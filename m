@@ -1,56 +1,82 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/2] arm64: mediatek: Select PINCTRL for Mediatek platform
-Date: Fri, 6 Mar 2015 14:18:43 +0100
-Message-ID: <CABuKBeKBDQ0uqH2ssuRFHV=77_cVYddZMzJR-SsN44U245imvA@mail.gmail.com>
-References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+Subject: [PATCH v2 06/10] pinctrl: berlin: use proper compatibles
+Date: Fri,  6 Mar 2015 16:05:24 +0100
+Message-ID: <1425654328-26298-7-git-send-email-antoine.tenart@free-electrons.com>
+References: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
+In-Reply-To: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, srv_heupstream <srv_heupstream@mediatek.com>, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>
+To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-2015-03-06 7:24 GMT+01:00 Yingjoe Chen <yingjoe.chen@mediatek.com>:
-> These 2 patches are fixup for MT8173 pinctrl driver:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/320066.html
->
-> Arm64 maintainers doesn't want to add MACH_* in Kconfig, this patch
-> is used to replace the first one in that series.
->
-> Matthias,
-> Can you take this one?
->
-> ----------------------------------
-> MediaTek SoC expect to work with a pinctrl driver.
-> Select PINCTRL if ARCH_MEDIATEK is selected.
->
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+The Berlin pin-controller driver was sharing the chip and system
+controller nodes with the clock and the reset drivers. They all shared
+the same compatible. With the introduction of the Marvell Berlin MFD
+controller, the Berlin pin-controller driver has now its own node.
+Update its compatibles to not share anymore the ones of the chip and
+system controllers.
 
-applied to v4.0-next/arm64
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+---
+ drivers/pinctrl/berlin/berlin-bg2.c   | 4 ++--
+ drivers/pinctrl/berlin/berlin-bg2cd.c | 4 ++--
+ drivers/pinctrl/berlin/berlin-bg2q.c  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-> ---
->  arch/arm64/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index e627ead..a2ddd3f 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -151,6 +151,7 @@ menu "Platform selection"
->  config ARCH_MEDIATEK
->         bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
->         select ARM_GIC
-> +       select PINCTRL
->         help
->           Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
->
-> --
-> 1.8.1.1.dirty
->
-
-
-
+diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
+index 368ec0b9b8ba..3769eaedf519 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2.c
++++ b/drivers/pinctrl/berlin/berlin-bg2.c
+@@ -218,11 +218,11 @@ static const struct berlin_pinctrl_desc berlin2_sysmgr_pinctrl_data = {
+ 
+ static const struct of_device_id berlin2_pinctrl_match[] = {
+ 	{
+-		.compatible = "marvell,berlin2-chip-ctrl",
++		.compatible = "marvell,berlin2-soc-pinctrl",
+ 		.data = &berlin2_soc_pinctrl_data
+ 	},
+ 	{
+-		.compatible = "marvell,berlin2-system-ctrl",
++		.compatible = "marvell,berlin2-system-pinctrl",
+ 		.data = &berlin2_sysmgr_pinctrl_data
+ 	},
+ 	{}
+diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
+index 6b9cae029ef7..9e11f191d643 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2cd.c
++++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
+@@ -161,11 +161,11 @@ static const struct berlin_pinctrl_desc berlin2cd_sysmgr_pinctrl_data = {
+ 
+ static const struct of_device_id berlin2cd_pinctrl_match[] = {
+ 	{
+-		.compatible = "marvell,berlin2cd-chip-ctrl",
++		.compatible = "marvell,berlin2cd-soc-pinctrl",
+ 		.data = &berlin2cd_soc_pinctrl_data
+ 	},
+ 	{
+-		.compatible = "marvell,berlin2cd-system-ctrl",
++		.compatible = "marvell,berlin2cd-system-pinctrl",
+ 		.data = &berlin2cd_sysmgr_pinctrl_data
+ 	},
+ 	{}
+diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
+index 11aa10cc0e3e..ba7a8a8ad010 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2q.c
++++ b/drivers/pinctrl/berlin/berlin-bg2q.c
+@@ -380,11 +380,11 @@ static const struct berlin_pinctrl_desc berlin2q_sysmgr_pinctrl_data = {
+ 
+ static const struct of_device_id berlin2q_pinctrl_match[] = {
+ 	{
+-		.compatible = "marvell,berlin2q-chip-ctrl",
++		.compatible = "marvell,berlin2q-soc-pinctrl",
+ 		.data = &berlin2q_soc_pinctrl_data,
+ 	},
+ 	{
+-		.compatible = "marvell,berlin2q-system-ctrl",
++		.compatible = "marvell,berlin2q-system-pinctrl",
+ 		.data = &berlin2q_sysmgr_pinctrl_data,
+ 	},
+ 	{}
 -- 
-motzblog.wordpress.com
+2.3.1
