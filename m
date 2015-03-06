@@ -1,134 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: Add Pistachio SoC pin control driver
-Date: Fri, 6 Mar 2015 12:55:12 +0100
-Message-ID: <CACRpkdbqioAreyDwM2JN87=gH20n1OkUXPjdkW885iDWUV1NnA@mail.gmail.com>
-References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
-	<1424744104-14151-3-git-send-email-abrestic@chromium.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
+Date: Fri, 06 Mar 2015 15:42:05 +0300
+Message-ID: <54F9A09D.7040909@cogentembedded.com>
+References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1424744104-14151-3-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:40024 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755575AbbCFMmJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 07:42:09 -0500
+Received: by lbiw7 with SMTP id w7so17937242lbi.7
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 04:42:07 -0800 (PST)
+In-Reply-To: <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Feb 24, 2015 at 3:15 AM, Andrew Bresticker
-<abrestic@chromium.org> wrote:
+On 3/6/2015 1:43 PM, Linus Walleij wrote:
 
-> Add a driver for the pin controller present on the IMG Pistachio SoC.
-> This driver provides pinmux and pinconfig operations as well as GPIO
-> and IRQ chips for the GPIO banks.
->
-> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> The  pin array handled by sh_pfc_map_pins() may contain holes representing non-
+>> existing pins. We have to first count the valid pins in order to calculate the
+>> size  of the memory to be allocated, then to skip over the non-existing pins
+>> when  initializing the allocated arrays, and then to return the number of valid
+>> pins  from sh_pfc_map_pins() instead of 0 on success.
 
-(...)
-> +static inline u32 pctl_readl(struct pistachio_pinctrl *pctl, u32 reg)
-> +{
-> +       return readl(pctl->base + reg);
-> +}
-> +
-> +static inline void pctl_writel(struct pistachio_pinctrl *pctl, u32 val, u32 reg)
-> +{
-> +       writel(val, pctl->base + reg);
-> +}
-> +
-> +static inline u32 gpio_readl(struct pistachio_gpio_bank *bank, u32 reg)
-> +{
-> +       return readl(bank->base + reg);
-> +}
-> +
-> +static inline void gpio_writel(struct pistachio_gpio_bank *bank, u32 val,
-> +                              u32 reg)
-> +{
-> +       writel(val, bank->base + reg);
-> +}
+>> As we have to touch devm_kzalloc() calls anyway, use more fitting devm_kcalloc()
+>> instead which additionally checks the array size. And since PINMUX_TYPE_NONE is
+>> #define'd as 0, stop re-initializing already zeroed out 'pmx->configs' array.
 
-I don't see the point of these special readl/writel accessors. Just
-use readl/writel
-directly. Or consider readl/writel_relaxed() if MIPS has this.
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> +static inline void gpio_mask_writel(struct pistachio_gpio_bank *bank,
-> +                                   u32 reg, unsigned int bit, u32 val)
-> +{
-> +       gpio_writel(bank, (0x10000 | val) << bit, reg);
-> +}
+>> ---
+>> The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
+>> This patch should be applied before my R8A7794 PFC support patch and before
+>> Laurent's patches removing non-existent GPIOs for R8A779[01], otherwise they
+>> would cause the kernel  to hang while booting!
 
-Magic mask? Some comment on what is happening here when OR:in
-on 0x10000?
+> OK not applying this until ACKed by Laurent,
+> and in the meantime I'm taking the three applied R8A7794 patches
+> out of my tree again.
 
-(...)
-> +static int pistachio_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       struct pistachio_gpio_bank *bank = gc_to_bank(chip);
-> +
-> +       if (gpio_readl(bank, GPIO_OUTPUT_EN) & BIT(offset))
-> +               return GPIOF_DIR_OUT;
-> +       return GPIOF_DIR_IN;
-> +}
+    Thanks!
 
-These flags are not for the driver API.
+> Can you please send these depending patches as a series with this
+> patch as 1/4 and the three R8A7794 patches as 2,3,4/4? Thanks.
 
-Do this:
+    OK, will try to remember. But what about Lauren't 2 patches also dependent 
+on this one?
 
-return !gpio_readl(bank, GPIO_OUTPUT_EN) & BIT(offset));
+> Yours,
+> Linus Walleij
 
-> +static void pistachio_gpio_set(struct gpio_chip *chip, unsigned offset,
-> +                              int value)
-> +{
-> +       struct pistachio_gpio_bank *bank = gc_to_bank(chip);
-> +
-> +       gpio_mask_writel(bank, GPIO_OUTPUT, offset, !!value);
-> +}
+WBR, Sergei
 
-Hm we should clamp value in the core and make the parameter "value"
-a bool.... sigh for another day when things are calm.
-
-(...)
-> +static void pistachio_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-> +{
-> +       struct gpio_chip *gc = irq_get_handler_data(irq);
-> +       struct pistachio_gpio_bank *bank = gc_to_bank(gc);
-> +       struct irq_chip *chip = irq_get_chip(irq);
-> +       unsigned long pending;
-> +       unsigned int pin, virq;
-
-Don't call it virq, just call it irq. All Linux irq numbers are virtual
-so just go with irq.
-
-> +
-> +       chained_irq_enter(chip, desc);
-> +       pending = gpio_readl(bank, GPIO_INTERRUPT_STATUS) &
-> +               gpio_readl(bank, GPIO_INTERRUPT_EN);
-> +       for_each_set_bit(pin, &pending, 16) {
-> +               virq = irq_linear_revmap(gc->irqdomain, pin);
-> +               generic_handle_irq(virq);
-> +       }
-> +       chained_irq_exit(chip, desc);
-> +}
-
-(...)
-> +static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
-> +{
-> +       struct device_node *child, *node = pctl->dev->of_node;
-> +       struct pistachio_gpio_bank *bank;
-> +       unsigned int i = 0;
-> +       int irq, ret = 0;
-> +
-> +       for_each_child_of_node(node, child) {
-> +               if (!of_find_property(child, "gpio-controller", NULL))
-> +                       continue;
-
-So why not instead specify "simple-bus" as compatible on the parent node
-and have each subnode be its own device (simple-bus will spawn platform
-devices for all subnodes).
-
-Overall this composite-device pattern is discouraged if we can instead have
-unique devices for each bank.
-
-Apart from these things the driver looks very nice!
-
-Yours,
-Linus Walleij
