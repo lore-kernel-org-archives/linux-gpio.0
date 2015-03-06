@@ -1,57 +1,47 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 0/2] ARM: shmobile: ape6evm: Fix GPIO keys and wake-up
-Date: Fri, 06 Mar 2015 13:33:05 +0200
-Message-ID: <1533426.PtrGHiBojg@avalon>
-References: <1425059319-13403-1-git-send-email-geert+renesas@glider.be> <5844551.UVahD0ukvm@avalon> <20150306113028.GB27105@verge.net.au>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Fri, 06 Mar 2015 13:34:59 +0200
+Message-ID: <5341607.ysC4Tafd3h@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <CACRpkdbv8V2DY6DniY5fOaSQNkNZtZQ6G_hrm-vcG9cjFTSAEA@mail.gmail.com> <CAMuHMdVhD2e2Q9bTwu_r30AUCq4=-GzH=RWp2TFL7tXXz3prJA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33692 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754065AbbCFLdA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 06:33:00 -0500
-In-Reply-To: <20150306113028.GB27105@verge.net.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVhD2e2Q9bTwu_r30AUCq4=-GzH=RWp2TFL7tXXz3prJA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-Hi Simon,
+Hi Geert,
 
-On Friday 06 March 2015 20:30:29 Simon Horman wrote:
-> On Thu, Mar 05, 2015 at 12:42:07PM +0200, Laurent Pinchart wrote:
-> > On Thursday 05 March 2015 09:34:33 Simon Horman wrote:
-> >> On Fri, Feb 27, 2015 at 06:48:37PM +0100, Geert Uytterhoeven wrote:
-> >>> 	Hi Simon, Magnus,
-> >>> 
-> >>> This patch series adds the missing pull-up bias configuration for the
-> >>> switches on the r8a73a4/ape6evm development board, and configures the
-> >>> custom switch as a wake-up source.
-> >>> 
-> >>> After this, the keys actually work, and the system can be resumed from
-> >>> s2ram by pressing the custom switch.
-> >>> 
-> >>> This depends functionally on "[PATCH 1/4] pinctrl: sh-pfc: Do not
-> >>> overwrite bias configuration" in the series "[PATCH 0/4] pinctrl:
-> >>> sh-pfc: Fix pin bias and cleanups" which I've just sent. But as this
-> >>> is DTS, it can be applied independently.
-> >>> 
-> >>> Thanks for your comments!
+On Friday 06 March 2015 12:26:57 Geert Uytterhoeven wrote:
+> On Fri, Mar 6, 2015 at 11:48 AM, Linus Walleij wrote:
+> > On Fri, Feb 27, 2015 at 6:38 PM, Geert Uytterhoeven wrote:
+> >> Register and field widths are in the range 1..32. Storing them in the
+> >> pinctrl data in (arrays of) unsigned long wastes space.
 > >> 
-> >> Hi Geert,
+> >> This decreases the size of a (32-bit) shmobile_defconfig kernel
+> >> supporting 7 SoCs by 26460 bytes.
 > >> 
-> >> this seems fine to me. But I am reluctant to queue it up before the PFC
-> >> changes are accepted, lest there be some change in direction.
-> >> 
-> >> Please repost once the PFC changes have been accepted.
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > > 
-> > I've acked the dependency, but we should probably wait for Linus to apply
-> > it.
->
-> Thanks Laurent, of course that plan is fine by me.
+> > This 2/4 is not ACKed so pausing application after 1/4.
+> > 
+> > Is 3,4/4 independent of this patch?
+> 
+> Unfortunately not, as there are contextual dependencies.
+> 
+> Laurent: Is 2/4 OK for you as-is? Your comments about the size of reg are
+> not related to "Store register/field widths in u8 instead of unsigned long",
+> and thus an area for future improvement.
 
-Linus has just applied it, so I think you can go forward with this series.
+As just stated in a different reply to this patch, if you change reg to a u32 
+in a separate patch (maybe as a v2 of 3/4 ?),
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+for this patch.
 
 -- 
 Regards,
