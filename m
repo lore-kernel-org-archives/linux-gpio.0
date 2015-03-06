@@ -1,54 +1,83 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
- GPIOLIB is not enabled
-Date: Fri, 6 Mar 2015 09:26:26 +0100
-Message-ID: <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
-References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] pinctrl: Add initial driver data for Alphascale asm9260
+Date: Fri, 6 Mar 2015 09:38:28 +0100
+Message-ID: <CACRpkdbKLkMB6WP0zp2xN+gM4ytvs=3V5hh8uKt8e=YE4gAAqQ@mail.gmail.com>
+References: <CACRpkdZMX=HSpusLtPREufJpXuHOwH2MCtHrViASDR7Vbu_eMw@mail.gmail.com>
+	<1423740753-1221-1-git-send-email-linux@rempel-privat.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:34896 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932352AbbCFI01 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 03:26:27 -0500
-Received: by obbgq1 with SMTP id gq1so19338021obb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 00:26:26 -0800 (PST)
-In-Reply-To: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:41789 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932276AbbCFIi3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 03:38:29 -0500
+Received: by obcva8 with SMTP id va8so8129680obc.8
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 00:38:28 -0800 (PST)
+In-Reply-To: <1423740753-1221-1-git-send-email-linux@rempel-privat.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Oleksij Rempel <linux@rempel-privat.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 12, 2015 at 10:03 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+Hi Oleksij,
 
-> I wonder if gpiod_get_optional et all should be changed to return NUL=
-L
-> instead.
+Thanks for your patch.
 
-This is actually the norm in most subsystems returning cookie
-pointers, clk, regulator, pinctrl... a NULL pointer is a functional
-noop. But normally then NULL is returned from all stubs, not
-just optional.
+On Thu, Feb 12, 2015 at 12:32 PM, Oleksij Rempel <linux@rempel-privat.de> wrote:
 
-Alexandre, what do you say?
+Also send the patch to linux-kernel@vger.kernel.org as that is the
+default pin control mailing list.
 
-> The obvious downside is that if the device tree specifies a
-> reset-gpio and the kernel just fails to use it because there is some
-> code missing, this should better be an error. (The adau1977 code has
-> this problem already know, but when changing devm_gpiod_get_optional =
-all
-> callers are affected.)
+Split off Device Tree bindings in its own file and send that also to
+devicetree@vger.kernel.org for review.
 
-Device Tree-specific problems is not something we design
-subsystems for, we try to just accomodate them. I'm not
-sure I fully understand what you mean here.
+> This patch adds initial driver data for Alphascale asm9260 pinctrl support.
+>
+> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
+
+A bit terse description, tell us a bit more about the system in the initial
+commit, and what silicon it lives in etc.
+
+> +The pinctrl driver enables Alphascale ASM9260 to configure the multi-purpose pins
+> +(MPP) to a specific function.
+
+MPP? That is a new name again for pin multiplexing, alternate function,
+mission mode etc... apparently people have a problem with what to
+call this.
+
+(...)
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+
+Nice. Good that you use generic bindings.
+
+> +The following generic properties as defined in pinctrl-bindings.txt are valid
+> +to specify in a pin configuration subnode:
+> +pins                   - the list of pins that properties in the node
+> +                         apply to (either this or "group" has to be
+> +                         specified)
+
+Should be "groups" not "group". Several groups can map to one
+function.
+
+> +function               - the mux function to select
+> +bias-disable           - disable any pin bias
+> +bias-pull-up           - pull up the pin. Supported only on GPIO0_* pins.
+> +bias-pull-down         - pull down the pin. Supported on all pins except of GPIO0_*.
+
+Nice, good details.
+
+(...)
+> +struct asm9260_function {
+> +       const char              *name;
+> +       const char              **groups;
+> +       unsigned int            ngroups;
+> +};
+
+Yes, see one function, many groups.
+
+The driver looks simple and nice.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
