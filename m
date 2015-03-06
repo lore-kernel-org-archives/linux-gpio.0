@@ -1,57 +1,47 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
-Date: Fri, 06 Mar 2015 13:05:24 +0200
-Message-ID: <2354666.zjhAAbqIil@avalon>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <12083025.CFMfs0EISD@avalon> <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
+Date: Fri, 06 Mar 2015 12:05:54 +0100
+Message-ID: <1425639954.24292.274.camel@x220>
+References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+On Fri, 2015-03-06 at 14:24 +0800, Yingjoe Chen wrote:
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
 
-On Thursday 05 March 2015 10:19:33 Geert Uytterhoeven wrote:
-> On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart wrote:
-> >> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> >> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> >> @@ -69,9 +69,10 @@ struct pinmux_func {
-> >>  };
-> >>  
-> >>  struct pinmux_cfg_reg {
-> >> -     unsigned long reg, reg_width, field_width;
-> >> +     unsigned long reg;
-> > 
-> > How about making reg a u32 ? It won't make a difference in practice on
-> > 32-bit systems, but it would be more explicit.
+> @@ -8,11 +8,13 @@ config PINCTRL_MTK_COMMON
+>  	select OF_GPIO
+>  
+>  config PINCTRL_MT8135
+> -	def_bool MACH_MT8135
+> +	def_bool MACH_MT8135 || COMPILE_TEST
+>  	select PINCTRL_MTK_COMMON
+>  
+>  config PINCTRL_MT8173
+> -	def_bool MACH_MT8173
+> +	bool "Mediatek MT8173 pin control"
+> +	def_bool y
 
-You might have missed this comment.
+The kconfig tools will do what you mean here, but I think it's cleaner
+to make this just:
+	bool "Mediatek MT8173 pin control"
+	default y
 
-> > We could also save space by making reg a u16 and storing the register
-> > offset only instead of the full address (assuming it can always fit in 16
-> > bits, which should be checked). We'll also need to support 64-bit systems
-> > at some point, and making reg a u64 would increase space waste.
-> 
-> That would be more intrusive (and definitely needs to be in a separate
-> patch), as reg is used here to store a physical register address, for
-> conversion between physical and virtual addresses. I didn't want to go that
-> far yet.
-> 
-> u16 would indeed be nice, as it means reg, reg_width, and field_width
-> would fit in one 32-bit word, which I hadn't realized. That means we can
-> reduce each entry by 2 words instead of 1.
-> 
-> For 64-bit that would still be suboptimal, as pointers are aligned to 8
-> bytes, leading to gaps.
-> Perhaps we do want __packed here, too? I don't think the performance drop of
-> doing some unaligned accesses would be significant. This isn't a hot path.
+> +	depends on ARM64 || COMPILE_TEST
+>  	select PINCTRL_MTK_COMMON
+>  
+>  endif
 
--- 
-Regards,
+Thanks,
 
-Laurent Pinchart
 
+Paul Bolle
