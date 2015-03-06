@@ -1,25 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: make of_device_id array const
-Date: Fri, 6 Mar 2015 11:53:39 +0100
-Message-ID: <CACRpkdY8SN5+Y9gJDw_DTm7Z0WFvOJTjrOCiS+TitVhRLfQ4Xg@mail.gmail.com>
-References: <1422960119-11490-1-git-send-email-sanjeev_sharma@mentor.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Fri, 06 Mar 2015 12:55:13 +0200
+Message-ID: <1467324.hsXv6mAIiy@avalon>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be> <CAMuHMdVYUod+rqrjmvtwqT4dbJiGtt+qQW0CbRd5j6uGFJ3=gQ@mail.gmail.com> <CAMuHMdXNEcrtYge=EcNhAXnm8367h7=7SAg0AkiE1gvSJTxJpw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1422960119-11490-1-git-send-email-sanjeev_sharma@mentor.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sanjeev Sharma <sanjeev_sharma@mentor.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:33623 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754227AbbCFKzJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:55:09 -0500
+In-Reply-To: <CAMuHMdXNEcrtYge=EcNhAXnm8367h7=7SAg0AkiE1gvSJTxJpw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>
 
-On Tue, Feb 3, 2015 at 11:41 AM, Sanjeev Sharma
-<sanjeev_sharma@mentor.com> wrote:
+Hi Geert,
 
-> Make of_device_id array const.
+On Thursday 05 March 2015 19:02:10 Geert Uytterhoeven wrote:
+> On Thu, Mar 5, 2015 at 10:19 AM, Geert Uytterhoeven wrote:
+> > On Thu, Mar 5, 2015 at 10:03 AM, Laurent Pinchart
+> > 
+> > <laurent.pinchart@ideasonboard.com> wrote:
+> >>> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> >>> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> >>> @@ -69,9 +69,10 @@ struct pinmux_func {
+> >>>  };
+> >>>  
+> >>>  struct pinmux_cfg_reg {
+> >>> -     unsigned long reg, reg_width, field_width;
+> >>> +     unsigned long reg;
+> >> 
+> >> How about making reg a u32 ? It won't make a difference in practice on
+> >> 32-bit systems, but it would be more explicit.
+> >> 
+> >> We could also save space by making reg a u16 and storing the register
+> >> offset only instead of the full address (assuming it can always fit in
+> >> 16 bits, which should be checked). We'll also need to support 64-bit
+> >> systems at some point,
 >
-> Signed-off-by: Sanjeev Sharma <Sanjeev_Sharma@mentor.com>
+> Unfortunately there's a (single) exception: sh7734 has two register blocks,
+> at 0xFFFC0000 and 0xFFC40000, which is more than 64 KiB apart.
+> And we also can't say that all config registers are in the first
+> block, and all data registers are in the second block (for SoCs with
+> multiple blocks).
+> 
+> We could use u32 instead of u16 if CONFIG_PINCTRL_PFC_SH7734 is set, though.
 
-Patch applied.
+Or drop arch/sh support ;-)
 
-Yours,
-Linus Walleij
+> >> and making reg a u64 would increase space waste.
+> > 
+> > That would be more intrusive (and definitely needs to be in a separate
+> > patch), as reg is used here to store a physical register address, for
+> > conversion between physical and virtual addresses. I didn't want to go
+> > that far yet.
+> 
+> I had a quick check, and using 16-bit register offsets instead of 32-bit
+> registers addresses would save ca. 3 KiB in a shmobile_defconfig kernel.
+> Which is a saving of less than 2% of the current pinctrl binary size.
+> 
+> Of course it's something to keep in mind for future 64-bit SoCs...
+
+Let's do that for now then, just keep it in mind.
+
+-- 
+Regards,
+
+Laurent Pinchart
+
