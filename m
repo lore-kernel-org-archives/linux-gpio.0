@@ -1,29 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: vf610: Replaces comma between expression statements
- by semicolon
-Date: Fri, 6 Mar 2015 11:18:05 +0100
-Message-ID: <CACRpkdYOP=1TMsXqJAGJy33u+3Acf1a4QuT3M7bih0bM_JkGAA@mail.gmail.com>
-References: <1423832682.6895.1.camel@phoenix>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7790: Remove non existing GPIO pins
+Date: Fri, 6 Mar 2015 11:24:38 +0100
+Message-ID: <CACRpkdZdwsHnATuhck6h4w9OA-k0pxYQJzVUxtAda7qMsmGuiA@mail.gmail.com>
+References: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:37141 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030202AbbCFKSG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:18:06 -0500
-Received: by obcwp4 with SMTP id wp4so12797442obc.4
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 02:18:05 -0800 (PST)
-In-Reply-To: <1423832682.6895.1.camel@phoenix>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:41071 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932606AbbCFKYj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 05:24:39 -0500
+Received: by oiav63 with SMTP id v63so16871009oia.8
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 02:24:38 -0800 (PST)
+In-Reply-To: <1424115661-21928-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawn.guo@freescale.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 13, 2015 at 2:04 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Mon, Feb 16, 2015 at 8:41 PM, Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> GPIO banks 1 and 2 are missing pins 30 and 31. Remove them.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Patch applied.
+Patch applied with Geert's ACK.
 
 Yours,
 Linus Walleij
