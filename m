@@ -1,58 +1,56 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Fri, 06 Mar 2015 15:17:36 +0200
-Message-ID: <1595394.zdJD8lWkjG@avalon>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com> <54F9A09D.7040909@cogentembedded.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 1/2] arm64: mediatek: Select PINCTRL for Mediatek platform
+Date: Fri, 6 Mar 2015 14:18:43 +0100
+Message-ID: <CABuKBeKBDQ0uqH2ssuRFHV=77_cVYddZMzJR-SsN44U245imvA@mail.gmail.com>
+References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <54F9A09D.7040909@cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, srv_heupstream <srv_heupstream@mediatek.com>, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Sergei,
+2015-03-06 7:24 GMT+01:00 Yingjoe Chen <yingjoe.chen@mediatek.com>:
+> These 2 patches are fixup for MT8173 pinctrl driver:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/320066.html
+>
+> Arm64 maintainers doesn't want to add MACH_* in Kconfig, this patch
+> is used to replace the first one in that series.
+>
+> Matthias,
+> Can you take this one?
+>
+> ----------------------------------
+> MediaTek SoC expect to work with a pinctrl driver.
+> Select PINCTRL if ARCH_MEDIATEK is selected.
+>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-On Friday 06 March 2015 15:42:05 Sergei Shtylyov wrote:
-> On 3/6/2015 1:43 PM, Linus Walleij wrote:
-> >> The  pin array handled by sh_pfc_map_pins() may contain holes
-> >> representing non- existing pins. We have to first count the valid pins
-> >> in order to calculate the size  of the memory to be allocated, then to
-> >> skip over the non-existing pins when  initializing the allocated arrays,
-> >> and then to return the number of valid pins  from sh_pfc_map_pins()
-> >> instead of 0 on success.
-> >> 
-> >> As we have to touch devm_kzalloc() calls anyway, use more fitting
-> >> devm_kcalloc() instead which additionally checks the array size. And
-> >> since PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already
-> >> zeroed out 'pmx->configs' array.
-> >> 
-> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >> 
-> >> ---
-> >> The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
-> >> repo. This patch should be applied before my R8A7794 PFC support patch
-> >> and before Laurent's patches removing non-existent GPIOs for R8A779[01],
-> >> otherwise they would cause the kernel  to hang while booting!
-> > 
-> > OK not applying this until ACKed by Laurent,
-> > and in the meantime I'm taking the three applied R8A7794 patches
-> > out of my tree again.
-> 
-> Thanks!
-> 
-> > Can you please send these depending patches as a series with this
-> > patch as 1/4 and the three R8A7794 patches as 2,3,4/4? Thanks.
-> 
-> OK, will try to remember. But what about Lauren't 2 patches also
-> dependent on this one?
+applied to v4.0-next/arm64
 
-If you don't mind, please also include them in your series.
+> ---
+>  arch/arm64/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index e627ead..a2ddd3f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -151,6 +151,7 @@ menu "Platform selection"
+>  config ARCH_MEDIATEK
+>         bool "Mediatek MT65xx & MT81xx ARMv8 SoC"
+>         select ARM_GIC
+> +       select PINCTRL
+>         help
+>           Support for Mediatek MT65xx & MT81xx ARMv8 SoCs
+>
+> --
+> 1.8.1.1.dirty
+>
+
+
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+motzblog.wordpress.com
