@@ -1,47 +1,36 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
-Date: Fri, 06 Mar 2015 12:05:54 +0100
-Message-ID: <1425639954.24292.274.camel@x220>
-References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 11/20] devicetree: bindings: add Device Tree bindings
+ for Armada 39x pin-muxing controller
+Date: Fri, 6 Mar 2015 12:09:08 +0100
+Message-ID: <CACRpkdY1GO-5yjBNAW2o3BsaQL_NSOtMsjnmX-WNfeNfLAR98w@mail.gmail.com>
+References: <1425393675-17820-1-git-send-email-thomas.petazzoni@free-electrons.com>
+	<1425393675-17820-12-git-send-email-thomas.petazzoni@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:46506 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756203AbbCFLJJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Mar 2015 06:09:09 -0500
+Received: by oiav63 with SMTP id v63so17024354oia.13
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Mar 2015 03:09:08 -0800 (PST)
+In-Reply-To: <1425393675-17820-12-git-send-email-thomas.petazzoni@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Fri, 2015-03-06 at 14:24 +0800, Yingjoe Chen wrote:
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
+On Tue, Mar 3, 2015 at 3:41 PM, Thomas Petazzoni
+<thomas.petazzoni@free-electrons.com> wrote:
 
-> @@ -8,11 +8,13 @@ config PINCTRL_MTK_COMMON
->  	select OF_GPIO
->  
->  config PINCTRL_MT8135
-> -	def_bool MACH_MT8135
-> +	def_bool MACH_MT8135 || COMPILE_TEST
->  	select PINCTRL_MTK_COMMON
->  
->  config PINCTRL_MT8173
-> -	def_bool MACH_MT8173
-> +	bool "Mediatek MT8173 pin control"
-> +	def_bool y
+> This commit adds the Device Tree binding documentation to describe the
+> pin-muxing controller of the Marvell Armada 39x processors. Two
+> variants are supported for the moment: the 88F6920 (Armada 390) and
+> 88F6928 (Armada 398).
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-The kconfig tools will do what you mean here, but I think it's cleaner
-to make this just:
-	bool "Mediatek MT8173 pin control"
-	default y
+Patch applied to the pinctrl tree.
 
-> +	depends on ARM64 || COMPILE_TEST
->  	select PINCTRL_MTK_COMMON
->  
->  endif
-
-Thanks,
-
-
-Paul Bolle
+Yours,
+Linus Walleij
