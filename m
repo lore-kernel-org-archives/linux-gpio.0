@@ -1,115 +1,56 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [RFC/RFT PATCH 2/2] gpio: omap: ensure that runtime pm will
- disable unused gpio banks
-Date: Fri, 6 Mar 2015 15:15:30 -0800
-Message-ID: <20150306231513.GB2651@atomide.com>
-References: <1425670017-19598-1-git-send-email-grygorii.strashko@linaro.org>
- <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 0/2] ARM: shmobile: ape6evm: Fix GPIO keys and wake-up
+Date: Sat, 7 Mar 2015 10:08:12 +0900
+Message-ID: <20150307010811.GL19866@verge.net.au>
+References: <1425059319-13403-1-git-send-email-geert+renesas@glider.be>
+ <5844551.UVahD0ukvm@avalon>
+ <20150306113028.GB27105@verge.net.au>
+ <1533426.PtrGHiBojg@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: grygorii.strashko@linaro.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, ssantosh@kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <1533426.PtrGHiBojg@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-* grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150306 11:27]:
-> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+On Fri, Mar 06, 2015 at 01:33:05PM +0200, Laurent Pinchart wrote:
+> Hi Simon,
 > 
-> Now there are two points related to Runtime PM usage:
-> 1) bank state doesn't need to be checked in places where
-> Rintime PM is used, bacause Runtime PM maintains its
-> own usage counter:
->       if (!BANK_USED(bank))
->                pm_runtime_get_sync(bank->dev);
-> so, it's safe to drop such checks.
+> On Friday 06 March 2015 20:30:29 Simon Horman wrote:
+> > On Thu, Mar 05, 2015 at 12:42:07PM +0200, Laurent Pinchart wrote:
+> > > On Thursday 05 March 2015 09:34:33 Simon Horman wrote:
+> > >> On Fri, Feb 27, 2015 at 06:48:37PM +0100, Geert Uytterhoeven wrote:
+> > >>> 	Hi Simon, Magnus,
+> > >>> 
+> > >>> This patch series adds the missing pull-up bias configuration for the
+> > >>> switches on the r8a73a4/ape6evm development board, and configures the
+> > >>> custom switch as a wake-up source.
+> > >>> 
+> > >>> After this, the keys actually work, and the system can be resumed from
+> > >>> s2ram by pressing the custom switch.
+> > >>> 
+> > >>> This depends functionally on "[PATCH 1/4] pinctrl: sh-pfc: Do not
+> > >>> overwrite bias configuration" in the series "[PATCH 0/4] pinctrl:
+> > >>> sh-pfc: Fix pin bias and cleanups" which I've just sent. But as this
+> > >>> is DTS, it can be applied independently.
+> > >>> 
+> > >>> Thanks for your comments!
+> > >> 
+> > >> Hi Geert,
+> > >> 
+> > >> this seems fine to me. But I am reluctant to queue it up before the PFC
+> > >> changes are accepted, lest there be some change in direction.
+> > >> 
+> > >> Please repost once the PFC changes have been accepted.
+> > > 
+> > > I've acked the dependency, but we should probably wait for Linus to apply
+> > > it.
+> >
+> > Thanks Laurent, of course that plan is fine by me.
 > 
-> 2) There is a call of pm_runtime_get_sync() in omap_gpio_irq_type(),
-> but no corresponding put. As result, GPIO devices could be
-> powered on forever if at least one GPIO was used as IRQ.
-> Hence, allow powering off GPIO banks by adding missed
-> pm_runtime_put(bank->dev) at the end of omap_gpio_irq_type().
+> Linus has just applied it, so I think you can go forward with this series.
 
-Nice to see this happening, but I think before merging this we need
-to test to be sure that the pm_runtime calls actually match.. I'm
-not convinced right now.. We may still have uninitialized entry
-points similar to 3d009c8c61f9 ("gpio: omap: Fix bad device
-access with setup_irq()").
-
-Regards,
-
-Tony
- 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
-> ---
->  drivers/gpio/gpio-omap.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 2b2fc4b..b1176c5 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -497,8 +497,7 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
->  	unsigned long flags;
->  	unsigned offset;
->  
-> -	if (!BANK_USED(bank))
-> -		pm_runtime_get_sync(bank->dev);
-> +	pm_runtime_get_sync(bank->dev);
->  
->  #ifdef CONFIG_ARCH_OMAP1
->  	if (d->irq > IH_MPUIO_BASE)
-> @@ -530,6 +529,8 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
->  	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->  		__irq_set_handler_locked(d->irq, handle_edge_irq);
->  
-> +	pm_runtime_put(bank->dev);
-> +
->  	return retval;
->  }
->  
-> @@ -680,8 +681,7 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
->  	 * If this is the first gpio_request for the bank,
->  	 * enable the bank module.
->  	 */
-> -	if (!BANK_USED(bank))
-> -		pm_runtime_get_sync(bank->dev);
-> +	pm_runtime_get_sync(bank->dev);
->  
->  	spin_lock_irqsave(&bank->lock, flags);
->  	/* Set trigger to none. You need to enable the desired trigger with
-> @@ -713,8 +713,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
->  	 * If this is the last gpio to be freed in the bank,
->  	 * disable the bank module.
->  	 */
-> -	if (!BANK_USED(bank))
-> -		pm_runtime_put(bank->dev);
-> +	pm_runtime_put(bank->dev);
->  }
->  
->  /*
-> @@ -807,8 +806,7 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
->  	unsigned long flags;
->  	unsigned offset = GPIO_INDEX(bank, gpio);
->  
-> -	if (!BANK_USED(bank))
-> -		pm_runtime_get_sync(bank->dev);
-> +	pm_runtime_get_sync(bank->dev);
->  
->  	spin_lock_irqsave(&bank->lock, flags);
->  	omap_gpio_init_irq(bank, gpio, offset);
-> @@ -835,8 +833,7 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
->  	 * If this is the last IRQ to be freed in the bank,
->  	 * disable the bank module.
->  	 */
-> -	if (!BANK_USED(bank))
-> -		pm_runtime_put(bank->dev);
-> +	pm_runtime_put(bank->dev);
->  }
->  
->  static void omap_gpio_ack_irq(struct irq_data *d)
-> -- 
-> 1.9.1
-> 
+Thanks, done.
