@@ -1,40 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] pinctrl: tegra: support nvidia,io-hv DT property
-Date: Sat, 7 Mar 2015 21:10:31 +0100
-Message-ID: <CACRpkdYtUZOjEZYdOJt2NjtDBuo=Brp0babpRZVYdhic+US0Pg@mail.gmail.com>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>
-	<1424811651-18660-3-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [RFC PATCH] gpio: support for GPIO forwarding
+Date: Sat, 7 Mar 2015 23:13:05 +0100
+Message-ID: <CACRpkdbG7Zc=gUG=L6RtJ543bwxL-hO-0e=CRYtsBkxzPUU3MQ@mail.gmail.com>
+References: <1418890998-23811-1-git-send-email-heikki.krogerus@linux.intel.com>
+	<CAAVeFuJUxad0dJ9vK1DaDJPDLM+rc5b77=PgcJT5+Bv1=iWGxg@mail.gmail.com>
+	<CACRpkdZzCX0O1wX=W5RbjLcqOF_R3HMTT1w59oFu=JfPauLNuw@mail.gmail.com>
+	<4078818.ecVtLF3hjd@vostro.rjw.lan>
+	<CAAVeFuJjMDfz7TZexkYnYrCGkAmRwubs32UhSPO-4qZWbMJjuQ@mail.gmail.com>
+	<20150224203459.GC13094@psi-dev26.jf.intel.com>
+	<CAAVeFuKhD2VBf3EOCjHqJK5CLx4qC8Quire2My9nMqboZzSNZQ@mail.gmail.com>
+	<20150225182502.GA7586@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:41279 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752446AbbCGUKb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Mar 2015 15:10:31 -0500
-Received: by obcva8 with SMTP id va8so15665438obc.8
-        for <linux-gpio@vger.kernel.org>; Sat, 07 Mar 2015 12:10:31 -0800 (PST)
-In-Reply-To: <1424811651-18660-3-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20150225182502.GA7586@psi-dev26.jf.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Darren Hart <dvhart@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 
-On Tue, Feb 24, 2015 at 10:00 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Wed, Feb 25, 2015 at 7:25 PM, David Cohen
+<david.a.cohen@linux.intel.com> wrote:
 
-> From: Stephen Warren <swarren@nvidia.com>
+> In my case [1] I need 2 "virtual devices" (and more in future) to be
+> part of an USB OTG port control. I call it virtual because they are too
+> simple components connected to no bus and controlled by GPIOs:
+> - a fixed regulator controlled by GPIO
+> - a generic mux controlled by GPIO
 >
-> Both nvidia,io-hv and nvidia,rcv-sel represent the fact that a particular
-> pin's IO buffers are configured to accept "high voltage" input signals.
-> The TRM for different chips names the register field rcv-sel on older
-> SoCs and io_hv on newer SoCs. Add the new naming option into the pinctrl
-> driver so that DT files can use naming consistent with the TRM.
+> I'd need to request official ACPI HID for them in order to make them
+> self-sufficient.
 >
-> This new property name will be documented in the patch that adds support
-> for the new SoC.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> I can go ahead with this approach, but we have many examples of drivers
+> on upstream that are platform driver expecting to receive gpio via
+> platform data (e.g. extcon-gpio). The ACPI table of some products on
+> market were defined following this concept and won't change anymore.
 
-Patch applied.
+So it's not just going to be GPIOs I take it?
+
+There is going to be regulator forwarding, clock forwarding, pin control
+forwarding, IRQ forwarding and DMA channel forwarding etc at the end
+of the day?
+
+I think it's strange that we see this so much, is the real problem that
+ACPI and the kernel have different ideas of what constitutes a device?
+And how come the DT seems to be a much better fit and not experience
+this? Because we haven't had to deal with deployed device trees with
+resources (GPIOs, regulators, etc) bound to some complex MFD device?
 
 Yours,
 Linus Walleij
