@@ -1,56 +1,44 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 0/2] ARM: shmobile: ape6evm: Fix GPIO keys and wake-up
-Date: Sat, 7 Mar 2015 10:08:12 +0900
-Message-ID: <20150307010811.GL19866@verge.net.au>
-References: <1425059319-13403-1-git-send-email-geert+renesas@glider.be>
- <5844551.UVahD0ukvm@avalon>
- <20150306113028.GB27105@verge.net.au>
- <1533426.PtrGHiBojg@avalon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10 0/2] drivers/gpio: Altera soft IP GPIO driver
+Date: Sat, 7 Mar 2015 20:35:59 +0100
+Message-ID: <CACRpkdZvbKMdqY_b3ZUCEA3mq4M1s3kZ9VHnXWZGPMETWYg5kw@mail.gmail.com>
+References: <1424771583-4404-1-git-send-email-thloh@altera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1533426.PtrGHiBojg@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35608 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751406AbbCGTgA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Mar 2015 14:36:00 -0500
+Received: by oifz81 with SMTP id z81so23095864oif.2
+        for <linux-gpio@vger.kernel.org>; Sat, 07 Mar 2015 11:35:59 -0800 (PST)
+In-Reply-To: <1424771583-4404-1-git-send-email-thloh@altera.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tien Hock Loh <thloh@altera.com>
+Cc: Dinh Nguyen <dinguyen@altera.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Greg KH <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Antti Palosaari <crope@iki.fi>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tien Hock Loh <thloh.linux@gmail.com>
 
-On Fri, Mar 06, 2015 at 01:33:05PM +0200, Laurent Pinchart wrote:
-> Hi Simon,
-> 
-> On Friday 06 March 2015 20:30:29 Simon Horman wrote:
-> > On Thu, Mar 05, 2015 at 12:42:07PM +0200, Laurent Pinchart wrote:
-> > > On Thursday 05 March 2015 09:34:33 Simon Horman wrote:
-> > >> On Fri, Feb 27, 2015 at 06:48:37PM +0100, Geert Uytterhoeven wrote:
-> > >>> 	Hi Simon, Magnus,
-> > >>> 
-> > >>> This patch series adds the missing pull-up bias configuration for the
-> > >>> switches on the r8a73a4/ape6evm development board, and configures the
-> > >>> custom switch as a wake-up source.
-> > >>> 
-> > >>> After this, the keys actually work, and the system can be resumed from
-> > >>> s2ram by pressing the custom switch.
-> > >>> 
-> > >>> This depends functionally on "[PATCH 1/4] pinctrl: sh-pfc: Do not
-> > >>> overwrite bias configuration" in the series "[PATCH 0/4] pinctrl:
-> > >>> sh-pfc: Fix pin bias and cleanups" which I've just sent. But as this
-> > >>> is DTS, it can be applied independently.
-> > >>> 
-> > >>> Thanks for your comments!
-> > >> 
-> > >> Hi Geert,
-> > >> 
-> > >> this seems fine to me. But I am reluctant to queue it up before the PFC
-> > >> changes are accepted, lest there be some change in direction.
-> > >> 
-> > >> Please repost once the PFC changes have been accepted.
-> > > 
-> > > I've acked the dependency, but we should probably wait for Linus to apply
-> > > it.
-> >
-> > Thanks Laurent, of course that plan is fine by me.
-> 
-> Linus has just applied it, so I think you can go forward with this series.
+On Tue, Feb 24, 2015 at 10:53 AM,  <thloh@altera.com> wrote:
 
-Thanks, done.
+> From: Tien Hock Loh <thloh@altera.com>
+>
+> Adds a new device tree binding and driver for Altera soft GPIO IP.
+> The driver is able to do read/write and allows GPIO to be a interrupt controller.
+>
+> Tested on Altera GHRD on interrupt handling and IO.
+>
+> v10:
+> Updated conflicting device tree parameters
+> Removed unused headers
+> Used macro instead of magic numbers for ngpio
+> Code readability cleanup using ?: and temporal variables
+> Removed leftover garbage and unnecessary function calls
+> Checked bgpio_init but unusable because Altera GPIO may not be a multiple of 8 bits
+
+This v10 patch applied. Any remaining issues can certainly be resolved
+by additional patches in-tree.
+
+Good patience and good work, the driver looks really really neat now.
+
+Yours,
+Linus Walleij
