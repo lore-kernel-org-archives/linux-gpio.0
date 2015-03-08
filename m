@@ -1,43 +1,54 @@
 From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH 1/2] pinctrl: remove enable/disable callbacks from documentation
-Date: Sun,  8 Mar 2015 10:51:45 +0200
-Message-ID: <14c3c3a3ee485c9fdc868b9fab2322bf47963ec0.1425804706.git.baruch@tkos.co.il>
+Subject: [PATCH 2/2] pinctrl: remove doc mention of the enable/disable API
+Date: Sun,  8 Mar 2015 10:51:46 +0200
+Message-ID: <46f7c40cdc176e60aa4735b9cd515942fec1f7f7.1425804706.git.baruch@tkos.co.il>
+References: <14c3c3a3ee485c9fdc868b9fab2322bf47963ec0.1425804706.git.baruch@tkos.co.il>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:45837 "EHLO
+Received: from guitar.tcltek.co.il ([192.115.133.116]:45838 "EHLO
 	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751594AbbCHIv5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1751619AbbCHIv5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Sun, 8 Mar 2015 04:51:57 -0400
+In-Reply-To: <14c3c3a3ee485c9fdc868b9fab2322bf47963ec0.1425804706.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
+Cc: linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Stephen Warren <swarren@nvidia.com>
 
-Commit 03e9f0cac5d (pinctrl: clean up after enable refactoring) updated the
-documentation to remove mention of disable(), and rename enable() to set_mux().
-One in-text mention was forgotten. Fix this.
+This API has changed in commit 6e5e959dde0 (pinctrl: API changes to support
+multiple states per device).
 
-Fixes: 03e9f0cac5d ('pinctrl: clean up after enable refactoring')
+Fixes: 6e5e959dde0 ('pinctrl: API changes to support multiple states per device')
+Cc: Stephen Warren <swarren@nvidia.com>
 Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- Documentation/pinctrl.txt | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ Documentation/pinctrl.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
-index b8f2147b96dd..91ea46b89d83 100644
+index 91ea46b89d83..2db41b41225e 100644
 --- a/Documentation/pinctrl.txt
 +++ b/Documentation/pinctrl.txt
-@@ -570,9 +570,8 @@ is possible to perform the requested mux setting, poke the hardware so that
- this happens.
+@@ -1265,7 +1265,7 @@ The semantics of the pinctrl APIs are:
  
- Pinmux drivers are required to supply a few callback functions, some are
--optional. Usually the enable() and disable() functions are implemented,
--writing values into some certain registers to activate a certain mux setting
--for a certain pin.
-+optional. Usually the set_mux() function is implemented, writing values into
-+some certain registers to activate a certain mux setting for a certain pin.
+ Usually the pin control core handled the get/put pair and call out to the
+ device drivers bookkeeping operations, like checking available functions and
+-the associated pins, whereas the enable/disable pass on to the pin controller
++the associated pins, whereas select_state pass on to the pin controller
+ driver which takes care of activating and/or deactivating the mux setting by
+ quickly poking some registers.
  
- A simple driver for the above example will work by setting bits 0, 1, 2, 3 or 4
- into some register named MUX to select a certain function with a certain
+@@ -1362,8 +1362,9 @@ function, but with different named in the mapping as described under
+ "Advanced mapping" above. So that for an SPI device, we have two states named
+ "pos-A" and "pos-B".
+ 
+-This snippet first muxes the function in the pins defined by group A, enables
+-it, disables and releases it, and muxes it in on the pins defined by group B:
++This snippet first initializes a state object for both groups (in foo_probe()),
++then muxes the function in the pins defined by group A, and finally muxes it in
++on the pins defined by group B:
+ 
+ #include <linux/pinctrl/consumer.h>
+ 
 -- 
 2.1.4
 
