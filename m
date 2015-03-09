@@ -1,45 +1,89 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH v5 5/8] pinctrl: Cygnus: define Broadcom Cygnus GPIO/PINCONF
- binding
-Date: Mon, 9 Mar 2015 09:41:22 -0700
-Message-ID: <54FDCD32.4080701@broadcom.com>
-References: <1425515756-321-1-git-send-email-rjui@broadcom.com>	<1425515756-321-6-git-send-email-rjui@broadcom.com> <CACRpkdYy75-fH29W-pr5ExuQc6dfO1Xe5UtFr49GAdnVHyXuCg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
+ GPIOLIB is not enabled
+Date: Mon, 9 Mar 2015 17:44:57 +0100
+Message-ID: <CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
+References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
+	<20150306085957.GC10717@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYy75-fH29W-pr5ExuQc6dfO1Xe5UtFr49GAdnVHyXuCg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>devic
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150306085957.GC10717-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-On 3/9/2015 9:30 AM, Linus Walleij wrote:
-> On Thu, Mar 5, 2015 at 1:35 AM, Ray Jui <rjui@broadcom.com> wrote:
-> 
->> Document the GPIO/PINCONF device tree binding for Broadcom Cygnus SoC
+On Fri, Mar 6, 2015 at 9:59 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> On Fri, Mar 06, 2015 at 09:26:26AM +0100, Linus Walleij wrote:
+>> On Thu, Feb 12, 2015 at 10:03 AM, Uwe Kleine-K=C3=B6nig
+>> <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
 >>
->> Signed-off-by: Ray Jui <rjui@broadcom.com>
->> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> (...)
-> 
->> +- ngpios:
->> +    Total number of GPIOs the controller provides
-> 
-> Remind me again. Why don't we know this from the compatible string?
+>> > I wonder if gpiod_get_optional et all should be changed to return =
+NULL
+>> > instead.
+>>
+>> This is actually the norm in most subsystems returning cookie
+>> pointers, clk, regulator, pinctrl... a NULL pointer is a functional
+>> noop. But normally then NULL is returned from all stubs, not
+>> just optional.
+>>
+>> Alexandre, what do you say?
+>>
+>> > The obvious downside is that if the device tree specifies a
+>> > reset-gpio and the kernel just fails to use it because there is so=
+me
+>> > code missing, this should better be an error. (The adau1977 code h=
+as
+>> > this problem already know, but when changing devm_gpiod_get_option=
+al all
+>> > callers are affected.)
+>>
+>> Device Tree-specific problems is not something we design
+>> subsystems for, we try to just accomodate them. I'm not
+>> sure I fully understand what you mean here.
+> Consider you have a device that has:
+>
+>         enable-gpio =3D <&gpio3 12 0>;
+>
+> and you do in your driver:
+>
+>         enablegpio =3D devm_gpiod_get_optional(... "enable" ...);
+>
+> . If GPIOLIB is off, enablegpio gets assigned NULL and the driver
+> continues happily without enabling the device which most likely is a
+> bug.
+>
+> So IMHO the logic in devm_gpiod_get_optional for the GPIOLIB=3Dn case
+> should be:
+>
+>         if (device_has_gpio())
+>                 return ERR_PTR(-ENOSYS);
+>         else
+>                 return NULL;
+>
+> . device_has_gpio should use similar logic like gpiod_get_index to ch=
+eck
+> if there is a gpio. If this is considered to be too complicated for a
+> disabled subsystem, returning -ENOSYS unconditionally is better than
+> NULL.
 
-Is hard coding the number of GPIO pins in the driver based on compatible
-string the preferred approach? If so, I can make the change. Note the
-current driver only has one compatible string "brcm,cygnus-gpio." To do
-this, I need to introduce 3 compatible strings "brcm,cygnus-asiu-gpio",
-"brcm,cygnus-ccm-gpio", "brcm,cygnus-aon-gpio", and assign hard coded
-ngpios to each of them during probe.
+Aha Oh that's complex.
 
-> 
-> (I paused applying the patches here waiting for the answer.)
-> 
-> Yours,
-> Linus Walleij
-> 
+I cannot answer that myself, it needs feedback from the OF/DT
+maintainers before I even dare to think anything, as it is related
+to how hardware is described :/
+
+Added devicetree-list and DT/OF maintainers to To: line to get
+some feedback on this.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
