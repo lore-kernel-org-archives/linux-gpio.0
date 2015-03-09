@@ -1,50 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: Use u32 to store register data
-Date: Mon, 9 Mar 2015 18:56:38 +0100
-Message-ID: <CAMuHMdXFBwvyrWter-T49tJyQGe-EJQEEqeNCTB=0ivh4SrbpQ@mail.gmail.com>
-References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
-	<1425058685-12956-4-git-send-email-geert+renesas@glider.be>
-	<CACRpkdbDNu55E6Cd+w29koWiQQ=wpAkG_feg6ap2U_LuBgYueg@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH] gpio: gpio-tb10x: remove incorrect __exit markup
+Date: Mon, 9 Mar 2015 11:04:09 -0700
+Message-ID: <20150309180409.GA24645@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:43581 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751582AbbCIR4j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 13:56:39 -0400
-In-Reply-To: <CACRpkdbDNu55E6Cd+w29koWiQQ=wpAkG_feg6ap2U_LuBgYueg@mail.gmail.com>
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:46381 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751433AbbCISEO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 14:04:14 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+Even if bus is not hot-pluggable, the devices can be unbound from the
+driver via sysfs, so we should not be using __exit annotations on
+remove() methods. The only exception is drivers registered with
+platform_driver_probe() which specifically disables sysfs bind/unbind
+attributes.
 
-On Mon, Mar 9, 2015 at 5:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Feb 27, 2015 at 6:38 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->
->> As PFC registers are either 8, 16, or 32 bits wide, use u32 (mostly
->> replacing unsigned long) to store (parts of) register values and masks.
->>
->> Switch the shadow register operations from {set,clear}_bit() to plain C
->> bit operations, as the former can operate on long data only.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Patch applied with Laurent's ACK.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpio-tb10x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+index 62ab9f4..46b8961 100644
+--- a/drivers/gpio/gpio-tb10x.c
++++ b/drivers/gpio/gpio-tb10x.c
+@@ -283,7 +283,7 @@ fail_ioremap:
+ 	return ret;
+ }
+ 
+-static int __exit tb10x_gpio_remove(struct platform_device *pdev)
++static int tb10x_gpio_remove(struct platform_device *pdev)
+ {
+ 	struct tb10x_gpio *tb10x_gpio = platform_get_drvdata(pdev);
+ 
+-- 
+2.2.0.rc0.207.ga3a616c
 
-I will post the reworked/new patches when I see your published branch.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Dmitry
