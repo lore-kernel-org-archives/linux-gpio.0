@@ -1,51 +1,32 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH] pinctrl: update direction_output function of cherryview
- driver
-Date: Mon, 9 Mar 2015 12:29:30 +0200
-Message-ID: <20150309102930.GT1758@lahna.fi.intel.com>
-References: <1425377602-6649-1-git-send-email-qipeng.zha@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: dwapb: re-enable GPIO_DWAPB for arm64
+Date: Mon, 9 Mar 2015 11:55:13 +0100
+Message-ID: <CACRpkdZa-WyOJM7KDW-R5yq8sFfiTEkA=-qkFkFn0T2-95_ZMA@mail.gmail.com>
+References: <1425281034-3324-1-git-send-email-wangkefeng.wang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:4395 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754069AbbCIK3e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Mar 2015 06:29:34 -0400
-Content-Disposition: inline
-In-Reply-To: <1425377602-6649-1-git-send-email-qipeng.zha@intel.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:44599 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751300AbbCIKzO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 06:55:14 -0400
+Received: by obcuy5 with SMTP id uy5so25450544obc.11
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 03:55:13 -0700 (PDT)
+In-Reply-To: <1425281034-3324-1-git-send-email-wangkefeng.wang@huawei.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "qipeng.zha" <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, "jason.cj.chen" <jason.cj.chen@intel.com>, David Cohen <david.a.cohen@linux.intel.com>
+To: Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Mar 03, 2015 at 06:13:22PM +0800, qipeng.zha wrote:
-> From: "qipeng.zha" <qipeng.zha@intel.com>
-> 
-> >From the comments of gpiod_direction_output(), need to set @value
-> as initial output, so update the lowlevel routine to make it work.
-> 
-> Signed-off-by: jason.cj.chen<jason.cj.chen@intel.com>
-> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
+On Mon, Mar 2, 2015 at 8:23 AM, Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
 
-Thanks for the fix.
+> Hisilicon arm64 soc uses designWare gpio, re-enable it after
+> commit 1972c97db5b(gpio: dwapb: fix compile errors).
+>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Patch applied. I cannot see patch 1/2 I guess it's not affecting
+my subsystem.
 
-> ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index e9f8b39..ee6a6de 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1206,6 +1206,7 @@ static int chv_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
->  static int chv_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->  				     int value)
->  {
-> +	chv_gpio_set(chip, offset, value);
->  	return pinctrl_gpio_direction_output(chip->base + offset);
->  }
->  
-> -- 
-> 1.8.3.2
+Yours,
+Linus Walleij
