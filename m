@@ -1,45 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinmux: 1 pin is not allowed to be configured for both
- GPIO and peripheral funtion
-Date: Mon, 9 Mar 2015 16:46:41 +0100
-Message-ID: <CACRpkdaLSZiqoQZrAkji_MsFCnr7hv7HwBe2_oFk+EPGeYMXww@mail.gmail.com>
-References: <1424936504-32662-1-git-send-email-sonic.adi@gmail.com>
+Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
+Date: Mon, 9 Mar 2015 16:50:26 +0100
+Message-ID: <CACRpkdYnj0vTBVEEDp4isznRZ+KQuC2h+VViZr=Pt8VtEOWP-A@mail.gmail.com>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33613 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754100AbbCIPql (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 11:46:41 -0400
-Received: by oifz81 with SMTP id z81so30039857oif.0
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 08:46:41 -0700 (PDT)
-In-Reply-To: <1424936504-32662-1-git-send-email-sonic.adi@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sonic Zhang <sonic.adi@gmail.com>
-Cc: Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
 
-On Thu, Feb 26, 2015 at 8:41 AM, Sonic Zhang <sonic.adi@gmail.com> wrote:
+On Fri, Feb 20, 2015 at 7:01 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
 
-> From: Sonic Zhang <sonic.zhang@analog.com>
+> This patch adds clocksource support for ARMv7-M's System timer,
+> also known as SysTick.
 >
-> The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
-> for both GPIO and peripheral function. So, check both gpio_owner and
-> mux_owner before approving the pin request.
->
-> Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+(...)
+> +       /* If no clock found, try to get clock-frequency property */
+> +       if (!rate) {
+> +               ret = of_property_read_u32(np, "clock-frequency", &rate);
+> +               if (ret)
+> +                       goto out_unmap;
+> +       }
 
-So since there are pin controllers that can do this even though your
-pin controller can't, you cannot forbit it for everyone like this.
+If this driver is only used for this one system, and if on this one system
+the clk subsystem will provide the clock rate, then there is no need
+to include this hackaround property.
 
-We have discussed adding a field to struct pinctrl_desc,
-bool strict, that would make the core disallow GPIOs and
-functions to be used on a pin at the same time.
+Alternatively there is no point including reading the frequency from
+the clk subsystem for this one system.
 
-So if this behaviour is desired for a certain pin controller then
-implement it like so: add bool strict to the struct pinctrl_desc,
-and only do the above strict check for pin controllers that set
-it, and set it for your pin controller.
+So which one is it?
 
 Yours,
 Linus Walleij
