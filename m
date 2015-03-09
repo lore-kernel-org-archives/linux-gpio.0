@@ -1,39 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 5/8] pinctrl: Cygnus: define Broadcom Cygnus
- GPIO/PINCONF binding
-Date: Mon, 9 Mar 2015 17:30:45 +0100
-Message-ID: <CACRpkdYy75-fH29W-pr5ExuQc6dfO1Xe5UtFr49GAdnVHyXuCg@mail.gmail.com>
-References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
-	<1425515756-321-6-git-send-email-rjui@broadcom.com>
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: Use u32 to store register data
+Date: Mon, 9 Mar 2015 17:37:30 +0100
+Message-ID: <CACRpkdbDNu55E6Cd+w29koWiQQ=wpAkG_feg6ap2U_LuBgYueg@mail.gmail.com>
+References: <1425058685-12956-1-git-send-email-geert+renesas@glider.be>
+	<1425058685-12956-4-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:34356 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753698AbbCIQaq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:30:46 -0400
-Received: by oigh136 with SMTP id h136so30328051oig.1
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:30:45 -0700 (PDT)
-In-Reply-To: <1425515756-321-6-git-send-email-rjui@broadcom.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:34031 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932616AbbCIQha (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:37:30 -0400
+Received: by oigh136 with SMTP id h136so30369685oig.1
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:37:30 -0700 (PDT)
+In-Reply-To: <1425058685-12956-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>devicetree@
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Thu, Mar 5, 2015 at 1:35 AM, Ray Jui <rjui@broadcom.com> wrote:
+On Fri, Feb 27, 2015 at 6:38 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Document the GPIO/PINCONF device tree binding for Broadcom Cygnus SoC
+> As PFC registers are either 8, 16, or 32 bits wide, use u32 (mostly
+> replacing unsigned long) to store (parts of) register values and masks.
 >
-> Signed-off-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-(...)
+> Switch the shadow register operations from {set,clear}_bit() to plain C
+> bit operations, as the former can operate on long data only.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +- ngpios:
-> +    Total number of GPIOs the controller provides
-
-Remind me again. Why don't we know this from the compatible string?
-
-(I paused applying the patches here waiting for the answer.)
+Patch applied with Laurent's ACK.
 
 Yours,
 Linus Walleij
