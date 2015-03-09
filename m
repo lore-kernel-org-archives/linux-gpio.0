@@ -1,67 +1,103 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: RGB LED control (was Re: "advanced" LED controllers)
-Date: Mon, 9 Mar 2015 10:08:46 +0100
-Message-ID: <20150309090846.GA6659@amd>
-References: <20150219211424.GN13603@saruman.tx.rr.com>
- <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
- <20150302092111.GA19233@amd>
- <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
- <20150308205732.GA385@amd>
- <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
+From: "Westerberg, Mika" <mika.westerberg@intel.com>
+Subject: Re: [PATCH] Fix one issue in pinctrl-cherryview.c
+Date: Mon, 9 Mar 2015 11:17:22 +0200
+Message-ID: <20150309091722.GM1758@lahna.fi.intel.com>
+References: <C6287702A945AC47BE5DB5DFD4B5C6DD01841877@SHSMSX104.ccr.corp.intel.com>
+ <20150226071109.GY1758@lahna.fi.intel.com>
+ <20150227174717.GA19392@psi-dev26.jf.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="Qz2CZ664xQdCRdPu"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53801 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751321AbbCIJIs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 05:08:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:22706 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751715AbbCIJR0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 9 Mar 2015 05:17:26 -0400
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
+In-Reply-To: <20150227174717.GA19392@psi-dev26.jf.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: David Cohen <david.a.cohen@linux.intel.com>
+Cc: "Zha, Qipeng" <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>
 
-On Mon 2015-03-09 09:08:37, Geert Uytterhoeven wrote:
-> Hi Pavel,
+
+--Qz2CZ664xQdCRdPu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Feb 27, 2015 at 09:47:17AM -0800, David Cohen wrote:
+> Hi Mika,
 > 
-> On Sun, Mar 8, 2015 at 9:57 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Ok, so I played with RGB LED a bit, and we have quite a gap in
-> > documentation: what 50% brightness means is non-trivial and very
-> > important in case we want to do smooth blinking and color transitions.
-> >
-> > Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-> > index 3646ec8..649d7a6 100644
-> > --- a/Documentation/ABI/testing/sysfs-class-led
-> > +++ b/Documentation/ABI/testing/sysfs-class-led
-> > @@ -8,6 +8,11 @@ Description:
-> >                 non-zero brightness settings. The value is between 0 and
-> >                 /sys/class/leds/<led>/max_brightness.
-> >
-> > +               If LED supports continuous brightness settings, 50% brightness
-> > +               should correspond to 50% brightness perceived by human, in a similar
-> > +               manner pixel brightness on monitor does (not 50% PWM).
+> On Thu, Feb 26, 2015 at 09:11:09AM +0200, Westerberg, Mika wrote:
+> > On Thu, Feb 26, 2015 at 05:10:13AM +0200, Zha, Qipeng wrote:
+> > >    Hi
+> > > 
+> > >    Please check below patch(or attached), thanks.
+> > > 
+> > >    this is verified on Intel cherrytrail platform on linux 3.19-rc6.
+> > 
+> > In general you should send your patches inline and plain text to the
+> > interested parties. Please take some time reading Documentation/SubmittingPatches.
+> > 
+> > Then do this:
+> > 
+> >  1) git format-patch -1
+> > 
+> > This results 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
+> > 
+> >  2) git send-email --dry-run --to self 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
+> > 
+> > Verify that it sends the patch only to you
+> > 
+> >  3) git send-email --to self 0001-pinctrl-update-direction_output-function-of-cherryvi.patch
+> > 
+> > Verify that the patch formatting and content is ok. If not, apply fixes
+> > and start from 1).
+> > 
+> > Once you are happy with the result you can then send the patch like:
+> > 
+> >  4) git send-email --to ... --cc ...
+> > 
+> > and everyone is happy :)
+> > 
+> > The patch itself looks good to me.
 > 
-> How many drivers do it right? How many don't?
+> Not sure if I missed something, but where's the patch? :)
 
-Not sure. leds-lp5523.c gets is wrong. Easy test is to attempt to set
-"electric indigo" color
-(http://en.wikipedia.org/wiki/Indigo#Violet-blue) and see what comes
-out.
+It was attached. Here it is again (attached).
 
-> For those that don't, perhaps we handle the conversion between perceived and
-> pwm in the core, e.g. by adding a new flag to led_classdev.flags to indicate
-> the need for conversion?
+--Qz2CZ664xQdCRdPu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="0001-pinctrl-update-direction_output-function-of-cherryvi.patch"
 
-There is not that many drivers that support smooth power
-adjustments. But yes, we can probably conversion in the core for
-trivial case.
+>From e22a498f8d1c3317e86b6a18fbb4371010862692 Mon Sep 17 00:00:00 2001
+From: "qipeng.zha" <qipeng.zha@intel.com>
+Date: Fri, 13 Feb 2015 19:03:56 +0800
+Subject: [PATCH] pinctrl: update direction_output function of cherryview
+ driver
 
-Unfortunately, we only have 8-bits of precision to work with... 
-									Pavel
+>From the comments of gpiod_direction_output(), need to set @value
+as initial output, so update the lowlevel routine to make it work.
+
+Signed-off-by: jason.cj.chen<jason.cj.chen@intel.com>
+Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index e9f8b39..ee6a6de 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1206,6 +1206,7 @@ static int chv_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ static int chv_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				     int value)
+ {
++	chv_gpio_set(chip, offset, value);
+ 	return pinctrl_gpio_direction_output(chip->base + offset);
+ }
+ 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.8.1.2
+
+
+--Qz2CZ664xQdCRdPu--
