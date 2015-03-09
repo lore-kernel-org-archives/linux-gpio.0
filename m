@@ -1,33 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
-Date: Mon, 9 Mar 2015 17:18:05 +0100
-Message-ID: <CACRpkdb1iTf4YjJ1r4Mq-jOun+J95ofRG8AkG+Oj6Of-m1=S0Q@mail.gmail.com>
+Date: Mon, 9 Mar 2015 17:18:51 +0100
+Message-ID: <CACRpkdaSFag+tLqF383UK56V0XzdtCr6-xhyCEnmRphZdjo-7A@mail.gmail.com>
 References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
+	<20150302114516.GC3040@dragon>
+	<20150302125935.GC7865@pengutronix.de>
+	<43491e2cb2c520d8f15d90ae99a82f28@agner.ch>
+	<20150302155315.GD7865@pengutronix.de>
+	<89abf03242a4e5a39fab1373c62dce13@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:39952 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752337AbbCIQSG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:18:06 -0400
-Received: by obcuz6 with SMTP id uz6so8274025obc.7
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:18:06 -0700 (PDT)
-In-Reply-To: <1423240256-27210-1-git-send-email-stefan@agner.ch>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:40370 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753363AbbCIQSw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:18:52 -0400
+Received: by oiba3 with SMTP id a3so30247024oib.7
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:18:51 -0700 (PDT)
+In-Reply-To: <89abf03242a4e5a39fab1373c62dce13@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Stefan Agner <stefan@agner.ch>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Feb 6, 2015 at 5:30 PM, Stefan Agner <stefan@agner.ch> wrote:
+On Thu, Mar 5, 2015 at 12:23 AM, Stefan Agner <stefan@agner.ch> wrote:
 
-> Commit 3dac1918a491 ("pinctrl: imx: detect uninitialized pins") needs
-> the values in struct imx_pin_reg to be -1. This has been done in a
-> rather unorthodox way by setting the memory to 0xff using memset...
-> Use a proper for loop to initialize the whole array with -1.
+> Do you generally agree to that change?
 >
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> @Linus Walleij, anything holding this patch back from getting merged?
 
-Patch applied with the ACKs.
+Nothing apart from me being overloaded.
+
+Merged now, thanks.
 
 Yours,
 Linus Walleij
