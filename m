@@ -1,78 +1,111 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Mon, 9 Mar 2015 15:22:58 -0500
-Message-ID: <20150309202258.GA3398@deathray>
-References: <20150219085303.GI21469@belle.intranet.vanheusden.com>
- <CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
- <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
- <CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
- <CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
- <20150302072655.GA17089@deathray>
- <CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
- <CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
- <CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
- <CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
+Date: Mon, 09 Mar 2015 21:36:18 +0100
+Message-ID: <3011616.9oVy3HN0Pj@wuerfel>
+References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com> <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:39640 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490AbbCIUXJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 16:23:09 -0400
-Received: by igdh15 with SMTP id h15so24501505igd.4
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 13:23:08 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
+Received: from mout.kundenserver.de ([212.227.126.131]:55238 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751490AbbCIUhK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 16:37:10 -0400
+In-Reply-To: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>
 
-On Mon, Mar 09, 2015 at 04:52:26PM +0100, Linus Walleij wrote:
-> On Wed, Mar 4, 2015 at 1:43 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> > On Tue, Mar 3, 2015 at 7:31 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >> On Tue, Mar 3, 2015 at 9:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> >>
-> >>> It really comes down to how user-space wants to access GPIOs. I
-> >>> suspect the majority of sysfs accesses is done by scripts and other
-> >>> simple programs. If we introduce a char device that takes requires
-> >>> ioctls, it is then customary to add a small user-space library to
-> >>> abstract that (for both convenience and safety - think libdrm). Do we
-> >>> want to maintain libgpio?
-> >>
-> >> Good point.
-> >>
-> >> We have no clue about how the majority out there use the GPIO
-> >> sysfs, but I have heard of mission-critical systems just hammering
-> >> GPIOs from userspace.
-> >>
-> >> Sadly many of these industrial users are "I just want it to work, now"
-> >> types and they don't step forward much on these mailing lists.
-> >> (Learned from private conversations...)
-> >>
-> >> Maybe if noone voice their opinion and offer to help with this, we can
-> >> assume they don't exist (well obviously a community does not exist)
-> >> and their specific needs be ignored until they put their money where
-> >> their mouth is.
-> >
-> > That's the only way we can handle the situation if people don't
-> > manifest their needs. But does this mean that you would agree with a
-> > cleaner, multi-GPIO friendly sysfs-based solution, or I am
-> > misunderstanding you?
+On Friday 06 March 2015 14:24:51 Yingjoe Chen wrote:
+> Linus,
+> This one make PINCTRL_MT8173 option user selectable and is based on
+> mtk-staging in your tree. If you think this is OK, please applied or
+> squash this into previous change. Thanks.
+
+The patch looks good in principle, just two small comments
+
+> --------------------------------------------------
+
+To simplify the job for Linus here, please start the line above
+with 
+
+8<------
+
+(a stylized pair if scissors)
+
+which is the magic that git-am looks for.
+
+
+> ARM64 maintainer doesn't want to add MACH_* for each SoC.
+> Adjust mt8173 pinctrl kconfig entry so user can manually select it.
 > 
-> I guess I'm just a bit grumpy.
+> Also make PINCTRL_MT8135 build when COMPILE_TEST is enabled.
 > 
-> Whoever comes up with a cleaner sysfs or a clean device interface
-> will win the argument and lock the path for the other approach.
-> It's like a forking path with no going back or something.
-
-There is no need to fork and in fact it would probably be a bad idea.
-
-At EMAC we support both sysfs and character device simultaneously.
-Sysfs for the ease of use and ioctl for real time advantages.
-
-Not saying that it is a good reference but the two interfaces "could" co-exist.
-
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> ---
+>  drivers/pinctrl/mediatek/Kconfig | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> Yours,
-> Linus Walleij
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 49b8649..1472f0e 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -1,4 +1,4 @@
+> -if ARCH_MEDIATEK
+> +if ARCH_MEDIATEK || COMPILE_TEST
+>  
+>  config PINCTRL_MTK_COMMON
+>  	bool
+> @@ -8,11 +8,13 @@ config PINCTRL_MTK_COMMON
+>  	select OF_GPIO
+>  
+>  config PINCTRL_MT8135
+> -	def_bool MACH_MT8135
+> +	def_bool MACH_MT8135 || COMPILE_TEST
+>  	select PINCTRL_MTK_COMMON
+>  
+>  config PINCTRL_MT8173
+> -	def_bool MACH_MT8173
+> +	bool "Mediatek MT8173 pin control"
+> +	def_bool y
+> +	depends on ARM64 || COMPILE_TEST
+>  	select PINCTRL_MTK_COMMON
+>  
+
+You have slightly different logic here: PINCTRL_MT8135 will
+always be enabled when COMPILE_TEST is on, while PINCTRL_MT8173
+is enabled by default in this case, but can be turned off.
+
+Neither of them is what you really want, which would be
+
+config PINCTRL_MT8135
+	bool "Mediatek MT8135 pin control"
+	depends on MACH_MT8135 || COMPILE_TEST
+	default MACH_MT8135
+	select PINCTRL_MTK_COMMON
+
+config PINCTRL_MT8135
+	bool "Mediatek MT8173 pin control"
+	depends on MACH_MT8173 || COMPILE_TEST
+	default MACH_MT8173
+	select PINCTRL_MTK_COMMON
+
+This way, the options are only enabled by default if MACH_MT8135
+or MACH_MT8173 are enabled, but you are free to enable or disable
+them when COMPILE_TEST is set. Alternatively, you can do
+
+config PINCTRL_MT8135
+	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+	default MACH_MT8135
+	select PINCTRL_MTK_COMMON
+
+config PINCTRL_MT8135
+	bool "Mediatek MT8173 pin control" if COMPILE_TEST && !MACH_MT8173
+	default MACH_MT8173
+	select PINCTRL_MTK_COMMON
+
+which will let you turn on the options if COMPILE_TEST is set, but not
+let you turn them off when the drivers are required.
+
+	Arnd
