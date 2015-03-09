@@ -1,47 +1,94 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: RGB LED control (was Re: "advanced" LED controllers)
-Date: Sun, 8 Mar 2015 21:57:32 +0100
-Message-ID: <20150308205732.GA385@amd>
-References: <20150219211424.GN13603@saruman.tx.rr.com>
- <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
- <20150302092111.GA19233@amd>
- <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH v2 02/18] ARM: ARMv7M: Enlarge vector table to 256 entries
+Date: Mon, 09 Mar 2015 01:29:28 +0100
+Message-ID: <1364122b3b72c50138d81ee4eec2a4c7@agner.ch>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1424455277-29983-3-git-send-email-mcoquelin.stm32@gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay
 List-Id: linux-gpio@vger.kernel.org
 
+On 2015-02-20 19:01, Maxime Coquelin wrote:
+> From Cortex-M reference manuals, the nvic supports up to 240 interrupts.
+> So the number of entries in vectors table is up to 256.
+> 
+> This patch adds a new config flag to specify the number of external interrupts.
+> Some ifdeferies are added in order to respect the natural alignment without
+> wasting too much space on smaller systems.
+> 
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> ---
+>  arch/arm/kernel/entry-v7m.S | 13 +++++++++----
+>  arch/arm/mm/Kconfig         | 15 +++++++++++++++
+>  2 files changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
+> index 8944f49..68cde36 100644
+> --- a/arch/arm/kernel/entry-v7m.S
+> +++ b/arch/arm/kernel/entry-v7m.S
+> @@ -117,9 +117,14 @@ ENTRY(__switch_to)
+>  ENDPROC(__switch_to)
+>  
+>  	.data
+> -	.align	8
+> +#if CONFIG_CPUV7M_NUM_IRQ <= 112
+> +	.align	9
+> +#else
+> +	.align	10
+> +#endif
+> +
+>  /*
+> - * Vector table (64 words => 256 bytes natural alignment)
+> + * Vector table (Natural alignment need to be ensured)
+>   */
+>  ENTRY(vector_table)
+>  	.long	0			@ 0 - Reset stack pointer
+> @@ -138,6 +143,6 @@ ENTRY(vector_table)
+>  	.long	__invalid_entry		@ 13 - Reserved
+>  	.long	__pendsv_entry		@ 14 - PendSV
+>  	.long	__invalid_entry		@ 15 - SysTick
+> -	.rept	64 - 16
+> -	.long	__irq_entry		@ 16..64 - External Interrupts
+> +	.rept	CONFIG_CPUV7M_NUM_IRQ
+> +	.long	__irq_entry		@ External Interrupts
+>  	.endr
+> diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+> index c43c714..27eb835 100644
+> --- a/arch/arm/mm/Kconfig
+> +++ b/arch/arm/mm/Kconfig
+> @@ -604,6 +604,21 @@ config CPU_USE_DOMAINS
+>  	  This option enables or disables the use of domain switching
+>  	  via the set_fs() function.
+>  
+> +config CPUV7M_NUM_IRQ
+> +	int "Number of external interrupts connected to the NVIC"
+> +	depends on CPU_V7M
+> +	default 90 if ARCH_STM32
+> +	default 38 if ARCH_EFM32
+> +	default 240
+> +	help
+> +	  This option indicates the number of interrupts connected to the NVIC.
+> +	  The value can be larger than the real number of interrupts supported
+> +	  by the system, but must not be lower.
+> +	  The default value is 240, corresponding to the maximum number of
+> +	  interrupts supported by the NVIC on Cortex-M family.
+> +
+> +	  If unsure, keep default value.
+> +
+>  #
+>  # CPU supports 36-bit I/O
+>  #
 
-Ok, so I played with RGB LED a bit, and we have quite a gap in
-documentation: what 50% brightness means is non-trivial and very
-important in case we want to do smooth blinking and color transitions.
+I sent a patch which extended that vector table some weeks ago:
+https://lkml.org/lkml/2014/12/29/296
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+But your solution is definitely more flexible, and given that we deal
+with small devices here, it's worth saving memory.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 3646ec8..649d7a6 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -8,6 +8,11 @@ Description:
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
- 
-+		If LED supports continuous brightness settings, 50% brightness
-+		should correspond to 50% brightness perceived by human, in a similar
-+		manner pixel brightness on monitor does (not 50% PWM).
-+
-+
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
- KernelVersion:	2.6.17
-
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Acked-by: Stefan Agner <stefan@agner.ch>
