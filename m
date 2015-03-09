@@ -1,30 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: at91: simplify probe error handling
-Date: Mon, 9 Mar 2015 17:05:33 +0100
-Message-ID: <CACRpkdZsoujmj7+raYc2QA2NZygMy1vmUjU9RVjgryC5h6aeAA@mail.gmail.com>
-References: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
+Subject: Re: [PATCH v2 1/2] pinctrl: qcom: enable generic pinconf
+Date: Mon, 9 Mar 2015 17:08:19 +0100
+Message-ID: <CACRpkdbw3ek13gVgZ+Y047h035LS+Wyf=DxUQXiYZ7TrRW3cOQ@mail.gmail.com>
+References: <1425465717-27747-1-git-send-email-svarbanov@mm-sol.com>
+	<1425465717-27747-2-git-send-email-svarbanov@mm-sol.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:34654 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751138AbbCIQFd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:05:33 -0400
-Received: by obcwp18 with SMTP id wp18so23223994obc.1
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:05:33 -0700 (PDT)
-In-Reply-To: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1425465717-27747-2-git-send-email-svarbanov@mm-sol.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Stephen Boyd <sboyd@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 2, 2015 at 6:28 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+On Wed, Mar 4, 2015 at 11:41 AM, Stanimir Varbanov <svarbanov@mm-sol.com> wrote:
 
-> There is no code ender the 'err' label. Just return the error code directly.
+> This makes the pinctrl driver to use the generic pinconf
+> interface. Mainly it gives us a way to use debugfs to dump
+> group configurations.
 >
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> Signed-off-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Patch applied with the ACKs.
+Patch applied with ACKs.
 
 Yours,
 Linus Walleij
