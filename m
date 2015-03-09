@@ -1,37 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: imx: do not implicitly set pin regs to -1
-Date: Mon, 9 Mar 2015 17:18:51 +0100
-Message-ID: <CACRpkdaSFag+tLqF383UK56V0XzdtCr6-xhyCEnmRphZdjo-7A@mail.gmail.com>
-References: <1423240256-27210-1-git-send-email-stefan@agner.ch>
-	<20150302114516.GC3040@dragon>
-	<20150302125935.GC7865@pengutronix.de>
-	<43491e2cb2c520d8f15d90ae99a82f28@agner.ch>
-	<20150302155315.GD7865@pengutronix.de>
-	<89abf03242a4e5a39fab1373c62dce13@agner.ch>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/8] pinctrl: bcm: consolidate Broadcom pinctrl drivers
+Date: Mon, 9 Mar 2015 17:20:08 +0100
+Message-ID: <CACRpkdbr0K7M0bY6JYB3rGm2pzevSr7WfQLt-uRP_N-0M1Jo3Q@mail.gmail.com>
+References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
+	<1425515756-321-2-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:40370 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363AbbCIQSw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:18:52 -0400
-Received: by oiba3 with SMTP id a3so30247024oib.7
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:18:51 -0700 (PDT)
-In-Reply-To: <89abf03242a4e5a39fab1373c62dce13@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1425515756-321-2-git-send-email-rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, devicetree@
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Mar 5, 2015 at 12:23 AM, Stefan Agner <stefan@agner.ch> wrote:
+On Thu, Mar 5, 2015 at 1:35 AM, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
 
-> Do you generally agree to that change?
+> Consolidate Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
 >
-> @Linus Walleij, anything holding this patch back from getting merged?
+> Signed-off-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 
-Nothing apart from me being overloaded.
-
-Merged now, thanks.
+Patch applied.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
