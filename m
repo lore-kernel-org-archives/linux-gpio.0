@@ -1,123 +1,83 @@
-From: Andreas Bofjall <andreas@gazonk.org>
-Subject: [PATCH RESEND 3/3] gpio: f7188x: add GPIO support for F71869A
-Date: Mon,  9 Mar 2015 21:55:14 +0100
-Message-ID: <1425934514-1023-4-git-send-email-andreas@gazonk.org>
-References: <1425934514-1023-1-git-send-email-andreas@gazonk.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mxf4.bahnhof.se ([213.80.101.28]:61608 "EHLO mxf4.bahnhof.se"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752393AbbCIVb3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 9 Mar 2015 17:31:29 -0400
-In-Reply-To: <1425934514-1023-1-git-send-email-andreas@gazonk.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
+Date: Mon, 9 Mar 2015 23:17:52 +0100
+Message-ID: <20150309221752.GE7525@pengutronix.de>
+References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
+ <20150220195437.GT19388@pengutronix.de>
+ <1424468908.24292.10.camel@x220>
+ <CALszF6Bm_Y4ZLednjpmP-hMix3gA23FwLm5hViEjr1QojUY+Mg@mail.gmail.com>
+ <1425411786.2606.24.camel@tiscali.nl>
+ <CALszF6AEThPrRe7c7nJ6q7yb2fhLMFuHJUV10sf=w0TMcqVVaw@mail.gmail.com>
+ <1425935552.4244.6.camel@x220>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1425935552.4244.6.camel@x220>
+Sender: linux-doc-owner@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Les Schaffer <schaffer@optonline.net>, Andreas Bofjall <andreas@gazonk.org>
 
-Add support for the GPIOs found on the Fintek SuperI/O chip F71869A,
-such as the one found on the Jetway JNF99-525 motherboard, to the f7188x
-gpio driver.
+Hello,
 
-Signed-off-by: Andreas Bofjall <andreas@gazonk.org>
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpio/Kconfig       |  4 ++--
- drivers/gpio/gpio-f7188x.c | 26 +++++++++++++++++++++++---
- 2 files changed, 25 insertions(+), 5 deletions(-)
+On Mon, Mar 09, 2015 at 10:12:32PM +0100, Paul Bolle wrote:
+> On Wed, 2015-03-04 at 13:08 +0100, Maxime Coquelin wrote:
+> > This is because I added also support for COMPILE_TEST coverage as p=
+er
+> > Uwe advice,
+> > and thought it was necessary to have an entry for this.
+> > Maybe I'm just wrong?
+>=20
+> I missed that you added COMPILE_TEST.
+>=20
+> A quick scan of your idea doesn't show any obvious issues. (Note that=
+ I
+> don't really know how people actually use COMPILE_TEST. I guess thing=
+s
+> like "make allyesconfig" are involved.)
+Maybe this can clearify the purpose of COMPILE_TEST:
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b64aa78..2c10de2 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -198,11 +198,11 @@ config GPIO_MM_LANTIQ
- 	  created by attaching a 16bit latch to the bus.
- 
- config GPIO_F7188X
--	tristate "F71869, F71882FG and F71889F GPIO support"
-+	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
- 	depends on X86
- 	help
- 	  This option enables support for GPIOs found on Fintek Super-I/O
--	  chips F71869, F71882FG and F71889F.
-+	  chips F71869, F71869A, F71882FG and F71889F.
- 
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called f7188x-gpio.
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index ac677bf..dbda843 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -1,5 +1,5 @@
- /*
-- * GPIO driver for Fintek Super-I/O F71869, F71882 and F71889
-+ * GPIO driver for Fintek Super-I/O F71869, F71869A, F71882 and F71889
-  *
-  * Copyright (C) 2010-2013 LaCie
-  *
-@@ -33,13 +33,15 @@
- 
- #define SIO_FINTEK_ID		0x1934	/* Manufacturer ID */
- #define SIO_F71869_ID		0x0814	/* F71869 chipset ID */
-+#define SIO_F71869A_ID		0x1007	/* F71869A chipset ID */
- #define SIO_F71882_ID		0x0541	/* F71882 chipset ID */
- #define SIO_F71889_ID		0x0909	/* F71889 chipset ID */
- 
--enum chips { f71869, f71882fg, f71889f };
-+enum chips { f71869, f71869a, f71882fg, f71889f };
- 
- static const char * const f7188x_names[] = {
- 	"f71869",
-+	"f71869a",
- 	"f71882fg",
- 	"f71889f",
- };
-@@ -158,6 +160,17 @@ static struct f7188x_gpio_bank f71869_gpio_bank[] = {
- 	F7188X_GPIO_BANK(60, 6, 0x90),
- };
- 
-+static struct f7188x_gpio_bank f71869a_gpio_bank[] = {
-+	F7188X_GPIO_BANK(0, 6, 0xF0),
-+	F7188X_GPIO_BANK(10, 8, 0xE0),
-+	F7188X_GPIO_BANK(20, 8, 0xD0),
-+	F7188X_GPIO_BANK(30, 8, 0xC0),
-+	F7188X_GPIO_BANK(40, 8, 0xB0),
-+	F7188X_GPIO_BANK(50, 5, 0xA0),
-+	F7188X_GPIO_BANK(60, 8, 0x90),
-+	F7188X_GPIO_BANK(70, 8, 0x80),
-+};
+diff --git a/init/Kconfig b/init/Kconfig
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -67,6 +67,26 @@ config COMPILE_TEST
+ 	  here. If you are a user/distributor, say N here to exclude useless
+ 	  drivers to be distributed.
+=20
++	# If you are a driver author consider to adjust your driver's
++	# dependencies to make it buildable with minimal preconditions if
++	# COMPILE_TEST is enabled. This helps contributers and maintainers
++	# that might not have the necessary toolchain or kernel config handy =
+and
++	# also increases compile test coverage. It's your advantage if others=
+ can
++	# build your driver more easily! So for a device that is only found o=
+n the
++	# foo cpu use:
++	#
++	# 	depends on CPU_FOO || COMPILE_TEST
++	#
++	# . You might have to use
++	#
++	# 	depends on CPU_FOO || (COMPILE_TEST && COOKIE)
++	#
++	# or
++	#
++	#	depends on COOKIE && (CPU_FOO || COMPILE_TEST)
++	#
++	# if your driver uses features that are only available if COOKIE is o=
+n.
 +
- static struct f7188x_gpio_bank f71882_gpio_bank[] = {
- 	F7188X_GPIO_BANK(0 , 8, 0xF0),
- 	F7188X_GPIO_BANK(10, 8, 0xE0),
-@@ -297,6 +310,10 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
- 		data->nr_bank = ARRAY_SIZE(f71869_gpio_bank);
- 		data->bank = f71869_gpio_bank;
- 		break;
-+	case f71869a:
-+		data->nr_bank = ARRAY_SIZE(f71869a_gpio_bank);
-+		data->bank = f71869a_gpio_bank;
-+		break;
- 	case f71882fg:
- 		data->nr_bank = ARRAY_SIZE(f71882_gpio_bank);
- 		data->bank = f71882_gpio_bank;
-@@ -373,6 +390,9 @@ static int __init f7188x_find(int addr, struct f7188x_sio *sio)
- 	case SIO_F71869_ID:
- 		sio->type = f71869;
- 		break;
-+	case SIO_F71869A_ID:
-+		sio->type = f71869a;
-+		break;
- 	case SIO_F71882_ID:
- 		sio->type = f71882fg;
- 		break;
-@@ -469,6 +489,6 @@ static void __exit f7188x_gpio_exit(void)
- }
- module_exit(f7188x_gpio_exit);
- 
--MODULE_DESCRIPTION("GPIO driver for Super-I/O chips F71869, F71882FG and F71889F");
-+MODULE_DESCRIPTION("GPIO driver for Super-I/O chips F71869, F71869A, F71882FG and F71889F");
- MODULE_AUTHOR("Simon Guinot <simon.guinot@sequanux.org>");
- MODULE_LICENSE("GPL");
--- 
-2.1.4
+ config LOCALVERSION
+ 	string "Local version - append to kernel release"
+ 	help
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
