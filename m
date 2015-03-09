@@ -1,37 +1,30 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 3/4] pinctrl: tegra: support nvidia,io-hv DT property
-Date: Mon, 09 Mar 2015 09:58:50 -0600
-Message-ID: <54FDC33A.8040301@wwwdotorg.org>
-References: <1424811651-18660-1-git-send-email-swarren@wwwdotorg.org>	<1424811651-18660-3-git-send-email-swarren@wwwdotorg.org> <CACRpkdYtUZOjEZYdOJt2NjtDBuo=Brp0babpRZVYdhic+US0Pg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: at91: simplify probe error handling
+Date: Mon, 9 Mar 2015 17:05:33 +0100
+Message-ID: <CACRpkdZsoujmj7+raYc2QA2NZygMy1vmUjU9RVjgryC5h6aeAA@mail.gmail.com>
+References: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYtUZOjEZYdOJt2NjtDBuo=Brp0babpRZVYdhic+US0Pg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:34654 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbbCIQFd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 12:05:33 -0400
+Received: by obcwp18 with SMTP id wp18so23223994obc.1
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 09:05:33 -0700 (PDT)
+In-Reply-To: <2adab2d9a86d0e44051541052ace08527bdcc045.1425317325.git.baruch@tkos.co.il>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 03/07/2015 01:10 PM, Linus Walleij wrote:
-> On Tue, Feb 24, 2015 at 10:00 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Mon, Mar 2, 2015 at 6:28 PM, Baruch Siach <baruch@tkos.co.il> wrote:
+
+> There is no code ender the 'err' label. Just return the error code directly.
 >
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Both nvidia,io-hv and nvidia,rcv-sel represent the fact that a particular
->> pin's IO buffers are configured to accept "high voltage" input signals.
->> The TRM for different chips names the register field rcv-sel on older
->> SoCs and io_hv on newer SoCs. Add the new naming option into the pinctrl
->> driver so that DT files can use naming consistent with the TRM.
->>
->> This new property name will be documented in the patch that adds support
->> for the new SoC.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->
-> Patch applied.
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
-Thanks!
+Patch applied with the ACKs.
 
-For the record in the list archives, I see patch 4 in your git repo too, 
-although I didn't get a "patch applied" email for that one.
+Yours,
+Linus Walleij
