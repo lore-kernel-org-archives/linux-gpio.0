@@ -1,111 +1,103 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
-Date: Mon, 09 Mar 2015 21:36:18 +0100
-Message-ID: <3011616.9oVy3HN0Pj@wuerfel>
-References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com> <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v6 0/8] Add pinctrl support to Broadcom Cygnus SoC
+Date: Mon, 9 Mar 2015 13:44:54 -0700
+Message-ID: <1425933902-20652-1-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:55238 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490AbbCIUhK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 16:37:10 -0400
-In-Reply-To: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+Cc: Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>
 
-On Friday 06 March 2015 14:24:51 Yingjoe Chen wrote:
-> Linus,
-> This one make PINCTRL_MT8173 option user selectable and is based on
-> mtk-staging in your tree. If you think this is OK, please applied or
-> squash this into previous change. Thanks.
+This patchset contains the pinmux (IOMUX) and GPIO/PINCONF support for
+Broadcom Cygnus SoC.
 
-The patch looks good in principle, just two small comments
+The Cygnus IOMUX controller supports group based mux
+configuration and allows certain pins to be muxed to GPIO function
+individually. The IOMUX controller is supported by the pinctrl-cygnus-mux.c
+driver.
 
-> --------------------------------------------------
+Cygnus has 3 GPIO controllers: 1) the ASIU GPIO; 2) the chipCommonG GPIO;
+and 3) the ALWAYS-ON GPIO. All 3 Cygnus GPIO controllers support basic PINCONF
+functions such as bias pull up, pull down, and drive strength configuration,
+when pins are muxed to GPIO. GPIO/PINCONF support is in the
+pinctrl-cygnus-gpio.c driver.
 
-To simplify the job for Linus here, please start the line above
-with 
+Note pins from the ASIU GPIO can be individually muxed to GPIO function,
+through interaction with the Cygnus IOMUX controller.
 
-8<------
+Changes from v5:
+ - Remove ngpios device tree property. Instead, determine the number of GPIO
+   based on compaitble string in the driver
+ - Remove all MODULE_* related macros in the driver since the driver will never
+   be compiled as a kernel loadable module
 
-(a stylized pair if scissors)
+Changes from v4:
+ - Rebased to Linux 4.0-rc2
+ - Switched to use the newly available pinconf_generic_dt_node_to_map_group
+   function for mapping DT mux properties in the IOMUX driver. This helps
+   to get rid of customized device tree parsing code in the driver
+ - Consolidated the other Cygnus GPIO/PINCONF patchset into one single patchset
+ - Tuned up the GPIO/PINCONF driver a bit more, based on code review comments
+   from Linus Walleij
 
-which is the magic that git-am looks for.
+Changes from v3:
+ - Fix the driver to have more proper use of "const" in various places
+ - Other minor improvements
 
+Changes from v2:
+ - Consolidate all Broadcom pinctrl drivers into drivers/pinctrl/bcm/*
+ - Change the Cygnus IOMUX driver to use standard Linux pinctrl subnode
+properties such as "function" and "groups" for pinmux configuration, instead
+of non-standard properties such as "brcm,function" and "brcm,group"
+ - Use real function names like "spi0", "lcd", "key", and etc. instead of HW
+specific mux names like "alt1", "alt2", "alt3", and etc.
+ - Add suffix "grp" to all group names
+ - Add support to allow individual pins to be muxed to GPIO function through
+subsystem callbacks "gpio_request_enable" and "gpio_disable_free", and get rid
+of all GPIO groups
+ - Other minor improvements in the driver
 
-> ARM64 maintainer doesn't want to add MACH_* for each SoC.
-> Adjust mt8173 pinctrl kconfig entry so user can manually select it.
-> 
-> Also make PINCTRL_MT8135 build when COMPILE_TEST is enabled.
-> 
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/Kconfig | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 49b8649..1472f0e 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -1,4 +1,4 @@
-> -if ARCH_MEDIATEK
-> +if ARCH_MEDIATEK || COMPILE_TEST
->  
->  config PINCTRL_MTK_COMMON
->  	bool
-> @@ -8,11 +8,13 @@ config PINCTRL_MTK_COMMON
->  	select OF_GPIO
->  
->  config PINCTRL_MT8135
-> -	def_bool MACH_MT8135
-> +	def_bool MACH_MT8135 || COMPILE_TEST
->  	select PINCTRL_MTK_COMMON
->  
->  config PINCTRL_MT8173
-> -	def_bool MACH_MT8173
-> +	bool "Mediatek MT8173 pin control"
-> +	def_bool y
-> +	depends on ARM64 || COMPILE_TEST
->  	select PINCTRL_MTK_COMMON
->  
+Changes from v1:
+ - Fix a typo in device tree binding document
 
-You have slightly different logic here: PINCTRL_MT8135 will
-always be enabled when COMPILE_TEST is on, while PINCTRL_MT8173
-is enabled by default in this case, but can be turned off.
+Ray Jui (8):
+  pinctrl: bcm: consolidate Broadcom pinctrl drivers
+  pinctrl: Broadcom Cygnus pinctrl device tree binding
+  pinctrl: cygnus: add initial IOMUX driver support
+  ARM: dts: enable IOMUX for Broadcom Cygnus
+  pinctrl: Cygnus: define Broadcom Cygnus GPIO/PINCONF binding
+  pinctrl: cygnus: add gpio/pinconf driver
+  ARM: dts: enable GPIO for Broadcom Cygnus
+  ARM: dts: cygnus: enable GPIO based hook detection
 
-Neither of them is what you really want, which would be
+ .../bindings/pinctrl/brcm,cygnus-gpio.txt          |   98 ++
+ .../bindings/pinctrl/brcm,cygnus-pinmux.txt        |  132 +++
+ arch/arm/boot/dts/bcm-cygnus.dtsi                  |   36 +
+ arch/arm/boot/dts/bcm911360_entphn.dts             |   13 +
+ drivers/pinctrl/Kconfig                            |   19 +-
+ drivers/pinctrl/Makefile                           |    3 +-
+ drivers/pinctrl/bcm/Kconfig                        |   56 ++
+ drivers/pinctrl/bcm/Makefile                       |    6 +
+ drivers/pinctrl/{ => bcm}/pinctrl-bcm281xx.c       |    4 +-
+ drivers/pinctrl/{ => bcm}/pinctrl-bcm2835.c        |    0
+ drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c          |  907 +++++++++++++++++
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c           | 1017 ++++++++++++++++++++
+ 12 files changed, 2269 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,cygnus-pinmux.txt
+ create mode 100644 drivers/pinctrl/bcm/Kconfig
+ create mode 100644 drivers/pinctrl/bcm/Makefile
+ rename drivers/pinctrl/{ => bcm}/pinctrl-bcm281xx.c (99%)
+ rename drivers/pinctrl/{ => bcm}/pinctrl-bcm2835.c (100%)
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
 
-config PINCTRL_MT8135
-	bool "Mediatek MT8135 pin control"
-	depends on MACH_MT8135 || COMPILE_TEST
-	default MACH_MT8135
-	select PINCTRL_MTK_COMMON
+-- 
+1.7.9.5
 
-config PINCTRL_MT8135
-	bool "Mediatek MT8173 pin control"
-	depends on MACH_MT8173 || COMPILE_TEST
-	default MACH_MT8173
-	select PINCTRL_MTK_COMMON
-
-This way, the options are only enabled by default if MACH_MT8135
-or MACH_MT8173 are enabled, but you are free to enable or disable
-them when COMPILE_TEST is set. Alternatively, you can do
-
-config PINCTRL_MT8135
-	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
-	default MACH_MT8135
-	select PINCTRL_MTK_COMMON
-
-config PINCTRL_MT8135
-	bool "Mediatek MT8173 pin control" if COMPILE_TEST && !MACH_MT8173
-	default MACH_MT8173
-	select PINCTRL_MTK_COMMON
-
-which will let you turn on the options if COMPILE_TEST is set, but not
-let you turn them off when the drivers are required.
-
-	Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
