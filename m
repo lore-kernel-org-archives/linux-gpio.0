@@ -1,47 +1,47 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH] gpio: gpio-tb10x: remove incorrect __exit markup
-Date: Mon, 9 Mar 2015 11:04:09 -0700
-Message-ID: <20150309180409.GA24645@dtor-ws>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH v5 3/8] pinctrl: cygnus: add initial IOMUX driver support
+Date: Mon, 09 Mar 2015 19:40:56 +0100
+Message-ID: <1425926456.2317.13.camel@tiscali.nl>
+References: <1425515756-321-1-git-send-email-rjui@broadcom.com>
+	 <1425515756-321-4-git-send-email-rjui@broadcom.com>
+	 <1425542612.24292.180.camel@x220>
+	 <CACRpkdYTDSSSd5oDNXmcav-2ycbki0=K+0Cm6dLSBHUv6UXF9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:46381 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751433AbbCISEO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 14:04:14 -0400
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYTDSSSd5oDNXmcav-2ycbki0=K+0Cm6dLSBHUv6UXF9g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list>
+List-Id: linux-gpio@vger.kernel.org
 
-Even if bus is not hot-pluggable, the devices can be unbound from the
-driver via sysfs, so we should not be using __exit annotations on
-remove() methods. The only exception is drivers registered with
-platform_driver_probe() which specifically disables sysfs bind/unbind
-attributes.
+Linus Walleij schreef op ma 09-03-2015 om 17:28 [+0100]:
+> I think you're right. Or I fear you're right.
+> 
+> But this problem is present in so many drivers that a generic
+> fixup needs to be done with a script and across an entire subsystem
+> at once,
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/gpio-tb10x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why don't we start with checking for similar cases during review, like
+I'm now doing for only a week or two?
 
-diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-index 62ab9f4..46b8961 100644
---- a/drivers/gpio/gpio-tb10x.c
-+++ b/drivers/gpio/gpio-tb10x.c
-@@ -283,7 +283,7 @@ fail_ioremap:
- 	return ret;
- }
- 
--static int __exit tb10x_gpio_remove(struct platform_device *pdev)
-+static int tb10x_gpio_remove(struct platform_device *pdev)
- {
- 	struct tb10x_gpio *tb10x_gpio = platform_get_drvdata(pdev);
- 
--- 
-2.2.0.rc0.207.ga3a616c
+>  and besides I'm not sure of these macros disturb so much.
+
+I think they're confusing at best. Ie, when reading the code and the
+corresponding Kconfig file one has to wonder: should the Kconfig symbol
+actually be tristate or should it stay bool but did someone forget to
+delete the module-specific code?
+
+> They are documentation in a sense, albeit a kind of documentation
+> we used before we had git to record the actual authors of the
+> code.
+
+They're useful, mostly, for module utilities. Outside that scope they
+add information that thousands of files (that can also only be built-in
+but do not have these macros) do not have and, apparently, do not need.
+
+Thanks,
 
 
--- 
-Dmitry
+Paul Bolle
