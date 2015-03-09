@@ -1,85 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: "gpioN" named functions for GPIO pins
-Date: Mon, 9 Mar 2015 18:07:40 +0100
-Message-ID: <CACRpkdbGLka+Kf61L2d+e0x7GT1AC1NoEsb-Kss9mgNoLjX4Sw@mail.gmail.com>
-References: <CAOiHx==ZVc8z-zPqn4iPr-9Z_hmg95vrWGiexhZp_LJYg5NQSw@mail.gmail.com>
+Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
+Date: Mon, 9 Mar 2015 18:11:35 +0100
+Message-ID: <CACRpkdZ_VHAnOqJV4Kpn1n_YZyVLKXEn4=tN=Ta=xrsMxq7Leg@mail.gmail.com>
+References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com>
+	<CACRpkdbMzGXeK6fX-h09-3F+jzxNLNsJwzLSeQrLT0MmJDRnWg@mail.gmail.com>
+	<1498074.6jEVhizFNe@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:44056 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752496AbbCIRHl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 13:07:41 -0400
-Received: by oifu20 with SMTP id u20so30555404oif.11
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 10:07:41 -0700 (PDT)
-In-Reply-To: <CAOiHx==ZVc8z-zPqn4iPr-9Z_hmg95vrWGiexhZp_LJYg5NQSw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1498074.6jEVhizFNe@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Mar 6, 2015 at 12:26 PM, Jonas Gorski <jogo@openwrt.org> wrote:
-
-> As far as I understand the second paragraph, it should suffice to
-> define functions named "gpio0", "gpio1", etc. instead of adding a
-> gpio_request_enable().
+On Fri, Mar 6, 2015 at 11:58 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Linus,
 >
-> But I fail to see in pinctrl_request_gpio() where this happens:
+> On Friday 06 March 2015 11:43:45 Linus Walleij wrote:
+>> On Sat, Feb 28, 2015 at 12:39 AM, Sergei Shtylyov wrote:
+>> > The  pin array handled by sh_pfc_map_pins() may contain holes representing
+>> > non- existing pins. We have to first count the valid pins in order to
+>> > calculate the size  of the memory to be allocated, then to skip over the
+>> > non-existing pins when  initializing the allocated arrays, and then to
+>> > return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
+>> > success.
+>> >
+>> > As we have to touch devm_kzalloc() calls anyway, use more fitting
+>> > devm_kcalloc() instead which additionally checks the array size. And
+>> > since PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already
+>> > zeroed out 'pmx->configs' array.
+>> >
+>> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> >
+>> > ---
+>> > The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
+>> > repo. This patch should be applied before my R8A7794 PFC support patch
+>> > and before Laurent's patches removing non-existent GPIOs for R8A779[01],
+>> > otherwise they would cause the kernel  to hang while booting!
+>>
+>> OK not applying this until ACKed by Laurent,
+>> and in the meantime I'm taking the three applied R8A7794 patches
+>> out of my tree again.
 >
-> pinctrl_request_gpio() calls pinmux_request_gpio(), which calls
-> pin_request(); pin_request() then calls ops->gpio_request_enable() if
-> present and a gpiorange is given, or ops->request() if present.
-> Nowhere I can see that any "gpio%d" function is even looked for, at
-> least that was the heuristic I used to find that place where
-> pinctrl_request_gpio was supposed to obtain the function "gpioN".
+> Could you also drop "pinctrl: sh-pfc: r8a7790: Remove non existing GPIO pins"
+> and "pinctrl: sh-pfc: r8a7791: Remove non existing GPIO pins" for the same
+> reason ? Sorry for the trouble.
 
-No you're right...
-
-pinctrl_request_gpio() ->
-pinmux_request_gpio() ->
-pin_request() ->
-
-Then you get to this:
-
-        /*
-         * If there is no kind of request function for the pin we just assume
-         * we got it by default and proceed.
-         */
-        if (gpio_range && ops->gpio_request_enable)
-                /* This requests and enables a single GPIO pin */
-                status = ops->gpio_request_enable(pctldev, gpio_range, pin);
-        else if (ops->request)
-                status = ops->request(pctldev, pin);
-        else
-                status = 0;
-
-It will try to acquire it as a single pin but not check that the function
-name is correct.
-
-So it's not very strict, this will be allowed no matter what function
-name you set on that pin.
-
-I guess people use this by setting the mux up in the usual way
-with functions+groups e.g. through a device tree, then this will
-just fall through nicely and the mux be correct.
-
-But it should call:
-.get_functions_count()
-.get_function_name()
-if a proper name is found, call
-.set_mux() with the right function and group set to zero
-(this should be OK, maybe we should even look for groups...)
-THEN if that works, call ops->request()
-
-But I fear regressions if we actually do this ...
-
-If you want to fix it, go ahead!
-
-Alternatively delete this from the documentation.
-
-I'm quite perplexed this is so wrong :/ I must have been stressed
-out when reviewing something. Or probably documented it the way
-I thought it works but was just wrong about that.
+OK dropped them (rebased .... argh hope noone will kick my ass)
 
 Yours,
 Linus Walleij
