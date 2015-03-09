@@ -1,41 +1,72 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
-Date: Mon, 9 Mar 2015 16:50:26 +0100
-Message-ID: <CACRpkdYnj0vTBVEEDp4isznRZ+KQuC2h+VViZr=Pt8VtEOWP-A@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Mon, 9 Mar 2015 16:52:26 +0100
+Message-ID: <CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
+References: <20150130234552.GA20407@sysresccd>
+	<20150131083300.GZ21469@belle.intranet.vanheusden.com>
+	<CAAVeFuJ6+W-CpXKCE2uY=T7RUVjA4d2PML708xH8dPQwij5NTg@mail.gmail.com>
+	<20150203090325.GA29693@deathray>
+	<CACRpkdbGo1+v_aVJP7+pbbw2HnRdqrBwwPv=0fC87Ze5JveAnw@mail.gmail.com>
+	<20150219085303.GI21469@belle.intranet.vanheusden.com>
+	<CACRpkdbPEoyyPqgmZXFT9AQAahgwVjfz0DOnH6ZW2omq=SWCTA@mail.gmail.com>
+	<CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+	<CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+	<CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
+	<20150302072655.GA17089@deathray>
+	<CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
+	<CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
+	<CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:46931 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753769AbbCIPw0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Mar 2015 11:52:26 -0400
+Received: by oiav63 with SMTP id v63so30095358oia.13
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Mar 2015 08:52:26 -0700 (PDT)
+In-Reply-To: <CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Michael Welling <mwelling@ieee.org>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Feb 20, 2015 at 7:01 PM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
-
-> This patch adds clocksource support for ARMv7-M's System timer,
-> also known as SysTick.
+On Wed, Mar 4, 2015 at 1:43 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Mar 3, 2015 at 7:31 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Tue, Mar 3, 2015 at 9:27 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+>>
+>>> It really comes down to how user-space wants to access GPIOs. I
+>>> suspect the majority of sysfs accesses is done by scripts and other
+>>> simple programs. If we introduce a char device that takes requires
+>>> ioctls, it is then customary to add a small user-space library to
+>>> abstract that (for both convenience and safety - think libdrm). Do we
+>>> want to maintain libgpio?
+>>
+>> Good point.
+>>
+>> We have no clue about how the majority out there use the GPIO
+>> sysfs, but I have heard of mission-critical systems just hammering
+>> GPIOs from userspace.
+>>
+>> Sadly many of these industrial users are "I just want it to work, now"
+>> types and they don't step forward much on these mailing lists.
+>> (Learned from private conversations...)
+>>
+>> Maybe if noone voice their opinion and offer to help with this, we can
+>> assume they don't exist (well obviously a community does not exist)
+>> and their specific needs be ignored until they put their money where
+>> their mouth is.
 >
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-(...)
-> +       /* If no clock found, try to get clock-frequency property */
-> +       if (!rate) {
-> +               ret = of_property_read_u32(np, "clock-frequency", &rate);
-> +               if (ret)
-> +                       goto out_unmap;
-> +       }
+> That's the only way we can handle the situation if people don't
+> manifest their needs. But does this mean that you would agree with a
+> cleaner, multi-GPIO friendly sysfs-based solution, or I am
+> misunderstanding you?
 
-If this driver is only used for this one system, and if on this one system
-the clk subsystem will provide the clock rate, then there is no need
-to include this hackaround property.
+I guess I'm just a bit grumpy.
 
-Alternatively there is no point including reading the frequency from
-the clk subsystem for this one system.
-
-So which one is it?
+Whoever comes up with a cleaner sysfs or a clean device interface
+will win the argument and lock the path for the other approach.
+It's like a forking path with no going back or something.
 
 Yours,
 Linus Walleij
