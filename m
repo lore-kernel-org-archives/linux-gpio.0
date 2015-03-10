@@ -1,40 +1,26 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a7790 platform_device_id entry
-Date: Tue, 10 Mar 2015 12:14:40 +0100
-Message-ID: <1425986080-26648-2-git-send-email-geert+renesas@glider.be>
-References: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Possible regression in next-20150310 due to pinctrl: sh-pfc:
+ r8a7790: Remove non existing GPIO pins
+Date: Tue, 10 Mar 2015 15:00:05 +0100
+Message-ID: <CACRpkdZ=+sMPhoKVhuHCS6drCWkRbtXnsN99nqD+0ouCjkmrOA@mail.gmail.com>
+References: <20150310075538.GA20709@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <20150310075538.GA20709@verge.net.au>
 Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The r8a7790 platform is now DT-only, the driver doesn't need to match
-platform devices by name anymore. Remove the corresponding
-platform_device_id entry.
+On Tue, Mar 10, 2015 at 8:55 AM, Simon Horman <horms@verge.net.au> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The r8a7790 platform is DT-only since v4.0-rc1.
+> I have observed what appears to be a regression in next-20150310.  Using
+> the shmobile_defconfig the lager board does not produce console output
+> whatsoever. If I revert bfb6698fad74e7ba2 ("pinctrl: sh-pfc: r8a7790:
+> Remove non existing GPIO pins") then the problem seems to be resolved.
 
- drivers/pinctrl/sh-pfc/core.c | 3 ---
- 1 file changed, 3 deletions(-)
+I have removed these two patches from the tree since last night.
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 0e6083fc3563f4a5..52342a22d40a031f 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -591,9 +591,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
- #ifdef CONFIG_PINCTRL_PFC_R8A7779
- 	{ "pfc-r8a7779", (kernel_ulong_t)&r8a7779_pinmux_info },
- #endif
--#ifdef CONFIG_PINCTRL_PFC_R8A7790
--	{ "pfc-r8a7790", (kernel_ulong_t)&r8a7790_pinmux_info },
--#endif
- #ifdef CONFIG_PINCTRL_PFC_SH7203
- 	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
- #endif
--- 
-1.9.1
-
+Yours,
+Linus Walleij
