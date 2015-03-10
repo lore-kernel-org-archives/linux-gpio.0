@@ -1,34 +1,36 @@
 From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v6 4/8] ARM: dts: enable IOMUX for Broadcom Cygnus
-Date: Tue, 10 Mar 2015 09:35:13 -0700
-Message-ID: <CAGVrzcY+49cDoQEuC6PxOfnt0gEfGwCDNEPfbzgp+BG2Ow+q+g@mail.gmail.com>
+Subject: Re: [PATCH v6 7/8] ARM: dts: enable GPIO for Broadcom Cygnus
+Date: Tue, 10 Mar 2015 09:38:51 -0700
+Message-ID: <CAGVrzcZN0zUUb_zyrvijm3XBHAO+NqvrMpdptbn0oVyaShWqdw@mail.gmail.com>
 References: <1425933902-20652-1-git-send-email-rjui@broadcom.com>
- <1425933902-20652-5-git-send-email-rjui@broadcom.com> <CACRpkdase0H-fH4f_0FOXj6O79C=S4frjk-evsE+6EOSVN4MuA@mail.gmail.com>
+ <1425933902-20652-8-git-send-email-rjui@broadcom.com> <CACRpkdbx9h5t5QRLusnXqx31zD9W89dyvGDH4y6osK_6PeoChA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:45461 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750976AbbCJQfy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 12:35:54 -0400
-In-Reply-To: <CACRpkdase0H-fH4f_0FOXj6O79C=S4frjk-evsE+6EOSVN4MuA@mail.gmail.com>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:43844 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753330AbbCJQjc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 12:39:32 -0400
+In-Reply-To: <CACRpkdbx9h5t5QRLusnXqx31zD9W89dyvGDH4y6osK_6PeoChA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Paul Bolle <pebolle@tiscali.nl>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom>
 
-2015-03-10 3:14 GMT-07:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Mon, Mar 9, 2015 at 9:44 PM, Ray Jui <rjui@broadcom.com> wrote:
+2015-03-10 3:21 GMT-07:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Mon, Mar 9, 2015 at 9:45 PM, Ray Jui <rjui@broadcom.com> wrote:
 >
->> This enables the IOMUX support for Broadcom Cygnus SoC
+>> This enables all 3 GPIO controllers including the ASIU GPIO, the
+>> chipcommonG GPIO, and the ALWAYS-ON GPIO, for Broadcom Cygnus SoC
 >>
 >> Signed-off-by: Ray Jui <rjui@broadcom.com>
+>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
 >> Tested-by: Dmitry Torokhov <dtor@chromium.org>
 >
 > Acked-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> Pls take this through some BRCM ARM SoC tree.
+> Pls take this through ARM SoC.
 
 Applied to devicetree/next.
--- 
+--
 Florian
