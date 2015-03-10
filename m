@@ -1,56 +1,105 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 05/18] reset: Add reset_controller_of_init() function
-Date: Tue, 10 Mar 2015 16:28:44 +0100
-Message-ID: <CALszF6BkTOLR+VNkRKfvEBG5ZyaYL+9fZ4EAPVu5b_imCvEQoQ@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-6-git-send-email-mcoquelin.stm32@gmail.com>
-	<8729383.kvUZDm4dQz@wuerfel>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
+ IODelay configuration
+Date: Tue, 10 Mar 2015 08:33:21 -0700
+Message-ID: <20150310153321.GO5264@atomide.com>
+References: <1425427237-11511-1-git-send-email-nm@ti.com>
+ <1425427237-11511-2-git-send-email-nm@ti.com>
+ <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8729383.kvUZDm4dQz@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Antti Palosaari <crope-X3B1VOXEql0@public.gmane.org>, Tejun Heo <tj>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:36181 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751879AbbCJPia (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Mar 2015 11:38:30 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lokesh Vutla <lokeshvutla@ti.com>
 
-2015-03-10 16:00 GMT+01:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
-> On Friday 20 February 2015 19:01:04 Maxime Coquelin wrote:
->> Some platforms need to initialize the reset controller before the timers.
->>
->> This patch introduces a reset_controller_of_init() function that can be
->> called before the timers intialization.
->>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>
+* Linus Walleij <linus.walleij@linaro.org> [150310 03:39]:
+> On Wed, Mar 4, 2015 at 1:00 AM, Nishanth Menon <nm@ti.com> wrote:
+> 
+> > +Configuration definition follows similar model as the pinctrl-single:
+> > +The groups of pin configuration are defined under "pinctrl-single,pins"
+> > +
+> > +&dra7_iodelay_core {
+> > +       mmc2_iodelay_3v3_conf: mmc2_iodelay_3v3_conf {
+> > +               pinctrl-single,pins = <
+> > +                       0x18c (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A19_IN */
+> > +                       0x1a4 (A_DELAY(265) | G_DELAY(360))     /* CFG_GPMC_A20_IN */
+> > +                       0x1b0 (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A21_IN */
+> > +                       0x1bc (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A22_IN */
+> > +                       0x1c8 (A_DELAY(287) | G_DELAY(420))     /* CFG_GPMC_A23_IN */
+> > +                       0x1d4 (A_DELAY(144) | G_DELAY(240))     /* CFG_GPMC_A24_IN */
+> > +                       0x1e0 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A25_IN */
+> > +                       0x1ec (A_DELAY(120) | G_DELAY(0))       /* CFG_GPMC_A26_IN */
+> > +                       0x1f8 (A_DELAY(120) | G_DELAY(180))     /* CFG_GPMC_A27_IN */
+> > +                       0x360 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_CS1_IN */
+> > +               >;
+> > +       };
+> > +};
+> 
+> But wait.
+> 
+> The promise when we merged pinctrl-single was that this driver was to be used
+> when the system had a one-register-per-pin layout and it was easy to do device
+> trees based on that.
+> 
+> We were very reluctant to accept that even though we didn't even have the
+> generic pin control bindings in place, the argument being that the driver
+> should know the detailed register layout, it should not be described in the
+> device tree. We eventually caved in and accepted it as an exception.
+
+Hey let's get few things straight here. There's nothing stopping the
+driver from knowing a detailed register layout with the pinctrl-single
+binding. This can be very easily done based on the compatible flag and
+match data as needed and check the values provided.
+
+And let's also recap the reasons for the pinctrl-single binding. The
+the main reason for the pinctrl-single binding is to avoid mapping
+individual register bits to device tree compatible string properties.
+
+Imagine doing that for hundreds of similar registers. Believe me, I tried
+using device tree properties initially and it just sucked big time. For
+larger amounts of dts data, it's best to stick to numeric values and
+phandles in the device tree data and rely on the preprocessor for
+getting the values right.
+
+Finally, we don't want to build databases into the kernel drivers for
+every SoC. We certainly have plenty fo those already.
+ 
+> Since this pin controller is not using pinctrl-single it does not enjoy that
+> privilege and you need to explain why this pin controller cannot use the
+> generic bindings like so many other pin controllers have since started
+> to do. ("It is in the same SoC" is not an acceptable argument.)
 >
-> Not sure about this. It seems like the cleanest approach if we get
-> a lot of these, but then again it is probably very rare, and I'd
-> like to avoid adding such infrastructure if it's just for one
-> SoC. Could we add a hack in the machine initialization instead?
+> What is wrong with this:
+> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-Sun6i also need to initialize the reset controller early. Today, they
-hack the machine initialization.
-With two SoCs having the same need, what should we do?
+Nishanth, care to explain your reasons for using pinctrl-single binding
+here vs the generic binding? Is the amount of string parsing with the
+data an issue here?
+ 
+> We can add generic delay bindings to the list, it even seems like
+> a good idea to do so, as it is likely something that will come up in
+> other hardware and will be needed for ACPI etc going forward.
 
-That said, I'm fine with either way. If reset_controller_of_init gets
-accepted, I will send the patch for sun6i.
+We certainly need to make setting delays (with values) generic, no
+doubt about that.
 
->
-> I think ideally this would be done in the boot loader before we
-> even start Linux, but I don't know if that's possible for you.
+If the large amount of data is not an issue here, we could maybe set
+each iodelay register as a separate device? Then the binding could
+be just along the interrupts-extended type binding:
 
->From what I understand, the only constraint is to perform it after the
-clock is enabled.
-So this should be possible to do it in the bootloader, but it means
-also adding timers clocks ungating in the bootloader.
+foo = <&bar 0x18c A_DELAY(0) G_DELAY(120)>;
 
-Br,
-Maxime
+Where the 0x18c is the instance offset of the register within the
+ti,dra7-iodelay compatible controller.
 
->
->         Arnd
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+
+Tony
