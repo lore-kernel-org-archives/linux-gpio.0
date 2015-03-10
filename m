@@ -1,58 +1,34 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: Remove emev2 platform_device_id entry
-Date: Tue, 10 Mar 2015 18:24:17 +0200
-Message-ID: <3341846.uKjR1IUGkO@avalon>
-References: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH v6 4/8] ARM: dts: enable IOMUX for Broadcom Cygnus
+Date: Tue, 10 Mar 2015 09:35:13 -0700
+Message-ID: <CAGVrzcY+49cDoQEuC6PxOfnt0gEfGwCDNEPfbzgp+BG2Ow+q+g@mail.gmail.com>
+References: <1425933902-20652-1-git-send-email-rjui@broadcom.com>
+ <1425933902-20652-5-git-send-email-rjui@broadcom.com> <CACRpkdase0H-fH4f_0FOXj6O79C=S4frjk-evsE+6EOSVN4MuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:37947 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932508AbbCJQYQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 12:24:16 -0400
-In-Reply-To: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:45461 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbbCJQfy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 12:35:54 -0400
+In-Reply-To: <CACRpkdase0H-fH4f_0FOXj6O79C=S4frjk-evsE+6EOSVN4MuA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Paul Bolle <pebolle@tiscali.nl>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom>
 
-Hi Geert,
+2015-03-10 3:14 GMT-07:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Mon, Mar 9, 2015 at 9:44 PM, Ray Jui <rjui@broadcom.com> wrote:
+>
+>> This enables the IOMUX support for Broadcom Cygnus SoC
+>>
+>> Signed-off-by: Ray Jui <rjui@broadcom.com>
+>> Tested-by: Dmitry Torokhov <dtor@chromium.org>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Pls take this through some BRCM ARM SoC tree.
 
-Thank you for the patch.
-
-On Tuesday 10 March 2015 12:14:39 Geert Uytterhoeven wrote:
-> The emev2 platform is now DT-only, the driver doesn't need to match
-> platform devices by name anymore. Remove the corresponding
-> platform_device_id entry.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> The emev2 platform never had pinctrl support for non-DT.
-> 
->  drivers/pinctrl/sh-pfc/core.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> index 656745f545442d58..0e6083fc3563f4a5 100644
-> --- a/drivers/pinctrl/sh-pfc/core.c
-> +++ b/drivers/pinctrl/sh-pfc/core.c
-> @@ -579,9 +579,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
->  }
-> 
->  static const struct platform_device_id sh_pfc_id_table[] = {
-> -#ifdef CONFIG_PINCTRL_PFC_EMEV2
-> -	{ "pfc-emev2", (kernel_ulong_t)&emev2_pinmux_info },
-> -#endif
->  #ifdef CONFIG_PINCTRL_PFC_R8A73A4
->  	{ "pfc-r8a73a4", (kernel_ulong_t)&r8a73a4_pinmux_info },
->  #endif
-
+Applied to devicetree/next.
 -- 
-Regards,
-
-Laurent Pinchart
-
+Florian
