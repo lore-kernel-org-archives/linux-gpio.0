@@ -1,62 +1,47 @@
-From: "qipeng.zha" <qipeng.zha@intel.com>
-Subject: [PATCH] gpiolib: translate pin number in GPIO ACPI callbacks
-Date: Wed, 11 Mar 2015 01:15:38 +0800
-Message-ID: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Possible regression in next-20150310 due to pinctrl: sh-pfc:
+ r8a7790: Remove non existing GPIO pins
+Date: Tue, 10 Mar 2015 10:30:54 +0100
+Message-ID: <CAMuHMdUOScAQCBG1GM=d8mZj1PDDkZd9Pfxps=-814=rFAyAfQ@mail.gmail.com>
+References: <20150310075538.GA20709@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:47366 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751173AbbCJJNR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 10 Mar 2015 05:13:17 -0400
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:36576 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258AbbCJJaz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 05:30:55 -0400
+In-Reply-To: <20150310075538.GA20709@verge.net.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, qi.zheng@intel.com, jason.cj.chen@intel.com, "qipeng.zha" <qipeng.zha@intel.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
 
-From: "qipeng.zha" <qipeng.zha@intel.com>
+Hi Simon,
 
-If GPIO driver use pin mapping, need to translate pin number
-between ACPI table and GPIO driver.
+On Tue, Mar 10, 2015 at 8:55 AM, Simon Horman <horms@verge.net.au> wrote:
+> I have observed what appears to be a regression in next-20150310.  Using
+> the shmobile_defconfig the lager board does not produce console output
+> whatsoever. If I revert bfb6698fad74e7ba2 ("pinctrl: sh-pfc: r8a7790:
+> Remove non existing GPIO pins") then the problem seems to be resolved.
+>
+> Likewise for the koelsh board and 896498d439cec6ff0 ("pinctrl: sh-pfc:
+> r8a7791: Remove non existing GPIO pins").
 
-This issue is found on one platform with Cherryview gpio
-controller, kernel is hang when executed _PS0 method of
-one ACPI device, since without this translation, it access
-invalid gpiodesc array.
+That's correct. I reverted these in renesas-drivers-2015-03-09-v4.0-rc3.
 
-Verified it works again with this patch.
+In the mean time, they have been dropped from pinctrl/for-next, as
+requested by Laurent last week.
 
-Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Sorry for the issues.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index c0929d9..df990f2 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -201,6 +201,10 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 	if (!handler)
- 		return AE_BAD_PARAMETER;
- 
-+	pin = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
-+	if (pin < 0)
-+		return AE_BAD_PARAMETER;
-+
- 	desc = gpiochip_request_own_desc(chip, pin, "ACPI:Event");
- 	if (IS_ERR(desc)) {
- 		dev_err(chip->dev, "Failed to request GPIO\n");
-@@ -551,6 +555,12 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 		struct gpio_desc *desc;
- 		bool found;
- 
-+		pin = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
-+		if (pin < 0) {
-+			status = AE_BAD_PARAMETER;
-+			goto out;
-+		}
-+
- 		mutex_lock(&achip->conn_lock);
- 
- 		found = false;
--- 
-1.8.3.2
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
