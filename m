@@ -1,39 +1,35 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 07/18] drivers: reset: Add STM32 reset driver
-Date: Tue, 10 Mar 2015 16:02:14 +0100
-Message-ID: <2383270.cAJPOxrkvo@wuerfel>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com> <1424455277-29983-8-git-send-email-mcoquelin.stm32@gmail.com>
+From: Mika Westerberg <mika.westerberg@intel.com>
+Subject: Re: [PATCH] gpiolib: translate pin number in GPIO ACPI callbacks
+Date: Tue, 10 Mar 2015 17:04:38 +0200
+Message-ID: <20150310150438.GR1563@lahna.fi.intel.com>
+References: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57641 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751285AbbCJPCy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 11:02:54 -0400
-In-Reply-To: <1424455277-29983-8-git-send-email-mcoquelin.stm32@gmail.com>
+Received: from mga01.intel.com ([192.55.52.88]:4595 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751496AbbCJPFw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Mar 2015 11:05:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>Rus
+To: "qipeng.zha" <qipeng.zha@intel.com>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com, jason.cj.chen@intel.com
 
-On Friday 20 February 2015 19:01:06 Maxime Coquelin wrote:
-> +/* AHB1 */
-> +#define GPIOA_RESET    0
-> +#define GPIOB_RESET    1
-> +#define GPIOC_RESET    2
-> +#define GPIOD_RESET    3
-> +#define GPIOE_RESET    4
-> +#define GPIOF_RESET    5
-> +#define GPIOG_RESET    6
-> +#define GPIOH_RESET    7
-> +#define GPIOI_RESET    8
-> +#define GPIOJ_RESET    9
-> +#define GPIOK_RESET    10
+On Wed, Mar 11, 2015 at 01:15:38AM +0800, qipeng.zha wrote:
+> From: "qipeng.zha" <qipeng.zha@intel.com>
 > 
+> If GPIO driver use pin mapping, need to translate pin number
+> between ACPI table and GPIO driver.
+> 
+> This issue is found on one platform with Cherryview gpio
+> controller, kernel is hang when executed _PS0 method of
+> one ACPI device, since without this translation, it access
+> invalid gpiodesc array.
+> 
+> Verified it works again with this patch.
+> 
+> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
 
-As these are just the hardware numbers, it's better to not make them
-part of the binding at all. Instead, just document in the binding that
-one is supposed to pass the hardware number as the argument.
-
-	Arnd
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
