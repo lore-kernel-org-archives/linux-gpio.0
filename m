@@ -1,58 +1,62 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into request/release
- resources methods
-Date: Tue, 10 Mar 2015 09:34:23 +0100
-Message-ID: <54FEAC8F.1040206@atmel.com>
-References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com> <CACRpkdazTt+_9m-iWEee2gJy4MQ+QNo3Rb2JY9hVSSXK2-dJRw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdazTt+_9m-iWEee2gJy4MQ+QNo3Rb2JY9hVSSXK2-dJRw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+From: "qipeng.zha" <qipeng.zha@intel.com>
+Subject: [PATCH] gpiolib: translate pin number in GPIO ACPI callbacks
+Date: Wed, 11 Mar 2015 01:15:38 +0800
+Message-ID: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:47366 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751173AbbCJJNR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Mar 2015 05:13:17 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, qi.zheng@intel.com, jason.cj.chen@intel.com, "qipeng.zha" <qipeng.zha@intel.com>
 
-Le 09/03/2015 17:14, Linus Walleij a =C3=A9crit :
-> On Sun, Feb 8, 2015 at 7:23 PM, Boris Brezillon
-> <boris.brezillon@free-electrons.com> wrote:
->=20
->> The gpiochip_lock_as_irq call can fail and return an error, while th=
-e
->> irq_startup is not expected to fail (returns an unsigned int which i=
-s not
->> checked by irq core code).
->>
->> irq_request/release_resources functions have been created to address=
- this
->> problem.
->>
->> Move gpiochip_lock/unlock_as_irq calls into
->> irq_request/release_resources functions to prevent using a gpio as a=
-n irq
->> if the gpiochip_lock_as_irq call failed.
->>
->> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
->=20
-> Patch applied with all the ACKs.
+From: "qipeng.zha" <qipeng.zha@intel.com>
 
-Hi Linus,
+If GPIO driver use pin mapping, need to translate pin number
+between ACPI table and GPIO driver.
 
-As suggested earlier, do you think it can be scheduled for the 4.0-rc
-phase as a "fix"?
+This issue is found on one platform with Cherryview gpio
+controller, kernel is hang when executed _PS0 method of
+one ACPI device, since without this translation, it access
+invalid gpiodesc array.
 
-Bye,
+Verified it works again with this patch.
 
+Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index c0929d9..df990f2 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -201,6 +201,10 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ 	if (!handler)
+ 		return AE_BAD_PARAMETER;
+ 
++	pin = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
++	if (pin < 0)
++		return AE_BAD_PARAMETER;
++
+ 	desc = gpiochip_request_own_desc(chip, pin, "ACPI:Event");
+ 	if (IS_ERR(desc)) {
+ 		dev_err(chip->dev, "Failed to request GPIO\n");
+@@ -551,6 +555,12 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 		struct gpio_desc *desc;
+ 		bool found;
+ 
++		pin = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
++		if (pin < 0) {
++			status = AE_BAD_PARAMETER;
++			goto out;
++		}
++
+ 		mutex_lock(&achip->conn_lock);
+ 
+ 		found = false;
+-- 
+1.8.3.2
 
-> Happy new year J-C!
->=20
-> Yours,
-> Linus Walleij
->=20
->=20
-
-
---=20
-Nicolas Ferre
