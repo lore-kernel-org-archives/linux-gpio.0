@@ -1,37 +1,39 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: Remove emev2 platform_device_id entry
-Date: Tue, 10 Mar 2015 12:14:39 +0100
-Message-ID: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a7790 platform_device_id entry
+Date: Tue, 10 Mar 2015 12:14:40 +0100
+Message-ID: <1425986080-26648-2-git-send-email-geert+renesas@glider.be>
+References: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-sh-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The emev2 platform is now DT-only, the driver doesn't need to match
+The r8a7790 platform is now DT-only, the driver doesn't need to match
 platform devices by name anymore. Remove the corresponding
 platform_device_id entry.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-The emev2 platform never had pinctrl support for non-DT.
+The r8a7790 platform is DT-only since v4.0-rc1.
 
  drivers/pinctrl/sh-pfc/core.c | 3 ---
  1 file changed, 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 656745f545442d58..0e6083fc3563f4a5 100644
+index 0e6083fc3563f4a5..52342a22d40a031f 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -579,9 +579,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id sh_pfc_id_table[] = {
--#ifdef CONFIG_PINCTRL_PFC_EMEV2
--	{ "pfc-emev2", (kernel_ulong_t)&emev2_pinmux_info },
+@@ -591,9 +591,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
+ #ifdef CONFIG_PINCTRL_PFC_R8A7779
+ 	{ "pfc-r8a7779", (kernel_ulong_t)&r8a7779_pinmux_info },
+ #endif
+-#ifdef CONFIG_PINCTRL_PFC_R8A7790
+-	{ "pfc-r8a7790", (kernel_ulong_t)&r8a7790_pinmux_info },
 -#endif
- #ifdef CONFIG_PINCTRL_PFC_R8A73A4
- 	{ "pfc-r8a73a4", (kernel_ulong_t)&r8a73a4_pinmux_info },
+ #ifdef CONFIG_PINCTRL_PFC_SH7203
+ 	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
  #endif
 -- 
 1.9.1
