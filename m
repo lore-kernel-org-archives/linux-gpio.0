@@ -1,83 +1,82 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2 04/18] clocksource: Add ARM System timer driver
-Date: Mon, 9 Mar 2015 23:17:52 +0100
-Message-ID: <20150309221752.GE7525@pengutronix.de>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
- <1424455277-29983-5-git-send-email-mcoquelin.stm32@gmail.com>
- <20150220195437.GT19388@pengutronix.de>
- <1424468908.24292.10.camel@x220>
- <CALszF6Bm_Y4ZLednjpmP-hMix3gA23FwLm5hViEjr1QojUY+Mg@mail.gmail.com>
- <1425411786.2606.24.camel@tiscali.nl>
- <CALszF6AEThPrRe7c7nJ6q7yb2fhLMFuHJUV10sf=w0TMcqVVaw@mail.gmail.com>
- <1425935552.4244.6.camel@x220>
+From: Ken Xue <Ken.Xue@amd.com>
+Subject: Re: [PATCH V2] pinctrl: add AMD GPIO driver support.
+Date: Tue, 10 Mar 2015 14:43:31 +0800
+Message-ID: <1425969811.14295.8.camel@kxue-X58A-UD3R>
+References: <1422949788.18208.4.camel@kxue-X58A-UD3R>
+	 <1423111885.18208.41.camel@kxue-X58A-UD3R>
+	 <1425452005.24903.4.camel@kxue-X58A-UD3R>
+	 <CACRpkdZiSaMUQxU5HHuMn0kZhdXqAX6OYVQGmoNriP0jamuHPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1425935552.4244.6.camel@x220>
-Sender: linux-doc-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0131.outbound.protection.outlook.com ([65.55.169.131]:52175
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751531AbbCJHJq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 10 Mar 2015 03:09:46 -0400
+In-Reply-To: <CACRpkdZiSaMUQxU5HHuMn0kZhdXqAX6OYVQGmoNriP0jamuHPA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello,
+On Mon, 2015-03-09 at 16:02 +0100, Linus Walleij wrote:
+> On Wed, Mar 4, 2015 at 7:53 AM, Ken Xue <Ken.Xue@amd.com> wrote:
+> 
+> > From c2258b4b550d8f61a5eb64fee25d4c0fdd3a1e91 Mon Sep 17 00:00:00 2001
+> > From: Ken Xue <Ken.Xue@amd.com>
+> > Date: Wed, 4 Mar 2015 14:48:36 +0800
+> > Subject: [PATCH] pinctrl: add AMD GPIO driver support.
+> >
+> > KERNCZ GPIO is a new IP from AMD. it can be implemented in both x86 and ARM.
+> > Current driver patch only support GPIO in x86.
+> >
+> > Signed-off-by: Ken Xue <Ken.Xue@amd.com>
 
-On Mon, Mar 09, 2015 at 10:12:32PM +0100, Paul Bolle wrote:
-> On Wed, 2015-03-04 at 13:08 +0100, Maxime Coquelin wrote:
-> > This is because I added also support for COMPILE_TEST coverage as p=
-er
-> > Uwe advice,
-> > and thought it was necessary to have an entry for this.
-> > Maybe I'm just wrong?
->=20
-> I missed that you added COMPILE_TEST.
->=20
-> A quick scan of your idea doesn't show any obvious issues. (Note that=
- I
-> don't really know how people actually use COMPILE_TEST. I guess thing=
-s
-> like "make allyesconfig" are involved.)
-Maybe this can clearify the purpose of COMPILE_TEST:
+> > +#include <linux/io.h>
+> > +#include <linux/gpio.h>
+> 
+> Should still be #include <linux/gpio/driver.h>
+> isn't it compiling like so?
+> 
+ok. i will change <linux/gpio.h> to <linux/gpio/driver.h>.
+And then i shall add <linux/pinctrl/pinctrl.h> for macro PINCTRL_PIN and
+add <asm-generic/gpio.h> for "gpiochip_add_pin_range".
 
-diff --git a/init/Kconfig b/init/Kconfig
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -67,6 +67,26 @@ config COMPILE_TEST
- 	  here. If you are a user/distributor, say N here to exclude useless
- 	  drivers to be distributed.
-=20
-+	# If you are a driver author consider to adjust your driver's
-+	# dependencies to make it buildable with minimal preconditions if
-+	# COMPILE_TEST is enabled. This helps contributers and maintainers
-+	# that might not have the necessary toolchain or kernel config handy =
-and
-+	# also increases compile test coverage. It's your advantage if others=
- can
-+	# build your driver more easily! So for a device that is only found o=
-n the
-+	# foo cpu use:
-+	#
-+	# 	depends on CPU_FOO || COMPILE_TEST
-+	#
-+	# . You might have to use
-+	#
-+	# 	depends on CPU_FOO || (COMPILE_TEST && COOKIE)
-+	#
-+	# or
-+	#
-+	#	depends on COOKIE && (CPU_FOO || COMPILE_TEST)
-+	#
-+	# if your driver uses features that are only available if COOKIE is o=
-n.
-+
- config LOCALVERSION
- 	string "Local version - append to kernel release"
- 	help
+> > +static void amd_gpio_irq_mask(struct irq_data *d)
+> > +{
+> > +       u32 pin_reg;
+> > +       unsigned long flags;
+> > +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> > +       struct amd_gpio *gpio_dev = to_amd_gpio(gc);
+> > +
+> > +       spin_lock_irqsave(&gpio_dev->lock, flags);
+> > +       pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+> > +       pin_reg &= ~(1UL << INTERRUPT_MASK_OFF);
+> > +       writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
+> > +       spin_unlock_irqrestore(&gpio_dev->lock, flags);
+> > +}
+> > +
+> > +static void amd_gpio_irq_unmask(struct irq_data *d)
+> > +{
+> > +       u32 pin_reg;
+> > +       unsigned long flags;
+> > +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> > +       struct amd_gpio *gpio_dev = to_amd_gpio(gc);
+> > +
+> > +       spin_lock_irqsave(&gpio_dev->lock, flags);
+> > +       pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
+> > +       pin_reg |= 1UL << INTERRUPT_MASK_OFF;
+> > +       writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
+> > +       spin_unlock_irqrestore(&gpio_dev->lock, flags);
+> > +}
+> 
+> I don't know if it's necessary to implement both enable/disable
+> and mask/unmask. I guess you should only mask in the
+> mask() function and only enable in the enable() function then.
+AMD GPIO interrupt is masked by default. I want to unmask GPIO interrupt
+when irq is enabled. So that, interrupt can work right after driver
+request_threaded_irq.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+
