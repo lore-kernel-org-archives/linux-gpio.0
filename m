@@ -1,55 +1,41 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] pinctrl: sh-pfc: cleanups
-Date: Tue, 10 Mar 2015 12:06:19 +0100
-Message-ID: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] pinctrl: sh-pfc: Use reg_width instead of reg as sentinel
+Date: Tue, 10 Mar 2015 12:06:22 +0100
+Message-ID: <1425985583-26279-4-git-send-email-geert+renesas@glider.be>
+References: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-sh-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-	Hi Linus, Laurent,
+All other loops over sh_pfc_soc_info.data_regs[] use
+pinmux_data_reg.regwidth as the sentinel, which is safer as zero is
+never a valid regwidth value (reg could be zero if we start using it to
+store an offset).
 
-This patch series does some code (type) cleanups.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ drivers/pinctrl/sh-pfc/gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  - Patch 1 changes the types used for storing register and field widths
-    in the pinctrl data tables, shrinking them by an average of ca. 4
-    KiB per SoC,
-  - Patches 3, 4, and 5 do some more cleanups w.r.t. the choice of types.
-
-The first two patches have been sent before as part of the series
-"[PATCH 0/4] pinctrl: sh-pfc: Fix pin bias and cleanups", and received
-some rework according to review comments. The last two are new.
-
-This series is against pinctrl/for-next.
-
-Boot-tested on r8a73a4/ape6evm, r8a7740/armadillo, r8a7791/koelsch, and
-sh73a0/kzm9g.
-
-Geert Uytterhoeven (4):
-  pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned
-    long
-  pinctrl: sh-pfc: Use unsigned int for register/field widths and
-    offsets
-  pinctrl: sh-pfc: Use reg_width instead of reg as sentinel
-  pinctrl: sh-pfc: Use u32 to store register addresses
-
- drivers/pinctrl/sh-pfc/core.c   | 65 ++++++++++++++++++++---------------------
- drivers/pinctrl/sh-pfc/core.h   |  4 +--
- drivers/pinctrl/sh-pfc/gpio.c   | 18 +++++++-----
- drivers/pinctrl/sh-pfc/sh_pfc.h | 12 ++++----
- 4 files changed, 52 insertions(+), 47 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index aa2fc77a1925e839..5d3a35ce09125a45 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -84,7 +84,7 @@ static void gpio_setup_data_reg(struct sh_pfc_chip *chip, unsigned idx)
+ 	unsigned int bit;
+ 	unsigned int i;
+ 
+-	for (i = 0, dreg = pfc->info->data_regs; dreg->reg; ++i, ++dreg) {
++	for (i = 0, dreg = pfc->info->data_regs; dreg->reg_width; ++i, ++dreg) {
+ 		for (bit = 0; bit < dreg->reg_width; bit++) {
+ 			if (dreg->enum_ids[bit] == pin->enum_id) {
+ 				gpio_pin->dreg = i;
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
