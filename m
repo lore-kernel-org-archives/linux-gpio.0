@@ -1,63 +1,64 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v2 05/18] reset: Add reset_controller_of_init() function
-Date: Tue, 10 Mar 2015 16:30:40 -0500
-Message-ID: <CAL_Jsq+_ridpAaUwpqo91xB6Ea1ctCWfYTYUrcZ=gB_0FiBD4g@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
- <8729383.kvUZDm4dQz@wuerfel> <CALszF6BkTOLR+VNkRKfvEBG5ZyaYL+9fZ4EAPVu5b_imCvEQoQ@mail.gmail.com>
- <6773745.i9mx5zmPP4@wuerfel>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [PATCH 1/2] gpio / ACPI: Avoid unnecessary checks in __gpiod_get_index()
+Date: Tue, 10 Mar 2015 23:08:57 +0100
+Message-ID: <1829371.gDPkhnsp25@vostro.rjw.lan>
+References: <4032246.STUT1iRmIk@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f54.google.com ([74.125.82.54]:45372 "EHLO
-	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753780AbbCJVbC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 17:31:02 -0400
-In-Reply-To: <6773745.i9mx5zmPP4@wuerfel>
+Received: from v094114.home.net.pl ([79.96.170.134]:63486 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752260AbbCJVqY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 17:46:24 -0400
+In-Reply-To: <4032246.STUT1iRmIk@vostro.rjw.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Mar 10, 2015 at 3:19 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 10 March 2015 16:28:44 Maxime Coquelin wrote:
->> 2015-03-10 16:00 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
->> > On Friday 20 February 2015 19:01:04 Maxime Coquelin wrote:
->> >> Some platforms need to initialize the reset controller before the timers.
->> >>
->> >> This patch introduces a reset_controller_of_init() function that can be
->> >> called before the timers intialization.
->> >>
->> >> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> >>
->> >
->> > Not sure about this. It seems like the cleanest approach if we get
->> > a lot of these, but then again it is probably very rare, and I'd
->> > like to avoid adding such infrastructure if it's just for one
->> > SoC. Could we add a hack in the machine initialization instead?
->>
->> Sun6i also need to initialize the reset controller early. Today, they
->> hack the machine initialization.
->> With two SoCs having the same need, what should we do?
->
-> Good question, I'd like to hear some other opinions on this first.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-2 is still far from the common case.
+If dev is NULL in __gpiod_get_index() and both ACPI and OF are
+enabled, it will be checked twice before the code decides to give
+up with DT/ACPI lookup, so avoid that.
 
->> > I think ideally this would be done in the boot loader before we
->> > even start Linux, but I don't know if that's possible for you.
->>
->> From what I understand, the only constraint is to perform it after the
->> clock is enabled.
->> So this should be possible to do it in the bootloader, but it means
->> also adding timers clocks ungating in the bootloader.
->
-> Ungating the timer clock input seems like a reasonable thing to
-> do for the bootloader, I think a lot of platforms rely on this
-> elsewhere (but enough of them don't, which is why we have the
-> early clk init).
+Also use the observation that ACPI_COMPANION() is much more efficient
+than ACPI_HANDLE(), because the latter uses the former and carries out
+a check and a pointer dereference on top of it, so replace the
+ACPI_HANDLE() check with an ACPI_COMPANION() one which does not
+require the additional IS_ENABLED(CONFIG_ACPI) check too.
 
-+1
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/gpio/gpiolib.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-If the bootloader is u-boot, then you need a timer anyway.
+Index: linux-pm/drivers/gpio/gpiolib.c
+===================================================================
+--- linux-pm.orig/drivers/gpio/gpiolib.c
++++ linux-pm/drivers/gpio/gpiolib.c
+@@ -1865,13 +1865,15 @@ struct gpio_desc *__must_check __gpiod_g
+ 
+ 	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
+ 
+-	/* Using device tree? */
+-	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
+-		dev_dbg(dev, "using device tree for GPIO lookup\n");
+-		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
+-	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
+-		dev_dbg(dev, "using ACPI for GPIO lookup\n");
+-		desc = acpi_find_gpio(dev, con_id, idx, &lookupflags);
++	if (dev) {
++		/* Using device tree? */
++		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
++			dev_dbg(dev, "using device tree for GPIO lookup\n");
++			desc = of_find_gpio(dev, con_id, idx, &lookupflags);
++		} else if (ACPI_COMPANION(dev)) {
++			dev_dbg(dev, "using ACPI for GPIO lookup\n");
++			desc = acpi_find_gpio(dev, con_id, idx, &lookupflags);
++		}
+ 	}
+ 
+ 	/*
 
-Rob
