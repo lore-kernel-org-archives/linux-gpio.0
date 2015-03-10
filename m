@@ -1,30 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: staticise example code funcs/structs
-Date: Tue, 10 Mar 2015 08:55:37 +0100
-Message-ID: <CACRpkdYNKRrcqqt5e5KSpe7Y9P7nLaA=XkcU6qRmyoncEnzKaA@mail.gmail.com>
-References: <c3ed2457215426bbb856f5ebff39bb97259403fb.1425808985.git.baruch@tkos.co.il>
+From: Simon Horman <horms@verge.net.au>
+Subject: Possible regression in next-20150310 due to pinctrl: sh-pfc:
+ r8a7790: Remove non existing GPIO pins
+Date: Tue, 10 Mar 2015 16:55:39 +0900
+Message-ID: <20150310075538.GA20709@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:40213 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751231AbbCJHzh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 03:55:37 -0400
-Received: by oiba3 with SMTP id a3so34067157oib.7
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2015 00:55:37 -0700 (PDT)
-In-Reply-To: <c3ed2457215426bbb856f5ebff39bb97259403fb.1425808985.git.baruch@tkos.co.il>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57693 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751337AbbCJHzm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 03:55:42 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
 
-On Sun, Mar 8, 2015 at 11:03 AM, Baruch Siach <baruch@tkos.co.il> wrote:
+Hi,
 
-> Make the example code consistent wrt local function and struct definitions.
->
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+I have observed what appears to be a regression in next-20150310.  Using
+the shmobile_defconfig the lager board does not produce console output
+whatsoever. If I revert bfb6698fad74e7ba2 ("pinctrl: sh-pfc: r8a7790:
+Remove non existing GPIO pins") then the problem seems to be resolved.
 
-Patch applied.
+Likewise for the koelsh board and 896498d439cec6ff0 ("pinctrl: sh-pfc:
+r8a7791: Remove non existing GPIO pins").
 
-Yours,
-Linus Walleij
+
+N.B.: In order to boot all the way to user-space I also need to revert
+5da0e63e268dc5120 ("mmc: tmio: Fix PIO mode with CONFIG_HIGHMEM"), a
+problem that I have reported separately[1].
+
+[1] Possible regression in next-20150306 due to "mmc: tmio: Fix PIO mode
+with CONFIG_HIGHMEM"
+    http://www.spinics.net/lists/linux-sh/msg40804.html
+
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Patch applied with Geert's ACK.
+> 
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
