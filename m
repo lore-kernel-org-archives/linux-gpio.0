@@ -1,34 +1,58 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 12/18] dt-bindings: Document the STM32 USART bindings
-Date: Tue, 10 Mar 2015 16:45:59 +0100
-Message-ID: <CALszF6BEYTAF9FiQQB9wF74btVbaMYPgSTRz41-LbhDUnY_37w@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-13-git-send-email-mcoquelin.stm32@gmail.com>
-	<38153432.AWA0ogMaoK@wuerfel>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a7790 platform_device_id entry
+Date: Tue, 10 Mar 2015 18:24:06 +0200
+Message-ID: <1947693.pyxfTlgn3E@avalon>
+References: <1425986080-26648-1-git-send-email-geert+renesas@glider.be> <1425986080-26648-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <38153432.AWA0ogMaoK@wuerfel>
-Sender: linux-arch-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37945 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932246AbbCJQYH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 12:24:07 -0400
+In-Reply-To: <1425986080-26648-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
 
-2015-03-10 16:08 GMT+01:00 Arnd Bergmann <arnd@arndb.de>:
-> On Friday 20 February 2015 19:01:11 Maxime Coquelin wrote:
->> +
->> +Example:
->> +usart1: usart@40011000 {
->> +       compatible = "st,stm32-usart";
->>
->
-> Please use generic node names everywhere. The standard name for a serial
-> port is "serial".
+Hi Geert,
 
-I already had the remark, and it is already fixed in the next version.
+Thank you for the patch.
 
-Thanks,
-Maxime
+On Tuesday 10 March 2015 12:14:40 Geert Uytterhoeven wrote:
+> The r8a7790 platform is now DT-only, the driver doesn't need to match
+> platform devices by name anymore. Remove the corresponding
+> platform_device_id entry.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->
->         Arnd
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> The r8a7790 platform is DT-only since v4.0-rc1.
+> 
+>  drivers/pinctrl/sh-pfc/core.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index 0e6083fc3563f4a5..52342a22d40a031f 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -591,9 +591,6 @@ static const struct platform_device_id sh_pfc_id_table[]
+> = { #ifdef CONFIG_PINCTRL_PFC_R8A7779
+>  	{ "pfc-r8a7779", (kernel_ulong_t)&r8a7779_pinmux_info },
+>  #endif
+> -#ifdef CONFIG_PINCTRL_PFC_R8A7790
+> -	{ "pfc-r8a7790", (kernel_ulong_t)&r8a7790_pinmux_info },
+> -#endif
+>  #ifdef CONFIG_PINCTRL_PFC_SH7203
+>  	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
+>  #endif
+
+-- 
+Regards,
+
+Laurent Pinchart
+
