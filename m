@@ -1,202 +1,142 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/4] pinctrl: sh-pfc: Use unsigned int for register/field widths and offsets
-Date: Tue, 10 Mar 2015 12:06:21 +0100
-Message-ID: <1425985583-26279-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] pinctrl: sh-pfc: Use u32 to store register addresses
+Date: Tue, 10 Mar 2015 12:06:23 +0100
+Message-ID: <1425985583-26279-5-git-send-email-geert+renesas@glider.be>
 References: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:52885 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752777AbbCJLGc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 07:06:32 -0400
 In-Reply-To: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-gpio@vger.kernel.org
 
-As register and field widths and offsets are in the range 1..32, use
-unsigned int (mostly replacing unsigned long) to store them in local
-variables and for passing them around.
+Currently all PFC registers lie in low 32-bit address space. Hence use
+u32 instead of unsigned long to store PFC register addresses in pinctrl
+tables.  All calculations of virtual addresses use a phys_addr_t
+intermediate, so we know where to add an offset if the 32-bit assumption
+ever becomes false.
 
-Move to one variable per line and move variables to the beginning of
-the block where they are used while we are at it.
+While this doesn't impact 32-bit builds, it would save ca. 7 KiB on a
+64-bit shmobile_defconfig kernel.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - Move to one variable per line and move variables to the beginning of
-    the block where they are used for the code that is touched.
+  - New.
 ---
- drivers/pinctrl/sh-pfc/core.c | 59 +++++++++++++++++++++----------------------
- drivers/pinctrl/sh-pfc/core.h |  4 +--
- drivers/pinctrl/sh-pfc/gpio.c |  4 +--
- 3 files changed, 33 insertions(+), 34 deletions(-)
+ drivers/pinctrl/sh-pfc/core.c   |  6 +++---
+ drivers/pinctrl/sh-pfc/gpio.c   | 12 ++++++++----
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  6 +++---
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 5591baf9738b5de9..aaf9c7fa742cc9c1 100644
+index aaf9c7fa742cc9c1..656745f545442d58 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -144,7 +144,7 @@ static int sh_pfc_enum_in_range(u16 enum_id, const struct pinmux_range *r)
- 	return 1;
- }
- 
--u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width)
- {
- 	switch (reg_width) {
- 	case 8:
-@@ -159,7 +159,7 @@ u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width)
+@@ -92,10 +92,10 @@ static int sh_pfc_map_resources(struct sh_pfc *pfc,
  	return 0;
  }
  
--void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
-+void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 			  u32 data)
+-static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc,
+-					 unsigned long address)
++static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 reg)
  {
- 	switch (reg_width) {
-@@ -179,9 +179,9 @@ void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
+ 	struct sh_pfc_window *window;
++	phys_addr_t address = reg;
+ 	unsigned int i;
  
- static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 				     const struct pinmux_cfg_reg *crp,
--				     unsigned long in_pos,
-+				     unsigned int in_pos,
- 				     void __iomem **mapped_regp, u32 *maskp,
--				     unsigned long *posp)
-+				     unsigned int *posp)
- {
- 	unsigned int k;
- 
-@@ -200,15 +200,15 @@ static void sh_pfc_config_reg_helper(struct sh_pfc *pfc,
- 
- static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 				    const struct pinmux_cfg_reg *crp,
--				    unsigned long field, u32 value)
-+				    unsigned int field, u32 value)
- {
- 	void __iomem *mapped_reg;
--	unsigned long pos;
-+	unsigned int pos;
- 	u32 mask, data;
+ 	/* scan through physical windows and convert address */
+@@ -208,7 +208,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
  
  	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
  
--	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %ld, "
-+	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
+-	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
++	dev_dbg(pfc->dev, "write_reg addr = %x, value = 0x%x, field = %u, "
  		"r_width = %u, f_width = %u\n",
  		crp->reg, value, field, crp->reg_width, crp->field_width);
  
-@@ -228,27 +228,28 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- }
- 
- static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
--				 const struct pinmux_cfg_reg **crp, int *fieldp,
--				 u32 *valuep)
-+				 const struct pinmux_cfg_reg **crp,
-+				 unsigned int *fieldp, u32 *valuep)
- {
--	const struct pinmux_cfg_reg *config_reg;
--	unsigned long r_width, f_width, curr_width;
--	unsigned int k, m, pos, bit_pos;
--	u32 ncomb, n;
-+	unsigned int k = 0;
- 
--	k = 0;
- 	while (1) {
--		config_reg = pfc->info->cfg_regs + k;
--
--		r_width = config_reg->reg_width;
--		f_width = config_reg->field_width;
-+		const struct pinmux_cfg_reg *config_reg =
-+			pfc->info->cfg_regs + k;
-+		unsigned int r_width = config_reg->reg_width;
-+		unsigned int f_width = config_reg->field_width;
-+		unsigned int curr_width;
-+		unsigned int bit_pos;
-+		unsigned int pos = 0;
-+		unsigned int m = 0;
- 
- 		if (!r_width)
- 			break;
- 
--		pos = 0;
--		m = 0;
- 		for (bit_pos = 0; bit_pos < r_width; bit_pos += curr_width) {
-+			u32 ncomb;
-+			u32 n;
-+
- 			if (f_width)
- 				curr_width = f_width;
- 			else
-@@ -297,12 +298,8 @@ static int sh_pfc_mark_to_enum(struct sh_pfc *pfc, u16 mark, int pos,
- 
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- {
--	const struct pinmux_cfg_reg *cr = NULL;
--	u16 enum_id;
- 	const struct pinmux_range *range;
--	int in_range, pos, field;
--	u32 value;
--	int ret;
-+	int pos = 0;
- 
- 	switch (pinmux_type) {
- 	case PINMUX_TYPE_GPIO:
-@@ -322,13 +319,15 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 		return -EINVAL;
- 	}
- 
--	pos = 0;
--	enum_id = 0;
--	field = 0;
--	value = 0;
--
- 	/* Iterate over all the configuration fields we need to update. */
- 	while (1) {
-+		const struct pinmux_cfg_reg *cr = NULL;
-+		unsigned int field = 0;
-+		u16 enum_id = 0;
-+		u32 value = 0;
-+		int in_range;
-+		int ret;
-+
- 		pos = sh_pfc_mark_to_enum(pfc, mark, pos, &enum_id);
- 		if (pos < 0)
- 			return pos;
-diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-index 8a10dd50ccdd2e0c..6dc8a6fc27468b39 100644
---- a/drivers/pinctrl/sh-pfc/core.h
-+++ b/drivers/pinctrl/sh-pfc/core.h
-@@ -57,8 +57,8 @@ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
- int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
- int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
- 
--u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned long reg_width);
--void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned long reg_width,
-+u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
-+void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
- 			  u32 data);
- 
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
 diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index f2bb7d7398cdfc24..aa2fc77a1925e839 100644
+index 5d3a35ce09125a45..ba353735ecf2be9a 100644
 --- a/drivers/pinctrl/sh-pfc/gpio.c
 +++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -153,8 +153,8 @@ static void gpio_pin_set_value(struct sh_pfc_chip *chip, unsigned offset,
- 			       int value)
+@@ -62,7 +62,8 @@ static void gpio_get_data_reg(struct sh_pfc_chip *chip, unsigned int offset,
+ static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
+ 			      const struct pinmux_data_reg *dreg)
  {
- 	struct sh_pfc_gpio_data_reg *reg;
--	unsigned long pos;
- 	unsigned int bit;
-+	unsigned int pos;
+-	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
++	phys_addr_t address = dreg->reg;
++	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
  
- 	gpio_get_data_reg(chip, offset, &reg, &bit);
- 
-@@ -185,8 +185,8 @@ static int gpio_pin_get(struct gpio_chip *gc, unsigned offset)
+ 	return sh_pfc_read_raw_reg(mem, dreg->reg_width);
+ }
+@@ -70,7 +71,8 @@ static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
+ static void gpio_write_data_reg(struct sh_pfc_chip *chip,
+ 				const struct pinmux_data_reg *dreg, u32 value)
  {
- 	struct sh_pfc_chip *chip = gpio_to_pfc_chip(gc);
- 	struct sh_pfc_gpio_data_reg *reg;
--	unsigned long pos;
- 	unsigned int bit;
-+	unsigned int pos;
+-	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
++	phys_addr_t address = dreg->reg;
++	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
  
- 	gpio_get_data_reg(chip, offset, &reg, &bit);
+ 	sh_pfc_write_raw_reg(mem, dreg->reg_width, value);
+ }
+@@ -340,6 +342,7 @@ sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
+ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ {
+ 	struct sh_pfc_chip *chip;
++	phys_addr_t address;
+ 	unsigned int i;
+ 	int ret;
  
+@@ -351,11 +354,12 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ 	 * that covers the data registers. In that case don't try to handle
+ 	 * GPIOs.
+ 	 */
++	address = pfc->info->data_regs[0].reg;
+ 	for (i = 0; i < pfc->num_windows; ++i) {
+ 		struct sh_pfc_window *window = &pfc->windows[i];
+ 
+-		if (pfc->info->data_regs[0].reg >= window->phys &&
+-		    pfc->info->data_regs[0].reg < window->phys + window->size)
++		if (address >= window->phys &&
++		    address < window->phys + window->size)
+ 			break;
+ 	}
+ 
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 6aeec8152ea674cf..c7508d5f688613b2 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -69,7 +69,7 @@ struct pinmux_func {
+ };
+ 
+ struct pinmux_cfg_reg {
+-	unsigned long reg;
++	u32 reg;
+ 	u8 reg_width, field_width;
+ 	const u16 *enum_ids;
+ 	const u8 *var_field_width;
+@@ -86,7 +86,7 @@ struct pinmux_cfg_reg {
+ 	.enum_ids = (const u16 [])
+ 
+ struct pinmux_data_reg {
+-	unsigned long reg;
++	u32 reg;
+ 	u8 reg_width;
+ 	const u16 *enum_ids;
+ };
+@@ -150,7 +150,7 @@ struct sh_pfc_soc_info {
+ 	const struct pinmux_irq *gpio_irq;
+ 	unsigned int gpio_irq_size;
+ 
+-	unsigned long unlock_reg;
++	u32 unlock_reg;
+ };
+ 
+ /* -----------------------------------------------------------------------------
 -- 
 1.9.1
 
