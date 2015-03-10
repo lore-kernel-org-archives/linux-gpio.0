@@ -1,48 +1,34 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Possible regression in next-20150310 due to pinctrl: sh-pfc:
- r8a7790: Remove non existing GPIO pins
-Date: Tue, 10 Mar 2015 16:55:39 +0900
-Message-ID: <20150310075538.GA20709@verge.net.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: update direction_output function of cherryview driver
+Date: Tue, 10 Mar 2015 09:02:03 +0100
+Message-ID: <CACRpkdYw6L8CXiP8cgjhQqAop6GcWzUVgn0gw2rTcFpq6GYjSw@mail.gmail.com>
+References: <1425377602-6649-1-git-send-email-qipeng.zha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:57693 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337AbbCJHzm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 03:55:42 -0400
-Content-Disposition: inline
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:40979 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752140AbbCJICE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 04:02:04 -0400
+Received: by obcva8 with SMTP id va8so27827759obc.8
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2015 01:02:03 -0700 (PDT)
+In-Reply-To: <1425377602-6649-1-git-send-email-qipeng.zha@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+To: "qipeng.zha" <qipeng.zha@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, "jason.cj.chen" <jason.cj.chen@intel.com>
 
-Hi,
+On Tue, Mar 3, 2015 at 11:13 AM, qipeng.zha <qipeng.zha@intel.com> wrote:
 
-I have observed what appears to be a regression in next-20150310.  Using
-the shmobile_defconfig the lager board does not produce console output
-whatsoever. If I revert bfb6698fad74e7ba2 ("pinctrl: sh-pfc: r8a7790:
-Remove non existing GPIO pins") then the problem seems to be resolved.
+> From: "qipeng.zha" <qipeng.zha@intel.com>
+>
+> From the comments of gpiod_direction_output(), need to set @value
+> as initial output, so update the lowlevel routine to make it work.
+>
+> Signed-off-by: jason.cj.chen<jason.cj.chen@intel.com>
+> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
 
-Likewise for the koelsh board and 896498d439cec6ff0 ("pinctrl: sh-pfc:
-r8a7791: Remove non existing GPIO pins").
+Patch applied for fixes.
 
-
-N.B.: In order to boot all the way to user-space I also need to revert
-5da0e63e268dc5120 ("mmc: tmio: Fix PIO mode with CONFIG_HIGHMEM"), a
-problem that I have reported separately[1].
-
-[1] Possible regression in next-20150306 due to "mmc: tmio: Fix PIO mode
-with CONFIG_HIGHMEM"
-    http://www.spinics.net/lists/linux-sh/msg40804.html
-
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Patch applied with Geert's ACK.
-> 
-> Yours,
-> Linus Walleij
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Yours,
+Linus Walleij
