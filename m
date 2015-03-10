@@ -1,164 +1,69 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
- IODelay configuration
-Date: Tue, 10 Mar 2015 10:31:15 -0700
-Message-ID: <20150310173115.GS5264@atomide.com>
-References: <1425427237-11511-1-git-send-email-nm@ti.com>
- <1425427237-11511-2-git-send-email-nm@ti.com>
- <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com>
- <20150310153321.GO5264@atomide.com>
- <54FF28F5.4040707@ti.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v6 6/8] pinctrl: cygnus: add gpio/pinconf driver
+Date: Tue, 10 Mar 2015 10:57:00 -0700
+Message-ID: <54FF306C.7020407@broadcom.com>
+References: <1425933902-20652-1-git-send-email-rjui@broadcom.com>	<1425933902-20652-7-git-send-email-rjui@broadcom.com> <CACRpkdZ1ErfikdF41aANTM-7LE6AExizHtCZTq1_TTxwYjeSQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <54FF28F5.4040707@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lokesh Vutla <lokeshvutla@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZ1ErfikdF41aANTM-7LE6AExizHtCZTq1_TTxwYjeSQA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Dmitry Torokhov <dtor-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Anatol Pomazau <anatol-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-fe>
 List-Id: linux-gpio@vger.kernel.org
 
-* Nishanth Menon <nm@ti.com> [150310 10:25]:
-> On 03/10/2015 10:33 AM, Tony Lindgren wrote:
-> > * Linus Walleij <linus.walleij@linaro.org> [150310 03:39]:
-> >> On Wed, Mar 4, 2015 at 1:00 AM, Nishanth Menon <nm@ti.com> wrote:
-> >>
-> >>> +Configuration definition follows similar model as the pinctrl-single:
-> >>> +The groups of pin configuration are defined under "pinctrl-single,pins"
-> >>> +
-> >>> +&dra7_iodelay_core {
-> >>> +       mmc2_iodelay_3v3_conf: mmc2_iodelay_3v3_conf {
-> >>> +               pinctrl-single,pins = <
-> >>> +                       0x18c (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A19_IN */
-> >>> +                       0x1a4 (A_DELAY(265) | G_DELAY(360))     /* CFG_GPMC_A20_IN */
-> >>> +                       0x1b0 (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A21_IN */
-> >>> +                       0x1bc (A_DELAY(0) | G_DELAY(120))       /* CFG_GPMC_A22_IN */
-> >>> +                       0x1c8 (A_DELAY(287) | G_DELAY(420))     /* CFG_GPMC_A23_IN */
-> >>> +                       0x1d4 (A_DELAY(144) | G_DELAY(240))     /* CFG_GPMC_A24_IN */
-> >>> +                       0x1e0 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_A25_IN */
-> >>> +                       0x1ec (A_DELAY(120) | G_DELAY(0))       /* CFG_GPMC_A26_IN */
-> >>> +                       0x1f8 (A_DELAY(120) | G_DELAY(180))     /* CFG_GPMC_A27_IN */
-> >>> +                       0x360 (A_DELAY(0) | G_DELAY(0))         /* CFG_GPMC_CS1_IN */
-> >>> +               >;
-> >>> +       };
-> >>> +};
-> >>
-> >> But wait.
-> >>
-> >> The promise when we merged pinctrl-single was that this driver was to be used
-> >> when the system had a one-register-per-pin layout and it was easy to do device
-> >> trees based on that.
-> >>
-> >> We were very reluctant to accept that even though we didn't even have the
-> >> generic pin control bindings in place, the argument being that the driver
-> >> should know the detailed register layout, it should not be described in the
-> >> device tree. We eventually caved in and accepted it as an exception.
-> > 
-> > Hey let's get few things straight here. There's nothing stopping the
-> > driver from knowing a detailed register layout with the pinctrl-single
-> > binding. This can be very easily done based on the compatible flag and
-> > match data as needed and check the values provided.
-> > 
-> > And let's also recap the reasons for the pinctrl-single binding. The
-> > the main reason for the pinctrl-single binding is to avoid mapping
-> > individual register bits to device tree compatible string properties.
-> > 
-> > Imagine doing that for hundreds of similar registers. Believe me, I tried
-> > using device tree properties initially and it just sucked big time. For
-> > larger amounts of dts data, it's best to stick to numeric values and
-> > phandles in the device tree data and rely on the preprocessor for
-> > getting the values right.
-> > 
-> > Finally, we don't want to build databases into the kernel drivers for
-> > every SoC. We certainly have plenty fo those already.
-> >  
-> >> Since this pin controller is not using pinctrl-single it does not enjoy that
-> >> privilege and you need to explain why this pin controller cannot use the
-> >> generic bindings like so many other pin controllers have since started
-> >> to do. ("It is in the same SoC" is not an acceptable argument.)
-> >>
-> >> What is wrong with this:
-> >> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > 
-> > Nishanth, care to explain your reasons for using pinctrl-single binding
-> > here vs the generic binding? Is the amount of string parsing with the
-> > data an issue here?
+Hi Linus,
+
+On 3/10/2015 3:20 AM, Linus Walleij wrote:
+> On Mon, Mar 9, 2015 at 9:45 PM, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
 > 
-> Wrong option chosen, I suppose :( - alright, lets discuss the alternative.
-
-Heh well now we know :) 
-  
-> >> We can add generic delay bindings to the list, it even seems like
-> >> a good idea to do so, as it is likely something that will come up in
-> >> other hardware and will be needed for ACPI etc going forward.
-> > 
-> > We certainly need to make setting delays (with values) generic, no
-> > doubt about that.
-> > 
-> > If the large amount of data is not an issue here, we could maybe set
-> > each iodelay register as a separate device? Then the binding could
-> > be just along the interrupts-extended type binding:
-> > 
-> > foo = <&bar 0x18c A_DELAY(0) G_DELAY(120)>;
-> > 
-> > Where the 0x18c is the instance offset of the register within the
-> > ti,dra7-iodelay compatible controller.
+>> This adds the initial support of the Broadcom Cygnus GPIO/PINCONF driver
+>> that supports all 3 GPIO controllers on Cygnus including the ASIU GPIO
+>> controller, the chipCommonG GPIO controller, and the always-on GPIO
+>> controller. Basic PINCONF configurations such as bias pull up/down, and
+>> drive strength are also supported in this driver.
+>>
+>> Pins from the ASIU GPIO controller can be individually muxed to GPIO
+>> function, through interaction with the Cygnus IOMUX controller
+>>
+>> Signed-off-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> Reviewed-by: Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> Tested-by: Dmitry Torokhov <dtor-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > 
-> if mmc2_pins_default point at pins for mmc pin configuration for
-> control_core (pinctrl-single), are you proposing the following?
+> Patch applied! But please look at this:
 > 
->  mmc2_pins_default: mmc2_pins_default {
->          pinctrl-single,pins = <
->                  0x9c (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a23.mmc2_clk */
->                  0xb0 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_cs1.mmc2_cmd */
->                  0xa0 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a24.mmc2_dat0 */
->                  0xa4 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a25.mmc2_dat1 */
->                  0xa8 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a26.mmc2_dat2 */
->                  0xac (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a27.mmc2_dat3 */
->                  0x8c (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a19.mmc2_dat4 */
->                  0x90 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a20.mmc2_dat5 */
->                  0x94 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a21.mmc2_dat6 */
->                  0x98 (PIN_INPUT_PULLUP | MANUAL_MODE | MUX_MODE1) /*
-> gpmc_a22.mmc2_dat7 */
->          >;
->  };
-
-Yeah so existing pinctrl-single binding above, with additional iodelay
-binding below..
- 
-> &mmc2 {
-> ...
->  pinctrl-1 =
->  	&mmc2_pins_default,	/* points to mmc control core pins */
->  	<&iodelay 0x18c A_DELAY(0) | G_DELAY(120)>,       /* CFG_GPMC_A19_IN */
->  	<&iodelay 0x1a4 A_DELAY(265) | G_DELAY(360)>,     /* CFG_GPMC_A20_IN */
->  	<&iodelay 0x1b0 A_DELAY(0) | G_DELAY(120)>,       /* CFG_GPMC_A21_IN */
->  	<&iodelay 0x1bc A_DELAY(0) | G_DELAY(120)>,       /* CFG_GPMC_A22_IN */
->  	<&iodelay 0x1c8 A_DELAY(287) | G_DELAY(420)>,     /* CFG_GPMC_A23_IN */
->  	<&iodelay 0x1d4 A_DELAY(144) | G_DELAY(240)>,     /* CFG_GPMC_A24_IN */
->  	<&iodelay 0x1e0 A_DELAY(0) | G_DELAY(0)>,         /* CFG_GPMC_A25_IN */
->  	<&iodelay 0x1ec A_DELAY(120) | G_DELAY(0)>,       /* CFG_GPMC_A26_IN */
->  	<&iodelay 0x1f8 A_DELAY(120) | G_DELAY(180)>,     /* CFG_GPMC_A27_IN */
->  	<&iodelay 0x360 A_DELAY(0) | G_DELAY(0)>;         /* CFG_GPMC_CS1_IN */
+>> +#include <linux/gpio.h>
 > 
-> I have to check if we are capable of parsing that. but if that is the
-> approach chosen, I suppose we might be able to figure something, I
-> suppose..
+> Doesn't just #include <linux/gpio/driver.h> work?
+> 
 
-Yes except I'd make use of some kind of #pinctrl-cells here just like
-interrupt controller has #interrupt-cells. Then you can have the values
-seprate and the controller knows what to do with them based on the
-compatible flag and #pinctrl-cells.
+I think I need linux/gpio.h for gpiochip_add_pin_range and some related
+APIs.
 
-Regards,
+>> +static int __init cygnus_gpio_init(void)
+>> +{
+>> +       return platform_driver_probe(&cygnus_gpio_driver, cygnus_gpio_probe);
+>> +}
+>> +arch_initcall_sync(cygnus_gpio_init);
+> 
+> arch_initcall_sync() is a bit brutal.
+> 
+> Can you please investigate if you can have this as a normal device_initcall()
+> utilizing deferred probe if necessary?
+> 
+> Follow-up patches accepted!
+> 
 
-Tony
+I understand. Further investigation is needed and this may take a while,
+since a lot of our Cygnus drivers depend on GPIO and regulators (and all
+need to be converted to check against deferred probe errors). If
+possible, I'll definitely fix this.
+
+> Yours,
+> Linus Walleij
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
