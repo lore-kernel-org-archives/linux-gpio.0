@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 7/8] ARM: dts: enable GPIO for Broadcom Cygnus
-Date: Tue, 10 Mar 2015 11:21:28 +0100
-Message-ID: <CACRpkdbx9h5t5QRLusnXqx31zD9W89dyvGDH4y6osK_6PeoChA@mail.gmail.com>
+Subject: Re: [PATCH v6 8/8] ARM: dts: cygnus: enable GPIO based hook detection
+Date: Tue, 10 Mar 2015 11:22:04 +0100
+Message-ID: <CACRpkdaGGvwAGThe=gt3J7MRt=aXrdXuh0tJtA+8U_vQFsAk1Q@mail.gmail.com>
 References: <1425933902-20652-1-git-send-email-rjui@broadcom.com>
-	<1425933902-20652-8-git-send-email-rjui@broadcom.com>
+	<1425933902-20652-9-git-send-email-rjui@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:40604 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752418AbbCJKV3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 06:21:29 -0400
-Received: by obcuz6 with SMTP id uz6so485206obc.7
-        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2015 03:21:28 -0700 (PDT)
-In-Reply-To: <1425933902-20652-8-git-send-email-rjui@broadcom.com>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:42643 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751555AbbCJKWE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Mar 2015 06:22:04 -0400
+Received: by obbnt9 with SMTP id nt9so474489obb.9
+        for <linux-gpio@vger.kernel.org>; Tue, 10 Mar 2015 03:22:04 -0700 (PDT)
+In-Reply-To: <1425933902-20652-9-git-send-email-rjui@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Ray Jui <rjui@broadcom.com>
@@ -21,16 +21,12 @@ Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 
 On Mon, Mar 9, 2015 at 9:45 PM, Ray Jui <rjui@broadcom.com> wrote:
 
-> This enables all 3 GPIO controllers including the ASIU GPIO, the
-> chipcommonG GPIO, and the ALWAYS-ON GPIO, for Broadcom Cygnus SoC
+> This enables GPIO based phone hook detection for Broadcom BCM911360
+> phone factor board (bcm911360_entphn)
 >
 > Signed-off-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> Tested-by: Dmitry Torokhov <dtor@chromium.org>
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Pls take this through ARM SoC.
 
 Yours,
 Linus Walleij
