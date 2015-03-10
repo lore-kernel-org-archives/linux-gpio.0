@@ -1,76 +1,58 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: RGB LED control (was Re: "advanced" LED controllers)
-Date: Tue, 10 Mar 2015 09:04:21 +0100
-Message-ID: <20150310080420.GA31091@amd>
-References: <20150219211424.GN13603@saruman.tx.rr.com>
- <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
- <20150302092111.GA19233@amd>
- <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
- <20150308205732.GA385@amd>
- <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
- <yw1xd24i1ja7.fsf@unicorn.mansr.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH] pinctrl: at91: move lock/unlock_as_irq calls into request/release
+ resources methods
+Date: Tue, 10 Mar 2015 09:34:23 +0100
+Message-ID: <54FEAC8F.1040206@atmel.com>
+References: <1423419822-6258-1-git-send-email-boris.brezillon@free-electrons.com> <CACRpkdazTt+_9m-iWEee2gJy4MQ+QNo3Rb2JY9hVSSXK2-dJRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <yw1xd24i1ja7.fsf@unicorn.mansr.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdazTt+_9m-iWEee2gJy4MQ+QNo3Rb2JY9hVSSXK2-dJRw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon 2015-03-09 11:50:56, M=E5ns Rullg=E5rd wrote:
-> Geert Uytterhoeven <geert@linux-m68k.org> writes:
+Le 09/03/2015 17:14, Linus Walleij a =C3=A9crit :
+> On Sun, Feb 8, 2015 at 7:23 PM, Boris Brezillon
+> <boris.brezillon@free-electrons.com> wrote:
 >=20
-> > Hi Pavel,
-> >
-> > On Sun, Mar 8, 2015 at 9:57 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> >> Ok, so I played with RGB LED a bit, and we have quite a gap in
-> >> documentation: what 50% brightness means is non-trivial and very
-> >> important in case we want to do smooth blinking and color transiti=
-ons.
-> >>
-> >> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> >>
-> >> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documenta=
-tion/ABI/testing/sysfs-class-led
-> >> index 3646ec8..649d7a6 100644
-> >> --- a/Documentation/ABI/testing/sysfs-class-led
-> >> +++ b/Documentation/ABI/testing/sysfs-class-led
-> >> @@ -8,6 +8,11 @@ Description:
-> >>                 non-zero brightness settings. The value is between=
- 0 and
-> >>                 /sys/class/leds/<led>/max_brightness.
-> >>
-> >> +               If LED supports continuous brightness settings, 50=
-% brightness
-> >> +               should correspond to 50% brightness perceived by h=
-uman, in a similar
-> >> +               manner pixel brightness on monitor does (not 50% P=
-WM).
-> >
-> > How many drivers do it right? How many don't?
-> >
-> > For those that don't, perhaps we handle the conversion between perc=
-eived and
-> > pwm in the core, e.g. by adding a new flag to led_classdev.flags to=
- indicate
-> > the need for conversion?
+>> The gpiochip_lock_as_irq call can fail and return an error, while th=
+e
+>> irq_startup is not expected to fail (returns an unsigned int which i=
+s not
+>> checked by irq core code).
+>>
+>> irq_request/release_resources functions have been created to address=
+ this
+>> problem.
+>>
+>> Move gpiochip_lock/unlock_as_irq calls into
+>> irq_request/release_resources functions to prevent using a gpio as a=
+n irq
+>> if the gpiochip_lock_as_irq call failed.
+>>
+>> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 >=20
-> Some LED controllers do the right thing in hardware, so any adjustmen=
-t
-> done in the core needs to be optional.
+> Patch applied with all the ACKs.
 
-Do you have example controller that gets it right, btw?
+Hi Linus,
 
-Bryan, can you apply the documentation patch so we can start fixing
-the drivers?
+As suggested earlier, do you think it can be scheduled for the 4.0-rc
+phase as a "fix"?
 
-Thanks,
-									Pavel
+Bye,
+
+
+
+> Happy new year J-C!
+>=20
+> Yours,
+> Linus Walleij
+>=20
+>=20
+
+
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses=
-/blog.html
+Nicolas Ferre
