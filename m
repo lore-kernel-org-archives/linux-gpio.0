@@ -1,55 +1,43 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Documentation: leds: clarify what 50% brightness means
-Date: Wed, 11 Mar 2015 10:34:26 +0100
-Message-ID: <20150311093425.GA8866@amd>
-References: <20150219211424.GN13603@saruman.tx.rr.com>
- <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
- <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
- <20150302092111.GA19233@amd>
- <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
- <20150308205732.GA385@amd>
- <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
- <yw1xd24i1ja7.fsf@unicorn.mansr.com>
- <20150310080420.GA31091@amd>
- <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: fix constconst in devres
+Date: Wed, 11 Mar 2015 12:24:38 +0100
+Message-ID: <1426073078-25029-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33171 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbbCKJea (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 05:34:30 -0400
-Content-Disposition: inline
-In-Reply-To: <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:43692 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752788AbbCKLYp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 07:24:45 -0400
+Received: by lbvp9 with SMTP id p9so8043171lbv.10
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2015 04:24:44 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Olliver Schinagl <oliver@schinagl.nl>
 
-I played with RGB LED a bit, and we have quite a gap in
-documentation: what 50% brightness means is non-trivial and very
-important in case we want to do smooth blinking and color
-transitions.
-    
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+Commit 1feb57a245a4910b03202a814ffc51a900bd4aca
+"gpio: add parameter to allow the use named gpios"
+includes a double-conted array. Fix this.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 3646ec8..649d7a6 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -8,6 +8,11 @@ Description:
- 		non-zero brightness settings. The value is between 0 and
- 		/sys/class/leds/<led>/max_brightness.
- 
-+		If LED supports continuous brightness settings, 50% brightness
-+		should correspond to 50% brightness perceived by human, in a similar
-+		manner pixel brightness on monitor does (not 50% PWM).
-+
-+
- What:		/sys/class/leds/<led>/max_brightness
- Date:		March 2006
- KernelVersion:	2.6.17
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Olliver Schinagl <oliver@schinagl.nl>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/devres.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index ec24da2418b3..0bd060bf7151 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -135,7 +135,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+ 					    struct fwnode_handle *child)
+ {
+-	static const char const *suffixes[] = { "gpios", "gpio" };
++	static const char *suffixes[] = { "gpios", "gpio" };
+ 	char prop_name[32]; /* 32 is max size of property name */
+ 	struct gpio_desc **dr;
+ 	struct gpio_desc *desc;
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.9.3
+
