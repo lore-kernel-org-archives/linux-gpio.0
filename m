@@ -1,54 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 6/8] pinctrl: cygnus: add gpio/pinconf driver
-Date: Wed, 11 Mar 2015 10:15:20 +0100
-Message-ID: <CACRpkdZbxTyYWpxWCmdN8a7p+MjcUo6UxEwfgStPWsNzf4NZ=g@mail.gmail.com>
-References: <1425933902-20652-1-git-send-email-rjui@broadcom.com>
-	<1425933902-20652-7-git-send-email-rjui@broadcom.com>
-	<CACRpkdZ1ErfikdF41aANTM-7LE6AExizHtCZTq1_TTxwYjeSQA@mail.gmail.com>
-	<54FF306C.7020407@broadcom.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Documentation: leds: clarify what 50% brightness means
+Date: Wed, 11 Mar 2015 10:34:26 +0100
+Message-ID: <20150311093425.GA8866@amd>
+References: <20150219211424.GN13603@saruman.tx.rr.com>
+ <CAMuHMdUUNzFYHzSR3yLCJuz11vuO3Z4yVWVxRQfutGY1KxZLPQ@mail.gmail.com>
+ <CAAVeFuJ7DCs_=iESJRcXwyQ09eD57dZCxGG5CD3LD9_ZGZHP2A@mail.gmail.com>
+ <20150302092111.GA19233@amd>
+ <CAAVeFuK9eGO2TN+tgDyN8EFzEhgHOy5YCch+LaqS9PNaQXQ4Qg@mail.gmail.com>
+ <20150308205732.GA385@amd>
+ <CAMuHMdUVgZ1i5zymxmi3-i98n9UPTV=Sq-Oa=ieyfOzETW-DzA@mail.gmail.com>
+ <yw1xd24i1ja7.fsf@unicorn.mansr.com>
+ <20150310080420.GA31091@amd>
+ <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:33301 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751990AbbCKJPV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 05:15:21 -0400
-Received: by obcvb8 with SMTP id vb8so7544165obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Mar 2015 02:15:21 -0700 (PDT)
-In-Reply-To: <54FF306C.7020407@broadcom.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33171 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbbCKJea (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 05:34:30 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5ve-K4jyBSVk1CZ8qQrFgevqdbhdsgZ1ZYX2e-t07494oq4A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Paul Bolle <pebolle@tiscali.nl>, Scott Branden <sbranden@broadcom.com>, Dmitry Torokhov <dtor@google.com>, Anatol Pomazau <anatol@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback->
+To: Bryan Wu <cooloney@gmail.com>
+Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Felipe Balbi <balbi@ti.com>, Bryan Wu <cooloney@gmail.cofm>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 10, 2015 at 6:57 PM, Ray Jui <rjui@broadcom.com> wrote:
-> On 3/10/2015 3:20 AM, Linus Walleij wrote:
->> On Mon, Mar 9, 2015 at 9:45 PM, Ray Jui <rjui@broadcom.com> wrote:
->>
->>> This adds the initial support of the Broadcom Cygnus GPIO/PINCONF driver
->>> that supports all 3 GPIO controllers on Cygnus including the ASIU GPIO
->>> controller, the chipCommonG GPIO controller, and the always-on GPIO
->>> controller. Basic PINCONF configurations such as bias pull up/down, and
->>> drive strength are also supported in this driver.
->>>
->>> Pins from the ASIU GPIO controller can be individually muxed to GPIO
->>> function, through interaction with the Cygnus IOMUX controller
->>>
->>> Signed-off-by: Ray Jui <rjui@broadcom.com>
->>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
->>> Tested-by: Dmitry Torokhov <dtor@chromium.org>
->>
->> Patch applied! But please look at this:
->>
->>> +#include <linux/gpio.h>
->>
->> Doesn't just #include <linux/gpio/driver.h> work?
->>
->
-> I think I need linux/gpio.h for gpiochip_add_pin_range and some related
-> APIs.
+I played with RGB LED a bit, and we have quite a gap in
+documentation: what 50% brightness means is non-trivial and very
+important in case we want to do smooth blinking and color
+transitions.
+    
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
-OK you're right ... I need to fix this.
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 3646ec8..649d7a6 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -8,6 +8,11 @@ Description:
+ 		non-zero brightness settings. The value is between 0 and
+ 		/sys/class/leds/<led>/max_brightness.
+ 
++		If LED supports continuous brightness settings, 50% brightness
++		should correspond to 50% brightness perceived by human, in a similar
++		manner pixel brightness on monitor does (not 50% PWM).
++
++
+ What:		/sys/class/leds/<led>/max_brightness
+ Date:		March 2006
+ KernelVersion:	2.6.17
 
-Yours,
-Linus Walleij
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
