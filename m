@@ -1,49 +1,66 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH -next] pinctrl: mediatek: Fix include directive
-Date: Wed, 11 Mar 2015 09:05:20 -0700
-Message-ID: <1426089920-24818-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:36068 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750755AbbCKQF0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 12:05:26 -0400
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1YVj8Q-002h6k-5j
-	for linux-gpio@vger.kernel.org; Wed, 11 Mar 2015 16:05:26 +0000
-Sender: linux-gpio-owner@vger.kernel.org
+From: Nicolas Schichan <nschichan@freebox.fr>
+Subject: Re: bcm63xx gpio issue on 3.19
+Date: Wed, 11 Mar 2015 18:49:46 +0100
+Message-ID: <5500803A.7080409@freebox.fr>
+References: <54FDDE00.7030100@freebox.fr> <54FFD15E.3040202@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <54FFD15E.3040202@nvidia.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-mips@linux-mips.org
+Cc: Maxime Bizon <mbizon@freebox.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-Fix the following build failure:
+On 03/11/2015 06:23 AM, Alexandre Courbot wrote:
+>> Could you please advise on how to fix/workaround that ? (ideally while keeping
+>> the possibility to invoke the gpiolib code from the setup/prom code).
+> 
+> The only allocation performed by gpiochip_add() is the array of gpio_descs.
+> Having this array pre-allocated in your early code (maybe by using a static
+> array variable) and passing it to a gpiochip_add_early() function would do the
+> trick.
+> 
+> However, it is not that simple since gpio_desc is a private structure which
+> details (including its size) are not visible outside of drivers/gpio.
+> 
+> Another solution I could see would be to have a kernel config option that
+> would make gpiolib "pre-allocate" a number of gpio descriptors as a static
+> array for such cases - similar to the global GPIO array, but not as big.
+> 
+> Finally, we can also restore the global GPIO array as a config option for the
+> few architectures that need it.
+> 
+> Of course, I would prefer a solution based on dynamic allocation - is there a
+> kind a primitive memory allocator that we can use at this early stage of boot?
+> I.e. would alloc_pages() maybe work?
+> 
+> How do other subsystems that rely on dynamic allocation for registering their
+> resources handle this? I guess regulator must fall in the same use-case,
+> doesn't it?
 
-In file included from drivers/pinctrl/mediatek/pinctrl-mt8135.c:24:0:
-drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h:19:32: fatal error:
-	pinctrl-mtk-common.h: No such file or directory
+Hi Alexandre,
 
-seen when building arm:multi_v7_defconfig.
+Moving the bcm63xx_gpio_init() call from board_prom_init() to
+bcm63xx_register_devices() (an arch_initcall) is enough to get called when
+kmalloc is working. If code poking GPIOs is invoked earlier by a board code,
+it will have to move in the board_register_devices() function though there
+doesn't seem to any problems with the mainline bcm63xx board code in that regard.
 
-Fixes: 94097d89c145 ("pinctrl: mediatek: Add Pinctrl/GPIO driver for mt8135.")
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I can produce a patch for that if it is an accepted solution. It has the
+advantage of not requiring changes to the gpiolib code.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h
-index 5019cef..e17aedb 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h
-@@ -16,7 +16,7 @@
- #define __PINCTRL_MTK_MT8135_H
- 
- #include <linux/pinctrl/pinctrl.h>
--#include <pinctrl-mtk-common.h>
-+#include "pinctrl-mtk-common.h"
- 
- static const struct mtk_desc_pin mtk_pins_mt8135[] = {
- 	MTK_PIN(
+Regards,
+
 -- 
-2.1.0
-
+Nicolas Schichan
+Freebox SAS
