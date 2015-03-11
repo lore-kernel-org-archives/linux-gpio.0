@@ -1,66 +1,38 @@
-From: Nicolas Schichan <nschichan@freebox.fr>
-Subject: Re: bcm63xx gpio issue on 3.19
-Date: Wed, 11 Mar 2015 18:49:46 +0100
-Message-ID: <5500803A.7080409@freebox.fr>
-References: <54FDDE00.7030100@freebox.fr> <54FFD15E.3040202@nvidia.com>
+From: Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH -next] pinctrl: mediatek: Fix include directive
+Date: Wed, 11 Mar 2015 19:16:33 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1503111915570.22939@utopia.booyaka.com>
+References: <1426089920-24818-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <54FFD15E.3040202@nvidia.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-mips@linux-mips.org
-Cc: Maxime Bizon <mbizon@freebox.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from utopia.booyaka.com ([74.50.51.50]:54837 "EHLO
+	utopia.booyaka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751724AbbCKTQf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 15:16:35 -0400
+In-Reply-To: <1426089920-24818-1-git-send-email-linux@roeck-us.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>
 
-On 03/11/2015 06:23 AM, Alexandre Courbot wrote:
->> Could you please advise on how to fix/workaround that ? (ideally while keeping
->> the possibility to invoke the gpiolib code from the setup/prom code).
-> 
-> The only allocation performed by gpiochip_add() is the array of gpio_descs.
-> Having this array pre-allocated in your early code (maybe by using a static
-> array variable) and passing it to a gpiochip_add_early() function would do the
-> trick.
-> 
-> However, it is not that simple since gpio_desc is a private structure which
-> details (including its size) are not visible outside of drivers/gpio.
-> 
-> Another solution I could see would be to have a kernel config option that
-> would make gpiolib "pre-allocate" a number of gpio descriptors as a static
-> array for such cases - similar to the global GPIO array, but not as big.
-> 
-> Finally, we can also restore the global GPIO array as a config option for the
-> few architectures that need it.
-> 
-> Of course, I would prefer a solution based on dynamic allocation - is there a
-> kind a primitive memory allocator that we can use at this early stage of boot?
-> I.e. would alloc_pages() maybe work?
-> 
-> How do other subsystems that rely on dynamic allocation for registering their
-> resources handle this? I guess regulator must fall in the same use-case,
-> doesn't it?
+On Wed, 11 Mar 2015, Guenter Roeck wrote:
 
-Hi Alexandre,
+> Fix the following build failure:
+> 
+> In file included from drivers/pinctrl/mediatek/pinctrl-mt8135.c:24:0:
+> drivers/pinctrl/mediatek/pinctrl-mtk-mt8135.h:19:32: fatal error:
+> 	pinctrl-mtk-common.h: No such file or directory
+> 
+> seen when building arm:multi_v7_defconfig.
+> 
+> Fixes: 94097d89c145 ("pinctrl: mediatek: Add Pinctrl/GPIO driver for mt8135.")
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Moving the bcm63xx_gpio_init() call from board_prom_init() to
-bcm63xx_register_devices() (an arch_initcall) is enough to get called when
-kmalloc is working. If code poking GPIOs is invoked earlier by a board code,
-it will have to move in the board_register_devices() function though there
-doesn't seem to any problems with the mainline bcm63xx board code in that regard.
+This fixes the next-20150311 build here.
 
-I can produce a patch for that if it is an accepted solution. It has the
-advantage of not requiring changes to the gpiolib code.
+Reviewed-by: Paul Walmsley <paul@pwsan.com>
 
-Regards,
 
--- 
-Nicolas Schichan
-Freebox SAS
+- Paul
