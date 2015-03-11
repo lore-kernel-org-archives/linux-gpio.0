@@ -1,78 +1,67 @@
-From: Hanjun Guo <guohanjun@huawei.com>
-Subject: Re: [PATCH 1/2] gpio / ACPI: Avoid unnecessary checks in __gpiod_get_index()
-Date: Wed, 11 Mar 2015 09:36:15 +0800
-Message-ID: <54FF9C0F.3060107@huawei.com>
-References: <4032246.STUT1iRmIk@vostro.rjw.lan> <1829371.gDPkhnsp25@vostro.rjw.lan>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: bcm63xx gpio issue on 3.19
+Date: Wed, 11 Mar 2015 14:23:42 +0900
+Message-ID: <54FFD15E.3040202@nvidia.com>
+References: <54FDDE00.7030100@freebox.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1829371.gDPkhnsp25@vostro.rjw.lan>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:6187 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751097AbbCKFXs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 01:23:48 -0400
+In-Reply-To: <54FDDE00.7030100@freebox.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nicolas Schichan <nschichan@freebox.fr>, linux-mips@linux-mips.org
+Cc: Maxime Bizon <mbizon@freebox.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On 2015/3/11 6:08, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> If dev is NULL in __gpiod_get_index() and both ACPI and OF are
-> enabled, it will be checked twice before the code decides to give
-> up with DT/ACPI lookup, so avoid that.
->
-> Also use the observation that ACPI_COMPANION() is much more efficient
-> than ACPI_HANDLE(), because the latter uses the former and carries out
-> a check and a pointer dereference on top of it, so replace the
-> ACPI_HANDLE() check with an ACPI_COMPANION() one which does not
-> require the additional IS_ENABLED(CONFIG_ACPI) check too.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Nicolas,
 
-Quite straight forward to me, for both two patches,
+(adding the linux-gpio mailing-list and Linus W.)
 
-Reviewed-by: Hanjun Guo <hanjun.guo@linaro.org>
-
-Thanks
-Hanjun
-
-> ---
->  drivers/gpio/gpiolib.c |   16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+On 03/10/2015 02:53 AM, Nicolas Schichan wrote:
 >
-> Index: linux-pm/drivers/gpio/gpiolib.c
-> ===================================================================
-> --- linux-pm.orig/drivers/gpio/gpiolib.c
-> +++ linux-pm/drivers/gpio/gpiolib.c
-> @@ -1865,13 +1865,15 @@ struct gpio_desc *__must_check __gpiod_g
->  
->  	dev_dbg(dev, "GPIO lookup for consumer %s\n", con_id);
->  
-> -	/* Using device tree? */
-> -	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node) {
-> -		dev_dbg(dev, "using device tree for GPIO lookup\n");
-> -		desc = of_find_gpio(dev, con_id, idx, &lookupflags);
-> -	} else if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_HANDLE(dev)) {
-> -		dev_dbg(dev, "using ACPI for GPIO lookup\n");
-> -		desc = acpi_find_gpio(dev, con_id, idx, &lookupflags);
-> +	if (dev) {
-> +		/* Using device tree? */
-> +		if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> +			dev_dbg(dev, "using device tree for GPIO lookup\n");
-> +			desc = of_find_gpio(dev, con_id, idx, &lookupflags);
-> +		} else if (ACPI_COMPANION(dev)) {
-> +			dev_dbg(dev, "using ACPI for GPIO lookup\n");
-> +			desc = acpi_find_gpio(dev, con_id, idx, &lookupflags);
-> +		}
->  	}
->  
->  	/*
+> Hello Alexandre,
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Using the latest 3.19 kernel, the bcm63xx GPIO code under
+> arch/mips/bcm63xx/gpio.c is unable to register the gpio chip via
+> gpiochip_add(), as it returns -ENOMEM. The kcalloc call for the gpio_desc
+> array fails, as during prom code, it is too early for the kmalloc to work.
 >
-> .
->
+> It looks like the issue is caused by your patch: "gpio: remove gpio_descs
+> global array"
 
+Indeed. This happens because we removed the global GPIO array and 
+replaced it with a more flexible per-chip array of GPIOs. We were hoping 
+that issues like this one would have been caught in -next, but sadly the 
+problem with bcm63xx went unnoticed until now. :(
 
+>
+> Could you please advise on how to fix/workaround that ? (ideally while keeping
+> the possibility to invoke the gpiolib code from the setup/prom code).
+
+The only allocation performed by gpiochip_add() is the array of 
+gpio_descs. Having this array pre-allocated in your early code (maybe by 
+using a static array variable) and passing it to a gpiochip_add_early() 
+function would do the trick.
+
+However, it is not that simple since gpio_desc is a private structure 
+which details (including its size) are not visible outside of drivers/gpio.
+
+Another solution I could see would be to have a kernel config option 
+that would make gpiolib "pre-allocate" a number of gpio descriptors as a 
+static array for such cases - similar to the global GPIO array, but not 
+as big.
+
+Finally, we can also restore the global GPIO array as a config option 
+for the few architectures that need it.
+
+Of course, I would prefer a solution based on dynamic allocation - is 
+there a kind a primitive memory allocator that we can use at this early 
+stage of boot? I.e. would alloc_pages() maybe work?
+
+How do other subsystems that rely on dynamic allocation for registering 
+their resources handle this? I guess regulator must fall in the same 
+use-case, doesn't it?
