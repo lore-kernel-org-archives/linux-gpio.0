@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/4] pinctrl: sh-pfc: Use reg_width instead of reg as sentinel
-Date: Thu, 12 Mar 2015 11:09:15 +0100
-Message-ID: <1426154956-26583-4-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v3 4/4] pinctrl: sh-pfc: Use u32 to store register addresses
+Date: Thu, 12 Mar 2015 11:09:16 +0100
+Message-ID: <1426154956-26583-5-git-send-email-geert+renesas@glider.be>
 References: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:49970 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753444AbbCLKJZ (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:51675 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753514AbbCLKJZ (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2015 06:09:25 -0400
 In-Reply-To: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -14,10 +14,14 @@ List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-All other loops over sh_pfc_soc_info.data_regs[] use
-pinmux_data_reg.regwidth as the sentinel, which is safer as zero is
-never a valid regwidth value (reg could be zero if we start using it to
-store an offset).
+Currently all PFC registers lie in low 32-bit address space. Hence use
+u32 instead of unsigned long to store PFC register addresses in pinctrl
+tables.  All calculations of virtual addresses use a phys_addr_t
+intermediate, so we know where to add an offset if the 32-bit assumption
+ever becomes false.
+
+While this doesn't impact 32-bit builds, it would save ca. 7 KiB on a
+64-bit shmobile_defconfig kernel.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -28,22 +32,115 @@ v3:
 v2:
   - New.
 ---
- drivers/pinctrl/sh-pfc/gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/core.c   |  6 +++---
+ drivers/pinctrl/sh-pfc/gpio.c   | 12 ++++++++----
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  6 +++---
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index aa2fc77a1925e839..5d3a35ce09125a45 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -84,7 +84,7 @@ static void gpio_setup_data_reg(struct sh_pfc_chip *chip, unsigned idx)
- 	unsigned int bit;
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index c33e2474a8676cbc..1b6dc69229156755 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -92,10 +92,10 @@ static int sh_pfc_map_resources(struct sh_pfc *pfc,
+ 	return 0;
+ }
+ 
+-static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc,
+-					 unsigned long address)
++static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 reg)
+ {
+ 	struct sh_pfc_window *window;
++	phys_addr_t address = reg;
  	unsigned int i;
  
--	for (i = 0, dreg = pfc->info->data_regs; dreg->reg; ++i, ++dreg) {
-+	for (i = 0, dreg = pfc->info->data_regs; dreg->reg_width; ++i, ++dreg) {
- 		for (bit = 0; bit < dreg->reg_width; bit++) {
- 			if (dreg->enum_ids[bit] == pin->enum_id) {
- 				gpio_pin->dreg = i;
+ 	/* scan through physical windows and convert address */
+@@ -208,7 +208,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
+ 
+ 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
+ 
+-	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
++	dev_dbg(pfc->dev, "write_reg addr = %x, value = 0x%x, field = %u, "
+ 		"r_width = %u, f_width = %u\n",
+ 		crp->reg, value, field, crp->reg_width, crp->field_width);
+ 
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index 5d3a35ce09125a45..ba353735ecf2be9a 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -62,7 +62,8 @@ static void gpio_get_data_reg(struct sh_pfc_chip *chip, unsigned int offset,
+ static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
+ 			      const struct pinmux_data_reg *dreg)
+ {
+-	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
++	phys_addr_t address = dreg->reg;
++	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
+ 
+ 	return sh_pfc_read_raw_reg(mem, dreg->reg_width);
+ }
+@@ -70,7 +71,8 @@ static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
+ static void gpio_write_data_reg(struct sh_pfc_chip *chip,
+ 				const struct pinmux_data_reg *dreg, u32 value)
+ {
+-	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
++	phys_addr_t address = dreg->reg;
++	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
+ 
+ 	sh_pfc_write_raw_reg(mem, dreg->reg_width, value);
+ }
+@@ -340,6 +342,7 @@ sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
+ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ {
+ 	struct sh_pfc_chip *chip;
++	phys_addr_t address;
+ 	unsigned int i;
+ 	int ret;
+ 
+@@ -351,11 +354,12 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ 	 * that covers the data registers. In that case don't try to handle
+ 	 * GPIOs.
+ 	 */
++	address = pfc->info->data_regs[0].reg;
+ 	for (i = 0; i < pfc->num_windows; ++i) {
+ 		struct sh_pfc_window *window = &pfc->windows[i];
+ 
+-		if (pfc->info->data_regs[0].reg >= window->phys &&
+-		    pfc->info->data_regs[0].reg < window->phys + window->size)
++		if (address >= window->phys &&
++		    address < window->phys + window->size)
+ 			break;
+ 	}
+ 
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 6aeec8152ea674cf..c7508d5f688613b2 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -69,7 +69,7 @@ struct pinmux_func {
+ };
+ 
+ struct pinmux_cfg_reg {
+-	unsigned long reg;
++	u32 reg;
+ 	u8 reg_width, field_width;
+ 	const u16 *enum_ids;
+ 	const u8 *var_field_width;
+@@ -86,7 +86,7 @@ struct pinmux_cfg_reg {
+ 	.enum_ids = (const u16 [])
+ 
+ struct pinmux_data_reg {
+-	unsigned long reg;
++	u32 reg;
+ 	u8 reg_width;
+ 	const u16 *enum_ids;
+ };
+@@ -150,7 +150,7 @@ struct sh_pfc_soc_info {
+ 	const struct pinmux_irq *gpio_irq;
+ 	unsigned int gpio_irq_size;
+ 
+-	unsigned long unlock_reg;
++	u32 unlock_reg;
+ };
+ 
+ /* -----------------------------------------------------------------------------
 -- 
 1.9.1
 
