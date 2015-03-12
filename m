@@ -1,101 +1,61 @@
-From: Sonic Zhang <sonic.adi@gmail.com>
-Subject: [PATCH] pinmux: allow exlusive pin allocation among GPIO and peripheral funtions via flag strict in struct pinctrl_desc
-Date: Thu, 12 Mar 2015 17:56:43 +0800
-Message-ID: <1426154203-11551-1-git-send-email-sonic.adi@gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] pinctrl: mediatek: mtk-common: Remove kfree for memory
+ allocated by devm_kzalloc
+Date: Thu, 12 Mar 2015 21:52:33 +0800
+Message-ID: <1426168353.30920.2.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0097.outbound.protection.outlook.com ([207.46.100.97]:48128
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751267AbbCLKbW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 Mar 2015 06:31:22 -0400
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:40203 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753749AbbCLNwl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2015 09:52:41 -0400
+Received: by padfb1 with SMTP id fb1so20731601pad.7
+        for <linux-gpio@vger.kernel.org>; Thu, 12 Mar 2015 06:52:40 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Steven Miao <realmz6@gmail.com>, linux-gpio@vger.kernel.org
-Cc: adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Maoguang Meng <maoguang.meng@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Sonic Zhang <sonic.zhang@analog.com>
-
-The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
-for both GPIO and peripheral function. So, add flag strict in struct pinctrl
-to check both gpio_owner and mux_owner before approving the pin request.
-
-Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/pinctrl/pinctrl-adi2.c  |    1 +
- drivers/pinctrl/pinmux.c        |   29 +++++++++++++++--------------
- include/linux/pinctrl/pinctrl.h |    1 +
- 3 files changed, 17 insertions(+), 14 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-index 8434439..fbd4926 100644
---- a/drivers/pinctrl/pinctrl-adi2.c
-+++ b/drivers/pinctrl/pinctrl-adi2.c
-@@ -710,6 +710,7 @@ static struct pinctrl_desc adi_pinmux_desc = {
- 	.name = DRIVER_NAME,
- 	.pctlops = &adi_pctrl_ops,
- 	.pmxops = &adi_pinmux_ops,
-+	.strict = true,
- 	.owner = THIS_MODULE,
- };
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index b8f8bef..f82f57a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1222,7 +1222,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	if (!irq) {
+ 		dev_err(&pdev->dev, "couldn't parse and map irq\n");
+ 		ret = -EINVAL;
+-		goto free_edges;
++		goto chip_error;
+ 	}
  
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index b874458..dfa2b42 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -99,24 +99,25 @@ static int pin_request(struct pinctrl_dev *pctldev,
- 	dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
- 		pin, desc->name, owner);
+ 	pctl->domain = irq_domain_add_linear(np,
+@@ -1230,7 +1230,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	if (!pctl->domain) {
+ 		dev_err(&pdev->dev, "Couldn't register IRQ domain\n");
+ 		ret = -ENOMEM;
+-		goto free_edges;
++		goto chip_error;
+ 	}
  
-+	if ((gpio_range || pctldev->desc->strict) && desc->gpio_owner) {
-+		dev_err(pctldev->dev,
-+			"pin %s already requested by %s; cannot claim for %s\n",
-+			desc->name, desc->gpio_owner, owner);
-+		goto out;
-+	}
-+
-+	if ((!gpio_range || pctldev->desc->strict) &&
-+	    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
-+		dev_err(pctldev->dev,
-+			"pin %s already requested by %s; cannot claim for %s\n",
-+			desc->name, desc->mux_owner, owner);
-+		goto out;
-+	}
-+
- 	if (gpio_range) {
- 		/* There's no need to support multiple GPIO requests */
--		if (desc->gpio_owner) {
--			dev_err(pctldev->dev,
--				"pin %s already requested by %s; cannot claim for %s\n",
--				desc->name, desc->gpio_owner, owner);
--			goto out;
--		}
--
- 		desc->gpio_owner = owner;
- 	} else {
--		if (desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
--			dev_err(pctldev->dev,
--				"pin %s already requested by %s; cannot claim for %s\n",
--				desc->name, desc->mux_owner, owner);
--			goto out;
--		}
--
- 		desc->mux_usecount++;
- 		if (desc->mux_usecount > 1)
- 			return 0;
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index 66e4697..ca6c99c0 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -132,6 +132,7 @@ struct pinctrl_desc {
- 	const struct pinctrl_ops *pctlops;
- 	const struct pinmux_ops *pmxops;
- 	const struct pinconf_ops *confops;
-+	bool strict;
- 	struct module *owner;
- #ifdef CONFIG_GENERIC_PINCONF
- 	unsigned int num_custom_params;
+ 	mtk_eint_init(pctl);
+@@ -1248,8 +1248,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	set_irq_flags(irq, IRQF_VALID);
+ 	return 0;
+ 
+-free_edges:
+-	kfree(pctl->eint_dual_edges);
+ chip_error:
+ 	gpiochip_remove(pctl->chip);
+ pctrl_error:
 -- 
-1.7.9.5
+1.9.1
+
+
 
