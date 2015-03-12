@@ -1,17 +1,17 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 4/4] pinctrl: sh-pfc: Use u32 to store register addresses
-Date: Thu, 12 Mar 2015 03:02:51 +0200
-Message-ID: <3725535.iu1CkyQgCh@avalon>
-References: <1425985583-26279-1-git-send-email-geert+renesas@glider.be> <1425985583-26279-5-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v2 3/4] pinctrl: sh-pfc: Use reg_width instead of reg as sentinel
+Date: Thu, 12 Mar 2015 03:19:32 +0200
+Message-ID: <5151261.qkXBQVcIf9@avalon>
+References: <1425985583-26279-1-git-send-email-geert+renesas@glider.be> <1425985583-26279-4-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39605 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39613 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751133AbbCLBCt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 21:02:49 -0400
-In-Reply-To: <1425985583-26279-5-git-send-email-geert+renesas@glider.be>
+	with ESMTP id S1751532AbbCLBTp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Mar 2015 21:19:45 -0400
+In-Reply-To: <1425985583-26279-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -21,22 +21,38 @@ Hi Geert,
 
 Thank you for the patch.
 
-On Tuesday 10 March 2015 12:06:23 Geert Uytterhoeven wrote:
-> Currently all PFC registers lie in low 32-bit address space. Hence use
-> u32 instead of unsigned long to store PFC register addresses in pinctrl
-> tables.  All calculations of virtual addresses use a phys_addr_t
-> intermediate, so we know where to add an offset if the 32-bit assumption
-> ever becomes false.
-> 
-> While this doesn't impact 32-bit builds, it would save ca. 7 KiB on a
-> 64-bit shmobile_defconfig kernel.
+On Tuesday 10 March 2015 12:06:22 Geert Uytterhoeven wrote:
+> All other loops over sh_pfc_soc_info.data_regs[] use
+> pinmux_data_reg.regwidth as the sentinel, which is safer as zero is
+> never a valid regwidth value (reg could be zero if we start using it to
+> store an offset).
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
+> ---
+> v2:
+>   - New.
+> ---
+>  drivers/pinctrl/sh-pfc/gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+> index aa2fc77a1925e839..5d3a35ce09125a45 100644
+> --- a/drivers/pinctrl/sh-pfc/gpio.c
+> +++ b/drivers/pinctrl/sh-pfc/gpio.c
+> @@ -84,7 +84,7 @@ static void gpio_setup_data_reg(struct sh_pfc_chip *chip,
+> unsigned idx) unsigned int bit;
+>  	unsigned int i;
+> 
+> -	for (i = 0, dreg = pfc->info->data_regs; dreg->reg; ++i, ++dreg) {
+> +	for (i = 0, dreg = pfc->info->data_regs; dreg->reg_width; ++i, ++dreg) {
+>  		for (bit = 0; bit < dreg->reg_width; bit++) {
+>  			if (dreg->enum_ids[bit] == pin->enum_id) {
+>  				gpio_pin->dreg = i;
+
 -- 
 Regards,
 
 Laurent Pinchart
-
