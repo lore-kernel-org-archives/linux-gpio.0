@@ -1,64 +1,84 @@
-From: Olliver Schinagl <oliver@schinagl.nl>
-Subject: Re: [PATCH] gpio: fix constconst in devres
-Date: Thu, 12 Mar 2015 10:00:23 +0100
-Message-ID: <550155A7.8080406@schinagl.nl>
-References: <1426073078-25029-1-git-send-email-linus.walleij@linaro.org> <5364467.g0vMANFLvB@pcimr> <55003990.7010700@schinagl.nl> <6123809.y1TdJ8k4td@pcimr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/4] pinctrl: sh-pfc: Store register/field widths in u8 instead of unsigned long
+Date: Thu, 12 Mar 2015 11:09:13 +0100
+Message-ID: <1426154956-26583-2-git-send-email-geert+renesas@glider.be>
+References: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 7of9.schinagl.nl ([88.159.158.68]:38975 "EHLO 7of9.schinagl.nl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750726AbbCLJA3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 12 Mar 2015 05:00:29 -0400
-In-Reply-To: <6123809.y1TdJ8k4td@pcimr>
+Received: from michel.telenet-ops.be ([195.130.137.88]:53484 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753409AbbCLKJZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2015 06:09:25 -0400
+In-Reply-To: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hey all,
+Register and field widths are in the range 1..32. Storing them in the
+pinctrl data in (arrays of) unsigned long wastes space.
 
-On 11-03-15 15:23, Rojhalat Ibrahim wrote:
-> On Wednesday 11 March 2015 13:48:16 Olliver Schinagl wrote:
->> Hey all,
->>
->> On 11-03-15 13:22, Rojhalat Ibrahim wrote:
->>> On Wednesday 11 March 2015 12:24:38 Linus Walleij wrote:
->>>> Commit 1feb57a245a4910b03202a814ffc51a900bd4aca
->>>> "gpio: add parameter to allow the use named gpios"
->>>> includes a double-conted array. Fix this.
->>>>
->>>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->>>> Cc: Olliver Schinagl <oliver@schinagl.nl>
->>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->>>> ---
->>>>    drivers/gpio/devres.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
->>>> index ec24da2418b3..0bd060bf7151 100644
->>>> --- a/drivers/gpio/devres.c
->>>> +++ b/drivers/gpio/devres.c
->>>> @@ -135,7 +135,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->>>>    					    const char *con_id,
->>>>    					    struct fwnode_handle *child)
->>>>    {
->>>> -	static const char const *suffixes[] = { "gpios", "gpio" };
->>>> +	static const char *suffixes[] = { "gpios", "gpio" };
->>>>    	char prop_name[32]; /* 32 is max size of property name */
->>>>    	struct gpio_desc **dr;
->>>>    	struct gpio_desc *desc;
->>>>
->>> Shouldn't it be const char * const suffixes[], as in a const pointer to const data?
->> I sent a patch to fix this weeks ago I belive.
->>> Wouldn't it be better to add an #include "gpiolib.h" to devres.c and use
->>> the gpio_suffixes array defined in gliolib.h?
->> I did not know we had that, that sounds logical. I can cook up a patch
->> for that to work on both invocations!
->>
-> The gpio_suffixes array in gpiolib.h was added only very recently (after your
-> patch that added the declaration here). So you couldn't have known.
-Ah, fair enough. I'll rebase and make a patch then for it :)
->
+This decreases the size of a (32-bit) shmobile_defconfig kernel
+supporting 7 SoCs by 26460 bytes.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v3:
+  - No changes,
+
+v2:
+  - Add Acked-by.
+---
+ drivers/pinctrl/sh-pfc/core.c   |  2 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 895a41e2f30aefc8..5591baf9738b5de9 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -209,7 +209,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
+ 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
+ 
+ 	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %ld, "
+-		"r_width = %ld, f_width = %ld\n",
++		"r_width = %u, f_width = %u\n",
+ 		crp->reg, value, field, crp->reg_width, crp->field_width);
+ 
+ 	mask = ~(mask << pos);
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index ed5cf4192fa1a2d0..6aeec8152ea674cf 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -69,9 +69,10 @@ struct pinmux_func {
+ };
+ 
+ struct pinmux_cfg_reg {
+-	unsigned long reg, reg_width, field_width;
++	unsigned long reg;
++	u8 reg_width, field_width;
+ 	const u16 *enum_ids;
+-	const unsigned long *var_field_width;
++	const u8 *var_field_width;
+ };
+ 
+ #define PINMUX_CFG_REG(name, r, r_width, f_width) \
+@@ -80,12 +81,13 @@ struct pinmux_cfg_reg {
+ 
+ #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+ 	.reg = r, .reg_width = r_width,	\
+-	.var_field_width = (const unsigned long [r_width]) \
++	.var_field_width = (const u8 [r_width]) \
+ 		{ var_fw0, var_fwn, 0 }, \
+ 	.enum_ids = (const u16 [])
+ 
+ struct pinmux_data_reg {
+-	unsigned long reg, reg_width;
++	unsigned long reg;
++	u8 reg_width;
+ 	const u16 *enum_ids;
+ };
+ 
+-- 
+1.9.1
 
