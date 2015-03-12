@@ -1,146 +1,101 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 4/4] pinctrl: sh-pfc: Use u32 to store register addresses
-Date: Thu, 12 Mar 2015 11:09:16 +0100
-Message-ID: <1426154956-26583-5-git-send-email-geert+renesas@glider.be>
-References: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
+From: Sonic Zhang <sonic.adi@gmail.com>
+Subject: [PATCH] pinmux: allow exlusive pin allocation among GPIO and peripheral funtions via flag strict in struct pinctrl_desc
+Date: Thu, 12 Mar 2015 17:56:43 +0800
+Message-ID: <1426154203-11551-1-git-send-email-sonic.adi@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:51675 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753514AbbCLKJZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Mar 2015 06:09:25 -0400
-In-Reply-To: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-by2on0097.outbound.protection.outlook.com ([207.46.100.97]:48128
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751267AbbCLKbW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 Mar 2015 06:31:22 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Steven Miao <realmz6@gmail.com>, linux-gpio@vger.kernel.org
+Cc: adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
 
-Currently all PFC registers lie in low 32-bit address space. Hence use
-u32 instead of unsigned long to store PFC register addresses in pinctrl
-tables.  All calculations of virtual addresses use a phys_addr_t
-intermediate, so we know where to add an offset if the 32-bit assumption
-ever becomes false.
+From: Sonic Zhang <sonic.zhang@analog.com>
 
-While this doesn't impact 32-bit builds, it would save ca. 7 KiB on a
-64-bit shmobile_defconfig kernel.
+The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
+for both GPIO and peripheral function. So, add flag strict in struct pinctrl
+to check both gpio_owner and mux_owner before approving the pin request.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
 ---
-v3:
-  - Add Acked-by,
+ drivers/pinctrl/pinctrl-adi2.c  |    1 +
+ drivers/pinctrl/pinmux.c        |   29 +++++++++++++++--------------
+ include/linux/pinctrl/pinctrl.h |    1 +
+ 3 files changed, 17 insertions(+), 14 deletions(-)
 
-v2:
-  - New.
----
- drivers/pinctrl/sh-pfc/core.c   |  6 +++---
- drivers/pinctrl/sh-pfc/gpio.c   | 12 ++++++++----
- drivers/pinctrl/sh-pfc/sh_pfc.h |  6 +++---
- 3 files changed, 14 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index c33e2474a8676cbc..1b6dc69229156755 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -92,10 +92,10 @@ static int sh_pfc_map_resources(struct sh_pfc *pfc,
- 	return 0;
- }
- 
--static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc,
--					 unsigned long address)
-+static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 reg)
- {
- 	struct sh_pfc_window *window;
-+	phys_addr_t address = reg;
- 	unsigned int i;
- 
- 	/* scan through physical windows and convert address */
-@@ -208,7 +208,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 
- 	sh_pfc_config_reg_helper(pfc, crp, field, &mapped_reg, &mask, &pos);
- 
--	dev_dbg(pfc->dev, "write_reg addr = %lx, value = 0x%x, field = %u, "
-+	dev_dbg(pfc->dev, "write_reg addr = %x, value = 0x%x, field = %u, "
- 		"r_width = %u, f_width = %u\n",
- 		crp->reg, value, field, crp->reg_width, crp->field_width);
- 
-diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 5d3a35ce09125a45..ba353735ecf2be9a 100644
---- a/drivers/pinctrl/sh-pfc/gpio.c
-+++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -62,7 +62,8 @@ static void gpio_get_data_reg(struct sh_pfc_chip *chip, unsigned int offset,
- static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
- 			      const struct pinmux_data_reg *dreg)
- {
--	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
-+	phys_addr_t address = dreg->reg;
-+	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
- 
- 	return sh_pfc_read_raw_reg(mem, dreg->reg_width);
- }
-@@ -70,7 +71,8 @@ static u32 gpio_read_data_reg(struct sh_pfc_chip *chip,
- static void gpio_write_data_reg(struct sh_pfc_chip *chip,
- 				const struct pinmux_data_reg *dreg, u32 value)
- {
--	void __iomem *mem = dreg->reg - chip->mem->phys + chip->mem->virt;
-+	phys_addr_t address = dreg->reg;
-+	void __iomem *mem = address - chip->mem->phys + chip->mem->virt;
- 
- 	sh_pfc_write_raw_reg(mem, dreg->reg_width, value);
- }
-@@ -340,6 +342,7 @@ sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
- int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
- {
- 	struct sh_pfc_chip *chip;
-+	phys_addr_t address;
- 	unsigned int i;
- 	int ret;
- 
-@@ -351,11 +354,12 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
- 	 * that covers the data registers. In that case don't try to handle
- 	 * GPIOs.
- 	 */
-+	address = pfc->info->data_regs[0].reg;
- 	for (i = 0; i < pfc->num_windows; ++i) {
- 		struct sh_pfc_window *window = &pfc->windows[i];
- 
--		if (pfc->info->data_regs[0].reg >= window->phys &&
--		    pfc->info->data_regs[0].reg < window->phys + window->size)
-+		if (address >= window->phys &&
-+		    address < window->phys + window->size)
- 			break;
- 	}
- 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 6aeec8152ea674cf..c7508d5f688613b2 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -69,7 +69,7 @@ struct pinmux_func {
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index 8434439..fbd4926 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -710,6 +710,7 @@ static struct pinctrl_desc adi_pinmux_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pctlops = &adi_pctrl_ops,
+ 	.pmxops = &adi_pinmux_ops,
++	.strict = true,
+ 	.owner = THIS_MODULE,
  };
  
- struct pinmux_cfg_reg {
--	unsigned long reg;
-+	u32 reg;
- 	u8 reg_width, field_width;
- 	const u16 *enum_ids;
- 	const u8 *var_field_width;
-@@ -86,7 +86,7 @@ struct pinmux_cfg_reg {
- 	.enum_ids = (const u16 [])
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index b874458..dfa2b42 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -99,24 +99,25 @@ static int pin_request(struct pinctrl_dev *pctldev,
+ 	dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
+ 		pin, desc->name, owner);
  
- struct pinmux_data_reg {
--	unsigned long reg;
-+	u32 reg;
- 	u8 reg_width;
- 	const u16 *enum_ids;
- };
-@@ -150,7 +150,7 @@ struct sh_pfc_soc_info {
- 	const struct pinmux_irq *gpio_irq;
- 	unsigned int gpio_irq_size;
- 
--	unsigned long unlock_reg;
-+	u32 unlock_reg;
- };
- 
- /* -----------------------------------------------------------------------------
++	if ((gpio_range || pctldev->desc->strict) && desc->gpio_owner) {
++		dev_err(pctldev->dev,
++			"pin %s already requested by %s; cannot claim for %s\n",
++			desc->name, desc->gpio_owner, owner);
++		goto out;
++	}
++
++	if ((!gpio_range || pctldev->desc->strict) &&
++	    desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
++		dev_err(pctldev->dev,
++			"pin %s already requested by %s; cannot claim for %s\n",
++			desc->name, desc->mux_owner, owner);
++		goto out;
++	}
++
+ 	if (gpio_range) {
+ 		/* There's no need to support multiple GPIO requests */
+-		if (desc->gpio_owner) {
+-			dev_err(pctldev->dev,
+-				"pin %s already requested by %s; cannot claim for %s\n",
+-				desc->name, desc->gpio_owner, owner);
+-			goto out;
+-		}
+-
+ 		desc->gpio_owner = owner;
+ 	} else {
+-		if (desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
+-			dev_err(pctldev->dev,
+-				"pin %s already requested by %s; cannot claim for %s\n",
+-				desc->name, desc->mux_owner, owner);
+-			goto out;
+-		}
+-
+ 		desc->mux_usecount++;
+ 		if (desc->mux_usecount > 1)
+ 			return 0;
+diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+index 66e4697..ca6c99c0 100644
+--- a/include/linux/pinctrl/pinctrl.h
++++ b/include/linux/pinctrl/pinctrl.h
+@@ -132,6 +132,7 @@ struct pinctrl_desc {
+ 	const struct pinctrl_ops *pctlops;
+ 	const struct pinmux_ops *pmxops;
+ 	const struct pinconf_ops *confops;
++	bool strict;
+ 	struct module *owner;
+ #ifdef CONFIG_GENERIC_PINCONF
+ 	unsigned int num_custom_params;
 -- 
-1.9.1
+1.7.9.5
 
