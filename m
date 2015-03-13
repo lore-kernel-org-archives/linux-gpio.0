@@ -1,185 +1,192 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3  06/15] drivers: reset: Add STM32 reset driver
-Date: Fri, 13 Mar 2015 09:11:02 +0900
-Message-ID: <55022B16.7070408@samsung.com>
-References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
- <1426197361-19290-7-git-send-email-maxime.coquelin@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1426197361-19290-7-git-send-email-maxime.coquelin@st.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, stefan@agner.ch, pmeerw@pmeerw.net, pebolle@tiscali.nl, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.>
+From: Huacai Chen <chenhc@lemote.com>
+Subject: [PATCH V8 3/8] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Fri, 13 Mar 2015 10:26:33 +0800
+Message-ID: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtpbgbr2.qq.com ([54.207.22.56]:51217 "EHLO smtpbgbr2.qq.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752465AbbCMC2G (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 Mar 2015 22:28:06 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, linux-gpio@vger.kernel.org, Huacai Chen <chenhc@lemote.com>
 
-Hi Maxime,
+This cleanup is prepare to move the driver to drivers/gpio. Custom
+definitions of gpio_get_value()/gpio_set_value() are dropped.
 
-On 03/13/2015 06:55 AM, Maxime Coquelin wrote:
-> From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> 
-> The STM32 MCUs family IP can be reset by accessing some shared registers.
-> 
-> The specificity is that some reset lines are used by the timers.
-> At timer initialization time, the timer has to be reset, that's why
-> we cannot use a regular driver.
-> 
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> ---
->  drivers/reset/Makefile      |   1 +
->  drivers/reset/reset-stm32.c | 125 ++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 drivers/reset/reset-stm32.c
-> 
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 157d421..aed12d1 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -1,5 +1,6 @@
->  obj-$(CONFIG_RESET_CONTROLLER) += core.o
->  obj-$(CONFIG_ARCH_SOCFPGA) += reset-socfpga.o
->  obj-$(CONFIG_ARCH_BERLIN) += reset-berlin.o
-> +obj-$(CONFIG_ARCH_STM32) += reset-stm32.o
->  obj-$(CONFIG_ARCH_SUNXI) += reset-sunxi.o
->  obj-$(CONFIG_ARCH_STI) += sti/
-> diff --git a/drivers/reset/reset-stm32.c b/drivers/reset/reset-stm32.c
-> new file mode 100644
-> index 0000000..0d389b1
-> --- /dev/null
-> +++ b/drivers/reset/reset-stm32.c
-> @@ -0,0 +1,125 @@
-> +/*
-> + * Copyright (C) Maxime Coquelin 2015
-> + * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> + * License terms:  GNU General Public License (GPL), version 2
-> + *
-> + * Heavily based on sunxi driver from Maxime Ripard.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-> +
-> +struct stm32_reset_data {
-> +	spinlock_t			lock;
-> +	void __iomem			*membase;
-> +	struct reset_controller_dev	rcdev;
-> +};
-> +
-> +static int stm32_reset_assert(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	struct stm32_reset_data *data = container_of(rcdev,
-> +						     struct stm32_reset_data,
-> +						     rcdev);
-> +	int bank = id / BITS_PER_LONG;
-> +	int offset = id % BITS_PER_LONG;
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	spin_lock_irqsave(&data->lock, flags);
-> +
-> +	reg = readl_relaxed(data->membase + (bank * 4));
-> +	writel_relaxed(reg | BIT(offset), data->membase + (bank * 4));
-> +
-> +	spin_unlock_irqrestore(&data->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stm32_reset_deassert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	struct stm32_reset_data *data = container_of(rcdev,
-> +						     struct stm32_reset_data,
-> +						     rcdev);
-> +	int bank = id / BITS_PER_LONG;
-> +	int offset = id % BITS_PER_LONG;
-> +	unsigned long flags;
-> +	u32 reg;
-> +
-> +	spin_lock_irqsave(&data->lock, flags);
-> +
-> +	reg = readl_relaxed(data->membase + (bank * 4));
-> +	writel_relaxed(reg & ~BIT(offset), data->membase + (bank * 4));
-> +
-> +	spin_unlock_irqrestore(&data->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct reset_control_ops stm32_reset_ops = {
-> +	.assert		= stm32_reset_assert,
-> +	.deassert	= stm32_reset_deassert,
-> +};
-> +
-> +static const struct of_device_id stm32_reset_dt_ids[] = {
-> +	 { .compatible = "st,stm32-rcc", },
-> +	 { /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, sstm32_reset_dt_ids);
-> +
-> +static int stm32_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct stm32_reset_data *data;
-> +	struct resource *res;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	data->membase = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(data->membase))
-> +		return PTR_ERR(data->membase);
-> +
-> +	spin_lock_init(&data->lock);
-> +
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.nr_resets = resource_size(res) * 8;
-> +	data->rcdev.ops = &stm32_reset_ops;
-> +	data->rcdev.of_node = pdev->dev.of_node;
-> +
-> +	return reset_controller_register(&data->rcdev);
-> +}
-> +
-> +static int stm32_reset_remove(struct platform_device *pdev)
-> +{
-> +	struct stm32_reset_data *data = platform_get_drvdata(pdev);
-> +
-> +	reset_controller_unregister(&data->rcdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver stm32_reset_driver = {
-> +	.probe	= stm32_reset_probe,
-> +	.remove	= stm32_reset_remove,
-> +	.driver = {
-> +		.name		= "stm32-rcc-reset",
-> +		.of_match_table	= stm32_reset_dt_ids,
-> +	},
-> +};
-> +module_platform_driver(stm32_reset_driver);
-> +
-> +MODULE_AUTHOR("Maxime Coquelin <maxime.coquelin@gmail.com>");
-> +MODULE_DESCRIPTION("STM32 MCUs Reset Controller Driver");
-> +MODULE_LICENSE("GPL");
-> +
-> 
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+---
+ arch/mips/include/asm/mach-loongson/gpio.h |   15 +++---
+ arch/mips/loongson/common/gpio.c           |   80 ++++++++--------------------
+ 2 files changed, 31 insertions(+), 64 deletions(-)
 
-Last blank line is un-necessary. When I applied this patch for test,
-"new blank line at EOF" happen.
+diff --git a/arch/mips/include/asm/mach-loongson/gpio.h b/arch/mips/include/asm/mach-loongson/gpio.h
+index 211a7b7..b3b2169 100644
+--- a/arch/mips/include/asm/mach-loongson/gpio.h
++++ b/arch/mips/include/asm/mach-loongson/gpio.h
+@@ -1,8 +1,9 @@
+ /*
+- * STLS2F GPIO Support
++ * Loongson GPIO Support
+  *
+  * Copyright (c) 2008  Richard Liu, STMicroelectronics <richard.liu@st.com>
+  * Copyright (c) 2008-2010  Arnaud Patard <apatard@mandriva.com>
++ * Copyright (c) 2014  Huacai Chen <chenhc@lemote.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -10,14 +11,14 @@
+  * (at your option) any later version.
+  */
+ 
+-#ifndef __STLS2F_GPIO_H
+-#define __STLS2F_GPIO_H
++#ifndef __LOONGSON_GPIO_H
++#define __LOONGSON_GPIO_H
+ 
+ #include <asm-generic/gpio.h>
+ 
+-extern void gpio_set_value(unsigned gpio, int value);
+-extern int gpio_get_value(unsigned gpio);
+-extern int gpio_cansleep(unsigned gpio);
++#define gpio_get_value __gpio_get_value
++#define gpio_set_value __gpio_set_value
++#define gpio_cansleep __gpio_cansleep
+ 
+ /* The chip can do interrupt
+  * but it has not been tested and doc not clear
+@@ -32,4 +33,4 @@ static inline int irq_to_gpio(int gpio)
+ 	return -EINVAL;
+ }
+ 
+-#endif				/* __STLS2F_GPIO_H */
++#endif	/* __LOONGSON_GPIO_H */
+diff --git a/arch/mips/loongson/common/gpio.c b/arch/mips/loongson/common/gpio.c
+index 29dbaa2..b4e69e0 100644
+--- a/arch/mips/loongson/common/gpio.c
++++ b/arch/mips/loongson/common/gpio.c
+@@ -24,63 +24,11 @@
+ 
+ static DEFINE_SPINLOCK(gpio_lock);
+ 
+-int gpio_get_value(unsigned gpio)
+-{
+-	u32 val;
+-	u32 mask;
+-
+-	if (gpio >= STLS2F_N_GPIO)
+-		return __gpio_get_value(gpio);
+-
+-	mask = 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
+-	spin_lock(&gpio_lock);
+-	val = LOONGSON_GPIODATA;
+-	spin_unlock(&gpio_lock);
+-
+-	return (val & mask) != 0;
+-}
+-EXPORT_SYMBOL(gpio_get_value);
+-
+-void gpio_set_value(unsigned gpio, int state)
+-{
+-	u32 val;
+-	u32 mask;
+-
+-	if (gpio >= STLS2F_N_GPIO) {
+-		__gpio_set_value(gpio, state);
+-		return ;
+-	}
+-
+-	mask = 1 << gpio;
+-
+-	spin_lock(&gpio_lock);
+-	val = LOONGSON_GPIODATA;
+-	if (state)
+-		val |= mask;
+-	else
+-		val &= (~mask);
+-	LOONGSON_GPIODATA = val;
+-	spin_unlock(&gpio_lock);
+-}
+-EXPORT_SYMBOL(gpio_set_value);
+-
+-int gpio_cansleep(unsigned gpio)
+-{
+-	if (gpio < STLS2F_N_GPIO)
+-		return 0;
+-	else
+-		return __gpio_cansleep(gpio);
+-}
+-EXPORT_SYMBOL(gpio_cansleep);
+-
+ static int ls2f_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	u32 temp;
+ 	u32 mask;
+ 
+-	if (gpio >= STLS2F_N_GPIO)
+-		return -EINVAL;
+-
+ 	spin_lock(&gpio_lock);
+ 	mask = 1 << gpio;
+ 	temp = LOONGSON_GPIOIE;
+@@ -97,9 +45,6 @@ static int ls2f_gpio_direction_output(struct gpio_chip *chip,
+ 	u32 temp;
+ 	u32 mask;
+ 
+-	if (gpio >= STLS2F_N_GPIO)
+-		return -EINVAL;
+-
+ 	gpio_set_value(gpio, level);
+ 	spin_lock(&gpio_lock);
+ 	mask = 1 << gpio;
+@@ -113,13 +58,33 @@ static int ls2f_gpio_direction_output(struct gpio_chip *chip,
+ 
+ static int ls2f_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+ {
+-	return gpio_get_value(gpio);
++	u32 val;
++	u32 mask;
++
++	mask = 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
++	spin_lock(&gpio_lock);
++	val = LOONGSON_GPIODATA;
++	spin_unlock(&gpio_lock);
++
++	return (val & mask) != 0;
+ }
+ 
+ static void ls2f_gpio_set_value(struct gpio_chip *chip,
+ 		unsigned gpio, int value)
+ {
+-	gpio_set_value(gpio, value);
++	u32 val;
++	u32 mask;
++
++	mask = 1 << gpio;
++
++	spin_lock(&gpio_lock);
++	val = LOONGSON_GPIODATA;
++	if (value)
++		val |= mask;
++	else
++		val &= (~mask);
++	LOONGSON_GPIODATA = val;
++	spin_unlock(&gpio_lock);
+ }
+ 
+ static struct gpio_chip ls2f_chip = {
+@@ -130,6 +95,7 @@ static struct gpio_chip ls2f_chip = {
+ 	.set			= ls2f_gpio_set_value,
+ 	.base			= 0,
+ 	.ngpio			= STLS2F_N_GPIO,
++	.can_sleep		= false,
+ };
+ 
+ static int __init ls2f_gpio_setup(void)
+-- 
+1.7.7.3
 
-Thanks,
-Chanwoo Choi
+
 
 
