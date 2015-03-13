@@ -1,74 +1,84 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: [PATCH v3] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
-Date: Fri, 13 Mar 2015 22:40:52 +0800
-Message-ID: <1426257652-16779-1-git-send-email-yingjoe.chen@mediatek.com>
-References: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: mtk-common: Use devm_kcalloc at
+ appropriate places
+Date: Fri, 13 Mar 2015 12:47:55 -0700
+Message-ID: <1426276075.22708.7.camel@mussux00.eus.mediatek.inc>
+References: <1426168353.30920.2.camel@phoenix>
+	 <1426168412.30920.3.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43757 "EHLO
+Received: from mailgw02.mediatek.com ([66.228.70.112]:45567 "EHLO
 	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751863AbbCMOk4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2015 10:40:56 -0400
-In-Reply-To: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+	with ESMTP id S1757107AbbCMTxD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2015 15:53:03 -0400
+In-Reply-To: <1426168412.30920.3.camel@phoenix>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>
-Cc: srv_heupstream@mediatek.com, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-arm-kernel@lists.infradead.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Maoguang Meng <maoguang.meng@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Thu, 2015-03-12 at 21:53 +0800, Axel Lin wrote:
+> Prefer devm_kcalloc over devm_kzalloc with multiply.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index f82f57a..493294c 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1076,16 +1076,14 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+>  	pctl->ngroups = pctl->devdata->npins;
+>  
+>  	/* Allocate groups */
+> -	pctl->groups = devm_kzalloc(&pdev->dev,
+> -				    pctl->ngroups * sizeof(*pctl->groups),
+> -				    GFP_KERNEL);
+> +	pctl->groups = devm_kcalloc(&pdev->dev, pctl->ngroups,
+> +				    sizeof(*pctl->groups), GFP_KERNEL);
+>  	if (!pctl->groups)
+>  		return -ENOMEM;
+>  
+>  	/* We assume that one pin is one group, use pin name as group name. */
+> -	pctl->grp_names = devm_kzalloc(&pdev->dev,
+> -				    pctl->ngroups * sizeof(*pctl->grp_names),
+> -				    GFP_KERNEL);
+> +	pctl->grp_names = devm_kcalloc(&pdev->dev, pctl->ngroups,
+> +				       sizeof(*pctl->grp_names), GFP_KERNEL);
+>  	if (!pctl->grp_names)
+>  		return -ENOMEM;
+>  
+> @@ -1152,8 +1150,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  		return -EINVAL;
+>  	}
+>  
+> -	pins = devm_kzalloc(&pdev->dev,
+> -			    pctl->devdata->npins * sizeof(*pins),
+> +	pins = devm_kcalloc(&pdev->dev, pctl->devdata->npins, sizeof(*pins),
+>  			    GFP_KERNEL);
+>  	if (!pins)
+>  		return -ENOMEM;
+> @@ -1211,8 +1208,8 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  		goto chip_error;
+>  	}
+>  
+> -	pctl->eint_dual_edges = devm_kzalloc(&pdev->dev,
+> -			sizeof(int) * pctl->devdata->ap_num, GFP_KERNEL);
+> +	pctl->eint_dual_edges = devm_kcalloc(&pdev->dev, pctl->devdata->ap_num,
+> +					     sizeof(int), GFP_KERNEL);
+>  	if (!pctl->eint_dual_edges) {
+>  		ret = -ENOMEM;
+>  		goto chip_error;
 
-Yet another version. Changed based on Arnd's suggestion to make config
-options for PINCTRL_MT8135 & PINCTRL_MT8173 more consist. This is based
-on mtk-staging in your tree. If you think this is OK, please applied or
-squash this into previous change. Thanks.
+Hi Axel,
 
-Old patch can be found at:
-http://lists.infradead.org/pipermail/linux-mediatek/2015-March/000057.html
+Thanks a lot.
 
-Joe.C
+Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-8<-------------------------------------------------------
-ARM64 maintainer doesn't want to add MACH_* for each SoC.
-Adjust mt8173 pinctrl kconfig entry so user can manually select it.
-
-Also make PINCTRL_MT8135 selectable when COMPILE_TEST is enabled.
-
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
----
- drivers/pinctrl/mediatek/Kconfig | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 49b8649..5983cf5 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -1,4 +1,4 @@
--if ARCH_MEDIATEK
-+if ARCH_MEDIATEK || COMPILE_TEST
- 
- config PINCTRL_MTK_COMMON
- 	bool
-@@ -7,12 +7,17 @@ config PINCTRL_MTK_COMMON
- 	select GPIOLIB
- 	select OF_GPIO
- 
-+# For ARMv7 SoCs
- config PINCTRL_MT8135
--	def_bool MACH_MT8135
-+	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
-+	default MACH_MT8135
- 	select PINCTRL_MTK_COMMON
- 
-+# For ARMv8 SoCs
- config PINCTRL_MT8173
--	def_bool MACH_MT8173
-+	bool "Mediatek MT8173 pin control"
-+	depends on ARM64 || COMPILE_TEST
-+	default ARM64 && ARCH_MEDIATEK
- 	select PINCTRL_MTK_COMMON
- 
- endif
--- 
-1.8.1.1.dirty
+Hongzhou
 
