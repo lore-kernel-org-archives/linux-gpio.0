@@ -1,71 +1,100 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] pinctrl: mediatek: mt8135/mt8173: Constify of_device_id
- table
-Date: Fri, 13 Mar 2015 14:44:43 +0800
-Message-ID: <1426229083.15007.1.camel@phoenix>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
+Date: Fri, 13 Mar 2015 14:46:35 +0800
+Message-ID: <1426229195.16768.278.camel@mtksdaap41>
+References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
+	 <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+	 <3011616.9oVy3HN0Pj@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:35243 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbbCMGou (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2015 02:44:50 -0400
-Received: by pdbfp1 with SMTP id fp1so26531785pdb.2
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Mar 2015 23:44:49 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3011616.9oVy3HN0Pj@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-
-Also make the table a bit compact.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8135.c | 8 +++-----
- drivers/pinctrl/mediatek/pinctrl-mt8173.c | 8 +++-----
- 2 files changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8135.c b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-index 1296d6d..b7e91c1 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-@@ -347,11 +347,9 @@ static int mt8135_pinctrl_probe(struct platform_device *pdev)
- 	return mtk_pctrl_init(pdev, &mt8135_pinctrl_data);
- }
- 
--static struct of_device_id mt8135_pctrl_match[] = {
--	{
--		.compatible = "mediatek,mt8135-pinctrl",
--	}, {
--	}
-+static const struct of_device_id mt8135_pctrl_match[] = {
-+	{ .compatible = "mediatek,mt8135-pinctrl", },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, mt8135_pctrl_match);
- 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-index f07cafb..46e4f6e 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-@@ -427,11 +427,9 @@ static int mt8173_pinctrl_probe(struct platform_device *pdev)
- 	return mtk_pctrl_init(pdev, &mt8173_pinctrl_data);
- }
- 
--static struct of_device_id mt8173_pctrl_match[] = {
--	{
--		.compatible = "mediatek,mt8173-pinctrl",
--	}, {
--	}
-+static const struct of_device_id mt8173_pctrl_match[] = {
-+	{ .compatible = "mediatek,mt8173-pinctrl", },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, mt8173_pctrl_match);
- 
--- 
-1.9.1
 
 
 
+Hi Arnd,
+
+Thanks for your suggestion.
+
+On Mon, 2015-03-09 at 21:36 +0100, Arnd Bergmann wrote:
+> On Friday 06 March 2015 14:24:51 Yingjoe Chen wrote:
+> > Linus,
+> > This one make PINCTRL_MT8173 option user selectable and is based on
+> > mtk-staging in your tree. If you think this is OK, please applied or
+> > squash this into previous change. Thanks.
+> 
+> The patch looks good in principle, just two small comments
+> 
+> > --------------------------------------------------
+> 
+> To simplify the job for Linus here, please start the line above
+> with 
+> 
+> 8<------
+> 
+> (a stylized pair if scissors)
+> 
+> which is the magic that git-am looks for.
+
+Will do next time.
+
+
+<...>
+> You have slightly different logic here: PINCTRL_MT8135 will
+> always be enabled when COMPILE_TEST is on, while PINCTRL_MT8173
+> is enabled by default in this case, but can be turned off.
+> Neither of them is what you really want, which would be
+> 
+> config PINCTRL_MT8135
+> 	bool "Mediatek MT8135 pin control"
+> 	depends on MACH_MT8135 || COMPILE_TEST
+> 	default MACH_MT8135
+> 	select PINCTRL_MTK_COMMON
+> 
+> config PINCTRL_MT8135
+> 	bool "Mediatek MT8173 pin control"
+> 	depends on MACH_MT8173 || COMPILE_TEST
+> 	default MACH_MT8173
+> 	select PINCTRL_MTK_COMMON
+> 
+> This way, the options are only enabled by default if MACH_MT8135
+> or MACH_MT8173 are enabled, but you are free to enable or disable
+> them when COMPILE_TEST is set. Alternatively, you can do
+> 
+> config PINCTRL_MT8135
+> 	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+> 	default MACH_MT8135
+> 	select PINCTRL_MTK_COMMON
+> 
+> config PINCTRL_MT8135
+> 	bool "Mediatek MT8173 pin control" if COMPILE_TEST && !MACH_MT8173
+> 	default MACH_MT8173
+> 	select PINCTRL_MTK_COMMON
+> 
+> which will let you turn on the options if COMPILE_TEST is set, but not
+> let you turn them off when the drivers are required.
+
+Yes, this is preferred. Because we don't have MACH_MT8173, so it is
+possible a ARM64 + ARCH_MEDIATEK system doesn't need PINCTRL_MT8173, so
+we still need 2 slightly different logic. Is it OK if I do this?
+Also add some comments so future SoCs can follow the correct template.
+
+# For ARMv7 SoCs
+config PINCTRL_MT8135
+        bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+        default MACH_MT8135
+        select PINCTRL_MTK_COMMON
+
+# For ARMv8 SoCs
+config PINCTRL_MT8173
+        bool "Mediatek MT8173 pin control"
+        depends on ARM64 || COMPILE_TEST
+        default ARM64
+        select PINCTRL_MTK_COMMON
+
+Joe.C
