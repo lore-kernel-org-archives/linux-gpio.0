@@ -1,100 +1,77 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
-Date: Fri, 13 Mar 2015 14:46:35 +0800
-Message-ID: <1426229195.16768.278.camel@mtksdaap41>
-References: <1425623091-30478-1-git-send-email-yingjoe.chen@mediatek.com>
-	 <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
-	 <3011616.9oVy3HN0Pj@wuerfel>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: pinctrl: mediatek: emulate GPIO interrupt on both-edges
+Date: Fri, 13 Mar 2015 11:38:24 +0300
+Message-ID: <20150313083824.GA5750@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3011616.9oVy3HN0Pj@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, linux-mediatek@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:49077 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751247AbbCMIil (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Mar 2015 04:38:41 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: yingjoe.chen@mediatek.com
+Cc: linux-gpio@vger.kernel.org
 
+Hello Yingjoe Chen,
 
+The patch c3a785c1b041: "pinctrl: mediatek: emulate GPIO interrupt on
+both-edges" from Jan 27, 2015, leads to the following static checker
+warning:
 
-Hi Arnd,
+	drivers/pinctrl/mediatek/pinctrl-mtk-common.c:1252 mtk_pctrl_init()
+	warn: passing devm_ allocated variable to kfree. 'pctl->eint_dual_edges'
 
-Thanks for your suggestion.
+drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+  1213  
+  1214          pctl->eint_dual_edges = devm_kzalloc(&pdev->dev,
+                                        ^^^^^^^^^^^^
+  1215                          sizeof(int) * pctl->devdata->ap_num, GFP_KERNEL);
+  1216          if (!pctl->eint_dual_edges) {
+  1217                  ret = -ENOMEM;
+  1218                  goto chip_error;
+  1219          }
+  1220  
+  1221          irq = irq_of_parse_and_map(np, 0);
+  1222          if (!irq) {
+  1223                  dev_err(&pdev->dev, "couldn't parse and map irq\n");
+  1224                  ret = -EINVAL;
+  1225                  goto free_edges;
+  1226          }
+  1227  
+  1228          pctl->domain = irq_domain_add_linear(np,
+  1229                  pctl->devdata->ap_num, &irq_domain_simple_ops, NULL);
+  1230          if (!pctl->domain) {
+  1231                  dev_err(&pdev->dev, "Couldn't register IRQ domain\n");
+  1232                  ret = -ENOMEM;
+  1233                  goto free_edges;
+  1234          }
+  1235  
+  1236          mtk_eint_init(pctl);
+  1237          for (i = 0; i < pctl->devdata->ap_num; i++) {
+  1238                  int virq = irq_create_mapping(pctl->domain, i);
+  1239  
+  1240                  irq_set_chip_and_handler(virq, &mtk_pinctrl_irq_chip,
+  1241                          handle_level_irq);
+  1242                  irq_set_chip_data(virq, pctl);
+  1243                  set_irq_flags(virq, IRQF_VALID);
+  1244          };
+  1245  
+  1246          irq_set_chained_handler(irq, mtk_eint_irq_handler);
+  1247          irq_set_handler_data(irq, pctl);
+  1248          set_irq_flags(irq, IRQF_VALID);
+  1249          return 0;
+  1250  
+  1251  free_edges:
+  1252          kfree(pctl->eint_dual_edges);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This causes a double free.  You can just leave it out since devm_
+pointers are freed automatically.
 
-On Mon, 2015-03-09 at 21:36 +0100, Arnd Bergmann wrote:
-> On Friday 06 March 2015 14:24:51 Yingjoe Chen wrote:
-> > Linus,
-> > This one make PINCTRL_MT8173 option user selectable and is based on
-> > mtk-staging in your tree. If you think this is OK, please applied or
-> > squash this into previous change. Thanks.
-> 
-> The patch looks good in principle, just two small comments
-> 
-> > --------------------------------------------------
-> 
-> To simplify the job for Linus here, please start the line above
-> with 
-> 
-> 8<------
-> 
-> (a stylized pair if scissors)
-> 
-> which is the magic that git-am looks for.
+  1253  chip_error:
+  1254          gpiochip_remove(pctl->chip);
 
-Will do next time.
-
-
-<...>
-> You have slightly different logic here: PINCTRL_MT8135 will
-> always be enabled when COMPILE_TEST is on, while PINCTRL_MT8173
-> is enabled by default in this case, but can be turned off.
-> Neither of them is what you really want, which would be
-> 
-> config PINCTRL_MT8135
-> 	bool "Mediatek MT8135 pin control"
-> 	depends on MACH_MT8135 || COMPILE_TEST
-> 	default MACH_MT8135
-> 	select PINCTRL_MTK_COMMON
-> 
-> config PINCTRL_MT8135
-> 	bool "Mediatek MT8173 pin control"
-> 	depends on MACH_MT8173 || COMPILE_TEST
-> 	default MACH_MT8173
-> 	select PINCTRL_MTK_COMMON
-> 
-> This way, the options are only enabled by default if MACH_MT8135
-> or MACH_MT8173 are enabled, but you are free to enable or disable
-> them when COMPILE_TEST is set. Alternatively, you can do
-> 
-> config PINCTRL_MT8135
-> 	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
-> 	default MACH_MT8135
-> 	select PINCTRL_MTK_COMMON
-> 
-> config PINCTRL_MT8135
-> 	bool "Mediatek MT8173 pin control" if COMPILE_TEST && !MACH_MT8173
-> 	default MACH_MT8173
-> 	select PINCTRL_MTK_COMMON
-> 
-> which will let you turn on the options if COMPILE_TEST is set, but not
-> let you turn them off when the drivers are required.
-
-Yes, this is preferred. Because we don't have MACH_MT8173, so it is
-possible a ARM64 + ARCH_MEDIATEK system doesn't need PINCTRL_MT8173, so
-we still need 2 slightly different logic. Is it OK if I do this?
-Also add some comments so future SoCs can follow the correct template.
-
-# For ARMv7 SoCs
-config PINCTRL_MT8135
-        bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
-        default MACH_MT8135
-        select PINCTRL_MTK_COMMON
-
-# For ARMv8 SoCs
-config PINCTRL_MT8173
-        bool "Mediatek MT8173 pin control"
-        depends on ARM64 || COMPILE_TEST
-        default ARM64
-        select PINCTRL_MTK_COMMON
-
-Joe.C
+regards,
+dan carpenter
