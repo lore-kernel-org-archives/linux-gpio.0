@@ -1,94 +1,79 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
-Date: Sun, 15 Mar 2015 01:05:52 +0100
-Message-ID: <1426377952-12383-1-git-send-email-stefan@agner.ch>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] pinctrl: dt-binding: fix generic pinmux/pinconf examples
+Date: Sun, 15 Mar 2015 08:55:15 +0200
+Message-ID: <b6effc6c0cb6b9488145b873dc01fcba2a4cd1df.1426402515.git.baruch@tkos.co.il>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from guitar.tcltek.co.il ([192.115.133.116]:56395 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751122AbbCOGzc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 15 Mar 2015 02:55:32 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
 
-Optional fields are set to -1 by various preprocessor macros. Make
-sure the struct fields can actually store them.
+pinconf_generic_dt_node_to_map() scans only subnodes of the pinctrl-0 pahndle,
+not the referenced node itself. Change the example nodes to match.
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
-This lead to a lot of warnings when compiling the Tegra pinctrl drivers
-using LLVM/clang:
+ .../bindings/pinctrl/pinctrl-bindings.txt          | 30 ++++++++++++++--------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-drivers/pinctrl/pinctrl-tegra124.c:2048:2: warning: implicit truncation from
-'int' to bitfield changes value from -1 to 63 [-Wbitfield-constant-conversion]
-        MIPI_PAD_CTRL_PINGROUP(dsi_b,   0x820, 1, CSI, DSI_B)
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/pinctrl/pinctrl-tegra124.c:1807:18: note: expanded from macro
-'MIPI_PAD_CTRL_PINGROUP'
-                .rcv_sel_bit = -1,                                      \
-                               ^~
-
-However, I did not check if this could actually lead to an unintended
-pin configuration...
-
- drivers/pinctrl/pinctrl-tegra.h | 48 ++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
-index 8d94d13..0711ae62 100644
---- a/drivers/pinctrl/pinctrl-tegra.h
-+++ b/drivers/pinctrl/pinctrl-tegra.h
-@@ -135,30 +135,30 @@ struct tegra_pingroup {
- 	s16 pupd_reg;
- 	s16 tri_reg;
- 	s16 drv_reg;
--	u32 mux_bank:2;
--	u32 pupd_bank:2;
--	u32 tri_bank:2;
--	u32 drv_bank:2;
--	u32 mux_bit:6;
--	u32 pupd_bit:6;
--	u32 tri_bit:6;
--	u32 einput_bit:6;
--	u32 odrain_bit:6;
--	u32 lock_bit:6;
--	u32 ioreset_bit:6;
--	u32 rcv_sel_bit:6;
--	u32 hsm_bit:6;
--	u32 schmitt_bit:6;
--	u32 lpmd_bit:6;
--	u32 drvdn_bit:6;
--	u32 drvup_bit:6;
--	u32 slwr_bit:6;
--	u32 slwf_bit:6;
--	u32 drvtype_bit:6;
--	u32 drvdn_width:6;
--	u32 drvup_width:6;
--	u32 slwr_width:6;
--	u32 slwf_width:6;
-+	u8 mux_bank:2;
-+	u8 pupd_bank:2;
-+	u8 tri_bank:2;
-+	u8 drv_bank:2;
-+	s8 mux_bit:6;
-+	s8 pupd_bit:6;
-+	s8 tri_bit:6;
-+	s8 einput_bit:6;
-+	s8 odrain_bit:6;
-+	s8 lock_bit:6;
-+	s8 ioreset_bit:6;
-+	s8 rcv_sel_bit:6;
-+	s8 hsm_bit:6;
-+	s8 schmitt_bit:6;
-+	s8 lpmd_bit:6;
-+	s8 drvdn_bit:6;
-+	s8 drvup_bit:6;
-+	s8 slwr_bit:6;
-+	s8 slwf_bit:6;
-+	s8 drvtype_bit:6;
-+	s8 drvdn_width:6;
-+	s8 drvup_width:6;
-+	s8 slwr_width:6;
-+	s8 slwf_width:6;
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+index 950580c92448..e9ebe5d35835 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -137,12 +137,16 @@ groups			- the list of groups to select with this function
+ Example:
+ 
+ state_0_node_a {
+-	function = "uart0";
+-	groups = "u0rxtx", "u0rtscts";
++	uart0 {
++		function = "uart0";
++		groups = "u0rxtx", "u0rtscts";
++	};
+ };
+ state_1_node_a {
+-	function = "spi0";
+-	groups = "spi0pins";
++	spi0 {
++		function = "spi0";
++		groups = "spi0pins";
++	};
  };
  
- /**
+ == Generic pin configuration node content ==
+@@ -188,16 +192,22 @@ slew-rate		- set the slew rate
+ For example:
+ 
+ state_0_node_a {
+-	pins = "GPIO0_AJ5", "GPIO2_AH4"; /* CTS+RXD */
+-	bias-pull-up;
++	cts_rxd {
++		pins = "GPIO0_AJ5", "GPIO2_AH4"; /* CTS+RXD */
++		bias-pull-up;
++	};
+ };
+ state_1_node_a {
+-	pins = "GPIO1_AJ3", "GPIO3_AH3"; /* RTS+TXD */
+-	output-high;
++	rts_txd {
++		pins = "GPIO1_AJ3", "GPIO3_AH3"; /* RTS+TXD */
++		output-high;
++	};
+ };
+ state_2_node_a {
+-	group = "foo-group";
+-	bias-pull-up;
++	foo {
++		group = "foo-group";
++		bias-pull-up;
++	};
+ };
+ 
+ Some of the generic properties take arguments. For those that do, the
 -- 
-2.3.3
+2.1.4
+
