@@ -1,40 +1,44 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 25/35 linux-next] PCI: constify of_device_id array
-Date: Mon, 16 Mar 2015 23:23:28 +0300
-Message-ID: <55073BC0.3020009@cogentembedded.com>
-References: <1426533469-25458-1-git-send-email-fabf@skynet.be> <1426535685-25996-1-git-send-email-fabf@skynet.be> <1426535685-25996-4-git-send-email-fabf@skynet.be>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
+Date: Mon, 16 Mar 2015 21:30:02 +0100
+Message-ID: <b20f23a75058210e8521f014f130e306@agner.ch>
+References: <1426377952-12383-1-git-send-email-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1426535685-25996-4-git-send-email-fabf@skynet.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Fabian Frederick <fabf@skynet.be>, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Simon Horman <horms@verge.net.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-sh@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: linus.walleij@linaro.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hello.
-
-On 03/16/2015 10:54 PM, Fabian Frederick wrote:
-
-> of_device_id is always used as const.
-> (See driver.of_match_table and open firmware functions)
-
-> Signed-off-by: Fabian Frederick <fabf@skynet.be>
+On 2015-03-15 01:05, Stefan Agner wrote:
+> Optional fields are set to -1 by various preprocessor macros. Make
+> sure the struct fields can actually store them.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->   drivers/gpio/gpio-mpc8xxx.c      | 2 +-
->   drivers/gpio/gpio-octeon.c       | 2 +-
->   drivers/gpio/gpio-tz1090-pdc.c   | 2 +-
->   drivers/gpio/gpio-tz1090.c       | 2 +-
->   drivers/gpio/gpio-zynq.c         | 2 +-
+> This lead to a lot of warnings when compiling the Tegra pinctrl drivers
+> using LLVM/clang:
+> 
+> drivers/pinctrl/pinctrl-tegra124.c:2048:2: warning: implicit truncation from
+> 'int' to bitfield changes value from -1 to 63 [-Wbitfield-constant-conversion]
+>         MIPI_PAD_CTRL_PINGROUP(dsi_b,   0x820, 1, CSI, DSI_B)
+>         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/pinctrl-tegra124.c:1807:18: note: expanded from macro
+> 'MIPI_PAD_CTRL_PINGROUP'
+>                 .rcv_sel_bit = -1,                                      \
+>                                ^~
+> 
+> However, I did not check if this could actually lead to an unintended
+> pin configuration...
 
-    What the GPIO driver changes are doing here, in the PCI patch?
+Stephen, what do you think about this? While I think the patch  is the
+right thing to do, it could actually introduce nasty regressions (stuff
+which was working due to  "accidentally" wrong pin configuration)...
 
->   drivers/pci/host/pci-rcar-gen2.c | 2 +-
->   drivers/pci/host/pcie-xilinx.c   | 2 +-
->   7 files changed, 7 insertions(+), 7 deletions(-)
+I need to admit that I did not actually run a kernel with that patch.
 
-[...]
-
-WBR, Sergei
-
+--
+Stefan
