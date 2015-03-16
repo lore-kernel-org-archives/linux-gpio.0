@@ -1,118 +1,44 @@
-From: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Subject: [PATCH 1/2] pinctrl: dt-binding: document Conexant CX92755 SoC
-Date: Mon, 16 Mar 2015 17:21:44 +0200
-Message-ID: <1e256c7c4e35bb5bed79a2d2f1c8497b3b73ab74.1426519305.git.baruch@tkos.co.il>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Ben Avraham <yba-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>, Mike Green <Mike.Green-AX/FTzQb/nxWk0Htik3J/w@public.gmane.org>, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] pinctrl: tegra: use signed bitfields for optional fields
+Date: Mon, 16 Mar 2015 10:59:44 -0600
+Message-ID: <55070C00.5040804@wwwdotorg.org>
+References: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:48055 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756758AbbCPQ7s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Mar 2015 12:59:48 -0400
+In-Reply-To: <1426377952-12383-1-git-send-email-stefan@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: linus.walleij@linaro.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add pinctrl device tree binding documentation for the General Purpose Pin
-Mapping module of the Conexant CX92755 SoC.
+On 03/14/2015 06:05 PM, Stefan Agner wrote:
+> Optional fields are set to -1 by various preprocessor macros. Make
+> sure the struct fields can actually store them.
 
-Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
----
- .../bindings/pinctrl/cnxt,cx92755-pinctrl.txt      | 86 ++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
+> diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
-new file mode 100644
-index 000000000000..23ce8dc26990
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
-@@ -0,0 +1,86 @@
-+Conexant Digicolor CX92755 General Purpose Pin Mapping
-+
-+This document describes the device tree binding of the pin mapping hardware
-+modules in the Conexant Digicolor CX92755 SoCs. The CX92755 in one of the
-+Digicolor series of SoCs.
-+
-+=== Pin Controller Node ===
-+
-+Required Properties:
-+
-+- compatible: Must be "cnxt,cx92755-pinctrl"
-+- reg: Base address of the General Purpose Pin Mapping register block and the
-+  size of the block.
-+- gpio-controller: Marks the device node as a GPIO controller.
-+- #gpio-cells: Must be <2>. The first cell is the pin number and the
-+  second cell is used to specify flags. See include/dt-bindings/gpio/gpio.h
-+  for possible values.
-+
-+For example, the following is the bare minimum node:
-+
-+	pinctrl: pinctrl@f0000e20 {
-+		compatible = "cnxt,cx92755-pinctrl";
-+		reg = <0xf0000e20 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+As a pin controller device, in addition to the required properties, this node
-+should also contain the pin configuration nodes that client devices reference,
-+if any.
-+
-+For a general description of GPIO bindings, please refer to ../gpio/gpio.txt.
-+
-+=== Pin Configuration Node ===
-+
-+Each pin configuration node is a sub-node of the pin controller node and is a
-+container of an arbitrary number of subnodes, called pin group nodes in this
-+document.
-+
-+Please refer to the pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the definition of a
-+"pin configuration node".
-+
-+=== Pin Group Node ===
-+
-+A pin group node specifies the desired pin mux for an arbitrary number of
-+pins. The name of the pin group node is optional and not used.
-+
-+A pin group node only affects the properties specified in the node, and has no
-+effect on any properties that are omitted.
-+
-+The pin group node accepts a subset of the generic pin config properties. For
-+details generic pin config properties, please refer to pinctrl-bindings.txt
-+and <include/linux/pinctrl/pinconfig-generic.h>.
-+
-+Required Pin Group Node Properties:
-+
-+- pins: Multiple strings. Specifies the name(s) of one or more pins to be
-+  configured by this node. The format of a pin name string is "GP_xy", where x
-+  is an uppercase character from 'A' to 'R', and y is a digit from 0 to 7.
-+- function: String. Specifies the pin mux selection. Values must be one of:
-+  "gpio", "client_a", "client_b", "client_c"
-+
-+Example:
-+	pinctrl: pinctrl@f0000e20 {
-+		compatible = "cnxt,cx92755-pinctrl";
-+		reg = <0xf0000e20 0x100>;
-+
-+		uart0_default: uart0_active {
-+			data_signals {
-+				pins = "GP_O0", "GP_O1";
-+				function = "client_b";
-+			};
-+		};
-+	};
-+
-+	uart0: uart@f0000740 {
-+		compatible = "cnxt,cx92755-usart";
-+		...
-+		pinctrl-0 = <&uart0_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+In the example above, a single pin group configuration node defines the
-+"client select" for the Rx and Tx signals of uart0. The uart0 node references
-+that pin configuration node using the &uart0_default phandle.
--- 
-2.1.4
+> -	u32 mux_bit:6;
+> -	u32 pupd_bit:6;
+> -	u32 tri_bit:6;
+...
+> +	s8 mux_bit:6;
+> +	s8 pupd_bit:6;
+> +	s8 tri_bit:6;
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Could we make these s32s instead? According to the C standard, the type 
+should be a signed or unsigned int, and s32 matches that better than s8 
+for existing Tegra 32-bit platforms. Equally, for bitfields that don't 
+fit into the remaining space within a container (s8 above), 
+implementations are allowed to either span bitfields across multiple 
+containers, or pad the current container and start the bitfield in the 
+next container. Using the larger s32 as the "container" yields less 
+opportunity for potential padding and thus wasting space.
+
+Do you observe any increase in the sizes reported by 
+"${CROSS_COMPILE}size pinctrl-tegra*.o" with this patch?
