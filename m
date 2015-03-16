@@ -1,58 +1,81 @@
-From: Fabian Frederick <fabf@skynet.be>
-Subject: Re: [PATCH 25/35 linux-next] PCI: constify of_device_id array
-Date: Mon, 16 Mar 2015 21:30:32 +0100 (CET)
-Message-ID: <195534809.1144303.1426537832550.open-xchange@webmail.nmp.proximus.be>
-References: <1426533469-25458-1-git-send-email-fabf@skynet.be> <1426535685-25996-1-git-send-email-fabf@skynet.be> <1426535685-25996-4-git-send-email-fabf@skynet.be> <55073BC0.3020009@cogentembedded.com>
-Reply-To: Fabian Frederick <fabf@skynet.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55073BC0.3020009@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-sh@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org, linux-pci@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH v2] pinctrl: tegra: use signed bitfields for optional fields
+Date: Mon, 16 Mar 2015 22:42:34 +0100
+Message-ID: <1426542154-31072-1-git-send-email-stefan@agner.ch>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+Optional fields are set to -1 by various preprocessor macros. Make
+sure the fields can actually store them.
 
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+---
+With that, sizes are back to normal:
 
-> On 16 March 2015 at 21:23 Sergei Shtylyov <sergei.shtylyov@cogentembe=
-dded.com>
-> wrote:
->
->
-> Hello.
->
-> On 03/16/2015 10:54 PM, Fabian Frederick wrote:
->
-> > of_device_id is always used as const.
-> > (See driver.of_match_table and open firmware functions)
->
-> > Signed-off-by: Fabian Frederick <fabf@skynet.be>
-> > ---
-> >=C2=A0 =C2=A0drivers/gpio/gpio-mpc8xxx.c=C2=A0 =C2=A0 =C2=A0 | 2 +-
-> >=C2=A0 =C2=A0drivers/gpio/gpio-octeon.c=C2=A0 =C2=A0 =C2=A0 =C2=A0| =
-2 +-
-> >=C2=A0 =C2=A0drivers/gpio/gpio-tz1090-pdc.c=C2=A0 =C2=A0| 2 +-
-> >=C2=A0 =C2=A0drivers/gpio/gpio-tz1090.c=C2=A0 =C2=A0 =C2=A0 =C2=A0| =
-2 +-
-> >=C2=A0 =C2=A0drivers/gpio/gpio-zynq.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0| 2 +-
->
->=C2=A0 =C2=A0 =C2=A0What the GPIO driver changes are doing here, in th=
-e PCI patch?
-Nice catch :) I'll split that patch and only send those to avoid too mu=
-ch noise.
+   text	   data	    bss	    dec	    hex	filename
+   5406	    180	      1	   5587	   15d3	drivers/pinctrl/pinctrl-tegra-xusb.o
+   5256	     64	      0	   5320	   14c8	drivers/pinctrl/pinctrl-tegra.o
+  18072	   1032	      0	  19104	   4aa0	drivers/pinctrl/pinctrl-tegra114.o
+  19214	   1128	      0	  20342	   4f76	drivers/pinctrl/pinctrl-tegra124.o
+  18352	    876	      0	  19228	   4b1c	drivers/pinctrl/pinctrl-tegra20.o
+  24621	   1068	      0	  25689	   6459	drivers/pinctrl/pinctrl-tegra30.o
 
-Thanks,
-=46abian
+ drivers/pinctrl/pinctrl-tegra.h | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
->
-> >=C2=A0 =C2=A0drivers/pci/host/pci-rcar-gen2.c | 2 +-
-> >=C2=A0 =C2=A0drivers/pci/host/pcie-xilinx.c=C2=A0 =C2=A0| 2 +-
-> >=C2=A0 =C2=A07 files changed, 7 insertions(+), 7 deletions(-)
->
-> [...]
->
-> WBR, Sergei
->
+diff --git a/drivers/pinctrl/pinctrl-tegra.h b/drivers/pinctrl/pinctrl-tegra.h
+index 8d94d13..b8a82a3 100644
+--- a/drivers/pinctrl/pinctrl-tegra.h
++++ b/drivers/pinctrl/pinctrl-tegra.h
+@@ -139,26 +139,26 @@ struct tegra_pingroup {
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+ 	u32 drv_bank:2;
+-	u32 mux_bit:6;
+-	u32 pupd_bit:6;
+-	u32 tri_bit:6;
+-	u32 einput_bit:6;
+-	u32 odrain_bit:6;
+-	u32 lock_bit:6;
+-	u32 ioreset_bit:6;
+-	u32 rcv_sel_bit:6;
+-	u32 hsm_bit:6;
+-	u32 schmitt_bit:6;
+-	u32 lpmd_bit:6;
+-	u32 drvdn_bit:6;
+-	u32 drvup_bit:6;
+-	u32 slwr_bit:6;
+-	u32 slwf_bit:6;
+-	u32 drvtype_bit:6;
+-	u32 drvdn_width:6;
+-	u32 drvup_width:6;
+-	u32 slwr_width:6;
+-	u32 slwf_width:6;
++	s32 mux_bit:6;
++	s32 pupd_bit:6;
++	s32 tri_bit:6;
++	s32 einput_bit:6;
++	s32 odrain_bit:6;
++	s32 lock_bit:6;
++	s32 ioreset_bit:6;
++	s32 rcv_sel_bit:6;
++	s32 hsm_bit:6;
++	s32 schmitt_bit:6;
++	s32 lpmd_bit:6;
++	s32 drvdn_bit:6;
++	s32 drvup_bit:6;
++	s32 slwr_bit:6;
++	s32 slwf_bit:6;
++	s32 drvtype_bit:6;
++	s32 drvdn_width:6;
++	s32 drvup_width:6;
++	s32 slwr_width:6;
++	s32 slwf_width:6;
+ };
+ 
+ /**
+-- 
+2.3.3
