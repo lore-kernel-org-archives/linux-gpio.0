@@ -1,45 +1,98 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: dt: at91: new binding
-Date: Tue, 17 Mar 2015 13:07:19 +0100
-Message-ID: <CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
-References: <1424943294-8805-1-git-send-email-plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 2/2] pinctrl: Add Pistachio SoC pin control driver
+Date: Tue, 17 Mar 2015 13:16:52 +0100
+Message-ID: <CACRpkdbt4MQYY7MqjFN-1Dp0am1PaOZ1YL+bKc8SJrtFDnSW_Q@mail.gmail.com>
+References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
+	<1424744104-14151-3-git-send-email-abrestic@chromium.org>
+	<CACRpkdbqioAreyDwM2JN87=gH20n1OkUXPjdkW885iDWUV1NnA@mail.gmail.com>
+	<CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:36025 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752348AbbCQMHU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 08:07:20 -0400
-Received: by oigv203 with SMTP id v203so6008911oig.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 05:07:19 -0700 (PDT)
-In-Reply-To: <1424943294-8805-1-git-send-email-plagnioj@jcrosoft.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35067 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932192AbbCQMQx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 08:16:53 -0400
+Received: by obfv9 with SMTP id v9so5431739obf.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 05:16:52 -0700 (PDT)
+In-Reply-To: <CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
 
-On Thu, Feb 26, 2015 at 10:34 AM, Jean-Christophe PLAGNIOL-VILLARD
-<plagnioj@jcrosoft.com> wrote:
+On Fri, Mar 6, 2015 at 7:51 PM, Andrew Bresticker <abrestic@chromium.org> wrote:
+> On Fri, Mar 6, 2015 at 3:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> +For each peripheral/bank we will descibe in a u32 if a pin can be
-> +configured in it by putting 1 to the pin bit (1 << pin)
+>>> +static inline void gpio_writel(struct pistachio_gpio_bank *bank, u32 val,
+>>> +                              u32 reg)
+>>> +{
+>>> +       writel(val, bank->base + reg);
+>>> +}
+>>
+>> I don't see the point of these special readl/writel accessors. Just
+>> use readl/writel
+>> directly. Or consider readl/writel_relaxed() if MIPS has this.
+>
+> I actually find these useful for tracing MMIO accesses within a driver
+> and it seems many other drivers do this too.  I can drop them though
+> if you'd prefer.
 
-This seems to be describing driver intrinsics in the device tree, like
-how the hardware is routed on the inside and what it can do.
+OK does it turn up in ftrace etc? I was thinking these would be
+inlined by the compiler (especially since you even state they shall
+be inlined) and the symbols trashed?
 
-IMO that is driver territory, the driver should know these limitations
-and protest if you try to do something illegal.
+>> (...)
+>>> +static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>>> +{
+>>> +       struct device_node *child, *node = pctl->dev->of_node;
+>>> +       struct pistachio_gpio_bank *bank;
+>>> +       unsigned int i = 0;
+>>> +       int irq, ret = 0;
+>>> +
+>>> +       for_each_child_of_node(node, child) {
+>>> +               if (!of_find_property(child, "gpio-controller", NULL))
+>>> +                       continue;
+>>
+>> So why not instead specify "simple-bus" as compatible on the parent node
+>> and have each subnode be its own device (simple-bus will spawn platform
+>> devices for all subnodes).
+>>
+>> Overall this composite-device pattern is discouraged if we can instead have
+>> unique devices for each bank.
+>
+> I think there's an issue here though if some other device probes
+> between the pinctrl driver and the gpiochip drivers.  Since all these
+> pins are configured as GPIOs at POR, the pinctrl driver needs to clear
+> the GPIO enable bit on a pin when enabling a pinmux function for that
+> pin (see pistachio_pinmux_enable()).  If the gpiochip driver has yet
+> to probe, attempting to map the pinctrl pin to a GPIO range/pin (via
+> pinctrl_find_gpio_range_from_pin()) will fail and we won't be able to
+> disable the GPIO function for that pin.
 
-Anyway as the AT91 maintainers seem to disagree I will allow some
-more time for discussion before merging the patch.
+I was thinking the GPIO driver part should get a -EPROBE_DEFER when
+trying to call gpiochip_add_pin_range() and continue later when the
+pin controller is available?
 
-I can't really have one AT91 maintainer NACKing another, it doesn't
-matter that this is a separate driver, in my book the MAINTAINERS
-entry for AT91 as a whole overrides that so can you please find an
-agreement on how to handle this or I will stall the patch until
-you're in agreement.
+And all drivers using GPIOs in turn get a -EPROBE_DEFER when
+trying to get GPIOs on a not-yet registered GPIO chip.
 
-ARM SoC maintainers input would be welcomed.
+Sorry if I don't really know how things work now... :(
+It seems like a logical way to me.
+
+>  Also it doesn't look like
+> there's a good way to tell gpiolib to disable a GPIO form the pinctrl
+> driver.
+
+Define exactly what you mean by "disable". There is
+pinctrl_free_gpio().
+
+>  Any ideas?  I suppose I could keep the pin-to-GPIO mapping in
+> the pinctrl driver in addition to expressing it in the DT with
+> gpio-ranges, but that doesn't seem too nice.
+
+The ranges shall definately be registered from the GPIO side of
+the driver, that much I can tell you for sure...
 
 Yours,
 Linus Walleij
