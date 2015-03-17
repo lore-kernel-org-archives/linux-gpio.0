@@ -1,7 +1,7 @@
-From: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+From: Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>
 Subject: Re: [PATCH 35/35 linux-next] pinctrl: constify of_device_id array
-Date: Tue, 17 Mar 2015 09:15:26 +0100
-Message-ID: <5507E29E.5030602@st.com>
+Date: Tue, 17 Mar 2015 09:34:00 +0100
+Message-ID: <5507E6F8.9060109@st.com>
 References: <1426533469-25458-1-git-send-email-fabf@skynet.be>
  <1426535949-26107-1-git-send-email-fabf@skynet.be>
  <1426535949-26107-4-git-send-email-fabf@skynet.be>
@@ -20,10 +20,10 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
 Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 To: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Srinivas Kandagatla <srinivas.kandagatla-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>
+Cc: kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Srinivas Kandagatla <srinivas.kandagatla-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Fabian
+
 
 On 03/16/2015 08:59 PM, Fabian Frederick wrote:
 > of_device_id is always used as const.
@@ -31,11 +31,26 @@ On 03/16/2015 08:59 PM, Fabian Frederick wrote:
 >
 > Signed-off-by: Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>
 > ---
-...
+>   drivers/pinctrl/bcm/pinctrl-bcm2835.c       | 2 +-
+>   drivers/pinctrl/mediatek/pinctrl-mt8135.c   | 2 +-
+>   drivers/pinctrl/mediatek/pinctrl-mt8173.c   | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-370.c  | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-375.c  | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-38x.c  | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-39x.c  | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-xp.c   | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-kirkwood.c    | 2 +-
+>   drivers/pinctrl/mvebu/pinctrl-orion.c       | 2 +-
+>   drivers/pinctrl/pinctrl-as3722.c            | 2 +-
+>   drivers/pinctrl/pinctrl-at91.c              | 4 ++--
+>   drivers/pinctrl/pinctrl-palmas.c            | 2 +-
+>   drivers/pinctrl/pinctrl-single.c            | 4 ++--
 >   drivers/pinctrl/pinctrl-st.c                | 2 +-
 >
-For this driver
 
-Acked-by: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+For the pinctrl-st driver, you can add my:
 
-Thanks
+Acked-by: Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>
+
+Thanks!
+Maxime
