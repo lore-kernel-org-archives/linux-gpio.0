@@ -1,54 +1,45 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] gpio: dwapb: enable for Quark
-Date: Tue, 17 Mar 2015 14:28:54 +0200
-Message-ID: <1426595334.14897.316.camel@linux.intel.com>
-References: <1425573965-6971-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <CACRpkdbcgJA4x_Xub_J2TiV6_uFD1x5EOwCxpQ3OgpzD=DFFTg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: gpio-tb10x: remove incorrect __exit markup
+Date: Tue, 17 Mar 2015 13:30:15 +0100
+Message-ID: <CACRpkdaUMDZYmK6t5S7LZcmZw6e-viTd0Z4d2UtXZCvEX9RSWQ@mail.gmail.com>
+References: <20150309180409.GA24645@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:32478 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752096AbbCQM25 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 17 Mar 2015 08:28:57 -0400
-In-Reply-To: <CACRpkdbcgJA4x_Xub_J2TiV6_uFD1x5EOwCxpQ3OgpzD=DFFTg@mail.gmail.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:34876 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752598AbbCQMaQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 08:30:16 -0400
+Received: by obfv9 with SMTP id v9so5671844obf.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 05:30:15 -0700 (PDT)
+In-Reply-To: <20150309180409.GA24645@dtor-ws>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Raymond Tan <raymond.tan@intel.com>, "Ong, Boon Leong" <boon.leong.ong@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, 2015-03-17 at 13:20 +0100, Linus Walleij wrote:
-> On Thu, Mar 5, 2015 at 5:46 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > The Intel Quark SoC contains the DW GPIO on board. While fixing the build error
-> > the commit 1972c97db5b0 (gpio: dwapb: fix compile errors) disables the
-> > possibility to build the driver on X86, i.e. Intel Quark.
-> >
-> > The patch reenables it for Intel Quark as well.
-> >
-> > Since we have Intel Quark SoC introduced in 4.0-rc1 I would like to make this
-> > fix available there as well, though the actual MFD driver [1] is not yet
-> > applied.
-> >
-> > [1] https://lkml.org/lkml/2015/2/1/217
-> >
-> > Fixes: 1972c97db5b0 (gpio: dwapb: fix compile errors)
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Sorry commit b90f8f22ed86f4f1a38dd2178c4be558c0c70fb9
-> "gpio: dwapb: re-enable GPIO_DWAPB for arm64"
-> conflicts, re-enabling it for ARM64.
-> 
-> Can you rebase ... part of me just wanna enable this driver
-> for the whole world, don't see why we need to narrow it down
-> so much.
+On Mon, Mar 9, 2015 at 7:04 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-There was a v2 of that patch. Can you try it?
-http://comments.gmane.org/gmane.linux.kernel.gpio/6552
+> Even if bus is not hot-pluggable, the devices can be unbound from the
+> driver via sysfs, so we should not be using __exit annotations on
+> remove() methods. The only exception is drivers registered with
+> platform_driver_probe() which specifically disables sysfs bind/unbind
+> attributes.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
--- 
-Andy Shevchenko <andriy.shevchenko@intel.com>
-Intel Finland Oy
+I prefer to have this fixed by setting
+.suppress_bind_attrs = true
+in the struct device_driver .drv portion of the device driver,
+so the driver cannot be removed from sysfs.
 
+So platform_driver_probe() isn't really the only exception,
+there is a way to do the same supression on ordinary drivers
+if we know we won't fiddle with them from sysfs.
+
+Can you make a patch as per above (alternatively tell me
+how wrong I am...)
+
+Yours,
+Linus Walleij
