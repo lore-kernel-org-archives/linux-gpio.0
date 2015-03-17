@@ -1,75 +1,118 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Tue, 17 Mar 2015 11:47:25 -0500
-Message-ID: <20150317164724.GA3610@deathray>
-References: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
- <CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
- <CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
- <20150302072655.GA17089@deathray>
- <CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
- <CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
- <CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
- <CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
- <20150309202258.GA3398@deathray>
- <CACRpkdaC6A1D-rOeCywR9QHRc9wdKTcHVjEMfYCHrg0Jz0vwxg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio-dwapb: reset mask register on probe
+Date: Tue, 17 Mar 2015 17:54:57 +0100
+Message-ID: <CACRpkdYMtAzWyshP0_x-qucz2j=1JE_=DE3Y7TARWGxDQxnurA@mail.gmail.com>
+References: <1425372461-17859-1-git-send-email-abrodkin@synopsys.com>
+	<CACRpkdaknfTMb=1LVqNLTtV8Te+mjRdSZ=grk4NUGxKBt6gpCg@mail.gmail.com>
+	<1425934566.2312.16.camel@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:32971 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753562AbbCQQrc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 12:47:32 -0400
-Received: by iecvj10 with SMTP id vj10so16126696iec.0
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 09:47:32 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaC6A1D-rOeCywR9QHRc9wdKTcHVjEMfYCHrg0Jz0vwxg@mail.gmail.com>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:35940 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932553AbbCQQy6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 12:54:58 -0400
+Received: by oigv203 with SMTP id v203so13712423oig.3
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 09:54:57 -0700 (PDT)
+In-Reply-To: <1425934566.2312.16.camel@synopsys.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
 
-On Tue, Mar 17, 2015 at 05:39:01PM +0100, Linus Walleij wrote:
-> On Mon, Mar 9, 2015 at 9:22 PM, Michael Welling <mwelling@ieee.org> wrote:
-> > On Mon, Mar 09, 2015 at 04:52:26PM +0100, Linus Walleij wrote:
-> 
-> >> Whoever comes up with a cleaner sysfs or a clean device interface
-> >> will win the argument and lock the path for the other approach.
-> >> It's like a forking path with no going back or something.
-> >
-> > There is no need to fork and in fact it would probably be a bad idea.
-> 
-> For the record I am *NOT* talking about this:
-> https://en.wikipedia.org/wiki/Fork_%28software_development%29
+On Mon, Mar 9, 2015 at 9:56 PM, Alexey Brodkin
+<Alexey.Brodkin@synopsys.com> wrote:
+> On Mon, 2015-03-09 at 14:59 +0100, Linus Walleij wrote:
+>> On Tue, Mar 3, 2015 at 9:47 AM, Alexey Brodkin
+>> <Alexey.Brodkin@synopsys.com> wrote:
+
+> Interestingly what I observed in my testing that if both
+> enable()/disable() and mask()/unmask() are implemented in driver then
+> only enable()/disable() pair will be actually used.
 >
+> Look at how generic irq_enable() function is implemented -
+> http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/kernel/irq/chip.c#n208
+>
+>  --->8---
+>  void irq_enable(struct irq_desc *desc)
+>  {
+>         irq_state_clr_disabled(desc);
+>         if (desc->irq_data.chip->irq_enable)
+>                 desc->irq_data.chip->irq_enable(&desc->irq_data);
+>         else
+>                 desc->irq_data.chip->irq_unmask(&desc->irq_data);
+>         irq_state_clr_masked(desc);
+>  }
+>  --->8---
+>
+>> The real problem I think is that struct irq_chip contains
+>> mask()/unmask() callbacks that are not implemented
+>> by this driver.
+>
+> I'd say that mask()/unmask() callbacks are implemented in this driver
+> already.
+>
+> See
+> http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpio-dwapb.c#n334
+>  --->8---
+>                 ct->chip.irq_mask = irq_gc_mask_set_bit;
+>                 ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>                 ct->chip.irq_set_type = dwapb_irq_set_type;
+>                 ct->chip.irq_enable = dwapb_irq_enable;
+>                 ct->chip.irq_disable = dwapb_irq_disable;
+>  --->8---
+>
+> It actually uses generic implementation of mask set bit and clear bit:
+> irq_gc_mask_set_bit()/irq_gc_mask_clr_bit() that operate under
+> GPIO_INTMASK register. And I may confirm that these functions correctly
+> set/reset bits in mask register of GPIO controller.
 
-Okay.
- 
-> > At EMAC we support both sysfs and character device simultaneously.
-> > Sysfs for the ease of use and ioctl for real time advantages.
-> 
-> What is EMAC?
+Grrr how typical, I got it all wrong and I'm doing stupid things :(
 
-It is the company that I am currently working for.
-www.emacinc.com
+So you mean these generic mask/unmask callbacks sets the bits
+correctly and then there is no problem.
 
-> 
-> > Not saying that it is a good reference but the two interfaces "could" co-exist.
-> 
-> Hm....
-> 
-> I would more think about deprecating the sysfs in favor of the dev
-> node.
+>> +static void dwapb_irq_mask(struct irq_data *d)
+>> +static void dwapb_irq_unmask(struct irq_data *d)
+>
+> Why would we need these custom functions if there're already
+> irq_gc_mask_set_bit()/irq_gc_mask_clr_bit() implemented in
+> kernel/irq/generic-chip.c
 
-What happens to all of the users of the sysfs interface when this happens?
+You're right...
 
-> 
-> But this is getting terribly academic since we're just talking, noone is
-> really implementing anything.
+>>  static void dwapb_irq_enable(struct irq_data *d)
+>>  {
+>>      struct irq_chip_generic *igc = irq_data_get_irq_chip_data(d);
+>> @@ -302,6 +326,10 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>>      struct irq_chip_type *ct;
+>>      int err, i;
+>>
+>> +    /* Mask out and disable all interrupts */
+>> +    dwapb_write(gpio, GPIO_INTMASK, 0xffffffff);
+>> +    dwapb_write(gpio, GPIO_INTEN, 0);
+>
+> This looks good to me - it's always a good idea to make sure defaults
+> are set as we expect.
 
-Without a specification nothing is ever going to be implemented.
+So should I cook a patch doing just these two lines?
 
-If not here, where will we be able to discuss the implementation details?
+But the initial patch unmasking all IRQs then? Is that even needed?
 
-> 
-> Yours,
-> Linus Walleij
+>>      gpio->domain = irq_domain_add_linear(node, ngpio,
+>>                           &irq_generic_chip_ops, gpio);
+>>      if (!gpio->domain)
+>> @@ -334,6 +362,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>>          ct->chip.irq_mask = irq_gc_mask_set_bit;
+>>          ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+>>          ct->chip.irq_set_type = dwapb_irq_set_type;
+>> +        ct->chip.irq_mask = dwapb_irq_mask;
+>> +        ct->chip.irq_unmask = dwapb_irq_unmask;
+>
+> Looks like we set "ct->chip.irq_mask" and "ct->chip.irq_unmask" twice,
+> don't we?
+
+Yep, my bad.
+
+Yours,
+Linus Walleij
