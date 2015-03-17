@@ -1,58 +1,53 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v1 1/1] gpio: dwapb: enable for Quark
-Date: Tue, 17 Mar 2015 12:31:02 +0000
-Message-ID: <1426595462.14897.317.camel@intel.com>
-References: <1425573965-6971-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <CACRpkdbcgJA4x_Xub_J2TiV6_uFD1x5EOwCxpQ3OgpzD=DFFTg@mail.gmail.com>
-	 <1426595334.14897.316.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 1/1] gpio: dwapb: enable for Quark
+Date: Tue, 17 Mar 2015 14:38:11 +0200
+Message-ID: <1426595891-8008-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:20410 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:5385 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752493AbbCQMb3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 17 Mar 2015 08:31:29 -0400
-In-Reply-To: <1426595334.14897.316.camel@linux.intel.com>
-Content-Language: en-US
-Content-ID: <18A72D5466A8DF4C9DDCB59BE9C0467B@intel.com>
+	id S1753233AbbCQMiO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 17 Mar 2015 08:38:14 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "Ong, Boon Leong" <boon.leong.ong@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "Tan, Raymond" <raymond.tan@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Raymond Tan <raymond.tan@intel.com>, "Ong, Boon Leong" <boon.leong.ong@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-T24gVHVlLCAyMDE1LTAzLTE3IGF0IDE0OjI4ICswMjAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-DQo+IE9uIFR1ZSwgMjAxNS0wMy0xNyBhdCAxMzoyMCArMDEwMCwgTGludXMgV2FsbGVpaiB3cm90
-ZToNCj4gPiBPbiBUaHUsIE1hciA1LCAyMDE1IGF0IDU6NDYgUE0sIEFuZHkgU2hldmNoZW5rbw0K
-PiA+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+IHdyb3RlOg0KPiA+IA0KPiA+
-ID4gVGhlIEludGVsIFF1YXJrIFNvQyBjb250YWlucyB0aGUgRFcgR1BJTyBvbiBib2FyZC4gV2hp
-bGUgZml4aW5nIHRoZSBidWlsZCBlcnJvcg0KPiA+ID4gdGhlIGNvbW1pdCAxOTcyYzk3ZGI1YjAg
-KGdwaW86IGR3YXBiOiBmaXggY29tcGlsZSBlcnJvcnMpIGRpc2FibGVzIHRoZQ0KPiA+ID4gcG9z
-c2liaWxpdHkgdG8gYnVpbGQgdGhlIGRyaXZlciBvbiBYODYsIGkuZS4gSW50ZWwgUXVhcmsuDQo+
-ID4gPg0KPiA+ID4gVGhlIHBhdGNoIHJlZW5hYmxlcyBpdCBmb3IgSW50ZWwgUXVhcmsgYXMgd2Vs
-bC4NCj4gPiA+DQo+ID4gPiBTaW5jZSB3ZSBoYXZlIEludGVsIFF1YXJrIFNvQyBpbnRyb2R1Y2Vk
-IGluIDQuMC1yYzEgSSB3b3VsZCBsaWtlIHRvIG1ha2UgdGhpcw0KPiA+ID4gZml4IGF2YWlsYWJs
-ZSB0aGVyZSBhcyB3ZWxsLCB0aG91Z2ggdGhlIGFjdHVhbCBNRkQgZHJpdmVyIFsxXSBpcyBub3Qg
-eWV0DQo+ID4gPiBhcHBsaWVkLg0KPiA+ID4NCj4gPiA+IFsxXSBodHRwczovL2xrbWwub3JnL2xr
-bWwvMjAxNS8yLzEvMjE3DQo+ID4gPg0KPiA+ID4gRml4ZXM6IDE5NzJjOTdkYjViMCAoZ3Bpbzog
-ZHdhcGI6IGZpeCBjb21waWxlIGVycm9ycykNCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEFuZHkgU2hl
-dmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiA+IA0KPiA+IFNv
-cnJ5IGNvbW1pdCBiOTBmOGYyMmVkODZmNGYxYTM4ZGQyMTc4YzRiZTU1OGMwYzcwZmI5DQo+ID4g
-ImdwaW86IGR3YXBiOiByZS1lbmFibGUgR1BJT19EV0FQQiBmb3IgYXJtNjQiDQo+ID4gY29uZmxp
-Y3RzLCByZS1lbmFibGluZyBpdCBmb3IgQVJNNjQuDQo+ID4gDQo+ID4gQ2FuIHlvdSByZWJhc2Ug
-Li4uIHBhcnQgb2YgbWUganVzdCB3YW5uYSBlbmFibGUgdGhpcyBkcml2ZXINCj4gPiBmb3IgdGhl
-IHdob2xlIHdvcmxkLCBkb24ndCBzZWUgd2h5IHdlIG5lZWQgdG8gbmFycm93IGl0IGRvd24NCj4g
-PiBzbyBtdWNoLg0KPiANCj4gVGhlcmUgd2FzIGEgdjIgb2YgdGhhdCBwYXRjaC4gQ2FuIHlvdSB0
-cnkgaXQ/DQo+IGh0dHA6Ly9jb21tZW50cy5nbWFuZS5vcmcvZ21hbmUubGludXgua2VybmVsLmdw
-aW8vNjU1Mg0KPiANCg0KV2lsbCBub3QgaGVscC4gWWVzLCBJIHdpbGwgc2VuZCB5b3UgdjMgc29v
-bg0KDQotLSANCkFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AaW50ZWwuY29tPg0K
-SW50ZWwgRmlubGFuZCBPeQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIEZpbmxhbmQgT3kKUmVnaXN0ZXJl
-ZCBBZGRyZXNzOiBQTCAyODEsIDAwMTgxIEhlbHNpbmtpIApCdXNpbmVzcyBJZGVudGl0eSBDb2Rl
-OiAwMzU3NjA2IC0gNCAKRG9taWNpbGVkIGluIEhlbHNpbmtpIAoKVGhpcyBlLW1haWwgYW5kIGFu
-eSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgbWF0ZXJpYWwgZm9yCnRoZSBz
-b2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBBbnkgcmV2aWV3IG9yIGRpc3Ry
-aWJ1dGlvbgpieSBvdGhlcnMgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYgeW91IGFyZSBub3Qg
-dGhlIGludGVuZGVkCnJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNlbmRlciBhbmQgZGVs
-ZXRlIGFsbCBjb3BpZXMuCg==
+The Intel Quark SoC contains the DW GPIO on board. While fixing the build error
+the commit 1972c97db5b0 (gpio: dwapb: fix compile errors) disables the
+possibility to build the driver on X86, i.e. Intel Quark.
+
+The patch reenables it for Intel Quark as well.
+
+Since we have Intel Quark SoC introduced in 4.0-rc1 I would like to make this
+fix available there as well, though the actual MFD driver [1] is applied only
+for next version.
+
+[1] https://lkml.org/lkml/2015/2/1/217
+
+Fixes: 1972c97db5b0 (gpio: dwapb: fix compile errors)
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+Changelog v3:
+- rebase on top of commit b90f8f22ed86
+Changelog v2:
+- fix typo of parens location
+ drivers/gpio/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 7ca0de3..48c9bae 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -148,8 +148,7 @@ config GPIO_GENERIC_PLATFORM
+ 
+ config GPIO_DWAPB
+ 	tristate "Synopsys DesignWare APB GPIO driver"
+-	depends on ARM || ARM64
+-	depends on OF_GPIO
++	depends on ((ARM || ARM64) && OF_GPIO) || X86_INTEL_QUARK
+ 	select GPIO_GENERIC
+ 	select GENERIC_IRQ_CHIP
+ 	help
+-- 
+2.1.4
 
