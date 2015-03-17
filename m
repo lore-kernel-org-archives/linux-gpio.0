@@ -1,98 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: Add Pistachio SoC pin control driver
-Date: Tue, 17 Mar 2015 13:16:52 +0100
-Message-ID: <CACRpkdbt4MQYY7MqjFN-1Dp0am1PaOZ1YL+bKc8SJrtFDnSW_Q@mail.gmail.com>
-References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
-	<1424744104-14151-3-git-send-email-abrestic@chromium.org>
-	<CACRpkdbqioAreyDwM2JN87=gH20n1OkUXPjdkW885iDWUV1NnA@mail.gmail.com>
-	<CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpio: dwapb: enable for Quark
+Date: Tue, 17 Mar 2015 13:20:30 +0100
+Message-ID: <CACRpkdbcgJA4x_Xub_J2TiV6_uFD1x5EOwCxpQ3OgpzD=DFFTg@mail.gmail.com>
+References: <1425573965-6971-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:35067 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932192AbbCQMQx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 08:16:53 -0400
-Received: by obfv9 with SMTP id v9so5431739obf.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 05:16:52 -0700 (PDT)
-In-Reply-To: <CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:33672 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752299AbbCQMUa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 08:20:30 -0400
+Received: by oibu204 with SMTP id u204so6370306oib.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 05:20:30 -0700 (PDT)
+In-Reply-To: <1425573965-6971-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Raymond Tan <raymond.tan@intel.com>, "Ong, Boon Leong" <boon.leong.ong@intel.com>
 
-On Fri, Mar 6, 2015 at 7:51 PM, Andrew Bresticker <abrestic@chromium.org> wrote:
-> On Fri, Mar 6, 2015 at 3:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Mar 5, 2015 at 5:46 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
->>> +static inline void gpio_writel(struct pistachio_gpio_bank *bank, u32 val,
->>> +                              u32 reg)
->>> +{
->>> +       writel(val, bank->base + reg);
->>> +}
->>
->> I don't see the point of these special readl/writel accessors. Just
->> use readl/writel
->> directly. Or consider readl/writel_relaxed() if MIPS has this.
+> The Intel Quark SoC contains the DW GPIO on board. While fixing the build error
+> the commit 1972c97db5b0 (gpio: dwapb: fix compile errors) disables the
+> possibility to build the driver on X86, i.e. Intel Quark.
 >
-> I actually find these useful for tracing MMIO accesses within a driver
-> and it seems many other drivers do this too.  I can drop them though
-> if you'd prefer.
-
-OK does it turn up in ftrace etc? I was thinking these would be
-inlined by the compiler (especially since you even state they shall
-be inlined) and the symbols trashed?
-
->> (...)
->>> +static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
->>> +{
->>> +       struct device_node *child, *node = pctl->dev->of_node;
->>> +       struct pistachio_gpio_bank *bank;
->>> +       unsigned int i = 0;
->>> +       int irq, ret = 0;
->>> +
->>> +       for_each_child_of_node(node, child) {
->>> +               if (!of_find_property(child, "gpio-controller", NULL))
->>> +                       continue;
->>
->> So why not instead specify "simple-bus" as compatible on the parent node
->> and have each subnode be its own device (simple-bus will spawn platform
->> devices for all subnodes).
->>
->> Overall this composite-device pattern is discouraged if we can instead have
->> unique devices for each bank.
+> The patch reenables it for Intel Quark as well.
 >
-> I think there's an issue here though if some other device probes
-> between the pinctrl driver and the gpiochip drivers.  Since all these
-> pins are configured as GPIOs at POR, the pinctrl driver needs to clear
-> the GPIO enable bit on a pin when enabling a pinmux function for that
-> pin (see pistachio_pinmux_enable()).  If the gpiochip driver has yet
-> to probe, attempting to map the pinctrl pin to a GPIO range/pin (via
-> pinctrl_find_gpio_range_from_pin()) will fail and we won't be able to
-> disable the GPIO function for that pin.
+> Since we have Intel Quark SoC introduced in 4.0-rc1 I would like to make this
+> fix available there as well, though the actual MFD driver [1] is not yet
+> applied.
+>
+> [1] https://lkml.org/lkml/2015/2/1/217
+>
+> Fixes: 1972c97db5b0 (gpio: dwapb: fix compile errors)
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I was thinking the GPIO driver part should get a -EPROBE_DEFER when
-trying to call gpiochip_add_pin_range() and continue later when the
-pin controller is available?
+Sorry commit b90f8f22ed86f4f1a38dd2178c4be558c0c70fb9
+"gpio: dwapb: re-enable GPIO_DWAPB for arm64"
+conflicts, re-enabling it for ARM64.
 
-And all drivers using GPIOs in turn get a -EPROBE_DEFER when
-trying to get GPIOs on a not-yet registered GPIO chip.
-
-Sorry if I don't really know how things work now... :(
-It seems like a logical way to me.
-
->  Also it doesn't look like
-> there's a good way to tell gpiolib to disable a GPIO form the pinctrl
-> driver.
-
-Define exactly what you mean by "disable". There is
-pinctrl_free_gpio().
-
->  Any ideas?  I suppose I could keep the pin-to-GPIO mapping in
-> the pinctrl driver in addition to expressing it in the DT with
-> gpio-ranges, but that doesn't seem too nice.
-
-The ranges shall definately be registered from the GPIO side of
-the driver, that much I can tell you for sure...
+Can you rebase ... part of me just wanna enable this driver
+for the whole world, don't see why we need to narrow it down
+so much.
 
 Yours,
 Linus Walleij
