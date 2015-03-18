@@ -1,37 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 11/18] pinctrl: Add pinctrl driver for STM32 MCUs
-Date: Wed, 18 Mar 2015 02:08:13 +0100
-Message-ID: <CACRpkdZA4OMB+gqh6XKfYWR8RSLZGpYjj-cgrC_KcSfcon4QVg@mail.gmail.com>
-References: <1424455277-29983-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1424455277-29983-12-git-send-email-mcoquelin.stm32@gmail.com>
-	<2464742.YZIRrHto62@wuerfel>
+Subject: Re: [PATCH v2 1/4] pinctrl: sh-pfc: Store register/field widths in u8
+ instead of unsigned long
+Date: Wed, 18 Mar 2015 02:10:15 +0100
+Message-ID: <CACRpkdbSNeHcf5H-0ovLYkpoQyPRO2ys_eksKHJhs10x-QVJKQ@mail.gmail.com>
+References: <1425985583-26279-1-git-send-email-geert+renesas@glider.be>
+	<1425985583-26279-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <2464742.YZIRrHto62@wuerfel>
-Sender: linux-doc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1425985583-26279-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 10, 2015 at 4:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Friday 20 February 2015 19:01:10 Maxime Coquelin wrote:
+On Tue, Mar 10, 2015 at 12:06 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
->> +/* Pull-Up/Down */
->> +#define NO_PULL                0
->> +#define PULL_UP                1
->> +#define PULL_DOWN      2
->> +
->> +/* Type */
->> +#define PUSH_PULL      (0 << 2)
->> +#define OPEN_DRAIN     (1 << 2)
->> +
+> Register and field widths are in the range 1..32. Storing them in the
+> pinctrl data in (arrays of) unsigned long wastes space.
 >
-> These should probably not be stm32 specific at all, they sound
-> rather generic, so maybe put the definitions into a common file.
+> This decreases the size of a (32-bit) shmobile_defconfig kernel
+> supporting 7 SoCs by 26460 bytes.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v2:
+>   - Add Acked-by.
 
-It's part of what GENERIC_PINCONF does and it has bindings
-in Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+Patch applied.
 
 Yours,
 Linus Walleij
