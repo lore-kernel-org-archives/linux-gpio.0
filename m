@@ -1,54 +1,61 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 1/6] ARM: STi: DT: STiH407: Fix retime pin mask for PIO5 and PIO35
-Date: Wed, 18 Mar 2015 10:51:34 +0000
-Message-ID: <1426675899-19882-2-git-send-email-lee.jones@linaro.org>
+Subject: [PATCH 3/6] pinctrl: st: Move st_get_pio_control() further up the source file
+Date: Wed, 18 Mar 2015 10:51:36 +0000
+Message-ID: <1426675899-19882-4-git-send-email-lee.jones@linaro.org>
 References: <1426675899-19882-1-git-send-email-lee.jones@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:36702 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753969AbbCRKvw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Mar 2015 06:51:52 -0400
-Received: by wetk59 with SMTP id k59so28928416wet.3
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2015 03:51:50 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1426675899-19882-1-git-send-email-lee.jones@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: lee.jones@linaro.org, kernel@stlinux.com, Karim BEN BELGACEM <karim.ben-belgacem@st.com>
+Cc: lee.jones@linaro.org, kernel@stlinux.com
+List-Id: linux-gpio@vger.kernel.org
 
-From: Karim BEN BELGACEM <karim.ben-belgacem@st.com>
+st_get_pio_control() will be used by subsequent calls which are
+to be located above its original position.  This is required to
+prevent the need for an unnecessary forward-declaration/prototype.
 
-This will avoid programming the retime registers when not implemented
-
-- PIO5  : no retime registers assigned to pins 6 and 7
-- PIO35 : pin 7 is reserved so no retime register assigned to it
-
-Signed-off-by: Karim BEN BELGACEM <karim.ben-belgacem@st.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/pinctrl-st.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index 402844c..0a754f2 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -104,6 +104,7 @@
- 				#interrupt-cells = <2>;
- 				reg = <0x5000 0x100>;
- 				st,bank-name = "PIO5";
-+				st,retime-pin-mask = <0x3f>;
- 			};
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 5362e45..10ad19c 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -398,6 +398,16 @@ static const struct st_pctl_data stih407_flashdata = {
+ 	.rt = 100,
+ };
  
- 			rc {
-@@ -519,6 +520,7 @@
- 				#interrupt-cells = <2>;
- 				reg = <0x5000 0x100>;
- 				st,bank-name = "PIO35";
-+				st,retime-pin-mask = <0x7f>;
- 			};
++static struct st_pio_control *st_get_pio_control(
++			struct pinctrl_dev *pctldev, int pin)
++{
++	struct pinctrl_gpio_range *range =
++			 pinctrl_find_gpio_range_from_pin(pctldev, pin);
++	struct st_gpio_bank *bank = gpio_range_to_bank(range);
++
++	return &bank->pc;
++}
++
+ /* Low level functions.. */
+ static inline int st_gpio_bank(int gpio)
+ {
+@@ -918,16 +928,6 @@ static int st_pmx_get_groups(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
  
- 			i2c4 {
+-static struct st_pio_control *st_get_pio_control(
+-			struct pinctrl_dev *pctldev, int pin)
+-{
+-	struct pinctrl_gpio_range *range =
+-			 pinctrl_find_gpio_range_from_pin(pctldev, pin);
+-	struct st_gpio_bank *bank = gpio_range_to_bank(range);
+-
+-	return &bank->pc;
+-}
+-
+ static int st_pmx_set_mux(struct pinctrl_dev *pctldev, unsigned fselector,
+ 			unsigned group)
+ {
 -- 
 1.9.1
-
