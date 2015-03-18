@@ -1,30 +1,27 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a7790 platform_device_id entry
-Date: Wed, 18 Mar 2015 02:19:21 +0100
-Message-ID: <CACRpkdZHMjCjB91EFXpzgepErwqrigfjcve2MHte1dV1wuqzpQ@mail.gmail.com>
-References: <1425986080-26648-1-git-send-email-geert+renesas@glider.be>
-	<1425986080-26648-2-git-send-email-geert+renesas@glider.be>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: move pincontrol calls to <linux/gpio/driver.h>
+Date: Wed, 18 Mar 2015 10:29:50 +0900
+Message-ID: <CAAVeFuLxQZYQOWB41jhL7=L_JvGAiAySV9-jXTu1x8u+U5yDag@mail.gmail.com>
+References: <1426640683-22185-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1425986080-26648-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:36579 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752963AbbCRBaL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 21:30:11 -0400
+Received: by igbue6 with SMTP id ue6so88026553igb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 18:30:10 -0700 (PDT)
+In-Reply-To: <1426640683-22185-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Tue, Mar 10, 2015 at 12:14 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, Mar 18, 2015 at 10:04 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> These functions do not belong in <asm-generic/gpio.h> since the
+> split into separate GPIO headers under <linux/gpio/*>. Move them
+> to <linux/gpio/driver.h> as is apropriate.
 
-> The r8a7790 platform is now DT-only, the driver doesn't need to match
-> platform devices by name anymore. Remove the corresponding
-> platform_device_id entry.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> The r8a7790 platform is DT-only since v4.0-rc1.
-
-Patch applied with Laurent's ACK.
-
-Yours,
-Linus Walleij
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
