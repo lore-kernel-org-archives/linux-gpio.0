@@ -1,20 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/4] pinctrl: sh-pfc: Use unsigned int for
- register/field widths and offsets
-Date: Wed, 18 Mar 2015 02:14:15 +0100
-Message-ID: <CACRpkdZxueV1uqbD1PabrwUsV=xfys+Gq=TN5bu47O3sgWjrZw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] pinctrl: sh-pfc: Use reg_width instead of reg as sentinel
+Date: Wed, 18 Mar 2015 02:15:12 +0100
+Message-ID: <CACRpkdZ6kG0hJ7dno=ecFXEAPzpCUF3kDtS55rBkNo7+R1wu-A@mail.gmail.com>
 References: <1426154956-26583-1-git-send-email-geert+renesas@glider.be>
-	<1426154956-26583-3-git-send-email-geert+renesas@glider.be>
+	<1426154956-26583-4-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:36011 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754757AbbCRBOQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 21:14:16 -0400
-Received: by oigv203 with SMTP id v203so24149313oig.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 18:14:15 -0700 (PDT)
-In-Reply-To: <1426154956-26583-3-git-send-email-geert+renesas@glider.be>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34873 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753487AbbCRBPN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Mar 2015 21:15:13 -0400
+Received: by oiag65 with SMTP id g65so24185878oia.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Mar 2015 18:15:12 -0700 (PDT)
+In-Reply-To: <1426154956-26583-4-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -23,19 +22,15 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.
 On Thu, Mar 12, 2015 at 11:09 AM, Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 
-> As register and field widths and offsets are in the range 1..32, use
-> unsigned int (mostly replacing unsigned long) to store them in local
-> variables and for passing them around.
->
-> Move to one variable per line, move variables to the beginning of the
-> block where they are used, and drop superfluous initializations while we
-> are at it.
+> All other loops over sh_pfc_soc_info.data_regs[] use
+> pinmux_data_reg.regwidth as the sentinel, which is safer as zero is
+> never a valid regwidth value (reg could be zero if we start using it to
+> store an offset).
 >
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > ---
 > v3:
->   - Remove superfluous initializations of local variables,
 >   - Add Acked-by,
 
 Patch applied.
