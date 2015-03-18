@@ -1,29 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: mediatek: mtk-common: Remove kfree for
- memory allocated by devm_kzalloc
-Date: Wed, 18 Mar 2015 12:58:53 +0100
-Message-ID: <CACRpkdbUQXaYgei7WrwVZ5HaOYWGCxbVCJap6u0fX3jP8yqMEQ@mail.gmail.com>
-References: <1426168353.30920.2.camel@phoenix>
+Subject: Re: [PATCH v3] pinctrl: mediatek: Adjust mt8173 pinctrl kconfig
+Date: Wed, 18 Mar 2015 13:01:06 +0100
+Message-ID: <CACRpkdZyhgRDVAiX3UCpCqxQUeSU2a3ktUbVNnStsrXkR7zT-g@mail.gmail.com>
+References: <1425623091-30478-2-git-send-email-yingjoe.chen@mediatek.com>
+	<1426257652-16779-1-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:36560 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755514AbbCRL6y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Mar 2015 07:58:54 -0400
-Received: by obdfc2 with SMTP id fc2so29816403obd.3
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2015 04:58:53 -0700 (PDT)
-In-Reply-To: <1426168353.30920.2.camel@phoenix>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:35690 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756006AbbCRMBH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Mar 2015 08:01:07 -0400
+Received: by obcjt1 with SMTP id jt1so9648251obc.2
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Mar 2015 05:01:06 -0700 (PDT)
+In-Reply-To: <1426257652-16779-1-git-send-email-yingjoe.chen@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Maoguang Meng <maoguang.meng@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Paul Bolle <pebolle@tiscali.nl>, Arnd Bergmann <arnd@arndb.de>, srv_heupstream@mediatek.com, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Mar 12, 2015 at 2:52 PM, Axel Lin <axel.lin@ingics.com> wrote:
+On Fri, Mar 13, 2015 at 3:40 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Hi Linus,
+>
+> Yet another version. Changed based on Arnd's suggestion to make config
+> options for PINCTRL_MT8135 & PINCTRL_MT8173 more consist. This is based
+> on mtk-staging in your tree. If you think this is OK, please applied or
+> squash this into previous change. Thanks.
+>
+> Old patch can be found at:
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-March/000057.html
+>
+> Joe.C
+>
+> 8<-------------------------------------------------------
+> ARM64 maintainer doesn't want to add MACH_* for each SoC.
+> Adjust mt8173 pinctrl kconfig entry so user can manually select it.
+>
+> Also make PINCTRL_MT8135 selectable when COMPILE_TEST is enabled.
+>
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-Patch applied with Yingjoe's ACK.
+This last version of the patch applied.
 
 Yours,
 Linus Walleij
