@@ -1,46 +1,75 @@
-From: Maxime Coquelin <maxime.coquelin@st.com>
-Subject: Re: [STLinux Kernel] [PATCH 5/6] pinctrl: st: Show correct pin direction
- -- even when in GPIO mode
-Date: Wed, 18 Mar 2015 17:45:08 +0100
-Message-ID: <5509AB94.8040100@st.com>
-References: <1426675899-19882-1-git-send-email-lee.jones@linaro.org> <1426675899-19882-6-git-send-email-lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [STLinux Kernel] [PATCH 2/6] pinctrl: st: Introduce a 'get pin
+ function' call
+Date: Wed, 18 Mar 2015 16:51:16 +0000
+Message-ID: <20150318165116.GR3318@x1>
+References: <1426675899-19882-1-git-send-email-lee.jones@linaro.org>
+ <1426675899-19882-3-git-send-email-lee.jones@linaro.org>
+ <5509AAAB.8090906@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48169 "EHLO
-	mx08-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932069AbbCRQpl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 18 Mar 2015 12:45:41 -0400
-In-Reply-To: <1426675899-19882-6-git-send-email-lee.jones@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5509AAAB.8090906@st.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Coquelin <maxime.coquelin@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, kernel@stlinux.com
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: kernel@stlinux.com
 
+On Wed, 18 Mar 2015, Maxime Coquelin wrote:
 
+>=20
+>=20
+> On 03/18/2015 11:51 AM, Lee Jones wrote:
+> >This call fetches the numerical function value a specified pin is
+> >currently operating in.  Function zero is more often than not the
+> >GPIO function.  Greater than zero values represent an alternative
+> >function.  You'd need to either look those up in the Device Tree
+> >sources or the Programmer's Manual.
+> >
+> >Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> >---
+> >  drivers/pinctrl/pinctrl-st.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> >diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-=
+st.c
+> >index 9e5ec00..5362e45 100644
+> >--- a/drivers/pinctrl/pinctrl-st.c
+> >+++ b/drivers/pinctrl/pinctrl-st.c
+> >@@ -460,6 +460,20 @@ static void st_pctl_set_function(struct st_pio_=
+control *pc,
+> >  	regmap_field_write(alt, val);
+> >  }
+> >+static unsigned int st_pctl_get_pin_function(struct st_pio_control =
+*pc, int pin)
+> >+{
+> >+	struct regmap_field *alt =3D pc->alt;
+> >+	unsigned int val;
+> >+	int offset =3D pin * 4;
+> >+
+> >+	if (!alt)
+> >+		return 0;
+> Shouldn't we print something if alt is NULL?
+> Else we can think we are on alternate 0.
 
-On 03/18/2015 11:51 AM, Lee Jones wrote:
-> Until now ST's pinconf_dbg_show() call-back has displayed the PIO
-> alternate function direction, which is only relevant if a pin is
-> operating in an alternate function mode i.e not GPIO mode.  If a
-> pin is in GPIO mode its direction is both set and status is
-> obtained by a completely different/unrelated bunch of registers.
->
-> This change ensures that the correct pin direction is shown, even
-> if a pin is operating in GPIO mode.
->
-> Reported-by: Olivier Clergeaud <olivier.clergeaud@st.com>
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->   drivers/pinctrl/pinctrl-st.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
->
->
+That is the assumption that I've made.  Is there isn't an alt, then a
+pin can only be on Alt-0.  Have I made the incorrect assumption here?
 
+> >+
+> >+	regmap_field_read(alt, &val);
+> >+
+> >+	return (val >> offset) & 0xf;
+> >+}
+> >+
+> >  static unsigned long st_pinconf_delay_to_bit(unsigned int delay,
+> >  	const struct st_pctl_data *data, unsigned long config)
+> >  {
+>=20
 
-Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
-
-Thanks,
-Maxime
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
