@@ -1,67 +1,40 @@
-From: Maxime Coquelin <maxime.coquelin@st.com>
-Subject: Re: [STLinux Kernel] [PATCH 2/6] pinctrl: st: Introduce a 'get pin
- function' call
-Date: Wed, 18 Mar 2015 18:00:04 +0100
-Message-ID: <5509AF14.1060200@st.com>
-References: <1426675899-19882-1-git-send-email-lee.jones@linaro.org> <1426675899-19882-3-git-send-email-lee.jones@linaro.org> <5509AAAB.8090906@st.com> <20150318165116.GR3318@x1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48976 "EHLO
-	mx08-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932923AbbCRRAe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 18 Mar 2015 13:00:34 -0400
-In-Reply-To: <20150318165116.GR3318@x1>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl & GPIO in /sysfs
+Date: Wed, 18 Mar 2015 17:21:13 +0000
+Message-ID: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: lee.jones@linaro.org, kernel@stlinux.com
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, kernel@stlinux.com
 
+Version 2:
+  Fixed up Maxime's review comments
+    - Reduce size of char array
+    - Use snprintf()
+  Applied Maxime's Acks 
 
+ST's hardware differentiates between GPIO mode and Pinctrl alternate
+functions.  When a pin is in GPIO mode, there are dedicated registers
+to set and obtain direction status.  However, If a pin's alternate
+function is in use then the direction is set and status is derived
+from a bunch of syscon registers.  The issue is; until now there was
+a lack of parity between the two.
 
-On 03/18/2015 05:51 PM, Lee Jones wrote:
-> On Wed, 18 Mar 2015, Maxime Coquelin wrote:
->
->>
->> On 03/18/2015 11:51 AM, Lee Jones wrote:
->>> This call fetches the numerical function value a specified pin is
->>> currently operating in.  Function zero is more often than not the
->>> GPIO function.  Greater than zero values represent an alternative
->>> function.  You'd need to either look those up in the Device Tree
->>> sources or the Programmer's Manual.
->>>
->>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
->>> ---
->>>   drivers/pinctrl/pinctrl-st.c | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
->>> index 9e5ec00..5362e45 100644
->>> --- a/drivers/pinctrl/pinctrl-st.c
->>> +++ b/drivers/pinctrl/pinctrl-st.c
->>> @@ -460,6 +460,20 @@ static void st_pctl_set_function(struct st_pio_control *pc,
->>>   	regmap_field_write(alt, val);
->>>   }
->>> +static unsigned int st_pctl_get_pin_function(struct st_pio_control *pc, int pin)
->>> +{
->>> +	struct regmap_field *alt = pc->alt;
->>> +	unsigned int val;
->>> +	int offset = pin * 4;
->>> +
->>> +	if (!alt)
->>> +		return 0;
->> Shouldn't we print something if alt is NULL?
->> Else we can think we are on alternate 0.
-> That is the assumption that I've made.  Is there isn't an alt, then a
-> pin can only be on Alt-0.  Have I made the incorrect assumption here?
-Just re-checked the code, and yes you are right.
-No alt here means alt field of struct st_pctl_data is -1, which in turn 
-means the register is not available.
+Karim BEN BELGACEM (1):
+  ARM: STi: DT: STiH407: Fix retime pin mask for PIO5 and PIO35
 
-You can forget my remark, and add my:
-Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
+Lee Jones (5):
+  pinctrl: st: Introduce a 'get pin function' call
+  pinctrl: st: Move st_get_pio_control() further up the source file
+  pinctrl: st: Supply a GPIO get_direction() call-back
+  pinctrl: st: Show correct pin direction -- even when in GPIO mode
+  pinctrl: st: Display pin's function when printing pinctrl debug
+    information
 
-Thanks,
-Maxime
+ arch/arm/boot/dts/stih407-pinctrl.dtsi |  2 +
+ drivers/pinctrl/pinctrl-st.c           | 83 +++++++++++++++++++++++++++++-----
+ 2 files changed, 73 insertions(+), 12 deletions(-)
+
+-- 
+1.9.1
