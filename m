@@ -1,55 +1,67 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] gpio: gpio-tb10x: remove incorrect __exit markup
-Date: Wed, 18 Mar 2015 09:55:27 -0700
-Message-ID: <20150318165527.GB11485@dtor-ws>
-References: <20150309180409.GA24645@dtor-ws>
- <CACRpkdaUMDZYmK6t5S7LZcmZw6e-viTd0Z4d2UtXZCvEX9RSWQ@mail.gmail.com>
+From: Maxime Coquelin <maxime.coquelin@st.com>
+Subject: Re: [STLinux Kernel] [PATCH 2/6] pinctrl: st: Introduce a 'get pin
+ function' call
+Date: Wed, 18 Mar 2015 18:00:04 +0100
+Message-ID: <5509AF14.1060200@st.com>
+References: <1426675899-19882-1-git-send-email-lee.jones@linaro.org> <1426675899-19882-3-git-send-email-lee.jones@linaro.org> <5509AAAB.8090906@st.com> <20150318165116.GR3318@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:37089 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755717AbbCRQzc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Mar 2015 12:55:32 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaUMDZYmK6t5S7LZcmZw6e-viTd0Z4d2UtXZCvEX9RSWQ@mail.gmail.com>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48976 "EHLO
+	mx08-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932923AbbCRRAe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 18 Mar 2015 13:00:34 -0400
+In-Reply-To: <20150318165116.GR3318@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, kernel@stlinux.com
 
-On Tue, Mar 17, 2015 at 01:30:15PM +0100, Linus Walleij wrote:
-> On Mon, Mar 9, 2015 at 7:04 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> 
-> > Even if bus is not hot-pluggable, the devices can be unbound from the
-> > driver via sysfs, so we should not be using __exit annotations on
-> > remove() methods. The only exception is drivers registered with
-> > platform_driver_probe() which specifically disables sysfs bind/unbind
-> > attributes.
-> >
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> 
-> I prefer to have this fixed by setting
-> .suppress_bind_attrs = true
-> in the struct device_driver .drv portion of the device driver,
-> so the driver cannot be removed from sysfs.
-> 
-> So platform_driver_probe() isn't really the only exception,
-> there is a way to do the same supression on ordinary drivers
-> if we know we won't fiddle with them from sysfs.
 
-Yes, you are right, setting suppress_bind_attrs will work too.
 
-> 
-> Can you make a patch as per above (alternatively tell me
-> how wrong I am...)
+On 03/18/2015 05:51 PM, Lee Jones wrote:
+> On Wed, 18 Mar 2015, Maxime Coquelin wrote:
+>
+>>
+>> On 03/18/2015 11:51 AM, Lee Jones wrote:
+>>> This call fetches the numerical function value a specified pin is
+>>> currently operating in.  Function zero is more often than not the
+>>> GPIO function.  Greater than zero values represent an alternative
+>>> function.  You'd need to either look those up in the Device Tree
+>>> sources or the Programmer's Manual.
+>>>
+>>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>>> ---
+>>>   drivers/pinctrl/pinctrl-st.c | 14 ++++++++++++++
+>>>   1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+>>> index 9e5ec00..5362e45 100644
+>>> --- a/drivers/pinctrl/pinctrl-st.c
+>>> +++ b/drivers/pinctrl/pinctrl-st.c
+>>> @@ -460,6 +460,20 @@ static void st_pctl_set_function(struct st_pio_control *pc,
+>>>   	regmap_field_write(alt, val);
+>>>   }
+>>> +static unsigned int st_pctl_get_pin_function(struct st_pio_control *pc, int pin)
+>>> +{
+>>> +	struct regmap_field *alt = pc->alt;
+>>> +	unsigned int val;
+>>> +	int offset = pin * 4;
+>>> +
+>>> +	if (!alt)
+>>> +		return 0;
+>> Shouldn't we print something if alt is NULL?
+>> Else we can think we are on alternate 0.
+> That is the assumption that I've made.  Is there isn't an alt, then a
+> pin can only be on Alt-0.  Have I made the incorrect assumption here?
+Just re-checked the code, and yes you are right.
+No alt here means alt field of struct st_pctl_data is -1, which in turn 
+means the register is not available.
 
-Unfortunately I won't be able to do that as I can't provide
-justification for such change (i.e. I do not know why you want to
-disable unbinding while still keeping the remove() implementation.
+You can forget my remark, and add my:
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
 
-Thanks.
-
--- 
-Dmitry
+Thanks,
+Maxime
