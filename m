@@ -1,40 +1,64 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl & GPIO in /sysfs
-Date: Wed, 18 Mar 2015 17:21:13 +0000
-Message-ID: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
+Subject: [PATCH v2 5/6] pinctrl: st: Show correct pin direction -- even when in GPIO mode
+Date: Wed, 18 Mar 2015 17:21:18 +0000
+Message-ID: <1426699279-9258-6-git-send-email-lee.jones@linaro.org>
+References: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: lee.jones@linaro.org, kernel@stlinux.com
 List-Id: linux-gpio@vger.kernel.org
 
-Version 2:
-  Fixed up Maxime's review comments
-    - Reduce size of char array
-    - Use snprintf()
-  Applied Maxime's Acks 
+Until now ST's pinconf_dbg_show() call-back has displayed the PIO
+alternate function direction, which is only relevant if a pin is
+operating in an alternate function mode i.e not GPIO mode.  If a
+pin is in GPIO mode its direction is both set and status is
+obtained by a completely different/unrelated bunch of registers.
 
-ST's hardware differentiates between GPIO mode and Pinctrl alternate
-functions.  When a pin is in GPIO mode, there are dedicated registers
-to set and obtain direction status.  However, If a pin's alternate
-function is in use then the direction is set and status is derived
-from a bunch of syscon registers.  The issue is; until now there was
-a lack of parity between the two.
+This change ensures that the correct pin direction is shown, even
+if a pin is operating in GPIO mode.
 
-Karim BEN BELGACEM (1):
-  ARM: STi: DT: STiH407: Fix retime pin mask for PIO5 and PIO35
+Reported-by: Olivier Clergeaud <olivier.clergeaud@st.com>
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/pinctrl/pinctrl-st.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Lee Jones (5):
-  pinctrl: st: Introduce a 'get pin function' call
-  pinctrl: st: Move st_get_pio_control() further up the source file
-  pinctrl: st: Supply a GPIO get_direction() call-back
-  pinctrl: st: Show correct pin direction -- even when in GPIO mode
-  pinctrl: st: Display pin's function when printing pinctrl debug
-    information
-
- arch/arm/boot/dts/stih407-pinctrl.dtsi |  2 +
- drivers/pinctrl/pinctrl-st.c           | 83 +++++++++++++++++++++++++++++-----
- 2 files changed, 73 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 52a4377..1cda40e 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -206,6 +206,9 @@
+ #define gpio_chip_to_bank(chip) \
+ 		container_of(chip, struct st_gpio_bank, gpio_chip)
+ 
++#define pc_to_bank(pc) \
++		container_of(pc, struct st_gpio_bank, pc)
++
+ enum st_retime_style {
+ 	st_retime_style_none,
+ 	st_retime_style_packed,
+@@ -1053,15 +1056,18 @@ static int st_pinconf_get(struct pinctrl_dev *pctldev,
+ static void st_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 				   struct seq_file *s, unsigned pin_id)
+ {
++	struct st_pio_control *pc;
+ 	unsigned long config;
++	int offset = st_gpio_pin(pin_id);
+ 
+ 	mutex_unlock(&pctldev->mutex);
++	pc = st_get_pio_control(pctldev, pin_id);
+ 	st_pinconf_get(pctldev, pin_id, &config);
+ 	mutex_lock(&pctldev->mutex);
+ 	seq_printf(s, "[OE:%ld,PU:%ld,OD:%ld]\n"
+ 		"\t\t[retime:%ld,invclk:%ld,clknotdat:%ld,"
+ 		"de:%ld,rt-clk:%ld,rt-delay:%ld]",
+-		ST_PINCONF_UNPACK_OE(config),
++		!st_gpio_get_direction(&pc_to_bank(pc)->gpio_chip, offset),
+ 		ST_PINCONF_UNPACK_PU(config),
+ 		ST_PINCONF_UNPACK_OD(config),
+ 		ST_PINCONF_UNPACK_RT(config),
 -- 
 1.9.1
