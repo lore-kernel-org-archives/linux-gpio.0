@@ -1,108 +1,142 @@
-From: David Cohen <david.a.cohen@linux.intel.com>
-Subject: [RFC] gpio: add set_active_low() function to gpio_chip
-Date: Wed, 18 Mar 2015 13:16:22 -0700
-Message-ID: <1426709782-2763-1-git-send-email-david.a.cohen@linux.intel.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3  00/15] Add support to STMicroelectronics STM32 family
+Date: Thu, 19 Mar 2015 08:35:09 +0900
+Message-ID: <550A0BAD.2000104@samsung.com>
+References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:6444 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756992AbbCRUOa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 18 Mar 2015 16:14:30 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:61064 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752053AbbCRXfO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Mar 2015 19:35:14 -0400
+In-reply-to: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, David Cohen <david.a.cohen@linux.intel.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, stefan@agner.ch, pmeerw@pmeerw.net, pebolle@tiscali.nl, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.>
 
-Some gpio controllers are capable of programming its pins' active-low
-state. Let's add this new gpio_chip function for such cases and use it
-in gpiolib.
+Hi Maxime,
 
-When set_active_low() is implemented, we no longer need to do soft flips
-on values from non-raw get functions.
+I tested this patch-set on Linux 4.0-rc4 for STM32F429IDISCOVERY board.
+I completed the kernel booting successfully without any modification .
 
-Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
----
+Looks good to me for this patch-set.
 
-Hi,
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-This is a RFC, not meant for integration (yet).
+Best Regards,
+Chanwoo Choi
 
-We have a GPIO controller that is capable of inverting the GPIO logical value
-on hardware using a register (and GPIO voltage level if configured for output):
-- If GPIO pin is configured for input, only the logical value is affected: the
-  GPIO level stays the same but the read values are inverted (it affects even
-  interrupt event triggers).
-- If GPIO pin is configured for output, the GPIO level is also inverted.
-
-Is it acceptable to expose this functionality via new gpio chip operation
-set_active_low()?
-
-Comments are welcome.
-
-Br, David
----
-
- drivers/gpio/gpiolib-sysfs.c | 4 ++++
- drivers/gpio/gpiolib.c       | 6 ++++--
- include/linux/gpio/driver.h  | 2 ++
- 3 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 7722ed53bd65..316a1d008cad 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -289,11 +289,15 @@ static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
- static int sysfs_set_active_low(struct gpio_desc *desc, struct device *dev,
- 				int value)
- {
-+	struct gpio_chip	*chip = desc->chip;
- 	int			status = 0;
- 
- 	if (!!test_bit(FLAG_ACTIVE_LOW, &desc->flags) == !!value)
- 		return 0;
- 
-+	if (chip->set_active_low)
-+		chip->set_active_low(chip, gpio_chip_hwgpio(desc), value);
-+
- 	if (value)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 	else
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1ca9295b2c10..028a0d34ddab 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1196,7 +1196,8 @@ int gpiod_get_value(const struct gpio_desc *desc)
- 	WARN_ON(desc->chip->can_sleep);
- 
- 	value = _gpiod_get_raw_value(desc);
--	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-+	if (!desc->chip->set_active_low &&
-+	    test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 		value = !value;
- 
- 	return value;
-@@ -1550,7 +1551,8 @@ int gpiod_get_value_cansleep(const struct gpio_desc *desc)
- 		return 0;
- 
- 	value = _gpiod_get_raw_value(desc);
--	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-+	if (!desc->chip->set_active_low &&
-+	    test_bit(FLAG_ACTIVE_LOW, &desc->flags))
- 		value = !value;
- 
- 	return value;
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c497c62889d1..2d665352fd69 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -90,6 +90,8 @@ struct gpio_chip {
- 						unsigned offset);
- 	void			(*set)(struct gpio_chip *chip,
- 						unsigned offset, int value);
-+	void			(*set_active_low)(struct gpio_chip *chip,
-+						unsigned offset, int value);
- 	void			(*set_multiple)(struct gpio_chip *chip,
- 						unsigned long *mask,
- 						unsigned long *bits);
--- 
-2.1.4
+On 03/13/2015 06:55 AM, Maxime Coquelin wrote:
+> From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> 
+> This third round tries to address most of the comments made on previous series.
+> 
+> It contains few less patches, as the reset_controller_of_init() patch has been
+> removed, now that the bootlaoder handles the reset of the timers.
+> 
+> The pinctrl driver has also been removed after Linus review.
+> It will be reworked to use the generic pinconf bindings, and may contain
+> changes for other machines (Mediatek), to add support for pinmux property
+> handling directly in pinconf-generic.
+> 
+> STM32 MCUs are Cortex-M CPU, used in various applications (consumer
+> electronics, industrial applications, hobbyists...).
+> Datasheets, user and programming manuals are publicly available on
+> STMicroelectronics website.
+> 
+> With this series applied, the STM32F419 Discovery can boot succesfully.
+> 
+> 
+> Changes since v2:
+> -----------------
+>  - Remove pinctrl driver from the series. 
+>  - Remove reset_controller_of_init(), and reset the timers in the bootloader
+>  - Add HW flow contrl property for serial driver
+>  - Lots of changes in the DTS file, as per Andreas recommendations
+>  - Some Kconfig clean-ups
+>  - Adapt the config to be compatible with Andreas' bootwrapper, except UART port.
+>  - Various fixes in documentation
+> 
+> Changes since v1:
+> -----------------
+>  - Move bindings documentation in their own patches (Andreas)
+>  - Rename ARM System timer to armv7m-systick (Rob)
+>  - Add clock-frequency property handling in armv7m-systick (Rob)
+>  - Re-factor the reset controllers into a single controller (Philipp)
+>  - Add kerneldoc to reset_controller_of_init (Philipp)
+>  - Add named constants in include/dt-bindings/reset/ (Philipp)
+>  - Make pinctrl driver to depend on ARCH_STM32 or COMPILE_TEST (Geert)
+>  - Introduce CPUV7M_NUM_IRQ config flag to indicate the number of interrupts
+> supported by the MCU, in order to limit memory waste in vectors' table (Uwe)
+> 
+> 
+> Maxime Coquelin (15):
+>   scripts: link-vmlinux: Don't pass page offset to kallsyms if XIP
+>     Kernel
+>   ARM: ARMv7-M: Enlarge vector table up to 256 entries
+>   dt-bindings: Document the ARM System timer bindings
+>   clocksource: Add ARM System timer driver
+>   dt-bindings: Document the STM32 reset bindings
+>   drivers: reset: Add STM32 reset driver
+>   dt-bindings: Document the STM32 timer bindings
+>   clockevent: Add STM32 Timer driver
+>   dt-bindings: Document the STM32 USART bindings
+>   serial: stm32-usart: Add STM32 USART Driver
+>   ARM: Add STM32 family machine
+>   ARM: dts: Add ARM System timer as clockevent in armv7m
+>   ARM: dts: Introduce STM32F429 MCU
+>   ARM: configs: Add STM32 defconfig
+>   MAINTAINERS: Add entry for STM32 MCUs
+> 
+>  Documentation/arm/stm32/overview.txt               |  32 +
+>  Documentation/arm/stm32/stm32f429-overview.txt     |  22 +
+>  .../devicetree/bindings/arm/armv7m_systick.txt     |  26 +
+>  .../devicetree/bindings/reset/st,stm32-rcc.txt     | 102 +++
+>  .../devicetree/bindings/serial/st,stm32-usart.txt  |  32 +
+>  .../devicetree/bindings/timer/st,stm32-timer.txt   |  22 +
+>  MAINTAINERS                                        |   8 +
+>  arch/arm/Kconfig                                   |  18 +
+>  arch/arm/Makefile                                  |   1 +
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/armv7-m.dtsi                     |   6 +
+>  arch/arm/boot/dts/stm32f429-disco.dts              |  71 +++
+>  arch/arm/boot/dts/stm32f429.dtsi                   | 226 +++++++
+>  arch/arm/configs/stm32_defconfig                   |  71 +++
+>  arch/arm/kernel/entry-v7m.S                        |  13 +-
+>  arch/arm/mach-stm32/Makefile                       |   1 +
+>  arch/arm/mach-stm32/Makefile.boot                  |   3 +
+>  arch/arm/mach-stm32/board-dt.c                     |  19 +
+>  arch/arm/mm/Kconfig                                |  15 +
+>  drivers/clocksource/Kconfig                        |  15 +
+>  drivers/clocksource/Makefile                       |   2 +
+>  drivers/clocksource/armv7m_systick.c               |  78 +++
+>  drivers/clocksource/timer-stm32.c                  | 184 ++++++
+>  drivers/reset/Makefile                             |   1 +
+>  drivers/reset/reset-stm32.c                        | 125 ++++
+>  drivers/tty/serial/Kconfig                         |  17 +
+>  drivers/tty/serial/Makefile                        |   1 +
+>  drivers/tty/serial/stm32-usart.c                   | 695 +++++++++++++++++++++
+>  include/uapi/linux/serial_core.h                   |   3 +
+>  scripts/link-vmlinux.sh                            |   2 +-
+>  30 files changed, 1807 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/arm/stm32/overview.txt
+>  create mode 100644 Documentation/arm/stm32/stm32f429-overview.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/armv7m_systick.txt
+>  create mode 100644 Documentation/devicetree/bindings/reset/st,stm32-rcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/serial/st,stm32-usart.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/st,stm32-timer.txt
+>  create mode 100644 arch/arm/boot/dts/stm32f429-disco.dts
+>  create mode 100644 arch/arm/boot/dts/stm32f429.dtsi
+>  create mode 100644 arch/arm/configs/stm32_defconfig
+>  create mode 100644 arch/arm/mach-stm32/Makefile
+>  create mode 100644 arch/arm/mach-stm32/Makefile.boot
+>  create mode 100644 arch/arm/mach-stm32/board-dt.c
+>  create mode 100644 drivers/clocksource/armv7m_systick.c
+>  create mode 100644 drivers/clocksource/timer-stm32.c
+>  create mode 100644 drivers/reset/reset-stm32.c
+>  create mode 100644 drivers/tty/serial/stm32-usart.c
+> 
 
