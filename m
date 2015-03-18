@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] gpio: rcar: Add more register documentation
-Date: Wed, 18 Mar 2015 19:41:08 +0100
-Message-ID: <1426704069-26389-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 1/3] gpio: rcar: Use local variable gpio_chip in gpio_rcar_probe()
+Date: Wed, 18 Mar 2015 19:41:07 +0100
+Message-ID: <1426704069-26389-2-git-send-email-geert+renesas@glider.be>
 References: <1426704069-26389-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1426704069-26389-1-git-send-email-geert+renesas@glider.be>
@@ -10,46 +10,45 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
+The existing variable gpio_chip already points to the gpiochip instance,
+hence use it everywhere.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpio-rcar.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/gpio/gpio-rcar.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index e67d578ac07c45d5..d96166ca1b42f93e 100644
+index c49522efa7b3bce4..e67d578ac07c45d5 100644
 --- a/drivers/gpio/gpio-rcar.c
 +++ b/drivers/gpio/gpio-rcar.c
-@@ -39,18 +39,18 @@ struct gpio_rcar_priv {
- 	struct irq_chip irq_chip;
- };
+@@ -413,7 +413,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 		goto err0;
+ 	}
  
--#define IOINTSEL 0x00
--#define INOUTSEL 0x04
--#define OUTDT 0x08
--#define INDT 0x0c
--#define INTDT 0x10
--#define INTCLR 0x14
--#define INTMSK 0x18
--#define MSKCLR 0x1c
--#define POSNEG 0x20
--#define EDGLEVEL 0x24
--#define FILONOFF 0x28
--#define BOTHEDGE 0x4c
-+#define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-+#define INOUTSEL 0x04	/* General Input/Output Switching Register */
-+#define OUTDT 0x08	/* General Output Register */
-+#define INDT 0x0c	/* General Input Register */
-+#define INTDT 0x10	/* Interrupt Display Register */
-+#define INTCLR 0x14	/* Interrupt Clear Register */
-+#define INTMSK 0x18	/* Interrupt Mask Register */
-+#define MSKCLR 0x1c	/* Interrupt Mask Clear Register */
-+#define POSNEG 0x20	/* Positive/Negative Logic Select Register */
-+#define EDGLEVEL 0x24	/* Edge/level Select Register */
-+#define FILONOFF 0x28	/* Chattering Prevention On/Off Register */
-+#define BOTHEDGE 0x4c	/* One Edge/Both Edge Select Register */
+-	ret = gpiochip_irqchip_add(&p->gpio_chip, irq_chip, p->config.irq_base,
++	ret = gpiochip_irqchip_add(gpio_chip, irq_chip, p->config.irq_base,
+ 				   handle_level_irq, IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_err(dev, "cannot add irqchip\n");
+@@ -431,7 +431,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
  
- #define RCAR_MAX_GPIO_PER_BANK		32
+ 	/* warn in case of mismatch if irq base is specified */
+ 	if (p->config.irq_base) {
+-		ret = irq_find_mapping(p->gpio_chip.irqdomain, 0);
++		ret = irq_find_mapping(gpio_chip->irqdomain, 0);
+ 		if (p->config.irq_base != ret)
+ 			dev_warn(dev, "irq base mismatch (%u/%u)\n",
+ 				 p->config.irq_base, ret);
+@@ -447,7 +447,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	return 0;
  
+ err1:
+-	gpiochip_remove(&p->gpio_chip);
++	gpiochip_remove(gpio_chip);
+ err0:
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
 -- 
 1.9.1
 
