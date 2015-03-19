@@ -1,63 +1,82 @@
-From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: Re: [PATCH 35/35 linux-next] pinctrl: constify of_device_id array
-Date: Thu, 19 Mar 2015 13:55:23 -0700
-Message-ID: <1426798523.27166.3.camel@mussux00.eus.mediatek.inc>
-References: <1426533469-25458-1-git-send-email-fabf@skynet.be>
-	 <1426535949-26107-1-git-send-email-fabf@skynet.be>
-	 <1426535949-26107-4-git-send-email-fabf@skynet.be>
-	 <1426730289.21744.7.camel@mussux00.eus.mediatek.inc>
-	 <1144194766.100372.1426790475037.open-xchange@webmail.nmp.proximus.be>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/8] gpio: omap: cleanup: get rid of system GPIO <-> GPIO
+ offset converseations
+Date: Thu, 19 Mar 2015 16:00:25 -0700
+Message-ID: <20150319230025.GO31346@atomide.com>
+References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([66.228.70.112]:40103 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750891AbbCSUz3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 16:55:29 -0400
-In-Reply-To: <1144194766.100372.1426790475037.open-xchange@webmail.nmp.proximus.be>
+Received: from muru.com ([72.249.23.125]:38772 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751143AbbCSXFH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 19 Mar 2015 19:05:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabian Frederick <fabf@skynet.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Maxime Coquelin <maxime.coquelin@st.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Axel Lin <axel.lin@ingics.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, yingjoe.chen@mediatek.com, kernel@stlinux.com, Maxime Ripard <maxime.ripard@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Patrice Chotard <patrice.chotard@st.com>, linux-rpi-kernel@lists.infradead.org
+To: grygorii.strashko@linaro.org
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
 
-On Thu, 2015-03-19 at 19:41 +0100, Fabian Frederick wrote:
+* grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150319 10:26]:
+> From: Grygorii Strashko <grygorii.strashko@linaro.org>
 > 
-> > On 19 March 2015 at 02:58 Hongzhou Yang <hongzhou.yang@mediatek.com> wrote:
-> >
-> >
-> > On Mon, 2015-03-16 at 20:59 +0100, Fabian Frederick wrote:
-> > > of_device_id is always used as const.
-> > > (See driver.of_match_table and open firmware functions)
-> > >
-> > > Signed-off-by: Fabian Frederick <fabf@skynet.be>
-> > > ---
-> > >  drivers/pinctrl/bcm/pinctrl-bcm2835.c       | 2 +-
-> > >  drivers/pinctrl/mediatek/pinctrl-mt8135.c   | 2 +-
-> > >  drivers/pinctrl/mediatek/pinctrl-mt8173.c   | 2 +-
-> > > 
-> >
-> > For the pinctrl-mt81xx driver,
-> > Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> >
-> > By the way, Axel has sent same patch to linux-gpio.
-> > http://article.gmane.org/gmane.linux.kernel.gpio/6815
-> >
-> > Thanks.
-> > Hongzhou
-> >
-> Axel's version is better (it also improves display) but doesn't
-> include bcm. I'll resend if necessary.
+> Now in TI OMAP GPIO driver there are a lot of places where
+> System GPIO number calculated and then converted to GPIO offset.
+> What is worse is that in many place such conversation performed twice
+> or even three times. But actually, we don't need to do that at all, because
+> - gpiolib always passes GPIO offset to GPIO controller
+> - OMAP GPIO driver converted to use IRQ domain, so
+>   struct irq_data->hwirq contains GPIO offset
 > 
-> Regards,
-> Fabian
+> Hence, it is safe to convert all GPIO OMAP functions to use GPIO
+> offset instead of system GPIO numbers. Also, this allows to remove
+> unneeded conversations routines
+>  #define GPIO_INDEX(bank, gpio)
+>  #define GPIO_BIT(bank, gpio)
+>  int omap_irq_to_gpio()
 
-Hi Fabian,
+Right on! This is excellent news. I've tested this set on top of -rc4
+plus the patch mentioned below, and I'm not seeing regressions on
+the platforms I tested with. Wake up to smsc911x ping with off-idle
+still works on omap3.
 
-Sorry, it's my fault. Our patch only include pinctrl-mt8135.c and
-pinctrl-mt8173.c, bcm is not ours. 
-Thank you.
+I only briefly tested on omap1 (osk5912), so I'like to wait for
+Aaro's ack before this gets merged.
 
-Yours,
-Hongzhou
+I found one build error, other than that, for the whole series
+please feel free to add:
 
+Tested-by: Tony Lindgren <tony@atomide.com>
+ 
+> Tested on dra7-evm.
+> 
+> Last two patches have to be tested on OMAP1:
+> -  gpio: omap: get rid of omap_irq_to_gpio()
+> -  gpio: omap: get rid of GPIO_INDEX() macro
+> 
+> Based on top of Linux 4.0-rc4 plus patch
+> '[PATCH 1/2] gpio: omap: irq_shutdown: remove unnecessary call of gpiochip_unlock_as_irq'
+> http://www.spinics.net/lists/linux-omap/msg116482.html
+> 
+> Grygorii Strashko (8):
+>   gpio: omap: convert omap_gpio_is_input() to use gpio offset
+>   gpio: omap: simplify omap_set_gpio_dataout_x()
+>   gpio: omap: convert debounce functions switch to use gpio offset
+>   gpio: omap: drop 'gpio' param from omap_gpio_init_irq()
+>   gpio: omap: convert gpio irq functions to use GPIO offset
+>   gpio: omap: get rid of GPIO_BIT() macro
+>   gpio: omap: get rid of omap_irq_to_gpio()
+>   gpio: omap: get rid of GPIO_INDEX() macro
+> 
+>  drivers/gpio/gpio-omap.c | 130 ++++++++++++++++++++---------------------------
+>  1 file changed, 55 insertions(+), 75 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
