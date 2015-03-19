@@ -1,54 +1,58 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 10/15] serial: stm32-usart: Add STM32 USART Driver
-Date: Thu, 19 Mar 2015 18:35:30 +0100
-Message-ID: <CALszF6DX2pz_US6uqQwBjmZhfgjw5PP1UAy9H+c-_Kgkk_Z72w@mail.gmail.com>
-References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
-	<1426197361-19290-11-git-send-email-maxime.coquelin@st.com>
-	<CAHp75Vd7+oLiLLuyocYh95TebtocWrRho6xNjuSUt8fYGp8npg@mail.gmail.com>
-	<CALszF6BWuUYRh+3rWnSQLApkAHA5dQXw=6x6D_evRtb+5B_ukA@mail.gmail.com>
-	<CAHp75Vdf6=z1d5+eYJ+QGTko9kkZf-oPfoWaf8FRoTdqcdWxjw@mail.gmail.com>
-	<CALszF6A5Zu7i0hxSLTS-nfOAXmd0__jLjB=fHxK93Ex5Vbi9LA@mail.gmail.com>
-	<550AE41C.8070803@hurleysoftware.com>
+From: Fabian Frederick <fabf@skynet.be>
+Subject: Re: [PATCH 35/35 linux-next] pinctrl: constify of_device_id array
+Date: Thu, 19 Mar 2015 19:41:15 +0100 (CET)
+Message-ID: <1144194766.100372.1426790475037.open-xchange@webmail.nmp.proximus.be>
+References: <1426533469-25458-1-git-send-email-fabf@skynet.be> <1426535949-26107-1-git-send-email-fabf@skynet.be> <1426535949-26107-4-git-send-email-fabf@skynet.be> <1426730289.21744.7.camel@mussux00.eus.mediatek.inc>
+Reply-To: Fabian Frederick <fabf@skynet.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <550AE41C.8070803-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
-Cc: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm@linux-founda>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailsec110.isp.belgacom.be ([195.238.20.106]:16809 "EHLO
+	mailsec110.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751332AbbCSSlQ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 19 Mar 2015 14:41:16 -0400
+In-Reply-To: <1426730289.21744.7.camel@mussux00.eus.mediatek.inc>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Maxime Coquelin <maxime.coquelin@st.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, Axel Lin <axel.lin@ingics.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, yingjoe.chen@mediatek.com, kernel@stlinux.com, Maxime Ripard <maxime.ripard@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Patrice Chotard <patrice.chotard@st.com>, linux-rpi-kernel@lists.infradead.org
 
-2015-03-19 15:58 GMT+01:00 Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>:
-> On 03/19/2015 09:55 AM, Maxime Coquelin wrote:
->>>>>> +static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
->>>>>> +                           struct ktermios *old)
-> [...]
->>>>>> +       usardiv = (port->uartclk * 25) / (baud * 4);
->>>>>> +       mantissa = (usardiv / 100) << USART_BRR_DIV_M_SHIFT;
->>>>>> +       fraction = DIV_ROUND_CLOSEST((usardiv % 100) * 16, 100);
->>>>>> +       if (fraction & ~USART_BRR_DIV_F_MASK) {
->>>>>> +               fraction = 0;
->>>>>> +               mantissa += (1 << USART_BRR_DIV_M_SHIFT);
->>>>>> +       }
-> [...]
->> Really, I would prefer keeping this fractional divider as it is
->> implemented today.
->
-> You have to admit that's basically an unintelligible mess;
-> how would anyone ever be able to refactor and replace that with a
-> common divider implementation?
->
-> At the very least, please comment on the formula and format.
 
-Ok, I will refactor the implementation, and comment it.
+
+> On 19 March 2015 at 02:58 Hongzhou Yang <hongzhou.yang@mediatek.com> =
+wrote:
+>
+>
+> On Mon, 2015-03-16 at 20:59 +0100, Fabian Frederick wrote:
+> > of_device_id is always used as const.
+> > (See driver.of_match_table and open firmware functions)
+> >
+> > Signed-off-by: Fabian Frederick <fabf@skynet.be>
+> > ---
+> >=C2=A0 drivers/pinctrl/bcm/pinctrl-bcm2835.c=C2=A0 =C2=A0 =C2=A0 =C2=
+=A0| 2 +-
+> >=C2=A0 drivers/pinctrl/mediatek/pinctrl-mt8135.c=C2=A0 =C2=A0| 2 +-
+> >=C2=A0 drivers/pinctrl/mediatek/pinctrl-mt8173.c=C2=A0 =C2=A0| 2 +-
+> >=C2=A0
+>
+> For the pinctrl-mt81xx driver,
+> Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+>
+> By the way, Axel has sent same patch to linux-gpio.
+> http://article.gmane.org/gmane.linux.kernel.gpio/6815
+>
+> Thanks.
+> Hongzhou
+>
+Axel's version is better (it also improves display) but doesn't
+include bcm. I'll resend if necessary.
 
 Regards,
-Maxime
-
->
-> Regards,
-> Peter Hurley
+=46abian
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
