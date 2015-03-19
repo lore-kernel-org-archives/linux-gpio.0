@@ -1,62 +1,83 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC] gpio: add set_active_low() function to gpio_chip
-Date: Thu, 19 Mar 2015 09:33:12 -0600
-Message-ID: <550AEC38.8080709@wwwdotorg.org>
-References: <1426709782-2763-1-git-send-email-david.a.cohen@linux.intel.com> <CAAVeFuKT1OPhM8LMQ5z9WejZEeYgqSzwcmCOw6V7E7Y0c=8btA@mail.gmail.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [RFC] pinmux: group and function definitions in the device tree
+Date: Thu, 19 Mar 2015 16:39:50 +0100
+Message-ID: <20150319153950.GC30114@odux.rfo.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:40639 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750861AbbCSPdQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 11:33:16 -0400
-In-Reply-To: <CAAVeFuKT1OPhM8LMQ5z9WejZEeYgqSzwcmCOw6V7E7Y0c=8btA@mail.gmail.com>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:42237 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750852AbbCSPk5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 11:40:57 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, David Cohen <david.a.cohen@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, s.hauer@pengutronix.de, tony@atomide.com, nicolas.ferre@atmel.com
 
-On 03/18/2015 08:07 PM, Alexandre Courbot wrote:
-> On Thu, Mar 19, 2015 at 5:16 AM, David Cohen
-> <david.a.cohen@linux.intel.com> wrote:
->> Some gpio controllers are capable of programming its pins' active-low
->> state. Let's add this new gpio_chip function for such cases and use it
->> in gpiolib.
->>
->> When set_active_low() is implemented, we no longer need to do soft flips
->> on values from non-raw get functions.
->>
->> Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
->> ---
->>
->> Hi,
->>
->> This is a RFC, not meant for integration (yet).
->>
->> We have a GPIO controller that is capable of inverting the GPIO logical value
->> on hardware using a register (and GPIO voltage level if configured for output):
->> - If GPIO pin is configured for input, only the logical value is affected: the
->>    GPIO level stays the same but the read values are inverted (it affects even
->>    interrupt event triggers).
->> - If GPIO pin is configured for output, the GPIO level is also inverted.
->>
->> Is it acceptable to expose this functionality via new gpio chip operation
->> set_active_low()?
->
-> At first I thought "why not", but then I couldn't help but ask "why?"
->
-> Handling the active low state in software is basically free and
-> requires no extra support. What is the benefit of handling it in
-> hardware that would counterbalance the complexity this adds to the
-> GPIO framework?
->
-> Also, wouldn't that require us to reverse this active-low logic in the
-> *_raw functions for them to work as expected?
+Hi,
 
-What happens when some generic driver starts to make use of this new API 
-because it's convenient? Then that API has to work everywhere, including 
-on chips that don't support this feature in HW. Then, we're back to 
-emulating it in SW on those platforms. Given how trivial it is to 
-emulate, shouldn't we emulate it everywhere, so that the code paths are 
-identical everywhere?
+I would like to start a discussion about pinmuxing and device tree bindings.
+
+I am currently writing a new pinmuxing driver using the generic pinconf.
+My main concern is about defining functions and which pins belong to a
+group.
+
+At the moment, it seems that most drivers using the generic pinconf
+define this stuff in a static way. The pinctrl-at91 driver covers many
+devices, the new one should do the same for new Atmel devices. Having
+the group and function definitions in the driver could involve a huge
+file...
+I am not sure it is a good thing to embed all these information into a
+single zImage...
+
+How can we achieved this? I was thinking about something like this:
+
+pinctrl@fc06a000 {
+
+	[...]
+
+	pinctrl_defs {
+		mci0 {
+			mci0_ioset0_1bit_grp {
+				at91,pins = <68 69 70>;
+				at91,mux = <2>;
+			};
+
+			mci0_ioset0_4bit_grp {
+				at91,pins = <68 69 70 71 72 73>;
+				at91,mux = <2>;
+			};
+
+			mci0_ioset0_8bit_grp {
+				at91,pins = <68 69 70 71 72 73 74 75 76 77>;
+				at91,mux = <2>;
+			};
+		};
+	};
+
+	pinctrl_mci0_default: mci0_default {
+		mux {
+			function = "mci0";
+			groups = &mci0_ioset0_8bit_grp;
+		};
+
+		conf {
+			groups = &mci0_ioset0_8bit_grp;
+			bias-pullup;
+		};
+	};
+};
+
+- A subnode for these definitions in order to not parse the whole
+  pinctrl node to retrieve groups and functions.
+- Using node names as function and group names.
+- Can we get generic properties to define the groups? Of course a 'pins'
+  property is mandatory. In my case I will need an extra one to tell the
+  controller how to mux the pins (a same pin can have up to 7 muxing
+  possibilities).
+
+
+Thanks for your advices.
+
+Ludovic
