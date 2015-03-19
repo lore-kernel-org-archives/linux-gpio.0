@@ -1,42 +1,62 @@
-From: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v3 10/15] serial: stm32-usart: Add STM32 USART Driver
-Date: Thu, 19 Mar 2015 10:58:36 -0400
-Message-ID: <550AE41C.8070803@hurleysoftware.com>
-References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>	<1426197361-19290-11-git-send-email-maxime.coquelin@st.com>	<CAHp75Vd7+oLiLLuyocYh95TebtocWrRho6xNjuSUt8fYGp8npg@mail.gmail.com>	<CALszF6BWuUYRh+3rWnSQLApkAHA5dQXw=6x6D_evRtb+5B_ukA@mail.gmail.com>	<CAHp75Vdf6=z1d5+eYJ+QGTko9kkZf-oPfoWaf8FRoTdqcdWxjw@mail.gmail.com> <CALszF6A5Zu7i0hxSLTS-nfOAXmd0__jLjB=fHxK93Ex5Vbi9LA@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC] gpio: add set_active_low() function to gpio_chip
+Date: Thu, 19 Mar 2015 09:33:12 -0600
+Message-ID: <550AEC38.8080709@wwwdotorg.org>
+References: <1426709782-2763-1-git-send-email-david.a.cohen@linux.intel.com> <CAAVeFuKT1OPhM8LMQ5z9WejZEeYgqSzwcmCOw6V7E7Y0c=8btA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALszF6A5Zu7i0hxSLTS-nfOAXmd0__jLjB=fHxK93Ex5Vbi9LA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem@davemlo>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:40639 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750861AbbCSPdQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 11:33:16 -0400
+In-Reply-To: <CAAVeFuKT1OPhM8LMQ5z9WejZEeYgqSzwcmCOw6V7E7Y0c=8btA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 03/19/2015 09:55 AM, Maxime Coquelin wrote:
->>>>> +static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
->>>>> +                           struct ktermios *old)
-[...]
->>>>> +       usardiv = (port->uartclk * 25) / (baud * 4);
->>>>> +       mantissa = (usardiv / 100) << USART_BRR_DIV_M_SHIFT;
->>>>> +       fraction = DIV_ROUND_CLOSEST((usardiv % 100) * 16, 100);
->>>>> +       if (fraction & ~USART_BRR_DIV_F_MASK) {
->>>>> +               fraction = 0;
->>>>> +               mantissa += (1 << USART_BRR_DIV_M_SHIFT);
->>>>> +       }
-[...]
-> Really, I would prefer keeping this fractional divider as it is
-> implemented today.
+On 03/18/2015 08:07 PM, Alexandre Courbot wrote:
+> On Thu, Mar 19, 2015 at 5:16 AM, David Cohen
+> <david.a.cohen@linux.intel.com> wrote:
+>> Some gpio controllers are capable of programming its pins' active-low
+>> state. Let's add this new gpio_chip function for such cases and use it
+>> in gpiolib.
+>>
+>> When set_active_low() is implemented, we no longer need to do soft flips
+>> on values from non-raw get functions.
+>>
+>> Signed-off-by: David Cohen <david.a.cohen@linux.intel.com>
+>> ---
+>>
+>> Hi,
+>>
+>> This is a RFC, not meant for integration (yet).
+>>
+>> We have a GPIO controller that is capable of inverting the GPIO logical value
+>> on hardware using a register (and GPIO voltage level if configured for output):
+>> - If GPIO pin is configured for input, only the logical value is affected: the
+>>    GPIO level stays the same but the read values are inverted (it affects even
+>>    interrupt event triggers).
+>> - If GPIO pin is configured for output, the GPIO level is also inverted.
+>>
+>> Is it acceptable to expose this functionality via new gpio chip operation
+>> set_active_low()?
+>
+> At first I thought "why not", but then I couldn't help but ask "why?"
+>
+> Handling the active low state in software is basically free and
+> requires no extra support. What is the benefit of handling it in
+> hardware that would counterbalance the complexity this adds to the
+> GPIO framework?
+>
+> Also, wouldn't that require us to reverse this active-low logic in the
+> *_raw functions for them to work as expected?
 
-You have to admit that's basically an unintelligible mess;
-how would anyone ever be able to refactor and replace that with a
-common divider implementation?
-
-At the very least, please comment on the formula and format.
-
-Regards,
-Peter Hurley
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+What happens when some generic driver starts to make use of this new API 
+because it's convenient? Then that API has to work everywhere, including 
+on chips that don't support this feature in HW. Then, we're back to 
+emulating it in SW on those platforms. Given how trivial it is to 
+emulate, shouldn't we emulate it everywhere, so that the code paths are 
+identical everywhere?
