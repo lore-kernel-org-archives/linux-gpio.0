@@ -1,81 +1,85 @@
-From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH] gpio-dwapb: reset mask register on probe
-Date: Thu, 19 Mar 2015 08:44:01 +0000
-Message-ID: <1426754640.2742.19.camel@synopsys.com>
-References: <1425372461-17859-1-git-send-email-abrodkin@synopsys.com>
-	 <CACRpkdaknfTMb=1LVqNLTtV8Te+mjRdSZ=grk4NUGxKBt6gpCg@mail.gmail.com>
-	 <1425934566.2312.16.camel@synopsys.com>
-	 <CACRpkdYMtAzWyshP0_x-qucz2j=1JE_=DE3Y7TARWGxDQxnurA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for the v4.0 series
+Date: Thu, 19 Mar 2015 09:55:14 +0100
+Message-ID: <CACRpkdbxX0EYXO6y53wG248DssV-wAXLGkNHoZqKOgz-_AFk0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-7"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYMtAzWyshP0_x-qucz2j=1JE_=DE3Y7TARWGxDQxnurA@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <0E7029821DD768499A63737BB69A7BA2@internal.synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34312 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752053AbbCSIzO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:55:14 -0400
+Received: by oier21 with SMTP id r21so59424447oie.1
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:55:14 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 Hi Linus,
 
-On Tue, 2015-03-17 at 17:54 +-0100, Linus Walleij wrote:
-+AD4- +AD4APg- +-    /+ACo- Mask out and disable all interrupts +ACo-/
-+AD4- +AD4APg- +-    dwapb+AF8-write(gpio, GPIO+AF8-INTMASK, 0xffffffff)+ADs-
-+AD4- +AD4APg- +-    dwapb+AF8-write(gpio, GPIO+AF8-INTEN, 0)+ADs-
-+AD4- +AD4-
-+AD4- +AD4- This looks good to me - it's always a good idea to make sure defaults
-+AD4- +AD4- are set as we expect.
-+AD4- 
-+AD4- So should I cook a patch doing just these two lines?
-+AD4- 
-+AD4- But the initial patch unmasking all IRQs then? Is that even needed?
+here is a slew of pin control fixes I've accumulated for the
+v4.0 kernel. Nothing special, just driver fixes (mainly embedded
+Intel it seems) and a misunderstanding regarding the stub
+functions was reverted.
 
-Oops, my bad here :)
+Please pull them in!
 
-I intentionally wrote 0 to MASK register to return it to default state
-(if pre-bootloader messes it). As I explained if we really mask all
-interrupts (together with disabling them all via INTEN) then interrupts
-will never happen.
+Yours,
+Linus Walleij
 
-If we look at DW APB GPIO databook it says:
----+AD4-8---
-Whenever a 1 is written to a bit of this register +AFs-GPIO+AF8-INTEN+AF0-, it
-configures the corresponding bit on Port A to become an interrupt+ADs-
-otherwise, Port A operates as a normal GPIO signal.
----+AD4-8---
+The following changes since commit c517d838eb7d07bbe9507871fab3931deccff539:
 
-While for GPIO+AF8-INTMASK it says:
----+AD4-8---
-Controls whether an interrupt on Port A can create an interrupt for the
-interrupt controller by not masking it. By default, all interrupts bits
-are unmasked.
----+AD4-8---
+  Linux 4.0-rc1 (2015-02-22 18:21:14 -0800)
 
-So IMHO we need to update +ACI-gpio-dwapb+ACI- driver in the following manner:
+are available in the git repository at:
 
- +AFs-1+AF0- In dwapb+AF8-configure+AF8-irqs() in accordance to +ACI-snps,nr-gpios+ACI- in the
-first bank set a value in GPIO+AF8-INTEN. This way we turn N pins in that
-port/bank in +ACI-interrupt+ACI- mode from their default gpio mode.
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.0-2
 
- +AFs-2+AF0- Don't expose dwapb+AF8-irq+AF8-enable()/dwapb+AF8-irq+AF8-disable() through
-ct-+AD4-chip.irq+AF8-enable/ct-+AD4-chip.irq+AF8-disable. Because we don't want to
-toggle modes of pins, right?
+for you to fetch changes up to ef6d24cc7f5b2b5c4184eddb039e2add6231a122:
 
- +AFs-3+AF0- Use ct-+AD4-chip.irq+AF8-mask/ct-+AD4-chip.irq+AF8-unmask for purpose of real
-enabling/disabling interrupts.
+  pinctrl: sun4i: GPIOs configured as irq must be set to input before
+reading (2015-03-18 10:56:46 +0100)
 
-If I'm not missing something that would be implementation that matches
-real device specification.
+----------------------------------------------------------------
+A set of pin control fixes for the v4.0 release cycle:
 
-If we do these changes then indeed we'll want to make sure GPIO+AF8-INTMASK
-is initialized with all interrupts masked out:
----+AD4-8---
-dwapb+AF8-write(gpio, GPIO+AF8-INTMASK, 0xffffffff)+ADs-
----+AD4-8---
+- Fix up consumer return values on pin control stubs.
+- Four patches fixing up the interrupt handling and
+  sleep context save in the Baytrail driver.
+- Make default output directions work properly in the
+  Cherryview driver.
+- Fix interrupt locking in the AT91 driver.
+- Fix setting interrupt generating lines as input in
+  the sunxi driver.
 
-Let me know if my proposal makes sense and then I'll send patch that
-implements it.
+----------------------------------------------------------------
+Boris Brezillon (1):
+      pinctrl: at91: move lock/unlock_as_irq calls into request/release
 
--Alexey
+Hans de Goede (1):
+      pinctrl: sun4i: GPIOs configured as irq must be set to input
+before reading
+
+Linus Walleij (1):
+      Revert "pinctrl: consumer: use correct retval for placeholder functions"
+
+Mika Westerberg (4):
+      pinctrl: baytrail: Relax GPIO request rules
+      pinctrl: baytrail: Clear interrupt triggering from pins that are
+in GPIO mode
+      pinctrl: baytrail: Rework interrupt handling
+      pinctrl: baytrail: Save pin context over system sleep
+
+qipeng.zha (1):
+      pinctrl: update direction_output function of cherryview driver
+
+ drivers/pinctrl/intel/pinctrl-baytrail.c   | 254 +++++++++++++++++++++--------
+ drivers/pinctrl/intel/pinctrl-cherryview.c |   1 +
+ drivers/pinctrl/pinctrl-at91.c             |  17 +-
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c  |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c      |  14 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h      |   4 +
+ include/linux/pinctrl/consumer.h           |   6 +-
+ 7 files changed, 216 insertions(+), 81 deletions(-)
