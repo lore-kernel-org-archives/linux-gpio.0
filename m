@@ -1,107 +1,33 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH 2/2] pinctrl: driver for Conexant Digicolor CX92755 pin
- mapping
-Date: Thu, 19 Mar 2015 11:12:01 +0200
-Message-ID: <20150319091201.GA2415@tarshish>
-References: <1e256c7c4e35bb5bed79a2d2f1c8497b3b73ab74.1426519305.git.baruch@tkos.co.il>
- <2c75fb4c925dc318fd7c5db73315a7ac5822c8ce.1426519305.git.baruch@tkos.co.il>
- <CACRpkdY2bZf7eZn_jhb3r96SNk4W4miUa-thr1X5wPPZ1mfZUQ@mail.gmail.com>
+From: kbuild test robot <fengguang.wu@intel.com>
+Subject: [next:master 5727/5749] drivers/gpio/gpio-altera.c:259:5: sparse:
+ symbol 'altera_gpio_probe' was not declared. Should it be static?
+Date: Thu, 19 Mar 2015 17:40:02 +0800
+Message-ID: <201503191721.tDh6DZLK%fengguang.wu@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:56525 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751157AbbCSJMJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 19 Mar 2015 05:12:09 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdY2bZf7eZn_jhb3r96SNk4W4miUa-thr1X5wPPZ1mfZUQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jonathan Ben Avraham <yba@tkos.co.il>, Mike Green <Mike.Green@conexant.com>
+Cc: kbuild-all@01.org, Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+tree:   git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+head:   ce040cc379e3e1e094db5559f393d794fbfd01e4
+commit: 7fcb20a239a53831738bb991547ee4a1a0bebc06 [5727/5749] Merge remote-tracking branch 'gpio/for-next'
+reproduce:
+  # apt-get install sparse
+  git checkout 7fcb20a239a53831738bb991547ee4a1a0bebc06
+  make ARCH=x86_64 allmodconfig
+  make C=1 CF=-D__CHECK_ENDIAN__
 
-On Wed, Mar 18, 2015 at 01:33:02PM +0100, Linus Walleij wrote:
-> On Mon, Mar 16, 2015 at 4:21 PM, Baruch Siach <baruch@tkos.co.il> wrote:
-> 
-> > This adds pinctrl and gpio driver to the CX92755 SoC "General Purpose Pin
-> > Mapping" hardware block. The CX92755 is one SoC from the Conexant Digicolor
-> > series. Pin mapping hardware supports configuring pins as either GPIO, or up to
-> > 3 other "client select" functions. This driver adds support for pin muxing
-> > using the generic device tree binding, and a basic gpiolib driver for the GPIO
-> > functionality.
-> >
-> > This driver does not currently support GPIO interrupts, and pad configuration.
-> >
-> > Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-> 
-> (...)
-> 
-> > +struct dc_pinmap {
-> > +       void __iomem            *regs;
-> > +       struct device           *dev;
-> > +       struct pinctrl_dev      *pctl;
-> > +
-> > +       struct pinctrl_pin_desc *pins;
-> 
-> Instead of storing just an array of pinctrl_pin_desc
-> use the .pins in struct pinctrl_desc and store a pointer
-> to your struct pinctrl_desc in this state container.
 
-Good point. Will do.
+sparse warnings: (new ones prefixed by >>)
 
-> > +       const char              *pin_names[PINS_COUNT];
-> 
-> This duplicates names that should already be in the
-> .pins array in struct pinctrl_desc, don't do that.
+>> drivers/gpio/gpio-altera.c:259:5: sparse: symbol 'altera_gpio_probe' was not declared. Should it be static?
 
-The .get_function_groups callback in pinmux_ops expect a char array pointer in 
-*groups. That is currently implemented as
+Please review and possibly fold the followup patch.
 
-	*groups = pmap->pin_names;
-	*num_groups = PINS_COUNT;
-
-How can I implement that without a persistent char pointers array, where all I 
-have is the .name fields scattered in a big pinctrl_pin_desc array?
-
-> > +       struct gpio_chip        chip;
-> > +       spinlock_t              lock;
-> > +};
-> 
-> > +static const char *dc_get_group_name(struct pinctrl_dev *pctldev,
-> > +                                    unsigned selector)
-> > +{
-> > +       struct dc_pinmap *pmap = pinctrl_dev_get_drvdata(pctldev);
-> > +
-> > +       return pmap->pin_names[selector];
-> > +}
-> 
-> Add some comment explaining that you have exactly one group per pin.
-
-OK.
-
-> You are also re-implementing the .pins field in struct pinctrl_desc
-> where each pin is described by a struct pinctrl_pin_desc with
-> special macros available to define them and all.
-> 
-> If you want to have one group per pin named like this
-> why not just
-> 
-> return pmap->desc->pins[selector].name;
-> 
-> ?
-
-I had to have the char pointers array anyway, as explained above. If you have 
-a better suggestion to that problem I will happily implement it as you suggest 
-here.
-
-Thanks for reviewing, and for applying all my other little documentation 
-update patches.
-
-baruch
-
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+http://lists.01.org/mailman/listinfo/kbuild                 Intel Corporation
