@@ -1,40 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: translate pin number in GPIO ACPI callbacks
-Date: Thu, 19 Mar 2015 09:23:32 +0100
-Message-ID: <CACRpkdYfiPM9iSfUiQUU3BgkGd=rsb95GRie6ehmkUyZ3Se05g@mail.gmail.com>
-References: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
+Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
+Date: Thu, 19 Mar 2015 09:30:19 +0100
+Message-ID: <CACRpkdbjoK_fQrWSL5S2L9sjdTU3MUogSJt5qdeL8QgxGqifNQ@mail.gmail.com>
+References: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
+	<CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
+	<CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
+	<20150302072655.GA17089@deathray>
+	<CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
+	<CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
+	<CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
+	<CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
+	<20150309202258.GA3398@deathray>
+	<CACRpkdaC6A1D-rOeCywR9QHRc9wdKTcHVjEMfYCHrg0Jz0vwxg@mail.gmail.com>
+	<20150317164724.GA3610@deathray>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33450 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778AbbCSIXd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:23:33 -0400
-Received: by oifl3 with SMTP id l3so28782704oif.0
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:23:32 -0700 (PDT)
-In-Reply-To: <1426007738-119736-1-git-send-email-qipeng.zha@intel.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33813 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751314AbbCSIaU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:30:20 -0400
+Received: by oier21 with SMTP id r21so59005097oie.1
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:30:19 -0700 (PDT)
+In-Reply-To: <20150317164724.GA3610@deathray>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "qipeng.zha" <qipeng.zha@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, qi.zheng@intel.com, "jason.cj.chen" <jason.cj.chen@intel.com>
+To: Michael Welling <mwelling@ieee.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 10, 2015 at 6:15 PM, qipeng.zha <qipeng.zha@intel.com> wrote:
+On Tue, Mar 17, 2015 at 5:47 PM, Michael Welling <mwelling@ieee.org> wrote:
+> On Tue, Mar 17, 2015 at 05:39:01PM +0100, Linus Walleij wrote:
 
-> From: "qipeng.zha" <qipeng.zha@intel.com>
+>> I would more think about deprecating the sysfs in favor of the dev
+>> node.
 >
-> If GPIO driver use pin mapping, need to translate pin number
-> between ACPI table and GPIO driver.
->
-> This issue is found on one platform with Cherryview gpio
-> controller, kernel is hang when executed _PS0 method of
-> one ACPI device, since without this translation, it access
-> invalid gpiodesc array.
->
-> Verified it works again with this patch.
->
-> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
+> What happens to all of the users of the sysfs interface when this happens?
 
-Patch applied with Mika's ACK.
+They keep using a deprecated interface instead of an encouraged
+interface.
+
+>> But this is getting terribly academic since we're just talking, noone is
+>> really implementing anything.
+>
+> Without a specification nothing is ever going to be implemented.
+
+This is not a case of either/or but a case of both/and.
 
 Yours,
 Linus Walleij
