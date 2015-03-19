@@ -1,50 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Fw: [3.18.3] poll() on gpio pins broken
-Date: Thu, 19 Mar 2015 09:30:19 +0100
-Message-ID: <CACRpkdbjoK_fQrWSL5S2L9sjdTU3MUogSJt5qdeL8QgxGqifNQ@mail.gmail.com>
-References: <CAAVeFuKbgFqHKR5F_VeF9Ti=FvijK2CScNsUeapSpNde9OJqSA@mail.gmail.com>
-	<CACRpkdajCuob668o_9oF+4pomjaAkLz58Kg4Hx-ibbkBQv=h3w@mail.gmail.com>
-	<CAAVeFuJxki5mqY91ugumpDEuq9BMbBin4ypr1H2qcA_uzWGT9Q@mail.gmail.com>
-	<20150302072655.GA17089@deathray>
-	<CAAVeFu+J0toG+3Yzncw+c11Fk_FK0oQeHBB=0MmExCX3z9Sh0g@mail.gmail.com>
-	<CACRpkdZRXAokttK7uc6PtfOGvRa74ydQRo6Kn1V1ofGUcGbSiQ@mail.gmail.com>
-	<CAAVeFuJ+T-4ew+ACJpestMtH4D+ggcwOD3SumAwYNO5yGT=jiQ@mail.gmail.com>
-	<CACRpkdZBc3ry_0sOVRpwnTHNZ1M7CmHw9Us_XPen3pQQP0OazA@mail.gmail.com>
-	<20150309202258.GA3398@deathray>
-	<CACRpkdaC6A1D-rOeCywR9QHRc9wdKTcHVjEMfYCHrg0Jz0vwxg@mail.gmail.com>
-	<20150317164724.GA3610@deathray>
+Subject: Re: [PATCH 2/2] pinctrl: Add Pistachio SoC pin control driver
+Date: Thu, 19 Mar 2015 09:42:16 +0100
+Message-ID: <CACRpkdbXm_aPQU0-wV8yASts7n4QBd1dAe8-d40g2xy2KBAKEQ@mail.gmail.com>
+References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
+	<1424744104-14151-3-git-send-email-abrestic@chromium.org>
+	<CACRpkdbqioAreyDwM2JN87=gH20n1OkUXPjdkW885iDWUV1NnA@mail.gmail.com>
+	<CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
+	<CACRpkdbt4MQYY7MqjFN-1Dp0am1PaOZ1YL+bKc8SJrtFDnSW_Q@mail.gmail.com>
+	<CAL1qeaHCKPeQnf8VPWmz_=uN1=_mxWbMGF+HuPZ_AYOqA+15JA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:33813 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751314AbbCSIaU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:30:20 -0400
-Received: by oier21 with SMTP id r21so59005097oie.1
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:30:19 -0700 (PDT)
-In-Reply-To: <20150317164724.GA3610@deathray>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:36395 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751144AbbCSImR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:42:17 -0400
+Received: by obdfc2 with SMTP id fc2so49485677obd.3
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:42:16 -0700 (PDT)
+In-Reply-To: <CAL1qeaHCKPeQnf8VPWmz_=uN1=_mxWbMGF+HuPZ_AYOqA+15JA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, folkert <folkert@vanheusden.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
 
-On Tue, Mar 17, 2015 at 5:47 PM, Michael Welling <mwelling@ieee.org> wrote:
-> On Tue, Mar 17, 2015 at 05:39:01PM +0100, Linus Walleij wrote:
+On Tue, Mar 17, 2015 at 5:56 PM, Andrew Bresticker
+<abrestic@chromium.org> wrote:
+[Me]
+>> Sorry if I don't really know how things work now... :(
+>> It seems like a logical way to me.
+(...)
+> 4) The ->set_mux() op must set the proper function for the pin.
+> 5) The ->set_mux() op must also disable the GPIO function for the pin.
+> To disable the GPIO function, the pinctrl driver must map the pin to a
+> GPIO bank/offset and disable the GPIO via the GPIO bank's GPIO_EN
+> register.
 
->> I would more think about deprecating the sysfs in favor of the dev
->> node.
->
-> What happens to all of the users of the sysfs interface when this happens?
+That sounds like the"GPIO" registers are actually involved in any
+muxing usecase, meaning there is not really a clean split between
+the pinctrl and GPIO hardware, the case I refer to as "GPIO mode
+pitfalls" in Documentation/pinctrl.txt.
 
-They keep using a deprecated interface instead of an encouraged
-interface.
+In such cases both halves of the driver(s) need to be aware of
+the other, and that is what you seem to be wanting to achieve.
 
->> But this is getting terribly academic since we're just talking, noone is
->> really implementing anything.
->
-> Without a specification nothing is ever going to be implemented.
+So I was wrong in thinking the GPIO device could be a separate
+subdevice, the two parts are too dependent on each other.
+So keep a single probe() function and let the two driver halves
+poke into each others' registers.
 
-This is not a case of either/or but a case of both/and.
+Sorry for the fuzz...
 
 Yours,
 Linus Walleij
