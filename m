@@ -1,79 +1,54 @@
-From: <grygorii.strashko@linaro.org>
-Subject: [PATCH 4/8] gpio: omap: drop 'gpio' param from omap_gpio_init_irq()
-Date: Thu, 19 Mar 2015 19:25:40 +0200
-Message-ID: <1426785944-17255-5-git-send-email-grygorii.strashko@linaro.org>
-References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:35173 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757374AbbCSR0B (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 13:26:01 -0400
-Received: by lbcgn8 with SMTP id gn8so57936259lbc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 10:26:00 -0700 (PDT)
-In-Reply-To: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 10/15] serial: stm32-usart: Add STM32 USART Driver
+Date: Thu, 19 Mar 2015 18:35:30 +0100
+Message-ID: <CALszF6DX2pz_US6uqQwBjmZhfgjw5PP1UAy9H+c-_Kgkk_Z72w@mail.gmail.com>
+References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
+	<1426197361-19290-11-git-send-email-maxime.coquelin@st.com>
+	<CAHp75Vd7+oLiLLuyocYh95TebtocWrRho6xNjuSUt8fYGp8npg@mail.gmail.com>
+	<CALszF6BWuUYRh+3rWnSQLApkAHA5dQXw=6x6D_evRtb+5B_ukA@mail.gmail.com>
+	<CAHp75Vdf6=z1d5+eYJ+QGTko9kkZf-oPfoWaf8FRoTdqcdWxjw@mail.gmail.com>
+	<CALszF6A5Zu7i0hxSLTS-nfOAXmd0__jLjB=fHxK93Ex5Vbi9LA@mail.gmail.com>
+	<550AE41C.8070803@hurleysoftware.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <550AE41C.8070803-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
+Cc: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm@linux-founda>
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
 
-From: Grygorii Strashko <grygorii.strashko@linaro.org>
+2015-03-19 15:58 GMT+01:00 Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>:
+> On 03/19/2015 09:55 AM, Maxime Coquelin wrote:
+>>>>>> +static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
+>>>>>> +                           struct ktermios *old)
+> [...]
+>>>>>> +       usardiv = (port->uartclk * 25) / (baud * 4);
+>>>>>> +       mantissa = (usardiv / 100) << USART_BRR_DIV_M_SHIFT;
+>>>>>> +       fraction = DIV_ROUND_CLOSEST((usardiv % 100) * 16, 100);
+>>>>>> +       if (fraction & ~USART_BRR_DIV_F_MASK) {
+>>>>>> +               fraction = 0;
+>>>>>> +               mantissa += (1 << USART_BRR_DIV_M_SHIFT);
+>>>>>> +       }
+> [...]
+>> Really, I would prefer keeping this fractional divider as it is
+>> implemented today.
+>
+> You have to admit that's basically an unintelligible mess;
+> how would anyone ever be able to refactor and replace that with a
+> common divider implementation?
+>
+> At the very least, please comment on the formula and format.
 
-The 'gpio' parameter isn't needed any more as it
-duplicates 'offset' parameter, so drop it.
+Ok, I will refactor the implementation, and comment it.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
----
- drivers/gpio/gpio-omap.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Regards,
+Maxime
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 2df693b..ff5d54d 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -479,14 +479,13 @@ static int omap_gpio_is_input(struct gpio_bank *bank, unsigned offset)
- 	return readl_relaxed(reg) & BIT(offset);
- }
- 
--static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned gpio,
--			       unsigned offset)
-+static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned offset)
- {
- 	if (!LINE_USED(bank->mod_usage, offset)) {
- 		omap_enable_gpio_module(bank, offset);
- 		omap_set_gpio_direction(bank, offset, 1);
- 	}
--	bank->irq_usage |= BIT(GPIO_INDEX(bank, gpio));
-+	bank->irq_usage |= BIT(offset);
- }
- 
- static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
-@@ -518,7 +517,7 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
- 	spin_lock_irqsave(&bank->lock, flags);
- 	offset = GPIO_INDEX(bank, gpio);
- 	retval = omap_set_gpio_triggering(bank, offset, type);
--	omap_gpio_init_irq(bank, gpio, offset);
-+	omap_gpio_init_irq(bank, offset);
- 	if (!omap_gpio_is_input(bank, offset)) {
- 		spin_unlock_irqrestore(&bank->lock, flags);
- 		return -EINVAL;
-@@ -803,15 +802,14 @@ exit:
- static unsigned int omap_gpio_irq_startup(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
- 	unsigned long flags;
--	unsigned offset = GPIO_INDEX(bank, gpio);
-+	unsigned offset = d->hwirq;
- 
- 	if (!BANK_USED(bank))
- 		pm_runtime_get_sync(bank->dev);
- 
- 	spin_lock_irqsave(&bank->lock, flags);
--	omap_gpio_init_irq(bank, gpio, offset);
-+	omap_gpio_init_irq(bank, offset);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	omap_gpio_unmask_irq(d);
- 
--- 
-1.9.1
-
+>
+> Regards,
+> Peter Hurley
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
