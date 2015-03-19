@@ -1,54 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: Add Pistachio SoC pin control driver
-Date: Thu, 19 Mar 2015 09:42:16 +0100
-Message-ID: <CACRpkdbXm_aPQU0-wV8yASts7n4QBd1dAe8-d40g2xy2KBAKEQ@mail.gmail.com>
-References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
-	<1424744104-14151-3-git-send-email-abrestic@chromium.org>
-	<CACRpkdbqioAreyDwM2JN87=gH20n1OkUXPjdkW885iDWUV1NnA@mail.gmail.com>
-	<CAL1qeaHzpi3_PNpxnLOf=b8d2n5DrRrnB_yiZFHpiP8C7b0hSg@mail.gmail.com>
-	<CACRpkdbt4MQYY7MqjFN-1Dp0am1PaOZ1YL+bKc8SJrtFDnSW_Q@mail.gmail.com>
-	<CAL1qeaHCKPeQnf8VPWmz_=uN1=_mxWbMGF+HuPZ_AYOqA+15JA@mail.gmail.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Subject: Re: [PATCH] gpio-dwapb: reset mask register on probe
+Date: Thu, 19 Mar 2015 08:44:01 +0000
+Message-ID: <1426754640.2742.19.camel@synopsys.com>
+References: <1425372461-17859-1-git-send-email-abrodkin@synopsys.com>
+	 <CACRpkdaknfTMb=1LVqNLTtV8Te+mjRdSZ=grk4NUGxKBt6gpCg@mail.gmail.com>
+	 <1425934566.2312.16.camel@synopsys.com>
+	 <CACRpkdYMtAzWyshP0_x-qucz2j=1JE_=DE3Y7TARWGxDQxnurA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:36395 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751144AbbCSImR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 04:42:17 -0400
-Received: by obdfc2 with SMTP id fc2so49485677obd.3
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Mar 2015 01:42:16 -0700 (PDT)
-In-Reply-To: <CAL1qeaHCKPeQnf8VPWmz_=uN1=_mxWbMGF+HuPZ_AYOqA+15JA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-7"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYMtAzWyshP0_x-qucz2j=1JE_=DE3Y7TARWGxDQxnurA@mail.gmail.com>
+Content-Language: en-US
+Content-ID: <0E7029821DD768499A63737BB69A7BA2@internal.synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>
 
-On Tue, Mar 17, 2015 at 5:56 PM, Andrew Bresticker
-<abrestic@chromium.org> wrote:
-[Me]
->> Sorry if I don't really know how things work now... :(
->> It seems like a logical way to me.
-(...)
-> 4) The ->set_mux() op must set the proper function for the pin.
-> 5) The ->set_mux() op must also disable the GPIO function for the pin.
-> To disable the GPIO function, the pinctrl driver must map the pin to a
-> GPIO bank/offset and disable the GPIO via the GPIO bank's GPIO_EN
-> register.
+Hi Linus,
 
-That sounds like the"GPIO" registers are actually involved in any
-muxing usecase, meaning there is not really a clean split between
-the pinctrl and GPIO hardware, the case I refer to as "GPIO mode
-pitfalls" in Documentation/pinctrl.txt.
+On Tue, 2015-03-17 at 17:54 +-0100, Linus Walleij wrote:
++AD4- +AD4APg- +-    /+ACo- Mask out and disable all interrupts +ACo-/
++AD4- +AD4APg- +-    dwapb+AF8-write(gpio, GPIO+AF8-INTMASK, 0xffffffff)+ADs-
++AD4- +AD4APg- +-    dwapb+AF8-write(gpio, GPIO+AF8-INTEN, 0)+ADs-
++AD4- +AD4-
++AD4- +AD4- This looks good to me - it's always a good idea to make sure defaults
++AD4- +AD4- are set as we expect.
++AD4- 
++AD4- So should I cook a patch doing just these two lines?
++AD4- 
++AD4- But the initial patch unmasking all IRQs then? Is that even needed?
 
-In such cases both halves of the driver(s) need to be aware of
-the other, and that is what you seem to be wanting to achieve.
+Oops, my bad here :)
 
-So I was wrong in thinking the GPIO device could be a separate
-subdevice, the two parts are too dependent on each other.
-So keep a single probe() function and let the two driver halves
-poke into each others' registers.
+I intentionally wrote 0 to MASK register to return it to default state
+(if pre-bootloader messes it). As I explained if we really mask all
+interrupts (together with disabling them all via INTEN) then interrupts
+will never happen.
 
-Sorry for the fuzz...
+If we look at DW APB GPIO databook it says:
+---+AD4-8---
+Whenever a 1 is written to a bit of this register +AFs-GPIO+AF8-INTEN+AF0-, it
+configures the corresponding bit on Port A to become an interrupt+ADs-
+otherwise, Port A operates as a normal GPIO signal.
+---+AD4-8---
 
-Yours,
-Linus Walleij
+While for GPIO+AF8-INTMASK it says:
+---+AD4-8---
+Controls whether an interrupt on Port A can create an interrupt for the
+interrupt controller by not masking it. By default, all interrupts bits
+are unmasked.
+---+AD4-8---
+
+So IMHO we need to update +ACI-gpio-dwapb+ACI- driver in the following manner:
+
+ +AFs-1+AF0- In dwapb+AF8-configure+AF8-irqs() in accordance to +ACI-snps,nr-gpios+ACI- in the
+first bank set a value in GPIO+AF8-INTEN. This way we turn N pins in that
+port/bank in +ACI-interrupt+ACI- mode from their default gpio mode.
+
+ +AFs-2+AF0- Don't expose dwapb+AF8-irq+AF8-enable()/dwapb+AF8-irq+AF8-disable() through
+ct-+AD4-chip.irq+AF8-enable/ct-+AD4-chip.irq+AF8-disable. Because we don't want to
+toggle modes of pins, right?
+
+ +AFs-3+AF0- Use ct-+AD4-chip.irq+AF8-mask/ct-+AD4-chip.irq+AF8-unmask for purpose of real
+enabling/disabling interrupts.
+
+If I'm not missing something that would be implementation that matches
+real device specification.
+
+If we do these changes then indeed we'll want to make sure GPIO+AF8-INTMASK
+is initialized with all interrupts masked out:
+---+AD4-8---
+dwapb+AF8-write(gpio, GPIO+AF8-INTMASK, 0xffffffff)+ADs-
+---+AD4-8---
+
+Let me know if my proposal makes sense and then I'll send patch that
+implements it.
+
+-Alexey
