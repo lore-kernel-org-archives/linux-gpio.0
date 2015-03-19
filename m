@@ -1,145 +1,103 @@
-From: Sonic Zhang <sonic.adi@gmail.com>
-Subject: Re: [PATCH] pinmux: allow exlusive pin allocation among GPIO and
- peripheral funtions via flag strict in struct pinctrl_desc
-Date: Thu, 19 Mar 2015 18:06:37 +0800
-Message-ID: <CAJxxZ0OC0xDs3Y_kn=_r59Sx8mf3aUxE9unH+8mjuEsQrK8q=A@mail.gmail.com>
-References: <1426154203-11551-1-git-send-email-sonic.adi@gmail.com>
-	<CACRpkdZ-wmZRHR1eTwhaNYcot=T4GVX2spm80hv8Makw99bowQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: [PATCH] pinctrl: mvebu: add suspend/resume support to Armada XP pinctrl driver
+Date: Thu, 19 Mar 2015 11:30:47 +0100
+Message-ID: <1426761047-3103-1-git-send-email-thomas.petazzoni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35600 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751366AbbCSKGi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 06:06:38 -0400
-In-Reply-To: <CACRpkdZ-wmZRHR1eTwhaNYcot=T4GVX2spm80hv8Makw99bowQ@mail.gmail.com>
+Received: from down.free-electrons.com ([37.187.137.238]:58157 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751204AbbCSKbC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Mar 2015 06:31:02 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@linaro.org>, Steven Miao <realmz6@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
+Cc: linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Hi Linus,
+This commit adds suspend/resume support to the Armada XP pinctrl
+driver, by simply saving and restoring the MPP registers.
 
-On Wed, Mar 18, 2015 at 6:21 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Mar 12, 2015 at 10:56 AM, Sonic Zhang <sonic.adi@gmail.com> wrote:
->
->> From: Sonic Zhang <sonic.zhang@analog.com>
->>
->> The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
->> for both GPIO and peripheral function. So, add flag strict in struct pinctrl
->> to check both gpio_owner and mux_owner before approving the pin request.
->>
->> Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
->
-> Nice!
->
-> But mention in the commit that ADI2 is also patched to use
-> this.
-OK
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 40 +++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
->
-> Do we have other candidates for strict GPIO/mux separation?
-> What do people on the lists say?
->
->> +++ b/drivers/pinctrl/pinmux.c
->> @@ -99,24 +99,25 @@ static int pin_request(struct pinctrl_dev *pctldev,
->>         dev_dbg(pctldev->dev, "request pin %d (%s) for %s\n",
->>                 pin, desc->name, owner);
->>
->> +       if ((gpio_range || pctldev->desc->strict) && desc->gpio_owner) {
->
-> So either we find a range map or we are strict and there is also a
-> previous owner of the pin.
->
-> Is this correct? I think we should *always* find a range to request
-> a pin.
-When requesting regular muxing from function pinmux_enable_setting(),
-pin_request() is invoked with gpio_range = NULL. But, when requesting
-GPIO, function pinmux_request_gpio() always passes a valid range. So,
-if gpio_owner is set, it is correct to fail a request either the
-request is for this GPIO or the request is for regular muxing of this
-GPIO pin and the strict bit is set.
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index fc33761..d191c3a 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -34,6 +34,7 @@
+ #include "pinctrl-mvebu.h"
+ 
+ static void __iomem *mpp_base;
++static u32 *mpp_saved_regs;
+ 
+ static int armada_xp_mpp_ctrl_get(unsigned pid, unsigned long *config)
+ {
+@@ -406,12 +407,42 @@ static struct pinctrl_gpio_range mv78460_mpp_gpio_ranges[] = {
+ 	MPP_GPIO_RANGE(2,  64, 64,  3),
+ };
+ 
++static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
++				     pm_message_t state)
++{
++	struct mvebu_pinctrl_soc_info *soc =
++		platform_get_drvdata(pdev);
++	int i, nregs;
++
++	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
++
++	for (i = 0; i < nregs; i++)
++		mpp_saved_regs[i] = readl(mpp_base + i * 4);
++
++	return 0;
++}
++
++static int armada_xp_pinctrl_resume(struct platform_device *pdev)
++{
++	struct mvebu_pinctrl_soc_info *soc =
++		platform_get_drvdata(pdev);
++	int i, nregs;
++
++	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
++
++	for (i = 0; i < nregs; i++)
++		writel(mpp_saved_regs[i], mpp_base + i * 4);
++
++	return 0;
++}
++
+ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct mvebu_pinctrl_soc_info *soc = &armada_xp_pinctrl_info;
+ 	const struct of_device_id *match =
+ 		of_match_device(armada_xp_pinctrl_of_match, &pdev->dev);
+ 	struct resource *res;
++	int nregs;
+ 
+ 	if (!match)
+ 		return -ENODEV;
+@@ -459,6 +490,13 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 		break;
+ 	}
+ 
++	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
++
++	mpp_saved_regs = devm_kmalloc(&pdev->dev, nregs * sizeof(u32),
++				      GFP_KERNEL);
++	if (!mpp_saved_regs)
++		return -ENOMEM;
++
+ 	pdev->dev.platform_data = soc;
+ 
+ 	return mvebu_pinctrl_probe(pdev);
+@@ -476,6 +514,8 @@ static struct platform_driver armada_xp_pinctrl_driver = {
+ 	},
+ 	.probe = armada_xp_pinctrl_probe,
+ 	.remove = armada_xp_pinctrl_remove,
++	.suspend = armada_xp_pinctrl_suspend,
++	.resume = armada_xp_pinctrl_resume,
+ };
+ 
+ module_platform_driver(armada_xp_pinctrl_driver);
+-- 
+2.1.0
 
->
-> I think you should just leave this if()-statement alone and insert
-> some new stuff inside the lower else()-clause.
->
->
->> +               dev_err(pctldev->dev,
->> +                       "pin %s already requested by %s; cannot claim for %s\n",
->> +                       desc->name, desc->gpio_owner, owner);
->> +               goto out;
->> +       }
->> +
->> +       if ((!gpio_range || pctldev->desc->strict) &&
->> +           desc->mux_usecount && strcmp(desc->mux_owner, owner)) {
->> +               dev_err(pctldev->dev,
->> +                       "pin %s already requested by %s; cannot claim for %s\n",
->> +                       desc->name, desc->mux_owner, owner);
->> +               goto out;
->> +       }
->
-> This is wrong.
->
-> If the function is entered with gpio_range != NULL it is a request
-> for a single GPIO line, else it is regular muxing.
-
-Why this is wrong? If gpio_range != NULL, the request of a GPIO is
-already checked in the first if clause.
-
-In strict case:
-Both mux_owner and gpio_owner are checked no matter whether GPIO or
-regular muxing is requested.
-If both checking pass, muxing_owner or gpio_owner is set according to
-the request type.
-
-In non strict case:
-Request of GPIO is checked in the first if clause against gpio_owner,
-while request of regular muxing is checked in the second if clause
-against mux_owner.
-If either checking passes, its owner is set which doesn't affect the
-checking of the other request type.
-
->
-> Keep the else() clause, just also include an explicit check
-> to see if desc->gpio_owner is set, and in that case, if we
-> are also strict, bail out.
-
-Anyway, if you think doing the explicit check in both if() and else()
-clauses is better, I am fine to send a new patch.
-
->
-> else { /* No gpio_range */
->    if (pctldev->desc->strict && desc->gpio_owner) {
->       err "already used for GPIO..."
->    }
->
->> +
->>         if (gpio_range) {
->
-> So just keep the whole thing inside if (gpio_range).
->
->>                 desc->mux_usecount++;
->>                 if (desc->mux_usecount > 1)
->>                         return 0;
->> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
->> index 66e4697..ca6c99c0 100644
->> --- a/include/linux/pinctrl/pinctrl.h
->> +++ b/include/linux/pinctrl/pinctrl.h
->> @@ -132,6 +132,7 @@ struct pinctrl_desc {
->>         const struct pinctrl_ops *pctlops;
->>         const struct pinmux_ops *pmxops;
->>         const struct pinconf_ops *confops;
->> +       bool strict;
->
-> Also update the kerneldoc above this struct.
->
-> Also update examples and text in
-> Documentation/pinctrl.txt
-> so it is clear when to use this option and what it means.
-
-OK
-
-Regards,
-
-Sonic
