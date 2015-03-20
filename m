@@ -1,54 +1,30 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH 0/8] gpio: omap: cleanup: get rid of system GPIO <-> GPIO
- offset converseations
-Date: Fri, 20 Mar 2015 17:11:23 +0200
-Message-ID: <550C389B.2020506@linaro.org>
-References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org> <20150319230025.GO31346@atomide.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH 1/8] gpio: omap: convert omap_gpio_is_input() to use gpio
+ offset
+Date: Fri, 20 Mar 2015 09:42:58 -0700
+Message-ID: <550C4E12.8070204@oracle.com>
+References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org> <1426785944-17255-2-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20150319230025.GO31346@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:41929 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751319AbbCTQne (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Mar 2015 12:43:34 -0400
+In-Reply-To: <1426785944-17255-2-git-send-email-grygorii.strashko@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: grygorii.strashko@linaro.org, Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
+Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/20/2015 01:00 AM, Tony Lindgren wrote:
-> * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150319 10:26]:
->> From: Grygorii Strashko <grygorii.strashko@linaro.org>
->>
->> Now in TI OMAP GPIO driver there are a lot of places where
->> System GPIO number calculated and then converted to GPIO offset.
->> What is worse is that in many place such conversation performed twice
->> or even three times. But actually, we don't need to do that at all, because
->> - gpiolib always passes GPIO offset to GPIO controller
->> - OMAP GPIO driver converted to use IRQ domain, so
->>    struct irq_data->hwirq contains GPIO offset
->>
->> Hence, it is safe to convert all GPIO OMAP functions to use GPIO
->> offset instead of system GPIO numbers. Also, this allows to remove
->> unneeded conversations routines
->>   #define GPIO_INDEX(bank, gpio)
->>   #define GPIO_BIT(bank, gpio)
->>   int omap_irq_to_gpio()
-> 
-> Right on! This is excellent news. I've tested this set on top of -rc4
-> plus the patch mentioned below, and I'm not seeing regressions on
-> the platforms I tested with. Wake up to smsc911x ping with off-idle
-> still works on omap3.
-> 
-> I only briefly tested on omap1 (osk5912), so I'like to wait for
-> Aaro's ack before this gets merged.
-> 
-> I found one build error, other than that, for the whole series
-> please feel free to add:
-> 
-> Tested-by: Tony Lindgren <tony@atomide.com>
+On 3/19/15 10:25 AM, grygorii.strashko@linaro.org wrote:
+> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+>
+> Convert omap_gpio_is_input() to use GPIO offset instead of mask and,
+> in such way, make code simpler and remove few lines of code.
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+> ---
 
-Thanks Tony. 
-Yep. I'll wait for news from Aaro then will re-send if ok.
-
--- 
-regards,
--grygorii
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
