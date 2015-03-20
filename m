@@ -1,71 +1,189 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH 5/8] gpio: omap: convert gpio irq functions to use GPIO
- offset
-Date: Fri, 20 Mar 2015 17:06:02 +0200
-Message-ID: <550C375A.5040802@linaro.org>
-References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org> <1426785944-17255-6-git-send-email-grygorii.strashko@linaro.org> <20150319230334.GQ31346@atomide.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [RFC] pinmux: group and function definitions in the device tree
+Date: Fri, 20 Mar 2015 16:06:09 +0100
+Message-ID: <20150320150609.GB32259@odux.rfo.atmel.com>
+References: <20150319153950.GC30114@odux.rfo.atmel.com>
+ <20150319185637.GV4927@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:36062 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870AbbCTPGL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Mar 2015 11:06:11 -0400
-Received: by labe2 with SMTP id e2so13911087lab.3
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2015 08:06:09 -0700 (PDT)
-In-Reply-To: <20150319230334.GQ31346@atomide.com>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:37652 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751252AbbCTPHI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Mar 2015 11:07:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20150319185637.GV4927@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
 
-On 03/20/2015 01:03 AM, Tony Lindgren wrote:
-> * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150319=
- 10:26]:
->> From: Grygorii Strashko <grygorii.strashko@linaro.org>
->>
->> Convert GPIO IRQ functions to use GPIO offset instead of system
->> GPIO numbers. This allows to drop unneeded conversations between
->> system GPIO <-> GPIO offset which are done in many places and
->> many times.
->> It is safe to do now because:
->> - gpiolib always passes GPIO offset to GPIO controller
->> - OMAP GPIO driver converted to use IRQ domain, so
->>    struct irq_data->hwirq contains GPIO offset
->>
->> This is preparation step before removing:
->>   #define GPIO_INDEX(bank, gpio)
->>   #define GPIO_BIT(bank, gpio)
->>   int omap_irq_to_gpio()
-> ...
->
->>   static void omap_gpio_unmask_irq(struct irq_data *d)
->>   {
->>   	struct gpio_bank *bank =3D omap_irq_data_get_bank(d);
->> -	unsigned int gpio =3D omap_irq_to_gpio(bank, d->hwirq);
->> +	unsigned offset =3D d->hwirq;
->>   	unsigned int irq_mask =3D GPIO_BIT(bank, gpio);
->>   	u32 trigger =3D irqd_get_trigger_type(d);
->>   	unsigned long flags;
->
-> This series up to this patch produces a build error that
-> would break git bisect:
->
-> drivers/gpio/gpio-omap.c: In function =E2=80=98omap_gpio_unmask_irq=E2=
-=80=99:
-> drivers/gpio/gpio-omap.c:866:37: error: =E2=80=98gpio=E2=80=99 undecl=
-ared (first use in this function)
->    unsigned int irq_mask =3D GPIO_BIT(bank, gpio);
+On Thu, Mar 19, 2015 at 07:56:37PM +0100, Sascha Hauer wrote:
+> On Thu, Mar 19, 2015 at 04:39:50PM +0100, Ludovic Desroches wrote:
+> > Hi,
+> > 
+> > I would like to start a discussion about pinmuxing and device tree bindings.
+> > 
+> > I am currently writing a new pinmuxing driver using the generic pinconf.
+> > My main concern is about defining functions and which pins belong to a
+> > group.
+> > 
+> > At the moment, it seems that most drivers using the generic pinconf
+> > define this stuff in a static way. The pinctrl-at91 driver covers many
+> > devices, the new one should do the same for new Atmel devices. Having
+> > the group and function definitions in the driver could involve a huge
+> > file...
+> > I am not sure it is a good thing to embed all these information into a
+> > single zImage...
+> > 
+> > How can we achieved this? I was thinking about something like this:
+> > 
+> > pinctrl@fc06a000 {
+> > 
+> > 	[...]
+> > 
+> > 	pinctrl_defs {
+> > 		mci0 {
+> > 			mci0_ioset0_1bit_grp {
+> > 				at91,pins = <68 69 70>;
+> > 				at91,mux = <2>;
+> > 			};
+> > 
+> > 			mci0_ioset0_4bit_grp {
+> > 				at91,pins = <68 69 70 71 72 73>;
+> > 				at91,mux = <2>;
+> > 			};
+> > 
+> > 			mci0_ioset0_8bit_grp {
+> > 				at91,pins = <68 69 70 71 72 73 74 75 76 77>;
+> > 				at91,mux = <2>;
+> > 			};
+> > 		};
+> > 	};
+> 
+> Why are different groups here? Do you want to put them into the dtsi?
 
-Oh. Thanks for catching that :) - splitting/rebasing issue.
+We used to have a configuration per pin in our products. On next ones we
+will have some constraints ie. on the controller side we still have a
+configuration per pin but we will introduced the notion of iosets. This
+notion involves that timings are guaranteed only in one ioset. That's
+why we can't mix signals from several iosets because. On the controller side
+we can do all we want so I would like to use groups as a software protection.
 
---=20
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I have several groups because I can only choose the 4bit group and use other
+pins for an other device.
+
+Example:
+
+mci0 {
+	mci0_ioset0_1bit_grp {
+		pins = <PINMUX_PIN(68, 2),
+			PINMUX_PIN(69, 2),
+			PINMUX_PIN(70, 2)>;
+	};
+	mci0_ioset0_4bit_grp {
+		pins = <PINMUX_PIN(68, 2),
+			PINMUX_PIN(69, 2),
+			PINMUX_PIN(70, 2),
+			PINMUX_PIN(71, 2),
+			PINMUX_PIN(72, 2),
+			PINMUX_PIN(73, 2)>;
+	};
+	mci0_ioset0_8bit_grp {
+		pins = <PINMUX_PIN(68, 2),
+			PINMUX_PIN(69, 2),
+			PINMUX_PIN(70, 2),
+			PINMUX_PIN(71, 2),
+			PINMUX_PIN(72, 2),
+			PINMUX_PIN(73, 2),
+			PINMUX_PIN(74, 2),
+			PINMUX_PIN(75, 2),
+			PINMUX_PIN(76, 2),
+			PINMUX_PIN(77, 2)>;
+	};
+	mci0_ioset1_1bit_grp {
+		pins = <PINMUX_PIN(153, 1),
+			PINMUX_PIN(154, 1),
+			PINMUX_PIN(155, 1)>;
+	};
+};
+
+i2c0 {
+	i2c0_ioset0_grp {
+		pins  = <PINMUX_PIN(71, 4),
+			 PINMUX_PIN(72, 4)>;
+	};
+	i2c0_ioset1_grp {
+		pins  = <PINMUX_PIN(91, 6),
+			 PINMUX_PIN(92, 6)>;
+	};
+	i2c0_ioset2_grp {
+		pins  = <PINMUX_PIN(108, 1),
+			 PINMUX_PIN(109, 1)>;
+	};
+};
+
+
+> This would mean you have to carry a lot of groups in each dtsi from
+> which only a small fraction is used. We did that on i.MX but no longer
+> do this since the dtbs get very big.
+
+Yes I would like to put it in the dtsi file. For sure we will have big
+dtbs. If we put that in the driver we will increase the size of our
+kernel. If every one does this, we will have a lot of unused code for a
+multiplatform kernel. Where is the best place to put this?
+
+> 
+> > 
+> > 	pinctrl_mci0_default: mci0_default {
+> > 		mux {
+> > 			function = "mci0";
+> > 			groups = &mci0_ioset0_8bit_grp;
+> > 		};
+> > 
+> > 		conf {
+> > 			groups = &mci0_ioset0_8bit_grp;
+> > 			bias-pullup;
+> > 		};
+> > 	};
+> > };
+> > 
+> > - A subnode for these definitions in order to not parse the whole
+> >   pinctrl node to retrieve groups and functions.
+> > - Using node names as function and group names.
+> > - Can we get generic properties to define the groups? Of course a 'pins'
+> >   property is mandatory. In my case I will need an extra one to tell the
+> >   controller how to mux the pins (a same pin can have up to 7 muxing
+> >   possibilities).
+> 
+> Did you have a look at the RFC I sent for these kind of controllers [1] and
+> the final result for the Mediatek driver currently in Linux-next [2]?.
+> 
+> The binding has both the config and the pins in a single node and thus
+> is very compact.
+> 
+
+Thanks for the links. Well I had a look to them and now I am a bit
+lost...
+
+I agree with this binding but it involves to get rid of
+pinconf_generic_dt_node_to_map_all, isn't it? What do group and function
+become? It seems these concepts have disappeared.
+
+I am disappointed because I have the feeling that the only remaining
+part of the generic pinconf are the configuration properties.
+
+> Sascha
+> 
+> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-October/296491.html
+> [2] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/318452.html
+> 
+> -- 
+> Pengutronix e.K.                           |                             |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
