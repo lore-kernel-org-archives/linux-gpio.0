@@ -1,78 +1,43 @@
-From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Fri, 20 Mar 2015 20:12:00 +0100
-Message-ID: <1426878721-2618-1-git-send-email-alexanders83@web.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:61486 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751661AbbCTTMv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Mar 2015 15:12:51 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [RFT OMAP1 PATCH 7/8] gpio: omap: get rid of omap_irq_to_gpio()
+Date: Fri, 20 Mar 2015 22:39:27 +0200
+Message-ID: <550C857F.5060705@linaro.org>
+References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>	<1426785944-17255-8-git-send-email-grygorii.strashko@linaro.org> <CABxcv==mH5tpvW0FOsv30A-aucyZCAKuSo95Y=LW21+EWR4uDA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABxcv==mH5tpvW0FOsv30A-aucyZCAKuSo95Y=LW21+EWR4uDA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexanders83@web.de>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-This adds the callback for set_multiple.
-As this controller has a separate set and clear register, we can't write
-directly to PIO_ODSR as this would required a cached variable and would
-race with at91_gpio_set.
-So build masks for the PIO_SODR and PIO_CODR registers and write them
-together.
+On 03/20/2015 08:56 PM, Javier Martinez Canillas wrote:
+> Hello Grygorii,
+> 
+> On Thu, Mar 19, 2015 at 6:25 PM,  <grygorii.strashko@linaro.org> wrote:
+>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+>>
+>> Now OMAP GPIO driver prepared for omap_irq_to_gpio() removing.
+>> Do it ;)
+>>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+> 
+> I don't have access to OMAP1 boards to test but Tony did it o an
+> osk5912 and Aaro can confirm that it doesn't cause regressions on
+> other OMAP1 boards.
 
-Signed-off-by: Alexander Stein <alexanders83@web.de>
----
-This was tested by using an own test driver which uses
-gpiod_set_array_cansleep to set multiple GPIOs at once.
+Thanks. But could you clarify one point to me please? 
+"Aaro can confirm that it doesn't cause regressions on
+other OMAP1 boards" - Does It mean I can add his Tested-by?
+Or I still have to wait for his direct reply? 
+Just to avoid any confusions ;)
 
- drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+> 
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index f4cd0b9..a882523 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
- 	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
- }
- 
-+static void at91_gpio_set_multiple(struct gpio_chip *chip,
-+				      unsigned long *mask, unsigned long *bits)
-+{
-+	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
-+	void __iomem *pio = at91_gpio->regbase;
-+	unsigned long set_mask;
-+	unsigned long clear_mask;
-+	size_t i;
-+
-+	set_mask = 0;
-+	clear_mask = 0;
-+
-+	for (i = 0; i < chip->ngpio; i++) {
-+		if (*mask == 0)
-+			break;
-+		if (__test_and_clear_bit(i, mask)) {
-+			if (test_bit(i, bits))
-+				set_mask |= BIT(i);
-+			else
-+				clear_mask |= BIT(i);
-+		}
-+	}
-+
-+	writel_relaxed(set_mask, pio + PIO_SODR);
-+	writel_relaxed(clear_mask, pio + PIO_CODR);
-+}
-+
- static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				int val)
- {
-@@ -1692,6 +1719,7 @@ static struct gpio_chip at91_gpio_template = {
- 	.get			= at91_gpio_get,
- 	.direction_output	= at91_gpio_direction_output,
- 	.set			= at91_gpio_set,
-+	.set_multiple		= at91_gpio_set_multiple,
- 	.dbg_show		= at91_gpio_dbg_show,
- 	.can_sleep		= false,
- 	.ngpio			= MAX_NB_GPIO_PER_BANK,
+
 -- 
-2.3.3
-
+regards,
+-grygorii
