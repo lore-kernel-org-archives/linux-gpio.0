@@ -1,58 +1,86 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [RFT OMAP1 PATCH 7/8] gpio: omap: get rid of omap_irq_to_gpio()
-Date: Sat, 21 Mar 2015 00:44:46 +0100
-Message-ID: <CABxcv==jKSjWTCDMMUg0vZzpK34tLYnwdJzPw3h6H3oU+6dZ9Q@mail.gmail.com>
-References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
-	<1426785944-17255-8-git-send-email-grygorii.strashko@linaro.org>
-	<CABxcv==mH5tpvW0FOsv30A-aucyZCAKuSo95Y=LW21+EWR4uDA@mail.gmail.com>
-	<550C857F.5060705@linaro.org>
+From: Michael Kaplan <michael_kaplan@inode.at>
+Subject: gpio-mcp23s08 irq issue
+Date: Sun, 22 Mar 2015 00:04:34 +0100
+Message-ID: <1426979074.14991.7.camel@netghost.ehp.lan>
+Reply-To: michael_kaplan@inode.at
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:33607 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751164AbbCTXor (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Mar 2015 19:44:47 -0400
-Received: by weop45 with SMTP id p45so93323173weo.0
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Mar 2015 16:44:46 -0700 (PDT)
-In-Reply-To: <550C857F.5060705@linaro.org>
+Received: from b2bfep16.mx.upcmail.net ([62.179.121.61]:52654 "EHLO
+	b2bfep16.mx.upcmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751463AbbCUXE4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 21 Mar 2015 19:04:56 -0400
+Received: from edge11.upcmail.net ([192.168.13.81])
+          by b2bfep16.mx.upcmail.net
+          (InterMail vM.8.01.05.05 201-2260-151-110-20120111) with ESMTP
+          id <20150321230434.FBBV22681.b2bfep16-int.chello.at@edge11.upcmail.net>
+          for <linux-gpio@vger.kernel.org>; Sun, 22 Mar 2015 00:04:34 +0100
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
 
-Hello Grygorii,
+Hi!
 
-On Fri, Mar 20, 2015 at 9:39 PM, Grygorii.Strashko@linaro.org
-<grygorii.strashko@linaro.org> wrote:
-> On 03/20/2015 08:56 PM, Javier Martinez Canillas wrote:
->> Hello Grygorii,
->>
->> On Thu, Mar 19, 2015 at 6:25 PM,  <grygorii.strashko@linaro.org> wrote:
->>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
->>>
->>> Now OMAP GPIO driver prepared for omap_irq_to_gpio() removing.
->>> Do it ;)
->>>
->>> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
->>
->> I don't have access to OMAP1 boards to test but Tony did it o an
->> osk5912 and Aaro can confirm that it doesn't cause regressions on
->> other OMAP1 boards.
->
-> Thanks. But could you clarify one point to me please?
-> "Aaro can confirm that it doesn't cause regressions on
-> other OMAP1 boards" - Does It mean I can add his Tested-by?
-> Or I still have to wait for his direct reply?
-> Just to avoid any confusions ;)
->
+I am using an MCP23017 on a raspberry pi as GPIO expander.
+I am using  this to switch relais on the output side, and for reading
+the states of some switches on the input side.
 
-I meant that as far as I know Aaro has access to more OMAP1 systems so
-he should be able to test that no regressions are added for those. But
-I don't know if he would be able to test and I think your cleanups are
-good so that's why I acked the patches.
+I created a device-tree overlay from the example in
+Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt which is
+working fine for reading/writing via the sysfs interface.
 
-Sorry for the confusion.
+The problem occurs when I try to enable the interrupt via the edge file.
+As soon as I change the state of one of the irq-enabled gpio pins, I get
+following in the syslog:
 
-Best regards,
-Javier
+[  214.975538] irq 398: nobody cared (try booting with the "irqpoll"
+option)
+< many lines of stack trace>
+[  215.739630] Disabling IRQ #398
+
+I realize that such an 'IRQ #: nobody cared' message occurs when there
+are 100.000 unhandled interrupts.
+
+>From /proc/interrupts I can see that one single interrupt out of 100.001
+was handled by the mcp23s08 driver:
+
+398:     100001  pinctrl-bcm2835   4  1-0020
+457:          1  gpio-mcp23xxx   9  gpiolib
+
+I could confirm that by adding a printk() into the mcp23s08_irq()
+function.
+
+Now when I change my device tree overlay to use IRQ_TYPE_LEVEL_FALLING
+instead of IRQ_TYPE_LEVEL_LOW, and additionally use IRQF_TRIGGER_FALLING
+instead of IRQF_TRIGGER_LOW in the devm_request_threaded_irq() call
+within the function mcp23s08_irq_setup(), it works as expected - one
+interrupt for each state change on the gpio pin.
+
+I am using a self built 3.18.9+ kernel from the raspberry pi kernel
+repository because the gpio-mcp23s08 driver is not included in the
+standard kernel images.
+
+I am aware of some changes that happened to the driver in the kernel
+repository since 3.18, but even the newest version is still using
+IRQF_TRIGGER_LOW, so I guess it won't work on my side with a newer
+driver version either.
+
+So my questions are:
+
+1.) Why exactly is level triggering used instead of edge triggering?
+
+2.) Would it be reasonable to add two more options via the device-tree
+interface to make it possible to define IRQ_TYPE_LEVEL_FALLING and
+IRQ_TYPE_LEVEL_RISING in an overlay?
+
+3.) Are there any suggestions what I could do to avoid the problem
+without patching the driver?
+
+
+Any help would be appreciated ;-)
+
+regards
+Michael Kaplan
+
+
