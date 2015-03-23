@@ -1,28 +1,135 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V8 3/8] MIPS: Cleanup Loongson-2F's gpio driver
-Date: Mon, 23 Mar 2015 15:29:02 +0900
-Message-ID: <CAAVeFuLytDZwo-=Q3DSxS7jLWbr4Jgf8BsBr9VGptBBu4SzZZg@mail.gmail.com>
-References: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [RFC] pinmux: group and function definitions in the device tree
+Date: Mon, 23 Mar 2015 07:44:24 +0100
+Message-ID: <20150323064424.GD9742@pengutronix.de>
+References: <20150319153950.GC30114@odux.rfo.atmel.com>
+ <20150319185637.GV4927@pengutronix.de>
+ <20150320150609.GB32259@odux.rfo.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:36749 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751291AbbCWG3X (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 02:29:23 -0400
-Received: by iedm5 with SMTP id m5so28673985ied.3
-        for <linux-gpio@vger.kernel.org>; Sun, 22 Mar 2015 23:29:22 -0700 (PDT)
-In-Reply-To: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:47468 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751514AbbCWGo3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 02:44:29 -0400
+Content-Disposition: inline
+In-Reply-To: <20150320150609.GB32259@odux.rfo.atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Huacai Chen <chenhc@lemote.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips <linux-mips@linux-mips.org>, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
 
-On Fri, Mar 13, 2015 at 11:26 AM, Huacai Chen <chenhc@lemote.com> wrote:
-> This cleanup is prepare to move the driver to drivers/gpio. Custom
-> definitions of gpio_get_value()/gpio_set_value() are dropped.
+On Fri, Mar 20, 2015 at 04:06:09PM +0100, Ludovic Desroches wrote:
+> On Thu, Mar 19, 2015 at 07:56:37PM +0100, Sascha Hauer wrote:
+> > On Thu, Mar 19, 2015 at 04:39:50PM +0100, Ludovic Desroches wrote:
+> > > 	[...]
+> > > 
+> > > 	pinctrl_defs {
+> > > 		mci0 {
+> > > 			mci0_ioset0_1bit_grp {
+> > > 				at91,pins = <68 69 70>;
+> > > 				at91,mux = <2>;
+> > > 			};
+> > > 
+> > > 			mci0_ioset0_4bit_grp {
+> > > 				at91,pins = <68 69 70 71 72 73>;
+> > > 				at91,mux = <2>;
+> > > 			};
+> > > 
+> > > 			mci0_ioset0_8bit_grp {
+> > > 				at91,pins = <68 69 70 71 72 73 74 75 76 77>;
+> > > 				at91,mux = <2>;
+> > > 			};
+> > > 		};
+> > > 	};
+> > 
+> > Why are different groups here? Do you want to put them into the dtsi?
+> 
+> We used to have a configuration per pin in our products. On next ones we
+> will have some constraints ie. on the controller side we still have a
+> configuration per pin but we will introduced the notion of iosets. This
+> notion involves that timings are guaranteed only in one ioset. That's
+> why we can't mix signals from several iosets because. On the controller side
+> we can do all we want so I would like to use groups as a software protection.
 
-I suppose this is starting to look ok, at least patches 3, 4 and 5
-which are of interest for GPIO. I wonder which tree they should be
-merged through, MIPS or GPIO? Not seeing the rest of the series, I
-cannot make a suggestion.
+What does happen when you mix signals of different iosets? It won't work
+so the developer will change it. What do you need the software
+protection for?
+
+> i2c0 {
+> 	i2c0_ioset0_grp {
+> 		pins  = <PINMUX_PIN(71, 4),
+> 			 PINMUX_PIN(72, 4)>;
+> 	};
+> 	i2c0_ioset1_grp {
+> 		pins  = <PINMUX_PIN(91, 6),
+> 			 PINMUX_PIN(92, 6)>;
+> 	};
+> 	i2c0_ioset2_grp {
+> 		pins  = <PINMUX_PIN(108, 1),
+> 			 PINMUX_PIN(109, 1)>;
+> 	};
+> };
+> 
+> 
+> > This would mean you have to carry a lot of groups in each dtsi from
+> > which only a small fraction is used. We did that on i.MX but no longer
+> > do this since the dtbs get very big.
+> 
+> Yes I would like to put it in the dtsi file. For sure we will have big
+> dtbs. If we put that in the driver we will increase the size of our
+> kernel. If every one does this, we will have a lot of unused code for a
+> multiplatform kernel. Where is the best place to put this?
+
+If you put only the needed ones in each dts then you won't have to carry
+all unused groups in all dtbs.
+
+I think the idea you follow here is that you want to put all possible
+combinations (mci0_ioset0_4bit_grp, mci0_ioset1_1bit_grp) into the dtsi
+and let the board dts just pick one. For i.MX we realized that this does
+not scale because the number of possibilities is too high. Very often
+new boards had to introduce new pingroups in the dtsi because they did
+not yet exist or even did exist in a slightly different configuration.
+Out of tree dts files were painful because they often caused merge
+conflicts in the dtsi files. Also there there was the risk that two new
+groups were introduced with the same name but different meanings because
+someone else was faster (and chose the next free number in the 'ioset'
+counter).
+We removed the groups in the dtsi files altogether and put them into
+each board dts individually. This also made it easy to add the
+additional pins (Write protect, card detect) to the same groups.
+
+> > > - A subnode for these definitions in order to not parse the whole
+> > >   pinctrl node to retrieve groups and functions.
+> > > - Using node names as function and group names.
+> > > - Can we get generic properties to define the groups? Of course a 'pins'
+> > >   property is mandatory. In my case I will need an extra one to tell the
+> > >   controller how to mux the pins (a same pin can have up to 7 muxing
+> > >   possibilities).
+> > 
+> > Did you have a look at the RFC I sent for these kind of controllers [1] and
+> > the final result for the Mediatek driver currently in Linux-next [2]?.
+> > 
+> > The binding has both the config and the pins in a single node and thus
+> > is very compact.
+> > 
+> 
+> Thanks for the links. Well I had a look to them and now I am a bit
+> lost...
+> 
+> I agree with this binding but it involves to get rid of
+> pinconf_generic_dt_node_to_map_all, isn't it? What do group and function
+> become? It seems these concepts have disappeared.
+
+The binding I suggested changes nothing with pinconf, only the pinmux
+information is added to the same node. You can still call
+pinconf_generic_dt_node_to_map_all() on the nodes, it will simply ignore
+the pinmux information. You would have to handle them separately (or
+write some generic helper if you like)
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
