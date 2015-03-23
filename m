@@ -1,36 +1,72 @@
-From: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [RFC] pinmux: group and function definitions in the device tree
-Date: Mon, 23 Mar 2015 12:49:14 +0100
-Message-ID: <20150323114914.GL9742@pengutronix.de>
-References: <20150319153950.GC30114@odux.rfo.atmel.com>
- <20150319185637.GV4927@pengutronix.de>
- <20150320150609.GB32259@odux.rfo.atmel.com>
- <20150323064424.GD9742@pengutronix.de>
- <20150323090827.GD32259@odux.rfo.atmel.com>
- <20150323100913.GJ9742@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150323100913.GJ9742-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org
+From: <grygorii.strashko@linaro.org>
+Subject: [PATCH v2 2/8] gpio: omap: simplify omap_set_gpio_dataout_x()
+Date: Mon, 23 Mar 2015 14:18:24 +0200
+Message-ID: <1427113110-20813-3-git-send-email-grygorii.strashko@linaro.org>
+References: <1427113110-20813-1-git-send-email-grygorii.strashko@linaro.org>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1427113110-20813-1-git-send-email-grygorii.strashko@linaro.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
+Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 23, 2015 at 11:09:13AM +0100, Sascha Hauer wrote:
-> 
-> This may be because the concept of groups doesn't most hardware.
+From: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-I meant "doesn't match most hardware"
+Both functions omap_set_gpio_dataout_reg() and
+omap_set_gpio_dataout_mask() accept GPIO offset
+as 'gpio' input parameter, so rename it to 'offset' and
+drop usage of GPIO_BIT() macro.
 
-Sascha
+Tested-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+---
+ drivers/gpio/gpio-omap.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index ce71239..7aeee7b 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -75,7 +75,7 @@ struct gpio_bank {
+ 	int power_mode;
+ 	bool workaround_enabled;
+ 
+-	void (*set_dataout)(struct gpio_bank *bank, int gpio, int enable);
++	void (*set_dataout)(struct gpio_bank *bank, unsigned gpio, int enable);
+ 	int (*get_context_loss_count)(struct device *dev);
+ 
+ 	struct omap_gpio_reg_offs *regs;
+@@ -119,11 +119,11 @@ static void omap_set_gpio_direction(struct gpio_bank *bank, int gpio,
+ 
+ 
+ /* set data out value using dedicate set/clear register */
+-static void omap_set_gpio_dataout_reg(struct gpio_bank *bank, int gpio,
++static void omap_set_gpio_dataout_reg(struct gpio_bank *bank, unsigned offset,
+ 				      int enable)
+ {
+ 	void __iomem *reg = bank->base;
+-	u32 l = GPIO_BIT(bank, gpio);
++	u32 l = BIT(offset);
+ 
+ 	if (enable) {
+ 		reg += bank->regs->set_dataout;
+@@ -137,11 +137,11 @@ static void omap_set_gpio_dataout_reg(struct gpio_bank *bank, int gpio,
+ }
+ 
+ /* set data out value using mask register */
+-static void omap_set_gpio_dataout_mask(struct gpio_bank *bank, int gpio,
++static void omap_set_gpio_dataout_mask(struct gpio_bank *bank, unsigned offset,
+ 				       int enable)
+ {
+ 	void __iomem *reg = bank->base + bank->regs->dataout;
+-	u32 gpio_bit = GPIO_BIT(bank, gpio);
++	u32 gpio_bit = BIT(offset);
+ 	u32 l;
+ 
+ 	l = readl_relaxed(reg);
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
+
