@@ -1,132 +1,121 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 Subject: Re: [RFC] pinmux: group and function definitions in the device tree
-Date: Mon, 23 Mar 2015 11:09:13 +0100
-Message-ID: <20150323100913.GJ9742@pengutronix.de>
+Date: Mon, 23 Mar 2015 18:29:11 +0800
+Message-ID: <37858913-F9BB-41D8-A380-7F8C44E08A4F@jcrosoft.com>
 References: <20150319153950.GC30114@odux.rfo.atmel.com>
  <20150319185637.GV4927@pengutronix.de>
  <20150320150609.GB32259@odux.rfo.atmel.com>
  <20150323064424.GD9742@pengutronix.de>
  <20150323090827.GD32259@odux.rfo.atmel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:41730 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097AbbCWKJS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 06:09:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20150323090827.GD32259@odux.rfo.atmel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+ <20150323100913.GJ9742@pengutronix.de>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2070.6\))
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150323100913.GJ9742@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: devicetree@vger.kernel.org, swarren@wwwdotorg.org, tony@atomide.com, linus.walleij@linaro.org, Nicolas FERRE <nicolas.ferre@atmel.com>, linux-gpio@vger.kernel.org, laurent.pinchart@ideasonboard.com, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
 
-On Mon, Mar 23, 2015 at 10:08:27AM +0100, Ludovic Desroches wrote:
-> On Mon, Mar 23, 2015 at 07:44:24AM +0100, Sascha Hauer wrote:
-> > On Fri, Mar 20, 2015 at 04:06:09PM +0100, Ludovic Desroches wrote:
-> > > On Thu, Mar 19, 2015 at 07:56:37PM +0100, Sascha Hauer wrote:
-> > > > On Thu, Mar 19, 2015 at 04:39:50PM +0100, Ludovic Desroches wrote:
-> > > > > 	[...]
-> > > > > 
-> > > > > 	pinctrl_defs {
-> > > > > 		mci0 {
-> > > > > 			mci0_ioset0_1bit_grp {
-> > > > > 				at91,pins = <68 69 70>;
-> > > > > 				at91,mux = <2>;
-> > > > > 			};
-> > > > > 
-> > > > > 			mci0_ioset0_4bit_grp {
-> > > > > 				at91,pins = <68 69 70 71 72 73>;
-> > > > > 				at91,mux = <2>;
-> > > > > 			};
-> > > > > 
-> > > > > 			mci0_ioset0_8bit_grp {
-> > > > > 				at91,pins = <68 69 70 71 72 73 74 75 76 77>;
-> > > > > 				at91,mux = <2>;
-> > > > > 			};
-> > > > > 		};
-> > > > > 	};
-> > > > 
-> > > > Why are different groups here? Do you want to put them into the dtsi?
-> > > 
-> > > We used to have a configuration per pin in our products. On next ones we
-> > > will have some constraints ie. on the controller side we still have a
-> > > configuration per pin but we will introduced the notion of iosets. This
-> > > notion involves that timings are guaranteed only in one ioset. That's
-> > > why we can't mix signals from several iosets because. On the controller side
-> > > we can do all we want so I would like to use groups as a software protection.
-> > 
-> > What does happen when you mix signals of different iosets? It won't work
-> > so the developer will change it. What do you need the software
-> > protection for?
-> > 
-> 
-> I can't say it won't work, it could work in some cases. My fear is to
-> have some support cases because of this. It seems easy to spot this kind
-> of issue but experience tell us that we can loose time for this kind of
-> "stupid" error.
-
-Hm, the software (dts in this case) developer will only mix signals of
-different iosets when he is forced to by the board designer. It's the
-board designer that has made this mistake, the software developer will
-only try to make it work anyway. I doubt that the board designer will
-design the board based on the possibilities shown in the dts files.
-
-> > > > > - A subnode for these definitions in order to not parse the whole
-> > > > >   pinctrl node to retrieve groups and functions.
-> > > > > - Using node names as function and group names.
-> > > > > - Can we get generic properties to define the groups? Of course a 'pins'
-> > > > >   property is mandatory. In my case I will need an extra one to tell the
-> > > > >   controller how to mux the pins (a same pin can have up to 7 muxing
-> > > > >   possibilities).
-> > > > 
-> > > > Did you have a look at the RFC I sent for these kind of controllers [1] and
-> > > > the final result for the Mediatek driver currently in Linux-next [2]?.
-> > > > 
-> > > > The binding has both the config and the pins in a single node and thus
-> > > > is very compact.
-> > > > 
-> > > 
-> > > Thanks for the links. Well I had a look to them and now I am a bit
-> > > lost...
-> > > 
-> > > I agree with this binding but it involves to get rid of
-> > > pinconf_generic_dt_node_to_map_all, isn't it? What do group and function
-> > > become? It seems these concepts have disappeared.
-> > 
-> > The binding I suggested changes nothing with pinconf, only the pinmux
-> > information is added to the same node. You can still call
-> > pinconf_generic_dt_node_to_map_all() on the nodes, it will simply ignore
-> > the pinmux information. You would have to handle them separately (or
-> > write some generic helper if you like)
-> 
-> Yes, I can still use it. What I mean is there is no generic helper at the
-> moment to get both pinmux (excepting using the function property) and
-> pinconf information. Is it planned to have something generic for the
-> pinmux property?
-
-Not yet, but it would be a good idea to add something generic.
-
-> I see MTK_GET_PIN_NO and MTK_GET_PIN_FUNC macros, on my side,
-> I think it will feet my needs. Maybe we only need to remove the MTK
-> prefix and put these macros in another header.
-> 
-> In the mediatek driver, I have also noticed that we have a group for
-> each pin. I have the feeling that the concept of groups disappear, isn't
-> it?
-
-This may be because the concept of groups doesn't most hardware.
-There really is hardware out there which can only handle the pins in
-groups (that is, a single mux switches multiple pins), but this hardware
-is not very common. Most hardware can indeed control every pin
-indivually. In this situation some drivers are consequent and make a
-group out of each pin which renders the group concept moot. Other
-drivers just interpret each device node as pin group which creates
-artificial groups which do not exist in hardware.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Cj4gT24gTWFyIDIzLCAyMDE1LCBhdCA2OjA5IFBNLCBTYXNjaGEgSGF1ZXIgPHMuaGF1ZXJAcGVu
+Z3V0cm9uaXguZGU+IHdyb3RlOgo+IAo+IE9uIE1vbiwgTWFyIDIzLCAyMDE1IGF0IDEwOjA4OjI3
+QU0gKzAxMDAsIEx1ZG92aWMgRGVzcm9jaGVzIHdyb3RlOgo+PiBPbiBNb24sIE1hciAyMywgMjAx
+NSBhdCAwNzo0NDoyNEFNICswMTAwLCBTYXNjaGEgSGF1ZXIgd3JvdGU6Cj4+PiBPbiBGcmksIE1h
+ciAyMCwgMjAxNSBhdCAwNDowNjowOVBNICswMTAwLCBMdWRvdmljIERlc3JvY2hlcyB3cm90ZToK
+Pj4+PiBPbiBUaHUsIE1hciAxOSwgMjAxNSBhdCAwNzo1NjozN1BNICswMTAwLCBTYXNjaGEgSGF1
+ZXIgd3JvdGU6Cj4+Pj4+IE9uIFRodSwgTWFyIDE5LCAyMDE1IGF0IDA0OjM5OjUwUE0gKzAxMDAs
+IEx1ZG92aWMgRGVzcm9jaGVzIHdyb3RlOgo+Pj4+Pj4gCVsuLi5dCj4+Pj4+PiAKPj4+Pj4+IAlw
+aW5jdHJsX2RlZnMgewo+Pj4+Pj4gCQltY2kwIHsKPj4+Pj4+IAkJCW1jaTBfaW9zZXQwXzFiaXRf
+Z3JwIHsKPj4+Pj4+IAkJCQlhdDkxLHBpbnMgPSA8NjggNjkgNzA+Owo+Pj4+Pj4gCQkJCWF0OTEs
+bXV4ID0gPDI+Owo+Pj4+Pj4gCQkJfTsKPj4+Pj4+IAo+Pj4+Pj4gCQkJbWNpMF9pb3NldDBfNGJp
+dF9ncnAgewo+Pj4+Pj4gCQkJCWF0OTEscGlucyA9IDw2OCA2OSA3MCA3MSA3MiA3Mz47Cj4+Pj4+
+PiAJCQkJYXQ5MSxtdXggPSA8Mj47Cj4+Pj4+PiAJCQl9Owo+Pj4+Pj4gCj4+Pj4+PiAJCQltY2kw
+X2lvc2V0MF84Yml0X2dycCB7Cj4+Pj4+PiAJCQkJYXQ5MSxwaW5zID0gPDY4IDY5IDcwIDcxIDcy
+IDczIDc0IDc1IDc2IDc3PjsKPj4+Pj4+IAkJCQlhdDkxLG11eCA9IDwyPjsKPj4+Pj4+IAkJCX07
+Cj4+Pj4+PiAJCX07Cj4+Pj4+PiAJfTsKPj4+Pj4gCj4+Pj4+IFdoeSBhcmUgZGlmZmVyZW50IGdy
+b3VwcyBoZXJlPyBEbyB5b3Ugd2FudCB0byBwdXQgdGhlbSBpbnRvIHRoZSBkdHNpPwo+Pj4+IAo+
+Pj4+IFdlIHVzZWQgdG8gaGF2ZSBhIGNvbmZpZ3VyYXRpb24gcGVyIHBpbiBpbiBvdXIgcHJvZHVj
+dHMuIE9uIG5leHQgb25lcyB3ZQo+Pj4+IHdpbGwgaGF2ZSBzb21lIGNvbnN0cmFpbnRzIGllLiBv
+biB0aGUgY29udHJvbGxlciBzaWRlIHdlIHN0aWxsIGhhdmUgYQo+Pj4+IGNvbmZpZ3VyYXRpb24g
+cGVyIHBpbiBidXQgd2Ugd2lsbCBpbnRyb2R1Y2VkIHRoZSBub3Rpb24gb2YgaW9zZXRzLiBUaGlz
+Cj4+Pj4gbm90aW9uIGludm9sdmVzIHRoYXQgdGltaW5ncyBhcmUgZ3VhcmFudGVlZCBvbmx5IGlu
+IG9uZSBpb3NldC4gVGhhdCdzCj4+Pj4gd2h5IHdlIGNhbid0IG1peCBzaWduYWxzIGZyb20gc2V2
+ZXJhbCBpb3NldHMgYmVjYXVzZS4gT24gdGhlIGNvbnRyb2xsZXIgc2lkZQo+Pj4+IHdlIGNhbiBk
+byBhbGwgd2Ugd2FudCBzbyBJIHdvdWxkIGxpa2UgdG8gdXNlIGdyb3VwcyBhcyBhIHNvZnR3YXJl
+IHByb3RlY3Rpb24uCj4+PiAKPj4+IFdoYXQgZG9lcyBoYXBwZW4gd2hlbiB5b3UgbWl4IHNpZ25h
+bHMgb2YgZGlmZmVyZW50IGlvc2V0cz8gSXQgd29uJ3Qgd29yawo+Pj4gc28gdGhlIGRldmVsb3Bl
+ciB3aWxsIGNoYW5nZSBpdC4gV2hhdCBkbyB5b3UgbmVlZCB0aGUgc29mdHdhcmUKPj4+IHByb3Rl
+Y3Rpb24gZm9yPwo+Pj4gCj4+IAo+PiBJIGNhbid0IHNheSBpdCB3b24ndCB3b3JrLCBpdCBjb3Vs
+ZCB3b3JrIGluIHNvbWUgY2FzZXMuIE15IGZlYXIgaXMgdG8KPj4gaGF2ZSBzb21lIHN1cHBvcnQg
+Y2FzZXMgYmVjYXVzZSBvZiB0aGlzLiBJdCBzZWVtcyBlYXN5IHRvIHNwb3QgdGhpcyBraW5kCj4+
+IG9mIGlzc3VlIGJ1dCBleHBlcmllbmNlIHRlbGwgdXMgdGhhdCB3ZSBjYW4gbG9vc2UgdGltZSBm
+b3IgdGhpcyBraW5kIG9mCj4+ICJzdHVwaWQiIGVycm9yLgo+IAo+IEhtLCB0aGUgc29mdHdhcmUg
+KGR0cyBpbiB0aGlzIGNhc2UpIGRldmVsb3BlciB3aWxsIG9ubHkgbWl4IHNpZ25hbHMgb2YKPiBk
+aWZmZXJlbnQgaW9zZXRzIHdoZW4gaGUgaXMgZm9yY2VkIHRvIGJ5IHRoZSBib2FyZCBkZXNpZ25l
+ci4gSXQncyB0aGUKPiBib2FyZCBkZXNpZ25lciB0aGF0IGhhcyBtYWRlIHRoaXMgbWlzdGFrZSwg
+dGhlIHNvZnR3YXJlIGRldmVsb3BlciB3aWxsCj4gb25seSB0cnkgdG8gbWFrZSBpdCB3b3JrIGFu
+eXdheS4gSSBkb3VidCB0aGF0IHRoZSBib2FyZCBkZXNpZ25lciB3aWxsCj4gZGVzaWduIHRoZSBi
+b2FyZCBiYXNlZCBvbiB0aGUgcG9zc2liaWxpdGllcyBzaG93biBpbiB0aGUgZHRzIGZpbGVzLgo+
+IAo+Pj4+Pj4gLSBBIHN1Ym5vZGUgZm9yIHRoZXNlIGRlZmluaXRpb25zIGluIG9yZGVyIHRvIG5v
+dCBwYXJzZSB0aGUgd2hvbGUKPj4+Pj4+ICBwaW5jdHJsIG5vZGUgdG8gcmV0cmlldmUgZ3JvdXBz
+IGFuZCBmdW5jdGlvbnMuCj4+Pj4+PiAtIFVzaW5nIG5vZGUgbmFtZXMgYXMgZnVuY3Rpb24gYW5k
+IGdyb3VwIG5hbWVzLgo+Pj4+Pj4gLSBDYW4gd2UgZ2V0IGdlbmVyaWMgcHJvcGVydGllcyB0byBk
+ZWZpbmUgdGhlIGdyb3Vwcz8gT2YgY291cnNlIGEgJ3BpbnMnCj4+Pj4+PiAgcHJvcGVydHkgaXMg
+bWFuZGF0b3J5LiBJbiBteSBjYXNlIEkgd2lsbCBuZWVkIGFuIGV4dHJhIG9uZSB0byB0ZWxsIHRo
+ZQo+Pj4+Pj4gIGNvbnRyb2xsZXIgaG93IHRvIG11eCB0aGUgcGlucyAoYSBzYW1lIHBpbiBjYW4g
+aGF2ZSB1cCB0byA3IG11eGluZwo+Pj4+Pj4gIHBvc3NpYmlsaXRpZXMpLgo+Pj4+PiAKPj4+Pj4g
+RGlkIHlvdSBoYXZlIGEgbG9vayBhdCB0aGUgUkZDIEkgc2VudCBmb3IgdGhlc2Uga2luZCBvZiBj
+b250cm9sbGVycyBbMV0gYW5kCj4+Pj4+IHRoZSBmaW5hbCByZXN1bHQgZm9yIHRoZSBNZWRpYXRl
+ayBkcml2ZXIgY3VycmVudGx5IGluIExpbnV4LW5leHQgWzJdPy4KPj4+Pj4gCj4+Pj4+IFRoZSBi
+aW5kaW5nIGhhcyBib3RoIHRoZSBjb25maWcgYW5kIHRoZSBwaW5zIGluIGEgc2luZ2xlIG5vZGUg
+YW5kIHRodXMKPj4+Pj4gaXMgdmVyeSBjb21wYWN0Lgo+Pj4+PiAKPj4+PiAKPj4+PiBUaGFua3Mg
+Zm9yIHRoZSBsaW5rcy4gV2VsbCBJIGhhZCBhIGxvb2sgdG8gdGhlbSBhbmQgbm93IEkgYW0gYSBi
+aXQKPj4+PiBsb3N0Li4uCj4+Pj4gCj4+Pj4gSSBhZ3JlZSB3aXRoIHRoaXMgYmluZGluZyBidXQg
+aXQgaW52b2x2ZXMgdG8gZ2V0IHJpZCBvZgo+Pj4+IHBpbmNvbmZfZ2VuZXJpY19kdF9ub2RlX3Rv
+X21hcF9hbGwsIGlzbid0IGl0PyBXaGF0IGRvIGdyb3VwIGFuZCBmdW5jdGlvbgo+Pj4+IGJlY29t
+ZT8gSXQgc2VlbXMgdGhlc2UgY29uY2VwdHMgaGF2ZSBkaXNhcHBlYXJlZC4KPj4+IAo+Pj4gVGhl
+IGJpbmRpbmcgSSBzdWdnZXN0ZWQgY2hhbmdlcyBub3RoaW5nIHdpdGggcGluY29uZiwgb25seSB0
+aGUgcGlubXV4Cj4+PiBpbmZvcm1hdGlvbiBpcyBhZGRlZCB0byB0aGUgc2FtZSBub2RlLiBZb3Ug
+Y2FuIHN0aWxsIGNhbGwKPj4+IHBpbmNvbmZfZ2VuZXJpY19kdF9ub2RlX3RvX21hcF9hbGwoKSBv
+biB0aGUgbm9kZXMsIGl0IHdpbGwgc2ltcGx5IGlnbm9yZQo+Pj4gdGhlIHBpbm11eCBpbmZvcm1h
+dGlvbi4gWW91IHdvdWxkIGhhdmUgdG8gaGFuZGxlIHRoZW0gc2VwYXJhdGVseSAob3IKPj4+IHdy
+aXRlIHNvbWUgZ2VuZXJpYyBoZWxwZXIgaWYgeW91IGxpa2UpCj4+IAo+PiBZZXMsIEkgY2FuIHN0
+aWxsIHVzZSBpdC4gV2hhdCBJIG1lYW4gaXMgdGhlcmUgaXMgbm8gZ2VuZXJpYyBoZWxwZXIgYXQg
+dGhlCj4+IG1vbWVudCB0byBnZXQgYm90aCBwaW5tdXggKGV4Y2VwdGluZyB1c2luZyB0aGUgZnVu
+Y3Rpb24gcHJvcGVydHkpIGFuZAo+PiBwaW5jb25mIGluZm9ybWF0aW9uLiBJcyBpdCBwbGFubmVk
+IHRvIGhhdmUgc29tZXRoaW5nIGdlbmVyaWMgZm9yIHRoZQo+PiBwaW5tdXggcHJvcGVydHk/Cj4g
+Cj4gTm90IHlldCwgYnV0IGl0IHdvdWxkIGJlIGEgZ29vZCBpZGVhIHRvIGFkZCBzb21ldGhpbmcg
+Z2VuZXJpYy4KPiAKPj4gSSBzZWUgTVRLX0dFVF9QSU5fTk8gYW5kIE1US19HRVRfUElOX0ZVTkMg
+bWFjcm9zLCBvbiBteSBzaWRlLAo+PiBJIHRoaW5rIGl0IHdpbGwgZmVldCBteSBuZWVkcy4gTWF5
+YmUgd2Ugb25seSBuZWVkIHRvIHJlbW92ZSB0aGUgTVRLCj4+IHByZWZpeCBhbmQgcHV0IHRoZXNl
+IG1hY3JvcyBpbiBhbm90aGVyIGhlYWRlci4KPj4gCj4+IEluIHRoZSBtZWRpYXRlayBkcml2ZXIs
+IEkgaGF2ZSBhbHNvIG5vdGljZWQgdGhhdCB3ZSBoYXZlIGEgZ3JvdXAgZm9yCj4+IGVhY2ggcGlu
+LiBJIGhhdmUgdGhlIGZlZWxpbmcgdGhhdCB0aGUgY29uY2VwdCBvZiBncm91cHMgZGlzYXBwZWFy
+LCBpc24ndAo+PiBpdD8KPiAKPiBUaGlzIG1heSBiZSBiZWNhdXNlIHRoZSBjb25jZXB0IG9mIGdy
+b3VwcyBkb2Vzbid0IG1vc3QgaGFyZHdhcmUuCj4gVGhlcmUgcmVhbGx5IGlzIGhhcmR3YXJlIG91
+dCB0aGVyZSB3aGljaCBjYW4gb25seSBoYW5kbGUgdGhlIHBpbnMgaW4KPiBncm91cHMgKHRoYXQg
+aXMsIGEgc2luZ2xlIG11eCBzd2l0Y2hlcyBtdWx0aXBsZSBwaW5zKSwgYnV0IHRoaXMgaGFyZHdh
+cmUKPiBpcyBub3QgdmVyeSBjb21tb24uIE1vc3QgaGFyZHdhcmUgY2FuIGluZGVlZCBjb250cm9s
+IGV2ZXJ5IHBpbgo+IGluZGl2dWFsbHkuIEluIHRoaXMgc2l0dWF0aW9uIHNvbWUgZHJpdmVycyBh
+cmUgY29uc2VxdWVudCBhbmQgbWFrZSBhCj4gZ3JvdXAgb3V0IG9mIGVhY2ggcGluIHdoaWNoIHJl
+bmRlcnMgdGhlIGdyb3VwIGNvbmNlcHQgbW9vdC4gT3RoZXIKPiBkcml2ZXJzIGp1c3QgaW50ZXJw
+cmV0IGVhY2ggZGV2aWNlIG5vZGUgYXMgcGluIGdyb3VwIHdoaWNoIGNyZWF0ZXMKPiBhcnRpZmlj
+aWFsIGdyb3VwcyB3aGljaCBkbyBub3QgZXhpc3QgaW4gaGFyZHdhcmUuCgpUaGlzIGlzIHdoYXQg
+d2UgZG8gb24gdGhlIGN1cnJlbnQgcGluY3RybC1hdDkxCgphbmQgYXMgd2UgZG8gbm90IHNlZSB0
+aGUgc3BlY2lmaWMgb2YgdGhpcyBuZXcgSVAgZm9yIGF0OTEgaXTigJlzIGRpZmZpY3VsdCB0byBz
+ZWUKaWYgd2UgY2FuIHVzZSBnZW5lcmljIG9yIG5vdC4KClBlcnNvbmFsbHkgSSBkbyBwcmVmZXIg
+d2hlbiB0aGUgbnVtYmVyIG9mIHBvc3NpYmlsaXR5IGFyZSBub3QgaGlnaCB0byBoYXZlIGEgYmln
+CnNvYyBkdHNpLgoKQnV0IGluIHRoZSBjYXNlIG9mIEkuTVggeWVzIGl04oCZcyBpbXBvc3NpYmxl
+IHRvIG1hbmFnZQoKQmVzdCBSZWdhcmRzLApKLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
+cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
