@@ -1,206 +1,209 @@
-From: <grygorii.strashko@linaro.org>
-Subject: [PATCH v2 5/8] gpio: omap: convert gpio irq functions to use GPIO offset
-Date: Mon, 23 Mar 2015 14:18:27 +0200
-Message-ID: <1427113110-20813-6-git-send-email-grygorii.strashko@linaro.org>
-References: <1427113110-20813-1-git-send-email-grygorii.strashko@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427113110-20813-1-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
+From: Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] pinmux: group and function definitions in the device tree
+Date: Mon, 23 Mar 2015 15:00:20 +0100
+Message-ID: <20150323140019.GH32259@odux.rfo.atmel.com>
+References: <20150319153950.GC30114@odux.rfo.atmel.com>
+ <20150319185637.GV4927@pengutronix.de>
+ <20150320150609.GB32259@odux.rfo.atmel.com>
+ <20150323064424.GD9742@pengutronix.de>
+ <20150323090827.GD32259@odux.rfo.atmel.com>
+ <20150323100913.GJ9742@pengutronix.de>
+ <37858913-F9BB-41D8-A380-7F8C44E08A4F@jcrosoft.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <37858913-F9BB-41D8-A380-7F8C44E08A4F-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>
+Cc: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Nicolas FERRE <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@linaro.org>
+On Mon, Mar 23, 2015 at 06:29:11PM +0800, Jean-Christophe PLAGNIOL-VILL=
+ARD wrote:
+>=20
+> > On Mar 23, 2015, at 6:09 PM, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> =
+wrote:
+> >=20
+> > On Mon, Mar 23, 2015 at 10:08:27AM +0100, Ludovic Desroches wrote:
+> >> On Mon, Mar 23, 2015 at 07:44:24AM +0100, Sascha Hauer wrote:
+> >>> On Fri, Mar 20, 2015 at 04:06:09PM +0100, Ludovic Desroches wrote=
+:
+> >>>> On Thu, Mar 19, 2015 at 07:56:37PM +0100, Sascha Hauer wrote:
+> >>>>> On Thu, Mar 19, 2015 at 04:39:50PM +0100, Ludovic Desroches wro=
+te:
+> >>>>>> 	[...]
+> >>>>>>=20
+> >>>>>> 	pinctrl_defs {
+> >>>>>> 		mci0 {
+> >>>>>> 			mci0_ioset0_1bit_grp {
+> >>>>>> 				at91,pins =3D <68 69 70>;
+> >>>>>> 				at91,mux =3D <2>;
+> >>>>>> 			};
+> >>>>>>=20
+> >>>>>> 			mci0_ioset0_4bit_grp {
+> >>>>>> 				at91,pins =3D <68 69 70 71 72 73>;
+> >>>>>> 				at91,mux =3D <2>;
+> >>>>>> 			};
+> >>>>>>=20
+> >>>>>> 			mci0_ioset0_8bit_grp {
+> >>>>>> 				at91,pins =3D <68 69 70 71 72 73 74 75 76 77>;
+> >>>>>> 				at91,mux =3D <2>;
+> >>>>>> 			};
+> >>>>>> 		};
+> >>>>>> 	};
+> >>>>>=20
+> >>>>> Why are different groups here? Do you want to put them into the=
+ dtsi?
+> >>>>=20
+> >>>> We used to have a configuration per pin in our products. On next=
+ ones we
+> >>>> will have some constraints ie. on the controller side we still h=
+ave a
+> >>>> configuration per pin but we will introduced the notion of ioset=
+s. This
+> >>>> notion involves that timings are guaranteed only in one ioset. T=
+hat's
+> >>>> why we can't mix signals from several iosets because. On the con=
+troller side
+> >>>> we can do all we want so I would like to use groups as a softwar=
+e protection.
+> >>>=20
+> >>> What does happen when you mix signals of different iosets? It won=
+'t work
+> >>> so the developer will change it. What do you need the software
+> >>> protection for?
+> >>>=20
+> >>=20
+> >> I can't say it won't work, it could work in some cases. My fear is=
+ to
+> >> have some support cases because of this. It seems easy to spot thi=
+s kind
+> >> of issue but experience tell us that we can loose time for this ki=
+nd of
+> >> "stupid" error.
+> >=20
+> > Hm, the software (dts in this case) developer will only mix signals=
+ of
+> > different iosets when he is forced to by the board designer. It's t=
+he
+> > board designer that has made this mistake, the software developer w=
+ill
+> > only try to make it work anyway. I doubt that the board designer wi=
+ll
+> > design the board based on the possibilities shown in the dts files.
+> >=20
+> >>>>>> - A subnode for these definitions in order to not parse the wh=
+ole
+> >>>>>>  pinctrl node to retrieve groups and functions.
+> >>>>>> - Using node names as function and group names.
+> >>>>>> - Can we get generic properties to define the groups? Of cours=
+e a 'pins'
+> >>>>>>  property is mandatory. In my case I will need an extra one to=
+ tell the
+> >>>>>>  controller how to mux the pins (a same pin can have up to 7 m=
+uxing
+> >>>>>>  possibilities).
+> >>>>>=20
+> >>>>> Did you have a look at the RFC I sent for these kind of control=
+lers [1] and
+> >>>>> the final result for the Mediatek driver currently in Linux-nex=
+t [2]?.
+> >>>>>=20
+> >>>>> The binding has both the config and the pins in a single node a=
+nd thus
+> >>>>> is very compact.
+> >>>>>=20
+> >>>>=20
+> >>>> Thanks for the links. Well I had a look to them and now I am a b=
+it
+> >>>> lost...
+> >>>>=20
+> >>>> I agree with this binding but it involves to get rid of
+> >>>> pinconf_generic_dt_node_to_map_all, isn't it? What do group and =
+function
+> >>>> become? It seems these concepts have disappeared.
+> >>>=20
+> >>> The binding I suggested changes nothing with pinconf, only the pi=
+nmux
+> >>> information is added to the same node. You can still call
+> >>> pinconf_generic_dt_node_to_map_all() on the nodes, it will simply=
+ ignore
+> >>> the pinmux information. You would have to handle them separately =
+(or
+> >>> write some generic helper if you like)
+> >>=20
+> >> Yes, I can still use it. What I mean is there is no generic helper=
+ at the
+> >> moment to get both pinmux (excepting using the function property) =
+and
+> >> pinconf information. Is it planned to have something generic for t=
+he
+> >> pinmux property?
+> >=20
+> > Not yet, but it would be a good idea to add something generic.
+> >=20
+> >> I see MTK_GET_PIN_NO and MTK_GET_PIN_FUNC macros, on my side,
+> >> I think it will feet my needs. Maybe we only need to remove the MT=
+K
+> >> prefix and put these macros in another header.
+> >>=20
+> >> In the mediatek driver, I have also noticed that we have a group f=
+or
+> >> each pin. I have the feeling that the concept of groups disappear,=
+ isn't
+> >> it?
+> >=20
+> > This may be because the concept of groups doesn't most hardware.
+> > There really is hardware out there which can only handle the pins i=
+n
+> > groups (that is, a single mux switches multiple pins), but this har=
+dware
+> > is not very common. Most hardware can indeed control every pin
+> > indivually. In this situation some drivers are consequent and make =
+a
+> > group out of each pin which renders the group concept moot. Other
+> > drivers just interpret each device node as pin group which creates
+> > artificial groups which do not exist in hardware.
+>=20
+> This is what we do on the current pinctrl-at91
+>=20
 
-Convert GPIO IRQ functions to use GPIO offset instead of system
-GPIO numbers. This allows to drop unneeded conversations between
-system GPIO <-> GPIO offset which are done in many places and
-many times.
-It is safe to do now because:
-- gpiolib always passes GPIO offset to GPIO controller
-- OMAP GPIO driver converted to use IRQ domain, so
-  struct irq_data->hwirq contains GPIO offset
+It is a bit different with pinctrl-at91, we don't have npins groups.
+Even if there is no hardware reality behind we have groups of pins.
 
-This is preparation step before removing:
- #define GPIO_INDEX(bank, gpio)
- #define GPIO_BIT(bank, gpio)
- int omap_irq_to_gpio()
+> and as we do not see the specific of this new IP for at91 it=E2=80=99=
+s difficult to see
+> if we can use generic or not.
+>=20
 
-Tested-by: Tony Lindgren <tony@atomide.com>
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
----
- drivers/gpio/gpio-omap.c | 67 ++++++++++++++++++++++++------------------------
- 1 file changed, 34 insertions(+), 33 deletions(-)
+We can use the generic pinconf for sure. My main concern were the
+concepts of groups and functions. But it seems, now, we can't get rid o=
+f these
+concepts.
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index ff5d54d..628a132 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -549,9 +549,10 @@ static void omap_clear_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
- 	readl_relaxed(reg);
- }
- 
--static inline void omap_clear_gpio_irqstatus(struct gpio_bank *bank, int gpio)
-+static inline void omap_clear_gpio_irqstatus(struct gpio_bank *bank,
-+					     unsigned offset)
- {
--	omap_clear_gpio_irqbank(bank, GPIO_BIT(bank, gpio));
-+	omap_clear_gpio_irqbank(bank, BIT(offset));
- }
- 
- static u32 omap_get_gpio_irqbank_mask(struct gpio_bank *bank)
-@@ -612,13 +613,13 @@ static void omap_disable_gpio_irqbank(struct gpio_bank *bank, int gpio_mask)
- 	writel_relaxed(l, reg);
- }
- 
--static inline void omap_set_gpio_irqenable(struct gpio_bank *bank, int gpio,
--					   int enable)
-+static inline void omap_set_gpio_irqenable(struct gpio_bank *bank,
-+					   unsigned offset, int enable)
- {
- 	if (enable)
--		omap_enable_gpio_irqbank(bank, GPIO_BIT(bank, gpio));
-+		omap_enable_gpio_irqbank(bank, BIT(offset));
- 	else
--		omap_disable_gpio_irqbank(bank, GPIO_BIT(bank, gpio));
-+		omap_disable_gpio_irqbank(bank, BIT(offset));
- }
- 
- /*
-@@ -629,14 +630,16 @@ static inline void omap_set_gpio_irqenable(struct gpio_bank *bank, int gpio,
-  * enabled. When system is suspended, only selected GPIO interrupts need
-  * to have wake-up enabled.
-  */
--static int omap_set_gpio_wakeup(struct gpio_bank *bank, int gpio, int enable)
-+static int omap_set_gpio_wakeup(struct gpio_bank *bank, unsigned offset,
-+				int enable)
- {
--	u32 gpio_bit = GPIO_BIT(bank, gpio);
-+	u32 gpio_bit = BIT(offset);
- 	unsigned long flags;
- 
- 	if (bank->non_wakeup_gpios & gpio_bit) {
- 		dev_err(bank->dev,
--			"Unable to modify wakeup on non-wakeup GPIO%d\n", gpio);
-+			"Unable to modify wakeup on non-wakeup GPIO%d\n",
-+			offset);
- 		return -EINVAL;
- 	}
- 
-@@ -652,22 +655,22 @@ static int omap_set_gpio_wakeup(struct gpio_bank *bank, int gpio, int enable)
- 	return 0;
- }
- 
--static void omap_reset_gpio(struct gpio_bank *bank, int gpio)
-+static void omap_reset_gpio(struct gpio_bank *bank, unsigned offset)
- {
--	omap_set_gpio_direction(bank, GPIO_INDEX(bank, gpio), 1);
--	omap_set_gpio_irqenable(bank, gpio, 0);
--	omap_clear_gpio_irqstatus(bank, gpio);
--	omap_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), IRQ_TYPE_NONE);
--	omap_clear_gpio_debounce(bank, GPIO_INDEX(bank, gpio));
-+	omap_set_gpio_direction(bank, offset, 1);
-+	omap_set_gpio_irqenable(bank, offset, 0);
-+	omap_clear_gpio_irqstatus(bank, offset);
-+	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
-+	omap_clear_gpio_debounce(bank, offset);
- }
- 
- /* Use disable_irq_wake() and enable_irq_wake() functions from drivers */
- static int omap_gpio_wake_enable(struct irq_data *d, unsigned int enable)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
-+	unsigned offset = d->hwirq;
- 
--	return omap_set_gpio_wakeup(bank, gpio, enable);
-+	return omap_set_gpio_wakeup(bank, offset, enable);
- }
- 
- static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
-@@ -705,7 +708,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
- 	spin_lock_irqsave(&bank->lock, flags);
- 	bank->mod_usage &= ~(BIT(offset));
- 	omap_disable_gpio_module(bank, offset);
--	omap_reset_gpio(bank, bank->chip.base + offset);
-+	omap_reset_gpio(bank, offset);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
- 	/*
-@@ -819,14 +822,13 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
- static void omap_gpio_irq_shutdown(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
- 	unsigned long flags;
--	unsigned offset = GPIO_INDEX(bank, gpio);
-+	unsigned offset = d->hwirq;
- 
- 	spin_lock_irqsave(&bank->lock, flags);
- 	bank->irq_usage &= ~(BIT(offset));
- 	omap_disable_gpio_module(bank, offset);
--	omap_reset_gpio(bank, gpio);
-+	omap_reset_gpio(bank, offset);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
- 	/*
-@@ -840,43 +842,42 @@ static void omap_gpio_irq_shutdown(struct irq_data *d)
- static void omap_gpio_ack_irq(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
-+	unsigned offset = d->hwirq;
- 
--	omap_clear_gpio_irqstatus(bank, gpio);
-+	omap_clear_gpio_irqstatus(bank, offset);
- }
- 
- static void omap_gpio_mask_irq(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
-+	unsigned offset = d->hwirq;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&bank->lock, flags);
--	omap_set_gpio_irqenable(bank, gpio, 0);
--	omap_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), IRQ_TYPE_NONE);
-+	omap_set_gpio_irqenable(bank, offset, 0);
-+	omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
- static void omap_gpio_unmask_irq(struct irq_data *d)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
--	unsigned int gpio = omap_irq_to_gpio(bank, d->hwirq);
--	unsigned int irq_mask = GPIO_BIT(bank, gpio);
-+	unsigned offset = d->hwirq;
- 	u32 trigger = irqd_get_trigger_type(d);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&bank->lock, flags);
- 	if (trigger)
--		omap_set_gpio_triggering(bank, GPIO_INDEX(bank, gpio), trigger);
-+		omap_set_gpio_triggering(bank, offset, trigger);
- 
- 	/* For level-triggered GPIOs, the clearing must be done after
- 	 * the HW source is cleared, thus after the handler has run */
--	if (bank->level_mask & irq_mask) {
--		omap_set_gpio_irqenable(bank, gpio, 0);
--		omap_clear_gpio_irqstatus(bank, gpio);
-+	if (bank->level_mask & BIT(offset)) {
-+		omap_set_gpio_irqenable(bank, offset, 0);
-+		omap_clear_gpio_irqstatus(bank, offset);
- 	}
- 
--	omap_set_gpio_irqenable(bank, gpio, 1);
-+	omap_set_gpio_irqenable(bank, offset, 1);
- 	spin_unlock_irqrestore(&bank->lock, flags);
- }
- 
--- 
-1.9.1
+I am trying to figure out what we loose (or not) if using a mapping suc=
+h as
+'a pin =3D a group'. For example I am thinking about sysfs, it is proba=
+bly
+more human readable to have some groups with a name related to the
+device they are connected as done in pinctrl-at91.
+
+> Personally I do prefer when the number of possibility are not high to=
+ have a big
+> soc dtsi.
+>=20
+> But in the case of I.MX yes it=E2=80=99s impossible to manage
+>=20
+> Best Regards,
+> J.
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
