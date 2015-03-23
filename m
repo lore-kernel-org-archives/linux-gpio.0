@@ -1,64 +1,28 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [PATCH 0/8] gpio: omap: cleanup: get rid of system GPIO <-> GPIO
- offset converseations
-Date: Sun, 22 Mar 2015 19:32:53 +0200
-Message-ID: <20150322173253.GF10043@fuloong-minipc.musicnaut.iki.fi>
-References: <1426785944-17255-1-git-send-email-grygorii.strashko@linaro.org>
- <20150319230025.GO31346@atomide.com>
- <550C389B.2020506@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH V8 3/8] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Mon, 23 Mar 2015 15:29:02 +0900
+Message-ID: <CAAVeFuLytDZwo-=Q3DSxS7jLWbr4Jgf8BsBr9VGptBBu4SzZZg@mail.gmail.com>
+References: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from filtteri1.pp.htv.fi ([213.243.153.184]:42546 "EHLO
-	filtteri1.pp.htv.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751809AbbCVRdB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Mar 2015 13:33:01 -0400
-Content-Disposition: inline
-In-Reply-To: <550C389B.2020506@linaro.org>
+Received: from mail-ie0-f182.google.com ([209.85.223.182]:36749 "EHLO
+	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751291AbbCWG3X (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 02:29:23 -0400
+Received: by iedm5 with SMTP id m5so28673985ied.3
+        for <linux-gpio@vger.kernel.org>; Sun, 22 Mar 2015 23:29:22 -0700 (PDT)
+In-Reply-To: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips <linux-mips@linux-mips.org>, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi,
+On Fri, Mar 13, 2015 at 11:26 AM, Huacai Chen <chenhc@lemote.com> wrote:
+> This cleanup is prepare to move the driver to drivers/gpio. Custom
+> definitions of gpio_get_value()/gpio_set_value() are dropped.
 
-On Fri, Mar 20, 2015 at 05:11:23PM +0200, Grygorii.Strashko@linaro.org wrote:
-> On 03/20/2015 01:00 AM, Tony Lindgren wrote:
-> > * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150319 10:26]:
-> >> From: Grygorii Strashko <grygorii.strashko@linaro.org>
-> >> Now in TI OMAP GPIO driver there are a lot of places where
-> >> System GPIO number calculated and then converted to GPIO offset.
-> >> What is worse is that in many place such conversation performed twice
-> >> or even three times. But actually, we don't need to do that at all, because
-> >> - gpiolib always passes GPIO offset to GPIO controller
-> >> - OMAP GPIO driver converted to use IRQ domain, so
-> >>    struct irq_data->hwirq contains GPIO offset
-> >>
-> >> Hence, it is safe to convert all GPIO OMAP functions to use GPIO
-> >> offset instead of system GPIO numbers. Also, this allows to remove
-> >> unneeded conversations routines
-> >>   #define GPIO_INDEX(bank, gpio)
-> >>   #define GPIO_BIT(bank, gpio)
-> >>   int omap_irq_to_gpio()
-> > 
-> > Right on! This is excellent news. I've tested this set on top of -rc4
-> > plus the patch mentioned below, and I'm not seeing regressions on
-> > the platforms I tested with. Wake up to smsc911x ping with off-idle
-> > still works on omap3.
-> > 
-> > I only briefly tested on omap1 (osk5912), so I'like to wait for
-> > Aaro's ack before this gets merged.
-> > 
-> > I found one build error, other than that, for the whole series
-> > please feel free to add:
-> > 
-> > Tested-by: Tony Lindgren <tony@atomide.com>
-> 
-> Thanks Tony. 
-> Yep. I'll wait for news from Aaro then will re-send if ok.
-
-Works fine on 770 and E3.
-
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-
-A.
+I suppose this is starting to look ok, at least patches 3, 4 and 5
+which are of interest for GPIO. I wonder which tree they should be
+merged through, MIPS or GPIO? Not seeing the rest of the series, I
+cannot make a suggestion.
