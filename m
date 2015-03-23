@@ -1,32 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: pinctrl: add AMD GPIO driver support.
-Date: Mon, 23 Mar 2015 12:00:08 +0100
-Message-ID: <CACRpkdb3CaA4iAzhXND-YCKyXzzgKd8gbjzHHNu7HUc--mVB5A@mail.gmail.com>
-References: <20150319160716.GA28850@mwanda>
-	<4AC89B18A26BAB43B540DB1C94E2802C05B1C2E3@scybexdag03.amd.com>
+From: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [RFC] pinmux: group and function definitions in the device tree
+Date: Mon, 23 Mar 2015 12:49:14 +0100
+Message-ID: <20150323114914.GL9742@pengutronix.de>
+References: <20150319153950.GC30114@odux.rfo.atmel.com>
+ <20150319185637.GV4927@pengutronix.de>
+ <20150320150609.GB32259@odux.rfo.atmel.com>
+ <20150323064424.GD9742@pengutronix.de>
+ <20150323090827.GD32259@odux.rfo.atmel.com>
+ <20150323100913.GJ9742@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:36348 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097AbbCWLAJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 07:00:09 -0400
-Received: by obdfc2 with SMTP id fc2so120095675obd.3
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Mar 2015 04:00:09 -0700 (PDT)
-In-Reply-To: <4AC89B18A26BAB43B540DB1C94E2802C05B1C2E3@scybexdag03.amd.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150323100913.GJ9742-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Xue, Ken" <Ken.Xue@amd.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Mar 20, 2015 at 2:37 AM, Xue, Ken <Ken.Xue@amd.com> wrote:
+On Mon, Mar 23, 2015 at 11:09:13AM +0100, Sascha Hauer wrote:
+> 
+> This may be because the concept of groups doesn't most hardware.
 
-> Can you tell me how to check this kind of warnings by myself, before I send the patches?
-> I will send V4 patch for fixing warning.
+I meant "doesn't match most hardware"
 
-Don't do that. I have already merged v3.
+Sascha
 
-Send a patch fixing the warnings/bugs on top of v3.
-
-Yours,
-Linus Walleij
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
