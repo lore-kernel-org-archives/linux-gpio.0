@@ -1,51 +1,73 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: gpiolib: translate pin number in GPIO ACPI callbacks
-Date: Mon, 23 Mar 2015 18:55:27 +0300
-Message-ID: <20150323155527.GC24038@mwanda>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [RFC] pinmux: group and function definitions in the device tree
+Date: Tue, 24 Mar 2015 07:18:04 +0100
+Message-ID: <20150324061804.GP9742@pengutronix.de>
+References: <20150319153950.GC30114@odux.rfo.atmel.com>
+ <20150319185637.GV4927@pengutronix.de>
+ <20150320150609.GB32259@odux.rfo.atmel.com>
+ <20150323064424.GD9742@pengutronix.de>
+ <20150323090827.GD32259@odux.rfo.atmel.com>
+ <20150323100913.GJ9742@pengutronix.de>
+ <20150323142954.GI32259@odux.rfo.atmel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:36649 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752120AbbCWPzf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Mar 2015 11:55:35 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:36952 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751145AbbCXGSI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2015 02:18:08 -0400
 Content-Disposition: inline
+In-Reply-To: <20150323142954.GI32259@odux.rfo.atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: qipeng.zha@intel.com
-Cc: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
 
-Hello qipeng.zha,
+On Mon, Mar 23, 2015 at 03:29:54PM +0100, Ludovic Desroches wrote:
+> On Mon, Mar 23, 2015 at 11:09:13AM +0100, Sascha Hauer wrote:
+> > On Mon, Mar 23, 2015 at 10:08:27AM +0100, Ludovic Desroches wrote:
+> > > On Mon, Mar 23, 2015 at 07:44:24AM +0100, Sascha Hauer wrote:
+> > > > On Fri, Mar 20, 2015 at 04:06:09PM +0100, Ludovic Desroches wrote:
+> > > > > On Thu, Mar 19, 2015 at 07:56:37PM +0100, Sascha Hauer wrote:
+> > > > > We used to have a configuration per pin in our products. On next ones we
+> > > > > will have some constraints ie. on the controller side we still have a
+> > > > > configuration per pin but we will introduced the notion of iosets. This
+> > > > > notion involves that timings are guaranteed only in one ioset. That's
+> > > > > why we can't mix signals from several iosets because. On the controller side
+> > > > > we can do all we want so I would like to use groups as a software protection.
+> > > > 
+> > > > What does happen when you mix signals of different iosets? It won't work
+> > > > so the developer will change it. What do you need the software
+> > > > protection for?
+> > > > 
+> > > 
+> > > I can't say it won't work, it could work in some cases. My fear is to
+> > > have some support cases because of this. It seems easy to spot this kind
+> > > of issue but experience tell us that we can loose time for this kind of
+> > > "stupid" error.
+> > 
+> > Hm, the software (dts in this case) developer will only mix signals of
+> > different iosets when he is forced to by the board designer. It's the
+> > board designer that has made this mistake, the software developer will
+> > only try to make it work anyway. I doubt that the board designer will
+> > design the board based on the possibilities shown in the dts files.
+> > 
+> 
+> I think we still have cases were the choice has to be done by the user.
+> For example, the board designer offers several GPIOs, some can be muxed
+> to the ISI device (there is two possible configurations). Among these pins, 
+> we can use some of them for I2C devices.
+> 
+> The user will see that he could get two I2C devices by mixing ISI
+> signals. Why not doing it. That's why I would like to keep some
+> protection, a 'soft' protection such as group.
 
-The patch 4de60970abf9: "gpiolib: translate pin number in GPIO ACPI
-callbacks" from Mar 11, 2015, leads to the following static checker
-warning:
+Even if you put groups in the dtsi, this won't prevent me from creating my own
+groups in the board dts and thus still violating the ioset rule.
 
-	drivers/gpio/gpiolib-acpi.c:559 acpi_gpio_adr_space_handler()
-	warn: unsigned 'pin' is never less than zero.
+Sascha
 
-drivers/gpio/gpiolib-acpi.c
-   550  
-   551          length = min(agpio->pin_table_length, (u16)(pin_index + bits));
-   552          for (i = pin_index; i < length; ++i) {
-   553                  unsigned pin = agpio->pin_table[i];
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^^
-"pin" is already assigned.
-
-   554                  struct acpi_gpio_connection *conn;
-   555                  struct gpio_desc *desc;
-   556                  bool found;
-   557  
-   558                  pin = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
-   559                  if (pin < 0) {
-                            ^^^^^^^
-Error checking doesn't work.
-
-   560                          status = AE_BAD_PARAMETER;
-   561                          goto out;
-   562                  }
-   563  
-   564                  mutex_lock(&achip->conn_lock);
-
-regards,
-dan carpenter
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
