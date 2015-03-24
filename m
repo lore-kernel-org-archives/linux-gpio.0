@@ -1,116 +1,86 @@
-From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH] IIO: Adds ACPI support for ST gyroscopes
-Date: Tue, 24 Mar 2015 18:55:50 +0200
-Message-ID: <20150324165550.GS1878@lahna.fi.intel.com>
-References: <1427118025-4380-1-git-send-email-robert.dolca@intel.com>
- <551155C3.2030403@metafoo.de>
- <CAFPB+YdwrPoob1CPdUfSt2uBJWPi=6_0-d0NChj2agD6-z-8qw@mail.gmail.com>
- <551168F0.1090901@metafoo.de>
- <CACRpkdaOQ-onkgQJSyoVEQNtkZ9nF_4z=9jNdU-tug-TwvAAkQ@mail.gmail.com>
- <20150324150630.GP1878@lahna.fi.intel.com>
- <55118128.10402@metafoo.de>
- <20150324155515.GR1878@lahna.fi.intel.com>
- <55119429.6070806@metafoo.de>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v3 10/15] serial: stm32-usart: Add STM32 USART Driver
+Date: Tue, 24 Mar 2015 18:21:34 +0100
+Message-ID: <CALszF6Dg7t9+F9NG+xREPQeaAj7T6D1GuGabkr8EvOAAdtg7yA@mail.gmail.com>
+References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>
+	<1426197361-19290-11-git-send-email-maxime.coquelin@st.com>
+	<CAHp75Vd7+oLiLLuyocYh95TebtocWrRho6xNjuSUt8fYGp8npg@mail.gmail.com>
+	<CALszF6BWuUYRh+3rWnSQLApkAHA5dQXw=6x6D_evRtb+5B_ukA@mail.gmail.com>
+	<CAHp75Vdf6=z1d5+eYJ+QGTko9kkZf-oPfoWaf8FRoTdqcdWxjw@mail.gmail.com>
+	<CALszF6A5Zu7i0hxSLTS-nfOAXmd0__jLjB=fHxK93Ex5Vbi9LA@mail.gmail.com>
+	<550AE41C.8070803@hurleysoftware.com>
+	<CALszF6DX2pz_US6uqQwBjmZhfgjw5PP1UAy9H+c-_Kgkk_Z72w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55119429.6070806-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Robert Dolca <robert.dolca-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Dolca <robert.dolca-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Denis CIOCCA <denis.ciocca-qxv4g6HH51o@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALszF6DX2pz_US6uqQwBjmZhfgjw5PP1UAy9H+c-_Kgkk_Z72w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Hurley <peter@hurleysoftware.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-founda>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 24, 2015 at 05:43:21PM +0100, Lars-Peter Clausen wrote:
-> On 03/24/2015 04:55 PM, Mika Westerberg wrote:
-> >On Tue, Mar 24, 2015 at 04:22:16PM +0100, Lars-Peter Clausen wrote:
-> >>Add Alexandre and linux-gpio to Cc.
-> >>
-> >>On 03/24/2015 04:06 PM, Mika Westerberg wrote:
-> >>>On Tue, Mar 24, 2015 at 02:57:49PM +0100, Linus Walleij wrote:
-> >>>>On Tue, Mar 24, 2015 at 2:38 PM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
-> >>>>>On 03/24/2015 02:26 PM, Robert Dolca wrote:
-> >>>>>>On Tue, Mar 24, 2015 at 2:17 PM, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-> >>>>>>wrote:
-> >>>>
-> >>>>>>In the ACPI description you specify one or more IRQ GPIO pins. In the
-> >>>>>>driver you request the GPIO pin using the index. In the ACPI 5.1
-> >>>>>>specification you can use named GPIOs instead of index.
-> >>>>>
-> >>>>>
-> >>>>>But is there a way to distinguish between IRQ GPIOs and non IRQ GPIOs? If it
-> >>>>>is clear that a certain GPIO is the IRQ for the device the I2C framework
-> >>>>>should take care of assigning the client->irq field, instead of doing it
-> >>>>>manually in each and every device driver.
-> >>>>
-> >>>>In the device tree case we have a mechanism where each
-> >>>>GPIO chip implements two API:s, one gpio_chip API and
-> >>>>one irqchip API.
-> >>>>
-> >>>>Then in the tree both the GPIO and IRQs can be assigned as
-> >>>>resources to clients, orthogonally. Usually this will only work
-> >>>>if there is a 1-to-1 correspondence between the GPIO lines
-> >>>>and available IRQ line triggers on the GPIO chip, but that is
-> >>>>indeed the most common. They will then usually also have
-> >>>>the same line offset numbers. In some odd cases I guess it
-> >>>>won't work this way.
-> >>>>
-> >>>>The I2C subsystem does this for the device tree case in
-> >>>>i2c_device_probe() like this:
-> >>>>
-> >>>>  if (!client->irq && dev->of_node) {
-> >>>>                 int irq = of_irq_get(dev->of_node, 0);
-> >>>>
-> >>>>                 if (irq == -EPROBE_DEFER)
-> >>>>                         return irq;
-> >>>>                 if (irq < 0)
-> >>>>                         irq = 0;
-> >>>>
-> >>>>                 client->irq = irq;
-> >>>>         }
-> >>>>
-> >>>>This is why the code does not contain any OF/DT
-> >>>>IRQ assignment code.
-> >>>>
-> >>>>However in the ACPI probe path I guess it doesn't
-> >>>>happen then?
-> >>>
-> >>>In ACPI we have two kind of GPIOs: GpioIo and GpioInt. The latter is
-> >>>used to describe GPIOs that can be used as interrupts.
-> >>>
-> >>>In order to translate a GpioInt to an interrupt number we would need to
-> >>>request the GPIO first here (in the I2C core), call gpiod_to_irq() to it
-> >>>and assign that to the client->irq.
-> >>
-> >>Maybe the API can be extended to support to translate a GPIO to a IRQ
-> >>without actually requesting the GPIO first.
-> >
-> >We still need to take care the the GPIO is properly requested and locked
-> >as IRQ. Otherwise something else (userspace for example) can mess this
-> >up.
-> >
-> >>>
-> >>>This has few problems that I have not yet figured out. Maybe someone
-> >>>here can suggest what to do:
-> >>>
-> >>>  1) Who is responsible in releasing the GPIO?
-> >>>  2) What if the driver wants to use that pin as a GPIO instead? The GPIO
-> >>>     is already requested by the I2C core.
-> >>>  3) We may have multiple GpioInts for devices like GPIO button array.
-> >>>     Which one we should pick, or should we let the driver to handle this
-> >>>     separetely?
-> >>
-> >>Well, we have the same issue with devicetree already. I'd say use the first
-> >>IRQ for client->irq and ignore the other ones for now.
-> >
-> >For devices like the button array above doing that leaves the driver
-> >wondering where the heck is one of my GPIOs :-) Perhaps we could to
-> >automatic translation if we find out that there is only one GpioInt for
-> >this device.
-> 
-> Btw. in the ACPI case client->irq is already initialized by
-> acpi_dev_resource_interrupt() in the I2C core. Should the GpioInts just map
-> onto this API as well?
+Hi Peter,
 
-Yes, that's the place where we could assign the interrupt number. Given
-that we can solve the above problems.
+2015-03-19 18:35 GMT+01:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
+> 2015-03-19 15:58 GMT+01:00 Peter Hurley <peter@hurleysoftware.com>:
+>> On 03/19/2015 09:55 AM, Maxime Coquelin wrote:
+>>>>>>> +static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
+>>>>>>> +                           struct ktermios *old)
+>> [...]
+>>>>>>> +       usardiv = (port->uartclk * 25) / (baud * 4);
+>>>>>>> +       mantissa = (usardiv / 100) << USART_BRR_DIV_M_SHIFT;
+>>>>>>> +       fraction = DIV_ROUND_CLOSEST((usardiv % 100) * 16, 100);
+>>>>>>> +       if (fraction & ~USART_BRR_DIV_F_MASK) {
+>>>>>>> +               fraction = 0;
+>>>>>>> +               mantissa += (1 << USART_BRR_DIV_M_SHIFT);
+>>>>>>> +       }
+>> [...]
+>>> Really, I would prefer keeping this fractional divider as it is
+>>> implemented today.
+>>
+>> You have to admit that's basically an unintelligible mess;
+>> how would anyone ever be able to refactor and replace that with a
+>> common divider implementation?
+>>
+>> At the very least, please comment on the formula and format.
+>
+> Ok, I will refactor the implementation, and comment it.
+
+The implementation was indeed a mess.
+I found some time to refactor the code, and also added support for 8
+times oversampling (16 by default).
+It will allow to achieve higher speeds, with the side effect of being
+less tolerant to clock deviations.
+
+What do you think about the code below?
+
+
+    usartdiv = DIV_ROUND_CLOSEST(port->uartclk, baud);
+
+    /*
+     * The USART supports 16 or 8 times oversampling.
+     * By default we prefer 16 times oversampling, so that the receiver
+     * has a better tolerance to clock deviations.
+     * 8 times oversampling is only used to achieve higher speeds.
+     */
+    if (usartdiv < 16) {
+        oversampling = 8;
+        stm32_set_bits(port, USART_CR1, USART_CR1_OVER8);
+    } else {
+        oversampling = 16;
+        stm32_clr_bits(port, USART_CR1, USART_CR1_OVER8);
+    }
+
+    mantissa = (usartdiv / oversampling) << USART_BRR_DIV_M_SHIFT;
+    fraction = usartdiv % oversampling;
+    writel_relaxed(mantissa | fraction, port->membase + USART_BRR)
+
+Thanks,
+Maxime
+>
+> Regards,
+> Maxime
+>
+>>
+>> Regards,
+>> Peter Hurley
