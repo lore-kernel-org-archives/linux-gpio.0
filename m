@@ -1,59 +1,46 @@
-From: Olivier CLERGEAUD <olivier.clergeaud@st.com>
-Subject: RE: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl &
- GPIO in /sysfs
-Date: Wed, 25 Mar 2015 14:06:44 +0000
-Message-ID: <9D46209077AA0C4A98CD781BE48184B81EAC58@SAFEX1NODE23.st.com>
-References: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pcf857x: restore the initial line state of all pcf lines
+Date: Wed, 25 Mar 2015 16:28:29 +0100
+Message-ID: <CACRpkdaFXvqbo84BqBVJzoBqdejwauxhZDr+x4HgWbXehOqViw@mail.gmail.com>
+References: <1418371601-22658-1-git-send-email-kishon@ti.com>
+	<548F498F.7050202@ti.com>
+	<549271A9.5040701@ti.com>
+	<5492E09F.1000003@ti.com>
+	<54AA2EB1.8090501@ti.com>
+	<CACRpkdago2vWJYFmywULna6nkrbtciPZFESuuKixF0r8rSB1Sw@mail.gmail.com>
+	<5506987C.3060601@ti.com>
+	<CACRpkdYQv4z68HWAq0KFV1WiSgJeNzm4sosnJxXHHvQp5AqsSg@mail.gmail.com>
+	<55097BF5.8080600@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47241 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752649AbbCYOHQ convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 25 Mar 2015 10:07:16 -0400
-In-Reply-To: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55097BF5.8080600@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "kernel@stlinux.com" <kernel@stlinux.com>
 
-For the series:
+On Wed, Mar 18, 2015 at 2:21 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>[Me]
+>> Specify exactly what stuff may happen after the reboot notifier.
+>
+> okay, it's assumed the device may be used (active) till the shutdown handler
+> of that particular device is called.
+>
+> In this particular case we are restoring the initial line state of all pcf
+> lines even though we don't know if the devices connected to it are still
+> being active, which might cause a contention as explained by NM [1]
 
-Acked-by: Olivier Clergeaud <Olivier.clergeaud@st.com>
+OK I understand this, just that I want to know if it is a practical problem,
+i.e. do you run into it? Does the system lock up?
 
------Original Message-----
-From: Lee Jones [mailto:lee.jones@linaro.org] 
-Sent: mercredi 18 mars 2015 18:21
-To: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linus.walleij@linaro.org; linux-gpio@vger.kernel.org
-Cc: lee.jones@linaro.org; kernel@stlinux.com
-Subject: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl & GPIO in /sysfs
+> If the reboot notifier gets invoked after the shutdown handler then we could
+> be sure that restoring the initial line state of the pcf lines wouldn't
+> affect the devices connected to it.
 
-Version 2:
-  Fixed up Maxime's review comments
-    - Reduce size of char array
-    - Use snprintf()
-  Applied Maxime's Acks 
+OK so does it?
 
-ST's hardware differentiates between GPIO mode and Pinctrl alternate functions.  When a pin is in GPIO mode, there are dedicated registers to set and obtain direction status.  However, If a pin's alternate function is in use then the direction is set and status is derived from a bunch of syscon registers.  The issue is; until now there was a lack of parity between the two.
+ftrace is your friend.
 
-Karim BEN BELGACEM (1):
-  ARM: STi: DT: STiH407: Fix retime pin mask for PIO5 and PIO35
-
-Lee Jones (5):
-  pinctrl: st: Introduce a 'get pin function' call
-  pinctrl: st: Move st_get_pio_control() further up the source file
-  pinctrl: st: Supply a GPIO get_direction() call-back
-  pinctrl: st: Show correct pin direction -- even when in GPIO mode
-  pinctrl: st: Display pin's function when printing pinctrl debug
-    information
-
- arch/arm/boot/dts/stih407-pinctrl.dtsi |  2 +
- drivers/pinctrl/pinctrl-st.c           | 83 +++++++++++++++++++++++++++++-----
- 2 files changed, 73 insertions(+), 12 deletions(-)
-
---
-1.9.1
-
+Yours,
+Linus Walleij
