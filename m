@@ -1,70 +1,59 @@
-From: Zhou Wang <wangzhou1@hisilicon.com>
-Subject: Re: [RESEND PATCH v6 0/2] ARM: hip04: add GPIO support
-Date: Wed, 25 Mar 2015 17:35:13 +0800
-Message-ID: <55128151.3060105@hisilicon.com>
-References: <1427266665-226718-1-git-send-email-wangzhou1@hisilicon.com> <CAD6h2NQQXgROxw4hLEH=OBw8WeEyr5by8ZDGEW7DQ1AuO0207Q@mail.gmail.com>
+From: Olivier CLERGEAUD <olivier.clergeaud@st.com>
+Subject: RE: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl &
+ GPIO in /sysfs
+Date: Wed, 25 Mar 2015 14:06:44 +0000
+Message-ID: <9D46209077AA0C4A98CD781BE48184B81EAC58@SAFEX1NODE23.st.com>
+References: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga02-in.huawei.com ([119.145.14.65]:2492 "EHLO
-	szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751021AbbCYJfj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Mar 2015 05:35:39 -0400
-In-Reply-To: <CAD6h2NQQXgROxw4hLEH=OBw8WeEyr5by8ZDGEW7DQ1AuO0207Q@mail.gmail.com>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47241 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752649AbbCYOHQ convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 25 Mar 2015 10:07:16 -0400
+In-Reply-To: <1426699279-9258-1-git-send-email-lee.jones@linaro.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Wei Xu <xuwei5@hisilicon.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+To: Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "kernel@stlinux.com" <kernel@stlinux.com>
 
-On 2015/3/25 15:02, Haojian Zhuang wrote:
-> On 25 March 2015 at 14:57, Zhou Wang <wangzhou1@hisilicon.com> wrote:
->> This series add the support for the GPIOs of Hisilicon Soc hip04. Hip04 uses
->> synopsis' GPIO IP, and we use the dwapb GPIO driver here. This series add the
->> corresponding dts. The default value of ARCH_NR_GPIOS is used to find gpio
->> base here.
->>
->> Now this patchset is based on v4.0-rc5
->>
->> Change in v6:
->> - Change E-mail address in signed-off-by to "wangzhou1@hisilicon.com"
->> Change in v5:
->> - Base on v3.19-rc1
->> - Just use default value of ARCH_NR_GPIOS to find gpio base. Remove the new
->>   added patch(3/4) in v4.
->> Change in v4:
->> - Delete "default 128 if ARCH_HIP04" in arch/arm/Kconfig
->> - add a new patch to support find GPIO base number in increasing order
->> - add gpio-number-forward property in snps gpio binding doc
->> Change in v3:
->> - Move CONFIG_GPIO_DWAPB to hisi_defconfig
->> - Add CONFIG_GPIOLIB, CONFIG_GPIO_SYSFS in hisi_defconfig
->> Change in v2:
->> - Add select GPIO_DWAPB in arch/arm/mach-hisi/Kconfig
->>
->> Link for v4:
->> - http://www.spinics.net/lists/arm-kernel/msg383883.html
->> Link for v3:
->> - http://www.spinics.net/lists/devicetree/msg60324.html
->>
->>
->> Zhou Wang (2):
->>   ARM: hip04: add GPIO configure in hisi_defconfig
->>   ARM: dts: hip04: add GPIO pieces
->>
->>  arch/arm/boot/dts/hip04.dtsi    | 75 +++++++++++++++++++++++++++++++++++++++++
->>  arch/arm/configs/hisi_defconfig |  1 +
->>  2 files changed, 76 insertions(+)
->>
->> --
->> 1.9.1
->>
-> Acked-by: Haojian Zhuang <haojian.zhuang@linaro.org>
-> 
-> .
->
+For the series:
 
-Thanks!
-Zhou Wang
+Acked-by: Olivier Clergeaud <Olivier.clergeaud@st.com>
 
+-----Original Message-----
+From: Lee Jones [mailto:lee.jones@linaro.org] 
+Sent: mercredi 18 mars 2015 18:21
+To: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linus.walleij@linaro.org; linux-gpio@vger.kernel.org
+Cc: lee.jones@linaro.org; kernel@stlinux.com
+Subject: [PATCH v2 0/6] pinctrl: st: Fix disparity between Pinctrl & GPIO in /sysfs
+
+Version 2:
+  Fixed up Maxime's review comments
+    - Reduce size of char array
+    - Use snprintf()
+  Applied Maxime's Acks 
+
+ST's hardware differentiates between GPIO mode and Pinctrl alternate functions.  When a pin is in GPIO mode, there are dedicated registers to set and obtain direction status.  However, If a pin's alternate function is in use then the direction is set and status is derived from a bunch of syscon registers.  The issue is; until now there was a lack of parity between the two.
+
+Karim BEN BELGACEM (1):
+  ARM: STi: DT: STiH407: Fix retime pin mask for PIO5 and PIO35
+
+Lee Jones (5):
+  pinctrl: st: Introduce a 'get pin function' call
+  pinctrl: st: Move st_get_pio_control() further up the source file
+  pinctrl: st: Supply a GPIO get_direction() call-back
+  pinctrl: st: Show correct pin direction -- even when in GPIO mode
+  pinctrl: st: Display pin's function when printing pinctrl debug
+    information
+
+ arch/arm/boot/dts/stih407-pinctrl.dtsi |  2 +
+ drivers/pinctrl/pinctrl-st.c           | 83 +++++++++++++++++++++++++++++-----
+ 2 files changed, 73 insertions(+), 12 deletions(-)
+
+--
+1.9.1
 
