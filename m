@@ -1,50 +1,44 @@
-From: Huacai Chen <chenhc@lemote.com>
-Subject: Re: [PATCH V8 3/8] MIPS: Cleanup Loongson-2F's gpio driver
-Date: Wed, 25 Mar 2015 11:12:13 +0800
-Message-ID: <CAAhV-H7Q1EkRZEjzBb+mPZO9YZUWa8hKBF90RakYW8cW1ka2Vw@mail.gmail.com>
-References: <1426213595-28454-1-git-send-email-chenhc@lemote.com>
-	<CAAVeFuLytDZwo-=Q3DSxS7jLWbr4Jgf8BsBr9VGptBBu4SzZZg@mail.gmail.com>
-	<CAAhV-H5i+ysaJi1=6ftyY_82yGBZnCqpUmCV2ayMVMDFw0uWVQ@mail.gmail.com>
-	<CAAVeFuLF7tHgqXbX1MAikM67DwSu729eG0JcBiipSAG=AeBfOQ@mail.gmail.com>
+From: Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [RESEND PATCH v6 1/2] ARM: hip04: add GPIO configure in hisi_defconfig
+Date: Wed, 25 Mar 2015 14:57:44 +0800
+Message-ID: <1427266665-226718-2-git-send-email-wangzhou1@hisilicon.com>
+References: <1427266665-226718-1-git-send-email-wangzhou1@hisilicon.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:33432 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752477AbbCYDMO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Mar 2015 23:12:14 -0400
-Received: by wixw10 with SMTP id w10so64605693wix.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Mar 2015 20:12:13 -0700 (PDT)
-In-Reply-To: <CAAVeFuLF7tHgqXbX1MAikM67DwSu729eG0JcBiipSAG=AeBfOQ@mail.gmail.com>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:59899 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750866AbbCYGwJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Mar 2015 02:52:09 -0400
+In-Reply-To: <1427266665-226718-1-git-send-email-wangzhou1@hisilicon.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "Steven J. Hill" <Steven.Hill@imgtec.com>, linux-mips <linux-mips@linux-mips.org>, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Haojian Zhuang <haojian.zhuang@linaro.org>, Wei Xu <xuwei5@hisilicon.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, liguozhu@hisilicon.com, Zhou Wang <wangzhou.bry@gmail.com>, Zhou Wang <wangzhou1@hisilicon.com>
 
-It seems Ralf is very very busy, I have some bugfixing patches queued
-for a long time and no response. Maybe Steven can give a ACK for this?
+From: Zhou Wang <wangzhou.bry@gmail.com>
 
-Huacai
+The GPIO controller of Hisilicon hip04 Soc uses the IP from Sysnopsis,
+gpio-dwapb.c can be reused to support this GPIO controller. This patch
+adds related configure item in hisi_defconfig.
 
-On Wed, Mar 25, 2015 at 10:19 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Wed, Mar 25, 2015 at 10:15 AM, Huacai Chen <chenhc@lemote.com> wrote:
->> I think these three patches can go to GPIO tree, because it has no
->> relationship with others in this series.
->
-> In that case we would need a ack from the MIPS maintainers to move the
-> code into drivers/gpio/.
->
->>
->> Huacai
->>
->> On Mon, Mar 23, 2015 at 2:29 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
->>> On Fri, Mar 13, 2015 at 11:26 AM, Huacai Chen <chenhc@lemote.com> wrote:
->>>> This cleanup is prepare to move the driver to drivers/gpio. Custom
->>>> definitions of gpio_get_value()/gpio_set_value() are dropped.
->>>
->>> I suppose this is starting to look ok, at least patches 3, 4 and 5
->>> which are of interest for GPIO. I wonder which tree they should be
->>> merged through, MIPS or GPIO? Not seeing the rest of the series, I
->>> cannot make a suggestion.
->>>
->
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
+---
+ arch/arm/configs/hisi_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
+index c34da58..e7bf486 100644
+--- a/arch/arm/configs/hisi_defconfig
++++ b/arch/arm/configs/hisi_defconfig
+@@ -51,6 +51,7 @@ CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_GENERIC_PLATFORM=y
+ CONFIG_REGULATOR_GPIO=y
++CONFIG_GPIO_DWAPB=y
+ CONFIG_MFD_SYSCON=y
+ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_DRM=y
+-- 
+1.9.1
