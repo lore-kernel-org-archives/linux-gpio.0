@@ -1,186 +1,170 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v3  04/15] clocksource: Add ARM System timer driver
-Date: Thu, 26 Mar 2015 10:50:02 +0100
-Message-ID: <5513D64A.7060702@linaro.org>
-References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com> <1426197361-19290-5-git-send-email-maxime.coquelin@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] pinctrl: at91: convert __raw to endian agnostic IO
+Date: Thu, 26 Mar 2015 12:18:49 +0000
+Message-ID: <1427372329-26005-1-git-send-email-ben.dooks@codethink.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:33934 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790AbbCZJuJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Mar 2015 05:50:09 -0400
-Received: by wgs2 with SMTP id 2so57970034wgs.1
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Mar 2015 02:50:07 -0700 (PDT)
-In-Reply-To: <1426197361-19290-5-git-send-email-maxime.coquelin@st.com>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:60882 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752175AbbCZMTA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Mar 2015 08:19:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, u.kleine-koenig@pengutronix.de, afaerber@suse.de, geert@linux-m68k.org, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, stefan@agner.ch, pmeerw@pmeerw.net, pebolle@tiscali.nl
-Cc: Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Joe Perches <joe@perches.com>, Antti Palosaari <crope@iki.fi>, Tejun Heo <tj@kernel.org>, Will Deacon <will.deacon@arm.com>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Rusty Russell <rusty@rustcorp.com.au>, Kees Cook <keescook@chromium.org>, Michal Marek <mmarek@suse.cz>, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpi
+To: linux-kernel@lists.codethink.co.uk
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>, "moderated list:PIN CONTROLLER
+	-..." <linux-arm-kernel@lists.infradead.org>, "open list:PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-On 03/12/2015 10:55 PM, Maxime Coquelin wrote:
-> From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->
-> This patch adds clocksource support for ARMv7-M's System timer,
-> also known as SysTick.
->
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Use endian agnostic _relaxed IO accessors instead of the __raw ones.
 
-Hi Maxime,
-
-the driver looks good. Three comments below.
-
-   -- Daniel
-
-> ---
->   drivers/clocksource/Kconfig          |  7 ++++
->   drivers/clocksource/Makefile         |  1 +
->   drivers/clocksource/armv7m_systick.c | 78 +++++++++++++++++++++++++=
-+++++++++++
->   3 files changed, 86 insertions(+)
->   create mode 100644 drivers/clocksource/armv7m_systick.c
->
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfi=
-g
-> index 1c2506f..b82e58b 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -134,6 +134,13 @@ config CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
->   	help
->   	 Use ARM global timer clock source as sched_clock
->
-> +config ARMV7M_SYSTICK
-> +	bool
-> +	select CLKSRC_OF if OF
-> +	select CLKSRC_MMIO
-> +	help
-> +	  This options enables support for the ARMv7M system timer unit
-> +
->   config ATMEL_PIT
->   	select CLKSRC_OF if OF
->   	def_bool SOC_AT91SAM9 || SOC_SAMA5
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makef=
-ile
-> index 752d5c7..1c9a643 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -44,6 +44,7 @@ obj-$(CONFIG_MTK_TIMER)		+=3D mtk_timer.o
->
->   obj-$(CONFIG_ARM_ARCH_TIMER)		+=3D arm_arch_timer.o
->   obj-$(CONFIG_ARM_GLOBAL_TIMER)		+=3D arm_global_timer.o
-> +obj-$(CONFIG_ARMV7M_SYSTICK)		+=3D armv7m_systick.o
->   obj-$(CONFIG_CLKSRC_METAG_GENERIC)	+=3D metag_generic.o
->   obj-$(CONFIG_ARCH_HAS_TICK_BROADCAST)	+=3D dummy_timer.o
->   obj-$(CONFIG_ARCH_KEYSTONE)		+=3D timer-keystone.o
-> diff --git a/drivers/clocksource/armv7m_systick.c b/drivers/clocksour=
-ce/armv7m_systick.c
-> new file mode 100644
-> index 0000000..23d8249
-> --- /dev/null
-> +++ b/drivers/clocksource/armv7m_systick.c
-> @@ -0,0 +1,78 @@
-> +/*
-> + * Copyright (C) Maxime Coquelin 2015
-> + * Author:  Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> + * License terms:  GNU General Public License (GPL), version 2
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/clocksource.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/clk.h>
-> +#include <linux/bitops.h>
-> +
-> +#define SYST_CSR	0x00
-> +#define SYST_RVR	0x04
-> +#define SYST_CVR	0x08
-> +#define SYST_CALIB	0x0c
-> +
-> +#define SYST_CSR_ENABLE BIT(0)
-> +
-> +#define SYSTICK_LOAD_RELOAD_MASK 0x00FFFFFF
-> +
-> +static void __init system_timer_of_register(struct device_node *np)
-> +{
-> +	struct clk *clk;
-> +	void __iomem *base;
-> +	u32 rate =3D 0;
-> +	int ret;
-> +
-> +	base =3D of_iomap(np, 0);
-> +	if (!base) {
-> +		pr_warn("system-timer: invalid base address\n");
-> +		return;
-> +	}
-> +
-> +	clk =3D of_clk_get(np, 0);
-> +	if (!IS_ERR(clk)) {
-> +		ret =3D clk_prepare_enable(clk);
-> +		if (ret) {
-> +			clk_put(clk);
-> +			goto out_unmap;
-> +		}
-> +
-> +		rate =3D clk_get_rate(clk);
-> +	}
-> +
-> +	/* If no clock found, try to get clock-frequency property */
-> +	if (!rate) {
-> +		ret =3D of_property_read_u32(np, "clock-frequency", &rate);
-> +		if (ret)
-> +			goto out_unmap;
-
-Shouldn't be 'goto out_clk_disable' ?
-
-> +	}
-> +
-> +	writel_relaxed(SYSTICK_LOAD_RELOAD_MASK, base + SYST_RVR);
-> +	writel_relaxed(SYST_CSR_ENABLE, base + SYST_CSR);
-> +
-> +	ret =3D clocksource_mmio_init(base + SYST_CVR, "arm_system_timer", =
-rate,
-> +			200, 24, clocksource_mmio_readl_down);
-> +	if (ret) {
-> +		pr_err("failed to init clocksource (%d)\n", ret);
-> +		goto out_clk_disable;
-> +	}
-> +
-> +	pr_info("ARM System timer initialized as clocksource\n");
-> +
-> +	return;
-> +
-> +out_clk_disable:
-> +	if (!IS_ERR(clk))
-
-Why do you need this check ?
-
-It isn't missing a clk_put ?
-
-> +		clk_disable_unprepare(clk);
-> +out_unmap:
-> +	iounmap(base);
-> +	WARN(ret, "ARM System timer register failed (%d)\n", ret);
-> +}
-> +
-> +CLOCKSOURCE_OF_DECLARE(arm_systick, "arm,armv7m-systick",
-> +			system_timer_of_register);
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+CC: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com> (maintainer:PIN CONTROLLER -...)
+CC: Linus Walleij <linus.walleij@linaro.org> (maintainer:PIN CONTROL SUBSY...)
+CC: linux-arm-kernel@lists.infradead.org (moderated list:PIN CONTROLLER -...)
+CC: linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSY...)
+CC: Andrew Victor <linux@maxim.org.za>
+CC: Nicolas Ferre <nicolas.ferre@atmel.com>
+CC: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+---
+ drivers/pinctrl/pinctrl-at91.c | 50 +++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+index f4cd0b9..cdd47dc 100644
+--- a/drivers/pinctrl/pinctrl-at91.c
++++ b/drivers/pinctrl/pinctrl-at91.c
+@@ -451,18 +451,18 @@ static enum at91_mux at91_mux_get_periph(void __iomem *pio, unsigned mask)
+ 
+ static bool at91_mux_get_deglitch(void __iomem *pio, unsigned pin)
+ {
+-	return (__raw_readl(pio + PIO_IFSR) >> pin) & 0x1;
++	return (readl_relaxed(pio + PIO_IFSR) >> pin) & 0x1;
+ }
+ 
+ static void at91_mux_set_deglitch(void __iomem *pio, unsigned mask, bool is_on)
+ {
+-	__raw_writel(mask, pio + (is_on ? PIO_IFER : PIO_IFDR));
++	writel_relaxed(mask, pio + (is_on ? PIO_IFER : PIO_IFDR));
+ }
+ 
+ static bool at91_mux_pio3_get_deglitch(void __iomem *pio, unsigned pin)
+ {
+-	if ((__raw_readl(pio + PIO_IFSR) >> pin) & 0x1)
+-		return !((__raw_readl(pio + PIO_IFSCSR) >> pin) & 0x1);
++	if ((readl_relaxed(pio + PIO_IFSR) >> pin) & 0x1)
++		return !((readl_relaxed(pio + PIO_IFSCSR) >> pin) & 0x1);
+ 
+ 	return false;
+ }
+@@ -470,55 +470,55 @@ static bool at91_mux_pio3_get_deglitch(void __iomem *pio, unsigned pin)
+ static void at91_mux_pio3_set_deglitch(void __iomem *pio, unsigned mask, bool is_on)
+ {
+ 	if (is_on)
+-		__raw_writel(mask, pio + PIO_IFSCDR);
++		writel_relaxed(mask, pio + PIO_IFSCDR);
+ 	at91_mux_set_deglitch(pio, mask, is_on);
+ }
+ 
+ static bool at91_mux_pio3_get_debounce(void __iomem *pio, unsigned pin, u32 *div)
+ {
+-	*div = __raw_readl(pio + PIO_SCDR);
++	*div = readl_relaxed(pio + PIO_SCDR);
+ 
+-	return ((__raw_readl(pio + PIO_IFSR) >> pin) & 0x1) &&
+-	       ((__raw_readl(pio + PIO_IFSCSR) >> pin) & 0x1);
++	return ((readl_relaxed(pio + PIO_IFSR) >> pin) & 0x1) &&
++	       ((readl_relaxed(pio + PIO_IFSCSR) >> pin) & 0x1);
+ }
+ 
+ static void at91_mux_pio3_set_debounce(void __iomem *pio, unsigned mask,
+ 				bool is_on, u32 div)
+ {
+ 	if (is_on) {
+-		__raw_writel(mask, pio + PIO_IFSCER);
+-		__raw_writel(div & PIO_SCDR_DIV, pio + PIO_SCDR);
+-		__raw_writel(mask, pio + PIO_IFER);
++		writel_relaxed(mask, pio + PIO_IFSCER);
++		writel_relaxed(div & PIO_SCDR_DIV, pio + PIO_SCDR);
++		writel_relaxed(mask, pio + PIO_IFER);
+ 	} else
+-		__raw_writel(mask, pio + PIO_IFSCDR);
++		writel_relaxed(mask, pio + PIO_IFSCDR);
+ }
+ 
+ static bool at91_mux_pio3_get_pulldown(void __iomem *pio, unsigned pin)
+ {
+-	return !((__raw_readl(pio + PIO_PPDSR) >> pin) & 0x1);
++	return !((readl_relaxed(pio + PIO_PPDSR) >> pin) & 0x1);
+ }
+ 
+ static void at91_mux_pio3_set_pulldown(void __iomem *pio, unsigned mask, bool is_on)
+ {
+ 	if (is_on)
+-		__raw_writel(mask, pio + PIO_PUDR);
++		writel_relaxed(mask, pio + PIO_PUDR);
+ 
+-	__raw_writel(mask, pio + (is_on ? PIO_PPDER : PIO_PPDDR));
++	writel_relaxed(mask, pio + (is_on ? PIO_PPDER : PIO_PPDDR));
+ }
+ 
+ static void at91_mux_pio3_disable_schmitt_trig(void __iomem *pio, unsigned mask)
+ {
+-	__raw_writel(__raw_readl(pio + PIO_SCHMITT) | mask, pio + PIO_SCHMITT);
++	writel_relaxed(readl_relaxed(pio + PIO_SCHMITT) | mask, pio + PIO_SCHMITT);
+ }
+ 
+ static bool at91_mux_pio3_get_schmitt_trig(void __iomem *pio, unsigned pin)
+ {
+-	return (__raw_readl(pio + PIO_SCHMITT) >> pin) & 0x1;
++	return (readl_relaxed(pio + PIO_SCHMITT) >> pin) & 0x1;
+ }
+ 
+ static inline u32 read_drive_strength(void __iomem *reg, unsigned pin)
+ {
+-	unsigned tmp = __raw_readl(reg);
++	unsigned tmp = readl_relaxed(reg);
+ 
+ 	tmp = tmp >> two_bit_pin_value_shift_amount(pin);
+ 
+@@ -554,13 +554,13 @@ static unsigned at91_mux_sam9x5_get_drivestrength(void __iomem *pio,
+ 
+ static void set_drive_strength(void __iomem *reg, unsigned pin, u32 strength)
+ {
+-	unsigned tmp = __raw_readl(reg);
++	unsigned tmp = readl_relaxed(reg);
+ 	unsigned shift = two_bit_pin_value_shift_amount(pin);
+ 
+ 	tmp &= ~(DRIVE_STRENGTH_MASK  <<  shift);
+ 	tmp |= strength << shift;
+ 
+-	__raw_writel(tmp, reg);
++	writel_relaxed(tmp, reg);
+ }
+ 
+ static void at91_mux_sama5d3_set_drivestrength(void __iomem *pio, unsigned pin,
+@@ -1538,9 +1538,9 @@ void at91_pinctrl_gpio_suspend(void)
+ 
+ 		pio = gpio_chips[i]->regbase;
+ 
+-		backups[i] = __raw_readl(pio + PIO_IMR);
+-		__raw_writel(backups[i], pio + PIO_IDR);
+-		__raw_writel(wakeups[i], pio + PIO_IER);
++		backups[i] = readl_relaxed(pio + PIO_IMR);
++		writel_relaxed(backups[i], pio + PIO_IDR);
++		writel_relaxed(wakeups[i], pio + PIO_IER);
+ 
+ 		if (!wakeups[i])
+ 			clk_disable_unprepare(gpio_chips[i]->clock);
+@@ -1565,8 +1565,8 @@ void at91_pinctrl_gpio_resume(void)
+ 		if (!wakeups[i])
+ 			clk_prepare_enable(gpio_chips[i]->clock);
+ 
+-		__raw_writel(wakeups[i], pio + PIO_IDR);
+-		__raw_writel(backups[i], pio + PIO_IER);
++		writel_relaxed(wakeups[i], pio + PIO_IDR);
++		writel_relaxed(backups[i], pio + PIO_IER);
+ 	}
+ }
+ 
+-- 
+2.1.4
+
