@@ -1,42 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: syscon: reduce message level when direction reg
- offset not in dt
-Date: Fri, 27 Mar 2015 11:18:21 +0100
-Message-ID: <CACRpkdYaScNxta0iDyyYeJ2VyD=fyhaK=+Lsm1NifnyJq1MTfQ@mail.gmail.com>
-References: <20150324161358.GA694@kahuna>
-	<1427222562-2223-1-git-send-email-grygorii.strashko@linaro.org>
+Subject: Re: [PATCH] gpio: gpio-tb10x: remove incorrect __exit markup
+Date: Fri, 27 Mar 2015 11:24:45 +0100
+Message-ID: <CACRpkda7J0USKq4NLQgJkyGXVttAHQyOvD2p2xsDT=v9fX+BvA@mail.gmail.com>
+References: <20150309180409.GA24645@dtor-ws>
+	<CACRpkdaUMDZYmK6t5S7LZcmZw6e-viTd0Z4d2UtXZCvEX9RSWQ@mail.gmail.com>
+	<20150318165527.GB11485@dtor-ws>
+	<CACRpkdZ_092Gd62ef1bvp=c5WX3LXTB6W5ZrA260V1Q4Hi3UGg@mail.gmail.com>
+	<20150325171453.GA40952@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427222562-2223-1-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Muralidharan Karicheri <m-karicheri2@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:36764 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751902AbbC0KYp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 06:24:45 -0400
+Received: by oicf142 with SMTP id f142so62995731oic.3
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2015 03:24:45 -0700 (PDT)
+In-Reply-To: <20150325171453.GA40952@dtor-ws>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Tue, Mar 24, 2015 at 7:42 PM,  <grygorii.strashko@linaro.org> wrote:
+On Wed, Mar 25, 2015 at 6:14 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Wed, Mar 25, 2015 at 04:32:13PM +0100, Linus Walleij wrote:
 
-> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+>> For a bool driver of this type (typically compiled in and probed
+>> at boot) that makes most sense to me.
 >
-> Now GPIO syscon driver produces bunch of warnings during the
-> boot of Kesytone 2 SoCs:
->  gpio-syscon soc:keystone_dsp_gpio@02620240: can't read the dir register offset!
->  gpio-syscon soc:keystone_dsp_gpio@2620244: can't read the dir register offset!
->
-> This message unintentionally was added using dev_err(), but its
-> actual log level is debug, because third cell of "ti,syscon-dev" is
-> optional.
->
-> Hence change it to dev_dbg() as it should be.
->
-> This patch fixes commit:
->  5a3e3f8 ("gpio: syscon: retriave syscon node and regs offsets from dt")
->
-> Reported-by: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+> Hmm, I do not think this is a good justification for disabling
+> unbinding. However, as far as I can see, removing gpiochip will succeed
+> even though there are users of gpios in the system and that might
+> justify the change. But does this mean that we give up on making
+> gpiochip clean up properly and we should schedule gpiochip_remove() and
+> the rest of gpio cleanup infrastructure for removal and declare that
+> gpio drivers can not ever be made modules?
 
-OK sorry for missing this when asking about the strange messages.
-Patch applied for fixes with these test tags and ack.
+No. Johan Hovold is looking into use cases for GPIO chips that come
+and go, think GPIO on USB. These obviously need remove() semantics.
+
+What I'm thinking is that the SoC-embedded GPIO controllers (I don't know
+how many these are) should probably be bool in Kconfig and also
+patched not to have remove() functions and drop the sysfs attribs
+for unbinding.
+
+But now I think I'll just apply the patch anyways because it sure does
+not make a difference wrt to the bigger problem, so I'm just bitching
+around about details and thinking aloud, sorry..
 
 Yours,
 Linus Walleij
