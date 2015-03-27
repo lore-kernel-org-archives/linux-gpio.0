@@ -1,93 +1,77 @@
-From: Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH v3 10/15] serial: stm32-usart: Add STM32 USART Driver
-Date: Fri, 27 Mar 2015 07:32:34 -0400
-Message-ID: <55153FD2.7070304@hurleysoftware.com>
-References: <1426197361-19290-1-git-send-email-maxime.coquelin@st.com>	<1426197361-19290-11-git-send-email-maxime.coquelin@st.com>	<5511ABAA.2010303@hurleysoftware.com> <CALszF6Ds5b9V35iuSzxnOYDL2sD3psYfYp3b+6a-2Atse6_w3Q@mail.gmail.com>
+From: Alexander Stein <alexanders83@web.de>
+Subject: Re: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
+Date: Fri, 27 Mar 2015 12:54:23 +0100
+Message-ID: <4728260.M5jZylgLPj@kongar>
+References: <1426878721-2618-1-git-send-email-alexanders83@web.de> <20150327101152.GB16851@odux.rfo.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALszF6Ds5b9V35iuSzxnOYDL2sD3psYfYp3b+6a-2Atse6_w3Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemlo>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.web.de ([212.227.17.11]:52146 "EHLO mout.web.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751471AbbC0LzE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 27 Mar 2015 07:55:04 -0400
+In-Reply-To: <20150327101152.GB16851@odux.rfo.atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On 03/26/2015 06:03 PM, Maxime Coquelin wrote:
->>> +static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
->>> +                         struct ktermios *old)
->>> +{
->>> +     unsigned int baud;
->>> +     u32 usardiv, mantissa, fraction;
->>> +     tcflag_t cflag;
->>> +     u32 cr1, cr2, cr3;
->>> +     unsigned long flags;
->>> +
->>> +     baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk / 16);
->>> +     cflag = termios->c_cflag;
->>> +
->>> +     spin_lock_irqsave(&port->lock, flags);
->>> +
->>> +     /* Stop serial port and reset value */
->>> +     writel_relaxed(0, port->membase + USART_CR1);
->>> +
->>> +     cr1 = USART_CR1_TE | USART_CR1_RE | USART_CR1_UE | USART_CR1_RXNEIE;
->>> +
->>> +     if (cflag & CSTOPB)
->>> +             cr2 = USART_CR2_STOP_2B;
->>> +
->>> +     if (cflag & PARENB) {
->>> +             cr1 |= USART_CR1_PCE;
->>> +             if ((cflag & CSIZE) == CS8)
->>> +                     cr1 |= USART_CR1_M;
->>> +     }
->>> +
->>> +     if (cflag & PARODD)
->>> +             cr1 |= USART_CR1_PS;
->>> +
->>> +     if (cflag & CRTSCTS)
->>> +             cr3 = USART_CR3_RTSE | USART_CR3_CTSE;
->>
->> If this means autoflow control, then you need to define
->> throttle()/unthrottle() methods, otherwise the serial core won't
->> be able to throttle the remote when input buffers are about
->> to overflow.
->>
->> And you should only enable the autoCTS and let the serial
->> core enable autoRTS through set_mctrl(TIOCM_RTS).
->>
->> Just let me know if you need more info about how to do this.
+Hello Ludovic,
+
+On Friday 27 March 2015, 11:11:52 wrote Ludovic Desroches:
+> On Fri, Mar 20, 2015 at 08:12:00PM +0100, Alexander Stein wrote:
+> > This adds the callback for set_multiple.
+> > As this controller has a separate set and clear register, we can't write
+> > directly to PIO_ODSR as this would required a cached variable and would
+> > race with at91_gpio_set.
+> > So build masks for the PIO_SODR and PIO_CODR registers and write them
+> > together.
 > 
-> Ok, let's see if I have well understood.
+> Sure seems safer and easier to use SODR and CODR.
 > 
-> USART_CR3_RTSE should be set/cleared in set_mctrl(), depending on
-> TIOCM_RTS  value.
-> The throttle callback should disable the rx interrupt, and the
-> unthrottle enable it.
-> For CTS, it should be enabled in set_termios() if CRTSCTS, as done here.
+> > 
+> > Signed-off-by: Alexander Stein <alexanders83@web.de>
+> Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 > 
-> Am I right?
+> A question below.
+> 
+> > ---
+> > This was tested by using an own test driver which uses
+> > gpiod_set_array_cansleep to set multiple GPIOs at once.
+> > 
+> >  drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> > index f4cd0b9..a882523 100644
+> > --- a/drivers/pinctrl/pinctrl-at91.c
+> > +++ b/drivers/pinctrl/pinctrl-at91.c
+> > @@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
+> >  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
+> >  }
+> >  
+> > +static void at91_gpio_set_multiple(struct gpio_chip *chip,
+> > +				      unsigned long *mask, unsigned long *bits)
+> > +{
+> > +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
+> > +	void __iomem *pio = at91_gpio->regbase;
+> > +	unsigned long set_mask;
+> > +	unsigned long clear_mask;
+> > +	size_t i;
+> > +
+> > +	set_mask = 0;
+> > +	clear_mask = 0;
+> > +
+> > +	for (i = 0; i < chip->ngpio; i++) {
+> > +		if (*mask == 0)
+> > +			break;
+> > +		if (__test_and_clear_bit(i, mask)) {
+> 
+> For my knowledge, why do you need to clear the mask?
 
-Yeah, basically. You also have to indicate to the serial core that you
-require throttle/unthrottle handling in this mode by setting port->status.
+I tried to do the same as mpc8xxx_gpio_set_multiple. I think the reason is that an empty mask will quit that loop potentially earlier.
 
-Your set_termios() method would look like:
+Best regards,
+Alexander
 
-	port->status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS);
-	if (cflag & CRTSCTS) {
-		port->status |= UPSTAT_AUTOCTS | UPSTAT_AUTORTS;
-		cr3 = USART_CR3_CTSE;
-	}
-
-and your set_mctrl() method would look like:
-
-	if ((mctrl & TIOCM_RTS) && (port->status & UPSTAT_AUTORTS))
-		stm32_set_bits(port, USART_CR3, USART_CR3_RTSE);
-	else
-		stm32_clear_bits(port, USART_CR3, USART_CR3_RTSE);
-
-The UPSTAT_AUTOCTS doesn't really do anything right now but please
-use it anyway to indicate this driver has that functionality.
-
-Regards,
-Peter Hurley
