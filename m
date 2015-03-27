@@ -1,40 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: altera: staticize probe function
-Date: Fri, 27 Mar 2015 09:27:42 +0100
-Message-ID: <1427444862-5812-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH next] altera_gpio_probe() can be static
+Date: Fri, 27 Mar 2015 09:29:05 +0100
+Message-ID: <CACRpkdYJicXznpAzg9aeSUNW0Opnh4P5+a-h39USEPPSxOoFZw@mail.gmail.com>
+References: <201503191721.tDh6DZLK%fengguang.wu@intel.com>
+	<20150319094002.GA4717@lkp-sb04>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:32828 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753113AbbC0I1s (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 04:27:48 -0400
-Received: by labto5 with SMTP id to5so64964689lab.0
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2015 01:27:47 -0700 (PDT)
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:36370 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753301AbbC0I3F (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 04:29:05 -0400
+Received: by oicf142 with SMTP id f142so61085141oic.3
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2015 01:29:05 -0700 (PDT)
+In-Reply-To: <20150319094002.GA4717@lkp-sb04>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: "kbuild-all@01.org" <kbuild-all@01.org>, Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This is not to be globally visible.
+On Thu, Mar 19, 2015 at 10:40 AM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-altera.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index 4d41196b3f13..449fb46cb8a0 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -256,7 +256,7 @@ static void altera_gpio_irq_leveL_high_handler(unsigned int irq,
- 	chained_irq_exit(chip, desc);
- }
- 
--int altera_gpio_probe(struct platform_device *pdev)
-+static int altera_gpio_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	int reg, ret;
--- 
-1.9.3
+Ah you made a patch too, I see. Applied.
 
+Yours,
+Linus Walleij
