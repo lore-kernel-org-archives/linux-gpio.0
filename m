@@ -1,157 +1,100 @@
-From: Ken Xue <Ken.Xue@amd.com>
-Subject: [Patch] pinctrl: fix warning from static analysis tools for AMD
- GPIO driver
-Date: Fri, 27 Mar 2015 17:44:26 +0800
-Message-ID: <1427449466.2874.2.camel@kxue-X58A-UD3R>
-References: <1422949788.18208.4.camel@kxue-X58A-UD3R>
-	 <CACRpkda2CQf6ucrLUdzbbFHjmRsRscBZspCf3taGD8t7armwQw@mail.gmail.com>
-	 <1425087698.14876.28.camel@kxue-X58A-UD3R>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
+Date: Fri, 27 Mar 2015 11:11:52 +0100
+Message-ID: <20150327101152.GB16851@odux.rfo.atmel.com>
+References: <1426878721-2618-1-git-send-email-alexanders83@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2on0136.outbound.protection.outlook.com ([65.55.169.136]:61344
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751334AbbC0KLq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 27 Mar 2015 06:11:46 -0400
-In-Reply-To: <1425087698.14876.28.camel@kxue-X58A-UD3R>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:48751 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752312AbbC0KMt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 06:12:49 -0400
+Content-Disposition: inline
+In-Reply-To: <1426878721-2618-1-git-send-email-alexanders83@web.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Alexander Stein <alexanders83@web.de>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
+Hi Alexander,
 
-Fix inconsistent spinlock of AMD GPIO driver which can be
-recognized by static analysis tool smatch. Declare constant
-Variables with Sparse's suggestion.
+On Fri, Mar 20, 2015 at 08:12:00PM +0100, Alexander Stein wrote:
+> This adds the callback for set_multiple.
+> As this controller has a separate set and clear register, we can't write
+> directly to PIO_ODSR as this would required a cached variable and would
+> race with at91_gpio_set.
+> So build masks for the PIO_SODR and PIO_CODR registers and write them
+> together.
 
-Signed-off-by: Ken Xue <Ken.Xue@amd.com>
----
- drivers/pinctrl/pinctrl-amd.c | 19 +++++++++----------
- drivers/pinctrl/pinctrl-amd.h | 12 ++++++------
- 2 files changed, 15 insertions(+), 16 deletions(-)
+Sure seems safer and easier to use SODR and CODR.
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 3fe9ec4..7de3b64 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -29,7 +29,6 @@
- #include <linux/interrupt.h>
- #include <linux/list.h>
- #include <linux/bitops.h>
--#include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
-@@ -119,8 +118,9 @@ static void amd_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
- static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 		unsigned debounce)
- {
--	u32 pin_reg;
- 	u32 time;
-+	u32 pin_reg;
-+	int ret = 0;
- 	unsigned long flags;
- 	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
- 
-@@ -166,7 +166,7 @@ static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 			pin_reg |= BIT(DB_TMR_LARGE_OFF);
- 		} else {
- 			pin_reg &= ~DB_CNTRl_MASK;
--			return -EINVAL;
-+			ret = -EINVAL;
- 		}
- 	} else {
- 		pin_reg &= ~BIT(DB_TMR_OUT_UNIT_OFF);
-@@ -177,7 +177,7 @@ static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 	writel(pin_reg, gpio_dev->base + offset * 4);
- 	spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
--	return 0;
-+	return ret;
- }
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -463,14 +463,12 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	default:
- 		dev_err(&gpio_dev->pdev->dev, "Invalid type value\n");
- 		ret = -EINVAL;
--		goto exit;
- 	}
- 
- 	pin_reg |= CLR_INTR_STAT << INTERRUPT_STS_OFF;
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
- 	spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
--exit:
- 	return ret;
- }
- 
-@@ -635,8 +633,9 @@ static int amd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 				unsigned long *configs, unsigned num_configs)
- {
- 	int i;
--	u32 pin_reg;
- 	u32 arg;
-+	int ret = 0;
-+	u32 pin_reg;
- 	unsigned long flags;
- 	enum pin_config_param param;
- 	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
-@@ -675,14 +674,14 @@ static int amd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		default:
- 			dev_err(&gpio_dev->pdev->dev,
- 				"Invalid config param %04x\n", param);
--			return -ENOTSUPP;
-+			ret = -ENOTSUPP;
- 		}
- 
- 		writel(pin_reg, gpio_dev->base + pin*4);
- 	}
- 	spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
--	return 0;
-+	return ret;
- }
- 
- static int amd_pinconf_group_get(struct pinctrl_dev *pctldev,
-@@ -739,7 +738,7 @@ static struct pinctrl_desc amd_pinctrl_desc = {
- static int amd_gpio_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
--	u32 irq_base;
-+	int irq_base;
- 	struct resource *res;
- 	struct amd_gpio *gpio_dev;
- 
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index 37e72aa..7bfea47 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -217,13 +217,13 @@ static const struct pinctrl_pin_desc kerncz_pins[] = {
- 	PINCTRL_PIN(177, "GPIO_177"),
- };
- 
--const unsigned i2c0_pins[] = {145, 146};
--const unsigned i2c1_pins[] = {147, 148};
--const unsigned i2c2_pins[] = {113, 114};
--const unsigned i2c3_pins[] = {19, 20};
-+static const unsigned i2c0_pins[] = {145, 146};
-+static const unsigned i2c1_pins[] = {147, 148};
-+static const unsigned i2c2_pins[] = {113, 114};
-+static const unsigned i2c3_pins[] = {19, 20};
- 
--const unsigned uart0_pins[] = {135, 136, 137, 138, 139};
--const unsigned uart1_pins[] = {140, 141, 142, 143, 144};
-+static const unsigned uart0_pins[] = {135, 136, 137, 138, 139};
-+static const unsigned uart1_pins[] = {140, 141, 142, 143, 144};
- 
- static const struct amd_pingroup kerncz_groups[] = {
- 	{
--- 
-1.9.1
+> 
+> Signed-off-by: Alexander Stein <alexanders83@web.de>
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 
+A question below.
 
+> ---
+> This was tested by using an own test driver which uses
+> gpiod_set_array_cansleep to set multiple GPIOs at once.
+> 
+>  drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index f4cd0b9..a882523 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
+>  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
+>  }
+>  
+> +static void at91_gpio_set_multiple(struct gpio_chip *chip,
+> +				      unsigned long *mask, unsigned long *bits)
+> +{
+> +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
+> +	void __iomem *pio = at91_gpio->regbase;
+> +	unsigned long set_mask;
+> +	unsigned long clear_mask;
+> +	size_t i;
+> +
+> +	set_mask = 0;
+> +	clear_mask = 0;
+> +
+> +	for (i = 0; i < chip->ngpio; i++) {
+> +		if (*mask == 0)
+> +			break;
+> +		if (__test_and_clear_bit(i, mask)) {
 
+For my knowledge, why do you need to clear the mask?
 
+> +			if (test_bit(i, bits))
+> +				set_mask |= BIT(i);
+> +			else
+> +				clear_mask |= BIT(i);
+> +		}
+> +	}
+> +
+> +	writel_relaxed(set_mask, pio + PIO_SODR);
+> +	writel_relaxed(clear_mask, pio + PIO_CODR);
+> +}
+> +
+>  static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>  				int val)
+>  {
+> @@ -1692,6 +1719,7 @@ static struct gpio_chip at91_gpio_template = {
+>  	.get			= at91_gpio_get,
+>  	.direction_output	= at91_gpio_direction_output,
+>  	.set			= at91_gpio_set,
+> +	.set_multiple		= at91_gpio_set_multiple,
+>  	.dbg_show		= at91_gpio_dbg_show,
+>  	.can_sleep		= false,
+>  	.ngpio			= MAX_NB_GPIO_PER_BANK,
+> -- 
+> 2.3.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
