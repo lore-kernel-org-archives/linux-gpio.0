@@ -1,69 +1,105 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: configuration for nc pins without pull
-Date: Fri, 27 Mar 2015 10:15:13 +0100
-Message-ID: <CACRpkda2UHv5oe1z-48SDiYUH1BzVsJS-V4CRKcmjTfn=o=O7A@mail.gmail.com>
-References: <20150322100059.GH5664@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36119 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752655AbbC0JPO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 05:15:14 -0400
-Received: by oicf142 with SMTP id f142so61831367oic.3
-        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2015 02:15:13 -0700 (PDT)
-In-Reply-To: <20150322100059.GH5664@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Oleksij Rempel <linux@rempel-privat.de>
+Subject: [PATCH v2 2/2] pinctrl: asm9260: add pinctrl add device tree bindings documentation
+Date: Fri, 27 Mar 2015 10:36:13 +0100
+Message-ID: <1427448973-665-3-git-send-email-linux@rempel-privat.de>
+References: <CACRpkdbKLkMB6WP0zp2xN+gM4ytvs=3V5hh8uKt8e=YE4gAAqQ@mail.gmail.com>
+ <1427448973-665-1-git-send-email-linux@rempel-privat.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1427448973-665-1-git-send-email-linux@rempel-privat.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Oleksij Rempel <linux@rempel-privat.de>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sun, Mar 22, 2015 at 11:00 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+Add device tree bindings documentation for Alphascale asm9260 pin controller
 
-> for a machine I want to configure a pin that is actually not connecte=
-d
-> to minimize floating. (I think this is sensible, isn't it?)
+Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
+---
+ .../pinctrl/alphascale,asm9260-pinctrl.txt         | 76 ++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/alphascale,asm9260-pinctrl.txt
 
-Yup, and Russell gave an excellent summary of why.
-
-> For the pinctrl I can use a hog group of the pinctrl device. At least
-> one of the pins doesn't have a pullup/pulldown configuration though, =
-so
-> I want to mux it to its gpio function and set the gpio to output and =
-the
-> desired value.
->
-> Is there something nicer than defining an always-on regulator with gp=
-ios
-> =3D <&gpio4 3 0> to accomplish that without additional code?
-
-As explained in
-Documentation/pinctrl.txt, section "GPIO mode pitfalls" like 788
-this is not really "GPIO", it is a way of controlling the electric stat=
-e
-of the pin using software, it's just the hardware designers idea of the
-use case that it is "GPIO", it is not what a software engineer would ca=
-ll
-GPIO.
-
-If the controller support GENERIC_PINCONF I suggest implementing
-PIN_CONFIG_OUTPUT from include/linux/pinctrl/pinconf-generic.h
-which is more or less for exactly this purpose.
-
-It will bring the pin into "GPIO mode" by poking the right registers bu=
-t
-what is really happening is a non-GPIO usecase on the pin control
-side of things.
-
-This should be done using a hog on the device tree and
-output-low; or output-high; using the generic pinctrl bindings.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/devicetree/bindings/pinctrl/alphascale,asm9260-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/alphascale,asm9260-pinctrl.txt
+new file mode 100644
+index 0000000..dbeea4d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/alphascale,asm9260-pinctrl.txt
+@@ -0,0 +1,76 @@
++* Alphascale ASM9260 SoC pinctrl core driver
++
++The pinctrl driver enables Alphascale ASM9260 to configure pin multiplexing
++to a specific function.
++
++Required properties for pinctrl driver:
++- compatible: "alphascale,asm9260-pinctrl"
++- reg: Register base of the MPP block and length.
++- clocks: clock ids.
++- clock-names:
++	* 1 "ahb" : AHB gating clock.
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
++
++The pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for a
++pin or a list of pins. This configuration can include the
++mux function to select on those pin(s), and various pin configuration
++parameters, as listed below.
++
++SUBNODES:
++
++The name of each subnode is not important; all subnodes should be enumerated
++and processed purely based on their content.
++
++Each subnode only affects those parameters that are explicitly listed. In
++other words, a subnode that lists a mux function but no pin configuration
++parameters implies no information about any pin configuration parameters.
++Similarly, a pin subnode that describes a pullup parameter implies no
++information about e.g. the mux function.
++
++The following generic properties as defined in pinctrl-bindings.txt are valid
++to specify in a pin configuration subnode:
++pins			- the list of pins that properties in the node
++			  apply to (either this or "groups" has to be
++			  specified)
++function		- the mux function to select
++bias-disable		- disable any pin bias
++bias-pull-up		- pull up the pin. Supported only on GPIO0_* pins.
++bias-pull-down		- pull down the pin. Supported on all pins except of GPIO0_*.
++
++Examples:
++
++pinctrl: pinctrl@80044000 {
++	compatible = "alphascale,asm9260-pinctrl";
++	reg = <0x80044000 0x400>;
++	clocks = <&acc CLKID_AHB_IOCONFIG>;
++	clock-names = "ahb";
++
++        nand_fc0_pins_a: nand_fc0 {
++                nand_main_gr {
++                        pins = "GPIO11_0", "GPIO11_1", "GPIO11_2",
++                               "GPIO11_3", "GPIO11_4", "GPIO11_6",
++                               "GPIO12_0", "GPIO12_1", "GPIO12_2",
++                               "GPIO12_3", "GPIO12_4", "GPIO12_5",
++                               "GPIO12_6", "GPIO12_7";
++                        function = "nand0";
++                        bias-disable;
++                };
++        };
++};
++
++nand_controller0 {
++        status = "okay";
++        #address-cells = <1>;
++        #size-cells = <1>;
++        nand-ecc-strength = <4>;
++        nand-ecc-step-size = <512>;
++        nand-max-chips = <1>;
++        nand-on-flash-bbt;
++
++        pinctrl-names = "default";
++        pinctrl-0 = <&nand_fc0_pins_a>;
++};
+-- 
+1.9.1
