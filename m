@@ -1,49 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: add set_active_low() function to gpio_chip
-Date: Fri, 27 Mar 2015 09:45:58 +0100
-Message-ID: <CACRpkdZDA9Tz3rk++3iJWfLvWCXFiJSMLtG4PpfcV1aB0SXscA@mail.gmail.com>
-References: <1426709782-2763-1-git-send-email-david.a.cohen@linux.intel.com>
+Subject: Re: [PATCH 1/2] pinctrl: pinconf-generic: scan also referenced
+ phandle node
+Date: Fri, 27 Mar 2015 09:52:10 +0100
+Message-ID: <CACRpkdYFY6Lavx6hu9gUO0KHL6yQv_N6FpqpDRtuRznfqPmthQ@mail.gmail.com>
+References: <a7b25eb6f4fd888e9ac600959cf4216ffa11921e.1426796262.git.baruch@tkos.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1426709782-2763-1-git-send-email-david.a.cohen@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Cohen <david.a.cohen@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:34295 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752624AbbC0IwL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 04:52:11 -0400
+Received: by oigz129 with SMTP id z129so25856262oig.1
+        for <linux-gpio@vger.kernel.org>; Fri, 27 Mar 2015 01:52:10 -0700 (PDT)
+In-Reply-To: <a7b25eb6f4fd888e9ac600959cf4216ffa11921e.1426796262.git.baruch@tkos.co.il>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 18, 2015 at 9:16 PM, David Cohen
-<david.a.cohen@linux.intel.com> wrote:
+On Thu, Mar 19, 2015 at 9:17 PM, Baruch Siach <baruch@tkos.co.il> wrote:
 
-> +++ b/drivers/gpio/gpiolib-sysfs.c
-> @@ -289,11 +289,15 @@ static DEVICE_ATTR(edge, 0644, gpio_edge_show, gpio_edge_store);
->  static int sysfs_set_active_low(struct gpio_desc *desc, struct device *dev,
->                                 int value)
->  {
-> +       struct gpio_chip        *chip = desc->chip;
->         int                     status = 0;
+> Make pinconf_generic_dt_node_to_map() also scan the dt pin configuration node
+> directly referenced by phandle, not only its child nodes.
 >
->         if (!!test_bit(FLAG_ACTIVE_LOW, &desc->flags) == !!value)
->                 return 0;
+> The "parent scan" feature needs a few other changes:
 >
-> +       if (chip->set_active_low)
-> +               chip->set_active_low(chip, gpio_chip_hwgpio(desc), value);
-> +
->         if (value)
->                 set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+>    * Move the pinconf_generic_dt_node_to_map() error handling code to a common
+>      place, under the 'exit' label.
+>
+>    * Move the pins/groups strings count earlier in
+>      pinconf_generic_dt_subnode_to_map(), to allow us to bail out early when
+>      these properties are missing or wrong
+>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 
-Since the only user seems to be this abominable sysfs, and since that is
-definitely not on the hotpath due to context switching, this cannot possibly
-gain any performance benefits.
+phandle? Is's the parent node right?
 
-Unless we can come up with a use case where this actually improves
-performance we should just let software handle this instead.
-
-I like to have all hardware features implemented usually, so I'm a bit
-torn. But this one lacks a plausible use case. It looks like some hardware
-engineers attempt to be helpful to software developers.
-
-Any takers?
+Patch applied anyway, the code looks exactly like what I wanted.
 
 Yours,
 Linus Walleij
