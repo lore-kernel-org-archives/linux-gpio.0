@@ -1,100 +1,42 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Fri, 27 Mar 2015 11:11:52 +0100
-Message-ID: <20150327101152.GB16851@odux.rfo.atmel.com>
-References: <1426878721-2618-1-git-send-email-alexanders83@web.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: syscon: reduce message level when direction reg
+ offset not in dt
+Date: Fri, 27 Mar 2015 11:18:21 +0100
+Message-ID: <CACRpkdYaScNxta0iDyyYeJ2VyD=fyhaK=+Lsm1NifnyJq1MTfQ@mail.gmail.com>
+References: <20150324161358.GA694@kahuna>
+	<1427222562-2223-1-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:48751 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312AbbC0KMt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Mar 2015 06:12:49 -0400
-Content-Disposition: inline
-In-Reply-To: <1426878721-2618-1-git-send-email-alexanders83@web.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1427222562-2223-1-git-send-email-grygorii.strashko@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, Muralidharan Karicheri <m-karicheri2@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexanders83@web.de>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-Hi Alexander,
+On Tue, Mar 24, 2015 at 7:42 PM,  <grygorii.strashko@linaro.org> wrote:
 
-On Fri, Mar 20, 2015 at 08:12:00PM +0100, Alexander Stein wrote:
-> This adds the callback for set_multiple.
-> As this controller has a separate set and clear register, we can't write
-> directly to PIO_ODSR as this would required a cached variable and would
-> race with at91_gpio_set.
-> So build masks for the PIO_SODR and PIO_CODR registers and write them
-> together.
+> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+>
+> Now GPIO syscon driver produces bunch of warnings during the
+> boot of Kesytone 2 SoCs:
+>  gpio-syscon soc:keystone_dsp_gpio@02620240: can't read the dir register offset!
+>  gpio-syscon soc:keystone_dsp_gpio@2620244: can't read the dir register offset!
+>
+> This message unintentionally was added using dev_err(), but its
+> actual log level is debug, because third cell of "ti,syscon-dev" is
+> optional.
+>
+> Hence change it to dev_dbg() as it should be.
+>
+> This patch fixes commit:
+>  5a3e3f8 ("gpio: syscon: retriave syscon node and regs offsets from dt")
+>
+> Reported-by: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-Sure seems safer and easier to use SODR and CODR.
+OK sorry for missing this when asking about the strange messages.
+Patch applied for fixes with these test tags and ack.
 
-> 
-> Signed-off-by: Alexander Stein <alexanders83@web.de>
-Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-
-A question below.
-
-> ---
-> This was tested by using an own test driver which uses
-> gpiod_set_array_cansleep to set multiple GPIOs at once.
-> 
->  drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index f4cd0b9..a882523 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
->  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
->  }
->  
-> +static void at91_gpio_set_multiple(struct gpio_chip *chip,
-> +				      unsigned long *mask, unsigned long *bits)
-> +{
-> +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
-> +	void __iomem *pio = at91_gpio->regbase;
-> +	unsigned long set_mask;
-> +	unsigned long clear_mask;
-> +	size_t i;
-> +
-> +	set_mask = 0;
-> +	clear_mask = 0;
-> +
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		if (*mask == 0)
-> +			break;
-> +		if (__test_and_clear_bit(i, mask)) {
-
-For my knowledge, why do you need to clear the mask?
-
-> +			if (test_bit(i, bits))
-> +				set_mask |= BIT(i);
-> +			else
-> +				clear_mask |= BIT(i);
-> +		}
-> +	}
-> +
-> +	writel_relaxed(set_mask, pio + PIO_SODR);
-> +	writel_relaxed(clear_mask, pio + PIO_CODR);
-> +}
-> +
->  static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->  				int val)
->  {
-> @@ -1692,6 +1719,7 @@ static struct gpio_chip at91_gpio_template = {
->  	.get			= at91_gpio_get,
->  	.direction_output	= at91_gpio_direction_output,
->  	.set			= at91_gpio_set,
-> +	.set_multiple		= at91_gpio_set_multiple,
->  	.dbg_show		= at91_gpio_dbg_show,
->  	.can_sleep		= false,
->  	.ngpio			= MAX_NB_GPIO_PER_BANK,
-> -- 
-> 2.3.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
