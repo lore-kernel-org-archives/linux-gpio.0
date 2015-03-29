@@ -1,39 +1,56 @@
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 38/86] gpio/sch: use uapi/linux/pci_ids.h directly
-Date: Sun, 29 Mar 2015 15:40:39 +0200
-Message-ID: <1427635734-24786-39-git-send-email-mst@redhat.com>
-References: <1427635734-24786-1-git-send-email-mst@redhat.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] pinctrl: dt: at91: new binding
+Date: Sun, 29 Mar 2015 13:55:09 -0700
+Message-ID: <CAOesGMgsyEwuF95FFe81Li8nXO0MhHF0ZHPVV91MEH-JGO43tA@mail.gmail.com>
+References: <1424943294-8805-1-git-send-email-plagnioj@jcrosoft.com>
+	<CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1427635734-24786-1-git-send-email-mst@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35110 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752487AbbC2UzK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Mar 2015 16:55:10 -0400
+Received: by oiag65 with SMTP id g65so112631604oia.2
+        for <linux-gpio@vger.kernel.org>; Sun, 29 Mar 2015 13:55:09 -0700 (PDT)
+In-Reply-To: <CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Header moved from linux/pci_ids.h to uapi/linux/pci_ids.h,
-use the new header directly so we can drop
-the wrapper in include/linux/pci_ids.h.
+On Tue, Mar 17, 2015 at 5:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Feb 26, 2015 at 10:34 AM, Jean-Christophe PLAGNIOL-VILLARD
+> <plagnioj@jcrosoft.com> wrote:
+>
+>> +For each peripheral/bank we will descibe in a u32 if a pin can be
+>> +configured in it by putting 1 to the pin bit (1 << pin)
+>
+> This seems to be describing driver intrinsics in the device tree, like
+> how the hardware is routed on the inside and what it can do.
+>
+> IMO that is driver territory, the driver should know these limitations
+> and protest if you try to do something illegal.
+>
+> Anyway as the AT91 maintainers seem to disagree I will allow some
+> more time for discussion before merging the patch.
+>
+> I can't really have one AT91 maintainer NACKing another, it doesn't
+> matter that this is a separate driver, in my book the MAINTAINERS
+> entry for AT91 as a whole overrides that so can you please find an
+> agreement on how to handle this or I will stall the patch until
+> you're in agreement.
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/gpio/gpio-sch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nicolas has been the de-facto maintainer of AT91 for quite a while
+now, even though more of them are listed on the maintainers entry. It
+would be inappropriate to merge something that he disagreed with on
+that platform.
 
-diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
-index b72906f..9a4ac88 100644
---- a/drivers/gpio/gpio-sch.c
-+++ b/drivers/gpio/gpio-sch.c
-@@ -25,7 +25,7 @@
- #include <linux/errno.h>
- #include <linux/acpi.h>
- #include <linux/platform_device.h>
--#include <linux/pci_ids.h>
-+#include <uapi/linux/pci_ids.h>
- 
- #include <linux/gpio.h>
- 
--- 
-MST
+> ARM SoC maintainers input would be welcomed.
+
+It seems appropriate to ask the at91 folks to come back with a
+solution that everybody is OK with, and until then hold off merging
+this.
+
+
+-Olof
