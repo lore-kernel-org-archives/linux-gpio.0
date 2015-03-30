@@ -1,56 +1,57 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] pinctrl: dt: at91: new binding
-Date: Sun, 29 Mar 2015 13:55:09 -0700
-Message-ID: <CAOesGMgsyEwuF95FFe81Li8nXO0MhHF0ZHPVV91MEH-JGO43tA@mail.gmail.com>
-References: <1424943294-8805-1-git-send-email-plagnioj@jcrosoft.com>
-	<CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] late GPIO fixes for the v4.0 series
+Date: Mon, 30 Mar 2015 10:02:17 +0200
+Message-ID: <CACRpkdbr5Qi4if5ReaYZh3Yu7=wYe8FyiyZeJtw3sFUSwEXjjA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35110 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752487AbbC2UzK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Mar 2015 16:55:10 -0400
-Received: by oiag65 with SMTP id g65so112631604oia.2
-        for <linux-gpio@vger.kernel.org>; Sun, 29 Mar 2015 13:55:09 -0700 (PDT)
-In-Reply-To: <CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Kevin Hao <haokexin@gmail.com>, "qipeng.zha" <qipeng.zha@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Mar 17, 2015 at 5:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Feb 26, 2015 at 10:34 AM, Jean-Christophe PLAGNIOL-VILLARD
-> <plagnioj@jcrosoft.com> wrote:
->
->> +For each peripheral/bank we will descibe in a u32 if a pin can be
->> +configured in it by putting 1 to the pin bit (1 << pin)
->
-> This seems to be describing driver intrinsics in the device tree, like
-> how the hardware is routed on the inside and what it can do.
->
-> IMO that is driver territory, the driver should know these limitations
-> and protest if you try to do something illegal.
->
-> Anyway as the AT91 maintainers seem to disagree I will allow some
-> more time for discussion before merging the patch.
->
-> I can't really have one AT91 maintainer NACKing another, it doesn't
-> matter that this is a separate driver, in my book the MAINTAINERS
-> entry for AT91 as a whole overrides that so can you please find an
-> agreement on how to handle this or I will stall the patch until
-> you're in agreement.
+Hi Linus,
 
-Nicolas has been the de-facto maintainer of AT91 for quite a while
-now, even though more of them are listed on the maintainers entry. It
-would be inappropriate to merge something that he disagreed with on
-that platform.
+here are the (hopefully) last GPIO fixes for v4.0. Nothing
+controversial whatsoever, just fixes.
 
-> ARM SoC maintainers input would be welcomed.
+Please pull it in.
 
-It seems appropriate to ask the at91 folks to come back with a
-solution that everybody is OK with, and until then hold off merging
-this.
+Yours,
+Linus Walleij
 
 
--Olof
+The following changes since commit 13a7a6ac0a11197edcd0f756a035f472b42cdf8b:
+
+  Linux 4.0-rc2 (2015-03-03 09:04:59 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.0-3
+
+for you to fetch changes up to c6ac19dac2683a8b06aebcc10cb1c711b555a949:
+
+  gpio: syscon: reduce message level when direction reg offset not in
+dt (2015-03-27 11:17:08 +0100)
+
+----------------------------------------------------------------
+Late GPIO fixes:
+- Syscon GPIO fix for Keystone DSP GPIOs
+- Pin number translation fix for ACPI GPIO
+- A smallish compiler warning fix on the mpc8xxx driver
+
+----------------------------------------------------------------
+Grygorii Strashko (1):
+      gpio: syscon: reduce message level when direction reg offset not in dt
+
+Kevin Hao (1):
+      gpio: mpc8xxx: remove __initdata annotation for mpc8xxx_gpio_ids[]
+
+qipeng.zha (1):
+      gpiolib: translate pin number in GPIO ACPI callbacks
+
+ drivers/gpio/gpio-mpc8xxx.c |  2 +-
+ drivers/gpio/gpio-syscon.c  |  2 +-
+ drivers/gpio/gpiolib-acpi.c | 10 ++++++++++
+ 3 files changed, 12 insertions(+), 2 deletions(-)
