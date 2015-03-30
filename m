@@ -1,154 +1,56 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] sh-pfc: r8a7790: add EtherAVB pin groups
-Date: Tue, 31 Mar 2015 00:30:02 +0300
-Message-ID: <5670474.zOZjp8RhU1@wasted.cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:34934 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753276AbbC3VaH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Mar 2015 17:30:07 -0400
-Received: by lahp7 with SMTP id p7so95153189lah.2
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Mar 2015 14:30:05 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH V2 1/3] pinctrl: Document "function" + "pins" pinmux binding
+Date: Mon, 30 Mar 2015 16:16:54 -0700
+Message-ID: <1427757416-14491-2-git-send-email-abrestic@chromium.org>
+References: <1427757416-14491-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1427757416-14491-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-Add EtherAVB pin groups to R8A7790 PFC driver.
+Currently the "function" + "groups" combination is the only documented
+format for pinmux nodes, although many drivers use "function" + "pins".
+Update the generic pinctrl binding to include the "function" + "pins"
+combination as well.
 
-Based on original patch by Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>.
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+Cc: Kumar Gala <galak@codeaurora.org>
 ---
-The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
+New for v2.
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   91 +++++++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -1799,6 +1799,81 @@ static const unsigned int audio_clkout_d
- static const unsigned int audio_clkout_d_mux[] = {
- 	AUDIO_CLKOUT_D_MARK,
- };
-+/* - AVB -------------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	RCAR_GP_PIN(2, 15),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdio_pins[] = {
-+	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int avb_mdio_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 11),
-+
-+	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
-+	RCAR_GP_PIN(2, 2),
-+
-+	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8), RCAR_GP_PIN(2, 9),
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 10),
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
-+static const unsigned int avb_gmii_pins[] = {
-+	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+
-+	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
-+	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 4),
-+	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 6),
-+
-+	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8), RCAR_GP_PIN(2, 9),
-+	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 16),
-+	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9), RCAR_GP_PIN(3, 10),
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int avb_gmii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
-+	AVB_TXD6_MARK, AVB_TXD7_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
-+	AVB_RXD6_MARK, AVB_RXD7_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
-+	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
- /* - DU RGB ----------------------------------------------------------------- */
- static const unsigned int du_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -3823,6 +3898,12 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(audio_clkout_b),
- 	SH_PFC_PIN_GROUP(audio_clkout_c),
- 	SH_PFC_PIN_GROUP(audio_clkout_d),
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdio),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(du_rgb666),
- 	SH_PFC_PIN_GROUP(du_rgb888),
- 	SH_PFC_PIN_GROUP(du_clk_out_0),
-@@ -4101,6 +4182,15 @@ static const char * const audio_clk_grou
- 	"audio_clkout_d",
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+index 47d84b6..f7688e2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -133,6 +133,9 @@ pin multiplexing nodes:
  
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdio",
-+	"avb_mii",
-+	"avb_gmii",
-+};
-+
- static const char * const du_groups[] = {
- 	"du_rgb666",
- 	"du_rgb888",
-@@ -4507,6 +4597,7 @@ static const char * const vin3_groups[]
+ function		- the mux function to select
+ groups			- the list of groups to select with this function
++			  (either this or "pins" must be specified)
++pins			- the list of pins to select with this function (either
++			  this or "groups" must be specified)
  
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(du0),
- 	SH_PFC_FUNCTION(du1),
-
+ Example:
+ 
+@@ -144,6 +147,10 @@ state_1_node_a {
+ 	function = "spi0";
+ 	groups = "spi0pins";
+ };
++state_2_node_a {
++	function = "i2c0";
++	pins = "mfio29", "mfio30";
++};
+ 
+ == Generic pin configuration node content ==
+ 
+-- 
+2.2.0.rc0.207.ga3a616c
