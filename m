@@ -1,126 +1,114 @@
-From: "Frkuska, Joshua" <Joshua_Frkuska@mentor.com>
-Subject: RE: gpiolib, gpio removal while a gpio in-use
-Date: Tue, 31 Mar 2015 04:23:34 +0000
-Message-ID: <190351B32828744FBA3BD9565204D27B835A2422@NA-MBX-02.mgc.mentorg.com>
-References: <190351B32828744FBA3BD9565204D27B5330D2D2@NA-MBX-03.mgc.mentorg.com>
- <CAAVeFuL=PsgGnfb_Og5dvWYmXUdXSQuApfgrO-gRZ88OmbAX9w@mail.gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH V2 3/3] pinctrl: Add Pistachio SoC pin control driver
+Date: Tue, 31 Mar 2015 10:10:15 +0200
+Message-ID: <1427789415.2408.45.camel@x220>
+References: <1427757416-14491-1-git-send-email-abrestic@chromium.org>
+	 <1427757416-14491-4-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:64557 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752005AbbCaEXg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Mar 2015 00:23:36 -0400
-In-Reply-To: <CAAVeFuL=PsgGnfb_Og5dvWYmXUdXSQuApfgrO-gRZ88OmbAX9w@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1427757416-14491-4-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-VGhhbmsgeW91IGZvciB5b3VyIGZlZWRiYWNrDQoNCj4gT24gVHVlLCBNYXIgMTcsIDIwMTUgYXQg
-MTE6NTkgQU0sIEZya3Vza2EsIEpvc2h1YQ0KPiA8Sm9zaHVhX0Zya3Vza2FAbWVudG9yLmNvbT4g
-d3JvdGU6DQo+ID4gSGVsbG8sDQo+ID4NCj4gPiBJbiAzLjE4LCB0aGUgdXBzdHJlYW0gY29tbWl0
-IGUxZGIxNzA2YzggbWFkZSBpdCBhY2NlcHRhYmxlIHRvIHJlbW92ZQ0KPiBncGlvIGNoaXBzIHRo
-YXQgd2VyZSBpbiB1c2UgaW4gZXhjaGFuZ2UgZm9yIGEgY3JpdGljYWwgbWVzc2FnZS4gVGhlIHJl
-YXNvbmluZw0KPiBmcm9tIHdoYXQgSSBnYXRoZXJlZCBmcm9tIHRoZSBtYWlsaW5nIGxpc3Qgd2Fz
-IHRvIGF2b2lkIGhhbmRsaW5nIGVycm9ycyBpbg0KPiB0aGUgZGV2aWNlIHJlbW92ZSBoYW5kbGVy
-LiBUaGUganVzdGlmaWNhdGlvbiB3YXMgdGhhdCB0aGUgZXJyb3Igc2VlbWVkDQo+IHVudXNlZCBi
-eSBtb3N0IGRyaXZlcnMgYW5kIHRoZXJlIHdhcyBhIGNvbXBpbGVyIHdhcm5pbmcgd2hlbiBpZ25v
-cmluZyB0aGUNCj4gcmV0dXJuIHZhbHVlLg0KPiA+DQo+ID4gQXQgYSBoaWdoZXIgbGV2ZWwsIHRo
-aXMgaXMgYSBncGlvIGhhbmRsaW5nIHBvbGljeSBzaGlmdC4gUHJldmlvdXNseSB0aGUNCj4gYmVo
-YXZpb3Igd2FzIHRvIHJlc3VsdCBpbiBhbiBlcnJvciBhbmQgZGlzYWxsb3cgdGhlIGdwaW8gZGV2
-aWNlIHRvIGJlDQo+IHJlbW92ZWQuIFRoZW4gc3RhcnRpbmcgYXQgMy4xOCwgaXQgYmVjb21lcyBv
-ayB0byBmcmVlIGEgZ3BpbyBkZXZpY2UNCj4gcmVnYXJkbGVzcyBvZiB3aGF0ZXZlciB0aGUgKHBv
-c3NpYmx5IGNyaXRpY2FsKSBncGlvIG1heSBiZSBkb2luZyBhcyBsb25nIGFzIGENCj4gY3JpdGlj
-YWwgbWVzc2FnZSBpcyBkaXNwbGF5ZWQuDQo+ID4NCj4gPiBQcmlvciB0byB0aGlzIGNoYW5nZSBp
-biAzLjE4LCBJIHJhbiBhY3Jvc3MgYSBwcm9ibGVtIGluIDMuOCBhbmQgaW4gMy4xNCwgd2hlcmUN
-Cj4gSSBoYXZlIGEgZ3BpbyBleHBhbmRlciBjaGlwIG9uIGFuIGkyYyBidXMgY29udHJvbGxpbmcg
-c29tZSBleHRlcm5hbCBwb3dlcg0KPiByZWd1bGF0b3JzLiBUaGUgcmVndWxhdG9yIHJlc2VydmVz
-IHRoZSBncGlvIGFuZCBwdXRzIHRoZW0gaW4gdXNlLiBUaGVuIGlmIGZvcg0KPiBhbnkgcmVhc29u
-LCB0aGUgaTJjIGJ1cyBhZGFwdGVyL2RyaXZlciBpcyBkZXN0cm95ZWQvdW5sb2FkZWQsIHRoZSBp
-MmMgY2xpZW50DQo+IGdldHMgZGVzdHJveWVkIGNhdXNpbmcgYSBkYW5nbGluZyBwb2ludGVyIHRv
-IGJlIGxlZnQgaW4gdGhlIGdwaW8gZGVzY3JpcHRvcg0KPiBncGlvIGxpc3QuIFNpbmNlIHRoZSBy
-ZWd1bGF0b3Iga25vd3MgdGhlIGdwaW8gaWQgYW55IHN1YnNlcXVlbnQgYWNjZXNzIGZyb20NCj4g
-dGhlIHJlZ3VsYXRvciBjb3JlIG9mIHRoZSBncGlvbGliIGNhdXNlcyBhIGRlcmVmZXJlbmNlIG9m
-IHRoaXMgcG9pbnRlciBhcw0KPiBmb2xsb3dzOg0KPiA+DQo+ID4gMS4gZ3Bpb19zZXRfdmFsdWVf
-Y2Fuc2xlZXAoKSA8aW4gbXkgY2FzZSBpdCB3YXMgZHVlIHRvIGEgcmVndWxhdG9yDQo+ID4gdGhh
-dCB1c2VkIHRoZSBncGlvIGJlaW5nIHB1dC9zd2l0Y2hlZD4gMi4gX19ncGlvX2dldF92YWx1ZSgp
-IDMuDQo+ID4gZ3Bpb2RfZ2V0X3Jhd192YWx1ZSgpIDQuIF9ncGlvZF9nZXRfcmF3X3ZhbHVlKCkg
-NS4gY2hpcC0+Z2V0KCkgNi4NCj4gPiBwY2E5NTN4X2dwaW9fZ2V0X3ZhbHVlKCkgPGFueSBidXMg
-YmFzZWQgZ3BpbyBleHBhbmRlciBpbiB0aGlzIGNhc2U+IDcuDQo+ID4gcGNhOTUzeF9yZWFkX3Np
-bmdsZSgpIDguIGkyY19zbWJ1c19yZWFkX2J5dGVfZGF0YSgpIDkuIGRlcmVmZXJlbmNpbmcNCj4g
-PiBhbiBlbGVtZW50IG9mIHRoZSBpMmMgY2xpZW50IHBvaW50ZXIgY2F1c2VzIGludmFsaWQgbWVt
-b3J5IGFjY2Vzcy4NCj4gPg0KPiA+IFRoaXMgY2FuIGJlIHByZXZlbnRlZCBhIG51bWJlciBvZiB3
-YXlzIGJ1dCBhbGwgc2VlbSB1bmNsZWFuIChlLmcuIGkyYyBidXMNCj4gZHJpdmVyIGZyb20gYmVp
-bmcgdW5sb2FkZWQvaG90IHVucGx1Z2dlZCBpZiB0aGVyZSBpcyBhIG5vbi16ZXJvIHJlZmVyZW5j
-ZQ0KPiBjb3VudCkuIEkgd291bGQgbGlrZSB0byBrbm93IGlmIHRoZXJlIGlzIGEgcHJlZmVycmVk
-IGFwcHJvYWNoLiBGcm9tIG15DQo+IHVuZGVyc3RhbmRpbmcgdGhpcyB1c2UgY2FzZSBpcyBub3Qg
-c3VwcG9ydGVkIGFzIHRoZSBjb21tZW50IGluIGdwaW9saWINCj4gc3VnZ2VzdHMuDQo+ID4NCj4g
-PiAvKiBncGlvX2xvY2sgcHJldmVudHMgY29uZmxpY3RzIGR1cmluZyBncGlvX2Rlc2NbXSB0YWJs
-ZSB1cGRhdGVzLg0KPiA+ICogV2hpbGUgYW55IEdQSU8gaXMgcmVxdWVzdGVkLCBpdHMgZ3Bpb19j
-aGlwIGlzIG5vdCByZW1vdmFibGU7DQo+ID4gKiBlYWNoIEdQSU8ncyAicmVxdWVzdGVkIiBmbGFn
-IHNlcnZlcyBhcyBhIGxvY2sgYW5kIHJlZmNvdW50Lg0KPiA+ICovDQo+ID4NCj4gPiBTaG91bGQg
-YSBob3RwbHVnIGdwaW8gY2hpcCBiZSBjb25zaWRlcmVkPyBJZiB0aGUgYW5zd2VyIGlzIHllcywg
-dGhlbiBJDQo+IHdvdWxkIGxpa2UgdG8gYXNrIGlmIHRoZXJlIGhhcyBiZWVuIGFueSBkaXNjdXNz
-aW9uIHJlZ2FyZGluZyB0aGlzIHRvcGljIGFuZCBpZg0KPiBzbywgd2hhdCB0aGUgb3V0Y29tZSB3
-YXMuDQo+ID4NCj4gPiBGYXN0IGZvcndhcmQgdG8gMy4xOCssIHRoaXMgaXNzdWUgZ29lcyBhd2F5
-IGJlY2F1c2UgYSBncGlvIGluIHVzZSBjYW4gbm93DQo+IGJlIHJlbW92ZWQuIERvaW5nIHNvIGNs
-ZWFucyB1cCB0aGUgZ3BpbyBkYXRhIHN0cnVjdHVyZXMgYW5kIGVsaW1pbmF0ZXMgdGhlDQo+IHBy
-b2JsZW0gYWJvdmUuIFRoZSBjb25zZXF1ZW5jZSBvZiB0aGlzIGlzIHRoYXQgdGhlIGdwaW8gbWF5
-IGJlIHB1dCBpbnRvIGFuDQo+IHVuaW50ZW5kZWQgc3RhdGUgd2hlbiBmcmVlZCB3aGlsZSBpbi11
-c2UgaW4gdGhlIHN5c3RlbS4gQW4gZXhhbXBsZSBvZiB0aGlzDQo+IGNvdWxkIGJlIHRoZSBncGlv
-IGNsZWFuZWQgdXAvdHVybmVkIG9mZiB3aGlsc3QgY29udHJvbGxpbmcgYSByZWd1bGF0b3IgdGhh
-dCBpcw0KPiBiZWluZyB1c2VkIGJ5IHNvbWUgY3JpdGljYWwgaGFyZHdhcmUgZnVuY3Rpb24gYW5k
-IGl0IHdvdWxkbid0IGJlIHNvIG9idmlvdXMNCj4gdG8gYSByb290IHVzZXIgdGhhdCB0aGlzIG9j
-Y3VycmVkIGp1c3QgYmVjYXVzZSBoZSB1bmxvYWRlZCB0aGUgYnVzIGRyaXZlci4gSW4NCj4gMy4x
-OCssIHdoZXJlIHNob3VsZCB0aGUgbG9naWMgZm9yIGhhbmRsaW5nIHRoZSByZW1vdmFsIG9mIGEg
-Y3JpdGljYWwgZ3BpbyBpbi0NCj4gdXNlIGdvPyBEb2VzIGl0IGdvIGluIHRoZSBhY3R1YWwgZ3Bp
-byBkZXZpY2UgcmVtb3ZlL2ZyZWUgZnVuY3Rpb24gb3INCj4gc29tZXdoZXJlIGVsc2U/IEluIHRo
-aXMgY2FzZSBwZXJoYXBzIG9ubHkgdGhlIGVsZW1lbnQgdXNpbmcgdGhlIGdwaW8ga25vd3MNCj4g
-d2hhdCB0byBkbyBvciBhdCBsZWFzdCBzaG91bGQgYmUgaW5mb3JtZWQgaW4gb3JkZXIgdG8ga2Vl
-cCB0aGluZ3Mgc2FmZS4NCj4gPg0KPiA+IEkgcmVhbGl6ZSB0aGF0IHB1dHRpbmcgYSBjcml0aWNh
-bCBncGlvIG9uIGEgcmVtb3ZhYmxlIGJ1cyBpcyBhIHJpc2sgaXRzZWxmIGFuZA0KPiBjYW4gYmUg
-bWl0aWdhdGVkIGF0IGRlc2lnbiB0aW1lIGJ1dCBmb3IgdGhlIHNha2Ugb2YgdGhlIGFyZ3VtZW50
-LCBpdCBtYXkgYmUNCj4gdW5hdm9pZGFibGUgZHVlIHRvIGhhcmR3YXJlIGNvbnN0cmFpbnRzLg0K
-PiANCj4gQXMgSSBzZWUgaXQsIHRoZSBjb3JyZWN0IGJlaGF2aW9yIGZvciBhIEdQSU8gd2hvc2Ug
-Y2hpcCBpcyByZW1vdmVkIGF0IHJ1bnRpbWUNCj4gc2hvdWxkIGJlIHRvIHJldHVybiBhbiBlcnJv
-ciB0aGUgbmV4dCB0aW1lIHRoYXQgR1BJTyBpcyB1c2VkLg0KPiBQcm9ibGVtIGlzLCBncGlvZF9z
-ZXRfdmFsdWUoKSByZXR1cm5zIHZvaWQsIHNvIGl0IGlzIG5vdCBjbGVhciB0byBtZSB3aGVyZQ0K
-PiBzdWNoIGVycm9yIHNpZ25hbGluZyBzaG91bGQgdGFrZSBwbGFjZS4gQXQgbGVhc3QsIGFuIGVy
-cm9yIHNob3VsZCBiZSBwcmludGVkIGluDQo+IHRoZSBrZXJuZWwgbG9nLCBib3RoIHdoZW4gYSBH
-UElPIGNoaXBzIHdob3NlIEdQSU9zIGFyZSBpbiB1c2UgaXQgcmVtb3ZlZCwNCj4gYW5kIHdoZW4g
-c2FpZCBHUElPcyBhcmUgdXNlZCBwb3N0LXJlbW92YWwuIElzIGl0IHdoYXQgaGFwcGVucyB3aXRo
-IDMuMTgrPw0KPiANCkdvaW5nIGZvcndhcmQgZ3Bpb2Rfc2V0X3ZhbHVlKCkgY291bGQgYmUgbW9k
-aWZpZWQgdG8gcmV0dXJuIGFuIGVycm9yIGFzIHdlbGwgYXMgb3RoZXIgcG9zc2libGUgQVBJIGNh
-bGxzIGJ1dCBpZiB0aGUgZGVzY3JpcHRvciBpbiB0aGUgZ3BpbyB0YWJsZSBpcyBjbGVhcmVkIGFz
-IGlzIGluIDMuMTgrLCBhbnkgZXZpZGVuY2UgdGhhdCB0aGUgZ3BpbyB3YXMgaW4gdXNlIHByaW9y
-IHRvIHRoaXMgd2lsbCBiZSBsb3N0LiBJbiAzLjE4KywgQUZBSUsgdGhlIG9ubHkgZXZpZGVuY2Ug
-dGhhdCBzdWNoIGEgZmFpbHVyZSBvY2N1cnJlZCBpcyBhIGRldl9jcml0IG1lc3NhZ2UuDQoNCj4g
-SGF2aW5nIGNyaXRpY2FsIEdQSU9zIG9uIGEgaTJjIGJ1cyBpcyBhIHJhdGhlciBjb21tb24gdGhp
-bmcgKHRoaW5rIFBNSUMpLCBzbw0KPiB5ZWFoLCB3ZSBzaG91bGQgY2VydGFpbmx5IGRlZmluZSB0
-aGUgc3RhdGUgb2YgdGhlIGhhcmR3YXJlIHdoZW5ldmVyIEdQSU8NCj4gY2hpcHMgYXJlIHJlbW92
-ZWQuIEkgc3VwcG9zZSB0aGUgbW9zdCBjb21tb24gcHJhY3RpY2UgaXMgdG8gbGVhdmUgdGhlDQo+
-IEdQSU9zIGluIHRoZWlyIGxhc3Qgc3RhdGUsIGJ1dCBtYXliZSB3ZSBzaG91bGQgY29kaWZ5IHRo
-aXMgc29tZXdoZXJlIHNvDQo+IEdQSU8gZHJpdmVycyBjYW4gZm9sbG93IHRoYXQgcnVsZS4NCg0K
-QmVmb3JlIDMuMTgsIHRoZSBzdGF0ZSBvZiB0aGUgZ3BpbyBkZXNjcmlwdG9yIHdhcyBtYWludGFp
-bmVkIGFuZCB0aGUgZ3BpbyBkZXZpY2Ugd2FzIGRpc2FsbG93ZWQgZm9yIHJlbW92YWwuIFRoaXMg
-aGFkIHRoZSBzaWRlIGVmZmVjdCBvZiBjcmVhdGluZyB0aGUgZGFuZ2xpbmcgaTJjIGNsaWVudCBw
-b2ludGVyIGluIHRoZSBncGlvIGRlc2NyaXB0b3Igd2hpY2ggSSBzdGlsbCB0aGluayBjYW4gYmUg
-aGFuZGxlZCBwcm9wZXJseSwgaG93ZXZlciBzb21ldGhpbmcgc3VjaCBhczoNCg0KMS4gdGhlIHBh
-dGNoIGludHJvZHVjZWQgaW4gMy4xOCB3b3VsZCBuZWVkIHRvIGJlIHJldmVydGVkL21vZGlmaWVk
-IHRvIGFsbG93IHRoZSBkZXNjcmlwdG9yIHRvIHN0YXkuDQoyLiBkZXZpc2UgYSBjbGVhbiB3YXkg
-dG8gbGV0IGFuIGkyYyBidXMvY2xpZW50IGhvdHBsdWcgZnJvbSB0aGUgdGhlIGdwaW8gY29yZS4g
-KEluIG90aGVyIHdvcmRzLCBpZiB0aGUgaTJjIGJ1cyBpcyBub3QgYXZhaWxhYmxlIGFueW1vcmUs
-IHRoZSBncGlvIGV4aXN0cyBidXQgYW55IGF0dGVtcHRzIHRvIGNoYW5nZSBpdHMgc3RhdHVzIHdv
-dWxkIHJlc3VsdCBpbiBpbW1lZGlhdGUgZmFpbHVyZSB1bnRpbCB0aGUgYnVzIGJlY29tZXMgYXZh
-aWxhYmxlIGFnYWluIG9yIGFsbCByZWxhdGVkIHBhcnRpZXMgdXNpbmcgdGhlIGdwaW8gcmVsZWFz
-ZSBpdCBmcm9tIHNlcnZpY2UuIFJlcXVpcmVzICMzIGJlbG93KQ0KMy4gcG9zc2libHkgbW9kaWZ5
-IGxvY2tpbmcgaW4gdGhlIGdwaW8gY29yZSB0byBwcmV2ZW50IHJhY2UgY29uZGl0aW9ucyBmcm9t
-IG9jY3VycmluZyBkdXJpbmcgYSBob3RwbHVnIHNpdHVhdGlvbi4gRS5nLiBDdXJyZW50bHkgdGhl
-IHJlZ3VsYXRvciBjb3JlIGNhbGxzIGludG8gdGhlIGdwaW8gY29yZSB1c2luZyB0aGUgZ3BpbyBp
-bXBsaWNpdCBsb2NraW5nIHNjaGVtZSBhbmQgYWx3YXlzIGFzc3VtZXMgYXZhaWxhYmlsaXR5LiBJ
-ZiBhIGZsYWcgaXMgY2hlY2tlZCwgaXQgd291bGQgbmVlZCB0byBiZSBjaGVja2VkIHVuZGVyIGEg
-bG9ja2luZyBtZWNoYW5pc20gdG8gcHJldmVudCByYWNpbmcuDQoNClBlcmhhcHMgdGhlcmUgaXMg
-YSBzaW1wbGVyIGFwcHJvYWNoLiBUaG91Z2h0cz8NCg==
+The patch adds a mismatch between the Kconfig symbol (a bool) and the
+code (which suggests that a modular build is also possible).
+
+On Mon, 2015-03-30 at 16:16 -0700, Andrew Bresticker wrote:
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+
+> +config PINCTRL_PISTACHIO
+> +	def_bool y if MACH_PISTACHIO
+
+This adds a bool symbol.
+
+> +	select PINMUX
+> +	select GENERIC_PINCONF
+> +	select GPIOLIB_IRQCHIP
+
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+
+> +obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+
+So pinctrl-pistachio.o will never be part of a module.
+
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-pistachio.c
+
+> +#include <linux/module.h>
+
+Chances are this include is not needed.
+
+> +static struct pinctrl_desc pistachio_pinctrl_desc = {
+> +	.name = "pistachio-pinctrl",
+> +	.pctlops = &pistachio_pinctrl_ops,
+> +	.pmxops = &pistachio_pinmux_ops,
+> +	.confops = &pistachio_pinconf_ops,
+> +	.owner = THIS_MODULE,
+
+According to include/linux/export.h THIS_MODULE is equivalent to NULL,
+so this can probably be dropped.
+
+> +};
+
+> +#define GPIO_BANK(_bank, _pin_base, _npins)				\
+> +	{								\
+> +		.gpio_chip = {						\
+> +			.label = "GPIO" #_bank,				\
+> +			.request = pistachio_gpio_request,		\
+> +			.free = pistachio_gpio_free,			\
+> +			.get_direction = pistachio_gpio_get_direction,	\
+> +			.direction_input = pistachio_gpio_direction_input, \
+> +			.direction_output = pistachio_gpio_direction_output, \
+> +			.get = pistachio_gpio_get,			\
+> +			.set = pistachio_gpio_set,			\
+> +			.base = _pin_base,				\
+> +			.ngpio = _npins,				\
+> +			.owner = THIS_MODULE,				\
+
+Ditto.
+
+> +		},							\
+> +		.irq_chip = {						\
+> +			.name = "GPIO" #_bank,				\
+> +			.irq_startup = pistachio_gpio_irq_startup,	\
+> +			.irq_ack = pistachio_gpio_irq_ack,		\
+> +			.irq_mask = pistachio_gpio_irq_mask,		\
+> +			.irq_unmask = pistachio_gpio_irq_unmask,	\
+> +			.irq_set_type = pistachio_gpio_irq_set_type,	\
+> +		},							\
+> +		.gpio_range = {						\
+> +			.name = "GPIO" #_bank,				\
+> +			.id = _bank,					\
+> +			.base = _pin_base,				\
+> +			.pin_base = _pin_base,				\
+> +			.npins = _npins,				\
+> +		},							\
+> +	}
+
+> +MODULE_DEVICE_TABLE(of, pistachio_pinctrl_of_match);
+
+According to include/linux/module.h this will be preprocessed away.
+
+> +module_platform_driver(pistachio_pinctrl_driver);
+
+This seems to be equivalent to adding a wrapper that does
+    platform_driver_register(&pistachio_pinctrl_driver);
+
+and marking that wrapper with device_initcall(). I don't think there's
+one line macro to do that.
+
+> +MODULE_AUTHOR("Andrew Bresticker <abrestic@chromium.org>");
+> +MODULE_AUTHOR("Damien Horsley <Damien.Horsley@imgtec.com>");
+> +MODULE_DESCRIPTION("Pistachio pinctrl driver");
+> +MODULE_LICENSE("GPL v2");
+
+These macros will (basically) be preprocessed away.
+
+
+Paul Bolle
