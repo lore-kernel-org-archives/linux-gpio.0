@@ -1,114 +1,48 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH V2 3/3] pinctrl: Add Pistachio SoC pin control driver
-Date: Tue, 31 Mar 2015 10:10:15 +0200
-Message-ID: <1427789415.2408.45.camel@x220>
-References: <1427757416-14491-1-git-send-email-abrestic@chromium.org>
-	 <1427757416-14491-4-git-send-email-abrestic@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1427757416-14491-4-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org, linux-kernel@vger.kernel.org, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Subject: [PATCH] gpio: dwapb: enable for ARC
+Date: Tue, 31 Mar 2015 11:30:07 +0300
+Message-ID: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtprelay.synopsys.com ([198.182.60.111]:54096 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315AbbCaIaN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Mar 2015 04:30:13 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
-The patch adds a mismatch between the Kconfig symbol (a bool) and the
-code (which suggests that a modular build is also possible).
+From: Vineet Gupta <vgupta@synopsys.com>
 
-On Mon, 2015-03-30 at 16:16 -0700, Andrew Bresticker wrote:
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
+Synopsys SDP platform uses DW GPIO controller in design with
+ARC cores. So adding ARC to architectures that may select this
+GPIO controller.
 
-> +config PINCTRL_PISTACHIO
-> +	def_bool y if MACH_PISTACHIO
+Even though support for Synopsys SDP is yet to be submitted we'll need
+this tiny option enabled at least for properly working interrupts (DW
+GPIO controller is used as interrupt controller).
 
-This adds a bool symbol.
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	select PINMUX
-> +	select GENERIC_PINCONF
-> +	select GPIOLIB_IRQCHIP
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 4b3284b..83d2d0b 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -148,7 +148,7 @@ config GPIO_GENERIC_PLATFORM
+ 
+ config GPIO_DWAPB
+ 	tristate "Synopsys DesignWare APB GPIO driver"
+-	depends on ((ARM || ARM64) && OF_GPIO) || X86_INTEL_QUARK
++	depends on ((ARC || ARM || ARM64) && OF_GPIO) || X86_INTEL_QUARK
+ 	select GPIO_GENERIC
+ 	select GENERIC_IRQ_CHIP
+ 	help
+-- 
+2.1.0
 
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-
-> +obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
-
-So pinctrl-pistachio.o will never be part of a module.
-
-> --- /dev/null
-> +++ b/drivers/pinctrl/pinctrl-pistachio.c
-
-> +#include <linux/module.h>
-
-Chances are this include is not needed.
-
-> +static struct pinctrl_desc pistachio_pinctrl_desc = {
-> +	.name = "pistachio-pinctrl",
-> +	.pctlops = &pistachio_pinctrl_ops,
-> +	.pmxops = &pistachio_pinmux_ops,
-> +	.confops = &pistachio_pinconf_ops,
-> +	.owner = THIS_MODULE,
-
-According to include/linux/export.h THIS_MODULE is equivalent to NULL,
-so this can probably be dropped.
-
-> +};
-
-> +#define GPIO_BANK(_bank, _pin_base, _npins)				\
-> +	{								\
-> +		.gpio_chip = {						\
-> +			.label = "GPIO" #_bank,				\
-> +			.request = pistachio_gpio_request,		\
-> +			.free = pistachio_gpio_free,			\
-> +			.get_direction = pistachio_gpio_get_direction,	\
-> +			.direction_input = pistachio_gpio_direction_input, \
-> +			.direction_output = pistachio_gpio_direction_output, \
-> +			.get = pistachio_gpio_get,			\
-> +			.set = pistachio_gpio_set,			\
-> +			.base = _pin_base,				\
-> +			.ngpio = _npins,				\
-> +			.owner = THIS_MODULE,				\
-
-Ditto.
-
-> +		},							\
-> +		.irq_chip = {						\
-> +			.name = "GPIO" #_bank,				\
-> +			.irq_startup = pistachio_gpio_irq_startup,	\
-> +			.irq_ack = pistachio_gpio_irq_ack,		\
-> +			.irq_mask = pistachio_gpio_irq_mask,		\
-> +			.irq_unmask = pistachio_gpio_irq_unmask,	\
-> +			.irq_set_type = pistachio_gpio_irq_set_type,	\
-> +		},							\
-> +		.gpio_range = {						\
-> +			.name = "GPIO" #_bank,				\
-> +			.id = _bank,					\
-> +			.base = _pin_base,				\
-> +			.pin_base = _pin_base,				\
-> +			.npins = _npins,				\
-> +		},							\
-> +	}
-
-> +MODULE_DEVICE_TABLE(of, pistachio_pinctrl_of_match);
-
-According to include/linux/module.h this will be preprocessed away.
-
-> +module_platform_driver(pistachio_pinctrl_driver);
-
-This seems to be equivalent to adding a wrapper that does
-    platform_driver_register(&pistachio_pinctrl_driver);
-
-and marking that wrapper with device_initcall(). I don't think there's
-one line macro to do that.
-
-> +MODULE_AUTHOR("Andrew Bresticker <abrestic@chromium.org>");
-> +MODULE_AUTHOR("Damien Horsley <Damien.Horsley@imgtec.com>");
-> +MODULE_DESCRIPTION("Pistachio pinctrl driver");
-> +MODULE_LICENSE("GPL v2");
-
-These macros will (basically) be preprocessed away.
-
-
-Paul Bolle
