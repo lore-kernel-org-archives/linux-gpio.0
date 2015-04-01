@@ -1,119 +1,153 @@
-From: Darren Hart <dvhart@linux.intel.com>
-Subject: Re: [PATCH] Documentation: gpio: Update ACPI part of the document to
- mention _DSD
-Date: Tue, 31 Mar 2015 17:19:21 -0700
-Message-ID: <D14086D9.C4A08%dvhart@linux.intel.com>
-References: <1427802195-221906-1-git-send-email-mika.westerberg@linux.intel.com>
+From: "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+Subject: Re: [PATCH 3/3] GPIO: Add Loongson-3A/3B GPIO driver support
+Date: Wed, 1 Apr 2015 09:19:06 +0800
+Message-ID: <tencent_65D26B5215148B3B3BC9D009@qq.com>
+References: <1427337288-8411-1-git-send-email-chenhc@lemote.com>
+	<1427337288-8411-3-git-send-email-chenhc@lemote.com>
+	<CAAVeFuJCkzc-6hf+bX7YU1Bhhm4=XJF7vE--Ksj6XvCfNGsgBQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:20793 "EHLO mga09.intel.com"
+Received: from smtpbg303.qq.com ([184.105.206.26]:38402 "EHLO smtpbg303.qq.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751092AbbDAATu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 31 Mar 2015 20:19:50 -0400
-In-Reply-To: <1427802195-221906-1-git-send-email-mika.westerberg@linux.intel.com>
+	id S1751315AbbDABTW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 Mar 2015 21:19:22 -0400
+In-Reply-To: <CAAVeFuJCkzc-6hf+bX7YU1Bhhm4=XJF7vE--Ksj6XvCfNGsgBQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+To: =?utf-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>
+Cc: =?utf-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, =?utf-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?utf-8?B?RnV4aW4gWmhhbmc=?= <zhangfx@lemote.com>, =?utf-8?B?d3V6aGFuZ2ppbg==?= <wuzhangjin@gmail.com>
 
-On 3/31/15, 4:43 AM, "Mika Westerberg" <mika.westerberg@linux.intel.com>
-wrote:
-
->With ACPI 5.1 _DSD (Device Specific Data) it is now possible to name
->functions just like Device Tree is doing. Make sure that the documentation
->mentions _DSD as the recommended way to describe GPIOs in ACPI systems.
->
->Reported-by: Darren Hart <dvhart@linux.intel.com>
->Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-Thanks Mika! Couple of nits below to help it read a little better.
-
->---
-> Documentation/gpio/board.txt | 41
->+++++++++++++++++++++++++++++++++++++----
-> 1 file changed, 37 insertions(+), 4 deletions(-)
->
->diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
->index 8b35f51fe7b6..b68cfa8a6865 100644
->--- a/Documentation/gpio/board.txt
->+++ b/Documentation/gpio/board.txt
->@@ -50,10 +50,43 @@ gpiod_is_active_low(power) will be true).
-> 
-> ACPI
-> ----
->-ACPI does not support function names for GPIOs. Therefore, only the "idx"
->-argument of gpiod_get_index() is useful to discriminate between GPIOs
->assigned
->-to a device. The "con_id" argument can still be set for debugging
->purposes (it
->-will appear under error messages as well as debug and sysfs nodes).
->+ACPI does also support function names for GPIOs in similar fashion than
->DT.
-
-ACPI also supports function names for GPIOs in a similar fashion to DT.
-
->+The above DT example can be converted to corresponding ACPI version with
-
-... to an equivalent ACPI description with
-
->+the help of _DSD (Device Specific Data) which was introduced in ACPI 5.1:
-
-
-s/ which was/, /
-
-
---
-Darren
-
->+
->+	Device (FOO) {
->+		Name (_CRS, ResourceTemplate () {
->+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
->+				"\\_SB.GPI0") {15} // red
->+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
->+				"\\_SB.GPI0") {16} // green
->+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
->+				"\\_SB.GPI0") {17} // blue
->+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
->+				"\\_SB.GPI0") {1} // power
->+		})
->+
->+		Name (_DSD, Package () {
->+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
->+			Package () {
->+				Package () {
->+					"led-gpios",
->+					Package () {
->+						^FOO, 0, 0, 1,
->+						^FOO, 1, 0, 1,
->+						^FOO, 2, 0, 1,
->+					}
->+				},
->+				Package () {
->+					"power-gpios",
->+					Package () {^FOO, 3, 0, 0},
->+				},
->+			}
->+		})
->+	}
->+
->+For more information about the ACPI GPIO bindings see
->+Documentation/acpi/gpio-properties.txt.
-> 
-> Platform Data
-> -------------
->-- 
->2.1.4
->
->
-
-
--- 
-Darren Hart
-Intel Open Source Technology Center
-
-
+SGksIEFsZXhhbmRyZQ0KDQpZZXMsIHRoZSBHUElPIGlzIG5lZWRlZCB2ZXJ5IGVhcmx5LCBJ
+IHdpbGwgc2VuZCBuZXcgcGFjaGVzIHRvIHJlcGxhY2UgJ3RyaXN0YXRlJyB3aXRoICdib29s
+Jy4gVGhhbmtzLg0KIA0KSHVhY2FpDQogDQotLS0tLS0tLS0tLS0tLS0tLS0gT3JpZ2luYWwg
+LS0tLS0tLS0tLS0tLS0tLS0tDQpGcm9tOiAgIkFsZXhhbmRyZSBDb3VyYm90IjxnbnVyb3VA
+Z21haWwuY29tPjsNCkRhdGU6ICBUdWUsIE1hciAzMSwgMjAxNSAxMDo0NSBQTQ0KVG86ICAi
+SHVhY2FpIENoZW4iPGNoZW5oY0BsZW1vdGUuY29tPjsgDQpDYzogICJMaW51cyBXYWxsZWlq
+IjxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+OyAibGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5v
+cmciPGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnPjsgIkZ1eGluIFpoYW5nIjx6aGFuZ2Z4
+QGxlbW90ZS5jb20+OyAid3V6aGFuZ2ppbiI8d3V6aGFuZ2ppbkBnbWFpbC5jb20+OyANClN1
+YmplY3Q6ICBSZTogW1BBVENIIDMvM10gR1BJTzogQWRkIExvb25nc29uLTNBLzNCIEdQSU8g
+ZHJpdmVyIHN1cHBvcnQNCg0KIA0KT24gVGh1LCBNYXIgMjYsIDIwMTUgYXQgMTE6MzQgQU0s
+IEh1YWNhaSBDaGVuIDxjaGVuaGNAbGVtb3RlLmNvbT4gd3JvdGU6DQo+IEltcHJvdmUgTG9v
+bmdzb24tMidzIEdQSU8gZHJpdmVyIHRvIHN1cHBvcnQgTG9vbmdzb24tM0EvM0IsIGFuZCB1
+cGRhdGUNCj4gTG9vbmdzb24tMydzIGRlZmF1bHQgY29uZmlnIGZpbGUuDQo+DQo+IEFja2Vk
+LWJ5OiBSYWxmIEJhZWNobGUgPHJhbGZAbGludXgtbWlwcy5vcmc+DQo+IFNpZ25lZC1vZmYt
+Ynk6IEh1YWNhaSBDaGVuIDxjaGVuaGNAbGVtb3RlLmNvbT4NCj4gLS0tDQo+ICBhcmNoL21p
+cHMvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgIHwgICAgMSArDQo+ICBhcmNoL21pcHMv
+Y29uZmlncy9sb29uZ3NvbjNfZGVmY29uZmlnIHwgICAgMSArDQo+ICBkcml2ZXJzL2dwaW8v
+S2NvbmZpZyAgICAgICAgICAgICAgICAgIHwgICAgNiArKy0tDQo+ICBkcml2ZXJzL2dwaW8v
+Z3Bpby1sb29uZ3Nvbi5jICAgICAgICAgIHwgICA0NCArKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0tLQ0KPiAgNCBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCAyMCBk
+ZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2FyY2gvbWlwcy9LY29uZmlnIGIvYXJj
+aC9taXBzL0tjb25maWcNCj4gaW5kZXggOTE1ZTY4OS4uYjJhNTgyNyAxMDA2NDQNCj4gLS0t
+IGEvYXJjaC9taXBzL0tjb25maWcNCj4gKysrIGIvYXJjaC9taXBzL0tjb25maWcNCj4gQEAg
+LTEyNDUsNiArMTI0NSw3IEBAIGNvbmZpZyBDUFVfTE9PTkdTT04zDQo+ICAgICAgICAgc2Vs
+ZWN0IENQVV9TVVBQT1JUU19IVUdFUEFHRVMNCj4gICAgICAgICBzZWxlY3QgV0VBS19PUkRF
+UklORw0KPiAgICAgICAgIHNlbGVjdCBXRUFLX1JFT1JERVJJTkdfQkVZT05EX0xMU0MNCj4g
+KyAgICAgICBzZWxlY3QgQVJDSF9SRVFVSVJFX0dQSU9MSUINCj4gICAgICAgICBoZWxwDQo+
+ICAgICAgICAgICAgICAgICBUaGUgTG9vbmdzb24gMyBwcm9jZXNzb3IgaW1wbGVtZW50cyB0
+aGUgTUlQUzY0UjIgaW5zdHJ1Y3Rpb24NCj4gICAgICAgICAgICAgICAgIHNldCB3aXRoIG1h
+bnkgZXh0ZW5zaW9ucy4NCj4gZGlmZiAtLWdpdCBhL2FyY2gvbWlwcy9jb25maWdzL2xvb25n
+c29uM19kZWZjb25maWcgYi9hcmNoL21pcHMvY29uZmlncy9sb29uZ3NvbjNfZGVmY29uZmln
+DQo+IGluZGV4IDdlYWJjZDIuLmM4NDQyOTkgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvbWlwcy9j
+b25maWdzL2xvb25nc29uM19kZWZjb25maWcNCj4gKysrIGIvYXJjaC9taXBzL2NvbmZpZ3Mv
+bG9vbmdzb24zX2RlZmNvbmZpZw0KPiBAQCAtMjQzLDYgKzI0Myw3IEBAIENPTkZJR19IV19S
+QU5ET009eQ0KPiAgQ09ORklHX1JBV19EUklWRVI9bQ0KPiAgQ09ORklHX0kyQ19DSEFSREVW
+PXkNCj4gIENPTkZJR19JMkNfUElJWDQ9eQ0KPiArQ09ORklHX0dQSU9fTE9PTkdTT049eQ0K
+PiAgQ09ORklHX1NFTlNPUlNfTE03NT1tDQo+ICBDT05GSUdfU0VOU09SU19MTTkzPW0NCj4g
+IENPTkZJR19TRU5TT1JTX1c4MzYyN0hGPW0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bp
+by9LY29uZmlnIGIvZHJpdmVycy9ncGlvL0tjb25maWcNCj4gaW5kZXggNjQ1NDE2MC4uN2U4
+MjI3YiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL0tjb25maWcNCj4gKysrIGIvZHJp
+dmVycy9ncGlvL0tjb25maWcNCj4gQEAgLTUwMCwxMCArNTAwLDEwIEBAIGNvbmZpZyBHUElP
+X0dSR1BJTw0KPiAgICAgICAgICAgVkhETCBJUCBjb3JlIGxpYnJhcnkuDQo+DQo+ICBjb25m
+aWcgR1BJT19MT09OR1NPTg0KPiAtICAgICAgIHRyaXN0YXRlICJMb29uZ3Nvbi0yIEdQSU8g
+c3VwcG9ydCINCj4gLSAgICAgICBkZXBlbmRzIG9uIENQVV9MT09OR1NPTjINCj4gKyAgICAg
+ICB0cmlzdGF0ZSAiTG9vbmdzb24tMi8zIEdQSU8gc3VwcG9ydCINCj4gKyAgICAgICBkZXBl
+bmRzIG9uIENQVV9MT09OR1NPTjIgfHwgQ1BVX0xPT05HU09OMw0KPiAgICAgICAgIGhlbHAN
+Cj4gLSAgICAgICAgIGRyaXZlciBmb3IgR1BJTyBmdW5jdGlvbmFsaXR5IG9uIExvb25nc29u
+LTJGIHByb2Nlc3NvcnMuDQo+ICsgICAgICAgICBkcml2ZXIgZm9yIEdQSU8gZnVuY3Rpb25h
+bGl0eSBvbiBMb29uZ3Nvbi0yRi8zQS8zQiBwcm9jZXNzb3JzLg0KPg0KPiAgY29uZmlnIEdQ
+SU9fVEIxMFgNCj4gICAgICAgICBib29sDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwaW8v
+Z3Bpby1sb29uZ3Nvbi5jIGIvZHJpdmVycy9ncGlvL2dwaW8tbG9vbmdzb24uYw0KPiBpbmRl
+eCBiNGU2OWUwLi5jY2M2NWExIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1s
+b29uZ3Nvbi5jDQo+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLWxvb25nc29uLmMNCj4gQEAg
+LTEsOCArMSwxMCBAQA0KPiAgLyoNCj4gLSAqICBTVExTMkYgR1BJTyBTdXBwb3J0DQo+ICsg
+KiAgTG9vbmdzb24tMkYvM0EvM0IgR1BJTyBTdXBwb3J0DQo+ICAgKg0KPiAgICogIENvcHly
+aWdodCAoYykgMjAwOCBSaWNoYXJkIExpdSwgIFNUTWljcm9lbGVjdHJvbmljcyAgICAgICAg
+IDxyaWNoYXJkLmxpdUBzdC5jb20+DQo+ICAgKiAgQ29weXJpZ2h0IChjKSAyMDA4LTIwMTAg
+QXJuYXVkIFBhdGFyZCA8YXBhdGFyZEBtYW5kcml2YS5jb20+DQo+ICsgKiAgQ29weXJpZ2h0
+IChjKSAyMDEzIEhvbmdiaW5nIEh1IDxodWhiQGxlbW90ZS5jb20+DQo+ICsgKiAgQ29weXJp
+Z2h0IChjKSAyMDE0IEh1YWNhaSBDaGVuIDxjaGVuaGNAbGVtb3RlLmNvbT4NCj4gICAqDQo+
+ICAgKiAgVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmli
+dXRlIGl0IGFuZC9vciBtb2RpZnkNCj4gICAqICBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhl
+IEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGFzIHB1Ymxpc2hlZCBieQ0KPiBAQCAtMjAs
+MTEgKzIyLDE5IEBADQo+ICAjaW5jbHVkZSA8bGludXgvZ3Bpby5oPg0KPg0KPiAgI2RlZmlu
+ZSBTVExTMkZfTl9HUElPICAgICAgICAgIDQNCj4gLSNkZWZpbmUgU1RMUzJGX0dQSU9fSU5f
+T0ZGU0VUICAxNg0KPiArI2RlZmluZSBTVExTM0FfTl9HUElPICAgICAgICAgIDE2DQo+ICsN
+Cj4gKyNpZmRlZiBDT05GSUdfQ1BVX0xPT05HU09OMw0KPiArI2RlZmluZSBMT09OR1NPTl9O
+X0dQSU8gICAgICAgIFNUTFMzQV9OX0dQSU8NCj4gKyNlbHNlDQo+ICsjZGVmaW5lIExPT05H
+U09OX05fR1BJTyAgICAgICAgU1RMUzJGX05fR1BJTw0KPiArI2VuZGlmDQo+ICsNCj4gKyNk
+ZWZpbmUgTE9PTkdTT05fR1BJT19JTl9PRkZTRVQgICAgICAgIDE2DQo+DQo+ICBzdGF0aWMg
+REVGSU5FX1NQSU5MT0NLKGdwaW9fbG9jayk7DQo+DQo+IC1zdGF0aWMgaW50IGxzMmZfZ3Bp
+b19kaXJlY3Rpb25faW5wdXQoc3RydWN0IGdwaW9fY2hpcCAqY2hpcCwgdW5zaWduZWQgZ3Bp
+bykNCj4gK3N0YXRpYyBpbnQgbG9vbmdzb25fZ3Bpb19kaXJlY3Rpb25faW5wdXQoc3RydWN0
+IGdwaW9fY2hpcCAqY2hpcCwgdW5zaWduZWQgZ3BpbykNCj4gIHsNCj4gICAgICAgICB1MzIg
+dGVtcDsNCj4gICAgICAgICB1MzIgbWFzazsNCj4gQEAgLTM5LDcgKzQ5LDcgQEAgc3RhdGlj
+IGludCBsczJmX2dwaW9fZGlyZWN0aW9uX2lucHV0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAs
+IHVuc2lnbmVkIGdwaW8pDQo+ICAgICAgICAgcmV0dXJuIDA7DQo+ICB9DQo+DQo+IC1zdGF0
+aWMgaW50IGxzMmZfZ3Bpb19kaXJlY3Rpb25fb3V0cHV0KHN0cnVjdCBncGlvX2NoaXAgKmNo
+aXAsDQo+ICtzdGF0aWMgaW50IGxvb25nc29uX2dwaW9fZGlyZWN0aW9uX291dHB1dChzdHJ1
+Y3QgZ3Bpb19jaGlwICpjaGlwLA0KPiAgICAgICAgICAgICAgICAgdW5zaWduZWQgZ3Bpbywg
+aW50IGxldmVsKQ0KPiAgew0KPiAgICAgICAgIHUzMiB0ZW1wOw0KPiBAQCAtNTYsMTIgKzY2
+LDEyIEBAIHN0YXRpYyBpbnQgbHMyZl9ncGlvX2RpcmVjdGlvbl9vdXRwdXQoc3RydWN0IGdw
+aW9fY2hpcCAqY2hpcCwNCj4gICAgICAgICByZXR1cm4gMDsNCj4gIH0NCj4NCj4gLXN0YXRp
+YyBpbnQgbHMyZl9ncGlvX2dldF92YWx1ZShzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNp
+Z25lZCBncGlvKQ0KPiArc3RhdGljIGludCBsb29uZ3Nvbl9ncGlvX2dldF92YWx1ZShzdHJ1
+Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNpZ25lZCBncGlvKQ0KPiAgew0KPiAgICAgICAgIHUz
+MiB2YWw7DQo+ICAgICAgICAgdTMyIG1hc2s7DQo+DQo+IC0gICAgICAgbWFzayA9IDEgPDwg
+KGdwaW8gKyBTVExTMkZfR1BJT19JTl9PRkZTRVQpOw0KPiArICAgICAgIG1hc2sgPSAxIDw8
+IChncGlvICsgTE9PTkdTT05fR1BJT19JTl9PRkZTRVQpOw0KPiAgICAgICAgIHNwaW5fbG9j
+aygmZ3Bpb19sb2NrKTsNCj4gICAgICAgICB2YWwgPSBMT09OR1NPTl9HUElPREFUQTsNCj4g
+ICAgICAgICBzcGluX3VubG9jaygmZ3Bpb19sb2NrKTsNCj4gQEAgLTY5LDcgKzc5LDcgQEAg
+c3RhdGljIGludCBsczJmX2dwaW9fZ2V0X3ZhbHVlKHN0cnVjdCBncGlvX2NoaXAgKmNoaXAs
+IHVuc2lnbmVkIGdwaW8pDQo+ICAgICAgICAgcmV0dXJuICh2YWwgJiBtYXNrKSAhPSAwOw0K
+PiAgfQ0KPg0KPiAtc3RhdGljIHZvaWQgbHMyZl9ncGlvX3NldF92YWx1ZShzdHJ1Y3QgZ3Bp
+b19jaGlwICpjaGlwLA0KPiArc3RhdGljIHZvaWQgbG9vbmdzb25fZ3Bpb19zZXRfdmFsdWUo
+c3RydWN0IGdwaW9fY2hpcCAqY2hpcCwNCj4gICAgICAgICAgICAgICAgIHVuc2lnbmVkIGdw
+aW8sIGludCB2YWx1ZSkNCj4gIHsNCj4gICAgICAgICB1MzIgdmFsOw0KPiBAQCAtODcsMTkg
+Kzk3LDE5IEBAIHN0YXRpYyB2b2lkIGxzMmZfZ3Bpb19zZXRfdmFsdWUoc3RydWN0IGdwaW9f
+Y2hpcCAqY2hpcCwNCj4gICAgICAgICBzcGluX3VubG9jaygmZ3Bpb19sb2NrKTsNCj4gIH0N
+Cj4NCj4gLXN0YXRpYyBzdHJ1Y3QgZ3Bpb19jaGlwIGxzMmZfY2hpcCA9IHsNCj4gLSAgICAg
+ICAubGFiZWwgICAgICAgICAgICAgICAgICA9ICJsczJmIiwNCj4gLSAgICAgICAuZGlyZWN0
+aW9uX2lucHV0ICAgICAgICA9IGxzMmZfZ3Bpb19kaXJlY3Rpb25faW5wdXQsDQo+IC0gICAg
+ICAgLmdldCAgICAgICAgICAgICAgICAgICAgPSBsczJmX2dwaW9fZ2V0X3ZhbHVlLA0KPiAt
+ICAgICAgIC5kaXJlY3Rpb25fb3V0cHV0ICAgICAgID0gbHMyZl9ncGlvX2RpcmVjdGlvbl9v
+dXRwdXQsDQo+IC0gICAgICAgLnNldCAgICAgICAgICAgICAgICAgICAgPSBsczJmX2dwaW9f
+c2V0X3ZhbHVlLA0KPiArc3RhdGljIHN0cnVjdCBncGlvX2NoaXAgbG9vbmdzb25fY2hpcCA9
+IHsNCj4gKyAgICAgICAubGFiZWwgICAgICAgICAgICAgICAgICA9ICJMb29uZ3Nvbi1ncGlv
+LWNoaXAiLA0KPiArICAgICAgIC5kaXJlY3Rpb25faW5wdXQgICAgICAgID0gbG9vbmdzb25f
+Z3Bpb19kaXJlY3Rpb25faW5wdXQsDQo+ICsgICAgICAgLmdldCAgICAgICAgICAgICAgICAg
+ICAgPSBsb29uZ3Nvbl9ncGlvX2dldF92YWx1ZSwNCj4gKyAgICAgICAuZGlyZWN0aW9uX291
+dHB1dCAgICAgICA9IGxvb25nc29uX2dwaW9fZGlyZWN0aW9uX291dHB1dCwNCj4gKyAgICAg
+ICAuc2V0ICAgICAgICAgICAgICAgICAgICA9IGxvb25nc29uX2dwaW9fc2V0X3ZhbHVlLA0K
+PiAgICAgICAgIC5iYXNlICAgICAgICAgICAgICAgICAgID0gMCwNCj4gLSAgICAgICAubmdw
+aW8gICAgICAgICAgICAgICAgICA9IFNUTFMyRl9OX0dQSU8sDQo+ICsgICAgICAgLm5ncGlv
+ICAgICAgICAgICAgICAgICAgPSBMT09OR1NPTl9OX0dQSU8sDQo+ICAgICAgICAgLmNhbl9z
+bGVlcCAgICAgICAgICAgICAgPSBmYWxzZSwNCj4gIH07DQo+DQo+IC1zdGF0aWMgaW50IF9f
+aW5pdCBsczJmX2dwaW9fc2V0dXAodm9pZCkNCj4gK3N0YXRpYyBpbnQgX19pbml0IGxvb25n
+c29uX2dwaW9fc2V0dXAodm9pZCkNCj4gIHsNCj4gLSAgICAgICByZXR1cm4gZ3Bpb2NoaXBf
+YWRkKCZsczJmX2NoaXApOw0KPiArICAgICAgIHJldHVybiBncGlvY2hpcF9hZGQoJmxvb25n
+c29uX2NoaXApOw0KPiAgfQ0KPiAtYXJjaF9pbml0Y2FsbChsczJmX2dwaW9fc2V0dXApOw0K
+PiArcG9zdGNvcmVfaW5pdGNhbGwobG9vbmdzb25fZ3Bpb19zZXR1cCk7DQoNClRoaXMgZHJp
+dmVyIGRvZXMgbm90IGhhdmUgYSBwcm9iZSBmdW5jdGlvbiBhbmQgaXRzIGRldmljZSBpcyBh
+ZGRlZCBieQ0KdGhpcyBpbml0Y2FsbC4gSSBhbSBvayB3aXRoIHRoaXMgYnV0IGluIHRoYXQg
+Y2FzZSwgaXNuJ3QgaXQgaWxsZWdhbCB0bw0KYWxsb3cgdGhlIGRyaXZlciB0byBiZSBjb21w
+aWxlZCBhcyBhIG1vZHVsZSwgbGlrZSB5b3VyIHBhdGNoIDIvMyBkb2VzPw0KDQpBcyBhIGZ1
+dHVyZSB3b3JrLCBpdCB3b3VsZCBiZSBuaWNlIHRvIGNvbnZlcnQgdGhpcyB0byBhIHBsYXRm
+b3JtDQpkcml2ZXIsIHVubGVzcyB0aGUgR1BJT3MgYXJlIG5lZWRlZCB0b28gZWFybHkgaW4g
+dGhlIHN5c3RlbSdzDQpsaWZlY3ljbGUuDQoNClJldmlld2VkLWJ5OiBBbGV4YW5kcmUgQ291
+cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4=
 
