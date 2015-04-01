@@ -1,53 +1,88 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 0/2] pinctrl: Support for IMG Pistachio
-Date: Wed, 1 Apr 2015 12:03:26 +0200
-Message-ID: <20150401100326.GA20157@linux-mips.org>
-References: <1424744104-14151-1-git-send-email-abrestic@chromium.org>
- <CACRpkdbCOHNPs5Y58h--X6pOVvYyxTrgcFhFyk5dWE+JLo=rhg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] Documentation: gpio: Update ACPI part of the document to mention _DSD
+Date: Wed, 01 Apr 2015 15:37:43 +0200
+Message-ID: <6992212.k2gEnaWg9n@vostro.rjw.lan>
+References: <1427875996-216926-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbCOHNPs5Y58h--X6pOVvYyxTrgcFhFyk5dWE+JLo=rhg@mail.gmail.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1427875996-216926-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Darren Hart <dvhart@linux.intel.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 06, 2015 at 12:29:55PM +0100, Linus Walleij wrote:
-> Date:   Fri, 6 Mar 2015 12:29:55 +0100
-> From: Linus Walleij <linus.walleij@linaro.org>
-> To: Andrew Bresticker <abrestic@chromium.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle
->  <ralf@linux-mips.org>, "devicetree@vger.kernel.org"
->  <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org"
->  <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>,
->  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel
->  Garcia <ezequiel.garcia@imgtec.com>, James Hartley
->  <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
-> Subject: Re: [PATCH 0/2] pinctrl: Support for IMG Pistachio
-> Content-Type: text/plain; charset=UTF-8
+On Wednesday, April 01, 2015 11:13:16 AM Mika Westerberg wrote:
+> With ACPI 5.1 _DSD (Device Specific Data) it is now possible to name
+> functions just like Device Tree is doing. Make sure that the documentation
+> mentions _DSD as the recommended way to describe GPIOs in ACPI systems.
 > 
-> On Tue, Feb 24, 2015 at 3:15 AM, Andrew Bresticker
-> <abrestic@chromium.org> wrote:
-> 
-> >  I'd like this to go through the MIPS tree with
-> > Linus'/Alex's ACKs if possible.
-> 
-> Why? It will only help creating merge conflicts.
-> There seem to be no compile-related dependencies, just Kconfig
-> symbols, so patches using this can go in orthogonally.
+> Reported-by: Darren Hart <dvhart@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-It would mean all the bits for Pistachio support go through a single tree
-which simplifies testing and possibly fixing significantly.  The
-conflict potencial for this series is fairly low, I think.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-  Ralf
+> ---
+> v2: Corrected text according what Darren suggested
+> 
+>  Documentation/gpio/board.txt | 41 +++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 37 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+> index 8b35f51fe7b6..b80606de545a 100644
+> --- a/Documentation/gpio/board.txt
+> +++ b/Documentation/gpio/board.txt
+> @@ -50,10 +50,43 @@ gpiod_is_active_low(power) will be true).
+>  
+>  ACPI
+>  ----
+> -ACPI does not support function names for GPIOs. Therefore, only the "idx"
+> -argument of gpiod_get_index() is useful to discriminate between GPIOs assigned
+> -to a device. The "con_id" argument can still be set for debugging purposes (it
+> -will appear under error messages as well as debug and sysfs nodes).
+> +ACPI also supports function names for GPIOs in a similar fashion to DT.
+> +The above DT example can be converted to an equivalent ACPI description
+> +with the help of _DSD (Device Specific Data), introduced in ACPI 5.1:
+> +
+> +	Device (FOO) {
+> +		Name (_CRS, ResourceTemplate () {
+> +			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+> +				"\\_SB.GPI0") {15} // red
+> +			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+> +				"\\_SB.GPI0") {16} // green
+> +			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+> +				"\\_SB.GPI0") {17} // blue
+> +			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+> +				"\\_SB.GPI0") {1} // power
+> +		})
+> +
+> +		Name (_DSD, Package () {
+> +			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+> +			Package () {
+> +				Package () {
+> +					"led-gpios",
+> +					Package () {
+> +						^FOO, 0, 0, 1,
+> +						^FOO, 1, 0, 1,
+> +						^FOO, 2, 0, 1,
+> +					}
+> +				},
+> +				Package () {
+> +					"power-gpios",
+> +					Package () {^FOO, 3, 0, 0},
+> +				},
+> +			}
+> +		})
+> +	}
+> +
+> +For more information about the ACPI GPIO bindings see
+> +Documentation/acpi/gpio-properties.txt.
+>  
+>  Platform Data
+>  -------------
+> 
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
