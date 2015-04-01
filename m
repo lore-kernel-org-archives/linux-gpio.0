@@ -1,175 +1,113 @@
-From: Huacai Chen <chenhc@lemote.com>
-Subject: [PATCH 3/3] GPIO: Add Loongson-3A/3B GPIO driver support
-Date: Wed,  1 Apr 2015 10:20:09 +0800
-Message-ID: <1427854809-28472-3-git-send-email-chenhc@lemote.com>
+From: "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+Subject: Re:[PATCH 1/3] MIPS: Cleanup Loongson-2F's gpio driver
+Date: Wed, 1 Apr 2015 10:22:55 +0800
+Message-ID: <tencent_5A5866E61F8699595D291172@qq.com>
 References: <1427854809-28472-1-git-send-email-chenhc@lemote.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtpbg298.qq.com ([184.105.67.102]:58732 "EHLO smtpbg298.qq.com"
+Received: from smtpbg299.qq.com ([184.105.67.99]:48199 "EHLO smtpbg299.qq.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751259AbbDACUz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 31 Mar 2015 22:20:55 -0400
+	id S1752335AbbDACXG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 Mar 2015 22:23:06 -0400
 In-Reply-To: <1427854809-28472-1-git-send-email-chenhc@lemote.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Fuxin Zhang <zhangfx@lemote.com>, Zhangjin Wu <wuzhangjin@gmail.com>, Huacai Chen <chenhc@lemote.com>
+To: =?utf-8?B?SHVhY2FpIENoZW4=?= <chenhc@lemote.com>, =?utf-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
+Cc: =?utf-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, =?utf-8?B?bGludXgtZ3Bpbw==?= <linux-gpio@vger.kernel.org>, =?utf-8?B?RnV4aW4gWmhhbmc=?= <zhangfx@lemote.com>, =?utf-8?B?d3V6aGFuZ2ppbg==?= <wuzhangjin@gmail.com>
 
-Improve Loongson-2's GPIO driver to support Loongson-3A/3B, and update
-Loongson-3's default config file.
-
-Acked-by: Ralf Baechle <ralf@linux-mips.org>
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
----
- arch/mips/Kconfig                     |    1 +
- arch/mips/configs/loongson3_defconfig |    1 +
- drivers/gpio/Kconfig                  |    6 ++--
- drivers/gpio/gpio-loongson.c          |   44 ++++++++++++++++++++------------
- 4 files changed, 32 insertions(+), 20 deletions(-)
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 915e689..b2a5827 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1245,6 +1245,7 @@ config CPU_LOONGSON3
- 	select CPU_SUPPORTS_HUGEPAGES
- 	select WEAK_ORDERING
- 	select WEAK_REORDERING_BEYOND_LLSC
-+	select ARCH_REQUIRE_GPIOLIB
- 	help
- 		The Loongson 3 processor implements the MIPS64R2 instruction
- 		set with many extensions.
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index 7eabcd2..c844299 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -243,6 +243,7 @@ CONFIG_HW_RANDOM=y
- CONFIG_RAW_DRIVER=m
- CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_PIIX4=y
-+CONFIG_GPIO_LOONGSON=y
- CONFIG_SENSORS_LM75=m
- CONFIG_SENSORS_LM93=m
- CONFIG_SENSORS_W83627HF=m
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 6454160..7e8227b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -500,10 +500,10 @@ config GPIO_GRGPIO
- 	  VHDL IP core library.
- 
- config GPIO_LOONGSON
--	bool "Loongson-2 GPIO support"
--	depends on CPU_LOONGSON2
-+	bool "Loongson-2/3 GPIO support"
-+	depends on CPU_LOONGSON2 || CPU_LOONGSON3
- 	help
--	  driver for GPIO functionality on Loongson-2F processors.
-+	  driver for GPIO functionality on Loongson-2F/3A/3B processors.
- 
- config GPIO_TB10X
- 	bool
-diff --git a/drivers/gpio/gpio-loongson.c b/drivers/gpio/gpio-loongson.c
-index b4e69e0..ccc65a1 100644
---- a/drivers/gpio/gpio-loongson.c
-+++ b/drivers/gpio/gpio-loongson.c
-@@ -1,8 +1,10 @@
- /*
-- *  STLS2F GPIO Support
-+ *  Loongson-2F/3A/3B GPIO Support
-  *
-  *  Copyright (c) 2008 Richard Liu,  STMicroelectronics	 <richard.liu@st.com>
-  *  Copyright (c) 2008-2010 Arnaud Patard <apatard@mandriva.com>
-+ *  Copyright (c) 2013 Hongbing Hu <huhb@lemote.com>
-+ *  Copyright (c) 2014 Huacai Chen <chenhc@lemote.com>
-  *
-  *  This program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-@@ -20,11 +22,19 @@
- #include <linux/gpio.h>
- 
- #define STLS2F_N_GPIO		4
--#define STLS2F_GPIO_IN_OFFSET	16
-+#define STLS3A_N_GPIO		16
-+
-+#ifdef CONFIG_CPU_LOONGSON3
-+#define LOONGSON_N_GPIO	STLS3A_N_GPIO
-+#else
-+#define LOONGSON_N_GPIO	STLS2F_N_GPIO
-+#endif
-+
-+#define LOONGSON_GPIO_IN_OFFSET	16
- 
- static DEFINE_SPINLOCK(gpio_lock);
- 
--static int ls2f_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
-+static int loongson_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- {
- 	u32 temp;
- 	u32 mask;
-@@ -39,7 +49,7 @@ static int ls2f_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- 	return 0;
- }
- 
--static int ls2f_gpio_direction_output(struct gpio_chip *chip,
-+static int loongson_gpio_direction_output(struct gpio_chip *chip,
- 		unsigned gpio, int level)
- {
- 	u32 temp;
-@@ -56,12 +66,12 @@ static int ls2f_gpio_direction_output(struct gpio_chip *chip,
- 	return 0;
- }
- 
--static int ls2f_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-+static int loongson_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
- {
- 	u32 val;
- 	u32 mask;
- 
--	mask = 1 << (gpio + STLS2F_GPIO_IN_OFFSET);
-+	mask = 1 << (gpio + LOONGSON_GPIO_IN_OFFSET);
- 	spin_lock(&gpio_lock);
- 	val = LOONGSON_GPIODATA;
- 	spin_unlock(&gpio_lock);
-@@ -69,7 +79,7 @@ static int ls2f_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
- 	return (val & mask) != 0;
- }
- 
--static void ls2f_gpio_set_value(struct gpio_chip *chip,
-+static void loongson_gpio_set_value(struct gpio_chip *chip,
- 		unsigned gpio, int value)
- {
- 	u32 val;
-@@ -87,19 +97,19 @@ static void ls2f_gpio_set_value(struct gpio_chip *chip,
- 	spin_unlock(&gpio_lock);
- }
- 
--static struct gpio_chip ls2f_chip = {
--	.label			= "ls2f",
--	.direction_input	= ls2f_gpio_direction_input,
--	.get			= ls2f_gpio_get_value,
--	.direction_output	= ls2f_gpio_direction_output,
--	.set			= ls2f_gpio_set_value,
-+static struct gpio_chip loongson_chip = {
-+	.label                  = "Loongson-gpio-chip",
-+	.direction_input        = loongson_gpio_direction_input,
-+	.get                    = loongson_gpio_get_value,
-+	.direction_output       = loongson_gpio_direction_output,
-+	.set                    = loongson_gpio_set_value,
- 	.base			= 0,
--	.ngpio			= STLS2F_N_GPIO,
-+	.ngpio                  = LOONGSON_N_GPIO,
- 	.can_sleep		= false,
- };
- 
--static int __init ls2f_gpio_setup(void)
-+static int __init loongson_gpio_setup(void)
- {
--	return gpiochip_add(&ls2f_chip);
-+	return gpiochip_add(&loongson_chip);
- }
--arch_initcall(ls2f_gpio_setup);
-+postcore_initcall(loongson_gpio_setup);
--- 
-1.7.7.3
-
+SSdtIHNvcnJ5IHRoYXQgSSBmb3Jnb3QgdG8gYWRkICdWMicgdG8gdGhlIHBhdGNoIHRpdGxl
+Li4uDQogDQpIdWFjYWkNCiANCi0tLS0tLS0tLS0tLS0tLS0tLSBPcmlnaW5hbCAtLS0tLS0t
+LS0tLS0tLS0tLS0NCkZyb206ICAiSHVhY2FpIENoZW4iPGNoZW5oY0BsZW1vdGUuY29tPjsN
+CkRhdGU6ICBXZWQsIEFwciAxLCAyMDE1IDEwOjIwIEFNDQpUbzogICJMaW51cyBXYWxsZWlq
+IjxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+OyANCkNjOiAgIkFsZXhhbmRyZSBDb3VyYm90
+IjxnbnVyb3VAZ21haWwuY29tPjsgImxpbnV4LWdwaW8iPGxpbnV4LWdwaW9Admdlci5rZXJu
+ZWwub3JnPjsgIkZ1eGluIFpoYW5nIjx6aGFuZ2Z4QGxlbW90ZS5jb20+OyAid3V6aGFuZ2pp
+biI8d3V6aGFuZ2ppbkBnbWFpbC5jb20+OyAiSHVhY2FpIENoZW4iPGNoZW5oY0BsZW1vdGUu
+Y29tPjsgDQpTdWJqZWN0OiAgW1BBVENIIDEvM10gTUlQUzogQ2xlYW51cCBMb29uZ3Nvbi0y
+RidzIGdwaW8gZHJpdmVyDQoNCiANClRoaXMgY2xlYW51cCBpcyBwcmVwYXJlIHRvIG1vdmUg
+dGhlIGRyaXZlciB0byBkcml2ZXJzL2dwaW8uIEN1c3RvbQ0KZGVmaW5pdGlvbnMgb2YgZ3Bp
+b19nZXRfdmFsdWUoKS9ncGlvX3NldF92YWx1ZSgpIGFyZSBkcm9wcGVkLg0KDQpBY2tlZC1i
+eTogUmFsZiBCYWVjaGxlIDxyYWxmQGxpbnV4LW1pcHMub3JnPg0KU2lnbmVkLW9mZi1ieTog
+SHVhY2FpIENoZW4gPGNoZW5oY0BsZW1vdGUuY29tPg0KLS0tDQogYXJjaC9taXBzL2luY2x1
+ZGUvYXNtL21hY2gtbG9vbmdzb24vZ3Bpby5oIHwgICAxNSArKystLS0NCiBhcmNoL21pcHMv
+bG9vbmdzb24vY29tbW9uL2dwaW8uYyAgICAgICAgICAgfCAgIDgwICsrKysrKysrLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCiAyIGZpbGVzIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKyksIDY0
+IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC9taXBzL2luY2x1ZGUvYXNtL21h
+Y2gtbG9vbmdzb24vZ3Bpby5oIGIvYXJjaC9taXBzL2luY2x1ZGUvYXNtL21hY2gtbG9vbmdz
+b24vZ3Bpby5oDQppbmRleCAyMTFhN2I3Li5iM2IyMTY5IDEwMDY0NA0KLS0tIGEvYXJjaC9t
+aXBzL2luY2x1ZGUvYXNtL21hY2gtbG9vbmdzb24vZ3Bpby5oDQorKysgYi9hcmNoL21pcHMv
+aW5jbHVkZS9hc20vbWFjaC1sb29uZ3Nvbi9ncGlvLmgNCkBAIC0xLDggKzEsOSBAQA0KIC8q
+DQotICogU1RMUzJGIEdQSU8gU3VwcG9ydA0KKyAqIExvb25nc29uIEdQSU8gU3VwcG9ydA0K
+ICAqDQogICogQ29weXJpZ2h0IChjKSAyMDA4ICBSaWNoYXJkIExpdSwgU1RNaWNyb2VsZWN0
+cm9uaWNzIDxyaWNoYXJkLmxpdUBzdC5jb20+DQogICogQ29weXJpZ2h0IChjKSAyMDA4LTIw
+MTAgIEFybmF1ZCBQYXRhcmQgPGFwYXRhcmRAbWFuZHJpdmEuY29tPg0KKyAqIENvcHlyaWdo
+dCAoYykgMjAxNCAgSHVhY2FpIENoZW4gPGNoZW5oY0BsZW1vdGUuY29tPg0KICAqDQogICog
+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0
+IGFuZC9vciBtb2RpZnkNCiAgKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5l
+cmFsIFB1YmxpYyBMaWNlbnNlIGFzIHB1Ymxpc2hlZCBieQ0KQEAgLTEwLDE0ICsxMSwxNCBA
+QA0KICAqIChhdCB5b3VyIG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uDQogICovDQogDQot
+I2lmbmRlZiBfX1NUTFMyRl9HUElPX0gNCi0jZGVmaW5lIF9fU1RMUzJGX0dQSU9fSA0KKyNp
+Zm5kZWYgX19MT09OR1NPTl9HUElPX0gNCisjZGVmaW5lIF9fTE9PTkdTT05fR1BJT19IDQog
+DQogI2luY2x1ZGUgPGFzbS1nZW5lcmljL2dwaW8uaD4NCiANCi1leHRlcm4gdm9pZCBncGlv
+X3NldF92YWx1ZSh1bnNpZ25lZCBncGlvLCBpbnQgdmFsdWUpOw0KLWV4dGVybiBpbnQgZ3Bp
+b19nZXRfdmFsdWUodW5zaWduZWQgZ3Bpbyk7DQotZXh0ZXJuIGludCBncGlvX2NhbnNsZWVw
+KHVuc2lnbmVkIGdwaW8pOw0KKyNkZWZpbmUgZ3Bpb19nZXRfdmFsdWUgX19ncGlvX2dldF92
+YWx1ZQ0KKyNkZWZpbmUgZ3Bpb19zZXRfdmFsdWUgX19ncGlvX3NldF92YWx1ZQ0KKyNkZWZp
+bmUgZ3Bpb19jYW5zbGVlcCBfX2dwaW9fY2Fuc2xlZXANCiANCiAvKiBUaGUgY2hpcCBjYW4g
+ZG8gaW50ZXJydXB0DQogICogYnV0IGl0IGhhcyBub3QgYmVlbiB0ZXN0ZWQgYW5kIGRvYyBu
+b3QgY2xlYXINCkBAIC0zMiw0ICszMyw0IEBAIHN0YXRpYyBpbmxpbmUgaW50IGlycV90b19n
+cGlvKGludCBncGlvKQ0KIAlyZXR1cm4gLUVJTlZBTDsNCiB9DQogDQotI2VuZGlmCQkJCS8q
+IF9fU1RMUzJGX0dQSU9fSCAqLw0KKyNlbmRpZgkvKiBfX0xPT05HU09OX0dQSU9fSCAqLw0K
+ZGlmZiAtLWdpdCBhL2FyY2gvbWlwcy9sb29uZ3Nvbi9jb21tb24vZ3Bpby5jIGIvYXJjaC9t
+aXBzL2xvb25nc29uL2NvbW1vbi9ncGlvLmMNCmluZGV4IDI5ZGJhYTIuLmI0ZTY5ZTAgMTAw
+NjQ0DQotLS0gYS9hcmNoL21pcHMvbG9vbmdzb24vY29tbW9uL2dwaW8uYw0KKysrIGIvYXJj
+aC9taXBzL2xvb25nc29uL2NvbW1vbi9ncGlvLmMNCkBAIC0yNCw2MyArMjQsMTEgQEANCiAN
+CiBzdGF0aWMgREVGSU5FX1NQSU5MT0NLKGdwaW9fbG9jayk7DQogDQotaW50IGdwaW9fZ2V0
+X3ZhbHVlKHVuc2lnbmVkIGdwaW8pDQotew0KLQl1MzIgdmFsOw0KLQl1MzIgbWFzazsNCi0N
+Ci0JaWYgKGdwaW8gPj0gU1RMUzJGX05fR1BJTykNCi0JCXJldHVybiBfX2dwaW9fZ2V0X3Zh
+bHVlKGdwaW8pOw0KLQ0KLQltYXNrID0gMSA8PCAoZ3BpbyArIFNUTFMyRl9HUElPX0lOX09G
+RlNFVCk7DQotCXNwaW5fbG9jaygmZ3Bpb19sb2NrKTsNCi0JdmFsID0gTE9PTkdTT05fR1BJ
+T0RBVEE7DQotCXNwaW5fdW5sb2NrKCZncGlvX2xvY2spOw0KLQ0KLQlyZXR1cm4gKHZhbCAm
+IG1hc2spICE9IDA7DQotfQ0KLUVYUE9SVF9TWU1CT0woZ3Bpb19nZXRfdmFsdWUpOw0KLQ0K
+LXZvaWQgZ3Bpb19zZXRfdmFsdWUodW5zaWduZWQgZ3BpbywgaW50IHN0YXRlKQ0KLXsNCi0J
+dTMyIHZhbDsNCi0JdTMyIG1hc2s7DQotDQotCWlmIChncGlvID49IFNUTFMyRl9OX0dQSU8p
+IHsNCi0JCV9fZ3Bpb19zZXRfdmFsdWUoZ3Bpbywgc3RhdGUpOw0KLQkJcmV0dXJuIDsNCi0J
+fQ0KLQ0KLQltYXNrID0gMSA8PCBncGlvOw0KLQ0KLQlzcGluX2xvY2soJmdwaW9fbG9jayk7
+DQotCXZhbCA9IExPT05HU09OX0dQSU9EQVRBOw0KLQlpZiAoc3RhdGUpDQotCQl2YWwgfD0g
+bWFzazsNCi0JZWxzZQ0KLQkJdmFsICY9ICh+bWFzayk7DQotCUxPT05HU09OX0dQSU9EQVRB
+ID0gdmFsOw0KLQlzcGluX3VubG9jaygmZ3Bpb19sb2NrKTsNCi19DQotRVhQT1JUX1NZTUJP
+TChncGlvX3NldF92YWx1ZSk7DQotDQotaW50IGdwaW9fY2Fuc2xlZXAodW5zaWduZWQgZ3Bp
+bykNCi17DQotCWlmIChncGlvIDwgU1RMUzJGX05fR1BJTykNCi0JCXJldHVybiAwOw0KLQll
+bHNlDQotCQlyZXR1cm4gX19ncGlvX2NhbnNsZWVwKGdwaW8pOw0KLX0NCi1FWFBPUlRfU1lN
+Qk9MKGdwaW9fY2Fuc2xlZXApOw0KLQ0KIHN0YXRpYyBpbnQgbHMyZl9ncGlvX2RpcmVjdGlv
+bl9pbnB1dChzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNpZ25lZCBncGlvKQ0KIHsNCiAJ
+dTMyIHRlbXA7DQogCXUzMiBtYXNrOw0KIA0KLQlpZiAoZ3BpbyA+PSBTVExTMkZfTl9HUElP
+KQ0KLQkJcmV0dXJuIC1FSU5WQUw7DQotDQogCXNwaW5fbG9jaygmZ3Bpb19sb2NrKTsNCiAJ
+bWFzayA9IDEgPDwgZ3BpbzsNCiAJdGVtcCA9IExPT05HU09OX0dQSU9JRTsNCkBAIC05Nyw5
+ICs0NSw2IEBAIHN0YXRpYyBpbnQgbHMyZl9ncGlvX2RpcmVjdGlvbl9vdXRwdXQoc3RydWN0
+IGdwaW9fY2hpcCAqY2hpcCwNCiAJdTMyIHRlbXA7DQogCXUzMiBtYXNrOw0KIA0KLQlpZiAo
+Z3BpbyA+PSBTVExTMkZfTl9HUElPKQ0KLQkJcmV0dXJuIC1FSU5WQUw7DQotDQogCWdwaW9f
+c2V0X3ZhbHVlKGdwaW8sIGxldmVsKTsNCiAJc3Bpbl9sb2NrKCZncGlvX2xvY2spOw0KIAlt
+YXNrID0gMSA8PCBncGlvOw0KQEAgLTExMywxMyArNTgsMzMgQEAgc3RhdGljIGludCBsczJm
+X2dwaW9fZGlyZWN0aW9uX291dHB1dChzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLA0KIA0KIHN0
+YXRpYyBpbnQgbHMyZl9ncGlvX2dldF92YWx1ZShzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1
+bnNpZ25lZCBncGlvKQ0KIHsNCi0JcmV0dXJuIGdwaW9fZ2V0X3ZhbHVlKGdwaW8pOw0KKwl1
+MzIgdmFsOw0KKwl1MzIgbWFzazsNCisNCisJbWFzayA9IDEgPDwgKGdwaW8gKyBTVExTMkZf
+R1BJT19JTl9PRkZTRVQpOw0KKwlzcGluX2xvY2soJmdwaW9fbG9jayk7DQorCXZhbCA9IExP
+T05HU09OX0dQSU9EQVRBOw0KKwlzcGluX3VubG9jaygmZ3Bpb19sb2NrKTsNCisNCisJcmV0
+dXJuICh2YWwgJiBtYXNrKSAhPSAwOw0KIH0NCiANCiBzdGF0aWMgdm9pZCBsczJmX2dwaW9f
+c2V0X3ZhbHVlKHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsDQogCQl1bnNpZ25lZCBncGlvLCBp
+bnQgdmFsdWUpDQogew0KLQlncGlvX3NldF92YWx1ZShncGlvLCB2YWx1ZSk7DQorCXUzMiB2
+YWw7DQorCXUzMiBtYXNrOw0KKw0KKwltYXNrID0gMSA8PCBncGlvOw0KKw0KKwlzcGluX2xv
+Y2soJmdwaW9fbG9jayk7DQorCXZhbCA9IExPT05HU09OX0dQSU9EQVRBOw0KKwlpZiAodmFs
+dWUpDQorCQl2YWwgfD0gbWFzazsNCisJZWxzZQ0KKwkJdmFsICY9ICh+bWFzayk7DQorCUxP
+T05HU09OX0dQSU9EQVRBID0gdmFsOw0KKwlzcGluX3VubG9jaygmZ3Bpb19sb2NrKTsNCiB9
+DQogDQogc3RhdGljIHN0cnVjdCBncGlvX2NoaXAgbHMyZl9jaGlwID0gew0KQEAgLTEzMCw2
+ICs5NSw3IEBAIHN0YXRpYyBzdHJ1Y3QgZ3Bpb19jaGlwIGxzMmZfY2hpcCA9IHsNCiAJLnNl
+dAkJCT0gbHMyZl9ncGlvX3NldF92YWx1ZSwNCiAJLmJhc2UJCQk9IDAsDQogCS5uZ3BpbwkJ
+CT0gU1RMUzJGX05fR1BJTywNCisJLmNhbl9zbGVlcAkJPSBmYWxzZSwNCiB9Ow0KIA0KIHN0
+YXRpYyBpbnQgX19pbml0IGxzMmZfZ3Bpb19zZXR1cCh2b2lkKQ0KLS0gDQoxLjcuNy4z
 
