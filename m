@@ -1,50 +1,81 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Wed, 1 Apr 2015 15:45:20 +0800
-Message-ID: <15EE7657-76F1-4AD4-B90B-C6A166301154@jcrosoft.com>
-References: <1426878721-2618-1-git-send-email-alexanders83@web.de>
- <CACRpkdapp8vGFHJA+WrZzRk503zoAzrz3HaVGYXH+CHRDaLaDg@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2070.6\))
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdapp8vGFHJA+WrZzRk503zoAzrz3HaVGYXH+CHRDaLaDg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexanders83@web.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2] Documentation: gpio: Update ACPI part of the document to mention _DSD
+Date: Wed,  1 Apr 2015 11:13:16 +0300
+Message-ID: <1427875996-216926-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:41724 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750784AbbDAINV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 1 Apr 2015 04:13:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Darren Hart <dvhart@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-J
-> On Mar 27, 2015, at 5:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> On Fri, Mar 20, 2015 at 8:12 PM, Alexander Stein <alexanders83@web.de> wrote:
-> 
->> This adds the callback for set_multiple.
->> As this controller has a separate set and clear register, we can't write
->> directly to PIO_ODSR as this would required a cached variable and would
->> race with at91_gpio_set.
->> So build masks for the PIO_SODR and PIO_CODR registers and write them
->> together.
->> 
->> Signed-off-by: Alexander Stein <alexanders83@web.de>
->> ---
->> This was tested by using an own test driver which uses
->> gpiod_set_array_cansleep to set multiple GPIOs at once.
-> 
-> I remember J-C brought this up ages ago, so I hope he will be delighted
-> to see we can now, FINALLY, do this!
-> 
-> J-C can I have your review on this?
+With ACPI 5.1 _DSD (Device Specific Data) it is now possible to name
+functions just like Device Tree is doing. Make sure that the documentation
+mentions _DSD as the recommended way to describe GPIOs in ACPI systems.
 
-I will check it tonight
+Reported-by: Darren Hart <dvhart@linux.intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+v2: Corrected text according what Darren suggested
 
-Best Regards,
-J.
+ Documentation/gpio/board.txt | 41 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+index 8b35f51fe7b6..b80606de545a 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -50,10 +50,43 @@ gpiod_is_active_low(power) will be true).
+ 
+ ACPI
+ ----
+-ACPI does not support function names for GPIOs. Therefore, only the "idx"
+-argument of gpiod_get_index() is useful to discriminate between GPIOs assigned
+-to a device. The "con_id" argument can still be set for debugging purposes (it
+-will appear under error messages as well as debug and sysfs nodes).
++ACPI also supports function names for GPIOs in a similar fashion to DT.
++The above DT example can be converted to an equivalent ACPI description
++with the help of _DSD (Device Specific Data), introduced in ACPI 5.1:
++
++	Device (FOO) {
++		Name (_CRS, ResourceTemplate () {
++			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
++				"\\_SB.GPI0") {15} // red
++			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
++				"\\_SB.GPI0") {16} // green
++			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
++				"\\_SB.GPI0") {17} // blue
++			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
++				"\\_SB.GPI0") {1} // power
++		})
++
++		Name (_DSD, Package () {
++			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
++			Package () {
++				Package () {
++					"led-gpios",
++					Package () {
++						^FOO, 0, 0, 1,
++						^FOO, 1, 0, 1,
++						^FOO, 2, 0, 1,
++					}
++				},
++				Package () {
++					"power-gpios",
++					Package () {^FOO, 3, 0, 0},
++				},
++			}
++		})
++	}
++
++For more information about the ACPI GPIO bindings see
++Documentation/acpi/gpio-properties.txt.
+ 
+ Platform Data
+ -------------
+-- 
+2.1.4
+
