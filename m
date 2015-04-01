@@ -1,81 +1,43 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2] Documentation: gpio: Update ACPI part of the document to mention _DSD
-Date: Wed,  1 Apr 2015 11:13:16 +0300
-Message-ID: <1427875996-216926-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:41724 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750784AbbDAINV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 1 Apr 2015 04:13:21 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v4 10/15] serial: stm32-usart: Add STM32 USART Driver
+Date: Wed, 1 Apr 2015 10:36:58 +0200
+Message-ID: <CALszF6AKw-F1RVc5m2As7upp7ZuS7GpcJSoqixms3Dd4SNU9EQ@mail.gmail.com>
+References: <1427819096-31109-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1427819096-31109-11-git-send-email-mcoquelin.stm32@gmail.com>
+	<CAHp75VeUzKUEo7NCaXUYKBPpG7JYCykB+76Wu5tBKj750Bi+Qg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VeUzKUEo7NCaXUYKBPpG7JYCykB+76Wu5tBKj750Bi+Qg@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Darren Hart <dvhart@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-With ACPI 5.1 _DSD (Device Specific Data) it is now possible to name
-functions just like Device Tree is doing. Make sure that the documentation
-mentions _DSD as the recommended way to describe GPIOs in ACPI systems.
+Hello Andy,
 
-Reported-by: Darren Hart <dvhart@linux.intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-v2: Corrected text according what Darren suggested
+2015-03-31 18:45 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> On Tue, Mar 31, 2015 at 7:24 PM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
+>> This drivers adds support to the STM32 USART controller, which is a
+>> standard serial driver.
+>>
+>> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>
+> Few minor comments below.
 
- Documentation/gpio/board.txt | 41 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 37 insertions(+), 4 deletions(-)
+All your comments are valid, I will send a v5 shortly fixing this.
 
-diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
-index 8b35f51fe7b6..b80606de545a 100644
---- a/Documentation/gpio/board.txt
-+++ b/Documentation/gpio/board.txt
-@@ -50,10 +50,43 @@ gpiod_is_active_low(power) will be true).
- 
- ACPI
- ----
--ACPI does not support function names for GPIOs. Therefore, only the "idx"
--argument of gpiod_get_index() is useful to discriminate between GPIOs assigned
--to a device. The "con_id" argument can still be set for debugging purposes (it
--will appear under error messages as well as debug and sysfs nodes).
-+ACPI also supports function names for GPIOs in a similar fashion to DT.
-+The above DT example can be converted to an equivalent ACPI description
-+with the help of _DSD (Device Specific Data), introduced in ACPI 5.1:
-+
-+	Device (FOO) {
-+		Name (_CRS, ResourceTemplate () {
-+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
-+				"\\_SB.GPI0") {15} // red
-+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
-+				"\\_SB.GPI0") {16} // green
-+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
-+				"\\_SB.GPI0") {17} // blue
-+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
-+				"\\_SB.GPI0") {1} // power
-+		})
-+
-+		Name (_DSD, Package () {
-+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-+			Package () {
-+				Package () {
-+					"led-gpios",
-+					Package () {
-+						^FOO, 0, 0, 1,
-+						^FOO, 1, 0, 1,
-+						^FOO, 2, 0, 1,
-+					}
-+				},
-+				Package () {
-+					"power-gpios",
-+					Package () {^FOO, 3, 0, 0},
-+				},
-+			}
-+		})
-+	}
-+
-+For more information about the ACPI GPIO bindings see
-+Documentation/acpi/gpio-properties.txt.
- 
- Platform Data
- -------------
--- 
-2.1.4
+Thanks for the review,
+Maxime
 
+>
+>> ---
+>>  drivers/tty/serial/Kconfig       |  17 +
+>>  drivers/tty/serial/Makefile      |   1 +
+>>  drivers/tty/serial/stm32-usart.c | 743 +++++++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/serial_core.h |   3 +
+>>  4 files changed, 764 insertions(+)
+>>  create mode 100644 drivers/tty/serial/stm32-usart.c
+>>
