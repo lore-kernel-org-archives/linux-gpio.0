@@ -1,49 +1,119 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH V2 3/3] pinctrl: Add Pistachio SoC pin control driver
-Date: Tue, 31 Mar 2015 20:55:08 +0200
-Message-ID: <1427828108.2408.73.camel@x220>
-References: <1427757416-14491-1-git-send-email-abrestic@chromium.org>
-	 <1427757416-14491-4-git-send-email-abrestic@chromium.org>
-	 <1427789415.2408.45.camel@x220>
-	 <CAL1qeaG70_42p8r9ogHxMv2h-yx_TENYV_gZbX1wQMhqSaiFpg@mail.gmail.com>
-	 <1427826015.2408.63.camel@x220>
-	 <CAL1qeaHg2oLbnxCmk_TaxRMYA6vM8cfgUeLk=i7Q5b1CJfS9LQ@mail.gmail.com>
+From: Darren Hart <dvhart@linux.intel.com>
+Subject: Re: [PATCH] Documentation: gpio: Update ACPI part of the document to
+ mention _DSD
+Date: Tue, 31 Mar 2015 17:19:21 -0700
+Message-ID: <D14086D9.C4A08%dvhart@linux.intel.com>
+References: <1427802195-221906-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:53699 "EHLO
-	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751092AbbCaSzL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 31 Mar 2015 14:55:11 -0400
-In-Reply-To: <CAL1qeaHg2oLbnxCmk_TaxRMYA6vM8cfgUeLk=i7Q5b1CJfS9LQ@mail.gmail.com>
+Received: from mga09.intel.com ([134.134.136.24]:20793 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751092AbbDAATu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 31 Mar 2015 20:19:50 -0400
+In-Reply-To: <1427802195-221906-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
 
-Hi Andrew,
+On 3/31/15, 4:43 AM, "Mika Westerberg" <mika.westerberg@linux.intel.com>
+wrote:
 
-On Tue, 2015-03-31 at 11:37 -0700, Andrew Bresticker wrote:
-> I have no immediate plans to make this a module, but since the changes
-> to make it buildable as a module have no overhead (at least I think
-> they don't!) I'd prefer to leave them in for consistency and to
-> eliminate any need for these changes in the future.
+>With ACPI 5.1 _DSD (Device Specific Data) it is now possible to name
+>functions just like Device Tree is doing. Make sure that the documentation
+>mentions _DSD as the recommended way to describe GPIOs in ACPI systems.
+>
+>Reported-by: Darren Hart <dvhart@linux.intel.com>
+>Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-The people reading the code or reviewing the patch might wonder, just
-like I did, about the mismatch between the code and the Kconfig symbol.
+Thanks Mika! Couple of nits below to help it read a little better.
 
-Dead code - even if it's easily dealt with during the build - shouldn't
-be added without a clear benefit. And I don't think consistency or doing
-now what might be done in the future bring enough benefits.
+>---
+> Documentation/gpio/board.txt | 41
+>+++++++++++++++++++++++++++++++++++++----
+> 1 file changed, 37 insertions(+), 4 deletions(-)
+>
+>diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+>index 8b35f51fe7b6..b68cfa8a6865 100644
+>--- a/Documentation/gpio/board.txt
+>+++ b/Documentation/gpio/board.txt
+>@@ -50,10 +50,43 @@ gpiod_is_active_low(power) will be true).
+> 
+> ACPI
+> ----
+>-ACPI does not support function names for GPIOs. Therefore, only the "idx"
+>-argument of gpiod_get_index() is useful to discriminate between GPIOs
+>assigned
+>-to a device. The "con_id" argument can still be set for debugging
+>purposes (it
+>-will appear under error messages as well as debug and sysfs nodes).
+>+ACPI does also support function names for GPIOs in similar fashion than
+>DT.
 
-> I'll leave it up to LinusW though.
+ACPI also supports function names for GPIOs in a similar fashion to DT.
 
-Right, it's Linus decision.
+>+The above DT example can be converted to corresponding ACPI version with
 
-Thanks,
+... to an equivalent ACPI description with
+
+>+the help of _DSD (Device Specific Data) which was introduced in ACPI 5.1:
 
 
-Paul Bolle
+s/ which was/, /
+
+
+--
+Darren
+
+>+
+>+	Device (FOO) {
+>+		Name (_CRS, ResourceTemplate () {
+>+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+>+				"\\_SB.GPI0") {15} // red
+>+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+>+				"\\_SB.GPI0") {16} // green
+>+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+>+				"\\_SB.GPI0") {17} // blue
+>+			GpioIo (Exclusive, ..., IoRestrictionOutputOnly,
+>+				"\\_SB.GPI0") {1} // power
+>+		})
+>+
+>+		Name (_DSD, Package () {
+>+			ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+>+			Package () {
+>+				Package () {
+>+					"led-gpios",
+>+					Package () {
+>+						^FOO, 0, 0, 1,
+>+						^FOO, 1, 0, 1,
+>+						^FOO, 2, 0, 1,
+>+					}
+>+				},
+>+				Package () {
+>+					"power-gpios",
+>+					Package () {^FOO, 3, 0, 0},
+>+				},
+>+			}
+>+		})
+>+	}
+>+
+>+For more information about the ACPI GPIO bindings see
+>+Documentation/acpi/gpio-properties.txt.
+> 
+> Platform Data
+> -------------
+>-- 
+>2.1.4
+>
+>
+
+
+-- 
+Darren Hart
+Intel Open Source Technology Center
+
+
 
