@@ -1,74 +1,111 @@
-From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v3 1/1] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Thu,  2 Apr 2015 11:55:49 +0200
-Message-ID: <1427968549-19837-1-git-send-email-alexanders83@web.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:57315 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752347AbbDBJ4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 2 Apr 2015 05:56:03 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH] gpio: mvebu: Fix mask/unmask managment per irq chip type
+Date: Thu,  2 Apr 2015 17:11:11 +0200
+Message-ID: <1427987471-20419-1-git-send-email-gregory.clement@free-electrons.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Lior Amsalem <alior@marvell.com>, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexanders83@web.de>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-This adds the callback for set_multiple.
-As this controller has a separate set and clear register, we can't write
-directly to PIO_ODSR as this would required a cached variable and would
-race with at91_gpio_set.
-So build masks for the PIO_SODR and PIO_CODR registers and write them
-together.
+Level IRQ handlers and edge IRQ handler are managed by tow different
+sets of registers. But currently the driver uses the same mask for the
+both registers. It lead to issues with the following scenario:
 
-Signed-off-by: Alexander Stein <alexanders83@web.de>
+First, an IRQ is requested on a GPIO to be triggered on front. After,
+this an other IRQ is requested for a GPIO of the same bank but
+triggered on level. Then the first one will be also setup to be
+triggered on level. It leads to an interrupt storm.
+
+The different kind of handler are already associated with two
+different irq chip type. With this patch the driver uses a private
+mask for each one which solves this issue.
+
+It has been tested on an Armada XP based board and on an Armada 375
+board. For the both boards, with this patch is applied, there is no
+such interrupt storm when running the previous scenario.
+
+This bug was already fixed but in a different way in the legacy
+version of this driver by Evgeniy Dushistov:
+9ece8839b1277fb9128ff6833411614ab6c88d68 "ARM: orion: Fix for certain
+sequence of request_irq can cause irq storm". The fact the new version
+of the gpio drive could be affected had been discussed there:
+http://thread.gmane.org/gmane.linux.ports.arm.kernel/344670/focus=364012
+
+Reported-by: Evgeniy A. Dushistov <dushistov@mail.ru>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: <stable@vger.kernel.org> # v3.7 +
 ---
-I Just realized that some implementations have less than 32 pins. Thus
-BITS_MASK(chip->ngpio) as suggested by Jean-Christophe is actually required.
-I missed that, sorry for the noise.
+ drivers/gpio/gpio-mvebu.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-Changes in v3:
-* As not all GPIO controllers have 32 pins take ngpio into account
-  Mask the set- and clear-mask to the supported GPIO pins
-Changes in v2:
-* Greatly simplyfied the implementation: Generate the set- and clear-mask
-  directly from 'mask' and 'bits'
-
- drivers/pinctrl/pinctrl-at91.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index a4814066ea08..f1b0bfb94fcb 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1330,6 +1330,21 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
- 	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index d0bc123c7975..1a54205860f5 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -320,11 +320,13 @@ static void mvebu_gpio_edge_irq_mask(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct mvebu_gpio_chip *mvchip = gc->private;
++	struct irq_chip_type *ct = irq_data_get_chip_type(d);
+ 	u32 mask = 1 << (d->irq - gc->irq_base);
+ 
+ 	irq_gc_lock(gc);
+-	gc->mask_cache &= ~mask;
+-	writel_relaxed(gc->mask_cache, mvebu_gpioreg_edge_mask(mvchip));
++	ct->mask_cache_priv &= ~mask;
++
++	writel_relaxed(ct->mask_cache_priv, mvebu_gpioreg_edge_mask(mvchip));
+ 	irq_gc_unlock(gc);
  }
  
-+static void at91_gpio_set_multiple(struct gpio_chip *chip,
-+				      unsigned long *mask, unsigned long *bits)
-+{
-+	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
-+	void __iomem *pio = at91_gpio->regbase;
-+
-+#define BITS_MASK(bits) (((bits) == 32) ? ~0U : (BIT(bits) - 1))
-+	/* Mask additionally to ngpio as not all GPIO controllers have 32 pins */
-+	uint32_t set_mask = (*mask & *bits) & BITS_MASK(chip->ngpio);
-+	uint32_t clear_mask = (*mask & ~(*bits)) & BITS_MASK(chip->ngpio);
-+
-+	writel_relaxed(set_mask, pio + PIO_SODR);
-+	writel_relaxed(clear_mask, pio + PIO_CODR);
-+}
-+
- static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				int val)
+@@ -332,11 +334,13 @@ static void mvebu_gpio_edge_irq_unmask(struct irq_data *d)
  {
-@@ -1689,6 +1704,7 @@ static struct gpio_chip at91_gpio_template = {
- 	.get			= at91_gpio_get,
- 	.direction_output	= at91_gpio_direction_output,
- 	.set			= at91_gpio_set,
-+	.set_multiple		= at91_gpio_set_multiple,
- 	.dbg_show		= at91_gpio_dbg_show,
- 	.can_sleep		= false,
- 	.ngpio			= MAX_NB_GPIO_PER_BANK,
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct mvebu_gpio_chip *mvchip = gc->private;
++	struct irq_chip_type *ct = irq_data_get_chip_type(d);
++
+ 	u32 mask = 1 << (d->irq - gc->irq_base);
+ 
+ 	irq_gc_lock(gc);
+-	gc->mask_cache |= mask;
+-	writel_relaxed(gc->mask_cache, mvebu_gpioreg_edge_mask(mvchip));
++	ct->mask_cache_priv |= mask;
++	writel_relaxed(ct->mask_cache_priv, mvebu_gpioreg_edge_mask(mvchip));
+ 	irq_gc_unlock(gc);
+ }
+ 
+@@ -344,11 +348,13 @@ static void mvebu_gpio_level_irq_mask(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct mvebu_gpio_chip *mvchip = gc->private;
++	struct irq_chip_type *ct = irq_data_get_chip_type(d);
++
+ 	u32 mask = 1 << (d->irq - gc->irq_base);
+ 
+ 	irq_gc_lock(gc);
+-	gc->mask_cache &= ~mask;
+-	writel_relaxed(gc->mask_cache, mvebu_gpioreg_level_mask(mvchip));
++	ct->mask_cache_priv &= ~mask;
++	writel_relaxed(ct->mask_cache_priv, mvebu_gpioreg_level_mask(mvchip));
+ 	irq_gc_unlock(gc);
+ }
+ 
+@@ -356,11 +362,13 @@ static void mvebu_gpio_level_irq_unmask(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct mvebu_gpio_chip *mvchip = gc->private;
++	struct irq_chip_type *ct = irq_data_get_chip_type(d);
++
+ 	u32 mask = 1 << (d->irq - gc->irq_base);
+ 
+ 	irq_gc_lock(gc);
+-	gc->mask_cache |= mask;
+-	writel_relaxed(gc->mask_cache, mvebu_gpioreg_level_mask(mvchip));
++	ct->mask_cache_priv |= mask;
++	writel_relaxed(ct->mask_cache_priv, mvebu_gpioreg_level_mask(mvchip));
+ 	irq_gc_unlock(gc);
+ }
+ 
 -- 
-2.3.4
-
+2.1.0
