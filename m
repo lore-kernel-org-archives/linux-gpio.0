@@ -1,12 +1,12 @@
 From: Alexander Stein <alexanders83@web.de>
-Subject: [PATCH v2 1/1] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Thu,  2 Apr 2015 11:43:18 +0200
-Message-ID: <1427967798-6962-1-git-send-email-alexanders83@web.de>
+Subject: [PATCH v3 1/1] pinctrl: at91: Add set_multiple GPIO chip feature
+Date: Thu,  2 Apr 2015 11:55:49 +0200
+Message-ID: <1427968549-19837-1-git-send-email-alexanders83@web.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:58439 "EHLO mout.web.de"
+Received: from mout.web.de ([212.227.15.4]:57315 "EHLO mout.web.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750711AbbDBJni (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 2 Apr 2015 05:43:38 -0400
+	id S1752347AbbDBJ4D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 2 Apr 2015 05:56:03 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linus Walleij <linus.walleij@linaro.org>
@@ -21,21 +21,25 @@ together.
 
 Signed-off-by: Alexander Stein <alexanders83@web.de>
 ---
+I Just realized that some implementations have less than 32 pins. Thus
+BITS_MASK(chip->ngpio) as suggested by Jean-Christophe is actually required.
+I missed that, sorry for the noise.
+
+Changes in v3:
+* As not all GPIO controllers have 32 pins take ngpio into account
+  Mask the set- and clear-mask to the supported GPIO pins
 Changes in v2:
 * Greatly simplyfied the implementation: Generate the set- and clear-mask
   directly from 'mask' and 'bits'
 
-I skipped the 'Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>'
-due to the new implementation.
-
- drivers/pinctrl/pinctrl-at91.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/pinctrl/pinctrl-at91.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index a4814066ea08..3a7b008a9a4e 100644
+index a4814066ea08..f1b0bfb94fcb 100644
 --- a/drivers/pinctrl/pinctrl-at91.c
 +++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1330,6 +1330,18 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
+@@ -1330,6 +1330,21 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
  }
  
@@ -44,8 +48,11 @@ index a4814066ea08..3a7b008a9a4e 100644
 +{
 +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
 +	void __iomem *pio = at91_gpio->regbase;
-+	uint32_t set_mask = *mask & *bits;
-+	uint32_t clear_mask = *mask & ~(*bits);
++
++#define BITS_MASK(bits) (((bits) == 32) ? ~0U : (BIT(bits) - 1))
++	/* Mask additionally to ngpio as not all GPIO controllers have 32 pins */
++	uint32_t set_mask = (*mask & *bits) & BITS_MASK(chip->ngpio);
++	uint32_t clear_mask = (*mask & ~(*bits)) & BITS_MASK(chip->ngpio);
 +
 +	writel_relaxed(set_mask, pio + PIO_SODR);
 +	writel_relaxed(clear_mask, pio + PIO_CODR);
@@ -54,7 +61,7 @@ index a4814066ea08..3a7b008a9a4e 100644
  static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
  				int val)
  {
-@@ -1689,6 +1701,7 @@ static struct gpio_chip at91_gpio_template = {
+@@ -1689,6 +1704,7 @@ static struct gpio_chip at91_gpio_template = {
  	.get			= at91_gpio_get,
  	.direction_output	= at91_gpio_direction_output,
  	.set			= at91_gpio_set,
