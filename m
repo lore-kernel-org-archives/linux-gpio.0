@@ -1,102 +1,103 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
-Date: Thu, 2 Apr 2015 10:30:18 +0200
-Message-ID: <20150402083018.GC26864@ns203013.ovh.net>
-References: <1426878721-2618-1-git-send-email-alexanders83@web.de>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [RFC PATCH 0/4] pinctrl: prototyping a per pin mux approach
+Date: Thu, 2 Apr 2015 11:38:12 +0200
+Message-ID: <1427967496-22533-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mo68.mail-out.ovh.net ([178.32.228.68]:53957 "EHLO
-	mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751306AbbDBIaW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2015 04:30:22 -0400
-Received: from mail610.ha.ovh.net (b9.ovh.net [213.186.33.59])
-	by mo68.mail-out.ovh.net (Postfix) with SMTP id 1EEB4FFA447
-	for <linux-gpio@vger.kernel.org>; Thu,  2 Apr 2015 10:30:21 +0200 (CEST)
-Content-Disposition: inline
-In-Reply-To: <1426878721-2618-1-git-send-email-alexanders83@web.de>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:37139 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753171AbbDBJiM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2015 05:38:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexanders83@web.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, s.hauer@pengutronix.de, tony@atomide.com, nicolas.ferre@atmel.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-On 20:12 Fri 20 Mar     , Alexander Stein wrote:
-> This adds the callback for set_multiple.
-> As this controller has a separate set and clear register, we can't write
-> directly to PIO_ODSR as this would required a cached variable and would
-> race with at91_gpio_set.
-> So build masks for the PIO_SODR and PIO_CODR registers and write them
-> together.
-> 
-> Signed-off-by: Alexander Stein <alexanders83@web.de>
-> ---
-> This was tested by using an own test driver which uses
-> gpiod_set_array_cansleep to set multiple GPIOs at once.
-> 
->  drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index f4cd0b9..a882523 100644
-> --- a/drivers/pinctrl/pinctrl-at91.c
-> +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
->  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
->  }
->  
-> +static void at91_gpio_set_multiple(struct gpio_chip *chip,
-> +				      unsigned long *mask, unsigned long *bits)
-> +{
-> +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
-> +	void __iomem *pio = at91_gpio->regbase;
-> +	unsigned long set_mask;
-> +	unsigned long clear_mask;
-> +	size_t i;
-> +
-> +	set_mask = 0;
-> +	clear_mask = 0;
-> +
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		if (*mask == 0)
-so why do you loop?
-> +			break;
-> +		if (__test_and_clear_bit(i, mask)) {
-> +			if (test_bit(i, bits))
-> +				set_mask |= BIT(i);
-> +			else
-> +				clear_mask |= BIT(i);
-> +		}
-> +	}
 
-just use mask to invert the mask for the CODR
+Hi,
 
-#define BITS_MASK(bits)	(((bits) == 32) ? ~0U : (BIT(bits) - 1))
+Here is an implementation of what I need for the future at91 pin controller.
+The pinctrl driver is a draft made for a sama5d4 in order to test it. 
+It is not clean and many things are missing but I think it will be easier to
+debate on code.
 
-	uint32_t set_mask = *mask & BITS_MASK(chip->ngpio);;
-	uint32_t clear_mask = ~set_mask;
+>From the discussion with Sascha, it seems that we agree that current pinctrl
+doesn't fit the needs of controllers who have per pin muxing because the
+concepts of groups is not real.
+In my opinion, even if groups are not real it is quite convenient to use them
+at least for debug sysfs.
 
-	writel_relaxed(set_mask, pio + PIO_SODR);
-	writel_relaxed(clear_mask, pio + PIO_CODR);
+The new at91 pin controller is close to Mediatek one. I am not totally happy
+with their solution since a group is describing a pin. It is probably the
+easiest way to do it but it doesn't fit my needs. I have two constraints:
 
-Best Regards,
-J.
+- I want something readable in sysfs as:
 
-> +
-> +	writel_relaxed(set_mask, pio + PIO_SODR);
-> +	writel_relaxed(clear_mask, pio + PIO_CODR);
-> +}
-> +
->  static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->  				int val)
->  {
-> @@ -1692,6 +1719,7 @@ static struct gpio_chip at91_gpio_template = {
->  	.get			= at91_gpio_get,
->  	.direction_output	= at91_gpio_direction_output,
->  	.set			= at91_gpio_set,
-> +	.set_multiple		= at91_gpio_set_multiple,
->  	.dbg_show		= at91_gpio_dbg_show,
->  	.can_sleep		= false,
->  	.ngpio			= MAX_NB_GPIO_PER_BANK,
-> -- 
-> 2.3.3
-> 
+device fc000000.mmc
+state default
+type MUX_GROUP (2)
+controlling device ahb:apb:pinctrl@fc06a000
+group mci1_0_4bit
+function C
+
+device fc000000.mmc
+state default
+type CONFIGS_PIN (3)
+controlling device ahb:apb:pinctrl@fc06a000
+pin PE19
+config 00010003
+
+I don't want to have a group named as a pin.
+
+- I want to perform some verifications on user choices. A concept of ioset is
+introduced. An ioset is a set of pins dedicated to a device. A device can have
+several iosets. For example we can have i2c0 ioset1 with pins PA0 and PA1 and
+i2c0 ioset2 with pins PE10 and PE11. The controller has no knowledge about
+iosets. It means I could take the i2c data signal from ioset1 and the i2c
+clock signal from ioset2 BUT validation has been done only per ioset. For
+devices such as i2c it should not be a problem but it could be for other ones
+such as mci, isi, etc.
+
+- I don't want big tables describing pins in my driver. It represents a huge
+amount of code mainly useless in the case of a multiplatform image.
+
+- I would like to find a generic solution if possible by still using
+pinconf_generic_dt_node_to_map_all() instead of having my own implementation
+which will only call pinconf_generic_parse_dt_config().
+
+
+Well, I let you having a look to the following patch, it should help you to
+understand what I mean and what I need.
+
+Regards
+
+Ludovic
+
+
+Ludovic Desroches (4):
+  pinctrl: change function behavior for per pin muxing controllers
+  pinctrl: introduce complex pin description
+  pinctrl: rough draft for a future controller
+  ARM: at91/dt: proto dt
+
+ arch/arm/boot/dts/Makefile                 |   1 +
+ arch/arm/boot/dts/at91-sama5d4ek_proto.dts | 243 ++++++++++
+ arch/arm/boot/dts/sama5d4_proto-pinfunc.h  | 463 +++++++++++++++++++
+ arch/arm/boot/dts/sama5d4_proto.dtsi       | 716 +++++++++++++++++++++++++++++
+ drivers/pinctrl/Kconfig                    |  10 +
+ drivers/pinctrl/Makefile                   |   1 +
+ drivers/pinctrl/pinconf-generic.c          | 115 +++--
+ drivers/pinctrl/pinctrl-at91-pio4.c        | 625 +++++++++++++++++++++++++
+ drivers/pinctrl/pinmux.c                   |  58 +--
+ include/linux/pinctrl/pinctrl.h            |   5 +
+ include/linux/pinctrl/pinmux.h             |   3 +
+ 11 files changed, 2180 insertions(+), 60 deletions(-)
+ create mode 100644 arch/arm/boot/dts/at91-sama5d4ek_proto.dts
+ create mode 100644 arch/arm/boot/dts/sama5d4_proto-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/sama5d4_proto.dtsi
+ create mode 100644 drivers/pinctrl/pinctrl-at91-pio4.c
+
+-- 
+2.2.0
+
