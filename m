@@ -1,57 +1,102 @@
 From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: [PATCH 2/2] pinctrl: at91: Add missing include
-Date: Thu, 2 Apr 2015 10:19:41 +0200
-Message-ID: <20150402081941.GB26864@ns203013.ovh.net>
+Subject: Re: [PATCH 1/2] pinctrl: at91: Add set_multiple GPIO chip feature
+Date: Thu, 2 Apr 2015 10:30:18 +0200
+Message-ID: <20150402083018.GC26864@ns203013.ovh.net>
 References: <1426878721-2618-1-git-send-email-alexanders83@web.de>
- <1426878721-2618-2-git-send-email-alexanders83@web.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mo68.mail-out.ovh.net ([178.32.228.68]:53957 "EHLO
+	mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751306AbbDBIaW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Apr 2015 04:30:22 -0400
+Received: from mail610.ha.ovh.net (b9.ovh.net [213.186.33.59])
+	by mo68.mail-out.ovh.net (Postfix) with SMTP id 1EEB4FFA447
+	for <linux-gpio@vger.kernel.org>; Thu,  2 Apr 2015 10:30:21 +0200 (CEST)
 Content-Disposition: inline
-In-Reply-To: <1426878721-2618-2-git-send-email-alexanders83@web.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexander Stein <alexanders83@web.de>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1426878721-2618-1-git-send-email-alexanders83@web.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexanders83@web.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
 On 20:12 Fri 20 Mar     , Alexander Stein wrote:
-> This fixes the sparse warning:
-> drivers/pinctrl/pinctrl-at91.c:1556:6: warning: symbol
->  'at91_pinctrl_gpio_suspend' was not declared. Should it be static?
-> drivers/pinctrl/pinctrl-at91.c:1580:6: warning: symbol
->  'at91_pinctrl_gpio_resume' was not declared. Should it be static?
+> This adds the callback for set_multiple.
+> As this controller has a separate set and clear register, we can't write
+> directly to PIO_ODSR as this would required a cached variable and would
+> race with at91_gpio_set.
+> So build masks for the PIO_SODR and PIO_CODR registers and write them
+> together.
 > 
 > Signed-off-by: Alexander Stein <alexanders83@web.de>
 > ---
->  drivers/pinctrl/pinctrl-at91.c | 2 ++
->  1 file changed, 2 insertions(+)
+> This was tested by using an own test driver which uses
+> gpiod_set_array_cansleep to set multiple GPIOs at once.
+> 
+>  drivers/pinctrl/pinctrl-at91.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 > 
 > diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-> index a882523..02f6477 100644
+> index f4cd0b9..a882523 100644
 > --- a/drivers/pinctrl/pinctrl-at91.c
 > +++ b/drivers/pinctrl/pinctrl-at91.c
-> @@ -25,6 +25,8 @@
->  /* Since we request GPIOs from ourself */
->  #include <linux/pinctrl/consumer.h>
+> @@ -1330,6 +1330,33 @@ static void at91_gpio_set(struct gpio_chip *chip, unsigned offset,
+>  	writel_relaxed(mask, pio + (val ? PIO_SODR : PIO_CODR));
+>  }
 >  
-> +#include <mach/hardware.h>
-NACK this will break multi arch support
+> +static void at91_gpio_set_multiple(struct gpio_chip *chip,
+> +				      unsigned long *mask, unsigned long *bits)
+> +{
+> +	struct at91_gpio_chip *at91_gpio = to_at91_gpio_chip(chip);
+> +	void __iomem *pio = at91_gpio->regbase;
+> +	unsigned long set_mask;
+> +	unsigned long clear_mask;
+> +	size_t i;
+> +
+> +	set_mask = 0;
+> +	clear_mask = 0;
+> +
+> +	for (i = 0; i < chip->ngpio; i++) {
+> +		if (*mask == 0)
+so why do you loop?
+> +			break;
+> +		if (__test_and_clear_bit(i, mask)) {
+> +			if (test_bit(i, bits))
+> +				set_mask |= BIT(i);
+> +			else
+> +				clear_mask |= BIT(i);
+> +		}
+> +	}
+
+just use mask to invert the mask for the CODR
+
+#define BITS_MASK(bits)	(((bits) == 32) ? ~0U : (BIT(bits) - 1))
+
+	uint32_t set_mask = *mask & BITS_MASK(chip->ngpio);;
+	uint32_t clear_mask = ~set_mask;
+
+	writel_relaxed(set_mask, pio + PIO_SODR);
+	writel_relaxed(clear_mask, pio + PIO_CODR);
 
 Best Regards,
 J.
+
 > +
->  #include "pinctrl-at91.h"
->  #include "core.h"
->  
+> +	writel_relaxed(set_mask, pio + PIO_SODR);
+> +	writel_relaxed(clear_mask, pio + PIO_CODR);
+> +}
+> +
+>  static int at91_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>  				int val)
+>  {
+> @@ -1692,6 +1719,7 @@ static struct gpio_chip at91_gpio_template = {
+>  	.get			= at91_gpio_get,
+>  	.direction_output	= at91_gpio_direction_output,
+>  	.set			= at91_gpio_set,
+> +	.set_multiple		= at91_gpio_set_multiple,
+>  	.dbg_show		= at91_gpio_dbg_show,
+>  	.can_sleep		= false,
+>  	.ngpio			= MAX_NB_GPIO_PER_BANK,
 > -- 
 > 2.3.3
 > 
