@@ -1,34 +1,64 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 20/20] ARM: configs: enable Marvell Armada 39x in
- multi_v7_defconfig
-Date: Wed, 1 Apr 2015 16:24:49 -0700
-Message-ID: <20150401232449.GA8137@localhost>
-References: <1425393675-17820-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <1425393675-17820-21-git-send-email-thomas.petazzoni@free-electrons.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH] pinctrl: dt: at91: new binding
+Date: Thu, 2 Apr 2015 10:18:52 +0200
+Message-ID: <20150402081852.GA26864@ns203013.ovh.net>
+References: <1424943294-8805-1-git-send-email-plagnioj@jcrosoft.com>
+ <CACRpkdbNLE+VjhvSgsU4oqAc03ieCNyiLkUzbjEiu_LFof-Unw@mail.gmail.com>
+ <CAOesGMgsyEwuF95FFe81Li8nXO0MhHF0ZHPVV91MEH-JGO43tA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:33592 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752479AbbDAXYx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Apr 2015 19:24:53 -0400
-Received: by pdrw1 with SMTP id w1so61638861pdr.0
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Apr 2015 16:24:52 -0700 (PDT)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1425393675-17820-21-git-send-email-thomas.petazzoni@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <CAOesGMgsyEwuF95FFe81Li8nXO0MhHF0ZHPVV91MEH-JGO43tA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Tawfik Bayouk <tawfik@marvell.com>, Nadav Haklai <nadavh@marvell.com>, Lior Amsalem <alior@marvell.com>, Ezequiel Garcia <ezequiel.garcia@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, arm@kernel.org
 
-On Tue, Mar 03, 2015 at 03:41:15PM +0100, Thomas Petazzoni wrote:
-> Following the introduction of the Marvell Armada 39x support, let's
-> enable this support by default in multi_v7_defconfig.
+On 13:55 Sun 29 Mar     , Olof Johansson wrote:
+> On Tue, Mar 17, 2015 at 5:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Thu, Feb 26, 2015 at 10:34 AM, Jean-Christophe PLAGNIOL-VILLARD
+> > <plagnioj@jcrosoft.com> wrote:
+> >
+> >> +For each peripheral/bank we will descibe in a u32 if a pin can be
+> >> +configured in it by putting 1 to the pin bit (1 << pin)
+> >
+> > This seems to be describing driver intrinsics in the device tree, like
+> > how the hardware is routed on the inside and what it can do.
+> >
+> > IMO that is driver territory, the driver should know these limitations
+> > and protest if you try to do something illegal.
+> >
+> > Anyway as the AT91 maintainers seem to disagree I will allow some
+> > more time for discussion before merging the patch.
+> >
+> > I can't really have one AT91 maintainer NACKing another, it doesn't
+> > matter that this is a separate driver, in my book the MAINTAINERS
+> > entry for AT91 as a whole overrides that so can you please find an
+> > agreement on how to handle this or I will stall the patch until
+> > you're in agreement.
 > 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Cc: <arm@kernel.org>
+> Nicolas has been the de-facto maintainer of AT91 for quite a while
+> now, even though more of them are listed on the maintainers entry. It
+> would be inappropriate to merge something that he disagreed with on
+> that platform.
+I'm still following it
+> 
+> > ARM SoC maintainers input would be welcomed.
+> 
+> It seems appropriate to ask the at91 folks to come back with a
+> solution that everybody is OK with, and until then hold off merging
+> this.
+when the nack is motivated not just I don't like it
 
-Thanks, applied.
-
-
--Olof
+Best Regards,
+J.
