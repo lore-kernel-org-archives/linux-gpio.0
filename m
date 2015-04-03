@@ -1,29 +1,60 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 10/15] serial: stm32-usart: Add STM32 USART Driver
-Date: Fri, 03 Apr 2015 10:43:26 -0700
-Message-ID: <1428083006.13180.35.camel@perches.com>
-References: <1428080481-18591-1-git-send-email-mcoquelin.stm32@gmail.com>
-	 <1428080481-18591-11-git-send-email-mcoquelin.stm32@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1428080481-18591-11-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org, peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Antti
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH 0/6] pinctrl and gpio drivers for NXP LPC18xx family
+Date: Fri,  3 Apr 2015 23:16:01 +0200
+Message-ID: <1428095767-6286-1-git-send-email-manabian@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:35099 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752112AbbDCVQl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Apr 2015 17:16:41 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de, devicetree@vger.kernel.org, ariel.dalessandro@gmail.com, ezequiel@vanguardiasur.com.ar, Joachim Eastwood <manabian@gmail.com>
 
-On Fri, 2015-04-03 at 19:01 +0200, Maxime Coquelin wrote:
-> This drivers adds support to the STM32 USART controller, which is a
-> standard serial driver.
+This patch set adds drivers for pinctrl and gpio on NXP LPC18xx/43xx
+devices. Patchset is based on Linus master 4.0-rc6.
 
-trivia:
+The pinctrl driver uses the generic muxing and properties DT bindings as
+described in pinctrl-bindings.txt. There is still two TODOs left in the
+pinctrl driver regarding property control of special usb1 pins but I would
+like it merged regardless of this. Support will be added once I get USB up
+and running on the MCU.
 
-> diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-[]
-> +static struct uart_ops stm32_uart_ops = {
+There is no gpio irq support in this patch set, this will come at a later
+time.
 
-could be const
+The two last patches depend on two other patch sets and are only included
+to show the DT bindings in actual use.
 
-and it could be updated in a separate patch later too.
+Other LPC18xx patches:
+Base support: http://marc.info/?l=linux-arm-kernel&m=142792344110733&w=2
+Clk support: http://marc.info/?l=linux-arm-kernel&m=142800699801335&w=2
+
+Joachim Eastwood (6):
+  pinctrl: add lpc18xx pinctrl driver
+  doc: dt: add documentation for lpc1850-scu pinctrl driver
+  gpio: add lpc18xx gpio driver
+  doc: dt: add documentation for lpc1850-gpio driver
+  ARM: dts: lpc18xx: add pinctrl and gpio nodes
+  ARM: dts: lpc4357-ea4357: add pinctrl and uart0 muxing
+
+ .../devicetree/bindings/gpio/nxp,lpc1850-gpio.txt  |   23 +
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt           |   57 +
+ arch/arm/boot/dts/lpc18xx.dtsi                     |   57 +
+ arch/arm/boot/dts/lpc4357-ea4357.dts               |   19 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-lpc18xx.c                        |  191 ++++
+ drivers/pinctrl/Kconfig                            |    8 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-lpc18xx.c                  | 1145 ++++++++++++++++++++
+ 10 files changed, 1510 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+ create mode 100644 drivers/gpio/gpio-lpc18xx.c
+ create mode 100644 drivers/pinctrl/pinctrl-lpc18xx.c
+
+-- 
+1.8.0
+
