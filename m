@@ -1,56 +1,57 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v5 09/15] dt-bindings: Document the STM32 USART bindings
-Date: Tue, 7 Apr 2015 17:49:54 +0200
-Message-ID: <CALszF6BnFz3D=6AT0+o2umy6wtVJg1BGX4rLWmHjrbt=4-ZknQ@mail.gmail.com>
-References: <1428080481-18591-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1428080481-18591-10-git-send-email-mcoquelin.stm32@gmail.com>
-	<CAL_JsqKioFc65Gng0FbOOBCspwxr1-bdy1kShKRM24XyALPmOw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqKioFc65Gng0FbOOBCspwxr1-bdy1kShKRM24XyALPmOw@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linu>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: [PATCH gpio] gpio: removing kfree remove functionality
+Date: Tue,  7 Apr 2015 21:34:40 +0530
+Message-ID: <1428422680-4509-1-git-send-email-varkab@cdac.in>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:36431 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753607AbbDGQFO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 12:05:14 -0400
+Received: by pabsx10 with SMTP id sx10so83200830pab.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2015 09:05:13 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, johan@kernel.org, gnurou@gmail.com
 
-2015-04-03 19:14 GMT+02:00 Rob Herring <robherring2@gmail.com>:
-> On Fri, Apr 3, 2015 at 12:01 PM, Maxime Coquelin
-> <mcoquelin.stm32@gmail.com> wrote:
->> This adds documentation of device tree bindings for the
->> STM32 USART
->>
->> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> ---
->>  .../devicetree/bindings/serial/st,stm32-usart.txt  | 32 ++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/serial/st,stm32-usart.txt
->>
->> diff --git a/Documentation/devicetree/bindings/serial/st,stm32-usart.txt b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
->> new file mode 100644
->> index 0000000..090a3a4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/serial/st,stm32-usart.txt
->> @@ -0,0 +1,32 @@
->> +* STMicroelectronics STM32 USART
->> +
->> +Required properties:
->> +- compatible: Can be either "st,stm32-usart" or "st,stm32-uart" depending on
->> +whether the device supports synchronous mode.
->> +- reg: The address and length of the peripheral registers space
->> +- interrupts: The interrupt line of the USART instance
->> +- clocks: The input clock of the USART instance
->> +
->> +Optional properties:
->> +- pinctrl: The reference on the pins configuration
->> +- st,hw-flow-ctrl: bool flag to enable hardware flow control.
->
-> We already have "auto-flow-control" for 8250. Does that work for you?
+commit 3de07e5aaf290a0b58919 ("drivers: gpio: use devm_kzalloc")
+introduce devm_kzalloc() for allocating the memory. In this case kfree
+is not required to use. Above commit id introduced the bug that kfree
+is not removed from the remove function.
 
-Yes it works, just that I didn't know about it.
+This patch fix the above bug.
 
-I will change to "auto-flow-control" in next version.
+Signed-off-by: Varka Bhadram <varkab@cdac.in>
+---
+ drivers/gpio/gpio-adp5588.c  |    1 -
+ drivers/gpio/gpio-mcp23s08.c |    2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Maxime
+diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+index c90273d..d3fe6a6 100644
+--- a/drivers/gpio/gpio-adp5588.c
++++ b/drivers/gpio/gpio-adp5588.c
+@@ -471,7 +471,6 @@ static int adp5588_gpio_remove(struct i2c_client *client)
+ 
+ 	gpiochip_remove(&dev->gpio_chip);
+ 
+-	kfree(dev);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index a17b81f..2fc7ff8 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -1008,7 +1008,7 @@ static int mcp23s08_remove(struct spi_device *spi)
+ 			mcp23s08_irq_teardown(data->mcp[addr]);
+ 		gpiochip_remove(&data->mcp[addr]->chip);
+ 	}
+-	kfree(data);
++
+ 	return 0;
+ }
+ 
+-- 
+1.7.9.5
+
