@@ -1,43 +1,30 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v5 10/15] serial: stm32-usart: Add STM32 USART Driver
-Date: Tue, 7 Apr 2015 09:56:42 +0200
-Message-ID: <CALszF6CFBm5jJUF95K=6_gRHijSk3Addpw13_q3Li-i8fqP6tA@mail.gmail.com>
-References: <1428080481-18591-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1428080481-18591-11-git-send-email-mcoquelin.stm32@gmail.com>
-	<1428083006.13180.35.camel@perches.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: at91: convert __raw to endian agnostic IO
+Date: Tue, 7 Apr 2015 11:06:50 +0200
+Message-ID: <CACRpkdY26txvV92SePv02EdX6TOcTBn9uWPX08gC2oAi7XGs0A@mail.gmail.com>
+References: <1427372329-26005-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:36001 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751242AbbDGH4o (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 03:56:44 -0400
-In-Reply-To: <1428083006.13180.35.camel@perches.com>
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:34257 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752916AbbDGJGu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 05:06:50 -0400
+Received: by iget9 with SMTP id t9so5380940ige.1
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2015 02:06:50 -0700 (PDT)
+In-Reply-To: <1427372329-26005-1-git-send-email-ben.dooks@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Joe Perches <joe@perches.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linu>
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "moderated list:PIN CONTROLLER -..." <linux-arm-kernel@lists.infradead.org>, "open list:PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-2015-04-03 19:43 GMT+02:00 Joe Perches <joe@perches.com>:
-> On Fri, 2015-04-03 at 19:01 +0200, Maxime Coquelin wrote:
->> This drivers adds support to the STM32 USART controller, which is a
->> standard serial driver.
->
-> trivia:
->
->> diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-> []
->> +static struct uart_ops stm32_uart_ops = {
->
-> could be const
+On Thu, Mar 26, 2015 at 1:18 PM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
 
-i would even say, should be const.
-
+> Use endian agnostic _relaxed IO accessors instead of the __raw ones.
 >
-> and it could be updated in a separate patch later too.
->
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 
-Nope, I will send another version anyway, so it will be part of the v6.
+Uncontroversial. Applied with Nicolas' ACK.
 
-Thanks for the review,
-Maxime
+Yours,
+Linus Walleij
