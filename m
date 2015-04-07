@@ -1,60 +1,60 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: Add Intel Sunrisepoint pin controller
- and GPIO support
-Date: Tue, 7 Apr 2015 16:42:01 +0300
-Message-ID: <20150407134201.GA1734@lahna.fi.intel.com>
-References: <1427725909-79500-1-git-send-email-mika.westerberg@linux.intel.com>
- <CACRpkdbhwOd9P56Hwn5XaOMrSTp--XW-i9aDXwmYR+GbzAWurQ@mail.gmail.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Subject: Re: [PATCH] gpio: dwapb: enable for ARC
+Date: Tue, 7 Apr 2015 13:55:19 +0000
+Message-ID: <1428414919.2665.2.camel@synopsys.com>
+References: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-7"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:46965 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753286AbbDGNoM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 7 Apr 2015 09:44:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbhwOd9P56Hwn5XaOMrSTp--XW-i9aDXwmYR+GbzAWurQ@mail.gmail.com>
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:47223 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754542AbbDGN44 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 09:56:56 -0400
+In-Reply-To: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
+Content-Language: en-US
+Content-ID: <F70AFFBBC9008F45A2531E9F1680C1E5@internal.synopsys.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, Vineet Gupta <Vineet.Gupta1@synopsys.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 07, 2015 at 03:18:20PM +0200, Linus Walleij wrote:
-> On Mon, Mar 30, 2015 at 4:31 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > This driver supports pinctrl/GPIO hardware found on Intel Sunrisepoint (a
-> > Skylake PCH) providing users a pinctrl and GPIO interfaces (including GPIO
-> > interrupts).
-> >
-> > The driver is split into core and platform parts so that the same core
-> > driver can be reused in other drivers for other Intel GPIO hardware that is
-> > based on the same host controller design.
-> >
-> > Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> How could I possibly resist this gorgeous driver that just
-> does everything right? Patch applied for 4.1.
+Hi Linus,
 
-Thanks!
+On Tue, 2015-03-31 at 11:30 +-0300, Alexey Brodkin wrote:
++AD4- From: Vineet Gupta +ADw-vgupta+AEA-synopsys.com+AD4-
++AD4- 
++AD4- Synopsys SDP platform uses DW GPIO controller in design with
++AD4- ARC cores. So adding ARC to architectures that may select this
++AD4- GPIO controller.
++AD4- 
++AD4- Even though support for Synopsys SDP is yet to be submitted we'll need
++AD4- this tiny option enabled at least for properly working interrupts (DW
++AD4- GPIO controller is used as interrupt controller).
++AD4- 
++AD4- Signed-off-by: Vineet Gupta +ADw-vgupta+AEA-synopsys.com+AD4-
++AD4- Signed-off-by: Alexey Brodkin +ADw-abrodkin+AEA-synopsys.com+AD4-
++AD4- Cc: Andy Shevchenko +ADw-andriy.shevchenko+AEA-linux.intel.com+AD4-
++AD4- Cc: Linus Walleij +ADw-linus.walleij+AEA-linaro.org+AD4-
++AD4- ---
++AD4-  drivers/gpio/Kconfig +AHw- 2 +--
++AD4-  1 file changed, 1 insertion(+-), 1 deletion(-)
++AD4- 
++AD4- diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
++AD4- index 4b3284b..83d2d0b 100644
++AD4- --- a/drivers/gpio/Kconfig
++AD4- +-+-+- b/drivers/gpio/Kconfig
++AD4- +AEAAQA- -148,7 +-148,7 +AEAAQA- config GPIO+AF8-GENERIC+AF8-PLATFORM
++AD4-  
++AD4-  config GPIO+AF8-DWAPB
++AD4-  	tristate +ACI-Synopsys DesignWare APB GPIO driver+ACI-
++AD4- -	depends on ((ARM +AHwAfA- ARM64) +ACYAJg- OF+AF8-GPIO) +AHwAfA- X86+AF8-INTEL+AF8-QUARK
++AD4- +-	depends on ((ARC +AHwAfA- ARM +AHwAfA- ARM64) +ACYAJg- OF+AF8-GPIO) +AHwAfA- X86+AF8-INTEL+AF8-QUARK
++AD4-  	select GPIO+AF8-GENERIC
++AD4-  	select GENERIC+AF8-IRQ+AF8-CHIP
++AD4-  	help
 
-> > +config PINCTRL_INTEL
-> > +       tristate
-> > +       select PINMUX
-> > +       select PINCONF
-> > +       select GENERIC_PINCONF
-> > +       select GPIOLIB
-> > +       select GPIOLIB_IRQCHIP
-> 
-> Is this opening a refactoring possibility sharing more code/infrastructure
-> amongst the Intel drivers or just something that will be used for
-> new SoCs going forward?
+I'm wondering if there's a chance for this patch to be reviewed and/or
+applied?
 
-We are going to use the same core for newer hardware as much as
-possible. Hopefully all new SoCs will have GPIO controller which is
-based on the same hardware design.
-
-For the existing, unfortunately the hardware differentiates too much
-from Sunrisepoint that it does not make much sense to factor them to use
-this new core.
+-Alexey
