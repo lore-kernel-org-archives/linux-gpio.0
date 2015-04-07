@@ -1,37 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Add support for PM8916 GPIO's and MPP's
-Date: Tue, 7 Apr 2015 16:26:51 +0200
-Message-ID: <CACRpkda11ME2L40+-XuaLZAVwn9n1QjiBDBPXOfjsEqec7Svgg@mail.gmail.com>
-References: <1427794638-32732-1-git-send-email-ivan.ivanov@linaro.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH gpio 1/4] drivers: gpio: use devm_kzalloc
+Date: Tue, 7 Apr 2015 17:37:04 +0200
+Message-ID: <20150407153704.GE21841@localhost>
+References: <1427775551-6908-1-git-send-email-varkab@cdac.in>
+ <1427775551-6908-2-git-send-email-varkab@cdac.in>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f181.google.com ([209.85.213.181]:36792 "EHLO
-	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753846AbbDGO0w convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 10:26:52 -0400
-Received: by igblo3 with SMTP id lo3so13304906igb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2015 07:26:51 -0700 (PDT)
-In-Reply-To: <1427794638-32732-1-git-send-email-ivan.ivanov@linaro.org>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:36471 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752929AbbDGPhH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 11:37:07 -0400
+Received: by lbbqq2 with SMTP id qq2so37055672lbb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2015 08:37:05 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1427775551-6908-2-git-send-email-varkab@cdac.in>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Arnd Bergmann <arnd@arndb.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+To: Varka Bhadram <varkabhadram@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, Varka Bhadram <varkab@cdac.in>
 
-On Tue, Mar 31, 2015 at 11:37 AM, Ivan T. Ivanov <ivan.ivanov@linaro.or=
-g> wrote:
+On Tue, Mar 31, 2015 at 09:49:08AM +0530, Varka Bhadram wrote:
+> We can use devres API for allocating memory. No need of using kfree.
+> 
+> Signed-off-by: Varka Bhadram <varkab@cdac.in>
+> ---
+>  drivers/gpio/gpio-adp5588.c  |    3 +--
+>  drivers/gpio/gpio-mcp23s08.c |    7 ++++---
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+> index 3beed6e..0de8c70 100644
+> --- a/drivers/gpio/gpio-adp5588.c
+> +++ b/drivers/gpio/gpio-adp5588.c
+> @@ -378,7 +378,7 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+>  		return -EIO;
+>  	}
+>  
+> -	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> +	dev = devm_kzalloc(&client->dev, sizeof(*dev), GFP_KERNEL);
+>  	if (dev == NULL)
+>  		return -ENOMEM;
+>  
+> @@ -446,7 +446,6 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+>  err_irq:
+>  	adp5588_irq_teardown(dev);
+>  err:
+> -	kfree(dev);
+>  	return ret;
+>  }
 
-> Add compatible string definitions and supported pin functions.
->
-> Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+You cannot just switch the allocation to devm_kzalloc without removing
+the kfree from the remove callback.
 
-Bj=C3=B6rn, can you ACK/look at this?
+> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+> index eea5d7e..a17b81f 100644
+> --- a/drivers/gpio/gpio-mcp23s08.c
+> +++ b/drivers/gpio/gpio-mcp23s08.c
+> @@ -949,10 +949,12 @@ static int mcp23s08_probe(struct spi_device *spi)
+>  	if (!chips)
+>  		return -ENODEV;
+>  
+> -	data = kzalloc(sizeof(*data) + chips * sizeof(struct mcp23s08),
+> -			GFP_KERNEL);
+> +	data = devm_kzalloc(&spi->dev,
+> +			    sizeof(*data) + chips * sizeof(struct mcp23s08),
+> +			    GFP_KERNEL);
+>  	if (!data)
+>  		return -ENOMEM;
+> +
+>  	spi_set_drvdata(spi, data);
+>  
+>  	spi->irq = irq_of_parse_and_map(spi->dev.of_node, 0);
+> @@ -989,7 +991,6 @@ fail:
+>  			continue;
+>  		gpiochip_remove(&data->mcp[addr]->chip);
+>  	}
+> -	kfree(data);
+>  	return status;
+>  }
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Same bug again.
+
+Johan
