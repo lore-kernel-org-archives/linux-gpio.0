@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: move MFD GPIO drivers under their own comment
-Date: Wed,  8 Apr 2015 14:54:46 +0200
-Message-ID: <1428497686-20374-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH v2] gpio: move MFD GPIO drivers under their own comment
+Date: Wed,  8 Apr 2015 15:21:22 +0200
+Message-ID: <1428499282-7987-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:36767 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753173AbbDHMyx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 08:54:53 -0400
-Received: by lbbqq2 with SMTP id qq2so57448020lbb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 05:54:51 -0700 (PDT)
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:35825 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753059AbbDHNV3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 09:21:29 -0400
+Received: by lbbuc2 with SMTP id uc2so63279059lbb.2
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 06:21:27 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
@@ -24,11 +24,14 @@ alphabetic order.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/Kconfig | 260 +++++++++++++++++++++++++--------------------------
- 1 file changed, 128 insertions(+), 132 deletions(-)
+ChangeLog v1->v2:
+- Missed some MFD GPIO expanders, mea culpa
+---
+ drivers/gpio/Kconfig | 315 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 156 insertions(+), 159 deletions(-)
 
 diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 1356c482f00c..4d677510173f 100644
+index 1356c482f00c..c8d804074f61 100644
 --- a/drivers/gpio/Kconfig
 +++ b/drivers/gpio/Kconfig
 @@ -90,23 +90,6 @@ config GPIO_GENERIC
@@ -120,7 +123,7 @@ index 1356c482f00c..4d677510173f 100644
  config GPIO_MAX7300
  	tristate "Maxim MAX7300 GPIO expander"
  	depends on I2C
-@@ -681,6 +640,103 @@ config GPIO_PCF857X
+@@ -681,6 +640,125 @@ config GPIO_PCF857X
  	  This driver provides an in-kernel interface to those GPIOs using
  	  platform-neutral GPIO calls.
  
@@ -164,6 +167,16 @@ index 1356c482f00c..4d677510173f 100644
 +	  This driver can also be built as a module. If so, the module will be
 +	  called gpio-crystalcove.
 +
++config GPIO_CS5535
++	tristate "AMD CS5535/CS5536 GPIO support"
++	depends on MFD_CS5535
++	help
++	  The AMD CS5535 and CS5536 southbridges support 28 GPIO pins that
++	  can be used for quite a number of things.  The CS5535/6 is found on
++	  AMD Geode and Lemote Yeeloong devices.
++
++	  If unsure, say N.
++
 +config GPIO_DA9052
 +	tristate "Dialog DA9052 GPIO"
 +	depends on PMIC_DA9052
@@ -180,6 +193,18 @@ index 1356c482f00c..4d677510173f 100644
 +	  be controller by this driver.
 +
 +	  If driver is built as a module it will be called gpio-da9055.
++
++config GPIO_DLN2
++	tristate "Diolan DLN2 GPIO support"
++	depends on MFD_DLN2
++	select GPIOLIB_IRQCHIP
++
++	help
++	  Select this option to enable GPIO driver for the Diolan DLN2
++	  board.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called gpio-dln2.
 +
 +config GPIO_JANZ_TTL
 +	tristate "Janz VMOD-TTL Digital IO Module"
@@ -224,7 +249,7 @@ index 1356c482f00c..4d677510173f 100644
  config GPIO_RC5T583
  	bool "RICOH RC5T583 GPIO"
  	depends on MFD_RC5T583
-@@ -699,28 +755,6 @@ config GPIO_STMPE
+@@ -699,28 +777,6 @@ config GPIO_STMPE
  	  This enables support for the GPIOs found on the STMPE I/O
  	  Expanders.
  
@@ -253,10 +278,16 @@ index 1356c482f00c..4d677510173f 100644
  config GPIO_TC3589X
  	bool "TC3589X GPIOs"
  	depends on MFD_TC3589X
-@@ -729,6 +763,20 @@ config GPIO_TC3589X
+@@ -729,6 +785,26 @@ config GPIO_TC3589X
  	  This enables support for the GPIOs found on the TC3589X
  	  I/O Expander.
  
++config GPIO_TIMBERDALE
++	bool "Support for timberdale GPIO IP"
++	depends on MFD_TIMBERDALE
++	---help---
++	Add support for the GPIO IP in the timberdale FPGA.
++
 +config GPIO_TPS6586X
 +	bool "TPS6586X GPIO"
 +	depends on MFD_TPS6586X
@@ -274,7 +305,7 @@ index 1356c482f00c..4d677510173f 100644
  config GPIO_TPS65912
  	tristate "TI TPS65912 GPIO"
  	depends on (MFD_TPS65912_I2C || MFD_TPS65912_SPI)
-@@ -749,6 +797,13 @@ config GPIO_TWL6040
+@@ -749,6 +825,13 @@ config GPIO_TWL6040
  	  Say yes here to access the GPO signals of twl6040
  	  audio chip from Texas Instruments.
  
@@ -288,7 +319,36 @@ index 1356c482f00c..4d677510173f 100644
  config GPIO_WM831X
  	tristate "WM831x GPIOs"
  	depends on MFD_WM831X
-@@ -899,65 +954,6 @@ config GPIO_MC33880
+@@ -800,16 +883,6 @@ config GPIO_BT8XX
+ 
+ 	  If unsure, say N.
+ 
+-config GPIO_CS5535
+-	tristate "AMD CS5535/CS5536 GPIO support"
+-	depends on MFD_CS5535
+-	help
+-	  The AMD CS5535 and CS5536 southbridges support 28 GPIO pins that
+-	  can be used for quite a number of things.  The CS5535/6 is found on
+-	  AMD Geode and Lemote Yeeloong devices.
+-
+-	  If unsure, say N.
+-
+ config GPIO_INTEL_MID
+ 	bool "Intel Mid GPIO support"
+ 	depends on PCI && X86
+@@ -860,11 +933,6 @@ config GPIO_SODAVILLE
+ 	help
+ 	  Say Y here to support Intel Sodaville GPIO.
+ 
+-config GPIO_TIMBERDALE
+-	bool "Support for timberdale GPIO IP"
+-	depends on MFD_TIMBERDALE
+-	---help---
+-	Add support for the GPIO IP in the timberdale FPGA.
+ 
+ comment "SPI GPIO expanders:"
+ 
+@@ -899,65 +967,6 @@ config GPIO_MC33880
  	  SPI driver for Freescale MC33880 high-side/low-side switch.
  	  This provides GPIO interface supporting inputs and outputs.
  
@@ -354,6 +414,23 @@ index 1356c482f00c..4d677510173f 100644
  comment "USB GPIO expanders:"
  
  config GPIO_VIPERBOARD
+@@ -971,16 +980,4 @@ config GPIO_VIPERBOARD
+           River Tech's viperboard.h for detailed meaning
+           of the module parameters.
+ 
+-config GPIO_DLN2
+-	tristate "Diolan DLN2 GPIO support"
+-	depends on MFD_DLN2
+-	select GPIOLIB_IRQCHIP
+-
+-	help
+-	  Select this option to enable GPIO driver for the Diolan DLN2
+-	  board.
+-
+-	  This driver can also be built as a module. If so, the module
+-	  will be called gpio-dln2.
+-
+ endif
 -- 
 1.9.3
 
