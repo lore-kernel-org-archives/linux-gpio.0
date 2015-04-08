@@ -1,34 +1,44 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH gpio 4/4] drivers: gpio: use (!foo) instead of (foo == NULL)
-Date: Wed, 8 Apr 2015 10:50:03 +0900
-Message-ID: <CAAVeFuKU0di4qSqb4BXUSJ6FZ0R4hFUxMmaOYmBnBPuJsP3S2A@mail.gmail.com>
-References: <1427775551-6908-1-git-send-email-varkab@cdac.in>
- <1427775551-6908-5-git-send-email-varkab@cdac.in> <CACRpkdYR6RDfvK0t=EfLPw9FhW_GOoO9atY-AE7eBe74WvucBA@mail.gmail.com>
+From: Bjorn Andersson <bjorn-UYDU3/A3LUY@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: Add support for PM8916 GPIO's and MPP's
+Date: Tue, 7 Apr 2015 19:00:12 -0700
+Message-ID: <CAJAp7OgC_-AStTQphR9jyRO5JdHaw1Cg3NWmT9sX70BCNMYCHA@mail.gmail.com>
+References: <1427794638-32732-1-git-send-email-ivan.ivanov@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:35572 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753213AbbDHBuY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Apr 2015 21:50:24 -0400
-Received: by iggg4 with SMTP id g4so28239766igg.0
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Apr 2015 18:50:23 -0700 (PDT)
-In-Reply-To: <CACRpkdYR6RDfvK0t=EfLPw9FhW_GOoO9atY-AE7eBe74WvucBA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1427794638-32732-1-git-send-email-ivan.ivanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Ivan T. Ivanov" <ivan.ivanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-msm <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Varka Bhadram <varkabhadram@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Varka Bhadram <varkab@cdac.in>
 
-I wonder, is this any better, or is there a recommended guideline
-somewhere? Testing against NULL at least highlights the fact that the
-variable is a pointer, this looks like valuable information to me.
+On Tue, Mar 31, 2015 at 2:37 AM, Ivan T. Ivanov <ivan.ivanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Add compatible string definitions and supported pin functions.
+>
+> Signed-off-by: Ivan T. Ivanov <ivan.ivanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+[..]
+> diff --git a/include/dt-bindings/pinctrl/qcom,pmic-gpio.h b/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
+[..]
+>
+> +#define PM8916_GPIO1_BAT_ALRM_OUT      PMIC_GPIO_FUNC_FUNC1
+> +#define PM8916_GPIO1_KEYP_DRV          PMIC_GPIO_FUNC_FUNC2
+> +#define PM8916_GPIO2_DIV_CLK           PMIC_GPIO_FUNC_FUNC1
+> +#define PM8916_GPIO2_SLEEP_CLK         PMIC_GPIO_FUNC_FUNC2
+> +#define PM8916_GPIO3_KEYP_DRV          PMIC_GPIO_FUNC_FUNC1
+> +#define PM8916_GPIO4_KEYP_DRV          PMIC_GPIO_FUNC_FUNC2
+> +
 
-On Tue, Apr 7, 2015 at 11:22 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Mar 31, 2015 at 6:19 AM, Varka Bhadram <varkabhadram@gmail.com> wrote:
->
->> Signed-off-by: Varka Bhadram <varkab@cdac.in>
->
-> Patch applied.
->
-> Yours,
-> Linus Walleij
+The documentation I have for the PM8916 is vague, but lists slightly
+different functions. Andy, could you help out with verifying the
+functions of the gpios on this pmic?
+
+For the rest of the patch:
+Acked-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+
+Regards,
+Bjorn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
