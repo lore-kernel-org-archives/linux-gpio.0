@@ -1,36 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: intel: Add Intel Sunrisepoint pin controller and
- GPIO support
-Date: Wed, 8 Apr 2015 16:52:53 +0200
-Message-ID: <CACRpkdaoidr5RJs6d+4Vxtc9HXw6HOXsfQkqkui0h6za0_BQZA@mail.gmail.com>
-References: <1427725909-79500-1-git-send-email-mika.westerberg@linux.intel.com>
-	<CACRpkdbhwOd9P56Hwn5XaOMrSTp--XW-i9aDXwmYR+GbzAWurQ@mail.gmail.com>
-	<20150407134201.GA1734@lahna.fi.intel.com>
+Subject: Re: [PATCH gpio] gpio: removing kfree remove functionality
+Date: Wed, 8 Apr 2015 16:54:52 +0200
+Message-ID: <CACRpkdaVMGhdBLv6aPaYSNGXJh2+P9N-Ld3irD-LNH1N2i4Jsg@mail.gmail.com>
+References: <1428422680-4509-1-git-send-email-varkab@cdac.in>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150407134201.GA1734@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f170.google.com ([209.85.223.170]:35563 "EHLO
+	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754089AbbDHOyw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 10:54:52 -0400
+Received: by iejt8 with SMTP id t8so4060909iej.2
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 07:54:52 -0700 (PDT)
+In-Reply-To: <1428422680-4509-1-git-send-email-varkab@cdac.in>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Varka Bhadram <varkabhadram@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Apr 7, 2015 at 3:42 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Tue, Apr 7, 2015 at 6:04 PM, Varka Bhadram <varkabhadram@gmail.com> wrote:
 
-> We are going to use the same core for newer hardware as much as
-> possible. Hopefully all new SoCs will have GPIO controller which is
-> based on the same hardware design.
+> commit 3de07e5aaf290a0b58919 ("drivers: gpio: use devm_kzalloc")
+> introduce devm_kzalloc() for allocating the memory. In this case kfree
+> is not required to use. Above commit id introduced the bug that kfree
+> is not removed from the remove function.
 >
-> For the existing, unfortunately the hardware differentiates too much
-> from Sunrisepoint that it does not make much sense to factor them to use
-> this new core.
+> This patch fix the above bug.
+>
+> Signed-off-by: Varka Bhadram <varkab@cdac.in>
 
-OK fine. I was going to enquire into the similarity of this embedded Intel
-HW IP to the old StrongARM, Xscale, and PXA or whatever other
-embedded Intel things that have been around for ages, sometimes IP
-is inherited in the strangest ways. Oh well I guess we might see if we
-look at the register maps a bit.
+Patch applied.
+
+BTW these "deep cleanups" are much appreciated.
 
 Yours,
 Linus Walleij
