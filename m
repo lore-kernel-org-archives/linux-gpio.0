@@ -1,37 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH gpio] gpio: removing kfree remove functionality
-Date: Wed, 8 Apr 2015 16:54:52 +0200
-Message-ID: <CACRpkdaVMGhdBLv6aPaYSNGXJh2+P9N-Ld3irD-LNH1N2i4Jsg@mail.gmail.com>
-References: <1428422680-4509-1-git-send-email-varkab@cdac.in>
+Subject: Re: [PATCH gpio 4/4] drivers: gpio: use (!foo) instead of (foo == NULL)
+Date: Wed, 8 Apr 2015 16:56:59 +0200
+Message-ID: <CACRpkdZkzxoswsi7fajZKoRGCVAJmbxZzauZtBgRLJTtUCEfsg@mail.gmail.com>
+References: <1427775551-6908-1-git-send-email-varkab@cdac.in>
+	<1427775551-6908-5-git-send-email-varkab@cdac.in>
+	<CACRpkdYR6RDfvK0t=EfLPw9FhW_GOoO9atY-AE7eBe74WvucBA@mail.gmail.com>
+	<CAAVeFuKU0di4qSqb4BXUSJ6FZ0R4hFUxMmaOYmBnBPuJsP3S2A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:35563 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754089AbbDHOyw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 10:54:52 -0400
-Received: by iejt8 with SMTP id t8so4060909iej.2
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 07:54:52 -0700 (PDT)
-In-Reply-To: <1428422680-4509-1-git-send-email-varkab@cdac.in>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:38506 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932253AbbDHO5A (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 10:57:00 -0400
+Received: by igbqf9 with SMTP id qf9so40431157igb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 07:57:00 -0700 (PDT)
+In-Reply-To: <CAAVeFuKU0di4qSqb4BXUSJ6FZ0R4hFUxMmaOYmBnBPuJsP3S2A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Varka Bhadram <varkabhadram@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Varka Bhadram <varkabhadram@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Varka Bhadram <varkab@cdac.in>
 
-On Tue, Apr 7, 2015 at 6:04 PM, Varka Bhadram <varkabhadram@gmail.com> wrote:
+On Wed, Apr 8, 2015 at 3:50 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-> commit 3de07e5aaf290a0b58919 ("drivers: gpio: use devm_kzalloc")
-> introduce devm_kzalloc() for allocating the memory. In this case kfree
-> is not required to use. Above commit id introduced the bug that kfree
-> is not removed from the remove function.
->
-> This patch fix the above bug.
->
-> Signed-off-by: Varka Bhadram <varkab@cdac.in>
+> I wonder, is this any better, or is there a recommended guideline
+> somewhere?
 
-Patch applied.
+This construct is used in Chapter 7 of
+Documentation/CodingStyle
 
-BTW these "deep cleanups" are much appreciated.
+Though the use is not commented on.
+
+But it's fairly common & compact & nice I think.
 
 Yours,
 Linus Walleij
