@@ -1,46 +1,39 @@
-From: "Zha, Qipeng" <qipeng.zha@intel.com>
-Subject: RE: gpio/gpiolib-acpi.c:559: pointless test ?
-Date: Thu, 9 Apr 2015 08:10:20 +0000
-Message-ID: <C6287702A945AC47BE5DB5DFD4B5C6DD0187B3CB@SHSMSX104.ccr.corp.intel.com>
-References: <DUB128-W81974691C87CB9F27B504B9CFD0@phx.gbl>
- <CAAVeFu+eGOctb99oSdKpQrd7+yz_GnFM4i2GkKzDFKvp_5qSFg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RESEND RFT: pinctrl: sirf: move sgpio lock into state container
+Date: Thu, 9 Apr 2015 10:15:42 +0200
+Message-ID: <CACRpkdaFvYCpxJqESniQO276-BWV_W7n7vP-7_B+0Zo1eEOL7A@mail.gmail.com>
+References: <1412066704-28633-1-git-send-email-linus.walleij@linaro.org>
+	<CACRpkdYOyDMtoh6WaZhB9PQ9fn58zbbRsmgzB7HDw=v+UqhwHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:38333 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751949AbbDIIK7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 9 Apr 2015 04:10:59 -0400
-In-Reply-To: <CAAVeFu+eGOctb99oSdKpQrd7+yz_GnFM4i2GkKzDFKvp_5qSFg@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:34829 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751767AbbDIIPp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2015 04:15:45 -0400
+Received: by iejt8 with SMTP id t8so22769570iej.2
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Apr 2015 01:15:43 -0700 (PDT)
+In-Reply-To: <CACRpkdYOyDMtoh6WaZhB9PQ9fn58zbbRsmgzB7HDw=v+UqhwHg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, David Binderman <dcb314@hotmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, Barry Song <baohua@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-SGkgQWxleA0KDQpZZXMsIHRoZSB0eXBlIGlzIHdyb25nIGFuZCB0aGlzIGlzIG5vdCBzaG93IGlu
-IGZ1bmN0aW9uIHRlc3Qgd2l0aG91dCBlcnJvciBjYXNlLg0KSSB3aWxsIHBvc3QgZml4IGZvciB0
-aGlzLg0KVGhhbmtzLg0KDQoNCg0KQmVzdCB3aXNoZXMNClFpcGVuZw0KDQoNCi0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBsaW51eC1ncGlvLW93bmVyQHZnZXIua2VybmVsLm9yZyBb
-bWFpbHRvOmxpbnV4LWdwaW8tb3duZXJAdmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgQWxl
-eGFuZHJlIENvdXJib3QNClNlbnQ6IFRodXJzZGF5LCBBcHJpbCAwOSwgMjAxNSA5OjU2IEFNDQpU
-bzogRGF2aWQgQmluZGVybWFuOyBaaGEsIFFpcGVuZzsgTWlrYSBXZXN0ZXJiZXJnDQpDYzogTGlu
-dXMgV2FsbGVpajsgbGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IFJlOiBncGlv
-L2dwaW9saWItYWNwaS5jOjU1OTogcG9pbnRsZXNzIHRlc3QgPw0KDQpQYXRjaCA0ZGU2MDk3MGFi
-ZjlmNDk3MzdmNTFlYzZlN2ExZTNiY2Y2ZDM2NzQyIGludHJvZHVjZWQgdGhpcyBjb2RlLg0KRWl0
-aGVyIHRoZSB0eXBlIGlzIHdyb25nLCBvciB0aGUgdGVzdCBzaG91bGQgbm90IGJlIHBlcmZvcm1l
-ZC4NCkNvbnNpZGVyaW5nIHRoZSByZXR1cm4gdHlwZSBvZiBhY3BpX2dwaW9jaGlwX3Bpbl90b19n
-cGlvX29mZnNldCBhbmQgdGhlIGZhY3QgaXQgY2FuIHJldHVybiAtRUlOVkFMLCBJIHdvdWxkIHNh
-eSBpdCBpcyB0aGUgZm9ybWVyLg0KDQpRaXBlbmcsIGNhbiB5b3UgcG9zdCBhIGZpeCBpZiB5b3Ug
-YWdyZWUgd2l0aCBteSBhbmFseXNpcywgZ2l2aW5nIERhdmlkIGNyZWRpdCB3aXRoIHRoZSBSZXBv
-cnRlZC1ieSB0YWc/DQoNClRoYW5rcyENCg0KT24gVHVlLCBBcHIgNywgMjAxNSBhdCA3OjI3IFBN
-LCBEYXZpZCBCaW5kZXJtYW4gPGRjYjMxNEBob3RtYWlsLmNvbT4gd3JvdGU6DQo+IEhlbGxvIHRo
-ZXJlLA0KPg0KPiBbbGludXgtNC4wLXJjNy9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi1hY3BpLmM6NTU5
-XTogKHN0eWxlKSBDaGVja2luZyBpZiB1bnNpZ25lZCB2YXJpYWJsZSAncGluJyBpcyBsZXNzIHRo
-YW4gemVyby4NCj4NCj4gICAgICAgICBpZiAocGluIDwgMCkgew0KPg0KPiBidXQNCj4NCj4gICAg
-ICAgdW5zaWduZWQgcGluID0gYWdwaW8tPnBpbl90YWJsZVtpXTsNCj4NCj4gUmVnYXJkcw0KPg0K
-PiBEYXZpZCBCaW5kZXJtYW4NCj4NCj4NCi0tDQpUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlz
-dDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtZ3BpbyIgaW4gdGhlIGJvZHkgb2Yg
-YSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcgTW9yZSBtYWpvcmRvbW8gaW5m
-byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sDQo=
+On Tue, Oct 21, 2014 at 10:32 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Tue, Sep 30, 2014 at 10:45 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>
+>> Instead of referring to a global static variable for the sgpio
+>> locking, use the state container to contain the lock.
+>>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> Barry, did you get around to testing this patch?
+>
+> Shall I just apply this and see what happens?
+
+Found this patch littering around. I will just apply it now.
+
+Yours,
+Linus Walleij
