@@ -1,42 +1,33 @@
-From: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Subject: [PATCH 3/3] pinctrl: qcom-spmi-mpp: Fix input value report
-Date: Thu,  9 Apr 2015 18:18:37 +0300
-Message-ID: <1428592717-21706-3-git-send-email-ivan.ivanov@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH 1/3] pinctrl: qcom-spmi-gpio: Fix output type
+ configuration
+Date: Thu, 9 Apr 2015 08:53:21 -0700
+Message-ID: <20150409155320.GG19186@sonymobile.com>
 References: <1428592717-21706-1-git-send-email-ivan.ivanov@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([212.209.106.2]:8462 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755270AbbDIPx1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2015 11:53:27 -0400
+Content-Disposition: inline
 In-Reply-To: <1428592717-21706-1-git-send-email-ivan.ivanov@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 
-Fix interpretation of the pmic_mpp_read() return code,
-negative value means an error.
+On Thu 09 Apr 08:18 PDT 2015, Ivan T. Ivanov wrote:
 
-Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> GPIO output type configuration was incorrectly overwritten
+> by strength value. Fix this.
+> 
+> Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+> ---
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 8f36c5f..8f6c7be 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -576,10 +576,11 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
- 		if (pad->input_enabled) {
- 			ret = pmic_mpp_read(state, pad, PMIC_MPP_REG_RT_STS);
--			if (!ret) {
--				ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
--				pad->out_value = ret;
--			}
-+			if (ret < 0)
-+				return;
-+
-+			ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
-+			pad->out_value = ret;
- 		}
+Regards,
+Bjorn
 
- 		seq_printf(s, " %-4s", pad->output_enabled ? "out" : "in");
---
-1.9.1
