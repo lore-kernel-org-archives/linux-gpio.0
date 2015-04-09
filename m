@@ -1,50 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: enable for ARC
-Date: Wed, 8 Apr 2015 17:03:55 +0200
-Message-ID: <CACRpkdYTpLKXRdeCVMkCnXmBg84HEsc0qzfPai5dFOnQ1G+ZVg@mail.gmail.com>
-References: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: gpio/gpiolib-acpi.c:559: pointless test ?
+Date: Thu, 9 Apr 2015 10:55:42 +0900
+Message-ID: <CAAVeFu+eGOctb99oSdKpQrd7+yz_GnFM4i2GkKzDFKvp_5qSFg@mail.gmail.com>
+References: <DUB128-W81974691C87CB9F27B504B9CFD0@phx.gbl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:38458 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866AbbDHPDz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 11:03:55 -0400
-Received: by igbqf9 with SMTP id qf9so40661009igb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 08:03:55 -0700 (PDT)
-In-Reply-To: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:35164 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200AbbDIB4O (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 21:56:14 -0400
+Received: by iggg4 with SMTP id g4so55553825igg.0
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Apr 2015 18:56:13 -0700 (PDT)
+In-Reply-To: <DUB128-W81974691C87CB9F27B504B9CFD0@phx.gbl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vineet Gupta <Vineet.Gupta1@synopsys.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Binderman <dcb314@hotmail.com>, "qipeng.zha" <qipeng.zha@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 31, 2015 at 10:30 AM, Alexey Brodkin
-<Alexey.Brodkin@synopsys.com> wrote:
+Patch 4de60970abf9f49737f51ec6e7a1e3bcf6d36742 introduced this code.
+Either the type is wrong, or the test should not be performed.
+Considering the return type of acpi_gpiochip_pin_to_gpio_offset and
+the fact it can return -EINVAL, I would say it is the former.
 
-> From: Vineet Gupta <vgupta@synopsys.com>
+Qipeng, can you post a fix if you agree with my analysis, giving David
+credit with the Reported-by tag?
+
+Thanks!
+
+On Tue, Apr 7, 2015 at 7:27 PM, David Binderman <dcb314@hotmail.com> wrote:
+> Hello there,
 >
-> Synopsys SDP platform uses DW GPIO controller in design with
-> ARC cores. So adding ARC to architectures that may select this
-> GPIO controller.
+> [linux-4.0-rc7/drivers/gpio/gpiolib-acpi.c:559]: (style) Checking if unsigned variable 'pin' is less than zero.
 >
-> Even though support for Synopsys SDP is yet to be submitted we'll need
-> this tiny option enabled at least for properly working interrupts (DW
-> GPIO controller is used as interrupt controller).
+>         if (pin < 0) {
 >
-> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-
-Patch applied.
-
-But ...
-
-> -       depends on ((ARM || ARM64) && OF_GPIO) || X86_INTEL_QUARK
-> +       depends on ((ARC || ARM || ARM64) && OF_GPIO) || X86_INTEL_QUARK
-
-This is getting a bit silly. What stops us from actually just enabling
-it for any architecture?
-
-Yours,
-Linus Walleij
+> but
+>
+>       unsigned pin = agpio->pin_table[i];
+>
+> Regards
+>
+> David Binderman
+>
+>
