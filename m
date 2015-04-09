@@ -1,100 +1,124 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
- GPIOLIB is not enabled
-Date: Thu, 9 Apr 2015 11:20:55 +0900
-Message-ID: <CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
-References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
- <20150306085957.GC10717@pengutronix.de> <CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
+From: Sonic Zhang <sonic.adi@gmail.com>
+Subject: [PATCH v3] pinmux: allow exlusive pin allocation among GPIO and peripheral funtions via flag strict in struct pinctrl_desc
+Date: Thu, 9 Apr 2015 11:13:07 +0800
+Message-ID: <1428549187-9377-1-git-send-email-sonic.adi@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:35938 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754807AbbDICVQ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 8 Apr 2015 22:21:16 -0400
-In-Reply-To: <CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
+Received: from mail-by2on0073.outbound.protection.outlook.com ([207.46.100.73]:50620
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753787AbbDIDQJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 8 Apr 2015 23:16:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
 
-On Fri, Mar 6, 2015 at 5:59 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello,
->
-> On Fri, Mar 06, 2015 at 09:26:26AM +0100, Linus Walleij wrote:
->> On Thu, Feb 12, 2015 at 10:03 AM, Uwe Kleine-K=C3=B6nig
->> <u.kleine-koenig@pengutronix.de> wrote:
->>
->> > I wonder if gpiod_get_optional et all should be changed to return =
-NULL
->> > instead.
->>
->> This is actually the norm in most subsystems returning cookie
->> pointers, clk, regulator, pinctrl... a NULL pointer is a functional
->> noop. But normally then NULL is returned from all stubs, not
->> just optional.
->>
->> Alexandre, what do you say?
->>
->> > The obvious downside is that if the device tree specifies a
->> > reset-gpio and the kernel just fails to use it because there is so=
-me
->> > code missing, this should better be an error. (The adau1977 code h=
-as
->> > this problem already know, but when changing devm_gpiod_get_option=
-al all
->> > callers are affected.)
->>
->> Device Tree-specific problems is not something we design
->> subsystems for, we try to just accomodate them. I'm not
->> sure I fully understand what you mean here.
-> Consider you have a device that has:
->
->         enable-gpio =3D <&gpio3 12 0>;
->
-> and you do in your driver:
->
->         enablegpio =3D devm_gpiod_get_optional(... "enable" ...);
->
-> . If GPIOLIB is off, enablegpio gets assigned NULL and the driver
-> continues happily without enabling the device which most likely is a
-> bug.
->
-> So IMHO the logic in devm_gpiod_get_optional for the GPIOLIB=3Dn case
-> should be:
->
->         if (device_has_gpio())
->                 return ERR_PTR(-ENOSYS);
->         else
->                 return NULL;
->
-> . device_has_gpio should use similar logic like gpiod_get_index to ch=
-eck
-> if there is a gpio. If this is considered to be too complicated for a
-> disabled subsystem, returning -ENOSYS unconditionally is better than
-> NULL.
+From: Sonic Zhang <sonic.zhang@analog.com>
 
-I should have replied one month ago, but if gpiolib is disabled, how
-can we use gpiolib-like logic to check the existence of a GPIO?
+The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
+for both GPIO and peripheral function. So, add flag strict in struct
+pinctrl_desc to check both gpio_owner and mux_owner before approving the
+pin request.
 
-Having GPIO disabled means there is no GPIO support, including the
-ability to look for GPIOs. -ENOSYS is a well-documented error-code
-which meaning also applies to the gpio_*_optional functions (we don't
-have support for the operation you requested). If a driver or
-architecture really, really needs GPIO support they can require or
-depend on CONFIG_GPIOLIB, and the problem goes away. If they can work
-with and without gpiolib, then they should check for -ENOSYS when they
-request GPIOs and behave accordingly.
+v2-changes:
+- if strict flag is set, check gpio_owner and mux_onwer in if and else clause
 
-Moving the interpretation of what the absence of gpiolib means down to
-the GPIO functions themselves is actually what might lead consumers to
-not know the result of their request. For this reason I would say that
--ENOSYS is appropriate here.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+v3-changes:
+- add kerneldoc for this struct
+- augment Documentation/pinctrl.txt
+
+Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+---
+ Documentation/pinctrl.txt       |    7 +++++++
+ drivers/pinctrl/pinctrl-adi2.c  |    1 +
+ drivers/pinctrl/pinmux.c        |   13 +++++++++++++
+ include/linux/pinctrl/pinctrl.h |    3 +++
+ 4 files changed, 24 insertions(+)
+
+diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
+index 5e9909c..59e0aa7 100644
+--- a/Documentation/pinctrl.txt
++++ b/Documentation/pinctrl.txt
+@@ -850,6 +850,13 @@ possible that the GPIO, pin config and pin multiplex registers are placed into
+ the same memory range and the same section of the data sheet, although that
+ need not be the case.
+ 
++(B.1)
++In some processors, although the physical pins are designed in the same way
++as (B), the GPIO function still can't be enabled at the same time as the
++peripheral functions. So, a flag strict in struct pinctrl_desc is defined
++to check both gpio_owner and mux_owner before approving the pin request.
++Pinctrl driver should set this flag according to its hardware capability.
++
+ From a kernel point of view, however, these are different aspects of the
+ hardware and shall be put into different subsystems:
+ 
+diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+index 8434439..fbd4926 100644
+--- a/drivers/pinctrl/pinctrl-adi2.c
++++ b/drivers/pinctrl/pinctrl-adi2.c
+@@ -710,6 +710,7 @@ static struct pinctrl_desc adi_pinmux_desc = {
+ 	.name = DRIVER_NAME,
+ 	.pctlops = &adi_pctrl_ops,
+ 	.pmxops = &adi_pinmux_ops,
++	.strict = true,
+ 	.owner = THIS_MODULE,
+ };
+ 
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index b874458..2546fa7 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -107,6 +107,13 @@ static int pin_request(struct pinctrl_dev *pctldev,
+ 				desc->name, desc->gpio_owner, owner);
+ 			goto out;
+ 		}
++		if (pctldev->desc->strict && desc->mux_usecount &&
++		    strcmp(desc->mux_owner, owner)) {
++			dev_err(pctldev->dev,
++				"pin %s already requested by %s; cannot claim for %s\n",
++				desc->name, desc->mux_owner, owner);
++			goto out;
++		}
+ 
+ 		desc->gpio_owner = owner;
+ 	} else {
+@@ -116,6 +123,12 @@ static int pin_request(struct pinctrl_dev *pctldev,
+ 				desc->name, desc->mux_owner, owner);
+ 			goto out;
+ 		}
++		if (pctldev->desc->strict && desc->gpio_owner) {
++			dev_err(pctldev->dev,
++				"pin %s already requested by %s; cannot claim for %s\n",
++				desc->name, desc->gpio_owner, owner);
++			goto out;
++		}
+ 
+ 		desc->mux_usecount++;
+ 		if (desc->mux_usecount > 1)
+diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+index 66e4697..fc6b034 100644
+--- a/include/linux/pinctrl/pinctrl.h
++++ b/include/linux/pinctrl/pinctrl.h
+@@ -114,6 +114,8 @@ struct pinctrl_ops {
+  *	of the pins field above
+  * @pctlops: pin control operation vtable, to support global concepts like
+  *	grouping of pins, this is optional.
++ * @strict: check both gpio_owner and mux_owner strictly before approving
++	the pin request
+  * @pmxops: pinmux operations vtable, if you support pinmuxing in your driver
+  * @confops: pin config operations vtable, if you support pin configuration in
+  *	your driver
+@@ -132,6 +134,7 @@ struct pinctrl_desc {
+ 	const struct pinctrl_ops *pctlops;
+ 	const struct pinmux_ops *pmxops;
+ 	const struct pinconf_ops *confops;
++	bool strict;
+ 	struct module *owner;
+ #ifdef CONFIG_GENERIC_PINCONF
+ 	unsigned int num_custom_params;
+-- 
+1.7.9.5
+
