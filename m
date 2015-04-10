@@ -1,54 +1,73 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH 3/3] pinctrl: qcom-spmi-mpp: Fix input value report
-Date: Thu, 9 Apr 2015 09:03:55 -0700
-Message-ID: <20150409160355.GI19186@sonymobile.com>
-References: <1428592717-21706-1-git-send-email-ivan.ivanov@linaro.org>
- <1428592717-21706-3-git-send-email-ivan.ivanov@linaro.org>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [RFT][PATCH 1/2] gpio: bcm-kona: Return error if requesting an
+ already taken gpio
+Date: Fri, 10 Apr 2015 09:28:45 +0800
+Message-ID: <1428629325.5384.1.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([212.209.106.2]:12380 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932708AbbDIQEB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2015 12:04:01 -0400
-Content-Disposition: inline
-In-Reply-To: <1428592717-21706-3-git-send-email-ivan.ivanov@linaro.org>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:36366 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751310AbbDJB2u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Apr 2015 21:28:50 -0400
+Received: by pdea3 with SMTP id a3so5694295pde.3
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Apr 2015 18:28:50 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu 09 Apr 08:18 PDT 2015, Ivan T. Ivanov wrote:
+If a gpio is already taken, .gpio_request should return error.
 
-> Fix interpretation of the pmic_mpp_read() return code,
-> negative value means an error.
-> 
-> Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> index 8f36c5f..8f6c7be 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> @@ -576,10 +576,11 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
-> 
->  		if (pad->input_enabled) {
->  			ret = pmic_mpp_read(state, pad, PMIC_MPP_REG_RT_STS);
-> -			if (!ret) {
-> -				ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
-> -				pad->out_value = ret;
-> -			}
-> +			if (ret < 0)
-> +				return;
-> +
-> +			ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
-> +			pad->out_value = ret;
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-bcm-kona.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Same as with the gpio driver.
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index b164ce8..632352d 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -106,7 +106,7 @@ static void bcm_kona_gpio_lock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
+-static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
++static int bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 					unsigned gpio)
+ {
+ 	u32 val;
+@@ -116,10 +116,17 @@ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 	spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(kona_gpio->reg_base + GPIO_PWD_STATUS(bank_id));
++	if (!(val & BIT(gpio))) {
++		spin_unlock_irqrestore(&kona_gpio->lock, flags);
++		return -EBUSY;
++	}
++
+ 	val &= ~BIT(gpio);
+ 	bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, bank_id, val);
+ 
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++
++	return 0;
+ }
+ 
+ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+@@ -185,8 +192,7 @@ static int bcm_kona_gpio_request(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct bcm_kona_gpio *kona_gpio = to_kona_gpio(chip);
+ 
+-	bcm_kona_gpio_unlock_gpio(kona_gpio, gpio);
+-	return 0;
++	return bcm_kona_gpio_unlock_gpio(kona_gpio, gpio);
+ }
+ 
+ static void bcm_kona_gpio_free(struct gpio_chip *chip, unsigned gpio)
+-- 
+1.9.1
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Regards,
-Bjrn
+
