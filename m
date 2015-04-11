@@ -1,77 +1,67 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [RFT][PATCH 2/2] gpio: bcm-kona: Implement get_direction callback
-Date: Sat, 11 Apr 2015 07:13:48 +0800
-Message-ID: <CAFRkauCN9HQhcO+rhxUmqb=weYnup2CxxBgEBTMswUrOpkeErw@mail.gmail.com>
-References: <1428629325.5384.1.camel@phoenix>
-	<1428629414.5384.2.camel@phoenix>
-	<5527F6AE.9010502@broadcom.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:34639 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756496AbbDJXNu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Apr 2015 19:13:50 -0400
-Received: by laat2 with SMTP id t2so23272140laa.1
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Apr 2015 16:13:48 -0700 (PDT)
-In-Reply-To: <5527F6AE.9010502@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Andrianov <andrew@ncrmnt.org>
+Subject: [PATCH 0/2] ARM: mvebu: Add DLINK-DNS327L support
+Date: Sat, 11 Apr 2015 23:29:18 +0300
+Message-ID: <1428784160-19431-1-git-send-email-andrew@ncrmnt.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org
+Cc: Andrew Andrianov <andrew@ncrmnt.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-2015-04-11 0:13 GMT+08:00 Ray Jui <rjui@broadcom.com>:
-> Hi Axel,
->
-> On 4/9/2015 6:30 PM, Axel Lin wrote:
->> Implement gpio_chip's get_direction() callback, that lets other drivers get
->> particular GPIOs direction using gpiod_get_direction().
->>
->> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->> ---
->>  drivers/gpio/gpio-bcm-kona.c | 24 ++++++++++++++----------
->>  1 file changed, 14 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
->> index 632352d..3649ed5 100644
->> --- a/drivers/gpio/gpio-bcm-kona.c
->> +++ b/drivers/gpio/gpio-bcm-kona.c
->> @@ -129,6 +129,14 @@ static int bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
->>       return 0;
->>  }
->>
->> +static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
->> +{
->> +     struct bcm_kona_gpio *kona_gpio = to_kona_gpio(chip);
->> +     void __iomem *reg_base = kona_gpio->reg_base;
->> +
->> +     return readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK;
->
-> You are making assumption of actual values of GPIOF_DIR_IN and
-> GPIOF_DIR_OUT. I think it would be better to return GPIOF_DIR_IN or
-> GPIOF_DIR_OUT based on the register readling.
+This patchset adds support for armada370-based NAS by DLINK.
 
-Yes, it's because GPIO_GPCTR0_IOTR_CMD_INPUT == GPIOF_DIR_IN and
-GPIO_GPCTR0_IOTR_CMD_0UTPUT == GPIOF_DIR_OUT.
+DNS-327L is a 2-bay NAS with the following specs:     
+     - 512MiB RAM
+     - 128MiB NAND Flash
+     - 1 GbE interface (Marvell PHY)
+     - 1 rear USB 3.0 port (via PCIe USB 3.0 controller)
+     - 2 internal SATA ports handled by the Armada 370: 
+       	 uses 2 gpios for power control
+     - two front 2-color leds (amber + white) for both discs, 
+        controlled by the SoC
+     - One white LED handled by SoC (USB)
+     - 3 buttons. Power handled by weltrend, USB and 
+       RESET (on the bottom) are wired via GPIOs 
+     - Unidentified i2c device at address 0x13 (via i2cdetect)
+     - UART0 providing serial console
+     - Weltrend MCU serving for RTC, temperature, fan control, 
+       and power button handling interfaced via UART1 (dns320l-daemon)
+     
+Hardware notes follow: 
+Everything's supported, save for mysterious i2c device at 
+address 0x13 that I couldn't even find on the PCB.
 
-I can change it to below if you prefer, but current patch is shorter
-and logically exactly the same.
+Stock firmware performs some messing with PHY registers (that 
+have no public documentation) using a userspace script. With 
+upstream kernel it is possible to match the stock behavior using 
+the following in u-boot prompt:
 
-if (readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK)
-        return GPIOF_DIR_IN;
-else
-        return GPIOF_DIR_OUT;
+mw.l 0xd00184e0 0xa8a; 
+phyWrite 0 16 2; 
+phyWrite 0 19 77; 
+phyWrite 0 18 5747; 
 
->
-> In addition, with your change, when bcm_kona_gpio_get_dir is called
-> within bcm_kona_gpio_set and bcm_kona_gpio_get, it's protected by the
-> kona_gpio->lock spinlock. But no lock protection while being invoked
-> through the upper layer get_direction callback.
+When power button is pressed to turn the NAS off, weltrend signals 
+the SoC by driving mpp63 line low. Apparently right now pinctrl assumes
+that this line can only work as 'gpo' that screws up gpio-buttons driver.
+Since without gpio-buttons, mpp63 works as input properly via sysfs 
+interface, I've added a patch for pinctrl-armada-370.c that fixes the 
+issue.
 
-It is because bcm_kona_gpio_get_dir is a single register read.
-In bcm_kona_gpio_set/bcm_kona_gpio_get, the lock is to ensure
-read/write to both the DIR and LEVEL registers so we won't set/get
-wrong level value in wrong DIR status.
+The only remaining issue are hard-freezes every 4-16 hours when
+CONFIG_ARM_MVEBU_V7_CPUIDLE=y
+As of 3.18 this issue was still present, I'm testing if things changed 
+in 4.0-rc7 right now (Still live for 3 hours at the time of writing)
 
-Regards,
-Axel
+Andrew Andrianov (2):
+  pinctrl: mvebu: Fix mapping of pin 63 (gpo -> gpio)
+  ARM: mvebu: dts: Add dts file for DLink DNS-327L
+
+ arch/arm/boot/dts/Makefile                     |    1 +
+ arch/arm/boot/dts/armada-370-dlink-dns327l.dts |  309 ++++++++++++++++++++++++
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c     |    2 +-
+ 3 files changed, 311 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/armada-370-dlink-dns327l.dts
+
+-- 
+1.7.10.4
