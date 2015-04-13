@@ -1,95 +1,75 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH v2] gpio: bcm-kona: Implement get_direction callback
-Date: Mon, 13 Apr 2015 15:56:00 +0800
-Message-ID: <1428911760.25188.0.camel@phoenix>
+From: Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: [PATCH 1/2] Doc: DT: Add binding document for GPIO exporter
+Date: Mon, 13 Apr 2015 13:05:17 +0200
+Message-ID: <20150413110517.9681.2438.stgit@localhost>
+References: <20150413110515.9681.58848.stgit@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:36116 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753455AbbDMH4F (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Apr 2015 03:56:05 -0400
-Received: by pdea3 with SMTP id a3so98927976pde.3
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Apr 2015 00:56:04 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20150413110515.9681.58848.stgit@localhost>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Implement gpio_chip's get_direction() callback, that lets other drivers get
-particular GPIOs direction using gpiod_get_direction().
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
 ---
-v2: Make bcm_kona_gpio_get_dir explicitly return GPIOF_DIR_IN or GPIOF_DIR_OUT.
+ .../devicetree/bindings/gpio/gpio-exporter.txt     |   40 ++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-exporter.txt
 
- drivers/gpio/gpio-bcm-kona.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index b164ce8..a6e7922 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -122,6 +122,16 @@ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
- 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
- }
- 
-+static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
-+{
-+	struct bcm_kona_gpio *kona_gpio = to_kona_gpio(chip);
-+	void __iomem *reg_base = kona_gpio->reg_base;
-+	u32 val;
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-exporter.txt b/Documentation/devicetree/bindings/gpio/gpio-exporter.txt
+new file mode 100644
+index 0000000..58fc2a9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-exporter.txt
+@@ -0,0 +1,40 @@
++Bindings to export some GPIOs to userspace.
 +
-+	val = readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK;
-+	return val ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
-+}
++This is useful when some signals are made externally available by a piece
++of hardware (eg terminal blocks to connect sensors, actuators) but no
++special purpose kernel driver exists.
 +
- static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- {
- 	struct bcm_kona_gpio *kona_gpio;
-@@ -135,12 +145,8 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
- 	reg_base = kona_gpio->reg_base;
- 	spin_lock_irqsave(&kona_gpio->lock, flags);
- 
--	/* determine the GPIO pin direction */
--	val = readl(reg_base + GPIO_CONTROL(gpio));
--	val &= GPIO_GPCTR0_IOTR_MASK;
--
- 	/* this function only applies to output pin */
--	if (GPIO_GPCTR0_IOTR_CMD_INPUT == val)
-+	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
- 		goto out;
- 
- 	reg_offset = value ? GPIO_OUT_SET(bank_id) : GPIO_OUT_CLEAR(bank_id);
-@@ -166,13 +172,12 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
- 	reg_base = kona_gpio->reg_base;
- 	spin_lock_irqsave(&kona_gpio->lock, flags);
- 
--	/* determine the GPIO pin direction */
--	val = readl(reg_base + GPIO_CONTROL(gpio));
--	val &= GPIO_GPCTR0_IOTR_MASK;
-+	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
-+		reg_offset = GPIO_IN_STATUS(bank_id);
-+	else
-+		reg_offset = GPIO_OUT_STATUS(bank_id);
- 
- 	/* read the GPIO bank status */
--	reg_offset = (GPIO_GPCTR0_IOTR_CMD_INPUT == val) ?
--	    GPIO_IN_STATUS(bank_id) : GPIO_OUT_STATUS(bank_id);
- 	val = readl(reg_base + reg_offset);
- 
- 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
-@@ -310,6 +315,7 @@ static struct gpio_chip template_chip = {
- 	.owner = THIS_MODULE,
- 	.request = bcm_kona_gpio_request,
- 	.free = bcm_kona_gpio_free,
-+	.get_direction = bcm_kona_gpio_get_dir,
- 	.direction_input = bcm_kona_gpio_direction_input,
- 	.get = bcm_kona_gpio_get,
- 	.direction_output = bcm_kona_gpio_direction_output,
--- 
-1.9.1
-
-
-
++Use of this binding allows userspace to have a stable name and input
++/ output mode across hardware and software versions.
++
++Required properties:
++- compatible: "linux,gpio-exporter"
++
++
++Each GPIO to be exported is represented as a child node with:
++
++Required child properties:
++- gpios : Reference to the GPIO to export (standard gpio binding)
++
++Optional child properties:
++- output : if present GPIO is output, otherwise input
++- initial-state : Initial state (0=low, 1=high) for output
++- allow-direction-change : Present if GPIO direction may be modified
++
++The name of the child node is that exposed to userspace.
++
++Example:
++	gpio_exporter:gpio-exporter {
++		compatible = "linux,gpio-exporter";
++
++		terminalblock_1_out1 {
++			gpios = <&gpio2 12 0>;
++			output;
++			initial-state = <0>;
++		};
++
++		terminalblock_1_in1 {
++			gpios = <&gpio2 15 0>;
++		};
++
++	};
