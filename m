@@ -1,87 +1,95 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [RFT][PATCH 2/2] gpio: bcm-kona: Implement get_direction callback
-Date: Sun, 12 Apr 2015 21:15:36 -0700
-Message-ID: <552B42E8.6020605@broadcom.com>
-References: <1428629325.5384.1.camel@phoenix>	<1428629414.5384.2.camel@phoenix>	<5527F6AE.9010502@broadcom.com> <CAFRkauCN9HQhcO+rhxUmqb=weYnup2CxxBgEBTMswUrOpkeErw@mail.gmail.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH v2] gpio: bcm-kona: Implement get_direction callback
+Date: Mon, 13 Apr 2015 15:56:00 +0800
+Message-ID: <1428911760.25188.0.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:27745 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751133AbbDMEPi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Apr 2015 00:15:38 -0400
-In-Reply-To: <CAFRkauCN9HQhcO+rhxUmqb=weYnup2CxxBgEBTMswUrOpkeErw@mail.gmail.com>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:36116 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753455AbbDMH4F (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Apr 2015 03:56:05 -0400
+Received: by pdea3 with SMTP id a3so98927976pde.3
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Apr 2015 00:56:04 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Axel,
+Implement gpio_chip's get_direction() callback, that lets other drivers get
+particular GPIOs direction using gpiod_get_direction().
 
-On 4/10/2015 4:13 PM, Axel Lin wrote:
-> 2015-04-11 0:13 GMT+08:00 Ray Jui <rjui@broadcom.com>:
->> Hi Axel,
->>
->> On 4/9/2015 6:30 PM, Axel Lin wrote:
->>> Implement gpio_chip's get_direction() callback, that lets other drivers get
->>> particular GPIOs direction using gpiod_get_direction().
->>>
->>> Signed-off-by: Axel Lin <axel.lin@ingics.com>
->>> ---
->>>  drivers/gpio/gpio-bcm-kona.c | 24 ++++++++++++++----------
->>>  1 file changed, 14 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
->>> index 632352d..3649ed5 100644
->>> --- a/drivers/gpio/gpio-bcm-kona.c
->>> +++ b/drivers/gpio/gpio-bcm-kona.c
->>> @@ -129,6 +129,14 @@ static int bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
->>>       return 0;
->>>  }
->>>
->>> +static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
->>> +{
->>> +     struct bcm_kona_gpio *kona_gpio = to_kona_gpio(chip);
->>> +     void __iomem *reg_base = kona_gpio->reg_base;
->>> +
->>> +     return readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK;
->>
->> You are making assumption of actual values of GPIOF_DIR_IN and
->> GPIOF_DIR_OUT. I think it would be better to return GPIOF_DIR_IN or
->> GPIOF_DIR_OUT based on the register readling.
-> 
-> Yes, it's because GPIO_GPCTR0_IOTR_CMD_INPUT == GPIOF_DIR_IN and
-> GPIO_GPCTR0_IOTR_CMD_0UTPUT == GPIOF_DIR_OUT.
-> 
-> I can change it to below if you prefer, but current patch is shorter
-> and logically exactly the same.
-> 
-> if (readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK)
->         return GPIOF_DIR_IN;
-> else
->         return GPIOF_DIR_OUT;
-> 
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+v2: Make bcm_kona_gpio_get_dir explicitly return GPIOF_DIR_IN or GPIOF_DIR_OUT.
 
-Or one line like:
+ drivers/gpio/gpio-bcm-kona.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-    return readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK
-? GPIOF_DIR_IN : GPIOF_DIR_OUT;
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index b164ce8..a6e7922 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -122,6 +122,16 @@ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
++static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
++{
++	struct bcm_kona_gpio *kona_gpio = to_kona_gpio(chip);
++	void __iomem *reg_base = kona_gpio->reg_base;
++	u32 val;
++
++	val = readl(reg_base + GPIO_CONTROL(gpio)) & GPIO_GPCTR0_IOTR_MASK;
++	return val ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
++}
++
+ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ {
+ 	struct bcm_kona_gpio *kona_gpio;
+@@ -135,12 +145,8 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ 	reg_base = kona_gpio->reg_base;
+ 	spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+-	/* determine the GPIO pin direction */
+-	val = readl(reg_base + GPIO_CONTROL(gpio));
+-	val &= GPIO_GPCTR0_IOTR_MASK;
+-
+ 	/* this function only applies to output pin */
+-	if (GPIO_GPCTR0_IOTR_CMD_INPUT == val)
++	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
+ 		goto out;
+ 
+ 	reg_offset = value ? GPIO_OUT_SET(bank_id) : GPIO_OUT_CLEAR(bank_id);
+@@ -166,13 +172,12 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 	reg_base = kona_gpio->reg_base;
+ 	spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+-	/* determine the GPIO pin direction */
+-	val = readl(reg_base + GPIO_CONTROL(gpio));
+-	val &= GPIO_GPCTR0_IOTR_MASK;
++	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
++		reg_offset = GPIO_IN_STATUS(bank_id);
++	else
++		reg_offset = GPIO_OUT_STATUS(bank_id);
+ 
+ 	/* read the GPIO bank status */
+-	reg_offset = (GPIO_GPCTR0_IOTR_CMD_INPUT == val) ?
+-	    GPIO_IN_STATUS(bank_id) : GPIO_OUT_STATUS(bank_id);
+ 	val = readl(reg_base + reg_offset);
+ 
+ 	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+@@ -310,6 +315,7 @@ static struct gpio_chip template_chip = {
+ 	.owner = THIS_MODULE,
+ 	.request = bcm_kona_gpio_request,
+ 	.free = bcm_kona_gpio_free,
++	.get_direction = bcm_kona_gpio_get_dir,
+ 	.direction_input = bcm_kona_gpio_direction_input,
+ 	.get = bcm_kona_gpio_get,
+ 	.direction_output = bcm_kona_gpio_direction_output,
+-- 
+1.9.1
 
->>
->> In addition, with your change, when bcm_kona_gpio_get_dir is called
->> within bcm_kona_gpio_set and bcm_kona_gpio_get, it's protected by the
->> kona_gpio->lock spinlock. But no lock protection while being invoked
->> through the upper layer get_direction callback.
-> 
-> It is because bcm_kona_gpio_get_dir is a single register read.
-> In bcm_kona_gpio_set/bcm_kona_gpio_get, the lock is to ensure
-> read/write to both the DIR and LEVEL registers so we won't set/get
-> wrong level value in wrong DIR status.
 
-Yes, you are right. The locking part is fine!
 
-> 
-> Regards,
-> Axel
-> 
