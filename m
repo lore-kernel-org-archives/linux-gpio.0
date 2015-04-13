@@ -1,47 +1,89 @@
-From: Martin Fuzzey <mfuzzey@parkeon.com>
-Subject: [PATCH  0/2] gpio: Allow userspace export from DT
-Date: Mon, 13 Apr 2015 13:05:15 +0200
-Message-ID: <20150413110515.9681.58848.stgit@localhost>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: Fwd: Re: [PATCH 2/2] ARM: mvebu: dts: Add dts file for DLink
+ DNS-327L
+Date: Mon, 13 Apr 2015 16:16:10 +0200
+Message-ID: <552BCFAA.2020109@free-electrons.com>
+References: <b6534b962d2cf9d21cb72d43f19a6574@mail.ncrmnt.org> <552A6209.9040903@gmail.com> <cd7445f789f1082f464d464f77807f12@mail.ncrmnt.org> <20150412145857.GA14038@lunn.ch> <b172d775afa24cea69a9490f531c6b37@mail.ncrmnt.org> <20150412194735.GA27921@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:52442 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932262AbbDMOQO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Apr 2015 10:16:14 -0400
+In-Reply-To: <20150412194735.GA27921@lunn.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Lunn <andrew@lunn.ch>, Andrew <andrew@ncrmnt.org>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>
 
-Currently the gpio sysfs interface allows userspace to access simple hardware
-where no kernel driver exists or would be useful.
+Hi Andrew(s),
 
-However it requires userspace to know the gpio number that has been assigned
-by the kernel.
+On 12/04/2015 21:47, Andrew Lunn wrote:
+> On Sun, Apr 12, 2015 at 06:41:31PM +0300, Andrew wrote:
+>> Andrew Lunn ?????????? 12.04.2015 17:58:
+>>>> Okay, got it.
+>>>> I'll file a bug about this issue to the the bugzilla. However
+>>>> something
+>>>> tells me it might not be cpuidle, but D-link. This one's sounds nasty
+>>>> and it has been around since 3.16.x. How could it go unnoticed?
+>>>> Unfortunately I have no other armada-370 hardware to test it.
+>>>
+>>> Hi Andrew
+>>>
+>>> A few of us here do have hardware to test with. Please give a detailed
+>>> description of how you reproduce the issue, and your kernel
+>>> configuration, if different from mvebu_v7_defconfig, or
+>>> multi_v7_defconfig.
+>>>
+>>> 	Thanks
+>>> 		Andrew
+>>
+>>
+>> arch/arm/configs/mvebu_v7_defconfig has CONFIG_ARM_MVEBU_V7_CPUIDLE=y,
+>> so it should be sufficient to reproduce the issue. I first encountered
+>> this issue using that very config and observed it on 2 DNS-327L boxes I
+>> own.
+>>
+>> All I have to do to trigger the bug - enable cpuidle driver and let
+>> the box
+>> sit for some 4-12 hours, till it hard-freezes. If wdt is enabled -
+>> wdt reboot
+>> will happen.
+> 
+> That simple! Well i've got a 370RD which has been sat mostly idle for
+> weeks, using the mvebu_v7_defconfig, with a few addition things turned
+> on for testing the Ethernet switch on the board. I've not had that
+> lockup.
+> 
+> One thing you can try to narrow it down is the disable the second idle
+> mode. Take a look at armada370_idle_driver. Keep the
+> ARM_CPUIDLE_WFI_STATE but disable the "Deep Idle" state.
 
-That number, in the case of gpio drviers using dynamic allocation, is not fixed,
-and may change when:
-* The kernel version changes and ARCH_NR_GPIOS is changed (happened in 3.17)
-* The kernel version changes and probe order changes for gpio chips.
-* The kernel configuration is changed if CONFIG_ARCH_NR_GPIO is used
-* The board is redesigned (eg switching an externally visible signal from a
-SoC provided GPIO to an I2C expander chip or vice versa).
-* Other GPIO chips are added to the system.
+Actually you don't have to modify the kernel you can setup the CPU idle level
+you want at runtime:
 
-The above means that, in order to export the GPIO to userspace via
-/sys/class/gpio/export the userspace code must know the exact hardware and
-kernel version information.
+echo 1 > /sys/devices/system/cpu/cpu0/cpuidle/state1/disable
 
-Furthermore, in many cases, it makes no sense to allow userspace to change the
-signal direction; even if the GPIO itself allows it the circuitry connected
-to the pin often does not (eg a signal dedicated to an output function driving
-a  transistor).
+will disable the state1. By doing this on Armada 370 then you
+will only use the WFI state.
 
-This patch series solves both problems by performing the external
-signal => GPIO mapping in the device tree.
+Do you still have this issue on v4.0-rc7?
+
+Thanks,
+
+Gregory
+
+
+
+>       
+>       Andrew
+> 
+
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
