@@ -1,40 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: enable for ARC
-Date: Wed, 15 Apr 2015 10:13:34 +0200
-Message-ID: <CACRpkdZYZBAMW3UXcYtH3HKZbjhBLJQE15tLDFF47re+CuQi8w@mail.gmail.com>
-References: <1427790607-24842-1-git-send-email-abrodkin@synopsys.com>
-	<1428565685.2536.4.camel@synopsys.com>
-	<CACRpkdZCb+5AP7n8LuG2p6XMd9ctKVH8nRu8gavBV4EA5LcqBQ@mail.gmail.com>
-	<8837317.PEV34r0lLR@wuerfel>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
+Date: Wed, 15 Apr 2015 08:19:52 -0500
+Message-ID: <CAL_JsqJorndYh4ROdKbJfpG1KY=Xosjc6BMFYRPrb+BsauFsnQ@mail.gmail.com>
+References: <20150413110515.9681.58848.stgit@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:33636 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200AbbDOINf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2015 04:13:35 -0400
-Received: by oblw8 with SMTP id w8so12422796obl.0
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2015 01:13:34 -0700 (PDT)
-In-Reply-To: <8837317.PEV34r0lLR@wuerfel>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:33537 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751757AbbDONUN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2015 09:20:13 -0400
+In-Reply-To: <20150413110515.9681.58848.stgit@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Martin Fuzzey <mfuzzey@parkeon.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Thu, Apr 9, 2015 at 12:31 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 09 April 2015 10:29:59 Linus Walleij wrote:
+On Mon, Apr 13, 2015 at 6:05 AM, Martin Fuzzey <mfuzzey@parkeon.com> wrote:
+> Currently the gpio sysfs interface allows userspace to access simple hardware
+> where no kernel driver exists or would be useful.
 
->> I will make a patch removing the dependencies and see what happens.
+Whether or not a kernel driver exists can vary by kernel version. The
+dtb needs to work either way. The way you have done it would require
+dtb changes.
+
+It would be useful to describe the function of gpios in a way that
+either subsystems can bind to them (e.g. leds, rf-kill, keys, etc.) or
+that information can be exported to userspace.
+
+> However it requires userspace to know the gpio number that has been assigned
+> by the kernel.
 >
-> Yes, makes sense. I think we don't need anything other than
+> That number, in the case of gpio drviers using dynamic allocation, is not fixed,
+> and may change when:
+> * The kernel version changes and ARCH_NR_GPIOS is changed (happened in 3.17)
+> * The kernel version changes and probe order changes for gpio chips.
+> * The kernel configuration is changed if CONFIG_ARCH_NR_GPIO is used
+> * The board is redesigned (eg switching an externally visible signal from a
+> SoC provided GPIO to an I2C expander chip or vice versa).
+> * Other GPIO chips are added to the system.
+
+Isn't there some plan/desire to fix the GPIO sysfs interface?
+
+> The above means that, in order to export the GPIO to userspace via
+> /sys/class/gpio/export the userspace code must know the exact hardware and
+> kernel version information.
 >
->         depends on OF_GPIO || X86_INTEL_QUARK
-
-I didn't even keep that. Just available for everyone and its dog,
-this hardware is so clearly generic.
-
-I also rearranged the Kconfig menus in GPIO so users are not
-confused (hopefully) as much by strange GPIO stuff anymore.
-
-Yours,
-Linus Walleij
+> Furthermore, in many cases, it makes no sense to allow userspace to change the
+> signal direction; even if the GPIO itself allows it the circuitry connected
+> to the pin often does not (eg a signal dedicated to an output function driving
+> a  transistor).
+>
+> This patch series solves both problems by performing the external
+> signal => GPIO mapping in the device tree.
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
