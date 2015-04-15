@@ -1,52 +1,58 @@
-From: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
+From: "Lennart Sorensen" <lsorense@csclub.uwaterloo.ca>
 Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
  IODelay configuration
-Date: Wed, 15 Apr 2015 11:51:32 -0500
-Message-ID: <552E9714.10001@ti.com>
-References: <1425427237-11511-1-git-send-email-nm@ti.com> <1425427237-11511-2-git-send-email-nm@ti.com> <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com> <20150310153321.GO5264@atomide.com> <54FF28F5.4040707@ti.com> <20150310173115.GS5264@atomide.com> <54FF38F3.2030703@ti.com> <CACRpkdZ1faucps07jaT9kOyviC+Sw6gPkbF=cAGCUj+DiaEgTA@mail.gmail.com> <20150318014151.GL31346@atomide.com> <20150415012910.GA29560@csclub.uwaterloo.ca>
+Date: Wed, 15 Apr 2015 14:44:54 -0400
+Message-ID: <20150415184454.GT29558@csclub.uwaterloo.ca>
+References: <1425427237-11511-2-git-send-email-nm@ti.com>
+ <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com>
+ <20150310153321.GO5264@atomide.com>
+ <54FF28F5.4040707@ti.com>
+ <20150310173115.GS5264@atomide.com>
+ <54FF38F3.2030703@ti.com>
+ <CACRpkdZ1faucps07jaT9kOyviC+Sw6gPkbF=cAGCUj+DiaEgTA@mail.gmail.com>
+ <20150318014151.GL31346@atomide.com>
+ <20150415012910.GA29560@csclub.uwaterloo.ca>
+ <552E9714.10001@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150415012910.GA29560-1wCw9BSqJbv44Nm34jS7GywD8/FfD2ys@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lennart Sorensen <lsorense-1wCw9BSqJbv44Nm34jS7GywD8/FfD2ys@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <552E9714.10001@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lokesh Vutla <lokeshvutla@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 04/14/2015 08:29 PM, Lennart Sorensen wrote:
-> On Tue, Mar 17, 2015 at 06:41:51PM -0700, Tony Lindgren wrote:
->> Yeah agreed. I suggest discussing the binding and the generic
->> parsing code for it first :)
->>  
->> It seems with the generic binding the actual driver should be
->> just the hardware specific code hopefully.
+On Wed, Apr 15, 2015 at 11:51:32AM -0500, Nishanth Menon wrote:
+> I am yet to post a new revision to this series - few other stuff got
+> in the way. IODelay driver in no way removes the constraint that the
+> SoC architecture has - most of the pins still need to be muxed in
+> bootloader - we cannot escape that. The reasoning for doing the mux in
+> bootloader is independent of the need for iodelay.
 > 
-> Did this thread go anywhere in the last month?  I am certainly looking
-> forward to seeing what the resolution is to this, given for our use the
-> boot loader setup is not appealing at all.
+> Reasoning for mux in bootloader is because the mux and pull fields are
+> glitchy - much more than previous generations of TI SoCs and
+> significantly long enough to cause issues depending on the pins being
+> muxed.
+
+Well if we know glitching is NOT an issue on our boards, then we don't
+have to do anything in the boot loader other than the basic setup for
+the serial console and emmc and SD, which has always been necesary.
+
+I consider moving the mux setup to the bootloader a terrible design and
+won't go along with it.  We make sure all external devices have reset
+lines being held while the pinmux is being setup, so glitching is a
+non issue.
+
+> Reasoning for iodelay is different - it is a hardware block meant to
+> control the timing of signals in a particular signal path to ensure
+> that specification compliance is met.
 > 
-I am yet to post a new revision to this series - few other stuff got
-in the way. IODelay driver in no way removes the constraint that the
-SoC architecture has - most of the pins still need to be muxed in
-bootloader - we cannot escape that. The reasoning for doing the mux in
-bootloader is independent of the need for iodelay.
+> Lets try not to mix the two.
 
-Reasoning for mux in bootloader is because the mux and pull fields are
-glitchy - much more than previous generations of TI SoCs and
-significantly long enough to cause issues depending on the pins being
-muxed.
-
-Reasoning for iodelay is different - it is a hardware block meant to
-control the timing of signals in a particular signal path to ensure
-that specification compliance is met.
-
-Lets try not to mix the two.
+Well I was told by multiple people from TI that the reason for moving
+the pinmux setup to the bootloader was because of the iodelay issue,
+so you will have to get the message made clear within TI then.
 
 -- 
-Regards,
-Nishanth Menon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Len Sorensen
