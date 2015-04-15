@@ -1,41 +1,98 @@
-From: "Lennart Sorensen" <lsorense@csclub.uwaterloo.ca>
-Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
- IODelay configuration
-Date: Tue, 14 Apr 2015 21:29:10 -0400
-Message-ID: <20150415012910.GA29560@csclub.uwaterloo.ca>
-References: <1425427237-11511-1-git-send-email-nm@ti.com>
- <1425427237-11511-2-git-send-email-nm@ti.com>
- <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com>
- <20150310153321.GO5264@atomide.com>
- <54FF28F5.4040707@ti.com>
- <20150310173115.GS5264@atomide.com>
- <54FF38F3.2030703@ti.com>
- <CACRpkdZ1faucps07jaT9kOyviC+Sw6gPkbF=cAGCUj+DiaEgTA@mail.gmail.com>
- <20150318014151.GL31346@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: fix allmodconfig noise
+Date: Wed, 15 Apr 2015 10:03:32 +0200
+Message-ID: <1429085012-25183-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.csclub.uwaterloo.ca ([129.97.134.52]:55570 "EHLO
-	mail.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932654AbbDOB3M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Apr 2015 21:29:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20150318014151.GL31346@atomide.com>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:35390 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751703AbbDOIDn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2015 04:03:43 -0400
+Received: by lbbuc2 with SMTP id uc2so27678470lbb.2
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Apr 2015 01:03:41 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lokesh Vutla <lokeshvutla@ti.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Mar 17, 2015 at 06:41:51PM -0700, Tony Lindgren wrote:
-> Yeah agreed. I suggest discussing the binding and the generic
-> parsing code for it first :)
->  
-> It seems with the generic binding the actual driver should be
-> just the hardware specific code hopefully.
+There was some mess in the dependencies in the pinctrl
+Kconfig for compile tests under allmodconfig. Mea Culpa.
 
-Did this thread go anywhere in the last month?  I am certainly looking
-forward to seeing what the resolution is to this, given for our use the
-boot loader setup is not appealing at all.
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/Kconfig          | 5 ++++-
+ drivers/pinctrl/mediatek/Kconfig | 3 +++
+ drivers/pinctrl/nomadik/Kconfig  | 2 +-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index c6f299ba25cb..aeb5729fbda6 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -95,9 +95,11 @@ config PINCTRL_FALCON
+ 
+ config PINCTRL_MESON
+ 	bool
++	depends on OF
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
++	select GPIOLIB
+ 	select OF_GPIO
+ 	select REGMAP_MMIO
+ 
+@@ -229,7 +231,8 @@ config PINCTRL_XWAY
+ 
+ config PINCTRL_TB10X
+ 	bool
+-	depends on ARC_PLAT_TB10X
++	depends on OF && ARC_PLAT_TB10X
++	select GPIOLIB
+ 
+ endmenu
+ 
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index 5983cf5b2c46..6b3551cad111 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -2,6 +2,7 @@ if ARCH_MEDIATEK || COMPILE_TEST
+ 
+ config PINCTRL_MTK_COMMON
+ 	bool
++	depends on OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+ 	select GPIOLIB
+@@ -10,12 +11,14 @@ config PINCTRL_MTK_COMMON
+ # For ARMv7 SoCs
+ config PINCTRL_MT8135
+ 	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
++	depends on OF
+ 	default MACH_MT8135
+ 	select PINCTRL_MTK_COMMON
+ 
+ # For ARMv8 SoCs
+ config PINCTRL_MT8173
+ 	bool "Mediatek MT8173 pin control"
++	depends on OF
+ 	depends on ARM64 || COMPILE_TEST
+ 	default ARM64 && ARCH_MEDIATEK
+ 	select PINCTRL_MTK_COMMON
+diff --git a/drivers/pinctrl/nomadik/Kconfig b/drivers/pinctrl/nomadik/Kconfig
+index d48a5aa24a29..f4fcebfce68c 100644
+--- a/drivers/pinctrl/nomadik/Kconfig
++++ b/drivers/pinctrl/nomadik/Kconfig
+@@ -30,9 +30,9 @@ if (ARCH_U8500 || ARCH_NOMADIK)
+ config PINCTRL_NOMADIK
+ 	bool "Nomadik pin controller driver"
+ 	depends on ARCH_U8500 || ARCH_NOMADIK
++	depends on OF && GPIOLIB
+ 	select PINMUX
+ 	select PINCONF
+-	select GPIOLIB
+ 	select OF_GPIO
+ 	select GPIOLIB_IRQCHIP
+ 
 -- 
-Len Sorensen
+1.9.3
+
