@@ -1,60 +1,52 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
-Date: Wed, 15 Apr 2015 08:19:52 -0500
-Message-ID: <CAL_JsqJorndYh4ROdKbJfpG1KY=Xosjc6BMFYRPrb+BsauFsnQ@mail.gmail.com>
-References: <20150413110515.9681.58848.stgit@localhost>
+From: Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
+ IODelay configuration
+Date: Wed, 15 Apr 2015 11:51:32 -0500
+Message-ID: <552E9714.10001@ti.com>
+References: <1425427237-11511-1-git-send-email-nm@ti.com> <1425427237-11511-2-git-send-email-nm@ti.com> <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com> <20150310153321.GO5264@atomide.com> <54FF28F5.4040707@ti.com> <20150310173115.GS5264@atomide.com> <54FF38F3.2030703@ti.com> <CACRpkdZ1faucps07jaT9kOyviC+Sw6gPkbF=cAGCUj+DiaEgTA@mail.gmail.com> <20150318014151.GL31346@atomide.com> <20150415012910.GA29560@csclub.uwaterloo.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:33537 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751757AbbDONUN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Apr 2015 09:20:13 -0400
-In-Reply-To: <20150413110515.9681.58848.stgit@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150415012910.GA29560-1wCw9BSqJbv44Nm34jS7GywD8/FfD2ys@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lennart Sorensen <lsorense-1wCw9BSqJbv44Nm34jS7GywD8/FfD2ys@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Lokesh Vutla <lokeshvutla-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Fuzzey <mfuzzey@parkeon.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Apr 13, 2015 at 6:05 AM, Martin Fuzzey <mfuzzey@parkeon.com> wrote:
-> Currently the gpio sysfs interface allows userspace to access simple hardware
-> where no kernel driver exists or would be useful.
+On 04/14/2015 08:29 PM, Lennart Sorensen wrote:
+> On Tue, Mar 17, 2015 at 06:41:51PM -0700, Tony Lindgren wrote:
+>> Yeah agreed. I suggest discussing the binding and the generic
+>> parsing code for it first :)
+>>  
+>> It seems with the generic binding the actual driver should be
+>> just the hardware specific code hopefully.
+> 
+> Did this thread go anywhere in the last month?  I am certainly looking
+> forward to seeing what the resolution is to this, given for our use the
+> boot loader setup is not appealing at all.
+> 
+I am yet to post a new revision to this series - few other stuff got
+in the way. IODelay driver in no way removes the constraint that the
+SoC architecture has - most of the pins still need to be muxed in
+bootloader - we cannot escape that. The reasoning for doing the mux in
+bootloader is independent of the need for iodelay.
 
-Whether or not a kernel driver exists can vary by kernel version. The
-dtb needs to work either way. The way you have done it would require
-dtb changes.
+Reasoning for mux in bootloader is because the mux and pull fields are
+glitchy - much more than previous generations of TI SoCs and
+significantly long enough to cause issues depending on the pins being
+muxed.
 
-It would be useful to describe the function of gpios in a way that
-either subsystems can bind to them (e.g. leds, rf-kill, keys, etc.) or
-that information can be exported to userspace.
+Reasoning for iodelay is different - it is a hardware block meant to
+control the timing of signals in a particular signal path to ensure
+that specification compliance is met.
 
-> However it requires userspace to know the gpio number that has been assigned
-> by the kernel.
->
-> That number, in the case of gpio drviers using dynamic allocation, is not fixed,
-> and may change when:
-> * The kernel version changes and ARCH_NR_GPIOS is changed (happened in 3.17)
-> * The kernel version changes and probe order changes for gpio chips.
-> * The kernel configuration is changed if CONFIG_ARCH_NR_GPIO is used
-> * The board is redesigned (eg switching an externally visible signal from a
-> SoC provided GPIO to an I2C expander chip or vice versa).
-> * Other GPIO chips are added to the system.
+Lets try not to mix the two.
 
-Isn't there some plan/desire to fix the GPIO sysfs interface?
-
-> The above means that, in order to export the GPIO to userspace via
-> /sys/class/gpio/export the userspace code must know the exact hardware and
-> kernel version information.
->
-> Furthermore, in many cases, it makes no sense to allow userspace to change the
-> signal direction; even if the GPIO itself allows it the circuitry connected
-> to the pin often does not (eg a signal dedicated to an output function driving
-> a  transistor).
->
-> This patch series solves both problems by performing the external
-> signal => GPIO mapping in the device tree.
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Regards,
+Nishanth Menon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
