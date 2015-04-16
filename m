@@ -1,122 +1,272 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [RFC PATCH 0/4] pinctrl: prototyping a per pin mux approach
-Date: Thu, 16 Apr 2015 14:26:51 +0200
-Message-ID: <20150416122651.GE10236@odux.rfo.atmel.com>
-References: <1427967496-22533-1-git-send-email-ludovic.desroches@atmel.com>
- <20150414084005.GT9742@pengutronix.de>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RFC/RFT PATCH 2/2] gpio: omap: ensure that runtime pm will
+ disable unused gpio banks
+Date: Thu, 16 Apr 2015 09:29:41 -0700
+Message-ID: <20150416162941.GI18048@atomide.com>
+References: <1425670017-19598-1-git-send-email-grygorii.strashko@linaro.org>
+ <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org>
+ <20150306231513.GB2651@atomide.com>
+ <20150319230326.GP31346@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:32327 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367AbbDPM2V (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2015 08:28:21 -0400
+Received: from muru.com ([72.249.23.125]:44944 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753058AbbDPQc6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 16 Apr 2015 12:32:58 -0400
 Content-Disposition: inline
-In-Reply-To: <20150414084005.GT9742@pengutronix.de>
+In-Reply-To: <20150319230326.GP31346@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
+To: grygorii.strashko@linaro.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, ssantosh@kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hello Sascha,
-
-On Tue, Apr 14, 2015 at 10:40:05AM +0200, Sascha Hauer wrote:
-> On Thu, Apr 02, 2015 at 11:38:12AM +0200, Ludovic Desroches wrote:
+* Tony Lindgren <tony@atomide.com> [150319 16:08]:
+> * Tony Lindgren <tony@atomide.com> [150307 00:08]:
+> > * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150306 11:27]:
+> > > From: Grygorii Strashko <grygorii.strashko@linaro.org>
+> > > 
+> > > Now there are two points related to Runtime PM usage:
+> > > 1) bank state doesn't need to be checked in places where
+> > > Rintime PM is used, bacause Runtime PM maintains its
+> > > own usage counter:
+> > >       if (!BANK_USED(bank))
+> > >                pm_runtime_get_sync(bank->dev);
+> > > so, it's safe to drop such checks.
+> > > 
+> > > 2) There is a call of pm_runtime_get_sync() in omap_gpio_irq_type(),
+> > > but no corresponding put. As result, GPIO devices could be
+> > > powered on forever if at least one GPIO was used as IRQ.
+> > > Hence, allow powering off GPIO banks by adding missed
+> > > pm_runtime_put(bank->dev) at the end of omap_gpio_irq_type().
 > > 
-> > Hi,
-> > 
-> > Here is an implementation of what I need for the future at91 pin controller.
-> > The pinctrl driver is a draft made for a sama5d4 in order to test it. 
-> > It is not clean and many things are missing but I think it will be easier to
-> > debate on code.
-> > 
-> > From the discussion with Sascha, it seems that we agree that current pinctrl
-> > doesn't fit the needs of controllers who have per pin muxing because the
-> > concepts of groups is not real.
-> > In my opinion, even if groups are not real it is quite convenient to use them
-> > at least for debug sysfs.
-> > 
-> > The new at91 pin controller is close to Mediatek one. I am not totally happy
-> > with their solution since a group is describing a pin. It is probably the
-> > easiest way to do it but it doesn't fit my needs. I have two constraints:
-> > 
-> > - I want something readable in sysfs as:
-> > 
-> > device fc000000.mmc
-> > state default
-> > type MUX_GROUP (2)
-> > controlling device ahb:apb:pinctrl@fc06a000
-> > group mci1_0_4bit
-> > function C
-> > 
-> > device fc000000.mmc
-> > state default
-> > type CONFIGS_PIN (3)
-> > controlling device ahb:apb:pinctrl@fc06a000
-> > pin PE19
-> > config 00010003
-> > 
-> > I don't want to have a group named as a pin.
-> > 
-> > - I want to perform some verifications on user choices. A concept of ioset is
-> > introduced. An ioset is a set of pins dedicated to a device. A device can have
-> > several iosets. For example we can have i2c0 ioset1 with pins PA0 and PA1 and
-> > i2c0 ioset2 with pins PE10 and PE11. The controller has no knowledge about
-> > iosets. It means I could take the i2c data signal from ioset1 and the i2c
-> > clock signal from ioset2 BUT validation has been done only per ioset. For
-> > devices such as i2c it should not be a problem but it could be for other ones
-> > such as mci, isi, etc.
-> > 
-> > - I don't want big tables describing pins in my driver. It represents a huge
-> > amount of code mainly useless in the case of a multiplatform image.
+> > Nice to see this happening, but I think before merging this we need
+> > to test to be sure that the pm_runtime calls actually match.. I'm
+> > not convinced right now.. We may still have uninitialized entry
+> > points similar to 3d009c8c61f9 ("gpio: omap: Fix bad device
+> > access with setup_irq()").
 > 
-> This is needed due to some misdesign in the pinctrl core that's just,
-> sorry, braindamaged. The pinctrl core forces you to parse a device node
-> (which your driver perfectly understands) into a struct pinctrl_map.
-> This struct contains a struct pinctrl_map_mux which contains a group and
-> a function as strings. With the help of the driver struct pinctrl_map is
-> converted to struct pinctrl_setting which basically contains the same
-> information, but with a struct pinctrl_setting_mux which contains a
-> group and a function as integers. Instead of passing this data back to
-> the driver to act upon the structs are shred into pieces and passed to
-> the driver as individual variables.
-> 
-> So to recap the pinctrl core forces you to parse your data from the
-> device node into a format not native to the driver, then uses the
-> drivers help to convert this data in yet another format which it then
-> passes back to the driver in little pieces. Note that the pinctrl core
-> doesn't even use all this data except for requesting pins and for
-> generating debugfs entries.  These debugfs entries even often contain
-> useless information because neither struct pinctrl_map nor struct
-> pinctrl_setting are suitable for storing information for per-pin
-> controllers. Most drivers only put some information in there to find the
-> informations back the device node already contained.
-> 
-> A sane approach would just let the driver parse the data from a device
-> node into a cookie which is then passed back to the driver to be
-> activated. The driver would then be free to store whatever information
-> it needs in this cookie. The driver just request the necessary pins
-> itself from the pinctrl core instead of letting the core doing it.
-> 
-> I know this is not the answer you were looking for, but the pinctrl core
-> in my eyes is a big midlayer mistake and I'm not very fond of stretching
-> this concept further to be able to live with it for another round.
-> 
+> OK so I finally got around testing this along with your bank
+> removal set. Looks like this patch causes a regression at least
+> with n900 keyboard LEDs with off-idle. The LED won't come back
+> on after restore from off-idle. Anyways, now we have something
+> reproducable :) So I'll try to debug it further at some point,
+> might be few days before I get to it.
 
-For sure it was not the kind of answer I was looking for :) I understand
-your point of view.
+Sorry for the delay, finally got around to this one :)
 
-I won't discuss about the design of the pinctrl. I don't have enough
-knowledge about other controllers and I have never worked on a midlayer.
+Here's what I came up with, only lightly tested so far. Note that
+we need to keep the PM runtime per bank, not per GPIO. Will repost
+a proper patch after some more testing.
 
-My concern is the actual pinctrl doesn't fit my needs and add some strong
-constraints. I don't have the time (and probably not the skill) to
-re-design pinctrl without introducing breakage for existing users. My
-goal is to try to find some ways to make it more flexible.
+This should not cause any functional changes, mostly just removal
+of code that can all be done in omap_enable/disable_gpio_module.
 
-Linus, what do you think about all this? Are the changes proposed
-acceptable?
+Regards,
 
-Regards
+Tony
 
-Ludovic
+8< -------------------------
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -86,6 +86,7 @@ struct gpio_bank {
+ #define BANK_USED(bank) (bank->mod_usage || bank->irq_usage)
+ #define LINE_USED(line, offset) (line & (BIT(offset)))
+ 
++static void omap_reset_gpio(struct gpio_bank *bank, unsigned offset);
+ static void omap_gpio_unmask_irq(struct irq_data *d);
+ 
+ static inline struct gpio_bank *omap_irq_data_get_bank(struct irq_data *d)
+@@ -419,8 +420,16 @@ static int omap_set_gpio_triggering(struct gpio_bank *bank, int gpio,
+ 	return 0;
+ }
+ 
+-static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset)
++static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset,
++				    bool is_irq)
+ {
++	unsigned long flags;
++
++	/* PM runtime is per bank, not per GPIO line */
++	if (!BANK_USED(bank))
++		pm_runtime_get_sync(bank->dev);
++
++	spin_lock_irqsave(&bank->lock, flags);
+ 	if (bank->regs->pinctrl) {
+ 		void __iomem *reg = bank->base + bank->regs->pinctrl;
+ 
+@@ -438,11 +447,30 @@ static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset)
+ 		writel_relaxed(ctrl, reg);
+ 		bank->context.ctrl = ctrl;
+ 	}
++
++	if (is_irq) {
++		omap_set_gpio_direction(bank, offset, 1);
++		bank->irq_usage |= BIT(offset);
++	} else {
++		omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
++		bank->mod_usage |= BIT(offset);
++	}
++	spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
+-static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset)
++static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset,
++				     bool is_irq)
+ {
+ 	void __iomem *base = bank->base;
++	unsigned long flags;
++
++	spin_lock_irqsave(&bank->lock, flags);
++	if (is_irq)
++		bank->irq_usage &= ~(BIT(offset));
++	else
++		bank->mod_usage &= ~(BIT(offset));
++
++	omap_reset_gpio(bank, offset);
+ 
+ 	if (bank->regs->wkup_en &&
+ 	    !LINE_USED(bank->mod_usage, offset) &&
+@@ -463,6 +491,11 @@ static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset)
+ 		writel_relaxed(ctrl, reg);
+ 		bank->context.ctrl = ctrl;
+ 	}
++	spin_unlock_irqrestore(&bank->lock, flags);
++
++	/* PM runtime is per bank, not per GPIO line */
++	if (!BANK_USED(bank))
++		pm_runtime_put(bank->dev);
+ }
+ 
+ static int omap_gpio_is_input(struct gpio_bank *bank, unsigned offset)
+@@ -472,15 +505,6 @@ static int omap_gpio_is_input(struct gpio_bank *bank, unsigned offset)
+ 	return readl_relaxed(reg) & BIT(offset);
+ }
+ 
+-static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned offset)
+-{
+-	if (!LINE_USED(bank->mod_usage, offset)) {
+-		omap_enable_gpio_module(bank, offset);
+-		omap_set_gpio_direction(bank, offset, 1);
+-	}
+-	bank->irq_usage |= BIT(offset);
+-}
+-
+ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -488,9 +512,6 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+ 	if (type & ~IRQ_TYPE_SENSE_MASK)
+ 		return -EINVAL;
+ 
+@@ -498,13 +519,9 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 		(type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
+ 		return -EINVAL;
+ 
++	omap_enable_gpio_module(bank, offset, true);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	retval = omap_set_gpio_triggering(bank, offset, type);
+-	omap_gpio_init_irq(bank, offset);
+-	if (!omap_gpio_is_input(bank, offset)) {
+-		spin_unlock_irqrestore(&bank->lock, flags);
+-		return -EINVAL;
+-	}
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+@@ -659,26 +676,8 @@ static int omap_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
+-	unsigned long flags;
+ 
+-	/*
+-	 * If this is the first gpio_request for the bank,
+-	 * enable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	/* Set trigger to none. You need to enable the desired trigger with
+-	 * request_irq() or set_irq_type(). Only do this if the IRQ line has
+-	 * not already been requested.
+-	 */
+-	if (!LINE_USED(bank->irq_usage, offset)) {
+-		omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
+-		omap_enable_gpio_module(bank, offset);
+-	}
+-	bank->mod_usage |= BIT(offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
++	omap_enable_gpio_module(bank, offset, false);
+ 
+ 	return 0;
+ }
+@@ -686,20 +685,8 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	bank->mod_usage &= ~(BIT(offset));
+-	omap_disable_gpio_module(bank, offset);
+-	omap_reset_gpio(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+-	/*
+-	 * If this is the last gpio to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(bank->dev);
++	omap_disable_gpio_module(bank, offset, false);
+ }
+ 
+ /*
+@@ -788,15 +775,9 @@ exit:
+ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+-	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	omap_gpio_init_irq(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
++	omap_enable_gpio_module(bank, offset, true);
+ 	omap_gpio_unmask_irq(d);
+ 
+ 	return 0;
+@@ -805,21 +786,9 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+-	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	spin_lock_irqsave(&bank->lock, flags);
+-	bank->irq_usage &= ~(BIT(offset));
+-	omap_disable_gpio_module(bank, offset);
+-	omap_reset_gpio(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
+-
+-	/*
+-	 * If this is the last IRQ to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(bank->dev);
++	omap_disable_gpio_module(bank, offset, true);
+ }
+ 
+ static void omap_gpio_ack_irq(struct irq_data *d)
