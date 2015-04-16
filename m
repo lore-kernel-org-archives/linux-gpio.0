@@ -1,69 +1,122 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH 1/2] pinctrl: bindings: pinctrl: Add support for TI's
- IODelay configuration
-Date: Wed, 15 Apr 2015 13:53:59 -0500
-Message-ID: <552EB3C7.90603@ti.com>
-References: <1425427237-11511-2-git-send-email-nm@ti.com> <CACRpkdaLEPzBywMnMrteboK7Q4su8PoB0wjnGvVpgUJ=2czVxQ@mail.gmail.com> <20150310153321.GO5264@atomide.com> <54FF28F5.4040707@ti.com> <20150310173115.GS5264@atomide.com> <54FF38F3.2030703@ti.com> <CACRpkdZ1faucps07jaT9kOyviC+Sw6gPkbF=cAGCUj+DiaEgTA@mail.gmail.com> <20150318014151.GL31346@atomide.com> <20150415012910.GA29560@csclub.uwaterloo.ca> <552E9714.10001@ti.com> <20150415184454.GT29558@csclub.uwaterloo.ca>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [RFC PATCH 0/4] pinctrl: prototyping a per pin mux approach
+Date: Thu, 16 Apr 2015 14:26:51 +0200
+Message-ID: <20150416122651.GE10236@odux.rfo.atmel.com>
+References: <1427967496-22533-1-git-send-email-ludovic.desroches@atmel.com>
+ <20150414084005.GT9742@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:39560 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754857AbbDOSy0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 15 Apr 2015 14:54:26 -0400
-In-Reply-To: <20150415184454.GT29558@csclub.uwaterloo.ca>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:32327 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367AbbDPM2V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Apr 2015 08:28:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20150414084005.GT9742@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lokesh Vutla <lokeshvutla@ti.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, laurent.pinchart@ideasonboard.com, swarren@wwwdotorg.org, tony@atomide.com, nicolas.ferre@atmel.com
 
-On 04/15/2015 01:44 PM, Lennart Sorensen wrote:
-> On Wed, Apr 15, 2015 at 11:51:32AM -0500, Nishanth Menon wrote:
->> I am yet to post a new revision to this series - few other stuff got
->> in the way. IODelay driver in no way removes the constraint that the
->> SoC architecture has - most of the pins still need to be muxed in
->> bootloader - we cannot escape that. The reasoning for doing the mux in
->> bootloader is independent of the need for iodelay.
->>
->> Reasoning for mux in bootloader is because the mux and pull fields are
->> glitchy - much more than previous generations of TI SoCs and
->> significantly long enough to cause issues depending on the pins being
->> muxed.
+Hello Sascha,
+
+On Tue, Apr 14, 2015 at 10:40:05AM +0200, Sascha Hauer wrote:
+> On Thu, Apr 02, 2015 at 11:38:12AM +0200, Ludovic Desroches wrote:
+> > 
+> > Hi,
+> > 
+> > Here is an implementation of what I need for the future at91 pin controller.
+> > The pinctrl driver is a draft made for a sama5d4 in order to test it. 
+> > It is not clean and many things are missing but I think it will be easier to
+> > debate on code.
+> > 
+> > From the discussion with Sascha, it seems that we agree that current pinctrl
+> > doesn't fit the needs of controllers who have per pin muxing because the
+> > concepts of groups is not real.
+> > In my opinion, even if groups are not real it is quite convenient to use them
+> > at least for debug sysfs.
+> > 
+> > The new at91 pin controller is close to Mediatek one. I am not totally happy
+> > with their solution since a group is describing a pin. It is probably the
+> > easiest way to do it but it doesn't fit my needs. I have two constraints:
+> > 
+> > - I want something readable in sysfs as:
+> > 
+> > device fc000000.mmc
+> > state default
+> > type MUX_GROUP (2)
+> > controlling device ahb:apb:pinctrl@fc06a000
+> > group mci1_0_4bit
+> > function C
+> > 
+> > device fc000000.mmc
+> > state default
+> > type CONFIGS_PIN (3)
+> > controlling device ahb:apb:pinctrl@fc06a000
+> > pin PE19
+> > config 00010003
+> > 
+> > I don't want to have a group named as a pin.
+> > 
+> > - I want to perform some verifications on user choices. A concept of ioset is
+> > introduced. An ioset is a set of pins dedicated to a device. A device can have
+> > several iosets. For example we can have i2c0 ioset1 with pins PA0 and PA1 and
+> > i2c0 ioset2 with pins PE10 and PE11. The controller has no knowledge about
+> > iosets. It means I could take the i2c data signal from ioset1 and the i2c
+> > clock signal from ioset2 BUT validation has been done only per ioset. For
+> > devices such as i2c it should not be a problem but it could be for other ones
+> > such as mci, isi, etc.
+> > 
+> > - I don't want big tables describing pins in my driver. It represents a huge
+> > amount of code mainly useless in the case of a multiplatform image.
 > 
-> Well if we know glitching is NOT an issue on our boards, then we don't
-> have to do anything in the boot loader other than the basic setup for
-> the serial console and emmc and SD, which has always been necesary.
+> This is needed due to some misdesign in the pinctrl core that's just,
+> sorry, braindamaged. The pinctrl core forces you to parse a device node
+> (which your driver perfectly understands) into a struct pinctrl_map.
+> This struct contains a struct pinctrl_map_mux which contains a group and
+> a function as strings. With the help of the driver struct pinctrl_map is
+> converted to struct pinctrl_setting which basically contains the same
+> information, but with a struct pinctrl_setting_mux which contains a
+> group and a function as integers. Instead of passing this data back to
+> the driver to act upon the structs are shred into pieces and passed to
+> the driver as individual variables.
 > 
-> I consider moving the mux setup to the bootloader a terrible design and
-> won't go along with it.  We make sure all external devices have reset
-> lines being held while the pinmux is being setup, so glitching is a
-> non issue.
-
-I cannot discuss customer boards on this list - the right forum for TI
-support is e2e.ti.com or in cases where FAE (Field Applications
-Engineer) is involved, via appropriate support path.
-
-Now, that said, even with personal opinions in place, I have to stick
-with what the SoC constraints on hand and suggested architecture we
-have discussed to ensure safe platform operation at least for the
-platforms we are contributing to. again... muxing in the bootloader IS
-NOT what this patch is about. If we can stick to the topic in
-discussion, it is probably more effective. Any improvement suggestions
-to the code is more than appreciated.
-
->> Reasoning for iodelay is different - it is a hardware block meant to
->> control the timing of signals in a particular signal path to ensure
->> that specification compliance is met.
->>
->> Lets try not to mix the two.
+> So to recap the pinctrl core forces you to parse your data from the
+> device node into a format not native to the driver, then uses the
+> drivers help to convert this data in yet another format which it then
+> passes back to the driver in little pieces. Note that the pinctrl core
+> doesn't even use all this data except for requesting pins and for
+> generating debugfs entries.  These debugfs entries even often contain
+> useless information because neither struct pinctrl_map nor struct
+> pinctrl_setting are suitable for storing information for per-pin
+> controllers. Most drivers only put some information in there to find the
+> informations back the device node already contained.
 > 
-> Well I was told by multiple people from TI that the reason for moving
-> the pinmux setup to the bootloader was because of the iodelay issue,
-> so you will have to get the message made clear within TI then.
+> A sane approach would just let the driver parse the data from a device
+> node into a cookie which is then passed back to the driver to be
+> activated. The driver would then be free to store whatever information
+> it needs in this cookie. The driver just request the necessary pins
+> itself from the pinctrl core instead of letting the core doing it.
 > 
-I have passed on this message.
+> I know this is not the answer you were looking for, but the pinctrl core
+> in my eyes is a big midlayer mistake and I'm not very fond of stretching
+> this concept further to be able to live with it for another round.
+> 
 
--- 
-Regards,
-Nishanth Menon
+For sure it was not the kind of answer I was looking for :) I understand
+your point of view.
+
+I won't discuss about the design of the pinctrl. I don't have enough
+knowledge about other controllers and I have never worked on a midlayer.
+
+My concern is the actual pinctrl doesn't fit my needs and add some strong
+constraints. I don't have the time (and probably not the skill) to
+re-design pinctrl without introducing breakage for existing users. My
+goal is to try to find some ways to make it more flexible.
+
+Linus, what do you think about all this? Are the changes proposed
+acceptable?
+
+Regards
+
+Ludovic
