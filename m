@@ -1,45 +1,62 @@
-From: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Subject: [PATCH] pinctrl: qcom-spmi: Fix pin direction configuration
-Date: Fri, 17 Apr 2015 17:50:49 +0300
-Message-ID: <1429282249-30450-1-git-send-email-ivan.ivanov@linaro.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Soren Brinkmann <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH V3 2/2] pinctrl: Add Pistachio SoC pin control driver
+Date: Fri, 17 Apr 2015 09:39:23 -0700
+Message-ID: <CAL1qeaEd67bGw9Qw5DGwHeuPjEqdRdNz6bvCJ+OtCKuuZ4h1wA@mail.gmail.com>
+References: <1428435862-14354-1-git-send-email-abrestic@chromium.org>
+	<1428435862-14354-3-git-send-email-abrestic@chromium.org>
+	<553099AF.3060108@imgtec.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <553099AF.3060108@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Paul Bolle <pebolle@tiscali.nl>
 List-Id: linux-gpio@vger.kernel.org
 
-Pin direction configuration was incorrectly overwritten
-by output and function values in set_mux(). Fix this.
+Hi Ezequiel,
 
-Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c  | 1 +
- 2 files changed, 2 insertions(+)
+On Thu, Apr 16, 2015 at 10:27 PM, Ezequiel Garcia
+<ezequiel.garcia@imgtec.com> wrote:
+>
+> Hi Andrew,
+>
+> On 04/07/2015 04:44 PM, Andrew Bresticker wrote:
+> [..]
+>> +static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+>> +{
+>> +     struct device_node *node = pctl->dev->of_node;
+>> +     struct pistachio_gpio_bank *bank;
+>> +     unsigned int i;
+>> +     int irq, ret = 0;
+>> +
+>> +     for (i = 0; i < pctl->nbanks; i++) {
+>> +             char child_name[sizeof("gpioXX")];
+>> +             struct device_node *child;
+>
+> The first submission used for_each_child_of_node, and I can't find
+> any review comments explaining why you've changed it to a regular for
+> loop.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index e8b74c6..ae4115e 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -260,6 +260,7 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 			val = 1;
- 	}
+The reason for this was the change to looking for particular node
+names (gpio0, gpio1, ...) instead of assuming they'd be in order.  It
+seemed cleaner to me to do the above rather than:
 
-+	val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
- 	val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
- 	val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
+        for_each_child_of_node()
+                if (strcmp(node->name, ...) == 0)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 8f6c7be..211b942 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -370,6 +370,7 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 		}
- 	}
+>> +
+>> +             snprintf(child_name, sizeof(child_name), "gpio%d", i);
+>
+> This assumes the GPIO bank nodes are called gpio0, gpio1, ... and so on.
+> Do we really want to assume that?
 
-+	val = val << PMIC_MPP_REG_MODE_DIR_SHIFT;
- 	val |= pad->function << PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
- 	val |= pad->out_value & PMIC_MPP_REG_MODE_VALUE_MASK;
+Linus suggested using aliases [1] in a previous review, but that
+obviously won't work when we have the RPU pinctrl as well since there
+will be multiple "gpio0"s, so I decided to use node names instead.
+The Rockchip and Samsung pinctrl drivers do something similar.
 
---
-1.9.1
+[1] http://patchwork.linux-mips.org/patch/9307/
+
+Thanks,
+Andrew
