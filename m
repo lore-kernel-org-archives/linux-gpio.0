@@ -1,736 +1,162 @@
 From: <Frank.Li@freescale.com>
-Subject: [PATCH v3 09/10] arm: dts: add imx7d-sdb support
-Date: Sat, 18 Apr 2015 05:28:54 +0800
-Message-ID: <1429306135-24695-10-git-send-email-Frank.Li@freescale.com>
+Subject: [PATCH v3 02/10] ARM: dts: add pinfunc include file gpio1 to support
+ imx7d
+Date: Sat, 18 Apr 2015 05:28:47 +0800
+Message-ID: <1429306135-24695-3-git-send-email-Frank.Li@freescale.com>
 References: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0134.outbound.protection.outlook.com ([157.56.110.134]:36454
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932456AbbDQVcC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 17 Apr 2015 17:32:02 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: lznuaa@gmail.com, shawn.guo@linaro.org, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Frank Li <Frank.Li@freescale.com>
+Cc: linux-gpio@vger.kernel.org, Frank Li <Frank.Li@freescale.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Frank Li <Frank.Li@freescale.com>
 
-add imx7d sdb board support
+Addi i.MX7D support:
+	gpio1(lower power domain) pinfunc part
 
 Signed-off-by: Frank Li <Frank.Li@freescale.com>
 ---
- arch/arm/boot/dts/Makefile      |   2 +
- arch/arm/boot/dts/imx7d-sdb.dts | 684 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 686 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx7d-sdb.dts
+ arch/arm/boot/dts/imx7d-pinfunc.h | 115 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a71d3c7..e062934 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -313,6 +313,8 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
- 	imx6sx-sabreauto.dtb \
- 	imx6sx-sdb-reva.dtb \
- 	imx6sx-sdb.dtb
-+dtb-$(CONFIG_SOC_IMX7D) += \
-+	imx7d-sdb.dtb
- dtb-$(CONFIG_SOC_LS1021A) += \
- 	ls1021a-qds.dtb \
- 	ls1021a-twr.dtb
-diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
-new file mode 100644
-index 0000000..2d30cd3
---- /dev/null
-+++ b/arch/arm/boot/dts/imx7d-sdb.dts
-@@ -0,0 +1,684 @@
-+/*
-+ * Copyright (C) 2015 Freescale Semiconductor, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include "imx7d.dtsi"
-+
-+/ {
-+	model = "Freescale i.MX7 SabreSD Board";
-+	compatible = "fsl,imx7d-sdb", "fsl,imx7d";
-+
-+	memory {
-+		reg = <0x80000000 0x80000000>;
-+	};
-+
-+	backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 5000000>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+		status = "okay";
-+	};
-+
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		reg_usb_otg1_vbus: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "usb_otg1_vbus";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+
-+		reg_usb_otg2_vbus: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "usb_otg2_vbus";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			gpio = <&gpio4 7 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+
-+		reg_can2_3v3: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "can2-3v3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpio1 7 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		reg_vref_1v8: regulator@3 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "vref-1v8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		wlreg_on: fixedregulator@100 {
-+			compatible = "regulator-fixed";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-name = "wlreg_on";
-+			gpio = <&gpio4 21 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+		};
-+	};
-+
-+	spi4 {
-+		compatible = "spi-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_spi1>;
-+		status = "okay";
-+		gpio-sck = <&gpio1 13 0>;
-+		gpio-mosi = <&gpio1 9 0>;
-+		cs-gpios = <&gpio1 12 0>;
-+		num-chipselects = <1>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		gpio_spi: gpio_spi@0 {
-+			compatible = "fairchild,74hc595";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			reg = <0>;
-+			registers-number = <1>;
-+			registers-default = /bits/ 8 <0x44>; /* Enable PERI_3V3 and HDMI_RST*/
-+			spi-max-frequency = <100000>;
-+		};
-+	};
-+};
-+
-+&cpu0 {
-+	arm-supply = <&sw1a_reg>;
-+};
-+
-+&i2c1 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	status = "okay";
-+
-+	pmic: pfuze3000@08 {
-+		compatible = "fsl,pfuze3000";
-+		reg = <0x08>;
-+
-+		regulators {
-+			sw1a_reg: sw1a {
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1475000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			/* use sw1c_reg to align with pfuze100/pfuze200 */
-+			sw1c_reg: sw1b {
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1475000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			sw2_reg: sw2 {
-+				regulator-min-microvolt = <1500000>;
-+				regulator-max-microvolt = <1850000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw3a_reg: sw3 {
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1650000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			swbst_reg: swbst {
-+				regulator-min-microvolt = <5000000>;
-+				regulator-max-microvolt = <5150000>;
-+			};
-+
-+			snvs_reg: vsnvs {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vref_reg: vrefddr {
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vgen1_reg: vldo1 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen2_reg: vldo2 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1550000>;
-+			};
-+
-+			vgen3_reg: vccsd {
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen4_reg: v33 {
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen5_reg: vldo3 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen6_reg: vldo4 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+
-+	max17135: max17135@48 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_max17135>;
-+		compatible = "maxim,max17135";
-+		reg = <0x48>;
-+		status = "disabled";
-+
-+		vneg_pwrup = <1>;
-+		gvee_pwrup = <2>;
-+		vpos_pwrup = <10>;
-+		gvdd_pwrup = <12>;
-+		gvdd_pwrdn = <1>;
-+		vpos_pwrdn = <2>;
-+		gvee_pwrdn = <8>;
-+		vneg_pwrdn = <10>;
-+		gpio_pmic_pwrgood = <&gpio2 31 0>;
-+		gpio_pmic_vcom_ctrl = <&gpio4 14 0>;
-+		gpio_pmic_wakeup = <&gpio2 23 0>;
-+		gpio_pmic_v3p3 = <&gpio2 30 0>;
-+		gpio_pmic_intr = <&gpio2 22 0>;
-+
-+		regulators {
-+			DISPLAY_reg: DISPLAY {
-+				regulator-name = "DISPLAY";
-+			};
-+
-+			GVDD_reg: GVDD {
-+				/* 20v */
-+				regulator-name = "GVDD";
-+			};
-+
-+			GVEE_reg: GVEE {
-+				/* -22v */
-+				regulator-name = "GVEE";
-+			};
-+
-+			HVINN_reg: HVINN {
-+				/* -22v */
-+				regulator-name = "HVINN";
-+			};
-+
-+			HVINP_reg: HVINP {
-+				/* 20v */
-+				regulator-name = "HVINP";
-+			};
-+
-+			VCOM_reg: VCOM {
-+				regulator-name = "VCOM";
-+				/* 2's-compliment, -4325000 */
-+				regulator-min-microvolt = <0xffbe0178>;
-+				/* 2's-compliment, -500000 */
-+				regulator-max-microvolt = <0xfff85ee0>;
-+			};
-+
-+			VNEG_reg: VNEG {
-+				/* -15v */
-+				regulator-name = "VNEG";
-+			};
-+
-+			VPOS_reg: VPOS {
-+				/* 15v */
-+				regulator-name = "VPOS";
-+			};
-+
-+			V3P3_reg: V3P3 {
-+				regulator-name = "V3P3";
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c4>;
-+	status = "okay";
-+
-+	codec: wm8960@1a {
-+		compatible = "wlf,wm8960";
-+		reg = <0x1a>;
-+		clocks = <&clks IMX7D_AUDIO_MCLK_ROOT_CLK>;
-+		clock-names = "mclk";
-+		wlf,shared-lrclk;
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog_1>;
-+
-+	imx7d-sdb {
-+		pinctrl_hog_1: hoggrp-1 {
-+			fsl,pins = <
-+				MX7D_PAD_UART3_CTS_B__GPIO4_IO7	0x14
-+				MX7D_PAD_ECSPI2_SS0__GPIO4_IO23	 0x34  /* bt reg on */
-+			>;
-+		};
-+
-+		pinctrl_epdc0: epdcgrp0 {
-+			fsl,pins = <
-+				MX7D_PAD_EPDC_DATA00__EPDC_DATA0  0x2
-+				MX7D_PAD_EPDC_DATA01__EPDC_DATA1  0x2
-+				MX7D_PAD_EPDC_DATA02__EPDC_DATA2  0x2
-+				MX7D_PAD_EPDC_DATA03__EPDC_DATA3  0x2
-+				MX7D_PAD_EPDC_DATA04__EPDC_DATA4  0x2
-+				MX7D_PAD_EPDC_DATA05__EPDC_DATA5  0x2
-+				MX7D_PAD_EPDC_DATA06__EPDC_DATA6  0x2
-+				MX7D_PAD_EPDC_DATA07__EPDC_DATA7  0x2
-+				MX7D_PAD_EPDC_DATA08__EPDC_DATA8  0x2
-+				MX7D_PAD_EPDC_DATA09__EPDC_DATA9  0x2
-+				MX7D_PAD_EPDC_DATA10__EPDC_DATA10 0x2
-+				MX7D_PAD_EPDC_DATA11__EPDC_DATA11 0x2
-+				MX7D_PAD_EPDC_DATA12__EPDC_DATA12 0x2
-+				MX7D_PAD_EPDC_DATA13__EPDC_DATA13 0x2
-+				MX7D_PAD_EPDC_DATA14__EPDC_DATA14 0x2
-+				MX7D_PAD_EPDC_DATA15__EPDC_DATA15 0x2
-+				MX7D_PAD_EPDC_SDCLK__EPDC_SDCLK   0x2
-+				MX7D_PAD_EPDC_SDLE__EPDC_SDLE     0x2
-+				MX7D_PAD_EPDC_SDOE__EPDC_SDOE     0x2
-+				MX7D_PAD_EPDC_SDSHR__EPDC_SDSHR   0x2
-+				MX7D_PAD_EPDC_SDCE0__EPDC_SDCE0   0x2
-+				MX7D_PAD_EPDC_SDCE1__EPDC_SDCE1   0x2
-+				MX7D_PAD_EPDC_GDCLK__EPDC_GDCLK   0x2
-+				MX7D_PAD_EPDC_GDOE__EPDC_GDOE     0x2
-+				MX7D_PAD_EPDC_GDRL__EPDC_GDRL     0x2
-+				MX7D_PAD_EPDC_GDSP__EPDC_GDSP     0x2
-+				MX7D_PAD_EPDC_BDR0__EPDC_BDR0     0x2
-+				MX7D_PAD_EPDC_BDR1__EPDC_BDR1     0x2
-+			>;
-+		};
-+
-+		pinctrl_enet1: enet1grp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO10__ENET1_MDIO		0x3
-+				MX7D_PAD_GPIO1_IO11__ENET1_MDC		0x3
-+				MX7D_PAD_ENET1_RGMII_TXC__ENET1_RGMII_TXC	0x1
-+				MX7D_PAD_ENET1_RGMII_TD0__ENET1_RGMII_TD0	0x1
-+				MX7D_PAD_ENET1_RGMII_TD1__ENET1_RGMII_TD1	0x1
-+				MX7D_PAD_ENET1_RGMII_TD2__ENET1_RGMII_TD2	0x1
-+				MX7D_PAD_ENET1_RGMII_TD3__ENET1_RGMII_TD3	0x1
-+				MX7D_PAD_ENET1_RGMII_TX_CTL__ENET1_RGMII_TX_CTL	0x1
-+				MX7D_PAD_ENET1_RGMII_RXC__ENET1_RGMII_RXC	0x1
-+				MX7D_PAD_ENET1_RGMII_RD0__ENET1_RGMII_RD0	0x1
-+				MX7D_PAD_ENET1_RGMII_RD1__ENET1_RGMII_RD1	0x1
-+				MX7D_PAD_ENET1_RGMII_RD2__ENET1_RGMII_RD2	0x1
-+				MX7D_PAD_ENET1_RGMII_RD3__ENET1_RGMII_RD3	0x1
-+				MX7D_PAD_ENET1_RGMII_RX_CTL__ENET1_RGMII_RX_CTL	0x1
-+			>;
-+		};
-+
-+		pinctrl_enet2: enet2grp {
-+			fsl,pins = <
-+				MX7D_PAD_EPDC_GDSP__ENET2_RGMII_TXC		0x1
-+				MX7D_PAD_EPDC_SDCE2__ENET2_RGMII_TD0		0x1
-+				MX7D_PAD_EPDC_SDCE3__ENET2_RGMII_TD1		0x1
-+				MX7D_PAD_EPDC_GDCLK__ENET2_RGMII_TD2		0x1
-+				MX7D_PAD_EPDC_GDOE__ENET2_RGMII_TD3		0x1
-+				MX7D_PAD_EPDC_GDRL__ENET2_RGMII_TX_CTL		0x1
-+				MX7D_PAD_EPDC_SDCE1__ENET2_RGMII_RXC		0x1
-+				MX7D_PAD_EPDC_SDCLK__ENET2_RGMII_RD0		0x1
-+				MX7D_PAD_EPDC_SDLE__ENET2_RGMII_RD1		0x1
-+				MX7D_PAD_EPDC_SDOE__ENET2_RGMII_RD2		0x1
-+				MX7D_PAD_EPDC_SDSHR__ENET2_RGMII_RD3		0x1
-+				MX7D_PAD_EPDC_SDCE0__ENET2_RGMII_RX_CTL		0x1
-+			>;
-+		};
-+
-+		pinctrl_flexcan2: flexcan2grp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO14__FLEXCAN2_RX	0x59
-+				MX7D_PAD_GPIO1_IO15__FLEXCAN2_TX	0x59
-+			>;
-+		};
-+
-+		pinctrl_gpmi_nand_1: gpmi-nand-1 {
-+			fsl,pins = <
-+				MX7D_PAD_SD3_CLK__NAND_CLE			0x71
-+				MX7D_PAD_SD3_CMD__NAND_ALE			0x71
-+				MX7D_PAD_SAI1_MCLK__NAND_WP_B		0x71
-+				MX7D_PAD_SAI1_TX_BCLK__NAND_CE0_B	0x71
-+				MX7D_PAD_SAI1_RX_DATA__NAND_CE1_B	0x71
-+				MX7D_PAD_SAI1_TX_DATA__NAND_READY_B	0x74
-+				MX7D_PAD_SD3_STROBE__NAND_RE_B		0x71
-+				MX7D_PAD_SD3_RESET_B__NAND_WE_B		0x71
-+				MX7D_PAD_SD3_DATA0__NAND_DATA00		0x71
-+				MX7D_PAD_SD3_DATA1__NAND_DATA01		0x71
-+				MX7D_PAD_SD3_DATA2__NAND_DATA02		0x71
-+				MX7D_PAD_SD3_DATA3__NAND_DATA03		0x71
-+				MX7D_PAD_SD3_DATA4__NAND_DATA04		0x71
-+				MX7D_PAD_SD3_DATA5__NAND_DATA05		0x71
-+				MX7D_PAD_SD3_DATA6__NAND_DATA06		0x71
-+				MX7D_PAD_SD3_DATA7__NAND_DATA07		0x71
-+
-+			>;
-+		};
-+
-+		pinctrl_i2c1: i2c1grp {
-+			fsl,pins = <
-+				MX7D_PAD_I2C1_SDA__I2C1_SDA	0x4000007f
-+				MX7D_PAD_I2C1_SCL__I2C1_SCL	0x4000007f
-+			>;
-+		};
-+
-+		pinctrl_i2c2: i2c2grp {
-+			fsl,pins = <
-+				MX7D_PAD_I2C2_SDA__I2C2_SDA	0x4000007f
-+				MX7D_PAD_I2C2_SCL__I2C2_SCL	0x4000007f
-+			>;
-+		};
-+
-+		pinctrl_i2c3: i2c3grp {
-+			fsl,pins = <
-+				MX7D_PAD_I2C3_SDA__I2C3_SDA          0x4000007f
-+				MX7D_PAD_I2C3_SCL__I2C3_SCL          0x4000007f
-+			>;
-+		};
-+
-+		pinctrl_i2c4: i2c4grp {
-+			fsl,pins = <
-+				MX7D_PAD_SAI1_RX_BCLK__I2C4_SDA		0x4000007f
-+				MX7D_PAD_SAI1_RX_SYNC__I2C4_SCL		0x4000007f
-+			>;
-+		};
-+
-+		pinctrl_lcdif_dat: lcdifdatgrp {
-+			fsl,pins = <
-+				MX7D_PAD_LCD_DATA00__LCD_DATA0	0x79
-+				MX7D_PAD_LCD_DATA01__LCD_DATA1	0x79
-+				MX7D_PAD_LCD_DATA02__LCD_DATA2	0x79
-+				MX7D_PAD_LCD_DATA03__LCD_DATA3	0x79
-+				MX7D_PAD_LCD_DATA04__LCD_DATA4	0x79
-+				MX7D_PAD_LCD_DATA05__LCD_DATA5	0x79
-+				MX7D_PAD_LCD_DATA06__LCD_DATA6	0x79
-+				MX7D_PAD_LCD_DATA07__LCD_DATA7	0x79
-+				MX7D_PAD_LCD_DATA08__LCD_DATA8	0x79
-+				MX7D_PAD_LCD_DATA09__LCD_DATA9	0x79
-+				MX7D_PAD_LCD_DATA10__LCD_DATA10	0x79
-+				MX7D_PAD_LCD_DATA11__LCD_DATA11	0x79
-+				MX7D_PAD_LCD_DATA12__LCD_DATA12	0x79
-+				MX7D_PAD_LCD_DATA13__LCD_DATA13	0x79
-+				MX7D_PAD_LCD_DATA14__LCD_DATA14	0x79
-+				MX7D_PAD_LCD_DATA15__LCD_DATA15	0x79
-+				MX7D_PAD_LCD_DATA16__LCD_DATA16	0x79
-+				MX7D_PAD_LCD_DATA17__LCD_DATA17	0x79
-+				MX7D_PAD_LCD_DATA18__LCD_DATA18	0x79
-+				MX7D_PAD_LCD_DATA19__LCD_DATA19	0x79
-+				MX7D_PAD_LCD_DATA20__LCD_DATA20	0x79
-+				MX7D_PAD_LCD_DATA21__LCD_DATA21	0x79
-+				MX7D_PAD_LCD_DATA22__LCD_DATA22	0x79
-+				MX7D_PAD_LCD_DATA23__LCD_DATA23	0x79
-+			>;
-+		};
-+
-+		pinctrl_lcdif_ctrl: lcdifctrlgrp {
-+			fsl,pins = <
-+				MX7D_PAD_LCD_CLK__LCD_CLK	0x79
-+				MX7D_PAD_LCD_ENABLE__LCD_ENABLE	0x79
-+				MX7D_PAD_LCD_VSYNC__LCD_VSYNC	0x79
-+				MX7D_PAD_LCD_HSYNC__LCD_HSYNC	0x79
-+				MX7D_PAD_LCD_RESET__LCD_RESET	0x79
-+			>;
-+		};
-+
-+		pinctrl_max17135: max17135grp-1 {
-+			fsl,pins = <
-+				MX7D_PAD_EPDC_PWR_STAT__GPIO2_IO31	0x80000000  /* pwrgood */
-+				MX7D_PAD_I2C4_SCL__GPIO4_IO14		0x80000000  /* vcom_ctrl */
-+				MX7D_PAD_EPDC_SDCE3__GPIO2_IO23		0x80000000  /* wakeup */
-+				MX7D_PAD_EPDC_PWR_COM__GPIO2_IO30	0x80000000  /* v3p3 */
-+				MX7D_PAD_EPDC_SDCE2__GPIO2_IO22		0x80000000  /* pwr int */
-+			>;
-+		};
-+
-+		pinctrl_sii902x: hdmigrp-1 {
-+			fsl,pins = <
-+				MX7D_PAD_EPDC_DATA13__GPIO2_IO13 0x59
-+			>;
-+		};
-+
-+		pinctrl_uart1: uart1grp {
-+			fsl,pins = <
-+				MX7D_PAD_UART1_TX_DATA__UART1_DCE_TX 0x79
-+				MX7D_PAD_UART1_RX_DATA__UART1_DCE_RX 0x79
-+			>;
-+		};
-+
-+		pinctrl_uart5: uart5grp {
-+			fsl,pins = <
-+				MX7D_PAD_SAI1_TX_BCLK__UART5_DCE_TX 0x79
-+				MX7D_PAD_SAI1_RX_DATA__UART5_DCE_RX 0x79
-+				MX7D_PAD_SAI1_TX_SYNC__UART5_DCE_CTS 0x79
-+				MX7D_PAD_SAI1_TX_DATA__UART5_DCE_RTS 0x79
-+			>;
-+		};
-+
-+		pinctrl_uart6: uart6grp {
-+			fsl,pins = <
-+				MX7D_PAD_ECSPI1_MOSI__UART6_DCE_TX 0x79
-+				MX7D_PAD_ECSPI1_SCLK__UART6_DCE_RX 0x79
-+				MX7D_PAD_ECSPI1_SS0__UART6_DCE_CTS 0x79
-+				MX7D_PAD_ECSPI1_MISO__UART6_DCE_RTS 0x79
-+			>;
-+		};
-+
-+		pinctrl_usdhc1: usdhc1grp {
-+			fsl,pins = <
-+				MX7D_PAD_SD1_CMD__SD1_CMD	0x59
-+				MX7D_PAD_SD1_CLK__SD1_CLK	0x19
-+				MX7D_PAD_SD1_DATA0__SD1_DATA0	0x59
-+				MX7D_PAD_SD1_DATA1__SD1_DATA1	0x59
-+				MX7D_PAD_SD1_DATA2__SD1_DATA2	0x59
-+				MX7D_PAD_SD1_DATA3__SD1_DATA3	0x59
-+				MX7D_PAD_SD1_CD_B__GPIO5_IO0	0x59 /* CD */
-+				MX7D_PAD_SD1_WP__GPIO5_IO1	0x59 /* WP */
-+				MX7D_PAD_SD1_RESET_B__GPIO5_IO2	0x59 /* vmmc */
-+			>;
-+		};
-+
-+		pinctrl_usdhc2: usdhc2grp {
-+			fsl,pins = <
-+				MX7D_PAD_SD2_CMD__SD2_CMD       0x59
-+				MX7D_PAD_SD2_CLK__SD2_CLK       0x19
-+				MX7D_PAD_SD2_DATA0__SD2_DATA0   0x59
-+				MX7D_PAD_SD2_DATA1__SD2_DATA1   0x59
-+				MX7D_PAD_SD2_DATA2__SD2_DATA2   0x59
-+				MX7D_PAD_SD2_DATA3__SD2_DATA3   0x59
-+				MX7D_PAD_ECSPI2_MOSI__GPIO4_IO21	0x59 /* WL_REG_ON */
-+			>;
-+		};
-+
-+		pinctrl_usdhc2_100mhz: usdhc2grp_100mhz {
-+			fsl,pins = <
-+				MX7D_PAD_SD2_CMD__SD2_CMD       0x5a
-+				MX7D_PAD_SD2_CLK__SD2_CLK       0x1a
-+				MX7D_PAD_SD2_DATA0__SD2_DATA0   0x5a
-+				MX7D_PAD_SD2_DATA1__SD2_DATA1   0x5a
-+				MX7D_PAD_SD2_DATA2__SD2_DATA2   0x5a
-+				MX7D_PAD_SD2_DATA3__SD2_DATA3   0x5a
-+			>;
-+		};
-+
-+		pinctrl_usdhc2_200mhz: usdhc2grp_200mhz {
-+			fsl,pins = <
-+				MX7D_PAD_SD2_CMD__SD2_CMD       0x5b
-+				MX7D_PAD_SD2_CLK__SD2_CLK       0x1b
-+				MX7D_PAD_SD2_DATA0__SD2_DATA0   0x5b
-+				MX7D_PAD_SD2_DATA1__SD2_DATA1   0x5b
-+				MX7D_PAD_SD2_DATA2__SD2_DATA2   0x5b
-+				MX7D_PAD_SD2_DATA3__SD2_DATA3   0x5b
-+			>;
-+		};
-+
-+
-+		pinctrl_usdhc3: usdhc3grp {
-+			fsl,pins = <
-+				MX7D_PAD_SD3_CMD__SD3_CMD	0x59
-+				MX7D_PAD_SD3_CLK__SD3_CLK	0x19
-+				MX7D_PAD_SD3_DATA0__SD3_DATA0	0x59
-+				MX7D_PAD_SD3_DATA1__SD3_DATA1	0x59
-+				MX7D_PAD_SD3_DATA2__SD3_DATA2	0x59
-+				MX7D_PAD_SD3_DATA3__SD3_DATA3	0x59
-+				MX7D_PAD_SD3_DATA4__SD3_DATA4	0x59
-+				MX7D_PAD_SD3_DATA5__SD3_DATA5	0x59
-+				MX7D_PAD_SD3_DATA6__SD3_DATA6	0x59
-+				MX7D_PAD_SD3_DATA7__SD3_DATA7	0x59
-+				MX7D_PAD_SD3_STROBE__SD3_STROBE	0x19
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_100mhz: usdhc3grp_100mhz {
-+			fsl,pins = <
-+				MX7D_PAD_SD3_CMD__SD3_CMD	0x5a
-+				MX7D_PAD_SD3_CLK__SD3_CLK	0x1a
-+				MX7D_PAD_SD3_DATA0__SD3_DATA0	0x5a
-+				MX7D_PAD_SD3_DATA1__SD3_DATA1	0x5a
-+				MX7D_PAD_SD3_DATA2__SD3_DATA2	0x5a
-+				MX7D_PAD_SD3_DATA3__SD3_DATA3	0x5a
-+				MX7D_PAD_SD3_DATA4__SD3_DATA4	0x5a
-+				MX7D_PAD_SD3_DATA5__SD3_DATA5	0x5a
-+				MX7D_PAD_SD3_DATA6__SD3_DATA6	0x5a
-+				MX7D_PAD_SD3_DATA7__SD3_DATA7	0x5a
-+				MX7D_PAD_SD3_STROBE__SD3_STROBE	0x1a
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_200mhz: usdhc3grp_200mhz {
-+			fsl,pins = <
-+				MX7D_PAD_SD3_CMD__SD3_CMD	0x5b
-+				MX7D_PAD_SD3_CLK__SD3_CLK	0x1b
-+				MX7D_PAD_SD3_DATA0__SD3_DATA0	0x5b
-+				MX7D_PAD_SD3_DATA1__SD3_DATA1	0x5b
-+				MX7D_PAD_SD3_DATA2__SD3_DATA2	0x5b
-+				MX7D_PAD_SD3_DATA3__SD3_DATA3	0x5b
-+				MX7D_PAD_SD3_DATA4__SD3_DATA4	0x5b
-+				MX7D_PAD_SD3_DATA5__SD3_DATA5	0x5b
-+				MX7D_PAD_SD3_DATA6__SD3_DATA6	0x5b
-+				MX7D_PAD_SD3_DATA7__SD3_DATA7	0x5b
-+				MX7D_PAD_SD3_STROBE__SD3_STROBE	0x1b
-+			>;
-+		};
-+
-+		pinctrl_sai1: sai1grp {
-+			fsl,pins = <
-+				MX7D_PAD_SAI1_MCLK__SAI1_MCLK           0x1f
-+				MX7D_PAD_ENET1_RX_CLK__SAI1_TX_BCLK     0x1f
-+				MX7D_PAD_ENET1_CRS__SAI1_TX_SYNC	0x1f
-+				MX7D_PAD_ENET1_COL__SAI1_TX_DATA0	0x30
-+				MX7D_PAD_ENET1_TX_CLK__SAI1_RX_DATA0	0x1f
-+			>;
-+		};
-+
-+		pinctrl_sai2: sai2grp {
-+			fsl,pins = <
-+				MX7D_PAD_SAI2_TX_BCLK__SAI2_TX_BCLK     0x1f
-+				MX7D_PAD_SAI2_TX_SYNC__SAI2_TX_SYNC     0x1f
-+				MX7D_PAD_SAI2_TX_DATA__SAI2_TX_DATA0    0x30
-+				MX7D_PAD_SAI2_RX_DATA__SAI2_RX_DATA0    0x1f
-+			>;
-+		};
-+
-+		pinctrl_spi1: spi1grp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO09__GPIO1_IO9	0x59
-+				MX7D_PAD_GPIO1_IO12__GPIO1_IO12	0x59
-+				MX7D_PAD_GPIO1_IO13__GPIO1_IO13	0x59
-+			>;
-+		};
-+	};
-+};
-+
-+&iomuxc_lpsr {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog_2>;
-+
-+	imx7d-sdb {
-+		pinctrl_hog_2: hoggrp-2 {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO05__GPIO5_IO5	0x14
-+				MX7D_PAD_GPIO1_IO07__GPIO1_IO7	0x59  /* CAN_STBY */
-+			>;
-+		};
-+		pinctrl_pwm1: pwm1grp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO01__PWM1_OUT	0x110b0
-+			>;
-+		};
-+	};
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	assigned-clocks = <&clks IMX7D_UART1_ROOT_SRC>;
-+	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
-+	status = "okay";
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	cd-gpios = <&gpio5 0 0>;
-+	wp-gpios = <&gpio5 1 0>;
-+	enable-sdio-wakeup;
-+	keep-power-in-suspend;
-+	status = "okay";
-+};
+diff --git a/arch/arm/boot/dts/imx7d-pinfunc.h b/arch/arm/boot/dts/imx7d-pinfunc.h
+index a8d8149..1bcc4e6 100644
+--- a/arch/arm/boot/dts/imx7d-pinfunc.h
++++ b/arch/arm/boot/dts/imx7d-pinfunc.h
+@@ -15,6 +15,121 @@
+  * <mux_reg conf_reg input_reg mux_mode input_val>
+  */
+ 
++#define MX7D_PAD_GPIO1_IO00__GPIO1_IO0				  0x0000 0x0030 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO00__PWM4_OUT				  0x0000 0x0030 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG_ANY			  0x0000 0x0030 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG_B			  0x0000 0x0030 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG__RST_B_DEB		  0x0000 0x0030 0x0000 0x4 0x0
++#define MX7D_PAD_GPIO1_IO01__GPIO1_IO1				  0x0004 0x0034 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO01__PWM1_OUT				  0x0004 0x0034 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO01__CCM_ENET_REF_CLK3			  0x0004 0x0034 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO01__SAI1_MCLK				  0x0004 0x0034 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO01__OBSERVE0_OUT			  0x0004 0x0034 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO02__GPIO1_IO2				  0x0008 0x0038 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO02__PWM2_OUT				  0x0008 0x0038 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO02__CCM_ENET_REF_CLK1			  0x0008 0x0038 0x0564 0x2 0x3
++#define MX7D_PAD_GPIO1_IO02__SAI2_MCLK				  0x0008 0x0038 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO02__CCM_CLKO1				  0x0008 0x0038 0x0000 0x5 0x0
++#define MX7D_PAD_GPIO1_IO02__OBSERVE1_OUT			  0x0008 0x0038 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO02__USB_OTG1_ID			  0x0008 0x0038 0x0734 0x7 0x3
++#define MX7D_PAD_GPIO1_IO03__GPIO1_IO3				  0x000C 0x003C 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO03__PWM3_OUT				  0x000C 0x003C 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO03__CCM_ENET_REF_CLK2			  0x000C 0x003C 0x0570 0x2 0x3
++#define MX7D_PAD_GPIO1_IO03__SAI3_MCLK				  0x000C 0x003C 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO03__CCM_CLKO2				  0x000C 0x003C 0x0000 0x5 0x0
++#define MX7D_PAD_GPIO1_IO03__OBSERVE2_OUT			  0x000C 0x003C 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO03__USB_OTG2_ID			  0x000C 0x003C 0x0730 0x7 0x3
++#define MX7D_PAD_GPIO1_IO04__GPIO1_IO4				  0x0010 0x0040 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO04__USB_OTG1_OC			  0x0010 0x0040 0x072C 0x1 0x1
++#define MX7D_PAD_GPIO1_IO04__FLEXTIMER1_CH4			  0x0010 0x0040 0x0594 0x2 0x1
++#define MX7D_PAD_GPIO1_IO04__UART5_CTS_B			  0x0010 0x0040 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO04__I2C1_SCL				  0x0010 0x0040 0x05D4 0x4 0x2
++#define MX7D_PAD_GPIO1_IO04__OBSERVE3_OUT			  0x0010 0x0040 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO05__GPIO5_IO5				  0x0014 0x0044 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO05__USB_OTG1_PWR			  0x0014 0x0044 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO05__FLEXTIMER1_CH5			  0x0014 0x0044 0x0598 0x2 0x1
++#define MX7D_PAD_GPIO1_IO05__UART5_RTS_B			  0x0014 0x0044 0x0710 0x3 0x4
++#define MX7D_PAD_GPIO1_IO05__I2C1_SDA				  0x0014 0x0044 0x05D8 0x4 0x2
++#define MX7D_PAD_GPIO1_IO05__OBSERVE4_OUT			  0x0014 0x0044 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO06__GPIO1_IO6				  0x0018 0x0048 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO06__USB_OTG2_OC			  0x0018 0x0048 0x0728 0x1 0x1
++#define MX7D_PAD_GPIO1_IO06__FLEXTIMER1_CH6			  0x0018 0x0048 0x059C 0x2 0x1
++#define MX7D_PAD_GPIO1_IO06__UART5_RX_DATA			  0x0018 0x0048 0x0714 0x3 0x4
++#define MX7D_PAD_GPIO1_IO06__I2C2_SCL				  0x0018 0x0048 0x05DC 0x4 0x2
++#define MX7D_PAD_GPIO1_IO06__CCM_WAIT				  0x0018 0x0048 0x0000 0x5 0x0
++#define MX7D_PAD_GPIO1_IO06__KPP_ROW4				  0x0018 0x0048 0x0624 0x6 0x1
++#define MX7D_PAD_GPIO1_IO07__GPIO1_IO7				  0x001C 0x004C 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO07__USB_OTG2_PWR			  0x001C 0x004C 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO07__FLEXTIMER1_CH7			  0x001C 0x004C 0x05A0 0x2 0x1
++#define MX7D_PAD_GPIO1_IO07__UART5_TX_DATA			  0x001C 0x004C 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO07__I2C2_SDA				  0x001C 0x004C 0x05E0 0x4 0x2
++#define MX7D_PAD_GPIO1_IO07__CCM_STOP				  0x001C 0x004C 0x0000 0x5 0x0
++#define MX7D_PAD_GPIO1_IO07__KPP_COL4				  0x001C 0x004C 0x0604 0x6 0x1
++#define MX7D_PAD_GPIO1_IO08__GPIO1_IO8                            0x0014 0x026C 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO08__SD1_VSELECT                          0x0014 0x026C 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO08__WDOG1_WDOG_B                         0x0014 0x026C 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO08__UART3_DCE_RX                         0x0014 0x026C 0x0704 0x3 0x0
++#define MX7D_PAD_GPIO1_IO08__UART3_DTE_TX                         0x0014 0x026C 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO08__I2C3_SCL                             0x0014 0x026C 0x05E4 0x4 0x0
++#define MX7D_PAD_GPIO1_IO08__KPP_COL5                             0x0014 0x026C 0x0608 0x6 0x0
++#define MX7D_PAD_GPIO1_IO08__PWM1_OUT                             0x0014 0x026C 0x0000 0x7 0x0
++#define MX7D_PAD_GPIO1_IO09__GPIO1_IO9                            0x0018 0x0270 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO09__SD1_LCTL                             0x0018 0x0270 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO09__CCM_ENET_REF_CLK3                    0x0018 0x0270 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO09__UART3_DCE_TX                         0x0018 0x0270 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO09__UART3_DTE_RX                         0x0018 0x0270 0x0704 0x3 0x1
++#define MX7D_PAD_GPIO1_IO09__I2C3_SDA                             0x0018 0x0270 0x05E8 0x4 0x0
++#define MX7D_PAD_GPIO1_IO09__CCM_PMIC_READY                       0x0018 0x0270 0x04F4 0x5 0x0
++#define MX7D_PAD_GPIO1_IO09__KPP_ROW5                             0x0018 0x0270 0x0628 0x6 0x0
++#define MX7D_PAD_GPIO1_IO09__PWM2_OUT                             0x0018 0x0270 0x0000 0x7 0x0
++#define MX7D_PAD_GPIO1_IO10__GPIO1_IO10                           0x001C 0x0274 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO10__SD2_LCTL                             0x001C 0x0274 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO10__ENET1_MDIO                           0x001C 0x0274 0x0568 0x2 0x0
++#define MX7D_PAD_GPIO1_IO10__UART3_DCE_RTS                        0x001C 0x0274 0x0700 0x3 0x0
++#define MX7D_PAD_GPIO1_IO10__UART3_DTE_CTS                        0x001C 0x0274 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO10__I2C4_SCL                             0x001C 0x0274 0x05EC 0x4 0x0
++#define MX7D_PAD_GPIO1_IO10__FLEXTIMER1_PHA                       0x001C 0x0274 0x05A4 0x5 0x0
++#define MX7D_PAD_GPIO1_IO10__KPP_COL6                             0x001C 0x0274 0x060C 0x6 0x0
++#define MX7D_PAD_GPIO1_IO10__PWM3_OUT                             0x001C 0x0274 0x0000 0x7 0x0
++#define MX7D_PAD_GPIO1_IO11__GPIO1_IO11                           0x0020 0x0278 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO11__SD3_LCTL                             0x0020 0x0278 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO11__ENET1_MDC                            0x0020 0x0278 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO11__UART3_DCE_CTS                        0x0020 0x0278 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO11__UART3_DTE_RTS                        0x0020 0x0278 0x0700 0x3 0x1
++#define MX7D_PAD_GPIO1_IO11__I2C4_SDA                             0x0020 0x0278 0x05F0 0x4 0x0
++#define MX7D_PAD_GPIO1_IO11__FLEXTIMER1_PHB                       0x0020 0x0278 0x05A8 0x5 0x0
++#define MX7D_PAD_GPIO1_IO11__KPP_ROW6                             0x0020 0x0278 0x062C 0x6 0x0
++#define MX7D_PAD_GPIO1_IO11__PWM4_OUT                             0x0020 0x0278 0x0000 0x7 0x0
++#define MX7D_PAD_GPIO1_IO12__GPIO1_IO12                           0x0024 0x027C 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO12__SD2_VSELECT                          0x0024 0x027C 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO12__CCM_ENET_REF_CLK1                    0x0024 0x027C 0x0564 0x2 0x0
++#define MX7D_PAD_GPIO1_IO12__FLEXCAN1_RX                          0x0024 0x027C 0x04DC 0x3 0x0
++#define MX7D_PAD_GPIO1_IO12__CM4_NMI                              0x0024 0x027C 0x0000 0x4 0x0
++#define MX7D_PAD_GPIO1_IO12__CCM_EXT_CLK1                         0x0024 0x027C 0x04E4 0x5 0x0
++#define MX7D_PAD_GPIO1_IO12__SNVS_VIO_5                           0x0024 0x027C 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO12__USB_OTG1_ID                          0x0024 0x027C 0x0734 0x7 0x0
++#define MX7D_PAD_GPIO1_IO13__GPIO1_IO13                           0x0028 0x0280 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO13__SD3_VSELECT                          0x0028 0x0280 0x0000 0x1 0x0
++#define MX7D_PAD_GPIO1_IO13__CCM_ENET_REF_CLK2                    0x0028 0x0280 0x0570 0x2 0x0
++#define MX7D_PAD_GPIO1_IO13__FLEXCAN1_TX                          0x0028 0x0280 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO13__CCM_PMIC_READY                       0x0028 0x0280 0x04F4 0x4 0x1
++#define MX7D_PAD_GPIO1_IO13__CCM_EXT_CLK2                         0x0028 0x0280 0x04E8 0x5 0x0
++#define MX7D_PAD_GPIO1_IO13__SNVS_VIO_5_CTL                       0x0028 0x0280 0x0000 0x6 0x0
++#define MX7D_PAD_GPIO1_IO13__USB_OTG2_ID                          0x0028 0x0280 0x0730 0x7 0x0
++#define MX7D_PAD_GPIO1_IO14__GPIO1_IO14                           0x002C 0x0284 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO14__SD3_CD_B                             0x002C 0x0284 0x0738 0x1 0x0
++#define MX7D_PAD_GPIO1_IO14__ENET2_MDIO                           0x002C 0x0284 0x0574 0x2 0x0
++#define MX7D_PAD_GPIO1_IO14__FLEXCAN2_RX                          0x002C 0x0284 0x04E0 0x3 0x0
++#define MX7D_PAD_GPIO1_IO14__WDOG3_WDOG_B                         0x002C 0x0284 0x0000 0x4 0x0
++#define MX7D_PAD_GPIO1_IO14__CCM_EXT_CLK3                         0x002C 0x0284 0x04EC 0x5 0x0
++#define MX7D_PAD_GPIO1_IO14__SDMA_EXT_EVENT0                      0x002C 0x0284 0x06D8 0x6 0x0
++#define MX7D_PAD_GPIO1_IO15__GPIO1_IO15                           0x0030 0x0288 0x0000 0x0 0x0
++#define MX7D_PAD_GPIO1_IO15__SD3_WP                               0x0030 0x0288 0x073C 0x1 0x0
++#define MX7D_PAD_GPIO1_IO15__ENET2_MDC                            0x0030 0x0288 0x0000 0x2 0x0
++#define MX7D_PAD_GPIO1_IO15__FLEXCAN2_TX                          0x0030 0x0288 0x0000 0x3 0x0
++#define MX7D_PAD_GPIO1_IO15__WDOG4_WDOG_B                         0x0030 0x0288 0x0000 0x4 0x0
++#define MX7D_PAD_GPIO1_IO15__CCM_EXT_CLK4                         0x0030 0x0288 0x04F0 0x5 0x0
++#define MX7D_PAD_GPIO1_IO15__SDMA_EXT_EVENT1                      0x0030 0x0288 0x06DC 0x6 0x0
+ #define MX7D_PAD_EPDC_DATA00__EPDC_DATA0                          0x0034 0x02A4 0x0000 0x0 0x0
+ #define MX7D_PAD_EPDC_DATA00__SIM1_PORT2_TRXD                     0x0034 0x02A4 0x0000 0x1 0x0
+ #define MX7D_PAD_EPDC_DATA00__QSPI_A_DATA0                        0x0034 0x02A4 0x0000 0x2 0x0
 -- 
 1.9.1
-
