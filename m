@@ -1,46 +1,33 @@
-From: <Frank.Li@freescale.com>
-Subject: [PATCH v3 10/10] ARM: config: imx_v6_v7_defconfig add imx7d support
-Date: Sat, 18 Apr 2015 05:28:55 +0800
-Message-ID: <1429306135-24695-11-git-send-email-Frank.Li@freescale.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH v3 09/10] arm: dts: add imx7d-sdb support
+Date: Fri, 17 Apr 2015 20:20:24 -0300
+Message-ID: <CAOMZO5B9Ckc_YQpn4wrLLbEU-jahuZ4POBw2jtWi7GayLKp=zw@mail.gmail.com>
 References: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
+	<1429306135-24695-10-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: lznuaa@gmail.com, shawn.guo@linaro.org, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Frank Li <Frank.Li@freescale.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:33911 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751669AbbDQXU0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Apr 2015 19:20:26 -0400
+Received: by laat2 with SMTP id t2so91096283laa.1
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Apr 2015 16:20:24 -0700 (PDT)
+In-Reply-To: <1429306135-24695-10-git-send-email-Frank.Li@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Frank Li <Frank.Li@freescale.com>
+Cc: =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Frank Li <Frank.Li@freescale.com>
+On Fri, Apr 17, 2015 at 6:28 PM,  <Frank.Li@freescale.com> wrote:
 
-Add imx7d support
+> +               pinctrl_max17135: max17135grp-1 {
+> +                       fsl,pins = <
+> +                               MX7D_PAD_EPDC_PWR_STAT__GPIO2_IO31      0x80000000  /* pwrgood */
+> +                               MX7D_PAD_I2C4_SCL__GPIO4_IO14           0x80000000  /* vcom_ctrl */
+> +                               MX7D_PAD_EPDC_SDCE3__GPIO2_IO23         0x80000000  /* wakeup */
+> +                               MX7D_PAD_EPDC_PWR_COM__GPIO2_IO30       0x80000000  /* v3p3 */
+> +                               MX7D_PAD_EPDC_SDCE2__GPIO2_IO22         0x80000000  /* pwr int */
 
-Signed-off-by: Frank Li <Frank.Li@freescale.com>
----
- arch/arm/configs/imx_v6_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index fdeb1c8..c9c51e1f 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -38,6 +38,7 @@ CONFIG_SOC_IMX53=y
- CONFIG_SOC_IMX6Q=y
- CONFIG_SOC_IMX6SL=y
- CONFIG_SOC_IMX6SX=y
-+CONFIG_SOC_IMX7D=y
- CONFIG_SOC_VF610=y
- CONFIG_PCI=y
- CONFIG_PCI_IMX6=y
--- 
-1.9.1
+As I mentioned earlier, no 0x80000000 settings, please. Better use the
+real values instead.
