@@ -1,60 +1,65 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v3 00/10] Add Freescale i.mx7d support
-Date: Sat, 18 Apr 2015 08:39:57 +0200 (CEST)
-Message-ID: <389076076.132823.1429339197272.JavaMail.open-xchange@oxbaltgw09.schlund.de>
-References: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
-Reply-To: Stefan Wahren <stefan.wahren@i2se.com>
+From: chaotian.jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 2/5] mmc: mediatek: Add Mediatek MMC driver
+Date: Sun, 19 Apr 2015 11:22:41 +0800
+Message-ID: <1429413761.16027.2.camel@mhfsdcap03>
+References: <1426562035-16709-1-git-send-email-chaotian.jing@mediatek.com>
+ <1426562035-16709-3-git-send-email-chaotian.jing@mediatek.com>
+ <20150417134547.GN4946@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:64837 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750903AbbDRGk1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Apr 2015 02:40:27 -0400
-In-Reply-To: <1429306135-24695-1-git-send-email-Frank.Li@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20150417134547.GN4946-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Frank.Li@freescale.com
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, lznuaa@gmail.com, shawn.guo@linaro.org
 
-Hi Frank,
+Dear Sascha,
 
-> Frank.Li@freescale.com hat am 17. April 2015 um 23:28 geschrieben:
->
->
-> From: Frank Li <Frank.Li@freescale.com>
->
-> add basic support for chip imx7d.
-> - MSL
-> - Clock support. All clock enabled.
-> - pinctrl support
-> - SD Card support
->
-> Change from v2 to v3
-> - remove unsupport part in imx7d-sdb.dtb
->
-> Change from V1 to V2:
-> - split patch1 to three small one to avoid 100k maillist limitation.
-> - fix imx7d.dtsi code style problem
->
-> Anson Huang (1):
-> ARM: imx: add msl support for imx7d
->
-> Frank Li (9):
-> ARM: dts: add pinfunc include file to support imx7d
-> ARM: dts: add pinfunc include file gpio1 to support imx7d
-> ARM: dts: add clock include file to support imx7d
-> ARM: dts: add imx7d soc dtsi file
-> pinctrl: add imx7d support
-> ARM: imx: add gpt system timer support for imx7d
-> ARM: imx: add imx7d clk tree support
-> arm: dts: add imx7d-sdb support
-> ARM: config: imx_v6_v7_defconfig add imx7d support
 
-please pay attention to:
-
-http://lxr.free-electrons.com/source/Documentation/devicetree/bindings/submitting-patches.txt
-
-Thanks
-Stefan
+On Fri, 2015-04-17 at 15:45 +0200, Sascha Hauer wrote:
+> Hi Chaotian,
+> 
+> On Tue, Mar 17, 2015 at 11:13:52AM +0800, Chaotian Jing wrote:
+> > Add Mediatek MMC driver code
+> > 
+> 
+> [...]
+> 
+> > +	host->dev = &pdev->dev;
+> > +	host->mmc = mmc;
+> > +	/* Set host parameters to mmc */
+> > +	mmc->ops = &mt_msdc_ops;
+> > +	mmc->f_min = 260000;
+> > +	mmc->ocr_avail = MMC_VDD_30_31 | MMC_VDD_31_32 | MMC_VDD_32_33;
+> > +
+> > +	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+> > +	/* MMC core transfer sizes tunable parameters */
+> > +	mmc->max_segs = MAX_BD_NUM;
+> > +	mmc->max_seg_size = 64 * 1024;
+> 
+> Earlier versions of this driver had 64 * 1024 - 512 here. Using 64k
+> breaks SD card support here. Reading the partition table still works
+> fine, but the next transfers fail with messages like:
+> 
+> mtk-msdc 11240000.mmc: msdc_request_timeout: aborting cmd/data/mrq
+> mtk-msdc 11240000.mmc: msdc_request_timeout: aborting mrq=ffffffc06e586860 cmd=18
+> mtk-msdc 11240000.mmc: msdc_request_timeout: abort data: cmd18; 136 blocks
+> mmcblk1: error -110 transferring data, sector 338488, nr 136, cmd response 0x900, card status 0xb00
+> mtk-msdc 11240000.mmc: set mclk to 0 mmc1: tried to reset card
+> 
+> Can you confirm this?
+> 
+Yes, it will be fixed at next revision.
+Thx!
+> Sascha
+> 
