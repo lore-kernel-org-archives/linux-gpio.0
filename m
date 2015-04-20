@@ -1,62 +1,121 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: mediatek: mtk-common: initialize unmask
-Date: Mon, 20 Apr 2015 15:32:51 +0300
-Message-ID: <5534F1F3.9060802@cogentembedded.com>
-References: <1429528516-9245-1-git-send-email-colin.king@canonical.com>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: Fwd: Re: [PATCH 2/2] ARM: mvebu: dts: Add dts file for DLink
+  DNS-327L
+Date: Mon, 20 Apr 2015 17:04:09 +0200
+Message-ID: <55351569.7000307@free-electrons.com>
+References: <b6534b962d2cf9d21cb72d43f19a6574@mail.ncrmnt.org> <552A6209.9040903@gmail.com> <cd7445f789f1082f464d464f77807f12@mail.ncrmnt.org> <20150412145857.GA14038@lunn.ch> <b172d775afa24cea69a9490f531c6b37@mail.ncrmnt.org> <20150412194735.GA27921@lunn.ch> <552BCFAA.2020109@free-electrons.com> <1ec8906f00468ca5a9fa227f8c83fe69@mail.ncrmnt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:34384 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754806AbbDTMcz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Apr 2015 08:32:55 -0400
-Received: by laat2 with SMTP id t2so125483439laa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Apr 2015 05:32:54 -0700 (PDT)
-In-Reply-To: <1429528516-9245-1-git-send-email-colin.king@canonical.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1ec8906f00468ca5a9fa227f8c83fe69-IcawJbj+vY1vZ+LtbKW8tg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew <andrew-g16cbSVCqPUdnm+yROfE0A@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Maoguang Meng <maoguang.meng@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
 
-Hello.
+Hi Andrew,
 
-On 04/20/2015 02:15 PM, Colin King wrote:
+On 13/04/2015 16:32, Andrew wrote:
+> Gregory CLEMENT =D0=BF=D0=B8=D1=81=D0=B0=D0=BB 13.04.2015 17:16:
+>> Hi Andrew(s),
+>>
+>> On 12/04/2015 21:47, Andrew Lunn wrote:
+>>> On Sun, Apr 12, 2015 at 06:41:31PM +0300, Andrew wrote:
+>>>> Andrew Lunn ?????????? 12.04.2015 17:58:
+>>>>>> Okay, got it.
+>>>>>> I'll file a bug about this issue to the the bugzilla. However
+>>>>>> something
+>>>>>> tells me it might not be cpuidle, but D-link. This one's sounds=20
+>>>>>> nasty
+>>>>>> and it has been around since 3.16.x. How could it go unnoticed?
+>>>>>> Unfortunately I have no other armada-370 hardware to test it.
+>>>>>
+>>>>> Hi Andrew
+>>>>>
+>>>>> A few of us here do have hardware to test with. Please give a=20
+>>>>> detailed
+>>>>> description of how you reproduce the issue, and your kernel
+>>>>> configuration, if different from mvebu_v7_defconfig, or
+>>>>> multi_v7_defconfig.
+>>>>>
+>>>>> 	Thanks
+>>>>> 		Andrew
+>>>>
+>>>>
+>>>> arch/arm/configs/mvebu_v7_defconfig has=20
+>>>> CONFIG_ARM_MVEBU_V7_CPUIDLE=3Dy,
+>>>> so it should be sufficient to reproduce the issue. I first=20
+>>>> encountered
+>>>> this issue using that very config and observed it on 2 DNS-327L bo=
+xes=20
+>>>> I
+>>>> own.
+>>>>
+>>>> All I have to do to trigger the bug - enable cpuidle driver and le=
+t
+>>>> the box
+>>>> sit for some 4-12 hours, till it hard-freezes. If wdt is enabled -
+>>>> wdt reboot
+>>>> will happen.
+>>>
+>>> That simple! Well i've got a 370RD which has been sat mostly idle f=
+or
+>>> weeks, using the mvebu_v7_defconfig, with a few addition things tur=
+ned
+>>> on for testing the Ethernet switch on the board. I've not had that
+>>> lockup.
+>>>
+>>> One thing you can try to narrow it down is the disable the second i=
+dle
+>>> mode. Take a look at armada370_idle_driver. Keep the
+>>> ARM_CPUIDLE_WFI_STATE but disable the "Deep Idle" state.
+>>
+>> Actually you don't have to modify the kernel you can setup the CPU i=
+dle=20
+>> level
+>> you want at runtime:
+>>
+>> echo 1 > /sys/devices/system/cpu/cpu0/cpuidle/state1/disable
+>>
+>> will disable the state1. By doing this on Armada 370 then you
+>> will only use the WFI state.
+>>
+>> Do you still have this issue on v4.0-rc7?
+>=20
+> Yep, I can confirm having this issue on 4.0-rc7. I will only be able =
+to=20
+> test if
+> disabling state1 fixes it the next weekend.
 
-> From: Colin Ian King <colin.king@canonical.com>
+Did you manage to do some test this week-end?
 
-> cppcheck detected an unitialized variable:
+Thanks,
 
-    Uninitialized.
+Gregory
 
-> [drivers/pinctrl/mediatek/pinctrl-mtk-common.c:897]:
->    (error) Uninitialized variable: unmask
 
-> unmask should be initialized to zero to ensure unmasking
-> only occurs if a previous mask occurred. The current situation
-> is that the unmask variable could contain any random garbage
-> causing random unexpected unmasking.
+>=20
+>>
+>> Thanks,
+>>
+>> Gregory
+>>
+>>
+>>
+>>>
+>>>       Andrew
+>>>
+>=20
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index 493294c..3173125 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -881,7 +881,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
->   	if (!mtk_eint_get_mask(pctl, eint_num)) {
->   		mtk_eint_mask(d);
->   		unmask = 1;
-> -	}
-> +	} else
-> +		unmask = 0;
-
-    The CodingStyle dictates that there should be {} around *else* branch too.
-
-[...]
-
-WBR, Sergei
-
+--=20
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
