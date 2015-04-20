@@ -1,59 +1,48 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH v2 1/5] mmc: dt-bindings: add Mediatek MMC bindings
-Date: Mon, 20 Apr 2015 10:31:16 +0200
-Message-ID: <20150420083116.GQ4946@pengutronix.de>
-References: <1426562035-16709-1-git-send-email-chaotian.jing@mediatek.com>
- <1426562035-16709-2-git-send-email-chaotian.jing@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1426562035-16709-2-git-send-email-chaotian.jing@mediatek.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chaotian Jing <chaotian.jing@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream@mediatek.com, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, bin.zhang@mediatek.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-kernel@lists.infradead.org
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: mediatek: mtk-common: initialize unmask
+Date: Mon, 20 Apr 2015 06:15:16 -0500
+Message-ID: <1429528516-9245-1-git-send-email-colin.king@canonical.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:49382 "EHLO
+	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754739AbbDTLRM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Apr 2015 07:17:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Maoguang Meng <maoguang.meng@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi Chaotian,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Mar 17, 2015 at 11:13:51AM +0800, Chaotian Jing wrote:
-> Document the device-tree binding of Mediatek MMC host
-> 
-> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/mmc/mtk-sd.txt | 33 ++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> new file mode 100644
-> index 0000000..ac43f77
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
-> @@ -0,0 +1,33 @@
-> +* MTK MMC controller
-> +
-> +The MTK  MSDC can act as a MMC controller
-> +to support MMC, SD, and SDIO types of memory cards.
-> +
-> +This file documents differences between the core properties in mmc.txt
-> +and the properties used by the msdc driver.
-> +
-> +Required properties:
-> +- compatible: Should be "mediatek,mt8173-mmc","mediatek,mt8135-mmc".
-> +- interrupts: Should contain MSDC interrupt number
-> +- clocks: MSDC source clock
-> +- clock-names: "source"
+cppcheck detected an unitialized variable:
 
-When I remove the clk_ignore_unused from the command line SD/MMC stops
-working on the MT8173. This is because msdc50_0_h_sel is disabled, when
-I enable this clock SD/MMC works again. This clock should probably be
-added here and handled appropriatly in the driver.
+[drivers/pinctrl/mediatek/pinctrl-mtk-common.c:897]:
+  (error) Uninitialized variable: unmask
 
-Sascha
+unmask should be initialized to zero to ensure unmasking
+only occurs if a previous mask occurred. The current situation
+is that the unmask variable could contain any random garbage
+causing random unexpected unmasking.
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 493294c..3173125 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -881,7 +881,8 @@ static int mtk_gpio_set_debounce(struct gpio_chip *chip, unsigned offset,
+ 	if (!mtk_eint_get_mask(pctl, eint_num)) {
+ 		mtk_eint_mask(d);
+ 		unmask = 1;
+-	}
++	} else
++		unmask = 0;
+ 
+ 	clr_bit = 0xff << eint_offset;
+ 	writel(clr_bit, pctl->eint_reg_base + clr_offset);
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.1.4
+
