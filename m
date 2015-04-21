@@ -1,52 +1,65 @@
-From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH v5 07/11] ARM: imx: add msl support for imx7d
-Date: Tue, 21 Apr 2015 15:37:17 -0500
-Message-ID: <CAHrpEqS5qQ7-0bEFEZ3tkeupL0cBU1aPiVnS5RWy=GBW9JAhWw@mail.gmail.com>
-References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
-	<1429628007-8892-8-git-send-email-Frank.Li@freescale.com>
-	<20150421173110.GG10164@leverpostej>
-	<CAHrpEqRAEMammfaovi6QQxGJfW-LZsgwg5rX4-3Y=+m6qhqeTg@mail.gmail.com>
-	<CAL_Jsq+NV5Ok-P6JGZzNyQCD=PdwXbDY39XmwzKB0U+vuyHxVA@mail.gmail.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v4 05/11] ARM: dts: add imx7d soc dtsi file
+Date: Tue, 21 Apr 2015 15:37:16 -0500
+Message-ID: <CAL_JsqLP6ZE9_G1L9XzT-hR=k6Wzx80rKQMTdagp8q80ADN61g@mail.gmail.com>
+References: <1429563933-3129-1-git-send-email-Frank.Li@freescale.com> <1429563933-3129-6-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34514 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756031AbbDUUhR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 16:37:17 -0400
-In-Reply-To: <CAL_Jsq+NV5Ok-P6JGZzNyQCD=PdwXbDY39XmwzKB0U+vuyHxVA@mail.gmail.com>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:33551 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756031AbbDUUhi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 16:37:38 -0400
+In-Reply-To: <1429563933-3129-6-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "Frank.Li@freescale.com" <Frank.Li@freescale.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
+To: Frank.Li@freescale.com
+Cc: lznuaa@gmail.com, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Anson Huang <b20788@freescale.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Apr 21, 2015 at 3:22 PM, Rob Herring <robherring2@gmail.com> wrote:
-> On Tue, Apr 21, 2015 at 1:51 PM, Zhi Li <lznuaa@gmail.com> wrote:
->> On Tue, Apr 21, 2015 at 12:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>>> +static void __init imx_ca7_smp_init_cpus(void)
->>>> +{
->>>> +       int i, ncores;
->>>> +       unsigned long val;
->>>> +
->>>> +       asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r" (val));
->>>> +       ncores = ((val >> 24) & 0x3) + 1;
->>>> +       if (setup_max_cpus < ncores)
->>>> +               ncores = (setup_max_cpus) ? setup_max_cpus : 1;
->>>> +
->>>> +       for (i = ncores; i < NR_CPUS; i++)
->>>> +               set_cpu_possible(i, false);
->>>> +}
->>>
->>> NAK.
->>>
->>> The set of available CPUs should come from the DT, as with other
->>> platforms.
->>
->> Can you give me a reference platform implement?
+On Mon, Apr 20, 2015 at 4:05 PM,  <Frank.Li@freescale.com> wrote:
+> From: Frank Li <Frank.Li@freescale.com>
 >
-> All of the ones with no smp_operations.
-
-Okay, I just remove it.
-
+> Add i.mx7d support:
+>         imx7d dtsi part
 >
-> Rob
+> Signed-off-by: Anson Huang <b20788@freescale.com>
+> Signed-off-by: Frank Li <Frank.Li@freescale.com>
+> ---
+>  arch/arm/boot/dts/imx7d.dtsi | 498 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 498 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx7d.dtsi
+>
+> diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
+> new file mode 100644
+> index 0000000..dd391e2
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx7d.dtsi
+> @@ -0,0 +1,498 @@
+> +/*
+> + * Copyright 2015 Freescale Semiconductor, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+
+You should dual license dts files with BSD or MIT for any non-Linux users.
+
+
+> +
+> +       timer {
+> +               compatible = "arm,armv7-timer";
+> +               arm,cpu-registers-not-fw-configured;
+
+Fix your bootloader. This is for broken bootloaders which can't be fixed.
+
+> +               interrupts = <GIC_PPI 13
+> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 14
+> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +               interrupt-parent = <&intc>;
+> +               clock-frequency = <8000000>;
+
+Ditto.
+
+Rob
