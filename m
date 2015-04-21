@@ -1,44 +1,60 @@
 From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH v5 07/11] ARM: imx: add msl support for imx7d
-Date: Tue, 21 Apr 2015 13:51:04 -0500
-Message-ID: <CAHrpEqRAEMammfaovi6QQxGJfW-LZsgwg5rX4-3Y=+m6qhqeTg@mail.gmail.com>
+Subject: Re: [PATCH v5 05/11] ARM: dts: add imx7d soc dtsi file
+Date: Tue, 21 Apr 2015 14:34:45 -0500
+Message-ID: <CAHrpEqRqUJ2h2dXiwR3rcugWvszKwt10axy8jGsAJAH6Quafbg@mail.gmail.com>
 References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
-	<1429628007-8892-8-git-send-email-Frank.Li@freescale.com>
-	<20150421173110.GG10164@leverpostej>
+	<1429628007-8892-6-git-send-email-Frank.Li@freescale.com>
+	<20150421172834.GF10164@leverpostej>
+	<CAHrpEqTCMgaAx_bUG1JEtS-2_DrkwM_EbWphu_j=6YZuebcoSw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:34718 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753499AbbDUSvF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 14:51:05 -0400
-In-Reply-To: <20150421173110.GG10164@leverpostej>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:34012 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752916AbbDUTep (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 15:34:45 -0400
+In-Reply-To: <CAHrpEqTCMgaAx_bUG1JEtS-2_DrkwM_EbWphu_j=6YZuebcoSw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mark Rutland <mark.rutland@arm.com>
 Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-On Tue, Apr 21, 2015 at 12:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->> +static void __init imx_ca7_smp_init_cpus(void)
->> +{
->> +       int i, ncores;
->> +       unsigned long val;
->> +
->> +       asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r" (val));
->> +       ncores = ((val >> 24) & 0x3) + 1;
->> +       if (setup_max_cpus < ncores)
->> +               ncores = (setup_max_cpus) ? setup_max_cpus : 1;
->> +
->> +       for (i = ncores; i < NR_CPUS; i++)
->> +               set_cpu_possible(i, false);
->> +}
+>>> +
+>>> +       clocks {
+>>> +               #address-cells = <1>;
+>>> +               #size-cells = <0>;
+>>> +
+>>> +               ckil: clock@0 {
+>>> +                       compatible = "fixed-clock";
+>>> +                       reg = <0>;
+>>> +                       #clock-cells = <0>;
+>>> +                       clock-frequency = <32768>;
+>>> +                       clock-output-names = "ckil";
+>>> +               };
+>>> +
+>>> +               osc: clock@1 {
+>>> +                       compatible = "fixed-clock";
+>>> +                       reg = <1>;
+>>> +                       #clock-cells = <0>;
+>>> +                       clock-frequency = <24000000>;
+>>> +                       clock-output-names = "osc";
+>>> +               };
+>>> +
+>>> +       };
+>>
+>> Get rid of the clocks container node, and put these under the root.
 >
-> NAK.
->
-> The set of available CPUs should come from the DT, as with other
-> platforms.
+> Okay.
 
-Can you give me a reference platform implement?
+After remove clocks node.
+There will be warning
 
+Warning (reg_format): "reg" property in /clock@0 has invalid length (4
+bytes) (#address-cells == 1, #size-cells == 1)
+Warning (reg_format): "reg" property in /clock@1 has invalid length (4
+bytes) (#address-cells == 1, #size-cells == 1)
+
+best regards
+Frank Li
 >
-> Mark.
+>>
