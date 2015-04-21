@@ -1,110 +1,54 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 05/11] ARM: dts: add imx7d soc dtsi file
-Date: Tue, 21 Apr 2015 18:28:34 +0100
-Message-ID: <20150421172834.GF10164@leverpostej>
-References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
- <1429628007-8892-6-git-send-email-Frank.Li@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Semen Protsenko <semen.protsenko@globallogic.com>
+Subject: [PATCH 2/2] gpio: max732x: Fix irq-events handler
+Date: Tue, 21 Apr 2015 20:28:38 +0300
+Message-ID: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:47562 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933394AbbDUR2m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 21 Apr 2015 13:28:42 -0400
-Content-Disposition: inline
-In-Reply-To: <1429628007-8892-6-git-send-email-Frank.Li@freescale.com>
-Content-Language: en-US
+Received: from exprod5og117.obsmtp.com ([64.18.0.149]:47386 "EHLO
+	exprod5og117.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754353AbbDUR30 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 13:29:26 -0400
+Received: by lagv1 with SMTP id v1so156617192lag.3
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2015 10:29:24 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Frank.Li@freescale.com" <Frank.Li@freescale.com>
-Cc: "lznuaa@gmail.com" <lznuaa@gmail.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@globallogic.com>
 
-> +/*
-> +               cpu1: cpu@1 {
-> +                       compatible = "arm,cortex-a7";
-> +                       device_type = "cpu";
-> +                       reg = <1>;
-> +               };
-> +*/
+MAX732X doesn't support edge type interrupt. So replace
+handle_edge_irq() with handle_level_irq(), which uses
+irq_mask/irq_unmask callbacks instead of irq_ack().
 
-Why have it commented out? If it's not available, leave it out entirely.
+This wrong handler may lead to NULL pointer dereference in some cases.
+E.g. this was observed on hibernation process:
 
-> +       intc: interrupt-controller@31001000 {
-> +               compatible = "arm,cortex-a7-gic";
-> +               #interrupt-cells = <3>;
-> +               interrupt-controller;
-> +               reg = <0x31001000 0x1000>,
-> +                     <0x31002000 0x100>;
-> +       };
+  Unable to handle kernel NULL pointer dereference at virtual address 0
+  Backtrace:
+  (handle_edge_irq) from (resend_irqs)
+  (resend_irqs) from (tasklet_action)
+  (tasklet_action) from (__do_softirq)
+  (__do_softirq) from (run_ksoftirqd)
+  (run_ksoftirqd) from (smpboot_thread_fn)
+  (smpboot_thread_fn) from (kthread)
+  (kthread) from (ret_from_fork)
 
-GICC should be larger than 0x100 bytes.
+Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
+---
+ drivers/gpio/gpio-max732x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What about GICH, GICV?
+diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+index 1885e5c..edade14 100644
+--- a/drivers/gpio/gpio-max732x.c
++++ b/drivers/gpio/gpio-max732x.c
+@@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+ 		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
+ 					    &max732x_irq_chip,
+ 					    irq_base,
+-					    handle_edge_irq,
++					    handle_level_irq,
+ 					    IRQ_TYPE_NONE);
+ 		if (ret) {
+ 			dev_err(&client->dev,
+-- 
+1.7.9.5
 
-What state do CPUs enter the kernel?
-
-> +
-> +       clocks {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               ckil: clock@0 {
-> +                       compatible = "fixed-clock";
-> +                       reg = <0>;
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <32768>;
-> +                       clock-output-names = "ckil";
-> +               };
-> +
-> +               osc: clock@1 {
-> +                       compatible = "fixed-clock";
-> +                       reg = <1>;
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <24000000>;
-> +                       clock-output-names = "osc";
-> +               };
-> +
-> +       };
-
-Get rid of the clocks container node, and put these under the root.
-
-> +
-> +       timer {
-> +               compatible = "arm,armv7-timer";
-> +               arm,cpu-registers-not-fw-configured;
-
-This was bad enough the first time...
-
-> +               interrupts = <GIC_PPI 13
-> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +                       <GIC_PPI 14
-> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-
-Two interrupts are missing.
-
-> +               interrupt-parent = <&intc>;
-> +               clock-frequency = <8000000>;
-
-Why isn't this programmed?
-
-> +       };
-> +
-> +       soc {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               compatible = "simple-bus";
-> +               interrupt-parent = <&intc>;
-> +               ranges;
-> +
-> +               pmu {
-> +                       compatible = "arm,cortex-a7-pmu";
-> +                       interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-> +                       status = "disabled";
-> +               };
-
-Move this under the root. It doesn't live on an SoC-specific bus.
-
-Why disabled?
-
-Thanks,
-Mark.
