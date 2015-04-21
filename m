@@ -1,41 +1,83 @@
-From: Semen Protsenko <semen.protsenko@globallogic.com>
-Subject: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
-Date: Tue, 21 Apr 2015 16:19:04 +0300
-Message-ID: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Zhi Li <lznuaa@gmail.com>
+Subject: Re: [PATCH v4 09/11] ARM: imx: add imx7d clk tree support
+Date: Tue, 21 Apr 2015 09:15:36 -0500
+Message-ID: <CAHrpEqSuJbAEBDBfVMXdFk-p-xwtwfmHbSw3OsN-2sa9fNmA=A@mail.gmail.com>
+References: <1429563933-3129-1-git-send-email-Frank.Li@freescale.com>
+	<1429563933-3129-10-git-send-email-Frank.Li@freescale.com>
+	<20150421102255.GW6325@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:35203 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521AbbDUOPh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 10:15:37 -0400
+In-Reply-To: <20150421102255.GW6325@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, robh+dt@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>, Adrian Alonso <aalonso@freescale.com>
 
-It's possible that multiple MAX732X can be hooked up to the same
-interrupt line with the processor. So add IRQF_SHARED in requesting irq.
+On Tue, Apr 21, 2015 at 5:22 AM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> On Tue, Apr 21, 2015 at 05:05:31AM +0800, Frank.Li@freescale.com wrote:
+>> From: Frank Li <Frank.Li@freescale.com>
+>>
+>> Add i.MX7D clk tree support.
+>>
+>> +
+>> +     clk_register_clkdev(clks[IMX7D_GPT1_ROOT_CLK], "ipg", "imx-gpt.0");
+>> +     clk_register_clkdev(clks[IMX7D_GPT_3M_CLK], "gpt_3m", "imx-gpt.0");
 
-Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
----
- drivers/gpio/gpio-max732x.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+This patch just list all clock root in RM.
+all clock refine have to wait for Dong Aisheng's RFC clock framework
+change's patch.
 
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 0fa4543..55b13d4 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -507,12 +507,10 @@ static int max732x_irq_setup(struct max732x_chip *chip,
- 		chip->irq_features = has_irq;
- 		mutex_init(&chip->irq_lock);
- 
--		ret = devm_request_threaded_irq(&client->dev,
--					client->irq,
--					NULL,
--					max732x_irq_handler,
--					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
--					dev_name(&client->dev), chip);
-+		ret = devm_request_threaded_irq(&client->dev, client->irq,
-+				NULL, max732x_irq_handler, IRQF_ONESHOT |
-+				IRQF_TRIGGER_FALLING | IRQF_SHARED,
-+				dev_name(&client->dev), chip);
- 		if (ret) {
- 			dev_err(&client->dev, "failed to request irq %d\n",
- 				client->irq);
--- 
-1.7.9.5
+>
+> What are these good for? These shouldn't be here.
+>
+>> +
+>> +     for (i = 0; i < IMX7D_END_CLK; i++)
+>> +             clk_prepare_enable(clks[i]);
+>
+> Hey, no. You enable *all* clocks here which is certainly wrong. They
+> will never be turned off.
+
+Yes. This patches's purpose is bring up mx7.
+Because imx7 clock design change,  Dong Aisheng send out RFC patch to
+change a little bit framework.
+After that,  we can enable only necessary clock here. Otherwise system
+will halt and block the other part
+upstream.
+
+>
+>> @@ -309,12 +316,20 @@ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+>>       case IMX_PLLV3_ENET:
+>>               ops = &clk_pllv3_enet_ops;
+>>               break;
+>> +     case IMX_PLLV3_SYSV2:
+>> +             ops = &clk_pllv3_ops;
+>> +             break;
+>>       default:
+>>               ops = &clk_pllv3_ops;
+>>       }
+>>       pll->base = base;
+>>       pll->div_mask = div_mask;
+>>
+>> +     if (cpu_is_imx7d() && strcmp(name, "pll_enet_main") == 0)
+>> +             pll->powerdown = ENET_PLL_POWER;
+>> +     else
+>> +             pll->powerdown = BM_PLL_POWER;
+>
+> You should probably add a new PLL type, like IMX_PLLV3_ENET_IMX7 or such
+> instead of using cpu_is_ and strcmp.
+
+Okay I will update it.
+
+>
+> Sascha
+>
+> --
+> Pengutronix e.K.                           |                             |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
