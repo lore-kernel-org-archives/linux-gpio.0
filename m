@@ -1,54 +1,40 @@
-From: Semen Protsenko <semen.protsenko@globallogic.com>
-Subject: [PATCH 2/2] gpio: max732x: Fix irq-events handler
-Date: Tue, 21 Apr 2015 20:28:38 +0300
-Message-ID: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v5 07/11] ARM: imx: add msl support for imx7d
+Date: Tue, 21 Apr 2015 18:31:10 +0100
+Message-ID: <20150421173110.GG10164@leverpostej>
+References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
+ <1429628007-8892-8-git-send-email-Frank.Li@freescale.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og117.obsmtp.com ([64.18.0.149]:47386 "EHLO
-	exprod5og117.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754353AbbDUR30 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 13:29:26 -0400
-Received: by lagv1 with SMTP id v1so156617192lag.3
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2015 10:29:24 -0700 (PDT)
+Received: from foss.arm.com ([217.140.101.70]:47568 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933260AbbDURbQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Apr 2015 13:31:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1429628007-8892-8-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@globallogic.com>
+To: "Frank.Li@freescale.com" <Frank.Li@freescale.com>
+Cc: "lznuaa@gmail.com" <lznuaa@gmail.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-MAX732X doesn't support edge type interrupt. So replace
-handle_edge_irq() with handle_level_irq(), which uses
-irq_mask/irq_unmask callbacks instead of irq_ack().
+> +static void __init imx_ca7_smp_init_cpus(void)
+> +{
+> +       int i, ncores;
+> +       unsigned long val;
+> +
+> +       asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r" (val));
+> +       ncores = ((val >> 24) & 0x3) + 1;
+> +       if (setup_max_cpus < ncores)
+> +               ncores = (setup_max_cpus) ? setup_max_cpus : 1;
+> +
+> +       for (i = ncores; i < NR_CPUS; i++)
+> +               set_cpu_possible(i, false);
+> +}
 
-This wrong handler may lead to NULL pointer dereference in some cases.
-E.g. this was observed on hibernation process:
+NAK.
 
-  Unable to handle kernel NULL pointer dereference at virtual address 0
-  Backtrace:
-  (handle_edge_irq) from (resend_irqs)
-  (resend_irqs) from (tasklet_action)
-  (tasklet_action) from (__do_softirq)
-  (__do_softirq) from (run_ksoftirqd)
-  (run_ksoftirqd) from (smpboot_thread_fn)
-  (smpboot_thread_fn) from (kthread)
-  (kthread) from (ret_from_fork)
+The set of available CPUs should come from the DT, as with other
+platforms.
 
-Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
----
- drivers/gpio/gpio-max732x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 1885e5c..edade14 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
- 		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
- 					    &max732x_irq_chip,
- 					    irq_base,
--					    handle_edge_irq,
-+					    handle_level_irq,
- 					    IRQ_TYPE_NONE);
- 		if (ret) {
- 			dev_err(&client->dev,
--- 
-1.7.9.5
-
+Mark.
