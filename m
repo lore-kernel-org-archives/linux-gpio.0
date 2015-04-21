@@ -1,51 +1,41 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/8] ASoC: arizona: add defines for
-	single-input gain control
-Date: Tue, 21 Apr 2015 13:33:50 +0100
-Message-ID: <1429619636-25478-3-git-send-email-rf@opensource.wolfsonmicro.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
+From: Semen Protsenko <semen.protsenko@globallogic.com>
+Subject: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
+Date: Tue, 21 Apr 2015 16:19:04 +0300
+Message-ID: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Adds convenience defines for declaring a gain control that
-has an input mux. These block are functionally equivalent to
-the existing mixer blocks but only have a single input.
+It's possible that multiple MAX732X can be hooked up to the same
+interrupt line with the processor. So add IRQF_SHARED in requesting irq.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
 ---
- sound/soc/codecs/arizona.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ drivers/gpio/gpio-max732x.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/codecs/arizona.h b/sound/soc/codecs/arizona.h
-index 11ff899..6559ca0 100644
---- a/sound/soc/codecs/arizona.h
-+++ b/sound/soc/codecs/arizona.h
-@@ -92,6 +92,11 @@ extern const unsigned int arizona_mixer_tlv[];
- extern const char *arizona_mixer_texts[ARIZONA_NUM_MIXER_INPUTS];
- extern int arizona_mixer_values[ARIZONA_NUM_MIXER_INPUTS];
+diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+index 0fa4543..55b13d4 100644
+--- a/drivers/gpio/gpio-max732x.c
++++ b/drivers/gpio/gpio-max732x.c
+@@ -507,12 +507,10 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+ 		chip->irq_features = has_irq;
+ 		mutex_init(&chip->irq_lock);
  
-+#define ARIZONA_GAINMUX_CONTROLS(name, base) \
-+	SOC_SINGLE_RANGE_TLV(name " Input Volume", base + 1,		\
-+			     ARIZONA_MIXER_VOL_SHIFT, 0x20, 0x50, 0,	\
-+			     arizona_mixer_tlv)
-+
- #define ARIZONA_MIXER_CONTROLS(name, base) \
- 	SOC_SINGLE_RANGE_TLV(name " Input 1 Volume", base + 1,		\
- 			     ARIZONA_MIXER_VOL_SHIFT, 0x20, 0x50, 0,	\
+-		ret = devm_request_threaded_irq(&client->dev,
+-					client->irq,
+-					NULL,
+-					max732x_irq_handler,
+-					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+-					dev_name(&client->dev), chip);
++		ret = devm_request_threaded_irq(&client->dev, client->irq,
++				NULL, max732x_irq_handler, IRQF_ONESHOT |
++				IRQF_TRIGGER_FALLING | IRQF_SHARED,
++				dev_name(&client->dev), chip);
+ 		if (ret) {
+ 			dev_err(&client->dev, "failed to request irq %d\n",
+ 				client->irq);
 -- 
-1.7.2.5
+1.7.9.5
