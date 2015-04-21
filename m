@@ -1,36 +1,113 @@
-From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH v5 09/11] ARM: imx: add imx7d clk tree support
-Date: Tue, 21 Apr 2015 15:51:04 -0500
-Message-ID: <CAHrpEqQLik0vqKVOxcTpo00A+bMyN-QgXyZxLPJUP04ewnseLg@mail.gmail.com>
-References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
-	<1429628007-8892-10-git-send-email-Frank.Li@freescale.com>
-	<CAL_Jsq+V+q78e1QqtZJK2inCDv+rRjWnzcUgRKXComnJ2O3myg@mail.gmail.com>
-	<CAHrpEqTNNn1=g6X9-iYDmWdLp58SOYWMerccy-BR++E7TU4M-Q@mail.gmail.com>
-	<CAL_JsqLsLBxH+SKTeHV0c+WerXzD1u0KSYKUEFAoLiKKgLvn_g@mail.gmail.com>
+From: <Frank.Li@freescale.com>
+Subject: [PATCH v6 00/11] Add Freescale i.mx7d support
+Date: Wed, 22 Apr 2015 05:43:19 +0800
+Message-ID: <1429652610-25265-1-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:34724 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932413AbbDUUvF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 16:51:05 -0400
-In-Reply-To: <CAL_JsqLsLBxH+SKTeHV0c+WerXzD1u0KSYKUEFAoLiKKgLvn_g@mail.gmail.com>
+Received: from mail-bn1bon0132.outbound.protection.outlook.com ([157.56.111.132]:25504
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932096AbbDUVqX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Apr 2015 17:46:23 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>, Adrian Alonso <aalonso@freescale.com>
+To: lznuaa@gmail.com, shawn.guo@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Frank Li <Frank.Li@freescale.com>
 
->
-> If it was going in my tree, no. But it is not, so it is not my call.
-> However, I would not let you continue to add stuff if you have not
-> done the clean-up that has been done for almost every other modern
-> platform.
+From: Frank Li <Frank.Li@freescale.com>
 
-Shawn:
-      What's your opinion?
+add basic support for chip imx7d.
+ - MSL
+ - Clock support. All clock enabled.
+ - pinctrl support
+ - SD Card support
 
-best regards
-Frank Li
+Change from v5 to v6
+ - dual license for dts
+ - fix typo statue
+ - Remove smp_operations
+ - Remove GPT check cpu_is_mx7() by use old compatible mode
+ - Remove dts arch_timer part, which not used in this patch series
+ - correct GIC reg map
 
->
-> Rob
+Change from v4 to v5
+ - Remove imx7d_map_io()
+ - Remove  clk_register_clkdev(clks[IMX7D_GPT1_ROOT_CLK], "ipg", "imx-gpt.0");
+ - Remove  clk_register_clkdev(clks[IMX7D_GPT_3M_CLK], "gpt_3m", "imx-gpt.0");
+ - Add comment about enable all clock
+ - Add Type IMX_PLLV3_ENET_IMX7 and remove cpu_is_imx7d()
+
+Change from v3 to v4
+ - Fixed the problem review by Russel king.
+   Remove __mxc_arch_type
+   Remove MXC_ARCH_CA7
+   use new smp_operation for ca7 platform
+ - imx7d.dtsi remove unecessary part for bring up
+ - imx7d-sdb.dsi, just enable uart i2c and sd card
+ - Add device tree binding document for timer, clock and pinctrl
+
+Change from v2 to v3
+  - remove unsupport part in imx7d-sdb.dtb
+
+Change from V1 to V2:
+  - split patch1 to three small one to avoid 100k maillist limitation.
+  - fix imx7d.dtsi code style problem
+
+Anson Huang (1):
+  ARM: imx: add msl support for imx7d
+
+Frank Li (10):
+  ARM: dts: add pinfunc include file to support imx7d
+  ARM: dts: add pinfunc include file gpio1 to support imx7d
+  ARM: dts: add clock include file to support imx7d
+  Document: dt: binding: imx: update document for imx7d support
+  ARM: dts: add imx7d soc dtsi file
+  pinctrl: add imx7d support
+  ARM: imx: add gpt system timer support for imx7d
+  ARM: imx: add imx7d clk tree support
+  arm: dts: add imx7d-sdb support
+  ARM: config: imx_v6_v7_defconfig add imx7d support
+
+ .../devicetree/bindings/clock/imx7d-clock.txt      |   13 +
+ .../bindings/pinctrl/fsl,imx-pinctrl.txt           |    3 +
+ .../bindings/pinctrl/fsl,imx7d-pinctrl.txt         |   27 +
+ .../devicetree/bindings/timer/fsl,imxgpt.txt       |    3 +
+ arch/arm/boot/dts/Makefile                         |    2 +
+ arch/arm/boot/dts/imx7d-pinfunc.h                  | 1153 ++++++++++++++++++++
+ arch/arm/boot/dts/imx7d-sdb.dts                    |  444 ++++++++
+ arch/arm/boot/dts/imx7d.dtsi                       |  513 +++++++++
+ arch/arm/configs/imx_v6_v7_defconfig               |    1 +
+ arch/arm/mach-imx/Kconfig                          |   11 +
+ arch/arm/mach-imx/Makefile                         |    1 +
+ arch/arm/mach-imx/anatop.c                         |    5 +-
+ arch/arm/mach-imx/clk-imx7d.c                      |  887 +++++++++++++++
+ arch/arm/mach-imx/clk-pllv3.c                      |   16 +-
+ arch/arm/mach-imx/clk.h                            |    9 +
+ arch/arm/mach-imx/cpu.c                            |    3 +
+ arch/arm/mach-imx/hardware.h                       |    7 +-
+ arch/arm/mach-imx/mach-imx7d.c                     |   46 +
+ arch/arm/mach-imx/mx7.h                            |   38 +
+ arch/arm/mach-imx/mxc.h                            |    8 +-
+ arch/arm/mach-imx/time.c                           |    1 +
+ drivers/pinctrl/freescale/Kconfig                  |    7 +
+ drivers/pinctrl/freescale/Makefile                 |    1 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            |    3 +-
+ drivers/pinctrl/freescale/pinctrl-imx.h            |    1 +
+ drivers/pinctrl/freescale/pinctrl-imx7d.c          |  411 +++++++
+ include/dt-bindings/clock/imx7d-clock.h            |  450 ++++++++
+ 27 files changed, 4058 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7d-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+ create mode 100644 arch/arm/boot/dts/imx7d-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imx7d-sdb.dts
+ create mode 100644 arch/arm/boot/dts/imx7d.dtsi
+ create mode 100644 arch/arm/mach-imx/clk-imx7d.c
+ create mode 100644 arch/arm/mach-imx/mach-imx7d.c
+ create mode 100644 arch/arm/mach-imx/mx7.h
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7d.c
+ create mode 100644 include/dt-bindings/clock/imx7d-clock.h
+
+-- 
+1.9.1
+
