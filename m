@@ -1,56 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control Kconfig fix for v4.1
-Date: Tue, 21 Apr 2015 09:40:10 +0200
-Message-ID: <CACRpkda0PJDDd2MoLbsiHJ--_3GaVun-GAsDo5tx_FV7_OcHvA@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4 07/11] ARM: imx: add msl support for imx7d
+Date: Tue, 21 Apr 2015 10:55:43 +0100
+Message-ID: <20150421095543.GQ12732@n2100.arm.linux.org.uk>
+References: <1429563933-3129-1-git-send-email-Frank.Li@freescale.com>
+ <1429563933-3129-8-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:32897 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752130AbbDUHkL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 03:40:11 -0400
-Received: by oblw8 with SMTP id w8so139456851obl.0
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Apr 2015 00:40:10 -0700 (PDT)
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:43907 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750775AbbDUJz5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 05:55:57 -0400
+Content-Disposition: inline
+In-Reply-To: <1429563933-3129-8-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Frank.Li@freescale.com
+Cc: lznuaa@gmail.com, shawn.guo@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, Anson Huang <b20788@freescale.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Hi Linus,
+This looks a lot better, thanks - just one remaining comment:
 
-here is a single patch fixing the Kconfig noise from allmodconfig
-that you reported for the pin control subsystem.
+On Tue, Apr 21, 2015 at 05:05:29AM +0800, Frank.Li@freescale.com wrote:
+> +static void __init imx7d_map_io(void)
+> +{
+> +	debug_ll_io_init();
+> +}
 
-Please pull it in!
+If that's all that you need here, please get rid of it; the generic code
+will make that call for you if you don't provide a .map_io method below:
 
-Yours,
-Linus Walleij
+> +DT_MACHINE_START(IMX7D, "Freescale i.MX7 Dual (Device Tree)")
+> +	.map_io		= imx7d_map_io,
+> +	.smp            = smp_ops(imx_ca7_smp_ops),
+> +	.init_irq	= imx7d_init_irq,
+> +	.init_machine	= imx7d_init_machine,
+> +	.dt_compat	= imx7d_dt_compat,
+> +	.restart	= mxc_restart,
+> +MACHINE_END
 
-
-The following changes since commit bb0fd7ab0986105765d11baa82e619c618a235aa:
-
-  Merge branch 'for-linus' of
-git://ftp.arm.linux.org.uk/~rmk/linux-arm (2015-04-14 21:03:26 -0700)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.1-2
-
-for you to fetch changes up to b99e6fb86541e4dc28f5c3ff7418347fa9d8d29c:
-
-  pinctrl: fix allmodconfig noise (2015-04-15 10:02:42 +0200)
-
-----------------------------------------------------------------
-This fixes the annoying Kconfig noise from pin control.
-Mea Culpa.
-
-----------------------------------------------------------------
-Linus Walleij (1):
-      pinctrl: fix allmodconfig noise
-
- drivers/pinctrl/Kconfig          | 5 ++++-
- drivers/pinctrl/mediatek/Kconfig | 3 +++
- drivers/pinctrl/nomadik/Kconfig  | 2 +-
- 3 files changed, 8 insertions(+), 2 deletions(-)
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
