@@ -1,47 +1,73 @@
-From: Zhi Li <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v5 07/11] ARM: imx: add msl support for imx7d
-Date: Tue, 21 Apr 2015 10:19:35 -0500
-Message-ID: <CAHrpEqR+7dnBgP2eYUmYVqX2KeCffUX6HFb6AnXnS1ETKP2_aw@mail.gmail.com>
-References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
-	<1429628007-8892-8-git-send-email-Frank.Li@freescale.com>
-	<20150421151225.GZ12732@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150421151225.GZ12732-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: "Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: [PATCH 00/23] gpio: sysfs: fixes and clean ups
+Date: Tue, 21 Apr 2015 17:42:08 +0200
+Message-ID: <1429630951-27082-1-git-send-email-johan@kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, linux-kernel@zh-kernel.org, linux-arch@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 21, 2015 at 10:12 AM, Russell King - ARM Linux
-<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> On Tue, Apr 21, 2015 at 10:53:23PM +0800, Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org wrote:
->> diff --git a/arch/arm/mach-imx/mx7.h b/arch/arm/mach-imx/mx7.h
->> new file mode 100644
->> index 0000000..bfef936
->> --- /dev/null
->> +++ b/arch/arm/mach-imx/mx7.h
->> @@ -0,0 +1,38 @@
->> +/*
->> + * Copyright (C) 2015 Freescale Semiconductor, Inc. All Rights Reserved.
->> + */
->> +
->> +/*
->> + *  * This program is free software; you can redistribute it and/or modify
->> + *   * it under the terms of the GNU General Public License version 2 as
->> + *    * published by the Free Software Foundation.
->> + *     */
->
-> Something obviously went wrong here.
+These patches fix a number of issues with the gpio sysfs interface,
+including
 
-Sorry for that. I will fix at next version.
+ - fix memory leaks and crashes on device hotplug
+ - straighten out the convoluted locking
+ - reduce sysfs-interface latencies through more fine-grained locking
+ - more clearly separate the sysfs-interface implementation from gpiolib
+   core
 
->
-> --
-> FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-> according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The first patch is marked for stable and could go into 4.1. 
+
+Unfortunately we can't just kill the gpio sysfs interface, but these
+patches will make it more manageable and should allow us to implement a
+new user-space interface while maintaining the old one (for a while at
+least) without losing our sanity.
+
+Note that there is still a race between chip remove and gpiod_request (and
+therefore sysfs export), which needs to be fixed separately (for instance as
+part of a generic solution to chip hotplugging).
+
+Johan
+
+
+Johan Hovold (23):
+  gpio: sysfs: fix memory leaks and device hotplug
+  gpio: clean up gpiochip_remove
+  gpio: sysfs: drop redundant lock-as-irq
+  gpio: sysfs: preparatory clean ups
+  gpio: sysfs: reduce gpiochip-export locking scope
+  gpio: sysfs: clean up chip class-device handling
+  gpio: sysfs: rename gpiochip registration functions
+  gpio: remove gpiod_sysfs_set_active_low
+  gpio: sysfs: use DEVICE_ATTR macros
+  gpio: sysfs: release irq after class-device deregistration
+  gpio: sysfs: remove redundant export tests
+  gpio: sysfs: add gpiod class-device data
+  gpio: sysfs: remove redundant gpio-descriptor parameters
+  gpio: sysfs: clean up interrupt-interface implementation
+  gpio: sysfs: only call irq helper if needed
+  gpio: sysfs: split irq allocation and deallocation
+  gpio: sysfs: clean up edge_store
+  gpio: sysfs: clean up gpiod_export_link locking
+  gpio: sysfs: use per-gpio locking
+  gpio: sysfs: fix race between gpiod export and unexport
+  gpio: sysfs: rename active-low helper
+  gpio: sysfs: remove FLAG_SYSFS_DIR
+  gpio: sysfs: move irq trigger flags to class-device data
+
+ Documentation/gpio/gpio-legacy.txt |   9 -
+ Documentation/gpio/sysfs.txt       |   8 -
+ Documentation/zh_CN/gpio.txt       |   8 -
+ drivers/gpio/gpiolib-sysfs.c       | 561 +++++++++++++++++--------------------
+ drivers/gpio/gpiolib.c             |  18 +-
+ drivers/gpio/gpiolib.h             |  16 +-
+ include/asm-generic/gpio.h         |   5 -
+ include/linux/gpio.h               |   7 -
+ include/linux/gpio/consumer.h      |   6 -
+ include/linux/gpio/driver.h        |   4 +-
+ 10 files changed, 273 insertions(+), 369 deletions(-)
+
+-- 
+2.0.5
+
