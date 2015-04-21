@@ -1,7 +1,7 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH 11/23] gpio: sysfs: remove redundant export tests
-Date: Tue, 21 Apr 2015 17:42:19 +0200
-Message-ID: <1429630951-27082-12-git-send-email-johan@kernel.org>
+Subject: [PATCH 05/23] gpio: sysfs: reduce gpiochip-export locking scope
+Date: Tue, 21 Apr 2015 17:42:13 +0200
+Message-ID: <1429630951-27082-6-git-send-email-johan@kernel.org>
 References: <1429630951-27082-1-git-send-email-johan@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1429630951-27082-1-git-send-email-johan@kernel.org>
@@ -10,159 +10,54 @@ To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The attribute operations will never be called for an unregistered device
-so remove redundant checks for FLAG_EXPORT.
-
-Note that kernfs will also guarantee that any active sysfs operation has
-finished before the attribute is removed during deregistration.
+Reduce scope of sysfs_lock protection during chip export and unexport,
+which is only needed to prevent gpiod (re-)exports during chip removal.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 74 ++++++++++++++------------------------------
- 1 file changed, 23 insertions(+), 51 deletions(-)
+ drivers/gpio/gpiolib-sysfs.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index d896b6fa7fe8..b77f29cd1603 100644
+index da0300224b4a..c433f075f349 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -46,14 +46,10 @@ static ssize_t direction_show(struct device *dev,
+@@ -764,7 +764,6 @@ int gpiochip_export(struct gpio_chip *chip)
+ 		return 0;
  
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags)) {
--		status = -EIO;
--	} else {
--		gpiod_get_direction(desc);
--		status = sprintf(buf, "%s\n",
-+	gpiod_get_direction(desc);
-+	status = sprintf(buf, "%s\n",
- 			test_bit(FLAG_IS_OUT, &desc->flags)
- 				? "out" : "in");
--	}
- 
- 	mutex_unlock(&sysfs_lock);
- 	return status;
-@@ -67,9 +63,7 @@ static ssize_t direction_store(struct device *dev,
- 
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else if (sysfs_streq(buf, "high"))
-+	if (sysfs_streq(buf, "high"))
- 		status = gpiod_direction_output_raw(desc, 1);
- 	else if (sysfs_streq(buf, "out") || sysfs_streq(buf, "low"))
- 		status = gpiod_direction_output_raw(desc, 0);
-@@ -91,10 +85,7 @@ static ssize_t value_show(struct device *dev,
- 
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else
--		status = sprintf(buf, "%d\n", gpiod_get_value_cansleep(desc));
-+	status = sprintf(buf, "%d\n", gpiod_get_value_cansleep(desc));
- 
- 	mutex_unlock(&sysfs_lock);
- 	return status;
-@@ -108,11 +99,9 @@ static ssize_t value_store(struct device *dev,
- 
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else if (!test_bit(FLAG_IS_OUT, &desc->flags))
-+	if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
- 		status = -EPERM;
--	else {
-+	} else {
- 		long		value;
- 
- 		status = kstrtol(buf, 0, &value);
-@@ -222,23 +211,18 @@ static ssize_t edge_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
- 	const struct gpio_desc	*desc = dev_get_drvdata(dev);
--	ssize_t			status;
-+	unsigned long mask;
-+	ssize_t	status = 0;
-+	int i;
- 
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else {
--		int i;
--
--		status = 0;
--		for (i = 0; i < ARRAY_SIZE(trigger_types); i++)
--			if ((desc->flags & GPIO_TRIGGER_MASK)
--					== trigger_types[i].flags) {
--				status = sprintf(buf, "%s\n",
--						 trigger_types[i].name);
--				break;
--			}
-+	for (i = 0; i < ARRAY_SIZE(trigger_types); i++) {
-+		mask = desc->flags & GPIO_TRIGGER_MASK;
-+		if (mask == trigger_types[i].flags) {
-+			status = sprintf(buf, "%s\n", trigger_types[i].name);
-+			break;
-+		}
- 	}
- 
- 	mutex_unlock(&sysfs_lock);
-@@ -260,13 +244,9 @@ static ssize_t edge_store(struct device *dev,
- found:
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else {
--		status = gpio_setup_irq(desc, dev, trigger_types[i].flags);
--		if (!status)
--			status = size;
--	}
-+	status = gpio_setup_irq(desc, dev, trigger_types[i].flags);
-+	if (!status)
-+		status = size;
- 
+ 	/* use chip->base for the ID; it's already known to be unique */
+-	mutex_lock(&sysfs_lock);
+ 	dev = device_create_with_groups(&gpio_class, chip->dev, MKDEV(0, 0),
+ 					chip, gpiochip_groups,
+ 					"gpiochip%d", chip->base);
+@@ -772,6 +771,8 @@ int gpiochip_export(struct gpio_chip *chip)
+ 		status = PTR_ERR(dev);
+ 	else
+ 		status = 0;
++
++	mutex_lock(&sysfs_lock);
+ 	chip->exported = (status == 0);
  	mutex_unlock(&sysfs_lock);
  
-@@ -307,10 +287,7 @@ static ssize_t active_low_show(struct device *dev,
+@@ -788,17 +789,17 @@ void gpiochip_unexport(struct gpio_chip *chip)
+ 	struct gpio_desc *desc;
+ 	unsigned int i;
  
- 	mutex_lock(&sysfs_lock);
+-	mutex_lock(&sysfs_lock);
+ 	dev = class_find_device(&gpio_class, NULL, chip, match_export);
+ 	if (dev) {
+ 		put_device(dev);
+ 		device_unregister(dev);
+ 		/* prevent further gpiod exports */
++		mutex_lock(&sysfs_lock);
+ 		chip->exported = false;
++		mutex_unlock(&sysfs_lock);
+ 		status = 0;
+ 	} else
+ 		status = -ENODEV;
+-	mutex_unlock(&sysfs_lock);
  
--	if (!test_bit(FLAG_EXPORT, &desc->flags))
--		status = -EIO;
--	else
--		status = sprintf(buf, "%d\n",
-+	status = sprintf(buf, "%d\n",
- 				!!test_bit(FLAG_ACTIVE_LOW, &desc->flags));
- 
- 	mutex_unlock(&sysfs_lock);
-@@ -323,18 +300,13 @@ static ssize_t active_low_store(struct device *dev,
- {
- 	struct gpio_desc	*desc = dev_get_drvdata(dev);
- 	ssize_t			status;
-+	long			value;
- 
- 	mutex_lock(&sysfs_lock);
- 
--	if (!test_bit(FLAG_EXPORT, &desc->flags)) {
--		status = -EIO;
--	} else {
--		long		value;
--
--		status = kstrtol(buf, 0, &value);
--		if (status == 0)
--			status = sysfs_set_active_low(desc, dev, value != 0);
--	}
-+	status = kstrtol(buf, 0, &value);
-+	if (status == 0)
-+		status = sysfs_set_active_low(desc, dev, value != 0);
- 
- 	mutex_unlock(&sysfs_lock);
- 
+ 	if (status)
+ 		chip_dbg(chip, "%s: status %d\n", __func__, status);
 -- 
 2.0.5
