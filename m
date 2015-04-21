@@ -1,107 +1,243 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH 01/23] gpio: sysfs: fix memory leaks and device hotplug
-Date: Tue, 21 Apr 2015 17:42:09 +0200
-Message-ID: <1429630951-27082-2-git-send-email-johan@kernel.org>
-References: <1429630951-27082-1-git-send-email-johan@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:34276 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755696AbbDUPnM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Apr 2015 11:43:12 -0400
-In-Reply-To: <1429630951-27082-1-git-send-email-johan@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 1/1] gpio: omap: Fix PM runtime issue and remove most BANK_USED macros
+Date: Tue, 21 Apr 2015 09:08:53 -0700
+Message-ID: <1429632533-23285-1-git-send-email-tony@atomide.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Felipe Balbi <balbi@ti.com>, Grygorii Strashko <grygorii.strashko@linaro.org>, Javier Martinez Canillas <jmartinez@softcrates.net>, Nishanth Menon <nm@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable <stable@vger.kernel.org>
 
-Unregister GPIOs requested through sysfs at chip remove to avoid leaking
-the associated memory and sysfs entries.
+Looks like omap_gpio_irq_type can return early at several places
+leaving a GPIO bank enabled without doing pm_runtime_put if wrong
+GPIO arguments are passed.
 
-The stale sysfs entries prevented the gpio numbers from being exported
-when the gpio range was later reused (e.g. at device reconnect).
+Instead of adding more complicated BANK_USED macros, let's fix the
+issue properly. We can pass is_irq flag to omap_enable_gpio_module
+and omap_disble_gpio_module. And with that we can remove all the
+similar code elsewhere to get rid of most BANK_USED macros.
 
-This also fixes the related module-reference leak.
+Note that the reason for the BANK_USED macro is that we need to manage
+PM runtime on per GPIO bank basis. In the long run we want to move to
+using PM runtime counts for each GPIO line to determine if a GPIO
+bank is used. Once we have a solution for omap_enable_gpio_module
+and omap_disable_gpio_module, we can remove the remaining BANK_USED
+macros.
 
-Note that kernfs makes sure that any on-going sysfs operations finish
-before the class devices are unregistered and that further accesses
-fail.
-
-The chip exported flag is used to prevent gpiod exports during removal.
-This also makes it harder to trigger, but does not fix, the related race
-between gpiochip_remove and export_store, which is really a race with
-gpiod_request that needs to be addressed separately.
-
-Also note that this would prevent the crashes (e.g. NULL-dereferences)
-at reconnect that affects pre-3.18 kernels, as well as use-after-free on
-operations on open attribute files on pre-3.14 kernels (prior to
-kernfs).
-
-Fixes: d8f388d8dc8d ("gpio: sysfs interface")
-Cc: stable <stable@vger.kernel.org>	# v2.6.27: 01cca93a9491
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Javier Martinez Canillas <jmartinez@softcrates.net>
+Cc: Nishanth Menon <nm@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/gpio/gpiolib-sysfs.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpio/gpio-omap.c | 111 +++++++++++++++++------------------------------
+ 1 file changed, 40 insertions(+), 71 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 7722ed53bd65..af3bc7a8033b 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -551,6 +551,7 @@ static struct class gpio_class = {
-  */
- int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- {
-+	struct gpio_chip	*chip;
- 	unsigned long		flags;
- 	int			status;
- 	const char		*ioname = NULL;
-@@ -568,8 +569,16 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index d44e617..39a6312 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -86,6 +86,7 @@ struct gpio_bank {
+ #define BANK_USED(bank) (bank->mod_usage || bank->irq_usage)
+ #define LINE_USED(line, offset) (line & (BIT(offset)))
  
-+	chip = desc->chip;
-+
- 	mutex_lock(&sysfs_lock);
++static void omap_reset_gpio(struct gpio_bank *bank, unsigned offset);
+ static void omap_gpio_unmask_irq(struct irq_data *d);
  
-+	/* check if chip is being removed */
-+	if (!chip || !chip->exported) {
-+		status = -ENODEV;
-+		goto fail_unlock;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
- 	     test_bit(FLAG_EXPORT, &desc->flags)) {
-@@ -783,12 +792,15 @@ void gpiochip_unexport(struct gpio_chip *chip)
- {
- 	int			status;
- 	struct device		*dev;
-+	struct gpio_desc *desc;
-+	unsigned int i;
- 
- 	mutex_lock(&sysfs_lock);
- 	dev = class_find_device(&gpio_class, NULL, chip, match_export);
- 	if (dev) {
- 		put_device(dev);
- 		device_unregister(dev);
-+		/* prevent further gpiod exports */
- 		chip->exported = false;
- 		status = 0;
- 	} else
-@@ -797,6 +809,13 @@ void gpiochip_unexport(struct gpio_chip *chip)
- 
- 	if (status)
- 		chip_dbg(chip, "%s: status %d\n", __func__, status);
-+
-+	/* unregister gpiod class devices owned by sysfs */
-+	for (i = 0; i < chip->ngpio; i++) {
-+		desc = &chip->desc[i];
-+		if (test_and_clear_bit(FLAG_SYSFS, &desc->flags))
-+			gpiod_free(desc);
-+	}
+ static inline struct gpio_bank *omap_irq_data_get_bank(struct irq_data *d)
+@@ -419,8 +420,16 @@ static int omap_set_gpio_triggering(struct gpio_bank *bank, int gpio,
+ 	return 0;
  }
  
- static int __init gpiolib_sysfs_init(void)
+-static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset)
++static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset,
++				    bool is_irq)
+ {
++	unsigned long flags;
++
++	/* PM runtime is per bank, not per GPIO line */
++	if (!BANK_USED(bank))
++		pm_runtime_get_sync(bank->dev);
++
++	spin_lock_irqsave(&bank->lock, flags);
+ 	if (bank->regs->pinctrl) {
+ 		void __iomem *reg = bank->base + bank->regs->pinctrl;
+ 
+@@ -438,11 +447,30 @@ static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset)
+ 		writel_relaxed(ctrl, reg);
+ 		bank->context.ctrl = ctrl;
+ 	}
++
++	if (is_irq) {
++		omap_set_gpio_direction(bank, offset, 1);
++		bank->irq_usage |= BIT(offset);
++	} else {
++		omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
++		bank->mod_usage |= BIT(offset);
++	}
++	spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
+-static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset)
++static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset,
++				     bool is_irq)
+ {
+ 	void __iomem *base = bank->base;
++	unsigned long flags;
++
++	spin_lock_irqsave(&bank->lock, flags);
++	if (is_irq)
++		bank->irq_usage &= ~(BIT(offset));
++	else
++		bank->mod_usage &= ~(BIT(offset));
++
++	omap_reset_gpio(bank, offset);
+ 
+ 	if (bank->regs->wkup_en &&
+ 	    !LINE_USED(bank->mod_usage, offset) &&
+@@ -463,6 +491,11 @@ static void omap_disable_gpio_module(struct gpio_bank *bank, unsigned offset)
+ 		writel_relaxed(ctrl, reg);
+ 		bank->context.ctrl = ctrl;
+ 	}
++	spin_unlock_irqrestore(&bank->lock, flags);
++
++	/* PM runtime is per bank, not per GPIO line */
++	if (!BANK_USED(bank))
++		pm_runtime_put(bank->dev);
+ }
+ 
+ static int omap_gpio_is_input(struct gpio_bank *bank, unsigned offset)
+@@ -472,15 +505,6 @@ static int omap_gpio_is_input(struct gpio_bank *bank, unsigned offset)
+ 	return readl_relaxed(reg) & BIT(offset);
+ }
+ 
+-static void omap_gpio_init_irq(struct gpio_bank *bank, unsigned offset)
+-{
+-	if (!LINE_USED(bank->mod_usage, offset)) {
+-		omap_enable_gpio_module(bank, offset);
+-		omap_set_gpio_direction(bank, offset, 1);
+-	}
+-	bank->irq_usage |= BIT(offset);
+-}
+-
+ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+@@ -488,9 +512,6 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+ 	if (type & ~IRQ_TYPE_SENSE_MASK)
+ 		return -EINVAL;
+ 
+@@ -498,13 +519,9 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 		(type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
+ 		return -EINVAL;
+ 
++	omap_enable_gpio_module(bank, offset, true);
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	retval = omap_set_gpio_triggering(bank, offset, type);
+-	omap_gpio_init_irq(bank, offset);
+-	if (!omap_gpio_is_input(bank, offset)) {
+-		spin_unlock_irqrestore(&bank->lock, flags);
+-		return -EINVAL;
+-	}
+ 	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+@@ -659,26 +676,8 @@ static int omap_gpio_wake_enable(struct irq_data *d, unsigned int enable)
+ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
+-	unsigned long flags;
+ 
+-	/*
+-	 * If this is the first gpio_request for the bank,
+-	 * enable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	/* Set trigger to none. You need to enable the desired trigger with
+-	 * request_irq() or set_irq_type(). Only do this if the IRQ line has
+-	 * not already been requested.
+-	 */
+-	if (!LINE_USED(bank->irq_usage, offset)) {
+-		omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
+-		omap_enable_gpio_module(bank, offset);
+-	}
+-	bank->mod_usage |= BIT(offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
++	omap_enable_gpio_module(bank, offset, false);
+ 
+ 	return 0;
+ }
+@@ -686,20 +685,8 @@ static int omap_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	bank->mod_usage &= ~(BIT(offset));
+-	omap_disable_gpio_module(bank, offset);
+-	omap_reset_gpio(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
+ 
+-	/*
+-	 * If this is the last gpio to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(bank->dev);
++	omap_disable_gpio_module(bank, offset, false);
+ }
+ 
+ /*
+@@ -788,15 +775,9 @@ exit:
+ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+-	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	if (!BANK_USED(bank))
+-		pm_runtime_get_sync(bank->dev);
+-
+-	spin_lock_irqsave(&bank->lock, flags);
+-	omap_gpio_init_irq(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
++	omap_enable_gpio_module(bank, offset, true);
+ 	omap_gpio_unmask_irq(d);
+ 
+ 	return 0;
+@@ -805,21 +786,9 @@ static unsigned int omap_gpio_irq_startup(struct irq_data *d)
+ static void omap_gpio_irq_shutdown(struct irq_data *d)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+-	unsigned long flags;
+ 	unsigned offset = d->hwirq;
+ 
+-	spin_lock_irqsave(&bank->lock, flags);
+-	bank->irq_usage &= ~(BIT(offset));
+-	omap_disable_gpio_module(bank, offset);
+-	omap_reset_gpio(bank, offset);
+-	spin_unlock_irqrestore(&bank->lock, flags);
+-
+-	/*
+-	 * If this is the last IRQ to be freed in the bank,
+-	 * disable the bank module.
+-	 */
+-	if (!BANK_USED(bank))
+-		pm_runtime_put(bank->dev);
++	omap_disable_gpio_module(bank, offset, true);
+ }
+ 
+ static void omap_gpio_ack_irq(struct irq_data *d)
 -- 
-2.0.5
+2.1.4
 
