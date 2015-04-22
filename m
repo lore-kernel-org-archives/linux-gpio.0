@@ -1,46 +1,37 @@
-From: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH] Documentation: gpiolib: sysfs: high can be any nonzero value
-Date: Wed, 22 Apr 2015 18:39:46 +0200
-Message-ID: <1429720786-6277-1-git-send-email-dirk.behme@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] Documentation: gpiolib: sysfs: high can be any nonzero
+ value
+Date: Wed, 22 Apr 2015 19:10:24 +0200
+Message-ID: <20150422171024.GF16828@localhost>
+References: <1429720786-6277-1-git-send-email-dirk.behme@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:36694 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966340AbbDVQjw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 12:39:52 -0400
-Received: by wizk4 with SMTP id k4so185166883wiz.1
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Apr 2015 09:39:51 -0700 (PDT)
+Received: from mail-la0-f54.google.com ([209.85.215.54]:36450 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966252AbbDVRKY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 13:10:24 -0400
+Received: by lagv1 with SMTP id v1so180044638lag.3
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Apr 2015 10:10:23 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1429720786-6277-1-git-send-email-dirk.behme@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Dirk Behme <dirk.behme@gmail.com>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-With the commit 79a9becda8940d ("gpiolib: export descriptor-based
-GPIO interface") the gpiolib can return any nonzero value for high.
-Not only 1. Correct this in the documentation.
+On Wed, Apr 22, 2015 at 06:39:46PM +0200, Dirk Behme wrote:
+> With the commit 79a9becda8940d ("gpiolib: export descriptor-based
+> GPIO interface") the gpiolib can return any nonzero value for high.
+> Not only 1. Correct this in the documentation.
 
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
----
+As _gpiod_get_raw_value returns a bool, I fail to see how that could
+happen.
 
-Note: Commit 79a9becda8940d has been merged in v3.13. If this
-      patch is considered to be fine, please think about applying
-      it to -stable >= v3.14, too.
+Ah, that was fixed by commit 23600969ff13 ("gpio: clamp returned values
+to the boolean range") in 3.15.
 
- Documentation/gpio/sysfs.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks like that one should be backported to 3.14 instead.
 
-diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
-index c2c3a97..bc7f31d 100644
---- a/Documentation/gpio/sysfs.txt
-+++ b/Documentation/gpio/sysfs.txt
-@@ -69,7 +69,7 @@ and have the following read/write attributes:
- 		it was exported by kernel code that didn't explicitly
- 		allow userspace to reconfigure this GPIO's direction.
- 
--	"value" ... reads as either 0 (low) or 1 (high). If the GPIO
-+	"value" ... reads as either 0 (low) or nonzero (high). If the GPIO
- 		is configured as an output, this value may be written;
- 		any nonzero value is treated as high.
- 
--- 
-2.3.6
-
+Thanks,
+Johan
