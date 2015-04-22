@@ -1,68 +1,58 @@
-From: Oleksij Rempel <linux@rempel-privat.de>
-Subject: Re: [PATCH v4 0/2] Add driver and documentation for Alphascale asm9260
- pinctrl
-Date: Wed, 22 Apr 2015 21:49:15 +0200
-Message-ID: <5537FB3B.1040303@rempel-privat.de>
-References: <1428306169.634.51.camel@x220> <1428311043-12012-1-git-send-email-linux@rempel-privat.de>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
+Date: Wed, 22 Apr 2015 22:53:05 +0300
+Message-ID: <5537FC21.9050602@mentor.com>
+References: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="lPNVG2fSrjHIWS7kXN8AkPmvVdO9Hj5Sd"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:58075 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755531AbbDVTtc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 22 Apr 2015 15:49:32 -0400
-In-Reply-To: <1428311043-12012-1-git-send-email-linux@rempel-privat.de>
+Received: from relay1.mentorg.com ([192.94.38.131]:63161 "EHLO
+	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756678AbbDVTxJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 15:53:09 -0400
+In-Reply-To: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Semen Protsenko <semen.protsenko@globallogic.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---lPNVG2fSrjHIWS7kXN8AkPmvVdO9Hj5Sd
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hi Semen,
 
-Hallo all,
+On 21.04.2015 16:19, Semen Protsenko wrote:
+> It's possible that multiple MAX732X can be hooked up to the same
+> interrupt line with the processor. So add IRQF_SHARED in requesting irq.
+> 
+> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
+> ---
+>  drivers/gpio/gpio-max732x.c |   10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+> index 0fa4543..55b13d4 100644
+> --- a/drivers/gpio/gpio-max732x.c
+> +++ b/drivers/gpio/gpio-max732x.c
+> @@ -507,12 +507,10 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+>  		chip->irq_features = has_irq;
+>  		mutex_init(&chip->irq_lock);
+>  
+> -		ret = devm_request_threaded_irq(&client->dev,
+> -					client->irq,
+> -					NULL,
+> -					max732x_irq_handler,
+> -					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> -					dev_name(&client->dev), chip);
+> +		ret = devm_request_threaded_irq(&client->dev, client->irq,
+> +				NULL, max732x_irq_handler, IRQF_ONESHOT |
+> +				IRQF_TRIGGER_FALLING | IRQF_SHARED,
+> +				dev_name(&client->dev), chip);
 
-any updates here? :D
+is it still the case that for shared interrupts a hard IRQ handler is
+mandatory to have?
 
-Am 06.04.2015 um 11:04 schrieb Oleksij Rempel:
-> changes:
-> - v4. As Paul Bolle sugested, fixing License in the header.
->=20
-> Oleksij Rempel (2):
->   pinctrl: Add driver for Alphascale asm9260 pinctrl
->   pinctrl: asm9260: add pinctrl add device tree bindings documentation
->=20
->  .../pinctrl/alphascale,asm9260-pinctrl.txt         |  76 +++
->  drivers/pinctrl/Kconfig                            |   8 +
->  drivers/pinctrl/Makefile                           |   1 +
->  drivers/pinctrl/pinctrl-asm9260.c                  | 733 +++++++++++++=
-++++++++
->  4 files changed, 818 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/alphascal=
-e,asm9260-pinctrl.txt
->  create mode 100644 drivers/pinctrl/pinctrl-asm9260.c
->=20
+Here I rely on
+http://lists.kernelnewbies.org/pipermail/kernelnewbies/2011-March/001118.html
 
+With best wishes,
+Vladimir
 
---=20
-Regards,
-Oleksij
-
-
---lPNVG2fSrjHIWS7kXN8AkPmvVdO9Hj5Sd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iF4EAREIAAYFAlU3+0IACgkQHwImuRkmbWnm2gEAlMhHqow62yWasYx5S+q260hP
-VjSYY6cKWNB6KJ8Jqq0A/3zlSkBdRj3vy7C0L4qP46TWtpNHybG/jSagR67/f7TO
-=P694
------END PGP SIGNATURE-----
-
---lPNVG2fSrjHIWS7kXN8AkPmvVdO9Hj5Sd--
