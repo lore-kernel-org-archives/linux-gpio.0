@@ -1,49 +1,27 @@
-From: Semen Protsenko <semen.protsenko@globallogic.com>
-Subject: [PATCH v2] gpio: max732x: Fix irq-events handler
-Date: Wed, 22 Apr 2015 16:20:41 +0300
-Message-ID: <1429708841-31189-1-git-send-email-semen.protsenko@globallogic.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@globallogic.com>
+From: Sam Protsenko <semen.protsenko@globallogic.com>
+Subject: Re: [PATCH 2/2] gpio: max732x: Fix irq-events handler
+Date: Wed, 22 Apr 2015 16:23:27 +0300
+Message-ID: <CAJOTznXzQxTSKiN_1ATRVLFmaA9j2Hmh5=U+qe67NaEQOkV3pA@mail.gmail.com>
+References: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
+	<553750ED.70209@linaro.org>
+Reply-To: semen.protsenko@globallogic.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og108.obsmtp.com ([64.18.0.186]:36888 "EHLO
+	exprod5og108.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757130AbbDVNXa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 09:23:30 -0400
+Received: by lbbqq2 with SMTP id qq2so179846568lbb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Apr 2015 06:23:28 -0700 (PDT)
+In-Reply-To: <553750ED.70209@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-MAX732X clears all pending interrupts on I2C read (when interrupts
-register is being read). Driver doesn't need to send any ACKs when
-interrupt was handled. So replace handle_edge_irq() with
-handle_simple_irq().
+On Wed, Apr 22, 2015 at 10:42 AM, Grygorii.Strashko@linaro.org
+<grygorii.strashko@linaro.org> wrote:
+> Wouldn't handle_simple_irq() be a better choice here?
 
-Using handle_edge_irq() (w/o .irq_ack callback set) may lead to NULL
-pointer dereference in some cases. E.g. this was observed on
-hibernation process:
-
-  Unable to handle kernel NULL pointer dereference at virtual address 0
-  Backtrace:
-  (handle_edge_irq) from (resend_irqs)
-  (resend_irqs) from (tasklet_action)
-  (tasklet_action) from (__do_softirq)
-  (__do_softirq) from (run_ksoftirqd)
-  (run_ksoftirqd) from (smpboot_thread_fn)
-  (smpboot_thread_fn) from (kthread)
-  (kthread) from (ret_from_fork)
-
-Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
----
- drivers/gpio/gpio-max732x.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 1885e5c..86dc6b3 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
- 		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
- 					    &max732x_irq_chip,
- 					    irq_base,
--					    handle_edge_irq,
-+					    handle_simple_irq,
- 					    IRQ_TYPE_NONE);
- 		if (ret) {
- 			dev_err(&client->dev,
--- 
-1.7.9.5
+You are right, thanks! I sent the new version of patch.
