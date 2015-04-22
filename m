@@ -1,101 +1,59 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 6/8] extcon: arizona: Add support for WM8998 and WM1814
-Date: Wed, 22 Apr 2015 14:53:42 +0900
-Message-ID: <55373766.6060106@samsung.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1429619636-25478-7-git-send-email-rf@opensource.wolfsonmicro.com>
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: max732x: Fix irq-events handler
+Date: Wed, 22 Apr 2015 10:42:37 +0300
+Message-ID: <553750ED.70209@linaro.org>
+References: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:27551 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756525AbbDVFxo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 01:53:44 -0400
-In-reply-to: <1429619636-25478-7-git-send-email-rf@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Semen Protsenko <semen.protsenko@globallogic.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
 
-Hi Richard,
-
-On 04/21/2015 09:33 PM, Richard Fitzgerald wrote:
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> ---
->  drivers/extcon/extcon-arizona.c |   33 ++++++++++++++++++++++-----------
->  1 files changed, 22 insertions(+), 11 deletions(-)
+On 04/21/2015 08:28 PM, Semen Protsenko wrote:
+> MAX732X doesn't support edge type interrupt. So replace
+> handle_edge_irq() with handle_level_irq(), which uses
+> irq_mask/irq_unmask callbacks instead of irq_ack().
 > 
-> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-> index a0ed35b..0e60787 100644
-> --- a/drivers/extcon/extcon-arizona.c
-> +++ b/drivers/extcon/extcon-arizona.c
-> @@ -1,7 +1,7 @@
->  /*
->   * extcon-arizona.c - Extcon driver Wolfson Arizona devices
->   *
-> - *  Copyright (C) 2012 Wolfson Microelectronics plc
-> + *  Copyright (C) 2012-2014 Wolfson Microelectronics plc
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
-> @@ -140,10 +140,14 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
->  				    bool clamp)
->  {
->  	struct arizona *arizona = info->arizona;
-> -	unsigned int mask = 0, val = 0;
-> +	unsigned int mask, val = 0;
->  	int ret;
->  
->  	switch (arizona->type) {
-> +	case WM8998:
-> +	case WM1814:
-> +		mask = 0;
-> +		break;
->  	case WM5110:
->  		mask = ARIZONA_HP1L_SHRTO | ARIZONA_HP1L_FLWR |
->  		       ARIZONA_HP1L_SHRTI;
-> @@ -175,17 +179,19 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
->  				 ret);
->  	}
->  
-> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
-> -				 mask, val);
-> -	if (ret != 0)
-> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> +	if (mask) {
-> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
-> +					 mask, val);
-> +		if (ret != 0)
-> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
->  				 ret);
->  
-> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
-> -				 mask, val);
-> -	if (ret != 0)
-> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> -			 ret);
-> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
-> +					 mask, val);
-> +		if (ret != 0)
-> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> +				 ret);
-> +	}
->  
->  	/* Restore the desired state while not doing the clamp */
->  	if (!clamp) {
-> @@ -1176,6 +1182,11 @@ static int arizona_extcon_probe(struct platform_device *pdev)
->  			break;
->  		}
->  		break;
-> +	case WM8998:
-> +	case WM1814:
-> +		info->micd_clamp = true;
-> +		info->hpdet_ip = 2;
+> This wrong handler may lead to NULL pointer dereference in some cases.
+> E.g. this was observed on hibernation process:
+> 
+>    Unable to handle kernel NULL pointer dereference at virtual address 0
+>    Backtrace:
+>    (handle_edge_irq) from (resend_irqs)
+>    (resend_irqs) from (tasklet_action)
+>    (tasklet_action) from (__do_softirq)
+>    (__do_softirq) from (run_ksoftirqd)
+>    (run_ksoftirqd) from (smpboot_thread_fn)
+>    (smpboot_thread_fn) from (kthread)
+>    (kthread) from (ret_from_fork)
+> 
+> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
+> ---
+>   drivers/gpio/gpio-max732x.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+> index 1885e5c..edade14 100644
+> --- a/drivers/gpio/gpio-max732x.c
+> +++ b/drivers/gpio/gpio-max732x.c
+> @@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+>   		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
+>   					    &max732x_irq_chip,
+>   					    irq_base,
+> -					    handle_edge_irq,
+> +					    handle_level_irq,
 
-What is meaning of '2'? I prefer to use the definition for '2'.
+Wouldn't handle_simple_irq() be a better choice here?
 
-Except for upper one comment, looks good to me.
+>   					    IRQ_TYPE_NONE);
+>   		if (ret) {
+>   			dev_err(&client->dev,
+> 
 
-Thanks,
-Chanwoo Choi
+-- 
+regards,
+-grygorii
