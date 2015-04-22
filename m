@@ -1,49 +1,88 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 6/8] extcon: arizona: Add support for WM8998 and WM1814
-Date: Wed, 22 Apr 2015 19:20:09 +0900
-Message-ID: <553775D9.9080606@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 7/8] ASoC: wm8998: Initial WM8998 codec driver
+Date: Wed, 22 Apr 2015 12:00:30 +0100
+Message-ID: <20150422110030.GQ22845@sirena.org.uk>
 References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1429619636-25478-7-git-send-email-rf@opensource.wolfsonmicro.com>
- <55373766.6060106@samsung.com>
- <20150422091941.GA4303@opensource.wolfsonmicro.com>
+ <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="l8yJEXo8J9fv7OFY"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34930 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753991AbbDVKUP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 06:20:15 -0400
-In-reply-to: <20150422091941.GA4303@opensource.wolfsonmicro.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50195 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752194AbbDVLAp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 07:00:45 -0400
+Content-Disposition: inline
+In-Reply-To: <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
 
-On 04/22/2015 06:19 PM, Richard Fitzgerald wrote:
-> On Wed, Apr 22, 2015 at 02:53:42PM +0900, Chanwoo Choi wrote:
->> Hi Richard,
->>
->>> @@ -1176,6 +1182,11 @@ static int arizona_extcon_probe(struct platform_device *pdev)
->>>  			break;
->>>  		}
->>>  		break;
->>> +	case WM8998:
->>> +	case WM1814:
->>> +		info->micd_clamp = true;
->>> +		info->hpdet_ip = 2;
->>
->> What is meaning of '2'? I prefer to use the definition for '2'.
->>
-> 
-> '2' is the version number of the hpdet ip block in silicon. We're already using
-> it as a raw number '0', '1' or '2' all over extcon-arizona.c so changing it here
-> would mean making other patches to the file that aren't really part of adding
-> WM8998 support, so I'd prefer not to change that as a side-effect of adding WM8998.
 
-I think that just you can define following definitions and use HPDET_IP_VER_V2 instead of '2'.
+--l8yJEXo8J9fv7OFY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	#define HPDET_IP_VER_V0		0
-	#define HPDET_IP_VER_V1		1
-	#define HPDET_IP_VER_V2		2
+On Tue, Apr 21, 2015 at 01:33:55PM +0100, Richard Fitzgerald wrote:
 
+> +static int wm8998_in1mux_ev(struct snd_soc_dapm_widget *w,
+> +				struct snd_kcontrol *kcontrol,
+> +				int event)
+> +{
+> +	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+> +	struct arizona *arizona = dev_get_drvdata(codec->dev->parent);
+> +	unsigned int left_mux, right_mux, in1mode, old;
+> +
+> +	switch (event) {
+> +	case SND_SOC_DAPM_PRE_PMU:
+> +		/* Validate the mux configuration */
+> +		left_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1L) &
+> +				  ARIZONA_IN1L_SRC_MASK;
+> +		right_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1R) &
+> +				  ARIZONA_IN1R_SRC_MASK;
+> +
+> +		/* Only IN1A can be digital, IN1B is always analogue */
+> +		in1mode = (arizona->pdata.inmode[0] & 2)
+> +				<< (ARIZONA_IN1_MODE_SHIFT - 1);
+> +
+> +		if (in1mode != 0) {
+> +			/* if IN1A is digital, the only valid mux configs
+> +			 * are both channels A or both channels B.
+> +			 */
+> +			if (left_mux != right_mux) {
+> +				dev_err(arizona->dev,
+> +					"IN1=DMIC and IN1L Mux != IN1R Mux");
+> +				return -EINVAL;
+> +			}
+
+This (or at least some of it) seems like something we should be doing by
+registering different widgets and routing at device probe time.
+
+> +		old = snd_soc_read(codec, ARIZONA_IN1L_CONTROL) &
+> +					ARIZONA_IN1_MODE_MASK;
+
+> +		if (old != in1mode)
+> +			snd_soc_update_bits(codec, ARIZONA_IN1L_CONTROL,
+> +						ARIZONA_IN1_MODE_MASK, in1mode);
+
+Why bother with the read into old here?  Suppressing redundant updates
+is part of the point of snd_soc_update_bits().
+
+--l8yJEXo8J9fv7OFY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVN39NAAoJECTWi3JdVIfQQxwH+gO2x+Li17UNOs7ycKZkQDMq
+/FcusjV7wYyqJ8ykafkswXm+tLC9bMIayHlP4QWBcjEEGfHUz+pAaU6tCMwzkvJH
+FpSewRbzPrBxae5IaYvuiT8E/r6lezrEGIpEmcuhuLTvryZfgpywiXssxik2K5Zu
+LupmqcKWLGg6n0xbkz/6yKsSwONdW6wTPhq76rcVipzW5iLXjDcnQe/xoEreNbte
+TI/QasWyOsiwDBtRdsxepNeQkpiQhDEhf0ru3IMg27gR8wGCSauW3qe+ZDyN10jR
+X2hpr07kAl0Ulwr6AXhPqbqd2bKeLahGeCD5RrwDGIy7lhV6LKgxBghCqRtfhF4=
+=8esy
+-----END PGP SIGNATURE-----
+
+--l8yJEXo8J9fv7OFY--
