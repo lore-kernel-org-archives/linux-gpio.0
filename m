@@ -1,27 +1,31 @@
-From: Sam Protsenko <semen.protsenko@globallogic.com>
-Subject: Re: [PATCH 2/2] gpio: max732x: Fix irq-events handler
-Date: Wed, 22 Apr 2015 16:23:27 +0300
-Message-ID: <CAJOTznXzQxTSKiN_1ATRVLFmaA9j2Hmh5=U+qe67NaEQOkV3pA@mail.gmail.com>
-References: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
-	<553750ED.70209@linaro.org>
-Reply-To: semen.protsenko@globallogic.com
+From: Zhi Li <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 05/11] ARM: dts: add imx7d soc dtsi file
+Date: Wed, 22 Apr 2015 09:08:42 -0500
+Message-ID: <CAHrpEqRs5DwGtkp=euqwcJSpcEbtaLo+xvp6-WN0okKAscJvZQ@mail.gmail.com>
+References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
+	<1429628007-8892-6-git-send-email-Frank.Li@freescale.com>
+	<20150421172834.GF10164@leverpostej>
+	<CAHrpEqTCMgaAx_bUG1JEtS-2_DrkwM_EbWphu_j=6YZuebcoSw@mail.gmail.com>
+	<CAHrpEqRqUJ2h2dXiwR3rcugWvszKwt10axy8jGsAJAH6Quafbg@mail.gmail.com>
+	<20150422091231.GA27345@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og108.obsmtp.com ([64.18.0.186]:36888 "EHLO
-	exprod5og108.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757130AbbDVNXa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 09:23:30 -0400
-Received: by lbbqq2 with SMTP id qq2so179846568lbb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Apr 2015 06:23:28 -0700 (PDT)
-In-Reply-To: <553750ED.70209@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150422091231.GA27345@leverpostej>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: "Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 22, 2015 at 10:42 AM, Grygorii.Strashko@linaro.org
-<grygorii.strashko@linaro.org> wrote:
-> Wouldn't handle_simple_irq() be a better choice here?
+On Wed, Apr 22, 2015 at 4:12 AM, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote:
+> The reg property is meainingless, so just remove it and give the clocks
+> different names.
 
-You are right, thanks! I sent the new version of patch.
+I will change at V7 version.
+
+best regards
+Frank Li
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
