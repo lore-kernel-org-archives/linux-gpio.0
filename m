@@ -1,59 +1,63 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: max732x: Fix irq-events handler
-Date: Wed, 22 Apr 2015 10:42:37 +0300
-Message-ID: <553750ED.70209@linaro.org>
-References: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v5 05/11] ARM: dts: add imx7d soc dtsi file
+Date: Wed, 22 Apr 2015 10:12:32 +0100
+Message-ID: <20150422091231.GA27345@leverpostej>
+References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
+ <1429628007-8892-6-git-send-email-Frank.Li@freescale.com>
+ <20150421172834.GF10164@leverpostej>
+ <CAHrpEqTCMgaAx_bUG1JEtS-2_DrkwM_EbWphu_j=6YZuebcoSw@mail.gmail.com>
+ <CAHrpEqRqUJ2h2dXiwR3rcugWvszKwt10axy8jGsAJAH6Quafbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1429637318-11089-1-git-send-email-semen.protsenko@globallogic.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Semen Protsenko <semen.protsenko@globallogic.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:48773 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965712AbbDVJMj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 22 Apr 2015 05:12:39 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHrpEqRqUJ2h2dXiwR3rcugWvszKwt10axy8jGsAJAH6Quafbg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Zhi Li <lznuaa@gmail.com>
+Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-On 04/21/2015 08:28 PM, Semen Protsenko wrote:
-> MAX732X doesn't support edge type interrupt. So replace
-> handle_edge_irq() with handle_level_irq(), which uses
-> irq_mask/irq_unmask callbacks instead of irq_ack().
+On Tue, Apr 21, 2015 at 08:34:45PM +0100, Zhi Li wrote:
+> >>> +
+> >>> +       clocks {
+> >>> +               #address-cells = <1>;
+> >>> +               #size-cells = <0>;
+> >>> +
+> >>> +               ckil: clock@0 {
+> >>> +                       compatible = "fixed-clock";
+> >>> +                       reg = <0>;
+> >>> +                       #clock-cells = <0>;
+> >>> +                       clock-frequency = <32768>;
+> >>> +                       clock-output-names = "ckil";
+> >>> +               };
+> >>> +
+> >>> +               osc: clock@1 {
+> >>> +                       compatible = "fixed-clock";
+> >>> +                       reg = <1>;
+> >>> +                       #clock-cells = <0>;
+> >>> +                       clock-frequency = <24000000>;
+> >>> +                       clock-output-names = "osc";
+> >>> +               };
+> >>> +
+> >>> +       };
+> >>
+> >> Get rid of the clocks container node, and put these under the root.
+> >
+> > Okay.
 > 
-> This wrong handler may lead to NULL pointer dereference in some cases.
-> E.g. this was observed on hibernation process:
+> After remove clocks node.
+> There will be warning
 > 
->    Unable to handle kernel NULL pointer dereference at virtual address 0
->    Backtrace:
->    (handle_edge_irq) from (resend_irqs)
->    (resend_irqs) from (tasklet_action)
->    (tasklet_action) from (__do_softirq)
->    (__do_softirq) from (run_ksoftirqd)
->    (run_ksoftirqd) from (smpboot_thread_fn)
->    (smpboot_thread_fn) from (kthread)
->    (kthread) from (ret_from_fork)
-> 
-> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
-> ---
->   drivers/gpio/gpio-max732x.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-> index 1885e5c..edade14 100644
-> --- a/drivers/gpio/gpio-max732x.c
-> +++ b/drivers/gpio/gpio-max732x.c
-> @@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
->   		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
->   					    &max732x_irq_chip,
->   					    irq_base,
-> -					    handle_edge_irq,
-> +					    handle_level_irq,
+> Warning (reg_format): "reg" property in /clock@0 has invalid length (4
+> bytes) (#address-cells == 1, #size-cells == 1)
+> Warning (reg_format): "reg" property in /clock@1 has invalid length (4
+> bytes) (#address-cells == 1, #size-cells == 1)
 
-Wouldn't handle_simple_irq() be a better choice here?
+The reg property is meainingless, so just remove it and give the clocks
+different names.
 
->   					    IRQ_TYPE_NONE);
->   		if (ret) {
->   			dev_err(&client->dev,
-> 
-
--- 
-regards,
--grygorii
+Mark.
