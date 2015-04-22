@@ -1,58 +1,49 @@
 From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
-Date: Wed, 22 Apr 2015 22:53:05 +0300
-Message-ID: <5537FC21.9050602@mentor.com>
-References: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
+Subject: Re: [PATCH] Documentation: gpiolib: sysfs: high can be any nonzero
+ value
+Date: Thu, 23 Apr 2015 00:12:46 +0300
+Message-ID: <55380ECE.4040805@mentor.com>
+References: <1429720786-6277-1-git-send-email-dirk.behme@gmail.com> <20150422171024.GF16828@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:63161 "EHLO
+Received: from relay1.mentorg.com ([192.94.38.131]:37732 "EHLO
 	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756678AbbDVTxJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 15:53:09 -0400
-In-Reply-To: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
+	with ESMTP id S1753411AbbDVVNR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Apr 2015 17:13:17 -0400
+In-Reply-To: <20150422171024.GF16828@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Semen Protsenko <semen.protsenko@globallogic.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-Hi Semen,
+Hi Greg,
 
-On 21.04.2015 16:19, Semen Protsenko wrote:
-> It's possible that multiple MAX732X can be hooked up to the same
-> interrupt line with the processor. So add IRQF_SHARED in requesting irq.
+On 22.04.2015 20:10, Johan Hovold wrote:
+> On Wed, Apr 22, 2015 at 06:39:46PM +0200, Dirk Behme wrote:
+>> With the commit 79a9becda8940d ("gpiolib: export descriptor-based
+>> GPIO interface") the gpiolib can return any nonzero value for high.
+>> Not only 1. Correct this in the documentation.
 > 
-> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
-> ---
->  drivers/gpio/gpio-max732x.c |   10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+> As _gpiod_get_raw_value returns a bool, I fail to see how that could
+> happen.
 > 
-> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-> index 0fa4543..55b13d4 100644
-> --- a/drivers/gpio/gpio-max732x.c
-> +++ b/drivers/gpio/gpio-max732x.c
-> @@ -507,12 +507,10 @@ static int max732x_irq_setup(struct max732x_chip *chip,
->  		chip->irq_features = has_irq;
->  		mutex_init(&chip->irq_lock);
->  
-> -		ret = devm_request_threaded_irq(&client->dev,
-> -					client->irq,
-> -					NULL,
-> -					max732x_irq_handler,
-> -					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> -					dev_name(&client->dev), chip);
-> +		ret = devm_request_threaded_irq(&client->dev, client->irq,
-> +				NULL, max732x_irq_handler, IRQF_ONESHOT |
-> +				IRQF_TRIGGER_FALLING | IRQF_SHARED,
-> +				dev_name(&client->dev), chip);
+> Ah, that was fixed by commit 23600969ff13 ("gpio: clamp returned values
+> to the boolean range") in 3.15.
+> 
+> Looks like that one should be backported to 3.14 instead.
+> 
 
-is it still the case that for shared interrupts a hard IRQ handler is
-mandatory to have?
+I tested that 23600969ff13 clearly applies to 3.14.y and I confirm that
+it fixes the problem.
 
-Here I rely on
-http://lists.kernelnewbies.org/pipermail/kernelnewbies/2011-March/001118.html
+Would it be possible for you to backport this commit to LTS 3.14.y,
+since it fixes quite critical sysfs API regression? Or should I send the
+patch to stable@vger.kernel.org ?
 
+Thank you in advance!
+
+--
 With best wishes,
 Vladimir
-
