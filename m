@@ -1,61 +1,81 @@
-From: Sam Protsenko <semen.protsenko@globallogic.com>
-Subject: Re: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
-Date: Thu, 23 Apr 2015 17:15:52 +0300
-Message-ID: <CAJOTznXaqHOivrEXj6EiSuYPX_j6rD-zLShzSFgCbX9zGnVVDw@mail.gmail.com>
-References: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
-	<5537FC21.9050602@mentor.com>
-Reply-To: semen.protsenko@globallogic.com
+From: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 7/8] ASoC: wm8998: Initial WM8998 codec driver
+Date: Thu, 23 Apr 2015 15:28:23 +0100
+Message-ID: <20150423142823.GB17323@opensource.wolfsonmicro.com>
+References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com> <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com> <20150422110030.GQ22845@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og121.obsmtp.com ([64.18.0.139]:53881 "EHLO
-	exprod5og121.obsmtp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966036AbbDWOPz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2015 10:15:55 -0400
-Received: by layy10 with SMTP id y10so13721005lay.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2015 07:15:53 -0700 (PDT)
-In-Reply-To: <5537FC21.9050602@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150422110030.GQ22845-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Apr 22, 2015 at 10:53 PM, Vladimir Zapolskiy wrote:
-> is it still the case that for shared interrupts a hard IRQ handler is
-> mandatory to have?
->
-> Here I rely on
-> http://lists.kernelnewbies.org/pipermail/kernelnewbies/2011-March/001118.html
->
-> With best wishes,
-> Vladimir
->
+On Wed, Apr 22, 2015 at 12:00:30PM +0100, Mark Brown wrote:
+> On Tue, Apr 21, 2015 at 01:33:55PM +0100, Richard Fitzgerald wrote:
+> 
+> > +static int wm8998_in1mux_ev(struct snd_soc_dapm_widget *w,
+> > +				struct snd_kcontrol *kcontrol,
+> > +				int event)
+> > +{
+> > +	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+> > +	struct arizona *arizona = dev_get_drvdata(codec->dev->parent);
+> > +	unsigned int left_mux, right_mux, in1mode, old;
+> > +
+> > +	switch (event) {
+> > +	case SND_SOC_DAPM_PRE_PMU:
+> > +		/* Validate the mux configuration */
+> > +		left_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1L) &
+> > +				  ARIZONA_IN1L_SRC_MASK;
+> > +		right_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1R) &
+> > +				  ARIZONA_IN1R_SRC_MASK;
+> > +
+> > +		/* Only IN1A can be digital, IN1B is always analogue */
+> > +		in1mode = (arizona->pdata.inmode[0] & 2)
+> > +				<< (ARIZONA_IN1_MODE_SHIFT - 1);
+> > +
+> > +		if (in1mode != 0) {
+> > +			/* if IN1A is digital, the only valid mux configs
+> > +			 * are both channels A or both channels B.
+> > +			 */
+> > +			if (left_mux != right_mux) {
+> > +				dev_err(arizona->dev,
+> > +					"IN1=DMIC and IN1L Mux != IN1R Mux");
+> > +				return -EINVAL;
+> > +			}
+> 
+> This (or at least some of it) seems like something we should be doing by
+> registering different widgets and routing at device probe time.
 
-Vladimir,
+I'm not sure this is really a routing or widget problem. Problem is that
+if the muxed inputs are analogue we need to provide separate ALSA controls
+for the left and right mux because it is allowed to use them as two
+independant mono channels with separate muxing. But if they are
+configured as digital the mux controls are ganged so must be set the
+same. I don't feel good about registering a single mux control if its
+digital and two if its analogue because that means the codec's control
+list depends on a pdata option. I could implement the control pair
+so that if the input is digital changing one control always changes
+the other so they will always be forced to the same setting. Any
+better options?
 
-A hard IRQ handler is not mandatory to have for shared interrupts. It just can
-make things a bit faster. In fact, there is a lot of drivers that implement the
-same behavior as my patch proposes (requesting threaded interrupt with
-IRQF_SHARED flag and default IRQ handler). Well, there *may* be some cases
-when hard IRQ handler is mandatory, but it's definitely not this case.
+> 
+> > +		old = snd_soc_read(codec, ARIZONA_IN1L_CONTROL) &
+> > +					ARIZONA_IN1_MODE_MASK;
+> 
+> > +		if (old != in1mode)
+> > +			snd_soc_update_bits(codec, ARIZONA_IN1L_CONTROL,
+> > +						ARIZONA_IN1_MODE_MASK, in1mode);
+> 
+> Why bother with the read into old here?  Suppressing redundant updates
+> is part of the point of snd_soc_update_bits().
 
-Basically, what happens when interrupt arrives from the line that has multiple
-devices on it -- is that all the interrupt handlers (for devices on that line)
-are being executed. Then each handler reads interrupt register from associated
-device and decides if interrupt was from it's device. In my case reading is
-happening via I2C interface, which can take a while to finish, hence it's not
-recommended to perform I2C operations in hard IRQ handlers.
+Agreed, probably a legacy of an earlier implementation that's now redundant.
 
-The general approach for I2C drivers is to do request_threaded_irq() with
-NULL specified for hard IRQ handler (so irq_default_primary_handler() will be
-used, which just wakes bottom half handler). Driver should read interrupt
-register (via I2C) in threaded IRQ handler, do corresponding actions and send
-acknowledge to device, so device can release interrupt line. In my case
-acknowledge is happening automatically on I2C read operation. Also it's
-important to provide IRQF_ONESHOT flag when requesting threaded irq:
-this way irq line will be disabled before running threaded handler.
 
-Hope it answers your question.
-
-Best regards,
-  Sam Protsenko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
