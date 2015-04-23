@@ -1,81 +1,78 @@
-From: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 7/8] ASoC: wm8998: Initial WM8998 codec driver
-Date: Thu, 23 Apr 2015 15:28:23 +0100
-Message-ID: <20150423142823.GB17323@opensource.wolfsonmicro.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com> <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com> <20150422110030.GQ22845@sirena.org.uk>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/1] gpio: omap: Fix PM runtime issue and remove most
+ BANK_USED macros
+Date: Thu, 23 Apr 2015 07:39:53 -0700
+Message-ID: <20150423143952.GR18048@atomide.com>
+References: <1429632533-23285-1-git-send-email-tony@atomide.com>
+ <5538D3B6.7060305@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46399 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757442AbbDWOmt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 23 Apr 2015 10:42:49 -0400
 Content-Disposition: inline
-In-Reply-To: <20150422110030.GQ22845-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <5538D3B6.7060305@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <jmartinez@softcrates.net>, Nishanth Menon <nm@ti.com>
 
-On Wed, Apr 22, 2015 at 12:00:30PM +0100, Mark Brown wrote:
-> On Tue, Apr 21, 2015 at 01:33:55PM +0100, Richard Fitzgerald wrote:
-> 
-> > +static int wm8998_in1mux_ev(struct snd_soc_dapm_widget *w,
-> > +				struct snd_kcontrol *kcontrol,
-> > +				int event)
-> > +{
-> > +	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
-> > +	struct arizona *arizona = dev_get_drvdata(codec->dev->parent);
-> > +	unsigned int left_mux, right_mux, in1mode, old;
+* Grygorii.Strashko@linaro.org <grygorii.strashko@linaro.org> [150423 04:13]:
+> On 04/21/2015 07:08 PM, Tony Lindgren wrote:
+> > @@ -438,11 +447,30 @@ static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset)
+> >   		writel_relaxed(ctrl, reg);
+> >   		bank->context.ctrl = ctrl;
+> >   	}
 > > +
-> > +	switch (event) {
-> > +	case SND_SOC_DAPM_PRE_PMU:
-> > +		/* Validate the mux configuration */
-> > +		left_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1L) &
-> > +				  ARIZONA_IN1L_SRC_MASK;
-> > +		right_mux = snd_soc_read(codec, ARIZONA_ADC_DIGITAL_VOLUME_1R) &
-> > +				  ARIZONA_IN1R_SRC_MASK;
-> > +
-> > +		/* Only IN1A can be digital, IN1B is always analogue */
-> > +		in1mode = (arizona->pdata.inmode[0] & 2)
-> > +				<< (ARIZONA_IN1_MODE_SHIFT - 1);
-> > +
-> > +		if (in1mode != 0) {
-> > +			/* if IN1A is digital, the only valid mux configs
-> > +			 * are both channels A or both channels B.
-> > +			 */
-> > +			if (left_mux != right_mux) {
-> > +				dev_err(arizona->dev,
-> > +					"IN1=DMIC and IN1L Mux != IN1R Mux");
-> > +				return -EINVAL;
-> > +			}
+> > +	if (is_irq) {
+> > +		omap_set_gpio_direction(bank, offset, 1);
+> > +		bank->irq_usage |= BIT(offset);
+> > +	} else {
+> > +		omap_set_gpio_triggering(bank, offset, IRQ_TYPE_NONE);
+> > +		bank->mod_usage |= BIT(offset);
+> > +	}
 > 
-> This (or at least some of it) seems like something we should be doing by
-> registering different widgets and routing at device probe time.
-
-I'm not sure this is really a routing or widget problem. Problem is that
-if the muxed inputs are analogue we need to provide separate ALSA controls
-for the left and right mux because it is allowed to use them as two
-independant mono channels with separate muxing. But if they are
-configured as digital the mux controls are ganged so must be set the
-same. I don't feel good about registering a single mux control if its
-digital and two if its analogue because that means the codec's control
-list depends on a pdata option. I could implement the control pair
-so that if the input is digital changing one control always changes
-the other so they will always be forced to the same setting. Any
-better options?
-
+> The OMAP GPIO driver implements two Core interfaces IRQ-chip and GPIO-chip which, in general,
+> more or less independent. 
 > 
-> > +		old = snd_soc_read(codec, ARIZONA_IN1L_CONTROL) &
-> > +					ARIZONA_IN1_MODE_MASK;
-> 
-> > +		if (old != in1mode)
-> > +			snd_soc_update_bits(codec, ARIZONA_IN1L_CONTROL,
-> > +						ARIZONA_IN1_MODE_MASK, in1mode);
-> 
-> Why bother with the read into old here?  Suppressing redundant updates
-> is part of the point of snd_soc_update_bits().
+> So, I don't think, that it's good to mix GPIO-IRQ-chip specific code with GPIO-chip code.
+> And this even don't really correspond the purpose of omap_enable_gpio_module() :( and might
+> introduce misunderstanding of code. The worst thing is that future fixes in IRQ-chip may 
+> affect on on GPIO-chip and vise versa :(
 
-Agreed, probably a legacy of an earlier implementation that's now redundant.
+Hmm I'm thinking omap_enable/disable_gpio_module() eventually becomes
+our runtime_resume/suspend(). Currently the enabling and disabling is
+buggy for GPIO for some corner cases.. AFAIK the only difference between
+enabling GPIO vs GPIO-IRQ is the calling of omap_set_gpio_direction
+vs omap_set_gpio_triggering. Or at least that's the way it should be
+unless I'm missing something?
+ 
+> Could we keep omap_xxx_gpio_module() functions responsible only for GPIO bank PM and
+> enabling/disabling?
 
+If you're thinking about just thinking about having separate wrappers around
+it like this::
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+static void omap_enable_gpio_module(struct gpio_bank *bank, unsigned offset,
+					bool is_irq)
+{
+	...
+}
+
+static void omap_enable_gpio((struct gpio_bank *bank, unsigned offset)
+{
+	omap_enable_gpio_module(bpio_bank, offset, 0);
+}
+
+static void omap_enable_gpio_irq((struct gpio_bank *bank, unsigned offset)
+{
+	omap_enable_gpio_module(bpio_bank, offset, 1);
+}
+
+Then yes makes sense to me. Or do you have something else in mind?
+
+Regards,
+
+Tony
