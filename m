@@ -1,63 +1,106 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 7/8] ASoC: wm8998: Initial WM8998 codec driver
-Date: Thu, 23 Apr 2015 18:54:55 +0100
-Message-ID: <20150423175455.GY22845@sirena.org.uk>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com>
- <20150422110030.GQ22845@sirena.org.uk>
- <20150423142823.GB17323@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TX8FgYyhBart40Z+"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57271 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030210AbbDWRzI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2015 13:55:08 -0400
-Content-Disposition: inline
-In-Reply-To: <20150423142823.GB17323@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] gpio: omap: Fix regression for MPUIO interrupts
+Date: Thu, 23 Apr 2015 16:54:17 -0700
+Message-ID: <1429833257-28188-1-git-send-email-tony@atomide.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Aaro Koskinen <aaro.koskinen@iki.fi>, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
 
+At some point with all the GPIO clean-up we've broken the
+MPUIO interrupts. Those are just a little bit different from
+the GPIO interrupts, so we can fix it up just by setting
+different irqchip functions for it. And then we can just
+remove all old code trying to do the same.
 
---TX8FgYyhBart40Z+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Nishanth Menon <nm@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/gpio/gpio-omap.c | 48 +++++++++---------------------------------------
+ 1 file changed, 9 insertions(+), 39 deletions(-)
 
-On Thu, Apr 23, 2015 at 03:28:23PM +0100, Richard Fitzgerald wrote:
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 6553361..b59c3ca 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1023,38 +1023,8 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ 		dev_err(bank->dev, "Could not get gpio dbck\n");
+ }
+ 
+-static void
+-omap_mpuio_alloc_gc(struct gpio_bank *bank, unsigned int irq_start,
+-		    unsigned int num)
+-{
+-	struct irq_chip_generic *gc;
+-	struct irq_chip_type *ct;
+-
+-	gc = irq_alloc_generic_chip("MPUIO", 1, irq_start, bank->base,
+-				    handle_simple_irq);
+-	if (!gc) {
+-		dev_err(bank->dev, "Memory alloc failed for gc\n");
+-		return;
+-	}
+-
+-	ct = gc->chip_types;
+-
+-	/* NOTE: No ack required, reading IRQ status clears it. */
+-	ct->chip.irq_mask = irq_gc_mask_set_bit;
+-	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+-	ct->chip.irq_set_type = omap_gpio_irq_type;
+-
+-	if (bank->regs->wkup_en)
+-		ct->chip.irq_set_wake = omap_gpio_wake_enable;
+-
+-	ct->regs.mask = OMAP_MPUIO_GPIO_INT / bank->stride;
+-	irq_setup_generic_chip(gc, IRQ_MSK(num), IRQ_GC_INIT_MASK_CACHE,
+-			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+-}
+-
+ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ {
+-	int j;
+ 	static int gpio;
+ 	int irq_base = 0;
+ 	int ret;
+@@ -1101,6 +1071,15 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 	}
+ #endif
+ 
++	/* MPUIO is a bit different, reading IRQ status clears it */
++	if (bank->is_mpuio) {
++		irqc->irq_ack = dummy_irq_chip.irq_ack;
++		irqc->irq_mask = irq_gc_mask_set_bit;
++		irqc->irq_unmask = irq_gc_mask_clr_bit;
++		if (!bank->regs->wkup_en)
++			irqc->irq_set_wake = NULL;
++	}
++
+ 	ret = gpiochip_irqchip_add(&bank->chip, irqc,
+ 				   irq_base, omap_gpio_irq_handler,
+ 				   IRQ_TYPE_NONE);
+@@ -1114,15 +1093,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 	gpiochip_set_chained_irqchip(&bank->chip, irqc,
+ 				     bank->irq, omap_gpio_irq_handler);
+ 
+-	for (j = 0; j < bank->width; j++) {
+-		int irq = irq_find_mapping(bank->chip.irqdomain, j);
+-		if (bank->is_mpuio) {
+-			omap_mpuio_alloc_gc(bank, irq, bank->width);
+-			irq_set_chip_and_handler(irq, NULL, NULL);
+-			set_irq_flags(irq, 0);
+-		}
+-	}
+-
+ 	return 0;
+ }
+ 
+-- 
+2.1.4
 
-> I'm not sure this is really a routing or widget problem. Problem is that
-> if the muxed inputs are analogue we need to provide separate ALSA controls
-> for the left and right mux because it is allowed to use them as two
-> independant mono channels with separate muxing. But if they are
-> configured as digital the mux controls are ganged so must be set the
-
-I understand this, it's what prompted my comment.
-
-> same. I don't feel good about registering a single mux control if its
-> digital and two if its analogue because that means the codec's control
-> list depends on a pdata option. I could implement the control pair
-
-I don't see that as a problem, it's not like the disallowed options
-would ever meaningfully exist for users on an affected system.  Why do
-you see this as a problem?
-
---TX8FgYyhBart40Z+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVOTHuAAoJECTWi3JdVIfQPscH/itnC07LTHlo6gvYaA46XSug
-4wry1mJnZLiKa/RzlgDJ61FJ2njbelIGZ6GN5Z5Ryr5qzjjnh24SvhXIjlOTLqII
-Ve4r6Ngtjxqz/fjdlNcwIxAW8+9SYcJhrWZy5Qj0ghBA+7VECR9PS1I/z+yAGGr2
-Xe4IQUsUaRINY6/NdryzCp9gnKujaCHDAuTnt/t5JNB6D0H5SOLB0cp+Mvq/AeqL
-cf/hlD65ZC9dXGrbGqv8uuDcySma0/AjFL+6z11OddD7ZowZbT3bH+69nyZLEtzO
-YFpK6fWMKossCBw0Y1fpZwyZlZm8HlYs438S+64uA9ztyJmOUwJdRadqftK2MRk=
-=y6ka
------END PGP SIGNATURE-----
-
---TX8FgYyhBart40Z+--
