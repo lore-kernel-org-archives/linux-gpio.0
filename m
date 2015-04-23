@@ -1,47 +1,63 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [alsa-devel] [PATCH 8/8] Documentation: Add WM8998/WM1814
-	device tree bindings
-Date: Thu, 23 Apr 2015 15:46:15 +0100
-Message-ID: <20150423144615.GC17323@opensource.wolfsonmicro.com>
-References: <1429619636-25478-9-git-send-email-rf@opensource.wolfsonmicro.com> <0D842736-8A6E-4462-9690-C9BD60690A7C@cirrus.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 7/8] ASoC: wm8998: Initial WM8998 codec driver
+Date: Thu, 23 Apr 2015 18:54:55 +0100
+Message-ID: <20150423175455.GY22845@sirena.org.uk>
+References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1429619636-25478-8-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20150422110030.GQ22845@sirena.org.uk>
+ <20150423142823.GB17323@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TX8FgYyhBart40Z+"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57271 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030210AbbDWRzI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2015 13:55:08 -0400
 Content-Disposition: inline
-In-Reply-To: <0D842736-8A6E-4462-9690-C9BD60690A7C@cirrus.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Austin, Brian" <Brian.Austin@cirrus.com>
-Cc: "Fitzgerald, Richard" <Richard.Fitzgerald@cirrus.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "ckeepax@opensource.wolfsonmicro.com" <ckeepax@opensource.wolfsonmicro.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
+In-Reply-To: <20150423142823.GB17323@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
 
-On Thu, Apr 23, 2015 at 02:05:18AM +0000, Austin, Brian wrote:
-> 
-> 
-> > On Apr 21, 2015, at 07:38, Richard Fitzgerald <rf@opensource.wolfsonmicro.com> wrote:
-> > 
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> > ---
-> > Documentation/devicetree/bindings/mfd/arizona.txt |    3 +++
-> > 1 files changed, 3 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
-> > index 7665aa9..a3cb34b 100644
-> > --- a/Documentation/devicetree/bindings/mfd/arizona.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-> > @@ -10,6 +10,9 @@ Required properties:
-> >         "wlf,wm5110"
-> >         "wlf,wm8280"
-> >         "wlf,wm8997"
-> > +        "wlf,WM8998"
-> > +        "wlf,wm1814"
-> > +
-> Is there a reason for caps on the 8998? 
-> 
-> -Brian 
 
-Yes, it's called "lack of attention to detail". Will be fixed in the respin.
+--TX8FgYyhBart40Z+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+On Thu, Apr 23, 2015 at 03:28:23PM +0100, Richard Fitzgerald wrote:
+
+> I'm not sure this is really a routing or widget problem. Problem is that
+> if the muxed inputs are analogue we need to provide separate ALSA controls
+> for the left and right mux because it is allowed to use them as two
+> independant mono channels with separate muxing. But if they are
+> configured as digital the mux controls are ganged so must be set the
+
+I understand this, it's what prompted my comment.
+
+> same. I don't feel good about registering a single mux control if its
+> digital and two if its analogue because that means the codec's control
+> list depends on a pdata option. I could implement the control pair
+
+I don't see that as a problem, it's not like the disallowed options
+would ever meaningfully exist for users on an affected system.  Why do
+you see this as a problem?
+
+--TX8FgYyhBart40Z+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVOTHuAAoJECTWi3JdVIfQPscH/itnC07LTHlo6gvYaA46XSug
+4wry1mJnZLiKa/RzlgDJ61FJ2njbelIGZ6GN5Z5Ryr5qzjjnh24SvhXIjlOTLqII
+Ve4r6Ngtjxqz/fjdlNcwIxAW8+9SYcJhrWZy5Qj0ghBA+7VECR9PS1I/z+yAGGr2
+Xe4IQUsUaRINY6/NdryzCp9gnKujaCHDAuTnt/t5JNB6D0H5SOLB0cp+Mvq/AeqL
+cf/hlD65ZC9dXGrbGqv8uuDcySma0/AjFL+6z11OddD7ZowZbT3bH+69nyZLEtzO
+YFpK6fWMKossCBw0Y1fpZwyZlZm8HlYs438S+64uA9ztyJmOUwJdRadqftK2MRk=
+=y6ka
+-----END PGP SIGNATURE-----
+
+--TX8FgYyhBart40Z+--
