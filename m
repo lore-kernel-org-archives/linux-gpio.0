@@ -1,49 +1,55 @@
-From: "Austin, Brian" <Brian.Austin@cirrus.com>
-Subject: Re: [PATCH 8/8] Documentation: Add WM8998/WM1814
- device	tree bindings
-Date: Thu, 23 Apr 2015 02:05:18 +0000
-Message-ID: <0D842736-8A6E-4462-9690-C9BD60690A7C@cirrus.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>,
- <1429619636-25478-9-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: gpiolib, gpio removal while a gpio in-use
+Date: Thu, 23 Apr 2015 09:15:00 +0200
+Message-ID: <20150423071500.GA1136@localhost>
+References: <190351B32828744FBA3BD9565204D27B5330D2D2@NA-MBX-03.mgc.mentorg.com>
+ <20150422162933.GE16828@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1429619636-25478-9-git-send-email-rf@opensource.wolfsonmicro.com>
-Content-Language: en-US
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: "Fitzgerald, Richard" <Richard.Fitzgerald@cirrus.com>
-Cc: "gnurou@gmail.com" <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "ckeepax@opensource.wolfsonmicro.com" <ckeepax@opensource.wolfsonmicro.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f50.google.com ([209.85.215.50]:35259 "EHLO
+	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755617AbbDWHPA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2015 03:15:00 -0400
+Received: by labbd9 with SMTP id bd9so6310555lab.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Apr 2015 00:14:58 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20150422162933.GE16828@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Frkuska, Joshua" <Joshua_Frkuska@mentor.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-
-
-> On Apr 21, 2015, at 07:38, Richard Fitzgerald <rf@opensource.wolfsonmicro.com> wrote:
+On Wed, Apr 22, 2015 at 06:29:33PM +0200, Johan Hovold wrote:
+> On Tue, Mar 17, 2015 at 02:59:08AM +0000, Frkuska, Joshua wrote:
+> > Hello,
+> > 
+> > In 3.18, the upstream commit e1db1706c8 made it acceptable to remove
+> > gpio chips that were in use in exchange for a critical message. The
+> > reasoning from what I gathered from the mailing list was to avoid
+> > handling errors in the device remove handler. The justification was
+> > that the error seemed unused by most drivers and there was a compiler
+> > warning when ignoring the return value.
+> >
+> > At a higher level, this is a gpio handling policy shift. Previously
+> > the behavior was to result in an error and disallow the gpio device to
+> > be removed. Then starting at 3.18, it becomes ok to free a gpio device
+> > regardless of whatever the (possibly critical) gpio may be doing as
+> > long as a critical message is displayed.
 > 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> ---
-> Documentation/devicetree/bindings/mfd/arizona.txt |    3 +++
-> 1 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
-> index 7665aa9..a3cb34b 100644
-> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
-> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-> @@ -10,6 +10,9 @@ Required properties:
->         "wlf,wm5110"
->         "wlf,wm8280"
->         "wlf,wm8997"
-> +        "wlf,WM8998"
-> +        "wlf,wm1814"
-> +
-Is there a reason for caps on the 8998? 
+> It still isn't acceptable to remove a gpio chip with requested gpios as
+> it will lead to memory leaks (even though the most pre-3.18 crashes have
+> been fixed).
 
--Brian 
+To clarify: the memory leaks are primarily related to sysfs.
+
+The major issue is of course the crashes when attempting to call into
+chip drivers whose device state is likely deallocated with descriptors
+and chip structures that also have or could have been freed (e.g. as in
+your i2c example). This only affects in-kernel consumers using the
+gpiod-interface.
+
+So to summarise: Using a requested gpio post chip-removal is not
+supported.
+
+Johan
