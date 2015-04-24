@@ -1,77 +1,39 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [alsa-devel] [PATCH 6/8] extcon: arizona: Add support for	WM8998
- and WM1814
-Date: Fri, 24 Apr 2015 09:59:37 +0900
-Message-ID: <55399579.9090104@samsung.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1429619636-25478-7-git-send-email-rf@opensource.wolfsonmicro.com>
- <55373766.6060106@samsung.com>
- <20150422091941.GA4303@opensource.wolfsonmicro.com>
- <553775D9.9080606@samsung.com>
- <20150423141540.GA17323@opensource.wolfsonmicro.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH v5 09/11] ARM: imx: add imx7d clk tree support
+Date: Fri, 24 Apr 2015 16:28:14 +0800
+Message-ID: <20150424082812.GA25323@dragon>
+References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
+ <1429628007-8892-10-git-send-email-Frank.Li@freescale.com>
+ <CAL_Jsq+V+q78e1QqtZJK2inCDv+rRjWnzcUgRKXComnJ2O3myg@mail.gmail.com>
+ <CAHrpEqTNNn1=g6X9-iYDmWdLp58SOYWMerccy-BR++E7TU4M-Q@mail.gmail.com>
+ <CAL_JsqLsLBxH+SKTeHV0c+WerXzD1u0KSYKUEFAoLiKKgLvn_g@mail.gmail.com>
+ <CAHrpEqQLik0vqKVOxcTpo00A+bMyN-QgXyZxLPJUP04ewnseLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:65254 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752616AbbDXA7j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Apr 2015 20:59:39 -0400
-In-reply-to: <20150423141540.GA17323@opensource.wolfsonmicro.com>
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:35219 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965999AbbDXIaR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Apr 2015 04:30:17 -0400
+Received: by pdbqd1 with SMTP id qd1so42793237pdb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2015 01:30:17 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAHrpEqQLik0vqKVOxcTpo00A+bMyN-QgXyZxLPJUP04ewnseLg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, myungjoo.ham@samsung.com, ckeepax@opensource.wolfsonmicro.com, lee.jones@linaro.org
+To: Zhi Li <lznuaa@gmail.com>
+Cc: Rob Herring <robherring2@gmail.com>, "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>, Adrian Alonso <aalonso@freescale.com>
 
-On 04/23/2015 11:15 PM, Richard Fitzgerald wrote:
-> On Wed, Apr 22, 2015 at 07:20:09PM +0900, Chanwoo Choi wrote:
->> On 04/22/2015 06:19 PM, Richard Fitzgerald wrote:
->>> On Wed, Apr 22, 2015 at 02:53:42PM +0900, Chanwoo Choi wrote:
->>>> Hi Richard,
->>>>
->>>>> @@ -1176,6 +1182,11 @@ static int arizona_extcon_probe(struct platform_device *pdev)
->>>>>  			break;
->>>>>  		}
->>>>>  		break;
->>>>> +	case WM8998:
->>>>> +	case WM1814:
->>>>> +		info->micd_clamp = true;
->>>>> +		info->hpdet_ip = 2;
->>>>
->>>> What is meaning of '2'? I prefer to use the definition for '2'.
->>>>
->>>
->>> '2' is the version number of the hpdet ip block in silicon. We're already using
->>> it as a raw number '0', '1' or '2' all over extcon-arizona.c so changing it here
->>> would mean making other patches to the file that aren't really part of adding
->>> WM8998 support, so I'd prefer not to change that as a side-effect of adding WM8998.
->>
->> I think that just you can define following definitions and use HPDET_IP_VER_V2 instead of '2'.
->>
->> 	#define HPDET_IP_VER_V0		0
->> 	#define HPDET_IP_VER_V1		1
->> 	#define HPDET_IP_VER_V2		2
->>
+On Tue, Apr 21, 2015 at 03:51:04PM -0500, Zhi Li wrote:
+> >
+> > If it was going in my tree, no. But it is not, so it is not my call.
+> > However, I would not let you continue to add stuff if you have not
+> > done the clean-up that has been done for almost every other modern
+> > platform.
 > 
-> Can we deal with that as a separate patch from this series? Like I said,
-> the code already uses '0' '1' and '2' for the existing codecs so making a
-> change to use #define means patching the code for the other codecs. That
-> is not part of adding WM8998 support and I don't like patches that make
-> unexpected extra side-effect changes that are not relevant to the actual
-> functionality being added by the patch. It's specially annoying when
-> cherry-picking or reverting those patches if they included some extra
-> code change.
-> 
-> If we can get this series submitted I can look at making a later patch
-> to improve readbility, but since this really is just a version number I
-> think it would be enough to rename the variable to hpdet_ip_version rather
-> than effectively doing #define TWO 2
+> Shawn:
+>       What's your opinion?
 
-OK. I agree that rename the variable name (hpdet_ip_version)
-or add the definitions for version on later patch.
+Let's do it right now, I would say.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
-
+Shawn
