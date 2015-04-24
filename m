@@ -1,39 +1,62 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH v5 09/11] ARM: imx: add imx7d clk tree support
-Date: Fri, 24 Apr 2015 16:28:14 +0800
-Message-ID: <20150424082812.GA25323@dragon>
-References: <1429628007-8892-1-git-send-email-Frank.Li@freescale.com>
- <1429628007-8892-10-git-send-email-Frank.Li@freescale.com>
- <CAL_Jsq+V+q78e1QqtZJK2inCDv+rRjWnzcUgRKXComnJ2O3myg@mail.gmail.com>
- <CAHrpEqTNNn1=g6X9-iYDmWdLp58SOYWMerccy-BR++E7TU4M-Q@mail.gmail.com>
- <CAL_JsqLsLBxH+SKTeHV0c+WerXzD1u0KSYKUEFAoLiKKgLvn_g@mail.gmail.com>
- <CAHrpEqQLik0vqKVOxcTpo00A+bMyN-QgXyZxLPJUP04ewnseLg@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio: max732x: Fix irq-events handler
+Date: Fri, 24 Apr 2015 13:29:34 +0300
+Message-ID: <553A1B0E.9040003@ti.com>
+References: <1429708841-31189-1-git-send-email-semen.protsenko@globallogic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:35219 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965999AbbDXIaR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Apr 2015 04:30:17 -0400
-Received: by pdbqd1 with SMTP id qd1so42793237pdb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Apr 2015 01:30:17 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAHrpEqQLik0vqKVOxcTpo00A+bMyN-QgXyZxLPJUP04ewnseLg@mail.gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:58399 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751825AbbDXK3o (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 24 Apr 2015 06:29:44 -0400
+In-Reply-To: <1429708841-31189-1-git-send-email-semen.protsenko@globallogic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Zhi Li <lznuaa@gmail.com>
-Cc: Rob Herring <robherring2@gmail.com>, "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>, Adrian Alonso <aalonso@freescale.com>
+To: Semen Protsenko <semen.protsenko@globallogic.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@globallogic.com>
 
-On Tue, Apr 21, 2015 at 03:51:04PM -0500, Zhi Li wrote:
-> >
-> > If it was going in my tree, no. But it is not, so it is not my call.
-> > However, I would not let you continue to add stuff if you have not
-> > done the clean-up that has been done for almost every other modern
-> > platform.
-> 
-> Shawn:
->       What's your opinion?
+On 04/22/2015 04:20 PM, Semen Protsenko wrote:
+> MAX732X clears all pending interrupts on I2C read (when interrupts
+> register is being read). Driver doesn't need to send any ACKs when
+> interrupt was handled. So replace handle_edge_irq() with
+> handle_simple_irq().
+>
+> Using handle_edge_irq() (w/o .irq_ack callback set) may lead to NULL
+> pointer dereference in some cases. E.g. this was observed on
+> hibernation process:
+>
+>    Unable to handle kernel NULL pointer dereference at virtual address 0
+>    Backtrace:
+>    (handle_edge_irq) from (resend_irqs)
+>    (resend_irqs) from (tasklet_action)
+>    (tasklet_action) from (__do_softirq)
+>    (__do_softirq) from (run_ksoftirqd)
+>    (run_ksoftirqd) from (smpboot_thread_fn)
+>    (smpboot_thread_fn) from (kthread)
+>    (kthread) from (ret_from_fork)
+>
+> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
 
-Let's do it right now, I would say.
+Reviewed-by: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-Shawn
+> ---
+>   drivers/gpio/gpio-max732x.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+> index 1885e5c..86dc6b3 100644
+> --- a/drivers/gpio/gpio-max732x.c
+> +++ b/drivers/gpio/gpio-max732x.c
+> @@ -530,7 +530,7 @@ static int max732x_irq_setup(struct max732x_chip *chip,
+>   		ret =  gpiochip_irqchip_add(&chip->gpio_chip,
+>   					    &max732x_irq_chip,
+>   					    irq_base,
+> -					    handle_edge_irq,
+> +					    handle_simple_irq,
+>   					    IRQ_TYPE_NONE);
+>   		if (ret) {
+>   			dev_err(&client->dev,
+>
+
