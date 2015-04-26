@@ -1,140 +1,97 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Fri, 24 Apr 2015 23:12:50 +0300
-Message-ID: <553AA3C2.7090404@cogentembedded.com>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <3656925.3GuTRhx1fV@avalon>
+From: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+Subject: Re: [PATCH] pinctrl: zynq: configure SPI SSx pins separately
+Date: Sun, 26 Apr 2015 11:14:10 +0200
+Message-ID: <553CAC62.7060208@gmail.com>
+References: <1429694097-3087-1-git-send-email-helmut.buchsbaum@gmail.com> <c8981060-7f8d-4d0c-bc4f-c7be8f5ce02c@BY2FFO11FD032.protection.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <3656925.3GuTRhx1fV@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:33414 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751410AbbDZJON (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Apr 2015 05:14:13 -0400
+Received: by wgin8 with SMTP id n8so88403038wgi.0
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Apr 2015 02:14:12 -0700 (PDT)
+In-Reply-To: <c8981060-7f8d-4d0c-bc4f-c7be8f5ce02c@BY2FFO11FD032.protection.gbl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann@xilinx.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-gpio@vger.kernel.org
 
-Hello.
-
-On 03/03/2015 03:24 AM, Laurent Pinchart wrote:
-
-    Sorry for the belated reply, I was switched to EtherAVB soon after posting 
-this patch. :-)
-
->> The  pin array handled by sh_pfc_map_pins() may contain holes representing
->> non- existing pins. We have to first count the valid pins in order to
->> calculate the size  of the memory to be allocated, then to skip over the
->> non-existing pins when  initializing the allocated arrays, and then to
->> return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
->> success.
-
->> As we have to touch devm_kzalloc() calls anyway, use more fitting
->> devm_kcalloc() instead which additionally checks the array size. And since
->> PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already zeroed out
->> 'pmx->configs' array.
-
-> I agree with this optimization, but I think it deserves a comment in the
-> source code that explicitly mentions PINMUX_TYPE_NONE, to make sure any later
-> rework changing the PINMUX_TYPE_NONE value would catch this.
-
-    OK, will do.
-
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
->> ---
->> The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git'
->> repo. This patch should be applied before my R8A7794 PFC support patch and
->> before Laurent's patches removing non-existent GPIOs for R8A779[01],
->> otherwise they would cause the kernel  to hang while booting!
-
->>   drivers/pinctrl/sh-pfc/pinctrl.c |   32 +++++++++++++++++++-------------
->>   1 file changed, 19 insertions(+), 13 deletions(-)
-
->> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
->> ===================================================================
->> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pinctrl.c
->> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
->> @@ -571,33 +571,39 @@ static const struct pinconf_ops sh_pfc_p
->>   /* PFC ranges -> pinctrl pin descs */
->>   static int sh_pfc_map_pins(struct sh_pfc *pfc, struct sh_pfc_pinctrl *pmx)
->>   {
->> -	unsigned int i;
->> +	const struct sh_pfc_pin *info;
->> +	struct pinctrl_pin_desc *pin;
->> +	unsigned int i, n;
-
-> Could you please rename n to num_pins, and declare it on its own line to match
-> the coding style of the file ?
-
-    Will do.
-
->> +
->> +	/* Count the valid pins. */
->> +	for (i = 0, info = pfc->info->pins, n = 0;
->> +	     i < pfc->info->nr_pins; i++, info++) {
->> +		if (info->enum_id || info->configs)
-
-> Why do you need to test info->configs as well ? I thought enum_id == 0 is
-> always reserved, am I getting it wrong ?
-
-    Look at SH_PFC_PIN_NAMED() and its users.
-
->> +			n++;
->> +	}
+On 04/24/2015 08:21 PM, S=C3=B6ren Brinkmann wrote:
+> Hi Helmut,
+>
+> On Wed, 2015-04-22 at 11:14AM +0200, Helmut Buchsbaum wrote:
+>   =20
+>> Since SCLK, MISO and MOSI are the only mandatory signals at Zynq's S=
+PI
+>> interfaces, SS0, SS1 and SS2 have to be configured separately as the=
+y may
+>> be used as simple GPIO lines.
 >>
->>   	/* Allocate and initialize the pins and configs arrays. */
->> -	pmx->pins = devm_kzalloc(pfc->dev,
->> -				 sizeof(*pmx->pins) * pfc->info->nr_pins,
->> -				 GFP_KERNEL);
->> +	pmx->pins = devm_kcalloc(pfc->dev, n, sizeof(*pmx->pins), GFP_KERNEL);
->>   	if (unlikely(!pmx->pins))
->>   		return -ENOMEM;
->>
->> -	pmx->configs = devm_kzalloc(pfc->dev,
->> -				    sizeof(*pmx->configs) * pfc->info->nr_pins,
->> +	pmx->configs = devm_kcalloc(pfc->dev, n, sizeof(*pmx->configs),
->>   				    GFP_KERNEL);
->>   	if (unlikely(!pmx->configs))
->>   		return -ENOMEM;
->>
->> -	for (i = 0; i < pfc->info->nr_pins; ++i) {
->> -		const struct sh_pfc_pin *info = &pfc->info->pins[i];
->> -		struct sh_pfc_pin_config *cfg = &pmx->configs[i];
->> -		struct pinctrl_pin_desc *pin = &pmx->pins[i];
->> +	for (i = 0, info = pfc->info->pins, pin = pmx->pins;
->> +	     i < pfc->info->nr_pins; i++, info++) {
+>> This, of course, has to be considered in the devicetree, so pin cont=
+roller
+>> configuration for e.g. an SPI0 using SS0 and SS1 only might look lik=
+e the
+>> following snippet (derived from the example of chapter "17.5.3
+>> MIO/EMIO" Routing of Zynq-7000 TRM UG585). So MIO20 can now be used
+>> as GPIO instead of being occupied by SPI0 SS2 function:
+>>     =20
+> I think this is very valid and correct. Thanks! One doubt I have thou=
+gh:
+> [...]
+>   =20
+>> @@ -548,10 +591,20 @@ static const char * const qspi0_groups[] =3D {=
+"qspi0_0_grp"};
+>>   static const char * const qspi1_groups[] =3D {"qspi0_1_grp"};
+>>   static const char * const qspi_fbclk_groups[] =3D {"qspi_fbclk_grp=
+"};
+>>   static const char * const qspi_cs1_groups[] =3D {"qspi_cs1_grp"};
+>> -static const char * const spi0_groups[] =3D {"spi0_0_grp", "spi0_1_=
+grp",
+>> -					   "spi0_2_grp"};
+>> -static const char * const spi1_groups[] =3D {"spi1_0_grp", "spi1_1_=
+grp",
+>> -					   "spi1_2_grp", "spi1_3_grp"};
+>> +static const char * const spi0_groups[] =3D {"spi0_0_grp", "spi0_0_=
+ss0_grp",
+>> +					   "spi0_0_ss1_grp", "spi0_0_ss2_grp",
+>> +					   "spi0_1_grp", "spi0_1_ss0_grp",
+>> +					   "spi0_1_ss1_grp", "spi0_1_ss2_grp",
+>> +					   "spi0_2_grp", "spi0_2_ss0_grp",
+>> +					   "spi0_2_ss1_grp", "spi0_2_ss2_grp"};
+>> +static const char * const spi1_groups[] =3D {"spi1_0_grp", "spi1_0_=
+ss0_grp",
+>> +					   "spi1_0_ss1_grp", "spi1_0_ss2_grp",
+>> +					   "spi1_1_grp", "spi1_1_ss0_grp",
+>> +					   "spi1_1_ss1_grp", "spi1_1_ss2_grp",
+>> +					   "spi1_2_grp", "spi1_2_ss0_grp",
+>> +					   "spi1_2_ss1_grp", "spi1_2_ss2_grp",
+>> +					   "spi1_3_grp", "spi1_3_ss0_grp",
+>> +					   "spi1_3_ss1_grp", "spi1_3_ss2_grp"};
+>>     =20
+> Can we add this to the spiX groups or do we need individual
+> spix_ss_groups[] arrays? E.g. for the SD card detect signal and simil=
+ar
+> we have individual groups arrays.
+>
+> 	S=C3=B6ren
+>   =20
 
-> I would keep info as a local variable to avoid splitting the for () on
-> multiple lines. Same comment for the counter loop above.
+You're right. The cleaner solution is to keep the slave select groups i=
+n=20
+separate spix_ss_groups[] arrays. This also results in additional=20
+spix_ss pinmux functions. As a result this will be rather similar to th=
+e=20
+PC, WP and CD signals for SDIO. I'll change that and rework my patch.
 
-    I don't want to declare the same variable twice, so prefer doing gcc's 
-work of optimizing loop induction variable myself in this case. If you insist, 
-this can be changed...
+Thanks,
+Helmut
 
-[...]
->> @@ -622,7 +628,7 @@ int sh_pfc_register_pinctrl(struct sh_pf
->>   	pmx->pctl_desc.pmxops = &sh_pfc_pinmux_ops;
->>   	pmx->pctl_desc.confops = &sh_pfc_pinconf_ops;
->>   	pmx->pctl_desc.pins = pmx->pins;
->> -	pmx->pctl_desc.npins = pfc->info->nr_pins;
->> +	pmx->pctl_desc.npins = ret;
->>
->>   	pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
->>   	if (pmx->pctl == NULL)
-
-> Shouldn't you also fix sh_pfc_init_ranges() ? It includes the following code
-> that doesn't seem to handle holes properly.
-
->          for (i = 1, nr_ranges = 1; i < pfc->info->nr_pins; ++i) {
->                  if (pfc->info->pins[i-1].pin != pfc->info->pins[i].pin - 1)
->                          nr_ranges++;
->          }
-
-    Sorry, missed it, will try to deal with this as well...
-
-> Please make sure that sh_pfc_get_pin_index() doesn't start blowing up
-> afterwards though.
-
-    Will do.
-
-WBR, Sergei
-
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
