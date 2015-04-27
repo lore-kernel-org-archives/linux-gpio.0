@@ -1,41 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
- GPIOLIB is not enabled
-Date: Mon, 27 Apr 2015 15:05:14 +0200
-Message-ID: <CACRpkdbLRaEshEw-zCr49VUxULQ-gfT5LnHEL7Gz7jWr7NGOfg@mail.gmail.com>
-References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
-	<CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
-	<20150306085957.GC10717@pengutronix.de>
-	<CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
-	<CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: change gpio pin from unsigned to signed in acpi callback
+Date: Mon, 27 Apr 2015 15:21:28 +0200
+Message-ID: <CACRpkdasZJpBQLSp_pcv+Uzqez4OwM3GhDoggWcWXMY_budLvA@mail.gmail.com>
+References: <1428618310-10229-1-git-send-email-qipeng.zha@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:35468 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932805AbbD0NFP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:05:15 -0400
-Received: by oign205 with SMTP id n205so88052848oig.2
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:05:14 -0700 (PDT)
-In-Reply-To: <CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34799 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932620AbbD0NV3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:21:29 -0400
+Received: by obfe9 with SMTP id e9so82767463obf.1
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:21:28 -0700 (PDT)
+In-Reply-To: <1428618310-10229-1-git-send-email-qipeng.zha@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "qipeng.zha" <qipeng.zha@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, Alan Cox <alan@linux.intel.com>
 
-On Thu, Apr 9, 2015 at 4:20 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+On Fri, Apr 10, 2015 at 12:25 AM, qipeng.zha <qipeng.zha@intel.com> wrote:
 
-> Having GPIO disabled means there is no GPIO support, including the
-> ability to look for GPIOs. -ENOSYS is a well-documented error-code
-> which meaning also applies to the gpio_*_optional functions (we don't
-> have support for the operation you requested). If a driver or
-> architecture really, really needs GPIO support they can require or
-> depend on CONFIG_GPIOLIB, and the problem goes away. If they can work
-> with and without gpiolib, then they should check for -ENOSYS when they
-> request GPIOs and behave accordingly.
+> From: "qipeng.zha" <qipeng.zha@intel.com>
+>
+> The signed error will be wrongly used as valid gpio offset
+>
+> Reported-by: David Binderman <dcb314@hotmail.com>
+> Signed-off-by: Alan Cox <alan@linux.intel.com>
+> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
 
-Makes sense. We have ARCH_WANT_OPTIONAL_GPIOLIB and
-ARCH_REQUIRE_GPIOLIB for this reason.
+Patch applied for fixes with Mika's ACK.
 
 Yours,
 Linus Walleij
