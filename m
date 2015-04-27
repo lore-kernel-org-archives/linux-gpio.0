@@ -1,38 +1,32 @@
-From: Fabian Frederick <fabf@skynet.be>
-Subject: [PATCH 1/1 linux-next RESEND] pinctrl: use ERR_CAST instead of ERR_PTR/PTR_ERR
-Date: Mon, 27 Apr 2015 18:04:05 +0200
-Message-ID: <1430150646-21946-1-git-send-email-fabf@skynet.be>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH][RESEND] mdio-mux-gpio: use new gpiod_get_array and
+ gpiod_put_array functions
+Date: Mon, 27 Apr 2015 13:36:06 -0400 (EDT)
+Message-ID: <20150427.133606.779959918209009417.davem@davemloft.net>
+References: <5503716.QxOoBLSTJz@pcimr>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailrelay103.isp.belgacom.be ([195.238.20.130]:8159 "EHLO
-	mailrelay103.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752967AbbD0QEX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 27 Apr 2015 12:04:23 -0400
+Received: from shards.monkeyblade.net ([149.20.54.216]:56218 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932203AbbD0RgI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 13:36:08 -0400
+In-Reply-To: <5503716.QxOoBLSTJz@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Fabian Frederick <fabf@skynet.be>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: imr@rtschenk.de
+Cc: netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, acourbot@nvidia.com
 
-Inspired by scripts/coccinelle/api/err_cast.cocci
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Date: Mon, 27 Apr 2015 10:37:31 +0200
 
-Signed-off-by: Fabian Frederick <fabf@skynet.be>
----
- include/linux/pinctrl/consumer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Use the new gpiod_get_array and gpiod_put_array functions
+> (added to mainline in the v4.1 merge window) for obtaining and
+> disposing of GPIO descriptors.
+> 
+> Cc: David Miller <davem@davemloft.net>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index 18eccef..d7e5d60 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -142,7 +142,7 @@ static inline struct pinctrl * __must_check pinctrl_get_select(
- 	s = pinctrl_lookup_state(p, name);
- 	if (IS_ERR(s)) {
- 		pinctrl_put(p);
--		return ERR_PTR(PTR_ERR(s));
-+		return ERR_CAST(s);
- 	}
- 
- 	ret = pinctrl_select_state(p, s);
--- 
-1.9.1
-
+Applied.
