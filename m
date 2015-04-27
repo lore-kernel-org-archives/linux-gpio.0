@@ -1,33 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: bcm-kona: Implement get_direction callback
-Date: Mon, 27 Apr 2015 15:30:52 +0200
-Message-ID: <CACRpkdYhCyoBPSudP9C5jx-sLbTSvpKLPjeu07GicUgPLWOk3w@mail.gmail.com>
-References: <1428911760.25188.0.camel@phoenix>
+Subject: Re: [PATCH] pinctrl: qcom-spmi: Fix pin direction configuration
+Date: Mon, 27 Apr 2015 15:34:20 +0200
+Message-ID: <CACRpkdY+vV0uznsthJukOWQxMexj_yesj1g5Z68wMc8aAsg+GA@mail.gmail.com>
+References: <1429282249-30450-1-git-send-email-ivan.ivanov@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:36156 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932653AbbD0Nax (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:30:53 -0400
-Received: by obbeb7 with SMTP id eb7so82919427obb.3
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:30:53 -0700 (PDT)
-In-Reply-To: <1428911760.25188.0.camel@phoenix>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35588 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752935AbbD0NeV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:34:21 -0400
+Received: by oign205 with SMTP id n205so88782412oig.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:34:20 -0700 (PDT)
+In-Reply-To: <1429282249-30450-1-git-send-email-ivan.ivanov@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 
-On Mon, Apr 13, 2015 at 9:56 AM, Axel Lin <axel.lin@ingics.com> wrote:
+On Fri, Apr 17, 2015 at 4:50 PM, Ivan T. Ivanov <ivan.ivanov@linaro.org=
+> wrote:
 
-> Implement gpio_chip's get_direction() callback, that lets other drivers get
-> particular GPIOs direction using gpiod_get_direction().
+> Pin direction configuration was incorrectly overwritten
+> by output and function values in set_mux(). Fix this.
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
-> v2: Make bcm_kona_gpio_get_dir explicitly return GPIOF_DIR_IN or GPIOF_DIR_OUT.
+> Signed-off-by: Ivan T. Ivanov <ivan.ivanov@linaro.org>
 
-Patch applied with Ray's review tag.
+Patch applied for fixes, I guess Bj=C3=B6rn is also happy with this.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
