@@ -1,143 +1,61 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH][RESEND] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
-Date: Mon, 27 Apr 2015 10:37:31 +0200
-Message-ID: <5503716.QxOoBLSTJz@pcimr>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 06/23] gpio: sysfs: clean up chip class-device handling
+Date: Mon, 27 Apr 2015 10:47:25 +0200
+Message-ID: <20150427084725.GC27877@localhost>
+References: <1429630951-27082-1-git-send-email-johan@kernel.org>
+ <1429630951-27082-7-git-send-email-johan@kernel.org>
+ <CAAVeFuLFc8A7opQXuy0LkTfw1dxjzCgdyCATR0dXv6K=GSOC7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:59889 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932094AbbD0Ihg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 04:37:36 -0400
+Received: from mail-la0-f43.google.com ([209.85.215.43]:33124 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932217AbbD0IrZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 04:47:25 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuLFc8A7opQXuy0LkTfw1dxjzCgdyCATR0dXv6K=GSOC7g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: netdev@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Use the new gpiod_get_array and gpiod_put_array functions
-(added to mainline in the v4.1 merge window) for obtaining and
-disposing of GPIO descriptors.
+On Mon, Apr 27, 2015 at 12:54:41PM +0900, Alexandre Courbot wrote:
+> On Wed, Apr 22, 2015 at 12:42 AM, Johan Hovold <johan@kernel.org> wrote:
+> > Clean gpio-chip class device registration and deregistration.
+> >
+> > The class device is registered when a gpio-chip is added (or from
+> > gpiolib_sysfs_init post-core init call), and deregistered when the chip
+> > is removed.
+> >
+> > Store the class device in struct gpio_chip directly rather than do a
+> > class-device lookup on deregistration. This also removes the need for
+> > the exported flag.
+> >
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Cc: David Miller <davem@davemloft.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
- drivers/net/phy/mdio-mux-gpio.c |   60 +++++++++++-----------------------------
- 1 file changed, 17 insertions(+), 43 deletions(-)
+> > diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+> > index f1b36593ec9f..8c26855fc6ec 100644
+> > --- a/include/linux/gpio/driver.h
+> > +++ b/include/linux/gpio/driver.h
+> > @@ -20,6 +20,7 @@ struct seq_file;
+> >   * struct gpio_chip - abstract a GPIO controller
+> >   * @label: for diagnostics
+> >   * @dev: optional device providing the GPIOs
+> > + * @cdev: class device (may be NULL)
+> 
+> Maybe a comment explaining that this field is non-NULL when a chip is
+> exported would be useful to understand how it is used in the code?
 
-diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-index 320eb15..c49ad09 100644
---- a/drivers/net/phy/mdio-mux-gpio.c
-+++ b/drivers/net/phy/mdio-mux-gpio.c
-@@ -12,33 +12,30 @@
- #include <linux/module.h>
- #include <linux/phy.h>
- #include <linux/mdio-mux.h>
--#include <linux/of_gpio.h>
-+#include <linux/gpio/consumer.h>
- 
- #define DRV_VERSION "1.1"
- #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
- 
--#define MDIO_MUX_GPIO_MAX_BITS 8
--
- struct mdio_mux_gpio_state {
--	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
--	unsigned int num_gpios;
-+	struct gpio_descs *gpios;
- 	void *mux_handle;
- };
- 
- static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- 				   void *data)
- {
--	int values[MDIO_MUX_GPIO_MAX_BITS];
--	unsigned int n;
- 	struct mdio_mux_gpio_state *s = data;
-+	int values[s->gpios->ndescs];
-+	unsigned int n;
- 
- 	if (current_child == desired_child)
- 		return 0;
- 
--	for (n = 0; n < s->num_gpios; n++) {
-+	for (n = 0; n < s->gpios->ndescs; n++)
- 		values[n] = (desired_child >> n) & 1;
--	}
--	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
-+
-+	gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
- 
- 	return 0;
- }
-@@ -46,56 +43,33 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- static int mdio_mux_gpio_probe(struct platform_device *pdev)
- {
- 	struct mdio_mux_gpio_state *s;
--	int num_gpios;
--	unsigned int n;
- 	int r;
- 
--	if (!pdev->dev.of_node)
--		return -ENODEV;
--
--	num_gpios = of_gpio_count(pdev->dev.of_node);
--	if (num_gpios <= 0 || num_gpios > MDIO_MUX_GPIO_MAX_BITS)
--		return -ENODEV;
--
- 	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
- 	if (!s)
- 		return -ENOMEM;
- 
--	s->num_gpios = num_gpios;
--
--	for (n = 0; n < num_gpios; ) {
--		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
--							 GPIOD_OUT_LOW);
--		if (IS_ERR(gpio)) {
--			r = PTR_ERR(gpio);
--			goto err;
--		}
--		s->gpio[n] = gpio;
--		n++;
--	}
-+	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
-+	if (IS_ERR(s->gpios))
-+		return PTR_ERR(s->gpios);
- 
- 	r = mdio_mux_init(&pdev->dev,
- 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s);
- 
--	if (r == 0) {
--		pdev->dev.platform_data = s;
--		return 0;
--	}
--err:
--	while (n) {
--		n--;
--		gpiod_put(s->gpio[n]);
-+	if (r != 0) {
-+		gpiod_put_array(s->gpios);
-+		return r;
- 	}
--	return r;
-+
-+	pdev->dev.platform_data = s;
-+	return 0;
- }
- 
- static int mdio_mux_gpio_remove(struct platform_device *pdev)
- {
--	unsigned int n;
- 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
- 	mdio_mux_uninit(s->mux_handle);
--	for (n = 0; n < s->num_gpios; n++)
--		gpiod_put(s->gpio[n]);
-+	gpiod_put_array(s->gpios);
- 	return 0;
- }
- 
---
-2.0.5
+I've added comments where the field is used. I didn't want to get into
+explaining sysfs implementation details in the header file, but the "may
+be NULL" is there as a hint to actually look at the code.
 
+And a gpio chip will always be registered with driver core (rather than
+"exported" ;) ) until it is removed. [ Currently we also allow for
+"late" registration, though. ]
+
+This is related to the issue discussed in my last mail, and again the
+plan is to let chip registration be used for more than the sysfs
+interface.
+
+Johan
