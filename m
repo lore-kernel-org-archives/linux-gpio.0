@@ -1,50 +1,39 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 07/23] gpio: sysfs: rename gpiochip registration functions
-Date: Mon, 27 Apr 2015 11:05:10 +0200
-Message-ID: <20150427090510.GE27877@localhost>
-References: <1429630951-27082-1-git-send-email-johan@kernel.org>
- <1429630951-27082-8-git-send-email-johan@kernel.org>
- <CAAVeFuLOwa53YgcHVj9uGa+KLpV2Et-iEAwKEK3vhtJgQSJH4Q@mail.gmail.com>
- <20150427082753.GB27877@localhost>
- <CAAVeFuKRF2x+88Yz_64XYstSuk-BZGuYuZrRC-wWtaiwbLrJUw@mail.gmail.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/8] mfd: arizona: Add support for WM8998 and WM1814
+Date: Mon, 27 Apr 2015 13:40:19 +0100
+Message-ID: <20150427124019.GA3622@opensource.wolfsonmicro.com>
+References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com> <1429619636-25478-4-git-send-email-rf@opensource.wolfsonmicro.com> <20150422110808.GU22845@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44920 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932776AbbD0Mk0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 27 Apr 2015 08:40:26 -0400
 Content-Disposition: inline
-In-Reply-To: <CAAVeFuKRF2x+88Yz_64XYstSuk-BZGuYuZrRC-wWtaiwbLrJUw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20150422110808.GU22845@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
 
-On Mon, Apr 27, 2015 at 05:50:54PM +0900, Alexandre Courbot wrote:
-> On Mon, Apr 27, 2015 at 5:27 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Apr 27, 2015 at 12:54:36PM +0900, Alexandre Courbot wrote:
-> >> On Wed, Apr 22, 2015 at 12:42 AM, Johan Hovold <johan@kernel.org> wrote:
-> >> > Rename the gpio-chip export/unexport functions to the more descriptive
-> >> > names gpiochip_register and gpiochip_unregister.
-> >>
-> >> Since these functions are related to sysfs, wouldn't
-> >> gpiochip_sysfs_export (or gpiochip_sysfs_register, although the former
-> >> sounds better to me) be even more descriptive?
-> >
-> > I'm trying to get rid of the made up notion of "exporting" things. What
-> > we are doing is to register devices with driver core, and that involves
-> > a representation is sysfs.
-> >
-> > Eventually, a gpio chip should always be registered with driver core and
-> > this is not directly related to the (by then hopefully legacy)
-> > sysfs-interface.
+On Wed, Apr 22, 2015 at 12:08:08PM +0100, Mark Brown wrote:
+> On Tue, Apr 21, 2015 at 01:33:51PM +0100, Richard Fitzgerald wrote:
 > 
-> I understand and agree, but even after your patch series, registration
-> of a gpio chip with the driver core is still dependent on the
-> CONFIG_GPIO_SYSFS option. So maybe you could push the logic further
-> and either always register GPIO chips (effectively moving the call to
-> device_create into gpiolib.c) and only keep the legacy bits in
-> gpiolib-sysfs.c?
+> > +	switch (arizona->type) {
+> > +	case WM8998:
+> > +	case WM1814:
+> > +		/* Some bits are shifted on WM8998,
+> > +		 * rearrange to match the standard bit layout
+> > +		 */
+> > +		val[0] = ((val[0] & 0x60e0) >> 1) |
+> > +			 ((val[0] & 0x1e00) >> 2) |
+> > +			 (val[0] & 0x000f);
+> > +		break;
+> 
+> Are you sure this approach is going to scale (and avoid confusion)?
 
-That is the plan yes, but there's only so much I can do in one series.
-;) The current crazy sysfs API also prevents the decoupling of the sysfs
-interface from chip device registration.
-
-Johan
+It's a total one-off for the WM8998/WM1814, no other codecs have
+this shifted-bit-position problem. This shouldn't happen for any
+future codecs, so I don't feel like it's worth over-complicating it.
