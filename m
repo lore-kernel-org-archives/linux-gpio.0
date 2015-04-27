@@ -1,39 +1,38 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/8] mfd: arizona: Add support for WM8998 and WM1814
-Date: Mon, 27 Apr 2015 13:40:19 +0100
-Message-ID: <20150427124019.GA3622@opensource.wolfsonmicro.com>
-References: <1429619636-25478-1-git-send-email-rf@opensource.wolfsonmicro.com> <1429619636-25478-4-git-send-email-rf@opensource.wolfsonmicro.com> <20150422110808.GU22845@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Subject: [PATCH 1/2] pinctrl: single: Constify irq_domain_ops
+Date: Mon, 27 Apr 2015 21:54:06 +0900
+Message-ID: <1430139247-4198-1-git-send-email-k.kozlowski.k@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44920 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932776AbbD0Mk0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 27 Apr 2015 08:40:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20150422110808.GU22845@sirena.org.uk>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:33013 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932498AbbD0Myt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 08:54:49 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, ckeepax@opensource.wolfsonmicro.com, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org
+To: Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
-On Wed, Apr 22, 2015 at 12:08:08PM +0100, Mark Brown wrote:
-> On Tue, Apr 21, 2015 at 01:33:51PM +0100, Richard Fitzgerald wrote:
-> 
-> > +	switch (arizona->type) {
-> > +	case WM8998:
-> > +	case WM1814:
-> > +		/* Some bits are shifted on WM8998,
-> > +		 * rearrange to match the standard bit layout
-> > +		 */
-> > +		val[0] = ((val[0] & 0x60e0) >> 1) |
-> > +			 ((val[0] & 0x1e00) >> 2) |
-> > +			 (val[0] & 0x000f);
-> > +		break;
-> 
-> Are you sure this approach is going to scale (and avoid confusion)?
+The irq_domain_ops are not modified by the driver and the irqdomain core
+code accepts pointer to a const data.
 
-It's a total one-off for the WM8998/WM1814, no other codecs have
-this shifted-bit-position problem. This shouldn't happen for any
-future codecs, so I don't feel like it's worth over-complicating it.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 13b45f297727..968e352c595f 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1726,7 +1726,7 @@ static int pcs_irqdomain_map(struct irq_domain *d, unsigned int irq,
+ 	return 0;
+ }
+ 
+-static struct irq_domain_ops pcs_irqdomain_ops = {
++static const struct irq_domain_ops pcs_irqdomain_ops = {
+ 	.map = pcs_irqdomain_map,
+ 	.xlate = irq_domain_xlate_onecell,
+ };
+-- 
+2.1.0
+
