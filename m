@@ -1,34 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: change gpio pin from unsigned to signed in acpi callback
-Date: Mon, 27 Apr 2015 15:21:28 +0200
-Message-ID: <CACRpkdasZJpBQLSp_pcv+Uzqez4OwM3GhDoggWcWXMY_budLvA@mail.gmail.com>
-References: <1428618310-10229-1-git-send-email-qipeng.zha@intel.com>
+Subject: Re: [PATCH 1/2] pinctrl: mvebu: Fix mapping of pin 63 (gpo -> gpio)
+Date: Mon, 27 Apr 2015 15:24:44 +0200
+Message-ID: <CACRpkdbHV2jTnXwGv=CyjG9EvkFiuudjqj0-B2=r2QP4u5-ZVw@mail.gmail.com>
+References: <1428784160-19431-1-git-send-email-andrew@ncrmnt.org>
+	<1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34799 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932620AbbD0NV3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:21:29 -0400
-Received: by obfe9 with SMTP id e9so82767463obf.1
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:21:28 -0700 (PDT)
-In-Reply-To: <1428618310-10229-1-git-send-email-qipeng.zha@intel.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:34672 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932575AbbD0NYp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:24:45 -0400
+Received: by obfe9 with SMTP id e9so82842103obf.1
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:24:44 -0700 (PDT)
+In-Reply-To: <1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "qipeng.zha" <qipeng.zha@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, Alan Cox <alan@linux.intel.com>
+To: Andrew Andrianov <andrew@ncrmnt.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Wolfram Sang <wsa@the-dreams.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Apr 10, 2015 at 12:25 AM, qipeng.zha <qipeng.zha@intel.com> wrote:
+On Sat, Apr 11, 2015 at 10:29 PM, Andrew Andrianov <andrew@ncrmnt.org> wrote:
 
-> From: "qipeng.zha" <qipeng.zha@intel.com>
->
-> The signed error will be wrongly used as valid gpio offset
->
-> Reported-by: David Binderman <dcb314@hotmail.com>
-> Signed-off-by: Alan Cox <alan@linux.intel.com>
-> Signed-off-by: qipeng.zha <qipeng.zha@intel.com>
+> Signed-off-by: Andrew Andrianov <andrew@ncrmnt.org>
 
-Patch applied for fixes with Mika's ACK.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
