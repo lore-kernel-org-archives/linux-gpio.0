@@ -1,105 +1,41 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [PATCH 2/2] gpio: Constify irq_domain_ops
-Date: Mon, 27 Apr 2015 21:54:07 +0900
-Message-ID: <1430139247-4198-2-git-send-email-k.kozlowski.k@gmail.com>
-References: <1430139247-4198-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430139247-4198-1-git-send-email-k.kozlowski.k@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
+ GPIOLIB is not enabled
+Date: Mon, 27 Apr 2015 15:05:14 +0200
+Message-ID: <CACRpkdbLRaEshEw-zCr49VUxULQ-gfT5LnHEL7Gz7jWr7NGOfg@mail.gmail.com>
+References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
+	<20150306085957.GC10717@pengutronix.de>
+	<CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
+	<CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35468 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932805AbbD0NFP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 09:05:15 -0400
+Received: by oign205 with SMTP id n205so88052848oig.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Apr 2015 06:05:14 -0700 (PDT)
+In-Reply-To: <CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The irq_domain_ops are not modified by the driver and the irqdomain core
-code accepts pointer to a const data.
+On Thu, Apr 9, 2015 at 4:20 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
----
- drivers/gpio/gpio-bcm-kona.c  | 2 +-
- drivers/gpio/gpio-em.c        | 2 +-
- drivers/gpio/gpio-grgpio.c    | 2 +-
- drivers/gpio/gpio-mpc8xxx.c   | 2 +-
- drivers/gpio/gpio-sa1100.c    | 2 +-
- drivers/gpio/gpio-sodaville.c | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+> Having GPIO disabled means there is no GPIO support, including the
+> ability to look for GPIOs. -ENOSYS is a well-documented error-code
+> which meaning also applies to the gpio_*_optional functions (we don't
+> have support for the operation you requested). If a driver or
+> architecture really, really needs GPIO support they can require or
+> depend on CONFIG_GPIOLIB, and the problem goes away. If they can work
+> with and without gpiolib, then they should check for -ENOSYS when they
+> request GPIOs and behave accordingly.
 
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index b164ce837b43..cb89f37ffc02 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -534,7 +534,7 @@ static void bcm_kona_gpio_irq_unmap(struct irq_domain *d, unsigned int irq)
- 	irq_set_chip_data(irq, NULL);
- }
- 
--static struct irq_domain_ops bcm_kona_irq_ops = {
-+static const struct irq_domain_ops bcm_kona_irq_ops = {
- 	.map = bcm_kona_gpio_irq_map,
- 	.unmap = bcm_kona_gpio_irq_unmap,
- 	.xlate = irq_domain_xlate_twocell,
-diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-index 3cfcfc620c8e..fbf287307c4c 100644
---- a/drivers/gpio/gpio-em.c
-+++ b/drivers/gpio/gpio-em.c
-@@ -266,7 +266,7 @@ static int em_gio_irq_domain_map(struct irq_domain *h, unsigned int irq,
- 	return 0;
- }
- 
--static struct irq_domain_ops em_gio_irq_domain_ops = {
-+static const struct irq_domain_ops em_gio_irq_domain_ops = {
- 	.map	= em_gio_irq_domain_map,
- 	.xlate	= irq_domain_xlate_twocell,
- };
-diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-index 35a02770c8b0..0a8f7617e72e 100644
---- a/drivers/gpio/gpio-grgpio.c
-+++ b/drivers/gpio/gpio-grgpio.c
-@@ -332,7 +332,7 @@ static void grgpio_irq_unmap(struct irq_domain *d, unsigned int irq)
- 	spin_unlock_irqrestore(&priv->bgc.lock, flags);
- }
- 
--static struct irq_domain_ops grgpio_irq_domain_ops = {
-+static const struct irq_domain_ops grgpio_irq_domain_ops = {
- 	.map	= grgpio_irq_map,
- 	.unmap	= grgpio_irq_unmap,
- };
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index a65b75161aa4..20aa66f34f6e 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -329,7 +329,7 @@ static int mpc8xxx_gpio_irq_map(struct irq_domain *h, unsigned int irq,
- 	return 0;
- }
- 
--static struct irq_domain_ops mpc8xxx_gpio_irq_ops = {
-+static const struct irq_domain_ops mpc8xxx_gpio_irq_ops = {
- 	.map	= mpc8xxx_gpio_irq_map,
- 	.xlate	= irq_domain_xlate_twocell,
- };
-diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
-index bec397a60204..3fa22dade243 100644
---- a/drivers/gpio/gpio-sa1100.c
-+++ b/drivers/gpio/gpio-sa1100.c
-@@ -160,7 +160,7 @@ static int sa1100_gpio_irqdomain_map(struct irq_domain *d,
- 	return 0;
- }
- 
--static struct irq_domain_ops sa1100_gpio_irqdomain_ops = {
-+static const struct irq_domain_ops sa1100_gpio_irqdomain_ops = {
- 	.map = sa1100_gpio_irqdomain_map,
- 	.xlate = irq_domain_xlate_onetwocell,
- };
-diff --git a/drivers/gpio/gpio-sodaville.c b/drivers/gpio/gpio-sodaville.c
-index d8da36cd8123..65bc9f47a68e 100644
---- a/drivers/gpio/gpio-sodaville.c
-+++ b/drivers/gpio/gpio-sodaville.c
-@@ -125,7 +125,7 @@ static int sdv_xlate(struct irq_domain *h, struct device_node *node,
- 	return 0;
- }
- 
--static struct irq_domain_ops irq_domain_sdv_ops = {
-+static const struct irq_domain_ops irq_domain_sdv_ops = {
- 	.xlate = sdv_xlate,
- };
- 
--- 
-2.1.0
+Makes sense. We have ARCH_WANT_OPTIONAL_GPIOLIB and
+ARCH_REQUIRE_GPIOLIB for this reason.
+
+Yours,
+Linus Walleij
