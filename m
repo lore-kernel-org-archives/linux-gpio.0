@@ -1,32 +1,88 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH][RESEND] mdio-mux-gpio: use new gpiod_get_array and
- gpiod_put_array functions
-Date: Mon, 27 Apr 2015 13:36:06 -0400 (EDT)
-Message-ID: <20150427.133606.779959918209009417.davem@davemloft.net>
-References: <5503716.QxOoBLSTJz@pcimr>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH v2 2/2] doc: dt: add documentation for lpc1850-scu pinctrl driver
+Date: Tue, 28 Apr 2015 00:14:09 +0200
+Message-ID: <1430172849-3147-3-git-send-email-manabian@gmail.com>
+References: <1430172849-3147-1-git-send-email-manabian@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:56218 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932203AbbD0RgI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 13:36:08 -0400
-In-Reply-To: <5503716.QxOoBLSTJz@pcimr>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:33042 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965397AbbD0WOQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 18:14:16 -0400
+In-Reply-To: <1430172849-3147-1-git-send-email-manabian@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: imr@rtschenk.de
-Cc: netdev@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, acourbot@nvidia.com
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de, devicetree@vger.kernel.org, ariel.dalessandro@gmail.com, ezequiel@vanguardiasur.com.ar, Joachim Eastwood <manabian@gmail.com>
 
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Date: Mon, 27 Apr 2015 10:37:31 +0200
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt           | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
 
-> Use the new gpiod_get_array and gpiod_put_array functions
-> (added to mainline in the v4.1 merge window) for obtaining and
-> disposing of GPIO descriptors.
-> 
-> Cc: David Miller <davem@davemloft.net>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+new file mode 100644
+index 000000000000..df0309c57505
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+@@ -0,0 +1,57 @@
++NXP LPC18xx/43xx SCU pin controller Device Tree Bindings
++--------------------------------------------------------
++
++Required properties:
++- compatible		: Should be "nxp,lpc1850-scu"
++- reg			: Address and length of the register set for the device
++- clocks		: Clock specifier (see clock bindings for details)
++
++The lpc1850-scu driver uses the generic pin multiplexing and generic pin
++configuration documented in pinctrl-bindings.txt.
++
++The following generic nodes are supported:
++ - function
++ - pins
++ - bias-disable
++ - bias-pull-up
++ - bias-pull-down
++ - drive-strength
++ - input-enable
++ - input-disable
++ - input-schmitt-enable
++ - input-schmitt-disable
++ - slew-rate
++
++Not all pins support all properties so either refer to the NXP 1850/4350
++user manual or the pin table in the pinctrl-lpc18xx driver for supported
++pin properties.
++
++Example:
++pinctrl: pinctrl@40086000 {
++	compatible = "nxp,lpc1850-scu";
++	reg = <0x40086000 0x1000>;
++	clocks = <&ccu1 CLK_CPU_SCU>;
++
++	i2c0_pins: i2c0-pins {
++		i2c0_pins_cfg {
++			pins = "i2c0_scl", "i2c0_sda";
++			function = "i2c0";
++			input-enable;
++		};
++	};
++
++	uart0_pins: uart0-pins {
++		uart0_rx_cfg {
++			pins = "pf_11";
++			function = "uart0";
++			bias-disable;
++			input-enable;
++		};
++
++		uart0_tx_cfg {
++			pins = "pf_10";
++			function = "uart0";
++			bias-disable;
++		};
++	};
++};
+-- 
+1.8.0
 
-Applied.
