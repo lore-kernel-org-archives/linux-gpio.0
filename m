@@ -1,69 +1,143 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 08/23] gpio: remove gpiod_sysfs_set_active_low
-Date: Mon, 27 Apr 2015 17:34:38 +0900
-Message-ID: <CAAVeFuJH0d-08-HBjCx6zEvUJMhkVNFnGaK-X_FCucNbo9vbSA@mail.gmail.com>
-References: <1429630951-27082-1-git-send-email-johan@kernel.org>
- <1429630951-27082-9-git-send-email-johan@kernel.org> <CAAVeFuLc8U_fhmb=oyr+hTsH8XgkQU0Z-oSS4K3CRObqv_P_AQ@mail.gmail.com>
- <20150427081629.GA27877@localhost>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH][RESEND] mdio-mux-gpio: use new gpiod_get_array and gpiod_put_array functions
+Date: Mon, 27 Apr 2015 10:37:31 +0200
+Message-ID: <5503716.QxOoBLSTJz@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20150427081629.GA27877@localhost>
-Sender: linux-doc-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@zh-kernel.org, linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.9]:59889 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932094AbbD0Ihg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 04:37:36 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: netdev@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Apr 27, 2015 at 5:16 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Mon, Apr 27, 2015 at 12:54:15PM +0900, Alexandre Courbot wrote:
->> On Wed, Apr 22, 2015 at 12:42 AM, Johan Hovold <johan@kernel.org> wrote:
->> > Remove gpiod_sysfs_set_active_low (and gpio_sysfs_set_active_low) which
->> > allowed code to change the polarity of a gpio line even after it had
->> > been exported through sysfs.
->> >
->> > Drivers should not care, and generally does not know, about gpio-line
->> > polarity which is a hardware feature that needs to be described by
->> > firmware.
->> >
->> > It is currently possible to define gpio-line polarity in device-tree and
->> > acpi firmware or using platform data. Userspace can also change the
->> > polarity through sysfs.
->> >
->> > Note that drivers using the legacy gpio interface could still use
->> > GPIOF_ACTIVE_LOW to change the polarity before exporting the gpio.
->> >
->> > There are no in-kernel users of this interface.
->> >
->> > Cc: Jonathan Corbet <corbet@lwn.net>
->> > Cc: Harry Wei <harryxiyou@gmail.com>
->> > Cc: Arnd Bergmann <arnd@arndb.de>
->> > Cc: linux-doc@vger.kernel.org
->> > Cc: linux-kernel@zh-kernel.org
->> > Cc: linux-arch@vger.kernel.org
->> > Signed-off-by: Johan Hovold <johan@kernel.org>
->> > ---
->
->> > diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
->> > index 31434c5a90ef..8a95a954f514 100644
->> > --- a/drivers/gpio/gpiolib-sysfs.c
->> > +++ b/drivers/gpio/gpiolib-sysfs.c
->> > @@ -293,8 +293,8 @@ static int sysfs_set_active_low(struct gpio_desc *desc, struct device *dev,
->> >                 clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
->> >
->> >         /* reconfigure poll(2) support if enabled on one edge only */
->> > -       if (dev != NULL && (!!test_bit(FLAG_TRIG_RISE, &desc->flags) ^
->> > -                               !!test_bit(FLAG_TRIG_FALL, &desc->flags))) {
->> > +       if (!!test_bit(FLAG_TRIG_RISE, &desc->flags) ^
->> > +                               !!test_bit(FLAG_TRIG_FALL, &desc->flags)) {
->>
->> This change seems to be unrelated to this patch...
->
-> This helper is now only called from the attribute operation and dev
-> will never be NULL.
->
-> On the other hand, it was never called with a NULL argument before this
-> patch either (the test has always been bogus). Let me know if you prefer
-> this bit to be a separate patch.
+Use the new gpiod_get_array and gpiod_put_array functions
+(added to mainline in the v4.1 merge window) for obtaining and
+disposing of GPIO descriptors.
 
-Nope, after reading your explanation I understand why you want to have
-this here. Thanks for clarifying!
+Cc: David Miller <davem@davemloft.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+---
+ drivers/net/phy/mdio-mux-gpio.c |   60 +++++++++++-----------------------------
+ 1 file changed, 17 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 320eb15..c49ad09 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -12,33 +12,30 @@
+ #include <linux/module.h>
+ #include <linux/phy.h>
+ #include <linux/mdio-mux.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #define DRV_VERSION "1.1"
+ #define DRV_DESCRIPTION "GPIO controlled MDIO bus multiplexer driver"
+ 
+-#define MDIO_MUX_GPIO_MAX_BITS 8
+-
+ struct mdio_mux_gpio_state {
+-	struct gpio_desc *gpio[MDIO_MUX_GPIO_MAX_BITS];
+-	unsigned int num_gpios;
++	struct gpio_descs *gpios;
+ 	void *mux_handle;
+ };
+ 
+ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 				   void *data)
+ {
+-	int values[MDIO_MUX_GPIO_MAX_BITS];
+-	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = data;
++	int values[s->gpios->ndescs];
++	unsigned int n;
+ 
+ 	if (current_child == desired_child)
+ 		return 0;
+ 
+-	for (n = 0; n < s->num_gpios; n++) {
++	for (n = 0; n < s->gpios->ndescs; n++)
+ 		values[n] = (desired_child >> n) & 1;
+-	}
+-	gpiod_set_array_cansleep(s->num_gpios, s->gpio, values);
++
++	gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
+ 
+ 	return 0;
+ }
+@@ -46,56 +43,33 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ static int mdio_mux_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct mdio_mux_gpio_state *s;
+-	int num_gpios;
+-	unsigned int n;
+ 	int r;
+ 
+-	if (!pdev->dev.of_node)
+-		return -ENODEV;
+-
+-	num_gpios = of_gpio_count(pdev->dev.of_node);
+-	if (num_gpios <= 0 || num_gpios > MDIO_MUX_GPIO_MAX_BITS)
+-		return -ENODEV;
+-
+ 	s = devm_kzalloc(&pdev->dev, sizeof(*s), GFP_KERNEL);
+ 	if (!s)
+ 		return -ENOMEM;
+ 
+-	s->num_gpios = num_gpios;
+-
+-	for (n = 0; n < num_gpios; ) {
+-		struct gpio_desc *gpio = gpiod_get_index(&pdev->dev, NULL, n,
+-							 GPIOD_OUT_LOW);
+-		if (IS_ERR(gpio)) {
+-			r = PTR_ERR(gpio);
+-			goto err;
+-		}
+-		s->gpio[n] = gpio;
+-		n++;
+-	}
++	s->gpios = gpiod_get_array(&pdev->dev, NULL, GPIOD_OUT_LOW);
++	if (IS_ERR(s->gpios))
++		return PTR_ERR(s->gpios);
+ 
+ 	r = mdio_mux_init(&pdev->dev,
+ 			  mdio_mux_gpio_switch_fn, &s->mux_handle, s);
+ 
+-	if (r == 0) {
+-		pdev->dev.platform_data = s;
+-		return 0;
+-	}
+-err:
+-	while (n) {
+-		n--;
+-		gpiod_put(s->gpio[n]);
++	if (r != 0) {
++		gpiod_put_array(s->gpios);
++		return r;
+ 	}
+-	return r;
++
++	pdev->dev.platform_data = s;
++	return 0;
+ }
+ 
+ static int mdio_mux_gpio_remove(struct platform_device *pdev)
+ {
+-	unsigned int n;
+ 	struct mdio_mux_gpio_state *s = dev_get_platdata(&pdev->dev);
+ 	mdio_mux_uninit(s->mux_handle);
+-	for (n = 0; n < s->num_gpios; n++)
+-		gpiod_put(s->gpio[n]);
++	gpiod_put_array(s->gpios);
+ 	return 0;
+ }
+ 
+--
+2.0.5
+
