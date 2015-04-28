@@ -1,54 +1,61 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 07/23] gpio: sysfs: rename gpiochip registration functions
-Date: Tue, 28 Apr 2015 12:27:16 +0900
-Message-ID: <CAAVeFuKXArYBGNjUW8Dug0avGJoHTHZWD=FSxrTqTF+nRjBcOw@mail.gmail.com>
-References: <1429630951-27082-1-git-send-email-johan@kernel.org>
- <1429630951-27082-8-git-send-email-johan@kernel.org> <CAAVeFuLOwa53YgcHVj9uGa+KLpV2Et-iEAwKEK3vhtJgQSJH4Q@mail.gmail.com>
- <20150427082753.GB27877@localhost> <CAAVeFuKRF2x+88Yz_64XYstSuk-BZGuYuZrRC-wWtaiwbLrJUw@mail.gmail.com>
- <20150427090510.GE27877@localhost>
+Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
+ GPIOLIB is not enabled
+Date: Tue, 28 Apr 2015 12:31:37 +0900
+Message-ID: <CAAVeFuKMiHhT8o1PCETNTys8EATcVdy7xfy+P+o_2r6BwAXEgw@mail.gmail.com>
+References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
+ <20150306085957.GC10717@pengutronix.de> <CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
+ <CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com> <20150427152153.GN19431@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f182.google.com ([209.85.213.182]:37589 "EHLO
-	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932132AbbD1D1h (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 23:27:37 -0400
-In-Reply-To: <20150427090510.GE27877@localhost>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:36096 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932170AbbD1Db7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Apr 2015 23:31:59 -0400
+In-Reply-To: <20150427152153.GN19431@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Apr 27, 2015 at 6:05 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Mon, Apr 27, 2015 at 05:50:54PM +0900, Alexandre Courbot wrote:
->> On Mon, Apr 27, 2015 at 5:27 PM, Johan Hovold <johan@kernel.org> wrote:
->> > On Mon, Apr 27, 2015 at 12:54:36PM +0900, Alexandre Courbot wrote:
->> >> On Wed, Apr 22, 2015 at 12:42 AM, Johan Hovold <johan@kernel.org> wrote:
->> >> > Rename the gpio-chip export/unexport functions to the more descriptive
->> >> > names gpiochip_register and gpiochip_unregister.
->> >>
->> >> Since these functions are related to sysfs, wouldn't
->> >> gpiochip_sysfs_export (or gpiochip_sysfs_register, although the former
->> >> sounds better to me) be even more descriptive?
->> >
->> > I'm trying to get rid of the made up notion of "exporting" things. What
->> > we are doing is to register devices with driver core, and that involves
->> > a representation is sysfs.
->> >
->> > Eventually, a gpio chip should always be registered with driver core and
->> > this is not directly related to the (by then hopefully legacy)
->> > sysfs-interface.
->>
->> I understand and agree, but even after your patch series, registration
->> of a gpio chip with the driver core is still dependent on the
->> CONFIG_GPIO_SYSFS option. So maybe you could push the logic further
->> and either always register GPIO chips (effectively moving the call to
->> device_create into gpiolib.c) and only keep the legacy bits in
->> gpiolib-sysfs.c?
+On Tue, Apr 28, 2015 at 12:21 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> Hello,
 >
-> That is the plan yes, but there's only so much I can do in one series.
-> ;) The current crazy sysfs API also prevents the decoupling of the sysfs
-> interface from chip device registration.
+> On Thu, Apr 09, 2015 at 11:20:55AM +0900, Alexandre Courbot wrote:
+>> I should have replied one month ago, but if gpiolib is disabled, how
+>> can we use gpiolib-like logic to check the existence of a GPIO?
+>>
+>> Having GPIO disabled means there is no GPIO support, including the
+>> ability to look for GPIOs. -ENOSYS is a well-documented error-code
+>> which meaning also applies to the gpio_*_optional functions (we don'=
+t
+>> have support for the operation you requested). If a driver or
+>> architecture really, really needs GPIO support they can require or
+>> depend on CONFIG_GPIOLIB, and the problem goes away. If they can wor=
+k
+>> with and without gpiolib, then they should check for -ENOSYS when th=
+ey
+>> request GPIOs and behave accordingly.
+> What whould be the right behaviour in your eyes? I hope it's not
+>
+>         if (ret !=3D -ENOSYS)
+>                 return ret;
+>
+>         /* continue and ignore error */
 
-Sounds good then. This patch series is great anyway, so if Linus has
-nothing against it I hope we can merge it quickly.
+If a consumer absolutely needs a GPIO (most of the drivers out there I
+believe), then -ENOSYS can be handled like any other error. If it
+doesn't, and the driver is fine without GPIO support as well (meaning
+that it can somehow work even if a GPIO is declared, but GPIO support
+is not compiled in), then it will need to explicitly handle that
+particular error. That case should be rare though - most drivers will
+want to propagate -ENOSYS.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
