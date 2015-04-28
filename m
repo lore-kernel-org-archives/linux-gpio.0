@@ -1,177 +1,79 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v2 05/10] pinctrl: berlin: use the regmap provided by
- syscon
-Date: Tue, 28 Apr 2015 13:30:16 +0200
-Message-ID: <553F6F48.5060507@gmail.com>
-References: <1425654328-26298-1-git-send-email-antoine.tenart@free-electrons.com> <1425654328-26298-6-git-send-email-antoine.tenart@free-electrons.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:35967 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965048AbbD1LaV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Apr 2015 07:30:21 -0400
-In-Reply-To: <1425654328-26298-6-git-send-email-antoine.tenart@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 10/15] serial: stm32-usart: Add STM32 USART Driver
+Date: Tue, 28 Apr 2015 14:13:16 +0200
+Message-ID: <CALszF6CTFgVd4D6Ftkf0jW+Hcp53jqrutOHOagDXT-0705aHHQ@mail.gmail.com>
+References: <1428424234-28572-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1428424234-28572-11-git-send-email-mcoquelin.stm32@gmail.com>
+	<552678E7.4040107@mentor.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <552678E7.4040107-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Antoine Tenart <antoine.tenart@free-electrons.com>, linus.walleij@linaro.org
-Cc: jszhang@marvell.com, zmxu@marvell.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On 06.03.2015 16:05, Antoine Tenart wrote:
-> The Berlin pin controller nodes are now sub-nodes of the soc-controller
-> and the system-controller nodes. The register bank is managed by syscon,
-> which provides a regmap.
->
-> Remove the regmap setup from the Berlin pinctrl driver and use the one
-> provided by syscon.
->
-> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Hi Vladimir,
 
-Linus,
+Thanks for the review, and sorry for the late reply.
 
-would you mind to give your Acked-by for this and the next patch and
-let me take this through Berlin and ARM-SoC tree? The patches only
-touch berlin-specific subdirectories in pinctrl/ so there should be
-no merge issues expected.
+2015-04-09 15:04 GMT+02:00 Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>:
+> Hi Maxime,
+>
+> On 07.04.2015 19:30, Maxime Coquelin wrote:
+>> This drivers adds support to the STM32 USART controller, which is a
+>> standard serial driver.
+>>
+>> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Reviewed-by: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/tty/serial/Kconfig       |  17 +
+>>  drivers/tty/serial/Makefile      |   1 +
+>>  drivers/tty/serial/stm32-usart.c | 735 +++++++++++++++++++++++++++++++++++++++
+>>  include/uapi/linux/serial_core.h |   3 +
+>>  4 files changed, 756 insertions(+)
+>>  create mode 100644 drivers/tty/serial/stm32-usart.c
+>
+> [snip]
+>
+>> +static void stm32_console_write(struct console *co, const char *s, unsigned cnt)
+>> +{
+>> +     struct uart_port *port = &stm32_ports[co->index].port;
+>> +     unsigned long flags;
+>> +     u32 old_cr1, new_cr1;
+>> +     int locked = 1;
+>> +
+>> +     if (oops_in_progress) {
+>> +             locked = spin_trylock_irqsave(&port->lock, flags);
+>> +     } else {
+>> +             locked = 1;    ID
 
-Sebastian
+>
+> locked = 1 is done from the declaration.
+Right, I will fix this in next version
 
-> ---
->   drivers/pinctrl/berlin/berlin-bg2.c   | 22 ----------------------
->   drivers/pinctrl/berlin/berlin-bg2cd.c | 22 ----------------------
->   drivers/pinctrl/berlin/berlin-bg2q.c  | 22 ----------------------
->   drivers/pinctrl/berlin/berlin.c       |  9 ++++++---
->   4 files changed, 6 insertions(+), 69 deletions(-)
 >
-> diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
-> index b71a6fffef1b..368ec0b9b8ba 100644
-> --- a/drivers/pinctrl/berlin/berlin-bg2.c
-> +++ b/drivers/pinctrl/berlin/berlin-bg2.c
-> @@ -233,28 +233,6 @@ static int berlin2_pinctrl_probe(struct platform_device *pdev)
->   {
->   	const struct of_device_id *match =
->   		of_match_device(berlin2_pinctrl_match, &pdev->dev);
-> -	struct regmap_config *rmconfig;
-> -	struct regmap *regmap;
-> -	struct resource *res;
-> -	void __iomem *base;
-> -
-> -	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
-> -	if (!rmconfig)
-> -		return -ENOMEM;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> -
-> -	rmconfig->reg_bits = 32,
-> -	rmconfig->val_bits = 32,
-> -	rmconfig->reg_stride = 4,
-> -	rmconfig->max_register = resource_size(res);
-> -
-> -	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
-> -	if (IS_ERR(regmap))
-> -		return PTR_ERR(regmap);
->
->   	return berlin_pinctrl_probe(pdev, match->data);
->   }
-> diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
-> index 19ac5a22c947..6b9cae029ef7 100644
-> --- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-> +++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-> @@ -176,28 +176,6 @@ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
->   {
->   	const struct of_device_id *match =
->   		of_match_device(berlin2cd_pinctrl_match, &pdev->dev);
-> -	struct regmap_config *rmconfig;
-> -	struct regmap *regmap;
-> -	struct resource *res;
-> -	void __iomem *base;
-> -
-> -	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
-> -	if (!rmconfig)
-> -		return -ENOMEM;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> -
-> -	rmconfig->reg_bits = 32,
-> -	rmconfig->val_bits = 32,
-> -	rmconfig->reg_stride = 4,
-> -	rmconfig->max_register = resource_size(res);
-> -
-> -	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
-> -	if (IS_ERR(regmap))
-> -		return PTR_ERR(regmap);
->
->   	return berlin_pinctrl_probe(pdev, match->data);
->   }
-> diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
-> index bd9662e57ad3..11aa10cc0e3e 100644
-> --- a/drivers/pinctrl/berlin/berlin-bg2q.c
-> +++ b/drivers/pinctrl/berlin/berlin-bg2q.c
-> @@ -395,28 +395,6 @@ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
->   {
->   	const struct of_device_id *match =
->   		of_match_device(berlin2q_pinctrl_match, &pdev->dev);
-> -	struct regmap_config *rmconfig;
-> -	struct regmap *regmap;
-> -	struct resource *res;
-> -	void __iomem *base;
-> -
-> -	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
-> -	if (!rmconfig)
-> -		return -ENOMEM;
-> -
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(base))
-> -		return PTR_ERR(base);
-> -
-> -	rmconfig->reg_bits = 32,
-> -	rmconfig->val_bits = 32,
-> -	rmconfig->reg_stride = 4,
-> -	rmconfig->max_register = resource_size(res);
-> -
-> -	regmap = devm_regmap_init_mmio(&pdev->dev, base, rmconfig);
-> -	if (IS_ERR(regmap))
-> -		return PTR_ERR(regmap);
->
->   	return berlin_pinctrl_probe(pdev, match->data);
->   }
-> diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
-> index 7f0b0f93242b..2e3a8b8858ec 100644
-> --- a/drivers/pinctrl/berlin/berlin.c
-> +++ b/drivers/pinctrl/berlin/berlin.c
-> @@ -12,6 +12,7 @@
->
->   #include <linux/io.h>
->   #include <linux/module.h>
-> +#include <linux/mfd/syscon.h>
->   #include <linux/of.h>
->   #include <linux/of_address.h>
->   #include <linux/of_device.h>
-> @@ -295,13 +296,15 @@ int berlin_pinctrl_probe(struct platform_device *pdev,
->   			 const struct berlin_pinctrl_desc *desc)
->   {
->   	struct device *dev = &pdev->dev;
-> +	struct device_node *parent_np = of_get_parent(dev->of_node);
->   	struct berlin_pinctrl *pctrl;
->   	struct regmap *regmap;
->   	int ret;
->
-> -	regmap = dev_get_regmap(&pdev->dev, NULL);
-> -	if (!regmap)
-> -		return -ENODEV;
-> +	regmap = syscon_node_to_regmap(parent_np);
-> +	of_node_put(parent_np);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
->
->   	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
->   	if (!pctrl)
->
+> Also do you want to add "if (port->sysrq) locked = 0;" check?
 
+Yes, that makes sense. It will be also in v7.
+>
+>> +             spin_lock_irqsave(&port->lock, flags);
+>> +     }
+>> +
+
+
+>
+> [snip]
+>
+> Everything else is fine from point of view.
+>
+> Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+
+Regards,
+Maxime
+>
+> --
+> With best wishes,
+> Vladimir
