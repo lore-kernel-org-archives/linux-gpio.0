@@ -1,48 +1,60 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 2/2] i2c / ACPI: Assign IRQ for devices that have GpioInt automatically
-Date: Tue, 28 Apr 2015 18:05:07 +0300
-Message-ID: <1430233507-29389-3-git-send-email-mika.westerberg@linux.intel.com>
+From: sathyanarayanan kuppuswamy
+	<sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH 0/2] ACPI: Translate Linux IRQ number directly from GpioInt
+Date: Tue, 28 Apr 2015 10:36:48 -0700
+Message-ID: <553FC530.1020305@linux.intel.com>
 References: <1430233507-29389-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:52990 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030410AbbD1RhB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 28 Apr 2015 13:37:01 -0400
 In-Reply-To: <1430233507-29389-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Octavian Purdila <octavian.purdila@intel.com>, Robert Dolca <robert.dolca@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Octavian Purdila <octavian.purdila@intel.com>, Robert Dolca <robert.dolca@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
 
-Following what DT already does. If the device does not have ACPI Interrupt
-resource but instead it has one or more GpioInt resources listed below it,
-we take the first GpioInt resource, convert it to suitable Linux IRQ number
-and pass it to the driver instead.
 
-This makes drivers simpler because the don't need to care about GPIOs at
-all if only thing they need is interrupt.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/i2c/i2c-core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+On 04/28/2015 08:05 AM, Mika Westerberg wrote:
+> Hi,
+>
+> Currently drivers for ACPI enumerated devices that have their interrupt
+> line connected to a GPIO controller instead of IO-APIC are required to do
+> complete gpiod_get()/gpiod_to_irq() etc. dance themselves. This adds
+> unnecessary lines of code to these drivers.
+>
+> It turned out that DT solved the problem already with introduction of
+> of_irq_get() which is able to handle GPIO based interrupts as well through
+> irqchip API [1].
+>
+> Following two patches does the same for ACPI by introducing new function
+> acpi_dev_gpio_irq_get() that is then used in I2C core to automatically
+> translate ACPI GpioInt resource to Linux IRQ number.
+>
+> This requires that the boot firmware (BIOS/coreboot) configures these pins
+> correctly (input, etc) before handing over to OS. I've tested this on Intel
+> Baytrail, Braswell and Skylake based machines where this is true.
+Why not configure the GPIO pin as input in the API itself ?
+>
+> [1] https://lkml.org/lkml/2015/3/25/103
+>
+> Mika Westerberg (2):
+>    gpio / ACPI: Add support for retrieving GpioInt resources from a device
+>    i2c / ACPI: Assign IRQ for devices that have GpioInt automatically
+>
+>   drivers/gpio/gpiolib-acpi.c | 29 +++++++++++++++++++++++++++++
+>   drivers/i2c/i2c-core.c      |  9 +++++++--
+>   include/linux/acpi.h        |  7 +++++++
+>   3 files changed, 43 insertions(+), 2 deletions(-)
+>
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index 987c124432c5..01ef731281e2 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -632,8 +632,13 @@ static int i2c_device_probe(struct device *dev)
- 	if (!client)
- 		return 0;
- 
--	if (!client->irq && dev->of_node) {
--		int irq = of_irq_get(dev->of_node, 0);
-+	if (client->irq <= 0) {
-+		int irq = -ENOENT;
-+
-+		if (dev->of_node)
-+			irq = of_irq_get(dev->of_node, 0);
-+		else if (ACPI_COMPANION(dev))
-+			irq = acpi_dev_gpio_irq_get(ACPI_COMPANION(dev), 0);
- 
- 		if (irq == -EPROBE_DEFER)
- 			return irq;
 -- 
-2.1.4
+Sathyanarayanan Kuppuswamy
+Android kernel developer
 
