@@ -1,74 +1,65 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] RFC: let gpiod_get_optional et all return NULL when
- GPIOLIB is not enabled
-Date: Tue, 28 Apr 2015 15:46:47 +0900
-Message-ID: <CAAVeFu+V4YpCRRV26VgACDKOpyc4k9rOxHb9gDxoEm2TXQk+0g@mail.gmail.com>
-References: <1423731809-4800-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <CACRpkdb6KcZx3WfTqUKemhQ0_OsqxBGQb_P5cXXZvgc3riakdA@mail.gmail.com>
- <20150306085957.GC10717@pengutronix.de> <CACRpkdYq70V8SG4XOPBCGWs__J4ehknZSucpO5OdXpMDj8GPKA@mail.gmail.com>
- <CAAVeFu+0bWSAUSaDGTUmPyj9JxEJn4yxF_hzab4CHp8YV1MuoA@mail.gmail.com>
- <20150427152153.GN19431@pengutronix.de> <CAAVeFuKMiHhT8o1PCETNTys8EATcVdy7xfy+P+o_2r6BwAXEgw@mail.gmail.com>
- <20150428064524.GV19431@pengutronix.de>
+From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v3 0/7] Add Mediatek MMC driver
+Date: Tue, 28 Apr 2015 17:48:38 +0800
+Message-ID: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:38290 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751656AbbD1GrI convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Apr 2015 02:47:08 -0400
-In-Reply-To: <20150428064524.GV19431@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 28, 2015 at 3:45 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello,
->
-> On Tue, Apr 28, 2015 at 12:31:37PM +0900, Alexandre Courbot wrote:
->> On Tue, Apr 28, 2015 at 12:21 AM, Uwe Kleine-K=C3=B6nig
->> <u.kleine-koenig@pengutronix.de> wrote:
->> > On Thu, Apr 09, 2015 at 11:20:55AM +0900, Alexandre Courbot wrote:
->> >> Having GPIO disabled means there is no GPIO support, including th=
-e
->> >> ability to look for GPIOs. -ENOSYS is a well-documented error-cod=
-e
->> >> which meaning also applies to the gpio_*_optional functions (we d=
-on't
->> >> have support for the operation you requested). If a driver or
->> >> architecture really, really needs GPIO support they can require o=
-r
->> >> depend on CONFIG_GPIOLIB, and the problem goes away. If they can =
-work
->> >> with and without gpiolib, then they should check for -ENOSYS when=
- they
->> >> request GPIOs and behave accordingly.
->> > What whould be the right behaviour in your eyes? I hope it's not
->> >
->> >         if (ret !=3D -ENOSYS)
->> >                 return ret;
->> >
->> >         /* continue and ignore error */
->>
->> If a consumer absolutely needs a GPIO (most of the drivers out there=
- I
->> believe), then -ENOSYS can be handled like any other error. If it
->> doesn't, and the driver is fine without GPIO support as well (meanin=
-g
->> that it can somehow work even if a GPIO is declared, but GPIO suppor=
-t
->> is not compiled in), then it will need to explicitly handle that
->> particular error. That case should be rare though - most drivers wil=
-l
->> want to propagate -ENOSYS.
-> Ack.
+This series enables MMC support on the MT8135/MT8173 platform.
+MT8135 has 5 MMC controllers and MT8173 has 4 MMC controllers.
 
-Of course if you can think of a more elegant way to handle this, by
-all means, please let us know. :)
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes base on Ulf and Sascha's comments
+Remove useless macros and use hex value
+Remove setting for ocr_avail
+Modify the flow of "set clock to 0"
+Fix the race condition of cancel_delayed_work
+Replace some dev_err to WARN_ON()
+Remove useless "ACCESS_ONCE"	
+Use clk_disable_unprepare() to instead of clk_disable() and clk_unprepare()
+Use clk_prepare_enable() to instead  of clk_prepare() and clk_enable()
+Fix the judgment of 1.8V IO
+Fix the judgment of DDR mode
+Make the enable/disable of vqmmc balanced
+Fix runtime pm flow by Ulf and Sascha's comments
+
+
+Chaotian Jing (3):
+  mmc: dt-bindings: add Mediatek MMC bindings
+  mmc: mediatek: Add Mediatek MMC driver
+  mmc: mediatek: Add PM support for MMC driver
+
+Eddie Huang (2):
+  arm64: dts: mediatek: Add MT8173 MMC dts
+  arm64: mediatek: Add Mediatek MMC support in defconfig
+
+Yingjoe Chen (2):
+  ARM: mediatek: dts: Add emmc support to mt8135
+  ARM: multi_v7_defconfig: Enable Mediatek MMC support multi-v7
+
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt |   33 +
+ arch/arm/boot/dts/mt8135-evbp1.dts               |  141 +++
+ arch/arm/boot/dts/mt8135.dtsi                    |   26 +
+ arch/arm/configs/multi_v7_defconfig              |    1 +
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts      |  115 ++
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi         |   22 +-
+ arch/arm64/configs/defconfig                     |    1 +
+ drivers/mmc/host/Kconfig                         |    8 +
+ drivers/mmc/host/Makefile                        |    1 +
+ drivers/mmc/host/mtk-sd.c                        | 1464 ++++++++++++++++++++++
+ 10 files changed, 1811 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/mtk-sd.txt
+ create mode 100644 drivers/mmc/host/mtk-sd.c
