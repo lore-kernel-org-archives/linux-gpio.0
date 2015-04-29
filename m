@@ -1,93 +1,56 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [RFC/RFT PATCH 2/2] gpio: omap: ensure that runtime pm will
- disable unused gpio banks
-Date: Wed, 29 Apr 2015 07:33:21 -0700
-Message-ID: <20150429143320.GA24469@atomide.com>
-References: <1425670017-19598-1-git-send-email-grygorii.strashko@linaro.org>
- <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org>
- <20150306231513.GB2651@atomide.com>
- <20150319230326.GP31346@atomide.com>
- <20150416162941.GI18048@atomide.com>
- <55314396.20907@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH v2 0/8] Add support for Wolfson WM8998 and WM1814 codecs
+Date: Wed, 29 Apr 2015 15:37:01 +0100
+Message-ID: <1430318229-28518-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47936 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1423087AbbD2OdX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 29 Apr 2015 10:33:23 -0400
-Content-Disposition: inline
-In-Reply-To: <55314396.20907@linaro.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52082 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1031690AbbD2Oho (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Apr 2015 10:37:44 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, ssantosh@kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com
+Cc: myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-* Grygorii.Strashko@linaro.org <grygorii.strashko@linaro.org> [150417 10:33]:
-> Hi Tony,
-> On 04/16/2015 07:29 PM, Tony Lindgren wrote:
-> > * Tony Lindgren <tony@atomide.com> [150319 16:08]:
-> >> * Tony Lindgren <tony@atomide.com> [150307 00:08]:
-> >>> * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150306 11:27]:
-> >>>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
-> >>>>
-> >>>> Now there are two points related to Runtime PM usage:
-> >>>> 1) bank state doesn't need to be checked in places where
-> >>>> Rintime PM is used, bacause Runtime PM maintains its
-> >>>> own usage counter:
-> >>>>        if (!BANK_USED(bank))
-> >>>>                 pm_runtime_get_sync(bank->dev);
-> >>>> so, it's safe to drop such checks.
-> >>>>
-> >>>> 2) There is a call of pm_runtime_get_sync() in omap_gpio_irq_type(),
-> >>>> but no corresponding put. As result, GPIO devices could be
-> >>>> powered on forever if at least one GPIO was used as IRQ.
-> >>>> Hence, allow powering off GPIO banks by adding missed
-> >>>> pm_runtime_put(bank->dev) at the end of omap_gpio_irq_type().
-> >>>
-> >>> Nice to see this happening, but I think before merging this we need
-> >>> to test to be sure that the pm_runtime calls actually match.. I'm
-> >>> not convinced right now.. We may still have uninitialized entry
-> >>> points similar to 3d009c8c61f9 ("gpio: omap: Fix bad device
-> >>> access with setup_irq()").
-> >>
-> >> OK so I finally got around testing this along with your bank
-> >> removal set. Looks like this patch causes a regression at least
-> >> with n900 keyboard LEDs with off-idle. The LED won't come back
-> >> on after restore from off-idle. Anyways, now we have something
-> >> reproducable :) So I'll try to debug it further at some point,
-> >> might be few days before I get to it.
-> > 
-> > Sorry for the delay, finally got around to this one :)
-> > 
-> > Here's what I came up with, only lightly tested so far. Note that
-> > we need to keep the PM runtime per bank, not per GPIO. Will repost
-> > a proper patch after some more testing.
-> 
-> I've had a opposite idea actually ;) - use Runtime PM on per-gpio basis as
-> it maintains all needed counters inside and we can be sure that
-> PM runtime callbacks will be called once per bank.
+This set of patches adds support for the Wolfson Microelectronics
+WM8998 and WM1814 codecs.
 
-Sorry looks like I missed this email earlier, the mail got buried
-in all the threads in my inbox.
+Richard Fitzgerald (8):
+  mfd: arizona: Split INx_MODE into two fields
+  ASoC: arizona: add defines for single-input gain control
+  mfd: arizona: Add support for WM8998 and WM1814
+  gpio: arizona: add support for WM8998 and WM1814
+  regulator: arizona: add support for WM8998 and WM1814
+  extcon: arizona: Add support for WM8998 and WM1814
+  ASoC: wm8998: Initial WM8998 codec driver
+  Documentation: Add WM8998/WM1814 device tree bindings
 
-Anyways, we still need per bank pm runtime for a while until we
-can make it per GPIO.
+ Documentation/devicetree/bindings/mfd/arizona.txt |   13 +-
+ drivers/extcon/extcon-arizona.c                   |   33 +-
+ drivers/gpio/gpio-arizona.c                       |    2 +
+ drivers/mfd/Kconfig                               |    6 +
+ drivers/mfd/Makefile                              |    3 +
+ drivers/mfd/arizona-core.c                        |  105 ++-
+ drivers/mfd/arizona-i2c.c                         |    8 +
+ drivers/mfd/arizona-irq.c                         |    9 +
+ drivers/mfd/arizona.h                             |    5 +
+ drivers/mfd/wm8998-tables.c                       | 1592 +++++++++++++++++++++
+ drivers/regulator/arizona-ldo1.c                  |    2 +
+ include/linux/mfd/arizona/core.h                  |    3 +
+ include/linux/mfd/arizona/pdata.h                 |    7 +-
+ include/linux/mfd/arizona/registers.h             |  247 +++-
+ sound/soc/codecs/Kconfig                          |    6 +
+ sound/soc/codecs/Makefile                         |    2 +
+ sound/soc/codecs/arizona.c                        |    7 +
+ sound/soc/codecs/arizona.h                        |    7 +-
+ sound/soc/codecs/wm8998.c                         | 1394 ++++++++++++++++++
+ sound/soc/codecs/wm8998.h                         |   23 +
+ 20 files changed, 3442 insertions(+), 32 deletions(-)
+ create mode 100644 drivers/mfd/wm8998-tables.c
+ create mode 100644 sound/soc/codecs/wm8998.c
+ create mode 100644 sound/soc/codecs/wm8998.h
 
-> Also, I've thought about moving the code from omap_enable_gpio_module()
-> into Runtime PM callbacks.
-> So, final goal - get rid of BANK_USED & LINE_USED.
-> 
-> Were you able to identify broken calls sequence?
+-- 
+1.7.2.5
 
-No, but it breaks things for omap3 off idle. And then I noticed all
-the duplicate code as discussed in the newer thread.
- 
-> Also, Pay attention pls, that omap2_gpio_prepare_for/resume_after_idle()
-> will be most probably a NOP now.
-
-Looks like we can't do that change yet, it breaks omap3 off idle.
-
-Regards,
-
-Tony
