@@ -1,76 +1,53 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH V3 2/2] pinctrl: Add Pistachio SoC pin control driver
-Date: Tue, 28 Apr 2015 17:49:25 -0700
-Message-ID: <CAL1qeaH8gg2Df=GbQdW+GvMEzzYgMgAZwO9LSerj=xYYWSnsBA@mail.gmail.com>
-References: <1428435862-14354-1-git-send-email-abrestic@chromium.org>
-	<1428435862-14354-3-git-send-email-abrestic@chromium.org>
-	<554016A5.7040209@imgtec.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <554016A5.7040209@imgtec.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, Paul Bolle <pebolle@tiscali.nl>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH V4 0/2] pinctrl: Support for IMG Pistachio
+Date: Tue, 28 Apr 2015 18:13:00 -0700
+Message-ID: <1430269982-24129-1-git-send-email-abrestic@chromium.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hartley <james.hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Apr 28, 2015 at 4:24 PM, Ezequiel Garcia
-<ezequiel.garcia@imgtec.com> wrote:
-> Andrew,
->
-> On 04/07/2015 04:44 PM, Andrew Bresticker wrote:
-> [..]
->> +static int pistachio_pinmux_enable(struct pinctrl_dev *pctldev,
->> +                                unsigned func, unsigned group)
->> +{
->> +     struct pistachio_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
->> +     const struct pistachio_pin_group *pg = &pctl->groups[group];
->> +     const struct pistachio_function *pf = &pctl->functions[func];
->> +     struct pinctrl_gpio_range *range;
->> +     unsigned int i;
->> +     u32 val;
->> +
->> +     if (pg->mux_reg > 0) {
->> +             for (i = 0; i < ARRAY_SIZE(pg->mux_option); i++) {
->> +                     if (pg->mux_option[i] == func)
->> +                             break;
->> +             }
->> +             if (i == ARRAY_SIZE(pg->mux_option)) {
->> +                     dev_err(pctl->dev, "Cannot mux pin %u to function %u\n",
->> +                             group, func);
->> +                     return -EINVAL;
->> +             }
->> +
->> +             val = pctl_readl(pctl, pg->mux_reg);
->> +             val &= ~(pg->mux_mask << pg->mux_shift);
->> +             val |= i << pg->mux_shift;
->> +             pctl_writel(pctl, val, pg->mux_reg);
->> +
->> +             if (pf->scenarios) {
->> +                     for (i = 0; i < pf->nscenarios; i++) {
->> +                             if (pf->scenarios[i] == group)
->> +                                     break;
->> +                     }
->> +                     if (WARN_ON(i == pf->nscenarios))
->> +                             return -EINVAL;
->> +
->> +                     val = pctl_readl(pctl, pf->scenario_reg);
->> +                     val &= ~(pf->scenario_mask << pf->scenario_shift);
->> +                     val |= i << pf->scenario_shift;
->> +                     pctl_writel(pctl, val, pf->scenario_reg);
->> +             }
->> +     }
->> +
->> +     range = pinctrl_find_gpio_range_from_pin(pctl->pctldev, group);
->> +     if (range)
->> +             gpio_disable(gc_to_bank(range->gc), group - range->pin_base);
->> +
->
-> If you plan to submit a v4, how about using "pg->pins" here instead of "group"?
->
-> Using "group" relies on having the same numberspace for the group and the pin,
-> and it'll break when introducing the RPU pinctrl.
+This series adds support for the system pin and GPIO controller on the IMG
+Pistachio SoC.  Pistachio's system pin controller manages 99 pins, 90 of
+which are MFIOs which can be muxed between multiple functions or used
+as GPIOs.  The GPIO control for the 90 MFIOs is broken up into banks
+of 16.  Pistachio also has a second pin controller, the RPU pin controller,
+which will be supported by a future patchset through an extension to this
+driver.
 
-Sure, will do.
+Tested on an IMG Pistachio BuB.  Based on v4.1-rc1.
 
--Andrew
+Changes from v3:
+ - Addressed review comments from Ezequiel.
+Changes from v2:
+ - Removed module stuff that ends up being compiled out.
+Changes from v1:
+ - Documented pin + function generic binding.
+ - Changed compatible string to "img,pistachio-system-pinctrl".
+ - Addressed some review comments.
+ - A couple of bug fixes.
+
+Cc: Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Cc: James Hartley <james.hartley-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Cc: James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+
+Andrew Bresticker (2):
+  pinctrl: Add Pistachio SoC pin control binding document
+  pinctrl: Add Pistachio SoC pin control driver
+
+ .../bindings/pinctrl/img,pistachio-pinctrl.txt     |  217 +++
+ drivers/pinctrl/Kconfig                            |    6 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-pistachio.c                | 1502 ++++++++++++++++++++
+ 4 files changed, 1726 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-pistachio.c
+
+-- 
+2.2.0.rc0.207.ga3a616c
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
