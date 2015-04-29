@@ -1,54 +1,68 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a73a4 platform_device_id entry
-Date: Wed, 29 Apr 2015 14:53:22 +0300
-Message-ID: <21370155.oZX1erNtOU@avalon>
-References: <1430216107-31501-1-git-send-email-geert+renesas@glider.be> <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
+From: Shobhit Kumar <shobhit.kumar@intel.com>
+Subject: [PATCH 0/8] Crystalcove (CRC) PMIC based panel and pwm
+	control
+Date: Wed, 29 Apr 2015 19:29:57 +0530
+Message-ID: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-pwm <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Povilas Staniulis <wdmonster@gmail.com>, David Airlie <airlied@linux.ie>, Shobhit Kumar <shobhit.kumar@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jani Nikula <jani.nikula@intel.com>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
-
-Thank you for the patch.
-
-On Tuesday 28 April 2015 12:15:07 Geert Uytterhoeven wrote:
-> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
-> legacy platform"), r8a73a4 is only supported in generic DT-only ARM
-> multi-platform builds.  The driver doesn't need to match platform
-> devices by name anymore, hence remove the corresponding
-> platform_device_id entry.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/pinctrl/sh-pfc/core.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> index 7b2c9495c3832410..287a3d048a5e1cf9 100644
-> --- a/drivers/pinctrl/sh-pfc/core.c
-> +++ b/drivers/pinctrl/sh-pfc/core.c
-> @@ -579,9 +579,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
->  }
-> 
->  static const struct platform_device_id sh_pfc_id_table[] = {
-> -#ifdef CONFIG_PINCTRL_PFC_R8A73A4
-> -	{ "pfc-r8a73a4", (kernel_ulong_t)&r8a73a4_pinmux_info },
-> -#endif
->  #ifdef CONFIG_PINCTRL_PFC_R8A7740
->  	{ "pfc-r8a7740", (kernel_ulong_t)&r8a7740_pinmux_info },
->  #endif
-
--- 
-Regards,
-
-Laurent Pinchart
-
+SGkgQWxsLApPbiBzb21lIG9mIHRoZSBCWVQgZGV2aWNlcywgZm9yIERTSSBwYW5lbHMsIHRoZSBw
+YW5lbCBlbmFibGUvZGlzYWJsZSBzaWduYWxzCmFuZCBiYWNrbGlnaHQgY29udHJvbCBhcmUgZG9u
+ZSB1c2luZyB0aGUgQ3J5c3RhbGNvdmUgUE1JQy4gVGhpcyBzZXJpZXMgcHJvdmlkZXMKc3VwcG9y
+dCBmb3IgdGhlIHNhbWUgYW5kIGhhcyBiZWVuIHJldmlld2VkIGVhcmxpZXIgb24gLSAKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNoaXZlcy9pbnRlbC1nZngvMjAxNS1NYXJjaC8wNjE5
+MDguaHRtbAoKVGhpcyBzZXJpZXMgYWRkcmVzc2VzIHRoZSByZXZpZXcgY29tbWVudHMgd2l0aCB0
+d28gb2YgdGhlIHBhdGNoZXMgYWxyZWFkeSBtZXJnZWQKaW4gbGludXgtbmV4dCBhcyAtIAoKaHR0
+cDovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9uZXh0L2xpbnV4LW5leHQu
+Z2l0L2NvbW1pdC8/aWQ9ZTE4OWNhNTZkOTFiYmYxZDNmZTJmODhhYjY4NThiZjkxOWQ0MmFkZgpo
+dHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L25leHQvbGludXgtbmV4
+dC5naXQvY29tbWl0Lz9pZD1jMjY0ZjExMTBkMjcxODVmODUzMTYwMmY1ZmNlNDAwYTZiYmNlOTQ2
+CgpCYXNpY2FsbHkgZm9sbG93aW5nIGFyZSBpbXBsZW1lbnRlZCAtIAoKMS4gR1BJTyBjb250cm9s
+IGZvciBwYW5lbCBlbmFibGUvZGlzYWJsZSB3aXRoIEdGWCBkZXZpY2UgYXMgY29uc3VtZXIKMi4g
+TmV3IFBXTSBjaGlwIGRyaXZlciBhZGRlZCBmb3IgQ1JDIFBNSUMgYmFzZWQgYmFja2xpZ2h0IGNv
+bnRyb2wKMy4gaTkxNSBpcyBtb2RpZmllZCB0byB1c2UgdGhlIENSQyBncGlvIGNoaXAgYW5kIHRo
+ZSBDUkMgUFdNIGNoaXAgdG8gZG8gCiAgIGJhY2tsaWdodCBjb250cm9sLiBUaGlzIGlzIG5vdyBh
+ZGRlZCBpbiB0aGUgZ2VuZXJpYyBwYW5lbCBiYWNrbGlnaHQKICAgY29udHJvbCBpbmZyYXN0cnVj
+dHVyZQoKQWxsIHRoZXNlIHBhdGNoZXMgaGF2ZSBiZWVuIHRlc3RlZCBvbiBBc3VzVDEwMCBhbmQg
+d29ya2luZyBmaW5lIHVzaW5nIAovc3lzL2NsYXNzL2JhY2tsaWdodC9pbnRlbF9iYWNrbGlnaHQg
+aW50ZXJmYWNlLgoKUGF0Y2hlcyBhcmUgYWxzbyB2ZXJpZmllZCBvbiBhbmRyb2lkLXg4NiB0cmVl
+IGZvciBBc3VzVDEwMC4KClJlZ2FyZHMKU2hvYmhpdAoKU2hvYmhpdCBLdW1hciAoOCk6CiAgZHJp
+dmVycy9ncGlvL2dwaW9saWI6IEFkZCBzdXBwb3J0IGZvciByZW1vdmluZyByZWdpc3RlcmVkIGNv
+bnN1bWVyCiAgICBsb29rdXAgdGFibGUKICBkcml2ZXJzL3B3bS9jb3JlOiBBZGQgc3VwcG9ydCB0
+byByZW1vdmUgcmVnaXN0ZXJlZCBjb25zdW1lciBsb29rdXAKICAgIHRhYmxlcwogIGRyaXZlcnMv
+bWZkOiBBZGQgbG9va3VwIHRhYmxlIGZvciBQYW5lbCBDb250cm9sIGFzIEdQSU8gc2lnbmFsCiAg
+ZHJpdmVycy9tZmQ6IEFkZCBQV00gY2VsbCBkZXZpY2UgZm9yIENyeXN0YWxjb3ZlIFBNSUMKICBk
+cml2ZXJzL21mZDogQUREIFBXTSBsb29rdXAgdGFibGUgZm9yIENSQyBQTUlDIGJhc2VkIFBXTQog
+IGRyaXZlcnMvcHdtOiBBZGQgQ3J5c3RhbGNvdmUgKENSQykgUFdNIGRyaXZlcgogIGRybS9pOTE1
+OiBVc2UgdGhlIENSQyBncGlvIGZvciBwYW5lbCBlbmFibGUvZGlzYWJsZQogIGRybS9pOTE1OiBC
+YWNrbGlnaHQgY29udHJvbCB1c2luZyBDUkMgUE1JQyBiYXNlZCBQV00gZHJpdmVyCgogZHJpdmVy
+cy9ncGlvL2dwaW9saWIuYyAgICAgICAgICAgICB8ICAxMyArKysKIGRyaXZlcnMvZ3B1L2RybS9p
+OTE1L2ludGVsX2Rydi5oICAgfCAgIDUgKysKIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rz
+aS5jICAgfCAgMzggKysrKysrKystCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kc2kuaCAg
+IHwgICA2ICsrCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9wYW5lbC5jIHwgIDkyICsrKysr
+KysrKysrKysrKysrKy0tCiBkcml2ZXJzL21mZC9pbnRlbF9zb2NfcG1pY19jb3JlLmMgIHwgIDI5
+ICsrKysrKysKIGRyaXZlcnMvbWZkL2ludGVsX3NvY19wbWljX2NyYy5jICAgfCAgIDMgKwogZHJp
+dmVycy9wd20vS2NvbmZpZyAgICAgICAgICAgICAgICB8ICAgNyArKwogZHJpdmVycy9wd20vTWFr
+ZWZpbGUgICAgICAgICAgICAgICB8ICAgMSArCiBkcml2ZXJzL3B3bS9jb3JlLmMgICAgICAgICAg
+ICAgICAgIHwgIDE3ICsrKysKIGRyaXZlcnMvcHdtL3B3bS1jcmMuYyAgICAgICAgICAgICAgfCAx
+NzEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogaW5jbHVkZS9saW51eC9n
+cGlvL21hY2hpbmUuaCAgICAgICB8ICAgMSArCiBpbmNsdWRlL2xpbnV4L3B3bS5oICAgICAgICAg
+ICAgICAgIHwgICA1ICsrCiAxMyBmaWxlcyBjaGFuZ2VkLCAzODEgaW5zZXJ0aW9ucygrKSwgNyBk
+ZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3B3bS9wd20tY3JjLmMKCi0t
+IAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+SW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
