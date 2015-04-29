@@ -1,45 +1,92 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH v2 4/8] gpio: arizona: add support for WM8998
-	and WM1814
-Date: Wed, 29 Apr 2015 15:37:05 +0100
-Message-ID: <1430318229-28518-5-git-send-email-rf@opensource.wolfsonmicro.com>
-References: <1430318229-28518-1-git-send-email-rf@opensource.wolfsonmicro.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Subject: Re: [RFC/RFT PATCH 2/2] gpio: omap: ensure that runtime pm will disable
+ unused gpio banks
+Date: Wed, 29 Apr 2015 07:59:04 -0700
+Message-ID: <5540F1B8.5030407@oracle.com>
+References: <1425670017-19598-1-git-send-email-grygorii.strashko@linaro.org> <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org> <20150306231513.GB2651@atomide.com> <20150319230326.GP31346@atomide.com> <20150416162941.GI18048@atomide.com> <55314396.20907@linaro.org> <20150429143320.GA24469@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1430318229-28518-1-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, myungjoo.ham@samsung.com, ckeepax@opensource.wolfsonmicro.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:40419 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423203AbbD2O5J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 10:57:09 -0400
+In-Reply-To: <20150429143320.GA24469@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, ssantosh@kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-arizona.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+On 4/29/15 7:33 AM, Tony Lindgren wrote:
+> * Grygorii.Strashko@linaro.org <grygorii.strashko@linaro.org> [150417 10:33]:
+>> Hi Tony,
+>> On 04/16/2015 07:29 PM, Tony Lindgren wrote:
+>>> * Tony Lindgren <tony@atomide.com> [150319 16:08]:
+>>>> * Tony Lindgren <tony@atomide.com> [150307 00:08]:
+>>>>> * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150306 11:27]:
+>>>>>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+>>>>>>
+>>>>>> Now there are two points related to Runtime PM usage:
+>>>>>> 1) bank state doesn't need to be checked in places where
+>>>>>> Rintime PM is used, bacause Runtime PM maintains its
+>>>>>> own usage counter:
+>>>>>>         if (!BANK_USED(bank))
+>>>>>>                  pm_runtime_get_sync(bank->dev);
+>>>>>> so, it's safe to drop such checks.
+>>>>>>
+>>>>>> 2) There is a call of pm_runtime_get_sync() in omap_gpio_irq_type(),
+>>>>>> but no corresponding put. As result, GPIO devices could be
+>>>>>> powered on forever if at least one GPIO was used as IRQ.
+>>>>>> Hence, allow powering off GPIO banks by adding missed
+>>>>>> pm_runtime_put(bank->dev) at the end of omap_gpio_irq_type().
+>>>>>
+>>>>> Nice to see this happening, but I think before merging this we need
+>>>>> to test to be sure that the pm_runtime calls actually match.. I'm
+>>>>> not convinced right now.. We may still have uninitialized entry
+>>>>> points similar to 3d009c8c61f9 ("gpio: omap: Fix bad device
+>>>>> access with setup_irq()").
+>>>>
+>>>> OK so I finally got around testing this along with your bank
+>>>> removal set. Looks like this patch causes a regression at least
+>>>> with n900 keyboard LEDs with off-idle. The LED won't come back
+>>>> on after restore from off-idle. Anyways, now we have something
+>>>> reproducable :) So I'll try to debug it further at some point,
+>>>> might be few days before I get to it.
+>>>
+>>> Sorry for the delay, finally got around to this one :)
+>>>
+>>> Here's what I came up with, only lightly tested so far. Note that
+>>> we need to keep the PM runtime per bank, not per GPIO. Will repost
+>>> a proper patch after some more testing.
+>>
+>> I've had a opposite idea actually ;) - use Runtime PM on per-gpio basis as
+>> it maintains all needed counters inside and we can be sure that
+>> PM runtime callbacks will be called once per bank.
+>
+> Sorry looks like I missed this email earlier, the mail got buried
+> in all the threads in my inbox.
+>
+> Anyways, we still need per bank pm runtime for a while until we
+> can make it per GPIO.
+>
+>> Also, I've thought about moving the code from omap_enable_gpio_module()
+>> into Runtime PM callbacks.
+>> So, final goal - get rid of BANK_USED & LINE_USED.
+>>
+>> Were you able to identify broken calls sequence?
+>
+> No, but it breaks things for omap3 off idle. And then I noticed all
+> the duplicate code as discussed in the newer thread.
+>
+>> Also, Pay attention pls, that omap2_gpio_prepare_for/resume_after_idle()
+>> will be most probably a NOP now.
+>
+> Looks like we can't do that change yet, it breaks omap3 off idle.
+>
+The issue is across OMAPs. Those stupid debounce clocks won't let the
+GPIO block to idle. They are called optional clocks but actually they
+aren't.
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index 052fbc8..ca00273 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -118,6 +118,8 @@ static int arizona_gpio_probe(struct platform_device *pdev)
- 	case WM5110:
- 	case WM8280:
- 	case WM8997:
-+	case WM8998:
-+	case WM1814:
- 		arizona_gpio->gpio_chip.ngpio = 5;
- 		break;
- 	default:
--- 
-1.7.2.5
+Regards,
+Santosh
