@@ -1,79 +1,108 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Thu, 30 Apr 2015 01:38:58 +0300
-Message-ID: <55415D82.2020407@cogentembedded.com>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com> <3656925.3GuTRhx1fV@avalon>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 6/8] extcon: arizona: Add support for WM8998 and WM1814
+Date: Thu, 30 Apr 2015 08:35:34 +0900
+Message-ID: <55416AC6.4070403@samsung.com>
+References: <1430318229-28518-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1430318229-28518-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:33254 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbbD2WjD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 18:39:03 -0400
-Received: by layy10 with SMTP id y10so31255457lay.0
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Apr 2015 15:39:01 -0700 (PDT)
-In-Reply-To: <3656925.3GuTRhx1fV@avalon>
+Received: from mailout3.samsung.com ([203.254.224.33]:39791 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379AbbD2Xfh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 19:35:37 -0400
+In-reply-to: <1430318229-28518-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-Hello.
+Hi Richard,
 
-On 03/03/2015 03:24 AM, Laurent Pinchart wrote:
+This patch didn't include any description?
+I think that you better to add the patch description.
 
->> The  pin array handled by sh_pfc_map_pins() may contain holes representing
->> non- existing pins. We have to first count the valid pins in order to
->> calculate the size  of the memory to be allocated, then to skip over the
->> non-existing pins when  initializing the allocated arrays, and then to
->> return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
->> success.
->>
->> As we have to touch devm_kzalloc() calls anyway, use more fitting
->> devm_kcalloc() instead which additionally checks the array size. And since
->> PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already zeroed out
->> 'pmx->configs' array.
+Thanks,
+Chanwoo Choi
 
-> I agree with this optimization, but I think it deserves a comment in the
-> source code that explicitly mentions PINMUX_TYPE_NONE, to make sure any later
-> rework changing the PINMUX_TYPE_NONE value would catch this.
 
-    Note that this is not just "drove by" optimization, I was trying to avoid
-the very need to explicitly initialize 'pmx->configs' array to PINMUX_TYPE_NONE...
-
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-[...]
-
->> @@ -622,7 +628,7 @@ int sh_pfc_register_pinctrl(struct sh_pf
->>   	pmx->pctl_desc.pmxops = &sh_pfc_pinmux_ops;
->>   	pmx->pctl_desc.confops = &sh_pfc_pinconf_ops;
->>   	pmx->pctl_desc.pins = pmx->pins;
->> -	pmx->pctl_desc.npins = pfc->info->nr_pins;
->> +	pmx->pctl_desc.npins = ret;
->>
->>   	pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
->>   	if (pmx->pctl == NULL)
-
-> Shouldn't you also fix sh_pfc_init_ranges() ? It includes the following code
-> that doesn't seem to handle holes properly.
-
->          for (i = 1, nr_ranges = 1; i < pfc->info->nr_pins; ++i) {
->                  if (pfc->info->pins[i-1].pin != pfc->info->pins[i].pin - 1)
->                          nr_ranges++;
->          }
-
-> Please make sure that sh_pfc_get_pin_index() doesn't start blowing up
-> afterwards though.
-
-    I think I'm seeing a problem with this function (and it's not due to my 
-changes). Its result is often used to index 'pfc->info->pins' array. While 
-this is working now, when the holes are not yet allowed, it's going to break 
-when we start supporting the holes since that array couldn't be indexed this 
-way anymore (via ranges). This function is good only for 'pmx->configs' and 
-the like where we have already removed the holes. It looks like this holes 
-thing is going to be too complex, so how about leaving things as they are? :-)
-
-WBR, Sergei
+On 04/29/2015 11:37 PM, Richard Fitzgerald wrote:
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/extcon/extcon-arizona.c |   33 ++++++++++++++++++++++-----------
+>  1 files changed, 22 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+> index 830c5f9..586ec53 100644
+> --- a/drivers/extcon/extcon-arizona.c
+> +++ b/drivers/extcon/extcon-arizona.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * extcon-arizona.c - Extcon driver Wolfson Arizona devices
+>   *
+> - *  Copyright (C) 2012 Wolfson Microelectronics plc
+> + *  Copyright (C) 2012-2014 Wolfson Microelectronics plc
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License as published by
+> @@ -140,10 +140,14 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
+>  				    bool clamp)
+>  {
+>  	struct arizona *arizona = info->arizona;
+> -	unsigned int mask = 0, val = 0;
+> +	unsigned int mask, val = 0;
+>  	int ret;
+>  
+>  	switch (arizona->type) {
+> +	case WM8998:
+> +	case WM1814:
+> +		mask = 0;
+> +		break;
+>  	case WM5110:
+>  		mask = ARIZONA_HP1L_SHRTO | ARIZONA_HP1L_FLWR |
+>  		       ARIZONA_HP1L_SHRTI;
+> @@ -175,17 +179,19 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
+>  				 ret);
+>  	}
+>  
+> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
+> -				 mask, val);
+> -	if (ret != 0)
+> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
+> +	if (mask) {
+> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
+> +					 mask, val);
+> +		if (ret != 0)
+> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
+>  				 ret);
+>  
+> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
+> -				 mask, val);
+> -	if (ret != 0)
+> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
+> -			 ret);
+> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
+> +					 mask, val);
+> +		if (ret != 0)
+> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
+> +				 ret);
+> +	}
+>  
+>  	/* Restore the desired state while not doing the clamp */
+>  	if (!clamp) {
+> @@ -1176,6 +1182,11 @@ static int arizona_extcon_probe(struct platform_device *pdev)
+>  			break;
+>  		}
+>  		break;
+> +	case WM8998:
+> +	case WM1814:
+> +		info->micd_clamp = true;
+> +		info->hpdet_ip_version = 2;
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> 
 
