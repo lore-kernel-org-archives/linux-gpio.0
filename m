@@ -1,104 +1,93 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 3/8] drivers/mfd: Add lookup table for Panel Control as
- GPIO signal
-Date: Wed, 29 Apr 2015 15:29:18 +0100
-Message-ID: <20150429142918.GV9169@x1>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
- <1430316005-16480-4-git-send-email-shobhit.kumar@intel.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RFC/RFT PATCH 2/2] gpio: omap: ensure that runtime pm will
+ disable unused gpio banks
+Date: Wed, 29 Apr 2015 07:33:21 -0700
+Message-ID: <20150429143320.GA24469@atomide.com>
+References: <1425670017-19598-1-git-send-email-grygorii.strashko@linaro.org>
+ <1425670017-19598-2-git-send-email-grygorii.strashko@linaro.org>
+ <20150306231513.GB2651@atomide.com>
+ <20150319230326.GP31346@atomide.com>
+ <20150416162941.GI18048@atomide.com>
+ <55314396.20907@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:37285 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966212AbbD2O3Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 10:29:24 -0400
-Received: by widdi4 with SMTP id di4so68132277wid.0
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Apr 2015 07:29:23 -0700 (PDT)
+Received: from muru.com ([72.249.23.125]:47936 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1423087AbbD2OdX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Apr 2015 10:33:23 -0400
 Content-Disposition: inline
-In-Reply-To: <1430316005-16480-4-git-send-email-shobhit.kumar@intel.com>
+In-Reply-To: <55314396.20907@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-pwm <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Povilas Staniulis <wdmonster@gmail.com>, Chih-Wei Huang <cwhuang@android-x86.org>
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, ssantosh@kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-By the way, your subject lines are messed up.
+* Grygorii.Strashko@linaro.org <grygorii.strashko@linaro.org> [150417 10:33]:
+> Hi Tony,
+> On 04/16/2015 07:29 PM, Tony Lindgren wrote:
+> > * Tony Lindgren <tony@atomide.com> [150319 16:08]:
+> >> * Tony Lindgren <tony@atomide.com> [150307 00:08]:
+> >>> * grygorii.strashko@linaro.org <grygorii.strashko@linaro.org> [150306 11:27]:
+> >>>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+> >>>>
+> >>>> Now there are two points related to Runtime PM usage:
+> >>>> 1) bank state doesn't need to be checked in places where
+> >>>> Rintime PM is used, bacause Runtime PM maintains its
+> >>>> own usage counter:
+> >>>>        if (!BANK_USED(bank))
+> >>>>                 pm_runtime_get_sync(bank->dev);
+> >>>> so, it's safe to drop such checks.
+> >>>>
+> >>>> 2) There is a call of pm_runtime_get_sync() in omap_gpio_irq_type(),
+> >>>> but no corresponding put. As result, GPIO devices could be
+> >>>> powered on forever if at least one GPIO was used as IRQ.
+> >>>> Hence, allow powering off GPIO banks by adding missed
+> >>>> pm_runtime_put(bank->dev) at the end of omap_gpio_irq_type().
+> >>>
+> >>> Nice to see this happening, but I think before merging this we need
+> >>> to test to be sure that the pm_runtime calls actually match.. I'm
+> >>> not convinced right now.. We may still have uninitialized entry
+> >>> points similar to 3d009c8c61f9 ("gpio: omap: Fix bad device
+> >>> access with setup_irq()").
+> >>
+> >> OK so I finally got around testing this along with your bank
+> >> removal set. Looks like this patch causes a regression at least
+> >> with n900 keyboard LEDs with off-idle. The LED won't come back
+> >> on after restore from off-idle. Anyways, now we have something
+> >> reproducable :) So I'll try to debug it further at some point,
+> >> might be few days before I get to it.
+> > 
+> > Sorry for the delay, finally got around to this one :)
+> > 
+> > Here's what I came up with, only lightly tested so far. Note that
+> > we need to keep the PM runtime per bank, not per GPIO. Will repost
+> > a proper patch after some more testing.
+> 
+> I've had a opposite idea actually ;) - use Runtime PM on per-gpio basis as
+> it maintains all needed counters inside and we can be sure that
+> PM runtime callbacks will be called once per bank.
 
-They should adhere to the conventions laid down by the Maintainers.
+Sorry looks like I missed this email earlier, the mail got buried
+in all the threads in my inbox.
 
-`git log --oneline -- drivers/<subsystem>`
+Anyways, we still need per bank pm runtime for a while until we
+can make it per GPIO.
 
-> On some Intel SoC platforms, the panel enable/disable signals are
-> controlled by CRC PMIC. Add those control as a new GPIO in a lookup
-> table for gpio-crystalcove chip during CRC driver load
->=20
-> v2: Make the lookup table static (Thierry)
->     Remove the lookup table during driver remove (Thierry)
->=20
-> CC: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
-> ---
->  drivers/mfd/intel_soc_pmic_core.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_so=
-c_pmic_core.c
-> index 7b50b6b..f3d918e 100644
-> --- a/drivers/mfd/intel_soc_pmic_core.c
-> +++ b/drivers/mfd/intel_soc_pmic_core.c
-> @@ -24,8 +24,19 @@
->  #include <linux/acpi.h>
->  #include <linux/regmap.h>
->  #include <linux/mfd/intel_soc_pmic.h>
-> +#include <linux/gpio/machine.h>
->  #include "intel_soc_pmic_core.h"
-> =20
-> +/* Lookup table for the Panel Enable/Disable line as GPIO signals */
-> +static struct gpiod_lookup_table panel_gpio_table =3D {
-> +	/* Intel GFX is consumer */
-> +	.dev_id =3D "0000:00:02.0",
-> +	.table =3D {
-> +		/* Panel EN/DISABLE */
-> +		GPIO_LOOKUP("gpio_crystalcove", 94, "panel", GPIO_ACTIVE_HIGH),
-> +	},
-> +};
-> +
->  static int intel_soc_pmic_find_gpio_irq(struct device *dev)
->  {
->  	struct gpio_desc *desc;
-> @@ -85,6 +96,9 @@ static int intel_soc_pmic_i2c_probe(struct i2c_clie=
-nt *i2c,
->  	if (ret)
->  		dev_warn(dev, "Can't enable IRQ as wake source: %d\n", ret);
-> =20
-> +	/* Add lookup table binding for Panel Control to the GPIO Chip */
-> +	gpiod_add_lookup_table(&panel_gpio_table);
-> +
->  	ret =3D mfd_add_devices(dev, -1, config->cell_dev,
->  			      config->n_cell_devs, NULL, 0,
->  			      regmap_irq_get_domain(pmic->irq_chip_data));
-> @@ -104,6 +118,9 @@ static int intel_soc_pmic_i2c_remove(struct i2c_c=
-lient *i2c)
-> =20
->  	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
-> =20
-> +	/* Remove lookup table for Panel Control from the GPIO Chip */
-> +	gpiod_remove_lookup_table(&panel_gpio_table);
-> +
->  	mfd_remove_devices(&i2c->dev);
-> =20
->  	return 0;
+> Also, I've thought about moving the code from omap_enable_gpio_module()
+> into Runtime PM callbacks.
+> So, final goal - get rid of BANK_USED & LINE_USED.
+> 
+> Were you able to identify broken calls sequence?
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+No, but it breaks things for omap3 off idle. And then I noticed all
+the duplicate code as discussed in the newer thread.
+ 
+> Also, Pay attention pls, that omap2_gpio_prepare_for/resume_after_idle()
+> will be most probably a NOP now.
+
+Looks like we can't do that change yet, it breaks omap3 off idle.
+
+Regards,
+
+Tony
