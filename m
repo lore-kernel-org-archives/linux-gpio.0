@@ -1,35 +1,65 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH v3 4/7] arm64: dts: mediatek: Add MT8173 MMC dts
-Date: Wed, 29 Apr 2015 08:37:26 +0200
-Message-ID: <20150429063726.GQ6325@pengutronix.de>
-References: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
- <1430214525-19198-5-git-send-email-chaotian.jing@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Antonio Ospite <ao2@ao2.it>
+Subject: [PATCH] pinctrl: baytrail: explicitly set gpio chip base
+Date: Wed, 29 Apr 2015 11:02:42 +0200
+Message-ID: <1430298162-20238-1-git-send-email-ao2@ao2.it>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:43947 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751126AbbD2Ghl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 02:37:41 -0400
-Content-Disposition: inline
-In-Reply-To: <1430214525-19198-5-git-send-email-chaotian.jing@mediatek.com>
+Received: from smtp208.alice.it ([82.57.200.104]:38964 "EHLO smtp208.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1031729AbbD2JIj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 29 Apr 2015 05:08:39 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chaotian Jing <chaotian.jing@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream@mediatek.com, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, bin.zhang@mediatek.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Antonio Ospite <ao2@ao2.it>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Tue, Apr 28, 2015 at 05:48:42PM +0800, Chaotian Jing wrote:
-> From: Eddie Huang <eddie.huang@mediatek.com>
-> 
-> Add node mmc0 and mmc1
+Having the gpio chip base set explicitly makes it easier to compare the
+GPIOs definitions with the ones found on some Android kernels.
 
-While at it you could add mmc2 and mmc3 to the dtsi aswell. No need to patch that
-again later.
+Signed-off-by: Antonio Ospite <ao2@ao2.it>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Sascha
-
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 2062c22..4b2f594 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -548,6 +548,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+ 	struct acpi_device *acpi_dev;
+ 	struct pinctrl_gpio_range *range;
+ 	acpi_handle handle = ACPI_HANDLE(dev);
++	int base_offset;
+ 	int ret;
+ 
+ 	if (acpi_bus_get_device(handle, &acpi_dev))
+@@ -559,12 +560,14 @@ static int byt_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	base_offset = 0;
+ 	for (range = byt_ranges; range->name; range++) {
+ 		if (!strcmp(acpi_dev->pnp.unique_id, range->name)) {
+ 			vg->chip.ngpio = range->npins;
+ 			vg->range = range;
+ 			break;
+ 		}
++		base_offset += range->npins;
+ 	}
+ 
+ 	if (!vg->chip.ngpio || !vg->range)
+@@ -590,7 +593,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+ 	gc->get = byt_gpio_get;
+ 	gc->set = byt_gpio_set;
+ 	gc->dbg_show = byt_gpio_dbg_show;
+-	gc->base = -1;
++	gc->base = base_offset;
+ 	gc->can_sleep = false;
+ 	gc->dev = dev;
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.1.4
+
