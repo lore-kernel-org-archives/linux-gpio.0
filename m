@@ -1,108 +1,62 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v2 6/8] extcon: arizona: Add support for WM8998 and WM1814
-Date: Thu, 30 Apr 2015 08:35:34 +0900
-Message-ID: <55416AC6.4070403@samsung.com>
-References: <1430318229-28518-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1430318229-28518-7-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
+ multi-platform check
+Date: Thu, 30 Apr 2015 14:49:10 +0900
+Message-ID: <20150430054910.GN15511@verge.net.au>
+References: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39791 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751379AbbD2Xfh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Apr 2015 19:35:37 -0400
-In-reply-to: <1430318229-28518-7-git-send-email-rf@opensource.wolfsonmicro.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56414 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbbD3FtN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2015 01:49:13 -0400
+Content-Disposition: inline
+In-Reply-To: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Richard,
-
-This patch didn't include any description?
-I think that you better to add the patch description.
-
-Thanks,
-Chanwoo Choi
-
-
-On 04/29/2015 11:37 PM, Richard Fitzgerald wrote:
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Tue, Apr 28, 2015 at 12:14:31PM +0200, Geert Uytterhoeven wrote:
+> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
+> legacy platform"), r8a73a4 is only supported in generic ARM
+> multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
+> and the check can be removed.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/extcon/extcon-arizona.c |   33 ++++++++++++++++++++++-----------
->  1 files changed, 22 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-> index 830c5f9..586ec53 100644
-> --- a/drivers/extcon/extcon-arizona.c
-> +++ b/drivers/extcon/extcon-arizona.c
-> @@ -1,7 +1,7 @@
->  /*
->   * extcon-arizona.c - Extcon driver Wolfson Arizona devices
->   *
-> - *  Copyright (C) 2012 Wolfson Microelectronics plc
-> + *  Copyright (C) 2012-2014 Wolfson Microelectronics plc
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
-> @@ -140,10 +140,14 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
->  				    bool clamp)
->  {
->  	struct arizona *arizona = info->arizona;
-> -	unsigned int mask = 0, val = 0;
-> +	unsigned int mask, val = 0;
->  	int ret;
->  
->  	switch (arizona->type) {
-> +	case WM8998:
-> +	case WM1814:
-> +		mask = 0;
-> +		break;
->  	case WM5110:
->  		mask = ARIZONA_HP1L_SHRTO | ARIZONA_HP1L_FLWR |
->  		       ARIZONA_HP1L_SHRTI;
-> @@ -175,17 +179,19 @@ static void arizona_extcon_hp_clamp(struct arizona_extcon_info *info,
->  				 ret);
->  	}
->  
-> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
-> -				 mask, val);
-> -	if (ret != 0)
-> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> +	if (mask) {
-> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1L,
-> +					 mask, val);
-> +		if (ret != 0)
-> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
->  				 ret);
->  
-> -	ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
-> -				 mask, val);
-> -	if (ret != 0)
-> -		dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> -			 ret);
-> +		ret = regmap_update_bits(arizona->regmap, ARIZONA_HP_CTRL_1R,
-> +					 mask, val);
-> +		if (ret != 0)
-> +			dev_warn(arizona->dev, "Failed to do clamp: %d\n",
-> +				 ret);
-> +	}
->  
->  	/* Restore the desired state while not doing the clamp */
->  	if (!clamp) {
-> @@ -1176,6 +1182,11 @@ static int arizona_extcon_probe(struct platform_device *pdev)
->  			break;
->  		}
->  		break;
-> +	case WM8998:
-> +	case WM1814:
-> +		info->micd_clamp = true;
-> +		info->hpdet_ip_version = 2;
-> +		break;
->  	default:
->  		break;
->  	}
-> 
+> This depends on Simon's branch r8a73a4-ccf-and-multiplatform-for-v4.1
 
+Which was tagged as renesas-r8a73a4-ccf-and-multiplatform-for-v4.1 and
+is present in v4.0-rc1.
+
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a73a4.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
+> index 280a56f977860272..ba18d2e65e674563 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
+> @@ -21,10 +21,6 @@
+>  #include <linux/kernel.h>
+>  #include <linux/pinctrl/pinconf-generic.h>
+>  
+> -#ifndef CONFIG_ARCH_MULTIPLATFORM
+> -#include <mach/irqs.h>
+> -#endif
+> -
+>  #include "core.h"
+>  #include "sh_pfc.h"
+>  
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
