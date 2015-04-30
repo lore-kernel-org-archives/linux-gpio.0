@@ -1,58 +1,99 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a73a4 platform_device_id
- entry
-Date: Thu, 30 Apr 2015 14:50:04 +0900
-Message-ID: <20150430055003.GO15511@verge.net.au>
-References: <1430216107-31501-1-git-send-email-geert+renesas@glider.be>
- <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
+From: Shobhit Kumar <shobhit.kumar@linux.intel.com>
+Subject: Re: [PATCH 3/8] drivers/mfd: Add lookup table for Panel Control as
+ GPIO signal
+Date: Thu, 30 Apr 2015 12:47:05 +0530
+Message-ID: <5541D6F1.8090002@linux.intel.com>
+References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com> <1430316005-16480-4-git-send-email-shobhit.kumar@intel.com> <20150429142743.GU9169@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56423 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751064AbbD3FuH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2015 01:50:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <20150429142743.GU9169@x1>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, Apr 28, 2015 at 12:15:07PM +0200, Geert Uytterhoeven wrote:
-> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
-> legacy platform"), r8a73a4 is only supported in generic DT-only ARM
-> multi-platform builds.  The driver doesn't need to match platform
-> devices by name anymore, hence remove the corresponding
-> platform_device_id entry.
+On 04/29/2015 07:57 PM, Lee Jones wrote:
+> On Wed, 29 Apr 2015, Shobhit Kumar wrote:
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> On some Intel SoC platforms, the panel enable/disable signals are
+>> controlled by CRC PMIC. Add those control as a new GPIO in a lookup
+>> table for gpio-crystalcove chip during CRC driver load
+>>
+>> v2: Make the lookup table static (Thierry)
+>>     Remove the lookup table during driver remove (Thierry)
+>>
+>> CC: Samuel Ortiz <sameo@linux.intel.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
+>> ---
+>>  drivers/mfd/intel_soc_pmic_core.c | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+> 
+> I have no idea what this stuff is, but it looks plausible.
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+The CRC PMIC controls the panel enable/disable signal using one of GPIO
+like lines. It was agreed by Linus Walleij to go this way. The matching
+crystalcove gpio changes are already merged in Linux next as -
+http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=e189ca56d91bbf1d3fe2f88ab6858bf919d42adf
 
-> ---
->  drivers/pinctrl/sh-pfc/core.c | 3 ---
->  1 file changed, 3 deletions(-)
+This just adds a consumer lookup table for the gpio. Since we do not
+have a DT or board files, and since this was part of CRC driver, just
+added the lookup table during CRC driver load itself. Same is done for
+PWM in a later patch.
+
+Regards
+Shobhit
+
 > 
-> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> index 7b2c9495c3832410..287a3d048a5e1cf9 100644
-> --- a/drivers/pinctrl/sh-pfc/core.c
-> +++ b/drivers/pinctrl/sh-pfc/core.c
-> @@ -579,9 +579,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
->  }
->  
->  static const struct platform_device_id sh_pfc_id_table[] = {
-> -#ifdef CONFIG_PINCTRL_PFC_R8A73A4
-> -	{ "pfc-r8a73a4", (kernel_ulong_t)&r8a73a4_pinmux_info },
-> -#endif
->  #ifdef CONFIG_PINCTRL_PFC_R8A7740
->  	{ "pfc-r8a7740", (kernel_ulong_t)&r8a7740_pinmux_info },
->  #endif
-> -- 
-> 1.9.1
+> For my own reference:
+>   Acked-by: Lee Jones <lee.jones@linaro.org>
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
+>> index 7b50b6b..f3d918e 100644
+>> --- a/drivers/mfd/intel_soc_pmic_core.c
+>> +++ b/drivers/mfd/intel_soc_pmic_core.c
+>> @@ -24,8 +24,19 @@
+>>  #include <linux/acpi.h>
+>>  #include <linux/regmap.h>
+>>  #include <linux/mfd/intel_soc_pmic.h>
+>> +#include <linux/gpio/machine.h>
+>>  #include "intel_soc_pmic_core.h"
+>>  
+>> +/* Lookup table for the Panel Enable/Disable line as GPIO signals */
+>> +static struct gpiod_lookup_table panel_gpio_table = {
+>> +	/* Intel GFX is consumer */
+>> +	.dev_id = "0000:00:02.0",
+>> +	.table = {
+>> +		/* Panel EN/DISABLE */
+>> +		GPIO_LOOKUP("gpio_crystalcove", 94, "panel", GPIO_ACTIVE_HIGH),
+>> +	},
+>> +};
+>> +
+>>  static int intel_soc_pmic_find_gpio_irq(struct device *dev)
+>>  {
+>>  	struct gpio_desc *desc;
+>> @@ -85,6 +96,9 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
+>>  	if (ret)
+>>  		dev_warn(dev, "Can't enable IRQ as wake source: %d\n", ret);
+>>  
+>> +	/* Add lookup table binding for Panel Control to the GPIO Chip */
+>> +	gpiod_add_lookup_table(&panel_gpio_table);
+>> +
+>>  	ret = mfd_add_devices(dev, -1, config->cell_dev,
+>>  			      config->n_cell_devs, NULL, 0,
+>>  			      regmap_irq_get_domain(pmic->irq_chip_data));
+>> @@ -104,6 +118,9 @@ static int intel_soc_pmic_i2c_remove(struct i2c_client *i2c)
+>>  
+>>  	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
+>>  
+>> +	/* Remove lookup table for Panel Control from the GPIO Chip */
+>> +	gpiod_remove_lookup_table(&panel_gpio_table);
+>> +
+>>  	mfd_remove_devices(&i2c->dev);
+>>  
+>>  	return 0;
 > 
