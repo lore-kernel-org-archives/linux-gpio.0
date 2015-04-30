@@ -1,43 +1,44 @@
-From: Semen Protsenko <semen.protsenko@globallogic.com>
-Subject: [RESEND PATCH 2/3] gpio: max732x: Add IRQF_SHARED to irq flags
-Date: Thu, 30 Apr 2015 20:00:37 +0300
-Message-ID: <1430413238-9916-2-git-send-email-semen.protsenko@globallogic.com>
-References: <1430413238-9916-1-git-send-email-semen.protsenko@globallogic.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430413238-9916-1-git-send-email-semen.protsenko@globallogic.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH V7 04/10] ARM: dts: add imx7d soc dtsi file
+Date: Thu, 30 Apr 2015 15:07:38 -0300
+Message-ID: <CAOMZO5C2ye2GHi_CxFd_AKuK1k3okBBVgNoXN_31hjeCuzdXpA@mail.gmail.com>
+References: <1430317210-18333-1-git-send-email-Frank.Li@freescale.com>
+	<1430317210-18333-5-git-send-email-Frank.Li@freescale.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:33891 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752229AbbD3SHk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2015 14:07:40 -0400
+In-Reply-To: <1430317210-18333-5-git-send-email-Frank.Li@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Frank Li <Frank.Li@freescale.com>
+Cc: =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-It's possible that multiple MAX732X can be hooked up to the same
-interrupt line with the processor. So add IRQF_SHARED in requesting irq.
+Hi Frank,
 
-Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
----
- drivers/gpio/gpio-max732x.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+On Wed, Apr 29, 2015 at 11:20 AM,  <Frank.Li@freescale.com> wrote:
 
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 7b6fb68..fafc81b 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -507,12 +507,10 @@ static int max732x_irq_setup(struct max732x_chip *chip,
- 		chip->irq_features = has_irq;
- 		mutex_init(&chip->irq_lock);
- 
--		ret = devm_request_threaded_irq(&client->dev,
--					client->irq,
--					NULL,
--					max732x_irq_handler,
--					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
--					dev_name(&client->dev), chip);
-+		ret = devm_request_threaded_irq(&client->dev, client->irq,
-+				NULL, max732x_irq_handler, IRQF_ONESHOT |
-+				IRQF_TRIGGER_FALLING | IRQF_SHARED,
-+				dev_name(&client->dev), chip);
- 		if (ret) {
- 			dev_err(&client->dev, "failed to request irq %d\n",
- 				client->irq);
--- 
-1.7.9.5
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu0: cpu@0 {
+> +                       compatible = "arm,cortex-a7";
+> +                       device_type = "cpu";
+> +                       reg = <0>;
+> +                       operating-points = <
+> +                               /* KHz  uV */
+> +                               996000  1075000
+> +                               792000  975000
+> +                       >;
+> +                       clock-latency = <61036>; /* two CLK32 periods */
+> +                       clocks = <&clks IMX7D_ARM_A7_ROOT_CLK>, <&clks IMX7D_ARM_A7_ROOT_SRC>,
+> +                                <&clks IMX7D_PLL_ARM_MAIN_CLK>, <&clks IMX7D_PLL_SYS_MAIN_CLK>;
+> +                       clock-names = "arm", "arm_root_src", "pll_arm", "pll_sys_main";
+> +               };
+> +       };
+
+That's a dual core, so you also need to pass cpu1 ;-)
