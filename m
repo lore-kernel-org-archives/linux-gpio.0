@@ -1,57 +1,53 @@
 From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
- multi-platform check
-Date: Thu, 30 Apr 2015 14:49:10 +0900
-Message-ID: <20150430054910.GN15511@verge.net.au>
-References: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a73a4 platform_device_id
+ entry
+Date: Thu, 30 Apr 2015 14:50:04 +0900
+Message-ID: <20150430055003.GO15511@verge.net.au>
+References: <1430216107-31501-1-git-send-email-geert+renesas@glider.be>
+ <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:56414 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:56423 "EHLO
 	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272AbbD3FtN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2015 01:49:13 -0400
+	with ESMTP id S1751064AbbD3FuH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Apr 2015 01:50:07 -0400
 Content-Disposition: inline
-In-Reply-To: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, Apr 28, 2015 at 12:14:31PM +0200, Geert Uytterhoeven wrote:
+On Tue, Apr 28, 2015 at 12:15:07PM +0200, Geert Uytterhoeven wrote:
 > As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
-> legacy platform"), r8a73a4 is only supported in generic ARM
-> multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
-> and the check can be removed.
+> legacy platform"), r8a73a4 is only supported in generic DT-only ARM
+> multi-platform builds.  The driver doesn't need to match platform
+> devices by name anymore, hence remove the corresponding
+> platform_device_id entry.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on Simon's branch r8a73a4-ccf-and-multiplatform-for-v4.1
-
-Which was tagged as renesas-r8a73a4-ccf-and-multiplatform-for-v4.1 and
-is present in v4.0-rc1.
 
 Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
 > ---
->  drivers/pinctrl/sh-pfc/pfc-r8a73a4.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  drivers/pinctrl/sh-pfc/core.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> index 280a56f977860272..ba18d2e65e674563 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> @@ -21,10 +21,6 @@
->  #include <linux/kernel.h>
->  #include <linux/pinctrl/pinconf-generic.h>
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index 7b2c9495c3832410..287a3d048a5e1cf9 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -579,9 +579,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
+>  }
 >  
-> -#ifndef CONFIG_ARCH_MULTIPLATFORM
-> -#include <mach/irqs.h>
+>  static const struct platform_device_id sh_pfc_id_table[] = {
+> -#ifdef CONFIG_PINCTRL_PFC_R8A73A4
+> -	{ "pfc-r8a73a4", (kernel_ulong_t)&r8a73a4_pinmux_info },
 > -#endif
-> -
->  #include "core.h"
->  #include "sh_pfc.h"
->  
+>  #ifdef CONFIG_PINCTRL_PFC_R8A7740
+>  	{ "pfc-r8a7740", (kernel_ulong_t)&r8a7740_pinmux_info },
+>  #endif
 > -- 
 > 1.9.1
 > 
