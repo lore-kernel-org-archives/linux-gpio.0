@@ -1,47 +1,46 @@
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 2/2] gpio: x-gene: Remove a useless memset
-Date: Fri, 01 May 2015 16:54:28 +0200
-Message-ID: <554393A4.204@wanadoo.fr>
-References: <1430483346-10583-1-git-send-email-christophe.jaillet@wanadoo.fr> <20150501141922.GE14154@mwanda>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 2/8] ASoC: arizona: add defines for single-input gain control
+Date: Fri,  1 May 2015 16:15:13 +0100
+Message-ID: <1430493319-23808-3-git-send-email-rf@opensource.wolfsonmicro.com>
+References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:19653 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754041AbbEAOyc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 May 2015 10:54:32 -0400
-In-Reply-To: <20150501141922.GE14154@mwanda>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60269 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753844AbbEAPQJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 May 2015 11:16:09 -0400
+In-Reply-To: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com
+Cc: myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-Hi,
+Adds convenience defines for declaring a gain control that
+has an input mux. These blocks are functionally equivalent to
+the existing mixer blocks but can only have a single input
+active at once.
 
-yes, you are correct, it's a mistake.
-Should I resubmit with an updated subject?
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/arizona.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-CJ
+diff --git a/sound/soc/codecs/arizona.h b/sound/soc/codecs/arizona.h
+index 11ff899..6559ca0 100644
+--- a/sound/soc/codecs/arizona.h
++++ b/sound/soc/codecs/arizona.h
+@@ -92,6 +92,11 @@ extern const unsigned int arizona_mixer_tlv[];
+ extern const char *arizona_mixer_texts[ARIZONA_NUM_MIXER_INPUTS];
+ extern int arizona_mixer_values[ARIZONA_NUM_MIXER_INPUTS];
+ 
++#define ARIZONA_GAINMUX_CONTROLS(name, base) \
++	SOC_SINGLE_RANGE_TLV(name " Input Volume", base + 1,		\
++			     ARIZONA_MIXER_VOL_SHIFT, 0x20, 0x50, 0,	\
++			     arizona_mixer_tlv)
++
+ #define ARIZONA_MIXER_CONTROLS(name, base) \
+ 	SOC_SINGLE_RANGE_TLV(name " Input 1 Volume", base + 1,		\
+ 			     ARIZONA_MIXER_VOL_SHIFT, 0x20, 0x50, 0,	\
+-- 
+1.7.2.5
 
-
-Le 01/05/2015 16:19, Dan Carpenter a =E9crit :
-> The "[PATCH 2/2]" bit is a mistake.  It's not part of a patchset.  It=
-'s
-> just that you have sent two patches today.  The first patch wasn't ev=
-en
-> named [1/2]...
->
-> Unless, it is part of a patchset??  If so where is the first patch?
->
-> regards,
-> dan carpenter
->
->
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
