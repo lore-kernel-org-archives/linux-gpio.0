@@ -1,116 +1,195 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH] pinctrl: Don't just pretend to protect pinctrl_maps, do it for real
-Date: Fri,  1 May 2015 09:01:27 -0700
-Message-ID: <1430496088-5374-1-git-send-email-dianders@chromium.org>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v7 05/15] dt-bindings: Document the STM32 reset bindings
+Date: Sat, 2 May 2015 09:55:26 +0200
+Message-ID: <CALszF6Bw900E9MtpaVmvkFxsrOODRkNg+RxRXz5V3WghHtsxbw@mail.gmail.com>
+References: <1430410844-16062-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1430410844-16062-6-git-send-email-mcoquelin.stm32@gmail.com>
+	<55433467.2010603@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:37412 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755063AbbEAQCB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 May 2015 12:02:01 -0400
-Received: by igblo3 with SMTP id lo3so40722005igb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 01 May 2015 09:01:59 -0700 (PDT)
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:34571 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750807AbbEBHz1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 2 May 2015 03:55:27 -0400
+In-Reply-To: <55433467.2010603@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Doug Anderson <dianders@chromium.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@cod>
 
-Way back, when the world was a simpler place and there was no war, no
-evil, and no kernel bugs, there was just a single pinctrl lock.  That
-was how the world was when (57291ce pinctrl: core device tree mapping
-table parsing support) was written.  In that case, there were
-instances where the pinctrl mutex was already held when
-pinctrl_register_map() was called, hence a "locked" parameter was
-passed to the function to indicate that the mutex was already locked
-(so we shouldn't lock it again).
+2015-05-01 10:08 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> On 30/04/15 17:20, Maxime Coquelin wrote:
+>>
+>> This adds documentation of device tree bindings for the
+>> STM32 reset controller.
+>>
+>> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> ---
+>>   .../devicetree/bindings/reset/st,stm32-rcc.txt     | 107
+>> +++++++++++++++++++++
+>>   1 file changed, 107 insertions(+)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/reset/st,stm32-rcc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/reset/st,stm32-rcc.txt
+>> b/Documentation/devicetree/bindings/reset/st,stm32-rcc.txt
+>> new file mode 100644
+>> index 0000000..c1b0f8d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/reset/st,stm32-rcc.txt
+>> @@ -0,0 +1,107 @@
+>> +STMicroelectronics STM32 Peripheral Reset Controller
+>> +====================================================
+>> +
+>> +The RCC IP is both a reset and a clock controller. This documentation
+>> only
+>> +documents the reset part.
+>> +
+>> +Please also refer to reset.txt in this directory for common reset
+>> +controller binding usage.
+>> +
+>> +Required properties:
+>> +- compatible: Should be "st,stm32-rcc"
+>> +- reg: should be register base and length as documented in the
+>> +  datasheet
+>> +- #reset-cells: 1, see below
+>> +
+>> +example:
+>> +
+>> +rcc: reset@40023800 {
+>> +       #reset-cells = <1>;
+>> +       compatible = "st,stm32-rcc";
+>
+>
+> Do you intend the clock driver to use the same compatible string (given it
+> is the same bit of hardware).
+>
+> If so, is it better to use st,stm32f4-rcc here? It seems unlikey to me that
+> the register layout of the PLLs and dividers can be the same on the f7 parts
+> (and later).
 
-A few years ago in (42fed7b pinctrl: move subsystem mutex to
-pinctrl_dev struct), we switched to a separate pinctrl_maps_mutex.
-...but (oops) we forgot to re-think about the whole "locked" parameter
-for pinctrl_register_map().  Basically the "locked" parameter appears
-to still refer to whether the bigger pinctrl_dev mutex is locked, but
-we're using it to skip locks of our (now separate) pinctrl_maps_mutex.
+I agree we need a compatible dedicate to f4 series for clocks, and
+maybe even one for f429 (to be checked).
+For the reset part, we don't have this need.
 
-That's kind of a bad thing(TM).  Probably nobody noticed because most
-of the calls to pinctrl_register_map happen at boot time and we've got
-synchronous device probing.  ...and even cases where we're
-asynchronous don't end up actually hitting the race too often.  ...but
-after banging my head against the wall for a bug that reproduced 1 out
-of 1000 reboots and lots of looking through kgdb, I finally noticed
-this.
+So either we use only "st,stm32f4" as you suggest, or we can have both
+in device tree:
 
-Anyway, we can now safely remove the "locked" parameter and go back to
-a war-free, evil-free, and kernel-bug-free world.
+rcc: reset@40023800 {
+    #reset-cells = <1>;
+    compatible = "st,stm32f4-rcc", "st,stm32-rcc";
+    reg = <0x40023800 0x400>;
+};
 
-Fixes: 42fed7ba44e4 ("pinctrl: move subsystem mutex to pinctrl_dev struct")
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
- drivers/pinctrl/core.c       | 10 ++++------
- drivers/pinctrl/core.h       |  2 +-
- drivers/pinctrl/devicetree.c |  2 +-
- 3 files changed, 6 insertions(+), 8 deletions(-)
+What do you think?
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 89dca77..18ee208 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1110,7 +1110,7 @@ void devm_pinctrl_put(struct pinctrl *p)
- EXPORT_SYMBOL_GPL(devm_pinctrl_put);
- 
- int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
--			 bool dup, bool locked)
-+			 bool dup)
- {
- 	int i, ret;
- 	struct pinctrl_maps *maps_node;
-@@ -1178,11 +1178,9 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
- 		maps_node->maps = maps;
- 	}
- 
--	if (!locked)
--		mutex_lock(&pinctrl_maps_mutex);
-+	mutex_lock(&pinctrl_maps_mutex);
- 	list_add_tail(&maps_node->node, &pinctrl_maps);
--	if (!locked)
--		mutex_unlock(&pinctrl_maps_mutex);
-+	mutex_unlock(&pinctrl_maps_mutex);
- 
- 	return 0;
- }
-@@ -1197,7 +1195,7 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
- int pinctrl_register_mappings(struct pinctrl_map const *maps,
- 			      unsigned num_maps)
- {
--	return pinctrl_register_map(maps, num_maps, true, false);
-+	return pinctrl_register_map(maps, num_maps, true);
- }
- 
- void pinctrl_unregister_map(struct pinctrl_map const *map)
-diff --git a/drivers/pinctrl/core.h b/drivers/pinctrl/core.h
-index 75476b3..b24ea84 100644
---- a/drivers/pinctrl/core.h
-+++ b/drivers/pinctrl/core.h
-@@ -183,7 +183,7 @@ static inline struct pin_desc *pin_desc_get(struct pinctrl_dev *pctldev,
- }
- 
- int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
--			 bool dup, bool locked);
-+			 bool dup);
- void pinctrl_unregister_map(struct pinctrl_map const *map);
- 
- extern int pinctrl_force_sleep(struct pinctrl_dev *pctldev);
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index eda13de..0bbf7d7 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -92,7 +92,7 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
- 	dt_map->num_maps = num_maps;
- 	list_add_tail(&dt_map->node, &p->dt_maps);
- 
--	return pinctrl_register_map(map, num_maps, false, true);
-+	return pinctrl_register_map(map, num_maps, false);
- }
- 
- struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
--- 
-2.2.0.rc0.207.ga3a616c
+>
+>
+>> +       reg = <0x40023800 0x400>;
+>> +};
+>> +
+>> +Specifying softreset control of devices
+>> +=======================================
+>> +
+>> +Device nodes should specify the reset channel required in their "resets"
+>> +property, containing a phandle to the reset device node and an index
+>> specifying
+>> +which channel to use.
+>> +The index is the bit number within the RCC registers bank, starting from
+>> RCC
+>> +base address.
+>> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
+>> +Where bit_offset is the bit offset within the register.
+>> +For example, for CRC reset:
+>> +  crc = AHB1RSTR_offset / 4 * 32 + CRCRST_bit_offset = 0x10 / 4 * 32 + 12
+>> = 140
+>> +
+>> +example:
+>> +
+>> +       timer2 {
+>> +               resets                  = <&rcc 256>;
+>> +       };
+>> +
+>> +List of valid indices for STM32F429:
+>> + - gpioa: 128
+>> + - gpiob: 129
+>> + - gpioc: 130
+>> + - gpiod: 131
+>> + - gpioe: 132
+>> + - gpiof: 133
+>> + - gpiog: 134
+>> + - gpioh: 135
+>> + - gpioi: 136
+>> + - gpioj: 137
+>> + - gpiok: 138
+>> + - crc: 140
+>> + - dma1: 149
+>> + - dma2: 150
+>> + - dma2d: 151
+>> + - ethmac: 153
+>> + - otghs: 157
+>> + - dcmi: 160
+>> + - cryp: 164
+>> + - hash: 165
+>> + - rng: 166
+>> + - otgfs: 167
+>> + - fmc: 192
+>> + - tim2: 256
+>> + - tim3: 257
+>> + - tim4: 258
+>> + - tim5: 259
+>> + - tim6: 260
+>> + - tim7: 261
+>> + - tim12: 262
+>> + - tim13: 263
+>> + - tim14: 264
+>> + - wwdg: 267
+>> + - spi2: 270
+>> + - spi3: 271
+>> + - uart2: 273
+>> + - uart3: 274
+>> + - uart4: 275
+>> + - uart5: 276
+>> + - i2c1: 277
+>> + - i2c2: 278
+>> + - i2c3: 279
+>> + - can1: 281
+>> + - can2: 282
+>> + - pwr: 284
+>> + - dac: 285
+>> + - uart7: 286
+>> + - uart8: 287
+>> + - tim1: 288
+>> + - tim8: 289
+>> + - usart1: 292
+>> + - usart6: 293
+>> + - adc: 296
+>> + - sdio: 299
+>> + - spi1: 300
+>> + - spi4: 301
+>> + - syscfg: 302
+>> + - tim9: 304
+>> + - tim10: 305
+>> + - tim11: 306
+>> + - spi5: 308
+>> + - spi6: 309
+>> + - sai1: 310
+>> + - ltdc: 314
+>
+>
+> These numbers are stable for all STM32F4 family parts. Should this table go
+> into a dt-bindings header file?
+>
 
+This has already been discussed with Philipp and Arnd in earlier
+versions of this series [0].
+I initially created a header file, and we  decided going this way finally.
+
+Regards,
+Maxime
+
+[0]: https://lkml.org/lkml/2015/3/10/692
