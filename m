@@ -1,101 +1,46 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: baytrail: explicitly set gpio chip base
-Date: Mon, 4 May 2015 13:40:00 +0300
-Message-ID: <20150504104000.GZ1534@lahna.fi.intel.com>
-References: <1430298162-20238-1-git-send-email-ao2@ao2.it>
- <20150430110237.GV1534@lahna.fi.intel.com>
- <20150430235141.2928e7fa8a193437346b76aa@ao2.it>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH v3 3/8] mfd: arizona: Add support for
+	WM8998 and WM1814
+Date: Mon, 04 May 2015 12:44:14 +0200
+Message-ID: <1430736254.23580.2.camel@tiscali.nl>
+References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1430493319-23808-4-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1430560731.2187.70.camel@x220>
+ <20150504091119.GA32076@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:56309 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752222AbbEDKkF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 4 May 2015 06:40:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20150430235141.2928e7fa8a193437346b76aa@ao2.it>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20150504091119.GA32076@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, broonie@kernel.org, myungjoo.ham@samsung.com, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Antonio Ospite <ao2@ao2.it>
-Cc: linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Apr 30, 2015 at 11:51:41PM +0200, Antonio Ospite wrote:
-> Hi Mika,
-> 
-> On Thu, 30 Apr 2015 14:02:37 +0300
-> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> 
-> > On Wed, Apr 29, 2015 at 11:02:42AM +0200, Antonio Ospite wrote:
-> > > Having the gpio chip base set explicitly makes it easier to compare the
-> > > GPIOs definitions with the ones found on some Android kernels.
-> > > 
-> > > Signed-off-by: Antonio Ospite <ao2@ao2.it>
-> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > Cc: linux-gpio@vger.kernel.org
-> > > ---
-> > >  drivers/pinctrl/intel/pinctrl-baytrail.c | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > > index 2062c22..4b2f594 100644
-> > > --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > > +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > > @@ -548,6 +548,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
-> > >  	struct acpi_device *acpi_dev;
-> > >  	struct pinctrl_gpio_range *range;
-> > >  	acpi_handle handle = ACPI_HANDLE(dev);
-> > > +	int base_offset;
-> > >  	int ret;
-> > >  
-> > >  	if (acpi_bus_get_device(handle, &acpi_dev))
-> > > @@ -559,12 +560,14 @@ static int byt_gpio_probe(struct platform_device *pdev)
-> > >  		return -ENOMEM;
-> > >  	}
-> > >  
-> > > +	base_offset = 0;
-> > >  	for (range = byt_ranges; range->name; range++) {
-> > >  		if (!strcmp(acpi_dev->pnp.unique_id, range->name)) {
-> > >  			vg->chip.ngpio = range->npins;
-> > >  			vg->range = range;
-> > >  			break;
-> > >  		}
-> > > +		base_offset += range->npins;
-> > >  	}
-> > >  
-> > >  	if (!vg->chip.ngpio || !vg->range)
-> > > @@ -590,7 +593,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
-> > >  	gc->get = byt_gpio_get;
-> > >  	gc->set = byt_gpio_set;
-> > >  	gc->dbg_show = byt_gpio_dbg_show;
-> > > -	gc->base = -1;
-> > > +	gc->base = base_offset;
-> > 
-> > But this changes the base from being dynamically allocated to always
-> > start from 0, right?
-> >
-> 
-> Yes, that's the point: to have exactly the same bases as in the Android
-> kernels found in the wild, that is:
-> 
->   $ ls -1 /sys/class/gpio
->   export
->   gpiochip0
->   gpiochip102
->   gpiochip130
->   unexport
-> 
-> This makes it easier for me to verify the mappings when trying to make
-> my tablet work with the mainline kernel.
-> 
-> I might as well keep the change local, but I thought that others may
-> find it useful.
-> 
-> Are there drawbacks of such fixed scheme?
+Richard Fitzgerald schreef op ma 04-05-2015 om 10:11 [+0100]:
+> Yes, I've noticed that these tests are wrong and I'm working on a patch for
+> it.
 
-Well, if you happen to have another GPIO chip (a GPIO expander for
-example) and it somehow gets loaded before this driver. It may take the
-range you have reserved for the BYT driver.
+Glad to hear I wasn't misreading that Makefile.
 
-Not sure how realistic case that is, though...
+> It's another one of those cases where more lines needs patching to fix
+> it than the 3 lines this WM8998 patch adds, and also fixing it potentially
+> breaks the build because of dependencies that were accidentally working
+> because they never got compiled out. So I'd prefer not to half-fix it in
+> these WM8998 patches it's better to let the code settle and then fix it properly.
+
+I see. Unless that fix takes very long to land, I won't be bothering you
+about this again.
+
+Thanks,
+
+
+Paul Bolle
