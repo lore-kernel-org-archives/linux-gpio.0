@@ -1,102 +1,85 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 01/23] gpio: sysfs: fix memory leaks and device hotplug
-Date: Mon,  4 May 2015 17:10:26 +0200
-Message-ID: <1430752248-15401-2-git-send-email-johan@kernel.org>
-References: <1430752248-15401-1-git-send-email-johan@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1430752248-15401-1-git-send-email-johan@kernel.org>
-Sender: stable-owner@vger.kernel.org
+Subject: [PATCH v2 00/23] gpio: sysfs: fixes and clean ups
+Date: Mon,  4 May 2015 17:10:25 +0200
+Message-ID: <1430752248-15401-1-git-send-email-johan@kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, stable <stable@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org, linux-kernel@zh-kernel.org, linux-arch@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Unregister GPIOs requested through sysfs at chip remove to avoid leaking
-the associated memory and sysfs entries.
+These patches fix a number of issues with the gpio sysfs interface,
+including
 
-The stale sysfs entries prevented the gpio numbers from being exported
-when the gpio range was later reused (e.g. at device reconnect).
+ - fix memory leaks and crashes on device hotplug
+ - straighten out the convoluted locking
+ - reduce sysfs-interface latencies through more fine-grained locking
+ - more clearly separate the sysfs-interface implementation from gpiolib
+   core
 
-This also fixes the related module-reference leak.
+The first patch is marked for stable and could go into 4.1. [ May
+already have been applied but not pushed by Linus, but included in v2
+for completeness.  ]
 
-Note that kernfs makes sure that any on-going sysfs operations finish
-before the class devices are unregistered and that further accesses
-fail.
+Unfortunately we can't just kill the gpio sysfs interface, but these
+patches will make it more manageable and should allow us to implement a
+new user-space interface while maintaining the old one (for a while at
+least) without losing our sanity.
 
-The chip exported flag is used to prevent gpiod exports during removal.
-This also makes it harder to trigger, but does not fix, the related race
-between gpiochip_remove and export_store, which is really a race with
-gpiod_request that needs to be addressed separately.
+Note that there is still a race between chip remove and gpiod_request (and
+therefore sysfs export), which needs to be fixed separately (for instance as
+part of a generic solution to chip hotplugging).
 
-Also note that this would prevent the crashes (e.g. NULL-dereferences)
-at reconnect that affects pre-3.18 kernels, as well as use-after-free on
-operations on open attribute files on pre-3.14 kernels (prior to
-kernfs).
+Johan
 
-Fixes: d8f388d8dc8d ("gpio: sysfs interface")
-Cc: stable <stable@vger.kernel.org>	# v2.6.27: 01cca93a9491
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/gpio/gpiolib-sysfs.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 7722ed53bd65..af3bc7a8033b 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -551,6 +551,7 @@ static struct class gpio_class = {
-  */
- int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- {
-+	struct gpio_chip	*chip;
- 	unsigned long		flags;
- 	int			status;
- 	const char		*ioname = NULL;
-@@ -568,8 +569,16 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 		return -EINVAL;
- 	}
- 
-+	chip = desc->chip;
-+
- 	mutex_lock(&sysfs_lock);
- 
-+	/* check if chip is being removed */
-+	if (!chip || !chip->exported) {
-+		status = -ENODEV;
-+		goto fail_unlock;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	if (!test_bit(FLAG_REQUESTED, &desc->flags) ||
- 	     test_bit(FLAG_EXPORT, &desc->flags)) {
-@@ -783,12 +792,15 @@ void gpiochip_unexport(struct gpio_chip *chip)
- {
- 	int			status;
- 	struct device		*dev;
-+	struct gpio_desc *desc;
-+	unsigned int i;
- 
- 	mutex_lock(&sysfs_lock);
- 	dev = class_find_device(&gpio_class, NULL, chip, match_export);
- 	if (dev) {
- 		put_device(dev);
- 		device_unregister(dev);
-+		/* prevent further gpiod exports */
- 		chip->exported = false;
- 		status = 0;
- 	} else
-@@ -797,6 +809,13 @@ void gpiochip_unexport(struct gpio_chip *chip)
- 
- 	if (status)
- 		chip_dbg(chip, "%s: status %d\n", __func__, status);
-+
-+	/* unregister gpiod class devices owned by sysfs */
-+	for (i = 0; i < chip->ngpio; i++) {
-+		desc = &chip->desc[i];
-+		if (test_and_clear_bit(FLAG_SYSFS, &desc->flags))
-+			gpiod_free(desc);
-+	}
- }
- 
- static int __init gpiolib_sysfs_init(void)
+Changes since v1:
+ - Keep explicit lock-as-irq call in sysfs and add comment that it
+   should be removed once the broken drivers have been fixed (patch
+   3/23).
+ - Add comment that the class-device field of struct gpiochip is used by
+   the sysfs interface (patch 6/23).
+ - Add "sysfs"-infix to gpiochip sysfs registration functions as suggested
+   by Alexandre (patch 7/23).
+
+
+Johan Hovold (23):
+  gpio: sysfs: fix memory leaks and device hotplug
+  gpio: clean up gpiochip_remove
+  gpio: sysfs: fix redundant lock-as-irq handling
+  gpio: sysfs: preparatory clean ups
+  gpio: sysfs: reduce gpiochip-export locking scope
+  gpio: sysfs: clean up chip class-device handling
+  gpio: sysfs: rename gpiochip registration functions
+  gpio: remove gpiod_sysfs_set_active_low
+  gpio: sysfs: use DEVICE_ATTR macros
+  gpio: sysfs: release irq after class-device deregistration
+  gpio: sysfs: remove redundant export tests
+  gpio: sysfs: add gpiod class-device data
+  gpio: sysfs: remove redundant gpio-descriptor parameters
+  gpio: sysfs: clean up interrupt-interface implementation
+  gpio: sysfs: only call irq helper if needed
+  gpio: sysfs: split irq allocation and deallocation
+  gpio: sysfs: clean up edge_store
+  gpio: sysfs: clean up gpiod_export_link locking
+  gpio: sysfs: use per-gpio locking
+  gpio: sysfs: fix race between gpiod export and unexport
+  gpio: sysfs: rename active-low helper
+  gpio: sysfs: remove FLAG_SYSFS_DIR
+  gpio: sysfs: move irq trigger flags to class-device data
+
+ Documentation/gpio/gpio-legacy.txt |   9 -
+ Documentation/gpio/sysfs.txt       |   8 -
+ Documentation/zh_CN/gpio.txt       |   8 -
+ drivers/gpio/gpiolib-sysfs.c       | 578 ++++++++++++++++++-------------------
+ drivers/gpio/gpiolib.c             |  18 +-
+ drivers/gpio/gpiolib.h             |  16 +-
+ include/asm-generic/gpio.h         |   5 -
+ include/linux/gpio.h               |   7 -
+ include/linux/gpio/consumer.h      |   6 -
+ include/linux/gpio/driver.h        |   4 +-
+ 10 files changed, 290 insertions(+), 369 deletions(-)
+
 -- 
 2.0.5
+
