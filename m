@@ -1,96 +1,68 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 22/23] gpio: sysfs: remove FLAG_SYSFS_DIR
-Date: Mon,  4 May 2015 17:10:47 +0200
-Message-ID: <1430752248-15401-23-git-send-email-johan@kernel.org>
-References: <1430752248-15401-1-git-send-email-johan@kernel.org>
+Subject: [PATCH] gpio: fix gpio leak in gpiochip_add error path
+Date: Mon,  4 May 2015 17:23:25 +0200
+Message-ID: <1430753005-19691-1-git-send-email-johan@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:35673 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751878AbbEDPNo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 11:13:44 -0400
-In-Reply-To: <1430752248-15401-1-git-send-email-johan@kernel.org>
+Received: from mail-la0-f43.google.com ([209.85.215.43]:35201 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751346AbbEDPXj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 11:23:39 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 
-Remove FLAG_SYSFS_DIR, which is sysfs-interface specific, and store it
-in the class-device data instead.
+Make sure to free any hogged gpios on errors in gpiochip_add.
 
-Note that the flag is only used during export.
+Also move all forward declarations to the top of the file.
 
+Fixes: f625d4601759 ("gpio: add GPIO hogging mechanism")
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 15 +++++++--------
- drivers/gpio/gpiolib.h       |  1 -
- 2 files changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 06372c7c822c..9047b2d556a0 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -16,6 +16,8 @@ struct gpiod_data {
- 	struct mutex mutex;
- 	struct kernfs_node *value_kn;
- 	int irq;
+Here's another fix for 4.1.
+
+Johan
+
+
+ drivers/gpio/gpiolib.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 2ce3df3504e6..3b0b063ceb76 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -53,6 +53,11 @@ static DEFINE_MUTEX(gpio_lookup_lock);
+ static LIST_HEAD(gpio_lookup_list);
+ LIST_HEAD(gpio_chips);
+ 
 +
-+	bool direction_can_change;
- };
++static void gpiochip_free_hogs(struct gpio_chip *chip);
++static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
++
++
+ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ {
+ 	d->label = label;
+@@ -297,6 +302,7 @@ int gpiochip_add(struct gpio_chip *chip)
  
- /*
-@@ -354,7 +356,7 @@ static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
- 	struct gpiod_data *data = dev_get_drvdata(dev);
- 	struct gpio_desc *desc = data->desc;
- 	umode_t mode = attr->mode;
--	bool show_direction = test_bit(FLAG_SYSFS_DIR, &desc->flags);
-+	bool show_direction = data->direction_can_change;
+ err_remove_chip:
+ 	acpi_gpiochip_remove(chip);
++	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 	list_del(&chip->list);
+@@ -313,10 +319,6 @@ err_free_descs:
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_add);
  
- 	if (attr == &dev_attr_direction.attr) {
- 		if (!show_direction)
-@@ -583,12 +585,6 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 		status = -EPERM;
- 		goto err_unlock;
- 	}
+-/* Forward-declaration */
+-static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
+-static void gpiochip_free_hogs(struct gpio_chip *chip);
 -
--	if (chip->direction_input && chip->direction_output &&
--			direction_may_change) {
--		set_bit(FLAG_SYSFS_DIR, &desc->flags);
--	}
--
- 	spin_unlock_irqrestore(&gpio_lock, flags);
- 
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
-@@ -599,6 +595,10 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 
- 	data->desc = desc;
- 	mutex_init(&data->mutex);
-+	if (chip->direction_input && chip->direction_output)
-+		data->direction_can_change = direction_may_change;
-+	else
-+		data->direction_can_change = false;
- 
- 	offset = gpio_chip_hwgpio(desc);
- 	if (chip->names && chip->names[offset])
-@@ -693,7 +693,6 @@ void gpiod_unexport(struct gpio_desc *desc)
- 
- 	data = dev_get_drvdata(dev);
- 
--	clear_bit(FLAG_SYSFS_DIR, &desc->flags);
- 	clear_bit(FLAG_EXPORT, &desc->flags);
- 
- 	device_unregister(dev);
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 4a857da698b2..34eea33e482c 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -87,7 +87,6 @@ struct gpio_desc {
- #define FLAG_OPEN_DRAIN	7	/* Gpio is open drain type */
- #define FLAG_OPEN_SOURCE 8	/* Gpio is open source type */
- #define FLAG_USED_AS_IRQ 9	/* GPIO is connected to an IRQ */
--#define FLAG_SYSFS_DIR	10	/* show sysfs direction attribute */
- #define FLAG_IS_HOGGED	11	/* GPIO is hogged */
- 
- #define GPIO_TRIGGER_MASK	(BIT(FLAG_TRIG_FALL) | BIT(FLAG_TRIG_RISE))
+ /**
+  * gpiochip_remove() - unregister a gpio_chip
+  * @chip: the chip to unregister
 -- 
 2.0.5
 
