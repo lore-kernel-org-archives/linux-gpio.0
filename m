@@ -1,62 +1,48 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: rcar: Check for irq_set_irq_wake() failures
-Date: Mon,  4 May 2015 16:09:52 +0200
-Message-ID: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:41014 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751752AbbEDOJz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 10:09:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH] gpio: xilinx: Fix kernel-doc warnings
+Date: Mon,  4 May 2015 16:37:16 +0200
+Message-ID: <6680ac72661b4be9c4de4a3e2589a0b466fdda74.1430750234.git.michal.simek@xilinx.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu
+Cc: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-If an interrupt controller doesn't support wake-up configuration, trying
-to deconfigure wake-up will cause a warning:
+Fix kernel-doc format:
+- Add gpio-width description
+- Remove additional "inited" variable description
+- Add return value description - xgpio_remove
 
-    WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
-    Unbalanced IRQ 26 wake disable
-
-To fix this, refrain from any further parent interrupt controller
-(de)configuration if irq_set_irq_wake() failed.
-
-Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
-This is an alternative for:
-  - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
-    platform code, OR
-  - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
-    code.
----
- drivers/gpio/gpio-rcar.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index fd39774659484fa6..1e14a6c74ed13941 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -177,8 +177,17 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
- 						gpio_chip);
--
--	irq_set_irq_wake(p->irq_parent, on);
-+	int error;
-+
-+	if (p->irq_parent) {
-+		error = irq_set_irq_wake(p->irq_parent, on);
-+		if (error) {
-+			dev_dbg(&p->pdev->dev,
-+				"irq %u doesn't support irq_set_wake\n",
-+				p->irq_parent);
-+			p->irq_parent = 0;
-+		}
-+	}
- 
- 	if (!p->clk)
- 		return 0;
+ drivers/gpio/gpio-xilinx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 61243d177740..77fe5d3cb105 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -41,10 +41,10 @@
+ /**
+  * struct xgpio_instance - Stores information about GPIO device
+  * @mmchip: OF GPIO chip for memory mapped banks
++ * @gpio_width: GPIO width for every channel
+  * @gpio_state: GPIO state shadow register
+  * @gpio_dir: GPIO direction shadow register
+  * @gpio_lock: Lock used for synchronization
+- * @inited: True if the port has been inited
+  */
+ struct xgpio_instance {
+ 	struct of_mm_gpio_chip mmchip;
+@@ -231,6 +231,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+  * @pdev: pointer to the platform device
+  *
+  * This function remove gpiochips and frees all the allocated resources.
++ *
++ * Return: 0 always
+  */
+ static int xgpio_remove(struct platform_device *pdev)
+ {
 -- 
-1.9.1
-
+2.3.5
