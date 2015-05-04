@@ -1,48 +1,37 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH] gpio: xilinx: Fix kernel-doc warnings
-Date: Mon,  4 May 2015 16:37:16 +0200
-Message-ID: <6680ac72661b4be9c4de4a3e2589a0b466fdda74.1430750234.git.michal.simek@xilinx.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7740: Fix typo SCIFAB in comment
+Date: Mon,  4 May 2015 16:40:46 +0200
+Message-ID: <1430750446-8302-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57640 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751545AbbEDOkv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 10:40:51 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fix kernel-doc format:
-- Add gpio-width description
-- Remove additional "inited" variable description
-- Add return value description - xgpio_remove
+The last serial port is called "SCIFB", not "SCIFAB".
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpio/gpio-xilinx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index 61243d177740..77fe5d3cb105 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -41,10 +41,10 @@
- /**
-  * struct xgpio_instance - Stores information about GPIO device
-  * @mmchip: OF GPIO chip for memory mapped banks
-+ * @gpio_width: GPIO width for every channel
-  * @gpio_state: GPIO state shadow register
-  * @gpio_dir: GPIO direction shadow register
-  * @gpio_lock: Lock used for synchronization
-- * @inited: True if the port has been inited
-  */
- struct xgpio_instance {
- 	struct of_mm_gpio_chip mmchip;
-@@ -231,6 +231,8 @@ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
-  * @pdev: pointer to the platform device
-  *
-  * This function remove gpiochips and frees all the allocated resources.
-+ *
-+ * Return: 0 always
-  */
- static int xgpio_remove(struct platform_device *pdev)
- {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index b486e9d20cc2f7cb..d0bb1459783a16d2 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -258,7 +258,7 @@ enum {
+ 	/* SCIFA7 */
+ 	SCIFA7_TXD_MARK,	SCIFA7_RXD_MARK,
+ 
+-	/* SCIFAB */
++	/* SCIFB */
+ 	SCIFB_SCK_PORT190_MARK, /* MSEL5CR_17_0 */
+ 	SCIFB_RXD_PORT191_MARK,
+ 	SCIFB_TXD_PORT192_MARK,
 -- 
-2.3.5
+1.9.1
+
