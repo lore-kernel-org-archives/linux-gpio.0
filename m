@@ -1,40 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: max732x: Propagate wake-up setting to parent
- irq controller
-Date: Mon, 4 May 2015 15:32:31 +0200
-Message-ID: <CACRpkdYT6OMy1GSkoP3Tab3xcpC6qPFfX=aRVr4iUvBe5V6hjw@mail.gmail.com>
-References: <1429637257-11055-1-git-send-email-semen.protsenko@globallogic.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: rcar: Check for irq_set_irq_wake() failures
+Date: Mon,  4 May 2015 16:09:52 +0200
+Message-ID: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33404 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751640AbbEDNcb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 09:32:31 -0400
-Received: by oica37 with SMTP id a37so111655483oic.0
-        for <linux-gpio@vger.kernel.org>; Mon, 04 May 2015 06:32:31 -0700 (PDT)
-In-Reply-To: <1429637257-11055-1-git-send-email-semen.protsenko@globallogic.com>
+Received: from albert.telenet-ops.be ([195.130.137.90]:41014 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751752AbbEDOJz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 10:09:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Semen Protsenko <semen.protsenko@globallogic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Apr 21, 2015 at 7:27 PM, Semen Protsenko
-<semen.protsenko@globallogic.com> wrote:
+If an interrupt controller doesn't support wake-up configuration, trying
+to deconfigure wake-up will cause a warning:
 
-> Set .irq_set_wake callback to prevent possible issues on wake-up.
->
-> This patch was inspired by this commit:
-> b80eef95beb04760629822fa130aeed54cdfafca
->
-> Signed-off-by: Semen Protsenko <semen.protsenko@globallogic.com>
+    WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
+    Unbalanced IRQ 26 wake disable
 
-Are these real, observed issues?
+To fix this, refrain from any further parent interrupt controller
+(de)configuration if irq_set_irq_wake() failed.
 
-Patch applied, but it seems we need a general approach to
-cover a few GPIO drivers with this kind of thing.
+Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is an alternative for:
+  - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
+    platform code, OR
+  - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
+    code.
+---
+ drivers/gpio/gpio-rcar.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Is this how we should always do it?
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index fd39774659484fa6..1e14a6c74ed13941 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -177,8 +177,17 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
+ 						gpio_chip);
+-
+-	irq_set_irq_wake(p->irq_parent, on);
++	int error;
++
++	if (p->irq_parent) {
++		error = irq_set_irq_wake(p->irq_parent, on);
++		if (error) {
++			dev_dbg(&p->pdev->dev,
++				"irq %u doesn't support irq_set_wake\n",
++				p->irq_parent);
++			p->irq_parent = 0;
++		}
++	}
+ 
+ 	if (!p->clk)
+ 		return 0;
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
