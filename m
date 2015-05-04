@@ -1,62 +1,101 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v7 05/15] dt-bindings: Document the STM32 reset bindings
-Date: Mon, 04 May 2015 12:28:40 +0200
-Message-ID: <1430735320.3722.34.camel@pengutronix.de>
-References: <1430410844-16062-1-git-send-email-mcoquelin.stm32@gmail.com>
-		<1430410844-16062-6-git-send-email-mcoquelin.stm32@gmail.com>
-		<55433467.2010603@linaro.org>
-	 <CALszF6Bw900E9MtpaVmvkFxsrOODRkNg+RxRXz5V3WghHtsxbw@mail.gmail.com>
-	 <5544A069.5000808@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: baytrail: explicitly set gpio chip base
+Date: Mon, 4 May 2015 13:40:00 +0300
+Message-ID: <20150504104000.GZ1534@lahna.fi.intel.com>
+References: <1430298162-20238-1-git-send-email-ao2@ao2.it>
+ <20150430110237.GV1534@lahna.fi.intel.com>
+ <20150430235141.2928e7fa8a193437346b76aa@ao2.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:51907 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752734AbbEDK3i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 06:29:38 -0400
-In-Reply-To: <5544A069.5000808@linaro.org>
+Received: from mga03.intel.com ([134.134.136.65]:56309 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752222AbbEDKkF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 4 May 2015 06:40:05 -0400
+Content-Disposition: inline
+In-Reply-To: <20150430235141.2928e7fa8a193437346b76aa@ao2.it>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <ga>
+To: Antonio Ospite <ao2@ao2.it>
+Cc: linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Am Samstag, den 02.05.2015, 11:01 +0100 schrieb Daniel Thompson:
-> On 02/05/15 08:55, Maxime Coquelin wrote:
-> > 2015-05-01 10:08 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
-[...]
-> >> Do you intend the clock driver to use the same compatible string (given it
-> >> is the same bit of hardware).
-> >>
-> >> If so, is it better to use st,stm32f4-rcc here? It seems unlikey to me that
-> >> the register layout of the PLLs and dividers can be the same on the f7 parts
-> >> (and later).
-> >
-> > I agree we need a compatible dedicate to f4 series for clocks, and
-> > maybe even one for f429 (to be checked).
-> > For the reset part, we don't have this need.
-> >
-> > So either we use only "st,stm32f4" as you suggest, or we can have both
-> > in device tree:
-> >
-> > rcc: reset@40023800 {
-> >      #reset-cells = <1>;
-> >      compatible = "st,stm32f4-rcc", "st,stm32-rcc";
-> >      reg = <0x40023800 0x400>;
-> > };
-> >
-> > What do you think?
+On Thu, Apr 30, 2015 at 11:51:41PM +0200, Antonio Ospite wrote:
+> Hi Mika,
 > 
-> Having both makes sense. The reset driver probably doesn't care about 
-> differences between F4 and F7 (I know very little about F7 but I can't 
-> think of any obvious h/ware evolution that would confuse the current 
-> reset driver).
+> On Thu, 30 Apr 2015 14:02:37 +0300
+> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+> 
+> > On Wed, Apr 29, 2015 at 11:02:42AM +0200, Antonio Ospite wrote:
+> > > Having the gpio chip base set explicitly makes it easier to compare the
+> > > GPIOs definitions with the ones found on some Android kernels.
+> > > 
+> > > Signed-off-by: Antonio Ospite <ao2@ao2.it>
+> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: linux-gpio@vger.kernel.org
+> > > ---
+> > >  drivers/pinctrl/intel/pinctrl-baytrail.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> > > index 2062c22..4b2f594 100644
+> > > --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
+> > > +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> > > @@ -548,6 +548,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+> > >  	struct acpi_device *acpi_dev;
+> > >  	struct pinctrl_gpio_range *range;
+> > >  	acpi_handle handle = ACPI_HANDLE(dev);
+> > > +	int base_offset;
+> > >  	int ret;
+> > >  
+> > >  	if (acpi_bus_get_device(handle, &acpi_dev))
+> > > @@ -559,12 +560,14 @@ static int byt_gpio_probe(struct platform_device *pdev)
+> > >  		return -ENOMEM;
+> > >  	}
+> > >  
+> > > +	base_offset = 0;
+> > >  	for (range = byt_ranges; range->name; range++) {
+> > >  		if (!strcmp(acpi_dev->pnp.unique_id, range->name)) {
+> > >  			vg->chip.ngpio = range->npins;
+> > >  			vg->range = range;
+> > >  			break;
+> > >  		}
+> > > +		base_offset += range->npins;
+> > >  	}
+> > >  
+> > >  	if (!vg->chip.ngpio || !vg->range)
+> > > @@ -590,7 +593,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+> > >  	gc->get = byt_gpio_get;
+> > >  	gc->set = byt_gpio_set;
+> > >  	gc->dbg_show = byt_gpio_dbg_show;
+> > > -	gc->base = -1;
+> > > +	gc->base = base_offset;
+> > 
+> > But this changes the base from being dynamically allocated to always
+> > start from 0, right?
+> >
+> 
+> Yes, that's the point: to have exactly the same bases as in the Android
+> kernels found in the wild, that is:
+> 
+>   $ ls -1 /sys/class/gpio
+>   export
+>   gpiochip0
+>   gpiochip102
+>   gpiochip130
+>   unexport
+> 
+> This makes it easier for me to verify the mappings when trying to make
+> my tablet work with the mainline kernel.
+> 
+> I might as well keep the change local, but I thought that others may
+> find it useful.
+> 
+> Are there drawbacks of such fixed scheme?
 
-Seconded, this is exactly the way compatible string lists are supposed
-to be used.
+Well, if you happen to have another GPIO chip (a GPIO expander for
+example) and it somehow gets loaded before this driver. It may take the
+range you have reserved for the BYT driver.
 
-[...]
-
-regards
-Philipp
-
+Not sure how realistic case that is, though...
