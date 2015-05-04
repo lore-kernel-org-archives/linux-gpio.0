@@ -1,76 +1,54 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH  0/2] gpio: Allow userspace export from DT
-Date: Mon, 4 May 2015 10:49:25 +0200
-Message-ID: <20150504084925.GB4047@localhost>
-References: <20150413110515.9681.58848.stgit@localhost>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [PATCH 0/2] get pinctrl more flexible for per pin muxing controllers
+Date: Mon, 4 May 2015 10:56:12 +0200
+Message-ID: <1430729776-27797-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:34118 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751084AbbEDIt1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 04:49:27 -0400
-Content-Disposition: inline
-In-Reply-To: <20150413110515.9681.58848.stgit@localhost>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:32664 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751084AbbEDI4J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 04:56:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Fuzzey <mfuzzey@parkeon.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, nicolas.ferre@atmel.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-On Mon, Apr 13, 2015 at 01:05:15PM +0200, Martin Fuzzey wrote:
-> Currently the gpio sysfs interface allows userspace to access simple hardware
-> where no kernel driver exists or would be useful.
-> 
-> However it requires userspace to know the gpio number that has been assigned
-> by the kernel.
-> 
-> That number, in the case of gpio drviers using dynamic allocation, is not fixed,
-> and may change when:
-> * The kernel version changes and ARCH_NR_GPIOS is changed (happened in 3.17)
-> * The kernel version changes and probe order changes for gpio chips.
-> * The kernel configuration is changed if CONFIG_ARCH_NR_GPIO is used
-> * The board is redesigned (eg switching an externally visible signal from a
-> SoC provided GPIO to an I2C expander chip or vice versa).
-> * Other GPIO chips are added to the system.
-> 
-> The above means that, in order to export the GPIO to userspace via
-> /sys/class/gpio/export the userspace code must know the exact hardware and
-> kernel version information.
+Hi,
 
-Not quite. You can still determine the gpio number in the above cases by
-walking the sysfs tree to find the chip and it's base. This is the only
-way to do this for dynamic buses such as USB.
+The way pins, groups and functions are tied is too constraining for some
+controllers. It concerns mainly the ones we don't care about groups and
+functions, each pin can be muxed to any functions.
+The goal of these two patches is too remove some of the constraints.
 
-The only case for which this fails is if a pin function is moved (e.g.
-your i2c-expander case above).
+I have added the prototype of a pin controller and device tree to show the
+way I want to use these changes. I couldn't test it on boards using generic
+pinconf so I am not sure that I don't break something...
 
-> Furthermore, in many cases, it makes no sense to allow userspace to
-> change the signal direction; even if the GPIO itself allows it the
-> circuitry connected to the pin often does not (eg a signal dedicated
-> to an output function driving a  transistor).
 
-Indeed. The current sysfs-interface is a hack (which I personally think
-never should have been merged).
+Ludovic Desroches (4):
+  pinctrl: change function behavior for per pin muxing controllers
+  pinctrl: introduce complex pin description
+  pinctrl: rough draft for a future controller
+  ARM: at91/dt: proto dt
 
-Firmware should describe pin directionality and function, and undefined
-pins should never be allowed to be accessed from userspace.
+ arch/arm/boot/dts/Makefile                 |   1 +
+ arch/arm/boot/dts/at91-sama5d4ek_proto.dts | 243 ++++++++++
+ arch/arm/boot/dts/sama5d4_proto-pinfunc.h  | 463 +++++++++++++++++++
+ arch/arm/boot/dts/sama5d4_proto.dtsi       | 716 +++++++++++++++++++++++++++++
+ drivers/pinctrl/Kconfig                    |  10 +
+ drivers/pinctrl/Makefile                   |   1 +
+ drivers/pinctrl/pinconf-generic.c          |  44 +-
+ drivers/pinctrl/pinctrl-at91-pio4.c        | 625 +++++++++++++++++++++++++
+ drivers/pinctrl/pinmux.c                   |  58 +--
+ include/linux/pinctrl/pinctrl.h            |   6 +
+ include/linux/pinctrl/pinmux.h             |   3 +
+ 11 files changed, 2134 insertions(+), 36 deletions(-)
+ create mode 100644 arch/arm/boot/dts/at91-sama5d4ek_proto.dts
+ create mode 100644 arch/arm/boot/dts/sama5d4_proto-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/sama5d4_proto.dtsi
+ create mode 100644 drivers/pinctrl/pinctrl-at91-pio4.c
 
-Sure, the current GPIO-sysfs-interface is useful during development and
-for one-off hacks, but I'm convinced it's detrimental in the long run as
-it removes the incentives to fix the driver code that it's used to work
-around (e.g. custom init script to toggle enable lines of some radio
-chips).
+-- 
+2.2.0
 
-> This patch series solves both problems by performing the external
-> signal => GPIO mapping in the device tree.
-
-As Rob already mentioned, what we want is some way to declare pin
-functions. These could then be requested from userspace (or used in DT,
-something which should allow for further refactoring there as well)
-unless a driver has already claimed them.
-
-We don't want to add more dependencies on the current sysfs-based
-interface, which I hope we'll one day will be able to retire in favour
-of a more sane one.
-
-Johan
