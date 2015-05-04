@@ -1,154 +1,59 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 06/23] gpio: sysfs: clean up chip class-device handling
-Date: Mon,  4 May 2015 17:10:31 +0200
-Message-ID: <1430752248-15401-7-git-send-email-johan@kernel.org>
+Subject: [PATCH v2 10/23] gpio: sysfs: release irq after class-device deregistration
+Date: Mon,  4 May 2015 17:10:35 +0200
+Message-ID: <1430752248-15401-11-git-send-email-johan@kernel.org>
 References: <1430752248-15401-1-git-send-email-johan@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:35664 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751857AbbEDPNn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 11:13:43 -0400
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:34302 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751873AbbEDPNo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 May 2015 11:13:44 -0400
 In-Reply-To: <1430752248-15401-1-git-send-email-johan@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 
-Clean gpio-chip class device registration and deregistration.
+Make sure to release any irq only after the class device has been
+deregistered.
 
-The class device is registered when a gpio-chip is added (or from
-gpiolib_sysfs_init post-core init call), and deregistered when the chip
-is removed.
+This avoids a race between gpiod_unexport and edge_store, where an irq
+could be allocated just before the gpio class device is deregistered
+without relying on FLAG_EXPORT and the global sysfs lock.
 
-Store the class device in struct gpio_chip directly rather than do a
-class-device lookup on deregistration. This also removes the need for
-the exported flag.
+Note that there is no need to hold the sysfs lock when releasing the irq
+after the class device is gone as kernfs will prevent further attribute
+operations.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 39 +++++++++++++--------------------------
- include/linux/gpio/driver.h  |  4 ++--
- 2 files changed, 15 insertions(+), 28 deletions(-)
+ drivers/gpio/gpiolib-sysfs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index d19bf234e878..767b79adb9a4 100644
+index a78dabd4035b..e4b079eec9bc 100644
 --- a/drivers/gpio/gpiolib-sysfs.c
 +++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -582,7 +582,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	mutex_lock(&sysfs_lock);
+@@ -695,7 +695,6 @@ void gpiod_unexport(struct gpio_desc *desc)
  
- 	/* check if chip is being removed */
--	if (!chip || !chip->exported) {
-+	if (!chip || !chip->cdev) {
- 		status = -ENODEV;
- 		goto fail_unlock;
+ 		dev = class_find_device(&gpio_class, NULL, desc, match_export);
+ 		if (dev) {
+-			gpio_setup_irq(desc, dev, 0);
+ 			clear_bit(FLAG_SYSFS_DIR, &desc->flags);
+ 			clear_bit(FLAG_EXPORT, &desc->flags);
+ 		} else
+@@ -706,6 +705,11 @@ void gpiod_unexport(struct gpio_desc *desc)
+ 
+ 	if (dev) {
+ 		device_unregister(dev);
++		/*
++		 * Release irq after deregistration to prevent race with
++		 * edge_store.
++		 */
++		gpio_setup_irq(desc, dev, 0);
+ 		put_device(dev);
  	}
-@@ -767,7 +767,6 @@ EXPORT_SYMBOL_GPL(gpiod_unexport);
  
- int gpiochip_export(struct gpio_chip *chip)
- {
--	int		status;
- 	struct device	*dev;
- 
- 	/* Many systems register gpio chips for SOC support very early,
-@@ -783,41 +782,29 @@ int gpiochip_export(struct gpio_chip *chip)
- 					chip, gpiochip_groups,
- 					"gpiochip%d", chip->base);
- 	if (IS_ERR(dev))
--		status = PTR_ERR(dev);
--	else
--		status = 0;
-+		return PTR_ERR(dev);
- 
- 	mutex_lock(&sysfs_lock);
--	chip->exported = (status == 0);
-+	chip->cdev = dev;
- 	mutex_unlock(&sysfs_lock);
- 
--	if (status)
--		chip_dbg(chip, "%s: status %d\n", __func__, status);
--
--	return status;
-+	return 0;
- }
- 
- void gpiochip_unexport(struct gpio_chip *chip)
- {
--	int			status;
--	struct device		*dev;
- 	struct gpio_desc *desc;
- 	unsigned int i;
- 
--	dev = class_find_device(&gpio_class, NULL, chip, match_export);
--	if (dev) {
--		put_device(dev);
--		device_unregister(dev);
--		/* prevent further gpiod exports */
--		mutex_lock(&sysfs_lock);
--		chip->exported = false;
--		mutex_unlock(&sysfs_lock);
--		status = 0;
--	} else
--		status = -ENODEV;
-+	if (!chip->cdev)
-+		return;
- 
--	if (status)
--		chip_dbg(chip, "%s: status %d\n", __func__, status);
-+	device_unregister(chip->cdev);
-+
-+	/* prevent further gpiod exports */
-+	mutex_lock(&sysfs_lock);
-+	chip->cdev = NULL;
-+	mutex_unlock(&sysfs_lock);
- 
- 	/* unregister gpiod class devices owned by sysfs */
- 	for (i = 0; i < chip->ngpio; i++) {
-@@ -845,7 +832,7 @@ static int __init gpiolib_sysfs_init(void)
- 	 */
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_for_each_entry(chip, &gpio_chips, list) {
--		if (chip->exported)
-+		if (chip->cdev)
- 			continue;
- 
- 		/*
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index f1b36593ec9f..2c1e639f66bd 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -20,6 +20,7 @@ struct seq_file;
-  * struct gpio_chip - abstract a GPIO controller
-  * @label: for diagnostics
-  * @dev: optional device providing the GPIOs
-+ * @cdev: class device used by sysfs interface (may be NULL)
-  * @owner: helps prevent removal of modules exporting active GPIOs
-  * @list: links gpio_chips together for traversal
-  * @request: optional hook for chip-specific activation, such as
-@@ -57,7 +58,6 @@ struct seq_file;
-  *	implies that if the chip supports IRQs, these IRQs need to be threaded
-  *	as the chip access may sleep when e.g. reading out the IRQ status
-  *	registers.
-- * @exported: flags if the gpiochip is exported for use from sysfs. Private.
-  * @irq_not_threaded: flag must be set if @can_sleep is set but the
-  *	IRQs don't need to be threaded
-  *
-@@ -74,6 +74,7 @@ struct seq_file;
- struct gpio_chip {
- 	const char		*label;
- 	struct device		*dev;
-+	struct device		*cdev;
- 	struct module		*owner;
- 	struct list_head        list;
- 
-@@ -109,7 +110,6 @@ struct gpio_chip {
- 	const char		*const *names;
- 	bool			can_sleep;
- 	bool			irq_not_threaded;
--	bool			exported;
- 
- #ifdef CONFIG_GPIOLIB_IRQCHIP
- 	/*
 -- 
 2.0.5
 
