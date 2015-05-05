@@ -1,32 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] ARM: dts: lpc4357-ea4357: add pinctrl and uart0 muxing
-Date: Tue, 5 May 2015 17:33:58 +0200
-Message-ID: <CACRpkdZoG7ePbfhJwmQ5Lh-78Je8+ZTg=izrqA77w-JErFFUQA@mail.gmail.com>
-References: <1428095767-6286-1-git-send-email-manabian@gmail.com>
- <1428095767-6286-7-git-send-email-manabian@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [Intel-gfx] [PATCH 1/8] gpiolib: Add support for removing
+ registered consumer lookup table
+Date: Tue, 5 May 2015 17:44:59 +0200
+Message-ID: <20150505154459.GC30184@phenom.ffwll.local>
+References: <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
+ <1430818368-26790-1-git-send-email-shobhit.kumar@intel.com>
+ <20150505104505.GZ4047@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1428095767-6286-7-git-send-email-manabian@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, ariel.dalessandro@gmail.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ezequiel@vanguardiasur.com.ar, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20150505104505.GZ4047@x1>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, Povilas Staniulis <wdmonster@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Apr 3, 2015 at 11:16 PM, Joachim Eastwood <manabian@gmail.com> wrote:
-
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+T24gVHVlLCBNYXkgMDUsIDIwMTUgYXQgMTE6NDU6MDVBTSArMDEwMCwgTGVlIEpvbmVzIHdyb3Rl
+Ogo+IFRoaXMgaXMgbm90IGhvdyB3ZSBzdWJtaXQgc3Vic2VxdWVudCBwYXRjaC1zZXRzLgoKSXQg
+aXMgdW5mb3J0dW5hdGVseSBob3cgd2UgaGFuZGxlIHBhdGNoZXMgb24gZHJpLWRldmVsJmludGVs
+LWdmeCB0byBiZQphYmxlIHRvIGNvcGUgd2l0aCBtYXNzaXZlIG1haWwgbG9hZC4gSWYgZXZlcnlv
+bmUgd2hvIHN1Ym1pdHMgdG8gaW50ZWwtZ2Z4CndvdWxkIGFsd2F5cyByZXNlbmQgdGhlIGVudGly
+ZSBzZXJpZXMgZm9yIG1pbm9yIHVwZGF0ZXMgb2Ygc29tIHBhdGNoZXMKd2UnZCBjb21wbGV0ZWx5
+IGRyb3duIGluIHRoZSByZXN1bHRpbmcgZmxvb2QuCgo+IFBsZWFzZSBzdWJtaXQgdGhlbSBhcyBh
+IHdob2xlLCBzZXBlcmF0ZWx5IGZyb20gdGhlIGZpcnN0IHN1Ym1pc3Npb24KPiBhbmQgd2l0aCB2
+ZXJzaW9uaW5nIGluZm9ybWF0aW9uIGkuZS4gW1BBVENIIHYyIFgvWV0gU3R1ZmYgLi4uCj4gCj4g
+PiBJbiBjYXNlIHdlIHVubG9hZCBhbmQgbG9hZCBhIGRyaXZlciBtb2R1bGUgYWdhaW4gdGhhdCBp
+cyByZWdpc3RlcmluZyBhCj4gPiBsb29rdXAgdGFibGUsIHdpdGhvdXQgdGhpcyBpdCB3aWxsIHJl
+c3VsdCBpbiBtdWx0aXBsZSBlbnRyaWVzLiBQcm92aWRlCj4gPiBhbiBvcHRpb24gdG8gcmVtb3Zl
+IHRoZSBsb29rdXAgdGFibGUgb24gZHJpdmVyIHVubG9hZAo+ID4gCj4gPiB2MjogQ2NpbmcgbWFp
+bnRhaW5lcnMKPiA+IHYzOiBDb3JyZWN0IHRoZSBzdWJqZWN0IGxpbmUgKExlZSBqb25lcykKPiAK
+PiBDaGFuZ2UgbG9ncyBzaG91bGQgZ28gdW5kZXJuZXRoIHRoZSAnLS0tJyBhbmQgYWJvdmUgdGhl
+IGRpZmZzdGF0IGZvdW5kCj4gYmVsb3cuCgpBZ2FpbiBqdXN0IHN0eWxlIGRpZmZlcmVuY2VzIGJl
+dHdlZW4gc3Vic3lzdGVtcywgSSBnZW5lcmFsbHkgd2FudCB0byBoYXZlCnRob3NlIGFib3ZlIHRo
+ZSAtLS0uCi1EYW5pZWwKPiAKPiA+IENjOiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVs
+LmNvbT4KPiA+IENjOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+Cj4g
+PiBDYzogQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+Cj4gPiBDYzogVGhpZXJy
+eSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KPiA+IFJldmlld2VkLWJ5OiBBbGV4
+YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPiA+IFNpZ25lZC1vZmYtYnk6IFNo
+b2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+ID4gLS0tCj4gPiAgZHJpdmVy
+cy9ncGlvL2dwaW9saWIuYyAgICAgICB8IDEzICsrKysrKysrKysrKysKPiA+ICBpbmNsdWRlL2xp
+bnV4L2dwaW8vbWFjaGluZS5oIHwgIDEgKwo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0
+aW9ucygrKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW9saWIuYyBiL2Ry
+aXZlcnMvZ3Bpby9ncGlvbGliLmMKPiA+IGluZGV4IDU5ZWFhMjMuLjI0MjBhZjkgMTAwNjQ0Cj4g
+PiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi5jCj4gPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bp
+b2xpYi5jCj4gPiBAQCAtMTY1OCw2ICsxNjU4LDE5IEBAIHZvaWQgZ3Bpb2RfYWRkX2xvb2t1cF90
+YWJsZShzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSkKPiA+ICAJbXV0ZXhfdW5sb2Nr
+KCZncGlvX2xvb2t1cF9sb2NrKTsKPiA+ICB9Cj4gPiAgCj4gPiArLyoqCj4gPiArICogZ3Bpb2Rf
+cmVtb3ZlX2xvb2t1cF90YWJsZSgpIC0gdW5yZWdpc3RlciBHUElPIGRldmljZSBjb25zdW1lcnMK
+PiA+ICsgKiBAdGFibGU6IHRhYmxlIG9mIGNvbnN1bWVycyB0byB1bnJlZ2lzdGVyCj4gPiArICov
+Cj4gPiArdm9pZCBncGlvZF9yZW1vdmVfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBf
+dGFibGUgKnRhYmxlKQo+ID4gK3sKPiA+ICsJbXV0ZXhfbG9jaygmZ3Bpb19sb29rdXBfbG9jayk7
+Cj4gPiArCj4gPiArCWxpc3RfZGVsKCZ0YWJsZS0+bGlzdCk7Cj4gPiArCj4gPiArCW11dGV4X3Vu
+bG9jaygmZ3Bpb19sb29rdXBfbG9jayk7Cj4gPiArfQo+ID4gKwo+ID4gIHN0YXRpYyBzdHJ1Y3Qg
+Z3Bpb19kZXNjICpvZl9maW5kX2dwaW8oc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpj
+b25faWQsCj4gPiAgCQkJCSAgICAgIHVuc2lnbmVkIGludCBpZHgsCj4gPiAgCQkJCSAgICAgIGVu
+dW0gZ3Bpb19sb29rdXBfZmxhZ3MgKmZsYWdzKQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
+dXgvZ3Bpby9tYWNoaW5lLmggYi9pbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oCj4gPiBpbmRl
+eCBlMjcwNjE0Li5jMGQ3MTJkIDEwMDY0NAo+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9ncGlvL21h
+Y2hpbmUuaAo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9ncGlvL21hY2hpbmUuaAo+ID4gQEAgLTU3
+LDUgKzU3LDYgQEAgc3RydWN0IGdwaW9kX2xvb2t1cF90YWJsZSB7Cj4gPiAgfQo+ID4gIAo+ID4g
+IHZvaWQgZ3Bpb2RfYWRkX2xvb2t1cF90YWJsZShzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0
+YWJsZSk7Cj4gPiArdm9pZCBncGlvZF9yZW1vdmVfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9s
+b29rdXBfdGFibGUgKnRhYmxlKTsKPiA+ICAKPiA+ICAjZW5kaWYgLyogX19MSU5VWF9HUElPX01B
+Q0hJTkVfSCAqLwo+IAo+IC0tIAo+IExlZSBKb25lcwo+IExpbmFybyBTVE1pY3JvZWxlY3Ryb25p
+Y3MgTGFuZGluZyBUZWFtIExlYWQKPiBMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2Fy
+ZSBmb3IgQVJNIFNvQ3MKPiBGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0ZXIgfCBCbG9n
+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBJbnRl
+bC1nZnggbWFpbGluZyBsaXN0Cj4gSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngKCi0t
+IApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRw
+Oi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
