@@ -1,98 +1,124 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 04/27] extcon: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Tue,  5 May 2015 18:32:20 +0200
-Message-ID: <1430843563-18615-4-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 20/27] Staging: iio: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Tue,  5 May 2015 18:32:36 +0200
+Message-ID: <1430843563-18615-20-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
  <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:40223 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761315AbbEEQcy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2015 12:32:54 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: devel@driverdev.osuosl.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Cameron <jic23@kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consume=
-r
+not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
 functionality only, can still be compiled if GPIOLIB is not enabled.
 
 Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
 appropriate.
 
-If GPIOLIB=3Dn and asm-generic/gpio.h is not used:
-
-    drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon_d=
-etect_cable=E2=80=99:
-    drivers/extcon/extcon-usb-gpio.c:63: error: implicit declaration of=
- function =E2=80=98gpiod_get_value_cansleep=E2=80=99
-    drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon_p=
-robe=E2=80=99:
-    drivers/extcon/extcon-usb-gpio.c:116: error: implicit declaration o=
-f function =E2=80=98devm_gpiod_get=E2=80=99
-    drivers/extcon/extcon-usb-gpio.c:116: warning: assignment makes poi=
-nter from integer without a cast
-    drivers/extcon/extcon-usb-gpio.c:122: error: implicit declaration o=
-f function =E2=80=98gpiod_set_debounce=E2=80=99
-    drivers/extcon/extcon-usb-gpio.c:129: error: implicit declaration o=
-f function =E2=80=98gpiod_to_irq=E2=80=99
-
-Add the missing #include <linux/gpio/consumer.h> to fix this.
-
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org
+Cc: devel@driverdev.osuosl.org
 ---
- drivers/extcon/Kconfig           | 4 ++--
- drivers/extcon/extcon-usb-gpio.c | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/iio/accel/Kconfig    | 2 +-
+ drivers/staging/iio/adc/Kconfig      | 6 +++---
+ drivers/staging/iio/addac/Kconfig    | 2 +-
+ drivers/staging/iio/resolver/Kconfig | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
-index fdc0bf0543ce43ec..5d8d7244349870ca 100644
---- a/drivers/extcon/Kconfig
-+++ b/drivers/extcon/Kconfig
-@@ -30,7 +30,7 @@ config EXTCON_ARIZONA
-=20
- config EXTCON_GPIO
- 	tristate "GPIO extcon support"
+diff --git a/drivers/staging/iio/accel/Kconfig b/drivers/staging/iio/accel/Kconfig
+index 07b7ffa00ab53c86..fa67da9408b6b3b7 100644
+--- a/drivers/staging/iio/accel/Kconfig
++++ b/drivers/staging/iio/accel/Kconfig
+@@ -79,7 +79,7 @@ config LIS3L02DQ
+ 	depends on SPI
+ 	select IIO_TRIGGER if IIO_BUFFER
+ 	depends on !IIO_BUFFER || IIO_KFIFO_BUF
 -	depends on GPIOLIB
 +	depends on GPIOLIB || COMPILE_TEST
  	help
- 	  Say Y here to enable GPIO based extcon support. Note that GPIO
- 	  extcon supports single state per extcon instance.
-@@ -105,7 +105,7 @@ config EXTCON_SM5502
-=20
- config EXTCON_USB_GPIO
- 	tristate "USB GPIO extcon support"
+ 	  Say Y here to build SPI support for the ST microelectronics
+ 	  accelerometer. The driver supplies direct access via sysfs files
+diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
+index d0016ce6e65840e6..94ae4232ee773497 100644
+--- a/drivers/staging/iio/adc/Kconfig
++++ b/drivers/staging/iio/adc/Kconfig
+@@ -5,7 +5,7 @@ menu "Analog to digital converters"
+ 
+ config AD7606
+ 	tristate "Analog Devices AD7606 ADC driver"
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	select IIO_BUFFER
+ 	select IIO_TRIGGERED_BUFFER
+ 	help
+@@ -39,7 +39,7 @@ config AD7606_IFACE_SPI
+ config AD7780
+ 	tristate "Analog Devices AD7780 and similar ADCs driver"
+ 	depends on SPI
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	select AD_SIGMA_DELTA
+ 	help
+ 	  Say yes here to build support for Analog Devices AD7170, AD7171,
+@@ -52,7 +52,7 @@ config AD7780
+ config AD7816
+ 	tristate "Analog Devices AD7816/7/8 temperature sensor and ADC driver"
+ 	depends on SPI
 -	depends on GPIOLIB
 +	depends on GPIOLIB || COMPILE_TEST
  	help
- 	  Say Y here to enable GPIO based USB cable detection extcon support.
- 	  Used typically if GPIO is used for USB ID pin detection.
-diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-u=
-sb-gpio.c
-index de67fce189840eee..6c6fc33029826132 100644
---- a/drivers/extcon/extcon-usb-gpio.c
-+++ b/drivers/extcon/extcon-usb-gpio.c
-@@ -15,6 +15,7 @@
-  */
-=20
- #include <linux/extcon.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
---=20
+ 	  Say yes here to build support for Analog Devices AD7816/7/8
+ 	  temperature sensors and ADC.
+diff --git a/drivers/staging/iio/addac/Kconfig b/drivers/staging/iio/addac/Kconfig
+index 0ed7e13e2283edb0..ba18b8432d9cce6e 100644
+--- a/drivers/staging/iio/addac/Kconfig
++++ b/drivers/staging/iio/addac/Kconfig
+@@ -5,7 +5,7 @@ menu "Analog digital bi-direction converters"
+ 
+ config ADT7316
+ 	tristate "Analog Devices ADT7316/7/8 ADT7516/7/9 temperature sensor, ADC and DAC driver"
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say yes here to build support for Analog Devices ADT7316, ADT7317, ADT7318
+ 	  and ADT7516, ADT7517, ADT7519 temperature sensors, ADC and DAC.
+diff --git a/drivers/staging/iio/resolver/Kconfig b/drivers/staging/iio/resolver/Kconfig
+index c7a742ec122727b0..1c7e2860d6b75d56 100644
+--- a/drivers/staging/iio/resolver/Kconfig
++++ b/drivers/staging/iio/resolver/Kconfig
+@@ -16,7 +16,7 @@ config AD2S90
+ config AD2S1200
+ 	tristate "Analog Devices ad2s1200/ad2s1205 driver"
+ 	depends on SPI
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say yes here to build support for Analog Devices spi resolver
+ 	  to digital converters, ad2s1200 and ad2s1205, provides direct access
+@@ -28,7 +28,7 @@ config AD2S1200
+ config AD2S1210
+ 	tristate "Analog Devices ad2s1210 driver"
+ 	depends on SPI
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say yes here to build support for Analog Devices spi resolver
+ 	  to digital converters, ad2s1210, provides direct access via sysfs.
+-- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
