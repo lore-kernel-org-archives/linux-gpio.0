@@ -1,118 +1,64 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH v2 1/2] pinctrl: dt-binding: document Conexant CX92755 SoC
-Date: Tue,  5 May 2015 13:55:09 +0300
-Message-ID: <eaf294961247ac7c105156d6fae6d7389a4c0dfc.1430823310.git.baruch@tkos.co.il>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/2] gpio / ACPI: Add support for retrieving GpioInt
+ resources from a device
+Date: Tue, 5 May 2015 15:29:54 +0300
+Message-ID: <20150505122954.GD1541@lahna.fi.intel.com>
+References: <1430233507-29389-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1430233507-29389-2-git-send-email-mika.westerberg@linux.intel.com>
+ <1988723.gb0XCG22Xj@vostro.rjw.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:57759 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758026AbbEEKz1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 May 2015 06:55:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:50995 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752857AbbEEMaT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 May 2015 08:30:19 -0400
+Content-Disposition: inline
+In-Reply-To: <1988723.gb0XCG22Xj@vostro.rjw.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Baruch Siach <baruch@tkos.co.il>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Octavian Purdila <octavian.purdila@intel.com>, Robert Dolca <robert.dolca@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
 
-Add pinctrl device tree binding documentation for the General Purpose Pin
-Mapping module of the Conexant CX92755 SoC.
+On Tue, May 05, 2015 at 01:47:36AM +0200, Rafael J. Wysocki wrote:
+> On Tuesday, April 28, 2015 06:05:06 PM Mika Westerberg wrote:
+> > ACPI specification knows two types of GPIOs: GpioIo and GpioInt. The latter
+> > is used to describe that a given device interrupt line is connected to a
+> > specific GPIO pin. Typical ACPI _CRS entry for such device looks like
+> > below:
+> > 
+> >     Name (_CRS, ResourceTemplate ()
+> >     {
+> >         I2cSerialBus (0x004A, ControllerInitiated, 0x00061A80,
+> >                       AddressingMode7Bit, "\\_SB.PCI0.I2C6",
+> >                       0x00, ResourceConsumer)
+> >         GpioIo (Exclusive, PullDefault, 0x0000, 0x0000,
+> >                 IoRestrictionOutputOnly, "\\_SB.GPO0",
+> >                 0x00, ResourceConsumer)
+> >         {
+> >             0x004B
+> >         }
+> >         GpioInt (Level, ActiveLow, Shared, PullDefault, 0x0000,
+> >                  "\\_SB.GPO0", 0x00, ResourceConsumer)
+> >         {
+> >             0x004C
+> >         }
+> >     })
+> > 
+> > Currently drivers need to request a GPIO corresponding to the right GpioInt
+> > and then translate that to Linux IRQ number. This adds unnecessary lines of
+> > boiler-plate code.
+> > 
+> > We can ease this a bit by introducing acpi_dev_gpio_irq_get() analogous to
+> > of_irq_get(). This function translates given GpioInt resource under the
+> > device in question to the suitable Linux IRQ number.
+> > 
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
----
- .../bindings/pinctrl/cnxt,cx92755-pinctrl.txt      | 86 ++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
+Thanks Rafael.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
-new file mode 100644
-index 000000000000..23ce8dc26990
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
-@@ -0,0 +1,86 @@
-+Conexant Digicolor CX92755 General Purpose Pin Mapping
-+
-+This document describes the device tree binding of the pin mapping hardware
-+modules in the Conexant Digicolor CX92755 SoCs. The CX92755 in one of the
-+Digicolor series of SoCs.
-+
-+=== Pin Controller Node ===
-+
-+Required Properties:
-+
-+- compatible: Must be "cnxt,cx92755-pinctrl"
-+- reg: Base address of the General Purpose Pin Mapping register block and the
-+  size of the block.
-+- gpio-controller: Marks the device node as a GPIO controller.
-+- #gpio-cells: Must be <2>. The first cell is the pin number and the
-+  second cell is used to specify flags. See include/dt-bindings/gpio/gpio.h
-+  for possible values.
-+
-+For example, the following is the bare minimum node:
-+
-+	pinctrl: pinctrl@f0000e20 {
-+		compatible = "cnxt,cx92755-pinctrl";
-+		reg = <0xf0000e20 0x100>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+As a pin controller device, in addition to the required properties, this node
-+should also contain the pin configuration nodes that client devices reference,
-+if any.
-+
-+For a general description of GPIO bindings, please refer to ../gpio/gpio.txt.
-+
-+=== Pin Configuration Node ===
-+
-+Each pin configuration node is a sub-node of the pin controller node and is a
-+container of an arbitrary number of subnodes, called pin group nodes in this
-+document.
-+
-+Please refer to the pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the definition of a
-+"pin configuration node".
-+
-+=== Pin Group Node ===
-+
-+A pin group node specifies the desired pin mux for an arbitrary number of
-+pins. The name of the pin group node is optional and not used.
-+
-+A pin group node only affects the properties specified in the node, and has no
-+effect on any properties that are omitted.
-+
-+The pin group node accepts a subset of the generic pin config properties. For
-+details generic pin config properties, please refer to pinctrl-bindings.txt
-+and <include/linux/pinctrl/pinconfig-generic.h>.
-+
-+Required Pin Group Node Properties:
-+
-+- pins: Multiple strings. Specifies the name(s) of one or more pins to be
-+  configured by this node. The format of a pin name string is "GP_xy", where x
-+  is an uppercase character from 'A' to 'R', and y is a digit from 0 to 7.
-+- function: String. Specifies the pin mux selection. Values must be one of:
-+  "gpio", "client_a", "client_b", "client_c"
-+
-+Example:
-+	pinctrl: pinctrl@f0000e20 {
-+		compatible = "cnxt,cx92755-pinctrl";
-+		reg = <0xf0000e20 0x100>;
-+
-+		uart0_default: uart0_active {
-+			data_signals {
-+				pins = "GP_O0", "GP_O1";
-+				function = "client_b";
-+			};
-+		};
-+	};
-+
-+	uart0: uart@f0000740 {
-+		compatible = "cnxt,cx92755-usart";
-+		...
-+		pinctrl-0 = <&uart0_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+In the example above, a single pin group configuration node defines the
-+"client select" for the Rx and Tx signals of uart0. The uart0 node references
-+that pin configuration node using the &uart0_default phandle.
--- 
-2.1.4
-
+I'm going to change the other patch a bit to address conserns from
+Wolfram so that we will use irq == 0 to indicate an invalid interrupt
+instead of -1.
