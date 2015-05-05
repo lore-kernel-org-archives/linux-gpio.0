@@ -1,75 +1,59 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 7/8] ASoC: wm8998: Initial WM8998 codec driver
-Date: Tue, 5 May 2015 10:24:12 +0100
-Message-ID: <20150505092411.GA15549@opensource.wolfsonmicro.com>
-References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com> <1430493319-23808-8-git-send-email-rf@opensource.wolfsonmicro.com> <20150504113943.GB15510@sirena.org.uk>
+From: Shobhit Kumar <shobhit.kumar@intel.com>
+Subject: [PATCH 1/8] gpiolib: Add support for removing
+	registered consumer lookup table
+Date: Tue,  5 May 2015 15:02:48 +0530
+Message-ID: <1430818368-26790-1-git-send-email-shobhit.kumar@intel.com>
+References: <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43586 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1031288AbbEEJYT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2015 05:24:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20150504113943.GB15510@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-pwm <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Povilas Staniulis <wdmonster@gmail.com>, David Airlie <airlied@linux.ie>, Shobhit Kumar <shobhit.kumar@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jani Nikula <jani.nikula@intel.com>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-On Mon, May 04, 2015 at 12:39:43PM +0100, Mark Brown wrote:
-> On Fri, May 01, 2015 at 04:15:18PM +0100, Richard Fitzgerald wrote:
-> 
-> > +	switch (event) {
-> > +	case SND_SOC_DAPM_PRE_PMU:
-> > +		val = snd_soc_read(codec, ARIZONA_ASRC_RATE1);
-> > +		val &= ARIZONA_ASRC_RATE1_MASK;
-> > +		val >>= ARIZONA_ASRC_RATE1_SHIFT;
-> > +
-> > +		val = snd_soc_read(codec, ARIZONA_SAMPLE_RATE_1 + val);
-> > +		if (val >= 0x11)
-> > +			dev_warn(codec->dev, "Unsupported ASRC rate1\n");
-> 
-> Shouldn't we be returning an error if the rate is unsupported?  It'd
-> also be helpful to log what the invalid value that's been set is.
-> 
-> > +		val = snd_soc_read(codec, ARIZONA_ASRC_RATE2);
-> > +		val &= ARIZONA_ASRC_RATE2_MASK;
-> > +		val >>= ARIZONA_ASRC_RATE2_SHIFT;
-> > +		val -= 0x8;
-> 
-> What if the value we read back is set (invalidly I guess) to less than
-> 8?  We'll just read...
-
-> 
-> > +
-> > +		val = snd_soc_read(codec, ARIZONA_ASYNC_SAMPLE_RATE_1 + val);
-> > +		if (val >= 0x11)
-> > +			dev_warn(codec->dev, "Unsupported ASRC rate2\n");
-> 
-> ...some random other register.
-
-ARIZONA_ASRC_RATE2 register can only have the values 8 or 9 and we don't
-provide a way to set it to illegal values.
-
-> 
-> > +static const char * const wm8998_inmux_texts[] = {
-> > +	"A",
-> > +	"B",
-> > +};
-> > +
-> > +static const SOC_ENUM_SINGLE_DECL(wm8998_in1muxl_enum,
-> > +				  ARIZONA_ADC_DIGITAL_VOLUME_1L,
-> > +				  ARIZONA_IN1L_SRC_SHIFT,
-> > +				  wm8998_inmux_texts);
-> 
-> Those are some fun input names...
-
-... that's what the mux positions are called and it seems nice to have consistent
-naming for all similar muxes across channels and across future codecs. Like for
-example to switch both muxes of a stereo input you set them both to the same
-position name (both "A" or both "B") is clearer, and quicker to spot in a dump
-of ALSA control settings, than having the two muxes set to different enumeration
-strings that actually mean the same mux position.
-
-
+SW4gY2FzZSB3ZSB1bmxvYWQgYW5kIGxvYWQgYSBkcml2ZXIgbW9kdWxlIGFnYWluIHRoYXQgaXMg
+cmVnaXN0ZXJpbmcgYQpsb29rdXAgdGFibGUsIHdpdGhvdXQgdGhpcyBpdCB3aWxsIHJlc3VsdCBp
+biBtdWx0aXBsZSBlbnRyaWVzLiBQcm92aWRlCmFuIG9wdGlvbiB0byByZW1vdmUgdGhlIGxvb2t1
+cCB0YWJsZSBvbiBkcml2ZXIgdW5sb2FkCgp2MjogQ2NpbmcgbWFpbnRhaW5lcnMKdjM6IENvcnJl
+Y3QgdGhlIHN1YmplY3QgbGluZSAoTGVlIGpvbmVzKQoKQ2M6IFNhbXVlbCBPcnRpeiA8c2FtZW9A
+bGludXguaW50ZWwuY29tPgpDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8u
+b3JnPgpDYzogQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+CkNjOiBUaGllcnJ5
+IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgpSZXZpZXdlZC1ieTogQWxleGFuZHJl
+IENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+ClNpZ25lZC1vZmYtYnk6IFNob2JoaXQgS3Vt
+YXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgotLS0KIGRyaXZlcnMvZ3Bpby9ncGlvbGliLmMg
+ICAgICAgfCAxMyArKysrKysrKysrKysrCiBpbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oIHwg
+IDEgKwogMiBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncGlvL2dwaW9saWIuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvbGliLmMKaW5kZXggNTllYWEy
+My4uMjQyMGFmOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncGlvL2dwaW9saWIuYworKysgYi9kcml2
+ZXJzL2dwaW8vZ3Bpb2xpYi5jCkBAIC0xNjU4LDYgKzE2NTgsMTkgQEAgdm9pZCBncGlvZF9hZGRf
+bG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQogCW11dGV4X3Vu
+bG9jaygmZ3Bpb19sb29rdXBfbG9jayk7CiB9CiAKKy8qKgorICogZ3Bpb2RfcmVtb3ZlX2xvb2t1
+cF90YWJsZSgpIC0gdW5yZWdpc3RlciBHUElPIGRldmljZSBjb25zdW1lcnMKKyAqIEB0YWJsZTog
+dGFibGUgb2YgY29uc3VtZXJzIHRvIHVucmVnaXN0ZXIKKyAqLwordm9pZCBncGlvZF9yZW1vdmVf
+bG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQoreworCW11dGV4
+X2xvY2soJmdwaW9fbG9va3VwX2xvY2spOworCisJbGlzdF9kZWwoJnRhYmxlLT5saXN0KTsKKwor
+CW11dGV4X3VubG9jaygmZ3Bpb19sb29rdXBfbG9jayk7Cit9CisKIHN0YXRpYyBzdHJ1Y3QgZ3Bp
+b19kZXNjICpvZl9maW5kX2dwaW8oc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpjb25f
+aWQsCiAJCQkJICAgICAgdW5zaWduZWQgaW50IGlkeCwKIAkJCQkgICAgICBlbnVtIGdwaW9fbG9v
+a3VwX2ZsYWdzICpmbGFncykKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5l
+LmggYi9pbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oCmluZGV4IGUyNzA2MTQuLmMwZDcxMmQg
+MTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5lLmgKKysrIGIvaW5jbHVkZS9s
+aW51eC9ncGlvL21hY2hpbmUuaApAQCAtNTcsNSArNTcsNiBAQCBzdHJ1Y3QgZ3Bpb2RfbG9va3Vw
+X3RhYmxlIHsKIH0KIAogdm9pZCBncGlvZF9hZGRfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9s
+b29rdXBfdGFibGUgKnRhYmxlKTsKK3ZvaWQgZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90YWJsZShzdHJ1
+Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSk7CiAKICNlbmRpZiAvKiBfX0xJTlVYX0dQSU9f
+TUFDSElORV9IICovCi0tIAoyLjEuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9pbnRlbC1nZngK
