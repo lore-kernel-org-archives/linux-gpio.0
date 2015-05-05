@@ -1,27 +1,19 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 05/27] hwmon: Allow compile test of GPIO
-	consumers if !GPIOLIB
-Date: Tue,  5 May 2015 18:32:21 +0200
-Message-ID: <1430843563-18615-5-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 16/27] regulator: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Tue,  5 May 2015 18:32:32 +0200
+Message-ID: <1430843563-18615-16-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
-	<1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <lm-sensors-bounces@lm-sensors.org>
+ <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:46289 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761369AbbEEQc4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2015 12:32:56 -0400
 In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
-List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
-List-Post: <mailto:lm-sensors@lm-sensors.org>
-List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
-List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
-Sender: lm-sensors-bounces@lm-sensors.org
-Errors-To: lm-sensors-bounces@lm-sensors.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
 not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
@@ -31,40 +23,25 @@ Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
 appropriate.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jean Delvare <jdelvare@suse.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: lm-sensors@lm-sensors.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
 ---
- drivers/hwmon/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 25d9e72627e9df97..9d29f42db1856747 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -509,7 +509,7 @@ config SENSORS_G762
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index a6f116aa523532b5..91aa2302b74afa4d 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -233,7 +233,7 @@ config REGULATOR_FAN53555
  
- config SENSORS_GPIO_FAN
- 	tristate "GPIO fan"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	depends on THERMAL || THERMAL=n
- 	help
- 	  If you say yes here you get support for fans connected to GPIO lines.
-@@ -1186,7 +1186,7 @@ config SENSORS_PWM_FAN
- 
- config SENSORS_SHT15
- 	tristate "Sensiron humidity and temperature sensors. SHT15 and compat."
+ config REGULATOR_GPIO
+ 	tristate "GPIO regulator support"
 -	depends on GPIOLIB
 +	depends on GPIOLIB || COMPILE_TEST
  	help
- 	  If you say yes here you get support for the Sensiron SHT10, SHT11,
- 	  SHT15, SHT71, SHT75 humidity and temperature sensors.
+ 	  This driver provides support for regulators that can be
+ 	  controlled via gpios.
 -- 
 1.9.1
 
-
-_______________________________________________
-lm-sensors mailing list
-lm-sensors@lm-sensors.org
-http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
