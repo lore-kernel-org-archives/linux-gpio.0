@@ -1,62 +1,65 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 01/27] drm/bridge: ptn3460: #include <linux/gpio/consumer.h>,
- depend on GPIOLIB
-Date: Tue,  5 May 2015 18:32:17 +0200
-Message-ID: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 07/27] iio: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Tue,  5 May 2015 18:32:23 +0200
+Message-ID: <1430843563-18615-7-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+ <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SWYgR1BJT0xJQj1uIGFuZCBhc20tZ2VuZXJpYy9ncGlvLmggaXMgbm90IHVzZWQ6CgogICAgZHJp
-dmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmM6IEluIGZ1bmN0aW9uIOKAmHB0bjM0NjBfcHJl
-X2VuYWJsZeKAmToKICAgIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jOjEzNTogZXJy
-b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGdwaW9kX3NldF92YWx1ZeKA
-mQogICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmM6IEluIGZ1bmN0aW9uIOKAmHB0
-bjM0NjBfcHJvYmXigJk6CiAgICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYzozMzM6
-IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhkZXZtX2dwaW9kX2dl
-dOKAmQogICAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmM6MzMzOiB3YXJuaW5nOiBh
-c3NpZ25tZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0CiAgICBk
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYzozNDA6IGVycm9yOiBpbXBsaWNpdCBkZWNs
-YXJhdGlvbiBvZiBmdW5jdGlvbiDigJhncGlvZF9kaXJlY3Rpb25fb3V0cHV04oCZCiAgICBkcml2
-ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYzozNDY6IHdhcm5pbmc6IGFzc2lnbm1lbnQgbWFr
-ZXMgcG9pbnRlciBmcm9tIGludGVnZXIgd2l0aG91dCBhIGNhc3QKCkFkZCB0aGUgbWlzc2luZyAj
-aW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPiB0byBmaXggdGhpcy4KCkFzIHRoZSByZXN1
-bHRpbmcgZHJpdmVyIHdvbid0IHdvcmsgd2l0aCBHUElPTElCPW4gYW55d2F5LCBtYWtlCkRSTV9Q
-VE4zNDYwIGRlcGVuZCBvbiBHUElPTElCIHx8IENPTVBJTEVfVEVTVC4KClNpZ25lZC1vZmYtYnk6
-IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+CkNjOiBEYXZpZCBBaXJs
-aWUgPGFpcmxpZWRAbGludXguaWU+CkNjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Ci0tLQogZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnICAgfCA0ICsrLS0KIGRyaXZlcnMv
-Z3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jIHwgMSArCiAyIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJp
-ZGdlL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcKaW5kZXggYWNlZjMy
-MjM3NzJjYjg5OS4uNmNkY2QyZWM0ODQ4ZWRlYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2JyaWRnZS9LY29uZmlnCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZpZwpAQCAt
-NSw4ICs1LDggQEAgY29uZmlnIERSTV9EV19IRE1JCiAKIGNvbmZpZyBEUk1fUFROMzQ2MAogCXRy
-aXN0YXRlICJQVE4zNDYwIERQL0xWRFMgYnJpZGdlIgotCWRlcGVuZHMgb24gRFJNCi0JZGVwZW5k
-cyBvbiBPRgorCWRlcGVuZHMgb24gRFJNICYmIE9GCisJZGVwZW5kcyBvbiBHUElPTElCIHx8IENP
-TVBJTEVfVEVTVAogCXNlbGVjdCBEUk1fS01TX0hFTFBFUgogCXNlbGVjdCBEUk1fUEFORUwKIAkt
-LS1oZWxwLS0tCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCmluZGV4IDlkMmYwNTMzODJlMTg4OWEu
-LjYzYTA5ZTQwNzlmMzU4ZmYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRu
-MzQ2MC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcHRuMzQ2MC5jCkBAIC0xNSw2ICsx
-NSw3IEBACiAKICNpbmNsdWRlIDxsaW51eC9kZWxheS5oPgogI2luY2x1ZGUgPGxpbnV4L2dwaW8u
-aD4KKyNpbmNsdWRlIDxsaW51eC9ncGlvL2NvbnN1bWVyLmg+CiAjaW5jbHVkZSA8bGludXgvaTJj
-Lmg+CiAjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+CiAjaW5jbHVkZSA8bGludXgvb2YuaD4KLS0g
-CjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+functionality only, can still be compiled if GPIOLIB is not enabled.
+
+Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+appropriate.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org
+---
+ drivers/iio/humidity/Kconfig     | 2 +-
+ drivers/iio/magnetometer/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iio/humidity/Kconfig b/drivers/iio/humidity/Kconfig
+index 4813b793b9f7f944..688c0d1cb47dea36 100644
+--- a/drivers/iio/humidity/Kconfig
++++ b/drivers/iio/humidity/Kconfig
+@@ -5,7 +5,7 @@ menu "Humidity sensors"
+ 
+ config DHT11
+ 	tristate "DHT11 (and compatible sensors) driver"
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  This driver supports reading data via a single interrupt
+ 	  generating GPIO line. Currently tested are DHT11 and DHT22.
+diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+index a5d6de72c523bab2..00297bbb7e4b4a0b 100644
+--- a/drivers/iio/magnetometer/Kconfig
++++ b/drivers/iio/magnetometer/Kconfig
+@@ -8,7 +8,7 @@ menu "Magnetometer sensors"
+ config AK8975
+ 	tristate "Asahi Kasei AK 3-Axis Magnetometer"
+ 	depends on I2C
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say yes here to build support for Asahi Kasei AK8975, AK8963,
+ 	  AK09911 or AK09912 3-Axis Magnetometer.
+@@ -19,7 +19,7 @@ config AK8975
+ config AK09911
+ 	tristate "Asahi Kasei AK09911 3-axis Compass"
+ 	depends on I2C
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	select AK8975
+ 	help
+ 	  Deprecated: AK09911 is now supported by AK8975 driver.
+-- 
+1.9.1
