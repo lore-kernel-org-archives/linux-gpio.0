@@ -1,14 +1,26 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 07/27] iio: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Tue,  5 May 2015 18:32:23 +0200
-Message-ID: <1430843563-18615-7-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 18/27] staging: android: Allow compile test of GPIO consumers
+ if !GPIOLIB
+Date: Tue,  5 May 2015 18:32:34 +0200
+Message-ID: <1430843563-18615-18-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
  <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
 In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-gpio@vger.kernel.org
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
@@ -19,47 +31,25 @@ Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
 appropriate.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org
 ---
- drivers/iio/humidity/Kconfig     | 2 +-
- drivers/iio/magnetometer/Kconfig | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/android/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/humidity/Kconfig b/drivers/iio/humidity/Kconfig
-index 4813b793b9f7f944..688c0d1cb47dea36 100644
---- a/drivers/iio/humidity/Kconfig
-+++ b/drivers/iio/humidity/Kconfig
-@@ -5,7 +5,7 @@ menu "Humidity sensors"
+diff --git a/drivers/staging/android/Kconfig b/drivers/staging/android/Kconfig
+index 8feb9048e62ffa45..19fcc3fc15d4468b 100644
+--- a/drivers/staging/android/Kconfig
++++ b/drivers/staging/android/Kconfig
+@@ -20,7 +20,8 @@ config ANDROID_TIMED_OUTPUT
  
- config DHT11
- 	tristate "DHT11 (and compatible sensors) driver"
--	depends on GPIOLIB
+ config ANDROID_TIMED_GPIO
+ 	tristate "Android timed gpio driver"
+-	depends on GPIOLIB && ANDROID_TIMED_OUTPUT
 +	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  This driver supports reading data via a single interrupt
- 	  generating GPIO line. Currently tested are DHT11 and DHT22.
-diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
-index a5d6de72c523bab2..00297bbb7e4b4a0b 100644
---- a/drivers/iio/magnetometer/Kconfig
-+++ b/drivers/iio/magnetometer/Kconfig
-@@ -8,7 +8,7 @@ menu "Magnetometer sensors"
- config AK8975
- 	tristate "Asahi Kasei AK 3-Axis Magnetometer"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say yes here to build support for Asahi Kasei AK8975, AK8963,
- 	  AK09911 or AK09912 3-Axis Magnetometer.
-@@ -19,7 +19,7 @@ config AK8975
- config AK09911
- 	tristate "Asahi Kasei AK09911 3-axis Compass"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	select AK8975
- 	help
- 	  Deprecated: AK09911 is now supported by AK8975 driver.
++	depends on ANDROID_TIMED_OUTPUT
+ 	default n
+ 
+ config ANDROID_LOW_MEMORY_KILLER
 -- 
 1.9.1
