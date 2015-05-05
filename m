@@ -1,70 +1,96 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/8] gpiolib: Add support for removing
- registered consumer lookup table
-Date: Tue, 5 May 2015 11:45:05 +0100
-Message-ID: <20150505104505.GZ4047@x1>
-References: <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
- <1430818368-26790-1-git-send-email-shobhit.kumar@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 7/8] ASoC: wm8998: Initial WM8998 codec
+	driver
+Date: Tue, 5 May 2015 11:53:27 +0100
+Message-ID: <20150505105327.GZ22845@sirena.org.uk>
+References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1430493319-23808-8-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20150504113943.GB15510@sirena.org.uk>
+ <20150505092411.GA15549@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1430818368-26790-1-git-send-email-shobhit.kumar@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: multipart/mixed; boundary="===============2579490098064728190=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20150505092411.GA15549@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, myungjoo.ham@samsung.com, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-VGhpcyBpcyBub3QgaG93IHdlIHN1Ym1pdCBzdWJzZXF1ZW50IHBhdGNoLXNldHMuCgpQbGVhc2Ug
-c3VibWl0IHRoZW0gYXMgYSB3aG9sZSwgc2VwZXJhdGVseSBmcm9tIHRoZSBmaXJzdCBzdWJtaXNz
-aW9uCmFuZCB3aXRoIHZlcnNpb25pbmcgaW5mb3JtYXRpb24gaS5lLiBbUEFUQ0ggdjIgWC9ZXSBT
-dHVmZiAuLi4KCj4gSW4gY2FzZSB3ZSB1bmxvYWQgYW5kIGxvYWQgYSBkcml2ZXIgbW9kdWxlIGFn
-YWluIHRoYXQgaXMgcmVnaXN0ZXJpbmcgYQo+IGxvb2t1cCB0YWJsZSwgd2l0aG91dCB0aGlzIGl0
-IHdpbGwgcmVzdWx0IGluIG11bHRpcGxlIGVudHJpZXMuIFByb3ZpZGUKPiBhbiBvcHRpb24gdG8g
-cmVtb3ZlIHRoZSBsb29rdXAgdGFibGUgb24gZHJpdmVyIHVubG9hZAo+IAo+IHYyOiBDY2luZyBt
-YWludGFpbmVycwo+IHYzOiBDb3JyZWN0IHRoZSBzdWJqZWN0IGxpbmUgKExlZSBqb25lcykKCkNo
-YW5nZSBsb2dzIHNob3VsZCBnbyB1bmRlcm5ldGggdGhlICctLS0nIGFuZCBhYm92ZSB0aGUgZGlm
-ZnN0YXQgZm91bmQKYmVsb3cuCgo+IENjOiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVs
-LmNvbT4KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IENj
-OiBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRp
-bmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KPiBSZXZpZXdlZC1ieTogQWxleGFuZHJlIENv
-dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4gU2lnbmVkLW9mZi1ieTogU2hvYmhpdCBLdW1h
-ciA8c2hvYmhpdC5rdW1hckBpbnRlbC5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3Bpby9ncGlvbGli
-LmMgICAgICAgfCAxMyArKysrKysrKysrKysrCj4gIGluY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5l
-LmggfCAgMSArCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi5jIGIvZHJpdmVycy9ncGlvL2dwaW9saWIuYwo+
-IGluZGV4IDU5ZWFhMjMuLjI0MjBhZjkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW9s
-aWIuYwo+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvbGliLmMKPiBAQCAtMTY1OCw2ICsxNjU4LDE5
-IEBAIHZvaWQgZ3Bpb2RfYWRkX2xvb2t1cF90YWJsZShzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxl
-ICp0YWJsZSkKPiAgCW11dGV4X3VubG9jaygmZ3Bpb19sb29rdXBfbG9jayk7Cj4gIH0KPiAgCj4g
-Ky8qKgo+ICsgKiBncGlvZF9yZW1vdmVfbG9va3VwX3RhYmxlKCkgLSB1bnJlZ2lzdGVyIEdQSU8g
-ZGV2aWNlIGNvbnN1bWVycwo+ICsgKiBAdGFibGU6IHRhYmxlIG9mIGNvbnN1bWVycyB0byB1bnJl
-Z2lzdGVyCj4gKyAqLwo+ICt2b2lkIGdwaW9kX3JlbW92ZV9sb29rdXBfdGFibGUoc3RydWN0IGdw
-aW9kX2xvb2t1cF90YWJsZSAqdGFibGUpCj4gK3sKPiArCW11dGV4X2xvY2soJmdwaW9fbG9va3Vw
-X2xvY2spOwo+ICsKPiArCWxpc3RfZGVsKCZ0YWJsZS0+bGlzdCk7Cj4gKwo+ICsJbXV0ZXhfdW5s
-b2NrKCZncGlvX2xvb2t1cF9sb2NrKTsKPiArfQo+ICsKPiAgc3RhdGljIHN0cnVjdCBncGlvX2Rl
-c2MgKm9mX2ZpbmRfZ3BpbyhzdHJ1Y3QgZGV2aWNlICpkZXYsIGNvbnN0IGNoYXIgKmNvbl9pZCwK
-PiAgCQkJCSAgICAgIHVuc2lnbmVkIGludCBpZHgsCj4gIAkJCQkgICAgICBlbnVtIGdwaW9fbG9v
-a3VwX2ZsYWdzICpmbGFncykKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9ncGlvL21hY2hp
-bmUuaCBiL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5lLmgKPiBpbmRleCBlMjcwNjE0Li5jMGQ3
-MTJkIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5lLmgKPiArKysgYi9p
-bmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oCj4gQEAgLTU3LDUgKzU3LDYgQEAgc3RydWN0IGdw
-aW9kX2xvb2t1cF90YWJsZSB7Cj4gIH0KPiAgCj4gIHZvaWQgZ3Bpb2RfYWRkX2xvb2t1cF90YWJs
-ZShzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSk7Cj4gK3ZvaWQgZ3Bpb2RfcmVtb3Zl
-X2xvb2t1cF90YWJsZShzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSk7Cj4gIAo+ICAj
-ZW5kaWYgLyogX19MSU5VWF9HUElPX01BQ0hJTkVfSCAqLwoKLS0gCkxlZSBKb25lcwpMaW5hcm8g
-U1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4g
-c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3
-aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
-Cg==
+
+--===============2579490098064728190==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4OzcLsYxzreNWMPE"
+Content-Disposition: inline
+
+
+--4OzcLsYxzreNWMPE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, May 05, 2015 at 10:24:12AM +0100, Richard Fitzgerald wrote:
+> On Mon, May 04, 2015 at 12:39:43PM +0100, Mark Brown wrote:
+> > On Fri, May 01, 2015 at 04:15:18PM +0100, Richard Fitzgerald wrote:
+
+> > > +		val = snd_soc_read(codec, ARIZONA_ASYNC_SAMPLE_RATE_1 + val);
+> > > +		if (val >= 0x11)
+> > > +			dev_warn(codec->dev, "Unsupported ASRC rate2\n");
+
+> > ...some random other register.
+
+> ARIZONA_ASRC_RATE2 register can only have the values 8 or 9 and we don't
+> provide a way to set it to illegal values.
+
+That's trusting of future maintainers of this code, and it doesn't look
+great when bounds checking and validation code has some fairly obviously
+missing bounds checking and validation.
+
+> > > +static const char * const wm8998_inmux_texts[] = {
+> > > +	"A",
+> > > +	"B",
+
+> > Those are some fun input names...
+
+> ... that's what the mux positions are called and it seems nice to have consistent
+> naming for all similar muxes across channels and across future codecs. Like for
+> example to switch both muxes of a stereo input you set them both to the same
+> position name (both "A" or both "B") is clearer, and quicker to spot in a dump
+> of ALSA control settings, than having the two muxes set to different enumeration
+> strings that actually mean the same mux position.
+
+Equally when setting the muxes settings called A and B that's not really
+telling people what they do.
+
+--4OzcLsYxzreNWMPE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVSKEnAAoJECTWi3JdVIfQUWkH/iAm+V+tRy2vusGvhDMPVdg3
+tYedikVyumurF5RLgPISiAv7mndeLSXb1R/Mhf/ugGMe4fZUkrE1CUGAI46TXX4K
+kPo/1qKN4V+Me7hEPTfMg1+KS9dgW1gjBgvDiIZrzRd79t8QQMpXolI3Xn+74h/6
+qPRDCelHwXDro5joFm9yTk+RhxdOaM15tQSPMzn1qj5Lf8kS2cDmlG9nyVnExcc7
+BeJT3bc9Z2w5BYGDFnSdkEw2difn2t983UjOZRVHlqRLv138bL6NlidnWMkfhP0a
+l0+9x0OWy3umKaJE5x8lynM0ZFNbK9t6oTTxjMSCrD0TzDENQc0f5HZLircReFU=
+=+uCo
+-----END PGP SIGNATURE-----
+
+--4OzcLsYxzreNWMPE--
+
+--===============2579490098064728190==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============2579490098064728190==--
