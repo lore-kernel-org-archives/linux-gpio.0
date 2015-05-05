@@ -1,15 +1,19 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 06/27] i2c: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Tue,  5 May 2015 18:32:22 +0200
-Message-ID: <1430843563-18615-6-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 11/27] mfd: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Tue,  5 May 2015 18:32:27 +0200
+Message-ID: <1430843563-18615-11-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
  <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:54791 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761328AbbEEQcz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2015 12:32:55 -0400
 In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
 not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
@@ -19,57 +23,36 @@ Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
 appropriate.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/i2c/busses/Kconfig | 4 ++--
- drivers/i2c/muxes/Kconfig  | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/mfd/Kconfig | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 2255af23b9c70e69..5c9750ac486cdfa5 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -419,7 +419,7 @@ config I2C_CADENCE
- 
- config I2C_CBUS_GPIO
- 	tristate "CBUS I2C driver"
--	depends on GPIOLIB
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 7eaa5488892524ba..3ee86248aa7cad8b 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -52,7 +52,8 @@ config PMIC_ADP5520
+ config MFD_AAT2870_CORE
+ 	bool "AnalogicTech AAT2870"
+ 	select MFD_CORE
+-	depends on I2C=y && GPIOLIB
++	depends on I2C=y
 +	depends on GPIOLIB || COMPILE_TEST
  	help
- 	  Support for CBUS access using I2C API. Mostly relevant for Nokia
- 	  Internet Tablets (770, N800 and N810).
-@@ -525,7 +525,7 @@ config I2C_EXYNOS5
+ 	  If you say yes here you get support for the AAT2870.
+ 	  This driver provides common support for accessing the device,
+@@ -1115,7 +1116,8 @@ config MFD_TPS6586X
  
- config I2C_GPIO
- 	tristate "GPIO-based bitbanging I2C"
--	depends on GPIOLIB
+ config MFD_TPS65910
+ 	bool "TI TPS65910 Power Management chip"
+-	depends on I2C=y && GPIOLIB
++	depends on I2C=y
 +	depends on GPIOLIB || COMPILE_TEST
- 	select I2C_ALGOBIT
- 	help
- 	  This is a very simple bitbanging I2C driver utilizing the
-diff --git a/drivers/i2c/muxes/Kconfig b/drivers/i2c/muxes/Kconfig
-index f6d313e528de3453..fdd0769c84a31a02 100644
---- a/drivers/i2c/muxes/Kconfig
-+++ b/drivers/i2c/muxes/Kconfig
-@@ -7,7 +7,8 @@ menu "Multiplexer I2C Chip support"
- 
- config I2C_ARB_GPIO_CHALLENGE
- 	tristate "GPIO-based I2C arbitration"
--	depends on GPIOLIB && OF
-+	depends on GPIOLIB || COMPILE_TEST
-+	depends on OF
- 	help
- 	  If you say yes to this option, support will be included for an
- 	  I2C multimaster arbitration scheme using GPIOs and a challenge &
-@@ -40,7 +41,7 @@ config I2C_MUX_PCA9541
- 
- config I2C_MUX_PCA954x
- 	tristate "Philips PCA954x I2C Mux/switches"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  If you say yes here you get support for the Philips PCA954x
- 	  I2C mux/switch devices.
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
 -- 
 1.9.1
+
