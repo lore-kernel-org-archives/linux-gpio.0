@@ -1,47 +1,98 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 19/27] staging: fbtft: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Tue,  5 May 2015 18:32:35 +0200
-Message-ID: <1430843563-18615-19-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH 04/27] extcon: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Tue,  5 May 2015 18:32:20 +0200
+Message-ID: <1430843563-18615-4-git-send-email-geert@linux-m68k.org>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
  <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40223 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761315AbbEEQcy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 May 2015 12:32:54 -0400
 In-Reply-To: <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-VGhlIEdQSU8gc3Vic3lzdGVtIHByb3ZpZGVzIGR1bW15IEdQSU8gY29uc3VtZXIgZnVuY3Rpb25z
-IGlmIEdQSU9MSUIgaXMKbm90IGVuYWJsZWQuIEhlbmNlIGRyaXZlcnMgdGhhdCBkZXBlbmQgb24g
-R1BJT0xJQiwgYnV0IHVzZSBHUElPIGNvbnN1bWVyCmZ1bmN0aW9uYWxpdHkgb25seSwgY2FuIHN0
-aWxsIGJlIGNvbXBpbGVkIGlmIEdQSU9MSUIgaXMgbm90IGVuYWJsZWQuCgpSZWxheCB0aGUgZGVw
-ZW5kZW5jeSBvbiBHUElPTElCIGlmIENPTVBJTEVfVEVTVCBpcyBlbmFibGVkLCB3aGVyZQphcHBy
-b3ByaWF0ZS4KClNpZ25lZC1vZmYtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgt
-bTY4ay5vcmc+CkNjOiBUaG9tYXMgUGV0YXp6b25pIDx0aG9tYXMucGV0YXp6b25pQGZyZWUtZWxl
-Y3Ryb25zLmNvbT4KQ2M6IE5vcmFsZiBUcsO4bm5lcyA8bm9yYWxmQHRyb25uZXMub3JnPgpDYzog
-ZGV2ZWxAZHJpdmVyZGV2Lm9zdW9zbC5vcmcKLS0tCiBkcml2ZXJzL3N0YWdpbmcvZmJ0ZnQvS2Nv
-bmZpZyB8IDMgKystCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
-KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2ZidGZ0L0tjb25maWcgYi9kcml2ZXJz
-L3N0YWdpbmcvZmJ0ZnQvS2NvbmZpZwppbmRleCA2Y2YwYzU4ZjUzOGJjN2EzLi45OTJiMDMwMmEz
-YTQ3MDkxIDEwMDY0NAotLS0gYS9kcml2ZXJzL3N0YWdpbmcvZmJ0ZnQvS2NvbmZpZworKysgYi9k
-cml2ZXJzL3N0YWdpbmcvZmJ0ZnQvS2NvbmZpZwpAQCAtMSw2ICsxLDcgQEAKIG1lbnVjb25maWcg
-RkJfVEZUCiAJdHJpc3RhdGUgIlN1cHBvcnQgZm9yIHNtYWxsIFRGVCBMQ0QgZGlzcGxheSBtb2R1
-bGVzIgotCWRlcGVuZHMgb24gRkIgJiYgU1BJICYmIEdQSU9MSUIKKwlkZXBlbmRzIG9uIEZCICYm
-IFNQSQorCWRlcGVuZHMgb24gR1BJT0xJQiB8fCBDT01QSUxFX1RFU1QKIAlzZWxlY3QgRkJfU1lT
-X0ZJTExSRUNUCiAJc2VsZWN0IEZCX1NZU19DT1BZQVJFQQogCXNlbGVjdCBGQl9TWVNfSU1BR0VC
-TElUCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZGV2ZWwgbWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0
-cDovL2RyaXZlcmRldi5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-dmVyZGV2LWRldmVsCg==
+The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consume=
+r
+functionality only, can still be compiled if GPIOLIB is not enabled.
+
+Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+appropriate.
+
+If GPIOLIB=3Dn and asm-generic/gpio.h is not used:
+
+    drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon_d=
+etect_cable=E2=80=99:
+    drivers/extcon/extcon-usb-gpio.c:63: error: implicit declaration of=
+ function =E2=80=98gpiod_get_value_cansleep=E2=80=99
+    drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon_p=
+robe=E2=80=99:
+    drivers/extcon/extcon-usb-gpio.c:116: error: implicit declaration o=
+f function =E2=80=98devm_gpiod_get=E2=80=99
+    drivers/extcon/extcon-usb-gpio.c:116: warning: assignment makes poi=
+nter from integer without a cast
+    drivers/extcon/extcon-usb-gpio.c:122: error: implicit declaration o=
+f function =E2=80=98gpiod_set_debounce=E2=80=99
+    drivers/extcon/extcon-usb-gpio.c:129: error: implicit declaration o=
+f function =E2=80=98gpiod_to_irq=E2=80=99
+
+Add the missing #include <linux/gpio/consumer.h> to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/extcon/Kconfig           | 4 ++--
+ drivers/extcon/extcon-usb-gpio.c | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index fdc0bf0543ce43ec..5d8d7244349870ca 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -30,7 +30,7 @@ config EXTCON_ARIZONA
+=20
+ config EXTCON_GPIO
+ 	tristate "GPIO extcon support"
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say Y here to enable GPIO based extcon support. Note that GPIO
+ 	  extcon supports single state per extcon instance.
+@@ -105,7 +105,7 @@ config EXTCON_SM5502
+=20
+ config EXTCON_USB_GPIO
+ 	tristate "USB GPIO extcon support"
+-	depends on GPIOLIB
++	depends on GPIOLIB || COMPILE_TEST
+ 	help
+ 	  Say Y here to enable GPIO based USB cable detection extcon support.
+ 	  Used typically if GPIO is used for USB ID pin detection.
+diff --git a/drivers/extcon/extcon-usb-gpio.c b/drivers/extcon/extcon-u=
+sb-gpio.c
+index de67fce189840eee..6c6fc33029826132 100644
+--- a/drivers/extcon/extcon-usb-gpio.c
++++ b/drivers/extcon/extcon-usb-gpio.c
+@@ -15,6 +15,7 @@
+  */
+=20
+ #include <linux/extcon.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+--=20
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
