@@ -1,70 +1,60 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 2/7] mmc: mediatek: Add Mediatek MMC driver
-Date: Wed, 6 May 2015 18:31:07 +0200
-Message-ID: <CAPDyKFr+FTXAzYVn3F41dmw2zW01pSbSHPfGJHXbUFLJfvQ5CA@mail.gmail.com>
-References: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
-	<1430214525-19198-3-git-send-email-chaotian.jing@mediatek.com>
-	<CAPDyKFq=R9B6ZHHgmDcSg-TNSfqQKAUKc2NjACvpwxFpmk954g@mail.gmail.com>
-	<1430895299.15154.9.camel@mhfsdcap03>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: Re: [PATCH v2 08/17] gpio: locomo: implement per-pin irq handling
+Date: Wed, 6 May 2015 19:42:33 +0300
+Message-ID: <CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+	<1430178954-11138-9-git-send-email-dbaryshkov@gmail.com>
+	<CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:35324 "EHLO
-	mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751985AbbEFQbI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 12:31:08 -0400
-Received: by qkhg7 with SMTP id g7so9600680qkh.2
-        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 09:31:07 -0700 (PDT)
-In-Reply-To: <1430895299.15154.9.camel@mhfsdcap03>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:33441 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751494AbbEFQme (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 12:42:34 -0400
+In-Reply-To: <CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "chaotian.jing" <chaotian.jing@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger.kernel.or
 
-On 6 May 2015 at 08:54, chaotian.jing <chaotian.jing@mediatek.com> wrote:
-> Dear Ulf,
+2015-05-06 17:15 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Tue, Apr 28, 2015 at 1:55 AM, Dmitry Eremin-Solenikov
+> <dbaryshkov@gmail.com> wrote:
 >
-> Thanks for your review.
-> I must do a explain of our MMC host:
-> Source clock is source clock of the MMC bus, MMC host has a divider to
-> get different bus clock frequency. now the runtime suspend is gating
-> this clock.
+>> LoCoMo has a possibility to generate per-GPIO edge irqs. Support for
+>> that was there in old locomo driver, got 'cleaned up' during old driver
+>> IRQ cascading cleanup and is now reimplemented. It is expected that
+>> SL-5500 (collie) will use locomo gpio irqs for mmc detection irq.
+>>
+>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 >
-> Hclk is the power domain of the MMC host, if Hclk is gated, the MMC host
-> cannot work(all registers readout is zero). and, all registers would be
-> reset to default value if Hclk is gated/ungated.
-> At MT8173, MSDC0 and MSDC2 has independent Hclk, MSDC1 and MSDC3's Hclk
-> was controlled by "Infra module".
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks for clarifying!
+Thanks for review of the patches.
 
-I don't have enough knowledge about your SoC to understand the detail,
-but it seems like we are mixing clocks and power domains. I would
-rather keep this separate - if the HW allows it.
-
-I guess the key question I have is the following:
-1) Is it hardware wise possible to gate the hclk, but without gating
-the power domain?
-2) At what level is the reference counting done for each device in the
-power domain? In HW or in sofftware?
-
+> Assume this will also go through MFD.
 >
-> And, our MMC host has ability to control the gate/ungate of bus clock
-> automatically, in MSDC_CFG bit 1, if this bit is set to 0, then "bus
-> clock is gated to 0 if no command or data is transmitted".
-> So, if the runtime PM do not control the Source clock, Hclk, then the
-> runtime PM is needless.
+>> +       irq_set_chained_handler(lg->irq, NULL);
+>> +       irq_set_handler_data(lg->irq, NULL);
 >
-> if runtime PM do gate/ungate Hclk, then need do save/restore the
-> registers meanwhile.
+> Why is this needed? If the GPIOLIB_IRQCHIP code in
+> gpiolib.c is not doing this then maybe it's the core code that
+> needs fixing rather than having this in the driver.
 
-Yes agree, that's a common thing to deal with from runtime PM callbacks.
+I have skimmed through the rest of drivers using
+gpiochip_set_chained_irqchip(). Indeed none of the drivers NULL
+the chained handled and handler data. However I couldn't locate
+the code where they would be cleared.
+
+Should I still send the patch fixing the GPIOLIB_IRQCHIP?
 
 >
-> So, how about your suggestion ?
-> do we still need runtime PM ?
+> Yours,
+> Linus Walleij
 
-Yes, I definitely think you need it!
 
-Kind regards
-Uffe
+
+-- 
+With best wishes
+Dmitry
