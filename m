@@ -1,92 +1,51 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/8] pwm: core: Add support to remove
- registered consumer lookup tables
-Date: Wed, 6 May 2015 14:21:04 +0200
-Message-ID: <20150506122103.GC9421@ulmo>
-References: <1430316005-16480-3-git-send-email-shobhit.kumar@intel.com>
- <1430818458-26922-1-git-send-email-shobhit.kumar@intel.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 7/8] ASoC: wm8998: Initial WM8998 codec driver
+Date: Wed, 6 May 2015 13:21:53 +0100
+Message-ID: <20150506122153.GA29266@opensource.wolfsonmicro.com>
+References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com> <1430493319-23808-8-git-send-email-rf@opensource.wolfsonmicro.com> <20150504113943.GB15510@sirena.org.uk> <20150505092411.GA15549@opensource.wolfsonmicro.com> <20150505105327.GZ22845@sirena.org.uk> <20150505133129.GA26101@opensource.wolfsonmicro.com> <20150505215934.GH15510@sirena.org.uk> <20150506092405.GA17710@opensource.wolfsonmicro.com> <20150506114849.GM22845@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1888936198=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1430818458-26922-1-git-send-email-shobhit.kumar@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-gpio@vger.kernel.org
-
-
---===============1888936198==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
-Content-Disposition: inline
-
-
---uXxzq0nDebZQVNAZ
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47878 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750882AbbEFMWA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 08:22:00 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20150506114849.GM22845@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-On Tue, May 05, 2015 at 03:04:18PM +0530, Shobhit Kumar wrote:
-> In case some drivers are unloading, they can remove lookup tables which
-> they would have registered during their load time to avoid redundant
-> entries if loaded again
->=20
-> v2: Ccing maintainers
-> v3: Correct the subject line (Lee jones)
->=20
-> CC: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
-> ---
->  drivers/pwm/core.c  | 17 +++++++++++++++++
->  include/linux/pwm.h |  5 +++++
->  2 files changed, 22 insertions(+)
+On Wed, May 06, 2015 at 12:48:49PM +0100, Mark Brown wrote:
+> On Wed, May 06, 2015 at 10:24:05AM +0100, Richard Fitzgerald wrote:
+> 
+> > No, I'm just saying I don't see how calling the mux positions "IN1AL"
+> > is any clearer than calling them "A" and "B". The "IN1AL" names of the
+> > DAPM widgets is purely an internal detail that you wouldn't see through
+> > the ALSA interface anyway so they don't relate any more closely to what
+> > Joe user is seeing in the control list. The IN1L mux is for IN1L
+> > so including that information in the mux position is redundant. For me
+> 
+> Providing that people remember that this is what's going on here and
+> that they remember that for this mux this shortened name is used rather
+> than the full one.  We're relatively consistent in doing this for most
+> drivers, it's helpful that "I want to connect X to Y" usually translates
+> directly into one of "amixer cset X Y" or "amixer cset 'X Y' on".
+> 
+> > the real benefit of the "A"/"B" naming is that if you're reading through
+> > a configuration script and saw something like
+> 
+> >     'IN1L Mux' = 'B'
+> >     'IN1R Mux' = 'B'
+> 
+> > It's much more readably obvious that both channels are set the same
+> > rather than
+> 
+> Right, but as I said on the initial version in the case where you care
+> the user probably shouldn't have the ability to set them independently
+> in the first place.
 
-Applied, thanks.
-
-Thierry
-
---uXxzq0nDebZQVNAZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVSgcvAAoJEN0jrNd/PrOhiSUQAIESMz5YzUSx33V7D7DfUoBy
-kvtYLcGYZDLIPd9TTB2aa9Zm1ANxTwbjmrw6HAjB3LcdEXtQGvyY76vm4EsbsdQW
-/AhwqUKz+vhBsumjBiyGD5JHQ71m1MSEi1zHfIftmkLohkv6zPLOfanrfk7zJxJJ
-KeAbIl0jkHKp83Y5Wty6W7Eb7Vpy5Yx4xBNoCTh05sueSBv1tTemTVF+cu0QvOJM
-VU/CmoDPMhvFSymhh/9kG+5vjKaypIqqQ4OJweMskaOHwhapnjt5kydcf70S1bPZ
-zOFNXhIQ7mWOhXVtUpvSo6rugD4QlHr1AzDwHkKvhR6x7lHFZ0fHeRCC1P8UllLX
-qmtHFT2DzVHxvt9f1kW8i2gyiNYiZ8/gdIdK4tGE/V+d1vMuYKX4U4xhdu0C4UAf
-pEUxOdqdaD3gQwtLS4hzJUk4aNggzm8v6U8uTGwPxfQoWIMt09cEGJiGWZ5FpLSx
-N4tiGsZUFLXo41amjJGv53nlcu9qt4VKhBkOGyd94IQgd3zeuoNsPv3vSG8Xczci
-yOpoiwzEV3Iov82NvT40IRy/iMgMDSzCxuosOpSbPMa9RfOoMTa1cetgH79c+U4V
-1/3lCEO6qLWHq0dHADUcblnV59+usv3nDeqpfuAYDjgosE+tVTlCB7h2qab7kNTO
-rZLXxuxmUcfHLyrrdqjS
-=QFMs
------END PGP SIGNATURE-----
-
---uXxzq0nDebZQVNAZ--
-
---===============1888936198==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
-
---===============1888936198==--
+They don't. In this version I've got a custom put so that in the
+configuration where they must both change together changing one will force
+the other to the same state.
