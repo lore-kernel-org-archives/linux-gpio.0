@@ -1,97 +1,122 @@
-From: Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH] pinctrl: lpc18xx: create pin cap lookup helper
-Date: Wed,  6 May 2015 19:11:21 +0200
-Message-ID: <1430932281-3432-1-git-send-email-manabian@gmail.com>
+From: "Fuzzey, Martin" <mfuzzey@parkeon.com>
+Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
+Date: Wed, 6 May 2015 19:56:05 +0200
+Message-ID: <CANh8Qzy7D=O0C7nw_M0LCvE887uxsCjRmvQ8fcKTcf4dJNm7iA@mail.gmail.com>
+References: <20150413110515.9681.58848.stgit@localhost> <20150504084925.GB4047@localhost>
+ <CACRpkdbFKs8mALw7q2d0EEDkhxKNLgeiFB5TyZ6ZPpfcW-c+oQ@mail.gmail.com> <20150506130615.GB5302@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:34812 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750776AbbEFRLZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 13:11:25 -0400
-Received: by laat2 with SMTP id t2so12384118laa.1
-        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 10:11:24 -0700 (PDT)
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:36182 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752851AbbEFR41 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 13:56:27 -0400
+Received: by qgeb100 with SMTP id b100so8629028qge.3
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 10:56:26 -0700 (PDT)
+In-Reply-To: <20150506130615.GB5302@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joachim Eastwood <manabian@gmail.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Both pconf_get_pin and pconf_set_pin needs to lookup pin cap based
-on the pin number. Create a common helper function that both
-functions can use that also handles the case where no pin number is
-found in the pins array.
+On 6 May 2015 at 15:06, Johan Hovold <johan@kernel.org> wrote:
+>
+> On Wed, May 06, 2015 at 09:22:22AM +0200, Linus Walleij wrote:
+> > On Mon, May 4, 2015 at 10:49 AM, Johan Hovold <johan@kernel.org> wr=
+ote:
+> > > On Mon, Apr 13, 2015 at 01:05:15PM +0200, Martin Fuzzey wrote:
+> >
+> > >> The above means that, in order to export the GPIO to userspace v=
+ia
+> > >> /sys/class/gpio/export the userspace code must know the exact ha=
+rdware and
+> > >> kernel version information.
+> > >
+> > > Not quite. You can still determine the gpio number in the above c=
+ases by
+> > > walking the sysfs tree to find the chip and it's base. This is th=
+e only
+> > > way to do this for dynamic buses such as USB.
+> >
 
-This also fixes a small bug in pconf_get_pin where pconf_get_i2c0
-would use the pins array index rather than the pin number.
+A problem with that is that the "label" sysfs attribute is not
+necessarilly unique (and is even documented as being non unique).
+Many drivers just use the chip name as the label so if you have more
+than one of them...
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
----
-Hi Linus,
+Of course if you know the bus and bus address it is possible to find
+the associated GPIO base but why should userspace have to know that?
+Isn't the whole point of the DT to describe such hardware details?
 
-Patch is based on your linux-pinctrl devel branch.
-Since it's a new driver feel free to squash it with the initial commit.
+> > Maybe we should start providing something like an
+> > "lsgpio" utility in tools/gpio to do this, just as a hint
+> > to userspace people on how things should be done.
+>
+> I think we should focus on defining a new user-space interface rather
+> than make it easier to use the current one (it should really only be
+> used for development or one-off hacks IMO).
+>
 
-regards,
-Joachim Eastwood
+Doesn't the ability to name GPIOs, fix their direction, and "pre
+export" them  in the device tree remove most of the warts of the
+current interface? (for GPIOs for which it is used in any case)
 
- drivers/pinctrl/pinctrl-lpc18xx.c | 29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+While I agree that the sysfs GPIO interface is sometimes abused (such
+as for LEDs and switches which already have proper kernel drivers)
+there are still cases where a full kernel driver doesn't really make
+sense (eg a signal to open a parking barrier) - is anyone suggesting
+this needs a custom driver or that the LED one should be used  -
+setting the heartbeat trigger on that would be interesting .... :)
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index 15fe1e2535c2..0facb7e64fef 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -729,6 +729,18 @@ static int lpc18xx_pconf_get_pin(enum pin_config_param param, int *arg, u32 reg,
- 	return 0;
- }
- 
-+static struct lpc18xx_pin_caps *lpc18xx_get_pin_caps(unsigned pin)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
-+		if (lpc18xx_pins[i].number == pin)
-+			return lpc18xx_pins[i].drv_data;
-+	}
-+
-+	return NULL;
-+}
-+
- static int lpc18xx_pconf_get(struct pinctrl_dev *pctldev, unsigned pin,
- 			     unsigned long *config)
- {
-@@ -737,14 +749,11 @@ static int lpc18xx_pconf_get(struct pinctrl_dev *pctldev, unsigned pin,
- 	struct lpc18xx_pin_caps *pin_cap;
- 	int ret, arg = 0;
- 	u32 reg;
--	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
--		if (lpc18xx_pins[i].number == pin)
--			pin = i;
--	}
-+	pin_cap = lpc18xx_get_pin_caps(pin);
-+	if (!pin_cap)
-+		return -EINVAL;
- 
--	pin_cap = lpc18xx_pins[pin].drv_data;
- 	reg = readl(scu->base + pin_cap->offset);
- 
- 	if (pin_cap->type == TYPE_I2C0)
-@@ -905,12 +914,10 @@ static int lpc18xx_pconf_set(struct pinctrl_dev *pctldev, unsigned pin,
- 	int ret;
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
--		if (lpc18xx_pins[i].number == pin)
--			break;
--	}
-+	pin_cap = lpc18xx_get_pin_caps(pin);
-+	if (!pin_cap)
-+		return -EINVAL;
- 
--	pin_cap = lpc18xx_pins[i].drv_data;
- 	reg = readl(scu->base + pin_cap->offset);
- 
- 	for (i = 0; i < num_configs; i++) {
--- 
-1.8.0
+> > >> This patch series solves both problems by performing the externa=
+l
+> > >> signal =3D> GPIO mapping in the device tree.
+> > >
+> > > As Rob already mentioned, what we want is some way to declare pin
+> > > functions. These could then be requested from userspace (or used =
+in DT,
+> > > something which should allow for further refactoring there as wel=
+l)
+> > > unless a driver has already claimed them.
+> >
+> > We have the ability to name the GPIO lines (I usually refer to
+> > lines rather than pins, as pins are physical and not all GPIOs
+> > are, actually) using the array "names" in struct gpio_chip,
+> > however this has no DT binding, so maybe people should
+> > work on that. These names appear as named line files
+> > in sysfs IIRC. Or maybe you're thinking of something else?
+>
 
+>
+> Yes, something like that. As you mention above, if it was possibly to
+> define those names in firmware, even the current sysfs interface woul=
+d
+> expose the pins as
+>
+>         /sys/class/gpio/<function>
+>
+> rather than say /sys/class/gpio/gpio279, thereby solving the gpio-num=
+ber
+> look-up issue. Well, to actually make the pin available *from* usersp=
+ace
+> you'd currently still need the number...
+>
+Indeed that  doesn't solve the how to export it problem.
+AFAICT nothing is visible in sysfs until the export has been done.
+
+Martin
+
+
+
+--=20
+--=20
+Martin Fuzzey | Software Expertise
+Parc La Fayette - 6 rue Isaac Newton - 25075 Besan=C3=A7on - FR
++33381546880 | +33677158582
+mfuzzey@parkeon.com | www.parkeon.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
