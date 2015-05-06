@@ -1,59 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
-Date: Wed, 6 May 2015 09:22:22 +0200
-Message-ID: <CACRpkdbFKs8mALw7q2d0EEDkhxKNLgeiFB5TyZ6ZPpfcW-c+oQ@mail.gmail.com>
-References: <20150413110515.9681.58848.stgit@localhost>
-	<20150504084925.GB4047@localhost>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 6/8] pwm: crc: Add Crystalcove (CRC) PWM driver
+Date: Wed, 06 May 2015 09:40:58 +0200
+Message-ID: <1430898058.3843.30.camel@x220>
+References: <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
+ <1430818716-27287-1-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35643 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752860AbbEFHWX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 03:22:23 -0400
-Received: by obcux3 with SMTP id ux3so930377obc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 00:22:23 -0700 (PDT)
-In-Reply-To: <20150504084925.GB4047@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1430818716-27287-1-git-send-email-shobhit.kumar@intel.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Martin Fuzzey <mfuzzey@parkeon.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, May 4, 2015 at 10:49 AM, Johan Hovold <johan@kernel.org> wrote:
-> On Mon, Apr 13, 2015 at 01:05:15PM +0200, Martin Fuzzey wrote:
-
->> The above means that, in order to export the GPIO to userspace via
->> /sys/class/gpio/export the userspace code must know the exact hardware and
->> kernel version information.
->
-> Not quite. You can still determine the gpio number in the above cases by
-> walking the sysfs tree to find the chip and it's base. This is the only
-> way to do this for dynamic buses such as USB.
-
-Maybe we should start providing something like an
-"lsgpio" utility in tools/gpio to do this, just as a hint
-to userspace people on how things should be done.
-
->> This patch series solves both problems by performing the external
->> signal => GPIO mapping in the device tree.
->
-> As Rob already mentioned, what we want is some way to declare pin
-> functions. These could then be requested from userspace (or used in DT,
-> something which should allow for further refactoring there as well)
-> unless a driver has already claimed them.
-
-We have the ability to name the GPIO lines (I usually refer to
-lines rather than pins, as pins are physical and not all GPIOs
-are, actually) using the array "names" in struct gpio_chip,
-however this has no DT binding, so maybe people should
-work on that. These names appear as named line files
-in sysfs IIRC. Or maybe you're thinking of something else?
-
-> We don't want to add more dependencies on the current sysfs-based
-> interface, which I hope we'll one day will be able to retire in favour
-> of a more sane one.
-
-Agree.
-
-Yours,
-Linus Walleij
+T24gVHVlLCAyMDE1LTA1LTA1IGF0IDE1OjA4ICswNTMwLCBTaG9iaGl0IEt1bWFyIHdyb3RlOgo+
+IFRoZSBDcnlzdGFsY292ZSBQTUlDIGNvbnRyb2xzIFBXTSBzaWduYWxzIGFuZCB0aGlzIGRyaXZl
+ciBleHBvcnRzIHRoYXQKPiBjYXBhYmlsaXR5IGFzIGEgUFdNIGNoaXAgZHJpdmVyLiBUaGlzIGlz
+IHBsYXRmb3JtIGRldmljZSBpbXBsZW1lbnR0YWlvbgo+IG9mIHRoZSBkcml2ZXJzL21mZCBjZWxs
+IGRldmljZSBmb3IgQ1JDIFBNSUMKPiAKPiB2MjogVXNlIHRoZSBleGlzdGluZyBjb25maWcgY2Fs
+bGJhY2sgd2l0aCBkdXR5X25zIGFuZCBwZXJpb2RfbnMoVGhpZXJyeSkKPiAKPiB2MzogQ29ycmVj
+dCB0aGUgc3ViamVjdCBsaW5lIChMZWUgam9uZXMpCj4gCj4gQ0M6IFNhbXVlbCBPcnRpeiA8c2Ft
+ZW9AbGludXguaW50ZWwuY29tPgo+IENjOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxp
+bmFyby5vcmc+Cj4gQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPgo+IENj
+OiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+IFNpZ25lZC1vZmYt
+Ynk6IFNob2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgoKVGhlIHNhbWUgY29t
+bWVudHMgY2FuIGJlIG1hZGUgYXMgZm9yIHYyLCBzZWUKaHR0cDovL2xrbWwua2VybmVsLm9yZy9y
+LzE0MzA0MjgzMjIuMjE4Ny4yNC5jYW1lbEB4MjIwIC4gTWF5YmUgeW91CmRpZG4ndCByZWNlaXZl
+IHRoYXQgbWVzc2FnZS4KCkl0IGNvdWxkIGFsc28gYmUgdGhhdCB5b3UgdGhpbmsgbXkgY29tbWVu
+dHMgd2VyZSBpbnZhbGlkLCBvciB0b28gdmFndWUsCm9yIHdoYXRldmVyLiBQbGVhc2Ugc2F5IHNv
+LCBiZWNhdXNlIHRoZW4gSSBkb24ndCBoYXZlIHRvIGJvdGhlciB5b3UKYWdhaW4gd2hlbiB5b3Ug
+c2VuZCBvdXQgdjQuCgpUaGFua3MsCgoKUGF1bCBCb2xsZQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
