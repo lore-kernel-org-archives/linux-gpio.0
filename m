@@ -1,49 +1,52 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 1/8] drivers/gpio/gpiolib: Add support for
- removing registered consumer lookup table
-Date: Wed, 6 May 2015 17:09:49 +0200
-Message-ID: <20150506150949.GM30184@phenom.ffwll.local>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
- <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
- <CACRpkdbtu_J2vCZ2kKVhBX6J0Ptgx0UvbJo3jSf8s=8E2qf-mw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 16/27] regulator: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Wed, 6 May 2015 16:20:35 +0100
+Message-ID: <20150506152035.GU22845@sirena.org.uk>
+References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-16-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gorlpuYsmWC1I+wV"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53062 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750737AbbEFPUv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 11:20:51 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbtu_J2vCZ2kKVhBX6J0Ptgx0UvbJo3jSf8s=8E2qf-mw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-pwm <linux-pwm@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, Povilas Staniulis <wdmonster@gmail.com>, Johan Hovold <johan@kernel.org>, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
+In-Reply-To: <1430843563-18615-16-git-send-email-geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 
-T24gV2VkLCBNYXkgMDYsIDIwMTUgYXQgMDQ6NDk6MzZQTSArMDIwMCwgTGludXMgV2FsbGVpaiB3
-cm90ZToKPiBPbiBXZWQsIEFwciAyOSwgMjAxNSBhdCAzOjU5IFBNLCBTaG9iaGl0IEt1bWFyIDxz
-aG9iaGl0Lmt1bWFyQGludGVsLmNvbT4gd3JvdGU6Cj4gCj4gPiBJbiBjYXNlIHdlIHVubG9hZCBh
-bmQgbG9hZCBhIGRyaXZlciBtb2R1bGUgYWdhaW4gdGhhdCBpcyByZWdpc3RlcmluZyBhCj4gPiBs
-b29rdXAgdGFibGUsIHdpdGhvdXQgdGhpcyBpdCB3aWxsIHJlc3VsdCBpbiBtdWx0aXBsZSBlbnRy
-aWVzLiBQcm92aWRlCj4gPiBhbiBvcHRpb24gdG8gcmVtb3ZlIHRoZSBsb29rdXAgdGFibGUgb24g
-ZHJpdmVyIHVubG9hZAo+ID4KPiA+IHYyOiBDY2luZyBtYWludGFpbmVycwo+ID4KPiA+IENjOiBT
-YW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVsLmNvbT4KPiA+IENjOiBMaW51cyBXYWxsZWlq
-IDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+Cj4gPiBDYzogQWxleGFuZHJlIENvdXJib3QgPGdu
-dXJvdUBnbWFpbC5jb20+Cj4gPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdt
-YWlsLmNvbT4KPiA+IFJldmlld2VkLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZp
-ZGlhLmNvbT4KPiA+IFNpZ25lZC1vZmYtYnk6IFNob2JoaXQgS3VtYXIgPHNob2JoaXQua3VtYXJA
-aW50ZWwuY29tPgo+IAo+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlq
-QGxpbmFyby5vcmc+CgpJIHRoaW5rIHRoZSBncGlvL3B3bSBhbmQgbWZkIHBhcnRzIHdvdWxkIGFs
-bCBuZWVkIHRvIGdvIGluIHRocm91Z2ggdGhlCnNhbWUgdHJlZS4gaTkxNSBwYXJ0cyBhcmUgZGVj
-b3VwbGVkLiBJIGd1ZXNzIEkgY291bGQgZG8gYSBicmFuY2ggd2l0aCBqdXN0CnRob3NlIHBhdGNo
-ZXMsIHRhZyBpdCBhbmQgdGhlbiBzZW5kIGEgcHVsbCByZXF1ZXN0IHRvIGFsbCAzIHN1YnN5c3Rl
-bXMKb25jZSBpdCdzIHJldmlld2VkLiBXb3VsZCB0aGF0IGJlIG9rPwotRGFuaWVsCi0tIApEYW5p
-ZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxv
-Zy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+
+--gorlpuYsmWC1I+wV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, May 05, 2015 at 06:32:32PM +0200, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+
+Applied, thanks.
+
+--gorlpuYsmWC1I+wV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVSjFCAAoJECTWi3JdVIfQ9qkH/A+dG5ijkvUXXv95206nYO7j
+bGePb7jm/W4SMuzsq1JnBLdShddadK/gr6XWVGwW//j2xoMAcvn9Cp7g0Of05XdS
+VfEHocq0YeHbqYlClvlfUdzktA5GNhVUo5+jCCwUuhi5eR2WAXvcly7JnkMTR001
+6SyHMzbQueBu1G6fwL1SHEyCBAI9tJ9B2V1cnj/i8liTn7Jlnke4G1hyRqDyJBbO
+xI27dqKemZa4J0niVaNqt4wXlSM3x1LQjMtA3B1k953rgzHatfgbsaik5Lxx1gnK
+59OToth3NoxI2hR0PMV1L4hEvn5QTfUymDdmYyIbRs35Lu/72wzWD0WHUWUcuPc=
+=uL0O
+-----END PGP SIGNATURE-----
+
+--gorlpuYsmWC1I+wV--
