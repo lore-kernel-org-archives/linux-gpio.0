@@ -1,37 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V7 05/10] pinctrl: add imx7d support
-Date: Wed, 6 May 2015 13:55:26 +0200
-Message-ID: <CACRpkdZ8LA=mT_4cW8AuOXFs3MEB0i2066GMaEfb0HJD8B_7uQ@mail.gmail.com>
-References: <1430317210-18333-1-git-send-email-Frank.Li@freescale.com>
-	<1430317210-18333-6-git-send-email-Frank.Li@freescale.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: Fwd: Re: [PATCH 2/2] ARM: mvebu: dts: Add dts file for DLink
+  DNS-327L
+Date: Wed, 06 May 2015 14:13:49 +0200
+Message-ID: <554A057D.3050007@free-electrons.com>
+References: <b6534b962d2cf9d21cb72d43f19a6574@mail.ncrmnt.org> <552A6209.9040903@gmail.com> <cd7445f789f1082f464d464f77807f12@mail.ncrmnt.org> <20150412145857.GA14038@lunn.ch> <b172d775afa24cea69a9490f531c6b37@mail.ncrmnt.org> <20150412194735.GA27921@lunn.ch> <552BCFAA.2020109@free-electrons.com> <1ec8906f00468ca5a9fa227f8c83fe69@mail.ncrmnt.org> <55351569.7000307@free-electrons.com> <d28764ea5d0d5f4c2e5d3e9ca1d7217a@mail.ncrmnt.org> <55351898.60604@free-electrons.com> <4e7e91562aac6a260885bf2d12174060@mail.ncrmnt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33335 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751183AbbEFLz1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 07:55:27 -0400
-Received: by obblk2 with SMTP id lk2so4930562obb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 04:55:27 -0700 (PDT)
-In-Reply-To: <1430317210-18333-6-git-send-email-Frank.Li@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4e7e91562aac6a260885bf2d12174060@mail.ncrmnt.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew <andrew@ncrmnt.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>
 List-Id: linux-gpio@vger.kernel.org
-To: Frank.Li@freescale.com
-Cc: =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-On Wed, Apr 29, 2015 at 4:20 PM,  <Frank.Li@freescale.com> wrote:
+Hi Andrew,
 
-> From: Frank Li <Frank.Li@freescale.com>
->
-> Add i.MX7D pinctrl driver support
->
-> Signed-off-by: Frank Li <Frank.Li@freescale.com>
-> Signed-off-by: Anson Huang <b20788@freescale.com>
 
-Tired of waiting for review on this.
+> 
+> Sorry for the long delay with testing, but here come the results.
+> I've rebased everything to 4.1-rc1
+> 
+> 1. WFI + DeepIdle => freeze after approx:
+>    * 1 hours and 30 minutes, first test
+>    * 3 hours and 40 minutes, second test
+> 2. WFI only (DeepIdle disabled via sysfs) => Still alive after 13 hours 
+> and counting
 
-Patch applied. This should be possible to merge orthogonally
-with the rest so it goes in through pin control GIT tree.
+Thanks for testing it. So, to sum-up, WFI+DeepIdle makes the board freeze
+after a few hours in 4.1-rc1 and 4.0 for sure. Are you aware of any version
+that did not freeze? It would help to know if it was a regression or not.
 
-Yours,
-Linus Walleij
+Andrew Lunn did not report any issue on his 370RD however I will test
+it also on an other Armada 370 base board (a Mirabox) using the .config
+you already sent.
+
+But what I expect is either a hardware issue, or a hardware configuration
+issue in U-Boot. We still rely a lot on the bootloader and I fear that
+we have some implicit assumptions.
+
+By the way do you have access on the bootloader sources or at least could
+you give us the U-boot version used?
+
+Thanks,
+
+Gregory
+
+
+
+> 
+> The proper patchset will follow as soon as I figure out what change 
+> broke
+> dns320l-daemon (The utility that speaks to weltrend mcu on ttyS1)
+> It was working on 3.18.6, on 3.19 and up - it writes data to the port 
+> (and mcu acks it),
+> but can't read any responses.
+> 
+> Same thing happens to the python (pyserial inside) implementation of the 
+> fan-daemon:
+> https://github.com/martignlo/DNS-320L
+> 
+
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
