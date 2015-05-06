@@ -1,47 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinmux: allow exlusive pin allocation among GPIO and
- peripheral funtions via flag strict in struct pinctrl_desc
-Date: Wed, 6 May 2015 14:42:58 +0200
-Message-ID: <CACRpkdYbqFeSYXn9Kdt6AqhTbZP+jWaT8KGbt-TERSyzainaeg@mail.gmail.com>
-References: <1428549187-9377-1-git-send-email-sonic.adi@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH  0/2] gpio: Allow userspace export from DT
+Date: Wed, 6 May 2015 14:43:54 +0200
+Message-ID: <20150506124354.GA5302@localhost>
+References: <20150413110515.9681.58848.stgit@localhost>
+ <20150504084925.GB4047@localhost>
+ <20150506112449.GQ2067@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:33107 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940AbbEFMm7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 08:42:59 -0400
-Received: by obblk2 with SMTP id lk2so5809894obb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 05:42:58 -0700 (PDT)
-In-Reply-To: <1428549187-9377-1-git-send-email-sonic.adi@gmail.com>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:34849 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750737AbbEFMnx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 08:43:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20150506112449.GQ2067@n2100.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sonic Zhang <sonic.adi@gmail.com>
-Cc: Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, adi-buildroot-devel@lists.sourceforge.net, Sonic Zhang <sonic.zhang@analog.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Johan Hovold <johan@kernel.org>, Martin Fuzzey <mfuzzey@parkeon.com>, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Apr 9, 2015 at 5:13 AM, Sonic Zhang <sonic.adi@gmail.com> wrote:
+On Wed, May 06, 2015 at 12:24:50PM +0100, Russell King - ARM Linux wrote:
+> On Mon, May 04, 2015 at 10:49:25AM +0200, Johan Hovold wrote:
+> > Firmware should describe pin directionality and function, and undefined
+> > pins should never be allowed to be accessed from userspace.
+> 
+> No, that's totally wrong if you consider one of the most common use
+> cases out there...
+> 
+> Think about something like a Raspberry Pi, where you have a header with
+> GPIOs on it, which can be used for multiple different purposes (and are
+> even multiplexed with some on-SoC functions.)
+> 
+> "Firmware" can't know about all possible configurations of those IO pins.
+> 
+> That's why Raspberry Pi uses a userspace helper and programs stuff up
+> appropriately for the users application.
 
-> From: Sonic Zhang <sonic.zhang@analog.com>
->
-> The blackfin pinmux and gpio controller doesn't allow user to set up 1 pin
-> for both GPIO and peripheral function. So, add flag strict in struct
-> pinctrl_desc to check both gpio_owner and mux_owner before approving the
-> pin request.
->
-> v2-changes:
-> - if strict flag is set, check gpio_owner and mux_onwer in if and else clause
->
-> v3-changes:
-> - add kerneldoc for this struct
-> - augment Documentation/pinctrl.txt
->
-> Signed-off-by: Sonic Zhang <sonic.zhang@analog.com>
+I'm not familiar with exactly how the RPi handles its pin muxing, but
+even if it requires userspace interaction that should not prevent having
+firmware describe the pins.
 
-Patch applied and then I made some more patches on top to
-move around and test it out, sorry for taking so long. (Merge
-window chaos.)
+In general, if the hardware configuration is static we use device trees.
 
-Sending my additional patches soon!
+If the configuration is dynamic we use device-tree overlays; either
+loaded manually or by some service (e.g. Beaglebone capes). Perhaps this
+could be handled by the RPi helper.
 
-Yours,
-Linus Walleij
+And for experimentation / development, firmware could even be totally
+non-restrictive by simply declaring generic pin "functions" like
+"expansion-pin-4" and even allow for the direction to be changed.
+
+Johan
