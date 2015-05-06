@@ -1,50 +1,70 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7740: Fix typo SCIFAB in comment
-Date: Wed, 06 May 2015 19:26:07 +0300
-Message-ID: <1630235.T45TlTl3Ab@avalon>
-References: <1430750446-8302-1-git-send-email-geert+renesas@glider.be>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 2/7] mmc: mediatek: Add Mediatek MMC driver
+Date: Wed, 6 May 2015 18:31:07 +0200
+Message-ID: <CAPDyKFr+FTXAzYVn3F41dmw2zW01pSbSHPfGJHXbUFLJfvQ5CA@mail.gmail.com>
+References: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
+	<1430214525-19198-3-git-send-email-chaotian.jing@mediatek.com>
+	<CAPDyKFq=R9B6ZHHgmDcSg-TNSfqQKAUKc2NjACvpwxFpmk954g@mail.gmail.com>
+	<1430895299.15154.9.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1430750446-8302-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:35324 "EHLO
+	mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751985AbbEFQbI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 12:31:08 -0400
+Received: by qkhg7 with SMTP id g7so9600680qkh.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 09:31:07 -0700 (PDT)
+In-Reply-To: <1430895299.15154.9.camel@mhfsdcap03>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "chaotian.jing" <chaotian.jing@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek
 
-Hi Geert,
+On 6 May 2015 at 08:54, chaotian.jing <chaotian.jing@mediatek.com> wrote:
+> Dear Ulf,
+>
+> Thanks for your review.
+> I must do a explain of our MMC host:
+> Source clock is source clock of the MMC bus, MMC host has a divider to
+> get different bus clock frequency. now the runtime suspend is gating
+> this clock.
+>
+> Hclk is the power domain of the MMC host, if Hclk is gated, the MMC host
+> cannot work(all registers readout is zero). and, all registers would be
+> reset to default value if Hclk is gated/ungated.
+> At MT8173, MSDC0 and MSDC2 has independent Hclk, MSDC1 and MSDC3's Hclk
+> was controlled by "Infra module".
 
-Thank you for the patch.
+Thanks for clarifying!
 
-On Monday 04 May 2015 16:40:46 Geert Uytterhoeven wrote:
-> The last serial port is called "SCIFB", not "SCIFAB".
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I don't have enough knowledge about your SoC to understand the detail,
+but it seems like we are mixing clocks and power domains. I would
+rather keep this separate - if the HW allows it.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+I guess the key question I have is the following:
+1) Is it hardware wise possible to gate the hclk, but without gating
+the power domain?
+2) At what level is the reference counting done for each device in the
+power domain? In HW or in sofftware?
 
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c index
-> b486e9d20cc2f7cb..d0bb1459783a16d2 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> @@ -258,7 +258,7 @@ enum {
->  	/* SCIFA7 */
->  	SCIFA7_TXD_MARK,	SCIFA7_RXD_MARK,
-> 
-> -	/* SCIFAB */
-> +	/* SCIFB */
->  	SCIFB_SCK_PORT190_MARK, /* MSEL5CR_17_0 */
->  	SCIFB_RXD_PORT191_MARK,
->  	SCIFB_TXD_PORT192_MARK,
+>
+> And, our MMC host has ability to control the gate/ungate of bus clock
+> automatically, in MSDC_CFG bit 1, if this bit is set to 0, then "bus
+> clock is gated to 0 if no command or data is transmitted".
+> So, if the runtime PM do not control the Source clock, Hclk, then the
+> runtime PM is needless.
+>
+> if runtime PM do gate/ungate Hclk, then need do save/restore the
+> registers meanwhile.
 
--- 
-Regards,
+Yes agree, that's a common thing to deal with from runtime PM callbacks.
 
-Laurent Pinchart
+>
+> So, how about your suggestion ?
+> do we still need runtime PM ?
 
+Yes, I definitely think you need it!
+
+Kind regards
+Uffe
