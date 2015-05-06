@@ -1,61 +1,47 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 04/27] extcon: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Wed, 06 May 2015 14:38:14 +0900
-Message-ID: <5549A8C6.6030208@samsung.com>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-4-git-send-email-geert@linux-m68k.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V4 1/2] pinctrl: Add Pistachio SoC pin control binding document
+Date: Wed, 6 May 2015 08:35:36 +0200
+Message-ID: <CACRpkdbW8WNYy56U-KmsZPatQBFO8xSYAJV8R9BwsPMXnQzbwQ@mail.gmail.com>
+References: <1430269982-24129-1-git-send-email-abrestic@chromium.org>
+	<1430269982-24129-2-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1430843563-18615-4-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33130 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751477AbbEFGfg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 02:35:36 -0400
+Received: by oica37 with SMTP id a37so379010oic.0
+        for <linux-gpio@vger.kernel.org>; Tue, 05 May 2015 23:35:36 -0700 (PDT)
+In-Reply-To: <1430269982-24129-2-git-send-email-abrestic@chromium.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi Geert,
+On Wed, Apr 29, 2015 at 3:13 AM, Andrew Bresticker
+<abrestic@chromium.org> wrote:
 
-On 05/06/2015 01:32 AM, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB =
-is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consu=
-mer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
->=20
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
->=20
-> If GPIOLIB=3Dn and asm-generic/gpio.h is not used:
->=20
->     drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon=
-_detect_cable=E2=80=99:
->     drivers/extcon/extcon-usb-gpio.c:63: error: implicit declaration =
-of function =E2=80=98gpiod_get_value_cansleep=E2=80=99
->     drivers/extcon/extcon-usb-gpio.c: In function =E2=80=98usb_extcon=
-_probe=E2=80=99:
->     drivers/extcon/extcon-usb-gpio.c:116: error: implicit declaration=
- of function =E2=80=98devm_gpiod_get=E2=80=99
->     drivers/extcon/extcon-usb-gpio.c:116: warning: assignment makes p=
-ointer from integer without a cast
->     drivers/extcon/extcon-usb-gpio.c:122: error: implicit declaration=
- of function =E2=80=98gpiod_set_debounce=E2=80=99
->     drivers/extcon/extcon-usb-gpio.c:129: error: implicit declaration=
- of function =E2=80=98gpiod_to_irq=E2=80=99
->=20
-> Add the missing #include <linux/gpio/consumer.h> to fix this.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Add a device-tree binding document for the pin controller present
+> on the IMG Pistachio SoC.
+>
+> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
+> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Pawel Moll <pawel.moll@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> Cc: Kumar Gala <galak@codeaurora.org>
 > ---
->  drivers/extcon/Kconfig           | 4 ++--
->  drivers/extcon/extcon-usb-gpio.c | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
+> No changes from v2/v3.
+> Changes from v1:
+>  - Change compatible string to "img,pistachio-system-pinctrl".
+>  - Specify GPIO sub-node names rather than forcing the nodes to be in order.
 
-Applied it on -next branch.
+This binding looks nice.
 
-Thanks,
-Chanwoo Choi
+Patch applied.
+
+Yours,
+Linus Walleij
