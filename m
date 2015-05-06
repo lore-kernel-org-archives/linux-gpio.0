@@ -1,124 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4 2/2] pinctrl: Add Pistachio SoC pin control driver
-Date: Wed, 6 May 2015 09:14:58 +0200
-Message-ID: <CACRpkdZXYcULynAVOU-K+8f2qnQkEFgzK2+Ku7xXzGQx0=uvBQ@mail.gmail.com>
-References: <1430269982-24129-1-git-send-email-abrestic@chromium.org>
-	<1430269982-24129-3-git-send-email-abrestic@chromium.org>
+Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
+Date: Wed, 6 May 2015 09:22:22 +0200
+Message-ID: <CACRpkdbFKs8mALw7q2d0EEDkhxKNLgeiFB5TyZ6ZPpfcW-c+oQ@mail.gmail.com>
+References: <20150413110515.9681.58848.stgit@localhost>
+	<20150504084925.GB4047@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430269982-24129-3-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35643 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752860AbbEFHWX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 03:22:23 -0400
+Received: by obcux3 with SMTP id ux3so930377obc.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 00:22:23 -0700 (PDT)
+In-Reply-To: <20150504084925.GB4047@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Martin Fuzzey <mfuzzey@parkeon.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Andrew and sorry for a slow review process, I've been
-overloaded :(
+On Mon, May 4, 2015 at 10:49 AM, Johan Hovold <johan@kernel.org> wrote:
+> On Mon, Apr 13, 2015 at 01:05:15PM +0200, Martin Fuzzey wrote:
 
-On Wed, Apr 29, 2015 at 3:13 AM, Andrew Bresticker
-<abrestic@chromium.org> wrote:
-
-> Add a driver for the pin controller present on the IMG Pistachio SoC.
-> This driver provides pinmux and pinconfig operations as well as GPIO
-> and IRQ chips for the GPIO banks.
+>> The above means that, in order to export the GPIO to userspace via
+>> /sys/class/gpio/export the userspace code must know the exact hardware and
+>> kernel version information.
 >
-> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
-> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Signed-off-by: Kevin Cernekee <cernekee@chromium.org>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> ---
-> Changes from v3:
->  - Addressed review comments from Ezequiel.
+> Not quite. You can still determine the gpio number in the above cases by
+> walking the sysfs tree to find the chip and it's base. This is the only
+> way to do this for dynamic buses such as USB.
 
-Overall this is a very very nice looking driver so expect it to
-be merged after addressing or answering my last few
-concerns.
+Maybe we should start providing something like an
+"lsgpio" utility in tools/gpio to do this, just as a hint
+to userspace people on how things should be done.
 
-> +config PINCTRL_PISTACHIO
-> +       def_bool y if MACH_PISTACHIO
-> +       select PINMUX
-> +       select GENERIC_PINCONF
-> +       select GPIOLIB_IRQCHIP
+>> This patch series solves both problems by performing the external
+>> signal => GPIO mapping in the device tree.
+>
+> As Rob already mentioned, what we want is some way to declare pin
+> functions. These could then be requested from userspace (or used in DT,
+> something which should allow for further refactoring there as well)
+> unless a driver has already claimed them.
 
-I think you also need
-depends on / select GPIOLIB
-select OF_GPIO
+We have the ability to name the GPIO lines (I usually refer to
+lines rather than pins, as pins are physical and not all GPIOs
+are, actually) using the array "names" in struct gpio_chip,
+however this has no DT binding, so maybe people should
+work on that. These names appear as named line files
+in sysfs IIRC. Or maybe you're thinking of something else?
 
-x86_64 allmodconfig is usually the best way to test
-if your GPIOs and pin control fragments are correctly Kconfig:ed.
+> We don't want to add more dependencies on the current sysfs-based
+> interface, which I hope we'll one day will be able to retire in favour
+> of a more sane one.
 
-> +#define PADS_DRIVE_STRENGTH_2MA                0x0
-> +#define PADS_DRIVE_STRENGTH_4MA                0x1
-> +#define PADS_DRIVE_STRENGTH_8MA                0x2
-> +#define PADS_DRIVE_STRENGTH_12MA       0x3
-
-Thanks for being clear on the defines and not using magic
-values. This makes things so much easier for people
-using and maintaining the driver!
-
-> +#define GPIO_BANK(_bank, _pin_base, _npins)                            \
-> +       {                                                               \
-> +               .gpio_chip = {                                          \
-> +                       .label = "GPIO" #_bank,                         \
-> +                       .request = pistachio_gpio_request,              \
-> +                       .free = pistachio_gpio_free,                    \
-> +                       .get_direction = pistachio_gpio_get_direction,  \
-> +                       .direction_input = pistachio_gpio_direction_input, \
-> +                       .direction_output = pistachio_gpio_direction_output, \
-> +                       .get = pistachio_gpio_get,                      \
-> +                       .set = pistachio_gpio_set,                      \
-> +                       .base = _pin_base,                              \
-> +                       .ngpio = _npins,                                \
-> +               },                                                      \
-> +               .irq_chip = {                                           \
-> +                       .name = "GPIO" #_bank,                          \
-> +                       .irq_startup = pistachio_gpio_irq_startup,      \
-> +                       .irq_ack = pistachio_gpio_irq_ack,              \
-> +                       .irq_mask = pistachio_gpio_irq_mask,            \
-> +                       .irq_unmask = pistachio_gpio_irq_unmask,        \
-> +                       .irq_set_type = pistachio_gpio_irq_set_type,    \
-> +               },                                                      \
-> +               .gpio_range = {                                         \
-> +                       .name = "GPIO" #_bank,                          \
-> +                       .id = _bank,                                    \
-> +                       .base = _pin_base,                              \
-> +                       .pin_base = _pin_base,                          \
-> +                       .npins = _npins,                                \
-> +               },                                                      \
-> +       }
-
-This -gpio_range is the only thing that bothers me a little, combined with
-this:
-
-> +               bank->gpio_range.gc = &bank->gpio_chip;
-> +               pinctrl_add_gpio_range(pctl->pctldev, &bank->gpio_range);
-
-Because it adds the ranges from the pinctrl side instead of
-doing it from the gpiochip side using
-gpiochip_add_pin_range() or gpiochip_add_pingroup_range().
-
-Have you tried using those (from <linux/gpio/driver.h> instead?
-
-They have the upside that .base is taken from the gpio_chip
-meaning it is unnecessary to define .base for the gpiochip
-too and you can just go for what gpiolib dynamically assigns
-for you.
-
-> +               pinctrl_remove_gpio_range(pctl->pctldev, &bank->gpio_range);
-
-And this will then be done automatically by gpiochio_remove().
-
-> +static int __init pistachio_pinctrl_register(void)
-> +{
-> +       return platform_driver_register(&pistachio_pinctrl_driver);
-> +}
-> +arch_initcall(pistachio_pinctrl_register);
-
-Is it necessary to have it registered so early?
-
-Apart from these, as noted it looks very nice.
+Agree.
 
 Yours,
 Linus Walleij
