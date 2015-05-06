@@ -1,60 +1,97 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH v2 08/17] gpio: locomo: implement per-pin irq handling
-Date: Wed, 6 May 2015 19:42:33 +0300
-Message-ID: <CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
-References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
-	<1430178954-11138-9-git-send-email-dbaryshkov@gmail.com>
-	<CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: [PATCH] pinctrl: lpc18xx: create pin cap lookup helper
+Date: Wed,  6 May 2015 19:11:21 +0200
+Message-ID: <1430932281-3432-1-git-send-email-manabian@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:33441 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751494AbbEFQme (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 12:42:34 -0400
-In-Reply-To: <CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:34812 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750776AbbEFRLZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 13:11:25 -0400
+Received: by laat2 with SMTP id t2so12384118laa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 10:11:24 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger.kernel.or
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Joachim Eastwood <manabian@gmail.com>
 
-2015-05-06 17:15 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Apr 28, 2015 at 1:55 AM, Dmitry Eremin-Solenikov
-> <dbaryshkov@gmail.com> wrote:
->
->> LoCoMo has a possibility to generate per-GPIO edge irqs. Support for
->> that was there in old locomo driver, got 'cleaned up' during old driver
->> IRQ cascading cleanup and is now reimplemented. It is expected that
->> SL-5500 (collie) will use locomo gpio irqs for mmc detection irq.
->>
->> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Both pconf_get_pin and pconf_set_pin needs to lookup pin cap based
+on the pin number. Create a common helper function that both
+functions can use that also handles the case where no pin number is
+found in the pins array.
 
-Thanks for review of the patches.
+This also fixes a small bug in pconf_get_pin where pconf_get_i2c0
+would use the pins array index rather than the pin number.
 
-> Assume this will also go through MFD.
->
->> +       irq_set_chained_handler(lg->irq, NULL);
->> +       irq_set_handler_data(lg->irq, NULL);
->
-> Why is this needed? If the GPIOLIB_IRQCHIP code in
-> gpiolib.c is not doing this then maybe it's the core code that
-> needs fixing rather than having this in the driver.
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+Hi Linus,
 
-I have skimmed through the rest of drivers using
-gpiochip_set_chained_irqchip(). Indeed none of the drivers NULL
-the chained handled and handler data. However I couldn't locate
-the code where they would be cleared.
+Patch is based on your linux-pinctrl devel branch.
+Since it's a new driver feel free to squash it with the initial commit.
 
-Should I still send the patch fixing the GPIOLIB_IRQCHIP?
+regards,
+Joachim Eastwood
 
->
-> Yours,
-> Linus Walleij
+ drivers/pinctrl/pinctrl-lpc18xx.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-
-
+diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+index 15fe1e2535c2..0facb7e64fef 100644
+--- a/drivers/pinctrl/pinctrl-lpc18xx.c
++++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+@@ -729,6 +729,18 @@ static int lpc18xx_pconf_get_pin(enum pin_config_param param, int *arg, u32 reg,
+ 	return 0;
+ }
+ 
++static struct lpc18xx_pin_caps *lpc18xx_get_pin_caps(unsigned pin)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
++		if (lpc18xx_pins[i].number == pin)
++			return lpc18xx_pins[i].drv_data;
++	}
++
++	return NULL;
++}
++
+ static int lpc18xx_pconf_get(struct pinctrl_dev *pctldev, unsigned pin,
+ 			     unsigned long *config)
+ {
+@@ -737,14 +749,11 @@ static int lpc18xx_pconf_get(struct pinctrl_dev *pctldev, unsigned pin,
+ 	struct lpc18xx_pin_caps *pin_cap;
+ 	int ret, arg = 0;
+ 	u32 reg;
+-	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
+-		if (lpc18xx_pins[i].number == pin)
+-			pin = i;
+-	}
++	pin_cap = lpc18xx_get_pin_caps(pin);
++	if (!pin_cap)
++		return -EINVAL;
+ 
+-	pin_cap = lpc18xx_pins[pin].drv_data;
+ 	reg = readl(scu->base + pin_cap->offset);
+ 
+ 	if (pin_cap->type == TYPE_I2C0)
+@@ -905,12 +914,10 @@ static int lpc18xx_pconf_set(struct pinctrl_dev *pctldev, unsigned pin,
+ 	int ret;
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(lpc18xx_pins); i++) {
+-		if (lpc18xx_pins[i].number == pin)
+-			break;
+-	}
++	pin_cap = lpc18xx_get_pin_caps(pin);
++	if (!pin_cap)
++		return -EINVAL;
+ 
+-	pin_cap = lpc18xx_pins[i].drv_data;
+ 	reg = readl(scu->base + pin_cap->offset);
+ 
+ 	for (i = 0; i < num_configs; i++) {
 -- 
-With best wishes
-Dmitry
+1.8.0
+
