@@ -1,78 +1,67 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH  0/2] gpio: Allow userspace export from DT
-Date: Wed, 6 May 2015 13:57:08 +0100
-Message-ID: <20150506125707.GV2067@n2100.arm.linux.org.uk>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 0/2] gpio: Allow userspace export from DT
+Date: Wed, 6 May 2015 15:06:15 +0200
+Message-ID: <20150506130615.GB5302@localhost>
 References: <20150413110515.9681.58848.stgit@localhost>
  <20150504084925.GB4047@localhost>
- <20150506112449.GQ2067@n2100.arm.linux.org.uk>
- <20150506124354.GA5302@localhost>
+ <CACRpkdbFKs8mALw7q2d0EEDkhxKNLgeiFB5TyZ6ZPpfcW-c+oQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:54486 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750764AbbEFM5P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 08:57:15 -0400
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:32812 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750995AbbEFNGQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 09:06:16 -0400
 Content-Disposition: inline
-In-Reply-To: <20150506124354.GA5302@localhost>
+In-Reply-To: <CACRpkdbFKs8mALw7q2d0EEDkhxKNLgeiFB5TyZ6ZPpfcW-c+oQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Martin Fuzzey <mfuzzey@parkeon.com>, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Martin Fuzzey <mfuzzey@parkeon.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, May 06, 2015 at 02:43:54PM +0200, Johan Hovold wrote:
-> On Wed, May 06, 2015 at 12:24:50PM +0100, Russell King - ARM Linux wrote:
-> > On Mon, May 04, 2015 at 10:49:25AM +0200, Johan Hovold wrote:
-> > > Firmware should describe pin directionality and function, and undefined
-> > > pins should never be allowed to be accessed from userspace.
-> > 
-> > No, that's totally wrong if you consider one of the most common use
-> > cases out there...
-> > 
-> > Think about something like a Raspberry Pi, where you have a header with
-> > GPIOs on it, which can be used for multiple different purposes (and are
-> > even multiplexed with some on-SoC functions.)
-> > 
-> > "Firmware" can't know about all possible configurations of those IO pins.
-> > 
-> > That's why Raspberry Pi uses a userspace helper and programs stuff up
-> > appropriately for the users application.
+On Wed, May 06, 2015 at 09:22:22AM +0200, Linus Walleij wrote:
+> On Mon, May 4, 2015 at 10:49 AM, Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, Apr 13, 2015 at 01:05:15PM +0200, Martin Fuzzey wrote:
 > 
-> I'm not familiar with exactly how the RPi handles its pin muxing, but
-> even if it requires userspace interaction that should not prevent having
-> firmware describe the pins.
-
-How it handles this is... it doesn't.  Userspace does it.
-
-There is *no* "firmware" on these devices.  The only thing you have is a
-boot loader and a DT blob, and people will hate you if you tell them that
-they have to change the DT blob and then reboot their systems to change
-the functionality of a GPIO pin.
-
-It's also entirely reasonable to assume that people are going to want to
-change the configuration at runtime, given their diverse range of
-applications.
-
-> In general, if the hardware configuration is static we use device trees.
+> >> The above means that, in order to export the GPIO to userspace via
+> >> /sys/class/gpio/export the userspace code must know the exact hardware and
+> >> kernel version information.
+> >
+> > Not quite. You can still determine the gpio number in the above cases by
+> > walking the sysfs tree to find the chip and it's base. This is the only
+> > way to do this for dynamic buses such as USB.
 > 
-> If the configuration is dynamic we use device-tree overlays; either
-> loaded manually or by some service (e.g. Beaglebone capes). Perhaps this
-> could be handled by the RPi helper.
+> Maybe we should start providing something like an
+> "lsgpio" utility in tools/gpio to do this, just as a hint
+> to userspace people on how things should be done.
 
-Yes, that _could_ work, but I bet asking millions of people to change
-what they're doing is going to be extremely difficult.  Remember the
-golden rule of the kernel: thou shalt not break userspace.
+I think we should focus on defining a new user-space interface rather
+than make it easier to use the current one (it should really only be
+used for development or one-off hacks IMO).
 
-So, there is _no_ possibility of removing this GPIO exposure to userspace
-because we _know_ that it will break people.
+> >> This patch series solves both problems by performing the external
+> >> signal => GPIO mapping in the device tree.
+> >
+> > As Rob already mentioned, what we want is some way to declare pin
+> > functions. These could then be requested from userspace (or used in DT,
+> > something which should allow for further refactoring there as well)
+> > unless a driver has already claimed them.
+> 
+> We have the ability to name the GPIO lines (I usually refer to
+> lines rather than pins, as pins are physical and not all GPIOs
+> are, actually) using the array "names" in struct gpio_chip,
+> however this has no DT binding, so maybe people should
+> work on that. These names appear as named line files
+> in sysfs IIRC. Or maybe you're thinking of something else?
 
-If you think differently on the "thou shalt not break userspace" please
-don't discuss it with me, I'm not interested.  Linus isn't interested
-either, and if you try and discuss it with him, he'll tell you to get
-out of kernel programming. :)
+Yes, something like that. As you mention above, if it was possibly to
+define those names in firmware, even the current sysfs interface would
+expose the pins as
 
-This is a commonly used API.  You can't change it.
+	/sys/class/gpio/<function>
 
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+rather than say /sys/class/gpio/gpio279, thereby solving the gpio-number
+look-up issue. Well, to actually make the pin available *from* userspace
+you'd currently still need the number...
+
+Johan
