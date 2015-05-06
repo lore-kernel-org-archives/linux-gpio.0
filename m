@@ -1,49 +1,50 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] gpio: omap: Fix regression for MPUIO interrupts
-Date: Wed, 6 May 2015 08:36:56 -0700
-Message-ID: <20150506153656.GJ21061@atomide.com>
-References: <1429833257-28188-1-git-send-email-tony@atomide.com>
- <CACRpkdZqSEgaVOV1gCQvCLc1-x7eU3WZwAM2QT2HT21xqCHZ2Q@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7740: Fix typo SCIFAB in comment
+Date: Wed, 06 May 2015 19:26:07 +0300
+Message-ID: <1630235.T45TlTl3Ab@avalon>
+References: <1430750446-8302-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZqSEgaVOV1gCQvCLc1-x7eU3WZwAM2QT2HT21xqCHZ2Q@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1430750446-8302-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [150506 06:22]:
-> On Fri, Apr 24, 2015 at 1:54 AM, Tony Lindgren <tony@atomide.com> wrote:
+Hi Geert,
+
+Thank you for the patch.
+
+On Monday 04 May 2015 16:40:46 Geert Uytterhoeven wrote:
+> The last serial port is called "SCIFB", not "SCIFAB".
 > 
-> > At some point with all the GPIO clean-up we've broken the
-> > MPUIO interrupts. Those are just a little bit different from
-> > the GPIO interrupts, so we can fix it up just by setting
-> > different irqchip functions for it. And then we can just
-> > remove all old code trying to do the same.
-> >
-> > Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
-> > Cc: Felipe Balbi <balbi@ti.com>
-> > Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> > Cc: Grygorii Strashko <grygorii.strashko@linaro.org>
-> > Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> > Cc: Nishanth Menon <nm@ti.com>
-> > Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Patch applied for fixes with the ACKs etc,
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+> b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c index
+> b486e9d20cc2f7cb..d0bb1459783a16d2 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+> @@ -258,7 +258,7 @@ enum {
+>  	/* SCIFA7 */
+>  	SCIFA7_TXD_MARK,	SCIFA7_RXD_MARK,
+> 
+> -	/* SCIFAB */
+> +	/* SCIFB */
+>  	SCIFB_SCK_PORT190_MARK, /* MSEL5CR_17_0 */
+>  	SCIFB_RXD_PORT191_MARK,
+>  	SCIFB_TXD_PORT192_MARK,
 
-Thanks. Yes this should go in during the -rc cycle as a regresion
-fix. Sorry I could not exactly pinpoint where we've broken the
-MPUIO interrupts with all the clean-up.
-
-Also the omap1 SPARSE_IRQ changes I recently posted have a
-dependency to this one so that's another reason to get this
-one out of the way.
-
-No rush with the other ones, those should be OK for v4.2.
-
+-- 
 Regards,
 
-Tony
+Laurent Pinchart
+
