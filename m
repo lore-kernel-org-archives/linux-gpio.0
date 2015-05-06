@@ -1,48 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 17/27] spi: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Wed, 6 May 2015 16:21:20 +0100
-Message-ID: <20150506152120.GV22845@sirena.org.uk>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-17-git-send-email-geert@linux-m68k.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: Fix regression for MPUIO interrupts
+Date: Wed, 6 May 2015 08:36:56 -0700
+Message-ID: <20150506153656.GJ21061@atomide.com>
+References: <1429833257-28188-1-git-send-email-tony@atomide.com>
+ <CACRpkdZqSEgaVOV1gCQvCLc1-x7eU3WZwAM2QT2HT21xqCHZ2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="proJWJF/9RxP0DAH"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1430843563-18615-17-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+In-Reply-To: <CACRpkdZqSEgaVOV1gCQvCLc1-x7eU3WZwAM2QT2HT21xqCHZ2Q@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Felipe Balbi <balbi@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+* Linus Walleij <linus.walleij@linaro.org> [150506 06:22]:
+> On Fri, Apr 24, 2015 at 1:54 AM, Tony Lindgren <tony@atomide.com> wrote:
+> 
+> > At some point with all the GPIO clean-up we've broken the
+> > MPUIO interrupts. Those are just a little bit different from
+> > the GPIO interrupts, so we can fix it up just by setting
+> > different irqchip functions for it. And then we can just
+> > remove all old code trying to do the same.
+> >
+> > Cc: Aaro Koskinen <aaro.koskinen@iki.fi>
+> > Cc: Felipe Balbi <balbi@ti.com>
+> > Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> > Cc: Grygorii Strashko <grygorii.strashko@linaro.org>
+> > Cc: Kevin Hilman <khilman@deeprootsystems.com>
+> > Cc: Nishanth Menon <nm@ti.com>
+> > Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> Patch applied for fixes with the ACKs etc,
 
---proJWJF/9RxP0DAH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks. Yes this should go in during the -rc cycle as a regresion
+fix. Sorry I could not exactly pinpoint where we've broken the
+MPUIO interrupts with all the clean-up.
 
-On Tue, May 05, 2015 at 06:32:33PM +0200, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
+Also the omap1 SPARSE_IRQ changes I recently posted have a
+dependency to this one so that's another reason to get this
+one out of the way.
 
-Applied, thanks.
+No rush with the other ones, those should be OK for v4.2.
 
---proJWJF/9RxP0DAH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVSjFwAAoJECTWi3JdVIfQXaIH/2u0C+ddwO5SalPOpIoybOrT
-sVJQJOm3fzXY66QxbkKzz8v2XVwwS5C0wVhF1vxgbezS7BH40MJwNcpJkGax/S+m
-XmukYo9EwPjux+GOkbHA8ba2KLiYuqSLLD/pXRpcLFRISquZsH4XkMGh2ew+CbUW
-/EbvfXHJWHZN5k51mZ0jc6zWvGjiIf+FO99yjg79I9hauFUVmxNIMeH+0S7TRjWU
-/VLJwnpzUpJUrLCLmtFS7Co4dg6g6cCjSqsVuSDHD/Z8vLDvx4jfsf/G4Uhh8MWr
-1typ8T9D2gHequLAq25+JBvi3TyGI8DFdKO2UOWaEYdtDlNvYgOtBHJorEqIryU=
-=ujWS
------END PGP SIGNATURE-----
-
---proJWJF/9RxP0DAH--
+Tony
