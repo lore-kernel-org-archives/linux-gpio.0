@@ -1,30 +1,49 @@
-From: Sam Protsenko <semen.protsenko@globallogic.com>
-Subject: Re: [PATCH] gpio: max732x: Add IRQF_SHARED to irq flags
-Date: Wed, 6 May 2015 16:27:02 +0300
-Message-ID: <CAJOTznXawHyRmWd6e3TajriTOE4+ybvho=OyF46MuLdfRP8x5w@mail.gmail.com>
-References: <1429622344-19429-1-git-send-email-semen.protsenko@globallogic.com>
-	<CACRpkda5jrEcFuQKb63FbeggNWvJBYo4bbnrGecQnWTipdwxjQ@mail.gmail.com>
-Reply-To: semen.protsenko@globallogic.com
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: zynq: configure SPI SSx pins separately
+Date: Wed, 6 May 2015 15:27:41 +0200
+Message-ID: <CACRpkdZg1+fzOxVV6_GQms1wJ5OsK_G+QoNTCpuNh7ZK6EqfYQ@mail.gmail.com>
+References: <1430040767-26299-1-git-send-email-helmut.buchsbaum@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda5jrEcFuQKb63FbeggNWvJBYo4bbnrGecQnWTipdwxjQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:36454 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752465AbbEFN1l convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 May 2015 09:27:41 -0400
+Received: by obbkp3 with SMTP id kp3so6723886obb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 06 May 2015 06:27:41 -0700 (PDT)
+In-Reply-To: <1430040767-26299-1-git-send-email-helmut.buchsbaum@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Helmut Buchsbaum <helmut.buchsbaum@gmail.com>
+Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, May 6, 2015 at 4:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Sun, Apr 26, 2015 at 11:32 AM, Helmut Buchsbaum
+<helmut.buchsbaum@gmail.com> wrote:
 
-> Since you're doing these patches I assume my conversion to
-> GPIOLIB_IRQCHIP in the last merge window just worked.
+> Since SCLK, MISO and MOSI are the only mandatory signals at Zynq's SP=
+I
+> interfaces, SS0, SS1 and SS2 have to be configured separately as they=
+ may
+> be used as simple GPIO lines.
+>
+> This, of course, has to be considered in the devicetree, so pin contr=
+oller
+> configuration for e.g. an SPI0 using SS0 and SS1 only might look like=
+ the
+> following snippet (derived from the example of chapter "17.5.3
+> MIO/EMIO" Routing of Zynq-7000 TRM UG585). So MIO20 can now be used
+> as GPIO instead of being occupied by SPI0 SS2 function. Note the sepa=
+rate
+> pinmux function for the slave select signals:
 
-Actually I've only verified those patches on k3.14, and tested that mainline
-kernel builds successfully (with patches applied). For the moment I don't have
-the board with MAX732X where I can't test the last kernel. But I'm finishing
-building my own MAX7325 test board, and once it finished, I can verifyall mine
-and yours patches on my BeagleBone Black (connected to my MAX7325 board).
+This v2 patch applied with S=C3=B6ren's ACK.
 
-But I'm pretty sure that all mentioned patches are gonna work just fine
-(since my changes are really minimal and well-tested on k3.14, and things
-affected by my patches weren't really changed since then).
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
