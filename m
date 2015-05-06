@@ -1,50 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 09/27] leds: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Wed, 6 May 2015 10:31:46 +0200
-Message-ID: <CAMuHMdVt5XpW+kJ1kD2PkuAZkkdJ_j=OXgWK-43JRvN-dVn_Kg@mail.gmail.com>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
-	<1430843563-18615-1-git-send-email-geert@linux-m68k.org>
-	<1430843563-18615-9-git-send-email-geert@linux-m68k.org>
-	<5549C9BD.8010903@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <5549C9BD.8010903@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Wed,  6 May 2015 01:37:54 -0700
+Message-ID: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Gregory Fong <gregory.0xf0@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jacek,
+This patchset adds support for the GPIO controller (UPG GIO) used on Broadcom's
+various BRCMSTB SoCs (BCM7XXX and others).  It uses the "basic-mmio-gpio"
+interface to try to reduce duplication of the base logic.
 
-On Wed, May 6, 2015 at 9:58 AM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
-> Why don't you apply the same modification to all LED Kconfig
-> entries with GPIOLIB dependency?
+There is only one IRQ for each GIO IP block (i.e. several register banks share
+an IRQ).  After briefly looking into the generic IRQ chip implementation, it
+seemed like in this case that using it would result in the driver being more
+complex than necessary because AFAICT it expects a 1:1 mapping of
+irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
+irq_chip since we have a single IRQ for all register banks (multiple
+gpio_chips).  I might be missing something, maybe using a shared IRQ across
+multiple irq_chips is easier than I think?  Suggestions welcome.
 
-LEDS_PCA9532_GPIO is a GPIO provider, not a consumer. There are no
-dummies for GPIO providers.
-LEDS_GPIO doesn't compile if !GPIOLIB, but I missed that it's just due to
-a missing dummy for devm_get_gpiod_from_child() and a missing include.
-Will fix.
+For all existing hardware, this block hooked up to the BCM7120 L2 IRQ
+controller and so will require CONFIG_BCM7120_L2_IRQ=y.
 
-Thanks!
+Gregory Fong (3):
+  dt-bindings: add brcmstb-gpio GPIO binding
+  gpio: Add GPIO support for Broadcom STB SoCs
+  gpio: brcmstb: Add interrupt support
 
-> On 05/05/2015 06:32 PM, Geert Uytterhoeven wrote:
->> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
->> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
->> functionality only, can still be compiled if GPIOLIB is not enabled.
->>
->> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
->> appropriate.
+ .../devicetree/bindings/gpio/brcm,brcmstb-gpio.txt |   65 +++
+ MAINTAINERS                                        |    7 +
+ arch/arm/mach-bcm/Kconfig                          |    1 +
+ drivers/gpio/Kconfig                               |    9 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-brcmstb.c                        |  492 ++++++++++++++++++++
+ 6 files changed, 575 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt
+ create mode 100644 drivers/gpio/gpio-brcmstb.c
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+1.7.9.5
