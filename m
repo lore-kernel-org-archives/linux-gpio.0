@@ -1,112 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/8] gpiolib: Add support for removing
- registered consumer lookup table
-Date: Thu, 7 May 2015 08:25:03 +0100
-Message-ID: <20150507072503.GC3400@x1>
-References: <1430316005-16480-2-git-send-email-shobhit.kumar@intel.com>
- <1430818368-26790-1-git-send-email-shobhit.kumar@intel.com>
- <20150505104505.GZ4047@x1>
- <20150505154459.GC30184@phenom.ffwll.local>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] gpio: xlp: Add missing .owner and .label settings for
+ gpio_chip
+Date: Thu, 07 May 2015 15:34:37 +0800
+Message-ID: <1430984077.23118.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20150505154459.GC30184@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:36759 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845AbbEGHem (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 May 2015 03:34:42 -0400
+Received: by pabsx10 with SMTP id sx10so32829661pab.3
+        for <linux-gpio@vger.kernel.org>; Thu, 07 May 2015 00:34:42 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kamlakant Patel <kamlakant.patel@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-T24gVHVlLCAwNSBNYXkgMjAxNSwgRGFuaWVsIFZldHRlciB3cm90ZToKCj4gT24gVHVlLCBNYXkg
-MDUsIDIwMTUgYXQgMTE6NDU6MDVBTSArMDEwMCwgTGVlIEpvbmVzIHdyb3RlOgo+ID4gVGhpcyBp
-cyBub3QgaG93IHdlIHN1Ym1pdCBzdWJzZXF1ZW50IHBhdGNoLXNldHMuCj4gCj4gSXQgaXMgdW5m
-b3J0dW5hdGVseSBob3cgd2UgaGFuZGxlIHBhdGNoZXMgb24gZHJpLWRldmVsJmludGVsLWdmeCB0
-byBiZQo+IGFibGUgdG8gY29wZSB3aXRoIG1hc3NpdmUgbWFpbCBsb2FkLiBJZiBldmVyeW9uZSB3
-aG8gc3VibWl0cyB0byBpbnRlbC1nZngKPiB3b3VsZCBhbHdheXMgcmVzZW5kIHRoZSBlbnRpcmUg
-c2VyaWVzIGZvciBtaW5vciB1cGRhdGVzIG9mIHNvbSBwYXRjaGVzCj4gd2UnZCBjb21wbGV0ZWx5
-IGRyb3duIGluIHRoZSByZXN1bHRpbmcgZmxvb2QuCgpGb3Igb25lIG9yIHR3byBzaW1wbGUgZml4
-LXVwcyBpbiB0aGUgc2V0IHBlcmhhcHMsIGJ1dCB3aGVuIHN1Ym1pdHRpbmcKdGhlIGVudGlyZSBz
-ZXQgaXQgbmVlZHMgdG8gYmUgdGhyZWFkZWQgYXMgYSBzZXBhcmF0ZSBibG9jaywgcmF0aGVyCnRo
-YW4gc2VlaW5nIGN1cnJlbnQgYW5kIHN1cGVyc2VkZWQgcGF0Y2hlcyBpbnRlci13b3Zlbi4gIFRo
-aXMKc3VibWlzc2lvbiBpcyBhbHJlYWR5IGEgcmF0J3MgbmVzdCBhbmQgSSdtIHN0cnVnZ2xpbmcg
-dG8gc2VlIHdoaWNoCnBhdGNoZXMgYXJlIHdoaWNoLiAgSSdtIHJlYWxseSBub3QgbG9va2luZyBm
-b3J3YXJkIHRvIHYzIGFuZCB2NCEKQXR0YWNoaW5nIG9uZSB2ZXJzaW9uIHRvIGFub3RoZXIgaXMg
-YSBnb29kIHdheSB0byBrZWVwIGNvbnRyb2wgaWYgeW91CnJlYWxseSBhcmUgb3Zlci13aGVsbWVk
-LiAgRm9yIHlvdXIgdXNlLWNhc2UgSSB3b3VsZCBleHBlY3QgdG8gc2VlIHRoZQpmb2xsb3dpbmcs
-IHdoaWNoIGlzIGFjaGlldmVkIHVzaW5nIC0taW4tcmVwbHktdG86CgpbUEFUQ0ggMC8yXSBIZXJl
-IGlzIHdoYXQgSSBkaWQuLi4KICBbUEFUQ0ggMS8yXSBDbGVhbiB1cCBhbmQgdGVzdHMKICBbUEFU
-Q0ggMi8yXSBJbXBsZW1lbnRhdGlvbgogICAgW1BBVENIIHYyIDAvM10gSGVyZSBpcyBhIHJlcm9s
-bAogICAgICBbUEFUQ0ggdjIgMS8zXSBDbGVhbiB1cAogICAgICBbUEFUQ0ggdjIgMi8zXSBOZXcg
-dGVzdHMKICAgICAgW1BBVENIIHYyIDMvM10gSW1wbGVtZW50YXRpb24KClRoZSB2ZXJzaW9uIG51
-bWJlcnMgYWxzbyBuZWVkIHRvIGJlIHByZXNlbnQgYW5kIGFyZW4ndCBpbiB0aGlzCnJlLXN1Ym1p
-c3Npb24uCgo+ID4gUGxlYXNlIHN1Ym1pdCB0aGVtIGFzIGEgd2hvbGUsIHNlcGVyYXRlbHkgZnJv
-bSB0aGUgZmlyc3Qgc3VibWlzc2lvbgo+ID4gYW5kIHdpdGggdmVyc2lvbmluZyBpbmZvcm1hdGlv
-biBpLmUuIFtQQVRDSCB2MiBYL1ldIFN0dWZmIC4uLgo+ID4gCj4gPiA+IEluIGNhc2Ugd2UgdW5s
-b2FkIGFuZCBsb2FkIGEgZHJpdmVyIG1vZHVsZSBhZ2FpbiB0aGF0IGlzIHJlZ2lzdGVyaW5nIGEK
-PiA+ID4gbG9va3VwIHRhYmxlLCB3aXRob3V0IHRoaXMgaXQgd2lsbCByZXN1bHQgaW4gbXVsdGlw
-bGUgZW50cmllcy4gUHJvdmlkZQo+ID4gPiBhbiBvcHRpb24gdG8gcmVtb3ZlIHRoZSBsb29rdXAg
-dGFibGUgb24gZHJpdmVyIHVubG9hZAo+ID4gPiAKPiA+ID4gdjI6IENjaW5nIG1haW50YWluZXJz
-Cj4gPiA+IHYzOiBDb3JyZWN0IHRoZSBzdWJqZWN0IGxpbmUgKExlZSBqb25lcykKPiA+IAo+ID4g
-Q2hhbmdlIGxvZ3Mgc2hvdWxkIGdvIHVuZGVybmV0aCB0aGUgJy0tLScgYW5kIGFib3ZlIHRoZSBk
-aWZmc3RhdCBmb3VuZAo+ID4gYmVsb3cuCj4gCj4gQWdhaW4ganVzdCBzdHlsZSBkaWZmZXJlbmNl
-cyBiZXR3ZWVuIHN1YnN5c3RlbXMsIEkgZ2VuZXJhbGx5IHdhbnQgdG8gaGF2ZQo+IHRob3NlIGFi
-b3ZlIHRoZSAtLS0uCgpGb3IgYWxsIGNvbW1pdHM/ICBUaGVuIEknbSBndWVzc2luZyB5b3VyIEdp
-dCBoaXN0b3J5IGlzIGFsbCBidXQKdW5yZWFkYWJsZS4gIEluIHRoZSBrZXJuZWwsIHVubGVzcyB0
-aGUgY2hhbmdlbG9nIGhvbGRzIHZhbHVhYmxlCmhpc3RvcmljIGluZm9ybWF0aW9uIHdoaWNoIGlu
-Zmx1YW5jZSBrZXkgZGVzaWduIGRlY2lzaW9ucywgd2UgcHV0IHRoZQpwYXRjaCBjaGFuZ2Vsb2cg
-KmJlbG93KiB0aGUgJy0tLScuCgpQbGVhc2UgcmVhZCBEb2N1bWVudGF0aW9uL1N1Ym1pdHRpbmdQ
-YXRjaGVzOgoKICAgICAgICIxNCkgVGhlIGNhbm9uaWNhbCBwYXRjaCBmb3JtYXQKCiAgICAgICBb
-Li4uXQoKICAgICAgIFRoZSAiLS0tIiBtYXJrZXIgbGluZSBzZXJ2ZXMgdGhlIGVzc2VudGlhbCBw
-dXJwb3NlIG9mIG1hcmtpbmcKICAgICAgIGZvciBwYXRjaCBoYW5kbGluZyB0b29scyB3aGVyZSB0
-aGUgY2hhbmdlbG9nIG1lc3NhZ2UgZW5kcy4KCiAgICAgICBbLi4uXQoKICAgICAgIE90aGVyIGNv
-bW1lbnRzIHJlbGV2YW50IG9ubHkgdG8gdGhlIG1vbWVudCBvciB0aGUgbWFpbnRhaW5lciwKICAg
-ICAgIG5vdCBzdWl0YWJsZSBmb3IgdGhlIHBlcm1hbmVudCBjaGFuZ2Vsb2csIHNob3VsZCBhbHNv
-IGdvIGhlcmUuCiAgICAgICBBIGdvb2QgZXhhbXBsZSBvZiBzdWNoIGNvbW1lbnRzIG1pZ2h0IGJl
-ICoicGF0Y2ggY2hhbmdlbG9ncyIqCiAgICAgICB3aGljaCBkZXNjcmliZSB3aGF0IGhhcyBjaGFu
-Z2VkIGJldHdlZW4gdGhlIHYxIGFuZCB2MiB2ZXJzaW9uCiAgICAgICBvZiB0aGUgcGF0Y2guIgoK
-PiA+ID4gQ2M6IFNhbXVlbCBPcnRpeiA8c2FtZW9AbGludXguaW50ZWwuY29tPgo+ID4gPiBDYzog
-TGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+ID4gPiBDYzogQWxleGFu
-ZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+Cj4gPiA+IENjOiBUaGllcnJ5IFJlZGluZyA8
-dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgo+ID4gPiBSZXZpZXdlZC1ieTogQWxleGFuZHJlIENv
-dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4gPiA+IFNpZ25lZC1vZmYtYnk6IFNob2JoaXQg
-S3VtYXIgPHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgo+ID4gPiAtLS0KPiA+ID4gIGRyaXZlcnMv
-Z3Bpby9ncGlvbGliLmMgICAgICAgfCAxMyArKysrKysrKysrKysrCj4gPiA+ICBpbmNsdWRlL2xp
-bnV4L2dwaW8vbWFjaGluZS5oIHwgIDEgKwo+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNl
-cnRpb25zKCspCj4gPiA+IAo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW9saWIu
-YyBiL2RyaXZlcnMvZ3Bpby9ncGlvbGliLmMKPiA+ID4gaW5kZXggNTllYWEyMy4uMjQyMGFmOSAx
-MDA2NDQKPiA+ID4gLS0tIGEvZHJpdmVycy9ncGlvL2dwaW9saWIuYwo+ID4gPiArKysgYi9kcml2
-ZXJzL2dwaW8vZ3Bpb2xpYi5jCj4gPiA+IEBAIC0xNjU4LDYgKzE2NTgsMTkgQEAgdm9pZCBncGlv
-ZF9hZGRfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQo+ID4g
-PiAgCW11dGV4X3VubG9jaygmZ3Bpb19sb29rdXBfbG9jayk7Cj4gPiA+ICB9Cj4gPiA+ICAKPiA+
-ID4gKy8qKgo+ID4gPiArICogZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90YWJsZSgpIC0gdW5yZWdpc3Rl
-ciBHUElPIGRldmljZSBjb25zdW1lcnMKPiA+ID4gKyAqIEB0YWJsZTogdGFibGUgb2YgY29uc3Vt
-ZXJzIHRvIHVucmVnaXN0ZXIKPiA+ID4gKyAqLwo+ID4gPiArdm9pZCBncGlvZF9yZW1vdmVfbG9v
-a3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQo+ID4gPiArewo+ID4g
-PiArCW11dGV4X2xvY2soJmdwaW9fbG9va3VwX2xvY2spOwo+ID4gPiArCj4gPiA+ICsJbGlzdF9k
-ZWwoJnRhYmxlLT5saXN0KTsKPiA+ID4gKwo+ID4gPiArCW11dGV4X3VubG9jaygmZ3Bpb19sb29r
-dXBfbG9jayk7Cj4gPiA+ICt9Cj4gPiA+ICsKPiA+ID4gIHN0YXRpYyBzdHJ1Y3QgZ3Bpb19kZXNj
-ICpvZl9maW5kX2dwaW8oc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpjb25faWQsCj4g
-PiA+ICAJCQkJICAgICAgdW5zaWduZWQgaW50IGlkeCwKPiA+ID4gIAkJCQkgICAgICBlbnVtIGdw
-aW9fbG9va3VwX2ZsYWdzICpmbGFncykKPiA+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
-Z3Bpby9tYWNoaW5lLmggYi9pbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oCj4gPiA+IGluZGV4
-IGUyNzA2MTQuLmMwZDcxMmQgMTAwNjQ0Cj4gPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvZ3Bpby9t
-YWNoaW5lLmgKPiA+ID4gKysrIGIvaW5jbHVkZS9saW51eC9ncGlvL21hY2hpbmUuaAo+ID4gPiBA
-QCAtNTcsNSArNTcsNiBAQCBzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlIHsKPiA+ID4gIH0KPiA+
-ID4gIAo+ID4gPiAgdm9pZCBncGlvZF9hZGRfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29r
-dXBfdGFibGUgKnRhYmxlKTsKPiA+ID4gK3ZvaWQgZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90YWJsZShz
-dHJ1Y3QgZ3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSk7Cj4gPiA+ICAKPiA+ID4gICNlbmRpZiAv
-KiBfX0xJTlVYX0dQSU9fTUFDSElORV9IICovCj4gPiAKPiAKCi0tIApMZWUgSm9uZXMKTGluYXJv
-IFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVu
-IHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBU
-d2l0dGVyIHwgQmxvZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdm
-eAo=
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/gpio/gpio-xlp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
+index 8532697..9bdab72 100644
+--- a/drivers/gpio/gpio-xlp.c
++++ b/drivers/gpio/gpio-xlp.c
+@@ -366,6 +366,8 @@ static int xlp_gpio_probe(struct platform_device *pdev)
+ 
+ 	gc = &priv->chip;
+ 
++	gc->owner = THIS_MODULE;
++	gc->label = dev_name(&pdev->dev);
+ 	gc->base = 0;
+ 	gc->dev = &pdev->dev;
+ 	gc->ngpio = ngpio;
+-- 
+2.1.0
+
+
+
