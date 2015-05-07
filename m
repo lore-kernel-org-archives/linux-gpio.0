@@ -1,42 +1,48 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 3/3] leds: leds-gpio: Allow compile test if !GPIOLIB
-Date: Thu,  7 May 2015 10:08:10 +0200
-Message-ID: <1430986090-7243-4-git-send-email-geert@linux-m68k.org>
-References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 2/3] gpio: Add GPIO support for Broadcom STB SoCs
+Date: Thu, 07 May 2015 10:18:49 +0200
+Message-ID: <1430986729.8171.41.camel@x220>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+	 <1430901477-10678-3-git-send-email-gregory.0xf0@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lb2-smtp-cloud3.xs4all.net ([194.109.24.26]:48549 "EHLO
+	lb2-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750863AbbEGIS5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 May 2015 04:18:57 -0400
+In-Reply-To: <1430901477-10678-3-git-send-email-gregory.0xf0@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-functionality only, can still be compiled if GPIOLIB is not enabled.
+Just a nit: a license mismatch.
 
-Relax the dependency of LEDS_GPIO on GPIOLIB if COMPILE_TEST is
-enabled.
+On Wed, 2015-05-06 at 01:37 -0700, Gregory Fong wrote:
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-brcmstb.c
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-This could be folded in "[PATCH 09/27] leds: Allow compile test of GPIO
-consumers if !GPIOLIB" once its dependencies are satisfied.
----
- drivers/leds/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation version 2.
+> + *
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether express or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 8161cddc3f8d597a..1f6cb38335b52c3c 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -182,7 +182,7 @@ config LEDS_PCA9532_GPIO
- config LEDS_GPIO
- 	tristate "LED Support for GPIO connected LEDs"
- 	depends on LEDS_CLASS
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  This option enables support for the LEDs connected to GPIO
- 	  outputs. To be useful the particular board must have LEDs
--- 
-1.9.1
+This states the license is GPL v2.
+
+> +MODULE_LICENSE("GPL");
+
+And, according to include/linux/module.h, this states the license is GPL
+v2 or later. So I think either the comment at the top of this file or
+the ident used in the MODULE_LICENSE() macro needs to change.
+
+Thanks,
+
+
+Paul Bolle
+
