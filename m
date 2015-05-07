@@ -1,69 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 11/27] mfd: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Thu, 7 May 2015 08:37:36 +0100
-Message-ID: <20150507073736.GB12484@x1>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-11-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 2/3] leds: leds-gpio: Add missing #include <linux/of.h>
+Date: Thu,  7 May 2015 10:08:09 +0200
+Message-ID: <1430986090-7243-3-git-send-email-geert@linux-m68k.org>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1430843563-18615-11-git-send-email-geert@linux-m68k.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 05 May 2015, Geert Uytterhoeven wrote:
+drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=80=99=
+:
+drivers/leds/leds-gpio.c:194: error: implicit declaration of function =E2=
+=80=98of_node=E2=80=99
+drivers/leds/leds-gpio.c:194: warning: assignment makes pointer from in=
+teger without a cast
+drivers/leds/leds-gpio.c:200: error: dereferencing pointer to incomplet=
+e type
 
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB =
-is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consu=
-mer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
->=20
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/leds/leds-gpio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks.
-
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 7eaa5488892524ba..3ee86248aa7cad8b 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -52,7 +52,8 @@ config PMIC_ADP5520
->  config MFD_AAT2870_CORE
->  	bool "AnalogicTech AAT2870"
->  	select MFD_CORE
-> -	depends on I2C=3Dy && GPIOLIB
-> +	depends on I2C=3Dy
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  If you say yes here you get support for the AAT2870.
->  	  This driver provides common support for accessing the device,
-> @@ -1115,7 +1116,8 @@ config MFD_TPS6586X
-> =20
->  config MFD_TPS65910
->  	bool "TI TPS65910 Power Management chip"
-> -	depends on I2C=3Dy && GPIOLIB
-> +	depends on I2C=3Dy
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select MFD_CORE
->  	select REGMAP_I2C
->  	select REGMAP_IRQ
-
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 15eb3f86f670ffe4..89d981e8f8cacf55 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -16,6 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+1.9.1
