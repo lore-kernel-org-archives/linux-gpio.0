@@ -1,20 +1,20 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 23/27] backlight: Allow compile test of GPIO consumers if
+Subject: Re: [PATCH 11/27] mfd: Allow compile test of GPIO consumers if
  !GPIOLIB
-Date: Thu, 7 May 2015 08:37:08 +0100
-Message-ID: <20150507073708.GA12484@x1>
+Date: Thu, 7 May 2015 08:37:36 +0100
+Message-ID: <20150507073736.GB12484@x1>
 References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
  <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-23-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-11-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1430843563-18615-23-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1430843563-18615-11-git-send-email-geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
 On Tue, 05 May 2015, Geert Uytterhoeven wrote:
@@ -29,50 +29,38 @@ mer
 > appropriate.
 >=20
 > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Jingoo Han <jg1.han@samsung.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
 > Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: linux-fbdev@vger.kernel.org
 > ---
->  drivers/video/backlight/Kconfig | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/mfd/Kconfig | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Looks good.  Applied, thanks.
+Applied, thanks.
 
-> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backligh=
-t/Kconfig
-> index 2d9923a60076e380..0505b796d743250e 100644
-> --- a/drivers/video/backlight/Kconfig
-> +++ b/drivers/video/backlight/Kconfig
-> @@ -36,14 +36,16 @@ config LCD_CORGI
-> =20
->  config LCD_L4F00242T03
->  	tristate "Epson L4F00242T03 LCD"
-> -	depends on SPI_MASTER && GPIOLIB
-> +	depends on SPI_MASTER
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 7eaa5488892524ba..3ee86248aa7cad8b 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -52,7 +52,8 @@ config PMIC_ADP5520
+>  config MFD_AAT2870_CORE
+>  	bool "AnalogicTech AAT2870"
+>  	select MFD_CORE
+> -	depends on I2C=3Dy && GPIOLIB
+> +	depends on I2C=3Dy
 > +	depends on GPIOLIB || COMPILE_TEST
 >  	help
->  	  SPI driver for Epson L4F00242T03. This provides basic support
->  	  for init and powering the LCD up/down through a sysfs interface.
+>  	  If you say yes here you get support for the AAT2870.
+>  	  This driver provides common support for accessing the device,
+> @@ -1115,7 +1116,8 @@ config MFD_TPS6586X
 > =20
->  config LCD_LMS283GF05
->  	tristate "Samsung LMS283GF05 LCD"
-> -	depends on SPI_MASTER && GPIOLIB
-> +	depends on SPI_MASTER
+>  config MFD_TPS65910
+>  	bool "TI TPS65910 Power Management chip"
+> -	depends on I2C=3Dy && GPIOLIB
+> +	depends on I2C=3Dy
 > +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  SPI driver for Samsung LMS283GF05. This provides basic support
->  	  for powering the LCD up/down through a sysfs interface.
-> @@ -434,7 +436,7 @@ config BACKLIGHT_AS3711
-> =20
->  config BACKLIGHT_GPIO
->  	tristate "Generic GPIO based Backlight Driver"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  If you have a LCD backlight adjustable by GPIO, say Y to enable
->  	  this driver.
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
 
 --=20
 Lee Jones
