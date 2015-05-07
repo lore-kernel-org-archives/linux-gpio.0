@@ -1,43 +1,81 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: xlp: Add missing .owner and .label settings for
- gpio_chip
-Date: Thu, 07 May 2015 15:34:37 +0800
-Message-ID: <1430984077.23118.1.camel@ingics.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 23/27] backlight: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Thu, 7 May 2015 08:37:08 +0100
+Message-ID: <20150507073708.GA12484@x1>
+References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-23-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:36759 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845AbbEGHem (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 May 2015 03:34:42 -0400
-Received: by pabsx10 with SMTP id sx10so32829661pab.3
-        for <linux-gpio@vger.kernel.org>; Thu, 07 May 2015 00:34:42 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430843563-18615-23-git-send-email-geert@linux-m68k.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kamlakant Patel <kamlakant.patel@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-xlp.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Tue, 05 May 2015, Geert Uytterhoeven wrote:
 
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index 8532697..9bdab72 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -366,6 +366,8 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- 
- 	gc = &priv->chip;
- 
-+	gc->owner = THIS_MODULE;
-+	gc->label = dev_name(&pdev->dev);
- 	gc->base = 0;
- 	gc->dev = &pdev->dev;
- 	gc->ngpio = ngpio;
--- 
-2.1.0
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB =
+is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consu=
+mer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>=20
+> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+> appropriate.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: linux-fbdev@vger.kernel.org
+> ---
+>  drivers/video/backlight/Kconfig | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
+Looks good.  Applied, thanks.
 
+> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backligh=
+t/Kconfig
+> index 2d9923a60076e380..0505b796d743250e 100644
+> --- a/drivers/video/backlight/Kconfig
+> +++ b/drivers/video/backlight/Kconfig
+> @@ -36,14 +36,16 @@ config LCD_CORGI
+> =20
+>  config LCD_L4F00242T03
+>  	tristate "Epson L4F00242T03 LCD"
+> -	depends on SPI_MASTER && GPIOLIB
+> +	depends on SPI_MASTER
+> +	depends on GPIOLIB || COMPILE_TEST
+>  	help
+>  	  SPI driver for Epson L4F00242T03. This provides basic support
+>  	  for init and powering the LCD up/down through a sysfs interface.
+> =20
+>  config LCD_LMS283GF05
+>  	tristate "Samsung LMS283GF05 LCD"
+> -	depends on SPI_MASTER && GPIOLIB
+> +	depends on SPI_MASTER
+> +	depends on GPIOLIB || COMPILE_TEST
+>  	help
+>  	  SPI driver for Samsung LMS283GF05. This provides basic support
+>  	  for powering the LCD up/down through a sysfs interface.
+> @@ -434,7 +436,7 @@ config BACKLIGHT_AS3711
+> =20
+>  config BACKLIGHT_GPIO
+>  	tristate "Generic GPIO based Backlight Driver"
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>  	help
+>  	  If you have a LCD backlight adjustable by GPIO, say Y to enable
+>  	  this driver.
 
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
