@@ -1,36 +1,68 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: pinctrl: imx7d: undefined Kconfig option SOC_IMX7D
-Date: Thu, 7 May 2015 18:36:31 +0800
-Message-ID: <20150507103628.GA5909@dragon>
-References: <CAD3Xx4+VeF5WUj+WdyXackbA0xuTZ-YY4hm_yMoCwFsiUf0eaw@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 09/27] leds: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Thu, 07 May 2015 14:14:20 +0200
+Message-ID: <554B571C.90901@samsung.com>
+References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
+ <1430843563-18615-9-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAD3Xx4+VeF5WUj+WdyXackbA0xuTZ-YY4hm_yMoCwFsiUf0eaw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Valentin Rothberg <valentinrothberg@gmail.com>
-Cc: Frank.Li@freescale.com, linus.walleij@linaro.org, b20788@freescale.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, hengelein Stefan <stefan.hengelein@fau.de>, Andreas Ruprecht <andreas.ruprecht@fau.de>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-reply-to: <1430843563-18615-9-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Valentin,
+On 05/05/2015 06:32 PM, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>
+> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+> appropriate.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Bryan Wu <cooloney@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: linux-leds@vger.kernel.org
+> ---
+>   drivers/leds/Kconfig         | 2 +-
+>   drivers/leds/trigger/Kconfig | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 966b9605f5f0660c..8161cddc3f8d597a 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -395,7 +395,7 @@ config LEDS_INTEL_SS4200
+>   config LEDS_LT3593
+>   	tristate "LED driver for LT3593 controllers"
+>   	depends on LEDS_CLASS
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	help
+>   	  This option enables support for LEDs driven by a Linear Technology
+>   	  LT3593 controller. This controller uses a special one-wire pulse
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+> index 49794b47b51c498d..5bda6a9b56bbd90b 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -72,7 +72,7 @@ config LEDS_TRIGGER_CPU
+>   config LEDS_TRIGGER_GPIO
+>   	tristate "LED GPIO Trigger"
+>   	depends on LEDS_TRIGGERS
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	help
+>   	  This allows LEDs to be controlled by gpio events. It's good
+>   	  when using gpios as switches and triggering the needed LEDs
+>
 
-On Thu, May 07, 2015 at 09:17:40AM +0200, Valentin Rothberg wrote:
-> Hi Frank,
-> 
-> your commit c30024a64490 ("pinctrl: add imx7d support") is in today's
-> linux-next tree (i.e., next-20150507) adding driver support for IMX7D
-> pinctrl.  However, the driver cannot be compiled at its current state
-> since the required Kconfig option PINCTRL_IMX7D depends on SOC_IMX7D,
-> which is not defined in Kconfig, see:
-> 
-> +config PINCTRL_IMX7D
-> +       bool "IMX7D pinctrl driver"
-> +       depends on SOC_IMX7D
-> 
-> Is there a patch queued somewhere to add this option?
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Yes, there is a patch series adding i.MX7D SoC support which contains
-this option under review, and we plan to merge the series for v4.2.
-
-Shawn
+-- 
+Best Regards,
+Jacek Anaszewski
