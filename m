@@ -1,47 +1,35 @@
-From: Shobhit Kumar <kumar@shobhit.info>
-Subject: Re: [Intel-gfx] [PATCH 6/8] pwm: crc: Add Crystalcove (CRC) PWM driver
-Date: Thu, 7 May 2015 12:43:44 +0530
-Message-ID: <CAAbrOmcLynLOfphBbCHYBwc7uK=OKhXxRCYHNAx3X=Pi8S1_9Q@mail.gmail.com>
-References: <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
-	<1430818716-27287-1-git-send-email-shobhit.kumar@intel.com>
-	<1430898058.3843.30.camel@x220>
+From: Valentin Rothberg <valentinrothberg@gmail.com>
+Subject: pinctrl: imx7d: undefined Kconfig option SOC_IMX7D
+Date: Thu, 7 May 2015 09:17:40 +0200
+Message-ID: <CAD3Xx4+VeF5WUj+WdyXackbA0xuTZ-YY4hm_yMoCwFsiUf0eaw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1430898058.3843.30.camel@x220>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:35458 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379AbbEGHSM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 May 2015 03:18:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Frank.Li@freescale.com
+Cc: linus.walleij@linaro.org, shawn.guo@linaro.org, b20788@freescale.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, hengelein Stefan <stefan.hengelein@fau.de>, Andreas Ruprecht <andreas.ruprecht@fau.de>
 
-On Wed, May 6, 2015 at 1:10 PM, Paul Bolle <pebolle@tiscali.nl> wrote:
-> On Tue, 2015-05-05 at 15:08 +0530, Shobhit Kumar wrote:
->> The Crystalcove PMIC controls PWM signals and this driver exports that
->> capability as a PWM chip driver. This is platform device implementtaion
->> of the drivers/mfd cell device for CRC PMIC
->>
->> v2: Use the existing config callback with duty_ns and period_ns(Thierry)
->>
->> v3: Correct the subject line (Lee jones)
->>
->> CC: Samuel Ortiz <sameo@linux.intel.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
->
-> The same comments can be made as for v2, see
-> http://lkml.kernel.org/r/1430428322.2187.24.camel@x220 . Maybe you
-> didn't receive that message.
->
-> It could also be that you think my comments were invalid, or too vague,
-> or whatever. Please say so, because then I don't have to bother you
-> again when you send out v4.
->
+Hi Frank,
 
-Not at all, I just missed your comments and realise my mistake later
-after sending next update. Somehow the mailing list filters that I
-have setup are not working correctly. I will look into your comments.
+your commit c30024a64490 ("pinctrl: add imx7d support") is in today's
+linux-next tree (i.e., next-20150507) adding driver support for IMX7D
+pinctrl.  However, the driver cannot be compiled at its current state
+since the required Kconfig option PINCTRL_IMX7D depends on SOC_IMX7D,
+which is not defined in Kconfig, see:
 
-Regards
-Shobhit
++config PINCTRL_IMX7D
++       bool "IMX7D pinctrl driver"
++       depends on SOC_IMX7D
+
+Is there a patch queued somewhere to add this option?
+
+I found this issue with ./scripts/checkkconfigsymbols.py by diffing
+yesterday's and today's linux-next trees.
+
+Kind regards,
+ Valentin
