@@ -1,44 +1,149 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: Add GPIO support for Broadcom STB SoCs
-Date: Thu, 7 May 2015 21:19:21 -0700
-Message-ID: <20150508041921.GA26702@corellia.local>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
- <1430901477-10678-3-git-send-email-gregory.0xf0@gmail.com>
- <1430986729.8171.41.camel@x220>
+From: Sonic Zhang <sonic.adi@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: move strict option to pinmux_ops
+Date: Fri, 8 May 2015 13:15:14 +0800
+Message-ID: <CAJxxZ0M5GA8bKc6xcxj0QuY=ezuh=RKVW7H0vZzdddh57YPatQ@mail.gmail.com>
+References: <1430992414-10779-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1430986729.8171.41.camel@x220>
+In-Reply-To: <1430992414-10779-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sonic Zhang <sonic.zhang@analog.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 07, 2015 at 10:18:49AM +0200, Paul Bolle wrote:
-> Just a nit: a license mismatch.
-> 
-> On Wed, 2015-05-06 at 01:37 -0700, Gregory Fong wrote:
-> > --- /dev/null
-> > +++ b/drivers/gpio/gpio-brcmstb.c
-> 
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation version 2.
-> > + *
-> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> > + * kind, whether express or implied; without even the implied warranty
-> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> 
-> This states the license is GPL v2.
-> 
-> > +MODULE_LICENSE("GPL");
-> 
-> And, according to include/linux/module.h, this states the license is GPL
-> v2 or later. So I think either the comment at the top of this file or
-> the ident used in the MODULE_LICENSE() macro needs to change.
+Hi Walleij,
 
-Will fix that, thanks.
+Acked-by: Sonic Zhang <sonic.zhang@analog.com>
 
-Gregory
+
+Sonic
+
+On Thu, May 7, 2015 at 5:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> While the pinmux_ops are ideally just a vtable for pin mux
+> calls, the "strict" setting belongs so intuitively with the
+> pin multiplexing that we should move it here anyway. Putting
+> it in the top pinctrl_desc makes no sense.
+>
+> Cc: Sonic Zhang <sonic.zhang@analog.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  Documentation/pinctrl.txt       | 2 +-
+>  drivers/pinctrl/pinctrl-adi2.c  | 2 +-
+>  drivers/pinctrl/pinmux.c        | 4 ++--
+>  include/linux/pinctrl/pinctrl.h | 3 ---
+>  include/linux/pinctrl/pinmux.h  | 4 ++++
+>  5 files changed, 8 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
+> index d6b2bed94c43..4976389e432d 100644
+> --- a/Documentation/pinctrl.txt
+> +++ b/Documentation/pinctrl.txt
+> @@ -73,7 +73,6 @@ static struct pinctrl_desc foo_desc = {
+>         .pins = foo_pins,
+>         .npins = ARRAY_SIZE(foo_pins),
+>         .owner = THIS_MODULE,
+> -       .strict = true,
+>  };
+>
+>  int __init foo_probe(void)
+> @@ -715,6 +714,7 @@ static struct pinmux_ops foo_pmxops = {
+>         .get_function_name = foo_get_fname,
+>         .get_function_groups = foo_get_groups,
+>         .set_mux = foo_set_mux,
+> +       .strict = true,
+>  };
+>
+>  /* Pinmux operations are handled by some pin controller */
+> diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
+> index fbd492668da1..49df9037b41e 100644
+> --- a/drivers/pinctrl/pinctrl-adi2.c
+> +++ b/drivers/pinctrl/pinctrl-adi2.c
+> @@ -703,6 +703,7 @@ static struct pinmux_ops adi_pinmux_ops = {
+>         .get_function_name = adi_pinmux_get_func_name,
+>         .get_function_groups = adi_pinmux_get_groups,
+>         .gpio_request_enable = adi_pinmux_request_gpio,
+> +       .strict = true,
+>  };
+>
+>
+> @@ -710,7 +711,6 @@ static struct pinctrl_desc adi_pinmux_desc = {
+>         .name = DRIVER_NAME,
+>         .pctlops = &adi_pctrl_ops,
+>         .pmxops = &adi_pinmux_ops,
+> -       .strict = true,
+>         .owner = THIS_MODULE,
+>  };
+>
+> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+> index 2546fa783464..c58c168b06c2 100644
+> --- a/drivers/pinctrl/pinmux.c
+> +++ b/drivers/pinctrl/pinmux.c
+> @@ -107,7 +107,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
+>                                 desc->name, desc->gpio_owner, owner);
+>                         goto out;
+>                 }
+> -               if (pctldev->desc->strict && desc->mux_usecount &&
+> +               if (ops->strict && desc->mux_usecount &&
+>                     strcmp(desc->mux_owner, owner)) {
+>                         dev_err(pctldev->dev,
+>                                 "pin %s already requested by %s; cannot claim for %s\n",
+> @@ -123,7 +123,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
+>                                 desc->name, desc->mux_owner, owner);
+>                         goto out;
+>                 }
+> -               if (pctldev->desc->strict && desc->gpio_owner) {
+> +               if (ops->strict && desc->gpio_owner) {
+>                         dev_err(pctldev->dev,
+>                                 "pin %s already requested by %s; cannot claim for %s\n",
+>                                 desc->name, desc->gpio_owner, owner);
+> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+> index fc6b0348c375..66e4697516de 100644
+> --- a/include/linux/pinctrl/pinctrl.h
+> +++ b/include/linux/pinctrl/pinctrl.h
+> @@ -114,8 +114,6 @@ struct pinctrl_ops {
+>   *     of the pins field above
+>   * @pctlops: pin control operation vtable, to support global concepts like
+>   *     grouping of pins, this is optional.
+> - * @strict: check both gpio_owner and mux_owner strictly before approving
+> -       the pin request
+>   * @pmxops: pinmux operations vtable, if you support pinmuxing in your driver
+>   * @confops: pin config operations vtable, if you support pin configuration in
+>   *     your driver
+> @@ -134,7 +132,6 @@ struct pinctrl_desc {
+>         const struct pinctrl_ops *pctlops;
+>         const struct pinmux_ops *pmxops;
+>         const struct pinconf_ops *confops;
+> -       bool strict;
+>         struct module *owner;
+>  #ifdef CONFIG_GENERIC_PINCONF
+>         unsigned int num_custom_params;
+> diff --git a/include/linux/pinctrl/pinmux.h b/include/linux/pinctrl/pinmux.h
+> index 511bda9ed4bf..d3740fa7073f 100644
+> --- a/include/linux/pinctrl/pinmux.h
+> +++ b/include/linux/pinctrl/pinmux.h
+> @@ -56,6 +56,9 @@ struct pinctrl_dev;
+>   *     depending on whether the GPIO is configured as input or output,
+>   *     a direction selector function may be implemented as a backing
+>   *     to the GPIO controllers that need pin muxing.
+> + * @strict: do not allow simultaneous use of the same pin for GPIO and another
+> + *     function. Check both gpio_owner and mux_owner strictly before approving
+> + *     the pin request.
+>   */
+>  struct pinmux_ops {
+>         int (*request) (struct pinctrl_dev *pctldev, unsigned offset);
+> @@ -79,6 +82,7 @@ struct pinmux_ops {
+>                                    struct pinctrl_gpio_range *range,
+>                                    unsigned offset,
+>                                    bool input);
+> +       bool strict;
+>  };
+>
+>  #endif /* CONFIG_PINMUX */
+> --
+> 1.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
