@@ -1,149 +1,70 @@
-From: Sonic Zhang <sonic.adi@gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: move strict option to pinmux_ops
-Date: Fri, 8 May 2015 13:15:14 +0800
-Message-ID: <CAJxxZ0M5GA8bKc6xcxj0QuY=ezuh=RKVW7H0vZzdddh57YPatQ@mail.gmail.com>
-References: <1430992414-10779-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v4.1 series
+Date: Fri, 8 May 2015 09:46:55 +0200
+Message-ID: <CACRpkdYMu8-Vq7xkAjXCyAy3Tuh5W7vniKkwF=MXZJC1gWuwdw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430992414-10779-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sonic Zhang <sonic.zhang@analog.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:34205 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752065AbbEHHqz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 May 2015 03:46:55 -0400
+Received: by obfe9 with SMTP id e9so49826880obf.1
+        for <linux-gpio@vger.kernel.org>; Fri, 08 May 2015 00:46:55 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Walleij,
+Hi Linus,
 
-Acked-by: Sonic Zhang <sonic.zhang@analog.com>
+here is a bunch of GPIO fixes that I collected since -rc1,
+nothing controversial, nothing special. Some descriptions
+in the signed tag.
 
+Please pull them in!
 
-Sonic
+Yours,
+Linus Walleij
 
-On Thu, May 7, 2015 at 5:53 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> While the pinmux_ops are ideally just a vtable for pin mux
-> calls, the "strict" setting belongs so intuitively with the
-> pin multiplexing that we should move it here anyway. Putting
-> it in the top pinctrl_desc makes no sense.
->
-> Cc: Sonic Zhang <sonic.zhang@analog.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  Documentation/pinctrl.txt       | 2 +-
->  drivers/pinctrl/pinctrl-adi2.c  | 2 +-
->  drivers/pinctrl/pinmux.c        | 4 ++--
->  include/linux/pinctrl/pinctrl.h | 3 ---
->  include/linux/pinctrl/pinmux.h  | 4 ++++
->  5 files changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
-> index d6b2bed94c43..4976389e432d 100644
-> --- a/Documentation/pinctrl.txt
-> +++ b/Documentation/pinctrl.txt
-> @@ -73,7 +73,6 @@ static struct pinctrl_desc foo_desc = {
->         .pins = foo_pins,
->         .npins = ARRAY_SIZE(foo_pins),
->         .owner = THIS_MODULE,
-> -       .strict = true,
->  };
->
->  int __init foo_probe(void)
-> @@ -715,6 +714,7 @@ static struct pinmux_ops foo_pmxops = {
->         .get_function_name = foo_get_fname,
->         .get_function_groups = foo_get_groups,
->         .set_mux = foo_set_mux,
-> +       .strict = true,
->  };
->
->  /* Pinmux operations are handled by some pin controller */
-> diff --git a/drivers/pinctrl/pinctrl-adi2.c b/drivers/pinctrl/pinctrl-adi2.c
-> index fbd492668da1..49df9037b41e 100644
-> --- a/drivers/pinctrl/pinctrl-adi2.c
-> +++ b/drivers/pinctrl/pinctrl-adi2.c
-> @@ -703,6 +703,7 @@ static struct pinmux_ops adi_pinmux_ops = {
->         .get_function_name = adi_pinmux_get_func_name,
->         .get_function_groups = adi_pinmux_get_groups,
->         .gpio_request_enable = adi_pinmux_request_gpio,
-> +       .strict = true,
->  };
->
->
-> @@ -710,7 +711,6 @@ static struct pinctrl_desc adi_pinmux_desc = {
->         .name = DRIVER_NAME,
->         .pctlops = &adi_pctrl_ops,
->         .pmxops = &adi_pinmux_ops,
-> -       .strict = true,
->         .owner = THIS_MODULE,
->  };
->
-> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-> index 2546fa783464..c58c168b06c2 100644
-> --- a/drivers/pinctrl/pinmux.c
-> +++ b/drivers/pinctrl/pinmux.c
-> @@ -107,7 +107,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
->                                 desc->name, desc->gpio_owner, owner);
->                         goto out;
->                 }
-> -               if (pctldev->desc->strict && desc->mux_usecount &&
-> +               if (ops->strict && desc->mux_usecount &&
->                     strcmp(desc->mux_owner, owner)) {
->                         dev_err(pctldev->dev,
->                                 "pin %s already requested by %s; cannot claim for %s\n",
-> @@ -123,7 +123,7 @@ static int pin_request(struct pinctrl_dev *pctldev,
->                                 desc->name, desc->mux_owner, owner);
->                         goto out;
->                 }
-> -               if (pctldev->desc->strict && desc->gpio_owner) {
-> +               if (ops->strict && desc->gpio_owner) {
->                         dev_err(pctldev->dev,
->                                 "pin %s already requested by %s; cannot claim for %s\n",
->                                 desc->name, desc->gpio_owner, owner);
-> diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-> index fc6b0348c375..66e4697516de 100644
-> --- a/include/linux/pinctrl/pinctrl.h
-> +++ b/include/linux/pinctrl/pinctrl.h
-> @@ -114,8 +114,6 @@ struct pinctrl_ops {
->   *     of the pins field above
->   * @pctlops: pin control operation vtable, to support global concepts like
->   *     grouping of pins, this is optional.
-> - * @strict: check both gpio_owner and mux_owner strictly before approving
-> -       the pin request
->   * @pmxops: pinmux operations vtable, if you support pinmuxing in your driver
->   * @confops: pin config operations vtable, if you support pin configuration in
->   *     your driver
-> @@ -134,7 +132,6 @@ struct pinctrl_desc {
->         const struct pinctrl_ops *pctlops;
->         const struct pinmux_ops *pmxops;
->         const struct pinconf_ops *confops;
-> -       bool strict;
->         struct module *owner;
->  #ifdef CONFIG_GENERIC_PINCONF
->         unsigned int num_custom_params;
-> diff --git a/include/linux/pinctrl/pinmux.h b/include/linux/pinctrl/pinmux.h
-> index 511bda9ed4bf..d3740fa7073f 100644
-> --- a/include/linux/pinctrl/pinmux.h
-> +++ b/include/linux/pinctrl/pinmux.h
-> @@ -56,6 +56,9 @@ struct pinctrl_dev;
->   *     depending on whether the GPIO is configured as input or output,
->   *     a direction selector function may be implemented as a backing
->   *     to the GPIO controllers that need pin muxing.
-> + * @strict: do not allow simultaneous use of the same pin for GPIO and another
-> + *     function. Check both gpio_owner and mux_owner strictly before approving
-> + *     the pin request.
->   */
->  struct pinmux_ops {
->         int (*request) (struct pinctrl_dev *pctldev, unsigned offset);
-> @@ -79,6 +82,7 @@ struct pinmux_ops {
->                                    struct pinctrl_gpio_range *range,
->                                    unsigned offset,
->                                    bool input);
-> +       bool strict;
->  };
->
->  #endif /* CONFIG_PINMUX */
-> --
-> 1.9.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
+
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.1-2
+
+for you to fetch changes up to d2d05c65c40e067ca5898399069053f095c67d6f:
+
+  gpio: omap: Fix regression for MPUIO interrupts (2015-05-06 15:19:38 +0200)
+
+----------------------------------------------------------------
+These are some GPIO fixes for the v4.1 series:
+
+- Fix a memory leak for GPIO hotplug.
+
+- Fix a signedness bug in the ACPI GPIO pin validation.
+
+- Driver fixes: Qualcomm SPMI and OMAP MPUIO IRQ issues.
+
+----------------------------------------------------------------
+Ivan T. Ivanov (2):
+      pinctrl: qcom-spmi-gpio: Fix output type configuration
+      pinctrl: qcom-spmi-gpio: Fix input value report
+
+Johan Hovold (1):
+      gpio: sysfs: fix memory leaks and device hotplug
+
+Qipeng Zha (1):
+      gpiolib: change gpio pin from unsigned to signed in acpi callback
+
+Tony Lindgren (1):
+      gpio: omap: Fix regression for MPUIO interrupts
+
+ drivers/gpio/gpio-omap.c                 | 48 ++++++--------------------------
+ drivers/gpio/gpiolib-acpi.c              |  2 +-
+ drivers/gpio/gpiolib-sysfs.c             | 19 +++++++++++++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 13 +++++----
+ 4 files changed, 36 insertions(+), 46 deletions(-)
