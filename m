@@ -1,70 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for the v4.1 series
-Date: Fri, 8 May 2015 09:46:55 +0200
-Message-ID: <CACRpkdYMu8-Vq7xkAjXCyAy3Tuh5W7vniKkwF=MXZJC1gWuwdw@mail.gmail.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 3/8] mfd: arizona: Add support for WM8998 and WM1814
+Date: Fri, 8 May 2015 10:11:45 +0100
+Message-ID: <20150508091145.GA9991@opensource.wolfsonmicro.com>
+References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com> <1430493319-23808-4-git-send-email-rf@opensource.wolfsonmicro.com> <20150507085238.GA16220@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:34205 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752065AbbEHHqz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 May 2015 03:46:55 -0400
-Received: by obfe9 with SMTP id e9so49826880obf.1
-        for <linux-gpio@vger.kernel.org>; Fri, 08 May 2015 00:46:55 -0700 (PDT)
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54195 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751319AbbEHJLw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 May 2015 05:11:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20150507085238.GA16220@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, cw00.choi@samsung.com, myungjoo.ham@samsung.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 
-Hi Linus,
+On Thu, May 07, 2015 at 09:52:38AM +0100, Lee Jones wrote:
+> On Fri, 01 May 2015, Richard Fitzgerald wrote:
+> 
+> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> > ---
+> >  drivers/mfd/Kconfig                   |    6 +
+> >  drivers/mfd/Makefile                  |    3 +
+> >  drivers/mfd/arizona-core.c            |  105 ++-
+> >  drivers/mfd/arizona-i2c.c             |    8 +
+> >  drivers/mfd/arizona-irq.c             |    9 +
+> >  drivers/mfd/arizona.h                 |    5 +
+> >  drivers/mfd/wm8998-tables.c           | 1592 +++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/arizona/core.h      |    3 +
+> >  include/linux/mfd/arizona/pdata.h     |    2 +
+> >  include/linux/mfd/arizona/registers.h |  220 +++++
+> >  10 files changed, 1945 insertions(+), 8 deletions(-)
+> >  create mode 100644 drivers/mfd/wm8998-tables.c
+> 
+> How orthogonal is this patch?  Can I just take it?
+> 
+> For my own reference:
+>   Acked-by: Lee Jones <lee.jones@linaro.org>
 
-here is a bunch of GPIO fixes that I collected since -rc1,
-nothing controversial, nothing special. Some descriptions
-in the signed tag.
 
-Please pull them in!
+This patches code added by patch 1 "mfd: arizona: Split INx_MODE into two fields" so you'll
+need to take that one as well. But if you are ok with that change too then yes it's ok to
+take both of them into mfd.
 
-Yours,
-Linus Walleij
-
-The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
-
-  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.1-2
-
-for you to fetch changes up to d2d05c65c40e067ca5898399069053f095c67d6f:
-
-  gpio: omap: Fix regression for MPUIO interrupts (2015-05-06 15:19:38 +0200)
-
-----------------------------------------------------------------
-These are some GPIO fixes for the v4.1 series:
-
-- Fix a memory leak for GPIO hotplug.
-
-- Fix a signedness bug in the ACPI GPIO pin validation.
-
-- Driver fixes: Qualcomm SPMI and OMAP MPUIO IRQ issues.
-
-----------------------------------------------------------------
-Ivan T. Ivanov (2):
-      pinctrl: qcom-spmi-gpio: Fix output type configuration
-      pinctrl: qcom-spmi-gpio: Fix input value report
-
-Johan Hovold (1):
-      gpio: sysfs: fix memory leaks and device hotplug
-
-Qipeng Zha (1):
-      gpiolib: change gpio pin from unsigned to signed in acpi callback
-
-Tony Lindgren (1):
-      gpio: omap: Fix regression for MPUIO interrupts
-
- drivers/gpio/gpio-omap.c                 | 48 ++++++--------------------------
- drivers/gpio/gpiolib-acpi.c              |  2 +-
- drivers/gpio/gpiolib-sysfs.c             | 19 +++++++++++++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 13 +++++----
- 4 files changed, 36 insertions(+), 46 deletions(-)
