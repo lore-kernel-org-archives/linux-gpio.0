@@ -1,117 +1,44 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 20/27] Staging: iio: Allow compile test of GPIO consumers
- if !GPIOLIB
-Date: Thu, 07 May 2015 11:38:11 +0100
-Message-ID: <554B4093.9080207@kernel.org>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org> <1430843563-18615-1-git-send-email-geert@linux-m68k.org> <1430843563-18615-20-git-send-email-geert@linux-m68k.org>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 2/3] gpio: Add GPIO support for Broadcom STB SoCs
+Date: Thu, 7 May 2015 21:19:21 -0700
+Message-ID: <20150508041921.GA26702@corellia.local>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+ <1430901477-10678-3-git-send-email-gregory.0xf0@gmail.com>
+ <1430986729.8171.41.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430843563-18615-20-git-send-email-geert@linux-m68k.org>
+Content-Disposition: inline
+In-Reply-To: <1430986729.8171.41.camel@x220>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, devel@driverdev.osuosl.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/05/15 17:32, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
+On Thu, May 07, 2015 at 10:18:49AM +0200, Paul Bolle wrote:
+> Just a nit: a license mismatch.
 > 
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
+> On Wed, 2015-05-06 at 01:37 -0700, Gregory Fong wrote:
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-brcmstb.c
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: linux-iio@vger.kernel.org
-> Cc: devel@driverdev.osuosl.org
-Applied to the togreg branch of iio.git - to be pushed out as testing
-'soonish'.
-> ---
->  drivers/staging/iio/accel/Kconfig    | 2 +-
->  drivers/staging/iio/adc/Kconfig      | 6 +++---
->  drivers/staging/iio/addac/Kconfig    | 2 +-
->  drivers/staging/iio/resolver/Kconfig | 4 ++--
->  4 files changed, 7 insertions(+), 7 deletions(-)
+> > + * This program is free software; you can redistribute it and/or
+> > + * modify it under the terms of the GNU General Public License as
+> > + * published by the Free Software Foundation version 2.
+> > + *
+> > + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> > + * kind, whether express or implied; without even the implied warranty
+> > + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
 > 
-> diff --git a/drivers/staging/iio/accel/Kconfig b/drivers/staging/iio/accel/Kconfig
-> index 07b7ffa00ab53c86..fa67da9408b6b3b7 100644
-> --- a/drivers/staging/iio/accel/Kconfig
-> +++ b/drivers/staging/iio/accel/Kconfig
-> @@ -79,7 +79,7 @@ config LIS3L02DQ
->  	depends on SPI
->  	select IIO_TRIGGER if IIO_BUFFER
->  	depends on !IIO_BUFFER || IIO_KFIFO_BUF
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here to build SPI support for the ST microelectronics
->  	  accelerometer. The driver supplies direct access via sysfs files
-> diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
-> index d0016ce6e65840e6..94ae4232ee773497 100644
-> --- a/drivers/staging/iio/adc/Kconfig
-> +++ b/drivers/staging/iio/adc/Kconfig
-> @@ -5,7 +5,7 @@ menu "Analog to digital converters"
->  
->  config AD7606
->  	tristate "Analog Devices AD7606 ADC driver"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select IIO_BUFFER
->  	select IIO_TRIGGERED_BUFFER
->  	help
-> @@ -39,7 +39,7 @@ config AD7606_IFACE_SPI
->  config AD7780
->  	tristate "Analog Devices AD7780 and similar ADCs driver"
->  	depends on SPI
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select AD_SIGMA_DELTA
->  	help
->  	  Say yes here to build support for Analog Devices AD7170, AD7171,
-> @@ -52,7 +52,7 @@ config AD7780
->  config AD7816
->  	tristate "Analog Devices AD7816/7/8 temperature sensor and ADC driver"
->  	depends on SPI
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say yes here to build support for Analog Devices AD7816/7/8
->  	  temperature sensors and ADC.
-> diff --git a/drivers/staging/iio/addac/Kconfig b/drivers/staging/iio/addac/Kconfig
-> index 0ed7e13e2283edb0..ba18b8432d9cce6e 100644
-> --- a/drivers/staging/iio/addac/Kconfig
-> +++ b/drivers/staging/iio/addac/Kconfig
-> @@ -5,7 +5,7 @@ menu "Analog digital bi-direction converters"
->  
->  config ADT7316
->  	tristate "Analog Devices ADT7316/7/8 ADT7516/7/9 temperature sensor, ADC and DAC driver"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say yes here to build support for Analog Devices ADT7316, ADT7317, ADT7318
->  	  and ADT7516, ADT7517, ADT7519 temperature sensors, ADC and DAC.
-> diff --git a/drivers/staging/iio/resolver/Kconfig b/drivers/staging/iio/resolver/Kconfig
-> index c7a742ec122727b0..1c7e2860d6b75d56 100644
-> --- a/drivers/staging/iio/resolver/Kconfig
-> +++ b/drivers/staging/iio/resolver/Kconfig
-> @@ -16,7 +16,7 @@ config AD2S90
->  config AD2S1200
->  	tristate "Analog Devices ad2s1200/ad2s1205 driver"
->  	depends on SPI
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say yes here to build support for Analog Devices spi resolver
->  	  to digital converters, ad2s1200 and ad2s1205, provides direct access
-> @@ -28,7 +28,7 @@ config AD2S1200
->  config AD2S1210
->  	tristate "Analog Devices ad2s1210 driver"
->  	depends on SPI
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say yes here to build support for Analog Devices spi resolver
->  	  to digital converters, ad2s1210, provides direct access via sysfs.
+> This states the license is GPL v2.
 > 
+> > +MODULE_LICENSE("GPL");
+> 
+> And, according to include/linux/module.h, this states the license is GPL
+> v2 or later. So I think either the comment at the top of this file or
+> the ident used in the MODULE_LICENSE() macro needs to change.
+
+Will fix that, thanks.
+
+Gregory
