@@ -1,48 +1,38 @@
-From: Michael Brunner <mibru@gmx.de>
-Subject: [PATCH] gpio: gpio-kempld: Fix get_direction return value
-Date: Mon, 11 May 2015 12:46:49 +0200
-Message-ID: <20150511124649.1221e86e@hyperion>
+From: Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH 3/4] gpio: moxart: get value of output gpio from generic driver
+Date: Mon, 11 May 2015 14:17:30 +0200
+Message-ID: <CACmBeS0n4EcNpKfVZM4AypjJVqXeq+5jNqx2chyp5yPX6cBY0Q@mail.gmail.com>
+References: <1430321701-13758-1-git-send-email-vladimir_zapolskiy@mentor.com>
+	<1430321701-13758-4-git-send-email-vladimir_zapolskiy@mentor.com>
+	<CACRpkdaQc4Udg6mbzF23sapnPDRvRhLX_=4hjvtJpbmXO4_g-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:61908 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751058AbbEKKrB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 11 May 2015 06:47:01 -0400
+Received: from mail-yh0-f50.google.com ([209.85.213.50]:33922 "EHLO
+	mail-yh0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbbEKMRb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 May 2015 08:17:31 -0400
+Received: by yhw29 with SMTP id 29so35603179yhw.1
+        for <linux-gpio@vger.kernel.org>; Mon, 11 May 2015 05:17:30 -0700 (PDT)
+In-Reply-To: <CACRpkdaQc4Udg6mbzF23sapnPDRvRhLX_=4hjvtJpbmXO4_g-A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jochen Henneberg <jh@henneberg-systemdesign.com>, Michael Brunner <michael.brunner@kontron.com>, Darren Hart <dvhart@linux.intel.com>, Kevin Strasser <kevin.strasser@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This patch fixes an inverted return value of the gpio get_direction
-function.
+On 11 May 2015 at 11:52, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Patch applied, unless Jonas has a problem with it.
+> Always CC: Jonas Jensen whenever patching Moxart stuff pls.
 
-The wrong value causes the direction sysfs entry and GPIO debugfs file
-to indicate incorrect GPIO direction settings. In some cases it also
-prevents setting GPIO output values.
+Thanks!
 
-The problem is also present in all other stable kernel versions since
-linux-3.12.
+I just figured out I never completed my linux-gpio subscription though
+I would have found this eventually.
 
-Reported-by: Jochen Henneberg <jh@henneberg-systemdesign.com>
-Signed-off-by: Michael Brunner <michael.brunner@kontron.com>
----
- drivers/gpio/gpio-kempld.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Unfortunately my tree is not rebased since 3.17 so merged manually and
+tested (verified OK on UC-7112-LX):
 
-diff --git a/drivers/gpio/gpio-kempld.c b/drivers/gpio/gpio-kempld.c
-index 6b8115f..83f281d 100644
---- a/drivers/gpio/gpio-kempld.c
-+++ b/drivers/gpio/gpio-kempld.c
-@@ -117,7 +117,7 @@ static int kempld_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 		= container_of(chip, struct kempld_gpio_data, chip);
- 	struct kempld_device_data *pld = gpio->pld;
- 
--	return kempld_gpio_get_bit(pld, KEMPLD_GPIO_DIR_NUM(offset), offset);
-+	return !kempld_gpio_get_bit(pld, KEMPLD_GPIO_DIR_NUM(offset), offset);
- }
- 
- static int kempld_gpio_pincount(struct kempld_device_data *pld)
--- 
-1.8.5.1
+https://bitbucket.org/Kasreyn/linux-next/commits/5da653347ed802f5cdfd785d1dbaab2aa7432c1d
+
+
+   Jonas
