@@ -1,99 +1,43 @@
-From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v3 2/7] mmc: mediatek: Add Mediatek MMC driver
-Date: Mon, 11 May 2015 17:18:05 +0800
-Message-ID: <1431335885.26820.7.camel@mhfsdcap03>
-References: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
- <1430214525-19198-3-git-send-email-chaotian.jing@mediatek.com>
- <CAPDyKFq=R9B6ZHHgmDcSg-TNSfqQKAUKc2NjACvpwxFpmk954g@mail.gmail.com>
- <1430895299.15154.9.camel@mhfsdcap03>
- <CAPDyKFr+FTXAzYVn3F41dmw2zW01pSbSHPfGJHXbUFLJfvQ5CA@mail.gmail.com>
- <1430962956.15154.48.camel@mhfsdcap03>
- <CAPDyKFr5N_08HbLuY=4Wfv1BoVQLVR-VW+NKh_umL1hzi_KozA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] Revert "gpio: generic: clamp retured value to [0,1]"
+Date: Mon, 11 May 2015 11:46:57 +0200
+Message-ID: <CACRpkdYWEygtL3h4Z6uaWGxc1ac2Q7_X9gddCobUj_dHpSiK0g@mail.gmail.com>
+References: <1430321701-13758-1-git-send-email-vladimir_zapolskiy@mentor.com>
+	<1430321701-13758-2-git-send-email-vladimir_zapolskiy@mentor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAPDyKFr5N_08HbLuY=4Wfv1BoVQLVR-VW+NKh_umL1hzi_KozA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, srv_heupstream <srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Bin Zhang =?UTF-8?Q?=28=E7=AB=A0=E6=96=8C=29?= <bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kern>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:34888 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752610AbbEKJq6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 May 2015 05:46:58 -0400
+Received: by obcus9 with SMTP id us9so66069254obc.2
+        for <linux-gpio@vger.kernel.org>; Mon, 11 May 2015 02:46:58 -0700 (PDT)
+In-Reply-To: <1430321701-13758-2-git-send-email-vladimir_zapolskiy@mentor.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, 2015-05-08 at 14:12 +0200, Ulf Hansson wrote:
-> On 7 May 2015 at 03:42, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> > Dear Ulf,
-> >
-> > Thanks!
-> > Below is my comment:
-> >
-> > On Wed, 2015-05-06 at 18:31 +0200, Ulf Hansson wrote:
-> >> On 6 May 2015 at 08:54, chaotian.jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> >> > Dear Ulf,
-> >> >
-> >> > Thanks for your review.
-> >> > I must do a explain of our MMC host:
-> >> > Source clock is source clock of the MMC bus, MMC host has a divider to
-> >> > get different bus clock frequency. now the runtime suspend is gating
-> >> > this clock.
-> >> >
-> >> > Hclk is the power domain of the MMC host, if Hclk is gated, the MMC host
-> >> > cannot work(all registers readout is zero). and, all registers would be
-> >> > reset to default value if Hclk is gated/ungated.
-> >> > At MT8173, MSDC0 and MSDC2 has independent Hclk, MSDC1 and MSDC3's Hclk
-> >> > was controlled by "Infra module".
-> > Sorry for mistake, MSDC0 and MSDC3 has independent Hclk, MSDC1 and
-> > MSDC2's Hclk was controlled by "Infra module". the Infra module is a
-> > "power saving module", when the system go to sleep, Infra module will be
-> > set and MSDC1 & MSDC2's Hclk will be gated automatically.
-> >>
-> >> Thanks for clarifying!
-> >>
-> >> I don't have enough knowledge about your SoC to understand the detail,
-> >> but it seems like we are mixing clocks and power domains. I would
-> >> rather keep this separate - if the HW allows it.
-> >>
-> >> I guess the key question I have is the following:
-> >> 1) Is it hardware wise possible to gate the hclk, but without gating
-> >> the power domain?
-> >> 2) At what level is the reference counting done for each device in the
-> >> power domain? In HW or in sofftware?
-> >>
-> >
-> > Actually, Our MMC host do not have power domain, all the control of the
-> > host is the Hclk.
-> 
-> Okay, but I am not sure that fully answered my question.
-> 
-> You said that hclk will be gated when the power domain gets gated. And
-> the power domain (infra module, right?) will be gated at system PM
-> sleep. And when that happens the mmc controller loses register
-> context.
-> 
-> But, again, can hclk be gated without gating the power domain?
-> 
-> No matter what, it seems like a good idea to gate the power domain
-> when all clients of it are idle. Yes we would need to manage register
-> save/restore context, but on the other hand allow you to save more
-> power, right?
-> 
-For MSDC0 & MSDC3, it has independent HCLK, do not have power domain.
-For MSDC1 & MSDC2, its HCLK was controlled by Infra module(This is a big
-power domain for many modules).
-So, for msdc0 & msdc3, we can control its Hclk, for msdc1 & msdc2, we
-cannot control it.
+On Wed, Apr 29, 2015 at 5:34 PM, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
 
-Yes, I will do gate/ungate HCLK & source clock in PM.
-In addition, Since the gate/ungate HCLK is done by runtime PM, and all
-register operation should work at HCLK is on, so the msdc_init_hw() only
-can be called at set_ios(), because in probe(), the HCLK may have not
-been enabled.
-> Kind regards
-> Uffe
+> This reverts commit 25b35da7f4cce82271859f1b6eabd9f3bd41a2bb.
+>
+> The original change is a fast workaround in GPIO generic driver,
+> which is properly fixed by Alexandre's 23600969ff centralized handling
+> of return values from GPIO chip drivers.
+>
+> To avoid a redundant check and copy/paste confusion, it is better to
+> revert the change done in a particular driver.
+>
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+
+I'm gonna drop this patch, because the code is helpful like this,
+clear to see what is going on.
+
+In the long run I want to change the signature of the get/set functions
+to take bools because that is what they actually handle.
+
+Yours,
+Linus Walleij
