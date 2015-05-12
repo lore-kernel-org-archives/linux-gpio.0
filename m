@@ -1,30 +1,24 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 03/11] drivers/gpio: include <module.h> for modular
- crystalcove code
-Date: Tue, 12 May 2015 09:38:07 +0200
-Message-ID: <CACRpkdZ3sfVeSj=b=L5izwiV8yhFw-+AN4OJriuiU4Ft5J-tMQ@mail.gmail.com>
-References: <1430444867-22342-1-git-send-email-paul.gortmaker@windriver.com>
-	<1430444867-22342-4-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 1/3] gpio: mxc: Constify platform_device_id
+Date: Tue, 12 May 2015 09:39:57 +0200
+Message-ID: <CACRpkdZq9BEPfX7RDNmv8vXAA7iBSn3k8+KctVe8p=aA=jEiEw@mail.gmail.com>
+References: <1430495809-32061-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430444867-22342-4-git-send-email-paul.gortmaker@windriver.com>
+In-Reply-To: <1430495809-32061-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, May 1, 2015 at 3:47 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Fri, May 1, 2015 at 5:56 PM, Krzysztof Kozlowski
+<k.kozlowski.k@gmail.com> wrote:
 
-> This file is built off of a tristate Kconfig option and also contains
-> modular function calls so it should explicitly include module.h to
-> avoid compile breakage during header shuffles done in the future.
+> The platform_device_id is not modified by the driver and core uses it as
+> const.
 >
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
 Patch applied.
 
