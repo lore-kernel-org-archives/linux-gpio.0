@@ -1,35 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
- multi-platform check
-Date: Tue, 12 May 2015 12:29:37 +0200
-Message-ID: <CACRpkdYQ2rg7J17tG+Y82n-NEypdgnhw-KWwR1HbwWxJsRcTog@mail.gmail.com>
-References: <1430216107-31501-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
+ properties interface
+Date: Tue, 12 May 2015 12:31:35 +0200
+Message-ID: <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+	<1430986090-7243-2-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:36068 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbbELK3h (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 06:29:37 -0400
-Received: by obbkp3 with SMTP id kp3so1826361obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 03:29:37 -0700 (PDT)
-In-Reply-To: <1430216107-31501-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 28, 2015 at 12:15 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, May 7, 2015 at 10:08 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
-> legacy platform"), r8a73a4 is only supported in generic ARM
-> multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
-> and the check can be removed.
+> If GPIOLIB=3Dn:
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
+=80=99:
+>     drivers/leds/leds-gpio.c:187: error: implicit declaration of func=
+tion =E2=80=98devm_get_gpiod_from_child=E2=80=99
+>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer f=
+rom integer without a cast
+>
+> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chil=
+d()
+> for the !GPIOLIB case to fix this.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: 40b7318319281b1b ("gpio: Support for unified device properties=
+ interface")
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Counting on this to go through the LEDs tree as discussed.
 
 Yours,
 Linus Walleij
