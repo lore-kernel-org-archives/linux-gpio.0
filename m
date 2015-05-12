@@ -1,65 +1,58 @@
-From: Antonio Ospite <ao2@ao2.it>
-Subject: Re: [PATCH] pinctrl: baytrail: explicitly set gpio chip base
-Date: Tue, 12 May 2015 15:07:40 +0200
-Message-ID: <20150512150740.b9250662ff44f2d4d35527e0@ao2.it>
-References: <1430298162-20238-1-git-send-email-ao2@ao2.it>
-	<20150430110237.GV1534@lahna.fi.intel.com>
-	<20150430235141.2928e7fa8a193437346b76aa@ao2.it>
-	<20150504104000.GZ1534@lahna.fi.intel.com>
-	<20150504133646.391d1f3897ec2d51493ac28a@ao2.it>
-	<CACRpkdabi+QbExbm2NFNKUwH+2rAeCKEstnQ=ffSnK+GBiNq+w@mail.gmail.com>
+From: wsa@the-dreams.de
+Subject: Re: [PATCH v2 2/3] i2c / ACPI: Use 0 to indicate that device does
+ not have interrupt assigned
+Date: Tue, 12 May 2015 15:09:21 +0200
+Message-ID: <20150512130921.GD4447@schokonusskuchen.bad>
+References: <1430908148-201129-1-git-send-email-mika.westerberg@linux.intel.com>
+ <1430908148-201129-3-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp205.alice.it ([82.57.200.101]:54167 "EHLO smtp205.alice.it"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932339AbbELNHq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 12 May 2015 09:07:46 -0400
-In-Reply-To: <CACRpkdabi+QbExbm2NFNKUwH+2rAeCKEstnQ=ffSnK+GBiNq+w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ghzN8eJ9Qlbqn3iT"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430908148-201129-3-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Octavian Purdila <octavian.purdila@intel.com>, Robert Dolca <robert.dolca@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On Tue, 12 May 2015 09:48:12 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> On Mon, May 4, 2015 at 1:36 PM, Antonio Ospite <ao2@ao2.it> wrote:
-> > On Mon, 4 May 2015 13:40:00 +0300 Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> 
-> >> Well, if you happen to have another GPIO chip (a GPIO expander for
-> >> example) and it somehow gets loaded before this driver. It may take the
-> >> range you have reserved for the BYT driver.
-> >>
-> >> Not sure how realistic case that is, though...
-> >
-> > Indeed, being this for the SoC gpio controller I thought it was
-> > unlikely, however I do not have a huge experience on these matters.
-> >
-> > I have no strong opinion on this, Mika, so whether or not you merge the
-> > change it'll be fine by me.
-> 
-> The ability to set .base is basically there for legacy reasons,
-> and the critical legacy case is usually when setting it to 0
-> for the on-SoC GPIO.
->
-> In the long run we want to get rid of static GPIO numbers
-> altogether so I prefer if you construct your userspace to
-> traverse sysfs to get the GPIOs you need to get at,
-> sysfs is horrible and unreliable for GPIO.
-> 
+--ghzN8eJ9Qlbqn3iT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, if the use of static .base is deprecated my patch is inappropriate,
-I self-NACK it and we can close this thread.
+On Wed, May 06, 2015 at 01:29:07PM +0300, Mika Westerberg wrote:
+> This is the convention used in most parts of the kernel including DT
+> counterpart of I2C slave enumeration. To make things consistent do the sa=
+me
+> for ACPI I2C slave enumeration path as well.
+>=20
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Thanks for the replies,
-   Antonio
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
--- 
-Antonio Ospite
-http://ao2.it
 
-A: Because it messes up the order in which people normally read text.
-   See http://en.wikipedia.org/wiki/Posting_style
-Q: Why is top-posting such a bad thing?
+--ghzN8eJ9Qlbqn3iT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJVUfuBAAoJEBQN5MwUoCm2FyEP/1EEODbElxZn++Us9zQEethx
+QwQq9Jk4dAHkdOZtZlWG11b/67zL+KNur6D+2V2pt6eApl6Kgj2JHuAe9lgo6bnz
+YwAcIKmfaAUKtzOgxLHOOprxSeSC0oW6nAeozNLp0vLoEiHc7QU6iWmbsUfCgm3Q
+VAZDBYi3Rh9dgbucxBcjE0+rsXSVxDVXjH3f3OGpnvoPVotLh9gaxaUrX2e3mwAb
+kr4kGZrKJbdFpPIIa5u8WD9vvZvAvsIO9dfZunRXLx1e266RNXFxQ+Uz3J/2aQtW
+NePYc2gXfCMPQXOAh2rOtB0OnSPxi8TwFtqGB5hp5P9jxhiyS2sluBGJ3qo6qu0G
+cTgUb2nnWmG0uKJn3frsEkhj9oio5FoRYCiTha4Z2f3b971Ly/FTbCHOYdvMk7mY
+abz4lp4FIls6j/gT76E3Cq6Yp+OFYkoaSPPlFIfIdEVo87HvhtRUCEsbeywGZT25
+d3Xu5k8ZKb8KQbRpkp9vztPpheDJUjZhDhmn+5/EeaFVc1UR+XoD/ohIrlJgYhZ8
+aCD/LBBi8IufSp5ZHZQGKwHtgfV2tD10Mclqd7Pe8MxdeXUkwKAhN3sQ0HupSKP5
+VzyzVasAGCLXYrsEsqGgDubxOV1eWdBzP3ilLDgRvjHys2EjMmw+m/y6YLVNmzlZ
+gHpom71PMlm+orlMsDbi
+=f0Yv
+-----END PGP SIGNATURE-----
+
+--ghzN8eJ9Qlbqn3iT--
