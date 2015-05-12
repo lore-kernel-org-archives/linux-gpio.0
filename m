@@ -1,67 +1,59 @@
-From: wsa@the-dreams.de
-Subject: Re: [PATCH 06/27] i2c: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Tue, 12 May 2015 15:23:16 +0200
-Message-ID: <20150512132316.GH4447@schokonusskuchen.bad>
-References: <1430836404-15513-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-1-git-send-email-geert@linux-m68k.org>
- <1430843563-18615-6-git-send-email-geert@linux-m68k.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/1] gpio: omap: Fix PM runtime issue and remove most
+ BANK_USED macros
+Date: Tue, 12 May 2015 07:13:49 -0700
+Message-ID: <20150512141348.GG15563@atomide.com>
+References: <1429632533-23285-1-git-send-email-tony@atomide.com>
+ <CACRpkdZ1nJ=-NPHrZdCQ6_TCrF7009R9Y7zVyXN1z9RWcv3a6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yQbNiKLmgenwUfTN"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:60671 "EHLO pokefinder.org"
+Received: from muru.com ([72.249.23.125]:50509 "EHLO muru.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932757AbbELNXW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 12 May 2015 09:23:22 -0400
+	id S932545AbbELONv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 12 May 2015 10:13:51 -0400
 Content-Disposition: inline
-In-Reply-To: <1430843563-18615-6-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <CACRpkdZ1nJ=-NPHrZdCQ6_TCrF7009R9Y7zVyXN1z9RWcv3a6A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Felipe Balbi <balbi@ti.com>, Grygorii Strashko <grygorii.strashko@linaro.org>, Javier Martinez Canillas <jmartinez@softcrates.net>, Nishanth Menon <nm@ti.com>
 
+* Linus Walleij <linus.walleij@linaro.org> [150512 02:01]:
+> On Tue, Apr 21, 2015 at 6:08 PM, Tony Lindgren <tony@atomide.com> wrote:
+> 
+> > Looks like omap_gpio_irq_type can return early at several places
+> > leaving a GPIO bank enabled without doing pm_runtime_put if wrong
+> > GPIO arguments are passed.
+> >
+> > Instead of adding more complicated BANK_USED macros, let's fix the
+> > issue properly. We can pass is_irq flag to omap_enable_gpio_module
+> > and omap_disble_gpio_module. And with that we can remove all the
+> > similar code elsewhere to get rid of most BANK_USED macros.
+> >
+> > Note that the reason for the BANK_USED macro is that we need to manage
+> > PM runtime on per GPIO bank basis. In the long run we want to move to
+> > using PM runtime counts for each GPIO line to determine if a GPIO
+> > bank is used. Once we have a solution for omap_enable_gpio_module
+> > and omap_disable_gpio_module, we can remove the remaining BANK_USED
+> > macros.
+> >
+> > Cc: Felipe Balbi <balbi@ti.com>
+> > Cc: Grygorii Strashko <grygorii.strashko@linaro.org>
+> > Cc: Javier Martinez Canillas <jmartinez@softcrates.net>
+> > Cc: Nishanth Menon <nm@ti.com>
+> > Signed-off-by: Tony Lindgren <tony@atomide.com>
+> 
+> There is so much discussion around this patch that I can't make
+> up my mind whether I should apply this or some subsequent inline
+> version of it.
+> 
+> Holding this off for now...
 
---yQbNiKLmgenwUfTN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah let's see what Grygorii comes up, sounds like he may have
+a minimal fix coming up. Then we can do the rest as clean-up
+later on.
 
-On Tue, May 05, 2015 at 06:32:22PM +0200, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
->=20
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-i2c@vger.kernel.org
+Regards,
 
-Applied to for-next, thanks!
-
-
---yQbNiKLmgenwUfTN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJVUf7DAAoJEBQN5MwUoCm2DCgQAJ/H2Oo0zW3tLM4UzGuhwfmZ
-vonIY1udHsiYrjXdjQYQ7nlP4KtYXzrDjLh0ZXbisQT/yXDmNle/ZwNO9SnrOIzp
-Q2j/gZIPI9kgSWb0uG+UfAHoUtmP9FxXH4/u842RkN+25I0rs3iAZCCivFZpPgOq
-v2ElNeD2NLUTIMRW39kHSII3Aum+2rYKhJwHY3DPbth8KiyOe++V2hh4g76gZRII
-DFvjZJsDA0oxk6K+PKtrT9Wp5L/x23ar3tlKkamKbkjy0XqW5Rh1beJSenz4QLjK
-5gXy/mtwQTWY5tjoW8eJn1UccgtKcGA708Pl5sLSgW6QospUBXsREjOJhSSytqg+
-mGo+JykSWbGmwJ1OUI0WLLjZC5/yNAFdRJPu90pCjootrVqCniJitMgzpMJsMiI6
-3xFTlmN0OeZYWl/qTXQWk5CYlsFUNcrT2nVewYeSvgbAUt8rfiHmVvi7vsFHk7Wz
-VK3V/u/8NSAG3gMeoYUPrU9p0qwsYu0kKFz08IDt1aN2+tCzbzm8VDQ6JG87Nn+b
-u9AP9tW3GeC0G27dyZ8pNE1w8kGERRXBbSxePHAYl6GLNnHnVTEKOhp0L4uQsWPY
-IM6sndin2h5ESF1wnEbNwlTsOpn3pSfjza8k8SkdbuAcW/20MuIl3+DpA+CgqH0T
-LfE9tUnHvmiU1ehe5DJZ
-=yZpT
------END PGP SIGNATURE-----
-
---yQbNiKLmgenwUfTN--
+Tony
