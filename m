@@ -1,29 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH trivial] pinctrl: Grammar s/used in as/used as/
-Date: Tue, 12 May 2015 11:12:59 +0200
-Message-ID: <CACRpkdZ-KsZa8XQ551vdK4fypQiEFZvb959utZx0cSfea0OMEw@mail.gmail.com>
-References: <1430761617-24250-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 3/8] mfd: intel_soc_pmic_core: Add lookup
+ table for Panel Control as GPIO signal
+Date: Tue, 12 May 2015 11:14:07 +0200
+Message-ID: <CACRpkda4FEWekLfR6w6ewmXP6-5X9DDq==BDxP9hGz6-RS8Bhg@mail.gmail.com>
+References: <1430316005-16480-4-git-send-email-shobhit.kumar@intel.com>
+ <1430818565-27025-1-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:36450 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299AbbELJNA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 05:13:00 -0400
-Received: by obbkp3 with SMTP id kp3so633984obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 02:12:59 -0700 (PDT)
-In-Reply-To: <1430761617-24250-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1430818565-27025-1-git-send-email-shobhit.kumar@intel.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, May 4, 2015 at 7:46 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+T24gVHVlLCBNYXkgNSwgMjAxNSBhdCAxMTozNiBBTSwgU2hvYmhpdCBLdW1hciA8c2hvYmhpdC5r
+dW1hckBpbnRlbC5jb20+IHdyb3RlOgoKPiBPbiBzb21lIEludGVsIFNvQyBwbGF0Zm9ybXMsIHRo
+ZSBwYW5lbCBlbmFibGUvZGlzYWJsZSBzaWduYWxzIGFyZQo+IGNvbnRyb2xsZWQgYnkgQ1JDIFBN
+SUMuIEFkZCB0aG9zZSBjb250cm9sIGFzIGEgbmV3IEdQSU8gaW4gYSBsb29rdXAKPiB0YWJsZSBm
+b3IgZ3Bpby1jcnlzdGFsY292ZSBjaGlwIGR1cmluZyBDUkMgZHJpdmVyIGxvYWQKPgo+IHYyOiBN
+YWtlIHRoZSBsb29rdXAgdGFibGUgc3RhdGljIChUaGllcnJ5KQo+ICAgICBSZW1vdmUgdGhlIGxv
+b2t1cCB0YWJsZSBkdXJpbmcgZHJpdmVyIHJlbW92ZSAoVGhpZXJyeSkKPgo+IHYzOiBDb3JyZWN0
+IHRoZSBzdWJqZWN0IGxpbmUgKExlZSBqb25lcykKPgo+IENDOiBTYW11ZWwgT3J0aXogPHNhbWVv
+QGxpbnV4LmludGVsLmNvbT4KPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5h
+cm8ub3JnPgo+IENjOiBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4KPiBDYzog
+VGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KPiBBY2tlZC1ieTogTGVl
+IEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBTaG9iaGl0IEt1
+bWFyIDxzaG9iaGl0Lmt1bWFyQGludGVsLmNvbT4KCkFja2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxs
+aW51cy53YWxsZWlqQGxpbmFyby5vcmc+CgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBs
+aXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
