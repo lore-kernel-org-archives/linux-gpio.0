@@ -1,45 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
- multi-platform check
-Date: Tue, 12 May 2015 09:45:58 +0200
-Message-ID: <CAMuHMdV0Egnyr-1ZQtgC7t0GPzTrVj9_ndpjHoLmAj9U9sR28w@mail.gmail.com>
-References: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdZZ_=x7=2Ae9VPAo6dPvD2D_2MUDwNjCF-jxSp075X1hA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
+ properties interface
+Date: Tue, 12 May 2015 16:47:01 +0900
+Message-ID: <CAAVeFuJ2Uff9q9SUKVXAdOtRKQxUA0m7N9Aaee4bkHRxX+Y1dg@mail.gmail.com>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org> <1430986090-7243-2-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZZ_=x7=2Ae9VPAo6dPvD2D_2MUDwNjCF-jxSp075X1hA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 12, 2015 at 9:26 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Apr 28, 2015 at 12:14 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+On Thu, May 7, 2015 at 5:08 PM, Geert Uytterhoeven <geert@linux-m68k.or=
+g> wrote:
+> If GPIOLIB=3Dn:
 >
->> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
->> legacy platform"), r8a73a4 is only supported in generic ARM
->> multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
->> and the check can be removed.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> This depends on Simon's branch r8a73a4-ccf-and-multiplatform-for-v4.1
+>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
+=80=99:
+>     drivers/leds/leds-gpio.c:187: error: implicit declaration of func=
+tion =E2=80=98devm_get_gpiod_from_child=E2=80=99
+>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer f=
+rom integer without a cast
+>
+> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chil=
+d()
+> for the !GPIOLIB case to fix this.
 
-> I guess I can't merge it to pinctrl then and Simon will take it?
+This was obviously missing.
 
-Sorry for the confusion, that was a old comment I forgot to remove, as
-that branch was already upstream.
-The comment was no longer there in the updated version, sent 1 minute later.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
