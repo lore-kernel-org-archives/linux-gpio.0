@@ -1,56 +1,100 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
-Date: Tue, 12 May 2015 12:38:43 -0700
-Message-ID: <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com> <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 04/17] input: locomokbd: provide an Alt-SysRQ
+ combination
+Date: Tue, 12 May 2015 13:12:15 -0700
+Message-ID: <20150512201215.GD20725@dtor-ws>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-5-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-leds-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1430178954-11138-5-git-send-email-dbaryshkov@gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 12, 2015 at 3:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
->
->> There is only one IRQ for each GIO IP block (i.e. several register banks share
->> an IRQ).  After briefly looking into the generic IRQ chip implementation, it
->> seemed like in this case that using it would result in the driver being more
->> complex than necessary because AFAICT it expects a 1:1 mapping of
->> irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
->> irq_chip since we have a single IRQ for all register banks (multiple
->> gpio_chips).  I might be missing something, maybe using a shared IRQ across
->> multiple irq_chips is easier than I think?  Suggestions welcome.
->
-> What is needed is a 1:1 mapping between GPIO offsets and IRQ
-> offsets.
->
-> If you just number your GPIOs 0...n and your IRQs 0...n
-> it should work just fine with one irqchip for all banks.
->
-> What screws things up is likely that the hardware supports
-> 32 lines per bank and not all are used.
->
-> I suggest you enable 32 line and 32 IRQs per bank,
-> so that hwirq maps nicely 1:1 on the GPIO offsets,
-> then just use the width thing to NACK operations on
-> GPIO lines you are not using. This way you can also
-> decode and warn on spurious IRQs on the unused lines.
+Hi Dmitry,
 
-For having 32 lines per bank, the big problem here is the upper limit
-of 256 GPIOs.  We would hit that limit on SoCs that already exist with
-the SoC GPIOs alone, let alone any GPIO extenders.  I'm really not
-sure what the right way would be to deal with that.
+On Tue, Apr 28, 2015 at 02:55:41AM +0300, Dmitry Eremin-Solenikov wrote:
+> It is usefull sometimes to have an Alt-SysRQ combo on the keyboard to be
+> able to trigger sysrq functions directly. Add an option providing sysrq
+> mapping for Contact-Home keys.
 
-Anyway, I don't think I understand IRQ domains and irq_chip_generic
-very well.  One possibility _might_ be to use multiple irq_chips.  But
-from what I do understand, if there's only a single parent IRQ used by
-all of the GPIO banks, in order to use an irq_chip per bank, this
-would have to stop using the chained irq logic because the parent IRQ
-is shared across banks, and that implementation seems unnecessarily
-confusing.  Any other ideas?
+No, if you want to remap the keys please do it from usepspace; locomokbd
+supports it (EVIOCSKEYCODE ioctl).
 
-Best regards,
-Gregory
+Thanks.
+
+> 
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+> ---
+>  drivers/input/keyboard/Kconfig     |  7 +++++++
+>  drivers/input/keyboard/locomokbd.c | 14 +++++++++++---
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+> index 0a3d875..eb8b11b 100644
+> --- a/drivers/input/keyboard/Kconfig
+> +++ b/drivers/input/keyboard/Kconfig
+> @@ -343,6 +343,13 @@ config KEYBOARD_LOCOMO
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called locomokbd.
+>  
+> +config KEYBOARD_LOCOMO_SYSRQ
+> +	bool "Provide SysRQ key on LoCoMo keyboard"
+> +	depends on KEYBOARD_LOCOMO
+> +	help
+> +	  Say Y here to be able to use Contact-Home as Alt-Sysrq combo.
+> +	  Say N if you want to use them as usual keys.
+> +
+>  config KEYBOARD_LPC32XX
+>  	tristate "LPC32XX matrix key scanner support"
+>  	depends on ARCH_LPC32XX && OF
+> diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
+> index eed0a94..eb8dbe2 100644
+> --- a/drivers/input/keyboard/locomokbd.c
+> +++ b/drivers/input/keyboard/locomokbd.c
+> @@ -40,6 +40,14 @@
+>  #define KEY_CONTACT		KEY_F18
+>  #define KEY_CENTER		KEY_F15
+>  
+> +#ifdef CONFIG_KEYBOARD_LOCOMOKBD_SYSRQ
+> +#define LOCOMO_KEY_CONTACT	KEY_LEFTALT
+> +#define LOCOMO_KEY_HOME		KEY_SYSRQ
+> +#else
+> +#define LOCOMO_KEY_CONTACT	KEY_CONTACT
+> +#define LOCOMO_KEY_HOME		KEY_HOME
+> +#endif
+> +
+>  #define KB_ROWS			16
+>  #define KB_COLS			8
+>  #define LOCOMOKBD_NUMKEYS	(KB_ROWS * KB_COLS)
+> @@ -48,7 +56,7 @@
+>  static const unsigned char
+>  locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
+>  	0, KEY_ESC, KEY_ACTIVITY, 0, 0, 0, 0, 0, 0, 0,				/* 0 - 9 */
+> -	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, KEY_CONTACT,				/* 10 - 19 */
+> +	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, LOCOMO_KEY_CONTACT,			/* 10 - 19 */
+>  	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,						/* 20 - 29 */
+>  	0, 0, 0, KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,				/* 30 - 39 */
+>  	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
+> @@ -280,9 +288,9 @@ static int locomokbd_probe(struct platform_device *dev)
+>  			sizeof(locomokbd->keycode));
+>  
+>  	if (machine_is_collie())
+> -		locomokbd->keycode[18] = KEY_HOME;
+> +		locomokbd->keycode[18] = LOCOMO_KEY_HOME;
+>  	else
+> -		locomokbd->keycode[3] = KEY_HOME;
+> +		locomokbd->keycode[3] = LOCOMO_KEY_HOME;
+>  
+>  	for (i = 0; i < LOCOMOKBD_NUMKEYS; i++)
+>  		input_set_capability(input_dev, EV_KEY, locomokbd->keycode[i]);
+> -- 
+> 2.1.4
+> 
+
+-- 
+Dmitry
