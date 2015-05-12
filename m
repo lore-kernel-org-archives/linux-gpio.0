@@ -1,34 +1,55 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 7/8] drm/i915: Use the CRC gpio for panel enable/disable
-Date: Tue, 12 May 2015 13:10:30 +0200
-Message-ID: <CACRpkdYkZay7XbxzkvAmU7Bt0YT23rS-EyXJMtt05UMLF8MKEA@mail.gmail.com>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
-	<1430316005-16480-8-git-send-email-shobhit.kumar@intel.com>
+Subject: Re: [PATCH v2 08/17] gpio: locomo: implement per-pin irq handling
+Date: Tue, 12 May 2015 13:15:25 +0200
+Message-ID: <CACRpkdYQFYaA87N2f1uizRo=sDj2P4k4m1O_0_cQsi4BZbeGkg@mail.gmail.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+	<1430178954-11138-9-git-send-email-dbaryshkov@gmail.com>
+	<CACRpkdZt+rjzVSqXE6MDaY5S9gezeTu+2QWu31xKsg08TpXibw@mail.gmail.com>
+	<CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1430316005-16480-8-git-send-email-shobhit.kumar@intel.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-pwm <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Lee Jones <lee.jones@linaro.org>, Povilas Staniulis <wdmonster@gmail.com>, Chih-Wei Huang <cwhuang@android-x86.org>
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <CALT56yNJutWTW5zsos+=Uh+BDvO4o_tqBEj+H621TncVK6eD_Q@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, linux-leds@vger.kernel.or
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 29, 2015 at 4:00 PM, Shobhit Kumar <shobhit.kumar@intel.com> wrote:
-
-> The CRC (Crystal Cove) PMIC, controls the panel enable and disable
-> signals for BYT for dsi panels. This is indicated in the VBT fields. Use
-> that to initialize and use GPIO based control for these signals.
+On Wed, May 6, 2015 at 6:42 PM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
+> 2015-05-06 17:15 GMT+03:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Tue, Apr 28, 2015 at 1:55 AM, Dmitry Eremin-Solenikov
+>> <dbaryshkov@gmail.com> wrote:
+>>
+>>> LoCoMo has a possibility to generate per-GPIO edge irqs. Support for
+>>> that was there in old locomo driver, got 'cleaned up' during old driver
+>>> IRQ cascading cleanup and is now reimplemented. It is expected that
+>>> SL-5500 (collie) will use locomo gpio irqs for mmc detection irq.
+>>>
+>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+>>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> v2: Use the newer gpiod interface(Alexandre)
-> v3: Remove the redundant checks and unused code (Ville)
+> Thanks for review of the patches.
 >
-> CC: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
+>> Assume this will also go through MFD.
+>>
+>>> +       irq_set_chained_handler(lg->irq, NULL);
+>>> +       irq_set_handler_data(lg->irq, NULL);
+>>
+>> Why is this needed? If the GPIOLIB_IRQCHIP code in
+>> gpiolib.c is not doing this then maybe it's the core code that
+>> needs fixing rather than having this in the driver.
+>
+> I have skimmed through the rest of drivers using
+> gpiochip_set_chained_irqchip(). Indeed none of the drivers NULL
+> the chained handled and handler data. However I couldn't locate
+> the code where they would be cleared.
+>
+> Should I still send the patch fixing the GPIOLIB_IRQCHIP?
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Yes I guess you need to save parent_irq in struct gpio_chip and
+remove it in gpiochip_irqchip_remove() if it's != 0.
 
 Yours,
 Linus Walleij
