@@ -1,62 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: Check for irq_set_irq_wake() failures
-Date: Tue, 12 May 2015 09:55:47 +0200
-Message-ID: <CACRpkdaDEr7Lw8u5tAC-som5W-WM4-Wfqena4Ftd4KFdEA2-Yg@mail.gmail.com>
-References: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio: xilinx: Fix kernel-doc warnings
+Date: Tue, 12 May 2015 09:56:49 +0200
+Message-ID: <CACRpkda3RyBtqG9CgUOhA-4Z_21sgQY+gnZN1st90Z69gyZhgw@mail.gmail.com>
+References: <6680ac72661b4be9c4de4a3e2589a0b466fdda74.1430750234.git.michal.simek@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, hisashi.nakamura.ak@renesas.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Valentine <valentine.barshak@cogentembedded.com>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35767 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752672AbbELH4t (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:56:49 -0400
+Received: by obcus9 with SMTP id us9so88998807obc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 00:56:49 -0700 (PDT)
+In-Reply-To: <6680ac72661b4be9c4de4a3e2589a0b466fdda74.1430750234.git.michal.simek@xilinx.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <monstr@monstr.eu>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, May 4, 2015 at 4:09 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, May 4, 2015 at 4:37 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-> If an interrupt controller doesn't support wake-up configuration, trying
-> to deconfigure wake-up will cause a warning:
+> Fix kernel-doc format:
+> - Add gpio-width description
+> - Remove additional "inited" variable description
+> - Add return value description - xgpio_remove
 >
->     WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
->     Unbalanced IRQ 26 wake disable
->
-> To fix this, refrain from any further parent interrupt controller
-> (de)configuration if irq_set_irq_wake() failed.
->
-> Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This is an alternative for:
->   - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
->     platform code, OR
->   - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
->     code.
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-This should be moved to the commit message I think.
-
-> -       irq_set_irq_wake(p->irq_parent, on);
-> +       int error;
-> +
-> +       if (p->irq_parent) {
-> +               error = irq_set_irq_wake(p->irq_parent, on);
-> +               if (error) {
-> +                       dev_dbg(&p->pdev->dev,
-> +                               "irq %u doesn't support irq_set_wake\n",
-> +                               p->irq_parent);
-> +                       p->irq_parent = 0;
-> +               }
-> +       }
-
-Does the SH maintainers really like this... Warning
-appear once and is squelched.
-
-Isn't it better to make sure it doesn't happen or something.
-
-It looks hacky. Any other suggestions?
-
-Also, please convert this driver to use GPIOLIB_IRQCHIP
-like everyone else.
+Patch applied.
 
 Yours,
 Linus Walleij
