@@ -1,41 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: lpc18xx: create pin cap lookup helper
-Date: Tue, 12 May 2015 13:18:11 +0200
-Message-ID: <CACRpkdY-_+Y3UqoSM7BHTukbwtRfi9w5Sf00NQsRQuPxXgr_gg@mail.gmail.com>
-References: <1430932281-3432-1-git-send-email-manabian@gmail.com>
+Subject: Re: [PATCH V5] pinctrl: Add Pistachio SoC pin control driver
+Date: Tue, 12 May 2015 13:21:43 +0200
+Message-ID: <CACRpkda9gP45BUyh2bCYCvUM1MM+ZbUtbiyqsQ-ZrGde7cEGrg@mail.gmail.com>
+References: <1430942343-27201-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:33350 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932296AbbELLSL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 07:18:11 -0400
-Received: by oica37 with SMTP id a37so2935512oic.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 04:18:11 -0700 (PDT)
-In-Reply-To: <1430932281-3432-1-git-send-email-manabian@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1430942343-27201-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, May 6, 2015 at 7:11 PM, Joachim Eastwood <manabian@gmail.com> wrote:
+On Wed, May 6, 2015 at 9:59 PM, Andrew Bresticker <abrestic@chromium.org> wrote:
 
-> Both pconf_get_pin and pconf_set_pin needs to lookup pin cap based
-> on the pin number. Create a common helper function that both
-> functions can use that also handles the case where no pin number is
-> found in the pins array.
+> Add a driver for the pin controller present on the IMG Pistachio SoC.
+> This driver provides pinmux and pinconfig operations as well as GPIO
+> and IRQ chips for the GPIO banks.
 >
-> This also fixes a small bug in pconf_get_pin where pconf_get_i2c0
-> would use the pins array index rather than the pin number.
->
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
+> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
+> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Signed-off-by: Kevin Cernekee <cernekee@chromium.org>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Cc: James Hartley <james.hartley@imgtec.com>
+> Cc: James Hogan <james.hogan@imgtec.com>
 > ---
-> Hi Linus,
->
-> Patch is based on your linux-pinctrl devel branch.
-> Since it's a new driver feel free to squash it with the initial commit.
+> Changes from v4:
+>  - Switched to using gpiochip_add_pin_range().
+>  - Fixed up Kconfig entry.
 
-Patch applied, removed the other hackish check.
+This version applied. Awesome job with this driver, thanks!
 
 Yours,
 Linus Walleij
