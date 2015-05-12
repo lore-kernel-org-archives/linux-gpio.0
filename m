@@ -1,36 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: Remove r8a73a4 platform_device_id entry
-Date: Tue, 12 May 2015 09:28:40 +0200
-Message-ID: <CACRpkdYS1K5x_Wj3ABrX5n13+JRNfCcqPuzdjVuvQo-+gB_K9Q@mail.gmail.com>
-References: <1430216107-31501-1-git-send-email-geert+renesas@glider.be>
-	<1430216107-31501-2-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 1/2] gpio: max732x: Propagate wake-up setting to parent
+ irq controller
+Date: Tue, 12 May 2015 09:34:28 +0200
+Message-ID: <CACRpkdax+v48AJhoA4xJpO66ADUxOBOFLvmxKWJxLZBdN2iBgA@mail.gmail.com>
+References: <1429637257-11055-1-git-send-email-semen.protsenko@globallogic.com>
+	<CACRpkdYT6OMy1GSkoP3Tab3xcpC6qPFfX=aRVr4iUvBe5V6hjw@mail.gmail.com>
+	<CAJOTznUNrx7oytz+J7hkvBOARHEFK9etsK86uTWYxdm2p-sqtw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35207 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932066AbbELH2k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:28:40 -0400
-Received: by obcus9 with SMTP id us9so88539624obc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 00:28:40 -0700 (PDT)
-In-Reply-To: <1430216107-31501-2-git-send-email-geert+renesas@glider.be>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:36646 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752672AbbELHe3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:34:29 -0400
+Received: by obbkp3 with SMTP id kp3so118092178obb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 00:34:29 -0700 (PDT)
+In-Reply-To: <CAJOTznUNrx7oytz+J7hkvBOARHEFK9etsK86uTWYxdm2p-sqtw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Sam Protsenko <semen.protsenko@globallogic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Apr 28, 2015 at 12:15 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, May 4, 2015 at 8:23 PM, Sam Protsenko
+<semen.protsenko@globallogic.com> wrote:
+> On Mon, May 4, 2015 at 4:32 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
-> legacy platform"), r8a73a4 is only supported in generic DT-only ARM
-> multi-platform builds.  The driver doesn't need to match platform
-> devices by name anymore, hence remove the corresponding
-> platform_device_id entry.
+>> Patch applied, but it seems we need a general approach to
+>> cover a few GPIO drivers with this kind of thing.
+>>
+>> Is this how we should always do it?
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I think so (well, at least it seems to be correct for GPIO expanders). But I'd
+> verify each particular driver to be completely sure that it's really needed and
+> it wouldn't create some new issues. MAX732X chip seems to be very similar to
+> PCF857X one, so in this particular case I'm sure that this patch is a good thing
+> to have.
 
-Patch applied with all ACKs.
+OK yeah, maybe we could provide a list of "usual suspects", what do you
+say about "my" expanders:
+
+drivers/gpio/gpio-stmpe.c
+drivers/gpio/gpio-tc3589x.c
+
+I can surely patch and test these.
 
 Yours,
 Linus Walleij
