@@ -1,42 +1,27 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 00/23] gpio: sysfs: fixes and clean ups
-Date: Tue, 12 May 2015 15:37:47 +0900
-Message-ID: <CAAVeFuK35oXsrSsbdhGckjhfC=B6=aizqZYv2+0CQxAYQoYVGw@mail.gmail.com>
-References: <1430752248-15401-1-git-send-email-johan@kernel.org>
+Subject: Re: [PATCH] gpio: fix gpio leak in gpiochip_add error path
+Date: Tue, 12 May 2015 16:00:41 +0900
+Message-ID: <CAAVeFuLQWOihkOjb_DVCjgiEtGfkC56DQpw8wy0HYYH9ZT4Mmg@mail.gmail.com>
+References: <1430753005-19691-1-git-send-email-johan@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1430752248-15401-1-git-send-email-johan@kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Harry Wei <harryxiyou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-kernel@zh-kernel.org, linux-arch <linux-arch@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:33177 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752418AbbELHBC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:01:02 -0400
+In-Reply-To: <1430753005-19691-1-git-send-email-johan@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, May 5, 2015 at 12:10 AM, Johan Hovold <johan@kernel.org> wrote:
-> These patches fix a number of issues with the gpio sysfs interface,
-> including
+On Tue, May 5, 2015 at 12:23 AM, Johan Hovold <johan@kernel.org> wrote:
+> Make sure to free any hogged gpios on errors in gpiochip_add.
 >
->  - fix memory leaks and crashes on device hotplug
->  - straighten out the convoluted locking
->  - reduce sysfs-interface latencies through more fine-grained locking
->  - more clearly separate the sysfs-interface implementation from gpiolib
->    core
+> Also move all forward declarations to the top of the file.
 >
-> The first patch is marked for stable and could go into 4.1. [ May
-> already have been applied but not pushed by Linus, but included in v2
-> for completeness.  ]
->
-> Unfortunately we can't just kill the gpio sysfs interface, but these
-> patches will make it more manageable and should allow us to implement a
-> new user-space interface while maintaining the old one (for a while at
-> least) without losing our sanity.
->
-> Note that there is still a race between chip remove and gpiod_request (and
-> therefore sysfs export), which needs to be fixed separately (for instance as
-> part of a generic solution to chip hotplugging).
-
-Reiterating my
+> Fixes: f625d4601759 ("gpio: add GPIO hogging mechanism")
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-
-on this very nice series.
