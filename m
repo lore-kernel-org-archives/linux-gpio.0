@@ -1,275 +1,76 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH 2/3] gpio: Add GPIO support for Broadcom STB SoCs
-Date: Tue, 12 May 2015 11:46:22 -0700
-Message-ID: <CADtm3G58RqWdbigVy52C6rzoiEAS41WnAJHHeGui+V-ypMec5w@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
- <1430901477-10678-3-git-send-email-gregory.0xf0@gmail.com> <CACRpkdbzjdmtiou0gURKBRV2QEQqnbrdTA1523Q5ZkYxA-vpYw@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2 10/17] i2c: add locomo i2c driver
+Date: Tue, 12 May 2015 21:24:13 +0200
+Message-ID: <20150512192413.GE4449@schokonusskuchen.bad>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-11-git-send-email-dbaryshkov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f175.google.com ([209.85.220.175]:34382 "EHLO
-	mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933582AbbELSqx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 14:46:53 -0400
-In-Reply-To: <CACRpkdbzjdmtiou0gURKBRV2QEQqnbrdTA1523Q5ZkYxA-vpYw@mail.gmail.com>
+Received: from sauhun.de ([89.238.76.85]:35568 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753261AbbELTYf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 12 May 2015 15:24:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1430178954-11138-11-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hi Linus,
 
-On Tue, May 12, 2015 at 3:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
->
->> This adds support for the GPIO IP "UPG GIO" used on Broadcom STB SoCs
->> (BCM7XXX and some others).  Uses basic_mmio_gpio to instantiate a
->> gpio_chip for each bank.  The driver assumes that it handles the base
->> set of GPIOs on the system and that it can start its numbering sequence
->> from 0, so any GPIO expanders used with it must dynamically assign GPIO
->> numbers after this driver has finished registering its GPIOs.
->>
->> Does not implement the interrupt-controller portion yet, will be done in a
->> future commit.
->>
->> List-usage-fixed-by: Brian Norris <computersforpeace@gmail.com>
->> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
->
-> (...)
->>  arch/arm/mach-bcm/Kconfig   |    1 +
-> (...)
->> --- a/arch/arm/mach-bcm/Kconfig
->> +++ b/arch/arm/mach-bcm/Kconfig
->> @@ -144,6 +144,7 @@ config ARCH_BRCMSTB
->>         select BRCMSTB_GISB_ARB
->>         select BRCMSTB_L2_IRQ
->>         select BCM7120_L2_IRQ
->> +       select ARCH_WANT_OPTIONAL_GPIOLIB
->
-> Please remove this from this patch. I don't want to patch around
-> in the platforms from the GPIO tree. Take this oneliner through
-> ARM SoC.
+--WBsA/oQW3eTA3LlM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will move to a separate patch.
+On Tue, Apr 28, 2015 at 02:55:47AM +0300, Dmitry Eremin-Solenikov wrote:
+> LoCoMo chip contains a tiny i2c controller destined to control
+> M62332 DAC. Provide a separate I2C driver for this cell.
+>=20
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
->
->> +config GPIO_BRCMSTB
->> +       tristate "BRCMSTB GPIO support"
->> +       default y if ARCH_BRCMSTB
->> +       depends on OF_GPIO && (ARCH_BRCMSTB || COMPILE_TEST)
->> +       select GPIO_GENERIC
->
-> Nice.
->
->> +++ b/drivers/gpio/gpio-brcmstb.c
-> (...)
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/gpio.h>
->
-> #include <linux/gpio/driver.h>
->
-> should be sufficient.
+Thanks for the submission!
 
-OK.
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/locomo.h>
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/i2c-algo-bit.h>
 
->
->> +struct brcmstb_gpio_bank {
->> +       struct list_head node;
->> +       int id;
->> +       struct bgpio_chip bgc;
->> +       u32 imask;  /* irq mask shadow register */
->
-> Why? Is it a write-only register that can't be read back?
+To avoid duplicates, I prefer the includes to be sorted. No need to
+resend because of that, though.
 
-No, that wasn't necessary.  Will change to just read the register.
+Kudos for brushing up old code! Do you want the drivers go via the
+subsystem trees? Or is there a dependency so it should go in via some
+other tree in one go?
 
->
->> +       struct brcmstb_gpio_priv *parent_priv;  /* used in interrupt handler */
->
-> ...and this patch does not enable IRQs...
 
-OK, I will move it to the patch that does.
+--WBsA/oQW3eTA3LlM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->
->> +struct brcmstb_gpio_priv {
->> +       struct list_head bank_list;
->> +       void __iomem *reg_base;
->> +       int num_banks;
->> +       struct platform_device *pdev;
->> +       int gpio_base;
->
-> Usually we don't like it when you hardcode gpio_base, and this
-> field should anyway be present inside the bgpio_chip.gc.base
-> isn't it?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-This was needed to deal with having a single irq_chip shared across
-all of the gpio_chips in a GIO block.  You mentioned that this might
-not be the Right Way to do this in your reply on the cover page so
-I'll try to explain the reasoning better there.
+iQIcBAEBAgAGBQJVUlNdAAoJEBQN5MwUoCm2RBAP/3YILVpXkyvZZVX0QJlKN1DI
+Vvfli1Bm956MZwfV7ORSoWzthYmRSgsCZ/Q0i+97Y8M2sIpNWWQI00fFm6viiaf0
+zlDq8JZFeAyDQG6BIfsOeWqnIY0RSVoZ5a11PFGnge+knkn1Zj/HADMYZKwWfPgx
+qH/HXrPeZ79ewHzXmGPEmkGUBbtJYZi2VVprlYy85HY6yYPZ36/fS9tPNpCMz1vH
+9uXzpyY1DqGjqoi0pTR7+PhlRpBWsXB75B35A8hvfujPDAMFaCkVkFzD/OzW25ac
+Cu/NCRum6bCkVb6l5oz13sClc/5+OWUePH887TKgrZO4CFNH9jschbgqTb3utDLG
+CnvXRzXBI+XCH35szRZpgWm2DZvbUZXCEvEyVHU39eiCpKL6qh9VKsqwMtHldirf
+tDKKYW5Yo4io2QNedMbsBRFl60bajLBYxtmZhiTZKj8BBmaFa+Hi8rb+hdL5j0yV
+Kl8VrW6zlJhAbYzNahRdQJ786JkJX6acr8J2Itx8vlMx7PDIdyhRFqJQa1Z636Hl
+93sXW55dZtkOcrj+iHiT6047Az4AhzLr+WP8B8fxC4v0rC/1FXVdqjADduhu5LKU
+i/TwixNqO32RV0pPjx1bQbZS1pmgk6nuIIsj9jue07wD64+F1xJcKfMZtrTZd3zL
+4jm4gFJaJQ2D9kc0D7gd
+=PJWG
+-----END PGP SIGNATURE-----
 
-FWIW: yes, this is inside the first bank's bgpio_chip, and it would be
-possible to extract that info.  However, since it is used in
-- brcmstb_gpio_to_irq
-- brcmstb_gpio_hwirq_to_offset
-- brcmstb_gpio_irq_bank_handler
-- brcmstb_gpio_of_xlate
-
-It seemed like it would be easier to follow if this were just stored
-this in the priv struct, even if it is duplication of information.
-
->
->> +#define GPIO_PER_BANK           32
->> +#define GPIO_BANK(gpio)         ((gpio) >> 5)
->> +/* assumes GPIO_PER_BANK is a multiple of 2 */
->> +#define GPIO_BIT(gpio)          ((gpio) & (GPIO_PER_BANK - 1))
->
-> But this macro and GPIO_PER_BANK does not respect the DT binding
-> stating the number of used lines.
->
-> You need to call these MAX_GPIO_PER_BANK or something.
-
-Will change the name to MAX_GPIO_PER_BANK.
-
->
->> +static int brcmstb_gpio_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *np = dev->of_node;
->> +       void __iomem *reg_base;
->> +       struct brcmstb_gpio_priv *priv;
->> +       struct resource *res;
->> +       struct property *prop;
->> +       const __be32 *p;
->> +       u32 bank_width;
->> +       int err;
->> +       static int gpio_base;
->> +
->> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +       if (!priv)
->> +               return -ENOMEM;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       reg_base = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(reg_base))
->> +               return PTR_ERR(reg_base);
->> +
->> +       priv->gpio_base = gpio_base;
->> +       priv->reg_base = reg_base;
->> +       priv->pdev = pdev;
->> +
->> +       INIT_LIST_HEAD(&priv->bank_list);
->> +       if (brcmstb_gpio_sanity_check_banks(dev, np, res))
->> +               return -EINVAL;
->> +
->> +       of_property_for_each_u32(np, "brcm,gpio-bank-widths", prop, p,
->> +                       bank_width) {
->> +               struct brcmstb_gpio_bank *bank;
->> +               struct bgpio_chip *bgc;
->> +               struct gpio_chip *gc;
->> +
->> +               bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
->> +               if (!bank) {
->> +                       err = -ENOMEM;
->> +                       goto fail;
->> +               }
->> +
->> +               bank->parent_priv = priv;
->> +               bank->id = priv->num_banks;
->> +
->> +               /*
->> +                * Regs are 4 bytes wide, have data reg, no set/clear regs,
->> +                * and direction bits have 0 = output and 1 = input
->> +                */
->> +               bgc = &bank->bgc;
->> +               err = bgpio_init(bgc, dev, 4,
->> +                               reg_base + GIO_DATA(bank->id),
->> +                               NULL, NULL, NULL,
->> +                               reg_base + GIO_IODIR(bank->id), 0);
->> +               if (err) {
->> +                       dev_err(dev, "bgpio_init() failed\n");
->> +                       goto fail;
->> +               }
->> +
->> +               gc = &bgc->gc;
->> +               gc->of_node = np;
->> +               gc->owner = THIS_MODULE;
->> +               gc->label = np->full_name;
->> +               gc->base = gpio_base;
->
-> I strongly suggest that you try using -1 as base here instead
-> for dynamic assignment of GPIO numbers.
-
-That is what I did originally.  However, this results in a very
-unpleasant numbering scheme, at least as currently implemented.
-
-When -1 is base, as you know, numbering goes descending from 255
-(IIRC).  Right now I'm using the of_property_for_each_u32 loop over
-bank widths to go through the banks.  To keep the example
-straightforward, let's pretend our GIO block only has two banks.
-Here's how they're arranged:
-
-bank 0: starts at 0xf040a700, contains GPIOs 0-31
-bank 1: starts at 0xf040a720, contains GPIOs 32-63
-
-Right now, with -1 as base, calling gpiochip_add() inside of that loop
-will results in them getting this numbering:
-
-bank 0: linux GPIOs 224-255
-bank 1: linux GPIOs 192-223
-
-which has the obvious downside that the ordering doesn't at all match
-the hardware, making it completely unintuitive for anyone using the
-(admittedly quite awful) sysfs interface.
-
-Looking at this now, I think I could just add another loop afterward
-to do the gpiochip_add()'s in reverse order, resulting in the
-numbering ascending with banks as expected.  Does this seem sensible?
-
->
->> +               gc->of_gpio_n_cells = 2;
->> +               gc->of_xlate = brcmstb_gpio_of_xlate;
->> +
->> +               if (bank_width <= 0 || bank_width > GPIO_PER_BANK) {
->> +                       gc->ngpio = GPIO_PER_BANK;
->> +                       dev_warn(dev, "Invalid bank width %d, assume %d\n",
->> +                                       bank_width, gc->ngpio);
->
-> I wonder if this should not simply return an error.
-> If that number is wrong the DTS is completely screwed up.
-
-You're right, probably better to have that be an error.  Will change that.
-
->
->> +               } else {
->> +                       gc->ngpio = bank_width;
->> +               }
->> +
->> +               bank->imask =
->> +                       bgc->read_reg(reg_base + GIO_MASK(bank->id));
->
-> And this mask also mask the unused pins as GIO_MASK()
-> does not respect bank_width.
-
-I'll be getting rid of imask anyway as you suggested.  But since you
-mentioned it, I just realized that the register specification says
-that reads of the reserved bits can return an unknown value but writes
-of those bits should be 0.  While in practice it doesn't seem to cause
-any problems, I'll change that anyway just to be safe.
-
->
->> +               err = gpiochip_add(gc);
->> +               if (err) {
->> +                       dev_err(dev, "Could not add gpiochip for bank %d\n",
->> +                                       bank->id);
->> +                       goto fail;
->> +               }
->> +               gpio_base += gc->ngpio;
->
-> This complicates things. Use -1 as base for dynamic assignment
-> of GPIO numbers.
-
-(this was covered above)
-
-Thanks for the review,
-Gregory
+--WBsA/oQW3eTA3LlM--
