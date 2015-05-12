@@ -1,89 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: rcar: Check for irq_set_irq_wake() failures
-Date: Tue, 12 May 2015 10:07:54 +0200
-Message-ID: <CAMuHMdX2zaRhZh20e-TMkMeES6Ftaez1vcdcnAimVczW6L7gsQ@mail.gmail.com>
-References: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdaDEr7Lw8u5tAC-som5W-WM4-Wfqena4Ftd4KFdEA2-Yg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 06/23] gpio: sysfs: clean up chip class-device handling
+Date: Tue, 12 May 2015 10:14:59 +0200
+Message-ID: <CACRpkdb1K36QpEJrE4no0jP5L5VaHwmur5qFM2LZ5YSLRneKJw@mail.gmail.com>
+References: <1430752248-15401-1-git-send-email-johan@kernel.org>
+	<1430752248-15401-7-git-send-email-johan@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaDEr7Lw8u5tAC-som5W-WM4-Wfqena4Ftd4KFdEA2-Yg@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Hisashi Nakamura <hisashi.nakamura.ak@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Valentine <valentine.barshak@cogentembedded.com>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:33289 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752782AbbELIPA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 04:15:00 -0400
+Received: by obblk2 with SMTP id lk2so119143137obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 01:14:59 -0700 (PDT)
+In-Reply-To: <1430752248-15401-7-git-send-email-johan@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 12, 2015 at 9:55 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 4, 2015 at 4:09 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> If an interrupt controller doesn't support wake-up configuration, trying
->> to deconfigure wake-up will cause a warning:
->>
->>     WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
->>     Unbalanced IRQ 26 wake disable
->>
->> To fix this, refrain from any further parent interrupt controller
->> (de)configuration if irq_set_irq_wake() failed.
->>
->> Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> This is an alternative for:
->>   - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
->>     platform code, OR
+On Mon, May 4, 2015 at 5:10 PM, Johan Hovold <johan@kernel.org> wrote:
 
-Which is hacky, considering the below.
-
->>   - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
->>     code.
-
-Which was rejected by Marc, as the hardware doesn't support it.
-
-> This should be moved to the commit message I think.
-
-So that's why I put it below the "---".
-
->> -       irq_set_irq_wake(p->irq_parent, on);
->> +       int error;
->> +
->> +       if (p->irq_parent) {
->> +               error = irq_set_irq_wake(p->irq_parent, on);
->> +               if (error) {
->> +                       dev_dbg(&p->pdev->dev,
->> +                               "irq %u doesn't support irq_set_wake\n",
->> +                               p->irq_parent);
->> +                       p->irq_parent = 0;
->> +               }
->> +       }
+> Clean gpio-chip class device registration and deregistration.
 >
-> Does the SH maintainers really like this... Warning
-> appear once and is squelched.
+> The class device is registered when a gpio-chip is added (or from
+> gpiolib_sysfs_init post-core init call), and deregistered when the chip
+> is removed.
 >
-> Isn't it better to make sure it doesn't happen or something.
+> Store the class device in struct gpio_chip directly rather than do a
+> class-device lookup on deregistration. This also removes the need for
+> the exported flag.
 >
-> It looks hacky. Any other suggestions?
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-The first call to irq_set_irq_wake() (on = true) doesn't print a warning.
-It returns an error code, to indicate that the operation is not supported.
+Patch applied.
 
-Calling irq_set_irq_wake() again (on = false, during resume) would print
-a warning, as it wouldn't match internal state ("Unbalanced IRQ 26 wake
-disable"). That one is gone now.
-
-> Also, please convert this driver to use GPIOLIB_IRQCHIP
-> like everyone else.
-
-What old branch are you looking at, that it doesn't have commit
-c7f3c5d3ac2d6831 ("gpio: rcar: Switch to use gpiolib irqchip helpers")
-yet ;-)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
