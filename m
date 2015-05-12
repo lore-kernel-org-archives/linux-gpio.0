@@ -1,36 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V5] pinctrl: Add Pistachio SoC pin control driver
-Date: Tue, 12 May 2015 13:21:43 +0200
-Message-ID: <CACRpkda9gP45BUyh2bCYCvUM1MM+ZbUtbiyqsQ-ZrGde7cEGrg@mail.gmail.com>
-References: <1430942343-27201-1-git-send-email-abrestic@chromium.org>
+Subject: Re: [PATCH] gpio: xlp: Add missing .owner and .label settings for gpio_chip
+Date: Tue, 12 May 2015 13:23:44 +0200
+Message-ID: <CACRpkdaLrcLYwD5T5VtP_1mp-xGzzTJHtzwdttMApOEMrx-xeQ@mail.gmail.com>
+References: <1430984077.23118.1.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1430942343-27201-1-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Damien Horsley <Damien.Horsley@imgtec.com>, Govindraj Raja <govindraj.raja@imgtec.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Kevin Cernekee <cernekee@chromium.org>, James Hartley <james.hartley@imgtec.com>, James Hogan <james.hogan@imgtec.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:34881 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932192AbbELLXp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 07:23:45 -0400
+Received: by oign205 with SMTP id n205so2961922oig.2
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 04:23:44 -0700 (PDT)
+In-Reply-To: <1430984077.23118.1.camel@ingics.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Kamlakant Patel <kamlakant.patel@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, May 6, 2015 at 9:59 PM, Andrew Bresticker <abrestic@chromium.org> wrote:
+On Thu, May 7, 2015 at 9:34 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> Add a driver for the pin controller present on the IMG Pistachio SoC.
-> This driver provides pinmux and pinconfig operations as well as GPIO
-> and IRQ chips for the GPIO banks.
->
-> Signed-off-by: Damien Horsley <Damien.Horsley@imgtec.com>
-> Signed-off-by: Govindraj Raja <govindraj.raja@imgtec.com>
-> Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Signed-off-by: Kevin Cernekee <cernekee@chromium.org>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Cc: James Hartley <james.hartley@imgtec.com>
-> Cc: James Hogan <james.hogan@imgtec.com>
-> ---
-> Changes from v4:
->  - Switched to using gpiochip_add_pin_range().
->  - Fixed up Kconfig entry.
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-This version applied. Awesome job with this driver, thanks!
+Patch applied.
 
 Yours,
 Linus Walleij
