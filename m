@@ -1,63 +1,74 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
- properties interface
-Date: Tue, 12 May 2015 09:48:57 +0200
-Message-ID: <CAMuHMdXy1FoN0_Ku1AjnH-kH7e9fjnvu5T41cm8YVzabwSzDXw@mail.gmail.com>
-References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
-	<1430986090-7243-2-git-send-email-geert@linux-m68k.org>
-	<CAK5ve-KX_LXxd07ifcTMhm3Qn=QkNK4pwq=hd6HV_wTQgF6X_A@mail.gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH 1/4] Revert "gpio: generic: clamp retured value to [0,1]"
+Date: Tue, 12 May 2015 10:54:26 +0300
+Message-ID: <5551B1B2.4070606@mentor.com>
+References: <1430321701-13758-1-git-send-email-vladimir_zapolskiy@mentor.com> <1430321701-13758-2-git-send-email-vladimir_zapolskiy@mentor.com> <CACRpkdYWEygtL3h4Z6uaWGxc1ac2Q7_X9gddCobUj_dHpSiK0g@mail.gmail.com> <5550AAB2.4060308@mentor.com> <CAAVeFuLW6xzgMa0AxA_MW9idkwohyC6c93ZhG-hGvE+OdyJ+jg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35147 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752574AbbELHs6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:48:58 -0400
-In-Reply-To: <CAK5ve-KX_LXxd07ifcTMhm3Qn=QkNK4pwq=hd6HV_wTQgF6X_A@mail.gmail.com>
+Received: from relay1.mentorg.com ([192.94.38.131]:44895 "EHLO
+	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802AbbELHyf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:54:35 -0400
+In-Reply-To: <CAAVeFuLW6xzgMa0AxA_MW9idkwohyC6c93ZhG-hGvE+OdyJ+jg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bryan Wu <cooloney@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Bryan,
+Hi Alexandre,
 
-On Fri, May 8, 2015 at 7:43 PM, Bryan Wu <cooloney@gmail.com> wrote:
-> On Thu, May 7, 2015 at 1:08 AM, Geert Uytterhoeven <geert@linux-m68k.=
-org> wrote:
->> If GPIOLIB=3Dn:
+On 12.05.2015 10:45, Alexandre Courbot wrote:
+> Hi Vladimir,
+> 
+> On Mon, May 11, 2015 at 10:12 PM, Vladimir Zapolskiy
+> <vladimir_zapolskiy@mentor.com> wrote:
+>> Hi Linus,
 >>
->>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
-=80=99:
->>     drivers/leds/leds-gpio.c:187: error: implicit declaration of fun=
-ction =E2=80=98devm_get_gpiod_from_child=E2=80=99
->>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer =
-from integer without a cast
+>> On 11.05.2015 12:46, Linus Walleij wrote:
+>>> On Wed, Apr 29, 2015 at 5:34 PM, Vladimir Zapolskiy
+>>> <vladimir_zapolskiy@mentor.com> wrote:
+>>>
+>>>> This reverts commit 25b35da7f4cce82271859f1b6eabd9f3bd41a2bb.
+>>>>
+>>>> The original change is a fast workaround in GPIO generic driver,
+>>>> which is properly fixed by Alexandre's 23600969ff centralized handling
+>>>> of return values from GPIO chip drivers.
+>>>>
+>>>> To avoid a redundant check and copy/paste confusion, it is better to
+>>>> revert the change done in a particular driver.
+>>>>
+>>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>>
+>>> I'm gonna drop this patch, because the code is helpful like this,
+>>> clear to see what is going on.
+>>>
+>>> In the long run I want to change the signature of the get/set functions
+>>> to take bools because that is what they actually handle.
 >>
->> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chi=
-ld()
->> for the !GPIOLIB case to fix this.
->
-> This patch looks good to me. Do you mind merging it through LED tree
-> with other 2 more LED patches?
+>> thank you for review.
+>>
+>> In my opinion (and according to my tests of course) it is safe to apply
+>> this revert commit, also the commit is anyway needed, when you switch to
+>> bool return values.
+>>
+>> I understand your wish to keep this code as a hint for the planned
+>> updates in the future, if price of the dead code plus small deviation
+>> between bgpio_get() and bgpio_get_set() is less than price of the hint
+>> in your opinion, I have no objections to skip this patch.
+> 
+> I'd also agree with Linus that we could live without this patch until
+> we switch the functions to return bools.
+> 
+> Actually, with implicit type conversion doing most of the job, I
+> wonder if it would be that hard to do - maybe you will want to give it
+> a quick try?
+> 
 
-Now we have an ack from Alex, that's fine for me. Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+it should be quite a simple and straightforward change, I'll prepare
+patches for review, thank you for offering the task.
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With best wishes,
+Vladimir
