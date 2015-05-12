@@ -1,88 +1,56 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 10/17] i2c: add locomo i2c driver
-Date: Tue, 12 May 2015 21:28:38 +0200
-Message-ID: <20150512192837.GF4449@schokonusskuchen.bad>
-References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
- <1430178954-11138-11-git-send-email-dbaryshkov@gmail.com>
- <20150512192413.GE4449@schokonusskuchen.bad>
- <CALT56yNHvJ1Swj2pp2JrBaJBensSP703JXQKfvivFrJOYf85QA@mail.gmail.com>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Tue, 12 May 2015 12:38:43 -0700
+Message-ID: <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com> <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:35603 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753261AbbELT2y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 12 May 2015 15:28:54 -0400
-Content-Disposition: inline
-In-Reply-To: <CALT56yNHvJ1Swj2pp2JrBaJBensSP703JXQKfvivFrJOYf85QA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.org>, linux-spi <linux-spi@vger.kern>
 
+On Tue, May 12, 2015 at 3:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+>
+>> There is only one IRQ for each GIO IP block (i.e. several register banks share
+>> an IRQ).  After briefly looking into the generic IRQ chip implementation, it
+>> seemed like in this case that using it would result in the driver being more
+>> complex than necessary because AFAICT it expects a 1:1 mapping of
+>> irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
+>> irq_chip since we have a single IRQ for all register banks (multiple
+>> gpio_chips).  I might be missing something, maybe using a shared IRQ across
+>> multiple irq_chips is easier than I think?  Suggestions welcome.
+>
+> What is needed is a 1:1 mapping between GPIO offsets and IRQ
+> offsets.
+>
+> If you just number your GPIOs 0...n and your IRQs 0...n
+> it should work just fine with one irqchip for all banks.
+>
+> What screws things up is likely that the hardware supports
+> 32 lines per bank and not all are used.
+>
+> I suggest you enable 32 line and 32 IRQs per bank,
+> so that hwirq maps nicely 1:1 on the GPIO offsets,
+> then just use the width thing to NACK operations on
+> GPIO lines you are not using. This way you can also
+> decode and warn on spurious IRQs on the unused lines.
 
---65ImJOski3p8EhYV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For having 32 lines per bank, the big problem here is the upper limit
+of 256 GPIOs.  We would hit that limit on SoCs that already exist with
+the SoC GPIOs alone, let alone any GPIO extenders.  I'm really not
+sure what the right way would be to deal with that.
 
-On Tue, May 12, 2015 at 10:27:07PM +0300, Dmitry Eremin-Solenikov wrote:
-> 2015-05-12 22:24 GMT+03:00 Wolfram Sang <wsa@the-dreams.de>:
-> > On Tue, Apr 28, 2015 at 02:55:47AM +0300, Dmitry Eremin-Solenikov wrote:
-> >> LoCoMo chip contains a tiny i2c controller destined to control
-> >> M62332 DAC. Provide a separate I2C driver for this cell.
-> >>
-> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> >
-> > Thanks for the submission!
-> >
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/regmap.h>
-> >> +#include <linux/slab.h>
-> >> +#include <linux/mfd/locomo.h>
-> >> +
-> >> +#include <linux/i2c.h>
-> >> +#include <linux/i2c-algo-bit.h>
-> >
-> > To avoid duplicates, I prefer the includes to be sorted. No need to
-> > resend because of that, though.
-> >
-> > Kudos for brushing up old code! Do you want the drivers go via the
-> > subsystem trees? Or is there a dependency so it should go in via some
-> > other tree in one go?
->=20
-> There is a header dependency -- <linux/mfd/locomo.h> is a new header.
-> I'd prefer for these patches to go in via one of MFD, arm-soc or ARM trees
-> as a whole series (if that would be ok with respective maintainers).
+Anyway, I don't think I understand IRQ domains and irq_chip_generic
+very well.  One possibility _might_ be to use multiple irq_chips.  But
+from what I do understand, if there's only a single parent IRQ used by
+all of the GPIO banks, in order to use an irq_chip per bank, this
+would have to stop using the chained irq logic because the parent IRQ
+is shared across banks, and that implementation seems unnecessarily
+confusing.  Any other ideas?
 
-Fine with me.
-
-Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
-
-
---65ImJOski3p8EhYV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIbBAEBAgAGBQJVUlRlAAoJEBQN5MwUoCm2ej0P+IIGAwD/rcSrFWlH3MXKff0v
-qacZgD25svWNP+S4hrW42/x4lksQmhegWBUj10lhQ1UlVoY6JwByMQRUGz3rsf5J
-j6/L6Edo8IXopbrWmtXjG4YiFMAIAmRWFV7LP2dcfP/3MXOWtAlzGnLsyA2hpUk0
-dDSET2fTSuBxYW0C5jKk2yaE6mF14jebYBV83MuzG7bHBklQwdoXu2rk19XPE+Yw
-p/SB7Yk5luWIVtekfGDRdEeDac8Z7nf3ZuJdOCpXcaPLZoCeFoPxSgDLE2vjsIME
-EEBFJu2F+dF0oVdvPsIflhCeu1o6ba7iOLB3f4rpNMJZw4UsxphvT7uoSYCwwhH+
-naU47orc6X9a4yG50wxla/3nRAcrc6rPu5rUhFCNrUWibAzZJix8iMl2OHPEazHC
-i8X7QC0RLXdrSHw1YWgIdYsUDtqtWoF5gGkEnCkkxw4fGQYCaJzmJfsoxIii/+ol
-HgZlMN+Xwr5l0zykm0T4sfgnNdRriAQwAGv+f3i+6hT3uTj9iDzjY5AWNjE50l8H
-zSTGhNkNByPVare/obIT273YmA4pldZJ/xOin5fAtSsgTBraBzb6+NOi5pqkJCkb
-Wdvj4Dd+V+GcKQYYIaA1K/pJ06m4Pr1aZ7a8DOiE/aMBJ6nrKeY5k5ZcBMKx4wfm
-HjbVrK3h4R/rQE5p9I0=
-=2XV8
------END PGP SIGNATURE-----
-
---65ImJOski3p8EhYV--
+Best regards,
+Gregory
