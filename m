@@ -1,50 +1,63 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: baytrail: explicitly set gpio chip base
-Date: Tue, 12 May 2015 09:48:12 +0200
-Message-ID: <CACRpkdabi+QbExbm2NFNKUwH+2rAeCKEstnQ=ffSnK+GBiNq+w@mail.gmail.com>
-References: <1430298162-20238-1-git-send-email-ao2@ao2.it>
-	<20150430110237.GV1534@lahna.fi.intel.com>
-	<20150430235141.2928e7fa8a193437346b76aa@ao2.it>
-	<20150504104000.GZ1534@lahna.fi.intel.com>
-	<20150504133646.391d1f3897ec2d51493ac28a@ao2.it>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
+ properties interface
+Date: Tue, 12 May 2015 09:48:57 +0200
+Message-ID: <CAMuHMdXy1FoN0_Ku1AjnH-kH7e9fjnvu5T41cm8YVzabwSzDXw@mail.gmail.com>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+	<1430986090-7243-2-git-send-email-geert@linux-m68k.org>
+	<CAK5ve-KX_LXxd07ifcTMhm3Qn=QkNK4pwq=hd6HV_wTQgF6X_A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:36104 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932200AbbELHsN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:48:13 -0400
-Received: by obbkp3 with SMTP id kp3so118315140obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 00:48:12 -0700 (PDT)
-In-Reply-To: <20150504133646.391d1f3897ec2d51493ac28a@ao2.it>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35147 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752574AbbELHs6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:48:58 -0400
+In-Reply-To: <CAK5ve-KX_LXxd07ifcTMhm3Qn=QkNK4pwq=hd6HV_wTQgF6X_A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Antonio Ospite <ao2@ao2.it>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Bryan Wu <cooloney@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux LED Subsystem <linux-leds@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 
-On Mon, May 4, 2015 at 1:36 PM, Antonio Ospite <ao2@ao2.it> wrote:
-> On Mon, 4 May 2015 13:40:00 +0300 Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+Hi Bryan,
 
->> Well, if you happen to have another GPIO chip (a GPIO expander for
->> example) and it somehow gets loaded before this driver. It may take the
->> range you have reserved for the BYT driver.
+On Fri, May 8, 2015 at 7:43 PM, Bryan Wu <cooloney@gmail.com> wrote:
+> On Thu, May 7, 2015 at 1:08 AM, Geert Uytterhoeven <geert@linux-m68k.=
+org> wrote:
+>> If GPIOLIB=3Dn:
 >>
->> Not sure how realistic case that is, though...
+>>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
+=80=99:
+>>     drivers/leds/leds-gpio.c:187: error: implicit declaration of fun=
+ction =E2=80=98devm_get_gpiod_from_child=E2=80=99
+>>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer =
+from integer without a cast
+>>
+>> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chi=
+ld()
+>> for the !GPIOLIB case to fix this.
 >
-> Indeed, being this for the SoC gpio controller I thought it was
-> unlikely, however I do not have a huge experience on these matters.
->
-> I have no strong opinion on this, Mika, so whether or not you merge the
-> change it'll be fine by me.
+> This patch looks good to me. Do you mind merging it through LED tree
+> with other 2 more LED patches?
 
-The ability to set .base is basically there for legacy reasons,
-and the critical legacy case is usually when setting it to 0
-for the on-SoC GPIO.
+Now we have an ack from Alex, that's fine for me. Thanks!
 
-In the long run we want to get rid of static GPIO numbers
-altogether so I prefer if you construct your userspace to
-traverse sysfs to get the GPIOs you need to get at,
-sysfs is horrible and unreliable for GPIO.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
