@@ -1,39 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: gpio-kempld: Fix get_direction return value
-Date: Tue, 12 May 2015 13:50:26 +0200
-Message-ID: <CACRpkdaXBjvdi+-Lbtibgdi1vRjSfgKzb+8Y+6Wk0YE=CcFz_Q@mail.gmail.com>
-References: <20150511124649.1221e86e@hyperion>
+Subject: Re: [PATCH 1/4] Revert "gpio: generic: clamp retured value to [0,1]"
+Date: Tue, 12 May 2015 13:52:44 +0200
+Message-ID: <CACRpkdZ-o5fKv=S2OVvH+8LXqFXfHmi4sVk2dROBN5W+=QiUmQ@mail.gmail.com>
+References: <1430321701-13758-1-git-send-email-vladimir_zapolskiy@mentor.com>
+	<1430321701-13758-2-git-send-email-vladimir_zapolskiy@mentor.com>
+	<CACRpkdYWEygtL3h4Z6uaWGxc1ac2Q7_X9gddCobUj_dHpSiK0g@mail.gmail.com>
+	<5550AAB2.4060308@mentor.com>
+	<CAAVeFuLW6xzgMa0AxA_MW9idkwohyC6c93ZhG-hGvE+OdyJ+jg@mail.gmail.com>
+	<5551B1B2.4070606@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:35088 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932375AbbELLu1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 07:50:27 -0400
-Received: by oign205 with SMTP id n205so3429929oig.2
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 04:50:26 -0700 (PDT)
-In-Reply-To: <20150511124649.1221e86e@hyperion>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:32827 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932379AbbELLwp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 07:52:45 -0400
+Received: by obblk2 with SMTP id lk2so3341561obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 04:52:44 -0700 (PDT)
+In-Reply-To: <5551B1B2.4070606@mentor.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Brunner <mibru@gmx.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jochen Henneberg <jh@henneberg-systemdesign.com>, Michael Brunner <michael.brunner@kontron.com>, Darren Hart <dvhart@linux.intel.com>, Kevin Strasser <kevin.strasser@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, May 11, 2015 at 12:46 PM, Michael Brunner <mibru@gmx.de> wrote:
+On Tue, May 12, 2015 at 9:54 AM, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
+> On 12.05.2015 10:45, Alexandre Courbot wrote:
 
-> This patch fixes an inverted return value of the gpio get_direction
-> function.
+>> Actually, with implicit type conversion doing most of the job, I
+>> wonder if it would be that hard to do - maybe you will want to give it
+>> a quick try?
 >
-> The wrong value causes the direction sysfs entry and GPIO debugfs file
-> to indicate incorrect GPIO direction settings. In some cases it also
-> prevents setting GPIO output values.
->
-> The problem is also present in all other stable kernel versions since
-> linux-3.12.
->
-> Reported-by: Jochen Henneberg <jh@henneberg-systemdesign.com>
-> Signed-off-by: Michael Brunner <michael.brunner@kontron.com>
+> it should be quite a simple and straightforward change, I'll prepare
+> patches for review, thank you for offering the task.
 
-Patch applied and tagged for stable v3.12+
+Awesome, thanks for proposing this to be done guys.
 
 Yours,
 Linus Walleij
