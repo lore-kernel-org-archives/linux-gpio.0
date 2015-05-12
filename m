@@ -1,65 +1,49 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: [PATCH] gpiolib: cleanup chained handler and data
-Date: Tue, 12 May 2015 20:12:23 +0300
-Message-ID: <1431450743-25528-1-git-send-email-dbaryshkov@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:34991 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932918AbbELRMg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 13:12:36 -0400
-Received: by widdi4 with SMTP id di4so163452346wid.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 10:12:35 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Bryan Wu <cooloney@gmail.com>
+Subject: Re: [PATCH 1/3] gpiolib: Add missing dummies for the unified device
+ properties interface
+Date: Tue, 12 May 2015 10:48:28 -0700
+Message-ID: <CAK5ve-+9jtPMYdYmicJDRwiUcb8g5XD0h-G88RULY3GX6skZmQ@mail.gmail.com>
+References: <1430986090-7243-1-git-send-email-geert@linux-m68k.org>
+ <1430986090-7243-2-git-send-email-geert@linux-m68k.org> <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbsOvOpx8ctm2h2ZCQefpa-dB-fWOfObm4BSCG8xcupow@mail.gmail.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Arnd Bergmann <arnd@arndb.de>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
 
-Clean up chained handler and handler data if they were set by
-gpiochip_set_chained_irqchip().
+On Tue, May 12, 2015 at 3:31 AM, Linus Walleij <linus.walleij@linaro.or=
+g> wrote:
+> On Thu, May 7, 2015 at 10:08 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>
+>> If GPIOLIB=3Dn:
+>>
+>>     drivers/leds/leds-gpio.c: In function =E2=80=98gpio_leds_create=E2=
+=80=99:
+>>     drivers/leds/leds-gpio.c:187: error: implicit declaration of fun=
+ction =E2=80=98devm_get_gpiod_from_child=E2=80=99
+>>     drivers/leds/leds-gpio.c:187: warning: assignment makes pointer =
+from integer without a cast
+>>
+>> Add dummies for fwnode_get_named_gpiod() and devm_get_gpiod_from_chi=
+ld()
+>> for the !GPIOLIB case to fix this.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Fixes: 40b7318319281b1b ("gpio: Support for unified device propertie=
+s interface")
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Counting on this to go through the LEDs tree as discussed.
+>
+> Yours,
+> Linus Walleij
 
-Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
----
- drivers/gpio/gpiolib.c      | 7 +++++++
- include/linux/gpio/driver.h | 1 +
- 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59eaa23..0f40a7f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -439,6 +439,8 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 		 */
- 		irq_set_handler_data(parent_irq, gpiochip);
- 		irq_set_chained_handler(parent_irq, parent_handler);
-+
-+		gpiochip->irq_parent = parent_irq;
- 	}
- 
- 	/* Set the parent IRQ for all affected IRQs */
-@@ -547,6 +549,11 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 
- 	acpi_gpiochip_free_interrupts(gpiochip);
- 
-+	if (gpiochip->irq_parent) {
-+		irq_set_chained_handler(gpiochip->irq_parent, NULL);
-+		irq_set_handler_data(gpiochip->irq_parent, NULL);
-+	}
-+
- 	/* Remove all IRQ mappings and delete the domain */
- 	if (gpiochip->irqdomain) {
- 		for (offset = 0; offset < gpiochip->ngpio; offset++)
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index f1b3659..d656577 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -121,6 +121,7 @@ struct gpio_chip {
- 	unsigned int		irq_base;
- 	irq_flow_handler_t	irq_handler;
- 	unsigned int		irq_default_type;
-+	int			irq_parent;
- #endif
- 
- #if defined(CONFIG_OF_GPIO)
--- 
-2.1.4
-
+OK, merged with Alex and Linus Acks. Thanks,
+-Bryan
