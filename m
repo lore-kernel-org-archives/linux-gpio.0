@@ -1,74 +1,62 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH 1/4] Revert "gpio: generic: clamp retured value to [0,1]"
-Date: Tue, 12 May 2015 10:54:26 +0300
-Message-ID: <5551B1B2.4070606@mentor.com>
-References: <1430321701-13758-1-git-send-email-vladimir_zapolskiy@mentor.com> <1430321701-13758-2-git-send-email-vladimir_zapolskiy@mentor.com> <CACRpkdYWEygtL3h4Z6uaWGxc1ac2Q7_X9gddCobUj_dHpSiK0g@mail.gmail.com> <5550AAB2.4060308@mentor.com> <CAAVeFuLW6xzgMa0AxA_MW9idkwohyC6c93ZhG-hGvE+OdyJ+jg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: rcar: Check for irq_set_irq_wake() failures
+Date: Tue, 12 May 2015 09:55:47 +0200
+Message-ID: <CACRpkdaDEr7Lw8u5tAC-som5W-WM4-Wfqena4Ftd4KFdEA2-Yg@mail.gmail.com>
+References: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:44895 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751802AbbELHyf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 03:54:35 -0400
-In-Reply-To: <CAAVeFuLW6xzgMa0AxA_MW9idkwohyC6c93ZhG-hGvE+OdyJ+jg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1430748592-6394-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, hisashi.nakamura.ak@renesas.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Valentine <valentine.barshak@cogentembedded.com>, Magnus Damm <magnus.damm@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Alexandre,
+On Mon, May 4, 2015 at 4:09 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On 12.05.2015 10:45, Alexandre Courbot wrote:
-> Hi Vladimir,
-> 
-> On Mon, May 11, 2015 at 10:12 PM, Vladimir Zapolskiy
-> <vladimir_zapolskiy@mentor.com> wrote:
->> Hi Linus,
->>
->> On 11.05.2015 12:46, Linus Walleij wrote:
->>> On Wed, Apr 29, 2015 at 5:34 PM, Vladimir Zapolskiy
->>> <vladimir_zapolskiy@mentor.com> wrote:
->>>
->>>> This reverts commit 25b35da7f4cce82271859f1b6eabd9f3bd41a2bb.
->>>>
->>>> The original change is a fast workaround in GPIO generic driver,
->>>> which is properly fixed by Alexandre's 23600969ff centralized handling
->>>> of return values from GPIO chip drivers.
->>>>
->>>> To avoid a redundant check and copy/paste confusion, it is better to
->>>> revert the change done in a particular driver.
->>>>
->>>> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->>>
->>> I'm gonna drop this patch, because the code is helpful like this,
->>> clear to see what is going on.
->>>
->>> In the long run I want to change the signature of the get/set functions
->>> to take bools because that is what they actually handle.
->>
->> thank you for review.
->>
->> In my opinion (and according to my tests of course) it is safe to apply
->> this revert commit, also the commit is anyway needed, when you switch to
->> bool return values.
->>
->> I understand your wish to keep this code as a hint for the planned
->> updates in the future, if price of the dead code plus small deviation
->> between bgpio_get() and bgpio_get_set() is less than price of the hint
->> in your opinion, I have no objections to skip this patch.
-> 
-> I'd also agree with Linus that we could live without this patch until
-> we switch the functions to return bools.
-> 
-> Actually, with implicit type conversion doing most of the job, I
-> wonder if it would be that hard to do - maybe you will want to give it
-> a quick try?
-> 
+> If an interrupt controller doesn't support wake-up configuration, trying
+> to deconfigure wake-up will cause a warning:
+>
+>     WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
+>     Unbalanced IRQ 26 wake disable
+>
+> To fix this, refrain from any further parent interrupt controller
+> (de)configuration if irq_set_irq_wake() failed.
+>
+> Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This is an alternative for:
+>   - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
+>     platform code, OR
+>   - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
+>     code.
 
-it should be quite a simple and straightforward change, I'll prepare
-patches for review, thank you for offering the task.
+This should be moved to the commit message I think.
 
---
-With best wishes,
-Vladimir
+> -       irq_set_irq_wake(p->irq_parent, on);
+> +       int error;
+> +
+> +       if (p->irq_parent) {
+> +               error = irq_set_irq_wake(p->irq_parent, on);
+> +               if (error) {
+> +                       dev_dbg(&p->pdev->dev,
+> +                               "irq %u doesn't support irq_set_wake\n",
+> +                               p->irq_parent);
+> +                       p->irq_parent = 0;
+> +               }
+> +       }
+
+Does the SH maintainers really like this... Warning
+appear once and is squelched.
+
+Isn't it better to make sure it doesn't happen or something.
+
+It looks hacky. Any other suggestions?
+
+Also, please convert this driver to use GPIOLIB_IRQCHIP
+like everyone else.
+
+Yours,
+Linus Walleij
