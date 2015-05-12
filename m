@@ -1,48 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
-Date: Tue, 12 May 2015 12:59:35 +0200
-Message-ID: <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 7/8] drm/i915: Use the CRC gpio for panel enable/disable
+Date: Tue, 12 May 2015 13:10:30 +0200
+Message-ID: <CACRpkdYkZay7XbxzkvAmU7Bt0YT23rS-EyXJMtt05UMLF8MKEA@mail.gmail.com>
+References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
+	<1430316005-16480-8-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36216 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932200AbbELK7f (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 May 2015 06:59:35 -0400
-Received: by oift201 with SMTP id t201so2500433oif.3
-        for <linux-gpio@vger.kernel.org>; Tue, 12 May 2015 03:59:35 -0700 (PDT)
-In-Reply-To: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1430316005-16480-8-git-send-email-shobhit.kumar@intel.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-pwm <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, David Airlie <airlied@linux.ie>, Samuel Ortiz <sameo@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Lee Jones <lee.jones@linaro.org>, Povilas Staniulis <wdmonster@gmail.com>, Chih-Wei Huang <cwhuang@android-x86.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+On Wed, Apr 29, 2015 at 4:00 PM, Shobhit Kumar <shobhit.kumar@intel.com> wrote:
 
-> There is only one IRQ for each GIO IP block (i.e. several register banks share
-> an IRQ).  After briefly looking into the generic IRQ chip implementation, it
-> seemed like in this case that using it would result in the driver being more
-> complex than necessary because AFAICT it expects a 1:1 mapping of
-> irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
-> irq_chip since we have a single IRQ for all register banks (multiple
-> gpio_chips).  I might be missing something, maybe using a shared IRQ across
-> multiple irq_chips is easier than I think?  Suggestions welcome.
+> The CRC (Crystal Cove) PMIC, controls the panel enable and disable
+> signals for BYT for dsi panels. This is indicated in the VBT fields. Use
+> that to initialize and use GPIO based control for these signals.
+>
+> v2: Use the newer gpiod interface(Alexandre)
+> v3: Remove the redundant checks and unused code (Ville)
+>
+> CC: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
 
-What is needed is a 1:1 mapping between GPIO offsets and IRQ
-offsets.
-
-If you just number your GPIOs 0...n and your IRQs 0...n
-it should work just fine with one irqchip for all banks.
-
-What screws things up is likely that the hardware supports
-32 lines per bank and not all are used.
-
-I suggest you enable 32 line and 32 IRQs per bank,
-so that hwirq maps nicely 1:1 on the GPIO offsets,
-then just use the width thing to NACK operations on
-GPIO lines you are not using. This way you can also
-decode and warn on spurious IRQs on the unused lines.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
