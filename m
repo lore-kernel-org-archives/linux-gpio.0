@@ -1,277 +1,289 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH][RFC] gpiolib: rename gpiod_set_array to gpiod_set_array_value
-Date: Wed, 13 May 2015 11:04:56 +0200
-Message-ID: <5305088.q3JD5pGOgN@pcimr>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 01/17] mfd: add new driver for Sharp LoCoMo
+Date: Wed, 13 May 2015 10:41:32 +0100
+Message-ID: <20150513094132.GE3394@x1>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+ <1430178954-11138-2-git-send-email-dbaryshkov@gmail.com>
+ <20150428184525.GJ9169@x1>
+ <CALT56yP6FPhGRZFJZkyjjpqGJ6bofg+a1BTC9KcVAgpmt2htoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:57814 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752022AbbEMJE7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 05:04:59 -0400
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:37450 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754177AbbEMJli (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 05:41:38 -0400
+Received: by widdi4 with SMTP id di4so48180006wid.0
+        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2015 02:41:36 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CALT56yP6FPhGRZFJZkyjjpqGJ6bofg+a1BTC9KcVAgpmt2htoA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.org>, linux-spi <linux-spi@vger.kern>
 
-There have been concerns that the function names gpiod_set_array() and
-gpiod_get_array() might be confusing to users. One might expect
-gpiod_get_array() to return array values, while it is actually the array
-counterpart of gpiod_get(). To be consistent with the single descriptor API
-we could rename gpiod_set_array() to gpiod_set_array_value(). This makes
-some function names a bit lengthy: gpiod_set_raw_array_value_cansleep().
+On Tue, 12 May 2015, Dmitry Eremin-Solenikov wrote:
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
- drivers/gpio/gpiolib.c                 |   54 +++++++++++++++++----------------
- drivers/net/phy/mdio-mux-gpio.c        |    3 +
- drivers/tty/serial/serial_mctrl_gpio.c |    2 -
- include/linux/gpio/consumer.h          |   37 +++++++++++-----------
- 4 files changed, 51 insertions(+), 45 deletions(-)
+> 2015-04-28 21:45 GMT+03:00 Lee Jones <lee.jones@linaro.org>:
+> > On Tue, 28 Apr 2015, Dmitry Eremin-Solenikov wrote:
+> >
+> >> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does h=
+as
+> >> several design issues (special bus instead of platform bus, doesn'=
+t use
+> >> mfd-core, etc).
+> >>
+> >> Implement 'core' parts of locomo support as an mfd driver.
+> >>
+> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+> >> ---
+>=20
+> Thanks for the review. I agree (and have implemented) with most of
+> your comments.
+> However I have few questions. See below.
+>=20
+> >
+> >> +/* the following is the overall data for the locomo chip */
+> >> +struct locomo {
+> >> +     struct device *dev;
+> >> +     unsigned int irq;
+> >> +     spinlock_t lock;
+> >> +     struct irq_domain *domain;
+> >> +     struct regmap *regmap;
+> >> +};
+> >> +
+> >> +static struct resource locomo_kbd_resources[] =3D {
+> >> +     DEFINE_RES_IRQ(IRQ_LOCOMO_KEY),
+> >> +};
+> >> +
+> >> +static struct resource locomo_gpio_resources[] =3D {
+> >> +     DEFINE_RES_IRQ(IRQ_LOCOMO_GPIO),
+> >> +};
+> >> +
+> >> +/* Filled in locomo_probe() function. */
+> >> +static struct locomo_gpio_platform_data locomo_gpio_pdata;
+> >
+> > I'd prefer you didn't use globals for this.
+>=20
+> Just for platform data, or for all the structures?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2ce3df3..37fe323 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1309,10 +1309,10 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
- 	}
- }
- 
--static void gpiod_set_array_priv(bool raw, bool can_sleep,
--				 unsigned int array_size,
--				 struct gpio_desc **desc_array,
--				 int *value_array)
-+static void gpiod_set_array_value_priv(bool raw, bool can_sleep,
-+				       unsigned int array_size,
-+				       struct gpio_desc **desc_array,
-+				       int *value_array)
- {
- 	int i = 0;
- 
-@@ -1405,7 +1405,7 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
- EXPORT_SYMBOL_GPL(gpiod_set_value);
- 
- /**
-- * gpiod_set_raw_array() - assign values to an array of GPIOs
-+ * gpiod_set_raw_array_value() - assign values to an array of GPIOs
-  * @array_size: number of elements in the descriptor / value arrays
-  * @desc_array: array of GPIO descriptors whose values will be assigned
-  * @value_array: array of values to assign
-@@ -1416,17 +1416,18 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
-  * This function should be called from contexts where we cannot sleep, and will
-  * complain if the GPIO chip functions potentially sleep.
-  */
--void gpiod_set_raw_array(unsigned int array_size,
-+void gpiod_set_raw_array_value(unsigned int array_size,
- 			 struct gpio_desc **desc_array, int *value_array)
- {
- 	if (!desc_array)
- 		return;
--	gpiod_set_array_priv(true, false, array_size, desc_array, value_array);
-+	gpiod_set_array_value_priv(true, false, array_size, desc_array,
-+				   value_array);
- }
--EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
-+EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
- 
- /**
-- * gpiod_set_array() - assign values to an array of GPIOs
-+ * gpiod_set_array_value() - assign values to an array of GPIOs
-  * @array_size: number of elements in the descriptor / value arrays
-  * @desc_array: array of GPIO descriptors whose values will be assigned
-  * @value_array: array of values to assign
-@@ -1437,14 +1438,15 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
-  * This function should be called from contexts where we cannot sleep, and will
-  * complain if the GPIO chip functions potentially sleep.
-  */
--void gpiod_set_array(unsigned int array_size,
--		     struct gpio_desc **desc_array, int *value_array)
-+void gpiod_set_array_value(unsigned int array_size,
-+			   struct gpio_desc **desc_array, int *value_array)
- {
- 	if (!desc_array)
- 		return;
--	gpiod_set_array_priv(false, false, array_size, desc_array, value_array);
-+	gpiod_set_array_value_priv(false, false, array_size, desc_array,
-+				   value_array);
- }
--EXPORT_SYMBOL_GPL(gpiod_set_array);
-+EXPORT_SYMBOL_GPL(gpiod_set_array_value);
- 
- /**
-  * gpiod_cansleep() - report whether gpio value access may sleep
-@@ -1606,7 +1608,7 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
- 
- /**
-- * gpiod_set_raw_array_cansleep() - assign values to an array of GPIOs
-+ * gpiod_set_raw_array_value_cansleep() - assign values to an array of GPIOs
-  * @array_size: number of elements in the descriptor / value arrays
-  * @desc_array: array of GPIO descriptors whose values will be assigned
-  * @value_array: array of values to assign
-@@ -1616,19 +1618,20 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
-  *
-  * This function is to be called from contexts that can sleep.
-  */
--void gpiod_set_raw_array_cansleep(unsigned int array_size,
--				  struct gpio_desc **desc_array,
--				  int *value_array)
-+void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+					struct gpio_desc **desc_array,
-+					int *value_array)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
- 		return;
--	gpiod_set_array_priv(true, true, array_size, desc_array, value_array);
-+	gpiod_set_array_value_priv(true, true, array_size, desc_array,
-+				   value_array);
- }
--EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
-+EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
- 
- /**
-- * gpiod_set_array_cansleep() - assign values to an array of GPIOs
-+ * gpiod_set_array_value_cansleep() - assign values to an array of GPIOs
-  * @array_size: number of elements in the descriptor / value arrays
-  * @desc_array: array of GPIO descriptors whose values will be assigned
-  * @value_array: array of values to assign
-@@ -1638,16 +1641,17 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
-  *
-  * This function is to be called from contexts that can sleep.
-  */
--void gpiod_set_array_cansleep(unsigned int array_size,
--			      struct gpio_desc **desc_array,
--			      int *value_array)
-+void gpiod_set_array_value_cansleep(unsigned int array_size,
-+				    struct gpio_desc **desc_array,
-+				    int *value_array)
- {
- 	might_sleep_if(extra_checks);
- 	if (!desc_array)
- 		return;
--	gpiod_set_array_priv(false, true, array_size, desc_array, value_array);
-+	gpiod_set_array_value_priv(false, true, array_size, desc_array,
-+				   value_array);
- }
--EXPORT_SYMBOL_GPL(gpiod_set_array_cansleep);
-+EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
- 
- /**
-  * gpiod_add_lookup_table() - register GPIO device consumers
-diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
-index 66edd99..7ddb1ab 100644
---- a/drivers/net/phy/mdio-mux-gpio.c
-+++ b/drivers/net/phy/mdio-mux-gpio.c
-@@ -35,7 +35,8 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
- 	for (n = 0; n < s->gpios->ndescs; n++)
- 		values[n] = (desired_child >> n) & 1;
- 
--	gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
-+	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
-+				       values);
- 
- 	return 0;
- }
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index 0ec756c..d7b846d 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -55,7 +55,7 @@ void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
- 			value_array[count] = !!(mctrl & mctrl_gpios_desc[i].mctrl);
- 			count++;
- 		}
--	gpiod_set_array(count, desc_array, value_array);
-+	gpiod_set_array_value(count, desc_array, value_array);
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_set);
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 09a7fb0..fd09816 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -100,24 +100,25 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
- /* Value get/set from non-sleeping context */
- int gpiod_get_value(const struct gpio_desc *desc);
- void gpiod_set_value(struct gpio_desc *desc, int value);
--void gpiod_set_array(unsigned int array_size,
--		     struct gpio_desc **desc_array, int *value_array);
-+void gpiod_set_array_value(unsigned int array_size,
-+			   struct gpio_desc **desc_array, int *value_array);
- int gpiod_get_raw_value(const struct gpio_desc *desc);
- void gpiod_set_raw_value(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array(unsigned int array_size,
--			 struct gpio_desc **desc_array, int *value_array);
-+void gpiod_set_raw_array_value(unsigned int array_size,
-+			       struct gpio_desc **desc_array,
-+			       int *value_array);
- 
- /* Value get/set from sleeping context */
- int gpiod_get_value_cansleep(const struct gpio_desc *desc);
- void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
--void gpiod_set_array_cansleep(unsigned int array_size,
--			      struct gpio_desc **desc_array,
--			      int *value_array);
-+void gpiod_set_array_value_cansleep(unsigned int array_size,
-+				    struct gpio_desc **desc_array,
-+				    int *value_array);
- int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
- void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
--void gpiod_set_raw_array_cansleep(unsigned int array_size,
--				  struct gpio_desc **desc_array,
--				  int *value_array);
-+void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+					struct gpio_desc **desc_array,
-+					int *value_array);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- 
-@@ -304,9 +305,9 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_array(unsigned int array_size,
--				   struct gpio_desc **desc_array,
--				   int *value_array)
-+static inline void gpiod_set_array_value(unsigned int array_size,
-+					 struct gpio_desc **desc_array,
-+					 int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-@@ -322,9 +323,9 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array(unsigned int array_size,
--				       struct gpio_desc **desc_array,
--				       int *value_array)
-+static inline void gpiod_set_raw_array_value(unsigned int array_size,
-+					     struct gpio_desc **desc_array,
-+					     int *value_array)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-@@ -341,7 +342,7 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_array_cansleep(unsigned int array_size,
-+static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
- 					    struct gpio_desc **desc_array,
- 					    int *value_array)
- {
-@@ -360,7 +361,7 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
- }
--static inline void gpiod_set_raw_array_cansleep(unsigned int array_size,
-+static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 						struct gpio_desc **desc_array,
- 						int *value_array)
- {
+Just for this.  The remainder are standard.
 
+> >> +static struct resource locomo_lt_resources[] =3D {
+> >> +     DEFINE_RES_IRQ(IRQ_LOCOMO_LT),
+> >> +};
+> >> +
+> >> +static struct resource locomo_spi_resources[] =3D {
+> >> +     DEFINE_RES_IRQ(IRQ_LOCOMO_SPI),
+> >> +};
+> >> +
+> >> +/* Filled in locomo_probe() function. */
+> >> +static struct locomo_lcd_platform_data locomo_lcd_pdata;
+> >> +
+> >> +static struct mfd_cell locomo_cells[] =3D {
+> >> +     {
+> >> +             .name =3D "locomo-kbd",
+> >> +             .resources =3D locomo_kbd_resources,
+> >> +             .num_resources =3D ARRAY_SIZE(locomo_kbd_resources),
+> >> +     },
+> >> +     {
+> >> +             .name =3D "locomo-gpio",
+> >> +             .resources =3D locomo_gpio_resources,
+> >> +             .num_resources =3D ARRAY_SIZE(locomo_gpio_resources)=
+,
+> >> +             .platform_data =3D &locomo_gpio_pdata,
+> >> +             .pdata_size =3D sizeof(locomo_gpio_pdata),
+> >> +     },
+> >> +     {
+> >> +             .name =3D "locomo-lt", /* Long time timer */
+> >> +             .resources =3D locomo_lt_resources,
+> >> +             .num_resources =3D ARRAY_SIZE(locomo_lt_resources),
+> >> +     },
+> >> +     {
+> >> +             .name =3D "locomo-spi",
+> >> +             .resources =3D locomo_spi_resources,
+> >> +             .num_resources =3D ARRAY_SIZE(locomo_spi_resources),
+> >> +     },
+> >> +     {
+> >> +             .name =3D "locomo-led",
+> >> +     },
+> >> +     {
+> >> +             .name =3D "locomo-backlight",
+> >> +     },
+> >
+> > Please make these:
+> >
+> >> +     { .name =3D "locomo-led" },
+> >> +     { .name =3D "locomo-backlight" },
+> >
+> > ... and put them at the bottom.
+>=20
+> They will be populated by of_compatible lines, so it makes little sen=
+se
+> to me. What about adding of compatibility lines to this patch?
+
+Also fine.
+
+Although if you assure me you will do it, you can add them separately.
+
+> >> +     while (1) {
+> >> +             regmap_read(lchip->regmap, LOCOMO_ICR, &req);
+> >> +             req &=3D 0x0f00;
+> >
+> > What is this magic number?  Please #define it.
+>=20
+> Adding comments to this function instead.
+
+Also acceptable.
+
+> >> +             if (!req)
+> >> +                     break;
+> >> +
+> >> +             irq =3D ffs(req) - 9;
+> >
+> > Minus another random number?  Either define it or enter a comment.
+> >
+> >> +#ifdef CONFIG_PM_SLEEP
+> >> +static int locomo_suspend(struct device *dev)
+> >> +{
+> >> +     struct locomo *lchip =3D dev_get_drvdata(dev);
+> >> +
+> >> +     /* AUDIO */
+> >
+> > WHY ARE YOU SHOUTING?  Ironic eh? ;)
+> >
+> >> +     regmap_write(lchip->regmap, LOCOMO_PAIF, 0x00);
+> >> +
+> >> +     /*
+> >> +      * Original code disabled the clock depending on leds settin=
+gs
+> >> +      * However we disable leds before suspend, thus it's safe
+> >> +      * to just assume this setting.
+> >> +      */
+> >> +     /* CLK32 off */
+> >> +     regmap_write(lchip->regmap, LOCOMO_C32K, 0x00);
+> >> +
+> >> +     /* 22MHz/24MHz clock off */
+> >> +     regmap_write(lchip->regmap, LOCOMO_ACC, 0x00);
+> >> +
+> >> +     return 0;
+> >> +}
+> >> +
+> >> +static int locomo_resume(struct device *dev)
+> >> +{
+> >> +     struct locomo *lchip =3D dev_get_drvdata(dev);
+> >
+> > Do audio and clk sort themselves out?
+>=20
+> PAIF and ACC registers are used only by audio parts of the device. Ho=
+wever
+> there is no current Linux driver for those parts. The registers are c=
+leared
+> in case the firmware has set something in them, but in future it will
+> be the task
+> of the audio driver to properly clear and restore them.
+>=20
+> >> +     regmap_write(lchip->regmap, LOCOMO_C32K, 0x00);
+> >> +
+> >> +     return 0;
+> >> +}
+> >> +
+>=20
+> [skipped]
+> >> +
+> >> +     if (pdata) {
+> >> +             locomo_gpio_pdata.gpio_base =3D pdata->gpio_base;
+> >> +             locomo_lcd_pdata.comadj =3D pdata->comadj;
+> >> +     } else {
+> >> +             locomo_gpio_pdata.gpio_base =3D -1;
+> >> +             locomo_lcd_pdata.comadj =3D 128;
+> >> +     }
+> >
+> > struct locomo_gpio_platform_data locomo_gpio_pdata;
+> >
+> > locomo_gpio_pdata =3D devm_kzalloc(<blah>);
+> >
+> > locomo_cells[GPIO].platform_data =3D locomo_gpio_pdata;
+>=20
+> I do not quite agree with you at this place. The passed platform_data
+> will be kmemdup()'ed inside platform core. So the whole struct will b=
+e
+> duplicated twice inside kmallocate'd memory. Ideally I'd like to drop
+> the whole platform_data busyness, but that requires switching to DTS
+> first.
+
+Sounds reasonable.
+
+> >> diff --git a/include/linux/mfd/locomo.h b/include/linux/mfd/locomo=
+=2Eh
+> >> new file mode 100644
+> >> index 0000000..6729767
+> >> --- /dev/null
+> >> +++ b/include/linux/mfd/locomo.h
+>=20
+> >> +/* MCS decoder for boot selecting */
+> >> +#define LOCOMO_MCSX0 0x10
+> >> +#define LOCOMO_MCSX1 0x14
+> >> +#define LOCOMO_MCSX2 0x18
+> >> +#define LOCOMO_MCSX3 0x1c
+> >
+> > These are pretty cryptic.  Any way of making them easier to identif=
+y.
+>=20
+> No way. The names are based on old Sharp code. The drivers do not use
+> them, but I'd like to still keep the registers for the reference purp=
+oses.
+
+So they are not used at all?  Then why do you want to keep them?
+
+> >> +struct locomo_gpio_platform_data {
+> >> +     unsigned int gpio_base;
+> >> +};
+> >
+> > A struct for a single int seems overkill.
+> >
+> >> +struct locomo_lcd_platform_data {
+> >> +     u8 comadj;
+> >> +};
+> >> +
+> >> +struct locomo_platform_data {
+> >> +     unsigned int gpio_base;
+> >> +     u8 comadj;
+> >> +};
+> >
+> > Why do you need to pass gpio_base twice?
+>=20
+> First: machine file -> core driver
+> Second: core driver -> gpio driver
+>=20
+> The other way to do the same would be:
+>=20
+> struct locomo_gpio_platform_data {
+>      unsigned int gpio_base;
+> };
+>=20
+> struct locomo_lcd_platform_data {
+>      u8 comadj;
+> };
+>=20
+> struct locomo_platform_data {
+>      struct locomo_gpio_platform_data gpio_pdata;
+>      struct locomo_lcd_platform_data lcd_pdata;
+> };
+>=20
+> And to assign pointers to the passed data in the mfd_cells
+> during locomo_probe. Does that look better to you?
+
+Bingo.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
 --
-2.3.6
-
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
