@@ -1,40 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/3] irqchip: GIC: Add support for irq_{get,set}_irqchip_state
-Date: Wed, 13 May 2015 13:58:37 +0200
-Message-ID: <CACRpkdYffHJEzksc5mg7JZdwTzShGaQofAmbmn65=_V3ot04Rg@mail.gmail.com>
-References: <1426676484-21812-1-git-send-email-marc.zyngier@arm.com>
-	<1426676484-21812-3-git-send-email-marc.zyngier@arm.com>
-	<CAL85gmBrkonMcKdUVGmYx6zT3wSe-e2jPhnL_+Tkf3s4jsAiWg@mail.gmail.com>
+From: Sam Protsenko <semen.protsenko@globallogic.com>
+Subject: Re: [PATCH 1/2] gpio: max732x: Propagate wake-up setting to parent
+ irq controller
+Date: Wed, 13 May 2015 15:23:01 +0300
+Message-ID: <CAJOTznUyyj4VqP6m5iXa8y=z9jahKc_R0s=ommvQjTQpmprjRw@mail.gmail.com>
+References: <1429637257-11055-1-git-send-email-semen.protsenko@globallogic.com>
+	<CACRpkdYT6OMy1GSkoP3Tab3xcpC6qPFfX=aRVr4iUvBe5V6hjw@mail.gmail.com>
+	<CAJOTznUNrx7oytz+J7hkvBOARHEFK9etsK86uTWYxdm2p-sqtw@mail.gmail.com>
+	<CACRpkdax+v48AJhoA4xJpO66ADUxOBOFLvmxKWJxLZBdN2iBgA@mail.gmail.com>
+Reply-To: semen.protsenko@globallogic.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:34449 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754522AbbEML6i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 07:58:38 -0400
-Received: by oiko83 with SMTP id o83so29020687oik.1
-        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2015 04:58:37 -0700 (PDT)
-In-Reply-To: <CAL85gmBrkonMcKdUVGmYx6zT3wSe-e2jPhnL_+Tkf3s4jsAiWg@mail.gmail.com>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:35600 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754440AbbEMMXD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 08:23:03 -0400
+Received: by labbd9 with SMTP id bd9so27954370lab.2
+        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2015 05:23:01 -0700 (PDT)
+In-Reply-To: <CACRpkdax+v48AJhoA4xJpO66ADUxOBOFLvmxKWJxLZBdN2iBgA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Phong Vo <pvo@apm.com>, Tin Huynh <tnhuynh@apm.com>, Y Vo <yvo@apm.com>, Thomas Gleixner <tglx@linutronix.de>, Toan Le <toanle@apm.com>, Bjorn Andersson <bjorn@kryo.se>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, May 13, 2015 at 4:25 AM, Feng Kan <fkan@apm.com> wrote:
-
-> Marc:
+On Tue, May 12, 2015 at 10:34 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> OK yeah, maybe we could provide a list of "usual suspects", what do you
+> say about "my" expanders:
 >
-> Sorry for top posting. It seems with GIC-400, the get_irqstate is not a reliable
-> way of accessing the GPIO status. In our case, the gpio interrupt status can
-> only be read correctly with the SPISR register. So it seems we have to go
-> back to the old way of mapping the SPISR portion of the GIC in our GPIO
-> driver. We wanted to ask you if that is acceptable since SPISR in not
-> standard in all GIC, perhaps we can treat it differently.
+> drivers/gpio/gpio-stmpe.c
+> drivers/gpio/gpio-tc3589x.c
+>
+> I can surely patch and test these.
 
-As GPIO maintainer I am curious about what this is...
-
-Can you describe the scenario where your GPIO (!) driver needs
-to be poking around in the GIC SPISR?
-
-Yours,
-Linus Walleij
+This issue seems to be pretty common for all GPIO chips that have IRQ chip
+capability. So your expanders should be patched too. But still, the best course
+here is to actually reproduce the issue first, and only then proceed to
+patching. So if you have boards with those expanders -- it should be easy to
+come up with some use-case that reproduces the issue mentioned in the original
+commit.
