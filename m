@@ -1,124 +1,117 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v8 14/16] ARM: dts: Introduce STM32F429 MCU
-Date: Wed, 13 May 2015 15:27:31 +0200
-Message-ID: <3125409.QXbEmPolyh@wuerfel>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <CALszF6CS8Q9DWX+ERtu=k=Bzr1-25N3oZQyWyxDZBF3an4nFKQ@mail.gmail.com> <55534A5D.6050904@linaro.org>
+From: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 02/17] leds: port locomo leds driver to new locomo core
+Date: Wed, 13 May 2015 17:14:01 +0300
+Message-ID: <CALT56yOJyZvWF9neC2A09Y_w1Ej41uwWvU=aOOM0idbzUkBiFQ@mail.gmail.com>
+References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
+	<1430178954-11138-3-git-send-email-dbaryshkov@gmail.com>
+	<554A2DB4.3020000@samsung.com>
+	<CALT56yNJWapNw1XLrzfbUDUz1LF_BB9DfF94H6GhbnBUEP80_w@mail.gmail.com>
+	<555327EA.5060402@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:53136 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932109AbbEMN3R (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 09:29:17 -0400
-In-Reply-To: <55534A5D.6050904@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <555327EA.5060402-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-leds <linux-leds-u79uwXL29TaqPxH82wqD4g@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>
 
-On Wednesday 13 May 2015 13:58:05 Daniel Thompson wrote:
-> On 13/05/15 12:45, Maxime Coquelin wrote:
-> > 2015-05-12 23:21 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
-> >> On Saturday 09 May 2015 09:53:56 Maxime Coquelin wrote:
-> >>> +#include  <dt-bindings/mfd/stm32f4-rcc.h>
-> >>> +
-> >>>
-> >>
-> >> Can you find a way to avoid this dependency?
-> >>
-> >> Maybe you can change the bindings so that the numbers you pass as
-> >> arguments to the reset and clock specifiers reflect the numbers that
-> >> the hardware use?
-> >
-> > If I understand correctly, you prefer the way I did in v7 [0]?
+2015-05-13 13:31 GMT+03:00 Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+> On 05/12/2015 05:35 PM, Dmitry Eremin-Solenikov wrote:
+>>
+>> 2015-05-06 18:05 GMT+03:00 Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+>>>
+>>> On 04/28/2015 01:55 AM, Dmitry Eremin-Solenikov wrote:
+>>>>
+>>>>
+>>>> Adapt locomo leds driver to new locomo core setup.
+>>>>
+>>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>> ---
+>>>>    drivers/leds/Kconfig       |   1 -
+>>>>    drivers/leds/leds-locomo.c | 119
+>>>> +++++++++++++++++++++++----------------------
+>>>>    2 files changed, 61 insertions(+), 59 deletions(-)
+>>>>
+>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>>>> index 966b960..4b4650b 100644
+>>>> --- a/drivers/leds/Kconfig
+>>>> +++ b/drivers/leds/Kconfig
+>>>> @@ -79,7 +79,6 @@ config LEDS_LM3642
+>>>>    config LEDS_LOCOMO
+>>>>          tristate "LED Support for Locomo device"
+>>>>          depends on LEDS_CLASS
+>>>> -       depends on SHARP_LOCOMO
+>>>
+>>>
+>>>
+>>> Why do you remove this dependency?
+>>
+>>
+>> Because SHARP_LOCOMO is a Kconfig symbol for the old driver. New driver
+>> uses MFD_LOCOMO Kconfig entry. Also the driver now uses generic platform
+>> device and regmap interfaces, so there is no direct dependency on main
+>> LoCoMo driver. And the policy (IIRC) was not to have such dependencies.
+>
+>
+> Ack. Shouldn't you also need "select REGMAP_MMIO" ?
 
-Yes, that looks better. I would probably not list all the possible
-values in the binding though, when the intention is to use the
-hardware specific values, and being able to reuse the binding
-and driver for variations of the same chip.
+No. Maybe I should add "select REGMAP" instead.
 
-> > Note that doing that won't break the DT binary compatibility, as the
-> > raw reset values, or the ones from defines are the same.
-> >
-> > Daniel, could you share an example of the bindings you would use for the clocks?
-> 
-> For the most cases, where there is a clock gate just before the 
-> peripheral it looks pretty much like the reset driver and I use the bit 
-> offset of the clock gating bit as the index.
+>>>>   static void locomoled_brightness_set(struct led_classdev *led_cdev,
+>>>> -                               enum led_brightness value, int offset)
+>>>> +                               enum led_brightness value)
+>>>>    {
+>>>> -       struct locomo_dev *locomo_dev =
+>>>> LOCOMO_DEV(led_cdev->dev->parent);
+>>>> -       unsigned long flags;
+>>>> +       struct locomo_led *led = container_of(led_cdev, struct
+>>>> locomo_led,
+>>>> led);
+>>>>
+>>>> -       local_irq_save(flags);
+>>>> -       if (value)
+>>>> -               locomo_writel(LOCOMO_LPT_TOFH, locomo_dev->mapbase +
+>>>> offset);
+>>>> -       else
+>>>> -               locomo_writel(LOCOMO_LPT_TOFL, locomo_dev->mapbase +
+>>>> offset);
+>>>> -       local_irq_restore(flags);
+>>>> +       regmap_write(led->regmap, led->reg,
+>>>> +                       value ? LOCOMO_LPT_TOFH : LOCOMO_LPT_TOFL);
+>>>>    }
+>>>
+>>>
+>>>
+>>> Please use work queue for setting brightness. This is required for the
+>>> driver to be compatible with led triggers. You can refer to the
+>>> existing LED drivers on how to implement this.
+>>
+>>
+>> Hmm. Why? The regmap here uses MMIO access, so it is atomic operation
+>> and doesn't need to be wrapped into work queue, does it?
+>
+>
+> Triggers can call brightness_set op in the interrupt context, so it
+> cannot sleep. I see "map->lock(map->lock_arg)" in regmap_write, thus
+> I am inferring that it can sleep.
+>
+> I am not sure if regmap implements its 'lock' op when using MMIO.
+>
+> The best way to figure this out is turning "LED Timer Trigger" on
+> in the config and execute:
+>
+> echo "timer" > trigger
 
-Is this bit always the same index as the one for the reset driver?
+It works without any "might sleep/sleeping in atomic context" warnings.
 
-> However there are a couple of clocks without gating just before the 
-> clock reaches the peripheral:
-> 
-> 1. A hard coded /8. I think this will have to be given a synthetic
->     number.
+Technically I'd agree with you. If I'm using regmaps, ideally I should not
+depend on the exact backend and put working with it to the work queue.
+However as this is a driver for quite old IP block, it is not used with
+regmap backends other than MMIO, I'd deduce, it's ok to do things
+in a more relaxed way and to call regmap_write even from atomic
+contexts.
 
-If this is just a divider, why not use a separate DT node for that,
-like this:
-
-        clock {
-                compatible = "fixed-factor-clock";
-                clocks = <&parentclk>;
-                #clock-cells = <0>;
-                clock-div = <8>;
-                clock-mult = <1>;
-        };
-
-No need to assign a number for this.
-
-> 2. Ungated dividers. For these I am using the bit offset of the LSB of
->     the mux field.
-
-Do these ones also come with resets?
-
-> So I think there is only one value that is completely unrelated to the 
-> hardware and will use a magic constant instead.
-> 
-> I had planned to macros similar to the STM32F4_AxB_RESET() family of 
-> macros in both clk driver and DT in order to reuse the bit layouts from 
-> dt-bindings/mfd/stm32f4-rcc.h .
-> 
-> Normal case would have looked like this:
-> 
->                 timer3: timer@40000000 {
->                         compatible = "st,stm32-timer";
->                         reg = <0x40000000 0x400>;
->                         interrupts = <28>;
->                         resets = <&rcc STM32F4_APB1_RESET(TIM3)>;
->                         clocks = <&rcc STM32F4_APB1_CLK(TIM3)>;
->                         status = "disabled";
->                 };
-> 
-> Without the macros it looks like this:
-> 
->                 timer3: timer@40000000 {
->                         compatible = "st,stm32-timer";
->                         reg = <0x40000000 0x400>;
->                         interrupts = <28>;
->                         resets = <&rcc 257>;
->                         clocks = <&rcc 513>;
->                         status = "disabled";
->                 };
-> 
-> However we could perhaps be more literate even if we don't use the macros?
-> 
->                 timer3: timer@40000000 {
->                         compatible = "st,stm32-timer";
->                         reg = <0x40000000 0x400>;
->                         interrupts = <28>;
->                         resets = <&rcc ((0x20*8) + 1)>;
->                         clocks = <&rcc ((0x40*8) + 1)>;
->                         status = "disabled";
->                 };
-
-How about #address-cells = <2>, so you can do
-
-		resets = <&rcc 8 1>;
-		clocks = <&rcc 8 1>;
-
-with the first cell being an index for the block and the second cell the
-bit number within that block.
-
-	Arnd
+-- 
+With best wishes
+Dmitry
