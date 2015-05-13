@@ -1,82 +1,277 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
-Date: Wed, 13 May 2015 10:59:30 +0200
-Message-ID: <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
-	<CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
-	<CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+From: Rojhalat Ibrahim <imr@rtschenk.de>
+Subject: [PATCH][RFC] gpiolib: rename gpiod_set_array to gpiod_set_array_value
+Date: Wed, 13 May 2015 11:04:56 +0200
+Message-ID: <5305088.q3JD5pGOgN@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:57814 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752022AbbEMJE7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 05:04:59 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, May 12, 2015 at 9:38 PM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Tue, May 12, 2015 at 3:59 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->>> There is only one IRQ for each GIO IP block (i.e. several register banks share
->>> an IRQ).  After briefly looking into the generic IRQ chip implementation, it
->>> seemed like in this case that using it would result in the driver being more
->>> complex than necessary because AFAICT it expects a 1:1 mapping of
->>> irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
->>> irq_chip since we have a single IRQ for all register banks (multiple
->>> gpio_chips).  I might be missing something, maybe using a shared IRQ across
->>> multiple irq_chips is easier than I think?  Suggestions welcome.
->>
->> What is needed is a 1:1 mapping between GPIO offsets and IRQ
->> offsets.
->>
->> If you just number your GPIOs 0...n and your IRQs 0...n
->> it should work just fine with one irqchip for all banks.
->>
->> What screws things up is likely that the hardware supports
->> 32 lines per bank and not all are used.
->>
->> I suggest you enable 32 line and 32 IRQs per bank,
->> so that hwirq maps nicely 1:1 on the GPIO offsets,
->> then just use the width thing to NACK operations on
->> GPIO lines you are not using. This way you can also
->> decode and warn on spurious IRQs on the unused lines.
->
-> For having 32 lines per bank, the big problem here is the upper limit
-> of 256 GPIOs.
+There have been concerns that the function names gpiod_set_array() and
+gpiod_get_array() might be confusing to users. One might expect
+gpiod_get_array() to return array values, while it is actually the array
+counterpart of gpiod_get(). To be consistent with the single descriptor API
+we could rename gpiod_set_array() to gpiod_set_array_value(). This makes
+some function names a bit lengthy: gpiod_set_raw_array_value_cansleep().
 
-Which arch is this?
-Usually this limit comes from
-arch/*/include/asm/gpio.h
+Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+---
+ drivers/gpio/gpiolib.c                 |   54 +++++++++++++++++----------------
+ drivers/net/phy/mdio-mux-gpio.c        |    3 +
+ drivers/tty/serial/serial_mctrl_gpio.c |    2 -
+ include/linux/gpio/consumer.h          |   37 +++++++++++-----------
+ 4 files changed, 51 insertions(+), 45 deletions(-)
 
-For ARM that was bumped to 512 a while back. It is also possible
-to define a custom value for your system by defining
-ARCH_NR_GPIOS
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 2ce3df3..37fe323 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1309,10 +1309,10 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 	}
+ }
+ 
+-static void gpiod_set_array_priv(bool raw, bool can_sleep,
+-				 unsigned int array_size,
+-				 struct gpio_desc **desc_array,
+-				 int *value_array)
++static void gpiod_set_array_value_priv(bool raw, bool can_sleep,
++				       unsigned int array_size,
++				       struct gpio_desc **desc_array,
++				       int *value_array)
+ {
+ 	int i = 0;
+ 
+@@ -1405,7 +1405,7 @@ void gpiod_set_value(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value);
+ 
+ /**
+- * gpiod_set_raw_array() - assign values to an array of GPIOs
++ * gpiod_set_raw_array_value() - assign values to an array of GPIOs
+  * @array_size: number of elements in the descriptor / value arrays
+  * @desc_array: array of GPIO descriptors whose values will be assigned
+  * @value_array: array of values to assign
+@@ -1416,17 +1416,18 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_raw_array(unsigned int array_size,
++void gpiod_set_raw_array_value(unsigned int array_size,
+ 			 struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+ 		return;
+-	gpiod_set_array_priv(true, false, array_size, desc_array, value_array);
++	gpiod_set_array_value_priv(true, false, array_size, desc_array,
++				   value_array);
+ }
+-EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+ 
+ /**
+- * gpiod_set_array() - assign values to an array of GPIOs
++ * gpiod_set_array_value() - assign values to an array of GPIOs
+  * @array_size: number of elements in the descriptor / value arrays
+  * @desc_array: array of GPIO descriptors whose values will be assigned
+  * @value_array: array of values to assign
+@@ -1437,14 +1438,15 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_array(unsigned int array_size,
+-		     struct gpio_desc **desc_array, int *value_array)
++void gpiod_set_array_value(unsigned int array_size,
++			   struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+ 		return;
+-	gpiod_set_array_priv(false, false, array_size, desc_array, value_array);
++	gpiod_set_array_value_priv(false, false, array_size, desc_array,
++				   value_array);
+ }
+-EXPORT_SYMBOL_GPL(gpiod_set_array);
++EXPORT_SYMBOL_GPL(gpiod_set_array_value);
+ 
+ /**
+  * gpiod_cansleep() - report whether gpio value access may sleep
+@@ -1606,7 +1608,7 @@ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+ 
+ /**
+- * gpiod_set_raw_array_cansleep() - assign values to an array of GPIOs
++ * gpiod_set_raw_array_value_cansleep() - assign values to an array of GPIOs
+  * @array_size: number of elements in the descriptor / value arrays
+  * @desc_array: array of GPIO descriptors whose values will be assigned
+  * @value_array: array of values to assign
+@@ -1616,19 +1618,20 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_raw_array_cansleep(unsigned int array_size,
+-				  struct gpio_desc **desc_array,
+-				  int *value_array)
++void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++					struct gpio_desc **desc_array,
++					int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+ 		return;
+-	gpiod_set_array_priv(true, true, array_size, desc_array, value_array);
++	gpiod_set_array_value_priv(true, true, array_size, desc_array,
++				   value_array);
+ }
+-EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
++EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
+ 
+ /**
+- * gpiod_set_array_cansleep() - assign values to an array of GPIOs
++ * gpiod_set_array_value_cansleep() - assign values to an array of GPIOs
+  * @array_size: number of elements in the descriptor / value arrays
+  * @desc_array: array of GPIO descriptors whose values will be assigned
+  * @value_array: array of values to assign
+@@ -1638,16 +1641,17 @@ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_array_cansleep(unsigned int array_size,
+-			      struct gpio_desc **desc_array,
+-			      int *value_array)
++void gpiod_set_array_value_cansleep(unsigned int array_size,
++				    struct gpio_desc **desc_array,
++				    int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+ 		return;
+-	gpiod_set_array_priv(false, true, array_size, desc_array, value_array);
++	gpiod_set_array_value_priv(false, true, array_size, desc_array,
++				   value_array);
+ }
+-EXPORT_SYMBOL_GPL(gpiod_set_array_cansleep);
++EXPORT_SYMBOL_GPL(gpiod_set_array_value_cansleep);
+ 
+ /**
+  * gpiod_add_lookup_table() - register GPIO device consumers
+diff --git a/drivers/net/phy/mdio-mux-gpio.c b/drivers/net/phy/mdio-mux-gpio.c
+index 66edd99..7ddb1ab 100644
+--- a/drivers/net/phy/mdio-mux-gpio.c
++++ b/drivers/net/phy/mdio-mux-gpio.c
+@@ -35,7 +35,8 @@ static int mdio_mux_gpio_switch_fn(int current_child, int desired_child,
+ 	for (n = 0; n < s->gpios->ndescs; n++)
+ 		values[n] = (desired_child >> n) & 1;
+ 
+-	gpiod_set_array_cansleep(s->gpios->ndescs, s->gpios->desc, values);
++	gpiod_set_array_value_cansleep(s->gpios->ndescs, s->gpios->desc,
++				       values);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+index 0ec756c..d7b846d 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -55,7 +55,7 @@ void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+ 			value_array[count] = !!(mctrl & mctrl_gpios_desc[i].mctrl);
+ 			count++;
+ 		}
+-	gpiod_set_array(count, desc_array, value_array);
++	gpiod_set_array_value(count, desc_array, value_array);
+ }
+ EXPORT_SYMBOL_GPL(mctrl_gpio_set);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 09a7fb0..fd09816 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -100,24 +100,25 @@ int gpiod_direction_output_raw(struct gpio_desc *desc, int value);
+ /* Value get/set from non-sleeping context */
+ int gpiod_get_value(const struct gpio_desc *desc);
+ void gpiod_set_value(struct gpio_desc *desc, int value);
+-void gpiod_set_array(unsigned int array_size,
+-		     struct gpio_desc **desc_array, int *value_array);
++void gpiod_set_array_value(unsigned int array_size,
++			   struct gpio_desc **desc_array, int *value_array);
+ int gpiod_get_raw_value(const struct gpio_desc *desc);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array(unsigned int array_size,
+-			 struct gpio_desc **desc_array, int *value_array);
++void gpiod_set_raw_array_value(unsigned int array_size,
++			       struct gpio_desc **desc_array,
++			       int *value_array);
+ 
+ /* Value get/set from sleeping context */
+ int gpiod_get_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_array_cansleep(unsigned int array_size,
+-			      struct gpio_desc **desc_array,
+-			      int *value_array);
++void gpiod_set_array_value_cansleep(unsigned int array_size,
++				    struct gpio_desc **desc_array,
++				    int *value_array);
+ int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_cansleep(unsigned int array_size,
+-				  struct gpio_desc **desc_array,
+-				  int *value_array);
++void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++					struct gpio_desc **desc_array,
++					int *value_array);
+ 
+ int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
+ 
+@@ -304,9 +305,9 @@ static inline void gpiod_set_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_array(unsigned int array_size,
+-				   struct gpio_desc **desc_array,
+-				   int *value_array)
++static inline void gpiod_set_array_value(unsigned int array_size,
++					 struct gpio_desc **desc_array,
++					 int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+@@ -322,9 +323,9 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array(unsigned int array_size,
+-				       struct gpio_desc **desc_array,
+-				       int *value_array)
++static inline void gpiod_set_raw_array_value(unsigned int array_size,
++					     struct gpio_desc **desc_array,
++					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+@@ -341,7 +342,7 @@ static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_array_cansleep(unsigned int array_size,
++static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
+ 					    struct gpio_desc **desc_array,
+ 					    int *value_array)
+ {
+@@ -360,7 +361,7 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_cansleep(unsigned int array_size,
++static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
 
-> Anyway, I don't think I understand IRQ domains and irq_chip_generic
-> very well.  One possibility _might_ be to use multiple irq_chips.
-
-That is probably not possible if there is just one IRQ for all
-banks.
-
-The task of the irqdomain is a 1-to-1 translation from one
-hardware numberspace to the Linux IRQ number space.
-
-In your case the hardware IRQ (hwirq) numberspace
-should be:
-
-bank0: 0..31
-bank1: 32..63
-....
-bankn: 32*n..32*n+31
-
-I think the gpiolib irqchip code can translate that properly
-as it is just a simple 0...x mapping, the irq handler need
-some magic to loop over all banks from 0..n though.
-
-Yours,
-Linus Walleij
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.3.6
+
