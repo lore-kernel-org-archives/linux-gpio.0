@@ -1,47 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: discourage passing base to gpio_chip
-Date: Wed, 13 May 2015 13:04:55 +0200
-Message-ID: <1431515095-29107-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: cleanup chained handler and data
+Date: Wed, 13 May 2015 13:05:27 +0200
+Message-ID: <CACRpkdajxws-NupdX3wZsAYavGYdzA6MhPjg1aD3+-PoutyJGA@mail.gmail.com>
+References: <1431450743-25528-1-git-send-email-dbaryshkov@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f178.google.com ([209.85.217.178]:35299 "EHLO
-	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752856AbbEMLFA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 07:05:00 -0400
-Received: by lbbuc2 with SMTP id uc2so26611879lbb.2
-        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2015 04:04:59 -0700 (PDT)
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:33763 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753955AbbEMLF2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 07:05:28 -0400
+Received: by obblk2 with SMTP id lk2so26832489obb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 13 May 2015 04:05:27 -0700 (PDT)
+In-Reply-To: <1431450743-25528-1-git-send-email-dbaryshkov@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Passing a fixed base in struct gpio_chip is done for legacy
-systems that cannot handle dynamic allocation. Discourage this
-behaviour in the kerneldoc.
+On Tue, May 12, 2015 at 7:12 PM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- include/linux/gpio/driver.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+> Clean up chained handler and handler data if they were set by
+> gpiochip_set_chained_irqchip().
+>
+> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 96a678842cde..cc7ec129b329 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -42,8 +42,12 @@ struct seq_file;
-  * @dbg_show: optional routine to show contents in debugfs; default code
-  *	will be used when this is omitted, but custom code can show extra
-  *	state (such as pullup/pulldown configuration).
-- * @base: identifies the first GPIO number handled by this chip; or, if
-- *	negative during registration, requests dynamic ID allocation.
-+ * @base: identifies the first GPIO number handled by this chip;
-+ *	or, if negative during registration, requests dynamic ID allocation.
-+ *	DEPRECATION: providing anything non-negative and nailing the base
-+ *	base offset of GPIO chips is deprecated. Please pass -1 as base to
-+ *	let gpiolib select the chip base in all possible cases. We want to
-+ *	get rid of the static GPIO number space in the long run.
-  * @ngpio: the number of GPIOs handled by this controller; the last GPIO
-  *	handled is (base + ngpio - 1).
-  * @desc: array of ngpio descriptors. Private.
--- 
-1.9.3
+Yep exactly like this :)
 
+Patch applied!
+
+Yours,
+Linus Walleij
