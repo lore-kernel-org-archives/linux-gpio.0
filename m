@@ -1,91 +1,124 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 8/8] Documentation: Add WM8998/WM1814 device tree
- bindings
-Date: Wed, 13 May 2015 13:29:42 +0100
-Message-ID: <20150513122942.GW3394@x1>
-References: <1430493319-23808-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1430493319-23808-9-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 14/16] ARM: dts: Introduce STM32F429 MCU
+Date: Wed, 13 May 2015 13:58:05 +0100
+Message-ID: <55534A5D.6050904@linaro.org>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>	<1431158038-3813-15-git-send-email-mcoquelin.stm32@gmail.com>	<2789447.8FUTAOJOHR@wuerfel> <CALszF6CS8Q9DWX+ERtu=k=Bzr1-25N3oZQyWyxDZBF3an4nFKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1430493319-23808-9-git-send-email-rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <CALszF6CS8Q9DWX+ERtu=k=Bzr1-25N3oZQyWyxDZBF3an4nFKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <gal>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 01 May 2015, Richard Fitzgerald wrote:
+On 13/05/15 12:45, Maxime Coquelin wrote:
+> 2015-05-12 23:21 GMT+02:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
+>> On Saturday 09 May 2015 09:53:56 Maxime Coquelin wrote:
+>>> +#include  <dt-bindings/mfd/stm32f4-rcc.h>
+>>> +
+>>>
+>>
+>> Can you find a way to avoid this dependency?
+>>
+>> Maybe you can change the bindings so that the numbers you pass as
+>> arguments to the reset and clock specifiers reflect the numbers that
+>> the hardware use?
+>
+> If I understand correctly, you prefer the way I did in v7 [0]?
+>
+> I don't have a strong opinion on this. Either way is fine to me.
+>
+> I changed the bindings in the v8 after discussions with Daniel
+> Thompson, who is implementing the clock driver part of the RCC IP.
+>
+> He proposed we used common defines, because each peripheral has a
+> reset line and a clock gate.
+> Both reset and clock are represented as a single bit, with only the
+> base offset differing between clock and reset.
+> You can have a look at chapter 6 of the reference manual [1] if you
+> find some time.
+>
+> Having common defines between clocks and reset make sense to me, but I
+> also understand your point of avoiding dependencies.
+>
+> Maybe I can revert back to v7 bindings for now, and then we can
+> reconsider using common defines when Daniel will send the clock
+> patches.
+> Note that doing that won't break the DT binary compatibility, as the
+> raw reset values, or the ones from defines are the same.
+>
+> Daniel, could you share an example of the bindings you would use for the clocks?
 
-> Signed-off-by: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/mfd/arizona.txt |   13 +++++++++--=
+For the most cases, where there is a clock gate just before the 
+peripheral it looks pretty much like the reset driver and I use the bit 
+offset of the clock gating bit as the index.
+
+However there are a couple of clocks without gating just before the 
+clock reaches the peripheral:
+
+1. A hard coded /8. I think this will have to be given a synthetic
+    number.
+
+2. Ungated dividers. For these I am using the bit offset of the LSB of
+    the mux field.
+
+So I think there is only one value that is completely unrelated to the 
+hardware and will use a magic constant instead.
+
+I had planned to macros similar to the STM32F4_AxB_RESET() family of 
+macros in both clk driver and DT in order to reuse the bit layouts from 
+dt-bindings/mfd/stm32f4-rcc.h .
+
+Normal case would have looked like this:
+
+		timer3: timer@40000000 {
+			compatible = "st,stm32-timer";
+			reg = <0x40000000 0x400>;
+			interrupts = <28>;
+			resets = <&rcc STM32F4_APB1_RESET(TIM3)>;
+			clocks = <&rcc STM32F4_APB1_CLK(TIM3)>;
+			status = "disabled";
+		};
+
+Without the macros it looks like this:
+
+		timer3: timer@40000000 {
+			compatible = "st,stm32-timer";
+			reg = <0x40000000 0x400>;
+			interrupts = <28>;
+			resets = <&rcc 257>;
+			clocks = <&rcc 513>;
+			status = "disabled";
+		};
+
+However we could perhaps be more literate even if we don't use the macros?
+
+		timer3: timer@40000000 {
+			compatible = "st,stm32-timer";
+			reg = <0x40000000 0x400>;
+			interrupts = <28>;
+			resets = <&rcc ((0x20*8) + 1)>;
+			clocks = <&rcc ((0x40*8) + 1)>;
+			status = "disabled";
+		};
+
+
+Daniel.
+
+
+> Kind regards,
+> Maxime
+>
+>>
+>>          Arnd
+>
+> [0]: http://lkml.iu.edu/hypermail/linux/kernel/1504.3/04523.html
+> [1]: http://www.st.com/web/en/resource/technical/document/reference_manual/DM00031020.pdf
+>
+
 --
->  1 files changed, 9 insertions(+), 4 deletions(-)
-
-Applied, thanks.
-
-> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Docu=
-mentation/devicetree/bindings/mfd/arizona.txt
-> index 7665aa9..64fa3b2 100644
-> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
-> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-> @@ -10,6 +10,9 @@ Required properties:
->          "wlf,wm5110"
->          "wlf,wm8280"
->          "wlf,wm8997"
-> +        "wlf,wm8998"
-> +        "wlf,wm1814"
-> +
->    - reg : I2C slave address when connected using I2C, chip select nu=
-mber when
->      using SPI.
-> =20
-> @@ -31,10 +34,10 @@ Required properties:
->      as covered in Documentation/devicetree/bindings/regulator/regula=
-tor.txt
-> =20
->    - DBVDD2-supply, DBVDD3-supply : Additional databus power supplies=
- (wm5102,
-> -    wm5110, wm8280)
-> +    wm5110, wm8280, wm8998, wm1814)
-> =20
->    - SPKVDDL-supply, SPKVDDR-supply : Speaker driver power supplies (=
-wm5102,
-> -    wm5110, wm8280)
-> +    wm5110, wm8280, wm8998, wm1814)
-> =20
->    - SPKVDD-supply : Speaker driver power supply (wm8997)
-> =20
-> @@ -53,8 +56,10 @@ Optional properties:
->      of input signals. Valid values are 0 (Differential), 1 (Single-e=
-nded) and
->      2 (Digital Microphone). If absent, INn_MODE registers set to 0 b=
-y default.
->      If present, values must be specified less than or equal to the n=
-umber of
-> -    input singals. If values less than the number of input signals, =
-elements
-> -    that has not been specifed are set to 0 by default.
-> +    input signals. If values less than the number of input signals, =
-elements
-> +    that have not been specified are set to 0 by default. Entries ar=
-e:
-> +    <IN1, IN2, IN3, IN4> (wm5102, wm5110, wm8280, wm8997)
-> +    <IN1A, IN2A, IN1B, IN2B> (wm8998, wm1814)
-> =20
->    - wlf,dmic-ref : DMIC reference voltage source for each input, can=
- be
->      selected from either MICVDD or one of the MICBIAS's, defines
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
