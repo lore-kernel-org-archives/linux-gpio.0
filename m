@@ -1,127 +1,163 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v2 02/17] leds: port locomo leds driver to new locomo core
-Date: Wed, 13 May 2015 16:53:03 +0200
-Message-ID: <5553654F.4010608@samsung.com>
-References: <1430178954-11138-1-git-send-email-dbaryshkov@gmail.com>
- <1430178954-11138-3-git-send-email-dbaryshkov@gmail.com>
- <554A2DB4.3020000@samsung.com>
- <CALT56yNJWapNw1XLrzfbUDUz1LF_BB9DfF94H6GhbnBUEP80_w@mail.gmail.com>
- <555327EA.5060402@samsung.com>
- <CALT56yOJyZvWF9neC2A09Y_w1Ej41uwWvU=aOOM0idbzUkBiFQ@mail.gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH v8 14/16] ARM: dts: Introduce STM32F429 MCU
+Date: Wed, 13 May 2015 16:20:34 +0100
+Message-ID: <55536BC2.30603@linaro.org>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <CALszF6CS8Q9DWX+ERtu=k=Bzr1-25N3oZQyWyxDZBF3an4nFKQ@mail.gmail.com>
+ <55534A5D.6050904@linaro.org> <3125409.QXbEmPolyh@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-reply-to: <CALT56yOJyZvWF9neC2A09Y_w1Ej41uwWvU=aOOM0idbzUkBiFQ@mail.gmail.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-i2c@vger.kernel.org, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.or>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <3125409.QXbEmPolyh@wuerfel>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Kees Cook <keescook@chromium.org>, Linux-Arch <linux-arch@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, =?windows-1252?Q
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/13/2015 04:14 PM, Dmitry Eremin-Solenikov wrote:
-> 2015-05-13 13:31 GMT+03:00 Jacek Anaszewski <j.anaszewski@samsung.com>:
->> On 05/12/2015 05:35 PM, Dmitry Eremin-Solenikov wrote:
+On 13/05/15 14:27, Arnd Bergmann wrote:
+> On Wednesday 13 May 2015 13:58:05 Daniel Thompson wrote:
+>> On 13/05/15 12:45, Maxime Coquelin wrote:
+>>> 2015-05-12 23:21 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
+>>>> On Saturday 09 May 2015 09:53:56 Maxime Coquelin wrote:
+>>>>> +#include  <dt-bindings/mfd/stm32f4-rcc.h>
+>>>>> +
+>>>>>
+>>>>
+>>>> Can you find a way to avoid this dependency?
+>>>>
+>>>> Maybe you can change the bindings so that the numbers you pass as
+>>>> arguments to the reset and clock specifiers reflect the numbers that
+>>>> the hardware use?
 >>>
->>> 2015-05-06 18:05 GMT+03:00 Jacek Anaszewski <j.anaszewski@samsung.com>:
->>>>
->>>> On 04/28/2015 01:55 AM, Dmitry Eremin-Solenikov wrote:
->>>>>
->>>>>
->>>>> Adapt locomo leds driver to new locomo core setup.
->>>>>
->>>>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
->>>>> ---
->>>>>     drivers/leds/Kconfig       |   1 -
->>>>>     drivers/leds/leds-locomo.c | 119
->>>>> +++++++++++++++++++++++----------------------
->>>>>     2 files changed, 61 insertions(+), 59 deletions(-)
->>>>>
->>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>>> index 966b960..4b4650b 100644
->>>>> --- a/drivers/leds/Kconfig
->>>>> +++ b/drivers/leds/Kconfig
->>>>> @@ -79,7 +79,6 @@ config LEDS_LM3642
->>>>>     config LEDS_LOCOMO
->>>>>           tristate "LED Support for Locomo device"
->>>>>           depends on LEDS_CLASS
->>>>> -       depends on SHARP_LOCOMO
->>>>
->>>>
->>>>
->>>> Why do you remove this dependency?
->>>
->>>
->>> Because SHARP_LOCOMO is a Kconfig symbol for the old driver. New driver
->>> uses MFD_LOCOMO Kconfig entry. Also the driver now uses generic platform
->>> device and regmap interfaces, so there is no direct dependency on main
->>> LoCoMo driver. And the policy (IIRC) was not to have such dependencies.
->>
->>
->> Ack. Shouldn't you also need "select REGMAP_MMIO" ?
+>>> If I understand correctly, you prefer the way I did in v7 [0]?
 >
-> No. Maybe I should add "select REGMAP" instead.
+> Yes, that looks better. I would probably not list all the possible
+> values in the binding though, when the intention is to use the
+> hardware specific values, and being able to reuse the binding
+> and driver for variations of the same chip.
 
-REGMAP is enabled by default if REGMAP_MMIO is enabled. Having
-REGMAP_MMIO selected would also allow to notice at first glance which
-regmap backend is used. This would in turn provide a straightforward
-explanation on why brightness_set op is not delegated to work queue.
+Indeed. It was that long list that originally provoked me to comment in 
+the first place.
 
->>>>>    static void locomoled_brightness_set(struct led_classdev *led_cdev,
->>>>> -                               enum led_brightness value, int offset)
->>>>> +                               enum led_brightness value)
->>>>>     {
->>>>> -       struct locomo_dev *locomo_dev =
->>>>> LOCOMO_DEV(led_cdev->dev->parent);
->>>>> -       unsigned long flags;
->>>>> +       struct locomo_led *led = container_of(led_cdev, struct
->>>>> locomo_led,
->>>>> led);
->>>>>
->>>>> -       local_irq_save(flags);
->>>>> -       if (value)
->>>>> -               locomo_writel(LOCOMO_LPT_TOFH, locomo_dev->mapbase +
->>>>> offset);
->>>>> -       else
->>>>> -               locomo_writel(LOCOMO_LPT_TOFL, locomo_dev->mapbase +
->>>>> offset);
->>>>> -       local_irq_restore(flags);
->>>>> +       regmap_write(led->regmap, led->reg,
->>>>> +                       value ? LOCOMO_LPT_TOFH : LOCOMO_LPT_TOFL);
->>>>>     }
->>>>
->>>>
->>>>
->>>> Please use work queue for setting brightness. This is required for the
->>>> driver to be compatible with led triggers. You can refer to the
->>>> existing LED drivers on how to implement this.
+
+>>> Note that doing that won't break the DT binary compatibility, as the
+>>> raw reset values, or the ones from defines are the same.
 >>>
->>>
->>> Hmm. Why? The regmap here uses MMIO access, so it is atomic operation
->>> and doesn't need to be wrapped into work queue, does it?
+>>> Daniel, could you share an example of the bindings you would use for the clocks?
 >>
->>
->> Triggers can call brightness_set op in the interrupt context, so it
->> cannot sleep. I see "map->lock(map->lock_arg)" in regmap_write, thus
->> I am inferring that it can sleep.
->>
->> I am not sure if regmap implements its 'lock' op when using MMIO.
->>
->> The best way to figure this out is turning "LED Timer Trigger" on
->> in the config and execute:
->>
->> echo "timer" > trigger
+>> For the most cases, where there is a clock gate just before the
+>> peripheral it looks pretty much like the reset driver and I use the bit
+>> offset of the clock gating bit as the index.
 >
-> It works without any "might sleep/sleeping in atomic context" warnings.
+> Is this bit always the same index as the one for the reset driver?
+
+For the all reset bits:
+
+   clock idx = reset idx + 256
+
+The opposite is not true; the clock bits are a superset of the reset 
+bits (the reset bits act on cells but some cells have >1 clock).
+
+>> However there are a couple of clocks without gating just before the
+>> clock reaches the peripheral:
+>>
+>> 1. A hard coded /8. I think this will have to be given a synthetic
+>>      number.
 >
-> Technically I'd agree with you. If I'm using regmaps, ideally I should not
-> depend on the exact backend and put working with it to the work queue.
-> However as this is a driver for quite old IP block, it is not used with
-> regmap backends other than MMIO, I'd deduce, it's ok to do things
-> in a more relaxed way and to call regmap_write even from atomic
-> contexts.
+> If this is just a divider, why not use a separate DT node for that,
+> like this:
+>
+>          clock {
+>                  compatible = "fixed-factor-clock";
+>                  clocks = <&parentclk>;
+>                  #clock-cells = <0>;
+>                  clock-div = <8>;
+>                  clock-mult = <1>;
+>          };
+>
+> No need to assign a number for this.
 
-Ack.
+I'd wondered about doing that.
 
--- 
-Best Regards,
-Jacek Anaszewski
+It will certainly work but it seemed a bit odd to me to have one (really 
+tiny) part of the RCC cell included seperately in the platform 
+description whilst all the complicated bits end up aggregated into the 
+RCC cell.
+
+Is there much prior art that uses this type of trick to avoid having 
+magic numbers into the bindings?
+
+
+>> 2. Ungated dividers. For these I am using the bit offset of the LSB of
+>>      the mux field.
+>
+> Do these ones also come with resets?
+
+No. They mostly run to the core and its intimate peripherals (i.e. only 
+reset line comes from WDT).
+
+
+>> So I think there is only one value that is completely unrelated to the
+>> hardware and will use a magic constant instead.
+>>
+>> I had planned to macros similar to the STM32F4_AxB_RESET() family of
+>> macros in both clk driver and DT in order to reuse the bit layouts from
+>> dt-bindings/mfd/stm32f4-rcc.h .
+>>
+>> Normal case would have looked like this:
+>>
+>>                  timer3: timer@40000000 {
+>>                          compatible = "st,stm32-timer";
+>>                          reg = <0x40000000 0x400>;
+>>                          interrupts = <28>;
+>>                          resets = <&rcc STM32F4_APB1_RESET(TIM3)>;
+>>                          clocks = <&rcc STM32F4_APB1_CLK(TIM3)>;
+>>                          status = "disabled";
+>>                  };
+>>
+>> Without the macros it looks like this:
+>>
+>>                  timer3: timer@40000000 {
+>>                          compatible = "st,stm32-timer";
+>>                          reg = <0x40000000 0x400>;
+>>                          interrupts = <28>;
+>>                          resets = <&rcc 257>;
+>>                          clocks = <&rcc 513>;
+>>                          status = "disabled";
+>>                  };
+>>
+>> However we could perhaps be more literate even if we don't use the macros?
+>>
+>>                  timer3: timer@40000000 {
+>>                          compatible = "st,stm32-timer";
+>>                          reg = <0x40000000 0x400>;
+>>                          interrupts = <28>;
+>>                          resets = <&rcc ((0x20*8) + 1)>;
+>>                          clocks = <&rcc ((0x40*8) + 1)>;
+>>                          status = "disabled";
+>>                  };
+>
+> How about #address-cells = <2>, so you can do
+>
+> 		resets = <&rcc 8 1>;
+> 		clocks = <&rcc 8 1>;
+>
+> with the first cell being an index for the block and the second cell the
+> bit number within that block.
+
+That would suit me very well (although is the 0x20/0x40 not the 8 that 
+we would need in the middle column).
+
+Maxime: Does that suit reset driver?
+
+
+Daniel.
