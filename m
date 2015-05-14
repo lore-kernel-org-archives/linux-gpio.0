@@ -1,44 +1,39 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: [PATCH 2/2] pinctrl: cygnus: fixed incorrect GPIO-pin mapping
-Date: Wed, 13 May 2015 17:06:23 -0700
-Message-ID: <1431561983-8543-3-git-send-email-rjui@broadcom.com>
-References: <1431561983-8543-1-git-send-email-rjui@broadcom.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
+ multi-platform check
+Date: Thu, 14 May 2015 09:49:27 +0900
+Message-ID: <20150514004927.GI9781@verge.net.au>
+References: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
+ <CACRpkdZZ_=x7=2Ae9VPAo6dPvD2D_2MUDwNjCF-jxSp075X1hA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:26105 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934123AbbENAGb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 May 2015 20:06:31 -0400
-In-Reply-To: <1431561983-8543-1-git-send-email-rjui@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZZ_=x7=2Ae9VPAo6dPvD2D_2MUDwNjCF-jxSp075X1hA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Jason Uy <jasonuy@broadcom.com>, Ray Jui <rjui@broadcom.com>
 
-This patch fixes an incorrect GPIO-to-pin mapping in the Cygnus GPIO
-driver
+Hi Linus,
 
-Signed-off-by: Ray Jui <rjui@broadcom.com>
----
- drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Tue, May 12, 2015 at 09:26:53AM +0200, Linus Walleij wrote:
+> On Tue, Apr 28, 2015 at 12:14 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> 
+> > As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
+> > legacy platform"), r8a73a4 is only supported in generic ARM
+> > multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
+> > and the check can be removed.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This depends on Simon's branch r8a73a4-ccf-and-multiplatform-for-v4.1
+> 
+> I guess I can't merge it to pinctrl then and Simon will take it?
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-index bde45ba..e8c50f0 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-@@ -643,7 +643,9 @@ static const struct cygnus_gpio_pin_range cygnus_gpio_pintable[] = {
- 	CYGNUS_PINRANGE(87, 104, 12),
- 	CYGNUS_PINRANGE(99, 102, 2),
- 	CYGNUS_PINRANGE(101, 90, 4),
--	CYGNUS_PINRANGE(105, 116, 10),
-+	CYGNUS_PINRANGE(105, 116, 6),
-+	CYGNUS_PINRANGE(111, 100, 2),
-+	CYGNUS_PINRANGE(113, 122, 4),
- 	CYGNUS_PINRANGE(123, 11, 1),
- 	CYGNUS_PINRANGE(124, 38, 4),
- 	CYGNUS_PINRANGE(128, 43, 1),
--- 
-1.7.9.5
-
+I am happy to take this with your ack, however, the above mentioned branch
+is present in v4.1-rc1 so if it is practical for you to use that as a base
+then you can take the patch yourself.
