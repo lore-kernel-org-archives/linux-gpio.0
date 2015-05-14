@@ -1,113 +1,51 @@
-From: Oleksij Rempel <linux@rempel-privat.de>
-Subject: Re: [PATCH v4 1/2] pinctrl: Add driver for Alphascale asm9260 pinctrl
-Date: Thu, 14 May 2015 09:26:53 +0200
-Message-ID: <55544E3D.70106@rempel-privat.de>
-References: <1428306169.634.51.camel@x220>	<1428311043-12012-1-git-send-email-linux@rempel-privat.de>	<1428311043-12012-2-git-send-email-linux@rempel-privat.de>	<CACRpkdakXbHL6ydeZrs4XZ9Z1odHL5bWRxiHtT_Jbg-ygTudgw@mail.gmail.com>	<55522993.6090104@rempel-privat.de> <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a73a4: Remove obsolete
+ multi-platform check
+Date: Thu, 14 May 2015 12:23:48 +0200
+Message-ID: <CACRpkdaRZB_JAtt0uhS7ad3+Rvh3gg0RebZHE3Z_pp2guy0QHA@mail.gmail.com>
+References: <1430216072-31412-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdZZ_=x7=2Ae9VPAo6dPvD2D_2MUDwNjCF-jxSp075X1hA@mail.gmail.com>
+	<20150514004927.GI9781@verge.net.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="6J1UHAVXrWgBBPcFn7qa2tKoudWtO1Ofc"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.15.18]:62335 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751026AbbENH1D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 May 2015 03:27:03 -0400
-In-Reply-To: <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:33318 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932490AbbENKXt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2015 06:23:49 -0400
+Received: by oica37 with SMTP id a37so52123044oic.0
+        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2015 03:23:49 -0700 (PDT)
+In-Reply-To: <20150514004927.GI9781@verge.net.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---6J1UHAVXrWgBBPcFn7qa2tKoudWtO1Ofc
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Am 13.05.2015 um 13:00 schrieb Linus Walleij:
-> On Tue, May 12, 2015 at 6:25 PM, Oleksij Rempel <linux@rempel-privat.de=
-> wrote:
->> Am 05.05.2015 um 17:12 schrieb Linus Walleij:
->=20
->>> Just reference the statically defined array by a pointer instead,
->>> this just takes up a lot o memory for no reason.
+On Thu, May 14, 2015 at 2:49 AM, Simon Horman <horms@verge.net.au> wrote:
+> Hi Linus,
+>
+> On Tue, May 12, 2015 at 09:26:53AM +0200, Linus Walleij wrote:
+>> On Tue, Apr 28, 2015 at 12:14 PM, Geert Uytterhoeven
+>> <geert+renesas@glider.be> wrote:
 >>
->> This two arrays have different types this is why i convert it.
->> priv->pin_desc[i].name - here i copy pointer any ways, and
->> priv->pin_desc[i].number can be smaller then pointer.
->=20
-> I probably do not understand what you're trying to do, sorry :(
->=20
-> Why is it necessary for the driver to copy one description of
-> the pin into another?
->=20
->>> Mory copying. I don't see why this is necessary at all.
+>> > As of commit 9d07d414d4c33d86 ("ARM: shmobile: r8a73a4: ape6evm: Remove
+>> > legacy platform"), r8a73a4 is only supported in generic ARM
+>> > multi-platform builds.  Hence CONFIG_ARCH_MULTIPLATFORM is always set,
+>> > and the check can be removed.
+>> >
+>> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> > ---
+>> > This depends on Simon's branch r8a73a4-ccf-and-multiplatform-for-v4.1
 >>
->> I hadn't seen the point to define groups statically, especially becaus=
-e
->> they are used only  to make curious user happy. So, memory will be use=
-d
->> only if you request the list over sysfs. Or miss some thing?
->=20
-> pinctrl does not even use sysfs.
->=20
-> The group names are usually there for matching with a function,
-> it is part of the core functionality. The group name + function name
-> matching is even more obvious in the dt case.
->=20
-> They also make things easier to read in debugfs yes, but
-> the core of the crux is to make it easy to config function+groups
-> states with e.g. DT or board files.
->=20
->>>> +static struct pinmux_ops asm9260_pinmux_ops =3D {
->>>> +       .get_functions_count    =3D asm9260_pinctrl_get_funcs_count,=
-
->>>> +       .get_function_name      =3D asm9260_pinctrl_get_func_name,
->>>> +       .get_function_groups    =3D asm9260_pinctrl_get_func_groups,=
-
->>>> +       .set_mux                =3D asm9260_pinctrl_set_mux,
->>>> +       /* TODO: should we care about gpios here? gpio_request_enabl=
-e? */
->>>
->>> I think you should, if you also have a matching GPIO driver.
+>> I guess I can't merge it to pinctrl then and Simon will take it?
 >>
->> I fear it would cause unpredictable bugs. GPIO mode is just one of mux=
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> I am happy to take this with your ack, however, the above mentioned branch
+> is present in v4.1-rc1 so if it is practical for you to use that as a base
+> then you can take the patch yourself.
 
->> modes. If some one will request gpio some busy or dangerous line it
->> would do more harm then use. So, i assume limiting this only to device=
+Yeah I took it. Thanks Simon.
 
->> tree would be better.
->=20
-> Device tree or not doesn't matter, .gpio_request_enable() is used
-> as a shortcut to mux in GPIO pins.
->=20
-> If the simultaneous use of a pin for a device and GPIO bothers
-> you there is nowadays (linux-next or my devel branch) a .strict
-> option in pinmux_ops that you can set to disallow simultaneous
-> use by devices and GPIO of the same pin.
->=20
-> Yours,
-> Linus Walleij
->=20
-
-Hi, you was right, i was blind. Will redo some parts with your suggestion=
-s.
-
---=20
-Regards,
-Oleksij
-
-
---6J1UHAVXrWgBBPcFn7qa2tKoudWtO1Ofc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iF4EAREIAAYFAlVUTkEACgkQHwImuRkmbWmhYgD8DItLJp0ZpIBU74bEJddoTDmy
-amZCrfhwWGruhEOjcLQA/3If2d66xXhBXoglZZ8v+iJgitHgmwSjys9LeUSbUY+u
-=TYTs
------END PGP SIGNATURE-----
-
---6J1UHAVXrWgBBPcFn7qa2tKoudWtO1Ofc--
+Yours,
+Linus Walleij
