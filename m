@@ -1,164 +1,73 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
-Date: Thu, 14 May 2015 19:48:54 +0900
-Message-ID: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [PATCH] gpio: pcf875x: Revert "gpio: pcf857x: Propagate wake-up
+ setting to parent irq controller"
+Date: Thu, 14 May 2015 15:32:05 +0300
+Message-ID: <555495C5.3040904@linaro.org>
+References: <1431353601-21295-1-git-send-email-rogerq@ti.com> <CAMuHMdUhhKSw0fEB5XCMsrM+uKZRCRMZTiBvPpG8k2wo2gX-zA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:17455 "EHLO
-	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932742AbbENKtK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 May 2015 06:49:10 -0400
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:34607 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932420AbbENMcM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 May 2015 08:32:12 -0400
+Received: by wguv19 with SMTP id v19so11646278wgu.1
+        for <linux-gpio@vger.kernel.org>; Thu, 14 May 2015 05:32:11 -0700 (PDT)
+In-Reply-To: <CAMuHMdUhhKSw0fEB5XCMsrM+uKZRCRMZTiBvPpG8k2wo2gX-zA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- This patch is based on linux-pinctrl.git / for-next branch.
- (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
+Hi,
 
- I will write a patch for r8a7791 PWM later because I'm not sure that
- this patch is good or not.
+On 05/11/2015 08:36 PM, Geert Uytterhoeven wrote:
+> On Mon, May 11, 2015 at 4:13 PM, Roger Quadros <rogerq@ti.com> wrote:
+>> commit b80eef95beb0 ('gpio: pcf857x: Propagate wake-up setting to parent irq controller')
+>> introduces the following recursive locking warning while suspending dra7-evm.
+>>
+>> The issue addressed by that commit has been already resolved by
+>> commit 10a50f1ab5f0 ('genirq: Set IRQCHIP_SKIP_SET_WAKE flag for dummy_irq_chip')
+> 
+> That's not 100% correct: commit b80eef95beb0 ('gpio: pcf857x: Propagate wake-up
+> setting to parent irq controller') fixes _two_ things:
+>    1. warning due to missing irq_set_wake / IRQCHIP_SKIP_SET_WAKE,
+>    2. propagating set_wake, so the parent interrupt controller stays awake, as
+>       it's needed for wake-up,
+> 
+> Only the first issue is addressed by commit 10a50f1ab5f0 ('genirq: Set
+> IRQCHIP_SKIP_SET_WAKE flag for dummy_irq_chip').
+> 
+>> and so let's revert commit b80eef95beb0 ('gpio: pcf857x: Propagate wake-up setting to parent irq controller')
+>>
+>> At least the recursive locking message no longer appears after the revert.
+>>
+>> [   30.591905] PM: Syncing filesystems ... done.
+>> [   30.623060] Freezing user space processes ... (elapsed 0.003 seconds) done.
+>> [   30.634470] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+>> [   30.658288] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+>> [   30.663678]
+>> [   30.663681] =============================================
+>> [   30.663683] [ INFO: possible recursive locking detected ]
+>> [   30.663688] 4.1.0-rc3 #1115 Not tainted
+>> [   30.663693] ---------------------------------------------
+>> [   30.663697] suspend.sh/2319 is trying to acquire lock:
+>> [   30.663719]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+>> [   30.663722]
+>> [   30.663722] but task is already holding lock:
+>> [   30.663734]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+> 
+> Does this mean .set_irq_wake() cannot call irq_set_irq_wake()?
+> Many GPIO drivers do that, as they need to propagate wake-up state to the
+> parent interrupt controller?
 
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 101 +++++++++++++++++++++++++++++++++++
- 1 file changed, 101 insertions(+)
+As I remember, there was similar problem, so I found corresponding patch (just FYI)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 22a5470..baab81e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -2664,6 +2664,61 @@ static const unsigned int msiof3_tx_b_pins[] = {
- static const unsigned int msiof3_tx_b_mux[] = {
- 	MSIOF3_TXD_B_MARK,
- };
-+/* - PWM -------------------------------------------------------------------- */
-+static const unsigned int pwm0_pins[] = {
-+	RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int pwm0_mux[] = {
-+	PWM0_MARK,
-+};
-+static const unsigned int pwm0_b_pins[] = {
-+	RCAR_GP_PIN(4, 30),
-+};
-+static const unsigned int pwm0_b_mux[] = {
-+	PWM0_B_MARK,
-+};
-+static const unsigned int pwm1_pins[] = {
-+	RCAR_GP_PIN(5, 30),
-+};
-+static const unsigned int pwm1_mux[] = {
-+	PWM1_MARK,
-+};
-+static const unsigned int pwm1_b_pins[] = {
-+	RCAR_GP_PIN(4, 31),
-+};
-+static const unsigned int pwm1_b_mux[] = {
-+	PWM1_B_MARK,
-+};
-+static const unsigned int pwm2_pins[] = {
-+	RCAR_GP_PIN(5, 31),
-+};
-+static const unsigned int pwm2_mux[] = {
-+	PWM2_MARK,
-+};
-+static const unsigned int pwm3_pins[] = {
-+	RCAR_GP_PIN(0, 16),
-+};
-+static const unsigned int pwm3_mux[] = {
-+	PWM3_MARK,
-+};
-+static const unsigned int pwm4_pins[] = {
-+	RCAR_GP_PIN(0, 17),
-+};
-+static const unsigned int pwm4_mux[] = {
-+	PWM4_MARK,
-+};
-+static const unsigned int pwm5_pins[] = {
-+	RCAR_GP_PIN(0, 18),
-+};
-+static const unsigned int pwm5_mux[] = {
-+	PWM5_MARK,
-+};
-+static const unsigned int pwm6_pins[] = {
-+	RCAR_GP_PIN(0, 19),
-+};
-+static const unsigned int pwm6_mux[] = {
-+	PWM6_MARK,
-+};
- /* - QSPI ------------------------------------------------------------------- */
- static const unsigned int qspi_ctrl_pins[] = {
- 	/* SPCLK, SSL */
-@@ -4008,6 +4063,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(msiof3_sync_b),
- 	SH_PFC_PIN_GROUP(msiof3_rx_b),
- 	SH_PFC_PIN_GROUP(msiof3_tx_b),
-+	SH_PFC_PIN_GROUP(pwm0),
-+	SH_PFC_PIN_GROUP(pwm0_b),
-+	SH_PFC_PIN_GROUP(pwm1),
-+	SH_PFC_PIN_GROUP(pwm1_b),
-+	SH_PFC_PIN_GROUP(pwm2),
-+	SH_PFC_PIN_GROUP(pwm3),
-+	SH_PFC_PIN_GROUP(pwm4),
-+	SH_PFC_PIN_GROUP(pwm5),
-+	SH_PFC_PIN_GROUP(pwm6),
- 	SH_PFC_PIN_GROUP(qspi_ctrl),
- 	SH_PFC_PIN_GROUP(qspi_data2),
- 	SH_PFC_PIN_GROUP(qspi_data4),
-@@ -4364,6 +4428,36 @@ static const char * const msiof3_groups[] = {
- 	"msiof3_tx_b",
- };
- 
-+static const char * const pwm0_groups[] = {
-+	"pwm0",
-+	"pwm0_b",
-+};
-+
-+static const char * const pwm1_groups[] = {
-+	"pwm1",
-+	"pwm1_b",
-+};
-+
-+static const char * const pwm2_groups[] = {
-+	"pwm2",
-+};
-+
-+static const char * const pwm3_groups[] = {
-+	"pwm3",
-+};
-+
-+static const char * const pwm4_groups[] = {
-+	"pwm4",
-+};
-+
-+static const char * const pwm5_groups[] = {
-+	"pwm5",
-+};
-+
-+static const char * const pwm6_groups[] = {
-+	"pwm6",
-+};
-+
- static const char * const qspi_groups[] = {
- 	"qspi_ctrl",
- 	"qspi_data2",
-@@ -4621,6 +4715,13 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
- 	SH_PFC_FUNCTION(msiof3),
-+	SH_PFC_FUNCTION(pwm0),
-+	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(pwm2),
-+	SH_PFC_FUNCTION(pwm3),
-+	SH_PFC_FUNCTION(pwm4),
-+	SH_PFC_FUNCTION(pwm5),
-+	SH_PFC_FUNCTION(pwm6),
- 	SH_PFC_FUNCTION(qspi),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
+ab2b926 mfd: Fix twl6030 lockdep recursion warning on setting wake IRQs
+
+Not sure such kind of solution is the best choice (
+
 -- 
-1.9.1
-
+regards,
+-grygorii
