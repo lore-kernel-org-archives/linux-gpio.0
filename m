@@ -1,45 +1,164 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/3] irqchip: GIC: Add support for irq_{get,set}_irqchip_state
-Date: Thu, 14 May 2015 12:32:38 +0200
-Message-ID: <CACRpkdZkBLrhFpZiYk4fiM3ND+UwnVJhNKs=+rL5iZY4fS7zCg@mail.gmail.com>
-References: <1426676484-21812-1-git-send-email-marc.zyngier@arm.com>
-	<1426676484-21812-3-git-send-email-marc.zyngier@arm.com>
-	<CAL85gmBrkonMcKdUVGmYx6zT3wSe-e2jPhnL_+Tkf3s4jsAiWg@mail.gmail.com>
-	<CACRpkdYffHJEzksc5mg7JZdwTzShGaQofAmbmn65=_V3ot04Rg@mail.gmail.com>
-	<CAL85gmC4ovR99wQQYoKs=oo24So80jZ_guxDDFhi-1MXXj0uSw@mail.gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
+Date: Thu, 14 May 2015 19:48:54 +0900
+Message-ID: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CAL85gmC4ovR99wQQYoKs=oo24So80jZ_guxDDFhi-1MXXj0uSw@mail.gmail.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Phong Vo <pvo@apm.com>, Tin Huynh <tnhuynh@apm.com>, Y Vo <yvo@apm.com>, Thomas Gleixner <tglx@linutronix.de>, Toan Le <toanle@apm.com>, Bjorn Andersson <bjorn@kryo.se>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:17455 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932742AbbENKtK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 14 May 2015 06:49:10 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Wed, May 13, 2015 at 5:44 PM, Feng Kan <fkan@apm.com> wrote:
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ This patch is based on linux-pinctrl.git / for-next branch.
+ (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
 
-> We are using the gpio driver with gpio_key for power button. The gpio
-> status can only be retrieved from the GIC register when the gpio is
-> acting as a interrupt.
+ I will write a patch for r8a7791 PWM later because I'm not sure that
+ this patch is good or not.
 
-OK I understand so much. SPISR is a status register of the state
-of the IRQ lines of shared peripherals.
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 101 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-But surely the GPIO block has its own status register, so are
-you saying that this register is unreliable?
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 22a5470..baab81e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -2664,6 +2664,61 @@ static const unsigned int msiof3_tx_b_pins[] = {
+ static const unsigned int msiof3_tx_b_mux[] = {
+ 	MSIOF3_TXD_B_MARK,
+ };
++/* - PWM -------------------------------------------------------------------- */
++static const unsigned int pwm0_pins[] = {
++	RCAR_GP_PIN(5, 29),
++};
++static const unsigned int pwm0_mux[] = {
++	PWM0_MARK,
++};
++static const unsigned int pwm0_b_pins[] = {
++	RCAR_GP_PIN(4, 30),
++};
++static const unsigned int pwm0_b_mux[] = {
++	PWM0_B_MARK,
++};
++static const unsigned int pwm1_pins[] = {
++	RCAR_GP_PIN(5, 30),
++};
++static const unsigned int pwm1_mux[] = {
++	PWM1_MARK,
++};
++static const unsigned int pwm1_b_pins[] = {
++	RCAR_GP_PIN(4, 31),
++};
++static const unsigned int pwm1_b_mux[] = {
++	PWM1_B_MARK,
++};
++static const unsigned int pwm2_pins[] = {
++	RCAR_GP_PIN(5, 31),
++};
++static const unsigned int pwm2_mux[] = {
++	PWM2_MARK,
++};
++static const unsigned int pwm3_pins[] = {
++	RCAR_GP_PIN(0, 16),
++};
++static const unsigned int pwm3_mux[] = {
++	PWM3_MARK,
++};
++static const unsigned int pwm4_pins[] = {
++	RCAR_GP_PIN(0, 17),
++};
++static const unsigned int pwm4_mux[] = {
++	PWM4_MARK,
++};
++static const unsigned int pwm5_pins[] = {
++	RCAR_GP_PIN(0, 18),
++};
++static const unsigned int pwm5_mux[] = {
++	PWM5_MARK,
++};
++static const unsigned int pwm6_pins[] = {
++	RCAR_GP_PIN(0, 19),
++};
++static const unsigned int pwm6_mux[] = {
++	PWM6_MARK,
++};
+ /* - QSPI ------------------------------------------------------------------- */
+ static const unsigned int qspi_ctrl_pins[] = {
+ 	/* SPCLK, SSL */
+@@ -4008,6 +4063,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(msiof3_sync_b),
+ 	SH_PFC_PIN_GROUP(msiof3_rx_b),
+ 	SH_PFC_PIN_GROUP(msiof3_tx_b),
++	SH_PFC_PIN_GROUP(pwm0),
++	SH_PFC_PIN_GROUP(pwm0_b),
++	SH_PFC_PIN_GROUP(pwm1),
++	SH_PFC_PIN_GROUP(pwm1_b),
++	SH_PFC_PIN_GROUP(pwm2),
++	SH_PFC_PIN_GROUP(pwm3),
++	SH_PFC_PIN_GROUP(pwm4),
++	SH_PFC_PIN_GROUP(pwm5),
++	SH_PFC_PIN_GROUP(pwm6),
+ 	SH_PFC_PIN_GROUP(qspi_ctrl),
+ 	SH_PFC_PIN_GROUP(qspi_data2),
+ 	SH_PFC_PIN_GROUP(qspi_data4),
+@@ -4364,6 +4428,36 @@ static const char * const msiof3_groups[] = {
+ 	"msiof3_tx_b",
+ };
+ 
++static const char * const pwm0_groups[] = {
++	"pwm0",
++	"pwm0_b",
++};
++
++static const char * const pwm1_groups[] = {
++	"pwm1",
++	"pwm1_b",
++};
++
++static const char * const pwm2_groups[] = {
++	"pwm2",
++};
++
++static const char * const pwm3_groups[] = {
++	"pwm3",
++};
++
++static const char * const pwm4_groups[] = {
++	"pwm4",
++};
++
++static const char * const pwm5_groups[] = {
++	"pwm5",
++};
++
++static const char * const pwm6_groups[] = {
++	"pwm6",
++};
++
+ static const char * const qspi_groups[] = {
+ 	"qspi_ctrl",
+ 	"qspi_data2",
+@@ -4621,6 +4715,13 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(msiof1),
+ 	SH_PFC_FUNCTION(msiof2),
+ 	SH_PFC_FUNCTION(msiof3),
++	SH_PFC_FUNCTION(pwm0),
++	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(pwm2),
++	SH_PFC_FUNCTION(pwm3),
++	SH_PFC_FUNCTION(pwm4),
++	SH_PFC_FUNCTION(pwm5),
++	SH_PFC_FUNCTION(pwm6),
+ 	SH_PFC_FUNCTION(qspi),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+-- 
+1.9.1
 
-I can think of a few reasons, like transient IRQs etc but
-what is actually causing this?
-
-Techically the GIC would normally be higher up the food
-chain, i.e. one IRQ on the GIC is cascaded to sub-IRQs on
-the GPIO chip by virtue of its own struct irq_chip and
-irqdomain. The exception is typically only systems where
-the GPIO block is fused with the IRQ controller so that each
-GPIO line has its own unique IRQ line on the primary,
-top-level interrupt controller.
-
-Which GPIO driver is this? Is it upstream?
-
-Yours,
-Linus Walleij
