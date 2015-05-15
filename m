@@ -1,177 +1,26 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
-Date: Fri, 15 May 2015 20:27:20 +0300
-Message-ID: <2906250.XxqXE37H9S@avalon>
-References: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v8 12/16] ARM: Add STM32 family machine
+Date: Fri, 15 May 2015 21:57:52 +0200
+Message-ID: <4888184.iVzlIKQk94@wuerfel>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-13-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:55276 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753117AbbEOR1M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 May 2015 13:27:12 -0400
-In-Reply-To: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1431158038-3813-13-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org, peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm@linux-foundation.>
 List-Id: linux-gpio@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Shimoda-san,
-
-Thank you for the patch.
-
-On Thursday 14 May 2015 19:48:54 Yoshihiro Shimoda wrote:
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  This patch is based on linux-pinctrl.git / for-next branch.
->  (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
+On Saturday 09 May 2015 09:53:54 Maxime Coquelin wrote:
+> STMicrolectronics's STM32 series is a family of Cortex-M
+> microcontrollers. It is used in various applications, and
+> proposes a wide range of peripherals.
 > 
->  I will write a patch for r8a7791 PWM later because I'm not sure that
->  this patch is good or not.
-> 
->  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 101 ++++++++++++++++++++++++++++++++
->  1 file changed, 101 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c index 22a5470..baab81e 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> @@ -2664,6 +2664,61 @@ static const unsigned int msiof3_tx_b_pins[] = {
->  static const unsigned int msiof3_tx_b_mux[] = {
->  	MSIOF3_TXD_B_MARK,
->  };
-> +/* - PWM --------------------------------------------------------------- */
-> +static const unsigned int pwm0_pins[] = {
-> +	RCAR_GP_PIN(5, 29),
-> +};
-> +static const unsigned int pwm0_mux[] = {
-> +	PWM0_MARK,
-> +};
-> +static const unsigned int pwm0_b_pins[] = {
-> +	RCAR_GP_PIN(4, 30),
-> +};
-> +static const unsigned int pwm0_b_mux[] = {
-> +	PWM0_B_MARK,
-> +};
-> +static const unsigned int pwm1_pins[] = {
-> +	RCAR_GP_PIN(5, 30),
-> +};
-> +static const unsigned int pwm1_mux[] = {
-> +	PWM1_MARK,
-> +};
-> +static const unsigned int pwm1_b_pins[] = {
-> +	RCAR_GP_PIN(4, 31),
-> +};
-> +static const unsigned int pwm1_b_mux[] = {
-> +	PWM1_B_MARK,
-> +};
-> +static const unsigned int pwm2_pins[] = {
-> +	RCAR_GP_PIN(5, 31),
-> +};
-> +static const unsigned int pwm2_mux[] = {
-> +	PWM2_MARK,
-> +};
-> +static const unsigned int pwm3_pins[] = {
-> +	RCAR_GP_PIN(0, 16),
-> +};
-> +static const unsigned int pwm3_mux[] = {
-> +	PWM3_MARK,
-> +};
-> +static const unsigned int pwm4_pins[] = {
-> +	RCAR_GP_PIN(0, 17),
-> +};
-> +static const unsigned int pwm4_mux[] = {
-> +	PWM4_MARK,
-> +};
-> +static const unsigned int pwm5_pins[] = {
-> +	RCAR_GP_PIN(0, 18),
-> +};
-> +static const unsigned int pwm5_mux[] = {
-> +	PWM5_MARK,
-> +};
-> +static const unsigned int pwm6_pins[] = {
-> +	RCAR_GP_PIN(0, 19),
-> +};
-> +static const unsigned int pwm6_mux[] = {
-> +	PWM6_MARK,
-> +};
->  /* - QSPI -------------------------------------------------------------- */
-> static const unsigned int qspi_ctrl_pins[] = {
->  	/* SPCLK, SSL */
-> @@ -4008,6 +4063,15 @@ static const struct sh_pfc_pin_group pinmux_groups[]
-> = { SH_PFC_PIN_GROUP(msiof3_sync_b),
->  	SH_PFC_PIN_GROUP(msiof3_rx_b),
->  	SH_PFC_PIN_GROUP(msiof3_tx_b),
-> +	SH_PFC_PIN_GROUP(pwm0),
-> +	SH_PFC_PIN_GROUP(pwm0_b),
-> +	SH_PFC_PIN_GROUP(pwm1),
-> +	SH_PFC_PIN_GROUP(pwm1_b),
-> +	SH_PFC_PIN_GROUP(pwm2),
-> +	SH_PFC_PIN_GROUP(pwm3),
-> +	SH_PFC_PIN_GROUP(pwm4),
-> +	SH_PFC_PIN_GROUP(pwm5),
-> +	SH_PFC_PIN_GROUP(pwm6),
->  	SH_PFC_PIN_GROUP(qspi_ctrl),
->  	SH_PFC_PIN_GROUP(qspi_data2),
->  	SH_PFC_PIN_GROUP(qspi_data4),
-> @@ -4364,6 +4428,36 @@ static const char * const msiof3_groups[] = {
->  	"msiof3_tx_b",
->  };
-> 
-> +static const char * const pwm0_groups[] = {
-> +	"pwm0",
-> +	"pwm0_b",
-> +};
-> +
-> +static const char * const pwm1_groups[] = {
-> +	"pwm1",
-> +	"pwm1_b",
-> +};
-> +
-> +static const char * const pwm2_groups[] = {
-> +	"pwm2",
-> +};
-> +
-> +static const char * const pwm3_groups[] = {
-> +	"pwm3",
-> +};
-> +
-> +static const char * const pwm4_groups[] = {
-> +	"pwm4",
-> +};
-> +
-> +static const char * const pwm5_groups[] = {
-> +	"pwm5",
-> +};
-> +
-> +static const char * const pwm6_groups[] = {
-> +	"pwm6",
-> +};
-> +
->  static const char * const qspi_groups[] = {
->  	"qspi_ctrl",
->  	"qspi_data2",
-> @@ -4621,6 +4715,13 @@ static const struct sh_pfc_function
-> pinmux_functions[] = { SH_PFC_FUNCTION(msiof1),
->  	SH_PFC_FUNCTION(msiof2),
->  	SH_PFC_FUNCTION(msiof3),
-> +	SH_PFC_FUNCTION(pwm0),
-> +	SH_PFC_FUNCTION(pwm1),
-> +	SH_PFC_FUNCTION(pwm2),
-> +	SH_PFC_FUNCTION(pwm3),
-> +	SH_PFC_FUNCTION(pwm4),
-> +	SH_PFC_FUNCTION(pwm5),
-> +	SH_PFC_FUNCTION(pwm6),
->  	SH_PFC_FUNCTION(qspi),
->  	SH_PFC_FUNCTION(scif0),
->  	SH_PFC_FUNCTION(scif1),
+> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
--- 
-Regards,
+Applied to next/soc, thanks
 
-Laurent Pinchart
-
+	Arnd
