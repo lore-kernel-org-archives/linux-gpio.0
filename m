@@ -1,61 +1,177 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: Mediatek pinctrl driver optimize and add Mediatek SoC
- Pinctrl/GPIO/EINT driver for mt6397/mt8127.
-Date: Fri, 15 May 2015 23:09:13 +0800
-Message-ID: <1431702553.21788.9.camel@mtksdaap41>
-References: <1431567346-33780-1-git-send-email-hongzhou.yang@mediatek.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
+Date: Fri, 15 May 2015 20:27:20 +0300
+Message-ID: <2906250.XxqXE37H9S@avalon>
+References: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431567346-33780-1-git-send-email-hongzhou.yang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, Eddie Huang <eddie.huang@mediatek.com>, Howard Chen <ibanezchen@gmail.com>, Ashwin Chaugule <ashwin.chaugule@linaro.org>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infr
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55276 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753117AbbEOR1M (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 15 May 2015 13:27:12 -0400
+In-Reply-To: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, 2015-05-13 at 18:35 -0700, Hongzhou Yang wrote:
-> This series patches include below changes:
->   - Data struct optimize and remove unused member.
->   - Since several mediatek soc use similiar input enable/smt/pull setting, add those settings into common code.
->   - The first version of adding Mediatek SoC Pinctrl/GPIO driver for mt6397, mt6397 has 41 pins.
->   - The first version of adding Mediatek SoC Pinctrl/GPIO/EINT driver for mt8127, mt8127 has 143 pins.
+Hi Shimoda-san,
+
+Thank you for the patch.
+
+On Thursday 14 May 2015 19:48:54 Yoshihiro Shimoda wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  This patch is based on linux-pinctrl.git / for-next branch.
+>  (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
 > 
+>  I will write a patch for r8a7791 PWM later because I'm not sure that
+>  this patch is good or not.
 > 
-> Hongzhou Yang (6):
->   pinctrl: mediatek: add ies/smt control to common code.
->   dt-bindings: mediatek: Modify pinctrl bindings for mt6397.
->   pinctrl: mediatek: Add Pinctrl/GPIO driver for mt6397.
->   pinctrl: dt bindings: mt6397: Add pinfunc header file for mt6397.
->   arm64: dts: mt8173-evb: Add pinctrl/GPIO node for mt6397.
->   ARM: dts: mt8135-evbp1: Add pinctrl/GPIO node for mt6397.
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 101 ++++++++++++++++++++++++++++++++
+>  1 file changed, 101 insertions(+)
 > 
-> Yingjoe Chen (4):
->   pinctrl: mediatek: data struct optimize and remove unused member
->   pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common code
->   pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
->   ARM: dts: mt8127: add pinctrl/GPIO/EINT node for mt8127
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c index 22a5470..baab81e 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+> @@ -2664,6 +2664,61 @@ static const unsigned int msiof3_tx_b_pins[] = {
+>  static const unsigned int msiof3_tx_b_mux[] = {
+>  	MSIOF3_TXD_B_MARK,
+>  };
+> +/* - PWM --------------------------------------------------------------- */
+> +static const unsigned int pwm0_pins[] = {
+> +	RCAR_GP_PIN(5, 29),
+> +};
+> +static const unsigned int pwm0_mux[] = {
+> +	PWM0_MARK,
+> +};
+> +static const unsigned int pwm0_b_pins[] = {
+> +	RCAR_GP_PIN(4, 30),
+> +};
+> +static const unsigned int pwm0_b_mux[] = {
+> +	PWM0_B_MARK,
+> +};
+> +static const unsigned int pwm1_pins[] = {
+> +	RCAR_GP_PIN(5, 30),
+> +};
+> +static const unsigned int pwm1_mux[] = {
+> +	PWM1_MARK,
+> +};
+> +static const unsigned int pwm1_b_pins[] = {
+> +	RCAR_GP_PIN(4, 31),
+> +};
+> +static const unsigned int pwm1_b_mux[] = {
+> +	PWM1_B_MARK,
+> +};
+> +static const unsigned int pwm2_pins[] = {
+> +	RCAR_GP_PIN(5, 31),
+> +};
+> +static const unsigned int pwm2_mux[] = {
+> +	PWM2_MARK,
+> +};
+> +static const unsigned int pwm3_pins[] = {
+> +	RCAR_GP_PIN(0, 16),
+> +};
+> +static const unsigned int pwm3_mux[] = {
+> +	PWM3_MARK,
+> +};
+> +static const unsigned int pwm4_pins[] = {
+> +	RCAR_GP_PIN(0, 17),
+> +};
+> +static const unsigned int pwm4_mux[] = {
+> +	PWM4_MARK,
+> +};
+> +static const unsigned int pwm5_pins[] = {
+> +	RCAR_GP_PIN(0, 18),
+> +};
+> +static const unsigned int pwm5_mux[] = {
+> +	PWM5_MARK,
+> +};
+> +static const unsigned int pwm6_pins[] = {
+> +	RCAR_GP_PIN(0, 19),
+> +};
+> +static const unsigned int pwm6_mux[] = {
+> +	PWM6_MARK,
+> +};
+>  /* - QSPI -------------------------------------------------------------- */
+> static const unsigned int qspi_ctrl_pins[] = {
+>  	/* SPCLK, SSL */
+> @@ -4008,6 +4063,15 @@ static const struct sh_pfc_pin_group pinmux_groups[]
+> = { SH_PFC_PIN_GROUP(msiof3_sync_b),
+>  	SH_PFC_PIN_GROUP(msiof3_rx_b),
+>  	SH_PFC_PIN_GROUP(msiof3_tx_b),
+> +	SH_PFC_PIN_GROUP(pwm0),
+> +	SH_PFC_PIN_GROUP(pwm0_b),
+> +	SH_PFC_PIN_GROUP(pwm1),
+> +	SH_PFC_PIN_GROUP(pwm1_b),
+> +	SH_PFC_PIN_GROUP(pwm2),
+> +	SH_PFC_PIN_GROUP(pwm3),
+> +	SH_PFC_PIN_GROUP(pwm4),
+> +	SH_PFC_PIN_GROUP(pwm5),
+> +	SH_PFC_PIN_GROUP(pwm6),
+>  	SH_PFC_PIN_GROUP(qspi_ctrl),
+>  	SH_PFC_PIN_GROUP(qspi_data2),
+>  	SH_PFC_PIN_GROUP(qspi_data4),
+> @@ -4364,6 +4428,36 @@ static const char * const msiof3_groups[] = {
+>  	"msiof3_tx_b",
+>  };
+> 
+> +static const char * const pwm0_groups[] = {
+> +	"pwm0",
+> +	"pwm0_b",
+> +};
+> +
+> +static const char * const pwm1_groups[] = {
+> +	"pwm1",
+> +	"pwm1_b",
+> +};
+> +
+> +static const char * const pwm2_groups[] = {
+> +	"pwm2",
+> +};
+> +
+> +static const char * const pwm3_groups[] = {
+> +	"pwm3",
+> +};
+> +
+> +static const char * const pwm4_groups[] = {
+> +	"pwm4",
+> +};
+> +
+> +static const char * const pwm5_groups[] = {
+> +	"pwm5",
+> +};
+> +
+> +static const char * const pwm6_groups[] = {
+> +	"pwm6",
+> +};
+> +
+>  static const char * const qspi_groups[] = {
+>  	"qspi_ctrl",
+>  	"qspi_data2",
+> @@ -4621,6 +4715,13 @@ static const struct sh_pfc_function
+> pinmux_functions[] = { SH_PFC_FUNCTION(msiof1),
+>  	SH_PFC_FUNCTION(msiof2),
+>  	SH_PFC_FUNCTION(msiof3),
+> +	SH_PFC_FUNCTION(pwm0),
+> +	SH_PFC_FUNCTION(pwm1),
+> +	SH_PFC_FUNCTION(pwm2),
+> +	SH_PFC_FUNCTION(pwm3),
+> +	SH_PFC_FUNCTION(pwm4),
+> +	SH_PFC_FUNCTION(pwm5),
+> +	SH_PFC_FUNCTION(pwm6),
+>  	SH_PFC_FUNCTION(qspi),
+>  	SH_PFC_FUNCTION(scif0),
+>  	SH_PFC_FUNCTION(scif1),
 
+-- 
+Regards,
 
-Hi,
+Laurent Pinchart
 
-There are several patches in this series, and they should go to
-different trees. Will it be easier for maintainers if we rearrange
-patches in the following order?
-
-  dt-bindings: mediatek: Modify pinctrl bindings for mt6397.
-  pinctrl: dt bindings: mt6397: Add pinfunc header file for mt6397.
-  pinctrl: mediatek: data struct optimize and remove unused member
-  pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common code
-  pinctrl: mediatek: add ies/smt control to common code.
-  pinctrl: mediatek: add Pinctrl/GPIO driver for mt6397.
-  pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
-  mfd: mediatek: add GPIO sub module support into mfd.
-  ARM: dts: mt8127: add pinctrl/GPIO/EINT node for mt8127
-  arm64: dts: mt8173-evb: add pinctrl/GPIO node for mt6397.
-  ARM: dts: mt8135-evbp1: add pinctrl/GPIO node for mt6397.
-
-To avoid build fail, the last 2 should not be merged until the second
-one is merged into mainline.
-
-Joe.C
