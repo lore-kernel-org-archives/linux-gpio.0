@@ -1,40 +1,81 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
-Date: Fri, 15 May 2015 10:46:07 +0200
-Message-ID: <CAMuHMdWr5PkLwgDiwXJHgjC8TM8pAuDHa0EarY0cEctmNW_=Fg@mail.gmail.com>
-References: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: <grygorii.strashko@linaro.org>
+Subject: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Fri, 15 May 2015 16:25:21 +0300
+Message-ID: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Shimoda-san,
+From: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-On Thu, May 14, 2015 at 12:48 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  This patch is based on linux-pinctrl.git / for-next branch.
->  (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
->
->  I will write a patch for r8a7791 PWM later because I'm not sure that
->  this patch is good or not.
+Now GPIOs, wich are requested as IRQ only, will not be displayed
+through GPIO debugfs. For example:
+ # cat /proc/interrupts
+            CPU0       CPU1
+...
+209:          0          0  4805d000.gpio  11 Edge      0-0021
 
-Thanks, looks fine to me!
+ # cat /debug/gpio
+...
+GPIOs 160-191, platform/4805d000.gpio, gpio:
+<--- no info about gpio used as IRQ only here
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+GPIOs 192-223, platform/48051000.gpio, gpio:
+ gpio-203 (vtt_fixed           ) out hi
+...
 
-Gr{oetje,eeting}s,
+Hence, improve GPIO debugfs code to show such kind of gpio and print
+IRQ number also. In addition, add marker "requested" for GPIOs wich
+were requested by using gpioX_request().
 
-                        Geert
+After this patch sys/kernel/debug/gpio will produce following output:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ # cat /debug/gpio
+...
+GPIOs 160-191, platform/4805d000.gpio, gpio:
+ gpio-171 ((null)              ) in  hi IRQ209
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+GPIOs 192-223, platform/48051000.gpio, gpio:
+ gpio-203 (vtt_fixed           ) out hi requested
+
+Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 59eaa23..ea11706 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2259,19 +2259,23 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 	int			is_irq;
+ 
+ 	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
+-		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
++		if (!test_bit(FLAG_REQUESTED, &gdesc->flags) &&
++		    !test_bit(FLAG_USED_AS_IRQ, &gdesc->flags))
+ 			continue;
+ 
+ 		gpiod_get_direction(gdesc);
+ 		is_out = test_bit(FLAG_IS_OUT, &gdesc->flags);
+ 		is_irq = test_bit(FLAG_USED_AS_IRQ, &gdesc->flags);
+-		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s %s",
++		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s",
+ 			gpio, gdesc->label,
+ 			is_out ? "out" : "in ",
+ 			chip->get
+ 				? (chip->get(chip, i) ? "hi" : "lo")
+-				: "?  ",
+-			is_irq ? "IRQ" : "   ");
++				: "?  ");
++		if (is_irq)
++			seq_printf(s, " IRQ%d", gpiod_to_irq(gdesc));
++		if (test_bit(FLAG_REQUESTED, &gdesc->flags))
++			seq_puts(s, " requested");
+ 		seq_printf(s, "\n");
+ 	}
+ }
+-- 
+1.9.1
