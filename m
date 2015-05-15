@@ -1,26 +1,34 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v8 15/16] ARM: configs: Add STM32 defconfig
-Date: Fri, 15 May 2015 22:03:37 +0200
-Message-ID: <37337887.OlERAXq6R2@wuerfel>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-16-git-send-email-mcoquelin.stm32@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC v1 11/11] genirq: Pass irq_data to helper function
+ __irq_set_chip_handler_name_locked()
+Date: Fri, 15 May 2015 22:48:36 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1505152247280.4225@nanos>
+References: <1430709339-29083-1-git-send-email-jiang.liu@linux.intel.com> <1430709339-29083-12-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1431158038-3813-16-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, stefan-XLVq0VzYD2Y@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org, peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Andrew Morton <akpm@linux-foundation.>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <1430709339-29083-12-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?ISO-8859-15?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, James Hogan <james.hogan@imgtec.com>, Jason Cooper <jason@lakedaemon.net>, Manuel Lauss <manuel.lauss@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, x86@kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger
 List-Id: linux-gpio@vger.kernel.org
 
-On Saturday 09 May 2015 09:53:57 Maxime Coquelin wrote:
-> This patch adds a new config for STM32 MCUs.
-> STM32F429 Discovery board boots successfully with this config applied.
-> 
-> Tested-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
+On Mon, 4 May 2015, Jiang Liu wrote:
+>  /* caller has locked the irq_desc and both params are valid */
+>  static inline void
+> -__irq_set_chip_handler_name_locked(unsigned int irq, struct irq_chip *chip,
+> +__irq_set_chip_handler_name_locked(struct irq_data *data, struct irq_chip *chip,
+>  				   irq_flow_handler_t handler, const char *name)
+>  {
+>  	struct irq_desc *desc;
+>  
+> -	desc = irq_to_desc(irq);
+> -	irq_desc_get_irq_data(desc)->chip = chip;
+> +	desc = irq_to_desc(data->irq);
 
-Applied to next/defconfig, thanks!
+We should have a irq_data_to_desc() helper and use that instead of
+going through a full lookup again.
 
-	Arnd
+Thanks,
+
+	tglx
