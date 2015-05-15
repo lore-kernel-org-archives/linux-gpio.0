@@ -1,81 +1,61 @@
-From: <grygorii.strashko@linaro.org>
-Subject: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Fri, 15 May 2015 16:25:21 +0300
-Message-ID: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: Mediatek pinctrl driver optimize and add Mediatek SoC
+ Pinctrl/GPIO/EINT driver for mt6397/mt8127.
+Date: Fri, 15 May 2015 23:09:13 +0800
+Message-ID: <1431702553.21788.9.camel@mtksdaap41>
+References: <1431567346-33780-1-git-send-email-hongzhou.yang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431567346-33780-1-git-send-email-hongzhou.yang@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
+To: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, Eddie Huang <eddie.huang@mediatek.com>, Howard Chen <ibanezchen@gmail.com>, Ashwin Chaugule <ashwin.chaugule@linaro.org>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infr
 List-Id: linux-gpio@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@linaro.org>
+On Wed, 2015-05-13 at 18:35 -0700, Hongzhou Yang wrote:
+> This series patches include below changes:
+>   - Data struct optimize and remove unused member.
+>   - Since several mediatek soc use similiar input enable/smt/pull setting, add those settings into common code.
+>   - The first version of adding Mediatek SoC Pinctrl/GPIO driver for mt6397, mt6397 has 41 pins.
+>   - The first version of adding Mediatek SoC Pinctrl/GPIO/EINT driver for mt8127, mt8127 has 143 pins.
+> 
+> 
+> Hongzhou Yang (6):
+>   pinctrl: mediatek: add ies/smt control to common code.
+>   dt-bindings: mediatek: Modify pinctrl bindings for mt6397.
+>   pinctrl: mediatek: Add Pinctrl/GPIO driver for mt6397.
+>   pinctrl: dt bindings: mt6397: Add pinfunc header file for mt6397.
+>   arm64: dts: mt8173-evb: Add pinctrl/GPIO node for mt6397.
+>   ARM: dts: mt8135-evbp1: Add pinctrl/GPIO node for mt6397.
+> 
+> Yingjoe Chen (4):
+>   pinctrl: mediatek: data struct optimize and remove unused member
+>   pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common code
+>   pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
+>   ARM: dts: mt8127: add pinctrl/GPIO/EINT node for mt8127
 
-Now GPIOs, wich are requested as IRQ only, will not be displayed
-through GPIO debugfs. For example:
- # cat /proc/interrupts
-            CPU0       CPU1
-...
-209:          0          0  4805d000.gpio  11 Edge      0-0021
 
- # cat /debug/gpio
-...
-GPIOs 160-191, platform/4805d000.gpio, gpio:
-<--- no info about gpio used as IRQ only here
+Hi,
 
-GPIOs 192-223, platform/48051000.gpio, gpio:
- gpio-203 (vtt_fixed           ) out hi
-...
+There are several patches in this series, and they should go to
+different trees. Will it be easier for maintainers if we rearrange
+patches in the following order?
 
-Hence, improve GPIO debugfs code to show such kind of gpio and print
-IRQ number also. In addition, add marker "requested" for GPIOs wich
-were requested by using gpioX_request().
+  dt-bindings: mediatek: Modify pinctrl bindings for mt6397.
+  pinctrl: dt bindings: mt6397: Add pinfunc header file for mt6397.
+  pinctrl: mediatek: data struct optimize and remove unused member
+  pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common code
+  pinctrl: mediatek: add ies/smt control to common code.
+  pinctrl: mediatek: add Pinctrl/GPIO driver for mt6397.
+  pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
+  mfd: mediatek: add GPIO sub module support into mfd.
+  ARM: dts: mt8127: add pinctrl/GPIO/EINT node for mt8127
+  arm64: dts: mt8173-evb: add pinctrl/GPIO node for mt6397.
+  ARM: dts: mt8135-evbp1: add pinctrl/GPIO node for mt6397.
 
-After this patch sys/kernel/debug/gpio will produce following output:
+To avoid build fail, the last 2 should not be merged until the second
+one is merged into mainline.
 
- # cat /debug/gpio
-...
-GPIOs 160-191, platform/4805d000.gpio, gpio:
- gpio-171 ((null)              ) in  hi IRQ209
-
-GPIOs 192-223, platform/48051000.gpio, gpio:
- gpio-203 (vtt_fixed           ) out hi requested
-
-Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
----
- drivers/gpio/gpiolib.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59eaa23..ea11706 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2259,19 +2259,23 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	int			is_irq;
- 
- 	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
--		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-+		if (!test_bit(FLAG_REQUESTED, &gdesc->flags) &&
-+		    !test_bit(FLAG_USED_AS_IRQ, &gdesc->flags))
- 			continue;
- 
- 		gpiod_get_direction(gdesc);
- 		is_out = test_bit(FLAG_IS_OUT, &gdesc->flags);
- 		is_irq = test_bit(FLAG_USED_AS_IRQ, &gdesc->flags);
--		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s %s",
-+		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s",
- 			gpio, gdesc->label,
- 			is_out ? "out" : "in ",
- 			chip->get
- 				? (chip->get(chip, i) ? "hi" : "lo")
--				: "?  ",
--			is_irq ? "IRQ" : "   ");
-+				: "?  ");
-+		if (is_irq)
-+			seq_printf(s, " IRQ%d", gpiod_to_irq(gdesc));
-+		if (test_bit(FLAG_REQUESTED, &gdesc->flags))
-+			seq_puts(s, " requested");
- 		seq_printf(s, "\n");
- 	}
- }
--- 
-1.9.1
+Joe.C
