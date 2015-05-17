@@ -1,54 +1,60 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH] gpio: add ETRAXFS GPIO driver
-Date: Sat, 16 May 2015 15:59:27 +0200
-Message-ID: <1431784767.2341.28.camel@x220>
-References: <1431728843-21583-1-git-send-email-rabin@rab.in>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 0/6] UHS-I support for sh_mobile_sdhi
+Date: Sun, 17 May 2015 01:27:39 +0100
+Message-ID: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1431728843-21583-1-git-send-email-rabin@rab.in>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rabin Vincent <rabin@rab.in>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, 2015-05-16 at 00:27 +0200, Rabin Vincent wrote:
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
- 
-> +config GPIO_ETRAXFS
-> +	bool "Axis ETRAX FS General I/O"
-> +	depends on CRIS || COMPILE_TEST
-> +	depends on OF
-> +	select GPIO_GENERIC
-> +	help
-> +	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
+This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
+in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
+works on the R8A7790 Lager board and another development board.
 
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
+The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
+the pins wired to the SD card.  This is supported by adding separate
+functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
+that several SH SoCs have this capability, but I only have the R8A7790
+data sheet so I only implemented it for that one.
 
-> +obj-$(CONFIG_GPIO_ETRAXFS)	+= gpio-etraxfs.o
+Changes since the RFC:
+- Replace the 'regulator' devices for signal voltage switching with
+  pinctrl functions and states
+- Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
+  redundant
+- Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
+- Fix subject prefix for the DT changes
 
-GPIO_ETRAXFS is a bool symbol, so gpio-etraxfs.o can only be built-in,
-right?
+Ben.
 
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-etraxfs.c
+Ben Dooks (1):
+  ARM: shmobile: lager: Set sdhi and mmcif clock rates
 
-> +MODULE_DEVICE_TABLE(of, etraxfs_gpio_of_table);
+Ben Hutchings (5):
+  mmc: tmio: Add UHS-I mode support
+  pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
+  pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
+    operation
+  mmc: sh_mobile_sdhi: Add UHS-I mode support
+  ARM: shmobile: lager: Enable UHS-I SDR-50
 
-> +module_platform_driver(etraxfs_gpio_driver);
+ arch/arm/boot/dts/r8a7790-lager.dts  |   29 +++++++++++++-
+ drivers/mmc/host/sh_mobile_sdhi.c    |   58 ++++++++++++++++++++++++++++
+ drivers/mmc/host/tmio_mmc.h          |    3 ++
+ drivers/mmc/host/tmio_mmc_pio.c      |   31 +++++++++++++++
+ drivers/pinctrl/sh-pfc/core.c        |    2 +-
+ drivers/pinctrl/sh-pfc/core.h        |    1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   70 ++++++++++++++++++++++++++++++++--
+ drivers/pinctrl/sh-pfc/pinctrl.c     |    4 ++
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   10 ++++-
+ 9 files changed, 200 insertions(+), 8 deletions(-)
 
-(A patch was submitted that would allow built-in only code to use
-builtin_platform_driver(), see https://lkml.org/lkml/2015/5/10/125 .) 
-
-> +MODULE_DESCRIPTION("ETRAX FS GPIO driver");
-> +MODULE_LICENSE("GPL");
-
-But the code this patch adds contains a bit of module specific
-boilerplate. Was it perhaps your intention to make GPIO_ETRAXFS
-tristate?
+-- 
+1.7.10.4
 
 
-Paul Bolle
+
