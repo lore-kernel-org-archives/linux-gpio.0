@@ -1,118 +1,110 @@
-From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v3 2/7] mmc: mediatek: Add Mediatek MMC driver
-Date: Sun, 17 May 2015 17:40:54 +0800
-Message-ID: <1431855654.26820.11.camel@mhfsdcap03>
-References: <1430214525-19198-1-git-send-email-chaotian.jing@mediatek.com>
- <1430214525-19198-3-git-send-email-chaotian.jing@mediatek.com>
- <CAPDyKFq=R9B6ZHHgmDcSg-TNSfqQKAUKc2NjACvpwxFpmk954g@mail.gmail.com>
- <1430895299.15154.9.camel@mhfsdcap03>
- <CAPDyKFr+FTXAzYVn3F41dmw2zW01pSbSHPfGJHXbUFLJfvQ5CA@mail.gmail.com>
- <1430962956.15154.48.camel@mhfsdcap03>
- <CAPDyKFr5N_08HbLuY=4Wfv1BoVQLVR-VW+NKh_umL1hzi_KozA@mail.gmail.com>
- <1431335885.26820.7.camel@mhfsdcap03>
- <CAPDyKFqeAzjpbZsyfcwb_WarC=dzoCsEeLTmxAbtvOo3Y4cYyg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CAPDyKFqeAzjpbZsyfcwb_WarC=dzoCsEeLTmxAbtvOo3Y4cYyg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, srv_heupstream <srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Bin Zhang =?UTF-8?Q?=28=E7=AB=A0=E6=96=8C=29?= <bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kern>
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: [PATCH v3 00/17] new LoCoMo driver set
+Date: Sun, 17 May 2015 19:27:40 +0300
+Message-ID: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:33755 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750775AbbEQQ2V (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 17 May 2015 12:28:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Mon, 2015-05-11 at 12:29 +0200, Ulf Hansson wrote:
-> On 11 May 2015 at 11:18, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> > On Fri, 2015-05-08 at 14:12 +0200, Ulf Hansson wrote:
-> >> On 7 May 2015 at 03:42, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> >> > Dear Ulf,
-> >> >
-> >> > Thanks!
-> >> > Below is my comment:
-> >> >
-> >> > On Wed, 2015-05-06 at 18:31 +0200, Ulf Hansson wrote:
-> >> >> On 6 May 2015 at 08:54, chaotian.jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> >> >> > Dear Ulf,
-> >> >> >
-> >> >> > Thanks for your review.
-> >> >> > I must do a explain of our MMC host:
-> >> >> > Source clock is source clock of the MMC bus, MMC host has a divider to
-> >> >> > get different bus clock frequency. now the runtime suspend is gating
-> >> >> > this clock.
-> >> >> >
-> >> >> > Hclk is the power domain of the MMC host, if Hclk is gated, the MMC host
-> >> >> > cannot work(all registers readout is zero). and, all registers would be
-> >> >> > reset to default value if Hclk is gated/ungated.
-> >> >> > At MT8173, MSDC0 and MSDC2 has independent Hclk, MSDC1 and MSDC3's Hclk
-> >> >> > was controlled by "Infra module".
-> >> > Sorry for mistake, MSDC0 and MSDC3 has independent Hclk, MSDC1 and
-> >> > MSDC2's Hclk was controlled by "Infra module". the Infra module is a
-> >> > "power saving module", when the system go to sleep, Infra module will be
-> >> > set and MSDC1 & MSDC2's Hclk will be gated automatically.
-> >> >>
-> >> >> Thanks for clarifying!
-> >> >>
-> >> >> I don't have enough knowledge about your SoC to understand the detail,
-> >> >> but it seems like we are mixing clocks and power domains. I would
-> >> >> rather keep this separate - if the HW allows it.
-> >> >>
-> >> >> I guess the key question I have is the following:
-> >> >> 1) Is it hardware wise possible to gate the hclk, but without gating
-> >> >> the power domain?
-> >> >> 2) At what level is the reference counting done for each device in the
-> >> >> power domain? In HW or in sofftware?
-> >> >>
-> >> >
-> >> > Actually, Our MMC host do not have power domain, all the control of the
-> >> > host is the Hclk.
-> >>
-> >> Okay, but I am not sure that fully answered my question.
-> >>
-> >> You said that hclk will be gated when the power domain gets gated. And
-> >> the power domain (infra module, right?) will be gated at system PM
-> >> sleep. And when that happens the mmc controller loses register
-> >> context.
-> >>
-> >> But, again, can hclk be gated without gating the power domain?
-> >>
-> >> No matter what, it seems like a good idea to gate the power domain
-> >> when all clients of it are idle. Yes we would need to manage register
-> >> save/restore context, but on the other hand allow you to save more
-> >> power, right?
-> >>
-> > For MSDC0 & MSDC3, it has independent HCLK, do not have power domain.
-> > For MSDC1 & MSDC2, its HCLK was controlled by Infra module(This is a big
-> > power domain for many modules).
-> > So, for msdc0 & msdc3, we can control its Hclk, for msdc1 & msdc2, we
-> > cannot control it.
-> 
-> Okay, thanks for the clarification!
-> 
-> >
-> > Yes, I will do gate/ungate HCLK & source clock in PM.
-> > In addition, Since the gate/ungate HCLK is done by runtime PM, and all
-> > register operation should work at HCLK is on, so the msdc_init_hw() only
-> > can be called at set_ios(), because in probe(), the HCLK may have not
-> > been enabled.
-> 
-> I suggest you to enable HCLK in ->probe() and thus you may also call
-> msdc_init_hw() from there.
-> 
-> This should simplify for you, when adding the runtime PM support.
+Sharp Zaurus SL-5500 and SL-5600 use special companion Gate Array.
+With this patchset I tried to modernise and restructure the LoCoMo drivers.
 
-Yes, I will enable HCLK in ->probe(), but still need call msdc_init_hw()
-in set_ios(), because SD hot plug need it when inserted.
-In addition, it seems that still need sclk_enabled and hclk_enabled to
-judge if clock already enabled, because not only the runtime PM will
-call it.
-> 
-> Kind regards
-> Uffe
+* Use platform bus and mfd core code
+* Use GPIO API instead of custom locomo GPIO code
+* Use irqdomains to manage IRQs
+* Split mixed locomolcd driver to lcd and backlight parts
+* Implement IRQ handling in GPIO driver
+* Implement SPI driver used as a host for mmc_spi device to control SD cards
+
+Changes since V2:
+* Implemented most of review findings (lots of small changes)
+* Added comments where the review feedback was ignored
+
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
+
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/dbaryshkov/zaurus.git locomo-v3
+
+for you to fetch changes up to c7405f110836863287c505650ac2133fecabea7b:
+
+  ARM: drop old LoCoMo driver (2015-05-17 19:23:20 +0300)
+
+----------------------------------------------------------------
+Dmitry Eremin-Solenikov (17):
+      mfd: add new driver for Sharp LoCoMo
+      leds: port locomo leds driver to new locomo core
+      input: convert LoCoMo keyboard driver to use new locomo core
+      input: make LoCoMo keyboard driver support both poodle and collie
+      video: backlight: add new locomo backlight driver
+      video: lcd: add LoCoMo LCD driver
+      gpio: port LoCoMo gpio support from old driver
+      gpio: locomo: implement per-pin irq handling
+      spi: add locomo SPI driver
+      i2c: add locomo i2c driver
+      ARM: sa1100: make collie use new locomo drivers
+      ARM: sa1100: don't preallocate IRQ space for locomo
+      ASoC: pxa: poodle: make use of new locomo GPIO interface
+      ARM: pxa: poodle: use new LoCoMo driver
+      ARM: pxa: poodle: don't preallocate IRQ space for locomo
+      video: backlight: drop old locomo bl/lcd driver
+      ARM: drop old LoCoMo driver
+
+ arch/arm/common/Kconfig                    |   3 -
+ arch/arm/common/Makefile                   |   1 -
+ arch/arm/common/locomo.c                   | 914 -----------------------------
+ arch/arm/include/asm/hardware/locomo.h     | 221 -------
+ arch/arm/mach-pxa/Kconfig                  |   1 -
+ arch/arm/mach-pxa/include/mach/poodle.h    |   8 +-
+ arch/arm/mach-pxa/poodle.c                 |  58 +-
+ arch/arm/mach-sa1100/Kconfig               |   1 -
+ arch/arm/mach-sa1100/collie.c              | 213 +++++--
+ arch/arm/mach-sa1100/include/mach/collie.h |  16 +-
+ arch/arm/mach-sa1100/include/mach/irqs.h   |  19 +-
+ drivers/gpio/Kconfig                       |  13 +
+ drivers/gpio/Makefile                      |   1 +
+ drivers/gpio/gpio-locomo.c                 | 285 +++++++++
+ drivers/i2c/busses/Kconfig                 |  12 +
+ drivers/i2c/busses/Makefile                |   1 +
+ drivers/i2c/busses/i2c-locomo.c            | 135 +++++
+ drivers/input/keyboard/Kconfig             |   2 +-
+ drivers/input/keyboard/locomokbd.c         | 264 ++++-----
+ drivers/leds/Kconfig                       |   2 +-
+ drivers/leds/leds-locomo.c                 | 117 ++--
+ drivers/mfd/Kconfig                        |  10 +
+ drivers/mfd/Makefile                       |   1 +
+ drivers/mfd/locomo.c                       | 346 +++++++++++
+ drivers/spi/Kconfig                        |  10 +
+ drivers/spi/Makefile                       |   1 +
+ drivers/spi/spi-locomo.c                   | 332 +++++++++++
+ drivers/video/backlight/Kconfig            |  16 +-
+ drivers/video/backlight/Makefile           |   3 +-
+ drivers/video/backlight/locomo_bl.c        | 153 +++++
+ drivers/video/backlight/locomo_lcd.c       | 285 +++++++++
+ drivers/video/backlight/locomolcd.c        | 255 --------
+ include/linux/mfd/locomo.h                 | 167 ++++++
+ sound/soc/pxa/poodle.c                     |  52 +-
+ 34 files changed, 2216 insertions(+), 1702 deletions(-)
+ delete mode 100644 arch/arm/common/locomo.c
+ delete mode 100644 arch/arm/include/asm/hardware/locomo.h
+ create mode 100644 drivers/gpio/gpio-locomo.c
+ create mode 100644 drivers/i2c/busses/i2c-locomo.c
+ create mode 100644 drivers/mfd/locomo.c
+ create mode 100644 drivers/spi/spi-locomo.c
+ create mode 100644 drivers/video/backlight/locomo_bl.c
+ create mode 100644 drivers/video/backlight/locomo_lcd.c
+ delete mode 100644 drivers/video/backlight/locomolcd.c
+ create mode 100644 include/linux/mfd/locomo.h
+
+-- 
+With best wishes
+Dmitry
+
