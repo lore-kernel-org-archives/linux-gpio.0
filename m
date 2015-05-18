@@ -1,76 +1,71 @@
-From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 04/17] input: make LoCoMo keyboard driver support both
- poodle and collie
-Date: Mon, 18 May 2015 09:50:58 -0700
-Message-ID: <20150518165058.GB19708@dtor-ws>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
- <1431880077-26321-5-git-send-email-dbaryshkov@gmail.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH 4/6] mmc: sh_mobile_sdhi: Add UHS-I mode support
+Date: Mon, 18 May 2015 18:00:15 +0100
+Message-ID: <1431968415.1970.4.camel@codethink.co.uk>
+References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
+	 <1431822549.4222.171.camel@xylophone.i.decadent.org.uk>
+	 <87d21yu27f.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1431880077-26321-5-git-send-email-dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <87d21yu27f.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, May 17, 2015 at 07:27:44PM +0300, Dmitry Eremin-Solenikov wrote:
-> Keyboards on collie and poodle differ only in wiring of 'Home' key.
-> Instead of complicating the driver with platform data, just check for
-> the machine for the time being. This will be converted to DTS property
-> sometime in the future.
+On Mon, 2015-05-18 at 01:05 +0000, Kuninori Morimoto wrote:
+> Hi Ben
 > 
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-> ---
->  drivers/input/keyboard/locomokbd.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+> > Implement voltage switch, supporting modes up to SDR-50.
+> > 
+> > Based on work by Shinobu Uehara, Rob Taylor, William Towle and Ian Molton.
+> > 
+> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > ---
 > 
-> diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
-> index 1657bc0..b422608 100644
-> --- a/drivers/input/keyboard/locomokbd.c
-> +++ b/drivers/input/keyboard/locomokbd.c
-> @@ -33,6 +33,9 @@
->  #include <linux/slab.h>
->  #include <linux/mfd/locomo.h>
->  
-> +/* There is one minor difference between mappings on poodle and collie */
-> +#include <asm/mach-types.h>
-> +
->  #define KEY_ACTIVITY		KEY_F16
->  #define KEY_CONTACT		KEY_F18
->  #define KEY_CENTER		KEY_F15
-> @@ -45,7 +48,7 @@
->  static const unsigned char
->  locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
->  	0, KEY_ESC, KEY_ACTIVITY, 0, 0, 0, 0, 0, 0, 0,				/* 0 - 9 */
-> -	0, 0, 0, 0, 0, 0, 0, KEY_MENU, KEY_HOME, KEY_CONTACT,			/* 10 - 19 */
-> +	0, 0, 0, 0, 0, 0, 0, KEY_MENU, 0, KEY_CONTACT,				/* 10 - 19 */
->  	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,						/* 20 - 29 */
->  	0, 0, 0, KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,				/* 30 - 39 */
->  	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
-> @@ -278,6 +281,11 @@ static int locomokbd_probe(struct platform_device *dev)
->  			locomokbd_keycode,
->  			sizeof(locomokbd->keycode));
->  
-> +	if (machine_is_collie())
-> +		locomokbd->keycode[18] = KEY_HOME;
-> +	else
-> +		locomokbd->keycode[3] = KEY_HOME;
-> +
->  	for (i = 0; i < LOCOMOKBD_NUMKEYS; i++)
->  		input_set_capability(input_dev, EV_KEY, locomokbd->keycode[i]);
->  	input_set_capability(input_dev, EV_PWR, KEY_SUSPEND);
-> -- 
-> 2.1.4
+> I have 1 concern about .start_signal_voltage_switch return value
 > 
+> > +static int sh_mobile_sdhi_start_signal_voltage_switch(
+> > +	struct tmio_mmc_host *host, unsigned char signal_voltage)
+> > +{
+> > +	struct sh_mobile_sdhi *priv = host_to_priv(host);
+> > +	struct pinctrl_state *state;
+> > +	int min_uV, max_uV;
+> > +	int ret;
+> > +
+> > +	if (IS_ERR(priv->pinctrl) || IS_ERR(host->mmc->supply.vqmmc))
+> > +		return -EOPNOTSUPP;
+> (snip)
+> > @@ -239,6 +293,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
+> >  	host->clk_enable	= sh_mobile_sdhi_clk_enable;
+> >  	host->clk_disable	= sh_mobile_sdhi_clk_disable;
+> >  	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
+> > +
+> > +	host->start_signal_voltage_switch
+> > +				= sh_mobile_sdhi_start_signal_voltage_switch;
+> > +
+> 
+> This sh_mobile_sdhi_start_signal_voltage_switch() will return -EOPNOTSUPP
+> if IS_ERR(xx) cases, and it will be used on .tmio_mmc_start_signal_voltage_switch /
+> mmc_set_signal_voltage. These will think it is error and goes to error case or try again.
+> But, not supported is not error ?
 
--- 
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It is if we need to switch to a lower voltage.
+
+> Maybe we need this kind of code somewhere ? (ex. ALSA SoC has similar method)
+> 
+> 	/* EOPNOTSUPP is not error */
+> 	if (ret == -EOPNOTSUPP)
+> 		ret = 0;
+> 
+> I have no objection if my concern never happen.
+
+I think the driver should do something like this if the requested
+voltage is MMC_SIGNAL_VOLTAGE_330.  I'll fix that in the next version.
+
+Ben.
+
+
+
