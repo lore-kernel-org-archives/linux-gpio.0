@@ -1,36 +1,62 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v3 02/17] leds: port locomo leds driver to new locomo core
-Date: Mon, 18 May 2015 10:37:51 +0200
-Message-ID: <5559A4DF.3010101@samsung.com>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
- <1431880077-26321-3-git-send-email-dbaryshkov@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Mon, 18 May 2015 13:02:14 +0200
+Message-ID: <20150518110214.GC28127@localhost>
+References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27412 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750988AbbERIh6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2015 04:37:58 -0400
-In-reply-to: <1431880077-26321-3-git-send-email-dbaryshkov@gmail.com>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:32974 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751203AbbERLCR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2015 07:02:17 -0400
+Content-Disposition: inline
+In-Reply-To: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
+To: grygorii.strashko@linaro.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dmitry,
-
-On 05/17/2015 06:27 PM, Dmitry Eremin-Solenikov wrote:
-> Adapt locomo leds driver to new locomo core setup.
+On Fri, May 15, 2015 at 04:25:21PM +0300, grygorii.strashko@linaro.org wrote:
+> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+> 
+> Now GPIOs, wich are requested as IRQ only, will not be displayed
+> through GPIO debugfs. For example:
+>  # cat /proc/interrupts
+>             CPU0       CPU1
+> ...
+> 209:          0          0  4805d000.gpio  11 Edge      0-0021
+> 
+>  # cat /debug/gpio
+> ...
+> GPIOs 160-191, platform/4805d000.gpio, gpio:
+> <--- no info about gpio used as IRQ only here
+> 
+> GPIOs 192-223, platform/48051000.gpio, gpio:
+>  gpio-203 (vtt_fixed           ) out hi
+> ...
+> 
+> Hence, improve GPIO debugfs code to show such kind of gpio and print
+> IRQ number also. In addition, add marker "requested" for GPIOs wich
+> were requested by using gpioX_request().
 >
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> ---
->   drivers/leds/Kconfig       |   2 +-
->   drivers/leds/leds-locomo.c | 117 +++++++++++++++++++++++----------------------
->   2 files changed, 61 insertions(+), 58 deletions(-)
+> After this patch sys/kernel/debug/gpio will produce following output:
+> 
+>  # cat /debug/gpio
+> ...
+> GPIOs 160-191, platform/4805d000.gpio, gpio:
+>  gpio-171 ((null)              ) in  hi IRQ209
+> 
+> GPIOs 192-223, platform/48051000.gpio, gpio:
+>  gpio-203 (vtt_fixed           ) out hi requested
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+This is backwards. All gpios *should* be requested. *If* we are to
+include not-requested gpios in the debug output, then it is those pins
+that need to be marked as not-requested.
 
--- 
-Best Regards,
-Jacek Anaszewski
+The irq-number mapping could perhaps be useful, but it should go in a
+separate patch. I'd suggest adding a '-' before the irq-number (e.g.
+"IRQ-209").
+
+Thanks,
+Johan
