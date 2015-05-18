@@ -1,71 +1,138 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH 4/6] mmc: sh_mobile_sdhi: Add UHS-I mode support
-Date: Mon, 18 May 2015 18:00:15 +0100
-Message-ID: <1431968415.1970.4.camel@codethink.co.uk>
-References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
-	 <1431822549.4222.171.camel@xylophone.i.decadent.org.uk>
-	 <87d21yu27f.wl%kuninori.morimoto.gx@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <87d21yu27f.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
+From: Colin Cronin <colinpatrickcronin@gmail.com>
+Subject: [PATCH] Drivers: gpio: gpio-lynxpoint, gpio-pca953x, gpio-tegra, gpio-zynq, gpiolib-of, gpiolib: Fixed spelling errors
+Date: Mon, 18 May 2015 11:41:43 -0700
+Message-ID: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, colinpatrickcronin@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2015-05-18 at 01:05 +0000, Kuninori Morimoto wrote:
-> Hi Ben
-> 
-> > Implement voltage switch, supporting modes up to SDR-50.
-> > 
-> > Based on work by Shinobu Uehara, Rob Taylor, William Towle and Ian Molton.
-> > 
-> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > ---
-> 
-> I have 1 concern about .start_signal_voltage_switch return value
-> 
-> > +static int sh_mobile_sdhi_start_signal_voltage_switch(
-> > +	struct tmio_mmc_host *host, unsigned char signal_voltage)
-> > +{
-> > +	struct sh_mobile_sdhi *priv = host_to_priv(host);
-> > +	struct pinctrl_state *state;
-> > +	int min_uV, max_uV;
-> > +	int ret;
-> > +
-> > +	if (IS_ERR(priv->pinctrl) || IS_ERR(host->mmc->supply.vqmmc))
-> > +		return -EOPNOTSUPP;
-> (snip)
-> > @@ -239,6 +293,10 @@ static int sh_mobile_sdhi_probe(struct platform_device *pdev)
-> >  	host->clk_enable	= sh_mobile_sdhi_clk_enable;
-> >  	host->clk_disable	= sh_mobile_sdhi_clk_disable;
-> >  	host->multi_io_quirk	= sh_mobile_sdhi_multi_io_quirk;
-> > +
-> > +	host->start_signal_voltage_switch
-> > +				= sh_mobile_sdhi_start_signal_voltage_switch;
-> > +
-> 
-> This sh_mobile_sdhi_start_signal_voltage_switch() will return -EOPNOTSUPP
-> if IS_ERR(xx) cases, and it will be used on .tmio_mmc_start_signal_voltage_switch /
-> mmc_set_signal_voltage. These will think it is error and goes to error case or try again.
-> But, not supported is not error ?
+Fixed several spelling errors
 
-It is if we need to switch to a lower voltage.
+Signed-off-by: Colin Cronin <colinpatrickcronin@gmail.com>
+---
+ drivers/gpio/gpio-lynxpoint.c |  2 +-
+ drivers/gpio/gpio-pca953x.c   |  2 +-
+ drivers/gpio/gpio-tegra.c     |  2 +-
+ drivers/gpio/gpio-zynq.c      |  2 +-
+ drivers/gpio/gpiolib-of.c     |  2 +-
+ drivers/gpio/gpiolib.c        | 10 +++++-----
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-> Maybe we need this kind of code somewhere ? (ex. ALSA SoC has similar method)
-> 
-> 	/* EOPNOTSUPP is not error */
-> 	if (ret == -EOPNOTSUPP)
-> 		ret = 0;
-> 
-> I have no objection if my concern never happen.
-
-I think the driver should do something like this if the requested
-voltage is MMC_SIGNAL_VOLTAGE_330.  I'll fix that in the next version.
-
-Ben.
-
-
-
+diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
+index 127c755..153af46 100644
+--- a/drivers/gpio/gpio-lynxpoint.c
++++ b/drivers/gpio/gpio-lynxpoint.c
+@@ -72,7 +72,7 @@ struct lp_gpio {
+  *
+  * per gpio specific registers consist of two 32bit registers per gpio
+  * (LP_CONFIG1 and LP_CONFIG2), with 94 gpios there's a total of
+- * 188 config registes.
++ * 188 config registers.
+  *
+  * A simplified view of the register layout look like this:
+  *
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index e2da64a..eed4203 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -630,7 +630,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
+ 		memset(val, 0, NBANK(chip));
+ 	pca953x_write_regs(chip, PCA957X_INVRT, val);
+ 
+-	/* To enable register 6, 7 to controll pull up and pull down */
++	/* To enable register 6, 7 to control pull up and pull down */
+ 	memset(val, 0x02, NBANK(chip));
+ 	pca953x_write_regs(chip, PCA957X_BKEN, val);
+ 
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 1741981..a19f81a 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -288,7 +288,7 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 			tegra_gpio_writel(1 << pin, GPIO_INT_CLR(gpio));
+ 
+ 			/* if gpio is edge triggered, clear condition
+-			 * before executing the hander so that we don't
++			 * before executing the handler so that we don't
+ 			 * miss edges
+ 			 */
+ 			if (lvl & (0x100 << pin)) {
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 184c4b1..0d9663f 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -335,7 +335,7 @@ static void zynq_gpio_irq_ack(struct irq_data *irq_data)
+  * @irq_data:	irq data containing irq number of gpio pin for the interrupt
+  *		to enable
+  *
+- * Clears the INTSTS bit and unmasks the given interrrupt.
++ * Clears the INTSTS bit and unmasks the given interrupt.
+  */
+ static void zynq_gpio_irq_enable(struct irq_data *irq_data)
+ {
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6c67c6..9a0ec48 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -242,7 +242,7 @@ int of_gpio_simple_xlate(struct gpio_chip *gc,
+ {
+ 	/*
+ 	 * We're discouraging gpio_cells < 2, since that way you'll have to
+-	 * write your own xlate function (that will have to retrive the GPIO
++	 * write your own xlate function (that will have to retrieve the GPIO
+ 	 * number and the flags from a single gpio cell -- this is possible,
+ 	 * but not recommended).
+ 	 */
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 59eaa23..3175c60 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -606,7 +606,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 	of_node = gpiochip->dev->of_node;
+ #ifdef CONFIG_OF_GPIO
+ 	/*
+-	 * If the gpiochip has an assigned OF node this takes precendence
++	 * If the gpiochip has an assigned OF node this takes precedence
+ 	 * FIXME: get rid of this and use gpiochip->dev->of_node everywhere
+ 	 */
+ 	if (gpiochip->of_node)
+@@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_value);
+ /*
+  *  _gpio_set_open_drain_value() - Set the open drain gpio's value.
+  * @desc: gpio descriptor whose state need to be set.
+- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
++ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
+  */
+ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
+ {
+@@ -1236,7 +1236,7 @@ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
+ /*
+  *  _gpio_set_open_source_value() - Set the open source gpio's value.
+  * @desc: gpio descriptor whose state need to be set.
+- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
++ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
+  */
+ static void _gpio_set_open_source_value(struct gpio_desc *desc, bool value)
+ {
+@@ -1878,7 +1878,7 @@ EXPORT_SYMBOL_GPL(gpiod_count);
+  *
+  * Return the GPIO descriptor corresponding to the function con_id of device
+  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
+- * another IS_ERR() code if an error occured while trying to acquire the GPIO.
++ * another IS_ERR() code if an error occurred while trying to acquire the GPIO.
+  */
+ struct gpio_desc *__must_check __gpiod_get(struct device *dev, const char *con_id,
+ 					 enum gpiod_flags flags)
+@@ -1958,7 +1958,7 @@ static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+  *
+  * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
+  * requested function and/or index, or another IS_ERR() code if an error
+- * occured while trying to acquire the GPIO.
++ * occurred while trying to acquire the GPIO.
+  */
+ struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
+ 					       const char *con_id,
+-- 
+1.9.1
