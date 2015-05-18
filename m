@@ -1,138 +1,62 @@
-From: Colin Cronin <colinpatrickcronin@gmail.com>
-Subject: [PATCH] Drivers: gpio: gpio-lynxpoint, gpio-pca953x, gpio-tegra, gpio-zynq, gpiolib-of, gpiolib: Fixed spelling errors
-Date: Mon, 18 May 2015 11:41:43 -0700
-Message-ID: <1431974503-14181-1-git-send-email-colinpatrickcronin@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, colinpatrickcronin@gmail.com
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH 5/6] ARM: shmobile: lager: Set sdhi and mmcif clock rates
+Date: Mon, 18 May 2015 20:48:44 +0100
+Message-ID: <1431978524.22824.6.camel@codethink.co.uk>
+References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
+	 <1431822574.4222.172.camel@xylophone.i.decadent.org.uk>
+	 <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:38346 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932375AbbERTsu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2015 15:48:50 -0400
+In-Reply-To: <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ian Molton <ian@mnementh.co.uk>, Linux MMC List <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
 
-Fixed several spelling errors
+On Sun, 2015-05-17 at 10:13 +0200, Geert Uytterhoeven wrote:
+> On Sun, May 17, 2015 at 2:29 AM, Ben Hutchings
+> <ben.hutchings@codethink.co.uk> wrote:
+> > From: Ben Dooks <ben.dooks@codethink.co.uk>
+> >
+> > [bwh: Fold in fix from Ian Molton]
+> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > ---
+> >  arch/arm/boot/dts/r8a7790-lager.dts |   11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> > index aaa4f258e279..343ec0ccc8df 100644
+> > --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> > +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> > @@ -413,6 +413,11 @@
+> >         vmmc-supply = <&fixedregulator3v3>;
+> >         bus-width = <8>;
+> >         non-removable;
+> > +
+> > +       assigned-clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
+> > +       assigned-clock-rates = <97500000>;
+> > +       max-frequency = <50000000>;
+> 
+> Are all these properties Lager-specific, or r8a7790-specific?
+> If the latter, they belong in r8a7790.dtsi.
+> Same comment for the other nodes.
 
-Signed-off-by: Colin Cronin <colinpatrickcronin@gmail.com>
----
- drivers/gpio/gpio-lynxpoint.c |  2 +-
- drivers/gpio/gpio-pca953x.c   |  2 +-
- drivers/gpio/gpio-tegra.c     |  2 +-
- drivers/gpio/gpio-zynq.c      |  2 +-
- drivers/gpio/gpiolib-of.c     |  2 +-
- drivers/gpio/gpiolib.c        | 10 +++++-----
- 6 files changed, 10 insertions(+), 10 deletions(-)
+The clock assignments are not specific to Lager so they probably belong
+in r8a7790.dtsi; the dividers are configurable and could be
+board-specific.
 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index 127c755..153af46 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -72,7 +72,7 @@ struct lp_gpio {
-  *
-  * per gpio specific registers consist of two 32bit registers per gpio
-  * (LP_CONFIG1 and LP_CONFIG2), with 94 gpios there's a total of
-- * 188 config registes.
-+ * 188 config registers.
-  *
-  * A simplified view of the register layout look like this:
-  *
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index e2da64a..eed4203 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -630,7 +630,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
- 		memset(val, 0, NBANK(chip));
- 	pca953x_write_regs(chip, PCA957X_INVRT, val);
- 
--	/* To enable register 6, 7 to controll pull up and pull down */
-+	/* To enable register 6, 7 to control pull up and pull down */
- 	memset(val, 0x02, NBANK(chip));
- 	pca953x_write_regs(chip, PCA957X_BKEN, val);
- 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1741981..a19f81a 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -288,7 +288,7 @@ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 			tegra_gpio_writel(1 << pin, GPIO_INT_CLR(gpio));
- 
- 			/* if gpio is edge triggered, clear condition
--			 * before executing the hander so that we don't
-+			 * before executing the handler so that we don't
- 			 * miss edges
- 			 */
- 			if (lvl & (0x100 << pin)) {
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 184c4b1..0d9663f 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -335,7 +335,7 @@ static void zynq_gpio_irq_ack(struct irq_data *irq_data)
-  * @irq_data:	irq data containing irq number of gpio pin for the interrupt
-  *		to enable
-  *
-- * Clears the INTSTS bit and unmasks the given interrrupt.
-+ * Clears the INTSTS bit and unmasks the given interrupt.
-  */
- static void zynq_gpio_irq_enable(struct irq_data *irq_data)
- {
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6c67c6..9a0ec48 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -242,7 +242,7 @@ int of_gpio_simple_xlate(struct gpio_chip *gc,
- {
- 	/*
- 	 * We're discouraging gpio_cells < 2, since that way you'll have to
--	 * write your own xlate function (that will have to retrive the GPIO
-+	 * write your own xlate function (that will have to retrieve the GPIO
- 	 * number and the flags from a single gpio cell -- this is possible,
- 	 * but not recommended).
- 	 */
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59eaa23..3175c60 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -606,7 +606,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	of_node = gpiochip->dev->of_node;
- #ifdef CONFIG_OF_GPIO
- 	/*
--	 * If the gpiochip has an assigned OF node this takes precendence
-+	 * If the gpiochip has an assigned OF node this takes precedence
- 	 * FIXME: get rid of this and use gpiochip->dev->of_node everywhere
- 	 */
- 	if (gpiochip->of_node)
-@@ -1209,7 +1209,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_value);
- /*
-  *  _gpio_set_open_drain_value() - Set the open drain gpio's value.
-  * @desc: gpio descriptor whose state need to be set.
-- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
-+ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
-  */
- static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
- {
-@@ -1236,7 +1236,7 @@ static void _gpio_set_open_drain_value(struct gpio_desc *desc, bool value)
- /*
-  *  _gpio_set_open_source_value() - Set the open source gpio's value.
-  * @desc: gpio descriptor whose state need to be set.
-- * @value: Non-zero for setting it HIGH otherise it will set to LOW.
-+ * @value: Non-zero for setting it HIGH otherwise it will set to LOW.
-  */
- static void _gpio_set_open_source_value(struct gpio_desc *desc, bool value)
- {
-@@ -1878,7 +1878,7 @@ EXPORT_SYMBOL_GPL(gpiod_count);
-  *
-  * Return the GPIO descriptor corresponding to the function con_id of device
-  * dev, -ENOENT if no GPIO has been assigned to the requested function, or
-- * another IS_ERR() code if an error occured while trying to acquire the GPIO.
-+ * another IS_ERR() code if an error occurred while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check __gpiod_get(struct device *dev, const char *con_id,
- 					 enum gpiod_flags flags)
-@@ -1958,7 +1958,7 @@ static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
-  *
-  * Return a valid GPIO descriptor, -ENOENT if no GPIO has been assigned to the
-  * requested function and/or index, or another IS_ERR() code if an error
-- * occured while trying to acquire the GPIO.
-+ * occurred while trying to acquire the GPIO.
-  */
- struct gpio_desc *__must_check __gpiod_get_index(struct device *dev,
- 					       const char *con_id,
--- 
-1.9.1
+The board design could conceivably limit the usable frequency to below
+the chip's maximum, though presumably that won't usually happen.
+Currently the clk-rcar-gen2 driver only configures the dividers for
+sdhi{0,1}.  That leaves the rest of them effectively controlled by the
+board's firmware.
+
+Ben.
+
+
