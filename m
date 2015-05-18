@@ -1,62 +1,62 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
-Date: Mon, 18 May 2015 16:03:49 +0200
-Message-ID: <CALszF6CK7axU0qrWNf38aqrt2R2126ZACn7wx5jNY_1KE+4H+g@mail.gmail.com>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1431158038-3813-10-git-send-email-mcoquelin.stm32@gmail.com>
-	<5559E4B0.70506@linaro.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Calling irq_set_irq_wake() from .set_irq_wake()? (was: Re:
+ [PATCH] gpio: pcf875x: Revert "gpio: pcf857x: Propagate wake-up setting to
+ parent irq controller")
+Date: Mon, 18 May 2015 16:31:10 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1505181626060.4225@nanos>
+References: <CAMuHMdXYPcQNCHhGa5kC8omtBw_O=Ua+rRJ+gh3tc6dY0oC5JA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <5559E4B0.70506@linaro.org>
-Sender: linux-arch-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@he>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:49443 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751749AbbERObF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2015 10:31:05 -0400
+In-Reply-To: <CAMuHMdXYPcQNCHhGa5kC8omtBw_O=Ua+rRJ+gh3tc6dY0oC5JA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Ingo Molnar <mingo@redhat.com>, Roger Quadros <rogerq@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2015-05-18 15:10 GMT+02:00 Daniel Lezcano <daniel.lezcano@linaro.org>:
-> On 05/09/2015 09:53 AM, Maxime Coquelin wrote:
->>
->> STM32 MCUs feature 16 and 32 bits general purpose timers with prescalers.
->> The drivers detects whether the time is 16 or 32 bits, and applies a
->> 1024 prescaler value if it is 16 bits.
->>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> ---
->>   drivers/clocksource/Kconfig       |   8 ++
->>   drivers/clocksource/Makefile      |   1 +
->>   drivers/clocksource/timer-stm32.c | 184
->> ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 193 insertions(+)
->>   create mode 100644 drivers/clocksource/timer-stm32.c
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index bf9364c..2443520 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -106,6 +106,14 @@ config CLKSRC_EFM32
->>           Support to use the timers of EFM32 SoCs as clock source and
->> clock
->>           event device.
->>
->> +config CLKSRC_STM32
->> +       bool "Clocksource for STM32 SoCs" if !ARCH_STM32
->> +       depends on OF && ARM && (ARCH_STM32 || COMPILE_TEST)
->
->
-> Are the interactive bool and the 'COMPILE_TEST' necessary ?
->
+On Sun, 17 May 2015, Geert Uytterhoeven wrote:
+> >>> At least the recursive locking message no longer appears after the revert.
+> >>>
+> >>> [   30.591905] PM: Syncing filesystems ... done.
+> >>> [   30.623060] Freezing user space processes ... (elapsed 0.003 seconds) done.
+> >>> [   30.634470] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+> >>> [   30.658288] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> >>> [   30.663678]
+> >>> [   30.663681] =============================================
+> >>> [   30.663683] [ INFO: possible recursive locking detected ]
+> >>> [   30.663688] 4.1.0-rc3 #1115 Not tainted
+> >>> [   30.663693] ---------------------------------------------
+> >>> [   30.663697] suspend.sh/2319 is trying to acquire lock:
+> >>> [   30.663719]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+> >>> [   30.663722]
+> >>> [   30.663722] but task is already holding lock:
+> >>> [   30.663734]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+> >>
+> >> Does this mean .set_irq_wake() cannot call irq_set_irq_wake()?
 
-The interactive bool is necessary if we want to be able to
-select/deselect it in COMPILE_TEST configuration.
-And personnaly, I think COMPILE_TEST use makes sense.
+It can call it, if it's guaranteed that this wont deadlock.
 
-Note that other timer drivers are doing the same thing today
-(CLKSRC_EFM32, SH_TIMER_CMT, EM_TIMER_STI...).
+To tell lockdep that you sure about that, you need to set a different
+lock class for the child interrupts. irq_set_lockdep_class() is what
+you want to use here.
 
-Do you have a specific concern regarding COMPILE_TEST?
+> >> Many GPIO drivers do that, as they need to propagate wake-up state to the
+> >> parent interrupt controller?
+> >
+> > As I remember, there was similar problem, so I found corresponding patch (just FYI)
+> >
+> > ab2b926 mfd: Fix twl6030 lockdep recursion warning on setting wake IRQs
+> >
+> > Not sure such kind of solution is the best choice (
+> 
+> That looks like a convoluted solution...
 
-Kind regards,
-Maxime
+Indeed. See above.
+ 
+Thanks,
+
+	tglx
