@@ -1,85 +1,57 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
-Date: Tue, 19 May 2015 16:33:42 +0200
-Message-ID: <20150519143340.GE26748@ulmo.nvidia.com>
-References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
- <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Tue, 19 May 2015 17:37:48 +0300
+Message-ID: <555B4ABC.60304@linaro.org>
+References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>	<20150518110214.GC28127@localhost>	<5559E3C0.1040207@linaro.org>	<20150518150815.GH28127@localhost>	<555A0299.3030803@linaro.org> <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:35624 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932468AbbESOdr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 10:33:47 -0400
-Content-Disposition: inline
-In-Reply-To: <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
 
+Hi Linus,
 
---//IivP0gvsAy3Can
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 05/19/2015 05:12 PM, Linus Walleij wrote:
+> On Mon, May 18, 2015 at 5:17 PM, Grygorii.Strashko@linaro.org
+> <grygorii.strashko@linaro.org> wrote:
+>> On 05/18/2015 06:08 PM, Johan Hovold wrote:
+> 
+>>>        GPIOs 160-191, platform/4805d000.gpio, gpio:
+>>>        gpio-171 (<irq-only>          ) in  hi IRQ-209
+>>
+>> In general agree, but i propose to do it as
+>>          GPIOs 160-191, platform/4805d000.gpio, gpio:
+>>          gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
+>>
+>> My intention is - this interface could be considered as more or less stable, so
+>> it is better to add additional information at the end of each line to avoid
+>> potential breakage of User space SW (test/debug scripts).
+> 
+> What? If I wanted a stable interface I would use sysfs and document
+> the ABI in Documentation/ABI/*.
+> 
+> debugfs is not ABI.
+> 
+> Debugfs is instable by definition, it is not for production. If tests depend on
+> it they need to be ready to break and be updated, and in such case
+> it is a very very good idea to put any such tests in tools/* in the
+> kernel itself, as does trace-cmd and friends so you can patch the
+> tests at the same time you patch the code.
 
-On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
-[...]
+Okay. Sorry, My comment was not fully correct - keyword was "more or less stable"
+and of course it is not ABI.
 
-One more thing:
+Any way, the question is till here - How would it better to do?
+  gpio-171 (<irq-only>          ) in  hi IRQ-209
+-- or --
+  gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
 
-[...]
-> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinct=
-rl-tegra-xusb.c
-> index 3e8e4a914fb4..c61594066e26 100644
-> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-> @@ -125,6 +125,23 @@ static const char *tegra_xusb_padctl_get_group_name(=
-struct pinctrl_dev *pinctrl,
->  	return padctl->soc->pins[group].name;
->  }
-> =20
-> +static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinctrl,
-> +					    unsigned group,
-> +					    const unsigned **pins,
-> +					    unsigned *num_pins)
-> +{
-> +	struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pinctrl);
-> +
-> +	/*
-> +	 * For the tegra-xusb pad controller groups are synonomous
-> +	 * with lanes/pins and there is always one lane/pin per group.
-> +	 */
-> +	*pins =3D &padctl->soc->pins[group].number;
+Thanks a lot for your comments.
 
-Shouldn't this be the same as pinctrl->desc->pins? In that case, maybe a
-better solution would be to make .get_group_pins() mandatory again and
-turn this into a pinctrl helper function that can be used by all group-
-only pinctrl drivers?
-
-Thierry
-
---//IivP0gvsAy3Can
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVW0nEAAoJEN0jrNd/PrOhuc4P/0PWIqTxXYpXU5vrzanUzQEj
-qPW1GlusDkZwB6CbiLEo0d2J9tljtRoz9jWg7/0b5U8P1IPNzUdn+eOjXvKe6sZg
-cXAYt16Hpd04CjoQvJsSNelZpQD6lzQWLAr6hWY5PIsBPgG9eS2QP5qavEjgB1QX
-D7oFw9lE4P38PxcXKqO6VR9CfJLcAXgWzF/GMML8hxSrvWMVVUadw3FCQbmUWxrL
-Efnq2SlfW96Kl22Fd3uyOqgHC1aDrd0v5JUiqu5y4JAQsoNmtcQ8oNQp1zTz0w9M
-ZK2KJueiWvxiWwuZKvxWmNHb/cnGcS+6INKAffnRA1jd2LIjY23pDEaF+Ap+tkZ7
-UJVCbhuMz+QybO2aB19k4PXC8kF0v6WqWXZ3l1PxMoXsh2dYCmUiAhNvcS82bIj8
-UdY48xo1DFUEegIKvPUSYjT6mwWjNMpQv8BBSbQdlphqITOAHibYfovB9NInE9Z7
-+LXskdEZaV3S8blGRjfR6xncR4C02NvjwGgPtTKwHR4A0H2t9UWJNmEDc8WIobar
-dg1cWMg+tkEjGNuSg2ae/l38vQ4LFLIx3T+7PKX9c/JeCDwlMeISNevaIt654od9
-d4qo7yV6bcHZyha4Dv1FcAk1ZMv560V9Qh0ndYwQUdHjJ3xnAAxAi71GSOOxjqDk
-6rD/Yg7MKOnVZwq6kPHO
-=gO7a
------END PGP SIGNATURE-----
-
---//IivP0gvsAy3Can--
+-- 
+regards,
+-grygorii
