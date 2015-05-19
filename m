@@ -1,47 +1,56 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
-Date: Tue, 19 May 2015 17:03:49 +0200
-Message-ID: <555B50D5.4010100@linaro.org>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>	<555B098A.8030202@linaro.org>	<CALszF6AJ3Zf598wYeUx=iNWHHKT24xUyfagB=+4GocwZ-Fd-0g@mail.gmail.com>	<6177628.0ZDPLeVyah@wuerfel>	<CALszF6BZKD-CPTZ6Hc85wv2Z3Y7JmUv-cMkBtbk2Ga6WeeWU=A@mail.gmail.com>	<555B3F80.8070605@linaro.org> <CALszF6A-De6dvcRNoa9ruL+y6Wt_rc7bi-O-VxHWkFF9NSt5_g@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
+Date: Tue, 19 May 2015 16:09:26 +0100
+Message-ID: <555B5226.3090500@nvidia.com>
+References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com> <1432044863-2035-3-git-send-email-jonathanh@nvidia.com> <20150519143041.GD26748@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALszF6A-De6dvcRNoa9ruL+y6Wt_rc7bi-O-VxHWkFF9NSt5_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>Kumar Gala <g>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150519143041.GD26748-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/19/2015 04:41 PM, Maxime Coquelin wrote:
-> 2015-05-19 15:49 GMT+02:00 Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>=
-:
->>
->>
->> It is not exactly as the initial patch.
->>
->> I think Arnd is proposing:
->>
->> config CLKSRC_STM32
->>          bool "Clocksource for STM32 SoCs" if COMPILE_TEST
->>          select CLKSRC_MMIO
->>
->
-> Isn't "depends on OF" missing for COMPILE_TEST case?
 
-Hmm, yes. Probably.
+On 19/05/15 15:30, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
+>> Commit e5b3b2d9ed20 ("pinctrl: allows not to define the get_group_pins
+>> operation") allows pin controllers not to register the get_group_pins()
+>> function. However, a side-effect of not registering this function is
+>> that pins are not allocated and potentially multiple devices could
+>> attempt to configure the same pins [1]. Although this problem exists in
+>> the pinctrl core, because only a few devices are impacted by this, fix
+>> this for tegra-xusb by adding the get_group_pins() function.
+> 
+> If I understand correctly this effectively makes get_group_pins()
+> mandatory, doesn't it? In that case, shouldn't commit e5b3b2d9ed20 be
+> reverted?
 
-> Other than that, I'm fine with the proposal.
-> Daniel, is it the case for you too?
+Yes may be it should. I will defer to Linus here.
 
-Yep.
+>> Please note that in addition to adding the get_group_pins() functions
+>> the pins/lanes for the tegra-xusb also need to be registered when
+>> calling pinctrl_register(). This also allows the current pinmux state
+>> to be viewed by the debugfs node "pinmux-pins" for the tegra-xusb pad
+>> controller.
+> 
+> This sounds like a logically separate change and hence could warrant a
+> separate patch. I'll defer to Linus on this, though, so:
 
+It needs to be registered as part of this patch otherwise the pins will
+not be registered and pin_request() will fail. Today pin_request() does
+not even get called for these pins. So I believe that this is needed as
+part of this patch.
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+May be I was not clear above, but the debugfs "pinmux-pins" entry shows
+nothing today for these pins. A by-product of this fix is that now we
+can view the pinmux state of the pins via the debugfs.
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
