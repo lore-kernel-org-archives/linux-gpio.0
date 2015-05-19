@@ -1,57 +1,42 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Tue, 19 May 2015 17:37:48 +0300
-Message-ID: <555B4ABC.60304@linaro.org>
-References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>	<20150518110214.GC28127@localhost>	<5559E3C0.1040207@linaro.org>	<20150518150815.GH28127@localhost>	<555A0299.3030803@linaro.org> <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
+Date: Tue, 19 May 2015 16:41:58 +0200
+Message-ID: <CALszF6A-De6dvcRNoa9ruL+y6Wt_rc7bi-O-VxHWkFF9NSt5_g@mail.gmail.com>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<555B098A.8030202@linaro.org>
+	<CALszF6AJ3Zf598wYeUx=iNWHHKT24xUyfagB=+4GocwZ-Fd-0g@mail.gmail.com>
+	<6177628.0ZDPLeVyah@wuerfel>
+	<CALszF6BZKD-CPTZ6Hc85wv2Z3Y7JmUv-cMkBtbk2Ga6WeeWU=A@mail.gmail.com>
+	<555B3F80.8070605@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:33795 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752452AbbESOmA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 10:42:00 -0400
+In-Reply-To: <555B3F80.8070605@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <gal>
 
-Hi Linus,
+2015-05-19 15:49 GMT+02:00 Daniel Lezcano <daniel.lezcano@linaro.org>:
+>
+>
+> It is not exactly as the initial patch.
+>
+> I think Arnd is proposing:
+>
+> config CLKSRC_STM32
+>         bool "Clocksource for STM32 SoCs" if COMPILE_TEST
+>         select CLKSRC_MMIO
+>
 
-On 05/19/2015 05:12 PM, Linus Walleij wrote:
-> On Mon, May 18, 2015 at 5:17 PM, Grygorii.Strashko@linaro.org
-> <grygorii.strashko@linaro.org> wrote:
->> On 05/18/2015 06:08 PM, Johan Hovold wrote:
-> 
->>>        GPIOs 160-191, platform/4805d000.gpio, gpio:
->>>        gpio-171 (<irq-only>          ) in  hi IRQ-209
->>
->> In general agree, but i propose to do it as
->>          GPIOs 160-191, platform/4805d000.gpio, gpio:
->>          gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
->>
->> My intention is - this interface could be considered as more or less stable, so
->> it is better to add additional information at the end of each line to avoid
->> potential breakage of User space SW (test/debug scripts).
-> 
-> What? If I wanted a stable interface I would use sysfs and document
-> the ABI in Documentation/ABI/*.
-> 
-> debugfs is not ABI.
-> 
-> Debugfs is instable by definition, it is not for production. If tests depend on
-> it they need to be ready to break and be updated, and in such case
-> it is a very very good idea to put any such tests in tools/* in the
-> kernel itself, as does trace-cmd and friends so you can patch the
-> tests at the same time you patch the code.
+Isn't "depends on OF" missing for COMPILE_TEST case?
 
-Okay. Sorry, My comment was not fully correct - keyword was "more or less stable"
-and of course it is not ABI.
+Other than that, I'm fine with the proposal.
+Daniel, is it the case for you too?
 
-Any way, the question is till here - How would it better to do?
-  gpio-171 (<irq-only>          ) in  hi IRQ-209
--- or --
-  gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
-
-Thanks a lot for your comments.
-
--- 
-regards,
--grygorii
+Regards,
+Maxime
