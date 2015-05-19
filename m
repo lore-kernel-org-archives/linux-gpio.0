@@ -1,40 +1,36 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH v3 01/17] mfd: add new driver for Sharp LoCoMo
-Date: Tue, 19 May 2015 12:21:34 +0100
-Message-ID: <20150519112134.GD2067@n2100.arm.linux.org.uk>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
- <1431880077-26321-2-git-send-email-dbaryshkov@gmail.com>
- <20150519103828.GU22418@x1>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v4 3/7] mmc: mediatek: Add PM support for MMC driver
+Date: Tue, 19 May 2015 13:55:29 +0200
+Message-ID: <CAPDyKFo=f-8aycE9wPjdWEjdVLLz8Lk=Pt2=JeTL3CSM-2Gj4g@mail.gmail.com>
+References: <1432017411-2996-1-git-send-email-chaotian.jing@mediatek.com>
+	<1432017411-2996-4-git-send-email-chaotian.jing@mediatek.com>
+	<20150519110453.GD26575@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150519103828.GU22418@x1>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150519110453.GD26575@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Chaotian Jing <chaotian.jing@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-mediatek@lists.infradead.org, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-ker
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 19, 2015 at 11:38:28AM +0100, Lee Jones wrote:
-> On Sun, 17 May 2015, Dmitry Eremin-Solenikov wrote:
-> > +static void locomo_mask_irq(struct irq_data *d)
-> > +{
-> > +	struct locomo *ldev = irq_data_get_irq_chip_data(d);
-> > +	unsigned int mask = 0x0010 << d->hwirq;
-> 
-> This also needs defining.
-> 
-> Why not
->   BIT(d->hwirq + 1)
+On 19 May 2015 at 13:04, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> Hi Chaotian,
+>
+> On Tue, May 19, 2015 at 02:36:47PM +0800, Chaotian Jing wrote:
+>> Add PM support for Mediatek MMC driver
+>> Save/restore registers when PM
+>
+> Has anyone asked you to add a new driver in two steps? I find it hard to
+> review if a driver is introduced and changed right afterwards.
+> Presumably you find it hard to maintain the patches like this also.
+> Please ignore if this is indeed requested by someone.
 
-I think your maths is off...
+I requested it.
 
-0x0010 << d->hwirq != BIT(d->hwirq + 1)
+Primarily because I want to make sure we deal with runtime/system PM
+support properly. I guess I have seen too many cases where
+functionality is broken, unless compiled with CONFIG_PM* set.
 
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kind regards
+Uffe
