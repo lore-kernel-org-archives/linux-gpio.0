@@ -1,47 +1,46 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
-Date: Tue, 19 May 2015 15:49:52 +0200
-Message-ID: <555B3F80.8070605@linaro.org>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>	<555B098A.8030202@linaro.org>	<CALszF6AJ3Zf598wYeUx=iNWHHKT24xUyfagB=+4GocwZ-Fd-0g@mail.gmail.com>	<6177628.0ZDPLeVyah@wuerfel> <CALszF6BZKD-CPTZ6Hc85wv2Z3Y7JmUv-cMkBtbk2Ga6WeeWU=A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Tue, 19 May 2015 16:12:35 +0200
+Message-ID: <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
+References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
+	<20150518110214.GC28127@localhost>
+	<5559E3C0.1040207@linaro.org>
+	<20150518150815.GH28127@localhost>
+	<555A0299.3030803@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALszF6BZKD-CPTZ6Hc85wv2Z3Y7JmUv-cMkBtbk2Ga6WeeWU=A@mail.gmail.com>
-Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>Kumar Gala <g>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <555A0299.3030803@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 05/19/2015 03:42 PM, Maxime Coquelin wrote:
-> 2015-05-19 12:55 GMT+02:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
->> Please also make it possible to select this driver on other architec=
-tures
->> with COMPILE_TEST, so we get coverage from all the x86 test infrastr=
-ucture.
+On Mon, May 18, 2015 at 5:17 PM, Grygorii.Strashko@linaro.org
+<grygorii.strashko@linaro.org> wrote:
+> On 05/18/2015 06:08 PM, Johan Hovold wrote:
+
+>>       GPIOs 160-191, platform/4805d000.gpio, gpio:
+>>       gpio-171 (<irq-only>          ) in  hi IRQ-209
 >
-> You proposal is to revert back to the original patch, except that
-> ARCH_STM32 should select CLKSRC_STM32, right?
+> In general agree, but i propose to do it as
+>         GPIOs 160-191, platform/4805d000.gpio, gpio:
+>         gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
 >
-> Daniel, what do you think?
+> My intention is - this interface could be considered as more or less stable, so
+> it is better to add additional information at the end of each line to avoid
+> potential breakage of User space SW (test/debug scripts).
 
-It is not exactly as the initial patch.
+What? If I wanted a stable interface I would use sysfs and document
+the ABI in Documentation/ABI/*.
 
-I think Arnd is proposing:
+debugfs is not ABI.
 
-config CLKSRC_STM32
-	bool "Clocksource for STM32 SoCs" if COMPILE_TEST
-	select CLKSRC_MMIO
+Debugfs is instable by definition, it is not for production. If tests depend on
+it they need to be ready to break and be updated, and in such case
+it is a very very good idea to put any such tests in tools/* in the
+kernel itself, as does trace-cmd and friends so you can patch the
+tests at the same time you patch the code.
 
-
-
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Yours,
+Linus Walleij
