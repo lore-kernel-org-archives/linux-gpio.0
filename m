@@ -1,35 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] sh-pfc: r8a7790: Add PWM pin groups and functions
-Date: Tue, 19 May 2015 11:26:39 +0200
-Message-ID: <CACRpkdbdfkceuWNPdRCE84+RU7pJ6_VE8np6U4+kTao056aFTg@mail.gmail.com>
-References: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] pinctrl: zynq: add static to platform_driver remove callback
+Date: Tue, 19 May 2015 11:29:03 +0200
+Message-ID: <CACRpkdZV3wcc_fC=SMngY7qK8-7hOFH0hH0A=pkny-F2-jFm7Q@mail.gmail.com>
+References: <1431660698-30992-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33742 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753930AbbESJ0k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 05:26:40 -0400
-Received: by oica37 with SMTP id a37so6212114oic.0
-        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2015 02:26:39 -0700 (PDT)
-In-Reply-To: <1431600534-4360-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35561 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754873AbbESJ3D convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 05:29:03 -0400
+Received: by obcus9 with SMTP id us9so7587049obc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2015 02:29:03 -0700 (PDT)
+In-Reply-To: <1431660698-30992-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, May 14, 2015 at 12:48 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
+On Fri, May 15, 2015 at 5:31 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  This patch is based on linux-pinctrl.git / for-next branch.
->  (commit id = 1050c8f7b3f8f97ed3514ce800e7206207d5bbf9)
+> This function is only referenced in this file.
 >
->  I will write a patch for r8a7791 PWM later because I'm not sure that
->  this patch is good or not.
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Patch applied with the ACKs etc.
+Patch applied with S=C3=B6ren's review tag.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
