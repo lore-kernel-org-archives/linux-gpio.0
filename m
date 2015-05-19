@@ -1,47 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: lpc18xx: add the missing group function map
-Date: Tue, 19 May 2015 11:07:43 +0200
-Message-ID: <CACRpkdZZ8669umQ8juihZczVzw+w3_Y6PzyH3WqQNNZmjMOTUQ@mail.gmail.com>
-References: <1431607558-26887-1-git-send-email-manabian@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 01/11] dt-bindings: mediatek: Modify pinctrl bindings
+ for mt6397.
+Date: Tue, 19 May 2015 11:11:02 +0200
+Message-ID: <CACRpkdZhSUZVKZr5nWXX-15+GwrqrKkW_u_+cQDH1pO_NrayEA@mail.gmail.com>
+References: <1432015882-8646-1-git-send-email-hongzhou.yang@mediatek.com>
+	<1432015882-8646-2-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:34689 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817AbbESJHo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 05:07:44 -0400
-Received: by obfe9 with SMTP id e9so7255856obf.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2015 02:07:43 -0700 (PDT)
-In-Reply-To: <1431607558-26887-1-git-send-email-manabian@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1432015882-8646-2-git-send-email-hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, srv
 List-Id: linux-gpio@vger.kernel.org
-To: Joachim Eastwood <manabian@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, May 14, 2015 at 2:45 PM, Joachim Eastwood <manabian@gmail.com> wrote:
+On Tue, May 19, 2015 at 8:11 AM, Hongzhou Yang
+<hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
 
-> Add the required group function map and fill it at probe using
-> the pin capabilities information already present in the driver.
+> Since 6397 is no need to support interrupt controller,
+> moving interrupt controller relate property to optional list.
+> Also adding mt8173 and mt8127 to bindings.
 >
-> Signed-off-by: Joachim Eastwood <manabian@gmail.com>
-> ---
->
-> Hi Linus,
->
-> Seems like the implementation of the group function map was missing
-> from the pinctrl driver. The lpc18xx_pmx_get_func_groups function
-> was actually returning uninitlized pointers, but it seems like this,
-> for some reason, "works" on my nommu platform(!). This is the reason
-> why it took me a while to notice it.
->
-> After this patch the pinmux-functions debugfs file starts to work and
-> the displayed result looks correct. Small snippet below.
->
-> Patch based on your pintrl devel branch.
+> Signed-off-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-That's normal development :)
-
-Patch applied.
+Backed out earlier applied MTK patches and applied
+this one instead, sorry too intense development...
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
