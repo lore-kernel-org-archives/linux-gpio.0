@@ -1,62 +1,67 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH 5/6] ARM: shmobile: lager: Set sdhi and mmcif clock rates
-Date: Mon, 18 May 2015 20:48:44 +0100
-Message-ID: <1431978524.22824.6.camel@codethink.co.uk>
-References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
-	 <1431822574.4222.172.camel@xylophone.i.decadent.org.uk>
-	 <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v2 0/11] Mediatek pinctrl driver optimize and add Mediatek SoC Pinctrl/GPIO/EINT driver for mt6397/mt8127.
+Date: Mon, 18 May 2015 23:11:11 -0700
+Message-ID: <1432015882-8646-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:38346 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932375AbbERTsu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 May 2015 15:48:50 -0400
-In-Reply-To: <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, dandan.he-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ian Molton <ian@mnementh.co.uk>, Linux MMC List <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
 
-On Sun, 2015-05-17 at 10:13 +0200, Geert Uytterhoeven wrote:
-> On Sun, May 17, 2015 at 2:29 AM, Ben Hutchings
-> <ben.hutchings@codethink.co.uk> wrote:
-> > From: Ben Dooks <ben.dooks@codethink.co.uk>
-> >
-> > [bwh: Fold in fix from Ian Molton]
-> > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > ---
-> >  arch/arm/boot/dts/r8a7790-lager.dts |   11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-> > index aaa4f258e279..343ec0ccc8df 100644
-> > --- a/arch/arm/boot/dts/r8a7790-lager.dts
-> > +++ b/arch/arm/boot/dts/r8a7790-lager.dts
-> > @@ -413,6 +413,11 @@
-> >         vmmc-supply = <&fixedregulator3v3>;
-> >         bus-width = <8>;
-> >         non-removable;
-> > +
-> > +       assigned-clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
-> > +       assigned-clock-rates = <97500000>;
-> > +       max-frequency = <50000000>;
-> 
-> Are all these properties Lager-specific, or r8a7790-specific?
-> If the latter, they belong in r8a7790.dtsi.
-> Same comment for the other nodes.
+Due to these patches haven't sent to ML, just resend them.
 
-The clock assignments are not specific to Lager so they probably belong
-in r8a7790.dtsi; the dividers are configurable and could be
-board-specific.
+Changes in v2:
+  - Break mfd relate change out into a sparate patch.
+  - Rearrange order of patches.
 
-The board design could conceivably limit the usable frequency to below
-the chip's maximum, though presumably that won't usually happen.
-Currently the clk-rcar-gen2 driver only configures the dividers for
-sdhi{0,1}.  That leaves the rest of them effectively controlled by the
-board's firmware.
+Hongzhou Yang (7):
+  dt-bindings: mediatek: Modify pinctrl bindings for mt6397.
+  pinctrl: dt bindings: mt6397: Add pinfunc header file for mt6397.
+  pinctrl: mediatek: add ies/smt control to common code.
+  pinctrl: mediatek: Add Pinctrl/GPIO driver for mt6397.
+  mfd: mediatek: Add GPIO sub module support into mfd.
+  arm64: dts: mt8173-evb: Add pinctrl/GPIO node for mt6397.
+  ARM: dts: mt8135-evbp1: Add pinctrl/GPIO node for mt6397.
 
-Ben.
+Yingjoe Chen (4):
+  pinctrl: mediatek: data struct optimize and remove unused member
+  pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common code
+  pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
+  ARM: dts: mt8127: add pinctrl/GPIO/EINT node for mt8127
+
+ .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +-
+ arch/arm/boot/dts/mt8127-pinfunc.h                 |  742 +++++++++++
+ arch/arm/boot/dts/mt8127.dtsi                      |   22 +
+ arch/arm/boot/dts/mt8135-evbp1.dts                 |    9 +
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts        |    8 +
+ drivers/mfd/mt6397-core.c                          |    3 +
+ drivers/pinctrl/mediatek/Kconfig                   |   12 +
+ drivers/pinctrl/mediatek/Makefile                  |    2 +
+ drivers/pinctrl/mediatek/pinctrl-mt6397.c          |   78 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8127.c          |  359 ++++++
+ drivers/pinctrl/mediatek/pinctrl-mt8135.c          |   12 +-
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c          |  369 +++---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  155 ++-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h      |   75 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6397.h      |  424 +++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8127.h      | 1318 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/mt6397-pinfunc.h       |  256 ++++
+ 17 files changed, 3595 insertions(+), 258 deletions(-)  create mode 100644 arch/arm/boot/dts/mt8127-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6397.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8127.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6397.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8127.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6397-pinfunc.h
+
+--
+1.7.9.5
 
 
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
