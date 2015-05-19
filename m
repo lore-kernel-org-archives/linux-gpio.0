@@ -1,48 +1,38 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
-Date: Tue, 19 May 2015 16:05:36 +0200
-Message-ID: <2641240.S39i1jrT81@wuerfel>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>
- <CALszF6BZKD-CPTZ6Hc85wv2Z3Y7JmUv-cMkBtbk2Ga6WeeWU=A@mail.gmail.com>
- <555B3F80.8070605@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Tue, 19 May 2015 16:50:36 +0200
+Message-ID: <CACRpkdaDZDdRnro0CmyBed8smehjAJkx_bzU_2FT5mM8GKay7w@mail.gmail.com>
+References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
+	<20150518110214.GC28127@localhost>
+	<5559E3C0.1040207@linaro.org>
+	<20150518150815.GH28127@localhost>
+	<555A0299.3030803@linaro.org>
+	<CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
+	<555B4ABC.60304@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <555B3F80.8070605@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Kees Cook <keescook@chromium.org>, Linux-Arch <linux-arch@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Uwe
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:36482 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932488AbbESOug (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 10:50:36 -0400
+Received: by oihb9 with SMTP id b9so12689819oih.3
+        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2015 07:50:36 -0700 (PDT)
+In-Reply-To: <555B4ABC.60304@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tuesday 19 May 2015 15:49:52 Daniel Lezcano wrote:
-> On 05/19/2015 03:42 PM, Maxime Coquelin wrote:
-> > 2015-05-19 12:55 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
-> >> Please also make it possible to select this driver on other architectures
-> >> with COMPILE_TEST, so we get coverage from all the x86 test infrastructure.
-> >
-> > You proposal is to revert back to the original patch, except that
-> > ARCH_STM32 should select CLKSRC_STM32, right?
-> >
-> > Daniel, what do you think?
-> 
-> It is not exactly as the initial patch.
-> 
-> I think Arnd is proposing:
-> 
-> config CLKSRC_STM32
->         bool "Clocksource for STM32 SoCs" if COMPILE_TEST
->         select CLKSRC_MMIO
+On Tue, May 19, 2015 at 4:37 PM, Grygorii.Strashko@linaro.org
+<grygorii.strashko@linaro.org> wrote:
 
-Yes, that's fine, although we might also need a 'depends on OF'
-line, not sure.
+> Any way, the question is till here - How would it better to do?
+>   gpio-171 (<irq-only>          ) in  hi IRQ-209
+> -- or --
+>   gpio-171 ((null)          ) in  hi IRQ-209 <irq-only>
 
-	Arnd
+The latter I think. No strong opinion really.
+
+Yours,
+Linus Walleij
