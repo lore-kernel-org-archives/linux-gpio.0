@@ -1,54 +1,44 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 06/17] video: lcd: add LoCoMo LCD driver
-Date: Tue, 19 May 2015 13:34:18 +0100
-Message-ID: <20150519123418.GB3627@x1>
-References: <1431880077-26321-1-git-send-email-dbaryshkov@gmail.com>
- <1431880077-26321-7-git-send-email-dbaryshkov@gmail.com>
- <20150519093644.GT22418@x1>
- <CALT56yMwGngNvRWiCux962B=EQODUHW3=-ed6SZWJ9PnSPm09A@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v8 09/16] clockevents/drivers: Add STM32 Timer driver
+Date: Tue, 19 May 2015 14:56:43 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1505191455540.4225@nanos>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-10-git-send-email-mcoquelin.stm32@gmail.com> <5559E4B0.70506@linaro.org> <CALszF6CK7axU0qrWNf38aqrt2R2126ZACn7wx5jNY_1KE+4H+g@mail.gmail.com> <555AF143.2060807@linaro.org>
+ <CALszF6CwGuKqgbX6gVrya1-_YOgvtrgC7pVqKTNjCRif_o532A@mail.gmail.com> <555AFD18.2070009@linaro.org> <CALszF6Asfke0-cMQJcEQ8ya+rbPPPhUc6aXTZXQvQ8QF66cwYQ@mail.gmail.com> <555B098A.8030202@linaro.org>
+ <CALszF6AJ3Zf598wYeUx=iNWHHKT24xUyfagB=+4GocwZ-Fd-0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-leds-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CALT56yMwGngNvRWiCux962B=EQODUHW3=-ed6SZWJ9PnSPm09A@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-input <linux-input@vger.kernel.org>, linux-leds <linux-leds@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, linux-fbdev@vger.
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:54767 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754575AbbESM5I (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 May 2015 08:57:08 -0400
+In-Reply-To: <CALszF6AJ3Zf598wYeUx=iNWHHKT24xUyfagB=+4GocwZ-Fd-0g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>, Peter Meerwald <pmeerw@pmeerw.net>, Paul Bolle <pebolle@tiscali.nl>, Peter Hurley <peter@hurleysoftware.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Russell King <linux@arm.linux.org.uk>, Joe Perches <joe@perches.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson <daniel.thompson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.r>
 
-On Tue, 19 May 2015, Dmitry Eremin-Solenikov wrote:
-
-> 2015-05-19 12:36 GMT+03:00 Lee Jones <lee.jones@linaro.org>:
-> > On Sun, 17 May 2015, Dmitry Eremin-Solenikov wrote:
-> >
-> >> LoCoMo has some special handling for TFT screens attached to Colli=
-e and
-> >> Poodle. Implement that as a separate driver.
+On Tue, 19 May 2015, Maxime Coquelin wrote:
+> 2015-05-19 11:59 GMT+02:00 Daniel Lezcano <daniel.lezcano@linaro.org>:
+> >> Is the below Kconfig entry fine for you?
 > >>
-> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> >> ---
-> >>  drivers/video/backlight/Kconfig      |  10 ++
-> >>  drivers/video/backlight/Makefile     |   1 +
-> >>  drivers/video/backlight/locomo_lcd.c | 285 ++++++++++++++++++++++=
-+++++++++++++
-> >>  3 files changed, 296 insertions(+)
-> >>  create mode 100644 drivers/video/backlight/locomo_lcd.c
+> >> config CLKSRC_STM32
+> >>      def_bool y if ARCH_STM32
+> >>      select CLKSRC_MMIO
 > >
-> > This looks like it should be part of patch 16.
 > >
-> > How much of this file is the same as the one removed later in the s=
-et?
->=20
-> This is a completely new driver. Only few comments remained from old
-> locomolcd.c.
+> > config CLKSRC_STM32
+> >         bool
+> >         select CLKSRC_MMIO
+> >
+> > and in the arch/arm/mach-stm32/Kconfig add select CLKSRC_STM32
+> 
+> Ok, I will send a patch for arch/arm/Kconfig, as Arnd already applied
+> the one intruducing ARCH_STM32.
 
-Okay, thanks for the explanation.
+Folks, can you please trim your replies. It's a PITA to scroll down
+through several pages to find a single line of content.
 
-I'm sure Jingoo will be around to review shortly.
+Thanks,
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+	tglx
