@@ -1,50 +1,120 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Wed, 20 May 2015 09:21:16 +0200
-Message-ID: <CACRpkdbupBQBsymB4wcC9XxbFJMhzxoZVXhyKxZT+xxuSxwifA@mail.gmail.com>
-References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
-	<20150518110214.GC28127@localhost>
-	<5559E3C0.1040207@linaro.org>
-	<20150518150815.GH28127@localhost>
-	<555A0299.3030803@linaro.org>
-	<CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
-	<20150519153940.GP28127@localhost>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v4 2/3] irqchip: GIC: Add support for
+ irq_{get,set}_irqchip_state
+Date: Wed, 20 May 2015 08:58:46 +0100
+Message-ID: <20150520085846.43ad36b7@why.wild-wind.fr.eu.org>
+References: <1426676484-21812-1-git-send-email-marc.zyngier@arm.com>
+	<1426676484-21812-3-git-send-email-marc.zyngier@arm.com>
+	<CAL85gmBrkonMcKdUVGmYx6zT3wSe-e2jPhnL_+Tkf3s4jsAiWg@mail.gmail.com>
+	<CACRpkdYffHJEzksc5mg7JZdwTzShGaQofAmbmn65=_V3ot04Rg@mail.gmail.com>
+	<CAL85gmC4ovR99wQQYoKs=oo24So80jZ_guxDDFhi-1MXXj0uSw@mail.gmail.com>
+	<CACRpkdZkBLrhFpZiYk4fiM3ND+UwnVJhNKs=+rL5iZY4fS7zCg@mail.gmail.com>
+	<CAL85gmD=12u87vDAc601T=ZOgcS-jDo_=LaC5gRAZUHgp_iTbA@mail.gmail.com>
+	<CACRpkdYV1MzjW6ZMvmOhqi0qhXeeQnC62--7WBY=_hZBT8cvXg@mail.gmail.com>
+	<20150519110131.522f9c16@arm.com>
+	<CAL85gmDugvn0Gv-Ypm0EN-3bE6JM+hWFkVV8FxCeBQ1FS7EERw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150519153940.GP28127@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:37058 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751530AbbETH5K (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 20 May 2015 03:57:10 -0400
+In-Reply-To: <CAL85gmDugvn0Gv-Ypm0EN-3bE6JM+hWFkVV8FxCeBQ1FS7EERw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Feng Kan <fkan@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Phong Vo <pvo@apm.com>, Tin Huynh <tnhuynh@apm.com>, Y Vo <yvo@apm.com>, Thomas Gleixner <tglx@linutronix.de>, Toan Le <toanle@apm.com>, Bjorn Andersson <bjorn@kryo.se>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, May 19, 2015 at 5:39 PM, Johan Hovold <johan@kernel.org> wrote:
-> On Tue, May 19, 2015 at 04:12:35PM +0200, Linus Walleij wrote:
+On Tue, 19 May 2015 22:45:26 +0100
+Feng Kan <fkan@apm.com> wrote:
 
->> What? If I wanted a stable interface I would use sysfs and document
->> the ABI in Documentation/ABI/*.
->>
->> debugfs is not ABI.
->
-> As I mentioned in my response to Grygorii, not everyone -- and most
-> notably apparently not even Linus Torvalds -- agrees on this:
+> On Tue, May 19, 2015 at 3:01 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > On Tue, 19 May 2015 09:40:21 +0100
+> > Linus Walleij <linus.walleij@linaro.org> wrote:
+> >
+> >> On Thu, May 14, 2015 at 10:14 PM, Feng Kan <fkan@apm.com> wrote:
+> >> > On Thu, May 14, 2015 at 3:32 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >>
+> >> >> But surely the GPIO block has its own status register, so are
+> >> >> you saying that this register is unreliable?
+> >> >
+> >> > When the GPIO is used as interrupt, the gpio block does not report the
+> >> > status anymore. Which leaves us stuck with SPISR.
+> >> >>
+> >> >> I can think of a few reasons, like transient IRQs etc but
+> >> >> what is actually causing this?
+> >> >
+> >> > I won't say the obvious.
+> >>
+> >> Yeah I see your problem now :(
+> >>
+> >> I think it's better to fix the access functions so that you can
+> >> cross-call to the GIC driver to get the SPISR flag out though.
+> >> Let's see what Marc says.
+> >>
+> >> >> Which GPIO driver is this? Is it upstream?
+> >> >
+> >> > Yes, it is upstream. It is the xgene slimpro gpio driver. I am starting to
+> >> > think that we ought to switch to use some gpio poll driver rather than
+> >> > using gpio-key.
+> >>
+> >> There is both gpio_keys_polled and IRQ-driven gpio_keys so yeah
+> >> that's possible. But honestly I think it's better to deal with this
+> >> problem for real because IRQ is more efficient.
+> >>
+> >> So the way I perceive it this is the real problem:
+> >>
+> >> +static int gic_irq_get_irqchip_state(struct irq_data *d,
+> >> +                                     enum irqchip_irq_state which, bool *val)
+> >> +{
+> >> +       switch (which) {
+> >> (...)
+> >> +       case IRQCHIP_STATE_ACTIVE:
+> >> +               *val = gic_peek_irq(d, GIC_DIST_ACTIVE_SET);
+> >> +               break; case: read
+> >> from 0xd04 (SPISR) instead, because that makes more
+> >> sense to me, or am I wrong at it?
+> >>
+> >> +       case IRQCHIP_STATE_LINE_LEVEL:
+> >> +               *val = gic_peek_irq(d, GIC_DIST_SPISR);
+> >> +               break;
+> >>
+> >> And then put a define into <linux/irqchip/arm-gic.h> for
+> >> GIC_DIST_SPISR.
+> >
+> > What worries me here is that the PENDING state should already give you
+> > the right level of information (this is what the GIC-400 TRM says). The
+> > only reason why SPISR exists is that software can write to the PENDING
+> > register, while SPISR is RO.
+> >
+> > If reading the pending state doesn't work, then I'd like to know
+> > exactly *why*. Only then we can add support for LINE_LEVEL using SPISR
+> > (which has to be GIC-400 specific, as it is not architected).
+> 
+> IS_PENDING and IS_ACTIVE works fine for the ISR context. However,
+> the nature of the register is meant for IRQ handling and not to read
+> the status of a GPIO. By the time the gpio_key throws a work queue
+> and check the status of the PENDING register, it is no long relevant.
 
-Yeah I was sloppy I guess.
+This is far more subtle that that. Assuming a level-triggered
+interrupt, the PENDING state is completely independent of the state of
+the interrupt (see the GIC state machine), and will accurately reflect
+the input line (an edge-triggered interrupt is of course a different
+matter). As outlined in the GIC-400 TRM, both GICD_ICPENDINGRn,
+GICD_ISPENDINGRn and GICD_SPISRn are providing the same information
+(the only difference being that SPISRn is offering a RO view before the
+latches).
 
-What I mean, precisely is that sysfs is ABI, whether documented or
-not.
+SPISRn is essentially a debug register, not something that is meant to
+be used in normal code, GPIO or otherwise. So assuming we have an
+actual GIC-400 implementation here, I want to know why this isn't
+working, and you are in a position to tell me (I assume you can talk to
+the HW people that did the integration).
 
-Even debugfs is actually blurry, as per
-Documentation/filesystems/debugfs.txt:
+Thanks,
 
-"The debugfs filesystem is also intended to not serve as a stable
-ABI to user space; in theory, there are no stability constraints placed on
-files exported there.  The real world is not always so simple, though [1];
-even debugfs interfaces are best designed with the idea that they will need
-to be maintained forever."
-
-But I haven't been bitten by it yet so that's why I allow some poetic
-license.
-
-Yours,
-Linus Walleij
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
