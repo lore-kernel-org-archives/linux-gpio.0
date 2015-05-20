@@ -1,7 +1,7 @@
 From: Grygorii Strashko <grygorii.strashko@linaro.org>
-Subject: [PATCH v2 2/3] gpiolib: debugfs: show linux irq number for gpios requested as irq
-Date: Wed, 20 May 2015 13:30:22 +0300
-Message-ID: <1432117823-1834-3-git-send-email-grygorii.strashko@linaro.org>
+Subject: [PATCH v2 3/3] gpiolib: debugfs: identify gpios requested as irq only
+Date: Wed, 20 May 2015 13:30:23 +0300
+Message-ID: <1432117823-1834-4-git-send-email-grygorii.strashko@linaro.org>
 References: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
@@ -10,39 +10,55 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>, Johan Hovold <johan@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-This patch updates GPIO debugfs code to show Linux IRQ number
-for GPIOs requested as irq.
+Now many of GPIO drivers implement two interfaces gpiolib and irqchip
+which are essentially orthogonal. So, now GPIO line can be requested
+in three ways:
+1) As pure GPIO (gpioX_request())
+2) As pure GPIO IRQ, especially in DT boot case.
+  DT:
+	interrupt-parent = <&gpio6>;
+	interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
+  Code:
+	platform_get_irq() or of_irq_get()
+        request_irq()
+3) combination of (1) and (2).
+
+And from GPIO debugfs it could be identified when GPIO is
+requested/used or used as IRQ, but there is no way to determine
+when GPIO is requested/used as IRQ only.
+
+Such information is useful for debugging, so update GPIO debugfs code
+to show marker '<irq-only>' for GPIO lines which are requested/used as
+GPIO IRQ only.
 
 After this patch sys/kernel/debug/gpio will produce following output:
-    ...
-    GPIOs 160-191, platform/4805d000.gpio, gpio:
-     gpio-171 ((null)              ) in  hi IRQ-209
+  ...
+ GPIOs 160-191, platform/4805d000.gpio, gpio:
+  gpio-171 ((null)              ) in  hi IRQ-209 <irq-only>
+
+ GPIOs 192-223, platform/48051000.gpio, gpio:
+  gpio-203 (vtt_fixed           ) out hi
 
 Cc: Johan Hovold <johan@kernel.org>
 Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
 ---
- drivers/gpio/gpiolib.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 399ce2f..f1dcb5b 100644
+index f1dcb5b..d69fc58 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -2266,13 +2266,14 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		gpiod_get_direction(gdesc);
- 		is_out = test_bit(FLAG_IS_OUT, &gdesc->flags);
- 		is_irq = test_bit(FLAG_USED_AS_IRQ, &gdesc->flags);
--		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s %s",
-+		seq_printf(s, " gpio-%-3d (%-20.20s) %s %s",
- 			gpio, gdesc->label,
- 			is_out ? "out" : "in ",
+@@ -2272,8 +2272,11 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
  			chip->get
  				? (chip->get(chip, i) ? "hi" : "lo")
--				: "?  ",
--			is_irq ? "IRQ" : "   ");
-+				: "?  ");
-+		if (is_irq)
-+			seq_printf(s, " IRQ-%d", gpiod_to_irq(gdesc));
+ 				: "?  ");
+-		if (is_irq)
++		if (is_irq) {
+ 			seq_printf(s, " IRQ-%d", gpiod_to_irq(gdesc));
++			if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
++				seq_puts(s, " <irq-only>");
++		}
  		seq_printf(s, "\n");
  	}
  }
