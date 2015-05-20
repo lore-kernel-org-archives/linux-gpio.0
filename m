@@ -1,62 +1,43 @@
-From: Grygorii Strashko <grygorii.strashko@linaro.org>
-Subject: [PATCH v2 1/3] gpiolib: debugfs: display gpios requested as irq only
-Date: Wed, 20 May 2015 13:30:21 +0300
-Message-ID: <1432117823-1834-2-git-send-email-grygorii.strashko@linaro.org>
-References: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [RESEND PATCH 0/2] pinctrl: zynq: fix two bugs of zynq pinmux
+ function
+Date: Wed, 20 May 2015 07:23:58 -0700
+Message-ID: <20150520142358.GS31550@xsjsorenbubuntu>
+References: <1432111351-21336-1-git-send-email-yamada.masahiro@socionext.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
+Content-Disposition: inline
+In-Reply-To: <1432111351-21336-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>, Johan Hovold <johan@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Now GPIOs, wich are requested as IRQ only, will not be displayed
-through GPIO debugfs. For example:
- # cat /proc/interrupts
-            CPU0       CPU1
-...
-209:          0          0  4805d000.gpio  11 Edge      0-0021
+Hi Masahiro,
 
- # cat /debug/gpio
-...
-GPIOs 160-191, platform/4805d000.gpio, gpio:
-<--- no info about gpio used as IRQ only here
+On Wed, 2015-05-20 at 05:42PM +0900, Masahiro Yamada wrote:
+>=20
+> I sent the previous one to linux-serial by mistake.
+> I am resending to linux-gpio, dropping linux-serial.
+> Sorry for noise.
+>=20
+>=20
+>=20
+> Masahiro Yamada (2):
+>   pinctrl: zynq: fix DEFINE_ZYNQ_PINMUX_FUNCTION_MUX macro
+>   pinctrl: zynq: fix offset address for {SD0,SD1}_WP_CD_SEL
 
-GPIOs 192-223, platform/48051000.gpio, gpio:
- gpio-203 (vtt_fixed           ) out hi
-...
+=46or the series:
+Reviewed-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
 
-Hence, improve GPIO debugfs code to show such kind of GPIOs
+I'm not sure how severe the impact of these bugs is. It looks like the
+the current driver could corrupt the register for MIO pin0, am I right?
+It may be a good ides to add
+  Fixes: add958cee967 "pinctrl: Add driver for Zynq"
+(I suspect that bug is there from the beginning) and ask Linus to
+consider this for stable.
 
-After this patch sys/kernel/debug/gpio will produce following output:
-
- # cat /debug/gpio
-...
-GPIOs 160-191, platform/4805d000.gpio, gpio:
- gpio-171 ((null)              ) in  hi IRQ
-
-GPIOs 192-223, platform/48051000.gpio, gpio:
- gpio-203 (vtt_fixed           ) out hi
-
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
----
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 59eaa23..399ce2f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2259,7 +2259,8 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	int			is_irq;
- 
- 	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
--		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-+		if (!test_bit(FLAG_REQUESTED, &gdesc->flags) &&
-+		    !test_bit(FLAG_USED_AS_IRQ, &gdesc->flags))
- 			continue;
- 
- 		gpiod_get_direction(gdesc);
--- 
-1.9.1
+	Thanks,
+	S=C3=B6ren
