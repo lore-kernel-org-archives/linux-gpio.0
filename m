@@ -1,98 +1,51 @@
-From: Feng Kan <fkan@apm.com>
-Subject: Re: [PATCH v4 2/3] irqchip: GIC: Add support for irq_{get,set}_irqchip_state
-Date: Tue, 19 May 2015 14:45:26 -0700
-Message-ID: <CAL85gmDugvn0Gv-Ypm0EN-3bE6JM+hWFkVV8FxCeBQ1FS7EERw@mail.gmail.com>
-References: <1426676484-21812-1-git-send-email-marc.zyngier@arm.com>
-	<1426676484-21812-3-git-send-email-marc.zyngier@arm.com>
-	<CAL85gmBrkonMcKdUVGmYx6zT3wSe-e2jPhnL_+Tkf3s4jsAiWg@mail.gmail.com>
-	<CACRpkdYffHJEzksc5mg7JZdwTzShGaQofAmbmn65=_V3ot04Rg@mail.gmail.com>
-	<CAL85gmC4ovR99wQQYoKs=oo24So80jZ_guxDDFhi-1MXXj0uSw@mail.gmail.com>
-	<CACRpkdZkBLrhFpZiYk4fiM3ND+UwnVJhNKs=+rL5iZY4fS7zCg@mail.gmail.com>
-	<CAL85gmD=12u87vDAc601T=ZOgcS-jDo_=LaC5gRAZUHgp_iTbA@mail.gmail.com>
-	<CACRpkdYV1MzjW6ZMvmOhqi0qhXeeQnC62--7WBY=_hZBT8cvXg@mail.gmail.com>
-	<20150519110131.522f9c16@arm.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH v2 08/11] mfd: mediatek: Add GPIO sub module support
+ into mfd.
+Date: Tue, 19 May 2015 23:05:35 -0700
+Message-ID: <1432101935.4007.1.camel@mussux00.eus.mediatek.inc>
+References: <1432015882-8646-1-git-send-email-hongzhou.yang@mediatek.com>
+	 <1432015882-8646-9-git-send-email-hongzhou.yang@mediatek.com>
+	 <20150519093426.GS22418@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20150519110131.522f9c16@arm.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Abhijeet Dharmapurikar <adharmap@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>, Phong Vo <pvo@apm.com>, Tin Huynh <tnhuynh@apm.com>, Y Vo <yvo@apm.com>, Thomas Gleixner <tglx@linutronix.de>, Toan Le <toanle@apm.com>, Bjorn Andersson <bjorn@kryo.se>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([66.228.70.111]:55663 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751277AbbETGFu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 May 2015 02:05:50 -0400
+In-Reply-To: <20150519093426.GS22418@x1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Sascha Hauer <s.hauer@pengutronix.de>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, dandan.he@mediatek.com, eddie.huang@mediatek.co
 
-On Tue, May 19, 2015 at 3:01 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> On Tue, 19 May 2015 09:40:21 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
->
->> On Thu, May 14, 2015 at 10:14 PM, Feng Kan <fkan@apm.com> wrote:
->> > On Thu, May 14, 2015 at 3:32 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> >> But surely the GPIO block has its own status register, so are
->> >> you saying that this register is unreliable?
->> >
->> > When the GPIO is used as interrupt, the gpio block does not report the
->> > status anymore. Which leaves us stuck with SPISR.
->> >>
->> >> I can think of a few reasons, like transient IRQs etc but
->> >> what is actually causing this?
->> >
->> > I won't say the obvious.
->>
->> Yeah I see your problem now :(
->>
->> I think it's better to fix the access functions so that you can
->> cross-call to the GIC driver to get the SPISR flag out though.
->> Let's see what Marc says.
->>
->> >> Which GPIO driver is this? Is it upstream?
->> >
->> > Yes, it is upstream. It is the xgene slimpro gpio driver. I am starting to
->> > think that we ought to switch to use some gpio poll driver rather than
->> > using gpio-key.
->>
->> There is both gpio_keys_polled and IRQ-driven gpio_keys so yeah
->> that's possible. But honestly I think it's better to deal with this
->> problem for real because IRQ is more efficient.
->>
->> So the way I perceive it this is the real problem:
->>
->> +static int gic_irq_get_irqchip_state(struct irq_data *d,
->> +                                     enum irqchip_irq_state which, bool *val)
->> +{
->> +       switch (which) {
->> (...)
->> +       case IRQCHIP_STATE_ACTIVE:
->> +               *val = gic_peek_irq(d, GIC_DIST_ACTIVE_SET);
->> +               break; case: read
->> from 0xd04 (SPISR) instead, because that makes more
->> sense to me, or am I wrong at it?
->>
->> +       case IRQCHIP_STATE_LINE_LEVEL:
->> +               *val = gic_peek_irq(d, GIC_DIST_SPISR);
->> +               break;
->>
->> And then put a define into <linux/irqchip/arm-gic.h> for
->> GIC_DIST_SPISR.
->
-> What worries me here is that the PENDING state should already give you
-> the right level of information (this is what the GIC-400 TRM says). The
-> only reason why SPISR exists is that software can write to the PENDING
-> register, while SPISR is RO.
->
-> If reading the pending state doesn't work, then I'd like to know
-> exactly *why*. Only then we can add support for LINE_LEVEL using SPISR
-> (which has to be GIC-400 specific, as it is not architected).
-
-IS_PENDING and IS_ACTIVE works fine for the ISR context. However,
-the nature of the register is meant for IRQ handling and not to read
-the status of a GPIO. By the time the gpio_key throws a work queue
-and check the status of the PENDING register, it is no long relevant.
+On Tue, 2015-05-19 at 10:34 +0100, Lee Jones wrote:
+> On Mon, 18 May 2015, Hongzhou Yang wrote:
+> 
+> > Register pinctrl subnode into 6397 mfd cell.
+> > 
+> > Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> > ---
+> >  drivers/mfd/mt6397-core.c |    3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+> > index 09bc780..012c620 100644
+> > --- a/drivers/mfd/mt6397-core.c
+> > +++ b/drivers/mfd/mt6397-core.c
+> > @@ -34,6 +34,9 @@ static const struct mfd_cell mt6397_devs[] = {
+> >  	}, {
+> >  		.name = "mt6397-clk",
+> >  		.of_compatible = "mediatek,mt6397-clk",
+> > +	}, {
+> > +		.name = "mediatek-mt6397-pinctrl",
+> 
+> I think the "mediatek-" part should be removed, no?
 
 
+Ok, I will send another patch to change it, thank you.
 
->
-> Thanks,
->
->         M.
-> --
-> Jazz is not dead. It just smells funny.
+Yours,
+Hongzhou
+
