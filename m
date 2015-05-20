@@ -1,92 +1,103 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [Patch v2 06/14] genirq: Move field 'handler_data' from struct
- irq_data into struct irq_common_data
-Date: Wed, 20 May 2015 16:48:39 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1505201628400.4225@nanos>
-References: <1432114845-24304-1-git-send-email-jiang.liu@linux.intel.com> <1432114845-24304-7-git-send-email-jiang.liu@linux.intel.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
+Date: Wed, 20 May 2015 17:04:07 +0200
+Message-ID: <20150520150405.GA7734@ulmo.nvidia.com>
+References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
+ <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
+ <20150519143340.GE26748@ulmo.nvidia.com>
+ <555B5563.5060604@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1432114845-24304-7-git-send-email-jiang.liu@linux.intel.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, "David S. Miller" <davem@davemloft.net>, x86@kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, bob picco <bpicco@meloft.net>, Jason Cooper <jason@lakedaemon.net>, Kevin Cernekee <cernekee@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, sparclinux@vger.kernel.orgl
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:35488 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753942AbbETPEM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 May 2015 11:04:12 -0400
+Content-Disposition: inline
+In-Reply-To: <555B5563.5060604@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, 20 May 2015, Jiang Liu wrote:
 
-> Handler data (handler_data) is per-irq instead of per irqchip, so move
-> it into struct irq_common_data.
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For review and debugging sake, please do the same split as you did
-with node. Convert first and then move. 5 patches this time:
+On Tue, May 19, 2015 at 04:23:15PM +0100, Jon Hunter wrote:
+>=20
+> On 19/05/15 15:33, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
+> > [...]
+> >=20
+> > One more thing:
+> >=20
+> > [...]
+> >> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pi=
+nctrl-tegra-xusb.c
+> >> index 3e8e4a914fb4..c61594066e26 100644
+> >> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
+> >> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+> >> @@ -125,6 +125,23 @@ static const char *tegra_xusb_padctl_get_group_na=
+me(struct pinctrl_dev *pinctrl,
+> >>  	return padctl->soc->pins[group].name;
+> >>  }
+> >> =20
+> >> +static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinct=
+rl,
+> >> +					    unsigned group,
+> >> +					    const unsigned **pins,
+> >> +					    unsigned *num_pins)
+> >> +{
+> >> +	struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pinctrl=
+);
+> >> +
+> >> +	/*
+> >> +	 * For the tegra-xusb pad controller groups are synonomous
+> >> +	 * with lanes/pins and there is always one lane/pin per group.
+> >> +	 */
+> >> +	*pins =3D &padctl->soc->pins[group].number;
+> >=20
+> > Shouldn't this be the same as pinctrl->desc->pins? In that case, maybe a
+> > better solution would be to make .get_group_pins() mandatory again and
+> > turn this into a pinctrl helper function that can be used by all group-
+> > only pinctrl drivers?
+>=20
+> Yes I believe that you are right. However, I don't think a helper
+> function would work here, because this function returns a pointer to an
+> array of pin numbers. In the case of xusb this is simplified a bit
+> because we are only returning a single number here for the group.
+> However, if you look at other pinctrl devices (such as pinctrl-tegra.c)
+> there could be more than one number in the array.
 
-Sparc: 
->  arch/sparc/kernel/irq_64.c    |   15 +++++++++------
->  arch/sparc/kernel/sun4d_irq.c |    4 ++--
->  arch/sparc/kernel/sun4m_irq.c |    6 ++++--
+I see. Oh well, guess this is as good as it gets then.
 
-x86:
->  arch/x86/kernel/apic/msi.c    |    2 +-
->  arch/x86/kernel/hpet.c        |    4 ++--
+Thierry
 
-gpio:
->  drivers/gpio/gpio-davinci.c   |    2 +-
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature
 
-sh:
->  drivers/sh/intc/virq.c        |    4 ++--
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Move:
->  include/linux/irq.h           |    8 ++++----
->  include/linux/irqdesc.h       |    2 +-
->  kernel/irq/chip.c             |    2 +-
->  kernel/irq/irqdesc.c          |    3 ++-
+iQIcBAABCAAGBQJVXKJjAAoJEN0jrNd/PrOhiJwP/1AD+hb0dqH9pwpUl4+oekDS
+ImIbRQk1L2YG3BGQRogJJ84srI3kIq9iXC+ZUqUIqAKzkl7c299n10t65deaz1wN
+lNGmX9rZyCuHVD+ykdX4bmcyeWaiqYmObAzA0ZlNbnsjhhYyQ+/FQr4gEAHEF9i2
+MyTuCApDW0ZfO4vjGikpo/5+AWUyW/pMtnYVHeZCA9DnVDsLbawwb1VrWNyI6ffT
+S3awNv1Yo6vTxA314T67bqFAufXVWa7jG6zElMCDbukXVWdLskds1QW+De7u+5cm
+sfo06/1tpCh673oHQBAcz9iyQ7/DSO4Hr7vJCvtyfpQ7NSbCmuyD5bRW3WLBcZRh
+/eqf2OLOT7OirLfMIjQo/v41Rn39dskoFpN5nV7/83DnOQnQB2RaJeQoPX7OTdtP
+qBAkKUuQE+2W3yN5ZOt6yqJZ1S5zub74RFivk0F5a64afjEshDgSR1s/+JeCCmpl
+6jaUuga2oydRUAh/wR/zSGgQ3hJRiSmHwGgPX1yXXxtK3bH5BnWnHUvU/B+gceg8
+KNHnB/NlYCcuzeHq/Fsizr2B1oWJ34VSTpgMPVL3SM+995FP2RD92IQdtqhO6IrI
+EDZUqBlu+IKdYLi/lHTLddnKWo8xs/B9sK/2xES2a4c+t1h2xDKzSaLcSADaAl8A
+WePGM5/UHo730V/czKp8
+=oWCz
+-----END PGP SIGNATURE-----
 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index c5e05c82d67c..477d5b8616ab 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -396,7 +396,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
->  	struct davinci_gpio_regs __iomem *g;
->  	u32 mask;
->  
-> -	d = (struct davinci_gpio_controller *)data->handler_data;
-> +	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
-
-This type cast is silly, handler_data is (void *)
-
->  	g = (struct davinci_gpio_regs __iomem *)d->regs;
->  	mask = __gpio_mask(data->irq - d->gpio_irq);
->  
-> diff --git a/drivers/sh/intc/virq.c b/drivers/sh/intc/virq.c
-> index f30ac9354ff2..3dbc21696924 100644
-> --- a/drivers/sh/intc/virq.c
-> +++ b/drivers/sh/intc/virq.c
-> @@ -87,8 +87,8 @@ static int add_virq_to_pirq(unsigned int irq, unsigned int virq)
->  	struct irq_data *data = irq_get_irq_data(irq);
->  
->  	/* scan for duplicates */
-> -	last = (struct intc_virq_list **)&data->handler_data;
-> -	for_each_virq(entry, data->handler_data) {
-> +	last = (struct intc_virq_list **)&data->common->handler_data;
-
-That does not make sense. You convert the one below, but not that one
-to the accessor function.
-
-handler_data is a pointer to a struct intc_virq_list. So 
-
-	struct intc_virq_list **last, *entry, *head; 
-
-	head = irq_data_get_irq_handler_data(data);
-	last = &head;
-	
-	for_each_virq(entry, head) {
-		....
-	}
-
-Would be clean code and lets you convert all usage sites of
-data->handler_data before actually doing the move to common data.
-
-Thanks,
-
-	tglx
+--nFreZHaLTZJo0R7j--
