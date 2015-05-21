@@ -1,76 +1,65 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [RESEND PATCH 0/2] pinctrl: zynq: fix two bugs of zynq pinmux function
-Date: Thu, 21 May 2015 23:31:54 +0900
-Message-ID: <CAK7LNARutQyESi90faNUC0LvCQ3woS8wUvHLDw5emcBOza9eng@mail.gmail.com>
-References: <1432111351-21336-1-git-send-email-yamada.masahiro@socionext.com>
-	<20150520142358.GS31550@xsjsorenbubuntu>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
+Date: Thu, 21 May 2015 16:34:01 +0200
+Message-ID: <20150521143401.GB30660@localhost>
+References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
+ <20150518110214.GC28127@localhost>
+ <5559E3C0.1040207@linaro.org>
+ <20150518150815.GH28127@localhost>
+ <555A0299.3030803@linaro.org>
+ <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
+ <20150519153940.GP28127@localhost>
+ <CACRpkdbupBQBsymB4wcC9XxbFJMhzxoZVXhyKxZT+xxuSxwifA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:51135 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755501AbbEUOcH convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 21 May 2015 10:32:07 -0400
-In-Reply-To: <20150520142358.GS31550@xsjsorenbubuntu>
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:33063 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754189AbbEUOeB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 May 2015 10:34:01 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbupBQBsymB4wcC9XxbFJMhzxoZVXhyKxZT+xxuSxwifA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi S=C3=B6ren,
+On Wed, May 20, 2015 at 09:21:16AM +0200, Linus Walleij wrote:
+> On Tue, May 19, 2015 at 5:39 PM, Johan Hovold <johan@kernel.org> wrote:
+> > On Tue, May 19, 2015 at 04:12:35PM +0200, Linus Walleij wrote:
+> 
+> >> What? If I wanted a stable interface I would use sysfs and document
+> >> the ABI in Documentation/ABI/*.
+> >>
+> >> debugfs is not ABI.
+> >
+> > As I mentioned in my response to Grygorii, not everyone -- and most
+> > notably apparently not even Linus Torvalds -- agrees on this:
+> 
+> Yeah I was sloppy I guess.
+> 
+> What I mean, precisely is that sysfs is ABI, whether documented or
+> not.
+> 
+> Even debugfs is actually blurry, as per
+> Documentation/filesystems/debugfs.txt:
+> 
+> "The debugfs filesystem is also intended to not serve as a stable
+> ABI to user space; in theory, there are no stability constraints placed on
+> files exported there.  The real world is not always so simple, though [1];
+> even debugfs interfaces are best designed with the idea that they will need
+> to be maintained forever."
+> 
+> But I haven't been bitten by it yet so that's why I allow some poetic
+> license.
 
+Yes, and the [1] reference in that quote is the LWN article I referred
+to.
 
-2015-05-20 23:23 GMT+09:00 S=C3=B6ren Brinkmann <soren.brinkmann@xilinx=
-=2Ecom>:
-> Hi Masahiro,
->
-> On Wed, 2015-05-20 at 05:42PM +0900, Masahiro Yamada wrote:
->>
->> I sent the previous one to linux-serial by mistake.
->> I am resending to linux-gpio, dropping linux-serial.
->> Sorry for noise.
->>
->>
->>
->> Masahiro Yamada (2):
->>   pinctrl: zynq: fix DEFINE_ZYNQ_PINMUX_FUNCTION_MUX macro
->>   pinctrl: zynq: fix offset address for {SD0,SD1}_WP_CD_SEL
->
-> For the series:
-> Reviewed-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
->
-> I'm not sure how severe the impact of these bugs is. It looks like th=
-e
-> the current driver could corrupt the register for MIO pin0, am I righ=
-t?
+I also see you already "broke" that ABI in a similar way in 2013 with
+d468bf9ecaab ("gpio: add API to be strict about GPIO IRQ usage") by
+adding the IRQ field.
 
-Right.
-DEFINE_ZYNQ_PINMUX_FUNCTION_MUX() is missing the .mux
-so it is always set to zero, i.e. MIO pin0 register is corrupted.
+Your call. :)
 
-
-> It may be a good ides to add
->   Fixes: add958cee967 "pinctrl: Add driver for Zynq"
-> (I suspect that bug is there from the beginning) and ask Linus to
-> consider this for stable.
-
-Yes, looks like these two bugs have been there
-since the introduction of this driver.
-
-=46or the series,
-=46ixes: add958cee967 (pinctrl: Add driver for Zynq)
-
-Linus,
-Could you consider this series for stable and linux-4.1, please?
-
-
---=20
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Johan
