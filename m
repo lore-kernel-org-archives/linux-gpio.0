@@ -1,62 +1,65 @@
-From: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 11/11] ARM: dts: mt8135-evbp1: Add pinctrl/GPIO node
- for mt6397.
-Date: Thu, 21 May 2015 10:03:45 +0200
-Message-ID: <CABuKBeLgqhP=QHSKtV1ozanZLWwY8Byo3-1Su3v3FteMJcEEbw@mail.gmail.com>
-References: <1432015882-8646-1-git-send-email-hongzhou.yang@mediatek.com>
-	<1432015882-8646-12-git-send-email-hongzhou.yang@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432015882-8646-12-git-send-email-hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, srv_heupstream <srv_heupstream@media>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] gpio: rcar: Check for irq_set_irq_wake() failures
+Date: Thu, 21 May 2015 13:21:37 +0200
+Message-ID: <1432207297-16887-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Axel Haslam <ahaslam@baylibre.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-2015-05-19 8:11 GMT+02:00 Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>:
-> Add pinctrl and GPIO node to mt8135-evbp1.dts.
->
-> Signed-off-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-> ---
->  arch/arm/boot/dts/mt8135-evbp1.dts |    8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/mt8135-evbp1.dts b/arch/arm/boot/dts/mt8135-evbp1.dts
-> index 357a91f..332233b 100644
-> --- a/arch/arm/boot/dts/mt8135-evbp1.dts
-> +++ b/arch/arm/boot/dts/mt8135-evbp1.dts
-> @@ -14,6 +14,7 @@
->
->  /dts-v1/;
->  #include "mt8135.dtsi"
-> +#include <dt-bindings/pinctrl/mt6397-pinfunc.h>
->
->  / {
->         model = "MediaTek MT8135 evaluation board";
-> @@ -28,6 +29,13 @@
->         pmic: mt6397 {
->                 compatible = "mediatek,mt6397";
->
-> +               pio6397: pinctrl@c000 {
-> +                       compatible = "mediatek,mt6397-pinctrl";
-> +                       pins-are-numbered;
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +               };
-> +
->                 mt6397regulator: mt6397regulator {
->                         compatible = "mediatek,mt6397-regulator";
->
+If an interrupt controller doesn't support wake-up configuration,
+irq_set_irq_wake() returns an error code.  Then any subsequent call
+trying to deconfigure wake-up will cause an imbalance, and a warning
+will be printed:
 
-Acked-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+    WARNING: CPU: 1 PID: 1341 at kernel/irq/manage.c:540 irq_set_irq_wake+0x9c/0xf8()
+    Unbalanced IRQ 26 wake disable
 
-Linus, please take it through your tree.
-Thanks.
+To fix this, refrain from any further parent interrupt controller
+(de)configuration if irq_set_irq_wake() failed.
 
+Alternative fixes would be:
+  - calling "gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE)" from the
+    platform code,
+  - setting "gic_chip.flags = IRQCHIP_SKIP_SET_WAKE" in the GIC driver
+    code,
+but these were withheld as the GIC hardware doesn't really support
+wake-up interrupts.
+
+Fixes: ab82fa7da4dce5c7 ("gpio: rcar: Prevent module clock disable when wake-up is enabled")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Reworded patch description,
+  - Moved alternatives into the patch description.
+---
+ drivers/gpio/gpio-rcar.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index fd39774659484fa6..1e14a6c74ed13941 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -177,8 +177,17 @@ static int gpio_rcar_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct gpio_rcar_priv *p = container_of(gc, struct gpio_rcar_priv,
+ 						gpio_chip);
+-
+-	irq_set_irq_wake(p->irq_parent, on);
++	int error;
++
++	if (p->irq_parent) {
++		error = irq_set_irq_wake(p->irq_parent, on);
++		if (error) {
++			dev_dbg(&p->pdev->dev,
++				"irq %u doesn't support irq_set_wake\n",
++				p->irq_parent);
++			p->irq_parent = 0;
++		}
++	}
+ 
+ 	if (!p->clk)
+ 		return 0;
 -- 
-motzblog.wordpress.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
