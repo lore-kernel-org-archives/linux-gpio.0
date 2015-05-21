@@ -1,65 +1,60 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Thu, 21 May 2015 16:34:01 +0200
-Message-ID: <20150521143401.GB30660@localhost>
-References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
- <20150518110214.GC28127@localhost>
- <5559E3C0.1040207@linaro.org>
- <20150518150815.GH28127@localhost>
- <555A0299.3030803@linaro.org>
- <CACRpkdYs+r+oSegZuMjvg9PueWr6xB7Z-BmsHD+cmgeV=XD=Sg@mail.gmail.com>
- <20150519153940.GP28127@localhost>
- <CACRpkdbupBQBsymB4wcC9XxbFJMhzxoZVXhyKxZT+xxuSxwifA@mail.gmail.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v8 07/16] drivers: reset: Add STM32 reset driver
+Date: Thu, 21 May 2015 19:58:28 +0200
+Message-ID: <555E1CC4.9090605@suse.de>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-8-git-send-email-mcoquelin.stm32@gmail.com> <555D1C7D.1060205@suse.de> <CALszF6CrouFF3oS_Qz6+qQRqa4a5PurdYNdvHnZRDb4zwOJ6mQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:33063 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754189AbbEUOeB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 May 2015 10:34:01 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbupBQBsymB4wcC9XxbFJMhzxoZVXhyKxZT+xxuSxwifA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CALszF6CrouFF3oS_Qz6+qQRqa4a5PurdYNdvHnZRDb4zwOJ6mQ@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, Lee Jones <lee.jones@linaro.org>, Linux-Arch <linux-arch@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, May 20, 2015 at 09:21:16AM +0200, Linus Walleij wrote:
-> On Tue, May 19, 2015 at 5:39 PM, Johan Hovold <johan@kernel.org> wrote:
-> > On Tue, May 19, 2015 at 04:12:35PM +0200, Linus Walleij wrote:
-> 
-> >> What? If I wanted a stable interface I would use sysfs and document
-> >> the ABI in Documentation/ABI/*.
-> >>
-> >> debugfs is not ABI.
-> >
-> > As I mentioned in my response to Grygorii, not everyone -- and most
-> > notably apparently not even Linus Torvalds -- agrees on this:
-> 
-> Yeah I was sloppy I guess.
-> 
-> What I mean, precisely is that sysfs is ABI, whether documented or
-> not.
-> 
-> Even debugfs is actually blurry, as per
-> Documentation/filesystems/debugfs.txt:
-> 
-> "The debugfs filesystem is also intended to not serve as a stable
-> ABI to user space; in theory, there are no stability constraints placed on
-> files exported there.  The real world is not always so simple, though [1];
-> even debugfs interfaces are best designed with the idea that they will need
-> to be maintained forever."
-> 
-> But I haven't been bitten by it yet so that's why I allow some poetic
-> license.
+Am 21.05.2015 um 09:46 schrieb Maxime Coquelin:
+> 2015-05-21 1:45 GMT+02:00 Andreas F=E4rber <afaerber@suse.de>:
+>> Am 09.05.2015 um 09:53 schrieb Maxime Coquelin:
+>>> +static const struct of_device_id stm32_reset_dt_ids[] =3D {
+>>> +      { .compatible =3D "st,stm32-rcc", },
+>>> +      { /* sentinel */ },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, sstm32_reset_dt_ids);
+>>
+>> Typo.
+>=20
+> Indeed, thanks for pointing this out.
+>=20
+>>
+>> IIUC the timer depends on the reset controller, so it must be built =
+in
+>> anyway, and that's what's enforced in the Makefile above. Drop the l=
+ine?
+>>
+>=20
+> Agree it must be built-in.
+> I will fix that in next version.
 
-Yes, and the [1] reference in that quote is the LWN article I referred
-to.
+Actually, I've updated a timer implementation of mine to invoke a reset
+controller similar to how you do in the STM32 clocksource patch, but no
+reset controller is getting returned.
 
-I also see you already "broke" that ABI in a similar way in 2013 with
-d468bf9ecaab ("gpio: add API to be strict about GPIO IRQ usage") by
-adding the IRQ field.
+It seems to me, you are working around that by simply ignoring the erro=
+r
+in the timer code and not doing a reset then, so the STM32 timer does i=
+n
+fact _not_ depend on the reset controller? What happened to your effort=
+s
+of making the reset controller usable for the timer? In my case, my
+timer is originally in reset state and needs to be deasserted, so I
+can't just ignore it.
 
-Your call. :)
+Regards,
+Andreas
 
-Johan
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton; H=
+RB
+21284 (AG N=FCrnberg)
