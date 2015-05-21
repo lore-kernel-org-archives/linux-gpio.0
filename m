@@ -1,52 +1,29 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 0/3] gpiolib: debugfs: update to show more info for
- gpios requested as irq
-Date: Thu, 21 May 2015 13:02:30 +0900
-Message-ID: <CAAVeFuJ20AYEOWG04Nszt+2FF=Uz-ugMyrbWYPjpoPzveVgstw@mail.gmail.com>
-References: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
+From: Michal Marek <mmarek-AlSwsSmVLrQ@public.gmane.org>
+Subject: Re: [PATCH v8 01/16] scripts: link-vmlinux: Don't pass page offset
+ to kallsyms if XIP Kernel
+Date: Thu, 21 May 2015 13:40:13 +0800
+Message-ID: <555D6FBD.3020202@suse.cz>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-2-git-send-email-mcoquelin.stm32@gmail.com> <CALszF6B0=dgSDfLFwDi9YmEzrrNVuYbUnqMu5DmDhhy--emtpw@mail.gmail.com> <555D12F8.4000403@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f172.google.com ([209.85.213.172]:36088 "EHLO
-	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbbEUECv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 May 2015 00:02:51 -0400
-In-Reply-To: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <555D12F8.4000403-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-api-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Nikolay Borisov <Nikolay.Borisov-5wv7dgnIgG8@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, "linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-api-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Linux-Arch <linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Wed, May 20, 2015 at 7:30 PM, Grygorii Strashko
-<grygorii.strashko@linaro.org> wrote:
-> This series updates gpiolib debugfs code to show more information about
-> GPIOs requested as IRQ.
->
-> First patch ensures that information about GPIOs requested as IRQ only
-> will be provided through GPIO debugfs.
->
-> Other two patches extend information for GPIOs requested as IRQ
-> - show Linux irq number
-> - show marker '<irq-only>' for GPIOs requested as IRQ only
->
-> After this series sys/kernel/debug/gpio will produce following output:
->   ...
->  GPIOs 160-191, platform/4805d000.gpio, gpio:
->   gpio-171 ((null)              ) in  hi IRQ-209 <irq-only>
->  ^^^ GPIO requested as IRQ only and its Linux IRQ number is 209
->   gpio-172 (xxyy              ) in  hi IRQ-210
->  ^^^ GPIO requested as IRQ and as GPIO and its Linux IRQ number is 209
->
->  GPIOs 192-223, platform/48051000.gpio, gpio:
->   gpio-203 (vtt_fixed           ) out hi
->  ^^^ GPIO requested as GPIO only
->
-> Changes in v2:
-> - split original patch on three patcehs
-> - apply comments from Linus and Johan
+Dne 21.5.2015 v 07:04 Andreas F=E4rber napsal(a):
+> Am 18.05.2015 um 13:47 schrieb Maxime Coquelin:
+> But this is definitely an improvement for ARMv7-M debugging,
+>=20
+> Tested-by: Andreas F=E4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+>=20
+>> [Hi Michal, ...] could you consider
+>> taking it for v4.2?
 
-This looks like useful information indeed.
+I applied it to kbuild.git#kbuild now.
 
-The series,
-
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Thanks,
+Michal
