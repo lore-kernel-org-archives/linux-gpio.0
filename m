@@ -1,60 +1,116 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v8 07/16] drivers: reset: Add STM32 reset driver
-Date: Thu, 21 May 2015 19:58:28 +0200
-Message-ID: <555E1CC4.9090605@suse.de>
-References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com> <1431158038-3813-8-git-send-email-mcoquelin.stm32@gmail.com> <555D1C7D.1060205@suse.de> <CALszF6CrouFF3oS_Qz6+qQRqa4a5PurdYNdvHnZRDb4zwOJ6mQ@mail.gmail.com>
+From: Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
+Subject: Re: [PATCH] gpio: add ETRAXFS GPIO driver
+Date: Thu, 21 May 2015 20:48:55 +0200
+Message-ID: <20150521184855.GA6159@debian>
+References: <1431728843-21583-1-git-send-email-rabin@rab.in>
+ <CACRpkdZcbvrcOMJavU5TacR1nD5+ot2FdC5zxBc=8XdhZN0SqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CALszF6CrouFF3oS_Qz6+qQRqa4a5PurdYNdvHnZRDb4zwOJ6mQ@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, Lee Jones <lee.jones@linaro.org>, Linux-Arch <linux-arch@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZcbvrcOMJavU5TacR1nD5+ot2FdC5zxBc=8XdhZN0SqQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Am 21.05.2015 um 09:46 schrieb Maxime Coquelin:
-> 2015-05-21 1:45 GMT+02:00 Andreas F=E4rber <afaerber@suse.de>:
->> Am 09.05.2015 um 09:53 schrieb Maxime Coquelin:
->>> +static const struct of_device_id stm32_reset_dt_ids[] =3D {
->>> +      { .compatible =3D "st,stm32-rcc", },
->>> +      { /* sentinel */ },
->>> +};
->>> +MODULE_DEVICE_TABLE(of, sstm32_reset_dt_ids);
->>
->> Typo.
->=20
-> Indeed, thanks for pointing this out.
->=20
->>
->> IIUC the timer depends on the reset controller, so it must be built =
-in
->> anyway, and that's what's enforced in the Makefile above. Drop the l=
-ine?
->>
->=20
-> Agree it must be built-in.
-> I will fix that in next version.
+On Tue, May 19, 2015 at 11:39:01AM +0200, Linus Walleij wrote:
+> On Sat, May 16, 2015 at 12:27 AM, Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org> wrote:
+> > +Axis ETRAX FS General I/O controller bindings
+> > +
+> > +Required properties:
+> > +
+> > +- compatible:
+> > +  - "axis,etraxfs-gio"
+> > +- reg: Physical base address and length of the controller's registers.
+> > +- #gpio-cells: Should be 3
+> > +  - The first cell is the port number (hex).
+> > +  - The seconds cell is the gpio offset number.
+> > +  - The third cell is reserved and is currently unused.
+> > +- gpio-controller: Marks the device node as a GPIO controller.
+> > +
+> > +Example:
+> > +
+> > +       gio: gpio@b001a000 {
+> > +               compatible = "axis,etraxfs-gio";
+> > +               reg = <0xb001a000 0x1000>;
+> > +               gpio-controller;
+> > +               #gpio-cells = <3>;
+> > +       };
+> 
+> Three cells is rather unusual, is it the best arrangement?
+> 
+> Usually it's just offset+flags (your flags are ununsed I see).
+> And then you could divide offset by num gpios per bank
+> (I guess 32) in the driver to get bank number.
 
-Actually, I've updated a timer implementation of mine to invoke a reset
-controller similar to how you do in the STM32 clocksource patch, but no
-reset controller is getting returned.
+At least to me, this:
 
-It seems to me, you are working around that by simply ignoring the erro=
-r
-in the timer code and not doing a reset then, so the STM32 timer does i=
-n
-fact _not_ depend on the reset controller? What happened to your effort=
-s
-of making the reset controller usable for the timer? In my case, my
-timer is originally in reset state and needs to be deasserted, so I
-can't just ignore it.
++       i2c {
++               compatible = "i2c-gpio";
++               gpios = <&gio 0xD 5 0>, <&gio 0xD 6 0>;
++               i2c-gpio,delay-us = <2>;
 
-Regards,
-Andreas
+which immediately shows that it's port D pins 5 and 6 which are being used, and
+which matches the naming in the schematics and the chip documentation is
+clearly preferable to this:
 
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton; H=
-RB
-21284 (AG N=FCrnberg)
++               gpios = <&gio 101 0>, <&gio 102 0>;
+
+which uses made up numbers with no relation to any documentation and which
+probably requires the use of a calculator to determine if the correct
+pins are being used.
+
+(btw, the ports have varying numbers of GPIOs and none of them have 32).
+
+> 
+> The other obvious question is whether you considered the
+> design pattern of using one DT node per bank, so you
+> have offset 0..31 (I guess) on each device, simplifying things
+> with two cells.
+
+Yes, but I did it the way I did for the reasons below.
+
+> The latter design pattern is usually recommended unless
+> there is a "strong" coupling between the banks, such as
+> if they all share the same IRQ line so they need the
+> same interrupt handler, or share other common registers.
+
+The binding in the patch matches the hardware.  The hardware is
+described as one IP with several ports and not several instances of the
+same IP.  The registers are also just 3 per port in the same region.
+Creating one instance of the device for handling each port, seems
+like useless overhead at best and, because it doesn't even match how the
+hardware looks like, quite wrong anyway.
+
+Only port A has interrupt support; this is not implemented in the
+current driver.
+
+BTW, the documentation for the chip is available here (GIO starts at
+page 647 and its registers at page 895):
+http://www.axis.com/files/manuals/etrax_fs_des_ref-070821.pdf
+
+> > +struct etraxfs_gpio_port {
+> > +       const char *label;
+> > +       unsigned int oe;
+> > +       unsigned int dout;
+> > +       unsigned int din;
+> 
+> consider using u32 for these.
+
+Why?  These are just offsets to the base address so there's no reason
+they _have_ to be 32 bits so u32 seems semantically wrong.
+
+> > +       unsigned int ngpio;
+> > +};
+> > +
+> > +struct etraxfs_gpio_info {
+> > +       int num_ports;
+> 
+> unsigned?
+
+OK.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
