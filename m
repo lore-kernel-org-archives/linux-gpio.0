@@ -1,32 +1,52 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH][RFC] gpiolib: rename gpiod_set_array to gpiod_set_array_value
-Date: Thu, 21 May 2015 09:26:12 +0900
-Message-ID: <CAAVeFuJoX046=yN9kzEF33A-h5Y4dEtk9P-Dbv=FrxsesWxvaw@mail.gmail.com>
-References: <5305088.q3JD5pGOgN@pcimr>
+Subject: Re: [PATCH v2 0/3] gpiolib: debugfs: update to show more info for
+ gpios requested as irq
+Date: Thu, 21 May 2015 13:02:30 +0900
+Message-ID: <CAAVeFuJ20AYEOWG04Nszt+2FF=Uz-ugMyrbWYPjpoPzveVgstw@mail.gmail.com>
+References: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f175.google.com ([209.85.213.175]:38135 "EHLO
-	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753571AbbEUA0d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 May 2015 20:26:33 -0400
-Received: by igcau1 with SMTP id au1so52972935igc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 20 May 2015 17:26:32 -0700 (PDT)
-In-Reply-To: <5305088.q3JD5pGOgN@pcimr>
+Received: from mail-ig0-f172.google.com ([209.85.213.172]:36088 "EHLO
+	mail-ig0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750729AbbEUECv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 21 May 2015 00:02:51 -0400
+In-Reply-To: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Wed, May 13, 2015 at 6:04 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> There have been concerns that the function names gpiod_set_array() and
-> gpiod_get_array() might be confusing to users. One might expect
-> gpiod_get_array() to return array values, while it is actually the array
-> counterpart of gpiod_get(). To be consistent with the single descriptor API
-> we could rename gpiod_set_array() to gpiod_set_array_value(). This makes
-> some function names a bit lengthy: gpiod_set_raw_array_value_cansleep().
+On Wed, May 20, 2015 at 7:30 PM, Grygorii Strashko
+<grygorii.strashko@linaro.org> wrote:
+> This series updates gpiolib debugfs code to show more information about
+> GPIOs requested as IRQ.
+>
+> First patch ensures that information about GPIOs requested as IRQ only
+> will be provided through GPIO debugfs.
+>
+> Other two patches extend information for GPIOs requested as IRQ
+> - show Linux irq number
+> - show marker '<irq-only>' for GPIOs requested as IRQ only
+>
+> After this series sys/kernel/debug/gpio will produce following output:
+>   ...
+>  GPIOs 160-191, platform/4805d000.gpio, gpio:
+>   gpio-171 ((null)              ) in  hi IRQ-209 <irq-only>
+>  ^^^ GPIO requested as IRQ only and its Linux IRQ number is 209
+>   gpio-172 (xxyy              ) in  hi IRQ-210
+>  ^^^ GPIO requested as IRQ and as GPIO and its Linux IRQ number is 209
+>
+>  GPIOs 192-223, platform/48051000.gpio, gpio:
+>   gpio-203 (vtt_fixed           ) out hi
+>  ^^^ GPIO requested as GPIO only
+>
+> Changes in v2:
+> - split original patch on three patcehs
+> - apply comments from Linus and Johan
 
-It makes the naming consistent, which is a better thing (and some of
-these names were already long anyway).
+This looks like useful information indeed.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+The series,
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
