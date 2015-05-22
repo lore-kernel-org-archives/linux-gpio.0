@@ -1,42 +1,40 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: use "const struct ..." rather than "struct ... const"
-Date: Fri, 22 May 2015 15:25:50 +0900
-Message-ID: <1432275950-15374-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg010.nifty.com ([202.248.44.36]:30016 "EHLO
-	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752677AbbEVGZq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 May 2015 02:25:46 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Fri, 22 May 2015 10:56:08 +0300
+Message-ID: <1432281368-88687-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-Only this member, pins, is defined as "struct ... const *", but the
-others in this struct, pinlops, pmxops, confops, etc. are defined as
-"const struct ... *".
+BIOS/platform may use some of the pins by themselves, such as providing SCI
+(System Control Interrupt) from the embedded controller. The driver masks
+all interrupts at probe time which prevents those pins from triggering
+interrupts properly.
 
-Swap the "struct pinctrl_pin_desc" and "const" for consistency.
+Fix this by not masking all interrupts at probe -- it should be enough just
+to clear the status register.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Yu C Chen <yu.c.chen@intel.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- include/linux/pinctrl/pinctrl.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index 66e4697..9ba59fc 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -127,7 +127,7 @@ struct pinctrl_ops {
-  */
- struct pinctrl_desc {
- 	const char *name;
--	struct pinctrl_pin_desc const *pins;
-+	const struct pinctrl_pin_desc *pins;
- 	unsigned int npins;
- 	const struct pinctrl_ops *pctlops;
- 	const struct pinmux_ops *pmxops;
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 82f691eeeec4..c9c0257a370c 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1417,8 +1417,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		offset += range->npins;
+ 	}
+ 
+-	/* Mask and clear all interrupts */
+-	chv_writel(0, pctrl->regs + CHV_INTMASK);
++	/* Clear all interrupts */
+ 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+ 
+ 	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
 -- 
-1.9.1
-
+2.1.4
