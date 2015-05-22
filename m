@@ -1,94 +1,49 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v4 2/7] mmc: mediatek: Add Mediatek MMC driver
-Date: Fri, 22 May 2015 14:51:56 +0200
-Message-ID: <CAPDyKFpWCvJXL-W5P83ucBM2-b5cDFEtSLnN6J6WLyR_9CuvWw@mail.gmail.com>
-References: <1432017411-2996-1-git-send-email-chaotian.jing@mediatek.com>
-	<1432017411-2996-3-git-send-email-chaotian.jing@mediatek.com>
-	<CAPDyKFo5788uRqAaXUZ-OiS1XF8NPmg4tn2ipZNJdx4dci+KMQ@mail.gmail.com>
-	<1432284000.23435.38.camel@mhfsdcap03>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v8 14/16] ARM: dts: Introduce STM32F429 MCU
+Date: Fri, 22 May 2015 15:09:30 +0200
+Message-ID: <555F2A8A.5020205@suse.de>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>	<2282066.NWoIT9ZyLc@wuerfel>	<CALszF6CaO_yuNiSDuDV+4d2NRe_+32j=zcSE1HPhB1UH59cW9w@mail.gmail.com>	<13641152.Yt4ZI3oT6L@wuerfel>	<CALszF6CK5ezrO6D=4zr6zEPC7VanzbQjnZJwKOZekEZ5L4D-Dg@mail.gmail.com>	<1432285588.3929.28.camel@pengutronix.de>	<20150522091822.GF8557@lukather>	<1432289231.3929.60.camel@pengutronix.de>
+ <CALszF6CQ1_HQXJ8=vgytvVo2t4_ue5_nsE06HPyHMzSLrntqKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1432284000.23435.38.camel@mhfsdcap03>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chaotian Jing <chaotian.jing@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CALszF6CQ1_HQXJ8=vgytvVo2t4_ue5_nsE06HPyHMzSLrntqKg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux-Arch <linux-arch@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Daniel Lezcano <daniel.lezcano@linaro.org>, Nicolae Rosia <nicolae.rosia@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.>
 List-Id: linux-gpio@vger.kernel.org
 
-[...]
-
->> You are invoking msdc_gate_clock() and msdc_ungate_clock() in a
->> balanced manner, thus hclk_enabled is redundant. Please remove it.
->
-> on drv->probe(), already invoke the msdc_ungate_clock(), so, when the
-> runtime pm resume invoke the msdc_ungate_clock(), the hclk already
-> enabled.
-
-
-That's why you invoke pm_runtime_set_active() during ->probe() when
-deploying PM support in patch3. It's not an issue then.
-
-[...]
-
->> I assume it's possible to gate the clock by updating a MSDC register
->> instead!? That would be prefereable since then you can leave clock
->> gating/ungating via the clk API, to be dealt from runtime PM. That
->> would also make "sclk_enabled" in the struct msdc_host redundant.
->>
->> Adopting to above, obviously requires MSDC to be able to ungate the
->> clock by also updating a MSDC register. I assume that's possible as
->> well!?
->>
-> We can set the bit1 of MSDC_CFG, when this bit is 0, the bus clock was
-> gated to 0 if no command or data is transmitted.
-> And, from our designer, when we operate the MSDC register, we need make
-> sure both HCLK and source are enabled, if source clock was disabled,
-> write some MSDC registers will have no effect(eg. send CMD, without
-> source clock, not only cannot send CMD, but also cannot get CMD timeout
-> interrupt.)
-
-Thanks, that answered my question. As I understand it you should be
-able to adopt to my propsual.
-
-[...]
-
->> > +{
->> > +       unsigned long tmo = jiffies + msecs_to_jiffies(20);
->> > +
->> > +       while ((readl(host->base + SDC_STS) & SDC_STS_CMDBUSY)
->> > +                       && time_before(jiffies, tmo))
->> > +               continue;
->> > +
->> > +       if (readl(host->base + SDC_STS) & SDC_STS_CMDBUSY) {
->> > +               dev_err(host->dev, "CMD bus busy detected\n");
->> > +               host->error |= REQ_CMD_BUSY;
->> > +               msdc_cmd_done(host, MSDC_INT_CMDTMO, mrq, cmd);
->> > +               return false;
->> > +       }
->> > +
->> > +       if (mmc_resp_type(cmd) == MMC_RSP_R1B || cmd->data) {
->> > +               /* R1B or with data, should check SDCBUSY */
->> > +               while (readl(host->base + SDC_STS) & SDC_STS_SDCBUSY)
->> > +                       cpu_relax();
->> > +       }
->>
->> MSDC seems to be handling card busy detection in HW, right?
->>
-> Do not have this ability, HW only know if CMD/DAT is low, but do not
-> have any interrupt for it,
-
-I see, but doesn't the above polling mean that msdc will not propagate
-the response until the card have stopped signal busy? That's what
-MMC_CAP_WAIT_WHILE_BUSY shall be used for.
-
-Perhaps you should remove the above polling, and rely on the MMC core
-to poll with CMD13 instead?
-
->> If so, you should enable MMC_CAP_WAIT_WHILE_BUSY and set
->> "max_busy_timeout" to DAT_TIMEOUT to inform the mmc core about it.
->>
-
-[...]
-
-Kind regards
-Uffe
+QW0gMjIuMDUuMjAxNSB1bSAxNDozMiBzY2hyaWViIE1heGltZSBDb3F1ZWxpbjoKPiAyMDE1LTA1
+LTIyIDEyOjA3IEdNVCswMjowMCBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJvbml4LmRl
+PjoKPj4gVGhlIFNUTTMyRjQyN3h4L1NUTTMyRjQyOXh4IG1hbnVhbCwgVGFibGUgMTMuICJTVE0z
+MkY0Mjd4eCBhbmQKPj4gU1RNMzJGNDI5eHggcmVnaXN0ZXIgYm91bmRhcnkgYWRkcmVzc2VzIiBj
+b250YWlucyB0aGlzIGVudHJ5Ogo+PiAgICAgQnVzICAgIEJvdW5kYXJ5IGFkZHJlc3MgICAgICAg
+UGVyaXBoZXJhbAo+PiAgICAgQUhCMSAgIDB4NDAwMjM4MDAtMHg0MDAyMzhiZiAgUkNDCj4+Cj4+
+IEFuZCB0aGF0J3MgaG93IEknZCBleHBlY3QgaXQgdG8gYmUgZGVzY3JpYmVkIGJ5IHRoZSBkZXZp
+Y2UgdHJlZToKPj4KPj4gICAgIHJjYzogcmNjQDQwMDIzODAwIHsKPj4gICAgICAgICBjb21wYXRp
+YmxlID0gInN0LHN0bTMyLXJjYyI7Cj4+ICAgICAgICAgcmVnID0gPDB4NDAwMjM4MDAgMHhjMD47
+Cj4+ICAgICB9Owo+Pgo+IAo+IERvaW5nIHRoYXQsIHNpbmNlIHRoaXMgcmVnaXN0ZXIgYmFuayBj
+b250YWlucyBib3RoIHJlc2V0IGFuZCBjbG9jawo+IHJlZ2lzdGVycywgdGhlIHJlc2V0IGRldmlj
+ZSBjYW5ub3QgZ2V0IHRoZSBJTyByZXNvdXJjZSBhdCBwcm9iZSB0aW1lCj4gYmVjYXVzZSB0aGUg
+Y2xvY2sgZHJpdmVyIGhhcyBhbHJlYWR5IHJlc2VydmVkIGl0Lgo+IERhbmllbCwgd2hvIGhhcyBz
+dGFydGVkIHRvIHdvcmsgb24gdGhlIGNsb2NrIGRyaXZlciBpcyBmYWNpbmcgdGhpcyBpc3N1ZS4K
+PiBUaGlzIGlzIHdoeSBJIHByb3Bvc2VkIHRoaXMgYmluZGluZyBmb3IgInJlZyIgcHJvcGVydHku
+CgpBcyB5b3Ugc2hvdWxkIGtub3csIEkgZGlkIGhhdmUgYW4gUkNDIGNsayBkcml2ZXIsIGFuZCB0
+aGVyZSBpcyBubyBzdWNoCmlzc3VlLiBUaGUgdHdvIGRyaXZlcnMgdXNlIGRpZmZlcmVudCBtZWNo
+YW5pc21zIGZvciBpbml0aWFsaXphdGlvbi4gQW5kCkknbSBwcmV0dHkgc3VyZSB0aGF0IEkndmUg
+YWxyZWFkeSByZW1hcmtlZCB0aGF0IG9uIHRoZSBsaXN0LCB0b28uCgpSZWdhcmRzLApBbmRyZWFz
+CgotLSAKU1VTRSBMaW51eCBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdl
+cm1hbnkKR0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwgSmFuZSBTbWl0aGFyZCwgRGlsaXAgVXBtYW55
+dSwgR3JhaGFtIE5vcnRvbjsgSFJCCjIxMjg0IChBRyBOw7xybmJlcmcpCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxp
+bmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
+LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
