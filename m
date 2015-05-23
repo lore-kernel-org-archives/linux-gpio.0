@@ -1,90 +1,133 @@
-From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Subject: [PATCH] Pinctrl: imx1: fix wrong pin-name resolving
-Date: Sat, 23 May 2015 15:34:58 +0800
-Message-ID: <1432366498-4527-1-git-send-email-chris.ruehl@gtsys.com.hk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.fpasia.hk ([202.130.89.98]:32909 "EHLO fpa01n0.fpasia.hk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757176AbbEWHpL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 23 May 2015 03:45:11 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v8 14/16] ARM: dts: Introduce STM32F429 MCU
+Date: Sat, 23 May 2015 10:18:47 +0200
+Message-ID: <20150523081847.GJ8557@lukather>
+References: <1431158038-3813-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <2282066.NWoIT9ZyLc@wuerfel>
+ <CALszF6CaO_yuNiSDuDV+4d2NRe_+32j=zcSE1HPhB1UH59cW9w@mail.gmail.com>
+ <13641152.Yt4ZI3oT6L@wuerfel>
+ <CALszF6CK5ezrO6D=4zr6zEPC7VanzbQjnZJwKOZekEZ5L4D-Dg@mail.gmail.com>
+ <1432285588.3929.28.camel@pengutronix.de>
+ <20150522091822.GF8557@lukather>
+ <1432289231.3929.60.camel@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============4285934497855337019=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1432289231.3929.60.camel@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, Stefan Agner <stefan@agner.ch>, Nikolay Borisov <Nikolay.Borisov@arm.com>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux-Arch <linux-arch@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Jonathan Corbet <corbet@lwn.net>, Jiri Slaby <jslaby@suse.cz>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Antti Palosaari <crope@iki.fi>, Geert Uytterhoeven <geert@linux-m68k.org>"linux-serial@vger.kernel.org" <li>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Chris Ruehl <chris.ruehl@gtsys.com.hk>
-
-Bug in function imx1_pinconf_set() cause crash when
-princtrl debug is enabled and the pin_id becomes larger
-then the info->pins[] contains.
-
-imx27-pinctrl 10015000.iomuxc: request pin 134 (MX27_PAD_UART2_TXD) for 1000b000.serial
-imx27-pinctrl 10015000.iomuxc: request pin 135 (MX27_PAD_UART2_RXD) for 1000b000.serial
-imx27-pinctrl 10015000.iomuxc: request pin 131 (MX27_PAD_UART2_CTS) for 1000b000.serial
-imx27-pinctrl 10015000.iomuxc: request pin 132 (MX27_PAD_UART2_RTS) for 1000b000.serial
-imx27-pinctrl 10015000.iomuxc: enable function uart group uart2-1
-imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x86, function 0, gpio 0, direction 1, oconf 0, iconfa 0, iconfb 0
-imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x87, function 0, gpio 0, direction 0, oconf 0, iconfa 0, iconfb 0
-imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x83, function 0, gpio 0, direction 1, oconf 0, iconfa 0, iconfb 0
-imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x84, function 0, gpio 0, direction 0, oconf 0, iconfa 0, iconfb 0
-imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=134
-imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RTS
-imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=135
-imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_RTCK
-imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=131
-imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_TXD
-imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=132
-imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RXD
-...
-imx27-pinctrl 10015000.iomuxc: write: register 0xf4415508 offset 4 value 0x3
-imx27-pinctrl 10015000.iomuxc: write: register 0xf4415510 offset 4 value 0x0
-imx27-pinctrl 10015000.iomuxc: write: register 0xf4415518 offset 4 value 0x0
-imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0xb5, function 0, gpio 0, direction 1, oconf 0, iconfa 0, iconfb 0
-imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=171
-Unable to handle kernel paging request at virtual address 6c61765f
-pgd = c0004000
-6c61765f] *pgd=00000000
-Internal error: Oops: 5 [#1] ARM
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.1.0-rc4-next-20150522-dirty #8
-Hardware name: GTSYS i.MX27GTSIR (Device Tree Support)
-task: ce832000 ti: ce848000 task.ti: ce848000
-PC is at strnlen+0x28/0x3c
-LR is at string.isra.4+0x34/0xcc
-pc : [<c01ae188>]    lr : [<c01af9a4>]    psr: 20000093
-sp : ce849a88  ip : ce849a98  fp : ce849a94
-r10: c05d7e3a  r9 : c05d81e4  r8 : 00000000
-r7 : 6c61765f  r6 : c05d81e4  r5 : ffffffff  r4 : c05d7e3a
-r3 : 6c61765f  r2 : 6c61765f  r1 : 6c61765e  r0 : 6c61765f
-Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
 
 
-Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
----
- drivers/pinctrl/freescale/pinctrl-imx1-core.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--===============4285934497855337019==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gmhhrsDozM2n+uz5"
+Content-Disposition: inline
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-index 5ac59fb..8408bd8 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-@@ -403,14 +403,16 @@ static int imx1_pinconf_set(struct pinctrl_dev *pctldev,
- 			     unsigned num_configs)
- {
- 	struct imx1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
--	const struct imx1_pinctrl_soc_info *info = ipctl->info;
-+	struct pin_desc *desc;
- 	int i;
- 
-+	desc = pin_desc_get(pctldev, pin_id);
-+
- 	for (i = 0; i != num_configs; ++i) {
- 		imx1_write_bit(ipctl, pin_id, configs[i] & 0x01, MX1_PUEN);
- 
- 		dev_dbg(ipctl->dev, "pinconf set pullup pin %s\n",
--			info->pins[pin_id].name);
-+			desc->name);
- 	}
- 
- 	return 0;
--- 
-1.7.10.4
 
+--gmhhrsDozM2n+uz5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Philipp,
+
+On Fri, May 22, 2015 at 12:07:11PM +0200, Philipp Zabel wrote:
+> Am Freitag, den 22.05.2015, 11:18 +0200 schrieb Maxime Ripard:
+> > On Fri, May 22, 2015 at 11:06:28AM +0200, Philipp Zabel wrote:
+> > > > In the probe function, it would check the number of reg resources.
+> > > > If a single resource is passed, it would take it, else it would look
+> > > > the one named "reset".
+> > > > The driver and bindings would be the same for the two families, and
+> > > > the bindings would be backward compatible with sunxi ones.
+> > > >=20
+> > > > Philip, Arnd, what do you think?
+> > >=20
+> > > I'm not a fan of describing the register layout in the device tree as
+> > > detailed as the sunxi bindings do. I'd prefer the reg property to
+> > > describe the device's register address space with one entry per
+> > > contiguous block of registers.
+> >=20
+> > That's exactly what we do.
+>=20
+> Sorry, what I mean is 'as detailed as reusing the sunxi bindings for
+> stm32xx here would do'. I don't know enough about the Allwinner register
+> layouts to form an opinion.
+>=20
+> The STM32F427xx/STM32F429xx manual, Table 13. "STM32F427xx and
+> STM32F429xx register boundary addresses" contains this entry:
+>     Bus    Boundary address       Peripheral
+>     AHB1   0x40023800-0x400238bf  RCC
+>=20
+> And that's how I'd expect it to be described by the device tree:
+>=20
+>     rcc: rcc@40023800 {
+>         compatible =3D "st,stm32-rcc";
+>         reg =3D <0x40023800 0xc0>;
+>     };
+
+It's pretty much what we do already. The thing is that our reset
+controllers are intertwined with our clock ones, so our reset
+controllers are usually taking only a few registers, and we can't use
+more than that since we have clocks in the registers around.
+
+> Instead of "reg =3D <0x40023810 0x20>" for the resets. Where in the
+> address range the reset, clock gate and clock configuration registers
+> reside could be derived from the compatible value.
+
+I agree on that, and if a generic solution was to be made like this,
+we could definitely use it.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--gmhhrsDozM2n+uz5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVYDfnAAoJEBx+YmzsjxAgNi0P/jSOTQ3vHIrcKoIWxtBtGLGd
+6mvkQpyaIFt9E8AQZbD0XDaFoHI01r2ZoVQjAZKXFjbvlNeU2q1HQjzIV4cKURbt
+8ZOdee82KVHY3ZfmBMyVmvYu2Q6p/qJi03hoLqZ3/VrnwSavNq02lQRevcWg+kva
+RKlgphWNUElei6bon9rzeAkUR46Xz53k/cku/Jjd6ufwl8c6hBrLCVnEowJh2jzG
+x2H51EXcl6ACh3yXd9GB28cMnghzSb1jwXb9AK4rLQGD1y66yrKl8gElr1OHTWUS
+0a26Ao3y+epFySC7t+kuC7xLOWpnim7DxgR60/kkwlJ8KHRInzcm/4kqmGY3d3mY
+U0O1sbMqu44tL4xNkcjEGLunGE/Ji+lS499k3UsAeG+T7nDSsiflApYALm9QIxG6
+TJ2eYva89d3KJJg2vzy5oyrBrjanfaSgwDfX0t0c9Ff6wAuZFoRw1QLT+A2fWhYa
+RDcIp3b58jQ52RL7Tl4aRRlo7bDdNA+dviqqkonpjKS5SlUv6unGuU1HkIQuj/N0
+teIZH90VM7QoVKiRqhB9VgvvoZQrztHvHii6meErIzG8VKdZ7byu6ZTZCLXiwubV
+LCc1HfWCgvAACoYhguHFZhTg7Jht8niRERwX56A8J44I6c4yRs2gERwq8cLz2hH5
+ugYDmZTVzeQ+xwPBC+TA
+=ec/B
+-----END PGP SIGNATURE-----
+
+--gmhhrsDozM2n+uz5--
+
+
+--===============4285934497855337019==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============4285934497855337019==--
