@@ -1,44 +1,58 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 6/6] ARM: shmobile: lager: Enable UHS-I SDR-50
-Date: Mon, 25 May 2015 14:07:30 +0900
-Message-ID: <20150525050727.GA28560@verge.net.au>
-References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
- <1431823184.4222.180.camel@xylophone.i.decadent.org.uk>
- <20150525010724.GD24690@verge.net.au>
- <87fv6ljokk.wl%kuninori.morimoto.gx@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v4.1 series
+Date: Mon, 25 May 2015 09:26:52 +0200
+Message-ID: <CACRpkdb8dnO295DmK6yiKJe0zC67DgEpztVcm2OqUR4YZg4NBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:44507 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751040AbbEYFHe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2015 01:07:34 -0400
-Content-Disposition: inline
-In-Reply-To: <87fv6ljokk.wl%kuninori.morimoto.gx@renesas.com>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34184 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859AbbEYH0x (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2015 03:26:53 -0400
+Received: by obfe9 with SMTP id e9so49060016obf.1
+        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2015 00:26:53 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>, Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Michael Brunner <mibru@gmx.de>
 
-On Mon, May 25, 2015 at 04:00:11AM +0000, Kuninori Morimoto wrote:
-> 
-> Hi Simon
-> 
-> > On Sun, May 17, 2015 at 01:39:44AM +0100, Ben Hutchings wrote:
-> > > Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,2}.
-> > > 
-> > > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > > ---
-> > > None of the states includes the CD pins, as they can't be allocated both
-> > > through pinctrl and as GPIOs.  But the Lager manual shows these signals
-> > > being pulled up to the same variable voltage as the other signals.  This
-> > > might possibly lead to spurious card detect interrupts after switching
-> > > to 1.8V signalling.
-> > 
-> > Morimoto-san,
-> > 
-> > I would appreciate your opinion on this change.
-> 
-> Ben will send new version patch set if my understanding is correct
+Hi Linus,
 
-Thanks, got it.
+here are two GPIO fixes targeted for stable.
+Nothing special, a blurb in the signed tag.
+
+Please pull this in!
+
+Yours,
+Linus Walleij
+
+
+The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
+
+  Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.1-3
+
+for you to fetch changes up to f230e8ffc03f17bd9d6b90ea890b8252a8cc1821:
+
+  gpio: gpio-kempld: Fix get_direction return value (2015-05-12 13:49:13 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v4.1 series:
+
+- A leak in gpiochip_add path destined for stable.
+- A kempld driver bug destined for stable.
+
+----------------------------------------------------------------
+Johan Hovold (1):
+      gpio: fix gpio leak in gpiochip_add error path
+
+Michael Brunner (1):
+      gpio: gpio-kempld: Fix get_direction return value
+
+ drivers/gpio/gpio-kempld.c |  2 +-
+ drivers/gpio/gpiolib.c     | 10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
