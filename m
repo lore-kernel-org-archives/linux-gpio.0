@@ -1,65 +1,109 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for the v4.1 kernel cycle
-Date: Mon, 25 May 2015 09:33:08 +0200
-Message-ID: <CACRpkdbvsqc7Ng27eK37UHmb7TTuRUPc_v6m2r=4=1FbrFmf=w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Subject: [PATCH v4 00/18] new MFD LoCoMo driver set
+Date: Mon, 25 May 2015 14:41:35 +0300
+Message-ID: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35992 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750852AbbEYHdJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2015 03:33:09 -0400
-Received: by oihb142 with SMTP id b142so52369167oih.3
-        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2015 00:33:08 -0700 (PDT)
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:34387 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910AbbEYLmQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 May 2015 07:42:16 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Carlo Caione <carlo@caione.org>, Ray Jui <rjui@broadcom.com>
+To: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hi Linus,
+Sharp Zaurus SL-5500 and SL-5600 use special companion Gate Array.
+With this patchset I tried to modernise and restructure the LoCoMo drivers.
 
-here are some three pin control fixes for the v4.1 cycle,
-all driver-specific. Business as usual and calm as it should
-be in this portion of the merge window.
+* Use platform bus and mfd core code
+* Use GPIO API instead of custom locomo GPIO code
+* Use irqdomains to manage IRQs
+* Split mixed locomolcd driver to lcd and backlight parts
+* Implement IRQ handling in GPIO driver
+* Implement SPI driver used as a host for mmc_spi device to control SD cards
 
-Please pull them in!
+Changes since v3:
+* Removed magic values in locomo irq handling code
+* Using mutex in locomokbd driver
+* Dropped empty locomokbd_remove
+* Small rearrangement of headers/comments/etc in core and input drivers
 
-Yours,
-Linus Walleij
+The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
 
-The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
-
-  Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
+  Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.1-4
+  git://git.infradead.org/users/dbaryshkov/zaurus.git locomo-v4
 
-for you to fetch changes up to 984cffdeaeb7ea5a21f49a89f638d84d62d08992:
+for you to fetch changes up to 7c8e8e05ca27a4ad82356eb57ad12a7ca39bfd95:
 
-  pinctrl: Fix gpio/pin mapping for Meson8b (2015-05-19 11:40:52 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.1 kernel cycle:
-
-- IRQ trigger fix for the Intel Cherryview.
-- GPIO-to-pin mapping fix for the Cygnus driver.
-- GPIO-to-pin mapping fix for the Meson8b driver.
+  ARM: drop old LoCoMo driver (2015-05-25 14:29:23 +0300)
 
 ----------------------------------------------------------------
-Carlo Caione (1):
-      pinctrl: Fix gpio/pin mapping for Meson8b
+Dmitry Eremin-Solenikov (18):
+      mfd: add new driver for Sharp LoCoMo
+      leds: port locomo leds driver to new locomo core
+      input: convert LoCoMo keyboard driver to use new locomo core
+      input: locomokbd: differentiate between two Enter keys
+      input: make LoCoMo keyboard driver support both poodle and collie
+      video: backlight: add new locomo backlight driver
+      video: lcd: add LoCoMo LCD driver
+      gpio: port LoCoMo gpio support from old driver
+      gpio: locomo: implement per-pin irq handling
+      spi: add locomo SPI driver
+      i2c: add locomo i2c driver
+      ARM: sa1100: make collie use new locomo drivers
+      ARM: sa1100: don't preallocate IRQ space for locomo
+      ASoC: pxa: poodle: make use of new locomo GPIO interface
+      ARM: pxa: poodle: use new LoCoMo driver
+      ARM: pxa: poodle: don't preallocate IRQ space for locomo
+      video: backlight: drop old locomo bl/lcd driver
+      ARM: drop old LoCoMo driver
 
-Mika Westerberg (1):
-      pinctrl: cherryview: Read triggering type from HW if not set
-when requested
+ arch/arm/common/Kconfig                    |   3 -
+ arch/arm/common/Makefile                   |   1 -
+ arch/arm/common/locomo.c                   | 914 -----------------------------
+ arch/arm/include/asm/hardware/locomo.h     | 221 -------
+ arch/arm/mach-pxa/Kconfig                  |   1 -
+ arch/arm/mach-pxa/include/mach/poodle.h    |   8 +-
+ arch/arm/mach-pxa/poodle.c                 |  58 +-
+ arch/arm/mach-sa1100/Kconfig               |   1 -
+ arch/arm/mach-sa1100/collie.c              | 213 +++++--
+ arch/arm/mach-sa1100/include/mach/collie.h |  16 +-
+ arch/arm/mach-sa1100/include/mach/irqs.h   |  19 +-
+ drivers/gpio/Kconfig                       |  13 +
+ drivers/gpio/Makefile                      |   1 +
+ drivers/gpio/gpio-locomo.c                 | 285 +++++++++
+ drivers/i2c/busses/Kconfig                 |  12 +
+ drivers/i2c/busses/Makefile                |   1 +
+ drivers/i2c/busses/i2c-locomo.c            | 135 +++++
+ drivers/input/keyboard/Kconfig             |   2 +-
+ drivers/input/keyboard/locomokbd.c         | 262 ++++-----
+ drivers/leds/Kconfig                       |   2 +-
+ drivers/leds/leds-locomo.c                 | 117 ++--
+ drivers/mfd/Kconfig                        |  10 +
+ drivers/mfd/Makefile                       |   1 +
+ drivers/mfd/locomo.c                       | 336 +++++++++++
+ drivers/spi/Kconfig                        |  10 +
+ drivers/spi/Makefile                       |   1 +
+ drivers/spi/spi-locomo.c                   | 332 +++++++++++
+ drivers/video/backlight/Kconfig            |  16 +-
+ drivers/video/backlight/Makefile           |   3 +-
+ drivers/video/backlight/locomo_bl.c        | 153 +++++
+ drivers/video/backlight/locomo_lcd.c       | 285 +++++++++
+ drivers/video/backlight/locomolcd.c        | 255 --------
+ include/linux/mfd/locomo.h                 | 169 ++++++
+ sound/soc/pxa/poodle.c                     |  52 +-
+ 34 files changed, 2205 insertions(+), 1703 deletions(-)
+ delete mode 100644 arch/arm/common/locomo.c
+ delete mode 100644 arch/arm/include/asm/hardware/locomo.h
+ create mode 100644 drivers/gpio/gpio-locomo.c
+ create mode 100644 drivers/i2c/busses/i2c-locomo.c
+ create mode 100644 drivers/mfd/locomo.c
+ create mode 100644 drivers/spi/spi-locomo.c
+ create mode 100644 drivers/video/backlight/locomo_bl.c
+ create mode 100644 drivers/video/backlight/locomo_lcd.c
+ delete mode 100644 drivers/video/backlight/locomolcd.c
+ create mode 100644 include/linux/mfd/locomo.h
 
-Ray Jui (1):
-      pinctrl: cygnus: fixed incorrect GPIO-pin mapping
-
- drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c  |  4 ++-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 44 ++++++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson.c      |  2 +-
- drivers/pinctrl/meson/pinctrl-meson8b.c    |  4 +--
- 4 files changed, 50 insertions(+), 4 deletions(-)
