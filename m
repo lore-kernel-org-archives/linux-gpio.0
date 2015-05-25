@@ -1,118 +1,103 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Sun, 24 May 2015 19:12:51 +0200
-Message-ID: <20150524171251.GA25494@localhost>
-References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
- <20150518110214.GC28127@localhost>
- <CACRpkdb9K5oi0Ld-njEz2a85X1NhYgFa8DCTZquqALdohL7WKA@mail.gmail.com>
- <20150521142524.GA30660@localhost>
- <555E40FD.7010209@linaro.org>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 6/6] ARM: shmobile: lager: Enable UHS-I SDR-50
+Date: Mon, 25 May 2015 10:07:24 +0900
+Message-ID: <20150525010724.GD24690@verge.net.au>
+References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
+ <1431823184.4222.180.camel@xylophone.i.decadent.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <555E40FD.7010209@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <1431823184.4222.180.camel@xylophone.i.decadent.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, May 21, 2015 at 11:33:01PM +0300, Grygorii.Strashko@linaro.org wrote:
-> On 05/21/2015 05:25 PM, Johan Hovold wrote:
-> > On Tue, May 19, 2015 at 04:28:55PM +0200, Linus Walleij wrote:
+[CC Morimoto-san]
 
-> >> I introduced the gpiochip_[un]lock_as_irq() calls so we
-> >> could safeguard against this. Notably that blocks client A
-> >> from setting the line as output. I hope.
-> > 
-> > A problem with the current implementation is that it uses as a flag
-> > rather than a refcount. As I pointed out elsewhere in this thread, it is
-> > possible to request a shared IRQ (e.g. via the sysfs interface) and
-> > release it, thereby making it possible to change the direction of the
-> > pin while still in use for irq.
+On Sun, May 17, 2015 at 01:39:44AM +0100, Ben Hutchings wrote:
+> Add the "1v8" pinctrl state and sd-uhs-sdr50 property to SDHI{0,2}.
 > 
-> Yes (checked). And this is an issue which need to be fixed.
-> - gpio sysfs should not call gpiochip_un/lock_as_irq()
+> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> ---
+> None of the states includes the CD pins, as they can't be allocated both
+> through pinctrl and as GPIOs.  But the Lager manual shows these signals
+> being pulled up to the same variable voltage as the other signals.  This
+> might possibly lead to spurious card detect interrupts after switching
+> to 1.8V signalling.
 
-This is a known but unrelated issue. The lock/unlock call in the sysfs
-implementation is at worst redundant. I suggested removing it earlier,
-but Linus pointed out that there were still a few drivers not
-implementing the irq resource callbacks that need to be updated first.
+Morimoto-san,
 
-> - gpio drivers should use gpiochip API or implement 
->   .irq_release/request_resources() callbacks
+I would appreciate your opinion on this change.
+
+Thanks.
+
+>  arch/arm/boot/dts/r8a7790-lager.dts |   18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
 > 
-> in this case case IRQ core will do just what is required. Right?
-
-No, the problem is that the "lock" is implemented using a flag rather
-than a refcount.
-
-> >> I thought this would mean the line would only be used as IRQ
-> >> in this case, so I could block any gpiod_get() calls to that
-> >> line but *of course* some driver is using the IRQ and snooping
-> >> into the GPIO value at the same time. So can't simplify things
-> >> like so either.
-> >>
-> >> Maybe I'm smashing open doors here...
-> > 
-> > No, I understand that use case. But there are some issues with how it's
-> > currently implemented. Besides the example above, nothing pins a gpio
-> > chip driver in memory unless it has requested gpios, specifically,
-> > requesting a pin for irq use is not enough.
-> 
-> ok. An issue. Possible fix below:
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index ea11706..64392ad 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -514,6 +514,9 @@ static int gpiochip_irq_reqres(struct irq_data *d)
->  {
->         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> index 343ec0ccc8df..5584e835d0f5 100644
+> --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> @@ -314,11 +314,21 @@
+>  		renesas,function = "sdhi0";
+>  	};
 >  
-> +       if (!try_module_get(chip->owner))
-> +               return -ENODEV;
+> +	sdhi0_pins_1v8: sd0_1v8 {
+> +		renesas,groups = "sdhi0_data4", "sdhi0_ctrl";
+> +		renesas,function = "sdhi0_1v8";
+> +	};
 > +
->         if (gpiochip_lock_as_irq(chip, d->hwirq)) {
->                 chip_err(chip,
->                         "unable to lock HW IRQ %lu for IRQ\n",
-> @@ -528,6 +531,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
->         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+>  	sdhi2_pins: sd2 {
+>  		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
+>  		renesas,function = "sdhi2";
+>  	};
 >  
->         gpiochip_unlock_as_irq(chip, d->hwirq);
-> +       module_put(chip->owner);
->  }
-
-The resource callbacks would be the place to do resource allocation, but
-the above snippet is obviously broken as its leaking resources in the
-error path.
-
-> >> Anyway to get back to the original statement:
-> >>
-> >>> This is backwards. All gpios *should* be requested. *If* we are to
-> >>> include not-requested gpios in the debug output, then it is those pins
-> >>> that need to be marked as not-requested.
-> >>
-> >> This is correct, all GPIOs accessed *as gpios* should be
-> >> requested, no matter if they are then cast to IRQs by gpiod_to_irq
-> >> or not. However if the same hardware is used as only "some IRQ"
-> >> through it's irqchip interface, it needs not be requested, but
-> >> that is by definition not a GPIO, it is an IRQ.
-> > 
-> > True. And since it is not a GPIO, should it show up in
-> > /sys/kernel/debug/gpio? ;)
+> +	sdhi2_pins_1v8: sd2_1v8 {
+> +		renesas,groups = "sdhi2_data4", "sdhi2_ctrl";
+> +		renesas,function = "sdhi2_1v8";
+> +	};
+> +
+>  	mmc1_pins: mmc1 {
+>  		renesas,groups = "mmc1_data8", "mmc1_ctrl";
+>  		renesas,function = "mmc1";
+> @@ -491,7 +501,8 @@
+>  
+>  &sdhi0 {
+>  	pinctrl-0 = <&sdhi0_pins>;
+> -	pinctrl-names = "default";
+> +	pinctrl-1 = <&sdhi0_pins_1v8>;
+> +	pinctrl-names = "default", "1v8";
+>  
+>  	assigned-clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
+>  	assigned-clock-rates = <156000000>;
+> @@ -499,12 +510,14 @@
+>  	vmmc-supply = <&vcc_sdhi0>;
+>  	vqmmc-supply = <&vccq_sdhi0>;
+>  	cd-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
+> +	sd-uhs-sdr50;
+>  	status = "okay";
+>  };
+>  
+>  &sdhi2 {
+>  	pinctrl-0 = <&sdhi2_pins>;
+> -	pinctrl-names = "default";
+> +	pinctrl-1 = <&sdhi2_pins_1v8>;
+> +	pinctrl-names = "default", "1v8";
+>  
+>  	assigned-clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
+>  	assigned-clock-rates = <97500000>;
+> @@ -512,6 +525,7 @@
+>  	vmmc-supply = <&vcc_sdhi2>;
+>  	vqmmc-supply = <&vccq_sdhi2>;
+>  	cd-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
+> +	sd-uhs-sdr50;
+>  	status = "okay";
+>  };
+>  
+> -- 
+> 1.7.10.4
 > 
-> "Nice" idea :)
-> This information needed for debugging and testing which includes
-> checking of pin state (hi/lo) - especially useful during board's
-> bring-up when a lot of mistakes are detected related to wrong usage
-> of IRQ/GPIO numbers.
-
-At least the gpio-irq mapping for requested gpios could be useful.
-
-Another issue here is that you would start calling gpio accessors for
-unrequested gpios. Are you sure all gpio drivers can, and will always be
-able to, handle that? [ When using the gpiod interface, gpios will always
-be requested and must not be accessed after having been released. ]
-
-Johan
+> 
+> 
