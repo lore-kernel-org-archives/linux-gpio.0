@@ -1,61 +1,94 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register failure
-Date: Tue, 26 May 2015 17:20:24 +0900
-Message-ID: <CAK7LNAQ3GbG0BCiESOnO1=qViXOer0StEEbjxUYumbGa73VgZw@mail.gmail.com>
-References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
-	<4437293.G26yCXqFQH@wuerfel>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 2/7] mmc: mediatek: Add Mediatek MMC driver
+Date: Tue, 26 May 2015 14:33:41 +0200
+Message-ID: <CAPDyKFrNQ6E4cU1_gK56ZNYgb=9EzHoJ=vXyraYoKNnRL=Umyg@mail.gmail.com>
+References: <1432017411-2996-1-git-send-email-chaotian.jing@mediatek.com>
+ <1432017411-2996-3-git-send-email-chaotian.jing@mediatek.com>
+ <CAPDyKFo5788uRqAaXUZ-OiS1XF8NPmg4tn2ipZNJdx4dci+KMQ@mail.gmail.com>
+ <1432284000.23435.38.camel@mhfsdcap03>
+ <CAPDyKFpWCvJXL-W5P83ucBM2-b5cDFEtSLnN6J6WLyR_9CuvWw@mail.gmail.com>
+ <1432620991.647.6.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [202.248.44.40] ([202.248.44.40]:33503 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751126AbbEZIVW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 26 May 2015 04:21:22 -0400
-In-Reply-To: <4437293.G26yCXqFQH@wuerfel>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1432620991.647.6.camel@mhfsdcap03>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, srv_heupstream <srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel@lists.i>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
 
-Hi Arnd,
+[...]
 
+>> >> > +{
+>> >> > +       unsigned long tmo = jiffies + msecs_to_jiffies(20);
+>> >> > +
+>> >> > +       while ((readl(host->base + SDC_STS) & SDC_STS_CMDBUSY)
+>> >> > +                       && time_before(jiffies, tmo))
+>> >> > +               continue;
+>> >> > +
+>> >> > +       if (readl(host->base + SDC_STS) & SDC_STS_CMDBUSY) {
+>> >> > +               dev_err(host->dev, "CMD bus busy detected\n");
+>> >> > +               host->error |= REQ_CMD_BUSY;
+>> >> > +               msdc_cmd_done(host, MSDC_INT_CMDTMO, mrq, cmd);
+>> >> > +               return false;
+>> >> > +       }
+>> >> > +
+>> >> > +       if (mmc_resp_type(cmd) == MMC_RSP_R1B || cmd->data) {
+>> >> > +               /* R1B or with data, should check SDCBUSY */
+>> >> > +               while (readl(host->base + SDC_STS) & SDC_STS_SDCBUSY)
+>> >> > +                       cpu_relax();
+>> >> > +       }
+>> >>
+>> >> MSDC seems to be handling card busy detection in HW, right?
+>> >>
+>> > Do not have this ability, HW only know if CMD/DAT is low, but do not
+>> > have any interrupt for it,
+>>
+>> I see, but doesn't the above polling mean that msdc will not propagate
+>> the response until the card have stopped signal busy? That's what
+>> MMC_CAP_WAIT_WHILE_BUSY shall be used for.
+>>
+> As you see, we only check the "busy state" BEFORE issue a R1B command or
+> with data command, but do not check if AFTER the request was done, that
+> would do not match the "MMC_CAP_WAIT_WHILE_BUSY"(eg. CMD5 to sleep)
 
-2015-05-26 17:12 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Tuesday 26 May 2015 13:18:29 Masahiro Yamada wrote:
->> diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
->> index 04748a4..0ff653c 100644
->> --- a/drivers/pinctrl/pinctrl-zynq.c
->> +++ b/drivers/pinctrl/pinctrl-zynq.c
->> @@ -1141,7 +1141,7 @@ static int zynq_pinctrl_probe(struct platform_device *pdev)
->>
->>         pctrl->pctrl = pinctrl_register(&zynq_desc, &pdev->dev, pctrl);
->>         if (!pctrl->pctrl)
->> -               return -ENOMEM;
->> +               return -EINVAL;
->>
->>         platform_set_drvdata(pdev, pctrl);
->>
->>
+Okay, fair enough. Still, I don't understand why you want to do that?
+
+> In addition, about CMD5, I find that the suspend/resume flow of EMMC is
+> stranger in new kernel version, when suspend, it may issue CMD5 to enter
+> sleep mode, then power off MMC, but when resume, it will
+> re-initialization, So that why need do the redundant CMD5 in suspend ?
+
+Both CMD0 and CMD5 are valid as wakeup commands.
+
+To be able to use CMD5, the VCCQ regulator must be kept enabled in the
+sleep state. That's when it becomes a bit tricky, due to the range of
+different host drivers and SoCs for how VCCQ is managed.
+
+To be safe we have chosen to use CMD0, since it works for *all* cases
+no matter if VCCQ get gated or not.
+
+Moreover, using CMD5 as the wakeup command would require added
+complexity in the code dealing with suspend/resume. I don't think the
+effort is worth it, at least until someone has proven that the resume
+time is greatly decreased by using CMD5.
+
 >
-> One choice seems as bad as the other to me ;-)
->
-> Could we add a pinctrl_register_reason() variant that returns a meaningful
-> error code as ERR_PTR?
+>> Perhaps you should remove the above polling, and rely on the MMC core
+>> to poll with CMD13 instead?
+> before any read/write command, core will issue CMD13 to confirm card
+> status, here is just only do double confirm to avoid HW issue.
 
+What HW issue and why do you need to double confirm? It seems strange.
 
-I also thought of it.
-I was wondering why pinctrl_register() did not return ERR_PTR.
-
-Can we migrate to ERR_PTR in the long run?
-
- [1] Add pinctrl_register_reason()
- [2] Replace pinctrl_register() in each driver with
-pinctrl_register_reason() one by one
- [3] Eventually, pinctrl_register will disappear
- [4] Rename pinctrl_register_reason() into pinctrl_register()
-
-
--- 
-Best Regards
-Masahiro Yamada
+Kind regards
+Uffe
