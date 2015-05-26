@@ -1,71 +1,48 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH 5/6] ARM: shmobile: lager: Set sdhi and mmcif clock rates
-Date: Tue, 26 May 2015 19:17:25 +0100
-Message-ID: <1432664245.12223.7.camel@codethink.co.uk>
-References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
-	 <1431822574.4222.172.camel@xylophone.i.decadent.org.uk>
-	 <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
-	 <1431978524.22824.6.camel@codethink.co.uk>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register
+ failure
+Date: Tue, 26 May 2015 11:37:34 -0700
+Message-ID: <20150526183734.GA31081@xsjsorenbubuntu>
+References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
+ <4437293.G26yCXqFQH@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1431978524.22824.6.camel@codethink.co.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ian Molton <ian@mnementh.co.uk>, Linux MMC List <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4437293.G26yCXqFQH@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2015-05-18 at 20:48 +0100, Ben Hutchings wrote:
-> On Sun, 2015-05-17 at 10:13 +0200, Geert Uytterhoeven wrote:
-> > On Sun, May 17, 2015 at 2:29 AM, Ben Hutchings
-> > <ben.hutchings@codethink.co.uk> wrote:
-> > > From: Ben Dooks <ben.dooks@codethink.co.uk>
-> > >
-> > > [bwh: Fold in fix from Ian Molton]
-> > > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > > ---
-> > >  arch/arm/boot/dts/r8a7790-lager.dts |   11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-> > > index aaa4f258e279..343ec0ccc8df 100644
-> > > --- a/arch/arm/boot/dts/r8a7790-lager.dts
-> > > +++ b/arch/arm/boot/dts/r8a7790-lager.dts
-> > > @@ -413,6 +413,11 @@
-> > >         vmmc-supply = <&fixedregulator3v3>;
-> > >         bus-width = <8>;
-> > >         non-removable;
-> > > +
-> > > +       assigned-clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
-> > > +       assigned-clock-rates = <97500000>;
-> > > +       max-frequency = <50000000>;
-> > 
-> > Are all these properties Lager-specific, or r8a7790-specific?
-> > If the latter, they belong in r8a7790.dtsi.
-> > Same comment for the other nodes.
-> 
-> The clock assignments are not specific to Lager so they probably belong
-> in r8a7790.dtsi; the dividers are configurable and could be
-> board-specific.
+On Tue, 2015-05-26 at 10:12AM +0200, Arnd Bergmann wrote:
+> On Tuesday 26 May 2015 13:18:29 Masahiro Yamada wrote:
+> > diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinct=
+rl-zynq.c
+> > index 04748a4..0ff653c 100644
+> > --- a/drivers/pinctrl/pinctrl-zynq.c
+> > +++ b/drivers/pinctrl/pinctrl-zynq.c
+> > @@ -1141,7 +1141,7 @@ static int zynq_pinctrl_probe(struct platform=
+_device *pdev)
+> > =20
+> >         pctrl->pctrl =3D pinctrl_register(&zynq_desc, &pdev->dev, p=
+ctrl);
+> >         if (!pctrl->pctrl)
+> > -               return -ENOMEM;
+> > +               return -EINVAL;
+> > =20
+> >         platform_set_drvdata(pdev, pctrl);
+> > =20
+> >=20
+>=20
+> One choice seems as bad as the other to me ;-)
+>=20
+> Could we add a pinctrl_register_reason() variant that returns a meani=
+ngful
+> error code as ERR_PTR?
 
-The problem with doing that is I think the assigned-clocks and
-assigned-clock-rates properties belong together.  I can't find any other
-instance where they are split between a .dtsi file and .dts files that
-include it.
+I agree with Arnd. As long as we don't get a precise error code we can
+just keep the current one.
 
-I *could* define both properties in r8a7790.dtsi and then let board .dts
-files override the clock rate if wanted.
-
-> The board design could conceivably limit the usable frequency to below
-> the chip's maximum, though presumably that won't usually happen.
-> Currently the clk-rcar-gen2 driver only configures the dividers for
-> sdhi{0,1}.  That leaves the rest of them effectively controlled by the
-> board's firmware.
-
-I was mistaken about this; the other dividers are programmed by
-clk-div6.
-
-Ben.
-
-
+	S=C3=B6ren
