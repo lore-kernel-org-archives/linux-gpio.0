@@ -1,52 +1,71 @@
-From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 04/18] input: locomokbd: differentiate between two
- Enter keys
-Date: Tue, 26 May 2015 10:45:02 -0700
-Message-ID: <20150526174502.GB10571@dtor-ws>
-References: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
- <1432554113-26280-5-git-send-email-dbaryshkov@gmail.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH 5/6] ARM: shmobile: lager: Set sdhi and mmcif clock rates
+Date: Tue, 26 May 2015 19:17:25 +0100
+Message-ID: <1432664245.12223.7.camel@codethink.co.uk>
+References: <1431822459.4222.166.camel@xylophone.i.decadent.org.uk>
+	 <1431822574.4222.172.camel@xylophone.i.decadent.org.uk>
+	 <CAMuHMdWN1EPdq+TAdtZ5wW+G2r5he55SnjYEsHDg6T3-=n6r=g@mail.gmail.com>
+	 <1431978524.22824.6.camel@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1432554113-26280-5-git-send-email-dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1431978524.22824.6.camel@codethink.co.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ian Molton <ian@mnementh.co.uk>, Linux MMC List <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 25, 2015 at 02:41:39PM +0300, Dmitry Eremin-Solenikov wrote:
-> There are two Enter keys on collie/poodle keyboards. Make one of them to
-> generate KEY_KPENTER rather than just KEY_ENTER.
+On Mon, 2015-05-18 at 20:48 +0100, Ben Hutchings wrote:
+> On Sun, 2015-05-17 at 10:13 +0200, Geert Uytterhoeven wrote:
+> > On Sun, May 17, 2015 at 2:29 AM, Ben Hutchings
+> > <ben.hutchings@codethink.co.uk> wrote:
+> > > From: Ben Dooks <ben.dooks@codethink.co.uk>
+> > >
+> > > [bwh: Fold in fix from Ian Molton]
+> > > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > > ---
+> > >  arch/arm/boot/dts/r8a7790-lager.dts |   11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > >
+> > > diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+> > > index aaa4f258e279..343ec0ccc8df 100644
+> > > --- a/arch/arm/boot/dts/r8a7790-lager.dts
+> > > +++ b/arch/arm/boot/dts/r8a7790-lager.dts
+> > > @@ -413,6 +413,11 @@
+> > >         vmmc-supply = <&fixedregulator3v3>;
+> > >         bus-width = <8>;
+> > >         non-removable;
+> > > +
+> > > +       assigned-clocks = <&mstp3_clks R8A7790_CLK_MMCIF1>;
+> > > +       assigned-clock-rates = <97500000>;
+> > > +       max-frequency = <50000000>;
+> > 
+> > Are all these properties Lager-specific, or r8a7790-specific?
+> > If the latter, they belong in r8a7790.dtsi.
+> > Same comment for the other nodes.
 > 
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> The clock assignments are not specific to Lager so they probably belong
+> in r8a7790.dtsi; the dividers are configurable and could be
+> board-specific.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+The problem with doing that is I think the assigned-clocks and
+assigned-clock-rates properties belong together.  I can't find any other
+instance where they are split between a .dtsi file and .dts files that
+include it.
 
-> ---
->  drivers/input/keyboard/locomokbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/locomokbd.c b/drivers/input/keyboard/locomokbd.c
-> index 9742c79..7645053 100644
-> --- a/drivers/input/keyboard/locomokbd.c
-> +++ b/drivers/input/keyboard/locomokbd.c
-> @@ -50,7 +50,7 @@ locomokbd_keycode[LOCOMOKBD_NUMKEYS] = {
->  	0, 0, 0, KEY_CENTER, 0, KEY_MAIL, 0, 0, 0, 0,				/* 30 - 39 */
->  	0, 0, 0, 0, 0, 0, 0, 0, 0, KEY_RIGHT,					/* 40 - 49 */
->  	KEY_UP, KEY_LEFT, 0, 0, KEY_P, 0, KEY_O, KEY_I, KEY_Y, KEY_T,		/* 50 - 59 */
-> -	KEY_E, KEY_W, 0, 0, 0, 0, KEY_DOWN, KEY_ENTER, 0, 0,			/* 60 - 69 */
-> +	KEY_E, KEY_W, 0, 0, 0, 0, KEY_DOWN, KEY_KPENTER, 0, 0,			/* 60 - 69 */
->  	KEY_BACKSPACE, 0, KEY_L, KEY_U, KEY_H, KEY_R, KEY_D, KEY_Q, 0, 0,	/* 70 - 79 */
->  	0, 0, 0, 0, 0, 0, KEY_ENTER, KEY_RIGHTSHIFT, KEY_K, KEY_J,		/* 80 - 89 */
->  	KEY_G, KEY_F, KEY_X, KEY_S, 0, 0, 0, 0, 0, 0,				/* 90 - 99 */
-> -- 
-> 2.1.4
-> 
+I *could* define both properties in r8a7790.dtsi and then let board .dts
+files override the clock rate if wanted.
 
--- 
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The board design could conceivably limit the usable frequency to below
+> the chip's maximum, though presumably that won't usually happen.
+> Currently the clk-rcar-gen2 driver only configures the dividers for
+> sdhi{0,1}.  That leaves the rest of them effectively controlled by the
+> board's firmware.
+
+I was mistaken about this; the other dividers are programmed by
+clk-div6.
+
+Ben.
+
+
