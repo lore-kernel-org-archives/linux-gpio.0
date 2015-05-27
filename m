@@ -1,81 +1,60 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/2] pinctrl: tegra-xusb: Fix allocation of pins
-Date: Wed, 27 May 2015 14:11:54 +0100
-Message-ID: <1432732314-372-3-git-send-email-jonathanh@nvidia.com>
-References: <1432732314-372-1-git-send-email-jonathanh@nvidia.com>
+From: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 01/18] mfd: add new driver for Sharp LoCoMo
+Date: Wed, 27 May 2015 17:55:56 +0300
+Message-ID: <CALT56yO5Eu4Bk+_4sn2WgURh9YTsym9inWkvJftKUi_aLy5XXw@mail.gmail.com>
+References: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
+	<1432554113-26280-2-git-send-email-dbaryshkov@gmail.com>
+	<20150527102756.GH11677@x1>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432732314-372-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150527102756.GH11677@x1>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit e5b3b2d9ed20 ("pinctrl: allows not to define the get_group_pins
-operation") allows pin controllers not to register the get_group_pins()
-function. However, a side-effect of not registering this function is
-that pins are not allocated and potentially multiple devices could
-attempt to configure the same pins [1]. Although this problem exists in
-the pinctrl core, because only a few devices are impacted by this, fix
-this for tegra-xusb by adding the get_group_pins() function.
+2015-05-27 13:27 GMT+03:00 Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
+> On Mon, 25 May 2015, Dmitry Eremin-Solenikov wrote:
+>
+>> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does has
+>> several design issues (special bus instead of platform bus, doesn't use
+>> mfd-core, etc).
+>>
+>> Implement 'core' parts of locomo support as an mfd driver.
+>>
+>> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>
+> These things are much easier to re-review if you keep a change-log
+> here.
+>
+>>  drivers/mfd/Kconfig        |  10 ++
+>>  drivers/mfd/Makefile       |   1 +
+>>  drivers/mfd/locomo.c       | 336 +++++++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/mfd/locomo.h | 169 +++++++++++++++++++++++
+>>  4 files changed, 516 insertions(+)
+>>  create mode 100644 drivers/mfd/locomo.c
+>>  create mode 100644 include/linux/mfd/locomo.h
+>
+> Looks good now though:
+>   Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> How do you plan for this to be merged?
 
-Please note that in addition to adding the get_group_pins() functions
-the pins/lanes for the tegra-xusb also need to be registered when
-calling pinctrl_register(). This also allows the current pinmux state
-to be viewed by the debugfs node "pinmux-pins" for the tegra-xusb pad
-controller.
+I'd like for this to be merged either through mfd tree or through the
+arm-soc (or rmk's ARM) tree.
+Some of the respective maintainers already gave their blessing for
+this patchset to be merged
+not through their subsystem trees.
 
-[1] http://www.spinics.net/lists/linux-gpio/msg05810.html
+[skipped the patch]
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/pinctrl-tegra-xusb.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
-index 3e8e4a914fb4..6a6eebfb2930 100644
---- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-@@ -125,6 +125,21 @@ static const char *tegra_xusb_padctl_get_group_name(struct pinctrl_dev *pinctrl,
- 	return padctl->soc->pins[group].name;
- }
- 
-+static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinctrl,
-+					    unsigned group,
-+					    const unsigned **pins,
-+					    unsigned *num_pins)
-+{
-+	/*
-+	 * For the tegra-xusb pad controller groups are synonomous
-+	 * with lanes/pins and there is always one lane/pin per group.
-+	 */
-+	*pins = &pinctrl->desc->pins[group].number;
-+	*num_pins = 1;
-+
-+	return 0;
-+}
-+
- enum tegra_xusb_padctl_param {
- 	TEGRA_XUSB_PADCTL_IDDQ,
- };
-@@ -248,6 +263,7 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
- static const struct pinctrl_ops tegra_xusb_padctl_pinctrl_ops = {
- 	.get_groups_count = tegra_xusb_padctl_get_groups_count,
- 	.get_group_name = tegra_xusb_padctl_get_group_name,
-+	.get_group_pins = tegra_xusb_padctl_get_group_pins,
- 	.dt_node_to_map = tegra_xusb_padctl_dt_node_to_map,
- 	.dt_free_map = pinctrl_utils_dt_free_map,
- };
-@@ -898,6 +914,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
- 
- 	memset(&padctl->desc, 0, sizeof(padctl->desc));
- 	padctl->desc.name = dev_name(padctl->dev);
-+	padctl->desc.pins = tegra124_pins;
-+	padctl->desc.npins = ARRAY_SIZE(tegra124_pins);
- 	padctl->desc.pctlops = &tegra_xusb_padctl_pinctrl_ops;
- 	padctl->desc.pmxops = &tegra_xusb_padctl_pinmux_ops;
- 	padctl->desc.confops = &tegra_xusb_padctl_pinconf_ops;
 -- 
-1.9.1
+With best wishes
+Dmitry
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
