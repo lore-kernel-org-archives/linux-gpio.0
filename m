@@ -1,105 +1,59 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Wed, 27 May 2015 10:52:54 +0200
-Message-ID: <CAMuHMdWU1WK+M+Mz3CBgXkbtYC9=D03Jrs4425BWrv22ARLdqA@mail.gmail.com>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com>
-	<3656925.3GuTRhx1fV@avalon>
-	<55415D82.2020407@cogentembedded.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH 1/2] pinctrl: mediatek: Fix bug of ies/smt setting for mt8173.
+Date: Wed, 27 May 2015 02:43:54 -0700
+Message-ID: <1432719835-18939-2-git-send-email-hongzhou.yang@mediatek.com>
+References: <1432719835-18939-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33755 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751129AbbE0Iwz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2015 04:52:55 -0400
-In-Reply-To: <55415D82.2020407@cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1432719835-18939-1-git-send-email-hongzhou.yang@mediatek.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, eddie.huang@mediatek.com, dandan.he@mediatek.com
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 30, 2015 at 12:38 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 03/03/2015 03:24 AM, Laurent Pinchart wrote:
->>> The  pin array handled by sh_pfc_map_pins() may contain holes
->>> representing
->>> non- existing pins. We have to first count the valid pins in order to
->>> calculate the size  of the memory to be allocated, then to skip over the
->>> non-existing pins when  initializing the allocated arrays, and then to
->>> return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
->>> success.
->>>
->>> As we have to touch devm_kzalloc() calls anyway, use more fitting
->>> devm_kcalloc() instead which additionally checks the array size. And
->>> since
->>> PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already zeroed
->>> out
->>> 'pmx->configs' array.
->
->
->> I agree with this optimization, but I think it deserves a comment in the
->> source code that explicitly mentions PINMUX_TYPE_NONE, to make sure any
->> later
->> rework changing the PINMUX_TYPE_NONE value would catch this.
->
->
->    Note that this is not just "drove by" optimization, I was trying to avoid
-> the very need to explicitly initialize 'pmx->configs' array to
-> PINMUX_TYPE_NONE...
->
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
->
-> [...]
->
->>> @@ -622,7 +628,7 @@ int sh_pfc_register_pinctrl(struct sh_pf
->>>         pmx->pctl_desc.pmxops = &sh_pfc_pinmux_ops;
->>>         pmx->pctl_desc.confops = &sh_pfc_pinconf_ops;
->>>         pmx->pctl_desc.pins = pmx->pins;
->>> -       pmx->pctl_desc.npins = pfc->info->nr_pins;
->>> +       pmx->pctl_desc.npins = ret;
->>>
->>>         pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
->>>         if (pmx->pctl == NULL)
->
->
->> Shouldn't you also fix sh_pfc_init_ranges() ? It includes the following
->> code
->> that doesn't seem to handle holes properly.
->
->
->>          for (i = 1, nr_ranges = 1; i < pfc->info->nr_pins; ++i) {
->>                  if (pfc->info->pins[i-1].pin != pfc->info->pins[i].pin -
->> 1)
->>                          nr_ranges++;
->>          }
->
->
->> Please make sure that sh_pfc_get_pin_index() doesn't start blowing up
->> afterwards though.
->
->
->    I think I'm seeing a problem with this function (and it's not due to my
-> changes). Its result is often used to index 'pfc->info->pins' array. While
-> this is working now, when the holes are not yet allowed, it's going to break
-> when we start supporting the holes since that array couldn't be indexed this
-> way anymore (via ranges). This function is good only for 'pmx->configs' and
-> the like where we have already removed the holes. It looks like this holes
-> thing is going to be too complex, so how about leaving things as they are?
-> :-)
+Add ies/smt support for MSDC3.
+Also fix ies bug for pin 106 and 107.
 
-Any conclusion on this?
-If yes, please resend, incl. the r8a7794 pfc patches that depend on it.
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+index cf4ed6e..d0c811d 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+@@ -84,6 +84,10 @@ static const struct mtk_pin_ies_smt_set mt8173_smt_set[] = {
+ 	MTK_PIN_IES_SMT_SPEC(16, 16, 0x930, 0),
+ 	MTK_PIN_IES_SMT_SPEC(17, 17, 0x950, 2),
+ 	MTK_PIN_IES_SMT_SPEC(18, 21, 0x940, 3),
++	MTK_PIN_IES_SMT_SPEC(22, 25, 0xce0, 13),
++	MTK_PIN_IES_SMT_SPEC(26, 26, 0xcc0, 13),
++	MTK_PIN_IES_SMT_SPEC(27, 27, 0xcd0, 13),
++	MTK_PIN_IES_SMT_SPEC(28, 28, 0xd70, 13),
+ 	MTK_PIN_IES_SMT_SPEC(29, 32, 0x930, 3),
+ 	MTK_PIN_IES_SMT_SPEC(33, 33, 0x930, 4),
+ 	MTK_PIN_IES_SMT_SPEC(34, 36, 0x930, 5),
+@@ -133,6 +137,10 @@ static const struct mtk_pin_ies_smt_set mt8173_ies_set[] = {
+ 	MTK_PIN_IES_SMT_SPEC(16, 16, 0x900, 0),
+ 	MTK_PIN_IES_SMT_SPEC(17, 17, 0x920, 2),
+ 	MTK_PIN_IES_SMT_SPEC(18, 21, 0x910, 3),
++	MTK_PIN_IES_SMT_SPEC(22, 25, 0xce0, 14),
++	MTK_PIN_IES_SMT_SPEC(26, 26, 0xcc0, 14),
++	MTK_PIN_IES_SMT_SPEC(27, 27, 0xcd0, 14),
++	MTK_PIN_IES_SMT_SPEC(28, 28, 0xd70, 14),
+ 	MTK_PIN_IES_SMT_SPEC(29, 32, 0x900, 3),
+ 	MTK_PIN_IES_SMT_SPEC(33, 33, 0x900, 4),
+ 	MTK_PIN_IES_SMT_SPEC(34, 36, 0x900, 5),
+@@ -161,7 +169,7 @@ static const struct mtk_pin_ies_smt_set mt8173_ies_set[] = {
+ 	MTK_PIN_IES_SMT_SPEC(100, 103, 0xca0, 14),
+ 	MTK_PIN_IES_SMT_SPEC(104, 104, 0xc80, 14),
+ 	MTK_PIN_IES_SMT_SPEC(105, 105, 0xc90, 14),
+-	MTK_PIN_IES_SMT_SPEC(106, 107, 0x91, 4),
++	MTK_PIN_IES_SMT_SPEC(106, 107, 0x910, 4),
+ 	MTK_PIN_IES_SMT_SPEC(108, 112, 0x910, 1),
+ 	MTK_PIN_IES_SMT_SPEC(113, 116, 0x910, 2),
+ 	MTK_PIN_IES_SMT_SPEC(117, 118, 0x910, 5),
+-- 
+1.7.9.5
