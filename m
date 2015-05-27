@@ -1,36 +1,71 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v4 15/18] ARM: pxa: poodle: use new LoCoMo
-	driver
-Date: Tue, 26 May 2015 23:18:07 +0200
-Message-ID: <87wpzvyr5c.fsf@belgarion.home>
-References: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
- <1432554113-26280-16-git-send-email-dbaryshkov@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register failure
+Date: Wed, 27 May 2015 10:18:27 +0900
+Message-ID: <CAK7LNATGJRuk+VDMg0pcD7Mi79vkzXJZVU8c6zeAf2w=z2X9tQ@mail.gmail.com>
+References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
+	<4437293.G26yCXqFQH@wuerfel>
+	<20150526183734.GA31081@xsjsorenbubuntu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Jingoo Han <jg1.han@samsung.com>, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Daniel Mack <daniel@zonque.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg001.nifty.com ([202.248.44.39]:32205 "EHLO
+	conssluserg001-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751331AbbE0BS5 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 26 May 2015 21:18:57 -0400
+In-Reply-To: <20150526183734.GA31081@xsjsorenbubuntu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Dmitry Eremin-Solenikov <dbaryshkov@gmail.com> writes:
+Hi S=C3=B6ren,
 
-> Convert poodle to use new mfd-based LoCoMo driver.
+2015-05-27 3:37 GMT+09:00 S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.=
+com>:
+> On Tue, 2015-05-26 at 10:12AM +0200, Arnd Bergmann wrote:
+>> On Tuesday 26 May 2015 13:18:29 Masahiro Yamada wrote:
+>> > diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinc=
+trl-zynq.c
+>> > index 04748a4..0ff653c 100644
+>> > --- a/drivers/pinctrl/pinctrl-zynq.c
+>> > +++ b/drivers/pinctrl/pinctrl-zynq.c
+>> > @@ -1141,7 +1141,7 @@ static int zynq_pinctrl_probe(struct platfor=
+m_device *pdev)
+>> >
+>> >         pctrl->pctrl =3D pinctrl_register(&zynq_desc, &pdev->dev, =
+pctrl);
+>> >         if (!pctrl->pctrl)
+>> > -               return -ENOMEM;
+>> > +               return -EINVAL;
+>> >
+>> >         platform_set_drvdata(pdev, pctrl);
+>> >
+>> >
+>>
+>> One choice seems as bad as the other to me ;-)
+>>
+>> Could we add a pinctrl_register_reason() variant that returns a mean=
+ingful
+>> error code as ERR_PTR?
 >
-> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> I agree with Arnd. As long as we don't get a precise error code we ca=
+n
+> just keep the current one.
 
-Cheers.
+OK. Let's not do this way.
 
+
+I will try pinctrl_register_reason().
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 --
-Robert
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
