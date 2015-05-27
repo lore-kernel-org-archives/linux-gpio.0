@@ -1,71 +1,101 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register failure
-Date: Wed, 27 May 2015 10:18:27 +0900
-Message-ID: <CAK7LNATGJRuk+VDMg0pcD7Mi79vkzXJZVU8c6zeAf2w=z2X9tQ@mail.gmail.com>
-References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
-	<4437293.G26yCXqFQH@wuerfel>
-	<20150526183734.GA31081@xsjsorenbubuntu>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Tue, 26 May 2015 20:26:55 -0700
+Message-ID: <CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+ <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+ <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com> <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg001.nifty.com ([202.248.44.39]:32205 "EHLO
-	conssluserg001-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751331AbbE0BS5 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 26 May 2015 21:18:57 -0400
-In-Reply-To: <20150526183734.GA31081@xsjsorenbubuntu>
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:36141 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751762AbbE0D10 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 May 2015 23:27:26 -0400
+In-Reply-To: <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-Hi S=C3=B6ren,
+Hi Linus,
 
-2015-05-27 3:37 GMT+09:00 S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.=
-com>:
-> On Tue, 2015-05-26 at 10:12AM +0200, Arnd Bergmann wrote:
->> On Tuesday 26 May 2015 13:18:29 Masahiro Yamada wrote:
->> > diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinc=
-trl-zynq.c
->> > index 04748a4..0ff653c 100644
->> > --- a/drivers/pinctrl/pinctrl-zynq.c
->> > +++ b/drivers/pinctrl/pinctrl-zynq.c
->> > @@ -1141,7 +1141,7 @@ static int zynq_pinctrl_probe(struct platfor=
-m_device *pdev)
->> >
->> >         pctrl->pctrl =3D pinctrl_register(&zynq_desc, &pdev->dev, =
-pctrl);
->> >         if (!pctrl->pctrl)
->> > -               return -ENOMEM;
->> > +               return -EINVAL;
->> >
->> >         platform_set_drvdata(pdev, pctrl);
->> >
->> >
+On Wed, May 13, 2015 at 1:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, May 12, 2015 at 9:38 PM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+>> On Tue, May 12, 2015 at 3:59 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Wed, May 6, 2015 at 10:37 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+>>>
+>>>> There is only one IRQ for each GIO IP block (i.e. several register banks share
+>>>> an IRQ).  After briefly looking into the generic IRQ chip implementation, it
+>>>> seemed like in this case that using it would result in the driver being more
+>>>> complex than necessary because AFAICT it expects a 1:1 mapping of
+>>>> irq_chip_generic to gpio_chip.  It seemed like less of a pain to have a single
+>>>> irq_chip since we have a single IRQ for all register banks (multiple
+>>>> gpio_chips).  I might be missing something, maybe using a shared IRQ across
+>>>> multiple irq_chips is easier than I think?  Suggestions welcome.
+>>>
+>>> What is needed is a 1:1 mapping between GPIO offsets and IRQ
+>>> offsets.
+>>>
+>>> If you just number your GPIOs 0...n and your IRQs 0...n
+>>> it should work just fine with one irqchip for all banks.
+>>>
+>>> What screws things up is likely that the hardware supports
+>>> 32 lines per bank and not all are used.
+>>>
+>>> I suggest you enable 32 line and 32 IRQs per bank,
+>>> so that hwirq maps nicely 1:1 on the GPIO offsets,
+>>> then just use the width thing to NACK operations on
+>>> GPIO lines you are not using. This way you can also
+>>> decode and warn on spurious IRQs on the unused lines.
 >>
->> One choice seems as bad as the other to me ;-)
->>
->> Could we add a pinctrl_register_reason() variant that returns a mean=
-ingful
->> error code as ERR_PTR?
+>> For having 32 lines per bank, the big problem here is the upper limit
+>> of 256 GPIOs.
 >
-> I agree with Arnd. As long as we don't get a precise error code we ca=
-n
-> just keep the current one.
+> Which arch is this?
+> Usually this limit comes from
+> arch/*/include/asm/gpio.h
+>
+> For ARM that was bumped to 512 a while back. It is also possible
+> to define a custom value for your system by defining
+> ARCH_NR_GPIOS
+>
+>> Anyway, I don't think I understand IRQ domains and irq_chip_generic
+>> very well.  One possibility _might_ be to use multiple irq_chips.
+>
+> That is probably not possible if there is just one IRQ for all
+> banks.
+>
+> The task of the irqdomain is a 1-to-1 translation from one
+> hardware numberspace to the Linux IRQ number space.
+>
+> In your case the hardware IRQ (hwirq) numberspace
+> should be:
+>
+> bank0: 0..31
+> bank1: 32..63
+> ....
+> bankn: 32*n..32*n+31
+>
+> I think the gpiolib irqchip code can translate that properly
+> as it is just a simple 0...x mapping, the irq handler need
+> some magic to loop over all banks from 0..n though.
 
-OK. Let's not do this way.
+I've now actually attempted to use the gpiolib irqchip code.  This
+driver can't directly use gpiochip_irqchip_add() because of the
+multiple gpiochip : one irqchip map.  At first, I thought it might be
+possible to simply add a new argument (or break things into a helper
+function) to allow setting the associated IRQ domain, but then I can't
+use the generic map and unmap functions which expect the irq_domain
+host_data member to be struct gpiochip *, which makes no sense in this
+case.  That puts me right back to implementing a special version of
+the map and unmap function.
 
+Since there doesn't appear to be any benefit to using the gpiolib
+irqchip code for this case, I'm going to stick with my implementation
+from patch 3 of this patchset.  I've also added to it to allow for
+using the GPIOs as a wakeup source, and will submit that as well with
+V2.
 
-I will try pinctrl_register_reason().
-
-
-
---=20
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Gregory
