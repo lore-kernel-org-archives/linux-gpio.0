@@ -1,33 +1,44 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Fix pinctrl register irq fail bug.
-Date: Thu, 28 May 2015 09:11:43 +0800
-Message-ID: <CAFRkauDrWCme5WDxsEW-HSGrNmJRVftVBP6qPLq3Lux-09BHbA@mail.gmail.com>
-References: <1432719835-18939-1-git-send-email-hongzhou.yang@mediatek.com>
-	<1432719835-18939-3-git-send-email-hongzhou.yang@mediatek.com>
+From: Aaron Lu <aaron.lu@intel.com>
+Subject: [PATCH] gpio/crystalcove: set IRQCHIP_SKIP_SET_WAKE for the irqchip
+Date: Thu, 28 May 2015 10:58:49 +0800
+Message-ID: <20150528025848.GA11051@aaronlu.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:33082 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751395AbbE1BLp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2015 21:11:45 -0400
-Received: by lbcue7 with SMTP id ue7so18504560lbc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 May 2015 18:11:44 -0700 (PDT)
-In-Reply-To: <1432719835-18939-3-git-send-email-hongzhou.yang@mediatek.com>
+Received: from mga09.intel.com ([134.134.136.24]:31141 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750812AbbE1C5l (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 27 May 2015 22:57:41 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, eddie.huang@mediatek.com, dandan.he@mediatek.com
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, "Yang, Bin" <bin.yang@intel.com>
 
-2015-05-27 17:43 GMT+08:00 Hongzhou Yang <hongzhou.yang@mediatek.com>:
-> Since mt6397 is no need to support interrupt controller,
-> I judged "interrupt-controller" property to skip it last patch.
-> But the if judgement should on the contrary, this is a bug.
->
-> And find of_property_read_bool is better for this case.
-> So using of_property_read_bool instead of of_find_property.
->
-> Also fix bug of misuse pointer.
->
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Reviewed-by: Axel Lin <axel.lin@ingics.com>
+The CrystalCove GPIO irqchip doesn't have irq_set_wake callback defined
+so we should set IRQCHIP_SKIP_SET_WAKE for it or it would cause an irq
+desc's wake_depth unbalanced warning during system resume phase from the
+gpio_keys driver, which is the driver for the power button of the ASUS
+T100 laptop.
+
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/gpio/gpio-crystalcove.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+index 91a7ffe83135..ab457fc00e75 100644
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -255,6 +255,7 @@ static struct irq_chip crystalcove_irqchip = {
+ 	.irq_set_type		= crystalcove_irq_type,
+ 	.irq_bus_lock		= crystalcove_bus_lock,
+ 	.irq_bus_sync_unlock	= crystalcove_bus_sync_unlock,
++	.flags			= IRQCHIP_SKIP_SET_WAKE,
+ };
+ 
+ static irqreturn_t crystalcove_gpio_irq_handler(int irq, void *data)
+-- 
+2.4.1
+
