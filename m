@@ -1,36 +1,38 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: fix confusing debug message in pinctrl_register_map()
-Date: Thu, 28 May 2015 21:52:59 +0900
-Message-ID: <1432817579-4720-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: zynq: add static to zynq_pins
+Date: Thu, 28 May 2015 21:57:23 +0900
+Message-ID: <1432817843-6038-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg011.nifty.com ([202.248.44.37]:20542 "EHLO
+	conuserg011-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751284AbbE1M6U (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 08:58:20 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-There are two types for pinctrl maps: pinmux and pinconfig
-This debug message shows the number of maps of both types.
-The string "pinmux map" is not precise.  Let's say "pinctrl map"
-instead.
+This array is only referenced in this file.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- drivers/pinctrl/core.c | 2 +-
+ drivers/pinctrl/pinctrl-zynq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 18ee208..36c5592 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1115,7 +1115,7 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
- 	int i, ret;
- 	struct pinctrl_maps *maps_node;
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index 0ff653c..a687f24 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -123,7 +123,7 @@ enum zynq_pinmux_functions {
+ 	ZYNQ_PMUX_MAX_FUNC
+ };
  
--	pr_debug("add %d pinmux maps\n", num_maps);
-+	pr_debug("add %d pinctrl maps\n", num_maps);
- 
- 	/* First sanity check the new mapping */
- 	for (i = 0; i < num_maps; i++) {
+-const struct pinctrl_pin_desc zynq_pins[] = {
++static const struct pinctrl_pin_desc zynq_pins[] = {
+ 	PINCTRL_PIN(0,  "MIO0"),
+ 	PINCTRL_PIN(1,  "MIO1"),
+ 	PINCTRL_PIN(2,  "MIO2"),
 -- 
 1.9.1
+
