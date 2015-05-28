@@ -1,33 +1,32 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH] pinctrl: zynq: add static const to zynq_pctrl_groups
-Date: Thu, 28 May 2015 09:09:45 -0700
-Message-ID: <20150528160945.GT31081@xsjsorenbubuntu>
-References: <1432817873-6106-1-git-send-email-yamada.masahiro@socionext.com>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] pinctrl: fix confusing debug message in
+ pinctrl_register_map()
+Date: Thu, 28 May 2015 11:30:09 -0700
+Message-ID: <1432837809.1556.3.camel@perches.com>
+References: <1432817579-4720-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2on0094.outbound.protection.outlook.com ([207.46.100.94]:42174
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1753822AbbE1QKB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 May 2015 12:10:01 -0400
-Content-Disposition: inline
-In-Reply-To: <1432817873-6106-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1432817579-4720-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2015-05-28 at 09:57PM +0900, Masahiro Yamada wrote:
-> This array is only referenced in this file and never updated.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
+On Thu, 2015-05-28 at 21:52 +0900, Masahiro Yamada wrote:
+> There are two types for pinctrl maps: pinmux and pinconfig
+> This debug message shows the number of maps of both types.
+> The string "pinmux map" is not precise.  Let's say "pinctrl map"
+> instead.
+[]
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+[]
+> @@ -1115,7 +1115,7 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
+>  	int i, ret;
+>  	struct pinctrl_maps *maps_node;
+>  
+> -	pr_debug("add %d pinmux maps\n", num_maps);
+> +	pr_debug("add %d pinctrl maps\n", num_maps);
 
-	S=C3=B6ren
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You might want to fix the %d/%u mismatch too
