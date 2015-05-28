@@ -1,51 +1,36 @@
-From: christian.ruppert@alitech.com
-Subject: Re: [PATCH] gpio: tb10x: Drop unneeded free_irq() call
-Date: Thu, 28 May 2015 14:45:52 +0200
-Message-ID: <OF9121DD21.2AC94E3D-ONC1257E53.0045F58B-C1257E53.0045F345@alitech.com>
-References: <1432805170.22632.1.camel@ingics.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH] pinctrl: zynq: add static to zynq_pins
+Date: Thu, 28 May 2015 09:09:27 -0700
+Message-ID: <20150528160927.GS31081@xsjsorenbubuntu>
+References: <1432817843-6038-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nopam.alitech.com ([202.3.176.31]:19217 "EHLO nopam.alitech.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752213AbbE1NMA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 May 2015 09:12:00 -0400
-In-Reply-To: <1432805170.22632.1.camel@ingics.com>
+Received: from mail-bl2on0089.outbound.protection.outlook.com ([65.55.169.89]:64627
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751556AbbE1QJt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 May 2015 12:09:49 -0400
+Content-Disposition: inline
+In-Reply-To: <1432817843-6038-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Christian Ruppert <christian.ruppert@abilis.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Axel Lin <axel.lin@ingics.com> wrote on 05/28/2015 11:26:10 AM:
-> 
-> Current code uses devm_request_irq() in .probe, so drop the unneeded
-> free_irq() call in .remove.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+On Thu, 2015-05-28 at 09:57PM +0900, Masahiro Yamada wrote:
+> This array is only referenced in this file.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
 
-Acked-by: Christian Ruppert <christian.ruppert@alitech.com>
+I start to wonder how I missed all of these :) Thanks for cleaning it
+up!
 
-> ---
->  drivers/gpio/gpio-tb10x.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-> index 46b8961..12c99d9 100644
-> --- a/drivers/gpio/gpio-tb10x.c
-> +++ b/drivers/gpio/gpio-tb10x.c
-> @@ -292,7 +292,6 @@ static int tb10x_gpio_remove(struct platform_device 
-*pdev)
->                 BIT(tb10x_gpio->gc.ngpio) - 1, 0, 0);
->        kfree(tb10x_gpio->domain->gc);
->        irq_domain_remove(tb10x_gpio->domain);
-> -      free_irq(tb10x_gpio->irq, tb10x_gpio);
->     }
->     gpiochip_remove(&tb10x_gpio->gc);
-> 
-> -- 
-> 2.1.0
-> 
-> 
-> 
-
-
+	S=C3=B6ren
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
