@@ -1,69 +1,90 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: configuration for nc pins without pull
-Date: Thu, 28 May 2015 09:26:31 +0200
-Message-ID: <20150528072631.GE24769@pengutronix.de>
-References: <20150322100059.GH5664@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: improve debugfs for strict controllers
+Date: Thu, 28 May 2015 10:14:02 +0200
+Message-ID: <1432800842-19318-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:56972 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395AbbE1H0e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 03:26:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20150322100059.GH5664@pengutronix.de>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:33438 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751372AbbE1IOK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 04:14:10 -0400
+Received: by lbcue7 with SMTP id ue7so23088678lbc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 May 2015 01:14:09 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Sonic Zhang <sonic.zhang@analog.com>
 
-On Sun, Mar 22, 2015 at 11:00:59AM +0100, Uwe Kleine-K=F6nig wrote:
-> Hello,
->=20
-> for a machine I want to configure a pin that is actually not connecte=
-d
-> to minimize floating. (I think this is sensible, isn't it?)
->=20
-> For the pinctrl I can use a hog group of the pinctrl device. At least
-> one of the pins doesn't have a pullup/pulldown configuration though, =
-so
-> I want to mux it to its gpio function and set the gpio to output and =
-the
-> desired value.
->=20
-> Is there something nicer than defining an always-on regulator with gp=
-ios
-> =3D <&gpio4 3 0> to accomplish that without additional code?
-=46or the archive: Yes, there is something nicer in the meantime:
+If we know we are using a strict pin controller (one that cannot
+mix device functions+group use and GPIO) we can be a bit more
+specific in debugfs, just print either device-function-group
+or GPIO consumer for the pin. Let's do that to be helpful.
 
-Since commit f625d4601759 (gpio: add GPIO hogging mechanism) which is
-included in v4.1-rc1 you can do something like
+Cc: Sonic Zhang <sonic.zhang@analog.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinmux.c | 41 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
 
-&gpio3 {
-        pinctrl-names =3D "default";
-        pinctrl-0 =3D <&pinctrl_gpio3hog>;
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index c58c168b06c2..77f82b23f7be 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -585,7 +585,12 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
+ 		return 0;
+ 
+ 	seq_puts(s, "Pinmux settings per pin\n");
+-	seq_puts(s, "Format: pin (name): mux_owner gpio_owner hog?\n");
++	if (pmxops->strict)
++		seq_puts(s,
++		 "Format: pin (name): mux_owner|gpio_owner (strict) hog?\n");
++	else
++		seq_puts(s,
++		"Format: pin (name): mux_owner gpio_owner hog?\n");
+ 
+ 	mutex_lock(&pctldev->mutex);
+ 
+@@ -604,14 +609,34 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
+ 		    !strcmp(desc->mux_owner, pinctrl_dev_get_name(pctldev)))
+ 			is_hog = true;
+ 
+-		seq_printf(s, "pin %d (%s): %s %s%s", pin,
+-			   desc->name ? desc->name : "unnamed",
+-			   desc->mux_owner ? desc->mux_owner
+-				: "(MUX UNCLAIMED)",
+-			   desc->gpio_owner ? desc->gpio_owner
+-				: "(GPIO UNCLAIMED)",
+-			   is_hog ? " (HOG)" : "");
++		if (pmxops->strict) {
++			if (desc->mux_owner)
++				seq_printf(s, "pin %d (%s): device %s%s",
++					   pin,
++					   desc->name ? desc->name : "unnamed",
++					   desc->mux_owner,
++					   is_hog ? " (HOG)" : "");
++			else if (desc->gpio_owner)
++				seq_printf(s, "pin %d (%s): GPIO %s",
++					   pin,
++					   desc->name ? desc->name : "unnamed",
++					   desc->gpio_owner);
++			else
++				seq_printf(s, "pin %d (%s): UNCLAIMED",
++					   pin,
++					   desc->name ? desc->name : "unnamed");
++		} else {
++			/* For non-strict controllers */
++			seq_printf(s, "pin %d (%s): %s %s%s", pin,
++				   desc->name ? desc->name : "unnamed",
++				   desc->mux_owner ? desc->mux_owner
++				   : "(MUX UNCLAIMED)",
++				   desc->gpio_owner ? desc->gpio_owner
++				   : "(GPIO UNCLAIMED)",
++				   is_hog ? " (HOG)" : "");
++		}
+ 
++		/* If mux: print function+group claiming the pin */
+ 		if (desc->mux_setting)
+ 			seq_printf(s, " function %s group %s\n",
+ 				   pmxops->get_function_name(pctldev,
+-- 
+1.9.3
 
-        ext-armclk {
-                gpio-hog;
-                gpios =3D <15 0>;
-                output-low;
-        };
-};
-
-in the devicetree (here for an i.MX25).
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
