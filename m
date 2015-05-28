@@ -1,60 +1,33 @@
-From: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 01/18] mfd: add new driver for Sharp LoCoMo
-Date: Wed, 27 May 2015 17:55:56 +0300
-Message-ID: <CALT56yO5Eu4Bk+_4sn2WgURh9YTsym9inWkvJftKUi_aLy5XXw@mail.gmail.com>
-References: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
-	<1432554113-26280-2-git-send-email-dbaryshkov@gmail.com>
-	<20150527102756.GH11677@x1>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: Re: [PATCH 2/2] pinctrl: mediatek: Fix pinctrl register irq fail bug.
+Date: Thu, 28 May 2015 09:11:43 +0800
+Message-ID: <CAFRkauDrWCme5WDxsEW-HSGrNmJRVftVBP6qPLq3Lux-09BHbA@mail.gmail.com>
+References: <1432719835-18939-1-git-send-email-hongzhou.yang@mediatek.com>
+	<1432719835-18939-3-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150527102756.GH11677@x1>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrea Adami <andrea.adami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:33082 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751395AbbE1BLp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 May 2015 21:11:45 -0400
+Received: by lbcue7 with SMTP id ue7so18504560lbc.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 May 2015 18:11:44 -0700 (PDT)
+In-Reply-To: <1432719835-18939-3-git-send-email-hongzhou.yang@mediatek.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Chaotian Jing <chaotian.jing@mediatek.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, eddie.huang@mediatek.com, dandan.he@mediatek.com
 
-2015-05-27 13:27 GMT+03:00 Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On Mon, 25 May 2015, Dmitry Eremin-Solenikov wrote:
+2015-05-27 17:43 GMT+08:00 Hongzhou Yang <hongzhou.yang@mediatek.com>:
+> Since mt6397 is no need to support interrupt controller,
+> I judged "interrupt-controller" property to skip it last patch.
+> But the if judgement should on the contrary, this is a bug.
 >
->> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does has
->> several design issues (special bus instead of platform bus, doesn't use
->> mfd-core, etc).
->>
->> Implement 'core' parts of locomo support as an mfd driver.
->>
->> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
+> And find of_property_read_bool is better for this case.
+> So using of_property_read_bool instead of of_find_property.
 >
-> These things are much easier to re-review if you keep a change-log
-> here.
+> Also fix bug of misuse pointer.
 >
->>  drivers/mfd/Kconfig        |  10 ++
->>  drivers/mfd/Makefile       |   1 +
->>  drivers/mfd/locomo.c       | 336 +++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/mfd/locomo.h | 169 +++++++++++++++++++++++
->>  4 files changed, 516 insertions(+)
->>  create mode 100644 drivers/mfd/locomo.c
->>  create mode 100644 include/linux/mfd/locomo.h
->
-> Looks good now though:
->   Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
-> How do you plan for this to be merged?
-
-I'd like for this to be merged either through mfd tree or through the
-arm-soc (or rmk's ARM) tree.
-Some of the respective maintainers already gave their blessing for
-this patchset to be merged
-not through their subsystem trees.
-
-[skipped the patch]
-
-
--- 
-With best wishes
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
