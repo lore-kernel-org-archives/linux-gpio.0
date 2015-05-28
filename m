@@ -1,44 +1,78 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: tb10x: Drop unneeded free_irq() call
-Date: Thu, 28 May 2015 17:26:10 +0800
-Message-ID: <1432805170.22632.1.camel@ingics.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 01/18] mfd: add new driver for Sharp LoCoMo
+Date: Thu, 28 May 2015 12:58:23 +0100
+Message-ID: <20150528115823.GQ11677@x1>
+References: <1432554113-26280-1-git-send-email-dbaryshkov@gmail.com>
+ <1432554113-26280-2-git-send-email-dbaryshkov@gmail.com>
+ <20150527102756.GH11677@x1>
+ <CALT56yO5Eu4Bk+_4sn2WgURh9YTsym9inWkvJftKUi_aLy5XXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:34217 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415AbbE1J0P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 05:26:15 -0400
-Received: by pdbki1 with SMTP id ki1so37821742pdb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 28 May 2015 02:26:15 -0700 (PDT)
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:36533 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753752AbbE1L6f (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 07:58:35 -0400
+Received: by wizk4 with SMTP id k4so144028710wiz.1
+        for <linux-gpio@vger.kernel.org>; Thu, 28 May 2015 04:58:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CALT56yO5Eu4Bk+_4sn2WgURh9YTsym9inWkvJftKUi_aLy5XXw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Christian Ruppert <christian.ruppert@abilis.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Daniel Mack <daniel@zonque.org>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Jingoo Han <jg1.han@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Andrea Adami <andrea.adami@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-input <linux-input@vger.kernel.org>, linux-spi <linux-spi@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 
-Current code uses devm_request_irq() in .probe, so drop the unneeded
-free_irq() call in .remove.
+On Wed, 27 May 2015, Dmitry Eremin-Solenikov wrote:
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/gpio-tb10x.c | 1 -
- 1 file changed, 1 deletion(-)
+> 2015-05-27 13:27 GMT+03:00 Lee Jones <lee.jones@linaro.org>:
+> > On Mon, 25 May 2015, Dmitry Eremin-Solenikov wrote:
+> >
+> >> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does h=
+as
+> >> several design issues (special bus instead of platform bus, doesn'=
+t use
+> >> mfd-core, etc).
+> >>
+> >> Implement 'core' parts of locomo support as an mfd driver.
+> >>
+> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+> >> ---
+> >
+> > These things are much easier to re-review if you keep a change-log
+> > here.
+> >
+> >>  drivers/mfd/Kconfig        |  10 ++
+> >>  drivers/mfd/Makefile       |   1 +
+> >>  drivers/mfd/locomo.c       | 336 ++++++++++++++++++++++++++++++++=
++++++++++++++
+> >>  include/linux/mfd/locomo.h | 169 +++++++++++++++++++++++
+> >>  4 files changed, 516 insertions(+)
+> >>  create mode 100644 drivers/mfd/locomo.c
+> >>  create mode 100644 include/linux/mfd/locomo.h
+> >
+> > Looks good now though:
+> >   Acked-by: Lee Jones <lee.jones@linaro.org>
+> >
+> > How do you plan for this to be merged?
+>=20
+> I'd like for this to be merged either through mfd tree or through the
+> arm-soc (or rmk's ARM) tree.
+> Some of the respective maintainers already gave their blessing for
+> this patchset to be merged
+> not through their subsystem trees.
 
-diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
-index 46b8961..12c99d9 100644
---- a/drivers/gpio/gpio-tb10x.c
-+++ b/drivers/gpio/gpio-tb10x.c
-@@ -292,7 +292,6 @@ static int tb10x_gpio_remove(struct platform_device *pdev)
- 					BIT(tb10x_gpio->gc.ngpio) - 1, 0, 0);
- 		kfree(tb10x_gpio->domain->gc);
- 		irq_domain_remove(tb10x_gpio->domain);
--		free_irq(tb10x_gpio->irq, tb10x_gpio);
- 	}
- 	gpiochip_remove(&tb10x_gpio->gc);
- 
--- 
-2.1.0
+I can take it through MFD.  Once you have all the required Acks,
+resubmit the set with them all applied with a note in the cover-letter
+to that affect and I'll apply.
 
-
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
