@@ -1,38 +1,51 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: zynq: add static const to zynq_pctrl_groups
-Date: Thu, 28 May 2015 21:57:53 +0900
-Message-ID: <1432817873-6106-1-git-send-email-yamada.masahiro@socionext.com>
+From: christian.ruppert@alitech.com
+Subject: Re: [PATCH] gpio: tb10x: Drop unneeded free_irq() call
+Date: Thu, 28 May 2015 14:45:52 +0200
+Message-ID: <OF9121DD21.2AC94E3D-ONC1257E53.0045F58B-C1257E53.0045F345@alitech.com>
+References: <1432805170.22632.1.camel@ingics.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg010.nifty.com ([202.248.44.36]:29005 "EHLO
-	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753807AbbE1M7L (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 May 2015 08:59:11 -0400
+Received: from nopam.alitech.com ([202.3.176.31]:19217 "EHLO nopam.alitech.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752213AbbE1NMA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 May 2015 09:12:00 -0400
+In-Reply-To: <1432805170.22632.1.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Christian Ruppert <christian.ruppert@abilis.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-This array is only referenced in this file and never updated.
+Axel Lin <axel.lin@ingics.com> wrote on 05/28/2015 11:26:10 AM:
+> 
+> Current code uses devm_request_irq() in .probe, so drop the unneeded
+> free_irq() call in .remove.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Acked-by: Christian Ruppert <christian.ruppert@alitech.com>
 
- drivers/pinctrl/pinctrl-zynq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  drivers/gpio/gpio-tb10x.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+> index 46b8961..12c99d9 100644
+> --- a/drivers/gpio/gpio-tb10x.c
+> +++ b/drivers/gpio/gpio-tb10x.c
+> @@ -292,7 +292,6 @@ static int tb10x_gpio_remove(struct platform_device 
+*pdev)
+>                 BIT(tb10x_gpio->gc.ngpio) - 1, 0, 0);
+>        kfree(tb10x_gpio->domain->gc);
+>        irq_domain_remove(tb10x_gpio->domain);
+> -      free_irq(tb10x_gpio->irq, tb10x_gpio);
+>     }
+>     gpiochip_remove(&tb10x_gpio->gc);
+> 
+> -- 
+> 2.1.0
+> 
+> 
+> 
 
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index a687f24..93d3774 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -369,7 +369,7 @@ static const unsigned int usb1_0_pins[] = {40, 41, 42, 43, 44, 45, 46, 47, 48,
- 		.npins = ARRAY_SIZE(nm ## _pins), \
- 	}
- 
--struct zynq_pctrl_group zynq_pctrl_groups[] = {
-+static const struct zynq_pctrl_group zynq_pctrl_groups[] = {
- 	DEFINE_ZYNQ_PINCTRL_GRP(ethernet0_0),
- 	DEFINE_ZYNQ_PINCTRL_GRP(ethernet1_0),
- 	DEFINE_ZYNQ_PINCTRL_GRP(mdio0_0),
--- 
-1.9.1
 
