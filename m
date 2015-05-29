@@ -1,74 +1,44 @@
-From: Andrew <andrew@ncrmnt.org>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Subject: Re: [PATCH 1/2] pinctrl: mvebu: Fix mapping of pin 63 (gpo -> gpio)
-Date: Fri, 29 May 2015 12:55:44 +0300
-Message-ID: <1e014a41f99caee6f054713546efdf20@mail.ncrmnt.org>
+Date: Fri, 29 May 2015 12:06:29 +0200
+Message-ID: <20150529120629.1cb0d8ae@free-electrons.com>
 References: <1428784160-19431-1-git-send-email-andrew@ncrmnt.org>
- <1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
- <20150529111002.7368ca50@free-electrons.com>
+	<1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
+	<20150529111002.7368ca50@free-electrons.com>
+	<1e014a41f99caee6f054713546efdf20@mail.ncrmnt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from forward7l.mail.yandex.net ([84.201.143.140]:60053 "EHLO
-	forward7l.mail.yandex.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755774AbbE2Jzx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 05:55:53 -0400
-In-Reply-To: <20150529111002.7368ca50@free-electrons.com>
+Received: from down.free-electrons.com ([37.187.137.238]:58455 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753773AbbE2KGf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 06:06:35 -0400
+In-Reply-To: <1e014a41f99caee6f054713546efdf20@mail.ncrmnt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Andrew <andrew@ncrmnt.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Thomas Petazzoni =D0=BF=D0=B8=D1=81=D0=B0=D0=BB 29.05.2015 12:10:
-> Dear Andrew Andrianov,
->=20
-> On Sat, 11 Apr 2015 23:29:19 +0300, Andrew Andrianov wrote:
->> Signed-off-by: Andrew Andrianov <andrew@ncrmnt.org>
->> ---
->>  drivers/pinctrl/mvebu/pinctrl-armada-370.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-370.c=20
->> b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
->> index c4f51d0..78c332d 100644
->> --- a/drivers/pinctrl/mvebu/pinctrl-armada-370.c
->> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
->> @@ -364,7 +364,7 @@ static struct mvebu_mpp_mode mv88f6710_mpp_modes=
-[]=20
->> =3D {
->>  	   MPP_FUNCTION(0x5, "audio", "mclk"),
->>  	   MPP_FUNCTION(0x6, "uart0", "cts")),
->>  	MPP_MODE(63,
->> -	   MPP_FUNCTION(0x0, "gpo", NULL),
->> +	   MPP_FUNCTION(0x0, "gpio", NULL),
->>  	   MPP_FUNCTION(0x1, "spi0", "sck"),
->>  	   MPP_FUNCTION(0x2, "tclk", NULL)),
->>  	MPP_MODE(64,
->=20
-> I know the patch has already been applied, but this is weird: I just
-> checked the datasheet again, and it really says this pin is a "gpo".
-> I'll try to get some more information.
->=20
-> Best regards,
->=20
-> Thomas
+Andrew,
 
-Yep, exactly. I've seen that in the public docs. It must be a typo,
-unless there's something we don't know.
+On Fri, 29 May 2015 12:55:44 +0300, Andrew wrote:
 
-On DNS-327L this pin is wired as a button. Without th patch only
-gpio-buttons driver fails probing, but you can still configure the pin
-as input via sysfs gpio interface and even read sensible values from it=
-=2E
-If you have a board where this pin is broken out - it's easy to test.
+> Yep, exactly. I've seen that in the public docs. It must be a typo,
+> unless there's something we don't know.
+> 
+> On DNS-327L this pin is wired as a button. Without th patch only
+> gpio-buttons driver fails probing, but you can still configure the pin
+> as input via sysfs gpio interface and even read sensible values from it.
+> If you have a board where this pin is broken out - it's easy to test.
 
---=20
-Regards,
-Andrew
+Ok, I've made a request for Marvell to check this aspect. If there's a
+mistake, they should hopefully fix the datasheet at some point.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
