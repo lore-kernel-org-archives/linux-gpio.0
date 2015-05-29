@@ -1,53 +1,36 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH 1/2] pinctrl: mvebu: Fix mapping of pin 63 (gpo -> gpio)
-Date: Fri, 29 May 2015 11:10:02 +0200
-Message-ID: <20150529111002.7368ca50@free-electrons.com>
-References: <1428784160-19431-1-git-send-email-andrew@ncrmnt.org>
-	<1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v0] gpio: xgene: add ACPI support for APM X-Gene GPIO
+ standby driver
+Date: Fri, 29 May 2015 12:25:01 +0300
+Message-ID: <20150529092501.GI1747@lahna.fi.intel.com>
+References: <1432795588-17476-1-git-send-email-yvo@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:55597 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755589AbbE2JKG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 05:10:06 -0400
-In-Reply-To: <1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
+Received: from mga14.intel.com ([192.55.52.115]:36243 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754104AbbE2JZH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 29 May 2015 05:25:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1432795588-17476-1-git-send-email-yvo@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Andrianov <andrew@ncrmnt.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Y Vo <yvo@apm.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, patches@apm.com
 
-Dear Andrew Andrianov,
+On Thu, May 28, 2015 at 01:46:28PM +0700, Y Vo wrote:
+> +#ifdef CONFIG_ACPI
+> +	if (priv->nirq > 0) {
+> +		/* Register interrupt handlers for gpio signaled acpi events */
+> +		acpi_gpiochip_request_interrupts(&priv->bgc.gc);
+> +	}
+> +#endif
 
-On Sat, 11 Apr 2015 23:29:19 +0300, Andrew Andrianov wrote:
-> Signed-off-by: Andrew Andrianov <andrew@ncrmnt.org>
-> ---
->  drivers/pinctrl/mvebu/pinctrl-armada-370.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-370.c b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-> index c4f51d0..78c332d 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-> @@ -364,7 +364,7 @@ static struct mvebu_mpp_mode mv88f6710_mpp_modes[] = {
->  	   MPP_FUNCTION(0x5, "audio", "mclk"),
->  	   MPP_FUNCTION(0x6, "uart0", "cts")),
->  	MPP_MODE(63,
-> -	   MPP_FUNCTION(0x0, "gpo", NULL),
-> +	   MPP_FUNCTION(0x0, "gpio", NULL),
->  	   MPP_FUNCTION(0x1, "spi0", "sck"),
->  	   MPP_FUNCTION(0x2, "tclk", NULL)),
->  	MPP_MODE(64,
+You don't need to check CONFIG_ACPI as acpi_gpiochip_request_interrupts()
+will be stubbed out if !CONFIG_ACPI.
 
-I know the patch has already been applied, but this is weird: I just
-checked the datasheet again, and it really says this pin is a "gpo".
-I'll try to get some more information.
+Should you call acpi_gpiochip_free_interrupts() somewhere to unregister
+the interrupts as well?
 
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Even better if you can switch your driver to use GPIOLIB_IRQCHIP all
+this is done automatically for you.
