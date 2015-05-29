@@ -1,47 +1,53 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2] pinctrl: fix confusing debug message in pinctrl_register_map()
-Date: Fri, 29 May 2015 18:09:17 +0900
-Message-ID: <1432890557-19523-1-git-send-email-yamada.masahiro@socionext.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH 1/2] pinctrl: mvebu: Fix mapping of pin 63 (gpo -> gpio)
+Date: Fri, 29 May 2015 11:10:02 +0200
+Message-ID: <20150529111002.7368ca50@free-electrons.com>
+References: <1428784160-19431-1-git-send-email-andrew@ncrmnt.org>
+	<1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg010.nifty.com ([202.248.44.36]:30008 "EHLO
-	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754234AbbE2JJe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 05:09:34 -0400
+Received: from down.free-electrons.com ([37.187.137.238]:55597 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755589AbbE2JKG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 05:10:06 -0400
+In-Reply-To: <1428784160-19431-2-git-send-email-andrew@ncrmnt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: Andrew Andrianov <andrew@ncrmnt.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-There are two types for pinctrl maps: pinmux and pinconfig.
-This debug message shows the number of maps with both types.
+Dear Andrew Andrianov,
 
-The string "pinmux map" is not precise.  Let's say "pinctrl map"
-instead.
+On Sat, 11 Apr 2015 23:29:19 +0300, Andrew Andrianov wrote:
+> Signed-off-by: Andrew Andrianov <andrew@ncrmnt.org>
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-armada-370.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-370.c b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
+> index c4f51d0..78c332d 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-370.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
+> @@ -364,7 +364,7 @@ static struct mvebu_mpp_mode mv88f6710_mpp_modes[] = {
+>  	   MPP_FUNCTION(0x5, "audio", "mclk"),
+>  	   MPP_FUNCTION(0x6, "uart0", "cts")),
+>  	MPP_MODE(63,
+> -	   MPP_FUNCTION(0x0, "gpo", NULL),
+> +	   MPP_FUNCTION(0x0, "gpio", NULL),
+>  	   MPP_FUNCTION(0x1, "spi0", "sck"),
+>  	   MPP_FUNCTION(0x2, "tclk", NULL)),
+>  	MPP_MODE(64,
 
-While we are here, fix the %d/%u mismatch too.
+I know the patch has already been applied, but this is weird: I just
+checked the datasheet again, and it really says this pin is a "gpo".
+I'll try to get some more information.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Best regards,
 
-Changes in v2:
- - Fix %d/%u mismatch
-
- drivers/pinctrl/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 18ee208..f3cf3a8 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1115,7 +1115,7 @@ int pinctrl_register_map(struct pinctrl_map const *maps, unsigned num_maps,
- 	int i, ret;
- 	struct pinctrl_maps *maps_node;
- 
--	pr_debug("add %d pinmux maps\n", num_maps);
-+	pr_debug("add %u pinctrl maps\n", num_maps);
- 
- 	/* First sanity check the new mapping */
- 	for (i = 0; i < num_maps; i++) {
+Thomas
 -- 
-1.9.1
-
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
