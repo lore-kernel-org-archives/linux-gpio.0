@@ -1,277 +1,63 @@
-From: Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
-Subject: [PATCHv2] gpio: add ETRAXFS GPIO driver
-Date: Sat, 30 May 2015 22:26:02 +0200
-Message-ID: <1433017562-26744-1-git-send-email-rabin@rab.in>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Sat, 30 May 2015 21:29:20 +0100
+Message-ID: <CACxGe6uskWcBU0MhO=EupU=2VKmDhX01-_LDJ-n91XAnRYiqbw@mail.gmail.com>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
+ <CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+ <20140613183157.GA24644@kroah.com> <CACRpkdYRm1gE5ai05TK17T3bVHKSVEkXeL5Qci8G=Lpt+UYsug@mail.gmail.com>
+ <20140707173142.GB8693@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140707173142.GB8693-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Silbe <x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org>, Johan Hovold <jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add a GPIO driver for the General I/O block on Axis ETRAX FS SoCs.
+On Mon, Jul 7, 2014 at 6:31 PM, Greg Kroah-Hartman
+<gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+> On Mon, Jul 07, 2014 at 12:44:28PM +0200, Linus Walleij wrote:
+>> On Fri, Jun 13, 2014 at 8:31 PM, Greg Kroah-Hartman
+>> <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+>> > On Fri, Jun 13, 2014 at 09:25:07AM +0200, Linus Walleij wrote:
+>>
+>> >> But I also want to bring the device model into question: normally
+>> >> when a mother device spawns children across different subsystems
+>> >> we model them as MFD devices (drivers/mfd) that instantiate
+>> >> children for the different subsystems. So you could spawn a
+>> >> serial and a GPIO device from a USB-based hub device there.
+>> >>
+>> >> I do not know if that is really apropriate in this case. It seems the
+>> >> device is first and foremost FTDI.
+>> >>
+>> >> But it could still spawn a child platform device for the GPIO stuff
+>> >> so that this can live as a separate driver under drivers/gpio/gpio-ftdi.c
+>> >> or similar.
+>> >>
+>> >> You could then use something like:
+>> >>
+>> >> struct platform_device *gdev;
+>> >
+>> > Ick, no, it's a USB device, do not abuse the platform_device code any
+>> > more than it currently is (note, I HATE the platform device code,
+>> > someday I'll delete it entirely...  Well, I can dream...)
+>>
+>> Haha yeah :-)
+>>
+>> However is the MFD cell approach acceptable?
+>
+> Yes it is.
 
-Signed-off-by: Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
----
-v2: remove module* macros, make num_ports unsigned
+Going back to this old conversation... Actually, I disagree. There is
+absolutely no need to go the MFD approach for this driver. That just
+adds layers of abstraction for no purpose. GPIOLIB is an interface,
+and it is completely fine for a driver to hook up to the GPIOLIB
+interface at the same time as exposing a serial port. MFD doesn't buy
+the driver anything useful here.
 
- .../devicetree/bindings/gpio/gpio-etraxfs.txt      |  21 +++
- drivers/gpio/Kconfig                               |   8 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-etraxfs.c                        | 182 +++++++++++++++++++++
- 4 files changed, 212 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
- create mode 100644 drivers/gpio/gpio-etraxfs.c
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt b/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
-new file mode 100644
-index 0000000..dad24ab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
-@@ -0,0 +1,21 @@
-+Axis ETRAX FS General I/O controller bindings
-+
-+Required properties:
-+
-+- compatible:
-+  - "axis,etraxfs-gio"
-+- reg: Physical base address and length of the controller's registers.
-+- #gpio-cells: Should be 3
-+  - The first cell is the port number (hex).
-+  - The seconds cell is the gpio offset number.
-+  - The third cell is reserved and is currently unused.
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+Example:
-+
-+	gio: gpio@b001a000 {
-+		compatible = "axis,etraxfs-gio";
-+		reg = <0xb001a000 0x1000>;
-+		gpio-controller;
-+		#gpio-cells = <3>;
-+	};
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index caefe80..fe0b9da 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -159,6 +159,14 @@ config GPIO_EP93XX
- 	depends on ARCH_EP93XX
- 	select GPIO_GENERIC
- 
-+config GPIO_ETRAXFS
-+	bool "Axis ETRAX FS General I/O"
-+	depends on CRIS || COMPILE_TEST
-+	depends on OF
-+	select GPIO_GENERIC
-+	help
-+	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
-+
- config GPIO_F7188X
- 	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
- 	depends on X86
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index f71bb97..4f816ec 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_GPIO_DLN2)		+= gpio-dln2.o
- obj-$(CONFIG_GPIO_DWAPB)	+= gpio-dwapb.o
- obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
- obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
-+obj-$(CONFIG_GPIO_ETRAXFS)	+= gpio-etraxfs.o
- obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
- obj-$(CONFIG_GPIO_GE_FPGA)	+= gpio-ge.o
- obj-$(CONFIG_GPIO_GRGPIO)	+= gpio-grgpio.o
-diff --git a/drivers/gpio/gpio-etraxfs.c b/drivers/gpio/gpio-etraxfs.c
-new file mode 100644
-index 0000000..351403c
---- /dev/null
-+++ b/drivers/gpio/gpio-etraxfs.c
-@@ -0,0 +1,182 @@
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/gpio.h>
-+#include <linux/of_gpio.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/basic_mmio_gpio.h>
-+
-+#define ETRAX_FS_rw_pa_dout	0
-+#define ETRAX_FS_r_pa_din	4
-+#define ETRAX_FS_rw_pa_oe	8
-+#define ETRAX_FS_rw_intr_cfg	12
-+#define ETRAX_FS_rw_intr_mask	16
-+#define ETRAX_FS_rw_ack_intr	20
-+#define ETRAX_FS_r_intr		24
-+#define ETRAX_FS_rw_pb_dout	32
-+#define ETRAX_FS_r_pb_din	36
-+#define ETRAX_FS_rw_pb_oe	40
-+#define ETRAX_FS_rw_pc_dout	48
-+#define ETRAX_FS_r_pc_din	52
-+#define ETRAX_FS_rw_pc_oe	56
-+#define ETRAX_FS_rw_pd_dout	64
-+#define ETRAX_FS_r_pd_din	68
-+#define ETRAX_FS_rw_pd_oe	72
-+#define ETRAX_FS_rw_pe_dout	80
-+#define ETRAX_FS_r_pe_din	84
-+#define ETRAX_FS_rw_pe_oe	88
-+
-+struct etraxfs_gpio_port {
-+	const char *label;
-+	unsigned int oe;
-+	unsigned int dout;
-+	unsigned int din;
-+	unsigned int ngpio;
-+};
-+
-+struct etraxfs_gpio_info {
-+	unsigned int num_ports;
-+	const struct etraxfs_gpio_port *ports;
-+};
-+
-+static const struct etraxfs_gpio_port etraxfs_gpio_etraxfs_ports[] = {
-+	{
-+		.label	= "A",
-+		.ngpio	= 8,
-+		.oe	= ETRAX_FS_rw_pa_oe,
-+		.dout	= ETRAX_FS_rw_pa_dout,
-+		.din	= ETRAX_FS_r_pa_din,
-+	},
-+	{
-+		.label	= "B",
-+		.ngpio	= 18,
-+		.oe	= ETRAX_FS_rw_pb_oe,
-+		.dout	= ETRAX_FS_rw_pb_dout,
-+		.din	= ETRAX_FS_r_pb_din,
-+	},
-+	{
-+		.label	= "C",
-+		.ngpio	= 18,
-+		.oe	= ETRAX_FS_rw_pc_oe,
-+		.dout	= ETRAX_FS_rw_pc_dout,
-+		.din	= ETRAX_FS_r_pc_din,
-+	},
-+	{
-+		.label	= "D",
-+		.ngpio	= 18,
-+		.oe	= ETRAX_FS_rw_pd_oe,
-+		.dout	= ETRAX_FS_rw_pd_dout,
-+		.din	= ETRAX_FS_r_pd_din,
-+	},
-+	{
-+		.label	= "E",
-+		.ngpio	= 18,
-+		.oe	= ETRAX_FS_rw_pe_oe,
-+		.dout	= ETRAX_FS_rw_pe_dout,
-+		.din	= ETRAX_FS_r_pe_din,
-+	},
-+};
-+
-+static const struct etraxfs_gpio_info etraxfs_gpio_etraxfs = {
-+	.num_ports = ARRAY_SIZE(etraxfs_gpio_etraxfs_ports),
-+	.ports = etraxfs_gpio_etraxfs_ports,
-+};
-+
-+static int etraxfs_gpio_of_xlate(struct gpio_chip *gc,
-+			       const struct of_phandle_args *gpiospec,
-+			       u32 *flags)
-+{
-+	/*
-+	 * Port numbers are A to E, and the properties are integers, so we
-+	 * specify them as 0xA - 0xE.
-+	 */
-+	if (gc->label[0] - 'A' + 0xA != gpiospec->args[0])
-+		return -EINVAL;
-+
-+	if (gpiospec->args[1] >= gc->ngpio)
-+		return -EINVAL;
-+
-+	if (flags)
-+		*flags = gpiospec->args[2];
-+
-+	return gpiospec->args[1];
-+}
-+
-+static const struct of_device_id etraxfs_gpio_of_table[] = {
-+	{
-+		.compatible = "axis,etraxfs-gio",
-+		.data = &etraxfs_gpio_etraxfs,
-+	},
-+	{},
-+};
-+
-+static int etraxfs_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct etraxfs_gpio_info *info;
-+	const struct of_device_id *match;
-+	struct bgpio_chip *chips;
-+	struct resource *res;
-+	void __iomem *regs;
-+	int ret;
-+	int i;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (!regs)
-+		return -ENOMEM;
-+
-+	match = of_match_node(etraxfs_gpio_of_table, dev->of_node);
-+	if (!match)
-+		return -EINVAL;
-+
-+	info = match->data;
-+
-+	chips = devm_kzalloc(dev, sizeof(*chips) * info->num_ports, GFP_KERNEL);
-+	if (!chips)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < info->num_ports; i++) {
-+		struct bgpio_chip *bgc = &chips[i];
-+		const struct etraxfs_gpio_port *port = &info->ports[i];
-+
-+		ret = bgpio_init(bgc, dev, 4,
-+				 regs + port->din,	/* dat */
-+				 regs + port->dout,	/* set */
-+				 NULL,			/* clr */
-+				 regs + port->oe,	/* dirout */
-+				 NULL,			/* dirin */
-+				 BGPIOF_UNREADABLE_REG_SET);
-+		if (ret)
-+			return ret;
-+
-+		bgc->gc.ngpio = port->ngpio;
-+		bgc->gc.label = port->label;
-+
-+		bgc->gc.of_node = dev->of_node;
-+		bgc->gc.of_gpio_n_cells = 3;
-+		bgc->gc.of_xlate = etraxfs_gpio_of_xlate;
-+
-+		ret = gpiochip_add(&bgc->gc);
-+		if (ret)
-+			dev_err(dev, "Unable to register port %s\n",
-+				bgc->gc.label);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver etraxfs_gpio_driver = {
-+	.driver = {
-+		.name		= "etraxfs-gpio",
-+		.of_match_table = of_match_ptr(etraxfs_gpio_of_table),
-+	},
-+	.probe	= etraxfs_gpio_probe,
-+};
-+
-+static int __init etraxfs_gpio_init(void)
-+{
-+	return platform_driver_register(&etraxfs_gpio_driver);
-+}
-+
-+device_initcall(etraxfs_gpio_init);
--- 
-2.1.4
-
+g.
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
