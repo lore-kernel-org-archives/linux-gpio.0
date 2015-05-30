@@ -1,139 +1,121 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: brcmstb-gpio: document properties for wakeup
-Date: Fri, 29 May 2015 17:57:50 -0700
-Message-ID: <CADtm3G43-EBUOwAxcT2B-0syzDtpjdyfPmOHmmDsNN8+FgoZAA@mail.gmail.com>
+From: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/6] gpio: brcmstb: Add interrupt support
+Date: Fri, 29 May 2015 18:30:50 -0700
+Message-ID: <CADtm3G5GHVncdJwhnqL3=6aUbX3bXmX80pdsNMenpjtHOMK=BQ@mail.gmail.com>
 References: <1432865650-4062-1-git-send-email-gregory.0xf0@gmail.com>
- <1432865650-4062-4-git-send-email-gregory.0xf0@gmail.com> <20150530003613.GW27753@ld-irv-0074>
+ <1432865650-4062-3-git-send-email-gregory.0xf0@gmail.com> <20150530001033.GV27753@ld-irv-0074>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:34145 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753944AbbE3A6X (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 29 May 2015 20:58:23 -0400
-In-Reply-To: <20150530003613.GW27753@ld-irv-0074>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150530001033.GV27753@ld-irv-0074>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On Fri, May 29, 2015 at 5:36 PM, Brian Norris
-<computersforpeace@gmail.com> wrote:
-> On Thu, May 28, 2015 at 07:14:07PM -0700, Gregory Fong wrote:
->> Some brcmstb GPIO controllers can be used to wake from suspend, so use the
->> de facto standard property 'wakeup-source' to mark the nodes of controllers
->> with that capability.
+On Fri, May 29, 2015 at 5:10 PM, Brian Norris
+<computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> A few small comments:
+>
+> On Thu, May 28, 2015 at 07:14:06PM -0700, Gregory Fong wrote:
+>> v2:
+>> - since imask member of bank struct was removed, just read and write from mask
+>>   reg and don't maintain a shadow
+>
+> ^^ this comment may be addressing what I'm going to ask about below? Not
+> sure why this was changed, actually.
+
+Yes, see below...
+
+>
+>> - warn on invalid IRQs
+>> - move some irq setup to a separate function since probe is getting unwieldy
 >>
->> Also document interrupts-extended, which will be used for wakeup handling
->> because the interrupt parent for the wake IRQ is different from the regular
->> IRQ.
+>>  drivers/gpio/Kconfig        |   1 +
+>>  drivers/gpio/gpio-brcmstb.c | 276 ++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 277 insertions(+)
 >>
->> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
->> ---
->> New in v2.
->>
->>  .../devicetree/bindings/gpio/brcm,brcmstb-gpio.txt | 26 +++++++++++++++++++++-
->>  1 file changed, 25 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt
->> index 435f1bc..568814f 100644
->> --- a/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt
->> +++ b/Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt
->> @@ -33,6 +33,12 @@ Optional properties:
->>  - interrupt-parent:
->>      phandle of the parent interrupt controller
->>
->> +- interrupts-extended:
->> +    Alternate form of specifying interrupts and parents that allows for
->> +    multiple parents.  This takes precedence over 'interrupts' and
->> +    'interrupt-parent'.  This probably must be used if the wakeup-source
->> +    property is provided because that may have a different interrupt parent.
+> ...
+>> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+>> index 7a3cb1f..b9962ff 100644
+>> --- a/drivers/gpio/gpio-brcmstb.c
+>> +++ b/drivers/gpio/gpio-brcmstb.c
+> ...
+>> @@ -63,6 +69,231 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip *gc)
+> ...
+>> +static void brcmstb_gpio_irq_bank_handler(int irq,
+>> +             struct brcmstb_gpio_bank *bank)
+>> +{
+>> +     struct brcmstb_gpio_priv *priv = bank->parent_priv;
+>> +     void __iomem *reg_base = priv->reg_base;
+>> +     unsigned long status;
+>> +     unsigned long flags;
 >> +
+>> +     spin_lock_irqsave(&bank->bgc.lock, flags);
+>> +     while ((status = bank->bgc.read_reg(reg_base + GIO_STAT(bank->id)) &
+>> +                      bank->bgc.read_reg(reg_base + GIO_MASK(bank->id)))) {
 >
-> "This probably must be used" seems a little awkward, especially when
-> you're just explaining an implementation detail of our SoCs, rather than
-> something unique about this binding. Maybe:
->
->   "Wakeup-capable GPIO controllers often route their wakeup interrupt
->   lines through a different interrupt controller than the primary
->   interrupt line, making this property necessary."
+> In case you do run this loop multiple times (multiple interrupts in
+> progress?), wouldn't it make sense to stash the mask exactly once,
+> outside the loop? It's probably not a real big deal in practice, I
+> guess.
 
-That wording does seem better, will change.
+I made this change after Linus's remark at
+https://lkml.org/lkml/2015/5/12/303 on v1, which I agree with mostly
+since it's a premature optimization---I haven't determined whether
+keeping a shadow mask actually helps performance at all in practice,
+and better to keep it simpler without actual data.
 
 >
->>  - #interrupt-cells:
->>      Should be <2>.  The first cell is the GPIO number, the second should specify
->>      flags.  The following subset of flags is supported:
->> @@ -48,7 +54,10 @@ Optional properties:
->>      Marks the device node as an interrupt controller
+>> +             int bit;
+>> +             for_each_set_bit(bit, &status, 32) {
+>> +                     int hwirq = bank->bgc.gc.base -
+>> +                             priv->gpio_base + bit;
+>> +                     int child_irq =
+>> +                             irq_find_mapping(priv->irq_domain,
+>> +                                              hwirq);
+>> +                     u32 stat = bank->bgc.read_reg(reg_base +
+>> +                                                   GIO_STAT(bank->id));
+>> +                     if (bit >= bank->width)
+>> +                             dev_warn(&priv->pdev->dev,
+>> +                                      "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
+>> +                                      bank->id, bit);
+>> +                     bank->bgc.write_reg(reg_base + GIO_STAT(bank->id),
+>> +                                         stat | BIT(bit));
+>> +                     generic_handle_irq(child_irq);
+>> +             }
+>> +     }
+>> +     spin_unlock_irqrestore(&bank->bgc.lock, flags);
+>> +}
+> ...
+>> @@ -153,6 +410,16 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>>       priv->reg_base = reg_base;
+>>       priv->pdev = pdev;
 >>
->>  - interrupt-names:
->> -    The name of the IRQ resource used by this controller
->> +    The names of the IRQ resources used by this controller
+>> +     if (of_find_property(np, "interrupt-controller", NULL)) {
 >
-> If you're specifying names, you should list them here.
-
-I was wondering about that.  Some bindings have them listed, some
-don't.  In this case I know what names currently exist but there could
-certainly be different ones in the future.  How does that work?  Or am
-I misunderstanding what this field is used for?  Where are the
-documented rules for this?
-
->
->> +
->> +- wakeup-source:
->> +    GPIOs for this controller can be used as a wakeup source
->>
->>  Example:
->>       upg_gio: gpio@f040a700 {
->> @@ -63,3 +72,18 @@ Example:
->>               interrupt-names = "upg_gio";
->>               brcm,gpio-bank-widths = <0x20 0x20 0x20 0x18>;
->>       };
->> +
->> +     upg_gio_aon: gpio@f04172c0 {
->> +             #gpio-cells = <0x2>;
->> +             #interrupt-cells = <0x2>;
->
-> Might use decimal instead of hex for the above 2 lines?
-
-Sure.
-
->
->> +             compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
->> +             gpio-controller;
->> +             interrupt-controller;
->> +             reg = <0xf04172c0 0x40>;
->> +             interrupt-parent = <0xc>;
->
-> That should be a phandle, not an int (I realize phandles resolve down to
-> an integer, but we're speaking DTS, not DTB).
+> of_property_read_bool()?
 
 OK.
 
 >
->> +             interrupts = <0x6>;
->> +             interrupts-extended = <0xc 0x6 0xa 0x5>;
+>> +             priv->parent_irq = platform_get_irq(pdev, 0);
+>> +             if (priv->parent_irq < 0) {
+>> +                     dev_err(dev, "Couldn't get IRQ");
+>> +                     return -ENOENT;
+>> +             }
+>> +     } else {
+>> +             priv->parent_irq = -ENOENT;
+>> +     }
+>> +
+>>       INIT_LIST_HEAD(&priv->bank_list);
+>>       if (brcmstb_gpio_sanity_check_banks(dev, np, res))
+>>               return -EINVAL;
 >
-> Same here (phandles).
+> Otherwise, looks OK to my inexpert eyes.
 >
-> Also, even though the interrupt binding semantics specify precedence
-> between interrupts and interrupts-extended, I'd think an example should
-> stick to one or the other, no?
-
-This is the output that we actually get from the bootloader.  But
-regardless, IMO the example should have both cases: precedence is
-well-defined, both sets of information are valid, and the driver can
-handle the case where interrupts-extended is not an understood
-property.
-
->
->> +             interrupt-names = "upg_gio_aon", "upg_gio_aon_wakeup";
->> +             wakeup-source;
->> +             brcm,gpio-bank-widths = <0x12 0x4>;
->> +     };
->
-> Reviewed-by: Brian Norris <computersforpeace@gmail.com>
-
-Thanks for the review,
-Gregory
+> Reviewed-by: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
