@@ -1,35 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register failure
-Date: Mon, 1 Jun 2015 17:00:53 +0200
-Message-ID: <CACRpkdYU4MDP3dhVFvLgom36iwq_=dp8nQudO_t+mt9Kn7Dnow@mail.gmail.com>
-References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
-	<4437293.G26yCXqFQH@wuerfel>
-	<20150526183734.GA31081@xsjsorenbubuntu>
+From: santosh shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [RFC/RFT PATCH 0/7] gpio: omap: rework and fixes
+Date: Mon, 01 Jun 2015 10:14:56 -0700
+Message-ID: <556C9310.4000703@oracle.com>
+References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>	<20150522190346.GD10274@atomide.com> <CACRpkdaNiZrkL0qXaxcVopm-E_18-C7OH3yMgy=5OWH3LQ7jXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150526183734.GA31081@xsjsorenbubuntu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:30109 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910AbbFARPQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 13:15:16 -0400
+In-Reply-To: <CACRpkdaNiZrkL0qXaxcVopm-E_18-C7OH3yMgy=5OWH3LQ7jXQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Grygorii Strashko <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, May 26, 2015 at 8:37 PM, S=C3=B6ren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
-> On Tue, 2015-05-26 at 10:12AM +0200, Arnd Bergmann wrote:
-
->> Could we add a pinctrl_register_reason() variant that returns a mean=
-ingful
->> error code as ERR_PTR?
+On 6/1/2015 6:15 AM, Linus Walleij wrote:
+> On Fri, May 22, 2015 at 9:03 PM, Tony Lindgren <tony@atomide.com> wrote:
+>> * Grygorii Strashko <grygorii.strashko@linaro.org> [150522 07:37]:
 >
-> I agree with Arnd. As long as we don't get a precise error code we ca=
-n
-> just keep the current one.
+>> Patches 1-5 seem to work for me, patch 6 does not.
+>> So for patches 1-5, please feel free to add:
+>>
+>> Tested-by: Tony Lindgren <tony@atomide.com>
+>
+> OK I take this as an excuse to apply patches 1-5 with
+> Tony's test tag.
+>
+> The maintainers can cheer in if they want, I will
+> anyway take the OMAP maintainers test tag as
+> a good quality indication.
+>
+Cheers for patch 1-5 ;-)
 
-pinctrl_register_cause() please.
-
-Cause-and-effect, not "age of reason".
-
-Yours,
-Linus Walleij
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
