@@ -1,60 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpiolib: debugfs: identify gpios requested as irq only
-Date: Mon, 1 Jun 2015 14:52:31 +0200
-Message-ID: <CACRpkdZYCNENp2MhknoOhkfzHLN16LPexxhnoYGR7QH_=-zz2A@mail.gmail.com>
-References: <1432117823-1834-1-git-send-email-grygorii.strashko@linaro.org>
-	<1432117823-1834-4-git-send-email-grygorii.strashko@linaro.org>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+Subject: [PATCH 1/7] pinctrl: imx7d: Remove .owner field
+Date: Mon, 1 Jun 2015 09:53:59 -0300
+Message-ID: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:36008 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751319AbbFAMwc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 08:52:32 -0400
-Received: by oihb142 with SMTP id b142so100172615oih.3
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 05:52:31 -0700 (PDT)
-In-Reply-To: <1432117823-1834-4-git-send-email-grygorii.strashko@linaro.org>
+Received: from mail-bn1bbn0105.outbound.protection.outlook.com ([157.56.111.105]:24857
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751357AbbFAMyZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 1 Jun 2015 08:54:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, May 20, 2015 at 12:30 PM, Grygorii Strashko
-<grygorii.strashko@linaro.org> wrote:
+platform_driver does not need to set the owner field, as it will be 
+populated by the driver core, so just remove it.
 
-> Now many of GPIO drivers implement two interfaces gpiolib and irqchip
-> which are essentially orthogonal. So, now GPIO line can be requested
-> in three ways:
-> 1) As pure GPIO (gpioX_request())
-> 2) As pure GPIO IRQ, especially in DT boot case.
->   DT:
->         interrupt-parent = <&gpio6>;
->         interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
->   Code:
->         platform_get_irq() or of_irq_get()
->         request_irq()
-> 3) combination of (1) and (2).
->
-> And from GPIO debugfs it could be identified when GPIO is
-> requested/used or used as IRQ, but there is no way to determine
-> when GPIO is requested/used as IRQ only.
->
-> Such information is useful for debugging, so update GPIO debugfs code
-> to show marker '<irq-only>' for GPIO lines which are requested/used as
-> GPIO IRQ only.
->
-> After this patch sys/kernel/debug/gpio will produce following output:
->   ...
->  GPIOs 160-191, platform/4805d000.gpio, gpio:
->   gpio-171 ((null)              ) in  hi IRQ-209 <irq-only>
->
->  GPIOs 192-223, platform/48051000.gpio, gpio:
->   gpio-203 (vtt_fixed           ) out hi
->
-> Cc: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+The semantic patch that makes this change is available
+in scripts/coccinelle/api/platform_no_drv_owner.cocci.
 
-Patch applied.
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx7d.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx7d.c b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+index d8ab17e..1fa7530 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx7d.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx7d.c
+@@ -361,7 +361,6 @@ static int imx7d_pinctrl_probe(struct platform_device *pdev)
+ static struct platform_driver imx7d_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "imx7d-pinctrl",
+-		.owner = THIS_MODULE,
+ 		.of_match_table = of_match_ptr(imx7d_pinctrl_of_match),
+ 	},
+ 	.probe = imx7d_pinctrl_probe,
+-- 
+1.9.1
+
