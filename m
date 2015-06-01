@@ -1,35 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: use "const struct ..." rather than "struct ... const"
-Date: Mon, 1 Jun 2015 15:48:33 +0200
-Message-ID: <CACRpkdZmC+uGQd3ux+ZzNXkMHdCdnmVhRYr0x4nQXOdF=OCj8g@mail.gmail.com>
-References: <1432275950-15374-1-git-send-email-yamada.masahiro@socionext.com>
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: Re: [RFC v1 05/25] gpio: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Mon, 01 Jun 2015 21:48:53 +0800
+Message-ID: <556C62C5.2040107@linux.intel.com>
+References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>	<1432116013-25902-6-git-send-email-jiang.liu@linux.intel.com> <CACRpkdZfWK5H+gRD6inX31Ouq1XCvq7CneNDJV8x0iihXHzWjw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34462 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751448AbbFANse (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 09:48:34 -0400
-Received: by oifu123 with SMTP id u123so101595344oif.1
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 06:48:33 -0700 (PDT)
-In-Reply-To: <1432275950-15374-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZfWK5H+gRD6inX31Ouq1XCvq7CneNDJV8x0iihXHzWjw@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann@xilinx.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kern>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, May 22, 2015 at 8:25 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On 2015/6/1 20:45, Linus Walleij wrote:
+> On Wed, May 20, 2015 at 11:59 AM, Jiang Liu <jiang.liu@linux.intel.com> wrote:
+> 
+>> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+>> already have a pointer to corresponding irq_desc.
+>>
+>> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Are there dependencies on this patch or can I just apply it
+> directly to the GPIO tree?
+Hi Linus,
+	Thanks for review.
+	There's a very long dependency list of this patch set,
+so it would be safer to merge this patch set altogether through
+the irq tree if that works:)
+Thanks!
+Gerry
 
-> Only this member, pins, is defined as "struct ... const *", but the
-> others in this struct, pinlops, pmxops, confops, etc. are defined as
-> "const struct ... *".
->
-> Swap the "struct pinctrl_pin_desc" and "const" for consistency.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+> 
+> Yours,
+> Linus Walleij
+> 
