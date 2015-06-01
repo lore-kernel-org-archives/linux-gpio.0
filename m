@@ -1,16 +1,16 @@
 From: Fabio Estevam <fabio.estevam@freescale.com>
-Subject: [PATCH 6/7] pinctrl: mt6397: Remove .owner field
-Date: Mon, 1 Jun 2015 09:54:04 -0300
-Message-ID: <1433163245-5780-6-git-send-email-fabio.estevam@freescale.com>
+Subject: [PATCH 2/7] pinctrl: amd: Remove .owner field
+Date: Mon, 1 Jun 2015 09:54:00 -0300
+Message-ID: <1433163245-5780-2-git-send-email-fabio.estevam@freescale.com>
 References: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bon0110.outbound.protection.outlook.com ([157.56.111.110]:2880
+Received: from mail-bn1bn0109.outbound.protection.outlook.com ([157.56.110.109]:31983
 	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751332AbbFAMyd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 1 Jun 2015 08:54:33 -0400
+	id S1751357AbbFAMyj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 1 Jun 2015 08:54:39 -0400
 In-Reply-To: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -25,21 +25,21 @@ in scripts/coccinelle/api/platform_no_drv_owner.cocci.
 
 Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt6397.c | 1 -
+ drivers/pinctrl/pinctrl-amd.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-index 767bbdf..f9751ae 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-@@ -61,7 +61,6 @@ static struct platform_driver mtk_pinctrl_driver = {
- 	.probe = mt6397_pinctrl_probe,
- 	.driver = {
- 		.name = "mediatek-mt6397-pinctrl",
--		.owner = THIS_MODULE,
- 		.of_match_table = mt6397_pctrl_match,
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 7de3b64..e747912 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -855,7 +855,6 @@ MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
+ static struct platform_driver amd_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "amd_gpio",
+-		.owner	= THIS_MODULE,
+ 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
  	},
- };
+ 	.probe		= amd_gpio_probe,
 -- 
 1.9.1
 
