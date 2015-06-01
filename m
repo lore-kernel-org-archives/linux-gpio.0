@@ -1,32 +1,113 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC/RFT PATCH 0/7] gpio: omap: rework and fixes
-Date: Mon, 1 Jun 2015 15:15:09 +0200
-Message-ID: <CACRpkdaNiZrkL0qXaxcVopm-E_18-C7OH3yMgy=5OWH3LQ7jXQ@mail.gmail.com>
-References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>
-	<20150522190346.GD10274@atomide.com>
+Subject: Re: [PATCH] gpio: add ETRAXFS GPIO driver
+Date: Mon, 1 Jun 2015 15:45:35 +0200
+Message-ID: <CACRpkdabE5ztEDT8797iOO3fwDLgJOYyQp_cfjk7iDEAE+Uh8A@mail.gmail.com>
+References: <1431728843-21583-1-git-send-email-rabin@rab.in>
+	<CACRpkdZcbvrcOMJavU5TacR1nD5+ot2FdC5zxBc=8XdhZN0SqQ@mail.gmail.com>
+	<20150521184855.GA6159@debian>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20150522190346.GD10274@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Grygorii Strashko <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33430 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751596AbbFANpg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 09:45:36 -0400
+Received: by oiww2 with SMTP id w2so101524442oiw.0
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 06:45:35 -0700 (PDT)
+In-Reply-To: <20150521184855.GA6159@debian>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rabin Vincent <rabin@rab.in>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, May 22, 2015 at 9:03 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Grygorii Strashko <grygorii.strashko@linaro.org> [150522 07:37]:
+On Thu, May 21, 2015 at 8:48 PM, Rabin Vincent <rabin@rab.in> wrote:
+> On Tue, May 19, 2015 at 11:39:01AM +0200, Linus Walleij wrote:
 
-> Patches 1-5 seem to work for me, patch 6 does not.
-> So for patches 1-5, please feel free to add:
+>> Three cells is rather unusual, is it the best arrangement?
+>>
+>> Usually it's just offset+flags (your flags are ununsed I see).
+>> And then you could divide offset by num gpios per bank
+>> (I guess 32) in the driver to get bank number.
 >
-> Tested-by: Tony Lindgren <tony@atomide.com>
+> At least to me, this:
+>
+> +       i2c {
+> +               compatible = "i2c-gpio";
+> +               gpios = <&gio 0xD 5 0>, <&gio 0xD 6 0>;
+> +               i2c-gpio,delay-us = <2>;
+>
+> which immediately shows that it's port D pins 5 and 6 which are being used, and
+> which matches the naming in the schematics and the chip documentation is
+> clearly preferable to this:
+>
+> +               gpios = <&gio 101 0>, <&gio 102 0>;
+>
+> which uses made up numbers with no relation to any documentation and which
+> probably requires the use of a calculator to determine if the correct
+> pins are being used.
 
-OK I take this as an excuse to apply patches 1-5 with
-Tony's test tag.
+Sure I buy this ... just need to push back some to not get too
+many deviant DT bindings :/
 
-The maintainers can cheer in if they want, I will
-anyway take the OMAP maintainers test tag as
-a good quality indication.
+There is also the code such as of_gpio_simple_xlate()
+that can't be reused for this, so thus it needs its own xlate
+function and adds some complexity to the code.
+But the convention in of_gpio_simple_xlate() is that
+cell 0 is offset, and cell 1 is flags, so what about
+moving the bank number to the last argument so you
+can still use of_gpio_simple_xlate()?
+
+Like so:
+gpios = <&gio 5 0 0xD>, <&gio 6 0 0xD>;
+
+I.e. extra cells go at the end. I can see you have a check
+hack to see it is hitting a valid GPIO chip by using the label,
+but that doesn't seem totally necessary.
+
+Maybe we should even document this as a preferred binding
+for "one IP with many banks inside it" use cases so we can
+use that going forward?
+
+> (btw, the ports have varying numbers of GPIOs and none of them have 32).
+
+How typical.
+
+> The binding in the patch matches the hardware.  The hardware is
+> described as one IP with several ports and not several instances of the
+> same IP.  The registers are also just 3 per port in the same region.
+> Creating one instance of the device for handling each port, seems
+> like useless overhead at best and, because it doesn't even match how the
+> hardware looks like, quite wrong anyway.
+
+OK.
+
+> Only port A has interrupt support; this is not implemented in the
+> current driver.
+
+OK.
+
+> BTW, the documentation for the chip is available here (GIO starts at
+> page 647 and its registers at page 895):
+> http://www.axis.com/files/manuals/etrax_fs_des_ref-070821.pdf
+
+Ah I see it has pin multiplexing in front of the GPIO controller
+block too. The driver may need  pinctrl_request_gpio()/
+pinctrl_free_gpio() etc the day there is a standard pin control
+driver in the back end of it. But no hurry with that.
+
+>> > +struct etraxfs_gpio_port {
+>> > +       const char *label;
+>> > +       unsigned int oe;
+>> > +       unsigned int dout;
+>> > +       unsigned int din;
+>>
+>> consider using u32 for these.
+>
+> Why?  These are just offsets to the base address so there's no reason
+> they _have_ to be 32 bits so u32 seems semantically wrong.
+
+Ah I thought it was register shadows or something,
+offsets are OK. Sorry.
 
 Yours,
 Linus Walleij
