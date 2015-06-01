@@ -1,38 +1,55 @@
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: [RFC/RFT PATCH 0/7] gpio: omap: rework and fixes
-Date: Mon, 01 Jun 2015 10:14:56 -0700
-Message-ID: <556C9310.4000703@oracle.com>
-References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>	<20150522190346.GD10274@atomide.com> <CACRpkdaNiZrkL0qXaxcVopm-E_18-C7OH3yMgy=5OWH3LQ7jXQ@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH 0/7] ASoC: remove bitwise operations on GPIO
+	level value
+Date: Tue,  2 Jun 2015 02:07:11 +0300
+Message-ID: <1433200031-6748-1-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:30109 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751910AbbFARPQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 13:15:16 -0400
-In-Reply-To: <CACRpkdaNiZrkL0qXaxcVopm-E_18-C7OH3yMgy=5OWH3LQ7jXQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, Bard Liao <bardliao@realtek.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: Grygorii Strashko <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 6/1/2015 6:15 AM, Linus Walleij wrote:
-> On Fri, May 22, 2015 at 9:03 PM, Tony Lindgren <tony@atomide.com> wrote:
->> * Grygorii Strashko <grygorii.strashko@linaro.org> [150522 07:37]:
->
->> Patches 1-5 seem to work for me, patch 6 does not.
->> So for patches 1-5, please feel free to add:
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
->
-> OK I take this as an excuse to apply patches 1-5 with
-> Tony's test tag.
->
-> The maintainers can cheer in if they want, I will
-> anyway take the OMAP maintainers test tag as
-> a good quality indication.
->
-Cheers for patch 1-5 ;-)
+The series does not contain any functional changes, it touches only
+implementation of gpiolib .set and .direction_output callbacks.
 
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+The main intention of the change is to remove bitwise operations on
+GPIO high/low level value as a preceding change before updating
+gpiolib callback signatures to utilize bool type as a representation
+of GPIO level.
+
+The change covers all input cases of GPIO level (i.e. .set
+and .direction_output) in sound/*, also the series contains a small
+clean-ups in rt5677 and wm8903 codec drivers related to gpiolib
+callbacks.
+
+Vladimir Zapolskiy (7):
+  ASoC: rt5677: add GPIO helper macros
+  ASoC: rt5677: clean up gpiolib callbacks
+  ASoC: wm8903: generalize GPIO control register bits
+  ASoC: wm8903: simplify gpiolib callbacks
+  ASoC: wm5100: remove bitwise operations involving GPIO level value
+  ASoC: wm8962: remove bitwise operations involving GPIO level value
+  ASoC: wm8996: remove bitwise operations involving GPIO level value
+
+ include/sound/wm8903.h    | 222 ++++++++--------------------------------------
+ sound/soc/codecs/rt5677.c |  32 +++++--
+ sound/soc/codecs/rt5677.h |   6 ++
+ sound/soc/codecs/wm5100.c |  21 ++---
+ sound/soc/codecs/wm8903.c |  44 ++++-----
+ sound/soc/codecs/wm8962.c |  13 ++-
+ sound/soc/codecs/wm8996.c |  11 ++-
+ 7 files changed, 112 insertions(+), 237 deletions(-)
+
+-- 
+2.1.4
