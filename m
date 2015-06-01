@@ -1,36 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: debugfs: display gpios requested as irq only
-Date: Mon, 1 Jun 2015 15:09:48 +0200
-Message-ID: <CACRpkdYicRS7my9-TkePD9FHEihCu6GxONHHKJdNd58fcF5aBw@mail.gmail.com>
-References: <1431696321-7257-1-git-send-email-grygorii.strashko@linaro.org>
-	<20150518110214.GC28127@localhost>
-	<CACRpkdb9K5oi0Ld-njEz2a85X1NhYgFa8DCTZquqALdohL7WKA@mail.gmail.com>
-	<20150521142524.GA30660@localhost>
-	<555E40FD.7010209@linaro.org>
-	<20150524171251.GA25494@localhost>
-	<55636FE5.7090709@linaro.org>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+Subject: [PATCH 5/7] pinctrl: mt8127: Remove .owner field
+Date: Mon, 1 Jun 2015 09:54:03 -0300
+Message-ID: <1433163245-5780-5-git-send-email-fabio.estevam@freescale.com>
+References: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34209 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752031AbbFANJt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 09:09:49 -0400
-Received: by oifu123 with SMTP id u123so100692984oif.1
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 06:09:49 -0700 (PDT)
-In-Reply-To: <55636FE5.7090709@linaro.org>
+Received: from mail-bl2on0118.outbound.protection.outlook.com ([65.55.169.118]:13920
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753484AbbFANJ4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 1 Jun 2015 09:09:56 -0400
+In-Reply-To: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Mon, May 25, 2015 at 8:54 PM, Grygorii.Strashko@linaro.org
-<grygorii.strashko@linaro.org> wrote:
+platform_driver does not need to set the owner field, as it will be 
+populated by the driver core, so just remove it.
 
-> .. Looks like it's time to drop this stuff :,,(
+The semantic patch that makes this change is available
+in scripts/coccinelle/api/platform_no_drv_owner.cocci.
 
-Ooops missed this part of the discussion. Indeed it will call accessors
-on non-requested GPIO lines. Damned. Taking these patches out again.
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mt8127.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8127.c b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+index 6a26cfa..b317b0b 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8127.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+@@ -342,7 +342,6 @@ static struct platform_driver mtk_pinctrl_driver = {
+ 	.probe = mt8127_pinctrl_probe,
+ 	.driver = {
+ 		.name = "mediatek-mt8127-pinctrl",
+-		.owner = THIS_MODULE,
+ 		.of_match_table = mt8127_pctrl_match,
+ 	},
+ };
+-- 
+1.9.1
+
