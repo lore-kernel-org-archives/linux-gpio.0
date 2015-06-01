@@ -1,46 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][RFC] gpiolib: rename gpiod_set_array to gpiod_set_array_value
-Date: Mon, 1 Jun 2015 14:55:34 +0200
-Message-ID: <CACRpkdYtLDO5SHENE3RX6vYXUAAB6=b4gfwtuGBJ-xRYDM2R4g@mail.gmail.com>
-References: <5305088.q3JD5pGOgN@pcimr>
+From: Fabio Estevam <fabio.estevam@freescale.com>
+Subject: [PATCH] pinctrl: samsung: Fix the pointer in PTR_ERR()
+Date: Mon, 1 Jun 2015 09:57:04 -0300
+Message-ID: <1433163424-6123-1-git-send-email-fabio.estevam@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:33146 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751332AbbFAMzf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 08:55:35 -0400
-Received: by oiww2 with SMTP id w2so100373061oiw.0
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 05:55:34 -0700 (PDT)
-In-Reply-To: <5305088.q3JD5pGOgN@pcimr>
+Received: from mail-bn1bbn0105.outbound.protection.outlook.com ([157.56.111.105]:39280
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751942AbbFAM5b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 1 Jun 2015 08:57:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>, linux-netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Greg KH <gregkh@linuxfoundation.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linus.walleij@linaro.org
+Cc: tomasz.figa@gmail.com, linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Wed, May 13, 2015 at 11:04 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
+PTR_ERR should access the value just tested by IS_ERR
 
-> There have been concerns that the function names gpiod_set_array() and
-> gpiod_get_array() might be confusing to users. One might expect
-> gpiod_get_array() to return array values, while it is actually the array
-> counterpart of gpiod_get(). To be consistent with the single descriptor API
-> we could rename gpiod_set_array() to gpiod_set_array_value(). This makes
-> some function names a bit lengthy: gpiod_set_raw_array_value_cansleep().
->
-> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
+The semantic patch that makes this change is available
+in scripts/coccinelle/tests/odd_ptr_err.cocci.
 
-OK patch applied...
+Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  drivers/gpio/gpiolib.c                 |   54 +++++++++++++++++----------------
->  drivers/net/phy/mdio-mux-gpio.c        |    3 +
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ed165ba..0fd20c5 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -806,7 +806,7 @@ static int samsung_pinctrl_parse_dt(struct platform_device *pdev,
+ 	functions = samsung_pinctrl_create_functions(dev, drvdata, &func_cnt);
+ 	if (IS_ERR(functions)) {
+ 		dev_err(dev, "failed to parse pin functions\n");
+-		return PTR_ERR(groups);
++		return PTR_ERR(functions);
+ 	}
+ 
+ 	drvdata->pin_groups = groups;
+-- 
+1.9.1
 
-You should ideally have David's ACK for this.
-
->  drivers/tty/serial/serial_mctrl_gpio.c |    2 -
-
-And Greg's ACK for this.
-
-I hope this doesn't wreak havoc or I will have to revert it.
-
-Yours,
-Linus Walleij
