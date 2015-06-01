@@ -1,34 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv2 2/2] gpio-stp-xway: Use the of_property_read_u32 helper
-Date: Mon, 1 Jun 2015 16:59:21 +0200
-Message-ID: <CACRpkdYmKx0yvzRrRpZ4TNy_GbOvyPjVwkLkvAoBfDMguvGsvw@mail.gmail.com>
-References: <55641906.1080408@openwrt.org>
-	<1432674720-12419-1-git-send-email-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH] pinctrl: zynq: change error code for pinctrl_register failure
+Date: Mon, 1 Jun 2015 17:00:53 +0200
+Message-ID: <CACRpkdYU4MDP3dhVFvLgom36iwq_=dp8nQudO_t+mt9Kn7Dnow@mail.gmail.com>
+References: <1432613909-13457-1-git-send-email-yamada.masahiro@socionext.com>
+	<4437293.G26yCXqFQH@wuerfel>
+	<20150526183734.GA31081@xsjsorenbubuntu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34618 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751447AbbFAO7V (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 10:59:21 -0400
-Received: by oifu123 with SMTP id u123so103377451oif.1
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 07:59:21 -0700 (PDT)
-In-Reply-To: <1432674720-12419-1-git-send-email-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150526183734.GA31081@xsjsorenbubuntu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Crispin <blogic@openwrt.org>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>
 
-On Tue, May 26, 2015 at 11:12 PM, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Tue, May 26, 2015 at 8:37 PM, S=C3=B6ren Brinkmann
+<soren.brinkmann@xilinx.com> wrote:
+> On Tue, 2015-05-26 at 10:12AM +0200, Arnd Bergmann wrote:
 
-> This removes some redundant code but does not have any functional impact.
+>> Could we add a pinctrl_register_reason() variant that returns a mean=
+ingful
+>> error code as ERR_PTR?
 >
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
-> v2: Fixed patch description
+> I agree with Arnd. As long as we don't get a precise error code we ca=
+n
+> just keep the current one.
 
-This v2 patch applied.
+pinctrl_register_cause() please.
+
+Cause-and-effect, not "age of reason".
 
 Yours,
 Linus Walleij
