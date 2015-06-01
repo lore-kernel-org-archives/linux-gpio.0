@@ -1,53 +1,45 @@
-From: Fabio Estevam <fabio.estevam@freescale.com>
-Subject: [PATCH 7/7] pinctrl: atlas7: Remove .owner field
-Date: Mon, 1 Jun 2015 09:54:05 -0300
-Message-ID: <1433163245-5780-7-git-send-email-fabio.estevam@freescale.com>
-References: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/7] gpio: omap: fix omap_gpio_free to not clean up irq configuration
+Date: Mon, 1 Jun 2015 15:11:50 +0200
+Message-ID: <CACRpkdZT6TKNLFQf2Yh7fWHpaUkRtVYv-KWwAVwuuW6O3WFb1w@mail.gmail.com>
+References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>
+	<1432305354-5968-2-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bn0107.outbound.protection.outlook.com ([157.56.110.107]:38400
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751263AbbFANKa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 1 Jun 2015 09:10:30 -0400
-In-Reply-To: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:35554 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752429AbbFANLu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 09:11:50 -0400
+Received: by oihd6 with SMTP id d6so100740371oih.2
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 06:11:50 -0700 (PDT)
+In-Reply-To: <1432305354-5968-2-git-send-email-grygorii.strashko@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+To: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-platform_driver does not need to set the owner field, as it will be 
-populated by the driver core, so just remove it.
+On Fri, May 22, 2015 at 4:35 PM, Grygorii Strashko
+<grygorii.strashko@linaro.org> wrote:
 
-The semantic patch that makes this change is available
-in scripts/coccinelle/api/platform_no_drv_owner.cocci.
+> This patch fixes following issue:
+> - GPIOn is used as IRQ by some dev, for example PCF8575.INT ->  gpio6.11
+> - PCFx driver knows nothing about type of IRQ line (GPIO or not)
+>   so it doesn't request gpio and just do request_irq()
+> - If gpio6.11 will be exported through the sysfs and then un-xeported
+> then IRQs from PCFx will not be received any more, because
+> IRQ configuration for gpio6.11 will be cleaned up unconditionally
+> in omap_gpio_free.
+>
+> Fix this by removing all GPIO IRQ specific code from omap_gpio_free()
+> and also do GPIO clean up (change direction to 'in' and disable debounce)
+> only if corresponding GPIO is not used as IRQ too.
+> GPIO IRQ will be properly cleaned up by GPIO irqchip code.
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 2 --
- 1 file changed, 2 deletions(-)
+Can I get an ACK or comment from one of the three (!) maintainers
+on atleast these non-RFC patches?
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index 046251a..c2ced3f 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -4066,7 +4066,6 @@ static int atlas7_pinmux_probe(struct platform_device *pdev)
- 	pmx->pctl_desc.pctlops = &atlas7_pinctrl_ops;
- 	pmx->pctl_desc.pmxops = &atlas7_pinmux_ops;
- 	pmx->pctl_desc.confops = &atlas7_pinconf_ops;
--	pmx->pctl_desc.owner = THIS_MODULE;
- 
- 	for (idx = 0; idx < banks; idx++) {
- 		pmx->regs[idx] = of_iomap(np, idx);
-@@ -4109,7 +4108,6 @@ static const struct of_device_id atlas7_pinmux_ids[] = {
- static struct platform_driver atlas7_pinmux_driver = {
- 	.driver = {
- 		.name = "atlas7-ioc",
--		.owner = THIS_MODULE,
- 		.of_match_table = atlas7_pinmux_ids,
- 	},
- 	.probe = atlas7_pinmux_probe,
--- 
-1.9.1
-
+Yours,
+Linus Walleij
