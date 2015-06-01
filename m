@@ -1,45 +1,46 @@
-From: Fabio Estevam <fabio.estevam@freescale.com>
-Subject: [PATCH 2/7] pinctrl: amd: Remove .owner field
-Date: Mon, 1 Jun 2015 09:54:00 -0300
-Message-ID: <1433163245-5780-2-git-send-email-fabio.estevam@freescale.com>
-References: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH][RFC] gpiolib: rename gpiod_set_array to gpiod_set_array_value
+Date: Mon, 1 Jun 2015 14:55:34 +0200
+Message-ID: <CACRpkdYtLDO5SHENE3RX6vYXUAAB6=b4gfwtuGBJ-xRYDM2R4g@mail.gmail.com>
+References: <5305088.q3JD5pGOgN@pcimr>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bn0109.outbound.protection.outlook.com ([157.56.110.109]:31983
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751357AbbFAMyj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 1 Jun 2015 08:54:39 -0400
-In-Reply-To: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33146 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751332AbbFAMzf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Jun 2015 08:55:35 -0400
+Received: by oiww2 with SMTP id w2so100373061oiw.0
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2015 05:55:34 -0700 (PDT)
+In-Reply-To: <5305088.q3JD5pGOgN@pcimr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>
+To: Rojhalat Ibrahim <imr@rtschenk.de>, linux-netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Greg KH <gregkh@linuxfoundation.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-platform_driver does not need to set the owner field, as it will be 
-populated by the driver core, so just remove it.
+On Wed, May 13, 2015 at 11:04 AM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
 
-The semantic patch that makes this change is available
-in scripts/coccinelle/api/platform_no_drv_owner.cocci.
+> There have been concerns that the function names gpiod_set_array() and
+> gpiod_get_array() might be confusing to users. One might expect
+> gpiod_get_array() to return array values, while it is actually the array
+> counterpart of gpiod_get(). To be consistent with the single descriptor API
+> we could rename gpiod_set_array() to gpiod_set_array_value(). This makes
+> some function names a bit lengthy: gpiod_set_raw_array_value_cansleep().
+>
+> Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
 
-Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
----
- drivers/pinctrl/pinctrl-amd.c | 1 -
- 1 file changed, 1 deletion(-)
+OK patch applied...
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 7de3b64..e747912 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -855,7 +855,6 @@ MODULE_DEVICE_TABLE(acpi, amd_gpio_acpi_match);
- static struct platform_driver amd_gpio_driver = {
- 	.driver		= {
- 		.name	= "amd_gpio",
--		.owner	= THIS_MODULE,
- 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
- 	},
- 	.probe		= amd_gpio_probe,
--- 
-1.9.1
+>  drivers/gpio/gpiolib.c                 |   54 +++++++++++++++++----------------
+>  drivers/net/phy/mdio-mux-gpio.c        |    3 +
 
+You should ideally have David's ACK for this.
+
+>  drivers/tty/serial/serial_mctrl_gpio.c |    2 -
+
+And Greg's ACK for this.
+
+I hope this doesn't wreak havoc or I will have to revert it.
+
+Yours,
+Linus Walleij
