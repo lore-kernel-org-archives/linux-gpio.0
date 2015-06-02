@@ -1,50 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: add pinctrl_register_reason() to return proper
- error code
-Date: Tue, 2 Jun 2015 14:56:23 +0200
-Message-ID: <CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
-References: <1432899016-18155-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
+Date: Tue, 2 Jun 2015 15:18:09 +0200
+Message-ID: <CACRpkdbDAWq42pkwTfi98invy0ov=XD8WzfX0dwnjeRXVpQ8Ow@mail.gmail.com>
+References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
+	<CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
+	<20140613183157.GA24644@kroah.com>
+	<CACRpkdYRm1gE5ai05TK17T3bVHKSVEkXeL5Qci8G=Lpt+UYsug@mail.gmail.com>
+	<20140707173142.GB8693@kroah.com>
+	<CACxGe6uskWcBU0MhO=EupU=2VKmDhX01-_LDJ-n91XAnRYiqbw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:36539 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758933AbbFBM4Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 08:56:24 -0400
-Received: by obbea2 with SMTP id ea2so126771285obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 05:56:23 -0700 (PDT)
-In-Reply-To: <1432899016-18155-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACxGe6uskWcBU0MhO=EupU=2VKmDhX01-_LDJ-n91XAnRYiqbw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Sascha Silbe <x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org>, Johan Hovold <jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, May 29, 2015 at 1:30 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Sat, May 30, 2015 at 10:29 PM, Grant Likely
+<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
+> On Mon, Jul 7, 2014 at 6:31 PM, Greg Kroah-Hartman
+> <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
 
-> The pinctrl_register() just returns NULL on error, so the callers
-> can not know the exact reason of the failure.
+>>> However is the MFD cell approach acceptable?
+>>
+>> Yes it is.
 >
-> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
-> -ENOMEM on error of pinctrl_register() , although the error code
-> might be different from the actual cause of the error.
->
-> This new function, pinctrl_register_reason(), helps the drivers get
-> and return the appropriate error code.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Going back to this old conversation... Actually, I disagree. There is
+> absolutely no need to go the MFD approach for this driver. That just
+> adds layers of abstraction for no purpose. GPIOLIB is an interface,
+> and it is completely fine for a driver to hook up to the GPIOLIB
+> interface at the same time as exposing a serial port. MFD doesn't buy
+> the driver anything useful here.
 
-It should be named pinctrl_register_strict() or something.
-"reason" is anyways wrong, should be "cause", but please
-use _strict().
+What is buys is centralizing code into the proper drivers/gpio
+folder of the kernel. So more of a maintenance point than a
+mechanics/performance point.
 
-> If this patch is accepted, I can send a series to replace
-> the pinctrl_register() in each driver with pinctrl_register_reason().
-
-If it is replaced *everywhere* there is no point in keeping
-a separate function. Then you should just do a big
-patch changing all usage sites and the original function.
+We do have GPIO drivers scattered all over the kernel so one
+more or less wouldn't matter so much...
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
