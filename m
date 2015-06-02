@@ -1,45 +1,67 @@
-From: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
-Date: Tue, 2 Jun 2015 21:13:19 -0700
-Message-ID: <CADtm3G7mKJ6b9Koy0DeTAVUeJyhS9Lw+AzEvKf-xmFXTmAuG2w@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
- <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
- <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
- <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
- <CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com> <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 03 Jun 2015 00:54:31 +0200
+Message-ID: <556E3427.6000704@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, list@wandq.ahsoftware, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, open@wandq.ahsoftware, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 2, 2015 at 2:05 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, May 27, 2015 at 5:26 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> I've now actually attempted to use the gpiolib irqchip code.  This
->> driver can't directly use gpiochip_irqchip_add() because of the
->> multiple gpiochip : one irqchip map.  At first, I thought it might be
->> possible to simply add a new argument (or break things into a helper
->> function) to allow setting the associated IRQ domain, but then I can't
->> use the generic map and unmap functions which expect the irq_domain
->> host_data member to be struct gpiochip *, which makes no sense in this
->> case.  That puts me right back to implementing a special version of
->> the map and unmap function.
->
-> I see.
->
-
-I think I was wrong, it isn't actually necessary to have a single
-irq_chip as long as all of the IRQs use the same handler.  I have a
-preliminary implementation doing that instead that seems to work fine.
-Once I've had a chance to verify that it works in all cases, will post
-that as v3.
-
-Cheers,
-Gregory
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+QW0gMDIuMDYuMjAxNSB1bSAxMDo0OCBzY2hyaWViIExpbnVzIFdhbGxlaWo6Cj4gT24gTW9uLCBN
+YXkgMjUsIDIwMTUgYXQgNDo1MyBQTSwgVG9tZXUgVml6b3NvCj4gPHRvbWV1LnZpem9zb0Bjb2xs
+YWJvcmEuY29tPiB3cm90ZToKPiAKPj4gaGF2ZSBsb29rZWQgaW50byBvcmRlcmVkIHByb2Jpbmcg
+YXMgYQo+PiBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91
+bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0aAo+PiBpbml0Y2FsbCBsZXZlbHMuCj4+Cj4+IFdo
+aWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQg
+d2l0aCBoaXMgc2VyaWVzIHRvCj4+IG1ha2UgcHJvYmluZyBvcmRlciBkZXRlcm1pbmlzdGljLCBp
+dCBvY2N1cnJlZCB0byBtZSB0aGF0IGl0IHNob3VsZCBiZSBwb3NzaWJsZQo+PiB0byBhY2hpZXZl
+IHRoZSBzYW1lIGJ5IHJlZ2lzdGVyaW5nIGRldmljZXMgYXMgdGhleSBhcmUgcmVmZXJlbmNlZCBi
+eSBvdGhlcgo+PiBkZXZpY2VzLgo+IAo+IFRoaXMgaXMgcHJldHR5IGNvb2wsIGJ1dCBhIHRvbyBs
+b2NhbCBzb2x1dGlvbiB0byBhIGdsb2JhbCBwcm9ibGVtLgo+IAo+IERlZmVycmVkIHByb2JlIGFu
+ZCBpbml0Y2FsbCByZW9yZGVyaW5nLCBzaWxseSBhcyB0aGV5IG1heSBzZWVtLAo+IGRvZXMgbm90
+IHJlcXVpcmUgeW91IHRvIHVzZSBkZXZpY2UgdHJlZS4KPiAKPiBUaGUgcmVhbCBzb2x1dGlvbiwg
+d2hpY2ggSSB0aGluayBJIHBvaW50ZWQgb3V0IGFscmVhZHkgd2hlbiB3ZQo+IGFkZGVkIGRlZmVy
+cmVkIHByb2JlLCBpcyB0byBwdXQgZGVwZW5kZW5jeSBncmFwaHMgaW4gdGhlIGRyaXZlcnMKPiBh
+bmQgaGF2ZSB0aGUga2VybmVsIGRldmljZSBkcml2ZXIgY29yZSBwZXJjb2xhdGUgZGVwZW5kZWNp
+ZXMgYnkKPiB3YWxraW5nIHRoZSBncmFwaCBvbiBwcm9iaW5nIGRyaXZlciwgcmVtb3ZpbmcgZHJp
+dmVyICh1c3VhbGx5IHRoZQo+IGludmVyc2UgdXNlIGNhc2UpLCBbcnVudGltZV0gc3VzcGVuZCBh
+bmQgW3J1bnRpbWVdIHJlc3VtZWluZwo+IGEgZHJpdmVyLiBQb3NzaWJseSB0aGUgZGVwZW5kZW5j
+aWVzIHdpbGwgZXZlbiBiZSBkaWZmZXJlbnQKPiBkZXBlbmRpbmcgb24gdXNlIGNhc2UuCj4gCj4g
+VGhpcyBpcyB3aGF0IHN5c3RlbWQgaXMgZG9pbmcgaW4gdXNlcnNwYWNlIGZvciBzdGFydGluZyBz
+ZXJ2aWNlczoKPiBhc2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlm
+IHRoZXkgYXJlIG5vdAo+IHRoZXJlLiBTbyBkcml2ZXJzIGFzayBmb3IgcmVzb3VyY2VzIGFuZCB3
+YWl0IGZvciB0aGVtLiBJdCBhbHNvCj4gbmVlZHMgdG8gYmUgYWJzdHJhY3QsIHNvIGZvciBleGFt
+cGxlIHdlIG5lZWQgdG8gYmUgYWJsZSB0bwo+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGls
+IHRoZSBkcml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4gcmVndWxhdG9yLCBhbmQgYXMg
+bG9uZyBhcyBldmVyeXRoaW5nIGlzIGluIHNsb3dwYXRoIGl0IHNob3VsZAo+IGJlIE9LLiAoQW5k
+IHZpY2UgdmVyc2EgbXV0YXRpcyBtdXRhbmRpcyBmb3IgY2xrLCBncGlvLCBwaW4KPiBjb250cm9s
+LCBpbnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPiAKPiAKPiBT
+byBpZiB0aGlzIHNob3VsZCBiZSBzb2x2ZWQgaXQgc2hvdWxkIGJlIHNvbHZlZCBpbiBhbiBhYnN0
+cmFjdCB3YXkKPiBpbiB0aGUgZGV2aWNlIGRyaXZlciBjb3JlIGF2YWlsYWJsZSBmb3IgYWxsLCB0
+aGVuIGhhdmUgY2FsbHMgY2FsbGluZwo+IG91dCB0byBEVCwgQUNQSSwgcG9zc2libHkgZXZlbiBQ
+Q0kgb3IgVVNCIChhcyB0aGVzZQo+IGVudW1lcmF0ZSBkZXZpY2VzIHRoZW1zZWx2ZXMpIHRvIG9i
+dGFpbiBhIGNlcnRhaW4KPiBkZXBlbmRlbmN5LgoKSSBzdWdnZXN0IHRvIHN0YXJ0IHdpdGggbWFr
+aW5nIGl0IHBvc3NpYmxlIHRvIGlkZW50aWZ5IChhdCBsZWFzdCBtb3N0KQpkcml2ZXJzLiBJJ3Zl
+IGFscmVhZHkgcG9zdGVkIGEgcGF0Y2ggZm9yIHRoYXQgYXJvdW5kIGEgeWVhciBhZ28gYW5kIG5v
+dwpUb21ldSBkaWQgYWxtb3N0IHRoZSBzYW1lLgoKSG93ZXZlciBvbmUgd2FudHMgdG8gbWFrZSBh
+IGRldGVybWluaXN0aWMgb3JkZXIgdG8gbG9hZCBkcml2ZXJzLCB0aGVyZQp3aWxsIGJlIGFsd2F5
+cyB0aGUgbmVlZCB0byBrbm93IHdoaWNoIGRyaXZlcnMgb25lIGhhcyB0byBzb3J0LgoKUmVnYXJk
+cywKCkFsZXhhbmRlciBIb2xsZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
