@@ -1,43 +1,35 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/7] ASoC: wm8903: generalize GPIO control register bits
-Date: Tue, 2 Jun 2015 10:19:43 +0100
-Message-ID: <20150602091943.GE3449@opensource.wolfsonmicro.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com> <1433200158-6890-3-git-send-email-vz@mleia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio/crystalcove: set IRQCHIP_SKIP_SET_WAKE for the irqchip
+Date: Tue, 2 Jun 2015 11:23:03 +0200
+Message-ID: <CACRpkdbpJAG=T6RrV8qAos4NGX6NMDG-1GNvRo1Pk-YL69HnvA@mail.gmail.com>
+References: <20150528025848.GA11051@aaronlu.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47742 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755880AbbFBJTp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 05:19:45 -0400
-Content-Disposition: inline
-In-Reply-To: <1433200158-6890-3-git-send-email-vz@mleia.com>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:36605 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753893AbbFBJXD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 05:23:03 -0400
+Received: by oihb142 with SMTP id b142so121003601oih.3
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 02:23:03 -0700 (PDT)
+In-Reply-To: <20150528025848.GA11051@aaronlu.sh.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com
+To: Aaron Lu <aaron.lu@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>, "Yang, Bin" <bin.yang@intel.com>
 
-On Tue, Jun 02, 2015 at 02:09:14AM +0300, Vladimir Zapolskiy wrote:
-> All GPIO1/2/3/4/5 control registers have the same bit map, but in
-> implementation of gpiolib callbacks WM8903_GPn_*, WM8903_GP1_* and
-> WM8903_GP2_* macro are mixed up. Replace particular GPIOn control
-> register bit definitions with generic ones and save ~150 LoCs.
-> 
-> No functional change.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Axel Lin <axel.lin@ingics.com>
-> Cc: patches@opensource.wolfsonmicro.com
-> ---
+On Thu, May 28, 2015 at 4:58 AM, Aaron Lu <aaron.lu@intel.com> wrote:
 
-If Mark's ok with this I think I am. Generally those register
-files tend to list all the bits on the chip, but certainly in
-this case nothing is really added by listing all the GPIO
-registers seperately.
+> The CrystalCove GPIO irqchip doesn't have irq_set_wake callback defined
+> so we should set IRQCHIP_SKIP_SET_WAKE for it or it would cause an irq
+> desc's wake_depth unbalanced warning during system resume phase from the
+> gpio_keys driver, which is the driver for the power button of the ASUS
+> T100 laptop.
+>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> Cc: <stable@vger.kernel.org>
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Patch applied.
 
-Thanks,
-Charles
+Yours,
+Linus Walleij
