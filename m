@@ -1,24 +1,30 @@
 From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 5/7] ASoC: wm5100: remove bitwise operations involving
-	GPIO level value
-Date: Tue, 2 Jun 2015 09:40:22 +0100
-Message-ID: <20150602084022.GB3449@opensource.wolfsonmicro.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com> <1433200158-6890-5-git-send-email-vz@mleia.com>
+Subject: Re: [PATCH 6/7] ASoC: wm8962: remove bitwise
+	operations involving	GPIO level value
+Date: Tue, 2 Jun 2015 09:41:10 +0100
+Message-ID: <20150602084110.GC3449@opensource.wolfsonmicro.com>
+References: <1433200031-6748-1-git-send-email-vz@mleia.com>
+ <1433200158-6890-6-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47601 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754381AbbFBIkY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 04:40:24 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <1433200158-6890-5-git-send-email-vz@mleia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <1433200158-6890-6-git-send-email-vz@mleia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com
+Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 02, 2015 at 02:09:16AM +0300, Vladimir Zapolskiy wrote:
+On Tue, Jun 02, 2015 at 02:09:17AM +0300, Vladimir Zapolskiy wrote:
 > The main intention of the change is to remove bitwise operations on
 > GPIO level value as a preceding change before updating gpiolib
 > callbacks to utilize bool type to represent GPIO level.
