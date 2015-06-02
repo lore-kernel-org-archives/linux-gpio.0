@@ -1,17 +1,18 @@
 From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 4/7] ASoC: wm8903: simplify gpiolib callbacks
-Date: Tue, 02 Jun 2015 23:18:23 +0300
-Message-ID: <556E0F8F.1050307@mleia.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com> <1433200158-6890-4-git-send-email-vz@mleia.com> <20150602194153.GH14071@sirena.org.uk>
+Subject: Re: [PATCH 5/7] ASoC: wm5100: remove bitwise operations involving
+ GPIO level value
+Date: Tue, 02 Jun 2015 23:23:41 +0300
+Message-ID: <556E10CD.3090301@mleia.com>
+References: <1433200031-6748-1-git-send-email-vz@mleia.com> <1433200158-6890-5-git-send-email-vz@mleia.com> <20150602194558.GI14071@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:56804 "EHLO
+Received: from li271-223.members.linode.com ([178.79.152.223]:56839 "EHLO
 	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752233AbbFBUSb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 2 Jun 2015 16:18:31 -0400
-In-Reply-To: <20150602194153.GH14071@sirena.org.uk>
+	id S1751360AbbFBUXo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 2 Jun 2015 16:23:44 -0400
+In-Reply-To: <20150602194558.GI14071@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
@@ -19,38 +20,26 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org
 
 Hello Mark,
 
-On 02.06.2015 22:41, Mark Brown wrote:
-> On Tue, Jun 02, 2015 at 02:09:15AM +0300, Vladimir Zapolskiy wrote:
+On 02.06.2015 22:45, Mark Brown wrote:
+> On Tue, Jun 02, 2015 at 02:09:16AM +0300, Vladimir Zapolskiy wrote:
 > 
->> @@ -1783,18 +1783,13 @@ static int wm8903_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+>> @@ -2244,26 +2244,27 @@ static inline struct wm5100_priv *gpio_to_wm5100(struct gpio_chip *chip)
+>>  static void wm5100_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
 >>  {
->>  	struct wm8903_priv *wm8903 = gpio_to_wm8903(chip);
->>  	unsigned int mask, val;
->> -	int ret;
->>  
->>  	mask = WM8903_GPn_FN_MASK | WM8903_GPn_DIR_MASK;
->>  	val = (WM8903_GPn_FN_GPIO_INPUT << WM8903_GPn_FN_SHIFT) |
->>  		WM8903_GPn_DIR;
->>  
->> -	ret = regmap_update_bits(wm8903->regmap,
->> -				 WM8903_GPIO_CONTROL_1 + offset, mask, val);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	return 0;
->> +	return regmap_update_bits(wm8903->regmap,
->> +				  WM8903_GPIO_CONTROL_1 + offset, mask, val);
->>  }
->>  
->>  static int wm8903_gpio_get(struct gpio_chip *chip, unsigned offset)
+>>  	struct wm5100_priv *wm5100 = gpio_to_wm5100(chip);
+>> +	unsigned int val = 0;
+>> +
+>> +	if (value)
+>> +		val = 0x1 << WM5100_GP1_LVL_SHIFT;
 > 
-> This appears to be an unrelated coding style change.
+> Write this as an if/else so the reader doesn't have to wonder why you've
+> missed the handling of the false case.  
 > 
 
-this particular patch is named "simplify gpiolib callbacks".
-
-Do you prefer to separate the change here in .direction_in
-implementation from the rest?
+the only objection I have is that the resulting code will be two lines
+longer. If you think this code is not clear enough (is "val" vs. "value"
+misleading?), I'll change the rest of my patches, which contain the same
+logic structure, please let me know.
 
 --
 With best wishes,
