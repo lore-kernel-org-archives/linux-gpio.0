@@ -1,75 +1,59 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH 6/7] ASoC: wm8962: remove bitwise operations
-	involving GPIO level value
-Date: Tue,  2 Jun 2015 02:09:17 +0300
-Message-ID: <1433200158-6890-6-git-send-email-vz@mleia.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATH] Fix ies/smt and register irq fail bug.
+Date: Mon, 1 Jun 2015 19:34:00 -0700
+Message-ID: <1433212440.11936.3.camel@mussux00.eus.mediatek.inc>
+References: <1432719835-18939-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1433200031-6748-1-git-send-email-vz@mleia.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: alsa-devel@alsa-project.org, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1432719835-18939-1-git-send-email-hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, dandan.he-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Fabian Frederick <fabf-AgBVmzD5pcezQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The main intention of the change is to remove bitwise operations on
-GPIO level value as a preceding change before updating gpiolib
-callbacks to utilize bool type to represent GPIO level.
+On Wed, 2015-05-27 at 02:43 -0700, Hongzhou Yang wrote:
+> Hi Linus,
+> After integration test, we found some bugs in the code you just merged.
+> The first is that I missed ies/smt configuration for MSDC3.
+> The seconed is the if judgement for "interrupt-controller" I added last
+> time should on the contrary. So adding these two patches to fix them.
+> Sorry about this. And please help to merge them, many thanks.
+> 
+> These patches include below changes:
+> - Adding MSDC3 ies/smt support for mt8173.
+> - Since mt6397 is no need to support interrupt controller,
+> I judged "interrupt-controller" property to skip it last time,
+> but the if judgement should on the contrary, this is a bug.
+> so adding this patch to fix it. 
+>  
+> Hongzhou Yang (2):
+>   pinctrl: mediatek: Fix bug of ies/smt setting for mt8173.
+>   pinctrl: mediatek: Fix pinctrl register irq fail bug.
+> 
+>  drivers/pinctrl/mediatek/pinctrl-mt8173.c     |   10 +++++++++-
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    4 ++--
+>  2 files changed, 11 insertions(+), 3 deletions(-)
+> 
+> --
+> 1.7.9.5
+> 
 
-No functional change.
+Hi Linus,
 
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Axel Lin <axel.lin@ingics.com>
-Cc: patches@opensource.wolfsonmicro.com
----
- sound/soc/codecs/wm8962.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Do you have any suggestion about these two patches?
+Since we can't boot up device without these two patches, could
+you please help to merge them?
+Thank you very much.
 
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index c5748fd..ad619e6 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -3341,9 +3341,13 @@ static void wm8962_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct wm8962_priv *wm8962 = gpio_to_wm8962(chip);
- 	struct snd_soc_codec *codec = wm8962->codec;
-+	unsigned int val = 0;
-+
-+	if (value)
-+		val = 0x1 << WM8962_GP2_LVL_SHIFT;
- 
- 	snd_soc_update_bits(codec, WM8962_GPIO_BASE + offset,
--			    WM8962_GP2_LVL, !!value << WM8962_GP2_LVL_SHIFT);
-+			    WM8962_GP2_LVL, val);
- }
- 
- static int wm8962_gpio_direction_out(struct gpio_chip *chip,
-@@ -3351,10 +3355,11 @@ static int wm8962_gpio_direction_out(struct gpio_chip *chip,
- {
- 	struct wm8962_priv *wm8962 = gpio_to_wm8962(chip);
- 	struct snd_soc_codec *codec = wm8962->codec;
--	int ret, val;
-+	unsigned int val = 0x1 << WM8962_GP2_FN_SHIFT;
-+	int ret;
- 
--	/* Force function 1 (logic output) */
--	val = (1 << WM8962_GP2_FN_SHIFT) | (value << WM8962_GP2_LVL_SHIFT);
-+	if (value)
-+		val |= 0x1 << WM8962_GP2_LVL_SHIFT;
- 
- 	ret = snd_soc_update_bits(codec, WM8962_GPIO_BASE + offset,
- 				  WM8962_GP2_FN_MASK | WM8962_GP2_LVL, val);
--- 
-2.1.4
+Yours,
+Hongzhou
