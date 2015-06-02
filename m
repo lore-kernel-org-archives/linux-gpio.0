@@ -1,48 +1,65 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] USB: ftdi_sio: add GPIO support
-Date: Tue, 2 Jun 2015 15:18:09 +0200
-Message-ID: <CACRpkdbDAWq42pkwTfi98invy0ov=XD8WzfX0dwnjeRXVpQ8Ow@mail.gmail.com>
-References: <1402320115-13171-1-git-send-email-x-linux@infra-silbe.de>
-	<CACRpkdbiob-2d4sTmj8bZxo5GVZ0TvF5CT_W94BDsSNiEfB7kQ@mail.gmail.com>
-	<20140613183157.GA24644@kroah.com>
-	<CACRpkdYRm1gE5ai05TK17T3bVHKSVEkXeL5Qci8G=Lpt+UYsug@mail.gmail.com>
-	<20140707173142.GB8693@kroah.com>
-	<CACxGe6uskWcBU0MhO=EupU=2VKmDhX01-_LDJ-n91XAnRYiqbw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/6] gpio: brcmstb: Add interrupt support
+Date: Tue, 2 Jun 2015 15:33:41 +0200
+Message-ID: <CACRpkdayrD59LyQH+W7-A1n3CF5yKRjggm2f0LmEgmc7+DEyVg@mail.gmail.com>
+References: <1432865650-4062-1-git-send-email-gregory.0xf0@gmail.com>
+	<1432865650-4062-3-git-send-email-gregory.0xf0@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACxGe6uskWcBU0MhO=EupU=2VKmDhX01-_LDJ-n91XAnRYiqbw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Sascha Silbe <x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org>, Johan Hovold <jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1432865650-4062-3-git-send-email-gregory.0xf0@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, May 30, 2015 at 10:29 PM, Grant Likely
-<grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
-> On Mon, Jul 7, 2014 at 6:31 PM, Greg Kroah-Hartman
-> <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> wrote:
+On Fri, May 29, 2015 at 4:14 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
 
->>> However is the MFD cell approach acceptable?
->>
->> Yes it is.
+> Create an irq_chip for each GIO block.  Uses chained IRQ handling since
+> known uses of this block have a BCM7120 L2 interrupt controller as a
+> parent.  Supports interrupts for all GPIOs.
 >
-> Going back to this old conversation... Actually, I disagree. There is
-> absolutely no need to go the MFD approach for this driver. That just
-> adds layers of abstraction for no purpose. GPIOLIB is an interface,
-> and it is completely fine for a driver to hook up to the GPIOLIB
-> interface at the same time as exposing a serial port. MFD doesn't buy
-> the driver anything useful here.
+> In the IRQ handler, we check for raised IRQs for invalid GPIOs and warn
+> (ratelimited) if they're encountered.
+>
+> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
+> ---
+> v2:
+> - since imask member of bank struct was removed, just read and write from mask
+>   reg and don't maintain a shadow
+> - warn on invalid IRQs
+> - move some irq setup to a separate function since probe is getting unwieldy
 
-What is buys is centralizing code into the proper drivers/gpio
-folder of the kernel. So more of a maintenance point than a
-mechanics/performance point.
+This patch basically painfully reimplements GPIOLIB_IRQCHIP.
 
-We do have GPIO drivers scattered all over the kernel so one
-more or less wouldn't matter so much...
+Is there a reason for not using that generic mechanism?
+
+> +static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned gc_offset)
+> +{
+> +       struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
+> +       /* gc_offset is relative to this gpio_chip; want real offset */
+> +       int offset = gc_offset + (gc->base - priv->gpio_base);
+> +
+> +       if (offset >= priv->num_gpios)
+> +               return -ENXIO;
+> +       return irq_create_mapping(priv->irq_domain, offset);
+
+It is a no-no to rely on .to_irq() to be called before using an IRQ
+from a GPIO chip.
+
+The gpiochip and irq_chip APIs are orthogonal, and a user may
+request an interrupt from the irqchip without calling .to_irq() on any
+GPIO line first.
+
+This should only use irq_find_mapping().
+
+irq_create_mapping() needs to be called on all available
+offsets during probe.
+
+If the module is removable or at error path it also needs
+to call irq_dispose_mapping() on all lines. Also this is handled
+by GPIOLIB_IRQCHIP, and that is why it should always be
+used, if possible.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
