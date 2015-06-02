@@ -1,58 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Tue, 2 Jun 2015 10:48:50 +0200
-Message-ID: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Tue, 2 Jun 2015 11:05:21 +0200
+Message-ID: <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+	<CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+	<CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+	<CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
+	<CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.or
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gTW9uLCBNYXkgMjUsIDIwMTUgYXQgNDo1MyBQTSwgVG9tZXUgVml6b3NvCjx0b21ldS52aXpv
-c29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cgo+IGhhdmUgbG9va2VkIGludG8gb3JkZXJlZCBwcm9i
-aW5nIGFzIGEKPiBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBh
-cm91bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0aAo+IGluaXRjYWxsIGxldmVscy4KPgo+IFdo
-aWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQg
-d2l0aCBoaXMgc2VyaWVzIHRvCj4gbWFrZSBwcm9iaW5nIG9yZGVyIGRldGVybWluaXN0aWMsIGl0
-IG9jY3VycmVkIHRvIG1lIHRoYXQgaXQgc2hvdWxkIGJlIHBvc3NpYmxlCj4gdG8gYWNoaWV2ZSB0
-aGUgc2FtZSBieSByZWdpc3RlcmluZyBkZXZpY2VzIGFzIHRoZXkgYXJlIHJlZmVyZW5jZWQgYnkg
-b3RoZXIKPiBkZXZpY2VzLgoKVGhpcyBpcyBwcmV0dHkgY29vbCwgYnV0IGEgdG9vIGxvY2FsIHNv
-bHV0aW9uIHRvIGEgZ2xvYmFsIHByb2JsZW0uCgpEZWZlcnJlZCBwcm9iZSBhbmQgaW5pdGNhbGwg
-cmVvcmRlcmluZywgc2lsbHkgYXMgdGhleSBtYXkgc2VlbSwKZG9lcyBub3QgcmVxdWlyZSB5b3Ug
-dG8gdXNlIGRldmljZSB0cmVlLgoKVGhlIHJlYWwgc29sdXRpb24sIHdoaWNoIEkgdGhpbmsgSSBw
-b2ludGVkIG91dCBhbHJlYWR5IHdoZW4gd2UKYWRkZWQgZGVmZXJyZWQgcHJvYmUsIGlzIHRvIHB1
-dCBkZXBlbmRlbmN5IGdyYXBocyBpbiB0aGUgZHJpdmVycwphbmQgaGF2ZSB0aGUga2VybmVsIGRl
-dmljZSBkcml2ZXIgY29yZSBwZXJjb2xhdGUgZGVwZW5kZWNpZXMgYnkKd2Fsa2luZyB0aGUgZ3Jh
-cGggb24gcHJvYmluZyBkcml2ZXIsIHJlbW92aW5nIGRyaXZlciAodXN1YWxseSB0aGUKaW52ZXJz
-ZSB1c2UgY2FzZSksIFtydW50aW1lXSBzdXNwZW5kIGFuZCBbcnVudGltZV0gcmVzdW1laW5nCmEg
-ZHJpdmVyLiBQb3NzaWJseSB0aGUgZGVwZW5kZW5jaWVzIHdpbGwgZXZlbiBiZSBkaWZmZXJlbnQK
-ZGVwZW5kaW5nIG9uIHVzZSBjYXNlLgoKVGhpcyBpcyB3aGF0IHN5c3RlbWQgaXMgZG9pbmcgaW4g
-dXNlcnNwYWNlIGZvciBzdGFydGluZyBzZXJ2aWNlczoKYXNrIGZvciB5b3VyIGRlcGVuZGVuY2ll
-cyBhbmQgd2FpdCBmb3IgdGhlbSBpZiB0aGV5IGFyZSBub3QKdGhlcmUuIFNvIGRyaXZlcnMgYXNr
-IGZvciByZXNvdXJjZXMgYW5kIHdhaXQgZm9yIHRoZW0uIEl0IGFsc28KbmVlZHMgdG8gYmUgYWJz
-dHJhY3QsIHNvIGZvciBleGFtcGxlIHdlIG5lZWQgdG8gYmUgYWJsZSB0bwpoYW5nIG9uIHJlZ3Vs
-YXRvcl9nZXQoKSB1bnRpbCB0aGUgZHJpdmVyIGlzIHVwIGFuZCBwcm92aWRpbmcgdGhhdApyZWd1
-bGF0b3IsIGFuZCBhcyBsb25nIGFzIGV2ZXJ5dGhpbmcgaXMgaW4gc2xvd3BhdGggaXQgc2hvdWxk
-CmJlIE9LLiAoQW5kIHZpY2UgdmVyc2EgbXV0YXRpcyBtdXRhbmRpcyBmb3IgY2xrLCBncGlvLCBw
-aW4KY29udHJvbCwgaW50ZXJydXB0cyAoISkgYW5kIERNQSBjaGFubmVscyBmb3IgZXhhbXBsZS4p
-CgoKU28gaWYgdGhpcyBzaG91bGQgYmUgc29sdmVkIGl0IHNob3VsZCBiZSBzb2x2ZWQgaW4gYW4g
-YWJzdHJhY3Qgd2F5CmluIHRoZSBkZXZpY2UgZHJpdmVyIGNvcmUgYXZhaWxhYmxlIGZvciBhbGws
-IHRoZW4gaGF2ZSBjYWxscyBjYWxsaW5nCm91dCB0byBEVCwgQUNQSSwgcG9zc2libHkgZXZlbiBQ
-Q0kgb3IgVVNCIChhcyB0aGVzZQplbnVtZXJhdGUgZGV2aWNlcyB0aGVtc2VsdmVzKSB0byBvYnRh
-aW4gYSBjZXJ0YWluCmRlcGVuZGVuY3kuCgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, May 27, 2015 at 5:26 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+
+> I've now actually attempted to use the gpiolib irqchip code.  This
+> driver can't directly use gpiochip_irqchip_add() because of the
+> multiple gpiochip : one irqchip map.  At first, I thought it might be
+> possible to simply add a new argument (or break things into a helper
+> function) to allow setting the associated IRQ domain, but then I can't
+> use the generic map and unmap functions which expect the irq_domain
+> host_data member to be struct gpiochip *, which makes no sense in this
+> case.  That puts me right back to implementing a special version of
+> the map and unmap function.
+
+I see.
+
+I wonder if it is better to use one device per bank, and then set
+IRQF_SHARED when you issue request_irq(), and have the
+IRQ handler return IRQ_NONE if the IRQ comes from this
+bank, or IRQ_HANDLED if it has handled an IRQ from its own
+space.
+
+This way multiple banks can share a single interrupt line.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
