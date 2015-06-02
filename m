@@ -1,75 +1,90 @@
-From: Rojhalat Ibrahim <imr@rtschenk.de>
-Subject: [PATCH] fix documentation after renaming gpiod_set_array to gpiod_set_array_value
-Date: Tue, 02 Jun 2015 11:38:06 +0200
-Message-ID: <3735613.aCR2lpskqX@pcimr>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 2/7] gpio: omap: fix error handling in omap_gpio_irq_type
+Date: Tue, 2 Jun 2015 11:40:35 +0200
+Message-ID: <CABxcv=m7htmrUStVJXdUmPvn+hOkA6+vZJi4qvcYZ46qXiJ6Jw@mail.gmail.com>
+References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>
+	<1432305354-5968-3-git-send-email-grygorii.strashko@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:57715 "EHLO
-	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756456AbbFBJiJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 05:38:09 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1432305354-5968-3-git-send-email-grygorii.strashko@linaro.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-Patch "gpiolib: rename gpiod_set_array to gpiod_set_array_value" omitted
-to also change the function names in the documentation. Let's fix that.
+Hello Grygorii,
 
-Signed-off-by: Rojhalat Ibrahim <imr@rtschenk.de>
----
- Documentation/gpio/consumer.txt |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+On Fri, May 22, 2015 at 4:35 PM, Grygorii Strashko
+<grygorii.strashko@linaro.org> wrote:
+> The GPIO bank will be kept powered in case if input parameters
+> are invalid or error occurred in omap_gpio_irq_type.
+>
+> Hence, fix it by ensuring that GPIO bank will be unpowered
+> in case of errors and add additional check of value returned
+> from omap_set_gpio_triggering().
+>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+> ---
+>  drivers/gpio/gpio-omap.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index bb60cbc..f6cc638 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -488,9 +488,6 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+>         unsigned long flags;
+>         unsigned offset = d->hwirq;
+>
+> -       if (!BANK_USED(bank))
+> -               pm_runtime_get_sync(bank->dev);
+> -
+>         if (type & ~IRQ_TYPE_SENSE_MASK)
+>                 return -EINVAL;
+>
+> @@ -498,12 +495,18 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+>                 (type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
+>                 return -EINVAL;
+>
+> +       if (!BANK_USED(bank))
+> +               pm_runtime_get_sync(bank->dev);
+> +
+>         spin_lock_irqsave(&bank->lock, flags);
+>         retval = omap_set_gpio_triggering(bank, offset, type);
+> +       if (retval)
 
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index c21c131..bbc8b58 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -241,18 +241,18 @@ Set multiple GPIO outputs with a single function call
- -----------------------------------------------------
- The following functions set the output values of an array of GPIOs:
- 
--	void gpiod_set_array(unsigned int array_size,
--			     struct gpio_desc **desc_array,
--			     int *value_array)
--	void gpiod_set_raw_array(unsigned int array_size,
--				 struct gpio_desc **desc_array,
--				 int *value_array)
--	void gpiod_set_array_cansleep(unsigned int array_size,
--				      struct gpio_desc **desc_array,
--				      int *value_array)
--	void gpiod_set_raw_array_cansleep(unsigned int array_size,
--					  struct gpio_desc **desc_array,
--					  int *value_array)
-+	void gpiod_set_array_value(unsigned int array_size,
-+				   struct gpio_desc **desc_array,
-+				   int *value_array)
-+	void gpiod_set_raw_array_value(unsigned int array_size,
-+				       struct gpio_desc **desc_array,
-+				       int *value_array)
-+	void gpiod_set_array_value_cansleep(unsigned int array_size,
-+					    struct gpio_desc **desc_array,
-+					    int *value_array)
-+	void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
-+						struct gpio_desc **desc_array,
-+						int *value_array)
- 
- The array can be an arbitrary set of GPIOs. The functions will try to set
- GPIOs belonging to the same bank or chip simultaneously if supported by the
-@@ -271,8 +271,8 @@ matches the desired group of GPIOs, those GPIOs can be set by simply using
- the struct gpio_descs returned by gpiod_get_array():
- 
- 	struct gpio_descs *my_gpio_descs = gpiod_get_array(...);
--	gpiod_set_array(my_gpio_descs->ndescs, my_gpio_descs->desc,
--			my_gpio_values);
-+	gpiod_set_array_value(my_gpio_descs->ndescs, my_gpio_descs->desc,
-+			      my_gpio_values);
- 
- It is also possible to set a completely arbitrary array of descriptors. The
- descriptors may be obtained using any combination of gpiod_get() and
+At this point the bank->lock spinlock is held so you need to add a
+spin_unlock_irqrestore() in the error path.
 
---
-2.3.6
+> +               goto error;
+>         omap_gpio_init_irq(bank, offset);
+>         if (!omap_gpio_is_input(bank, offset)) {
+>                 spin_unlock_irqrestore(&bank->lock, flags);
+> -               return -EINVAL;
+> +               retval = -EINVAL;
+> +               goto error;
+>         }
+>         spin_unlock_irqrestore(&bank->lock, flags);
+>
+> @@ -512,6 +515,11 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+>         else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>                 __irq_set_handler_locked(d->irq, handle_edge_irq);
+>
+> +       return 0;
+> +
+> +error:
+> +       if (!BANK_USED(bank))
+> +               pm_runtime_put(bank->dev);
+>         return retval;
+>  }
+>
+> --
 
+But you are correct about the runtime PM bug so after addressing the
+above comment, feel free to add:
+
+Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+Best regards,
+Javier
