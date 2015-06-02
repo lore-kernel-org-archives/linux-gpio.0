@@ -1,44 +1,51 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 4/6] gpio: brcmstb: Allow GPIOs to be wakeup sources
-Date: Tue, 2 Jun 2015 15:45:01 +0200
-Message-ID: <CACRpkdYnZ9nYHPoUsmgLUtKhB2Us0c_scAYsZVJJQK2orKcpVA@mail.gmail.com>
-References: <1432865650-4062-1-git-send-email-gregory.0xf0@gmail.com>
-	<1432865650-4062-5-git-send-email-gregory.0xf0@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: cherryview: Do not mask all interrupts on probe
+Date: Tue, 2 Jun 2015 15:53:40 +0200
+Message-ID: <CACRpkdbQpx4oas72PSVXkyxCv4Vz+3PTistDh7EKB126E0Q_GQ@mail.gmail.com>
+References: <1432281368-88687-1-git-send-email-mika.westerberg@linux.intel.com>
+	<20150601092348.GK1747@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432865650-4062-5-git-send-email-gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:34706 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758735AbbFBNxk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 09:53:40 -0400
+Received: by obew15 with SMTP id w15so128575982obe.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 06:53:40 -0700 (PDT)
+In-Reply-To: <20150601092348.GK1747@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Yu C Chen <yu.c.chen@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, May 29, 2015 at 4:14 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> Several drivers (e.g. gpio-keys) allow for GPIOs to be configured as
-> wakeup sources, and this GPIO controller supports that through a
-> separate interrupt path.
+On Mon, Jun 1, 2015 at 11:23 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Fri, May 22, 2015 at 10:56:08AM +0300, Mika Westerberg wrote:
+>> BIOS/platform may use some of the pins by themselves, such as providing SCI
+>> (System Control Interrupt) from the embedded controller. The driver masks
+>> all interrupts at probe time which prevents those pins from triggering
+>> interrupts properly.
+>>
+>> Fix this by not masking all interrupts at probe -- it should be enough just
+>> to clear the status register.
+>>
+>> Reported-by: Yu C Chen <yu.c.chen@intel.com>
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 >
-> The de-facto standard DT property "wakeup-source" is checked, since
-> that indicates whether the GPIO controller hardware can wake.  Uses
-> the IRQCHIP_MASK_ON_SUSPEND irq_chip flag because UPG GIO doesn't have
-> any of its own wakeup source configuration.
+> Please ignore this patch for now. It turned out to be causing spurious
+> interrupts on another platform.
 >
-> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> I'll need to rethink how to fix the reported issue.
 
-(...)
-> +       if (enable)
-> +               enable_irq_wake(priv->parent_wake_irq);
-> +       else
-> +               disable_irq_wake(priv->parent_wake_irq);
-> +       return 0;
+Looks like a case of "embed more magic knowledge" in the driver :/
 
-No error handling? If the code assumes these calls will
-always succeed, atleast write that in a comment.
+It needs to know what platform it is running on, and only leave specific
+bits unmasked on these specific platforms. Right? Thereby
+tossing all of the acpi_device_id matching and abstraction out
+of the window.
+
+(Yes, I hate BIOSes doing crap behind my back.)
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
