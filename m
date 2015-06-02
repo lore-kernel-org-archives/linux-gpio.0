@@ -1,47 +1,57 @@
-From: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/6] gpio: brcmstb: Allow GPIOs to be wakeup sources
-Date: Tue, 2 Jun 2015 10:27:45 -0700
-Message-ID: <CADtm3G6N-DAYivc_33ReEpu0foi8yt1YdtLGttj9LBjUOmP5RQ@mail.gmail.com>
-References: <1432865650-4062-1-git-send-email-gregory.0xf0@gmail.com>
- <1432865650-4062-5-git-send-email-gregory.0xf0@gmail.com> <CACRpkdYnZ9nYHPoUsmgLUtKhB2Us0c_scAYsZVJJQK2orKcpVA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/7] ASoC: rt5677: clean up gpiolib callbacks
+Date: Tue, 2 Jun 2015 20:38:18 +0100
+Message-ID: <20150602193818.GG14071@sirena.org.uk>
+References: <1433200158-6890-2-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYnZ9nYHPoUsmgLUtKhB2Us0c_scAYsZVJJQK2orKcpVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hNweOTLwwbnii4NA"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39573 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751280AbbFBTig (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 15:38:36 -0400
+Content-Disposition: inline
+In-Reply-To: <1433200158-6890-2-git-send-email-vz@mleia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>
 
-On Tue, Jun 2, 2015 at 6:45 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, May 29, 2015 at 4:14 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
->> Several drivers (e.g. gpio-keys) allow for GPIOs to be configured as
->> wakeup sources, and this GPIO controller supports that through a
->> separate interrupt path.
->>
->> The de-facto standard DT property "wakeup-source" is checked, since
->> that indicates whether the GPIO controller hardware can wake.  Uses
->> the IRQCHIP_MASK_ON_SUSPEND irq_chip flag because UPG GIO doesn't have
->> any of its own wakeup source configuration.
->>
->> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->
-> (...)
->> +       if (enable)
->> +               enable_irq_wake(priv->parent_wake_irq);
->> +       else
->> +               disable_irq_wake(priv->parent_wake_irq);
->> +       return 0;
->
-> No error handling? If the code assumes these calls will
-> always succeed, atleast write that in a comment.
 
-Will add error handling.
+--hNweOTLwwbnii4NA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Gregory
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, Jun 02, 2015 at 02:09:13AM +0300, Vladimir Zapolskiy wrote:
+
+> +		if (value)
+> +			val = RT5677_GPIO_OUT_HI(offset);
+
+It seems like a greater variation in variable names might be called for
+here.
+
+>  		regmap_update_bits(rt5677->regmap, RT5677_GPIO_CTRL2,
+> -			0x1 << (offset * 3 + 1), !!value << (offset * 3 + 1));
+> +				   RT5677_GPIO_OUT_MASK(offset), val);
+
+Besides, isn't the minimal change here just to remove the !! (or do
+nothing)?  C defines a mapping between boolean and integer values.
+
+--hNweOTLwwbnii4NA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVbgYpAAoJECTWi3JdVIfQtiwH/0DUGHn1jhStZSh/9Ppfm3hJ
+vOaQ6AtLLg6obEzU5Ay+vueBXEaXR/dindckYezVWIdpTX/Gqd0l4o9q5Ubp6CUi
+JYmVR1sfTP3PjZk048cqbnetwgyGYQTZ1k+tV1xvSE09Zm26wtXNbg+PPCwRzM2I
+sJ9DfOyxmlPs0UgcLWyy9eQymywHFu2Y+b8H0yekIKKOB/QciCiXcw/o/P+2kndY
+Whkndu3dk40dv9jL9gWWgkv601GFC938OjHpJtm3JhCyj2Tf3TT3O/3v/X4g6cRa
+1krqjwlq/AadA9wx27u/6ilmfUXGQNdqQnbSY0T2E7rWkecWs+62HolR9A9XGjA=
+=T4hH
+-----END PGP SIGNATURE-----
+
+--hNweOTLwwbnii4NA--
