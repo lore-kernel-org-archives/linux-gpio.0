@@ -1,68 +1,41 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: add pinctrl_register_reason() to return proper
- error code
-Date: Wed, 3 Jun 2015 00:32:33 +0900
-Message-ID: <CAK7LNASuVz1R7ftXTGZycMm-qdgx8MGxe6nCpA9QwDG0fJoDsg@mail.gmail.com>
-References: <1432899016-18155-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Tue, 2 Jun 2015 17:28:31 +0100
+Message-ID: <20150602162830.GI2067@n2100.arm.linux.org.uk>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+ <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+ <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+ <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
+ <CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com>
+ <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg004.nifty.com ([202.248.44.42]:51921 "EHLO
-	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932228AbbFBPcr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 11:32:47 -0400
-In-Reply-To: <CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Tue, Jun 02, 2015 at 11:05:21AM +0200, Linus Walleij wrote:
+> ... and have the
+> IRQ handler return IRQ_NONE if the IRQ comes from this
+> bank, or IRQ_HANDLED if it has handled an IRQ from its own
+> space.
 
+I'm not sure that's worded correctly or not, but... fwiw, all IRQ handlers
+_should_ be returning IRQ_NONE if the IRQ does not belong to them whether
+or not they're shared handlers.
 
-2015-06-02 21:56 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Fri, May 29, 2015 at 1:30 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> The pinctrl_register() just returns NULL on error, so the callers
->> can not know the exact reason of the failure.
->>
->> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
->> -ENOMEM on error of pinctrl_register() , although the error code
->> might be different from the actual cause of the error.
->>
->> This new function, pinctrl_register_reason(), helps the drivers get
->> and return the appropriate error code.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Suggested-by: Arnd Bergmann <arnd@arndb.de>
->
-> It should be named pinctrl_register_strict() or something.
-> "reason" is anyways wrong, should be "cause", but please
-> use _strict().
-
-OK, I will do it.
-
-
->> If this patch is accepted, I can send a series to replace
->> the pinctrl_register() in each driver with pinctrl_register_reason().
->
-> If it is replaced *everywhere* there is no point in keeping
-> a separate function. Then you should just do a big
-> patch changing all usage sites and the original function.
-
-
-If nobody is opposed to this, I can send a single big patch
-replacing all the references.
-
-In that case, we would not need _strict().
-
-My concern is the sudden change of the function interface
-will break drivers that are under development out of the source tree.
-
-
+That is so the kernel can detect stuck IRQs and report that fact, rather
+than just locking up silently.  ARM CPUs make no progress when the IRQ to
+them is permanently asserted, so a stuck IRQ can be rather problematical.
 
 -- 
-Best Regards
-Masahiro Yamada
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
