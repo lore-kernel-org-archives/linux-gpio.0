@@ -1,99 +1,68 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH 2/7] gpio: omap: fix error handling in omap_gpio_irq_type
-Date: Tue, 02 Jun 2015 17:27:57 +0300
-Message-ID: <556DBD6D.8090306@linaro.org>
-References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>	<1432305354-5968-3-git-send-email-grygorii.strashko@linaro.org> <CABxcv=m7htmrUStVJXdUmPvn+hOkA6+vZJi4qvcYZ46qXiJ6Jw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] pinctrl: add pinctrl_register_reason() to return proper
+ error code
+Date: Wed, 3 Jun 2015 00:32:33 +0900
+Message-ID: <CAK7LNASuVz1R7ftXTGZycMm-qdgx8MGxe6nCpA9QwDG0fJoDsg@mail.gmail.com>
+References: <1432899016-18155-1-git-send-email-yamada.masahiro@socionext.com>
+	<CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=m7htmrUStVJXdUmPvn+hOkA6+vZJi4qvcYZ46qXiJ6Jw@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg004.nifty.com ([202.248.44.42]:51921 "EHLO
+	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932228AbbFBPcr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 11:32:47 -0400
+In-Reply-To: <CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 06/02/2015 12:40 PM, Javier Martinez Canillas wrote:
-> Hello Grygorii,
->
-> On Fri, May 22, 2015 at 4:35 PM, Grygorii Strashko
-> <grygorii.strashko@linaro.org> wrote:
->> The GPIO bank will be kept powered in case if input parameters
->> are invalid or error occurred in omap_gpio_irq_type.
->>
->> Hence, fix it by ensuring that GPIO bank will be unpowered
->> in case of errors and add additional check of value returned
->> from omap_set_gpio_triggering().
->>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
->> ---
->>   drivers/gpio/gpio-omap.c | 16 ++++++++++++----
->>   1 file changed, 12 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->> index bb60cbc..f6cc638 100644
->> --- a/drivers/gpio/gpio-omap.c
->> +++ b/drivers/gpio/gpio-omap.c
->> @@ -488,9 +488,6 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
->>          unsigned long flags;
->>          unsigned offset = d->hwirq;
->>
->> -       if (!BANK_USED(bank))
->> -               pm_runtime_get_sync(bank->dev);
->> -
->>          if (type & ~IRQ_TYPE_SENSE_MASK)
->>                  return -EINVAL;
->>
->> @@ -498,12 +495,18 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
->>                  (type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
->>                  return -EINVAL;
->>
->> +       if (!BANK_USED(bank))
->> +               pm_runtime_get_sync(bank->dev);
->> +
->>          spin_lock_irqsave(&bank->lock, flags);
->>          retval = omap_set_gpio_triggering(bank, offset, type);
->> +       if (retval)
->
-> At this point the bank->lock spinlock is held so you need to add a
-> spin_unlock_irqrestore() in the error path.
+Hi Linus,
 
-Ops. Thanks for catching it.
->
->> +               goto error;
->>          omap_gpio_init_irq(bank, offset);
->>          if (!omap_gpio_is_input(bank, offset)) {
->>                  spin_unlock_irqrestore(&bank->lock, flags);
->> -               return -EINVAL;
->> +               retval = -EINVAL;
->> +               goto error;
->>          }
->>          spin_unlock_irqrestore(&bank->lock, flags);
->>
->> @@ -512,6 +515,11 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
->>          else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->>                  __irq_set_handler_locked(d->irq, handle_edge_irq);
->>
->> +       return 0;
->> +
->> +error:
->> +       if (!BANK_USED(bank))
->> +               pm_runtime_put(bank->dev);
->>          return retval;
->>   }
->>
->> --
->
-> But you are correct about the runtime PM bug so after addressing the
-> above comment, feel free to add:
->
-> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
->
 
-Linus, How do prefer me to fix it?
-Resend whole patch or send additional fix on top of patch 5.
+2015-06-02 21:56 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Fri, May 29, 2015 at 1:30 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>
+>> The pinctrl_register() just returns NULL on error, so the callers
+>> can not know the exact reason of the failure.
+>>
+>> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
+>> -ENOMEM on error of pinctrl_register() , although the error code
+>> might be different from the actual cause of the error.
+>>
+>> This new function, pinctrl_register_reason(), helps the drivers get
+>> and return the appropriate error code.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+>
+> It should be named pinctrl_register_strict() or something.
+> "reason" is anyways wrong, should be "cause", but please
+> use _strict().
+
+OK, I will do it.
+
+
+>> If this patch is accepted, I can send a series to replace
+>> the pinctrl_register() in each driver with pinctrl_register_reason().
+>
+> If it is replaced *everywhere* there is no point in keeping
+> a separate function. Then you should just do a big
+> patch changing all usage sites and the original function.
+
+
+If nobody is opposed to this, I can send a single big patch
+replacing all the references.
+
+In that case, we would not need _strict().
+
+My concern is the sudden change of the function interface
+will break drivers that are under development out of the source tree.
+
 
 
 -- 
-regards,
--grygorii
+Best Regards
+Masahiro Yamada
