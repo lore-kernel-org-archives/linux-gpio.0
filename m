@@ -1,83 +1,45 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Tue, 2 Jun 2015 12:14:06 +0200
-Message-ID: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] gpio: xlp: GPIO controller for Netlogic XLP SoCs
+Date: Tue, 2 Jun 2015 13:23:21 +0200
+Message-ID: <CACRpkdZ9eKBKaa78J56Sth5y0hOV478odxrfLyZ7M-k1-o3-xg@mail.gmail.com>
+References: <1430232045-5114-1-git-send-email-kamlakant.patel@broadcom.com>
+	<1430232045-5114-3-git-send-email-kamlakant.patel@broadcom.com>
+	<CACRpkdbB=xg+wc+HfsPmdGxPHM3Vcck2T0h4xCTvVwepd8dP5g@mail.gmail.com>
+	<55673937.83c2420a.767d.55fcSMTPIN_ADDED_BROKEN@mx.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:35711 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752507AbbFBKOa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 06:14:30 -0400
-In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33178 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752476AbbFBLXW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 07:23:22 -0400
+Received: by obbnx5 with SMTP id nx5so124764078obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 04:23:22 -0700 (PDT)
+In-Reply-To: <55673937.83c2420a.767d.55fcSMTPIN_ADDED_BROKEN@mx.google.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.kernel.o
+To: Kamlakant Patel <kamlakant.patel@broadcom.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->
->> have looked into ordered probing as a
->> better way of solving this than moving nodes around in the DT or playing with
->> initcall levels.
+On Thu, May 28, 2015 at 5:51 PM, Kamlakant Patel
+<kamlakant.patel@broadcom.com> wrote:
+> [Me]
+>> Any place where the GPIO IRQ line is connected to a higher-order
+>> IRQ controller this should be done like so...
 >>
->> While reading the thread [1] that Alexander Holler started with his series to
->> make probing order deterministic, it occurred to me that it should be possible
->> to achieve the same by registering devices as they are referenced by other
->> devices.
->
-> This is pretty cool, but a too local solution to a global problem.
->
-> Deferred probe and initcall reordering, silly as they may seem,
-> does not require you to use device tree.
->
-> The real solution, which I think I pointed out already when we
-> added deferred probe, is to put dependency graphs in the drivers
+> We are not able to use gpiochip_set_chained_irqchip() because the current
+> implementation of parent irq_chip(arch/mips/netlogic/common/irq.c) uses
+> handler_data instead of chip_data.
 
-By this you mean something like what Thierry suggested here?
+That sounds like a bug.
 
-http://article.gmane.org/gmane.linux.kernel/1774623
+> I am testing a patch which changes parent irq_chip to use chip_data instead
+> of handler_data. I will send out a this pacth once tested and a patch
+> for gpio driver with gpiochip_set_chained_irqchip implementation.
 
-> and have the kernel device driver core percolate dependecies by
-> walking the graph on probing driver, removing driver (usually the
-> inverse use case), [runtime] suspend and [runtime] resumeing
-> a driver. Possibly the dependencies will even be different
-> depending on use case.
->
-> This is what systemd is doing in userspace for starting services:
-> ask for your dependencies and wait for them if they are not
-> there. So drivers ask for resources and wait for them. It also
-> needs to be abstract, so for example we need to be able to
-> hang on regulator_get() until the driver is up and providing that
-> regulator, and as long as everything is in slowpath it should
-> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
-> control, interrupts (!) and DMA channels for example.)
+Awesome, thanks Kamlakant, that sounds like the right fix.
 
-I understood above that you propose probing devices in order, but now
-you mention that resource getters would block until the dependency is
-fulfilled which confuses me because if we are probing in order then
-all dependencies would be fulfilled before the device in question gets
-probed.
+After that you should be able to use GPIOLIB_IRQCHIP.
 
-> So if this should be solved it should be solved in an abstract way
-> in the device driver core available for all, then have calls calling
-> out to DT, ACPI, possibly even PCI or USB (as these
-> enumerate devices themselves) to obtain a certain
-> dependency.
-
-Yeah, I was planning looking into this now that I got it working with
-async probing.
-
-Thanks,
-
-Tomeu
-
-> Yours,
-> Linus Walleij
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Yours,
+Linus Walleij
