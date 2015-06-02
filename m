@@ -1,31 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tb10x: Drop unneeded free_irq() call
-Date: Tue, 2 Jun 2015 11:26:30 +0200
-Message-ID: <CACRpkdYfAtWmH_VpWOTkOSpR6FkY4c70GTjp8vpwRXA=kFNoJw@mail.gmail.com>
-References: <1432805170.22632.1.camel@ingics.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 1/7] gpio: omap: fix omap_gpio_free to not clean up irq configuration
+Date: Tue, 2 Jun 2015 11:31:56 +0200
+Message-ID: <CABxcv=n9Fb7LTg_JfL54bTx1WD-52YZ-Gs=tRNyi1Jf-CvwkHw@mail.gmail.com>
+References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>
+	<1432305354-5968-2-git-send-email-grygorii.strashko@linaro.org>
+	<CACRpkdZT6TKNLFQf2Yh7fWHpaUkRtVYv-KWwAVwuuW6O3WFb1w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:34408 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752585AbbFBJ0b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 05:26:31 -0400
-Received: by oifu123 with SMTP id u123so121193396oif.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 02:26:30 -0700 (PDT)
-In-Reply-To: <1432805170.22632.1.camel@ingics.com>
+Received: from mail-yh0-f54.google.com ([209.85.213.54]:34280 "EHLO
+	mail-yh0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752585AbbFBJb5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Jun 2015 05:31:57 -0400
+Received: by yhom41 with SMTP id m41so39813190yho.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2015 02:31:56 -0700 (PDT)
+In-Reply-To: <CACRpkdZT6TKNLFQf2Yh7fWHpaUkRtVYv-KWwAVwuuW6O3WFb1w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Christian Ruppert <christian.ruppert@abilis.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, May 28, 2015 at 11:26 AM, Axel Lin <axel.lin@ingics.com> wrote:
+Hello Linus,
 
-> Current code uses devm_request_irq() in .probe, so drop the unneeded
-> free_irq() call in .remove.
+On Mon, Jun 1, 2015 at 3:11 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, May 22, 2015 at 4:35 PM, Grygorii Strashko
+> <grygorii.strashko@linaro.org> wrote:
 >
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+>> This patch fixes following issue:
+>> - GPIOn is used as IRQ by some dev, for example PCF8575.INT ->  gpio6.11
+>> - PCFx driver knows nothing about type of IRQ line (GPIO or not)
+>>   so it doesn't request gpio and just do request_irq()
+>> - If gpio6.11 will be exported through the sysfs and then un-xeported
+>> then IRQs from PCFx will not be received any more, because
+>> IRQ configuration for gpio6.11 will be cleaned up unconditionally
+>> in omap_gpio_free.
+>>
+>> Fix this by removing all GPIO IRQ specific code from omap_gpio_free()
+>> and also do GPIO clean up (change direction to 'in' and disable debounce)
+>> only if corresponding GPIO is not used as IRQ too.
+>> GPIO IRQ will be properly cleaned up by GPIO irqchip code.
+>>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+>
+> Can I get an ACK or comment from one of the three (!) maintainers
+> on atleast these non-RFC patches?
+>
 
-Patch applied with Christians ACK.
+Sorry for the delay, the patch looks good to me.
 
-Yours,
-Linus Walleij
+Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+
+> Yours,
+> Linus Walleij
+
+Best regards,
+Javier
