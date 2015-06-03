@@ -1,96 +1,45 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 2/7] ASoC: rt5677: clean up gpiolib callbacks
-Date: Wed, 03 Jun 2015 00:54:22 +0300
-Message-ID: <556E260E.2030507@mleia.com>
-References: <1433200158-6890-2-git-send-email-vz@mleia.com> <20150602193818.GG14071@sirena.org.uk> <556E1467.9030406@mleia.com> <20150602205017.GY14071@sirena.org.uk>
+From: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Tue, 2 Jun 2015 21:13:19 -0700
+Message-ID: <CADtm3G7mKJ6b9Koy0DeTAVUeJyhS9Lw+AzEvKf-xmFXTmAuG2w@mail.gmail.com>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+ <CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+ <CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+ <CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
+ <CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com> <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:57055 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751609AbbFBVyZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 2 Jun 2015 17:54:25 -0400
-In-Reply-To: <20150602205017.GY14071@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>
 
-On 02.06.2015 23:50, Mark Brown wrote:
-> On Tue, Jun 02, 2015 at 11:39:03PM +0300, Vladimir Zapolskiy wrote:
->> On 02.06.2015 22:38, Mark Brown wrote:
->>> On Tue, Jun 02, 2015 at 02:09:13AM +0300, Vladimir Zapolskiy wrote:
-> 
->>>> +		if (value)
->>>> +			val = RT5677_GPIO_OUT_HI(offset);
-> 
->>> It seems like a greater variation in variable names might be called for
->>> here.
-> 
->> thank you for review, you mean "val" vs. "value" I guess. May be you
->> have a better register value naming in mind?
-> 
-> I mean val vs value, yes.
-> 
->>>>  		regmap_update_bits(rt5677->regmap, RT5677_GPIO_CTRL2,
->>>> -			0x1 << (offset * 3 + 1), !!value << (offset * 3 + 1));
->>>> +				   RT5677_GPIO_OUT_MASK(offset), val);
-> 
->>> Besides, isn't the minimal change here just to remove the !! (or do
->>> nothing)?
-> 
->> this particular change mainly addresses "clean up gpiolib callbacks"
->> target as it is stated in subject/commit message. Removing of "!!" might
->> be unsafe, because the input value is not necessary 0 or 1 at the moment.
-> 
-> Sure, but if we use that we could also just not make any change to the
-> code except for changing the type of the argument when that's needed.
-> 
->>>  C defines a mapping between boolean and integer values.
-> 
->> As for today it is correct. In the kernel right now there is a movement
->> of replacing for instance explicit integer constants to false/true, when
->> they are used with variables of bool type, e.g. see
->> scripts/coccinelle/misc/bool{init,return}.cocci.
-> 
-> Hrm, right.  I suppose it's more useful than checkpatch cleanups.  In
-> any case I'm not sure it's relevant here where we're reading a value?
+On Tue, Jun 2, 2015 at 2:05 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, May 27, 2015 at 5:26 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> I've now actually attempted to use the gpiolib irqchip code.  This
+>> driver can't directly use gpiochip_irqchip_add() because of the
+>> multiple gpiochip : one irqchip map.  At first, I thought it might be
+>> possible to simply add a new argument (or break things into a helper
+>> function) to allow setting the associated IRQ domain, but then I can't
+>> use the generic map and unmap functions which expect the irq_domain
+>> host_data member to be struct gpiochip *, which makes no sense in this
+>> case.  That puts me right back to implementing a special version of
+>> the map and unmap function.
+>
+> I see.
+>
 
-That's the question of bool type comprehension in my opinion. If bool is
-seen from mathematical point of view, then arithmetic and bitwise
-operations (except inapplicable shift) may be applied only if the result
-is expected to be of bool type as well.
+I think I was wrong, it isn't actually necessary to have a single
+irq_chip as long as all of the IRQs use the same handler.  I have a
+preliminary implementation doing that instead that seems to work fine.
+Once I've had a chance to verify that it works in all cases, will post
+that as v3.
 
->> In my opinion changing GPIO level argument from int to bool should be
->> done, when all confusing cases like "!!false << (offset * 3 + 1)" above
->> (if just type of "value" is modified) are cleaned up in the code firstly.
-> 
-> I have to say I'm not sure I'm finding this is actually adding to the
-> clarity - it was partly a cheap trick for compiler implementation but
-> the int as boolean thing C has does also make this sort of code for
-> mapping values onto bitfields more direct which is handy for low level
-> systems programming like drivers.
-> 
-
-IIRC C95 doesn't define bool or _Bool at all, C99 implementations store
-one bool value in one "char" (or one byte/8 bit memory cell), so
-personally I'm not sure if arithmetic over boolean is so different from
-arithmetic over char/unsigned char (with exception of implicit type and
-value conversion).
-
-Of course I'm not a C standard writer, but I have a feeling that one day
-bool type may become quite distinct from int (or in other words bool
-type will not be one of integer types). This may explain why C99 and C11
-has "_Bool" type, not a hypothetically finalized in future "bool" type.
-Also C99 clearly states that macro "false" and "true" may be undefined
-and redefined to any arbitrary values.
-
-I'm going to fix review comments and resend the series tomorrow, if you
-find some of the changes wanted, please apply them, the rest may be
-actually just covered by a simple function argument type change, which
-hopefully happen in 4.2
-
+Cheers,
+Gregory
 --
-With best wishes,
-Vladimir
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
