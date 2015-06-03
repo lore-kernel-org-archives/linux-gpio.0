@@ -1,68 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/7] ASoC: rt5677: clean up gpiolib callbacks
-Date: Wed, 3 Jun 2015 12:38:56 +0100
-Message-ID: <20150603113856.GE14071@sirena.org.uk>
-References: <1433200158-6890-2-git-send-email-vz@mleia.com>
- <20150602193818.GG14071@sirena.org.uk>
- <556E1467.9030406@mleia.com>
- <20150602205017.GY14071@sirena.org.uk>
- <556E260E.2030507@mleia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
+Date: Wed, 3 Jun 2015 14:46:24 +0200
+Message-ID: <CACRpkdbDYGyX4-7U4rx3vzH2do7e=3U2qeqa=2j11E6z1Bqqyw@mail.gmail.com>
+References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
+	<CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
+	<CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
+	<CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
+	<CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com>
+	<CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
+	<20150602162830.GI2067@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RTD9Hr/VfB+mRRII"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40523 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950AbbFCLjL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jun 2015 07:39:11 -0400
-Content-Disposition: inline
-In-Reply-To: <556E260E.2030507@mleia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150602162830.GI2067@n2100.arm.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>
 
+On Tue, Jun 2, 2015 at 6:28 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Tue, Jun 02, 2015 at 11:05:21AM +0200, Linus Walleij wrote:
+>> ... and have the
+>> IRQ handler return IRQ_NONE if the IRQ comes from this
+>> bank, or IRQ_HANDLED if it has handled an IRQ from its own
+>> space.
+>
+> I'm not sure that's worded correctly or not, but... fwiw, all IRQ handlers
+> _should_ be returning IRQ_NONE if the IRQ does not belong to them whether
+> or not they're shared handlers.
 
---RTD9Hr/VfB+mRRII
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yup that's right. Sorry for being unclear.
 
-On Wed, Jun 03, 2015 at 12:54:22AM +0300, Vladimir Zapolskiy wrote:
-
-> Of course I'm not a C standard writer, but I have a feeling that one day
-> bool type may become quite distinct from int (or in other words bool
-> type will not be one of integer types). This may explain why C99 and C11
-> has "_Bool" type, not a hypothetically finalized in future "bool" type.
-> Also C99 clearly states that macro "false" and "true" may be undefined
-> and redefined to any arbitrary values.
-
-You're confusing several different things here - it's just the same as
-the handling of NULL and 0.  An implementation can make NULL be anything
-that amuses it (so long as nothing standards conforming can tell) but if
-you write 0 in a pointer context it has to be a NULL pointer, and if you
-use a NULL pointer in an integer context it must evaluate to 0.  The in
-memory representation is potentially a separate thing to what the source
-code does, though practically speaking people are unlikely to implment
-anything too extravagent.
-
-I suspect you'll find that the use of _Bool in current standards is
-simply to avoid breaking existing standards conforming code that uses
-bool by suddenly making that a keyword.
-
---RTD9Hr/VfB+mRRII
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVbudPAAoJECTWi3JdVIfQxMIH/0Cn7+fCI/jQm4+RlKETKGRd
-mQFiryxO1ZGvs7eWLf/75XsoHz/SIXzkDeOG32BFHC37grAmpfYj96WiCmlOrPNO
-0VVr2Bm8BlIymvjxoModEfHvAFUoHFr/RIeYTeCNqKc5PvkauFvCpbnb0V75VVM3
-c9P2CWY3hOqeQoAg2Err700Uby4VLBTfApnFQZ4RxVhyPASqqEyUYYFCu7Omfp3C
-L2VpnMlUkS4x8OWPYyzEOoFzjksoSwpT7GyL7fGLWjvQ0I4y5CmX3bC6iTH/qJVA
-hVURDGicwAhMY9Ia5AQzEfyt1Q37bWuGyOj+ITYXP9skXYC8pv+aVADBvSfDqjE=
-=f2Cq
------END PGP SIGNATURE-----
-
---RTD9Hr/VfB+mRRII--
+Yours,
+Linus Walleij
