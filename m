@@ -1,111 +1,128 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [alsa-devel] [PATCH 5/7] ASoC: wm5100: remove bitwise operations
- involving GPIO level value
-Date: Wed, 03 Jun 2015 22:13:19 +0300
-Message-ID: <556F51CF.1000807@mleia.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com>	<1433200158-6890-5-git-send-email-vz@mleia.com>	<20150602194558.GI14071@sirena.org.uk>	<556E10CD.3090301@mleia.com> <CA+7tXijtaM4tn3Mb+tbsd7JFbGjeh1yT=zTXPuCiFjqnvRjdvg@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: pcf857x: handle only enabled irqs
+Date: Wed, 3 Jun 2015 22:33:08 +0300
+Message-ID: <1433359988-3456-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:59795 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933021AbbFCTNX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 3 Jun 2015 15:13:23 -0400
-In-Reply-To: <CA+7tXijtaM4tn3Mb+tbsd7JFbGjeh1yT=zTXPuCiFjqnvRjdvg@mail.gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:49541 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754235AbbFCTdW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jun 2015 15:33:22 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Trent Piepho <tpiepho@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: nsekhar@ti.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hello Mark, Trent,
+Now pcf857x_irq() IRQ's dispatcher will try to run nested
+IRQ handlers for each GPIO pin which state has changed.
+Such IRQs are, actually, spurious and nested IRQ handlers
+have to be called only for IRQs wich were enabled by users.
+This is not critical issue - just  /proc/interrupts
+will display counters for unused IRQS:
+399:          4          0   pcf857x   0 Edge
+428:          1          0   pcf857x  13 Edge
+430:          1          0   pcf857x  15 Edge
 
-thank you for review.
+Hence, fix it by adding irq_enabled field in struct pcf857x to track
+enabled GPIO IRQs and corresponding callbacks in pcf857x_irq_chip.
 
-On 03.06.2015 13:50, Trent Piepho wrote:
-> On Tue, Jun 2, 2015 at 1:23 PM, Vladimir Zapolskiy <vz@mleia.com
-> <mailto:vz@mleia.com>> wrote:
-> 
->     Hello Mark,
-> 
->     On 02.06.2015 22:45, Mark Brown wrote:
->     > On Tue, Jun 02, 2015 at 02:09:16AM +0300, Vladimir Zapolskiy wrote:
->     >
->     >> @@ -2244,26 +2244,27 @@ static inline struct wm5100_priv
->     *gpio_to_wm5100(struct gpio_chip *chip)
->     >>  static void wm5100_gpio_set(struct gpio_chip *chip, unsigned
->     offset, int value)
->     >>  {
->     >>      struct wm5100_priv *wm5100 = gpio_to_wm5100(chip);
->     >> +    unsigned int val = 0;
->     >> +
->     >> +    if (value)
->     >> +            val = 0x1 << WM5100_GP1_LVL_SHIFT;
->     >
->     > Write this as an if/else so the reader doesn't have to wonder why
->     you've
->     > missed the handling of the false case.
->     >
-> 
->     the only objection I have is that the resulting code will be two lines
->     longer. If you think this code is not clear enough (is "val" vs. "value"
->     misleading?), I'll change the rest of my patches, which contain the same
->     logic structure, please let me know.
-> 
-> 
-> const unsigned int val = value ?  (0x1 << WM5100_GP1_LVL_SHIFT) : 0;
-> 
-> Two lines shorter....
-> 
-> Have you measured the effect of going from int to bool on code size and
-> speed?  Clearly, the C code is getting longer as '!!' is transformed
-> into an if-then-else to set a new scratch variable.  But the compiler
-> likely converts both to a conditional branch or cmov type instruction. 
-> What I wonder is if converting gpiolib to use bools instead of ints is
-> better just because someone likes it more that way or if there are
-> objective metrics that show improvement.
-> 
-> BTW, with a little C algebra:
-> const unsigned int val = value ?  0x1 << WM5100_GP1_LVL_SHIFT : 0;
-> const unsigned int val = (value ?  0x1 : 0) << WM5100_GP1_LVL_SHIFT;
-> const unsigned int val = (!!value) << WM5100_GP1_LVL_SHIFT;  //
-> definition of ! operator
-> 
-> And now we're back to where we started, so I don't really see why this
-> is even necessary.  The semantics of the ! operator will be changed in a
-> future C version?
+Similar functionality was presented in pcf857x driver, commit
+ 21fd3cd1874a ('gpio: pcf857x: call the gpio user handler iff...')
 
-I don't think it makes sense to discuss technical aspects of the
-proposed change, as I mentioned in the discussion yesterday I see no
-technical issues at this point, and my changes are described as
-nonfunctional.
+and then it was removed by commit
+ a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip...')
 
-The _nontechnical_ problem I see (well, may be I'm just blowing it up)
-is a Linux kernel code style policy problem, to my knowledge the policy
-of using bitwise and arithmetic operations on bool type variables and
-constants is not defined, and since the policy is not yet defined I'm
-glad to take part in its discussion now.
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 
-As an example of one related policy is change of 0/1 constants to
-false/true, when they are attended by bool type, see c2b49ae678b ,
-5c216cc3f37 , 7eef08554ca , bool{init,return}.cocci etc.
+Fixes: a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip helpers')
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-pcf857x.c | 42 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 9 deletions(-)
 
-One may say that the changes above has no value (however it might be
-related to ABI treatment of _Bool/bool), personally I agree with this
-accepted code policy.
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 945f0cd..699d8a5 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -91,6 +91,7 @@ struct pcf857x {
+ 	spinlock_t		slock;		/* protect irq demux */
+ 	unsigned		out;		/* software latch */
+ 	unsigned		status;		/* current status */
++	unsigned		irq_enabled;	/* enabled irqs */
+ 
+ 	int (*write)(struct i2c_client *client, unsigned data);
+ 	int (*read)(struct i2c_client *client);
+@@ -194,7 +195,7 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
+ 	 * interrupt source, just to avoid bad irqs
+ 	 */
+ 
+-	change = (gpio->status ^ status);
++	change = (gpio->status ^ status) & gpio->irq_enabled;
+ 	for_each_set_bit(i, &change, gpio->chip.ngpio)
+ 		handle_nested_irq(irq_find_mapping(gpio->chip.irqdomain, i));
+ 	gpio->status = status;
+@@ -209,29 +210,52 @@ static irqreturn_t pcf857x_irq(int irq, void *data)
+  */
+ static void noop(struct irq_data *data) { }
+ 
+-static unsigned int noop_ret(struct irq_data *data)
++static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
+ {
++	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
++
++	irq_set_irq_wake(gpio->client->irq, on);
+ 	return 0;
+ }
+ 
+-static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
++static void pcf857x_irq_enable(struct irq_data *data)
+ {
+ 	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
+ 
+-	irq_set_irq_wake(gpio->client->irq, on);
+-	return 0;
++	gpio->irq_enabled |= (1 << data->hwirq);
++}
++
++static void pcf857x_irq_disable(struct irq_data *data)
++{
++	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
++
++	gpio->irq_enabled &= ~(1 << data->hwirq);
++}
++
++static void pcf857x_irq_bus_lock(struct irq_data *data)
++{
++	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
++
++	mutex_lock(&gpio->lock);
++}
++
++static void pcf857x_irq_bus_sync_unlock(struct irq_data *data)
++{
++	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
++
++	mutex_unlock(&gpio->lock);
+ }
+ 
+ static struct irq_chip pcf857x_irq_chip = {
+ 	.name		= "pcf857x",
+-	.irq_startup	= noop_ret,
+-	.irq_shutdown	= noop,
+-	.irq_enable	= noop,
+-	.irq_disable	= noop,
++	.irq_enable	= pcf857x_irq_enable,
++	.irq_disable	= pcf857x_irq_disable,
+ 	.irq_ack	= noop,
+ 	.irq_mask	= noop,
+ 	.irq_unmask	= noop,
+ 	.irq_set_wake	= pcf857x_irq_set_wake,
++	.irq_bus_lock		= pcf857x_irq_bus_lock,
++	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+-- 
+1.9.1
 
-Another code policy question is to which degree arithmetic and bitwise
-operations on bool variables and constants are acceptable. In my
-personal opinion arithmetic and bitwise operations on bool variables are
-quite undesired, that's why I attempt to replace them in advance in some
-sound/soc/codecs/* functions before changing the type of input variable
-representing GPIO level from int to bool. I guess in your personal
-opinion this proposed change has no technical sense, I respect your
-opinion and do not insist on my answer to the policy.
-
-My little deal is to let you know that there is another opinion on the
-subject and send you the changes for review and ack/nak verdict.
-
---
-With best wishes,
-Vladimir
