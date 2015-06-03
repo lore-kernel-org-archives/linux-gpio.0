@@ -1,151 +1,118 @@
-From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
-Subject: Re: [PATCH 2/7] gpio: omap: fix error handling in omap_gpio_irq_type
-Date: Wed, 03 Jun 2015 22:34:23 +0300
-Message-ID: <556F56BF.8090803@linaro.org>
-References: <1432305354-5968-1-git-send-email-grygorii.strashko@linaro.org>	<1432305354-5968-3-git-send-email-grygorii.strashko@linaro.org> <CABxcv=m7htmrUStVJXdUmPvn+hOkA6+vZJi4qvcYZ46qXiJ6Jw@mail.gmail.com> <556DBD6D.8090306@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: Calling irq_set_irq_wake() from .set_irq_wake()?
+Date: Wed, 3 Jun 2015 22:52:47 +0300
+Message-ID: <556F5B0F.7040603@ti.com>
+References: <CAMuHMdXYPcQNCHhGa5kC8omtBw_O=Ua+rRJ+gh3tc6dY0oC5JA@mail.gmail.com>	<alpine.DEB.2.11.1505181626060.4225@nanos>	<5559FCC0.2050302@linaro.org> <CAMuHMdX7exSoJdnLD9_5ZB3Xmbxud+gPbcy2XJZv6hu9MEvEFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:35486 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933054AbbFCTea (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jun 2015 15:34:30 -0400
-Received: by wiga1 with SMTP id a1so25541101wig.0
-        for <linux-gpio@vger.kernel.org>; Wed, 03 Jun 2015 12:34:29 -0700 (PDT)
-In-Reply-To: <556DBD6D.8090306@linaro.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:50413 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753327AbbFCTxJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jun 2015 15:53:09 -0400
+In-Reply-To: <CAMuHMdX7exSoJdnLD9_5ZB3Xmbxud+gPbcy2XJZv6hu9MEvEFg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Roger Quadros <rogerq@ti.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+Hi Geert,
 
-On 06/02/2015 05:27 PM, Grygorii.Strashko@linaro.org wrote:
-> On 06/02/2015 12:40 PM, Javier Martinez Canillas wrote:
->> Hello Grygorii,
+On 05/19/2015 12:38 PM, Geert Uytterhoeven wrote:
+> On Mon, May 18, 2015 at 4:52 PM, Grygorii.Strashko@linaro.org
+> <grygorii.strashko@linaro.org> wrote:
+>> On 05/18/2015 05:31 PM, Thomas Gleixner wrote:
+>>> On Sun, 17 May 2015, Geert Uytterhoeven wrote:
+>>>>>>> At least the recursive locking message no longer appears after the revert.
+>>>>>>>
+>>>>>>> [   30.591905] PM: Syncing filesystems ... done.
+>>>>>>> [   30.623060] Freezing user space processes ... (elapsed 0.003 seconds) done.
+>>>>>>> [   30.634470] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+>>>>>>> [   30.658288] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+>>>>>>> [   30.663678]
+>>>>>>> [   30.663681] =============================================
+>>>>>>> [   30.663683] [ INFO: possible recursive locking detected ]
+>>>>>>> [   30.663688] 4.1.0-rc3 #1115 Not tainted
+>>>>>>> [   30.663693] ---------------------------------------------
+>>>>>>> [   30.663697] suspend.sh/2319 is trying to acquire lock:
+>>>>>>> [   30.663719]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+>>>>>>> [   30.663722]
+>>>>>>> [   30.663722] but task is already holding lock:
+>>>>>>> [   30.663734]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
+>>>>>>
+>>>>>> Does this mean .set_irq_wake() cannot call irq_set_irq_wake()?
+>>>
+>>> It can call it, if it's guaranteed that this wont deadlock.
+>>>
+>>> To tell lockdep that you sure about that, you need to set a different
+>>> lock class for the child interrupts. irq_set_lockdep_class() is what
+>>> you want to use here.
 >>
->> On Fri, May 22, 2015 at 4:35 PM, Grygorii Strashko
->> <grygorii.strashko@linaro.org> wrote:
->>> The GPIO bank will be kept powered in case if input parameters
->>> are invalid or error occurred in omap_gpio_irq_type.
->>>
->>> Hence, fix it by ensuring that GPIO bank will be unpowered
->>> in case of errors and add additional check of value returned
->>> from omap_set_gpio_triggering().
->>>
->>> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
->>> ---
->>>   drivers/gpio/gpio-omap.c | 16 ++++++++++++----
->>>   1 file changed, 12 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->>> index bb60cbc..f6cc638 100644
->>> --- a/drivers/gpio/gpio-omap.c
->>> +++ b/drivers/gpio/gpio-omap.c
->>> @@ -488,9 +488,6 @@ static int omap_gpio_irq_type(struct irq_data *d, 
->>> unsigned type)
->>>          unsigned long flags;
->>>          unsigned offset = d->hwirq;
->>>
->>> -       if (!BANK_USED(bank))
->>> -               pm_runtime_get_sync(bank->dev);
->>> -
->>>          if (type & ~IRQ_TYPE_SENSE_MASK)
->>>                  return -EINVAL;
->>>
->>> @@ -498,12 +495,18 @@ static int omap_gpio_irq_type(struct irq_data 
->>> *d, unsigned type)
->>>                  (type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
->>>                  return -EINVAL;
->>>
->>> +       if (!BANK_USED(bank))
->>> +               pm_runtime_get_sync(bank->dev);
->>> +
->>>          spin_lock_irqsave(&bank->lock, flags);
->>>          retval = omap_set_gpio_triggering(bank, offset, type);
->>> +       if (retval)
+>> Hm. Seems we already have corresponding call in gpiochip_irq_map:
 >>
->> At this point the bank->lock spinlock is held so you need to add a
->> spin_unlock_irqrestore() in the error path.
+>>   static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>>                              irq_hw_number_t hwirq)
+>> {
+>>          struct gpio_chip *chip = d->host_data;
+>>
+>>          irq_set_chip_data(irq, chip);
+>>          irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
+>> ^^^^
 > 
-> Ops. Thanks for catching it.
->>
->>> +               goto error;
->>>          omap_gpio_init_irq(bank, offset);
->>>          if (!omap_gpio_is_input(bank, offset)) {
->>>                  spin_unlock_irqrestore(&bank->lock, flags);
->>> -               return -EINVAL;
->>> +               retval = -EINVAL;
->>> +               goto error;
->>>          }
->>>          spin_unlock_irqrestore(&bank->lock, flags);
->>>
->>> @@ -512,6 +515,11 @@ static int omap_gpio_irq_type(struct irq_data 
->>> *d, unsigned type)
->>>          else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
->>>                  __irq_set_handler_locked(d->irq, handle_edge_irq);
->>>
->>> +       return 0;
->>> +
->>> +error:
->>> +       if (!BANK_USED(bank))
->>> +               pm_runtime_put(bank->dev);
->>>          return retval;
->>>   }
->>>
->>> -- 
->>
->> But you are correct about the runtime PM bug so after addressing the
->> above comment, feel free to add:
->>
->> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
->>
+> That piece of code sets the lockdep class of the gpiochip's interrupts, not
+> the parent interrupt.
 > 
-> Linus, How do prefer me to fix it?
-> Resend whole patch or send additional fix on top of patch 5.
+> Found out the hard way by adding some debug code ;-)
+[..]
 > 
+> However, I cannot reproduce the problem on sh73a0/kzm9g with
+> s2ram on a current tree (renesas-drivers-2015-05-19-v4.1-rc4 from
+> (https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git), using
+> 
+> CONFIG_LOCKDEP_SUPPORT=y
+> CONFIG_LOCKDEP=y
+> CONFIG_DEBUG_LOCKDEP=y
+> CONFIG_PROVE_LOCKING=y
+> 
+> Wake-up from gpio-keys works fine, no scary messages.
+> 
+>> commit e45d1c80c0eee88e82751461e9cac49d9ed287bc
+>> Author: Linus Walleij <linus.walleij@linaro.org>
+>> Date:   Tue Apr 22 14:01:46 2014 +0200
+>>
+>>      gpio: put GPIO IRQs into their own lock clas
+>>
+>> added in Kernel v3.16
+>>
+>> Roger, can you confirm that you've observed this issue with latest kernel, pls?
+> 
+> Yes please. Thanks!
 
-Below is the additional patch to fix issue reported by Javier.
-Pls. inform me if you would like me to send v2 of this patch instead.
+Unfortunately, I was able to reproduce it, but have no clue how to fix it gracefully.
+lockdep_set_class_and_subclass(..,gpio_chip->base)?
 
--- 
+HW configuration which generates lockdep warning:
+
+[SOC GPIO bankA.gpioX] <- irq - [pcf875x.gpioY] <- irq - DevZ.enable_irq_wake(pcf_gpioY_irq);
+
+There stacked GPIO chips, but gpiolib uses only one lockdep class for all GPIOirqchips -
+- gpiochip_irq_lock_class.
+
+
+> 
+>>>>>> Many GPIO drivers do that, as they need to propagate wake-up state to the
+>>>>>> parent interrupt controller?
+>>>>>
+>>>>> As I remember, there was similar problem, so I found corresponding patch (just FYI)
+>>>>>
+>>>>> ab2b926 mfd: Fix twl6030 lockdep recursion warning on setting wake IRQs
+>>>>>
+>>>>> Not sure such kind of solution is the best choice (
+>>>>
+>>>> That looks like a convoluted solution...
+>>>
+
 regards,
 -grygorii
-
------- <
->From 611cdfe480f095136e55f155bb71aeb09ea994b0 Mon Sep 17 00:00:00 2001
-From: Grygorii Strashko <grygorii.strashko@linaro.org>
-Date: Wed, 3 Jun 2015 19:15:19 +0300
-Subject: [PATCH] gpio: omap: add missed spin_unlock_irqrestore in omap_gpio_irq_type
-
-Add missed spin_unlock_irqrestore in omap_gpio_irq_type when
-omap_set_gpio_triggering() is failed.
-
-This fixes patch 'gpio: omap: fix error handling in omap_gpio_irq_type'
-
-Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
----
- drivers/gpio/gpio-omap.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e26dc40..e3f8205 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -490,8 +490,10 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
- 
- 	spin_lock_irqsave(&bank->lock, flags);
- 	retval = omap_set_gpio_triggering(bank, offset, type);
--	if (retval)
-+	if (retval) {
-+		spin_unlock_irqrestore(&bank->lock, flags);
- 		goto error;
-+	}
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
--- 
-1.9.1
 
