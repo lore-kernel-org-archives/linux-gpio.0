@@ -1,93 +1,111 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Wed, 03 Jun 2015 23:57:55 +0300
-Message-ID: <556F6A53.9010601@cogentembedded.com>
-References: <1528110.Mb5xiNU0rc@wasted.cogentembedded.com>	<3656925.3GuTRhx1fV@avalon>	<55415D82.2020407@cogentembedded.com> <CAMuHMdWU1WK+M+Mz3CBgXkbtYC9=D03Jrs4425BWrv22ARLdqA@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 3 Jun 2015 17:12:39 -0400
+Message-ID: <CAF6AEGuOP-3sxDQcNOjVmfP4ue6LmY7KFrj9W75aHKuvZpTFMw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdWU1WK+M+Mz3CBgXkbtYC9=D03Jrs4425BWrv22ARLdqA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-i2c@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, linux-clk@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dmaengine@vger.kern
 List-Id: linux-gpio@vger.kernel.org
 
-Hello.
-
-On 05/27/2015 11:52 AM, Geert Uytterhoeven wrote:
-
->>>> The  pin array handled by sh_pfc_map_pins() may contain holes
->>>> representing
->>>> non- existing pins. We have to first count the valid pins in order to
->>>> calculate the size  of the memory to be allocated, then to skip over the
->>>> non-existing pins when  initializing the allocated arrays, and then to
->>>> return the number of valid pins  from sh_pfc_map_pins() instead of 0 on
->>>> success.
-
->>>> As we have to touch devm_kzalloc() calls anyway, use more fitting
->>>> devm_kcalloc() instead which additionally checks the array size. And
->>>> since
->>>> PINMUX_TYPE_NONE is #define'd as 0, stop re-initializing already zeroed
->>>> out 'pmx->configs' array.
-
->>> I agree with this optimization, but I think it deserves a comment in the
->>> source code that explicitly mentions PINMUX_TYPE_NONE, to make sure any
->>> later
->>> rework changing the PINMUX_TYPE_NONE value would catch this.
-
->>     Note that this is not just "drove by" optimization, I was trying to avoid
->> the very need to explicitly initialize 'pmx->configs' array to
->> PINMUX_TYPE_NONE...
-
->>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
->> [...]
-
->>>> @@ -622,7 +628,7 @@ int sh_pfc_register_pinctrl(struct sh_pf
->>>>          pmx->pctl_desc.pmxops = &sh_pfc_pinmux_ops;
->>>>          pmx->pctl_desc.confops = &sh_pfc_pinconf_ops;
->>>>          pmx->pctl_desc.pins = pmx->pins;
->>>> -       pmx->pctl_desc.npins = pfc->info->nr_pins;
->>>> +       pmx->pctl_desc.npins = ret;
->>>>
->>>>          pmx->pctl = pinctrl_register(&pmx->pctl_desc, pfc->dev, pmx);
->>>>          if (pmx->pctl == NULL)
-
->>> Shouldn't you also fix sh_pfc_init_ranges() ? It includes the following
->>> code
->>> that doesn't seem to handle holes properly.
-
->>>           for (i = 1, nr_ranges = 1; i < pfc->info->nr_pins; ++i) {
->>>                   if (pfc->info->pins[i-1].pin != pfc->info->pins[i].pin -
->>> 1)
->>>                           nr_ranges++;
->>>           }
-
->>> Please make sure that sh_pfc_get_pin_index() doesn't start blowing up
->>> afterwards though.
-
->>     I think I'm seeing a problem with this function (and it's not due to my
->> changes). Its result is often used to index 'pfc->info->pins' array. While
->> this is working now, when the holes are not yet allowed, it's going to break
->> when we start supporting the holes since that array couldn't be indexed this
->> way anymore (via ranges). This function is good only for 'pmx->configs' and
->> the like where we have already removed the holes. It looks like this holes
->> thing is going to be too complex, so how about leaving things as they are?
->> :-)
-
-> Any conclusion on this?
-
-    I did overestimate the complexity, it seems. :-)
-    I have just removed the calls to sh_pfc_get_pin_index() on 
-'pfc->info->pins' and its alias.
-
-> If yes, please resend, incl. the r8a7794 pfc patches that depend on it.
-
-    Will repost the patches RSN.
-
-> Gr{oetje,eeting}s,
->                          Geert
-
-WBR, Sergei
-
+T24gTW9uLCBNYXkgMjUsIDIwMTUgYXQgMTA6NTMgQU0sIFRvbWV1IFZpem9zbwo8dG9tZXUudml6
+b3NvQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+IEhlbGxvLAo+Cj4gSSBoYXZlIGEgcHJvYmxlbSB3
+aXRoIHRoZSBwYW5lbCBvbiBteSBUZWdyYSBDaHJvbWVib29rIHRha2luZyBsb25nZXIgdGhhbgo+
+IGV4cGVjdGVkIHRvIGJlIHJlYWR5IGR1cmluZyBib290IChTdMOpcGhhbmUgTWFyY2hlc2luIHJl
+cG9ydGVkIHdoYXQgaXMKPiBiYXNpY2FsbHkgdGhlIHNhbWUgaXNzdWUgaW4gWzBdKSwgYW5kIGhh
+dmUgbG9va2VkIGludG8gb3JkZXJlZCBwcm9iaW5nIGFzIGEKPiBiZXR0ZXIgd2F5IG9mIHNvbHZp
+bmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0
+aAo+IGluaXRjYWxsIGxldmVscy4KPgo+IFdoaWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhh
+dCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQgd2l0aCBoaXMgc2VyaWVzIHRvCj4gbWFrZSBwcm9i
+aW5nIG9yZGVyIGRldGVybWluaXN0aWMsIGl0IG9jY3VycmVkIHRvIG1lIHRoYXQgaXQgc2hvdWxk
+IGJlIHBvc3NpYmxlCj4gdG8gYWNoaWV2ZSB0aGUgc2FtZSBieSByZWdpc3RlcmluZyBkZXZpY2Vz
+IGFzIHRoZXkgYXJlIHJlZmVyZW5jZWQgYnkgb3RoZXIKPiBkZXZpY2VzLgo+Cj4gVGhpcyBiYXNp
+Y2FsbHkgcmV1c2VzIHRoZSBpbmZvcm1hdGlvbiB0aGF0IGlzIGFscmVhZHkgaW1wbGljaXQgaW4g
+dGhlIHByb2JlKCkKPiBpbXBsZW1lbnRhdGlvbnMsIHNhdmluZyB1cyBmcm9tIHJlZmFjdG9yaW5n
+IGV4aXN0aW5nIGRyaXZlcnMgb3IgYWRkaW5nCj4gaW5mb3JtYXRpb24gdG8gRFRCcy4KPgo+IFNv
+bWV0aGluZyBJJ20gbm90IGNvbXBsZXRlbHkgaGFwcHkgd2l0aCBpcyB0aGF0IEkgaGF2ZSBoYWQg
+dG8gbW92ZSB0aGUgY2FsbCB0bwo+IG9mX3BsYXRmb3JtX3BvcHVsYXRlIGFmdGVyIGFsbCBwbGF0
+Zm9ybSBkcml2ZXJzIGhhdmUgYmVlbiByZWdpc3RlcmVkLgo+IE90aGVyd2lzZSBJIGRvbid0IHNl
+ZSBob3cgSSBjb3VsZCByZWdpc3RlciBkcml2ZXJzIG9uIGRlbWFuZCBhcyB3ZSBkb24ndCBoYXZl
+Cj4geWV0IGVhY2ggZHJpdmVyJ3MgY29tcGF0aWJsZSBzdHJpbmdzLgo+Cj4gRm9yIG1hY2hzIHRo
+YXQgZG9uJ3QgbW92ZSBvZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpIHRvIGEgbGF0ZXIgcG9pbnQsIHRo
+ZXNlCj4gcGF0Y2hlcyBzaG91bGRuJ3QgY2F1c2UgYW55IHByb2JsZW1zIGJ1dCBpdCdzIG5vdCBn
+dWFyYW50ZWVkIHRoYXQgd2UnbGwgYXZvaWQKPiBhbGwgdGhlIGRlZmVycmVkIHByb2JlcyBhcyBz
+b21lIGRyaXZlcnMgbWF5IG5vdCBiZSByZWdpc3RlcmVkIHlldC4KPgo+IEkgaGF2ZSB0ZXN0ZWQg
+dGhpcyBvbiBib2FyZHMgd2l0aCBUZWdyYSwgaU1YLjYgYW5kIEV4eW5vcyBTb0NzLCBhbmQgdGhl
+c2UKPiBwYXRjaGVzIHdlcmUgZW5vdWdoIHRvIGVsaW1pbmF0ZSBhbGwgdGhlIGRlZmVycmVkIHBy
+b2Jlcy4KPgo+IFdpdGggdGhpcyBzZXJpZXMgSSBnZXQgdGhlIGtlcm5lbCB0byBvdXRwdXQgdG8g
+dGhlIHBhbmVsIGluIDAuNXMsIGluc3RlYWQgb2YgMi44cy4KClNvLCBjb21wbGV0ZSBkcml2ZS1i
+eSBjb21tZW50IChhbmQgSSB3b24ndCBjbGFpbSB0byBiZSBhIERUIGV4cGVydCwKZXRjLCBldGMs
+IHNvIHRha2UgdGhpcyB3aXRoIGEgZmV3IGdyYWlucyBvZiBzYWx0KSwgYnV0IHdoeSBub3QgcHVz
+aAp0aGUgcHJvYmxlbSB0byB0aGUgRFQgY29tcGlsZXIgKG9yIGEgcHJlLXByb2Nlc3Mgc3RlcCB0
+aGF0IGNvdWxkIGJlCnJ1biBvbiBleGlzdGluZyBEVCBibG9icyksIHdoaWNoIGdlbmVyYXRlcyBh
+biBvcHRpb25hbCBEVCBub2RlIHRoYXQgaXMKdGhlIHJlY29tbWVuZGVkIHByb2JlIG9yZGVyPyAg
+VGhhdCBzZWVtcyBsaWtlIGl0IGF2b2lkcyBhZGRpbmcKY29tcGxleGl0eSBpbnRvIHRoZSBlYXJs
+eSBib290IGNvZGUgKHdoaWNoIHNlZW1zIGxpa2UgYSBnb29kIHRoaW5nKS4uCgpBcyBhIGJvbnVz
+LCBhIGJvb3RhcmcgKG9yIHNvbWV0aGluZyBsaWtlIHRoYXQpIHdoaWNoIHJ1bnMgdGhyb3VnaCB0
+aGUKcmVjb21tZW5kZWQgcHJvYmUgb3JkZXIgaW4gcmV2ZXJzZSAodG8gY29udGludWUgb3VyIGN1
+cnJlbnQgc3RhdGUgb2YKZW5zdXJpbmcgdGhhdCBFUFJPQkVfREVGRVIgZXJyb3IgcGF0aHMgYXJl
+IHdlbGwgdGVzdGVkKQoKQXQgYW55IHJhdGUsIGZvciBhIGRldmljZSBsaWtlIGEgZHJtIGRyaXZl
+ciB0aGF0IGhhcyBtdWx0aXBsZQpzdWItY29tcG9uZW50cywgYW5kIGRlcGVuZHMgb24gdmFyaW91
+cyBvdGhlciBjbGsvZ3Bpby9yZWd1bGF0b3IvZXRjCmRyaXZlcnMsIHRoZSBjdXJyZW50IEVQUk9C
+RV9ERUZFUiBzaXR1YXRpb24gaXMgcHJldHR5IGNvbWljYWwsIHNvIGFueQpzb2x1dGlvbiB0aGF0
+IGltcHJvdmVzIG9uIHRoaW5ncyBpcyB2ZXJ5IG11Y2ggd2VsY29tZSA6LSkKCkJSLAotUgoKPiBS
+ZWdhcmRzLAo+Cj4gVG9tZXUKPgo+IFswXSBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2Fy
+Y2hpdmVzL2RyaS1kZXZlbC8yMDE0LUF1Z3VzdC8wNjY1MjcuaHRtbAo+Cj4gWzFdIGh0dHBzOi8v
+bGttbC5vcmcvbGttbC8yMDE0LzUvMTIvNDUyCj4KPiBUb21ldSBWaXpvc28gKDIxKToKPiAgIHJl
+Z3VsYXRvcjogY29yZTogUmVkdWNlIGNyaXRpY2FsIGFyZWEgaW4gX3JlZ3VsYXRvcl9nZXQKPiAg
+IEFSTTogdGVncmE6IEFkZCBncGlvLXJhbmdlcyBwcm9wZXJ0eQo+ICAgQVJNOiB0ZWdyYTogUmVn
+aXN0ZXIgZHJpdmVycyBiZWZvcmUgZGV2aWNlcwo+ICAgQVJNOiBFWFlOT1M6IFJlZ2lzdGVyIGRy
+aXZlcnMgYmVmb3JlIGRldmljZXMKPiAgIEFSTSBpLk1YNnE6IFJlZ2lzdGVyIGRyaXZlcnMgYmVm
+b3JlIGRldmljZXMKPiAgIG9mL3BsYXRmb3JtOiBBZGQgb2ZfcGxhdGZvcm1fZGV2aWNlX2Vuc3Vy
+ZSgpCj4gICBvZi9wbGF0Zm9ybTogRW5zdXJlIGRldmljZSByZWdpc3RyYXRpb24gb24gbG9va3Vw
+Cj4gICBncGlvOiBQcm9iZSBHUElPIGRyaXZlcnMgb24gZGVtYW5kCj4gICBncGlvOiBQcm9iZSBw
+aW5jdHJsIGRldmljZXMgb24gZGVtYW5kCj4gICByZWd1bGF0b3I6IGNvcmU6IFByb2JlIHJlZ3Vs
+YXRvcnMgb24gZGVtYW5kCj4gICBkcm06IFByb2JlIHBhbmVscyBvbiBkZW1hbmQKPiAgIGRybS90
+ZWdyYTogUHJvYmUgZHBhdXggZGV2aWNlcyBvbiBkZW1hbmQKPiAgIGkyYzogY29yZTogUHJvYmUg
+aTJjIG1hc3RlciBkZXZpY2VzIG9uIGRlbWFuZAo+ICAgcHdtOiBQcm9iZSBQV00gY2hpcCBkZXZp
+Y2VzIG9uIGRlbWFuZAo+ICAgYmFja2xpZ2h0OiBQcm9iZSBiYWNrbGlnaHQgZGV2aWNlcyBvbiBk
+ZW1hbmQKPiAgIHVzYjogcGh5OiBQcm9iZSBwaHkgZGV2aWNlcyBvbiBkZW1hbmQKPiAgIGNsazog
+UHJvYmUgY2xrIHByb3ZpZGVycyBvbiBkZW1hbmQKPiAgIHBpbmN0cmw6IFByb2JlIHBpbmN0cmwg
+ZGV2aWNlcyBvbiBkZW1hbmQKPiAgIHBoeTogY29yZTogUHJvYmUgcGh5IHByb3ZpZGVycyBvbiBk
+ZW1hbmQKPiAgIGRtYTogb2Y6IFByb2JlIERNQSBjb250cm9sbGVycyBvbiBkZW1hbmQKPiAgIHBv
+d2VyLXN1cHBseTogUHJvYmUgcG93ZXIgc3VwcGxpZXMgb24gZGVtYW5kCj4KPiAgYXJjaC9hcm0v
+Ym9vdC9kdHMvdGVncmExMjQuZHRzaSAgICAgfCAgMSArCj4gIGFyY2gvYXJtL21hY2gtZXh5bm9z
+L2V4eW5vcy5jICAgICAgIHwgIDQgKy0tCj4gIGFyY2gvYXJtL21hY2gtaW14L21hY2gtaW14NnEu
+YyAgICAgIHwgMTIgKysrKy0tLS0tCj4gIGFyY2gvYXJtL21hY2gtdGVncmEvdGVncmEuYyAgICAg
+ICAgIHwgMjEgKysrKysrLS0tLS0tLS0tCj4gIGRyaXZlcnMvY2xrL2Nsay5jICAgICAgICAgICAg
+ICAgICAgIHwgIDMgKysrCj4gIGRyaXZlcnMvZG1hL29mLWRtYS5jICAgICAgICAgICAgICAgIHwg
+IDMgKysrCj4gIGRyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMgICAgICAgICAgIHwgIDUgKysrKwo+
+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMgICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJz
+L2dwdS9kcm0vdGVncmEvZHBhdXguYyAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL2kyYy9pMmMt
+Y29yZS5jICAgICAgICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL29mL3BsYXRmb3JtLmMgICAg
+ICAgICAgICAgICB8IDUzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAg
+ZHJpdmVycy9waHkvcGh5LWNvcmUuYyAgICAgICAgICAgICAgfCAgMyArKysKPiAgZHJpdmVycy9w
+aW5jdHJsL2RldmljZXRyZWUuYyAgICAgICAgfCAgMiArKwo+ICBkcml2ZXJzL3Bvd2VyL3Bvd2Vy
+X3N1cHBseV9jb3JlLmMgICB8ICAzICsrKwo+ICBkcml2ZXJzL3B3bS9jb3JlLmMgICAgICAgICAg
+ICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL3JlZ3VsYXRvci9jb3JlLmMgICAgICAgICAgICB8
+IDQ1ICsrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy91c2IvcGh5L3Bo
+eS5jICAgICAgICAgICAgICAgfCAgMyArKysKPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYmFj
+a2xpZ2h0LmMgfCAgMyArKysKPiAgaW5jbHVkZS9saW51eC9vZl9wbGF0Zm9ybS5oICAgICAgICAg
+fCAgMiArKwo+ICAxOSBmaWxlcyBjaGFuZ2VkLCAxMzAgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRp
+b25zKC0pCj4KPiAtLQo+IDIuNC4xCj4KPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCj4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKPiBsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFk
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
