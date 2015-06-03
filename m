@@ -1,36 +1,86 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] GPIO support for BRCMSTB
-Date: Wed, 3 Jun 2015 14:46:24 +0200
-Message-ID: <CACRpkdbDYGyX4-7U4rx3vzH2do7e=3U2qeqa=2j11E6z1Bqqyw@mail.gmail.com>
-References: <1430901477-10678-1-git-send-email-gregory.0xf0@gmail.com>
-	<CACRpkda3EDa7YdzeT6FQ=cQw1RrDath7pQsCos-JeB2y4r18gw@mail.gmail.com>
-	<CADtm3G45-u82Rp_0dHf2EfdMokf8E4FaQ84PHnocpvXxU+5_+g@mail.gmail.com>
-	<CACRpkdaTYAr-7K5_QZh1CyeyA1224obqEB2Sz8UHZmrWcfv+ow@mail.gmail.com>
-	<CADtm3G4ao=3sHx2F1+V9rwS=jWf6ZdEQi4d24HxQ6MEc+CQ8CQ@mail.gmail.com>
-	<CACRpkdY_-zq-1srBC213MK_RoVvPsfTpRTQyx-4yRvCOV5JdxQ@mail.gmail.com>
-	<20150602162830.GI2067@n2100.arm.linux.org.uk>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH 0/2] get pinctrl more flexible for per pin muxing controllers
+Date: Wed, 3 Jun 2015 15:31:56 +0200
+Message-ID: <556F01CC.8020305@atmel.com>
+References: <1430729776-27797-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150602162830.GI2067@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:24568 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752111AbbFCNcz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Jun 2015 09:32:55 -0400
+In-Reply-To: <1430729776-27797-1-git-send-email-ludovic.desroches@atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 2, 2015 at 6:28 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Tue, Jun 02, 2015 at 11:05:21AM +0200, Linus Walleij wrote:
->> ... and have the
->> IRQ handler return IRQ_NONE if the IRQ comes from this
->> bank, or IRQ_HANDLED if it has handled an IRQ from its own
->> space.
->
-> I'm not sure that's worded correctly or not, but... fwiw, all IRQ handlers
-> _should_ be returning IRQ_NONE if the IRQ does not belong to them whether
-> or not they're shared handlers.
+Le 04/05/2015 10:56, Ludovic Desroches a =E9crit :
+> Hi,
+>=20
+> The way pins, groups and functions are tied is too constraining for s=
+ome
+> controllers. It concerns mainly the ones we don't care about groups a=
+nd
+> functions, each pin can be muxed to any functions.
+> The goal of these two patches is too remove some of the constraints.
+>=20
+> I have added the prototype of a pin controller and device tree to sho=
+w the
+> way I want to use these changes. I couldn't test it on boards using g=
+eneric
+> pinconf so I am not sure that I don't break something...
+>=20
+>=20
+> Ludovic Desroches (4):
+>   pinctrl: change function behavior for per pin muxing controllers
+>   pinctrl: introduce complex pin description
 
-Yup that's right. Sorry for being unclear.
+Linus,
 
-Yours,
-Linus Walleij
+Ludovic sent this series nearly one month ago. It was posted after a RF=
+C
+series on the same topic two months ago. As we don't see any comment on
+neither of them we assume that it's okay to include them.
+
+So, is it possible for you to merge these 2 patches in
+pinmux/pinconf-generic? The driver making use of this work, which was
+marked a "PROTO" in the series sent by Ludovic, is being finalized and
+sent: it would be good to have it working early.
+
+Best regards,
+
+
+>   pinctrl: rough draft for a future controller
+>   ARM: at91/dt: proto dt
+>=20
+>  arch/arm/boot/dts/Makefile                 |   1 +
+>  arch/arm/boot/dts/at91-sama5d4ek_proto.dts | 243 ++++++++++
+>  arch/arm/boot/dts/sama5d4_proto-pinfunc.h  | 463 +++++++++++++++++++
+>  arch/arm/boot/dts/sama5d4_proto.dtsi       | 716 +++++++++++++++++++=
+++++++++++
+>  drivers/pinctrl/Kconfig                    |  10 +
+>  drivers/pinctrl/Makefile                   |   1 +
+>  drivers/pinctrl/pinconf-generic.c          |  44 +-
+>  drivers/pinctrl/pinctrl-at91-pio4.c        | 625 +++++++++++++++++++=
+++++++
+>  drivers/pinctrl/pinmux.c                   |  58 +--
+>  include/linux/pinctrl/pinctrl.h            |   6 +
+>  include/linux/pinctrl/pinmux.h             |   3 +
+>  11 files changed, 2134 insertions(+), 36 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/at91-sama5d4ek_proto.dts
+>  create mode 100644 arch/arm/boot/dts/sama5d4_proto-pinfunc.h
+>  create mode 100644 arch/arm/boot/dts/sama5d4_proto.dtsi
+>  create mode 100644 drivers/pinctrl/pinctrl-at91-pio4.c
+>=20
+
+
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
