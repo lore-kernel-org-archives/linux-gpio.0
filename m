@@ -1,67 +1,75 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Wed, 03 Jun 2015 00:54:31 +0200
-Message-ID: <556E3427.6000704@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+From: Trent Piepho <tpiepho@gmail.com>
+Subject: Re: [PATCH 5/7] ASoC: wm5100: remove bitwise
+ operations involving GPIO level value
+Date: Wed, 3 Jun 2015 03:50:04 -0700
+Message-ID: <CA+7tXijtaM4tn3Mb+tbsd7JFbGjeh1yT=zTXPuCiFjqnvRjdvg@mail.gmail.com>
+References: <1433200031-6748-1-git-send-email-vz@mleia.com>
+ <1433200158-6890-5-git-send-email-vz@mleia.com>
+ <20150602194558.GI14071@sirena.org.uk> <556E10CD.3090301@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, list@wandq.ahsoftware, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, open@wandq.ahsoftware, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <556E10CD.3090301@mleia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 List-Id: linux-gpio@vger.kernel.org
 
-QW0gMDIuMDYuMjAxNSB1bSAxMDo0OCBzY2hyaWViIExpbnVzIFdhbGxlaWo6Cj4gT24gTW9uLCBN
-YXkgMjUsIDIwMTUgYXQgNDo1MyBQTSwgVG9tZXUgVml6b3NvCj4gPHRvbWV1LnZpem9zb0Bjb2xs
-YWJvcmEuY29tPiB3cm90ZToKPiAKPj4gaGF2ZSBsb29rZWQgaW50byBvcmRlcmVkIHByb2Jpbmcg
-YXMgYQo+PiBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91
-bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0aAo+PiBpbml0Y2FsbCBsZXZlbHMuCj4+Cj4+IFdo
-aWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQg
-d2l0aCBoaXMgc2VyaWVzIHRvCj4+IG1ha2UgcHJvYmluZyBvcmRlciBkZXRlcm1pbmlzdGljLCBp
-dCBvY2N1cnJlZCB0byBtZSB0aGF0IGl0IHNob3VsZCBiZSBwb3NzaWJsZQo+PiB0byBhY2hpZXZl
-IHRoZSBzYW1lIGJ5IHJlZ2lzdGVyaW5nIGRldmljZXMgYXMgdGhleSBhcmUgcmVmZXJlbmNlZCBi
-eSBvdGhlcgo+PiBkZXZpY2VzLgo+IAo+IFRoaXMgaXMgcHJldHR5IGNvb2wsIGJ1dCBhIHRvbyBs
-b2NhbCBzb2x1dGlvbiB0byBhIGdsb2JhbCBwcm9ibGVtLgo+IAo+IERlZmVycmVkIHByb2JlIGFu
-ZCBpbml0Y2FsbCByZW9yZGVyaW5nLCBzaWxseSBhcyB0aGV5IG1heSBzZWVtLAo+IGRvZXMgbm90
-IHJlcXVpcmUgeW91IHRvIHVzZSBkZXZpY2UgdHJlZS4KPiAKPiBUaGUgcmVhbCBzb2x1dGlvbiwg
-d2hpY2ggSSB0aGluayBJIHBvaW50ZWQgb3V0IGFscmVhZHkgd2hlbiB3ZQo+IGFkZGVkIGRlZmVy
-cmVkIHByb2JlLCBpcyB0byBwdXQgZGVwZW5kZW5jeSBncmFwaHMgaW4gdGhlIGRyaXZlcnMKPiBh
-bmQgaGF2ZSB0aGUga2VybmVsIGRldmljZSBkcml2ZXIgY29yZSBwZXJjb2xhdGUgZGVwZW5kZWNp
-ZXMgYnkKPiB3YWxraW5nIHRoZSBncmFwaCBvbiBwcm9iaW5nIGRyaXZlciwgcmVtb3ZpbmcgZHJp
-dmVyICh1c3VhbGx5IHRoZQo+IGludmVyc2UgdXNlIGNhc2UpLCBbcnVudGltZV0gc3VzcGVuZCBh
-bmQgW3J1bnRpbWVdIHJlc3VtZWluZwo+IGEgZHJpdmVyLiBQb3NzaWJseSB0aGUgZGVwZW5kZW5j
-aWVzIHdpbGwgZXZlbiBiZSBkaWZmZXJlbnQKPiBkZXBlbmRpbmcgb24gdXNlIGNhc2UuCj4gCj4g
-VGhpcyBpcyB3aGF0IHN5c3RlbWQgaXMgZG9pbmcgaW4gdXNlcnNwYWNlIGZvciBzdGFydGluZyBz
-ZXJ2aWNlczoKPiBhc2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlm
-IHRoZXkgYXJlIG5vdAo+IHRoZXJlLiBTbyBkcml2ZXJzIGFzayBmb3IgcmVzb3VyY2VzIGFuZCB3
-YWl0IGZvciB0aGVtLiBJdCBhbHNvCj4gbmVlZHMgdG8gYmUgYWJzdHJhY3QsIHNvIGZvciBleGFt
-cGxlIHdlIG5lZWQgdG8gYmUgYWJsZSB0bwo+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGls
-IHRoZSBkcml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4gcmVndWxhdG9yLCBhbmQgYXMg
-bG9uZyBhcyBldmVyeXRoaW5nIGlzIGluIHNsb3dwYXRoIGl0IHNob3VsZAo+IGJlIE9LLiAoQW5k
-IHZpY2UgdmVyc2EgbXV0YXRpcyBtdXRhbmRpcyBmb3IgY2xrLCBncGlvLCBwaW4KPiBjb250cm9s
-LCBpbnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPiAKPiAKPiBT
-byBpZiB0aGlzIHNob3VsZCBiZSBzb2x2ZWQgaXQgc2hvdWxkIGJlIHNvbHZlZCBpbiBhbiBhYnN0
-cmFjdCB3YXkKPiBpbiB0aGUgZGV2aWNlIGRyaXZlciBjb3JlIGF2YWlsYWJsZSBmb3IgYWxsLCB0
-aGVuIGhhdmUgY2FsbHMgY2FsbGluZwo+IG91dCB0byBEVCwgQUNQSSwgcG9zc2libHkgZXZlbiBQ
-Q0kgb3IgVVNCIChhcyB0aGVzZQo+IGVudW1lcmF0ZSBkZXZpY2VzIHRoZW1zZWx2ZXMpIHRvIG9i
-dGFpbiBhIGNlcnRhaW4KPiBkZXBlbmRlbmN5LgoKSSBzdWdnZXN0IHRvIHN0YXJ0IHdpdGggbWFr
-aW5nIGl0IHBvc3NpYmxlIHRvIGlkZW50aWZ5IChhdCBsZWFzdCBtb3N0KQpkcml2ZXJzLiBJJ3Zl
-IGFscmVhZHkgcG9zdGVkIGEgcGF0Y2ggZm9yIHRoYXQgYXJvdW5kIGEgeWVhciBhZ28gYW5kIG5v
-dwpUb21ldSBkaWQgYWxtb3N0IHRoZSBzYW1lLgoKSG93ZXZlciBvbmUgd2FudHMgdG8gbWFrZSBh
-IGRldGVybWluaXN0aWMgb3JkZXIgdG8gbG9hZCBkcml2ZXJzLCB0aGVyZQp3aWxsIGJlIGFsd2F5
-cyB0aGUgbmVlZCB0byBrbm93IHdoaWNoIGRyaXZlcnMgb25lIGhhcyB0byBzb3J0LgoKUmVnYXJk
-cywKCkFsZXhhbmRlciBIb2xsZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+On Tue, Jun 2, 2015 at 1:23 PM, Vladimir Zapolskiy <vz@mleia.com> wrote:
+
+> Hello Mark,
+>
+> On 02.06.2015 22:45, Mark Brown wrote:
+> > On Tue, Jun 02, 2015 at 02:09:16AM +0300, Vladimir Zapolskiy wrote:
+> >
+> >> @@ -2244,26 +2244,27 @@ static inline struct wm5100_priv
+> *gpio_to_wm5100(struct gpio_chip *chip)
+> >>  static void wm5100_gpio_set(struct gpio_chip *chip, unsigned offset,
+> int value)
+> >>  {
+> >>      struct wm5100_priv *wm5100 = gpio_to_wm5100(chip);
+> >> +    unsigned int val = 0;
+> >> +
+> >> +    if (value)
+> >> +            val = 0x1 << WM5100_GP1_LVL_SHIFT;
+> >
+> > Write this as an if/else so the reader doesn't have to wonder why you've
+> > missed the handling of the false case.
+> >
+>
+> the only objection I have is that the resulting code will be two lines
+> longer. If you think this code is not clear enough (is "val" vs. "value"
+> misleading?), I'll change the rest of my patches, which contain the same
+> logic structure, please let me know.
+>
+
+const unsigned int val = value ?  (0x1 << WM5100_GP1_LVL_SHIFT) : 0;
+
+Two lines shorter....
+
+Have you measured the effect of going from int to bool on code size and
+speed?  Clearly, the C code is getting longer as '!!' is transformed into
+an if-then-else to set a new scratch variable.  But the compiler likely
+converts both to a conditional branch or cmov type instruction.  What I
+wonder is if converting gpiolib to use bools instead of ints is better just
+because someone likes it more that way or if there are objective metrics
+that show improvement.
+
+BTW, with a little C algebra:
+const unsigned int val = value ?  0x1 << WM5100_GP1_LVL_SHIFT : 0;
+const unsigned int val = (value ?  0x1 : 0) << WM5100_GP1_LVL_SHIFT;
+const unsigned int val = (!!value) << WM5100_GP1_LVL_SHIFT;  // definition
+of ! operator
+
+And now we're back to where we started, so I don't really see why this is
+even necessary.  The semantics of the ! operator will be changed in a
+future C version?
