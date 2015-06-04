@@ -1,496 +1,345 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH v2] gpio: Added GPIO support to Zynq Ultrascale+ MPSoC
-Date: Thu, 04 Jun 2015 15:26:07 +0200
-Message-ID: <557051EF.7050404@monstr.eu>
-References: <1433419832-40678-1-git-send-email-anuragku@xilinx.com>
-Reply-To: monstr@monstr.eu
+From: "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Thu, 04 Jun 2015 19:51:28 +0300
+Message-ID: <55708210.7070007@linaro.org>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <CAAObsKAFQrm-maqzadCELi2JVt5jd+yoqCbDpu5OP7gkSk8gcA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="SUWcPEs6qf0POg26rA99snBiuvTARg1Le"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:33642 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752998AbbFDN0P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 09:26:15 -0400
-Received: by wgez8 with SMTP id z8so33634825wge.0
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 06:26:14 -0700 (PDT)
-In-Reply-To: <1433419832-40678-1-git-send-email-anuragku@xilinx.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKAFQrm-maqzadCELi2JVt5jd+yoqCbDpu5OP7gkSk8gcA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Alexander Holler <holler@ahsoftware.de>, linux-clk@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kern>
 List-Id: linux-gpio@vger.kernel.org
-To: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com
-Cc: devicetree@vger.kernel.org, Anurag Kumar Vulisha <anuragku@xilinx.com>, svemula@xilinx.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, anirudh@xilinx.com, harini.katakam@xilinx.com, punnaia@xilinx.com, linux-arm-kernel@lists.infradead.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---SUWcPEs6qf0POg26rA99snBiuvTARg1Le
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-On 06/04/2015 02:10 PM, Anurag Kumar Vulisha wrote:
-> Added support to Zynq Ultrascale+ MPSoC on the existing zynq gpio drive=
-r.
+On 06/04/2015 11:39 AM, Tomeu Vizoso wrote:
+> On 3 June 2015 at 21:57, Grygorii.Strashko@linaro.org
+> <grygorii.strashko@linaro.org> wrote:
+>> On 05/28/2015 07:33 AM, Rob Herring wrote:
+>>> On Mon, May 25, 2015 at 9:53 AM, Tomeu Vizoso <tomeu.vizoso@collabo=
+ra.com> wrote:
+>>>> I have a problem with the panel on my Tegra Chromebook taking long=
+er than
+>>>> expected to be ready during boot (St=C3=A9phane Marchesin reported=
+ what is
+>>>> basically the same issue in [0]), and have looked into ordered pro=
+bing as a
+>>>> better way of solving this than moving nodes around in the DT or p=
+laying with
+>>>> initcall levels.
+>>>>
+>>>> While reading the thread [1] that Alexander Holler started with hi=
+s series to
+>>>> make probing order deterministic, it occurred to me that it should=
+ be possible
+>>>> to achieve the same by registering devices as they are referenced =
+by other
+>>>> devices.
+>>>
+>>> I like the concept and novel approach.
+>>>
+>>>> This basically reuses the information that is already implicit in =
+the probe()
+>>>> implementations, saving us from refactoring existing drivers or ad=
+ding
+>>>> information to DTBs.
+>>>>
+>>>> Something I'm not completely happy with is that I have had to move=
+ the call to
+>>>> of_platform_populate after all platform drivers have been register=
+ed.
+>>>> Otherwise I don't see how I could register drivers on demand as we=
+ don't have
+>>>> yet each driver's compatible strings.
+>>>
+>>> Yeah, this is the opposite of what we'd really like. Ideally, we wo=
+uld
+>>> have a solution that works for modules too. However, we're no worse
+>>> off. We pretty much build-in dependencies to avoid module ordering
+>>> problems.
+>>>
+>>> Perhaps we need to make the probing on-demand rather than simply on
+>>> device<->driver match occurring.
+>>>
+>>>> For machs that don't move of_platform_populate() to a later point,=
+ these
+>>>> patches shouldn't cause any problems but it's not guaranteed that =
+we'll avoid
+>>>> all the deferred probes as some drivers may not be registered yet.
+>>>
+>>> Ideally, of_platform_populate is not explicitly called by each
+>>> platform. So I think we need to make this work for the default case=
+=2E
+>>>
+>>>> I have tested this on boards with Tegra, iMX.6 and Exynos SoCs, an=
+d these
+>>>> patches were enough to eliminate all the deferred probes.
+>>>>
+>>>> With this series I get the kernel to output to the panel in 0.5s, =
+instead of 2.8s.
+>>>
+>>> That's certainly compelling.
+>>
+>> I've found your idea about moving device registration later during S=
+ystem boot
+>> very interesting so I've decided to try it on dra7-evem (TI) :).
+>> It's good to know time during Kernel boot when we can assume that al=
+l drivers are
+>> ready for probing, so there are more ways to control probing order.
 >=20
-> Signed-off-by: Anurag Kumar Vulisha <anuragku@xilinx.com>
-> ---
->  Chnages in v2:
-> 	1.Added device tree bingings for Zynq Ultrascale+ MPSoC
-> 	2.Changed the commit message and subject from ZynqMP to
-> 	  Zynq Ultrascale+ MPSoC
-> ---
->  .../devicetree/bindings/gpio/gpio-zynq.txt         |    2 +-
->  drivers/gpio/Kconfig                               |    2 +-
->  drivers/gpio/gpio-zynq.c                           |  191 ++++++++++++=
-+-------
->  3 files changed, 127 insertions(+), 68 deletions(-)
+> Thanks, though right now I'm following Rob's suggestion and only dela=
+y
+> probing, not registration. The patch is really simple (applies on
+> linux-next, with async probing):
 >=20
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt b/Doc=
-umentation/devicetree/bindings/gpio/gpio-zynq.txt
-> index 986371a..db4c6a6 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-zynq.txt
-> @@ -6,7 +6,7 @@ Required properties:
->  			  - First cell is the GPIO line number
->  			  - Second cell is used to specify optional
->  			    parameters (unused)
-> -- compatible		: Should be "xlnx,zynq-gpio-1.0"
-> +- compatible		: Should be "xlnx,zynq-gpio-1.0" or "xlnx,zynqmp-gpio-1.=
-0"
->  - clocks		: Clock specifier (see clock bindings for details)
->  - gpio-controller	: Marks the device node as a GPIO controller.
->  - interrupts		: Interrupt specifier (see interrupt bindings for
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index caefe80..eef3a74 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -505,7 +505,7 @@ config GPIO_ZEVIO
-> =20
->  config GPIO_ZYNQ
->  	tristate "Xilinx Zynq GPIO support"
-> -	depends on ARCH_ZYNQ
-> +	depends on ARCH_ZYNQ || ARCH_ZYNQMP
->  	select GPIOLIB_IRQCHIP
->  	help
->  	  Say yes here to support Xilinx Zynq GPIO controller.
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index 184c4b1..d9d26aa 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -18,34 +18,47 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/of.h>
-> =20
->  #define DRIVER_NAME "zynq-gpio"
-> =20
->  /* Maximum banks */
->  #define ZYNQ_GPIO_MAX_BANK	4
-> +#define ZYNQMP_GPIO_MAX_BANK	6
-> =20
->  #define ZYNQ_GPIO_BANK0_NGPIO	32
->  #define ZYNQ_GPIO_BANK1_NGPIO	22
->  #define ZYNQ_GPIO_BANK2_NGPIO	32
->  #define ZYNQ_GPIO_BANK3_NGPIO	32
-> =20
-> -#define ZYNQ_GPIO_NR_GPIOS	(ZYNQ_GPIO_BANK0_NGPIO + \
-> -				 ZYNQ_GPIO_BANK1_NGPIO + \
-> -				 ZYNQ_GPIO_BANK2_NGPIO + \
-> -				 ZYNQ_GPIO_BANK3_NGPIO)
-> -
-> -#define ZYNQ_GPIO_BANK0_PIN_MIN	0
-> -#define ZYNQ_GPIO_BANK0_PIN_MAX	(ZYNQ_GPIO_BANK0_PIN_MIN + \
-> -					ZYNQ_GPIO_BANK0_NGPIO - 1)
-> -#define ZYNQ_GPIO_BANK1_PIN_MIN	(ZYNQ_GPIO_BANK0_PIN_MAX + 1)
-> -#define ZYNQ_GPIO_BANK1_PIN_MAX	(ZYNQ_GPIO_BANK1_PIN_MIN + \
-> -					ZYNQ_GPIO_BANK1_NGPIO - 1)
-> -#define ZYNQ_GPIO_BANK2_PIN_MIN	(ZYNQ_GPIO_BANK1_PIN_MAX + 1)
-> -#define ZYNQ_GPIO_BANK2_PIN_MAX	(ZYNQ_GPIO_BANK2_PIN_MIN + \
-> -					ZYNQ_GPIO_BANK2_NGPIO - 1)
-> -#define ZYNQ_GPIO_BANK3_PIN_MIN	(ZYNQ_GPIO_BANK2_PIN_MAX + 1)
-> -#define ZYNQ_GPIO_BANK3_PIN_MAX	(ZYNQ_GPIO_BANK3_PIN_MIN + \
-> -					ZYNQ_GPIO_BANK3_NGPIO - 1)
-> +#define ZYNQMP_GPIO_BANK0_NGPIO 26
-> +#define ZYNQMP_GPIO_BANK1_NGPIO 26
-> +#define ZYNQMP_GPIO_BANK2_NGPIO 26
-> +#define ZYNQMP_GPIO_BANK3_NGPIO 32
-> +#define ZYNQMP_GPIO_BANK4_NGPIO 32
-> +#define ZYNQMP_GPIO_BANK5_NGPIO 32
-> +
-> +#define	ZYNQ_GPIO_NR_GPIOS	118
-> +#define	ZYNQMP_GPIO_NR_GPIOS	174
-> +
-> +#define ZYNQ_GPIO_BANK0_PIN_MIN(str)	0
-> +#define ZYNQ_GPIO_BANK0_PIN_MAX(str)	(ZYNQ_GPIO_BANK0_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK0_NGPIO - 1)
-> +#define ZYNQ_GPIO_BANK1_PIN_MIN(str)	(ZYNQ_GPIO_BANK0_PIN_MAX(str) + 1=
-)
-> +#define ZYNQ_GPIO_BANK1_PIN_MAX(str)	(ZYNQ_GPIO_BANK1_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK1_NGPIO - 1)
-> +#define ZYNQ_GPIO_BANK2_PIN_MIN(str)	(ZYNQ_GPIO_BANK1_PIN_MAX(str) + 1=
-)
-> +#define ZYNQ_GPIO_BANK2_PIN_MAX(str)	(ZYNQ_GPIO_BANK2_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK2_NGPIO - 1)
-> +#define ZYNQ_GPIO_BANK3_PIN_MIN(str)	(ZYNQ_GPIO_BANK2_PIN_MAX(str) + 1=
-)
-> +#define ZYNQ_GPIO_BANK3_PIN_MAX(str)	(ZYNQ_GPIO_BANK3_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK3_NGPIO - 1)
-> +#define ZYNQ_GPIO_BANK4_PIN_MIN(str)	(ZYNQ_GPIO_BANK3_PIN_MAX(str) + 1=
-)
-> +#define ZYNQ_GPIO_BANK4_PIN_MAX(str)	(ZYNQ_GPIO_BANK4_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK4_NGPIO - 1)
-> +#define ZYNQ_GPIO_BANK5_PIN_MIN(str)	(ZYNQ_GPIO_BANK4_PIN_MAX(str) + 1=
-)
-> +#define ZYNQ_GPIO_BANK5_PIN_MAX(str)	(ZYNQ_GPIO_BANK5_PIN_MIN(str) + \=
-
-> +					ZYNQ##str##_GPIO_BANK5_NGPIO - 1)
-> =20
-> =20
->  /* Register offsets for the GPIO device */
-> @@ -89,12 +102,30 @@
->   * @base_addr:	base address of the GPIO device
->   * @clk:	clock resource for this controller
->   * @irq:	interrupt for the GPIO device
-> + * @p_data:	pointer to platform data
->   */
->  struct zynq_gpio {
->  	struct gpio_chip chip;
->  	void __iomem *base_addr;
->  	struct clk *clk;
->  	int irq;
-> +	const struct zynq_platform_data *p_data;
-> +};
-> +
-> +/**
-> + * struct zynq_platform_data -  zynq gpio platform data structure
-> + * @label:	string to store in gpio->label
-> + * @ngpio:	max number of gpio pins
-> + * @max_bank:	maximum number of gpio banks
-> + * @bank_min:	this array represents bank's min pin
-> + * @bank_max:	this array represents bank's max pin
-> +*/
-> +struct zynq_platform_data {
-> +	const char *label;
-> +	u16 ngpio;
-> +	int max_bank;
-> +	int bank_min[ZYNQMP_GPIO_MAX_BANK];
-> +	int bank_max[ZYNQMP_GPIO_MAX_BANK];
->  };
-> =20
->  static struct irq_chip zynq_gpio_level_irqchip;
-> @@ -112,39 +143,26 @@ static struct irq_chip zynq_gpio_edge_irqchip;
->   */
->  static inline void zynq_gpio_get_bank_pin(unsigned int pin_num,
->  					  unsigned int *bank_num,
-> -					  unsigned int *bank_pin_num)
-> +					  unsigned int *bank_pin_num,
-> +					  struct zynq_gpio *gpio)
->  {
-> -	switch (pin_num) {
-> -	case ZYNQ_GPIO_BANK0_PIN_MIN ... ZYNQ_GPIO_BANK0_PIN_MAX:
-> -		*bank_num =3D 0;
-> -		*bank_pin_num =3D pin_num;
-> -		break;
-> -	case ZYNQ_GPIO_BANK1_PIN_MIN ... ZYNQ_GPIO_BANK1_PIN_MAX:
-> -		*bank_num =3D 1;
-> -		*bank_pin_num =3D pin_num - ZYNQ_GPIO_BANK1_PIN_MIN;
-> -		break;
-> -	case ZYNQ_GPIO_BANK2_PIN_MIN ... ZYNQ_GPIO_BANK2_PIN_MAX:
-> -		*bank_num =3D 2;
-> -		*bank_pin_num =3D pin_num - ZYNQ_GPIO_BANK2_PIN_MIN;
-> -		break;
-> -	case ZYNQ_GPIO_BANK3_PIN_MIN ... ZYNQ_GPIO_BANK3_PIN_MAX:
-> -		*bank_num =3D 3;
-> -		*bank_pin_num =3D pin_num - ZYNQ_GPIO_BANK3_PIN_MIN;
-> -		break;
-> -	default:
-> -		WARN(true, "invalid GPIO pin number: %u", pin_num);
-> -		*bank_num =3D 0;
-> -		*bank_pin_num =3D 0;
-> -		break;
-> +	int bank;
-> +
-> +	for (bank =3D 0; bank < gpio->p_data->max_bank; bank++) {
-> +		if ((pin_num >=3D gpio->p_data->bank_min[bank]) &&
-> +			(pin_num <=3D gpio->p_data->bank_max[bank])) {
-> +				*bank_num =3D bank;
-> +				*bank_pin_num =3D pin_num -
-> +						gpio->p_data->bank_min[bank];
-> +				return;
-> +		}
->  	}
-> -}
-> =20
-> -static const unsigned int zynq_gpio_bank_offset[] =3D {
-> -	ZYNQ_GPIO_BANK0_PIN_MIN,
-> -	ZYNQ_GPIO_BANK1_PIN_MIN,
-> -	ZYNQ_GPIO_BANK2_PIN_MIN,
-> -	ZYNQ_GPIO_BANK3_PIN_MIN,
-> -};
-> +	/* default */
-> +	WARN(true, "invalid GPIO pin number: %u", pin_num);
-> +	*bank_num =3D 0;
-> +	*bank_pin_num =3D 0;
-> +}
-> =20
->  /**
->   * zynq_gpio_get_value - Get the state of the specified pin of GPIO de=
-vice
-> @@ -161,7 +179,7 @@ static int zynq_gpio_get_value(struct gpio_chip *ch=
-ip, unsigned int pin)
->  	unsigned int bank_num, bank_pin_num;
->  	struct zynq_gpio *gpio =3D container_of(chip, struct zynq_gpio, chip)=
-;
-> =20
-> -	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
-> =20
->  	data =3D readl_relaxed(gpio->base_addr +
->  			     ZYNQ_GPIO_DATA_RO_OFFSET(bank_num));
-> @@ -185,7 +203,7 @@ static void zynq_gpio_set_value(struct gpio_chip *c=
-hip, unsigned int pin,
->  	unsigned int reg_offset, bank_num, bank_pin_num;
->  	struct zynq_gpio *gpio =3D container_of(chip, struct zynq_gpio, chip)=
-;
-> =20
-> -	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
-> =20
->  	if (bank_pin_num >=3D ZYNQ_GPIO_MID_PIN_NUM) {
->  		/* only 16 data bits in bit maskable reg */
-> @@ -222,7 +240,7 @@ static int zynq_gpio_dir_in(struct gpio_chip *chip,=
- unsigned int pin)
->  	unsigned int bank_num, bank_pin_num;
->  	struct zynq_gpio *gpio =3D container_of(chip, struct zynq_gpio, chip)=
-;
-> =20
-> -	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
-> =20
->  	/* bank 0 pins 7 and 8 are special and cannot be used as inputs */
->  	if (bank_num =3D=3D 0 && (bank_pin_num =3D=3D 7 || bank_pin_num =3D=3D=
- 8))
-> @@ -255,7 +273,7 @@ static int zynq_gpio_dir_out(struct gpio_chip *chip=
-, unsigned int pin,
->  	unsigned int bank_num, bank_pin_num;
->  	struct zynq_gpio *gpio =3D container_of(chip, struct zynq_gpio, chip)=
-;
-> =20
-> -	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
-> =20
->  	/* set the GPIO pin as output */
->  	reg =3D readl_relaxed(gpio->base_addr + ZYNQ_GPIO_DIRM_OFFSET(bank_nu=
-m));
-> @@ -286,7 +304,7 @@ static void zynq_gpio_irq_mask(struct irq_data *irq=
-_data)
->  	struct zynq_gpio *gpio =3D irq_data_get_irq_chip_data(irq_data);
-> =20
->  	device_pin_num =3D irq_data->hwirq;
-> -	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num, gpio=
-);
->  	writel_relaxed(BIT(bank_pin_num),
->  		       gpio->base_addr + ZYNQ_GPIO_INTDIS_OFFSET(bank_num));
->  }
-> @@ -306,7 +324,7 @@ static void zynq_gpio_irq_unmask(struct irq_data *i=
-rq_data)
->  	struct zynq_gpio *gpio =3D irq_data_get_irq_chip_data(irq_data);
-> =20
->  	device_pin_num =3D irq_data->hwirq;
-> -	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num, gpio=
-);
->  	writel_relaxed(BIT(bank_pin_num),
->  		       gpio->base_addr + ZYNQ_GPIO_INTEN_OFFSET(bank_num));
->  }
-> @@ -325,7 +343,7 @@ static void zynq_gpio_irq_ack(struct irq_data *irq_=
-data)
->  	struct zynq_gpio *gpio =3D irq_data_get_irq_chip_data(irq_data);
-> =20
->  	device_pin_num =3D irq_data->hwirq;
-> -	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num, gpio=
-);
->  	writel_relaxed(BIT(bank_pin_num),
->  		       gpio->base_addr + ZYNQ_GPIO_INTSTS_OFFSET(bank_num));
->  }
-> @@ -375,7 +393,7 @@ static int zynq_gpio_set_irq_type(struct irq_data *=
-irq_data, unsigned int type)
->  	struct zynq_gpio *gpio =3D irq_data_get_irq_chip_data(irq_data);
-> =20
->  	device_pin_num =3D irq_data->hwirq;
-> -	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num);
-> +	zynq_gpio_get_bank_pin(device_pin_num, &bank_num, &bank_pin_num, gpio=
-);
-> =20
->  	int_type =3D readl_relaxed(gpio->base_addr +
->  				 ZYNQ_GPIO_INTTYPE_OFFSET(bank_num));
-> @@ -470,7 +488,7 @@ static void zynq_gpio_handle_bank_irq(struct zynq_g=
-pio *gpio,
->  				      unsigned int bank_num,
->  				      unsigned long pending)
->  {
-> -	unsigned int bank_offset =3D zynq_gpio_bank_offset[bank_num];
-> +	unsigned int bank_offset =3D gpio->p_data->bank_min[bank_num];
->  	struct irq_domain *irqdomain =3D gpio->chip.irqdomain;
->  	int offset;
-> =20
-> @@ -505,7 +523,7 @@ static void zynq_gpio_irqhandler(unsigned int irq, =
-struct irq_desc *desc)
-> =20
->  	chained_irq_enter(irqchip, desc);
-> =20
-> -	for (bank_num =3D 0; bank_num < ZYNQ_GPIO_MAX_BANK; bank_num++) {
-> +	for (bank_num =3D 0; bank_num < gpio->p_data->max_bank; bank_num++) {=
-
->  		int_sts =3D readl_relaxed(gpio->base_addr +
->  					ZYNQ_GPIO_INTSTS_OFFSET(bank_num));
->  		int_enb =3D readl_relaxed(gpio->base_addr +
-> @@ -582,6 +600,46 @@ static const struct dev_pm_ops zynq_gpio_dev_pm_op=
-s =3D {
->  			zynq_gpio_runtime_resume, NULL)
->  };
-> =20
-> +static const struct zynq_platform_data zynqmp_gpio_def =3D {
-> +	.label =3D "zynqmp_gpio",
-> +	.ngpio =3D ZYNQMP_GPIO_NR_GPIOS,
-> +	.max_bank =3D ZYNQMP_GPIO_MAX_BANK,
-> +	.bank_min[0] =3D ZYNQ_GPIO_BANK0_PIN_MIN(MP),
-> +	.bank_max[0] =3D ZYNQ_GPIO_BANK0_PIN_MAX(MP),
-> +	.bank_min[1] =3D ZYNQ_GPIO_BANK1_PIN_MIN(MP),
-> +	.bank_max[1] =3D ZYNQ_GPIO_BANK1_PIN_MAX(MP),
-> +	.bank_min[2] =3D ZYNQ_GPIO_BANK2_PIN_MIN(MP),
-> +	.bank_max[2] =3D ZYNQ_GPIO_BANK2_PIN_MAX(MP),
-> +	.bank_min[3] =3D ZYNQ_GPIO_BANK3_PIN_MIN(MP),
-> +	.bank_max[3] =3D ZYNQ_GPIO_BANK3_PIN_MAX(MP),
-> +	.bank_min[4] =3D ZYNQ_GPIO_BANK4_PIN_MIN(MP),
-> +	.bank_max[4] =3D ZYNQ_GPIO_BANK4_PIN_MAX(MP),
-> +	.bank_min[5] =3D ZYNQ_GPIO_BANK5_PIN_MIN(MP),
-> +	.bank_max[5] =3D ZYNQ_GPIO_BANK5_PIN_MAX(MP),
-> +};
-> +
-> +static const struct zynq_platform_data zynq_gpio_def =3D {
-> +	.label =3D "zynq_gpio",
-> +	.ngpio =3D ZYNQ_GPIO_NR_GPIOS,
-> +	.max_bank =3D ZYNQ_GPIO_MAX_BANK,
-> +	.bank_min[0] =3D ZYNQ_GPIO_BANK0_PIN_MIN(),
-> +	.bank_max[0] =3D ZYNQ_GPIO_BANK0_PIN_MAX(),
-> +	.bank_min[1] =3D ZYNQ_GPIO_BANK1_PIN_MIN(),
-> +	.bank_max[1] =3D ZYNQ_GPIO_BANK1_PIN_MAX(),
-> +	.bank_min[2] =3D ZYNQ_GPIO_BANK2_PIN_MIN(),
-> +	.bank_max[2] =3D ZYNQ_GPIO_BANK2_PIN_MAX(),
-> +	.bank_min[3] =3D ZYNQ_GPIO_BANK3_PIN_MIN(),
-> +	.bank_max[3] =3D ZYNQ_GPIO_BANK3_PIN_MAX(),
-> +};
-> +
-> +static const struct of_device_id zynq_gpio_of_match[] =3D {
-> +	{ .compatible =3D "xlnx,zynq-gpio-1.0", .data =3D (void *)&zynq_gpio_=
-def },
-> +	{ .compatible =3D "xlnx,zynqmp-gpio-1.0",
-> +					.data =3D (void *)&zynqmp_gpio_def },
-> +	{ /* end of table */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, zynq_gpio_of_match);
-> +
->  /**
->   * zynq_gpio_probe - Initialization method for a zynq_gpio device
->   * @pdev:	platform device instance
-> @@ -599,11 +657,18 @@ static int zynq_gpio_probe(struct platform_device=
- *pdev)
->  	struct zynq_gpio *gpio;
->  	struct gpio_chip *chip;
->  	struct resource *res;
-> +	const struct of_device_id *match;
-> =20
->  	gpio =3D devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
->  	if (!gpio)
->  		return -ENOMEM;
-> =20
-> +	match =3D of_match_node(zynq_gpio_of_match, pdev->dev.of_node);
-> +	if (!match) {
-> +		dev_err(&pdev->dev, "of_match_node() failed\n");
-> +		return -EINVAL;
-> +	}
-> +	gpio->p_data =3D match->data;
->  	platform_set_drvdata(pdev, gpio);
-> =20
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -619,7 +684,7 @@ static int zynq_gpio_probe(struct platform_device *=
-pdev)
-> =20
->  	/* configure the gpio chip */
->  	chip =3D &gpio->chip;
-> -	chip->label =3D "zynq_gpio";
-> +	chip->label =3D gpio->p_data->label;
->  	chip->owner =3D THIS_MODULE;
->  	chip->dev =3D &pdev->dev;
->  	chip->get =3D zynq_gpio_get_value;
-> @@ -629,7 +694,7 @@ static int zynq_gpio_probe(struct platform_device *=
-pdev)
->  	chip->direction_input =3D zynq_gpio_dir_in;
->  	chip->direction_output =3D zynq_gpio_dir_out;
->  	chip->base =3D -1;
-> -	chip->ngpio =3D ZYNQ_GPIO_NR_GPIOS;
-> +	chip->ngpio =3D gpio->p_data->ngpio;
-> =20
->  	/* Enable GPIO clock */
->  	gpio->clk =3D devm_clk_get(&pdev->dev, NULL);
-> @@ -651,7 +716,7 @@ static int zynq_gpio_probe(struct platform_device *=
-pdev)
->  	}
-> =20
->  	/* disable interrupts for all banks */
-> -	for (bank_num =3D 0; bank_num < ZYNQ_GPIO_MAX_BANK; bank_num++)
-> +	for (bank_num =3D 0; bank_num < gpio->p_data->max_bank; bank_num++)
->  		writel_relaxed(ZYNQ_GPIO_IXR_DISABLE_ALL, gpio->base_addr +
->  			       ZYNQ_GPIO_INTDIS_OFFSET(bank_num));
-> =20
-> @@ -695,12 +760,6 @@ static int zynq_gpio_remove(struct platform_device=
- *pdev)
->  	return 0;
->  }
-> =20
-> -static struct of_device_id zynq_gpio_of_match[] =3D {
-> -	{ .compatible =3D "xlnx,zynq-gpio-1.0", },
-> -	{ /* end of table */ }
-> -};
-> -MODULE_DEVICE_TABLE(of, zynq_gpio_of_match);
-> -
->  static struct platform_driver zynq_gpio_driver =3D {
->  	.driver	=3D {
->  		.name =3D DRIVER_NAME,
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 8da8e07..7e6b1e1 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -407,6 +407,11 @@ int driver_probe_device(struct device_driver
+> *drv, struct device *dev)
+>          if (!device_is_registered(dev))
+>                  return -ENODEV;
 >=20
+> +       if (!driver_deferred_probe_enable) {
+> +               driver_deferred_probe_add(dev);
+> +               return 0;
+> +       }
+> +
+>          pr_debug("bus: '%s': %s: matched device %s with driver %s\n"=
+,
+>                   drv->bus->name, __func__, dev_name(dev), drv->name)=
+;
+>=20
+> @@ -585,7 +590,7 @@ EXPORT_SYMBOL_GPL(device_attach);
+>=20
+>   void device_initial_probe(struct device *dev)
+>   {
+> -       __device_attach(dev, true);
+> +       __device_attach(dev, driver_deferred_probe_enable);
+>   }
+>=20
+>   static int __driver_attach(struct device *dev, void *data)
 
-Acked-by: Michal Simek <michal.simek@xilinx.com>
+Can't boot my 3.14 kernel with this change :( Most probably,
+the problem is related to platform_driver_probe() usage :(
+Have no time to play with it now :(, but recommend you to check also
+earlyprintk, last log message I can see:
+[    1.435522] bootconsole [earlycon0] disabled
 
-Thanks,
-Michal
+But, nice try ;) Seems -EPROBE_DEFER is reality of life which
+has to be accepted as is.
+
+>=20
+>> Pls, Note here that TI OMAP2+ mach is not pure DT mach - it's combin=
+ation of
+>> DT and not DT devices/drivers.
+>>
+>> Ok. So What was done...
+>>
+>> LKML Linux 4.1-rc3 (a simple case)
+>> 1) use your patches 3/4 as reference (only these two patches :)
+>> 2) move of_platform_populate later at device_initcall_sync time
+>> Boot time reduction ~0.4 sec
+>=20
+> I'm a bit surprised at such a big improvement. May I ask how you are
+> measuring it?
+
+Ah. My measurements are not precise. I've just tracking time of message
+"[    4.110756] Freeing unused kernel memory: 344K (c0994000 - c09ea000=
+)"
+
+>=20
+>> TI Android Kernel 3.14 (NOT a simple case)
+>> 1) use your patches 3/4 as reference (only these two patches :)
+>> 2) move of_platform_populate later at device_initcall_sync time
+>> 3) make it to boot (not sure I've fixed all issues, but those which
+>>     break the System boot):
+>>   - split non-DT and DT devices registration in platform code;
+>>   - keep non-DT devices registration from .init_machine() [arch_init=
+call]
+>>   - move DT-devices registration at device_initcall_sync time
+>>   - fix drivers which use platform_driver_probe().
+>>     Note. Now there are at about ~190 occurrences of this macro in K=
+ernel.
+>>   - re-order few devices in DT (4 devices)
+>>   - fix one driver which uses of_find_device_by_node() wrongly
+>>     Note. This API is used some times with assumption that
+>>     requested dev has been probed already.
+>> Boot time reduction ~0.3 sec. Probing of some devices are still defe=
+rred.
+>=20
+> I got no deferred probes on a pandaboard with just these changes:
+>=20
+> https://git.collabora.com/cgit/user/tomeu/linux.git/commit/?id=3D1586=
+c6f50b3d3c65dc219a3cdc3327d798cabca6
+
+As I've mentioned I tried TI Android Kernel 3.14 where all DRA7 SoC fea=
+tures are enabled.
+It is very close to production SW. LKML, by default, enables
+mostly nothing and not all features are supported.=20
+In my prev exercise I was able to boot till Android GUI and it has work=
+ed :)
+
+Also, cool statistic - really_probe() was called 136 times for me
+(successful execution of dev->bus->probe() and drv->probe()).
+
+>=20
+>> TI Android Kernel 3.14 + of_platform_device_ensure
+>> 1) backport of_platform_device_ensure() (also need patches
+>>     "of: Introduce device tree node flag helpers" and
+>>     "of: Keep track of populated platform devices")
+>> 2) back-port all your patches which uses of_platform_device_ensure()
+>> 3) make it to boot:
+>>     - drop patch dma: of: Probe DMA controllers on demand
+>>     - fix deadlock in regulator core:
+>>     regulator_dev_lookup() called from regulator_register() in K3.14
+>> 4) get rid of deferred probes - add of_platform_device_ensure() call=
+s in:
+>>     - drivers/video/fbdev/omap2/dss/output.c
+>>     - drivers/extcon/extcon-class.c
+>>
+>>   Boot time reduction: NONE !?
+>>
+>> So few comments from above:
+>> - registering devices later during the System boot may improve boot =
+time.
+>>    But resolving of all deferred probes may NOT improve boot time ;)
+>>    Have you seen smth like this?
+>=20
+> Yeah, I don't really expect for on-demand probing to improve boot tim=
+e
+> much in the general case, as drivers tend to first acquire resources
+> (and defer probe if needed) and only then access hardware and wait fo=
+r
+> stuff to happen.
+>=20
+> The main advantage of ordered/ondemand probing is that it is much
+> easier to see the order in which devices will be bound. In my case
+> this is useful because one could get one device (eg. the drm panel) t=
+o
+> probe very early by just moving that node to the beginning of the DT.
+> With deferred probe, one would have to figure out all the dependencie=
+s
+> and shuffle them around in the DT.
+>=20
+> Another advantage (but not the one why I'm doing this work) is that i=
+n
+> general a driver's probe will be called only once per device, and if
+> it fails then we can be almost certain that something is wrong. This
+> should aid in debugging as right now one has to take into account the
+> several reasons why a device might defer its probe.
+>=20
+> Depending on what work your drivers do in your platform, enabling
+> async probing for all of them may have a noticeable impact though.
+>=20
+>> - usage of of_platform_device_ensure() will require continuous fixin=
+g of Kernel :(
+>=20
+> You mean adding those calls to more subsystems?
+
+Exactly. Each time new framework will be introduced or reworked (or eve=
+n for some drivers),
+because each of them implement its own of_get_xxx() API.=20
+
+>=20
+>> - late_initcall is not (as for me not safe) a good time to register =
+devices. A lot
+>>    of platforms/subsystems/frameworks perform their final initializa=
+tion or clean-up
+>>    steps, with assumption that System mostly ready to work. For exam=
+ple, CPUIdle/CPUFreq
+>>    are allowed and other PM staff. CPUIdle and driver's probing are =
+not friends.
+>=20
+> Yeah, I was expecting to find more problems due to this, but the
+> platforms I tested on didn't show any. Do you have pointers to
+> concrete issues?
+
+No. This observation comes from my working experience with OMAP4 device=
+s where
+lowest possible CPUIdle state was mostly equal to Device-OFF state.=20
+=46ast search has allowed me to find possible source of issues in code =
+- I'm pretty sure
+smth. similar can be found in other ARM maches:
+- arch/arm/mach-omap2/omap_device.c -> omap_device_late_init().
+
+>=20
+>> What would be nice to have for now in my opinion:
+>> - some useful place to move device population code.
+>>    May be machine_desc->init_device_sync() callback.
+>=20
+> I'm looking at leave device registration where it currently is and
+> just add devices to the deferred list until we get to late_initcall,
+> where we would start to actually probe them. Seems promising for now.
+>=20
+>> - some optional feature in DTC which will allow to re-arrange DT nod=
+es for levels 0(root)
+>>    and 1(simple-bus) using standard or widely used bindings (gpio, r=
+egulators, clocks, dma,
+>>    pinctrl, irqs).
+>=20
+> Could you extend on this, please?
+
+This is actually mostly the same idea as was mentioned by Rob Clark=20
+http://www.spinics.net/lists/arm-kernel/msg423485.html
+
+
+=46or example, mmc1 probe will be deferred always for below DT,
+but if we put evm_3v3_sw before ocp and exchange mmc1 and i2c1
+- mmc1 will be probed without deferring.
+Potentially, It can be done in DTC where we do not have so strict limit=
+s
+as for Kernel code.=20
+
+Soc file:
+/ { /* root - level 0 */
+	ocp { /* simple-bus - level 1 */
+		compatible =3D  "simple-bus";
+
+		mmc1: mmc@4809c000 {
+			compatible =3D "mmc";
+		...
+		}
+
+		i2c1: i2c@48070000 {
+			compatible =3D "i2c";
+		}
+	}
+}
+
+board file:
+#include "SoC.dtsi"
+
+/ {
+	evm_3v3_sw: fixedregulator-evm_3v3_sw {
+		compatible =3D "regulator-fixed";
+		regulator-name =3D "evm_3v3_sw";
+		regulator-min-microvolt =3D <3300000>;
+		regulator-max-microvolt =3D <3300000>;
+	};
+};
+
+&i2c1 {
+	pcf_gpio_21: gpio@21 {
+		compatible =3D "ti,pcf8575";
+		reg =3D <0x21>;
+		lines-initial-states =3D <0x1408>;
+		gpio-controller;
+		#gpio-cells =3D <2>;
+	};
+}
+
+&mmc1 {
+	status =3D "okay";
+	vmmc-supply =3D <&evm_3v3_sw>;
+	bus-width =3D <4>;
+	cd-gpios =3D <&pcf_gpio_21 5 0>;
+};
+=09
+
 
 --=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---SUWcPEs6qf0POg26rA99snBiuvTARg1Le
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.14 (GNU/Linux)
-
-iEYEARECAAYFAlVwUfMACgkQykllyylKDCGxSACdFif4ce8Fz1Rf4+x4j9zetQ7C
-QLMAnjhlSFrTf6q6ThmUu3zZS3+SsBf8
-=6Gg9
------END PGP SIGNATURE-----
-
---SUWcPEs6qf0POg26rA99snBiuvTARg1Le--
+regards,
+-grygorii
