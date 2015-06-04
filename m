@@ -1,66 +1,27 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/7] ASoC: wm8903: generalize GPIO control register bits
-Date: Thu, 4 Jun 2015 11:34:18 +0100
-Message-ID: <20150604103418.GC14071@sirena.org.uk>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com>
- <1433200158-6890-3-git-send-email-vz@mleia.com>
- <CACRpkdaGf+oQA3OF5HnVGXh5exz2L8RSye1Fj=r-=wzsMay_ag@mail.gmail.com>
- <20150604091924.GZ14071@sirena.org.uk>
- <20150604092439.GC3902@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFT v2 30/48] gpio: Prepare for killing the first parameter
+ 'irq' of irq_flow_handler_t
+Date: Thu, 4 Jun 2015 13:27:40 +0200
+Message-ID: <CACRpkdYZvaqbWDZsZ2+rV3KmuZ5pKx1Q5_6OtM78oeUaA5ryAg@mail.gmail.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+	<1433391238-19471-31-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="o+hUPwk7FawzfnFh"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41899 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752732AbbFDKef (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 06:34:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20150604092439.GC3902@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433391238-19471-31-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Alexandre Courbot <gnurou@gmail.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com
 
+On Thu, Jun 4, 2015 at 6:13 AM, Jiang Liu <jiang.liu@linux.intel.com> wrote:
 
---o+hUPwk7FawzfnFh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Change irq flow handlers to prepare for killing the first parameter 'irq'
+> of irq_flow_handler_t.
+>
+> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
 
-On Thu, Jun 04, 2015 at 10:24:39AM +0100, Charles Keepax wrote:
-> On Thu, Jun 04, 2015 at 10:19:24AM +0100, Mark Brown wrote:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > There's that as well, but more generally I'm not sure if there's even
-> > any use of those defines for the driver (without looking at the source
-> > to check).
-
-> Many of the drivers contain a gpio defaults style entry in the
-> pdata, which basically is doing what pin control should be and
-> setting up the pulls/functions etc. But replacing that in all
-> the legacy CODECs would be a massive task.
-
-Sure, I just don't know without looking if this particular driver ever
-bothered doing that.  The defines aren't pinctrl support by themselves
-they're just mechanically generated defines.
-
-To be honest I'm not sure pinctrl is actually making life easier for
-these devices, especially without ACPI bindings given that people are
-now deploying ACPI based systems.  There's also the whole MFD thing.
-
---o+hUPwk7FawzfnFh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVcCmqAAoJECTWi3JdVIfQDdYH/iy4ghGKuGhPM06DfTBYHpc5
-M1cnPiCfiO/nLBcy+1ppan7btjBtR4skSoSXbWgE7ZGlgZl87N3TP79t9spReR+L
-+SZKwFJFwv4C62BIuoGjhexfCAYyXboJ7Yi4N43jd3w4AzRxnTgoLIg45CkaHz+S
-g1sLamlQfRVusFWmQGAPpWypn7Cqh/XGw3FDEh5+vR0KLVzmC/KGFsQJD/OnRV7H
-hYpc44e4fRMYrZW8EFf1cXcpbrq/iDoU/I1sh7dfmGMQzxLKT6MnDIzbJFd7T66s
-1WGUlufX1tNiIleUYsw4e7VcnadYGuk+0EW3QNt5uQpZ4YH5MQ6SEQSczeLjzR0=
-=gUTm
------END PGP SIGNATURE-----
-
---o+hUPwk7FawzfnFh--
+Yours,
+Linus Walleij
