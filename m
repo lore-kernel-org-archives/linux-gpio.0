@@ -1,47 +1,53 @@
-From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: RE: [patch] gpio: Added GPIO support to ZynqMP SoC
-Date: Thu, 4 Jun 2015 09:22:07 +0000
-Message-ID: <3802E9A6666DF54886E2B9CBF743BA98011EBF75@XAP-PVEXMBX01.xlnx.xilinx.com>
-References: <1433160019-11157-1-git-send-email-anuragku@xilinx.com>
- <CACRpkdZpvr4NfH43FvoHdfKaqqDGMHJU5=UHEzOpLV9xC4vaTw@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/7] ASoC: wm8903: generalize GPIO control register bits
+Date: Thu, 4 Jun 2015 10:24:39 +0100
+Message-ID: <20150604092439.GC3902@opensource.wolfsonmicro.com>
+References: <1433200031-6748-1-git-send-email-vz@mleia.com> <1433200158-6890-3-git-send-email-vz@mleia.com> <CACRpkdaGf+oQA3OF5HnVGXh5exz2L8RSye1Fj=r-=wzsMay_ag@mail.gmail.com> <20150604091924.GZ14071@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZpvr4NfH43FvoHdfKaqqDGMHJU5=UHEzOpLV9xC4vaTw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michals@xilinx.com>, Soren Brinkmann <sorenb@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Punnaiah Choudary Kalluri <punnaia@xilinx.com>, Srikanth Vemula <svemula@xilinx.com>, Anirudha Sarangi <anirudh@xilinx.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52407 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751125AbbFDJYl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 05:24:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20150604091924.GZ14071@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com
 
-SGkgTGludXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMg
-V2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogVGh1cnNk
-YXksIEp1bmUgMDQsIDIwMTUgMTozOCBQTQ0KPiBUbzogQW51cmFnIEt1bWFyIFZ1bGlzaGENCj4g
-Q2M6IEFsZXhhbmRyZSBDb3VyYm90OyBNaWNoYWwgU2ltZWs7IFNvcmVuIEJyaW5rbWFubjsgbGlu
-dXgtDQo+IGdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
-OyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBQdW5uYWlhaCBDaG91
-ZGFyeSBLYWxsdXJpOyBTcmlrYW50aCBWZW11bGE7DQo+IEFuaXJ1ZGhhIFNhcmFuZ2k7IEFudXJh
-ZyBLdW1hciBWdWxpc2hhDQo+IFN1YmplY3Q6IFJlOiBbcGF0Y2hdIGdwaW86IEFkZGVkIEdQSU8g
-c3VwcG9ydCB0byBaeW5xTVAgU29DDQo+DQo+IE9uIE1vbiwgSnVuIDEsIDIwMTUgYXQgMjowMCBQ
-TSwgQW51cmFnIEt1bWFyIFZ1bGlzaGENCj4gPGFudXJhZy5rdW1hci52dWxpc2hhQHhpbGlueC5j
-b20+IHdyb3RlOg0KPg0KPiA+IEFkZGVkIHN1cHBvcnQgdG8gWnlucU1QIFNvQyBvbiB0aGUgZXhp
-c3RpbmcgenlucSBncGlvIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFudXJhZyBL
-dW1hciBWdWxpc2hhIDxhbnVyYWdrdUB4aWxpbnguY29tPg0KPg0KPiA+ICtzdGF0aWMgY29uc3Qg
-c3RydWN0IG9mX2RldmljZV9pZCB6eW5xX2dwaW9fb2ZfbWF0Y2hbXSA9IHsNCj4gPiArICAgICAg
-IHsgLmNvbXBhdGlibGUgPSAieGxueCx6eW5xLWdwaW8tMS4wIiwgLmRhdGEgPSAodm9pZCAqKSZ6
-eW5xX2dwaW9fZGVmDQo+IH0sDQo+ID4gKyAgICAgICB7IC5jb21wYXRpYmxlID0gInhsbngsenlu
-cW1wLWdwaW8tMS4wIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgLmRhdGEgPSAodm9pZA0KPiA+ICsqKSZ6eW5xbXBfZ3Bpb19kZWYgfSwNCj4NCj4gSXMgdGhl
-cmUgYSBzZXBhcmF0ZSBwYXRjaCBhZGRpbmcgdGhpcyB0byB0aGUgZGV2aWNlIHRyZWUgYmluZGlu
-Z3MgaW4NCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby16eW5x
-LnR4dD8NCj4NCj4gRWxzZSBwbGVhc2UgaW5jbHVkZSBpdCBpbiB0aGlzIHBhdGNoLg0KDQpJIHdp
-bGwgaW5jbHVkZSB0aGUgZGV2aWNlLXRyZWUgYmluZGluZ3MgYW5kIHNlbmQgdGhlIHBhdGNoIGFz
-IHYyLg0KDQpUaGFua3MsDQpBbnVyYWcgS3VtYXIgVg0KDQoNClRoaXMgZW1haWwgYW5kIGFueSBh
-dHRhY2htZW50cyBhcmUgaW50ZW5kZWQgZm9yIHRoZSBzb2xlIHVzZSBvZiB0aGUgbmFtZWQgcmVj
-aXBpZW50KHMpIGFuZCBjb250YWluKHMpIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiB0aGF0IG1h
-eSBiZSBwcm9wcmlldGFyeSwgcHJpdmlsZWdlZCBvciBjb3B5cmlnaHRlZCB1bmRlciBhcHBsaWNh
-YmxlIGxhdy4gSWYgeW91IGFyZSBub3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCwgZG8gbm90IHJl
-YWQsIGNvcHksIG9yIGZvcndhcmQgdGhpcyBlbWFpbCBtZXNzYWdlIG9yIGFueSBhdHRhY2htZW50
-cy4gRGVsZXRlIHRoaXMgZW1haWwgbWVzc2FnZSBhbmQgYW55IGF0dGFjaG1lbnRzIGltbWVkaWF0
-ZWx5Lg0KDQo=
+On Thu, Jun 04, 2015 at 10:19:24AM +0100, Mark Brown wrote:
+> On Thu, Jun 04, 2015 at 10:30:10AM +0200, Linus Walleij wrote:
+> 
+> > > +#define WM8903_GPn_PU_MASK                      0x0004  /* GPn_PU */
+> > > +#define WM8903_GPn_PU_SHIFT                          2  /* GPn_PU */
+> > > +#define WM8903_GPn_PU_WIDTH                          1  /* GPn_PU */
+> 
+> > Pull-down/pull-up?
+> 
+> > That is pin control, not GPIO.
+> 
+> Those register definition defines are just an automatically generated
+> dump of the complete CODEC register map, the GPIO pins have some pin
+> control type functionality in there.
+> 
+> > I know I should probably be a bit relaxed on enforcing strict frameworks
+> > on ASoC and DRI/DRM alike, because the drivers are complex and sometimes
+> > need to be on top of things rather than split things apart and set up
+> > complex cobwebs of subsystem cross-dependencies, but I'd
+> > like to know a bit more about the design philisophy here.
+> 
+> > I guess this dates back to the time before the pin control subsystem?
+> 
+> There's that as well, but more generally I'm not sure if there's even
+> any use of those defines for the driver (without looking at the source
+> to check).
+
+Many of the drivers contain a gpio defaults style entry in the
+pdata, which basically is doing what pin control should be and
+setting up the pulls/functions etc. But replacing that in all
+the legacy CODECs would be a massive task.
+
+Thanks,
+Charles
