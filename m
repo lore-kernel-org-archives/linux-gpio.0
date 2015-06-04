@@ -1,49 +1,50 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [RFT v2 45/48] genirq, gpio: Kill the first parameter 'irq' of irq_flow_handler_t
-Date: Thu, 4 Jun 2015 08:20:55 +0200
-Message-ID: <CABxcv==u4XqozhR9=aXohGKy-qV696Rv74GqsgeUh0KUEoByEA@mail.gmail.com>
-References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
-	<1433391238-19471-46-git-send-email-jiang.liu@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1433391238-19471-46-git-send-email-jiang.liu@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Tien Hock Loh <thloh@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ray Jui <rjui@broadcom.com>, David Cohen <david.a.cohen@linux.intel.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, Linux Kernel <linux-kern>
+From: Y Vo <yvo@apm.com>
+Subject: [PATCH v0] arm64: dts: Add APM X-Gene standby GPIO controller DTS entries
+Date: Thu,  4 Jun 2015 14:19:04 +0700
+Message-ID: <1433402344-20836-1-git-send-email-yvo@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og115.obsmtp.com ([64.18.0.246]:34537 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751125AbbFDHTP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 03:19:15 -0400
+Received: by pdjm12 with SMTP id m12so24847360pdj.3
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 00:19:14 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, arm@kernel.org, linux-kernel@vger.kernel.org
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com, Loc Ho <lho@apm.com>
 
-Hello Jiang,
+Add standby domain gpio controller for APM X-Gene SoC platform.
 
-On Thu, Jun 4, 2015 at 6:13 AM, Jiang Liu <jiang.liu@linux.intel.com> wrote:
-> Now most IRQ flow handlers make no use of the first parameter 'irq'.
-> And for those who do make use of 'irq', we could easily get the irq
-> number through irq_desc->irq_data->irq. So kill the first parameter
-> 'irq' of irq_flow_handler_t.
->
-> To ease review, I have split the changes into several parts, though
-> they should be merge as one to support bisecting.
->
-> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
-> ---
->  drivers/gpio/gpio-altera.c     |    6 ++----
->  drivers/gpio/gpio-bcm-kona.c   |    2 +-
->  drivers/gpio/gpio-davinci.c    |    2 +-
->  drivers/gpio/gpio-dwapb.c      |    2 +-
->  drivers/gpio/gpio-ep93xx.c     |    4 ++--
->  drivers/gpio/gpio-intel-mid.c  |    2 +-
->  drivers/gpio/gpio-lynxpoint.c  |    2 +-
->  drivers/gpio/gpio-mpc8xxx.c    |    2 +-
->  drivers/gpio/gpio-msic.c       |    2 +-
->  drivers/gpio/gpio-msm-v2.c     |    2 +-
->  drivers/gpio/gpio-mvebu.c      |    2 +-
->  drivers/gpio/gpio-mxc.c        |    4 ++--
->  drivers/gpio/gpio-mxs.c        |    2 +-
->  drivers/gpio/gpio-omap.c       |    2 +-
+Signed-off-by: Y Vo <yvo@apm.com>
+---
+ arch/arm64/boot/dts/apm/apm-storm.dtsi |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
 
-For gpio-omap:
+diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+index f1ad9c2..2e1c438 100644
+--- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+@@ -587,6 +587,19 @@
+ 			phy-names = "sata-phy";
+ 		};
+ 
++		sbgpio: sbgpio@17001000{
++			compatible = "apm,xgene-gpio-sb";
++			reg = <0x0 0x17001000 0x0 0x400>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupts = 	<0x0 0x28 0x1>,
++					<0x0 0x29 0x1>,
++					<0x0 0x2a 0x1>,
++					<0x0 0x2b 0x1>,
++					<0x0 0x2c 0x1>,
++					<0x0 0x2d 0x1>;
++		};
++
+ 		rtc: rtc@10510000 {
+ 			compatible = "apm,xgene-rtc";
+ 			reg = <0x0 0x10510000 0x0 0x400>;
+-- 
+1.7.1
 
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
-
-Best regards,
-Javier
