@@ -1,59 +1,66 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [alsa-devel] [PATCH 5/7] ASoC: wm5100: remove bitwise operations
- involving GPIO level value
-Date: Thu, 04 Jun 2015 01:58:37 +0300
-Message-ID: <556F869D.6060601@mleia.com>
-References: <1433200031-6748-1-git-send-email-vz@mleia.com>	<1433200158-6890-5-git-send-email-vz@mleia.com>	<20150602194558.GI14071@sirena.org.uk>	<556E10CD.3090301@mleia.com>	<CA+7tXijtaM4tn3Mb+tbsd7JFbGjeh1yT=zTXPuCiFjqnvRjdvg@mail.gmail.com>	<556F51CF.1000807@mleia.com> <CA+7tXigF6LginxQGUBKqLZorecPp7B8wydzDA4jb4iKOi7CdBA@mail.gmail.com>
+From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v4 2/7] mmc: mediatek: Add Mediatek MMC driver
+Date: Thu, 4 Jun 2015 10:54:03 +0800
+Message-ID: <1433386443.3304.2.camel@mhfsdcap03>
+References: <1432017411-2996-1-git-send-email-chaotian.jing@mediatek.com>
+ <1432017411-2996-3-git-send-email-chaotian.jing@mediatek.com>
+ <20150519111558.GD6325@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:60264 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752206AbbFCW6k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 3 Jun 2015 18:58:40 -0400
-In-Reply-To: <CA+7tXigF6LginxQGUBKqLZorecPp7B8wydzDA4jb4iKOi7CdBA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20150519111558.GD6325-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Trent Piepho <tpiepho@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, patches@opensource.wolfsonmicro.com, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Hello Trent,
-
-On 04.06.2015 00:51, Trent Piepho wrote:
-> On Wed, Jun 3, 2015 at 12:13 PM, Vladimir Zapolskiy <vz@mleia.com> wrote:
->>>
->>> BTW, with a little C algebra:
->>> const unsigned int val = value ?  0x1 << WM5100_GP1_LVL_SHIFT : 0;
->>> const unsigned int val = (value ?  0x1 : 0) << WM5100_GP1_LVL_SHIFT;
->>> const unsigned int val = (!!value) << WM5100_GP1_LVL_SHIFT;  //
->>> definition of ! operator
->>>
->>> And now we're back to where we started, so I don't really see why this
->>> is even necessary.  The semantics of the ! operator will be changed in a
->>> future C version?
->>
->> I don't think it makes sense to discuss technical aspects of the
->> proposed change, as I mentioned in the discussion yesterday I see no
->> technical issues at this point, and my changes are described as
->> nonfunctional.
->>
->> The _nontechnical_ problem I see (well, may be I'm just blowing it up)
->> is a Linux kernel code style policy problem, to my knowledge the policy
->> of using bitwise and arithmetic operations on bool type variables and
->> constants is not defined, and since the policy is not yet defined I'm
->> glad to take part in its discussion now.
+On Tue, 2015-05-19 at 13:15 +0200, Sascha Hauer wrote:
+> On Tue, May 19, 2015 at 02:36:46PM +0800, Chaotian Jing wrote:
+> > Add Mediatek MMC driver code
+> > Support eMMC/SD/SDIO
+> > 
+> > Signed-off-by: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> > ---
+> >  drivers/mmc/host/Kconfig  |    8 +
+> >  drivers/mmc/host/Makefile |    1 +
+> >  drivers/mmc/host/mtk-sd.c | 1422 +++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 1431 insertions(+)
+> >  create mode 100644 drivers/mmc/host/mtk-sd.c
+> > 
+> > +
+> > +	host->src_clk = devm_clk_get(&pdev->dev, "source");
+> > +	if (IS_ERR(host->src_clk)) {
+> > +		ret = PTR_ERR(host->src_clk);
+> > +		goto host_free;
+> > +	}
+> > +
+> > +	host->h_clk = devm_clk_get(&pdev->dev, "hclk");
+> > +	if (IS_ERR(host->h_clk)) {
+> > +		/* host->h_clk is optional, Only for MSDC0/3 at MT8173 */
+> > +		dev_dbg(&pdev->dev,
+> > +				"Invalied hclk from the device tree!\n");
+> > +	}
 > 
-> I don't believe this is the case.
+> s/Invalied/Invalid/
+> 
+> According to my reference manual the controller always needs a hclk. It
+> seems on some controllers it is just not software controllable. If
+> that's the case you should always provide a hclk to the driver and make
+> this clock mandatory.
+For MT8173, MSDC1, MSDC2's HCLK are in Infra, software cannot control
+it. So just set the HCLK to clk_null ?
 
-please excuse me for possible misunderstanding, you don't believe that
-I'm interested in discussing a _nontechnical_ problem stated above?
-
->  From C99, section 6.5.3.3, paragraph 5:
-
-C99 is a strict superset over Linux coding style (e.g. remember //
-comments or "register" specifier), so let's forget about.
-
---
-With best wishes,
-Vladimir
+If it is, will set HCLK to clk_null at next revision, and the same
+changes will make for MT8135.
+> 
+> Sascha
+> 
