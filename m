@@ -1,34 +1,67 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Fix the pointer in PTR_ERR()
-Date: Thu, 4 Jun 2015 10:15:07 +0200
-Message-ID: <CACRpkdZmB9Bt+UM=1YshRnONi+QiFgYy5ZX7WQaT_z0fDr73xA@mail.gmail.com>
-References: <1433163424-6123-1-git-send-email-fabio.estevam@freescale.com>
+Subject: Re: [PATCH 3/7] ASoC: wm8903: generalize GPIO control register bits
+Date: Thu, 4 Jun 2015 10:30:10 +0200
+Message-ID: <CACRpkdaGf+oQA3OF5HnVGXh5exz2L8RSye1Fj=r-=wzsMay_ag@mail.gmail.com>
+References: <1433200031-6748-1-git-send-email-vz@mleia.com>
+	<1433200158-6890-3-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:35559 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753241AbbFDIPI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 04:15:08 -0400
-Received: by oihd6 with SMTP id d6so26068949oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 01:15:08 -0700 (PDT)
-In-Reply-To: <1433163424-6123-1-git-send-email-fabio.estevam@freescale.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35216 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751696AbbFDIaL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 04:30:11 -0400
+Received: by oihd6 with SMTP id d6so26290832oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 01:30:10 -0700 (PDT)
+In-Reply-To: <1433200158-6890-3-git-send-email-vz@mleia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <fabio.estevam@freescale.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Lars-Peter Clausen <lars@metafoo.de>, Axel Lin <axel.lin@ingics.com>, patches@opensource.wolfsonmicro.com
 
-On Mon, Jun 1, 2015 at 2:57 PM, Fabio Estevam
-<fabio.estevam@freescale.com> wrote:
+On Tue, Jun 2, 2015 at 1:09 AM, Vladimir Zapolskiy <vz@mleia.com> wrote:
 
-> PTR_ERR should access the value just tested by IS_ERR
+> All GPIO1/2/3/4/5 control registers have the same bit map, but in
+> implementation of gpiolib callbacks WM8903_GPn_*, WM8903_GP1_* and
+> WM8903_GP2_* macro are mixed up. Replace particular GPIOn control
+> register bit definitions with generic ones and save ~150 LoCs.
 >
-> The semantic patch that makes this change is available
-> in scripts/coccinelle/tests/odd_ptr_err.cocci.
+> No functional change.
 >
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Axel Lin <axel.lin@ingics.com>
+> Cc: patches@opensource.wolfsonmicro.com
 
-Oviously correct, patch applied.
+This comment is not about the refactoring as such, which is OK...
+
+> +#define WM8903_GPn_FN_MASK                      0x1F00  /* GPn_FN - [12:8] */
+> +#define WM8903_GPn_FN_SHIFT                          8  /* GPn_FN - [12:8] */
+> +#define WM8903_GPn_FN_WIDTH                          5  /* GPn_FN - [12:8] */
+
+Function selection?
+
+> +#define WM8903_GPn_PD                           0x0008  /* GPn_PD */
+> +#define WM8903_GPn_PD_MASK                      0x0008  /* GPn_PD */
+> +#define WM8903_GPn_PD_SHIFT                          3  /* GPn_PD */
+> +#define WM8903_GPn_PD_WIDTH                          1  /* GPn_PD */
+> +#define WM8903_GPn_PU                           0x0004  /* GPn_PU */
+> +#define WM8903_GPn_PU_MASK                      0x0004  /* GPn_PU */
+> +#define WM8903_GPn_PU_SHIFT                          2  /* GPn_PU */
+> +#define WM8903_GPn_PU_WIDTH                          1  /* GPn_PU */
+
+Pull-down/pull-up?
+
+That is pin control, not GPIO.
+
+I know I should probably be a bit relaxed on enforcing strict frameworks
+on ASoC and DRI/DRM alike, because the drivers are complex and sometimes
+need to be on top of things rather than split things apart and set up
+complex cobwebs of subsystem cross-dependencies, but I'd
+like to know a bit more about the design philisophy here.
+
+I guess this dates back to the time before the pin control subsystem?
 
 Yours,
 Linus Walleij
