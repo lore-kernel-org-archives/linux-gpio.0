@@ -1,42 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] gpio: Added GPIO support to ZynqMP SoC
-Date: Thu, 4 Jun 2015 10:07:57 +0200
-Message-ID: <CACRpkdZpvr4NfH43FvoHdfKaqqDGMHJU5=UHEzOpLV9xC4vaTw@mail.gmail.com>
-References: <1433160019-11157-1-git-send-email-anuragku@xilinx.com>
+Subject: Re: [PATCH 1/7] pinctrl: imx7d: Remove .owner field
+Date: Thu, 4 Jun 2015 10:13:52 +0200
+Message-ID: <CACRpkdYSB_-kvVa0U3HkB4wikqsoJkGAXptKrp-OKYUjTFRtzw@mail.gmail.com>
+References: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1433160019-11157-1-git-send-email-anuragku@xilinx.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Anurag Kumar Vulisha <anuragku@xilinx.com>, svemula@xilinx.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, anirudh@xilinx.com, punnaia@xilinx.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36349 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752147AbbFDINx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 04:13:53 -0400
+Received: by obbqz1 with SMTP id qz1so8803992obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 01:13:53 -0700 (PDT)
+In-Reply-To: <1433163245-5780-1-git-send-email-fabio.estevam@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Fabio Estevam <fabio.estevam@freescale.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jun 1, 2015 at 2:00 PM, Anurag Kumar Vulisha
-<anurag.kumar.vulisha@xilinx.com> wrote:
+On Mon, Jun 1, 2015 at 2:53 PM, Fabio Estevam
+<fabio.estevam@freescale.com> wrote:
 
-> Added support to ZynqMP SoC on the existing zynq gpio driver.
+> platform_driver does not need to set the owner field, as it will be
+> populated by the driver core, so just remove it.
 >
-> Signed-off-by: Anurag Kumar Vulisha <anuragku@xilinx.com>
+> The semantic patch that makes this change is available
+> in scripts/coccinelle/api/platform_no_drv_owner.cocci.
+>
+> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
 
-> +static const struct of_device_id zynq_gpio_of_match[] = {
-> +       { .compatible = "xlnx,zynq-gpio-1.0", .data = (void *)&zynq_gpio_def },
-> +       { .compatible = "xlnx,zynqmp-gpio-1.0",
-> +                                       .data = (void *)&zynqmp_gpio_def },
-
-Is there a separate patch adding this to the device tree
-bindings in Documentation/devicetree/bindings/gpio/gpio-zynq.txt?
-
-Else please include it in this patch.
+All seven patches squashed into one and applied.
 
 Yours,
 Linus Walleij
