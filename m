@@ -1,52 +1,62 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC
- interrupt
-Date: Thu, 4 Jun 2015 21:36:18 -0700
-Message-ID: <20150605043618.GA27567@dtor-ws>
-References: <1433402712-21399-1-git-send-email-yvo@apm.com>
- <20150604172324.GA9074@dtor-ws>
- <CAL85gmC2oHVKzgfNFXRzSzigQu++OJv-TpwzeN5fC-5s3U0U-Q@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFT v2 44/48] genirq,
+ pinctrl: Kill the first parameter 'irq' of irq_flow_handler_t
+Date: Fri, 5 Jun 2015 12:08:06 +0900
+Message-ID: <CA+Ln22EHa-Bnybf2bd2-U1QvNOBThjpjj_uuz95aBAzniN2f1Q@mail.gmail.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+ <1433391238-19471-45-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:36858 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850AbbFEEgY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 00:36:24 -0400
-Content-Disposition: inline
-In-Reply-To: <CAL85gmC2oHVKzgfNFXRzSzigQu++OJv-TpwzeN5fC-5s3U0U-Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1433391238-19471-45-git-send-email-jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson@sonymobile>
 List-Id: linux-gpio@vger.kernel.org
-To: Feng Kan <fkan@apm.com>
-Cc: Y Vo <yvo@apm.com>, linux-input@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, patches <patches@apm.com>
 
-On Thu, Jun 04, 2015 at 08:37:50PM -0700, Feng Kan wrote:
-> On Thu, Jun 4, 2015 at 10:23 AM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > Hi Y,
-> > On Thu, Jun 04, 2015 at 02:25:12PM +0700, Y Vo wrote:
-> >> GIC is designed to support two of trigger mechanisms - active level
-> >> high or edge rising. But in the gpio_keys driver, it tries to use both
-> >> edge rising and edge falling trigger. This patch fixes the gpio_keys
-> >> driver to request only the edge rising event when failed to configure the
-> >> interrupt.
-> >
-> > How do we get notified of button release if we only get interrupt on
-> > rising edge?
-> 
-> On the arm gic, only the rising edge is supported. So key press can
-> only be defined
-> as rising edge and no key release.
+Hi,
 
-Then it is not much of a key if we can't signal release.
+2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>:
+> Now most IRQ flow handlers make no use of the first parameter 'irq'.
+> And for those who do make use of 'irq', we could easily get the irq
+> number through irq_desc->irq_data->irq. So kill the first parameter
+> 'irq' of irq_flow_handler_t.
+>
+> To ease review, I have split the changes into several parts, though
+> they should be merge as one to support bisecting.
+>
+> Signed-off-by: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> ---
+>  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c     |    2 +-
+>  drivers/pinctrl/intel/pinctrl-baytrail.c      |    2 +-
+>  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
+>  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
+>  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |    4 ++--
+>  drivers/pinctrl/pinctrl-adi2.c                |    3 +--
+>  drivers/pinctrl/pinctrl-amd.c                 |    4 ++--
+>  drivers/pinctrl/pinctrl-at91.c                |    2 +-
+>  drivers/pinctrl/pinctrl-coh901.c              |    2 +-
+>  drivers/pinctrl/pinctrl-rockchip.c            |    2 +-
+>  drivers/pinctrl/pinctrl-single.c              |    2 +-
+>  drivers/pinctrl/pinctrl-st.c                  |    4 ++--
+>  drivers/pinctrl/qcom/pinctrl-msm.c            |    4 ++--
+>  drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |    8 ++++----
+>  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   10 +++++-----
 
-gpio_keys
-driver supports what it calls "interrupt only" mode where there is no
-GPIO and we go just by the fact that we received interrupt. In this mode
-the trigger type is expected to be set by the platform code (or OF), the
-driver does not force need of both edges.
+Assuming that it was properly compile tested, for Samsung stuff:
 
-Thanks.
+Acked-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
--- 
-Dmitry
+Best regards,
+Tomasz
