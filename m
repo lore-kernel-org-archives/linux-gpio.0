@@ -1,46 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFT v2 06/48] pinctrl: Use irq_desc_get_xxx() to avoid redundant
- lookup of irq_desc
-Date: Fri, 5 Jun 2015 12:06:06 +0900
-Message-ID: <CA+Ln22Euot24co7qKLTej43j3Z2BS-p5WhjRq9WgRb-+U=Tyqw@mail.gmail.com>
-References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
-	<1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
+From: Feng Kan <fkan@apm.com>
+Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
+Date: Thu, 4 Jun 2015 20:37:50 -0700
+Message-ID: <CAL85gmC2oHVKzgfNFXRzSzigQu++OJv-TpwzeN5fC-5s3U0U-Q@mail.gmail.com>
+References: <1433402712-21399-1-git-send-email-yvo@apm.com>
+	<20150604172324.GA9074@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Heiko Stuebner <heiko@sntech.de>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Barry
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exprod5og101.obsmtp.com ([64.18.0.141]:59945 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752969AbbFEDhv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 4 Jun 2015 23:37:51 -0400
+Received: by obbea3 with SMTP id ea3so46497509obb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 04 Jun 2015 20:37:51 -0700 (PDT)
+In-Reply-To: <20150604172324.GA9074@dtor-ws>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Y Vo <yvo@apm.com>, linux-input@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, patches <patches@apm.com>
 
-Hi,
-
-2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu@linux.intel.com>:
-> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
-> already have a pointer to corresponding irq_desc.
+On Thu, Jun 4, 2015 at 10:23 AM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> Hi Y,
+> On Thu, Jun 04, 2015 at 02:25:12PM +0700, Y Vo wrote:
+>> GIC is designed to support two of trigger mechanisms - active level
+>> high or edge rising. But in the gpio_keys driver, it tries to use both
+>> edge rising and edge falling trigger. This patch fixes the gpio_keys
+>> driver to request only the edge rising event when failed to configure the
+>> interrupt.
 >
-> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
->  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    4 ++--
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |   12 +++++-------
->  drivers/pinctrl/pinctrl-amd.c                 |    2 +-
->  drivers/pinctrl/pinctrl-at91.c                |    2 +-
->  drivers/pinctrl/pinctrl-coh901.c              |    4 ++--
->  drivers/pinctrl/pinctrl-rockchip.c            |    4 ++--
->  drivers/pinctrl/pinctrl-single.c              |    2 +-
->  drivers/pinctrl/pinctrl-st.c                  |    6 +++---
->  drivers/pinctrl/qcom/pinctrl-msm.c            |    2 +-
->  drivers/pinctrl/samsung/pinctrl-exynos.c      |    8 ++++----
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |   18 +++++++++---------
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   22 ++++++++++------------
+> How do we get notified of button release if we only get interrupt on
+> rising edge?
 
-For Samsung stuff:
-
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+On the arm gic, only the rising edge is supported. So key press can
+only be defined
+as rising edge and no key release.
+>
+> Thanks.
+>
+> --
+> Dmitry
