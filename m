@@ -1,18 +1,18 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v5 2/3] sh-pfc: r8a7794: add MMCIF pin groups
-Date: Sat, 06 Jun 2015 01:35:54 +0300
-Message-ID: <3463514.kOPJ22qAGq@wasted.cogentembedded.com>
+Subject: [PATCH v5 3/3] sh-pfc: r8a7794: add SDHI pin groups
+Date: Sat, 06 Jun 2015 01:36:50 +0300
+Message-ID: <2599447.QZX6aSV6ig@wasted.cogentembedded.com>
 References: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:32964 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751877AbbFEWf6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 18:35:58 -0400
-Received: by lbcue7 with SMTP id ue7so53939857lbc.0
-        for <linux-gpio@vger.kernel.org>; Fri, 05 Jun 2015 15:35:57 -0700 (PDT)
+Received: from mail-la0-f45.google.com ([209.85.215.45]:33435 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751376AbbFEWgx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 18:36:53 -0400
+Received: by labpy14 with SMTP id py14so63597500lab.0
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Jun 2015 15:36:51 -0700 (PDT)
 In-Reply-To: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -20,10 +20,11 @@ To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideason
 
 From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
 
-Add MMCIF pin groups to R8A7794 PFC driver.
+Add SDHI0/1/2 pin groups to R8A7794 PFC driver.
 
 Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
-[Sergei: rebased, renamed, added changelog.]
+[Sergei: renamed SD data pins to match the driver, rebased, renamed, added
+changelog.]
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
@@ -32,85 +33,192 @@ Changes in version 5:
 - refreshed the patch;
 - added Laurent Pinchart's ACK.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   46 +++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  153 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
 
 Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
 ===================================================================
 --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
 +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -1919,6 +1919,40 @@ static const unsigned int intc_irq9_pins
- static const unsigned int intc_irq9_mux[] = {
- 	IRQ9_MARK,
+@@ -2659,6 +2659,117 @@ static const unsigned int scifb2_ctrl_pi
+ static const unsigned int scifb2_ctrl_mux[] = {
+ 	SCIFB2_RTS_N_MARK, SCIFB2_CTS_N_MARK,
  };
-+/* - MMCIF ------------------------------------------------------------------ */
-+static const unsigned int mmc_data1_pins[] = {
-+	/* D[0] */
++/* - SDHI0 ------------------------------------------------------------------ */
++static const unsigned int sdhi0_data1_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 2),
++};
++static const unsigned int sdhi0_data1_mux[] = {
++	SD0_DATA0_MARK,
++};
++static const unsigned int sdhi0_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 3),
++	RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 5),
++};
++static const unsigned int sdhi0_data4_mux[] = {
++	SD0_DATA0_MARK, SD0_DATA1_MARK, SD0_DATA2_MARK, SD0_DATA3_MARK,
++};
++static const unsigned int sdhi0_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 0), RCAR_GP_PIN(6, 1),
++};
++static const unsigned int sdhi0_ctrl_mux[] = {
++	SD0_CLK_MARK, SD0_CMD_MARK,
++};
++static const unsigned int sdhi0_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 6),
++};
++static const unsigned int sdhi0_cd_mux[] = {
++	SD0_CD_MARK,
++};
++static const unsigned int sdhi0_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int sdhi0_wp_mux[] = {
++	SD0_WP_MARK,
++};
++/* - SDHI1 ------------------------------------------------------------------ */
++static const unsigned int sdhi1_data1_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int sdhi1_data1_mux[] = {
++	SD1_DATA0_MARK,
++};
++static const unsigned int sdhi1_data4_pins[] = {
++	/* D[0:3] */
++	RCAR_GP_PIN(6, 10), RCAR_GP_PIN(6, 11),
++	RCAR_GP_PIN(6, 12), RCAR_GP_PIN(6, 13),
++};
++static const unsigned int sdhi1_data4_mux[] = {
++	SD1_DATA0_MARK, SD1_DATA1_MARK, SD1_DATA2_MARK, SD1_DATA3_MARK,
++};
++static const unsigned int sdhi1_ctrl_pins[] = {
++	/* CLK, CMD */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int sdhi1_ctrl_mux[] = {
++	SD1_CLK_MARK, SD1_CMD_MARK,
++};
++static const unsigned int sdhi1_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 14),
++};
++static const unsigned int sdhi1_cd_mux[] = {
++	SD1_CD_MARK,
++};
++static const unsigned int sdhi1_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 15),
++};
++static const unsigned int sdhi1_wp_mux[] = {
++	SD1_WP_MARK,
++};
++/* - SDHI2 ------------------------------------------------------------------ */
++static const unsigned int sdhi2_data1_pins[] = {
++	/* D0 */
 +	RCAR_GP_PIN(6, 18),
 +};
-+static const unsigned int mmc_data1_mux[] = {
-+	MMC_D0_MARK,
++static const unsigned int sdhi2_data1_mux[] = {
++	SD2_DATA0_MARK,
 +};
-+static const unsigned int mmc_data4_pins[] = {
++static const unsigned int sdhi2_data4_pins[] = {
 +	/* D[0:3] */
 +	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
 +	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
 +};
-+static const unsigned int mmc_data4_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
++static const unsigned int sdhi2_data4_mux[] = {
++	SD2_DATA0_MARK, SD2_DATA1_MARK, SD2_DATA2_MARK, SD2_DATA3_MARK,
 +};
-+static const unsigned int mmc_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
-+	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
-+	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int mmc_data8_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
-+};
-+static const unsigned int mmc_ctrl_pins[] = {
++static const unsigned int sdhi2_ctrl_pins[] = {
 +	/* CLK, CMD */
 +	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
 +};
-+static const unsigned int mmc_ctrl_mux[] = {
-+	MMC_CLK_MARK, MMC_CMD_MARK,
++static const unsigned int sdhi2_ctrl_mux[] = {
++	SD2_CLK_MARK, SD2_CMD_MARK,
 +};
- /* - MSIOF0 ----------------------------------------------------------------- */
- static const unsigned int msiof0_clk_pins[] = {
- 	/* SCK */
-@@ -2683,6 +2717,10 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(intc_irq7),
- 	SH_PFC_PIN_GROUP(intc_irq8),
- 	SH_PFC_PIN_GROUP(intc_irq9),
-+	SH_PFC_PIN_GROUP(mmc_data1),
-+	SH_PFC_PIN_GROUP(mmc_data4),
-+	SH_PFC_PIN_GROUP(mmc_data8),
-+	SH_PFC_PIN_GROUP(mmc_ctrl),
- 	SH_PFC_PIN_GROUP(msiof0_clk),
- 	SH_PFC_PIN_GROUP(msiof0_sync),
- 	SH_PFC_PIN_GROUP(msiof0_ss1),
-@@ -2869,6 +2907,13 @@ static const char * const intc_groups[]
- 	"intc_irq9",
++static const unsigned int sdhi2_cd_pins[] = {
++	/* CD */
++	RCAR_GP_PIN(6, 22),
++};
++static const unsigned int sdhi2_cd_mux[] = {
++	SD2_CD_MARK,
++};
++static const unsigned int sdhi2_wp_pins[] = {
++	/* WP */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int sdhi2_wp_mux[] = {
++	SD2_WP_MARK,
++};
+ 
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(eth_link),
+@@ -2819,6 +2930,21 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(scifb2_data),
+ 	SH_PFC_PIN_GROUP(scifb2_clk),
+ 	SH_PFC_PIN_GROUP(scifb2_ctrl),
++	SH_PFC_PIN_GROUP(sdhi0_data1),
++	SH_PFC_PIN_GROUP(sdhi0_data4),
++	SH_PFC_PIN_GROUP(sdhi0_ctrl),
++	SH_PFC_PIN_GROUP(sdhi0_cd),
++	SH_PFC_PIN_GROUP(sdhi0_wp),
++	SH_PFC_PIN_GROUP(sdhi1_data1),
++	SH_PFC_PIN_GROUP(sdhi1_data4),
++	SH_PFC_PIN_GROUP(sdhi1_ctrl),
++	SH_PFC_PIN_GROUP(sdhi1_cd),
++	SH_PFC_PIN_GROUP(sdhi1_wp),
++	SH_PFC_PIN_GROUP(sdhi2_data1),
++	SH_PFC_PIN_GROUP(sdhi2_data4),
++	SH_PFC_PIN_GROUP(sdhi2_ctrl),
++	SH_PFC_PIN_GROUP(sdhi2_cd),
++	SH_PFC_PIN_GROUP(sdhi2_wp),
  };
  
-+static const char * const mmc_groups[] = {
-+	"mmc_data1",
-+	"mmc_data4",
-+	"mmc_data8",
-+	"mmc_ctrl",
+ static const char * const eth_groups[] = {
+@@ -3069,6 +3195,30 @@ static const char * const scifb2_groups[
+ 	"scifb2_ctrl",
+ };
+ 
++static const char * const sdhi0_groups[] = {
++	"sdhi0_data1",
++	"sdhi0_data4",
++	"sdhi0_ctrl",
++	"sdhi0_cd",
++	"sdhi0_wp",
 +};
 +
- static const char * const msiof0_groups[] = {
- 	"msiof0_clk",
- 	"msiof0_sync",
-@@ -3035,6 +3080,7 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(i2c3),
- 	SH_PFC_FUNCTION(i2c4),
- 	SH_PFC_FUNCTION(intc),
-+	SH_PFC_FUNCTION(mmc),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
++static const char * const sdhi1_groups[] = {
++	"sdhi1_data1",
++	"sdhi1_data4",
++	"sdhi1_ctrl",
++	"sdhi1_cd",
++	"sdhi1_wp",
++};
++
++static const char * const sdhi2_groups[] = {
++	"sdhi2_data1",
++	"sdhi2_data4",
++	"sdhi2_ctrl",
++	"sdhi2_cd",
++	"sdhi2_wp",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(eth),
+ 	SH_PFC_FUNCTION(hscif0),
+@@ -3100,6 +3250,9 @@ static const struct sh_pfc_function pinm
+ 	SH_PFC_FUNCTION(scifb0),
+ 	SH_PFC_FUNCTION(scifb1),
+ 	SH_PFC_FUNCTION(scifb2),
++	SH_PFC_FUNCTION(sdhi0),
++	SH_PFC_FUNCTION(sdhi1),
++	SH_PFC_FUNCTION(sdhi2),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 
