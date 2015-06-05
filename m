@@ -1,62 +1,176 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFT v2 44/48] genirq,
- pinctrl: Kill the first parameter 'irq' of irq_flow_handler_t
-Date: Fri, 5 Jun 2015 12:08:06 +0900
-Message-ID: <CA+Ln22EHa-Bnybf2bd2-U1QvNOBThjpjj_uuz95aBAzniN2f1Q@mail.gmail.com>
-References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
- <1433391238-19471-45-git-send-email-jiang.liu@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1433391238-19471-45-git-send-email-jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, ACPI Devel Maling List <linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson@sonymobile>
+From: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+Subject: [PATCH] added device tree support to gpio-generic driver
+Date: Fri, 5 Jun 2015 08:51:02 +0200
+Message-ID: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>
+Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
+---
+ .../devicetree/bindings/gpio/gpio-generic.txt      |   19 +++++
+ drivers/gpio/gpio-generic.c                        |   81 ++++++++++++++-----
+ 2 files changed, 78 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-generic.txt
 
-2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>:
-> Now most IRQ flow handlers make no use of the first parameter 'irq'.
-> And for those who do make use of 'irq', we could easily get the irq
-> number through irq_desc->irq_data->irq. So kill the first parameter
-> 'irq' of irq_flow_handler_t.
->
-> To ease review, I have split the changes into several parts, though
-> they should be merge as one to support bisecting.
->
-> Signed-off-by: Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> ---
->  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c     |    2 +-
->  drivers/pinctrl/intel/pinctrl-baytrail.c      |    2 +-
->  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
->  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    2 +-
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |    4 ++--
->  drivers/pinctrl/pinctrl-adi2.c                |    3 +--
->  drivers/pinctrl/pinctrl-amd.c                 |    4 ++--
->  drivers/pinctrl/pinctrl-at91.c                |    2 +-
->  drivers/pinctrl/pinctrl-coh901.c              |    2 +-
->  drivers/pinctrl/pinctrl-rockchip.c            |    2 +-
->  drivers/pinctrl/pinctrl-single.c              |    2 +-
->  drivers/pinctrl/pinctrl-st.c                  |    4 ++--
->  drivers/pinctrl/qcom/pinctrl-msm.c            |    4 ++--
->  drivers/pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
->  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |    8 ++++----
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   10 +++++-----
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-generic.txt b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
+new file mode 100644
+index 0000000..c2c4b98
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
+@@ -0,0 +1,19 @@
++Bindings for gpio-generic
++
++Required properties:
++- compatible : "basic-mmio-gpio" for little endian register access or
++               "basic-mmio-gpio-be" for big endian register access
++- ngpios: Specifies the number of gpio mapped in the register. The value is
++          limited to the number of bits of the LONG type.
++
++Optional properties:
++- base: Allows to forces the gpio number base offset used to index the gpio in
++        the device. If it is not see then the driver search autonoumously for
++        valid index range.
++
++Examples:
++
++	gpio_a {
++		compatible = "basic-mmio-gpio";
++		ngpios = <32>;
++	};
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index b92a690..9a4354c 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -15,11 +15,11 @@
+  *  `.just a single "data" register, where GPIO state can be read and/or `
+  *    `,..written. ,,..``~~~~ .....``.`.`.~~.```.`.........``````.```````
+  *        `````````
+-                                    ___
+-_/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
+-__________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
+-o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+-                                                 `....trivial..'~`.```.```
++ *                                   ___
++ * _/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
++ * __________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
++ * o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
++ *                                                `....trivial..'~`.```.```
+  *                                                    ```````
+  *  .```````~~~~`..`.``.``.
+  * .  The driver supports  `...       ,..```.`~~~```````````````....````.``,,
+@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+ #include <linux/platform_device.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/basic_mmio_gpio.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
+ 
+ static void bgpio_write8(void __iomem *reg, unsigned long data)
+ {
+@@ -375,10 +377,9 @@ static int bgpio_setup_accessors(struct device *dev,
+ 			dev_err(dev,
+ 				"64 bit big endian byte order unsupported\n");
+ 			return -EINVAL;
+-		} else {
+-			bgc->read_reg	= bgpio_read64;
+-			bgc->write_reg	= bgpio_write64;
+ 		}
++		bgc->read_reg	= bgpio_read64;
++		bgc->write_reg	= bgpio_write64;
+ 		break;
+ #endif /* BITS_PER_LONG >= 64 */
+ 	default:
+@@ -564,6 +565,27 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+ 	return ret;
+ }
+ 
++static const struct platform_device_id bgpio_id_table[] = {
++	{ "basic-mmio-gpio",
++	  .driver_data	= 0,
++	}, { "basic-mmio-gpio-be",
++	  .driver_data	= BGPIOF_BIG_ENDIAN
++	},
++	{ },
++};
++MODULE_DEVICE_TABLE(platform, bgpio_id_table);
++
++static const struct of_device_id  bgpio_dt_ids[] = {
++	{ .compatible = "basic-mmio-gpio",
++	  .data = bgpio_id_table + 0
++	},
++	{ .compatible = "basic-mmio-gpio-be",
++	  .data = bgpio_id_table + 1
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, bgpio_dt_ids);
++
+ static int bgpio_pdev_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -574,10 +596,37 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+ 	void __iomem *dirout;
+ 	void __iomem *dirin;
+ 	unsigned long sz;
+-	unsigned long flags = pdev->id_entry->driver_data;
++	unsigned long flags;
+ 	int err;
+ 	struct bgpio_chip *bgc;
+-	struct bgpio_pdata *pdata = dev_get_platdata(dev);
++	struct bgpio_pdata *pdata;
++
++	if (of_have_populated_dt()) {
++		const struct of_device_id *of_id =
++			of_match_device(bgpio_dt_ids, dev);
++
++		pdata = devm_kzalloc(dev, sizeof(struct bgpio_pdata),
++				     GFP_KERNEL);
++		if (!pdata)
++			return -ENOMEM;
++
++		if (of_property_read_u32(dev->of_node, "ngpio",
++					 &pdata->ngpio)) {
++			dev_err(dev, "Failed to get field ngpio");
++			return -EINVAL;
++		}
++		if (of_property_read_u32(dev->of_node, "base", &pdata->base))
++			pdata->base = -1;
++
++		dev->platform_data = pdata;
++
++		if (of_id)
++			pdev->id_entry = of_id->data;
++	}
++
++	pdata = dev_get_platdata(dev);
++
++	flags = pdev->id_entry->driver_data;
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
+ 	if (!r)
+@@ -633,18 +682,6 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
+ 	return bgpio_remove(bgc);
+ }
+ 
+-static const struct platform_device_id bgpio_id_table[] = {
+-	{
+-		.name		= "basic-mmio-gpio",
+-		.driver_data	= 0,
+-	}, {
+-		.name		= "basic-mmio-gpio-be",
+-		.driver_data	= BGPIOF_BIG_ENDIAN,
+-	},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+-
+ static struct platform_driver bgpio_driver = {
+ 	.driver = {
+ 		.name = "basic-mmio-gpio",
+-- 
+1.7.1
 
-Assuming that it was properly compile tested, for Samsung stuff:
-
-Acked-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Best regards,
-Tomasz
+*********************************************************
+This message contains information that may be confidential and/or privileged and is intended only for the individual or entity named in the body of email above. If this message has been received in error, your receipt of this message is not intended to waive any applicable privilege. No one else may disclose, copy, distribute or use the contents of this message. Unauthorized use, dissemination and duplication is strictly prohibited, and may be unlawful.
