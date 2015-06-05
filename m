@@ -1,45 +1,32 @@
-From: Rabin Vincent <rabin@rab.in>
-Subject: Re: [PATCH] gpio: add ETRAXFS GPIO driver
-Date: Fri, 5 Jun 2015 21:36:31 +0200
-Message-ID: <20150605193631.GA28794@debian>
-References: <1431728843-21583-1-git-send-email-rabin@rab.in>
- <CACRpkdZcbvrcOMJavU5TacR1nD5+ot2FdC5zxBc=8XdhZN0SqQ@mail.gmail.com>
- <20150521184855.GA6159@debian>
- <CACRpkdabE5ztEDT8797iOO3fwDLgJOYyQp_cfjk7iDEAE+Uh8A@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v5 0/3] Add Renesas R8A7794 PFC support
+Date: Sat, 06 Jun 2015 01:32:21 +0300
+Message-ID: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:33428 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751327AbbFETgp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 15:36:45 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdabE5ztEDT8797iOO3fwDLgJOYyQp_cfjk7iDEAE+Uh8A@mail.gmail.com>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:35266 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbbFEWcZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 18:32:25 -0400
+Received: by lbbtu8 with SMTP id tu8so37872963lbb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 05 Jun 2015 15:32:24 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-On Mon, Jun 01, 2015 at 03:45:35PM +0200, Linus Walleij wrote:
-> There is also the code such as of_gpio_simple_xlate()
-> that can't be reused for this, so thus it needs its own xlate
-> function and adds some complexity to the code.
-> But the convention in of_gpio_simple_xlate() is that
-> cell 0 is offset, and cell 1 is flags, so what about
-> moving the bank number to the last argument so you
-> can still use of_gpio_simple_xlate()?
-> 
-> Like so:
-> gpios = <&gio 5 0 0xD>, <&gio 6 0 0xD>;
-> 
-> I.e. extra cells go at the end. I can see you have a check
-> hack to see it is hitting a valid GPIO chip by using the label,
-> but that doesn't seem totally necessary.
+Hello.
 
-That code is quite necessary, because that is what makes us bind to the
-correct gpio chip.  The wrong gpio chips' xlate() return an error code
-and the code in of_gpiochip_find_and_xlate() makes sure we look through
-the rest of the chips in the OF node until we find the right one.
+   Here's the set of 3 patches against the 'devel' branch of Linus Walleij's
+'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
+SoC. The patches teaching the PFC driver to deal with "holes" in the pin array
+are necessary for these patches to work (I didn't create a single series due to
+the different patch versions of these 2 series).
 
-But the xlate function can change the order as you suggest and use
-of_gpio_simple_xlate() as a helper.  I'll make it do that.
+[1/3] sh-pfc: add R8A7794 PFC support
+[2/3] sh-pfc: r8a7794: add MMCIF pin groups
+[3/3] sh-pfc: r8a7794: add SDHI pin groups
+
+WBR, Sergei
+
