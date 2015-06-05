@@ -1,176 +1,32 @@
-From: Romain Baeriswyl <romain.baeriswyl@alitech.com>
-Subject: [PATCH] added device tree support to gpio-generic driver
-Date: Fri, 5 Jun 2015 08:51:02 +0200
-Message-ID: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>
-Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gYWRkZWQgZGV2aWNlIHRyZWUgc3VwcG9ydCB0byBncGlv?=
+ =?UTF-8?B?LWdlbmVyaWMgZHJpdmVy?=
+Date: Fri, 05 Jun 2015 10:17:27 +0300
+Message-ID: <1433488647.404966286@f385.i.mail.ru>
+References: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fallback2.mail.ru ([94.100.179.22]:40138 "EHLO
+	fallback2.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149AbbFEHlG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 03:41:06 -0400
+In-Reply-To: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?B?Um9tYWluIEJhZXJpc3d5bA==?= <romain.baeriswyl@alitech.com>
+Cc: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>, =?UTF-8?B?QWxleGFuZHJlIENvdXJib3Q=?= <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Q2hyaXN0aWFuIFJ1cHBlcnQ=?= <christian.ruppert@alitech.com>, =?UTF-8?B?QW50b24gVm9yb250c292?= <cbouatmailru@gmail.com>, =?UTF-8?B?Um9qaGFsYXQgSWJyYWhpbQ==?= <imr@rtschenk.de>, =?UTF-8?B?YWJkb3VsYXllIGJlcnRoZQ==?= <berthe.ab@gmail.com>, =?UTF-8?B?QW50aG9ueSBGZWU=?= <anthony.fee@emutex.com>
 
----
- .../devicetree/bindings/gpio/gpio-generic.txt      |   19 +++++
- drivers/gpio/gpio-generic.c                        |   81 ++++++++++++++-----
- 2 files changed, 78 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-generic.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-generic.txt b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
-new file mode 100644
-index 0000000..c2c4b98
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
-@@ -0,0 +1,19 @@
-+Bindings for gpio-generic
-+
-+Required properties:
-+- compatible : "basic-mmio-gpio" for little endian register access or
-+               "basic-mmio-gpio-be" for big endian register access
-+- ngpios: Specifies the number of gpio mapped in the register. The value is
-+          limited to the number of bits of the LONG type.
-+
-+Optional properties:
-+- base: Allows to forces the gpio number base offset used to index the gpio in
-+        the device. If it is not see then the driver search autonoumously for
-+        valid index range.
-+
-+Examples:
-+
-+	gpio_a {
-+		compatible = "basic-mmio-gpio";
-+		ngpios = <32>;
-+	};
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index b92a690..9a4354c 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -15,11 +15,11 @@
-  *  `.just a single "data" register, where GPIO state can be read and/or `
-  *    `,..written. ,,..``~~~~ .....``.`.`.~~.```.`.........``````.```````
-  *        `````````
--                                    ___
--_/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
--__________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
--o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
--                                                 `....trivial..'~`.```.```
-+ *                                   ___
-+ * _/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
-+ * __________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
-+ * o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
-+ *                                                `....trivial..'~`.```.```
-  *                                                    ```````
-  *  .```````~~~~`..`.``.``.
-  * .  The driver supports  `...       ,..```.`~~~```````````````....````.``,,
-@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
- #include <linux/platform_device.h>
- #include <linux/mod_devicetable.h>
- #include <linux/basic_mmio_gpio.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
- 
- static void bgpio_write8(void __iomem *reg, unsigned long data)
- {
-@@ -375,10 +377,9 @@ static int bgpio_setup_accessors(struct device *dev,
- 			dev_err(dev,
- 				"64 bit big endian byte order unsupported\n");
- 			return -EINVAL;
--		} else {
--			bgc->read_reg	= bgpio_read64;
--			bgc->write_reg	= bgpio_write64;
- 		}
-+		bgc->read_reg	= bgpio_read64;
-+		bgc->write_reg	= bgpio_write64;
- 		break;
- #endif /* BITS_PER_LONG >= 64 */
- 	default:
-@@ -564,6 +565,27 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
- 	return ret;
- }
- 
-+static const struct platform_device_id bgpio_id_table[] = {
-+	{ "basic-mmio-gpio",
-+	  .driver_data	= 0,
-+	}, { "basic-mmio-gpio-be",
-+	  .driver_data	= BGPIOF_BIG_ENDIAN
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(platform, bgpio_id_table);
-+
-+static const struct of_device_id  bgpio_dt_ids[] = {
-+	{ .compatible = "basic-mmio-gpio",
-+	  .data = bgpio_id_table + 0
-+	},
-+	{ .compatible = "basic-mmio-gpio-be",
-+	  .data = bgpio_id_table + 1
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bgpio_dt_ids);
-+
- static int bgpio_pdev_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -574,10 +596,37 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 	void __iomem *dirout;
- 	void __iomem *dirin;
- 	unsigned long sz;
--	unsigned long flags = pdev->id_entry->driver_data;
-+	unsigned long flags;
- 	int err;
- 	struct bgpio_chip *bgc;
--	struct bgpio_pdata *pdata = dev_get_platdata(dev);
-+	struct bgpio_pdata *pdata;
-+
-+	if (of_have_populated_dt()) {
-+		const struct of_device_id *of_id =
-+			of_match_device(bgpio_dt_ids, dev);
-+
-+		pdata = devm_kzalloc(dev, sizeof(struct bgpio_pdata),
-+				     GFP_KERNEL);
-+		if (!pdata)
-+			return -ENOMEM;
-+
-+		if (of_property_read_u32(dev->of_node, "ngpio",
-+					 &pdata->ngpio)) {
-+			dev_err(dev, "Failed to get field ngpio");
-+			return -EINVAL;
-+		}
-+		if (of_property_read_u32(dev->of_node, "base", &pdata->base))
-+			pdata->base = -1;
-+
-+		dev->platform_data = pdata;
-+
-+		if (of_id)
-+			pdev->id_entry = of_id->data;
-+	}
-+
-+	pdata = dev_get_platdata(dev);
-+
-+	flags = pdev->id_entry->driver_data;
- 
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
- 	if (!r)
-@@ -633,18 +682,6 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
- 	return bgpio_remove(bgc);
- }
- 
--static const struct platform_device_id bgpio_id_table[] = {
--	{
--		.name		= "basic-mmio-gpio",
--		.driver_data	= 0,
--	}, {
--		.name		= "basic-mmio-gpio-be",
--		.driver_data	= BGPIOF_BIG_ENDIAN,
--	},
--	{ }
--};
--MODULE_DEVICE_TABLE(platform, bgpio_id_table);
--
- static struct platform_driver bgpio_driver = {
- 	.driver = {
- 		.name = "basic-mmio-gpio",
--- 
-1.7.1
-
-*********************************************************
-This message contains information that may be confidential and/or privileged and is intended only for the individual or entity named in the body of email above. If this message has been received in error, your receipt of this message is not intended to waive any applicable privilege. No one else may disclose, copy, distribute or use the contents of this message. Unauthorized use, dissemination and duplication is strictly prohibited, and may be unlawful.
+0J/Rj9GC0L3QuNGG0LAsICA1INC40Y7QvdGPIDIwMTUsIDg6NTEgKzAyOjAwINC+0YIgUm9tYWlu
+IEJhZXJpc3d5bCA8cm9tYWluLmJhZXJpc3d5bEBhbGl0ZWNoLmNvbT46Cj4gLS0tCj4gIC4uLi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby1nZW5lcmljLnR4dCAgICAgIHwgICAxOSArKysr
+Kwo+ICBkcml2ZXJzL2dwaW8vZ3Bpby1nZW5lcmljLmMgICAgICAgICAgICAgICAgICAgICAgICB8
+ICAgODEgKysrKysrKysrKysrKystLS0tLQo+ICAyIGZpbGVzIGNoYW5nZWQsIDc4IGluc2VydGlv
+bnMoKyksIDIyIGRlbGV0aW9ucygtKQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby1nZW5lcmljLnR4dAoKSGVsbG8uCgouLi4K
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncGlvL2dwaW8tZ2VuZXJpYy5jIGIvZHJpdmVycy9ncGlv
+L2dwaW8tZ2VuZXJpYy5jCi4uLgo+ICsJCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3UzMihkZXYtPm9m
+X25vZGUsICJiYXNlIiwgJnBkYXRhLT5iYXNlKSkKPiArCQkJcGRhdGEtPmJhc2UgPSAtMTsKClRo
+ZSAiYmFzZSIgcHJvcGVydHkgaXMgZXhjZXNzaXZlIGZvciBEVC4KCi0tLQoK
