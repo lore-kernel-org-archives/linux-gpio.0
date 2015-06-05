@@ -1,32 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
-Date: Fri, 05 Jun 2015 14:50:18 +0200
-Message-ID: <2953428.ar7Re29b0L@wuerfel>
-References: <1433402712-21399-1-git-send-email-yvo@apm.com>
+From: Rabin Vincent <rabin@rab.in>
+Subject: Re: [PATCH] gpio: add ETRAXFS GPIO driver
+Date: Fri, 5 Jun 2015 21:36:31 +0200
+Message-ID: <20150605193631.GA28794@debian>
+References: <1431728843-21583-1-git-send-email-rabin@rab.in>
+ <CACRpkdZcbvrcOMJavU5TacR1nD5+ot2FdC5zxBc=8XdhZN0SqQ@mail.gmail.com>
+ <20150521184855.GA6159@debian>
+ <CACRpkdabE5ztEDT8797iOO3fwDLgJOYyQp_cfjk7iDEAE+Uh8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:62120 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbbFEMvM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 08:51:12 -0400
-In-Reply-To: <1433402712-21399-1-git-send-email-yvo@apm.com>
+Received: from mail-wi0-f182.google.com ([209.85.212.182]:33428 "EHLO
+	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327AbbFETgp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 5 Jun 2015 15:36:45 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdabE5ztEDT8797iOO3fwDLgJOYyQp_cfjk7iDEAE+Uh8A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, patches@apm.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thursday 04 June 2015 14:25:12 Y Vo wrote:
-> GIC is designed to support two of trigger mechanisms - active level
-> high or edge rising. But in the gpio_keys driver, it tries to use both
-> edge rising and edge falling trigger. This patch fixes the gpio_keys
-> driver to request only the edge rising event when failed to configure the
-> interrupt.
+On Mon, Jun 01, 2015 at 03:45:35PM +0200, Linus Walleij wrote:
+> There is also the code such as of_gpio_simple_xlate()
+> that can't be reused for this, so thus it needs its own xlate
+> function and adds some complexity to the code.
+> But the convention in of_gpio_simple_xlate() is that
+> cell 0 is offset, and cell 1 is flags, so what about
+> moving the bank number to the last argument so you
+> can still use of_gpio_simple_xlate()?
 > 
-> Signed-off-by: Y Vo <yvo@apm.com>
+> Like so:
+> gpios = <&gio 5 0 0xD>, <&gio 6 0 0xD>;
+> 
+> I.e. extra cells go at the end. I can see you have a check
+> hack to see it is hitting a valid GPIO chip by using the label,
+> but that doesn't seem totally necessary.
 
-I think you want to use an 'interrupts' property instead of a 'gpios'
-property (or possibly both), so you can pass the right polarity.
+That code is quite necessary, because that is what makes us bind to the
+correct gpio chip.  The wrong gpio chips' xlate() return an error code
+and the code in of_gpiochip_find_and_xlate() makes sure we look through
+the rest of the chips in the OF node until we find the right one.
 
-	Arnd
+But the xlate function can change the order as you suggest and use
+of_gpio_simple_xlate() as a helper.  I'll make it do that.
