@@ -1,124 +1,46 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: Calling irq_set_irq_wake() from .set_irq_wake()?
-Date: Fri, 5 Jun 2015 05:35:43 +0300
-Message-ID: <20150605053543.3b10d605@rockdesk>
-References: <CAMuHMdXYPcQNCHhGa5kC8omtBw_O=Ua+rRJ+gh3tc6dY0oC5JA@mail.gmail.com>
-	<alpine.DEB.2.11.1505181626060.4225@nanos>
-	<5559FCC0.2050302@linaro.org>
-	<CAMuHMdX7exSoJdnLD9_5ZB3Xmbxud+gPbcy2XJZv6hu9MEvEFg@mail.gmail.com>
-	<556F5B0F.7040603@ti.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFT v2 06/48] pinctrl: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Fri, 5 Jun 2015 12:06:06 +0900
+Message-ID: <CA+Ln22Euot24co7qKLTej43j3Z2BS-p5WhjRq9WgRb-+U=Tyqw@mail.gmail.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+	<1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:52488 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753546AbbFECgM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 4 Jun 2015 22:36:12 -0400
-In-Reply-To: <556F5B0F.7040603@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433391238-19471-7-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Heiko Stuebner <heiko@sntech.de>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Barry
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
 Hi,
 
-On Wed, 3 Jun 2015 22:52:47 +0300
-Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+2015-06-04 13:13 GMT+09:00 Jiang Liu <jiang.liu@linux.intel.com>:
+> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+> already have a pointer to corresponding irq_desc.
+>
+> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/pinctrl/intel/pinctrl-cherryview.c    |    2 +-
+>  drivers/pinctrl/intel/pinctrl-intel.c         |    2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    4 ++--
+>  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |   12 +++++-------
+>  drivers/pinctrl/pinctrl-amd.c                 |    2 +-
+>  drivers/pinctrl/pinctrl-at91.c                |    2 +-
+>  drivers/pinctrl/pinctrl-coh901.c              |    4 ++--
+>  drivers/pinctrl/pinctrl-rockchip.c            |    4 ++--
+>  drivers/pinctrl/pinctrl-single.c              |    2 +-
+>  drivers/pinctrl/pinctrl-st.c                  |    6 +++---
+>  drivers/pinctrl/qcom/pinctrl-msm.c            |    2 +-
+>  drivers/pinctrl/samsung/pinctrl-exynos.c      |    8 ++++----
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c     |   18 +++++++++---------
+>  drivers/pinctrl/samsung/pinctrl-s3c64xx.c     |   22 ++++++++++------------
 
-> Hi Geert,
-> 
-> On 05/19/2015 12:38 PM, Geert Uytterhoeven wrote:
-> > On Mon, May 18, 2015 at 4:52 PM, Grygorii.Strashko@linaro.org
-> > <grygorii.strashko@linaro.org> wrote:
-> >> On 05/18/2015 05:31 PM, Thomas Gleixner wrote:
-> >>> On Sun, 17 May 2015, Geert Uytterhoeven wrote:
-> >>>>>>> At least the recursive locking message no longer appears after the revert.
-> >>>>>>>
-> >>>>>>> [   30.591905] PM: Syncing filesystems ... done.
-> >>>>>>> [   30.623060] Freezing user space processes ... (elapsed 0.003 seconds) done.
-> >>>>>>> [   30.634470] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
-> >>>>>>> [   30.658288] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-> >>>>>>> [   30.663678]
-> >>>>>>> [   30.663681] =============================================
-> >>>>>>> [   30.663683] [ INFO: possible recursive locking detected ]
-> >>>>>>> [   30.663688] 4.1.0-rc3 #1115 Not tainted
-> >>>>>>> [   30.663693] ---------------------------------------------
-> >>>>>>> [   30.663697] suspend.sh/2319 is trying to acquire lock:
-> >>>>>>> [   30.663719]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
-> >>>>>>> [   30.663722]
-> >>>>>>> [   30.663722] but task is already holding lock:
-> >>>>>>> [   30.663734]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
-> >>>>>>
-> >>>>>> Does this mean .set_irq_wake() cannot call irq_set_irq_wake()?
-> >>>
-> >>> It can call it, if it's guaranteed that this wont deadlock.
-> >>>
-> >>> To tell lockdep that you sure about that, you need to set a different
-> >>> lock class for the child interrupts. irq_set_lockdep_class() is what
-> >>> you want to use here.
-> >>
-> >> Hm. Seems we already have corresponding call in gpiochip_irq_map:
-> >>
-> >>   static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-> >>                              irq_hw_number_t hwirq)
-> >> {
-> >>          struct gpio_chip *chip = d->host_data;
-> >>
-> >>          irq_set_chip_data(irq, chip);
-> >>          irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
-> >> ^^^^
-> > 
-> > That piece of code sets the lockdep class of the gpiochip's interrupts, not
-> > the parent interrupt.
-> > 
-> > Found out the hard way by adding some debug code ;-)
-> [..]
-> > 
-> > However, I cannot reproduce the problem on sh73a0/kzm9g with
-> > s2ram on a current tree (renesas-drivers-2015-05-19-v4.1-rc4 from
-> > (https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git), using
-> > 
-> > CONFIG_LOCKDEP_SUPPORT=y
-> > CONFIG_LOCKDEP=y
-> > CONFIG_DEBUG_LOCKDEP=y
-> > CONFIG_PROVE_LOCKING=y
-> > 
-> > Wake-up from gpio-keys works fine, no scary messages.
-> > 
-> >> commit e45d1c80c0eee88e82751461e9cac49d9ed287bc
-> >> Author: Linus Walleij <linus.walleij@linaro.org>
-> >> Date:   Tue Apr 22 14:01:46 2014 +0200
-> >>
-> >>      gpio: put GPIO IRQs into their own lock clas
-> >>
-> >> added in Kernel v3.16
-> >>
-> >> Roger, can you confirm that you've observed this issue with latest kernel, pls?
-> > 
-> > Yes please. Thanks!
+For Samsung stuff:
 
-Issue is reproducible on v4.1-rc6
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-> 
-> Unfortunately, I was able to reproduce it, but have no clue how to fix it gracefully.
-> lockdep_set_class_and_subclass(..,gpio_chip->base)?
-> 
-> HW configuration which generates lockdep warning:
-> 
-> [SOC GPIO bankA.gpioX] <- irq - [pcf875x.gpioY] <- irq - DevZ.enable_irq_wake(pcf_gpioY_irq);
-> 
-> There stacked GPIO chips, but gpiolib uses only one lockdep class for all GPIOirqchips -
-> - gpiochip_irq_lock_class.
-
-If this is a gpiolib core issue are we (dra7-evm) the only stacked GPIO users facing
-this problem?
-
-Linus/Alexandre/Geert,
-
-Please advise what can be done for v4.1. The warning is annoying for dra7-evm users.
-Should we temporarily revert the patch even though it is correct and add it back when the
-gpiolib core issue is fixed?
-
-cheers,
--roger
+Best regards,
+Tomasz
