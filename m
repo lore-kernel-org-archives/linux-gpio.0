@@ -1,142 +1,271 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: Calling irq_set_irq_wake() from .set_irq_wake()?
-Date: Sat, 6 Jun 2015 10:16:47 +0200
-Message-ID: <CAMuHMdU99WKFKWMN-6J06U8pWVbWPKUhH7xXtmwnOg_OfyUcSw@mail.gmail.com>
-References: <CAMuHMdXYPcQNCHhGa5kC8omtBw_O=Ua+rRJ+gh3tc6dY0oC5JA@mail.gmail.com>
-	<alpine.DEB.2.11.1505181626060.4225@nanos>
-	<5559FCC0.2050302@linaro.org>
-	<CAMuHMdX7exSoJdnLD9_5ZB3Xmbxud+gPbcy2XJZv6hu9MEvEFg@mail.gmail.com>
-	<556F5B0F.7040603@ti.com>
-	<20150605053543.3b10d605@rockdesk>
-	<55717023.2090908@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Rabin Vincent <rabin@rab.in>
+Subject: [PATCHv3] gpio: add ETRAXFS GPIO driver
+Date: Sat,  6 Jun 2015 22:30:40 +0200
+Message-ID: <1433622640-26231-1-git-send-email-rabin@rab.in>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:36278 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750952AbbFFIQs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Jun 2015 04:16:48 -0400
-In-Reply-To: <55717023.2090908@ti.com>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:37651 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752875AbbFFUaz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 6 Jun 2015 16:30:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Roger Quadros <rogerq@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin@rab.in>
 
-On Fri, Jun 5, 2015 at 11:47 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 06/05/2015 05:35 AM, Roger Quadros wrote:
->> On Wed, 3 Jun 2015 22:52:47 +0300
->> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
->>> On 05/19/2015 12:38 PM, Geert Uytterhoeven wrote:
->>>> On Mon, May 18, 2015 at 4:52 PM, Grygorii.Strashko@linaro.org
->>>> <grygorii.strashko@linaro.org> wrote:
->>>>> On 05/18/2015 05:31 PM, Thomas Gleixner wrote:
->>>>>> On Sun, 17 May 2015, Geert Uytterhoeven wrote:
->>>>>>>>>> At least the recursive locking message no longer appears after the revert.
->>>>>>>>>>
->>>>>>>>>> [   30.591905] PM: Syncing filesystems ... done.
->>>>>>>>>> [   30.623060] Freezing user space processes ... (elapsed 0.003 seconds) done.
->>>>>>>>>> [   30.634470] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
->>>>>>>>>> [   30.658288] sd 0:0:0:0: [sda] Synchronizing SCSI cache
->>>>>>>>>> [   30.663678]
->>>>>>>>>> [   30.663681] =============================================
->>>>>>>>>> [   30.663683] [ INFO: possible recursive locking detected ]
->>>>>>>>>> [   30.663688] 4.1.0-rc3 #1115 Not tainted
->>>>>>>>>> [   30.663693] ---------------------------------------------
->>>>>>>>>> [   30.663697] suspend.sh/2319 is trying to acquire lock:
->>>>>>>>>> [   30.663719]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
->>>>>>>>>> [   30.663722]
->>>>>>>>>> [   30.663722] but task is already holding lock:
->>>>>>>>>> [   30.663734]  (class){......}, at: [<c0096ebc>] __irq_get_desc_lock+0x48/0x88
->>>>>>>>>
->>>>>>>>> Does this mean .set_irq_wake() cannot call irq_set_irq_wake()?
->>>>>>
->>>>>> It can call it, if it's guaranteed that this wont deadlock.
->>>>>>
->>>>>> To tell lockdep that you sure about that, you need to set a different
->>>>>> lock class for the child interrupts. irq_set_lockdep_class() is what
->>>>>> you want to use here.
->>>>>
->>>>> Hm. Seems we already have corresponding call in gpiochip_irq_map:
->>>>>
->>>>>    static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
->>>>>                               irq_hw_number_t hwirq)
->>>>> {
->>>>>           struct gpio_chip *chip = d->host_data;
->>>>>
->>>>>           irq_set_chip_data(irq, chip);
->>>>>           irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
->>>>> ^^^^
->>>>
->>>> That piece of code sets the lockdep class of the gpiochip's interrupts, not
->>>> the parent interrupt.
->>>>
->>>> Found out the hard way by adding some debug code ;-)
->>> [..]
->>>>
->>>> However, I cannot reproduce the problem on sh73a0/kzm9g with
->>>> s2ram on a current tree (renesas-drivers-2015-05-19-v4.1-rc4 from
->>>> (https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git), using
->>>>
->>>> CONFIG_LOCKDEP_SUPPORT=y
->>>> CONFIG_LOCKDEP=y
->>>> CONFIG_DEBUG_LOCKDEP=y
->>>> CONFIG_PROVE_LOCKING=y
->>>>
->>>> Wake-up from gpio-keys works fine, no scary messages.
->>>>
->>>>> commit e45d1c80c0eee88e82751461e9cac49d9ed287bc
->>>>> Author: Linus Walleij <linus.walleij@linaro.org>
->>>>> Date:   Tue Apr 22 14:01:46 2014 +0200
->>>>>
->>>>>       gpio: put GPIO IRQs into their own lock clas
->>>>>
->>>>> added in Kernel v3.16
->>>>>
->>>>> Roger, can you confirm that you've observed this issue with latest kernel, pls?
->>>>
->>>> Yes please. Thanks!
->>
->> Issue is reproducible on v4.1-rc6
->>
->>>
->>> Unfortunately, I was able to reproduce it, but have no clue how to fix it gracefully.
->>> lockdep_set_class_and_subclass(..,gpio_chip->base)?
->>>
->>> HW configuration which generates lockdep warning:
->>>
->>> [SOC GPIO bankA.gpioX] <- irq - [pcf875x.gpioY] <- irq - DevZ.enable_irq_wake(pcf_gpioY_irq);
->>>
->>> There stacked GPIO chips, but gpiolib uses only one lockdep class for all GPIOirqchips -
->>> - gpiochip_irq_lock_class.
->>
->> If this is a gpiolib core issue are we (dra7-evm) the only stacked GPIO users facing
->> this problem?
->>
->> Linus/Alexandre/Geert,
->>
->> Please advise what can be done for v4.1. The warning is annoying for dra7-evm users.
->> Should we temporarily revert the patch even though it is correct and add it back when the
->> gpiolib core issue is fixed?
->
-> No. Pls. don't do that. See https://lkml.org/lkml/2015/6/3/965
+Add a GPIO driver for the General I/O block on Axis ETRAX FS SoCs.
 
-I'm about to leave for a business trip to Japan. I will give it a try when I'm
-back home.
+Signed-off-by: Rabin Vincent <rabin@rab.in>
+---
+v3: Move port number to last cell and use of_gpio_simple_xlate().
 
-> Simple revert is not good solution.
->
-> Probably we need to allow GPIO drivers to specify own lockdep class somehow.
+ .../devicetree/bindings/gpio/gpio-etraxfs.txt      |  21 +++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-etraxfs.c                        | 176 +++++++++++++++++++++
+ 4 files changed, 206 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
+ create mode 100644 drivers/gpio/gpio-etraxfs.c
 
-Indeed.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt b/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
+new file mode 100644
+index 0000000..abf4db7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
+@@ -0,0 +1,21 @@
++Axis ETRAX FS General I/O controller bindings
++
++Required properties:
++
++- compatible:
++  - "axis,etraxfs-gio"
++- reg: Physical base address and length of the controller's registers.
++- #gpio-cells: Should be 3
++  - The first cell is the gpio offset number.
++  - The second cell is reserved and is currently unused.
++  - The third cell is the port number (hex).
++- gpio-controller: Marks the device node as a GPIO controller.
++
++Example:
++
++	gio: gpio@b001a000 {
++		compatible = "axis,etraxfs-gio";
++		reg = <0xb001a000 0x1000>;
++		gpio-controller;
++		#gpio-cells = <3>;
++	};
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index caefe80..fe0b9da 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -159,6 +159,14 @@ config GPIO_EP93XX
+ 	depends on ARCH_EP93XX
+ 	select GPIO_GENERIC
+ 
++config GPIO_ETRAXFS
++	bool "Axis ETRAX FS General I/O"
++	depends on CRIS || COMPILE_TEST
++	depends on OF
++	select GPIO_GENERIC
++	help
++	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
++
+ config GPIO_F7188X
+ 	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
+ 	depends on X86
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index f71bb97..4f816ec 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_GPIO_DLN2)		+= gpio-dln2.o
+ obj-$(CONFIG_GPIO_DWAPB)	+= gpio-dwapb.o
+ obj-$(CONFIG_GPIO_EM)		+= gpio-em.o
+ obj-$(CONFIG_GPIO_EP93XX)	+= gpio-ep93xx.o
++obj-$(CONFIG_GPIO_ETRAXFS)	+= gpio-etraxfs.o
+ obj-$(CONFIG_GPIO_F7188X)	+= gpio-f7188x.o
+ obj-$(CONFIG_GPIO_GE_FPGA)	+= gpio-ge.o
+ obj-$(CONFIG_GPIO_GRGPIO)	+= gpio-grgpio.o
+diff --git a/drivers/gpio/gpio-etraxfs.c b/drivers/gpio/gpio-etraxfs.c
+new file mode 100644
+index 0000000..28071f4
+--- /dev/null
++++ b/drivers/gpio/gpio-etraxfs.c
+@@ -0,0 +1,176 @@
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/gpio.h>
++#include <linux/of_gpio.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
++#include <linux/basic_mmio_gpio.h>
++
++#define ETRAX_FS_rw_pa_dout	0
++#define ETRAX_FS_r_pa_din	4
++#define ETRAX_FS_rw_pa_oe	8
++#define ETRAX_FS_rw_intr_cfg	12
++#define ETRAX_FS_rw_intr_mask	16
++#define ETRAX_FS_rw_ack_intr	20
++#define ETRAX_FS_r_intr		24
++#define ETRAX_FS_rw_pb_dout	32
++#define ETRAX_FS_r_pb_din	36
++#define ETRAX_FS_rw_pb_oe	40
++#define ETRAX_FS_rw_pc_dout	48
++#define ETRAX_FS_r_pc_din	52
++#define ETRAX_FS_rw_pc_oe	56
++#define ETRAX_FS_rw_pd_dout	64
++#define ETRAX_FS_r_pd_din	68
++#define ETRAX_FS_rw_pd_oe	72
++#define ETRAX_FS_rw_pe_dout	80
++#define ETRAX_FS_r_pe_din	84
++#define ETRAX_FS_rw_pe_oe	88
++
++struct etraxfs_gpio_port {
++	const char *label;
++	unsigned int oe;
++	unsigned int dout;
++	unsigned int din;
++	unsigned int ngpio;
++};
++
++struct etraxfs_gpio_info {
++	unsigned int num_ports;
++	const struct etraxfs_gpio_port *ports;
++};
++
++static const struct etraxfs_gpio_port etraxfs_gpio_etraxfs_ports[] = {
++	{
++		.label	= "A",
++		.ngpio	= 8,
++		.oe	= ETRAX_FS_rw_pa_oe,
++		.dout	= ETRAX_FS_rw_pa_dout,
++		.din	= ETRAX_FS_r_pa_din,
++	},
++	{
++		.label	= "B",
++		.ngpio	= 18,
++		.oe	= ETRAX_FS_rw_pb_oe,
++		.dout	= ETRAX_FS_rw_pb_dout,
++		.din	= ETRAX_FS_r_pb_din,
++	},
++	{
++		.label	= "C",
++		.ngpio	= 18,
++		.oe	= ETRAX_FS_rw_pc_oe,
++		.dout	= ETRAX_FS_rw_pc_dout,
++		.din	= ETRAX_FS_r_pc_din,
++	},
++	{
++		.label	= "D",
++		.ngpio	= 18,
++		.oe	= ETRAX_FS_rw_pd_oe,
++		.dout	= ETRAX_FS_rw_pd_dout,
++		.din	= ETRAX_FS_r_pd_din,
++	},
++	{
++		.label	= "E",
++		.ngpio	= 18,
++		.oe	= ETRAX_FS_rw_pe_oe,
++		.dout	= ETRAX_FS_rw_pe_dout,
++		.din	= ETRAX_FS_r_pe_din,
++	},
++};
++
++static const struct etraxfs_gpio_info etraxfs_gpio_etraxfs = {
++	.num_ports = ARRAY_SIZE(etraxfs_gpio_etraxfs_ports),
++	.ports = etraxfs_gpio_etraxfs_ports,
++};
++
++static int etraxfs_gpio_of_xlate(struct gpio_chip *gc,
++			       const struct of_phandle_args *gpiospec,
++			       u32 *flags)
++{
++	/*
++	 * Port numbers are A to E, and the properties are integers, so we
++	 * specify them as 0xA - 0xE.
++	 */
++	if (gc->label[0] - 'A' + 0xA != gpiospec->args[2])
++		return -EINVAL;
++
++	return of_gpio_simple_xlate(gc, gpiospec, flags);
++}
++
++static const struct of_device_id etraxfs_gpio_of_table[] = {
++	{
++		.compatible = "axis,etraxfs-gio",
++		.data = &etraxfs_gpio_etraxfs,
++	},
++	{},
++};
++
++static int etraxfs_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct etraxfs_gpio_info *info;
++	const struct of_device_id *match;
++	struct bgpio_chip *chips;
++	struct resource *res;
++	void __iomem *regs;
++	int ret;
++	int i;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (!regs)
++		return -ENOMEM;
++
++	match = of_match_node(etraxfs_gpio_of_table, dev->of_node);
++	if (!match)
++		return -EINVAL;
++
++	info = match->data;
++
++	chips = devm_kzalloc(dev, sizeof(*chips) * info->num_ports, GFP_KERNEL);
++	if (!chips)
++		return -ENOMEM;
++
++	for (i = 0; i < info->num_ports; i++) {
++		struct bgpio_chip *bgc = &chips[i];
++		const struct etraxfs_gpio_port *port = &info->ports[i];
++
++		ret = bgpio_init(bgc, dev, 4,
++				 regs + port->din,	/* dat */
++				 regs + port->dout,	/* set */
++				 NULL,			/* clr */
++				 regs + port->oe,	/* dirout */
++				 NULL,			/* dirin */
++				 BGPIOF_UNREADABLE_REG_SET);
++		if (ret)
++			return ret;
++
++		bgc->gc.ngpio = port->ngpio;
++		bgc->gc.label = port->label;
++
++		bgc->gc.of_node = dev->of_node;
++		bgc->gc.of_gpio_n_cells = 3;
++		bgc->gc.of_xlate = etraxfs_gpio_of_xlate;
++
++		ret = gpiochip_add(&bgc->gc);
++		if (ret)
++			dev_err(dev, "Unable to register port %s\n",
++				bgc->gc.label);
++	}
++
++	return 0;
++}
++
++static struct platform_driver etraxfs_gpio_driver = {
++	.driver = {
++		.name		= "etraxfs-gpio",
++		.of_match_table = of_match_ptr(etraxfs_gpio_of_table),
++	},
++	.probe	= etraxfs_gpio_probe,
++};
++
++static int __init etraxfs_gpio_init(void)
++{
++	return platform_driver_register(&etraxfs_gpio_driver);
++}
++
++device_initcall(etraxfs_gpio_init);
+-- 
+2.1.4
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
