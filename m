@@ -1,64 +1,223 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
-Date: Mon, 8 Jun 2015 09:48:29 +0700
-Message-ID: <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
-References: <1433402712-21399-1-git-send-email-yvo@apm.com>
-	<2953428.ar7Re29b0L@wuerfel>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] added device tree support to gpio-generic driver
+Date: Mon, 8 Jun 2015 13:19:58 +0900
+Message-ID: <CAAVeFuKRbFpw0_nyQy-nG9mx33FM59FJvwJ4r24=qaZcetuqRA@mail.gmail.com>
+References: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from exprod5og105.obsmtp.com ([64.18.0.180]:49927 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750769AbbFHCsb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Jun 2015 22:48:31 -0400
-Received: by pacyx8 with SMTP id yx8so48902309pac.2
-        for <linux-gpio@vger.kernel.org>; Sun, 07 Jun 2015 19:48:30 -0700 (PDT)
-In-Reply-To: <2953428.ar7Re29b0L@wuerfel>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34202 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751334AbbFHEUT convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 00:20:19 -0400
+In-Reply-To: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, patches <patches@apm.com>
+To: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>
 
-On Fri, Jun 5, 2015 at 7:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 04 June 2015 14:25:12 Y Vo wrote:
->> GIC is designed to support two of trigger mechanisms - active level
->> high or edge rising. But in the gpio_keys driver, it tries to use both
->> edge rising and edge falling trigger. This patch fixes the gpio_keys
->> driver to request only the edge rising event when failed to configure the
->> interrupt.
->>
->> Signed-off-by: Y Vo <yvo@apm.com>
+On Fri, Jun 5, 2015 at 3:51 PM, Romain Baeriswyl
+<romain.baeriswyl@alitech.com> wrote:
+> ---
+
+Your patch is missing a detailed commit message.
+
+>  .../devicetree/bindings/gpio/gpio-generic.txt      |   19 +++++
+>  drivers/gpio/gpio-generic.c                        |   81 ++++++++++++++-----
+>  2 files changed, 78 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-generic.txt
 >
-> I think you want to use an 'interrupts' property instead of a 'gpios'
-> property (or possibly both), so you can pass the right polarity.
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-generic.txt b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
+> new file mode 100644
+> index 0000000..c2c4b98
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
+> @@ -0,0 +1,19 @@
+> +Bindings for gpio-generic
+> +
+> +Required properties:
+> +- compatible : "basic-mmio-gpio" for little endian register access or
+> +               "basic-mmio-gpio-be" for big endian register access
+> +- ngpios: Specifies the number of gpio mapped in the register. The value is
+> +          limited to the number of bits of the LONG type.
+> +
+> +Optional properties:
+> +- base: Allows to forces the gpio number base offset used to index the gpio in
+> +        the device. If it is not see then the driver search autonoumously for
+> +        valid index range.
 
-        gpio-keys {
-                compatible = "gpio-keys";
-                apm_ctrl_name = "Power Button";
-                btn2 {
-                        label = "EXT_INT2";
-                        gpios = <&sbgpio 13 0x0>;
-                        linux,code = <116>;
-                        linux,input-type = <0x1>;     /* EV_KEY */
-                };
-        };
+A base property for GPIO drivers is frown upon nowadays. >:/
 
-         sbgpio: sbgpio@17001000{
-                        compatible = "apm,xgene-gpio-sb";
-                        reg = <0x0 0x17001000 0x0 0x400>;
-                        #gpio-cells = <2>;
-                        gpio-controller;
-                        interrupts =    <0x0 0x28 0x1>,
-                                        <0x0 0x29 0x1>,
-                                        <0x0 0x2a 0x1>,
-                                        <0x0 0x2b 0x1>,
-                                        <0x0 0x2c 0x1>,
-                                        <0x0 0x2d 0x1>;
-                };
-I can change the polarity of interrupt in the sbgpio node, but the
-issue here is the gpio_key driver always set interrupt type to
-(irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING). And the GIC
-driver only support edge rising or level high. So that's our issue.
+> +
+> +Examples:
+> +
+> +       gpio_a {
+> +               compatible = "basic-mmio-gpio";
+> +               ngpios = <32>;
+> +       };
+> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+> index b92a690..9a4354c 100644
+> --- a/drivers/gpio/gpio-generic.c
+> +++ b/drivers/gpio/gpio-generic.c
+> @@ -15,11 +15,11 @@
+>   *  `.just a single "data" register, where GPIO state can be read and/or `
+>   *    `,..written. ,,..``~~~~ .....``.`.`.~~.```.`.........``````.```````
+>   *        `````````
+> -                                    ___
+> -_/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
+> -__________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
+> -o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+> -                                                 `....trivial..'~`.```.```
+> + *                                   ___
+> + * _/~~|___/~|   . ```~~~~~~       ___/___\___     ,~.`.`.`.`````.~~...,,,,...
+> + * __________|~$@~~~        %~    /o*o*o*o*o*o\   .. Implementing such a GPIO .
+> + * o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+> + *                                                `....trivial..'~`.```.```
 
+Comment fix? Why not, but this is not related to the subject of this
+patch. Please do this in a separate patch.
+
+>   *                                                    ```````
+>   *  .```````~~~~`..`.``.``.
+>   * .  The driver supports  `...       ,..```.`~~~```````````````....````.``,,
+> @@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+>  #include <linux/platform_device.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/basic_mmio_gpio.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
 >
->         Arnd
+>  static void bgpio_write8(void __iomem *reg, unsigned long data)
+>  {
+> @@ -375,10 +377,9 @@ static int bgpio_setup_accessors(struct device *dev,
+>                         dev_err(dev,
+>                                 "64 bit big endian byte order unsupported\n");
+>                         return -EINVAL;
+> -               } else {
+> -                       bgc->read_reg   = bgpio_read64;
+> -                       bgc->write_reg  = bgpio_write64;
+>                 }
+> +               bgc->read_reg   = bgpio_read64;
+> +               bgc->write_reg  = bgpio_write64;
+
+Why change this? This if/else sequence was consistent with the other
+cases, I think it would be better to keep it that way.
+
+>                 break;
+>  #endif /* BITS_PER_LONG >= 64 */
+>         default:
+> @@ -564,6 +565,27 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+>         return ret;
+>  }
+>
+> +static const struct platform_device_id bgpio_id_table[] = {
+> +       { "basic-mmio-gpio",
+> +         .driver_data  = 0,
+> +       }, { "basic-mmio-gpio-be",
+> +         .driver_data  = BGPIOF_BIG_ENDIAN
+> +       },
+> +       { },
+> +};
+
+Formatting is wrong here. Please keep the same formatting as the
+original statement.
+
+> +MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+> +
+> +static const struct of_device_id  bgpio_dt_ids[] = {
+> +       { .compatible = "basic-mmio-gpio",
+
+Same remark about formatting.
+
+> +         .data = bgpio_id_table + 0
+
+I would probably prefer &bgpio_id_table[0], but your call.
+
+> +       },
+> +       { .compatible = "basic-mmio-gpio-be",
+> +         .data = bgpio_id_table + 1
+> +       },
+
+Instead of having two different compatible strings, how about making
+the big-endian option a boolean DT property?
+
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, bgpio_dt_ids);
+> +
+>  static int bgpio_pdev_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+> @@ -574,10 +596,37 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+>         void __iomem *dirout;
+>         void __iomem *dirin;
+>         unsigned long sz;
+> -       unsigned long flags = pdev->id_entry->driver_data;
+> +       unsigned long flags;
+>         int err;
+>         struct bgpio_chip *bgc;
+> -       struct bgpio_pdata *pdata = dev_get_platdata(dev);
+> +       struct bgpio_pdata *pdata;
+> +
+> +       if (of_have_populated_dt()) {
+> +               const struct of_device_id *of_id =
+> +                       of_match_device(bgpio_dt_ids, dev);
+> +
+> +               pdata = devm_kzalloc(dev, sizeof(struct bgpio_pdata),
+> +                                    GFP_KERNEL);
+> +               if (!pdata)
+> +                       return -ENOMEM;
+> +
+> +               if (of_property_read_u32(dev->of_node, "ngpio",
+> +                                        &pdata->ngpio)) {
+> +                       dev_err(dev, "Failed to get field ngpio");
+> +                       return -EINVAL;
+> +               }
+> +               if (of_property_read_u32(dev->of_node, "base", &pdata->base))
+> +                       pdata->base = -1;
+> +
+> +               dev->platform_data = pdata;
+> +
+> +               if (of_id)
+> +                       pdev->id_entry = of_id->data;
+> +       }
+
+Could you move this to a bgpio_parse_dt() function to keep this
+function short and clear?
+
+> +
+> +       pdata = dev_get_platdata(dev);
+> +
+> +       flags = pdev->id_entry->driver_data;
+>
+>         r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
+>         if (!r)
+> @@ -633,18 +682,6 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
+>         return bgpio_remove(bgc);
+>  }
+>
+> -static const struct platform_device_id bgpio_id_table[] = {
+> -       {
+> -               .name           = "basic-mmio-gpio",
+> -               .driver_data    = 0,
+> -       }, {
+> -               .name           = "basic-mmio-gpio-be",
+> -               .driver_data    = BGPIOF_BIG_ENDIAN,
+> -       },
+> -       { }
+> -};
+> -MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+> -
+>  static struct platform_driver bgpio_driver = {
+>         .driver = {
+>                 .name = "basic-mmio-gpio",
+> --
+> 1.7.1
+>
+> *********************************************************
+> This message contains information that may be confidential and/or privileged and is intended only for the individual or entity named in the body of email above. If this message has been received in error, your receipt of this message is not intended to waive any applicable privilege. No one else may disclose, copy, distribute or use the contents of this message. Unauthorized use, dissemination and duplication is strictly prohibited, and may be unlawful.
+>
+>
+>
+>
