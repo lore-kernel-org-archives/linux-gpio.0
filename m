@@ -1,44 +1,84 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: add pinctrl_register_reason() to return proper
- error code
-Date: Mon, 8 Jun 2015 15:36:10 +0200
-Message-ID: <CACRpkdak-BOEwZWCn+XCb8as0EudM4BAyMjMUW4bsYmrcO6=6A@mail.gmail.com>
-References: <1432899016-18155-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdZywHgUHbMg-1gfBDPZ3uXHuBWMvkAUZgkDRbn6Hi2Ovg@mail.gmail.com>
-	<CAK7LNASuVz1R7ftXTGZycMm-qdgx8MGxe6nCpA9QwDG0fJoDsg@mail.gmail.com>
+From: "Jingoo Han" <jingoohan1@gmail.com>
+Subject: Re: [PATCH v4 00/18] new MFD LoCoMo driver set
+Date: Mon, 8 Jun 2015 23:48:39 +0900
+Message-ID: <000001d0a1fa$39665c90$ac3315b0$@com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:36737 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751385AbbFHNgL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 09:36:11 -0400
-Received: by oihb142 with SMTP id b142so93045113oih.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2015 06:36:10 -0700 (PDT)
-In-Reply-To: <CAK7LNASuVz1R7ftXTGZycMm-qdgx8MGxe6nCpA9QwDG0fJoDsg@mail.gmail.com>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:35443 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753127AbbFHOt3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 10:49:29 -0400
+Content-Language: ko
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: 'Dmitry Eremin-Solenikov' <dbaryshkov@gmail.com>
+Cc: 'Lee Jones' <lee.jones@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Daniel Mack' <zonque@gmail.com>, 'Robert Jarzmik' <robert.jarzmik@free.fr>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <acourbot@nvidia.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Mark Brown' <broonie@linaro.org>, 'Liam Girdwood' <liam.r.girdwood@linux.intel.com>, 'Andrea Adami' <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Tue, Jun 2, 2015 at 5:32 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-
-> If nobody is opposed to this, I can send a single big patch
-> replacing all the references.
+On Thu, 28 May 2015 22:07:40 +0300, Dmitry Eremin-Solenikov wrote:
+>2015-05-28 14:58 GMT+03:00 Lee Jones wrote:
+>> On Wed, 27 May 2015, Dmitry Eremin-Solenikov wrote:
+>>
+>>> 2015-05-27 13:27 GMT+03:00 Lee Jones <lee.jones@xxxxxxxxxx>:
+>>> > On Mon, 25 May 2015, Dmitry Eremin-Solenikov wrote:
+>>> >
+>>> >> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does has
+>>> >> several design issues (special bus instead of platform bus, doesn't use
+>>> >> mfd-core, etc).
+>>> >>
+>>> >> Implement 'core' parts of locomo support as an mfd driver.
+>>> >>
+>>> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@xxxxxxxxx>
+>>> >> ---
+>>> >
+>>> > These things are much easier to re-review if you keep a change-log
+>>> > here.
+>>> >
+>>> >>  drivers/mfd/Kconfig        |  10 ++
+>>> >>  drivers/mfd/Makefile       |   1 +
+>>> >>  drivers/mfd/locomo.c       | 336 +++++++++++++++++++++++++++++++++++++++++++++
+>>> >>  include/linux/mfd/locomo.h | 169 +++++++++++++++++++++++
+>>> >>  4 files changed, 516 insertions(+)
+>>> >>  create mode 100644 drivers/mfd/locomo.c
+>>> >>  create mode 100644 include/linux/mfd/locomo.h
+>>> >
+>>> > Looks good now though:
+>>> >   Acked-by: Lee Jones <lee.jones@xxxxxxxxxx>
+>>> >
+>>> > How do you plan for this to be merged?
+>>>
+>>> I'd like for this to be merged either through mfd tree or through the
+>>> arm-soc (or rmk's ARM) tree.
+>>> Some of the respective maintainers already gave their blessing for
+>>> this patchset to be merged
+>>> not through their subsystem trees.
+>>
+>> I can take it through MFD.  Once you have all the required Acks,
+>> resubmit the set with them all applied with a note in the cover-letter
+>> to that affect and I'll apply.
 >
-> In that case, we would not need _strict().
+>Thank you. This is what I still miss:
+>
+>* Russell, could you please review sa1100 parts?
+>* Jingoo, could you please review the backlight part?
 
-Yeah just do this.
+For the following two patches,
 
-> My concern is the sudden change of the function interface
-> will break drivers that are under development out of the source tree.
+  [PATCH v4 06/18] video: backlight: add new locomo backlight driver
+  [PATCH v4 07/18] video: lcd: add LoCoMo LCD driver
 
-Base the patch on my -devel branch so you cover all driver in
-development. I will deal with any resulting mess.
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-Out of tree drivers we do not take into account, they should focus
-their efforts on working upstream.
+Pleased send the patches to 'jingoohan1@gmail.com', instead of
+'jg1.han@samsung.com'.
 
-Yours,
-Linus Walleij
+Best regards,
+Jingoo Han
+
+>* Mark, same question for the updated SPI driver.
+>* Linus, can I assume that yours 'Reviewed-by' mean
+>  'Acked-by' for the GPIO-related parts?
+
+
