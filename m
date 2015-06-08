@@ -1,54 +1,50 @@
-From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Mon, 8 Jun 2015 14:26:01 +0200
-Message-ID: <557589D9.1050008@melag.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: fix confusing debug message in pinctrl_register_map()
+Date: Mon, 8 Jun 2015 15:33:56 +0200
+Message-ID: <CACRpkdZrfzvjyEWaTEJ05q0r0q=Nb7X0b435u0UP_SboE9FDiw@mail.gmail.com>
+References: <1432817579-4720-1-git-send-email-yamada.masahiro@socionext.com>
+	<CACRpkdYFRxizbJmJhzx7sa11EEdXu5s5myz+2amgPC-JQC6Kgg@mail.gmail.com>
+	<CAK7LNAR7Y8KRDc_V7Y48cLNuz0cnY8YTQqboTi1TTpMbyYzuUw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <5570B783.1050808@ahsoftware.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Alexander Holler <holler@ahsoftware.de>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.ke>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34769 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762AbbFHNd5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 09:33:57 -0400
+Received: by obbir4 with SMTP id ir4so55842295obb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2015 06:33:57 -0700 (PDT)
+In-Reply-To: <CAK7LNAR7Y8KRDc_V7Y48cLNuz0cnY8YTQqboTi1TTpMbyYzuUw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Am 04.06.2015 um 22:39 schrieb Alexander Holler:
+On Tue, Jun 2, 2015 at 2:16 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2015-06-02 20:33 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Thu, May 28, 2015 at 2:52 PM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>
+>>> There are two types for pinctrl maps: pinmux and pinconfig
+>>> This debug message shows the number of maps of both types.
+>>> The string "pinmux map" is not precise.  Let's say "pinctrl map"
+>>> instead.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>
+>> Patch applied, also changed %d->%u as suggested by Joe.
+>>
+>
+>
+> When you apply a patch, please check if it is the latest version.
 
- > As it seems to have been forgotten or overread, I've mentioned in my
-> series of patches last year that, with a few changes, it's possible t=
-o
-> let the algorithm I've used (dfs) to spit out all drivers which can b=
-e
-> initialized in parallel.
+If you had seen my mailbox you would know why that is not always
+so easy to just add another routine to be applied to every patch that
+comes in.
 
-Unfortunately, I've missed that ... could you please resend you patches=
-?
-Boot time reduction is one of the topics on my 2do in several weeks.
+I tend to do it a bit, in an add hoc manner, sometimes I miss stuff,
+mea culpa.
 
-
-cu
---
-Enrico Weigelt, metux IT consult
-+49-151-27565287
-MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg =
-HRA 21333 B
-
-Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur f=C3=BCr =
-einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie i=
-st ausschlie=C3=9Flich f=C3=BCr denjenigen bestimmt, an den sie gericht=
-et worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, d=C3=BCr=
-fen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz o=
-der teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irr=
-t=C3=BCmlich erhalten haben, so benachrichtigen Sie bitte den Absender,=
- indem Sie auf diese Nachricht antworten. Bitte l=C3=B6schen Sie in die=
-sem Fall diese Nachricht und alle Anh=C3=A4nge, ohne eine Kopie zu beha=
-lten.
-Important Notice: This message may contain confidential or privileged i=
-nformation. It is intended only for the person it was addressed to. If =
-you are not the intended recipient of this email you may not copy, forw=
-ard, disclose or otherwise use it or any part of it in any form whatsoe=
-ver. If you received this email in error please notify the sender by re=
-plying and delete this message and any attachments without retaining a =
-copy.
+Yours,
+Linus Walleij
