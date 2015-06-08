@@ -1,84 +1,46 @@
-From: "Jingoo Han" <jingoohan1@gmail.com>
-Subject: Re: [PATCH v4 00/18] new MFD LoCoMo driver set
-Date: Mon, 8 Jun 2015 23:48:39 +0900
-Message-ID: <000001d0a1fa$39665c90$ac3315b0$@com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [PATCH] pinctrl: don't try to print function groups if we can't get them
+Date: Mon, 8 Jun 2015 17:16:37 +0200
+Message-ID: <1433776597-615-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:35443 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753127AbbFHOt3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 10:49:29 -0400
-Content-Language: ko
+Received: from eusmtp01.atmel.com ([212.144.249.242]:13072 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752545AbbFHPQm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 11:16:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: 'Dmitry Eremin-Solenikov' <dbaryshkov@gmail.com>
-Cc: 'Lee Jones' <lee.jones@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Daniel Mack' <zonque@gmail.com>, 'Robert Jarzmik' <robert.jarzmik@free.fr>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <acourbot@nvidia.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Samuel Ortiz' <sameo@linux.intel.com>, 'Mark Brown' <broonie@linaro.org>, 'Liam Girdwood' <liam.r.girdwood@linux.intel.com>, 'Andrea Adami' <andrea.adami@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, nicolas.ferre@atmel.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-On Thu, 28 May 2015 22:07:40 +0300, Dmitry Eremin-Solenikov wrote:
->2015-05-28 14:58 GMT+03:00 Lee Jones wrote:
->> On Wed, 27 May 2015, Dmitry Eremin-Solenikov wrote:
->>
->>> 2015-05-27 13:27 GMT+03:00 Lee Jones <lee.jones@xxxxxxxxxx>:
->>> > On Mon, 25 May 2015, Dmitry Eremin-Solenikov wrote:
->>> >
->>> >> LoCoMo is a GA used on Sharp Zaurus SL-5x00. Current driver does has
->>> >> several design issues (special bus instead of platform bus, doesn't use
->>> >> mfd-core, etc).
->>> >>
->>> >> Implement 'core' parts of locomo support as an mfd driver.
->>> >>
->>> >> Signed-off-by: Dmitry Eremin-Solenikov <dbaryshkov@xxxxxxxxx>
->>> >> ---
->>> >
->>> > These things are much easier to re-review if you keep a change-log
->>> > here.
->>> >
->>> >>  drivers/mfd/Kconfig        |  10 ++
->>> >>  drivers/mfd/Makefile       |   1 +
->>> >>  drivers/mfd/locomo.c       | 336 +++++++++++++++++++++++++++++++++++++++++++++
->>> >>  include/linux/mfd/locomo.h | 169 +++++++++++++++++++++++
->>> >>  4 files changed, 516 insertions(+)
->>> >>  create mode 100644 drivers/mfd/locomo.c
->>> >>  create mode 100644 include/linux/mfd/locomo.h
->>> >
->>> > Looks good now though:
->>> >   Acked-by: Lee Jones <lee.jones@xxxxxxxxxx>
->>> >
->>> > How do you plan for this to be merged?
->>>
->>> I'd like for this to be merged either through mfd tree or through the
->>> arm-soc (or rmk's ARM) tree.
->>> Some of the respective maintainers already gave their blessing for
->>> this patchset to be merged
->>> not through their subsystem trees.
->>
->> I can take it through MFD.  Once you have all the required Acks,
->> resubmit the set with them all applied with a note in the cover-letter
->> to that affect and I'll apply.
->
->Thank you. This is what I still miss:
->
->* Russell, could you please review sa1100 parts?
->* Jingoo, could you please review the backlight part?
+There is no reason to try to print groups associated to a function if
+get_function_groups returns an error. Moreover, it can lead to a NULL
+pointer dereference error.
 
-For the following two patches,
+Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+---
+ drivers/pinctrl/pinmux.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-  [PATCH v4 06/18] video: backlight: add new locomo backlight driver
-  [PATCH v4 07/18] video: lcd: add LoCoMo LCD driver
-
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-
-Pleased send the patches to 'jingoohan1@gmail.com', instead of
-'jg1.han@samsung.com'.
-
-Best regards,
-Jingoo Han
-
->* Mark, same question for the updated SPI driver.
->* Linus, can I assume that yours 'Reviewed-by' mean
->  'Acked-by' for the GPIO-related parts?
-
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index b874458..fd944e3 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -544,9 +544,12 @@ static int pinmux_functions_show(struct seq_file *s, void *what)
+ 
+ 		ret = pmxops->get_function_groups(pctldev, func_selector,
+ 						  &groups, &num_groups);
+-		if (ret)
++		if (ret) {
+ 			seq_printf(s, "function %s: COULD NOT GET GROUPS\n",
+ 				   func);
++			func_selector++;
++			continue;
++		}
+ 
+ 		seq_printf(s, "function: %s, groups = [ ", func);
+ 		for (i = 0; i < num_groups; i++)
+-- 
+2.2.0
 
