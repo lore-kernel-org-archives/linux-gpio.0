@@ -1,60 +1,54 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH][RESEND] gpiolib: rename gpiod_set_array to gpiod_set_array_value
-Date: Mon, 8 Jun 2015 16:19:43 +0900
-Message-ID: <CAAVeFuKrGVYOGKm4-z_hAkkmXqtUv6D6DUGNDgGkhmjQpr1_7A@mail.gmail.com>
-References: <2187916.sj28RxH2Yd@pcimr> <CAAVeFuLtNt3ePL_ZpM4wm0Gibzpop_sq5fNr=7cW5GUVg8_Rgg@mail.gmail.com>
- <CAAVeFuL1bDieCPB+JzeCaSB4mqxk4hOPtdw-LqfVnKK72U=DTQ@mail.gmail.com> <2222617.akd5TaKMMV@pcimr>
+From: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Mon, 8 Jun 2015 14:26:01 +0200
+Message-ID: <557589D9.1050008@melag.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:34581 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751133AbbFHHUE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 03:20:04 -0400
-Received: by obbir4 with SMTP id ir4so49642414obb.1
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2015 00:20:03 -0700 (PDT)
-In-Reply-To: <2222617.akd5TaKMMV@pcimr>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <5570B783.1050808@ahsoftware.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Alexander Holler <holler@ahsoftware.de>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.ke>
 List-Id: linux-gpio@vger.kernel.org
-To: Rojhalat Ibrahim <imr@rtschenk.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Jun 8, 2015 at 4:17 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
-> On Monday 08 June 2015 15:46:44 Alexandre Courbot wrote:
->> On Mon, Jun 8, 2015 at 2:37 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> > On Mon, Jun 1, 2015 at 8:41 PM, Rojhalat Ibrahim <imr@rtschenk.de> wrote:
->> >> There have been concerns that the function names gpiod_set_array() and
->> >> gpiod_get_array() might be confusing to users. One might expect
->> >> gpiod_get_array() to return array values, while it is actually the array
->> >> counterpart of gpiod_get(). To be consistent with the single descriptor API
->> >> gpiod_set_array() is renamed to gpiod_set_array_value().
->> >
->> > Linus, if you are ok with this change I suggest we merge it early in
->> > order to avoid conflicts as more people start using these APIs! :)
->>
->> Actually, Rojhalat: could you define temporary macros to ease the
->> transition? Something like
->>
->> #define gpiod_set_raw_array gpiod_set_raw_array_value
->>
->> We would then take them out around 4.2, once all consumers are converted.
->>
->
-> Hi Alexandre,
->
-> Linus already applied the patch. (He replied to my original RFC mail.)
+Am 04.06.2015 um 22:39 schrieb Alexander Holler:
 
-Ah, that's perfect then. Sorry for the noise.
+ > As it seems to have been forgotten or overread, I've mentioned in my
+> series of patches last year that, with a few changes, it's possible t=
+o
+> let the algorithm I've used (dfs) to spit out all drivers which can b=
+e
+> initialized in parallel.
 
-> I am not sure those temporary macros are justified. Do you really think
-> there are that many out-of-tree consumers? And if so, how would we know
-> when all of them have converted to the new interface? After all with those
-> macros around, they might not even notice they are using a deprecated
-> interface.
+Unfortunately, I've missed that ... could you please resend you patches=
+?
+Boot time reduction is one of the topics on my 2do in several weeks.
 
-My intention was to avoid in-tree breakage with linux-next (we do not
-worry about out-of-tree consumers since they can easily update their
-code. And they are out-of-tree anyway). But if the patch has already
-been merged and is working, then I have no concern at all.
 
-Thanks for keeping up with this!
+cu
+--
+Enrico Weigelt, metux IT consult
++49-151-27565287
+MELAG Medizintechnik oHG Sitz Berlin Registergericht AG Charlottenburg =
+HRA 21333 B
+
+Wichtiger Hinweis: Diese Nachricht kann vertrauliche oder nur f=C3=BCr =
+einen begrenzten Personenkreis bestimmte Informationen enthalten. Sie i=
+st ausschlie=C3=9Flich f=C3=BCr denjenigen bestimmt, an den sie gericht=
+et worden ist. Wenn Sie nicht der Adressat dieser E-Mail sind, d=C3=BCr=
+fen Sie diese nicht kopieren, weiterleiten, weitergeben oder sie ganz o=
+der teilweise in irgendeiner Weise nutzen. Sollten Sie diese E-Mail irr=
+t=C3=BCmlich erhalten haben, so benachrichtigen Sie bitte den Absender,=
+ indem Sie auf diese Nachricht antworten. Bitte l=C3=B6schen Sie in die=
+sem Fall diese Nachricht und alle Anh=C3=A4nge, ohne eine Kopie zu beha=
+lten.
+Important Notice: This message may contain confidential or privileged i=
+nformation. It is intended only for the person it was addressed to. If =
+you are not the intended recipient of this email you may not copy, forw=
+ard, disclose or otherwise use it or any part of it in any form whatsoe=
+ver. If you received this email in error please notify the sender by re=
+plying and delete this message and any attachments without retaining a =
+copy.
