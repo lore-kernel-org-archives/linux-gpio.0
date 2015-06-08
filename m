@@ -1,39 +1,155 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Mon, 08 Jun 2015 20:18:40 +0200
-Message-ID: <5575DC80.4040608@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <556F5C24.1030101@linaro.org> <5570B783.1050808@ahsoftware.de> <557589D9.1050008@melag.de> <5575DB8D.50000@ahsoftware.de>
+From: Daniel Lockyer <thisisdaniellockyer@gmail.com>
+Subject: [PATCH] GPIO: Fix checkpatch.pl issues
+Date: Mon, 8 Jun 2015 20:03:05 +0100
+Message-ID: <20150608190305.GA11525@eve.soton.ac.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from h1446028.stratoserver.net ([85.214.92.142]:49722 "EHLO
-	mail.ahsoftware.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752333AbbFHSSx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 14:18:53 -0400
-In-Reply-To: <5575DB8D.50000@ahsoftware.de>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35658 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752408AbbFHTDH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 8 Jun 2015 15:03:07 -0400
+Received: by wiga1 with SMTP id a1so96450826wig.0
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2015 12:03:06 -0700 (PDT)
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Enrico Weigelt, metux IT consult" <weigelt@melag.de>, "Grygorii.Strashko@linaro.org" <grygorii.strashko@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel>
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org
 
-Am 08.06.2015 um 20:14 schrieb Alexander Holler:
-> Am 08.06.2015 um 14:26 schrieb Enrico Weigelt, metux IT consult:
->> Am 04.06.2015 um 22:39 schrieb Alexander Holler:
->>
->>  > As it seems to have been forgotten or overread, I've mentioned in my
->>> series of patches last year that, with a few changes, it's possible to
->>> let the algorithm I've used (dfs) to spit out all drivers which can be
->>> initialized in parallel.
->>
->> Unfortunately, I've missed that ... could you please resend you patches?
->> Boot time reduction is one of the topics on my 2do in several weeks.
->
-> https://lkml.org/lkml/2014/5/12/452
->
+Fixed issues include indenting and spacing. Nothing particularly
+notable.
 
-And don't forget patch 10/9 which fixed a bug in my previous patch 
-series and which alos was the reason for the large difference in boot 
-times with and without deps:
+Signed-off-by: Daniel Lockyer <thisisdaniellockyer@gmail.com>
+---
+ drivers/gpio/gpio-altera.c      |  3 ++-
+ drivers/gpio/gpio-crystalcove.c |  3 +--
+ drivers/gpio/gpio-f7188x.c      |  4 ++--
+ drivers/gpio/gpio-it8761e.c     |  2 +-
+ drivers/gpio/gpiolib.c          | 19 ++++++++-----------
+ 5 files changed, 14 insertions(+), 17 deletions(-)
 
-https://lkml.org/lkml/2014/5/13/567
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 449fb46..0f3d336 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -107,7 +107,8 @@ static int altera_gpio_irq_set_type(struct irq_data *d,
+ 	return -EINVAL;
+ }
+ 
+-static unsigned int altera_gpio_irq_startup(struct irq_data *d) {
++static unsigned int altera_gpio_irq_startup(struct irq_data *d)
++{
+ 	altera_gpio_irq_unmask(d);
+ 
+ 	return 0;
+diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+index 91a7ffe..326f27b 100644
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -94,9 +94,8 @@ static inline int to_reg(int gpio, enum ctrl_register reg_type)
+ {
+ 	int reg;
+ 
+-	if (gpio == 94) {
++	if (gpio == 94)
+ 		return GPIOPANELCTL;
+-	}
+ 
+ 	if (reg_type == CTRL_IN) {
+ 		if (gpio < 8)
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index dbda843..5e3c4fa 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -172,7 +172,7 @@ static struct f7188x_gpio_bank f71869a_gpio_bank[] = {
+ };
+ 
+ static struct f7188x_gpio_bank f71882_gpio_bank[] = {
+-	F7188X_GPIO_BANK(0 , 8, 0xF0),
++	F7188X_GPIO_BANK(0, 8, 0xF0),
+ 	F7188X_GPIO_BANK(10, 8, 0xE0),
+ 	F7188X_GPIO_BANK(20, 8, 0xD0),
+ 	F7188X_GPIO_BANK(30, 4, 0xC0),
+@@ -180,7 +180,7 @@ static struct f7188x_gpio_bank f71882_gpio_bank[] = {
+ };
+ 
+ static struct f7188x_gpio_bank f71889_gpio_bank[] = {
+-	F7188X_GPIO_BANK(0 , 7, 0xF0),
++	F7188X_GPIO_BANK(0, 7, 0xF0),
+ 	F7188X_GPIO_BANK(10, 7, 0xE0),
+ 	F7188X_GPIO_BANK(20, 8, 0xD0),
+ 	F7188X_GPIO_BANK(30, 8, 0xC0),
+diff --git a/drivers/gpio/gpio-it8761e.c b/drivers/gpio/gpio-it8761e.c
+index dadfc24..30a8f24 100644
+--- a/drivers/gpio/gpio-it8761e.c
++++ b/drivers/gpio/gpio-it8761e.c
+@@ -123,7 +123,7 @@ static void it8761e_gpio_set(struct gpio_chip *gc,
+ 
+ 	curr_vals = inb(reg);
+ 	if (val)
+-		outb(curr_vals | (1 << bit) , reg);
++		outb(curr_vals | (1 << bit), reg);
+ 	else
+ 		outb(curr_vals & ~(1 << bit), reg);
+ 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6bc612b..f2cab60 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1300,9 +1300,8 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 				continue;
+ 			}
+ 			/* set outputs if the corresponding mask bit is set */
+-			if (__test_and_clear_bit(i, mask)) {
+-				chip->set(chip, i, test_bit(i, bits));
+-			}
++			if (__test_and_clear_bit(i, mask))
++				chip->set(chip, i, test_bit(i, bits));}
+ 		}
+ 	}
+ }
+@@ -1320,9 +1319,9 @@ static void gpiod_set_array_priv(bool raw, bool can_sleep,
+ 		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+ 		int count = 0;
+ 
+-		if (!can_sleep) {
++		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+-		}
++
+ 		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+@@ -1337,24 +1336,22 @@ static void gpiod_set_array_priv(bool raw, bool can_sleep,
+ 			 * open drain and open source outputs are set individually
+ 			 */
+ 			if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+-				_gpio_set_open_drain_value(desc,value);
++				_gpio_set_open_drain_value(desc, value);
+ 			} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+ 				_gpio_set_open_source_value(desc, value);
+ 			} else {
+ 				__set_bit(hwgpio, mask);
+-				if (value) {
++				if (value)
+ 					__set_bit(hwgpio, bits);
+-				} else {
++				else
+ 					__clear_bit(hwgpio, bits);
+-				}
+ 				count++;
+ 			}
+ 			i++;
+ 		} while ((i < array_size) && (desc_array[i]->chip == chip));
+ 		/* push collected bits to outputs */
+-		if (count != 0) {
++		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
+-		}
+ 	}
+ }
+ 
+-- 
+2.4.2
+
