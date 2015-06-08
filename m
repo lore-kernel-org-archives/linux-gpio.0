@@ -1,28 +1,64 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: improve error reporting on own descriptors
-Date: Mon, 8 Jun 2015 11:19:10 +0900
-Message-ID: <CAAVeFuJ9cOg-_RJpbDPvTmx8iT7e9n+QjArp6tj5ASeq27Naww@mail.gmail.com>
-References: <1433496970-20392-1-git-send-email-linus.walleij@linaro.org>
+From: Y Vo <yvo@apm.com>
+Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
+Date: Mon, 8 Jun 2015 09:48:29 +0700
+Message-ID: <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
+References: <1433402712-21399-1-git-send-email-yvo@apm.com>
+	<2953428.ar7Re29b0L@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:34981 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750769AbbFHCTb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Jun 2015 22:19:31 -0400
-Received: by oihd6 with SMTP id d6so84511871oih.2
-        for <linux-gpio@vger.kernel.org>; Sun, 07 Jun 2015 19:19:30 -0700 (PDT)
-In-Reply-To: <1433496970-20392-1-git-send-email-linus.walleij@linaro.org>
+Received: from exprod5og105.obsmtp.com ([64.18.0.180]:49927 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750769AbbFHCsb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 7 Jun 2015 22:48:31 -0400
+Received: by pacyx8 with SMTP id yx8so48902309pac.2
+        for <linux-gpio@vger.kernel.org>; Sun, 07 Jun 2015 19:48:30 -0700 (PDT)
+In-Reply-To: <2953428.ar7Re29b0L@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, patches <patches@apm.com>
 
-On Fri, Jun 5, 2015 at 6:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> When requesting own descriptors through hogs, it is useful to
-> get some details about what's going on if we encounter problems.
+On Fri, Jun 5, 2015 at 7:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thursday 04 June 2015 14:25:12 Y Vo wrote:
+>> GIC is designed to support two of trigger mechanisms - active level
+>> high or edge rising. But in the gpio_keys driver, it tries to use both
+>> edge rising and edge falling trigger. This patch fixes the gpio_keys
+>> driver to request only the edge rising event when failed to configure the
+>> interrupt.
+>>
+>> Signed-off-by: Y Vo <yvo@apm.com>
+>
+> I think you want to use an 'interrupts' property instead of a 'gpios'
+> property (or possibly both), so you can pass the right polarity.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+        gpio-keys {
+                compatible = "gpio-keys";
+                apm_ctrl_name = "Power Button";
+                btn2 {
+                        label = "EXT_INT2";
+                        gpios = <&sbgpio 13 0x0>;
+                        linux,code = <116>;
+                        linux,input-type = <0x1>;     /* EV_KEY */
+                };
+        };
 
-Linus, I apologize for my inactivity lately - hopefully I will have
-some more time to spend on GPIO reviews. Thanks for your patience!
+         sbgpio: sbgpio@17001000{
+                        compatible = "apm,xgene-gpio-sb";
+                        reg = <0x0 0x17001000 0x0 0x400>;
+                        #gpio-cells = <2>;
+                        gpio-controller;
+                        interrupts =    <0x0 0x28 0x1>,
+                                        <0x0 0x29 0x1>,
+                                        <0x0 0x2a 0x1>,
+                                        <0x0 0x2b 0x1>,
+                                        <0x0 0x2c 0x1>,
+                                        <0x0 0x2d 0x1>;
+                };
+I can change the polarity of interrupt in the sbgpio node, but the
+issue here is the gpio_key driver always set interrupt type to
+(irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING). And the GIC
+driver only support edge rising or level high. So that's our issue.
+
+>
+>         Arnd
