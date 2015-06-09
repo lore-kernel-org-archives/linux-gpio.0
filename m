@@ -1,32 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/4] sh-pfc: handle pin array holes in sh_pfc_map_pins()
-Date: Wed, 10 Jun 2015 09:49:13 +0200
-Message-ID: <CACRpkdYXHbP0jhvNxojhh=Mr-NCe-ismBp7g5T5_vYLFDz9rtw@mail.gmail.com>
-References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
+Date: Tue, 9 Jun 2015 10:55:36 -0700
+Message-ID: <55772898.8050601@broadcom.com>
+References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <4326653.qPvIJDU6F2@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rickard Strandqvist <rickard_strandqvist-IW2WV5XWFqGZkjO+N0TKoMugMpMbD5Xr@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Varka Bhadram <varkabhadram@gmail.>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 5, 2015 at 1:23 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
+On 6/8/2015 9:01 PM, Masahiro Yamada wrote:
+> Currently, pinctrl_register() just returns NULL on error, so the
+> callers can not know the exact reason of the failure.
+> 
+> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
+> -ENOMEM on error of pinctrl_register(), although the error code
+> might be different from the real cause of the error.
+> 
+> This commit reworks pinctrl_register() to return the appropriate
+> error code and modifies all of the pinctrl drivers to use IS_ERR()
+> for the error checking and PTR_ERR() for getting the error code.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
+> 
+> This patch is based on linux-pinctrl/devel
+> (Commit 7164873e7c69d6bab74726debc3b495a86332b1f).
+> 
+> I think I converted all of the pinctrl drivers, but just in case,
+> I'd like the driver maintainers to check this patch out.
+> 
+> 
 
-> Hello.
->
->    Here's the set of 4 patches against the 'devel' branch of Linus Walleij's
-> 'linux-pinctrl.git' repo. Here we add proper handling of the pin array "holes"
-> and then remove unused GPIO pins for R8A7790/1 SoCs.
->
-> [1/4] sh-pfc: do not call sh_pfc_get_pin_index() when unnecessary
-> [2/4] sh-pfc: handle pin array holes
-> [3/4] sh-pfc: r8a7790 remove non-existing GPIO pins
-> [4/4] sh-pfc: r8a7791 remove non-existing GPIO pins
+>  drivers/pinctrl/bcm/pinctrl-bcm281xx.c        |  4 ++--
+>  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c     |  4 ++--
+>  drivers/pinctrl/bcm/pinctrl-cygnus-mux.c      |  4 ++--
 
-Waiting for Laurent to review this series.
-
-Yours,
-Linus Walleij
+Acked-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
