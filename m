@@ -1,43 +1,37 @@
-From: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
-Date: Tue, 9 Jun 2015 20:10:43 +0200
-Message-ID: <20150609181043.GA4709@kwain>
-References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 0/3] Add Renesas R8A7794 PFC support
+Date: Wed, 10 Jun 2015 10:17:43 +0200
+Message-ID: <CACRpkdYLYeb7X52G7Et-6rXVpKpk67zAXB-UBO-vFFtrtLp+9Q@mail.gmail.com>
+References: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rickard Strandqvist <rickard_strandqvist-IW2WV5XWFqGZkjO+N0TKoMugMpMbD5Xr@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Varka Bhadram <varkabhadram@gmail>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:33711 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754217AbbFJIRo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 04:17:44 -0400
+Received: by oiha141 with SMTP id a141so27417107oih.0
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 01:17:43 -0700 (PDT)
+In-Reply-To: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello,
+On Sat, Jun 6, 2015 at 12:32 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-On Tue, Jun 09, 2015 at 01:01:16PM +0900, Masahiro Yamada wrote:
-> =
+>    Here's the set of 3 patches against the 'devel' branch of Linus Walleij's
+> 'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
+> SoC. The patches teaching the PFC driver to deal with "holes" in the pin array
+> are necessary for these patches to work (I didn't create a single series due to
+> the different patch versions of these 2 series).
+>
+> [1/3] sh-pfc: add R8A7794 PFC support
+> [2/3] sh-pfc: r8a7794: add MMCIF pin groups
+> [3/3] sh-pfc: r8a7794: add SDHI pin groups
 
-> I think I converted all of the pinctrl drivers, but just in case,
-> I'd like the driver maintainers to check this patch out.
+Waiting for Laurent to review these patches.
 
-For,
-
->  drivers/pinctrl/berlin/berlin.c               |  4 ++--
-
-Acked-by: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-
--- =
-
-Antoine T=E9nart, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Yours,
+Linus Walleij
