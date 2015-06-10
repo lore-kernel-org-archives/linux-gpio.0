@@ -1,52 +1,65 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpio: pcf857x: handle only enabled irqs
-Date: Thu, 11 Jun 2015 00:03:03 +0300
-Message-ID: <5578A607.9030602@ti.com>
-References: <1433359988-3456-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdaRb6FruKiYQg0g4ZO8cRnT5FSj==gkDb9GTvnnc=FTvg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
+Date: Thu, 11 Jun 2015 01:08:09 +0200
+Message-ID: <1529330.QWrJO7eUSt@wuerfel>
+References: <1433402712-21399-1-git-send-email-yvo@apm.com> <2953428.ar7Re29b0L@wuerfel> <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaRb6FruKiYQg0g4ZO8cRnT5FSj==gkDb9GTvnnc=FTvg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.130]:50321 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751306AbbFJXIj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 19:08:39 -0400
+In-Reply-To: <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Y Vo <yvo@apm.com>
+Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, patches <patches@apm.com>
 
-On 06/10/2015 10:39 AM, Linus Walleij wrote:
-> On Wed, Jun 3, 2015 at 9:33 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->
->> Now pcf857x_irq() IRQ's dispatcher will try to run nested
->> IRQ handlers for each GPIO pin which state has changed.
->> Such IRQs are, actually, spurious and nested IRQ handlers
->> have to be called only for IRQs wich were enabled by users.
->> This is not critical issue - just  /proc/interrupts
->> will display counters for unused IRQS:
->> 399:          4          0   pcf857x   0 Edge
->> 428:          1          0   pcf857x  13 Edge
->> 430:          1          0   pcf857x  15 Edge
->>
->> Hence, fix it by adding irq_enabled field in struct pcf857x to track
->> enabled GPIO IRQs and corresponding callbacks in pcf857x_irq_chip.
->>
->> Similar functionality was presented in pcf857x driver, commit
->>   21fd3cd1874a ('gpio: pcf857x: call the gpio user handler iff...')
->>
->> and then it was removed by commit
->>   a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip...')
->>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> Fixes: a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip helpers')
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->
-> This patch does not apply on the "devel" branch in my GPIO
-> tree, please rebase it. I do not run a "fixes" branch this
-> late in the kernel cycle.
+On Monday 08 June 2015 09:48:29 Y Vo wrote:
+> On Fri, Jun 5, 2015 at 7:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thursday 04 June 2015 14:25:12 Y Vo wrote:
+> >> GIC is designed to support two of trigger mechanisms - active level
+> >> high or edge rising. But in the gpio_keys driver, it tries to use both
+> >> edge rising and edge falling trigger. This patch fixes the gpio_keys
+> >> driver to request only the edge rising event when failed to configure the
+> >> interrupt.
+> >>
+> >> Signed-off-by: Y Vo <yvo@apm.com>
+> >
+> > I think you want to use an 'interrupts' property instead of a 'gpios'
+> > property (or possibly both), so you can pass the right polarity.
+> 
+>         gpio-keys {
+>                 compatible = "gpio-keys";
+>                 apm_ctrl_name = "Power Button";
+>                 btn2 {
+>                         label = "EXT_INT2";
+>                         gpios = <&sbgpio 13 0x0>;
+>                         linux,code = <116>;
+>                         linux,input-type = <0x1>;     /* EV_KEY */
+>                 };
+>         };
+> 
+>          sbgpio: sbgpio@17001000{
+>                         compatible = "apm,xgene-gpio-sb";
+>                         reg = <0x0 0x17001000 0x0 0x400>;
+>                         #gpio-cells = <2>;
+>                         gpio-controller;
+>                         interrupts =    <0x0 0x28 0x1>,
+>                                         <0x0 0x29 0x1>,
+>                                         <0x0 0x2a 0x1>,
+>                                         <0x0 0x2b 0x1>,
+>                                         <0x0 0x2c 0x1>,
+>                                         <0x0 0x2d 0x1>;
+>                 };
+> I can change the polarity of interrupt in the sbgpio node, but the
+> issue here is the gpio_key driver always set interrupt type to
+> (irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING). And the GIC
+> driver only support edge rising or level high. So that's our issue.
 
-Sure. Done.
+No, please do as I wrote, and use an interrupts property in the gpio-keys
+node.
 
--- 
-regards,
--grygorii
+	Arnd
