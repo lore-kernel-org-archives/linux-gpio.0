@@ -1,80 +1,50 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 0/6] UHS-I support for sh_mobile_sdhi
-Date: Wed, 10 Jun 2015 11:16:23 +0200
-Message-ID: <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
-References: <1433892104.12074.49.camel@codethink.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] GPIO / ACPI: export
+ acpi_gpiochip_request(free)_interrupts for module use
+Date: Wed, 10 Jun 2015 10:33:31 +0100
+Message-ID: <20150610093331.GD14071@sirena.org.uk>
+References: <1433927527-9980-1-git-send-email-hanjun.guo@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1433892104.12074.49.camel@codethink.co.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fNM8tsUwH0E3hRem"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51725 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933443AbbFJJdk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 05:33:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1433927527-9980-1-git-send-email-hanjun.guo@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hanjun Guo <hanjun.guo@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Y Vo <yvo@apm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10 June 2015 at 01:21, Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
-> This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
-> in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
-> works on the R8A7790 Lager board and another development board.
->
-> The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
-> the pins wired to the SD card.  This is supported by adding separate
-> functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
-> that several SH SoCs have this capability, but I only have the R8A7790
-> data sheet so I only implemented it for that one.
->
-> Changes since v1:
-> - Reword commit message for "mmc: tmio: Add UHS-I mode support"
-> - Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
->   to switch to 3.3V and the regulator or pinctrl or pinctrl state is
->   missing
-> - Drop change to mmcif clock on Lager
-> - Correct original author for sdhi clock changes on Lager
->
-> Changes since the RFC:
-> - Replace the 'regulator' devices for signal voltage switching with
->   pinctrl functions and states
-> - Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
->   redundant
-> - Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
-> - Fix subject prefix for the DT changes
->
-> Ben.
->
-> Ben Hutchings (5):
->   mmc: tmio: Add UHS-I mode support
->   pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
->   pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
->     operation
->   mmc: sh_mobile_sdhi: Add UHS-I mode support
->   ARM: shmobile: lager: Enable UHS-I SDR-50
->
-> Ian Molton (1):
->   ARM: shmobile: lager: Set clock rates for SDHI
->
->  arch/arm/boot/dts/r8a7790-lager.dts  | 24 +++++++++++--
->  drivers/mmc/host/sh_mobile_sdhi.c    | 60 +++++++++++++++++++++++++++++++
->  drivers/mmc/host/tmio_mmc.h          |  3 ++
->  drivers/mmc/host/tmio_mmc_pio.c      | 31 ++++++++++++++++
->  drivers/pinctrl/sh-pfc/core.c        |  2 +-
->  drivers/pinctrl/sh-pfc/core.h        |  1 +
->  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 70 +++++++++++++++++++++++++++++++++---
->  drivers/pinctrl/sh-pfc/pinctrl.c     |  4 +++
->  drivers/pinctrl/sh-pfc/sh_pfc.h      | 10 +++++-
->  9 files changed, 197 insertions(+), 8 deletions(-)
->
-> --
-> 2.1.4
->
 
-Hi Ben,
+--fNM8tsUwH0E3hRem
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have looked at the mmc patches, those looks good to me. Regarding
-the pinctrl and ARM patches, I suppose these can be taken through
-their respective trees and I can take the mmc patches?
+On Wed, Jun 10, 2015 at 05:12:07PM +0800, Hanjun Guo wrote:
+> acpi_gpiochip_request(free)_interrupts can be used for modules,
+> so export them. This also fixs a compile error when xgene-sb
+> configured as kernel module.
 
-BTW, I noticed that the pinctrl maintainer wasn't in the to-field, you
-may need to repost.
+Reviwed-by: Mark Brown <broonie@kernel.org>
 
-Kind regards
-Uffe
+--fNM8tsUwH0E3hRem
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVeARqAAoJECTWi3JdVIfQQWoH/2S5K5vqeBiky1rOgHV5WaX3
+vMRdxHIuXWxzXo7hoWuUAa0u0kNOQ3xsQIndvjDWuMuykz+W6r0AFQfZJcL5NQ1I
+5ZsuLpmgWf+yhXhcHRYN1n/V0/3wamo1JHYAnReXW36kDVMwEC+HknYuFgTZCwOm
+E+g1t7URclprJugqSniGoWpRuDzZOizSlNMssKunxzJwWLm5NeRiCh2MSGDIGT3E
+Fv6HuU5vctX0IXKa9BTl97lcomaBGs0Y2nLo/cd0J1ua5cKbRd21wf0VbL+0Zjn2
+YCkLMbXu2y2AvanOZrJM7LQK+B9ZO7NFPHHd9BX4ePUPE26WR9PEWo7M3klj/6k=
+=/k5E
+-----END PGP SIGNATURE-----
+
+--fNM8tsUwH0E3hRem--
