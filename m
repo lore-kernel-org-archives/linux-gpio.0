@@ -1,65 +1,76 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v0] gpio_keys: fix gpio key driver to proper support GIC interrupt
-Date: Thu, 11 Jun 2015 01:08:09 +0200
-Message-ID: <1529330.QWrJO7eUSt@wuerfel>
-References: <1433402712-21399-1-git-send-email-yvo@apm.com> <2953428.ar7Re29b0L@wuerfel> <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was not found
+Date: Thu, 11 Jun 2015 01:43:41 +0200
+Message-ID: <5235346.FKkPIUuDpF@vostro.rjw.lan>
+References: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:50321 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751306AbbFJXIj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 19:08:39 -0400
-In-Reply-To: <CAL4ahLeMm_Qvk0BWxOYTc973_4=TPjZStgTNe5uJL53FBhMRvg@mail.gmail.com>
+Received: from v094114.home.net.pl ([79.96.170.134]:45406 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751727AbbFJXRv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 19:17:51 -0400
+In-Reply-To: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: linux-input@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, patches <patches@apm.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tobias Diedrich <tobiasdiedrich@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday 08 June 2015 09:48:29 Y Vo wrote:
-> On Fri, Jun 5, 2015 at 7:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thursday 04 June 2015 14:25:12 Y Vo wrote:
-> >> GIC is designed to support two of trigger mechanisms - active level
-> >> high or edge rising. But in the gpio_keys driver, it tries to use both
-> >> edge rising and edge falling trigger. This patch fixes the gpio_keys
-> >> driver to request only the edge rising event when failed to configure the
-> >> interrupt.
-> >>
-> >> Signed-off-by: Y Vo <yvo@apm.com>
-> >
-> > I think you want to use an 'interrupts' property instead of a 'gpios'
-> > property (or possibly both), so you can pass the right polarity.
+On Wednesday, June 10, 2015 04:05:05 PM Mika Westerberg wrote:
+> If a driver requests a GPIO described in its _CRS but the GPIO host
+> controller (gpiochip) driver providing the GPIO has not been loaded yet
+> acpi_get_gpiod() returns -ENODEV which causes the calling driver to fail.
 > 
->         gpio-keys {
->                 compatible = "gpio-keys";
->                 apm_ctrl_name = "Power Button";
->                 btn2 {
->                         label = "EXT_INT2";
->                         gpios = <&sbgpio 13 0x0>;
->                         linux,code = <116>;
->                         linux,input-type = <0x1>;     /* EV_KEY */
->                 };
->         };
+> If the gpiochip driver is loaded afterwards the driver requesting the GPIO
+> will not notice this.
 > 
->          sbgpio: sbgpio@17001000{
->                         compatible = "apm,xgene-gpio-sb";
->                         reg = <0x0 0x17001000 0x0 0x400>;
->                         #gpio-cells = <2>;
->                         gpio-controller;
->                         interrupts =    <0x0 0x28 0x1>,
->                                         <0x0 0x29 0x1>,
->                                         <0x0 0x2a 0x1>,
->                                         <0x0 0x2b 0x1>,
->                                         <0x0 0x2c 0x1>,
->                                         <0x0 0x2d 0x1>;
->                 };
-> I can change the polarity of interrupt in the sbgpio node, but the
-> issue here is the gpio_key driver always set interrupt type to
-> (irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING). And the GIC
-> driver only support edge rising or level high. So that's our issue.
+> Better approach is to return -EPROBE_DEFER in such case. Then when the
+> gpiochip driver appears the driver requesting the GPIO will be probed
+> again. This also aligns ACPI GPIO lookup code closer to DT as it does
+> pretty much the same when no gpiochip driver was found.
+> 
+> Reported-by: Tobias Diedrich <tobiasdiedrich@gmail.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-No, please do as I wrote, and use an interrupts property in the gpio-keys
-node.
+Makes sense to me.
 
-	Arnd
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+> ---
+>  drivers/gpio/gpiolib-acpi.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index 19b99d0c2bf0..b49006c81a7f 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -114,10 +114,11 @@ static inline int acpi_gpiochip_pin_to_gpio_offset(struct gpio_chip *chip,
+>   * @path:	ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
+>   * @pin:	ACPI GPIO pin number (0-based, controller-relative)
+>   *
+> - * Returns GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
+> - * error value
+> + * Return: GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
+> + * error value. Specifically returns %-EPROBE_DEFER if the referenced GPIO
+> + * controller does not have gpiochip registered at the moment. This is to
+> + * support probe deferral.
+>   */
+> -
+>  static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
+>  {
+>  	struct gpio_chip *chip;
+> @@ -131,7 +132,7 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
+>  
+>  	chip = gpiochip_find(handle, acpi_gpiochip_find);
+>  	if (!chip)
+> -		return ERR_PTR(-ENODEV);
+> +		return ERR_PTR(-EPROBE_DEFER);
+>  
+>  	offset = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
+>  	if (offset < 0)
+> 
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
