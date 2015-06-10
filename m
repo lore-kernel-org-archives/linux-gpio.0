@@ -1,63 +1,27 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was not found
-Date: Wed, 10 Jun 2015 16:05:05 +0300
-Message-ID: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:18176 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964781AbbFJNHK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 10 Jun 2015 09:07:10 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFT v2 34/48] pinctrl: Prepare for killing the first parameter
+ 'irq' of irq_flow_handler_t
+Date: Wed, 10 Jun 2015 15:14:06 +0200
+Message-ID: <CACRpkdZUD3VQkrT1JReiKvM1SZf_nJiN-=JNZoyMJjK0MGefuQ@mail.gmail.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+	<1433391238-19471-35-git-send-email-jiang.liu@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1433391238-19471-35-git-send-email-jiang.liu@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Heiko Stuebner <heiko@sntech.de>, Barry Song <baohua@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Bin Shi <Bin.Shi@csr.com>, Fan Wu <fwu@marvell.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Barry Song <Baohua.Song@csr.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tobias Diedrich <tobiasdiedrich@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If a driver requests a GPIO described in its _CRS but the GPIO host
-controller (gpiochip) driver providing the GPIO has not been loaded yet
-acpi_get_gpiod() returns -ENODEV which causes the calling driver to fail.
+On Thu, Jun 4, 2015 at 6:13 AM, Jiang Liu <jiang.liu@linux.intel.com> wrote:
 
-If the gpiochip driver is loaded afterwards the driver requesting the GPIO
-will not notice this.
+> Change irq flow handler to prepare for killing the first parameter 'irq'
+> of irq_flow_handler_t.
+>
+> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
 
-Better approach is to return -EPROBE_DEFER in such case. Then when the
-gpiochip driver appears the driver requesting the GPIO will be probed
-again. This also aligns ACPI GPIO lookup code closer to DT as it does
-pretty much the same when no gpiochip driver was found.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reported-by: Tobias Diedrich <tobiasdiedrich@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 19b99d0c2bf0..b49006c81a7f 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -114,10 +114,11 @@ static inline int acpi_gpiochip_pin_to_gpio_offset(struct gpio_chip *chip,
-  * @path:	ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
-  * @pin:	ACPI GPIO pin number (0-based, controller-relative)
-  *
-- * Returns GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
-- * error value
-+ * Return: GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
-+ * error value. Specifically returns %-EPROBE_DEFER if the referenced GPIO
-+ * controller does not have gpiochip registered at the moment. This is to
-+ * support probe deferral.
-  */
--
- static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
- {
- 	struct gpio_chip *chip;
-@@ -131,7 +132,7 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
- 
- 	chip = gpiochip_find(handle, acpi_gpiochip_find);
- 	if (!chip)
--		return ERR_PTR(-ENODEV);
-+		return ERR_PTR(-EPROBE_DEFER);
- 
- 	offset = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
- 	if (offset < 0)
--- 
-2.1.4
-
+Yours,
+Linus Walleij
