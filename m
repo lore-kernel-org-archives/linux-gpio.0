@@ -1,49 +1,80 @@
-From: Hanjun Guo <hanjun.guo@linaro.org>
-Subject: [PATCH] GPIO / ACPI: export acpi_gpiochip_request(free)_interrupts for module use
-Date: Wed, 10 Jun 2015 17:12:07 +0800
-Message-ID: <1433927527-9980-1-git-send-email-hanjun.guo@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:36550 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933207AbbFJJMh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 05:12:37 -0400
-Received: by pdjm12 with SMTP id m12so33675050pdj.3
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 02:12:37 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 0/6] UHS-I support for sh_mobile_sdhi
+Date: Wed, 10 Jun 2015 11:16:23 +0200
+Message-ID: <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
+References: <1433892104.12074.49.camel@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1433892104.12074.49.camel@codethink.co.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Y Vo <yvo@apm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Hanjun Guo <hanjun.guo@linaro.org>
 
-acpi_gpiochip_request(free)_interrupts can be used for modules,
-so export them. This also fixs a compile error when xgene-sb
-configured as kernel module.
+On 10 June 2015 at 01:21, Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
+> This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
+> in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
+> works on the R8A7790 Lager board and another development board.
+>
+> The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
+> the pins wired to the SD card.  This is supported by adding separate
+> functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
+> that several SH SoCs have this capability, but I only have the R8A7790
+> data sheet so I only implemented it for that one.
+>
+> Changes since v1:
+> - Reword commit message for "mmc: tmio: Add UHS-I mode support"
+> - Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
+>   to switch to 3.3V and the regulator or pinctrl or pinctrl state is
+>   missing
+> - Drop change to mmcif clock on Lager
+> - Correct original author for sdhi clock changes on Lager
+>
+> Changes since the RFC:
+> - Replace the 'regulator' devices for signal voltage switching with
+>   pinctrl functions and states
+> - Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
+>   redundant
+> - Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
+> - Fix subject prefix for the DT changes
+>
+> Ben.
+>
+> Ben Hutchings (5):
+>   mmc: tmio: Add UHS-I mode support
+>   pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
+>   pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
+>     operation
+>   mmc: sh_mobile_sdhi: Add UHS-I mode support
+>   ARM: shmobile: lager: Enable UHS-I SDR-50
+>
+> Ian Molton (1):
+>   ARM: shmobile: lager: Set clock rates for SDHI
+>
+>  arch/arm/boot/dts/r8a7790-lager.dts  | 24 +++++++++++--
+>  drivers/mmc/host/sh_mobile_sdhi.c    | 60 +++++++++++++++++++++++++++++++
+>  drivers/mmc/host/tmio_mmc.h          |  3 ++
+>  drivers/mmc/host/tmio_mmc_pio.c      | 31 ++++++++++++++++
+>  drivers/pinctrl/sh-pfc/core.c        |  2 +-
+>  drivers/pinctrl/sh-pfc/core.h        |  1 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 70 +++++++++++++++++++++++++++++++++---
+>  drivers/pinctrl/sh-pfc/pinctrl.c     |  4 +++
+>  drivers/pinctrl/sh-pfc/sh_pfc.h      | 10 +++++-
+>  9 files changed, 197 insertions(+), 8 deletions(-)
+>
+> --
+> 2.1.4
+>
 
-Fixes: 733cf014f020 "gpio: xgene: add ACPI support for APM X-Gene GPIO standby driver"
-Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
----
- drivers/gpio/gpiolib-acpi.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Ben,
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 19b99d0..980a996 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -307,6 +307,7 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
- 	acpi_walk_resources(handle, "_AEI",
- 			    acpi_gpiochip_request_interrupt, acpi_gpio);
- }
-+EXPORT_SYMBOL_GPL(acpi_gpiochip_request_interrupts);
- 
- /**
-  * acpi_gpiochip_free_interrupts() - Free GPIO ACPI event interrupts.
-@@ -346,6 +347,7 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- 		kfree(event);
- 	}
- }
-+EXPORT_SYMBOL_GPL(acpi_gpiochip_free_interrupts);
- 
- int acpi_dev_add_driver_gpios(struct acpi_device *adev,
- 			      const struct acpi_gpio_mapping *gpios)
--- 
-1.9.1
+I have looked at the mmc patches, those looks good to me. Regarding
+the pinctrl and ARM patches, I suppose these can be taken through
+their respective trees and I can take the mmc patches?
 
+BTW, I noticed that the pinctrl maintainer wasn't in the to-field, you
+may need to repost.
+
+Kind regards
+Uffe
