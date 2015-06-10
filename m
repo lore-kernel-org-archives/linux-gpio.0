@@ -1,30 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: Added GPIO support to Zynq Ultrascale+ MPSoC
-Date: Wed, 10 Jun 2015 09:45:23 +0200
-Message-ID: <CACRpkdbz8XgSEKHvjysJ3ORTwsjiAaaVnfSLBCbX=Nrgh4Pbww@mail.gmail.com>
-References: <1433419832-40678-1-git-send-email-anuragku@xilinx.com>
+Subject: Re: [PATCH v2 0/4] sh-pfc: handle pin array holes in sh_pfc_map_pins()
+Date: Wed, 10 Jun 2015 09:49:13 +0200
+Message-ID: <CACRpkdYXHbP0jhvNxojhh=Mr-NCe-ismBp7g5T5_vYLFDz9rtw@mail.gmail.com>
+References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1433419832-40678-1-git-send-email-anuragku@xilinx.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, "<mark.rutland"@arm.com, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Harini Katakam <harini.katakam@xilinx.com>, punnaia@xilinx.com, svemula@xilinx.com, anirudh@xilinx.com, Anurag Kumar Vulisha <anuragku@xilinx.com>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <4326653.qPvIJDU6F2@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 4, 2015 at 2:10 PM, Anurag Kumar Vulisha
-<anurag.kumar.vulisha@xilinx.com> wrote:
+On Fri, Jun 5, 2015 at 1:23 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> Added support to Zynq Ultrascale+ MPSoC on the existing zynq gpio driver.
+> Hello.
 >
-> Signed-off-by: Anurag Kumar Vulisha <anuragku@xilinx.com>
-> ---
->  Chnages in v2:
->         1.Added device tree bingings for Zynq Ultrascale+ MPSoC
->         2.Changed the commit message and subject from ZynqMP to
->           Zynq Ultrascale+ MPSoC
+>    Here's the set of 4 patches against the 'devel' branch of Linus Walleij's
+> 'linux-pinctrl.git' repo. Here we add proper handling of the pin array "holes"
+> and then remove unused GPIO pins for R8A7790/1 SoCs.
+>
+> [1/4] sh-pfc: do not call sh_pfc_get_pin_index() when unnecessary
+> [2/4] sh-pfc: handle pin array holes
+> [3/4] sh-pfc: r8a7790 remove non-existing GPIO pins
+> [4/4] sh-pfc: r8a7791 remove non-existing GPIO pins
 
-Patch applied with Michal's ACK.
+Waiting for Laurent to review this series.
 
 Yours,
 Linus Walleij
