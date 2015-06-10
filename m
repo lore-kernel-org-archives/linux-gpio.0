@@ -1,48 +1,50 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v5 0/3] Add Renesas R8A7794 PFC support
-Date: Wed, 10 Jun 2015 14:57:01 +0300
-Message-ID: <5578260D.7040704@cogentembedded.com>
-References: <4547979.iqiS3iOv3s@wasted.cogentembedded.com> <CACRpkdYLYeb7X52G7Et-6rXVpKpk67zAXB-UBO-vFFtrtLp+9Q@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v5 3/7] mmc: mediatek: Add PM support for MMC driver
+Date: Wed, 10 Jun 2015 13:59:52 +0200
+Message-ID: <CAPDyKFrdw6m8C6oXRRC1cxmOPda8WqrFwwuP87rDBqEehdTaTA@mail.gmail.com>
+References: <1433903088-14407-1-git-send-email-chaotian.jing@mediatek.com>
+	<1433903088-14407-4-git-send-email-chaotian.jing@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:34079 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753877AbbFJL5P (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 07:57:15 -0400
-Received: by laew7 with SMTP id w7so31275883lae.1
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 04:57:13 -0700 (PDT)
-In-Reply-To: <CACRpkdYLYeb7X52G7Et-6rXVpKpk67zAXB-UBO-vFFtrtLp+9Q@mail.gmail.com>
+Received: from mail-qc0-f170.google.com ([209.85.216.170]:34767 "EHLO
+	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbbFJL7w (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 07:59:52 -0400
+Received: by qcej9 with SMTP id j9so16245306qce.1
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 04:59:52 -0700 (PDT)
+In-Reply-To: <1433903088-14407-4-git-send-email-chaotian.jing@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Chaotian Jing <chaotian.jing@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek
 
-Hello.
+On 10 June 2015 at 04:24, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+> Add PM support for Mediatek MMC driver
+> Save/restore registers when PM
+>
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 88 +++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 85 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index 8de3299..62e966f 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
 
-On 6/10/2015 11:17 AM, Linus Walleij wrote:
+Add pm.h as well.
 
->>     Here's the set of 3 patches against the 'devel' branch of Linus Walleij's
->> 'linux-pinctrl.git' repo. Here we add the PFC support for the Renesas R8A7794
->> SoC. The patches teaching the PFC driver to deal with "holes" in the pin array
->> are necessary for these patches to work (I didn't create a single series due to
->> the different patch versions of these 2 series).
+> +#include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/spinlock.h>
+>
 
-    Since no other R8A7794 patches have been merged yet, you can even merge 
-these patches right away.
+[...]
 
->> [1/3] sh-pfc: add R8A7794 PFC support
->> [2/3] sh-pfc: r8a7794: add MMCIF pin groups
->> [3/3] sh-pfc: r8a7794: add SDHI pin groups
-
-> Waiting for Laurent to review these patches.
-
-    The previous version was already ACKed by Laurent, and there was no 
-significant changes since then.
-
-> Yours,
-> Linus Walleij
-
-WBR, Sergei
-
+Kind regards
+Uffe
