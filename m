@@ -1,58 +1,57 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/2] get pinctrl more flexible for per pin muxing controllers
-Date: Wed, 10 Jun 2015 09:33:20 +0200
-Message-ID: <CACRpkdawFrfzHf+8vMLz07-r4J48bAVibV++K31dNQ+D-85ZMg@mail.gmail.com>
-References: <1430729776-27797-1-git-send-email-ludovic.desroches@atmel.com>
-	<556F01CC.8020305@atmel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pcf857x: handle only enabled irqs
+Date: Wed, 10 Jun 2015 09:39:09 +0200
+Message-ID: <CACRpkdaRb6FruKiYQg0g4ZO8cRnT5FSj==gkDb9GTvnnc=FTvg@mail.gmail.com>
+References: <1433359988-3456-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <556F01CC.8020305-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35564 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398AbbFJHjK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 03:39:10 -0400
+Received: by oihd6 with SMTP id d6so26896253oih.2
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 00:39:09 -0700 (PDT)
+In-Reply-To: <1433359988-3456-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, Jun 3, 2015 at 3:31 PM, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>=
- wrote:
-> Le 04/05/2015 10:56, Ludovic Desroches a =C3=A9crit :
->>
->> The way pins, groups and functions are tied is too constraining for =
-some
->> controllers. It concerns mainly the ones we don't care about groups =
-and
->> functions, each pin can be muxed to any functions.
->> The goal of these two patches is too remove some of the constraints.
->>
->> I have added the prototype of a pin controller and device tree to sh=
-ow the
->> way I want to use these changes. I couldn't test it on boards using =
-generic
->> pinconf so I am not sure that I don't break something...
->>
->>
->> Ludovic Desroches (4):
->>   pinctrl: change function behavior for per pin muxing controllers
->>   pinctrl: introduce complex pin description
+On Wed, Jun 3, 2015 at 9:33 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+
+> Now pcf857x_irq() IRQ's dispatcher will try to run nested
+> IRQ handlers for each GPIO pin which state has changed.
+> Such IRQs are, actually, spurious and nested IRQ handlers
+> have to be called only for IRQs wich were enabled by users.
+> This is not critical issue - just  /proc/interrupts
+> will display counters for unused IRQS:
+> 399:          4          0   pcf857x   0 Edge
+> 428:          1          0   pcf857x  13 Edge
+> 430:          1          0   pcf857x  15 Edge
 >
-> Linus,
+> Hence, fix it by adding irq_enabled field in struct pcf857x to track
+> enabled GPIO IRQs and corresponding callbacks in pcf857x_irq_chip.
 >
-> Ludovic sent this series nearly one month ago. It was posted after a =
-RFC
-> series on the same topic two months ago. As we don't see any comment =
-on
-> neither of them we assume that it's okay to include them.
+> Similar functionality was presented in pcf857x driver, commit
+>  21fd3cd1874a ('gpio: pcf857x: call the gpio user handler iff...')
+>
+> and then it was removed by commit
+>  a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip...')
+>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Fixes: a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip helpers')
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-It's a quite big patch and I need help reviewing it and thinking of
-some possible consequences.
+This patch does not apply on the "devel" branch in my GPIO
+tree, please rebase it. I do not run a "fixes" branch this
+late in the kernel cycle.
 
-Stephen, can you give me a hand with this?
+If the patch should go to stable it may be that you will need
+to send this version separately to the stable maintainer
+(Greg) after the rebased version goes upstream.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
