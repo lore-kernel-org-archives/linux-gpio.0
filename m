@@ -1,47 +1,154 @@
 From: Daniel Lockyer <thisisdaniellockyer@gmail.com>
-Subject: Re: [PATCH] GPIO: Fix checkpatch.pl issues
-Date: Wed, 10 Jun 2015 14:18:05 +0100
-Message-ID: <20150610131805.GA14834@eve.soton.ac.uk>
-References: <20150608190305.GA11525@eve.soton.ac.uk>
- <CAAVeFu+wXS=qGRn_qTU4AD0LQ8DUZp=EMgSYw20infejXHAejA@mail.gmail.com>
+Subject: [PATCH v2] GPIO: Fix checkpatch.pl issues
+Date: Wed, 10 Jun 2015 14:26:27 +0100
+Message-ID: <20150610132627.GA18814@eve.soton.ac.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:34156 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754011AbbFJNSH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 09:18:07 -0400
-Received: by wibut5 with SMTP id ut5so48173070wib.1
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 06:18:06 -0700 (PDT)
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:38698 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754176AbbFJN03 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 09:26:29 -0400
+Received: by wibdq8 with SMTP id dq8so47422293wib.1
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 06:26:28 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAAVeFu+wXS=qGRn_qTU4AD0LQ8DUZp=EMgSYw20infejXHAejA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org
 
-On Wed, Jun 10, 2015 at 11:17:10AM +0900, Alexandre Courbot wrote:
-> On Tue, Jun 9, 2015 at 4:03 AM, Daniel Lockyer
-> <thisisdaniellockyer@gmail.com> wrote:
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index 6bc612b..f2cab60 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -1300,9 +1300,8 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
-> >                                 continue;
-> >                         }
-> >                         /* set outputs if the corresponding mask bit is set */
-> > -                       if (__test_and_clear_bit(i, mask)) {
-> > -                               chip->set(chip, i, test_bit(i, bits));
-> > -                       }
-> > +                       if (__test_and_clear_bit(i, mask))
-> > +                               chip->set(chip, i, test_bit(i, bits));}
-> 
-> That closing bracket at the end of the line does not look like it
-> should be here. Does gpiolib even compile after this?
+This patch fixes some issues given by checkpatch. Fixes include
+bracket placement, spacing and indenting.
 
-I apologise... not sure what went on here.
+Signed-off-by: Daniel Lockyer <thisisdaniellockyer@gmail.com>
+---
+ drivers/gpio/gpio-altera.c      |  3 ++-
+ drivers/gpio/gpio-crystalcove.c |  3 +--
+ drivers/gpio/gpio-f7188x.c      |  4 ++--
+ drivers/gpio/gpio-it8761e.c     |  2 +-
+ drivers/gpio/gpiolib.c          | 17 +++++++----------
+ 5 files changed, 13 insertions(+), 16 deletions(-)
 
-New patch will be coming through soon.
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 449fb46..0f3d336 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -107,7 +107,8 @@ static int altera_gpio_irq_set_type(struct irq_data *d,
+ 	return -EINVAL;
+ }
+ 
+-static unsigned int altera_gpio_irq_startup(struct irq_data *d) {
++static unsigned int altera_gpio_irq_startup(struct irq_data *d)
++{
+ 	altera_gpio_irq_unmask(d);
+ 
+ 	return 0;
+diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+index 91a7ffe..326f27b 100644
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -94,9 +94,8 @@ static inline int to_reg(int gpio, enum ctrl_register reg_type)
+ {
+ 	int reg;
+ 
+-	if (gpio == 94) {
++	if (gpio == 94)
+ 		return GPIOPANELCTL;
+-	}
+ 
+ 	if (reg_type == CTRL_IN) {
+ 		if (gpio < 8)
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index dbda843..5e3c4fa 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -172,7 +172,7 @@ static struct f7188x_gpio_bank f71869a_gpio_bank[] = {
+ };
+ 
+ static struct f7188x_gpio_bank f71882_gpio_bank[] = {
+-	F7188X_GPIO_BANK(0 , 8, 0xF0),
++	F7188X_GPIO_BANK(0, 8, 0xF0),
+ 	F7188X_GPIO_BANK(10, 8, 0xE0),
+ 	F7188X_GPIO_BANK(20, 8, 0xD0),
+ 	F7188X_GPIO_BANK(30, 4, 0xC0),
+@@ -180,7 +180,7 @@ static struct f7188x_gpio_bank f71882_gpio_bank[] = {
+ };
+ 
+ static struct f7188x_gpio_bank f71889_gpio_bank[] = {
+-	F7188X_GPIO_BANK(0 , 7, 0xF0),
++	F7188X_GPIO_BANK(0, 7, 0xF0),
+ 	F7188X_GPIO_BANK(10, 7, 0xE0),
+ 	F7188X_GPIO_BANK(20, 8, 0xD0),
+ 	F7188X_GPIO_BANK(30, 8, 0xC0),
+diff --git a/drivers/gpio/gpio-it8761e.c b/drivers/gpio/gpio-it8761e.c
+index dadfc24..30a8f24 100644
+--- a/drivers/gpio/gpio-it8761e.c
++++ b/drivers/gpio/gpio-it8761e.c
+@@ -123,7 +123,7 @@ static void it8761e_gpio_set(struct gpio_chip *gc,
+ 
+ 	curr_vals = inb(reg);
+ 	if (val)
+-		outb(curr_vals | (1 << bit) , reg);
++		outb(curr_vals | (1 << bit), reg);
+ 	else
+ 		outb(curr_vals & ~(1 << bit), reg);
+ 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6bc612b..915b938 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1300,9 +1300,8 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 				continue;
+ 			}
+ 			/* set outputs if the corresponding mask bit is set */
+-			if (__test_and_clear_bit(i, mask)) {
++			if (__test_and_clear_bit(i, mask))
+ 				chip->set(chip, i, test_bit(i, bits));
+-			}
+ 		}
+ 	}
+ }
+@@ -1320,9 +1319,9 @@ static void gpiod_set_array_priv(bool raw, bool can_sleep,
+ 		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+ 		int count = 0;
+ 
+-		if (!can_sleep) {
++		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+-		}
++
+ 		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+@@ -1337,24 +1336,22 @@ static void gpiod_set_array_priv(bool raw, bool can_sleep,
+ 			 * open drain and open source outputs are set individually
+ 			 */
+ 			if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+-				_gpio_set_open_drain_value(desc,value);
++				_gpio_set_open_drain_value(desc, value);
+ 			} else if (test_bit(FLAG_OPEN_SOURCE, &desc->flags)) {
+ 				_gpio_set_open_source_value(desc, value);
+ 			} else {
+ 				__set_bit(hwgpio, mask);
+-				if (value) {
++				if (value)
+ 					__set_bit(hwgpio, bits);
+-				} else {
++				else
+ 					__clear_bit(hwgpio, bits);
+-				}
+ 				count++;
+ 			}
+ 			i++;
+ 		} while ((i < array_size) && (desc_array[i]->chip == chip));
+ 		/* push collected bits to outputs */
+-		if (count != 0) {
++		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
+-		}
+ 	}
+ }
+ 
+-- 
+2.4.2
 
-Daniel
