@@ -1,76 +1,93 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was not found
-Date: Thu, 11 Jun 2015 01:43:41 +0200
-Message-ID: <5235346.FKkPIUuDpF@vostro.rjw.lan>
-References: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH v2 0/6] UHS-I support for sh_mobile_sdhi
+Date: Thu, 11 Jun 2015 00:57:57 +0100
+Message-ID: <1433980677.12074.74.camel@codethink.co.uk>
+References: <1433892104.12074.49.camel@codethink.co.uk>
+	 <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:45406 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751727AbbFJXRv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 19:17:51 -0400
-In-Reply-To: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tobias Diedrich <tobiasdiedrich@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday, June 10, 2015 04:05:05 PM Mika Westerberg wrote:
-> If a driver requests a GPIO described in its _CRS but the GPIO host
-> controller (gpiochip) driver providing the GPIO has not been loaded yet
-> acpi_get_gpiod() returns -ENODEV which causes the calling driver to fail.
+On Wed, 2015-06-10 at 11:16 +0200, Ulf Hansson wrote:
+> On 10 June 2015 at 01:21, Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
+> > This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
+> > in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
+> > works on the R8A7790 Lager board and another development board.
+> >
+> > The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
+> > the pins wired to the SD card.  This is supported by adding separate
+> > functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
+> > that several SH SoCs have this capability, but I only have the R8A7790
+> > data sheet so I only implemented it for that one.
+> >
+> > Changes since v1:
+> > - Reword commit message for "mmc: tmio: Add UHS-I mode support"
+> > - Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
+> >   to switch to 3.3V and the regulator or pinctrl or pinctrl state is
+> >   missing
+> > - Drop change to mmcif clock on Lager
+> > - Correct original author for sdhi clock changes on Lager
+> >
+> > Changes since the RFC:
+> > - Replace the 'regulator' devices for signal voltage switching with
+> >   pinctrl functions and states
+> > - Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
+> >   redundant
+> > - Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
+> > - Fix subject prefix for the DT changes
+> >
+> > Ben.
+> >
+> > Ben Hutchings (5):
+> >   mmc: tmio: Add UHS-I mode support
+> >   pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
+> >   pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
+> >     operation
+> >   mmc: sh_mobile_sdhi: Add UHS-I mode support
+> >   ARM: shmobile: lager: Enable UHS-I SDR-50
+> >
+> > Ian Molton (1):
+> >   ARM: shmobile: lager: Set clock rates for SDHI
+> >
+> >  arch/arm/boot/dts/r8a7790-lager.dts  | 24 +++++++++++--
+> >  drivers/mmc/host/sh_mobile_sdhi.c    | 60 +++++++++++++++++++++++++++++++
+> >  drivers/mmc/host/tmio_mmc.h          |  3 ++
+> >  drivers/mmc/host/tmio_mmc_pio.c      | 31 ++++++++++++++++
+> >  drivers/pinctrl/sh-pfc/core.c        |  2 +-
+> >  drivers/pinctrl/sh-pfc/core.h        |  1 +
+> >  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 70 +++++++++++++++++++++++++++++++++---
+> >  drivers/pinctrl/sh-pfc/pinctrl.c     |  4 +++
+> >  drivers/pinctrl/sh-pfc/sh_pfc.h      | 10 +++++-
+> >  9 files changed, 197 insertions(+), 8 deletions(-)
+> >
+> > --
+> > 2.1.4
+> >
 > 
-> If the gpiochip driver is loaded afterwards the driver requesting the GPIO
-> will not notice this.
+> Hi Ben,
 > 
-> Better approach is to return -EPROBE_DEFER in such case. Then when the
-> gpiochip driver appears the driver requesting the GPIO will be probed
-> again. This also aligns ACPI GPIO lookup code closer to DT as it does
-> pretty much the same when no gpiochip driver was found.
-> 
-> Reported-by: Tobias Diedrich <tobiasdiedrich@gmail.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> I have looked at the mmc patches, those looks good to me. Regarding
+> the pinctrl and ARM patches, I suppose these can be taken through
+> their respective trees and I can take the mmc patches?
 
-Makes sense to me.
+The problem with that is that I think the device tree change will cause
+a regression if it's applied without the driver changes.  I would much
+prefer if I could get the pinctrl and device tree changes acked by the
+respective maintainers to go through the MMC tree.  (I should probably
+have said that up front.)
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> BTW, I noticed that the pinctrl maintainer wasn't in the to-field, you
+> may need to repost.
 
-> ---
->  drivers/gpio/gpiolib-acpi.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 19b99d0c2bf0..b49006c81a7f 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -114,10 +114,11 @@ static inline int acpi_gpiochip_pin_to_gpio_offset(struct gpio_chip *chip,
->   * @path:	ACPI GPIO controller full path name, (e.g. "\\_SB.GPO1")
->   * @pin:	ACPI GPIO pin number (0-based, controller-relative)
->   *
-> - * Returns GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
-> - * error value
-> + * Return: GPIO descriptor to use with Linux generic GPIO API, or ERR_PTR
-> + * error value. Specifically returns %-EPROBE_DEFER if the referenced GPIO
-> + * controller does not have gpiochip registered at the moment. This is to
-> + * support probe deferral.
->   */
-> -
->  static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
->  {
->  	struct gpio_chip *chip;
-> @@ -131,7 +132,7 @@ static struct gpio_desc *acpi_get_gpiod(char *path, int pin)
->  
->  	chip = gpiochip_find(handle, acpi_gpiochip_find);
->  	if (!chip)
-> -		return ERR_PTR(-ENODEV);
-> +		return ERR_PTR(-EPROBE_DEFER);
->  
->  	offset = acpi_gpiochip_pin_to_gpio_offset(chip, pin);
->  	if (offset < 0)
-> 
+I have the relevant _list_ (linux-gpio) in cc and thought that would be
+sufficient, but maybe not, so cc'ing this message.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Ben.
+
+
