@@ -1,38 +1,71 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] GPIO: Fix checkpatch.pl issues
-Date: Wed, 10 Jun 2015 11:17:10 +0900
-Message-ID: <CAAVeFu+wXS=qGRn_qTU4AD0LQ8DUZp=EMgSYw20infejXHAejA@mail.gmail.com>
-References: <20150608190305.GA11525@eve.soton.ac.uk>
+From: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v5 1/7] mmc: dt-bindings: add Mediatek MMC bindings
+Date: Wed, 10 Jun 2015 10:24:42 +0800
+Message-ID: <1433903088-14407-2-git-send-email-chaotian.jing@mediatek.com>
+References: <1433903088-14407-1-git-send-email-chaotian.jing@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:35055 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752587AbbFJCRe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 9 Jun 2015 22:17:34 -0400
-Received: by obbgp2 with SMTP id gp2so25332878obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Jun 2015 19:17:31 -0700 (PDT)
-In-Reply-To: <20150608190305.GA11525@eve.soton.ac.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1433903088-14407-1-git-send-email-chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, James Liao <jamesjj.liao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, bin.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Lockyer <thisisdaniellockyer@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jun 9, 2015 at 4:03 AM, Daniel Lockyer
-<thisisdaniellockyer@gmail.com> wrote:
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 6bc612b..f2cab60 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1300,9 +1300,8 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
->                                 continue;
->                         }
->                         /* set outputs if the corresponding mask bit is set */
-> -                       if (__test_and_clear_bit(i, mask)) {
-> -                               chip->set(chip, i, test_bit(i, bits));
-> -                       }
-> +                       if (__test_and_clear_bit(i, mask))
-> +                               chip->set(chip, i, test_bit(i, bits));}
+Document the device-tree binding of Mediatek MMC host
 
-That closing bracket at the end of the line does not look like it
-should be here. Does gpiolib even compile after this?
+Signed-off-by: Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+---
+ Documentation/devicetree/bindings/mmc/mtk-sd.txt | 32 ++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/mtk-sd.txt
+
+diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.txt b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+new file mode 100644
+index 0000000..a1adfa4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/mtk-sd.txt
+@@ -0,0 +1,32 @@
++* MTK MMC controller
++
++The MTK  MSDC can act as a MMC controller
++to support MMC, SD, and SDIO types of memory cards.
++
++This file documents differences between the core properties in mmc.txt
++and the properties used by the msdc driver.
++
++Required properties:
++- compatible: Should be "mediatek,mt8173-mmc","mediatek,mt8135-mmc"
++- interrupts: Should contain MSDC interrupt number
++- clocks: MSDC source clock, HCLK
++- clock-names: "source", "hclk"
++- pinctrl-names: should be "default", "state_uhs"
++- pinctrl-0: should contain default/high speed pin ctrl
++- pinctrl-1: should contain uhs mode pin ctrl
++- vmmc-supply: power to the Core
++- vqmmc-supply: power to the IO
++
++Examples:
++mmc0: mmc@11230000 {
++	compatible = "mediatek,mt8173-mmc", "mediatek,mt8135-mmc";
++	reg = <0 0x11230000 0 0x108>;
++	interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_LOW>;
++	vmmc-supply = <&mt6397_vemc_3v3_reg>;
++	vqmmc-supply = <&mt6397_vio18_reg>;
++	clocks = <&pericfg CLK_PERI_MSDC30_0>, <&topckgen CLK_TOP_MSDC50_0_H_SEL>;
++	clock-names = "source", "hclk";
++	pinctrl-names = "default", "state_uhs";
++	pinctrl-0 = <&mmc0_pins_default>;
++	pinctrl-1 = <&mmc0_pins_uhs>;
++};
+-- 
+1.8.1.1.dirty
