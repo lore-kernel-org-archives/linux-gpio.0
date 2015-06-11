@@ -1,116 +1,46 @@
 From: Tobias Diedrich <ranma+kernel@tdiedrich.de>
-Subject: [PATCH] gpio / ACPI: Add label to the gpio request
-Date: Thu, 11 Jun 2015 02:08:22 +0200
-Message-ID: <20150611000822.GA21213@yumi.tdiedrich.de>
+Subject: Re: [PATCH] gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was
+ not found
+Date: Thu, 11 Jun 2015 02:11:29 +0200
+Message-ID: <20150611001129.GB21213@yumi.tdiedrich.de>
+References: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
+ <5235346.FKkPIUuDpF@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from yumi.uguu.de ([85.10.200.126]:55102 "EHLO mx.tdiedrich.de"
+Received: from yumi.uguu.de ([85.10.200.126]:55103 "EHLO mx.tdiedrich.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751602AbbFKARF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	id S1751631AbbFKARF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
 	Wed, 10 Jun 2015 20:17:05 -0400
 Content-Disposition: inline
+In-Reply-To: <5235346.FKkPIUuDpF@vostro.rjw.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In create_gpio_led only the legacy pass propagates the label by passing it into
-devm_gpio_request_one.
-
-On the newer devicetree/acpi path the label is lost as far as the GPIO
-subsystem goes (it is only retained as name in struct gpio_led.
-
-Amend devm_get_gpiod_from_child to also pass the label into the GPIO layer, so
-it will show up in /sys/kernel/debug/gpio, so instead of:
-
-GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
- gpio-477 (?                   ) out hi
- gpio-478 (?                   ) out lo
- gpio-479 (?                   ) out hi
-
-we get the much nicer output:
-
-GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
- gpio-477 (led1                ) out hi
- gpio-478 (led2                ) out lo
- gpio-479 (led3                ) out hi
+Rafael J. Wysocki wrote:
+> On Wednesday, June 10, 2015 04:05:05 PM Mika Westerberg wrote:
+> > If a driver requests a GPIO described in its _CRS but the GPIO host
+> > controller (gpiochip) driver providing the GPIO has not been loaded yet
+> > acpi_get_gpiod() returns -ENODEV which causes the calling driver to fail.
+> > 
+> > If the gpiochip driver is loaded afterwards the driver requesting the GPIO
+> > will not notice this.
+> > 
+> > Better approach is to return -EPROBE_DEFER in such case. Then when the
+> > gpiochip driver appears the driver requesting the GPIO will be probed
+> > again. This also aligns ACPI GPIO lookup code closer to DT as it does
+> > pretty much the same when no gpiochip driver was found.
+> > 
+> > Reported-by: Tobias Diedrich <tobiasdiedrich@gmail.com>
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Makes sense to me.
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 Signed-off-by: Tobias Diedrich <ranma+kernel@tdiedrich.de>
----
- drivers/gpio/devres.c         | 6 +++++-
- drivers/gpio/gpiolib.c        | 6 ++++--
- include/linux/gpio/consumer.h | 3 ++-
- 3 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 07ba823..089db97 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -103,13 +103,17 @@ struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
- {
- 	struct gpio_desc **dr;
- 	struct gpio_desc *desc;
-+	const char *label = NULL;
- 
- 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
- 			  GFP_KERNEL);
- 	if (!dr)
- 		return ERR_PTR(-ENOMEM);
- 
--	desc = gpiod_get_index(dev, con_id, idx, flags);
-+	if (fwnode_property_present(child, "label"))
-+		fwnode_property_read_string(child, "label", &label);
-+
-+	desc = gpiod_get_index(dev, con_id, idx, flags, label);
- 	if (IS_ERR(desc)) {
- 		devres_free(dr);
- 		return desc;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6bc612b..fb2be68 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2017,6 +2017,7 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
-  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
-  * @fwnode:	handle of the firmware node
-  * @propname:	name of the firmware property representing the GPIO
-+ * @label:	optional label for the GPIO
-  *
-  * This function can be used for drivers that get their configuration
-  * from firmware.
-@@ -2028,7 +2029,8 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
-  * In case of error an ERR_PTR() is returned.
-  */
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname)
-+					 const char *propname,
-+					 const char *label)
- {
- 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
- 	bool active_low = false;
-@@ -2056,7 +2058,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	if (IS_ERR(desc))
- 		return desc;
- 
--	ret = gpiod_request(desc, NULL);
-+	ret = gpiod_request(desc, label);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 3a7c9ff..ef7d322 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -134,7 +134,8 @@ int desc_to_gpio(const struct gpio_desc *desc);
- struct fwnode_handle;
- 
- struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
--					 const char *propname);
-+					 const char *propname,
-+					 const char *label);
- struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 					    const char *con_id,
- 					    struct fwnode_handle *child);
 -- 
-2.1.4
-
+Tobias						PGP: http://8ef7ddba.uguu.de
