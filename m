@@ -1,72 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Thu, 11 Jun 2015 10:15:04 +0200
-Message-ID: <CACRpkdYyvXVm=UBVH9Lwp8nQbuxQL07MLspNfQSHtc-yT2C_0g@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-	<CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+Subject: Re: [PATCH] gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was not found
+Date: Thu, 11 Jun 2015 10:18:34 +0200
+Message-ID: <CACRpkdZVUaT4-C--Q7N8Teq1mQchYBYB95_Z1sJrjTXeh17MOg@mail.gmail.com>
+References: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:35529 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750752AbbFKISe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jun 2015 04:18:34 -0400
+Received: by obbgp2 with SMTP id gp2so50049819obb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2015 01:18:34 -0700 (PDT)
+In-Reply-To: <1433941505-135180-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tobias Diedrich <tobiasdiedrich@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 10, 2015 at 12:19 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Wed, Jun 10, 2015 at 3:05 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
->> regulator_get(...) -> not available, so:
->> - identify target regulator provider - this will need instrumentation
->> - probe it
->>
->> It then turns out the regulator driver is on the i2c bus, so we
->> need to probe the i2c driver:
->> - identify target i2c host for the regulator driver - this will need
->>   instrumentation
->> - probe the i2c host driver
->>
->> i2c host comes out, probes the regulator driver, regulator driver
->> probes and then the regulator_get() call returns.
+> If a driver requests a GPIO described in its _CRS but the GPIO host
+> controller (gpiochip) driver providing the GPIO has not been loaded yet
+> acpi_get_gpiod() returns -ENODEV which causes the calling driver to fail.
 >
-> Hmm, if I understand correctly what you say, this is exactly what this
-> particular series does:
+> If the gpiochip driver is loaded afterwards the driver requesting the GPIO
+> will not notice this.
 >
-> regulator_get -> of_platform_device_ensure -> probe() on the platform
-> device that encloses the requested device node (i2c host) -> i2c slave
-> gets probed and the regulator registered -> regulator_get returns the
-> requested resource
-
-Yes. But only for device tree.
-
-> The downside I'm currently looking at is that an explicit dependency
-> graph would be useful to have for other purposes. For example to print
-> a neat warning when a dependency cannot be fulfilled. Or to refuse to
-> unbind a device which other devices depend on, or to automatically
-> unbind the devices that depend on it, or to print a warning if a
-> device is hotplugged off and other devices depend on it.
-
-Unbind/remove() calls are the inverse usually yes.
-
-But also the [runtime] power up/down sequences for the
-devices tend to depend on a similar ordering or mostly
-the same. (Mentioned this before I think.)
-
->> This requires instrumentation on anything providing a resource
->> to another driver like those I mentioned and a lot of overhead
->> infrastructure, but I think it's the right approach. However I don't
->> know if I would ever be able to pull that off myself, I know talk
->> is cheap and I should show the code instead.
+> Better approach is to return -EPROBE_DEFER in such case. Then when the
+> gpiochip driver appears the driver requesting the GPIO will be probed
+> again. This also aligns ACPI GPIO lookup code closer to DT as it does
+> pretty much the same when no gpiochip driver was found.
 >
-> Yeah, if you can give it a second look and say if it matches what you
-> wrote above, it would be very much appreciated.
+> Reported-by: Tobias Diedrich <tobiasdiedrich@gmail.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Yes you are right. But what about ACPI, board files,
-Simple Firmware and future hardware description languages...
+Patch applied with the ACKs etc.
 
 Yours,
 Linus Walleij
