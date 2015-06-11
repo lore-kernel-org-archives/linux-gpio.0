@@ -1,106 +1,28 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 0/6] UHS-I support for sh_mobile_sdhi
-Date: Thu, 11 Jun 2015 11:49:41 +0900
-Message-ID: <20150611024938.GB6904@verge.net.au>
-References: <1433892104.12074.49.camel@codethink.co.uk>
- <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
- <1433980677.12074.74.camel@codethink.co.uk>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2] GPIO: Fix checkpatch.pl issues
+Date: Thu, 11 Jun 2015 14:34:14 +0900
+Message-ID: <CAAVeFuJ8=nh7_3BnTU_o9n5zfSgXh6U1jGTSZkK24LT6swX-tg@mail.gmail.com>
+References: <20150610132627.GA18814@eve.soton.ac.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45537 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751634AbbFKCtq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 10 Jun 2015 22:49:46 -0400
-Content-Disposition: inline
-In-Reply-To: <1433980677.12074.74.camel@codethink.co.uk>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:36307 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883AbbFKFef (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 11 Jun 2015 01:34:35 -0400
+Received: by oihb142 with SMTP id b142so44409481oih.3
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2015 22:34:34 -0700 (PDT)
+In-Reply-To: <20150610132627.GA18814@eve.soton.ac.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Ian Molton <ian@mnementh.co.uk>, linux-mmc <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To: Daniel Lockyer <thisisdaniellockyer@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jun 11, 2015 at 12:57:57AM +0100, Ben Hutchings wrote:
-> On Wed, 2015-06-10 at 11:16 +0200, Ulf Hansson wrote:
-> > On 10 June 2015 at 01:21, Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
-> > > This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
-> > > in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
-> > > works on the R8A7790 Lager board and another development board.
-> > >
-> > > The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
-> > > the pins wired to the SD card.  This is supported by adding separate
-> > > functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
-> > > that several SH SoCs have this capability, but I only have the R8A7790
-> > > data sheet so I only implemented it for that one.
-> > >
-> > > Changes since v1:
-> > > - Reword commit message for "mmc: tmio: Add UHS-I mode support"
-> > > - Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
-> > >   to switch to 3.3V and the regulator or pinctrl or pinctrl state is
-> > >   missing
-> > > - Drop change to mmcif clock on Lager
-> > > - Correct original author for sdhi clock changes on Lager
-> > >
-> > > Changes since the RFC:
-> > > - Replace the 'regulator' devices for signal voltage switching with
-> > >   pinctrl functions and states
-> > > - Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
-> > >   redundant
-> > > - Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
-> > > - Fix subject prefix for the DT changes
-> > >
-> > > Ben.
-> > >
-> > > Ben Hutchings (5):
-> > >   mmc: tmio: Add UHS-I mode support
-> > >   pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
-> > >   pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
-> > >     operation
-> > >   mmc: sh_mobile_sdhi: Add UHS-I mode support
-> > >   ARM: shmobile: lager: Enable UHS-I SDR-50
-> > >
-> > > Ian Molton (1):
-> > >   ARM: shmobile: lager: Set clock rates for SDHI
-> > >
-> > >  arch/arm/boot/dts/r8a7790-lager.dts  | 24 +++++++++++--
-> > >  drivers/mmc/host/sh_mobile_sdhi.c    | 60 +++++++++++++++++++++++++++++++
-> > >  drivers/mmc/host/tmio_mmc.h          |  3 ++
-> > >  drivers/mmc/host/tmio_mmc_pio.c      | 31 ++++++++++++++++
-> > >  drivers/pinctrl/sh-pfc/core.c        |  2 +-
-> > >  drivers/pinctrl/sh-pfc/core.h        |  1 +
-> > >  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 70 +++++++++++++++++++++++++++++++++---
-> > >  drivers/pinctrl/sh-pfc/pinctrl.c     |  4 +++
-> > >  drivers/pinctrl/sh-pfc/sh_pfc.h      | 10 +++++-
-> > >  9 files changed, 197 insertions(+), 8 deletions(-)
-> > >
-> > > --
-> > > 2.1.4
-> > >
-> > 
-> > Hi Ben,
-> > 
-> > I have looked at the mmc patches, those looks good to me. Regarding
-> > the pinctrl and ARM patches, I suppose these can be taken through
-> > their respective trees and I can take the mmc patches?
-> 
-> The problem with that is that I think the device tree change will cause
-> a regression if it's applied without the driver changes.  I would much
-> prefer if I could get the pinctrl and device tree changes acked by the
-> respective maintainers to go through the MMC tree.  (I should probably
-> have said that up front.)
+On Wed, Jun 10, 2015 at 10:26 PM, Daniel Lockyer
+<thisisdaniellockyer@gmail.com> wrote:
+> This patch fixes some issues given by checkpatch. Fixes include
+> bracket placement, spacing and indenting.
 
-Hi Ben,
+Looks good, thanks!
 
-I may be misunderstanding the above, if so I apologise, but I would
-strongly prefer to avoid an arrangement where the kernel and device tree
-blob (DTS/DTSI -> DTB) need to be upgrade in lock-step as this tends not to
-lead to a good experience for users.  My preference would be to maintain
-backwards and forwards compatibility and if appropriate schedule removal of
-such compatibility.
-
-> > BTW, I noticed that the pinctrl maintainer wasn't in the to-field, you
-> > may need to repost.
-> 
-> I have the relevant _list_ (linux-gpio) in cc and thought that would be
-> sufficient, but maybe not, so cc'ing this message.
-
-Thanks. I have also CCed Laurent who has done extensive work on sh-pfc.
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
