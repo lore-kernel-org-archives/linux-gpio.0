@@ -1,93 +1,116 @@
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: Re: [PATCH v2 0/6] UHS-I support for sh_mobile_sdhi
-Date: Thu, 11 Jun 2015 00:57:57 +0100
-Message-ID: <1433980677.12074.74.camel@codethink.co.uk>
-References: <1433892104.12074.49.camel@codethink.co.uk>
-	 <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
+From: Tobias Diedrich <ranma+kernel@tdiedrich.de>
+Subject: [PATCH] gpio / ACPI: Add label to the gpio request
+Date: Thu, 11 Jun 2015 02:08:22 +0200
+Message-ID: <20150611000822.GA21213@yumi.tdiedrich.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFq+fZrH1hMdMd8FEzy8h1U9pu8PbaMQtBDOEe+UySqJkA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from yumi.uguu.de ([85.10.200.126]:55102 "EHLO mx.tdiedrich.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751602AbbFKARF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 10 Jun 2015 20:17:05 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2015-06-10 at 11:16 +0200, Ulf Hansson wrote:
-> On 10 June 2015 at 01:21, Ben Hutchings <ben.hutchings@codethink.co.uk> wrote:
-> > This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
-> > in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
-> > works on the R8A7790 Lager board and another development board.
-> >
-> > The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
-> > the pins wired to the SD card.  This is supported by adding separate
-> > functions for 1.8V signalling in sh-pfc ("sdhi0_1v8" etc.).  I expect
-> > that several SH SoCs have this capability, but I only have the R8A7790
-> > data sheet so I only implemented it for that one.
-> >
-> > Changes since v1:
-> > - Reword commit message for "mmc: tmio: Add UHS-I mode support"
-> > - Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
-> >   to switch to 3.3V and the regulator or pinctrl or pinctrl state is
-> >   missing
-> > - Drop change to mmcif clock on Lager
-> > - Correct original author for sdhi clock changes on Lager
-> >
-> > Changes since the RFC:
-> > - Replace the 'regulator' devices for signal voltage switching with
-> >   pinctrl functions and states
-> > - Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
-> >   redundant
-> > - Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
-> > - Fix subject prefix for the DT changes
-> >
-> > Ben.
-> >
-> > Ben Hutchings (5):
-> >   mmc: tmio: Add UHS-I mode support
-> >   pinctrl: sh-pfc: Add set_mux operation to struct sh_pfc_function
-> >   pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V
-> >     operation
-> >   mmc: sh_mobile_sdhi: Add UHS-I mode support
-> >   ARM: shmobile: lager: Enable UHS-I SDR-50
-> >
-> > Ian Molton (1):
-> >   ARM: shmobile: lager: Set clock rates for SDHI
-> >
-> >  arch/arm/boot/dts/r8a7790-lager.dts  | 24 +++++++++++--
-> >  drivers/mmc/host/sh_mobile_sdhi.c    | 60 +++++++++++++++++++++++++++++++
-> >  drivers/mmc/host/tmio_mmc.h          |  3 ++
-> >  drivers/mmc/host/tmio_mmc_pio.c      | 31 ++++++++++++++++
-> >  drivers/pinctrl/sh-pfc/core.c        |  2 +-
-> >  drivers/pinctrl/sh-pfc/core.h        |  1 +
-> >  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 70 +++++++++++++++++++++++++++++++++---
-> >  drivers/pinctrl/sh-pfc/pinctrl.c     |  4 +++
-> >  drivers/pinctrl/sh-pfc/sh_pfc.h      | 10 +++++-
-> >  9 files changed, 197 insertions(+), 8 deletions(-)
-> >
-> > --
-> > 2.1.4
-> >
-> 
-> Hi Ben,
-> 
-> I have looked at the mmc patches, those looks good to me. Regarding
-> the pinctrl and ARM patches, I suppose these can be taken through
-> their respective trees and I can take the mmc patches?
+In create_gpio_led only the legacy pass propagates the label by passing it into
+devm_gpio_request_one.
 
-The problem with that is that I think the device tree change will cause
-a regression if it's applied without the driver changes.  I would much
-prefer if I could get the pinctrl and device tree changes acked by the
-respective maintainers to go through the MMC tree.  (I should probably
-have said that up front.)
+On the newer devicetree/acpi path the label is lost as far as the GPIO
+subsystem goes (it is only retained as name in struct gpio_led.
 
-> BTW, I noticed that the pinctrl maintainer wasn't in the to-field, you
-> may need to repost.
+Amend devm_get_gpiod_from_child to also pass the label into the GPIO layer, so
+it will show up in /sys/kernel/debug/gpio, so instead of:
 
-I have the relevant _list_ (linux-gpio) in cc and thought that would be
-sufficient, but maybe not, so cc'ing this message.
+GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+ gpio-477 (?                   ) out hi
+ gpio-478 (?                   ) out lo
+ gpio-479 (?                   ) out hi
 
-Ben.
+we get the much nicer output:
 
+GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+ gpio-477 (led1                ) out hi
+ gpio-478 (led2                ) out lo
+ gpio-479 (led3                ) out hi
+
+Signed-off-by: Tobias Diedrich <ranma+kernel@tdiedrich.de>
+---
+ drivers/gpio/devres.c         | 6 +++++-
+ drivers/gpio/gpiolib.c        | 6 ++++--
+ include/linux/gpio/consumer.h | 3 ++-
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index 07ba823..089db97 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -103,13 +103,17 @@ struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
+ {
+ 	struct gpio_desc **dr;
+ 	struct gpio_desc *desc;
++	const char *label = NULL;
+ 
+ 	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+ 			  GFP_KERNEL);
+ 	if (!dr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	desc = gpiod_get_index(dev, con_id, idx, flags);
++	if (fwnode_property_present(child, "label"))
++		fwnode_property_read_string(child, "label", &label);
++
++	desc = gpiod_get_index(dev, con_id, idx, flags, label);
+ 	if (IS_ERR(desc)) {
+ 		devres_free(dr);
+ 		return desc;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6bc612b..fb2be68 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2017,6 +2017,7 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
+  * fwnode_get_named_gpiod - obtain a GPIO from firmware node
+  * @fwnode:	handle of the firmware node
+  * @propname:	name of the firmware property representing the GPIO
++ * @label:	optional label for the GPIO
+  *
+  * This function can be used for drivers that get their configuration
+  * from firmware.
+@@ -2028,7 +2029,8 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
+  * In case of error an ERR_PTR() is returned.
+  */
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname)
++					 const char *propname,
++					 const char *label)
+ {
+ 	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+ 	bool active_low = false;
+@@ -2056,7 +2058,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (IS_ERR(desc))
+ 		return desc;
+ 
+-	ret = gpiod_request(desc, NULL);
++	ret = gpiod_request(desc, label);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 3a7c9ff..ef7d322 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -134,7 +134,8 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ struct fwnode_handle;
+ 
+ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+-					 const char *propname);
++					 const char *propname,
++					 const char *label);
+ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+ 					    const char *con_id,
+ 					    struct fwnode_handle *child);
+-- 
+2.1.4
 
