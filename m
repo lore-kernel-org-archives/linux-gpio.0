@@ -1,68 +1,46 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Fri, 12 Jun 2015 13:36:23 +0200
-Message-ID: <557AC437.9000607@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>	<5579602F.1070801@ahsoftware.de>	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>	<5579B9E8.9040609@ahsoftware.de> <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com> <557AC040.40803@ahsoftware.de>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH v2 3/6] pinctrl: sh-pfc: r8a7790: Add separate functions
+ for SDHI 1.8V operation
+Date: Fri, 12 Jun 2015 14:23:55 +0100
+Message-ID: <1434115435.25446.1.camel@codethink.co.uk>
+References: <1433892104.12074.49.camel@codethink.co.uk>
+	 <1433892211.12074.52.camel@codethink.co.uk> <2554026.6LTcTIWBdF@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <557AC040.40803@ahsoftware.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:42182 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753087AbbFLNYD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2015 09:24:03 -0400
+In-Reply-To: <2554026.6LTcTIWBdF@avalon>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Am 12.06.2015 um 13:19 schrieb Alexander Holler:
-> Am 12.06.2015 um 09:25 schrieb Linus Walleij:
->> On Thu, Jun 11, 2015 at 6:40 PM, Alexander Holler
->> <holler@ahsoftware.de> wrote:
->>> Am 11.06.2015 um 14:30 schrieb Linus Walleij:
->>
->>>> Certainly it is possible to create deadlocks in this scenario, but the
->>>> scope is not to create an ubreakable system.
->>>
->>> IAnd what happens if you run into a deadlock? Do you print "you've
->>> lost, try
->>> changing your kernel config" in some output hidden by a
->>> splash-screen? ;)
->>
->> Sorry it sounds like a blanket argument, the fact that there are
->> mutexes in the kernel makes it possible to deadlock, it doesn't
->> mean we don't use mutexes. Some programming problems are
->> just like such.
->
-> I'm not talking about specific deadlocks through mutexes. I'm talking
-> about what happens when driver A needs driver B which needs driver A.
-> How do you recognise and handle that with your instrumented on-demand
-> device initialization? Such a circular dependency might happen by just
-> adding a new fucntion call or by changing the kernel configuration. And
-> with the on-demand stuff, the possibility that the developer introducing
-> this new (maybe optional) call will never hit such a circular dependency
-> is high. So you will end up with a never ending stream of problem
-> reports whenever someone introduced such a circular dependecy without
-> having noticed it.
->
-> And to come back to specific deadlocks, if you are extending function
-> calls from something former simple to something which might initialize a
-> whole bunch of drivers, needing maybe seconds, I wouldn't say this is a
-> blanket argument, but a real thread.
+On Fri, 2015-06-12 at 10:18 +0300, Laurent Pinchart wrote:
+> Hi Ben,
+> 
+> (CC'ing Linus Walleij)
+> 
+> Thank you for the patch.
+> 
+> On Wednesday 10 June 2015 00:23:31 Ben Hutchings wrote:
+> > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
+> > on negotiation with the card.
+> > 
+> > Add separate functions for the 1.8V mode, and implement the set_mux
+> > operation on all SDHI functions to configure the voltage for each
+> > group of pins.
+> 
+> I don't think duplicating all functions for 1.8V and 3.3V is the right way to 
+> go. Can't we use the pinconf API instead, and in particular the 
+> PIN_CONFIG_POWER_SOURCE configuration ?
+[...]
 
-Keep in mind, that the possibility that a function call ends up with 
-initializing a whole bunch of other drivers, is not determined 
-statically, but depends on the configuration and runtime behaviour of 
-the actual system the on-demand stuff actually happens.
+So far as I could see, you can't use the pinconf API with pinmux groups.
 
-E.g. if driver A is faster one system that driver B, the whole bunch of 
-drivers might become initialized by a call in driver A. But if driver B 
-was faster on the developers system (or the system is configured to 
-first init driver B), than the whole bunch of drivers might have become 
-initialized by driver B on the developers system. Thus he never might 
-have hit a possible problem when the whole bunch of drivers got 
-initialized in driver A.
+Ben.
 
-That means it isn't always a good idea to create dynamic systems (like 
-on-demand device initialization), because it's very hard to foresee and 
-correctly handle their runtime behaviour.
 
-> Alexander Holler
