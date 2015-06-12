@@ -1,67 +1,57 @@
 From: Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Fri, 12 Jun 2015 16:19:45 +0800
-Message-ID: <1434097185-16464-1-git-send-email-jun.nie@linaro.org>
+Subject: [PATCH 1/2] dt/bindings: gpio: Document ZTE zx296702 GPIO
+Date: Fri, 12 Jun 2015 16:35:14 +0800
+Message-ID: <1434098115-17292-1-git-send-email-jun.nie@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:33207 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751163AbbFLIUN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2015 04:20:13 -0400
-Received: by pdjn11 with SMTP id n11so20194024pdj.0
-        for <linux-gpio@vger.kernel.org>; Fri, 12 Jun 2015 01:20:13 -0700 (PDT)
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:35755 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbbFLIfd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2015 04:35:33 -0400
+Received: by pacyx8 with SMTP id yx8so18932171pac.2
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Jun 2015 01:35:33 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org, Jun Nie <jun.nie@linaro.org>
 
-Support GPIO for one register control multiple pins case
-with calculating register offset first, then bit offset.
+Add document of ZTE zx296702 GPIO binding
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/gpio/zx296702-gpio.txt     | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 13b45f2..bd69d9a 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
- 	struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
- 	struct pcs_gpiofunc_range *frange = NULL;
- 	struct list_head *pos, *tmp;
--	int mux_bytes = 0;
-+	int offset, mux_bytes = 0;
- 	unsigned data;
- 
- 	/* If function mask is null, return directly. */
-@@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
- 			|| pin < frange->offset)
- 			continue;
- 		mux_bytes = pcs->width / BITS_PER_BYTE;
--		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
--		data |= frange->gpiofunc;
--		pcs->write(data, pcs->base + pin * mux_bytes);
-+		if (pcs->bits_per_mux) {
-+			int pin_pos, byte_num, num_pins_in_register;
+diff --git a/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt b/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
+new file mode 100644
+index 0000000..0dab156
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
+@@ -0,0 +1,24 @@
++ZTE ZX296702 GPIO controller
 +
-+			num_pins_in_register = pcs->width / pcs->bits_per_pin;
-+			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-+			offset = (byte_num / mux_bytes) * mux_bytes;
-+			pin_pos = pin % num_pins_in_register;
-+			pin_pos *= pcs->bits_per_pin;
-+			data = pcs->read(pcs->base + offset) &
-+				~(pcs->fmask << pin_pos);
-+			data |= frange->gpiofunc << pin_pos;
-+		} else {
-+			offset = pin * mux_bytes;
-+			data = pcs->read(pcs->base + offset) & ~pcs->fmask;
-+			data |= frange->gpiofunc;
-+		}
-+		pcs->write(data, pcs->base + offset);
- 		break;
- 	}
- 	return 0;
++Required properties:
++- compatible : "zte,zx296702-gpio"
++- #gpio-cells : Should be two. The first cell is the pin number and the
++  second cell is used to specify optional parameters:
++  - bit 0 specifies polarity (0 for normal, 1 for inverted)
++- gpio-controller : Marks the device node as a GPIO controller.
++- interrupts : Interrupt mapping for GPIO IRQ.
++- gpio-ranges : Interaction with the PINCTRL subsystem.
++
++gpio1: gpio@b008040 {
++	compatible = "zte,zx296702-gpio";
++	reg = <0xb008040 0x40>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	gpio-ranges = < &pmx0 0 54 2 &pmx0 2 59 14>;
++	interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++	interrupt-parent = <&intc>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	clock-names = "gpio_pclk";
++	clocks = <&lsp0clk ZX296702_GPIO_CLK>;
++};
 -- 
 1.9.1
 
