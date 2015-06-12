@@ -1,38 +1,67 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Fri, 12 Jun 2015 09:25:53 +0200
-Message-ID: <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-	<5577F533.1060007@ahsoftware.de>
-	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
-	<5579602F.1070801@ahsoftware.de>
-	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>
-	<5579B9E8.9040609@ahsoftware.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5579B9E8.9040609-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "list-7NY9aMYB+ISttCpgsWEBFg@public.gmane.org:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH] pinctrl: single: support GPIO for bits pinctrl
+Date: Fri, 12 Jun 2015 16:19:45 +0800
+Message-ID: <1434097185-16464-1-git-send-email-jun.nie@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:33207 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751163AbbFLIUN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2015 04:20:13 -0400
+Received: by pdjn11 with SMTP id n11so20194024pdj.0
+        for <linux-gpio@vger.kernel.org>; Fri, 12 Jun 2015 01:20:13 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org, Jun Nie <jun.nie@linaro.org>
 
-On Thu, Jun 11, 2015 at 6:40 PM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
-> Am 11.06.2015 um 14:30 schrieb Linus Walleij:
+Support GPIO for one register control multiple pins case
+with calculating register offset first, then bit offset.
 
->> Certainly it is possible to create deadlocks in this scenario, but the
->> scope is not to create an ubreakable system.
->
-> IAnd what happens if you run into a deadlock? Do you print "you've lost, try
-> changing your kernel config" in some output hidden by a splash-screen? ;)
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+ drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-Sorry it sounds like a blanket argument, the fact that there are
-mutexes in the kernel makes it possible to deadlock, it doesn't
-mean we don't use mutexes. Some programming problems are
-just like such.
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 13b45f2..bd69d9a 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+ 	struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
+ 	struct pcs_gpiofunc_range *frange = NULL;
+ 	struct list_head *pos, *tmp;
+-	int mux_bytes = 0;
++	int offset, mux_bytes = 0;
+ 	unsigned data;
+ 
+ 	/* If function mask is null, return directly. */
+@@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+ 			|| pin < frange->offset)
+ 			continue;
+ 		mux_bytes = pcs->width / BITS_PER_BYTE;
+-		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+-		data |= frange->gpiofunc;
+-		pcs->write(data, pcs->base + pin * mux_bytes);
++		if (pcs->bits_per_mux) {
++			int pin_pos, byte_num, num_pins_in_register;
++
++			num_pins_in_register = pcs->width / pcs->bits_per_pin;
++			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
++			offset = (byte_num / mux_bytes) * mux_bytes;
++			pin_pos = pin % num_pins_in_register;
++			pin_pos *= pcs->bits_per_pin;
++			data = pcs->read(pcs->base + offset) &
++				~(pcs->fmask << pin_pos);
++			data |= frange->gpiofunc << pin_pos;
++		} else {
++			offset = pin * mux_bytes;
++			data = pcs->read(pcs->base + offset) & ~pcs->fmask;
++			data |= frange->gpiofunc;
++		}
++		pcs->write(data, pcs->base + offset);
+ 		break;
+ 	}
+ 	return 0;
+-- 
+1.9.1
 
-Yours,
-Linus Walleij
