@@ -1,72 +1,51 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH] gpio: generic: add get_direction support
-Date: Fri, 12 Jun 2015 18:20:35 +0200
-Message-ID: <1434126035-18596-1-git-send-email-p.zabel@pengutronix.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:60272 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752697AbbFLQUj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 12 Jun 2015 12:20:39 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 3/6] pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V operation
+Date: Fri, 12 Jun 2015 22:07:19 +0300
+Message-ID: <34148355.aYdSK9R7Ck@avalon>
+References: <1433892104.12074.49.camel@codethink.co.uk> <2554026.6LTcTIWBdF@avalon> <1434115435.25446.1.camel@codethink.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1434115435.25446.1.camel@codethink.co.uk>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
 
-Allow to determine the current direction configuration by
-reading back from the direction register.
+Hi Ben,
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/gpio/gpio-generic.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On Friday 12 June 2015 14:23:55 Ben Hutchings wrote:
+> On Fri, 2015-06-12 at 10:18 +0300, Laurent Pinchart wrote:
+> > Hi Ben,
+> > 
+> > (CC'ing Linus Walleij)
+> > 
+> > Thank you for the patch.
+> > 
+> > On Wednesday 10 June 2015 00:23:31 Ben Hutchings wrote:
+> > > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
+> > > on negotiation with the card.
+> > > 
+> > > Add separate functions for the 1.8V mode, and implement the set_mux
+> > > operation on all SDHI functions to configure the voltage for each
+> > > group of pins.
+> > 
+> > I don't think duplicating all functions for 1.8V and 3.3V is the right way
+> > to go. Can't we use the pinconf API instead, and in particular the
+> > PIN_CONFIG_POWER_SOURCE configuration ?
+> 
+> [...]
+> 
+> So far as I could see, you can't use the pinconf API with pinmux groups.
 
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index b92a690..fb9c572 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -291,6 +291,14 @@ static int bgpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- 	return 0;
- }
- 
-+static int bgpio_get_dir(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+
-+	return (bgc->read_reg(bgc->reg_dir) & bgc->pin2mask(bgc, gpio)) ?
-+	       GPIOF_DIR_OUT : GPIOF_DIR_IN;
-+}
-+
- static int bgpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
- 	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-@@ -340,6 +348,14 @@ static int bgpio_dir_out_inv(struct gpio_chip *gc, unsigned int gpio, int val)
- 	return 0;
- }
- 
-+static int bgpio_get_dir_inv(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct bgpio_chip *bgc = to_bgpio_chip(gc);
-+
-+	return (bgc->read_reg(bgc->reg_dir) & bgc->pin2mask(bgc, gpio)) ?
-+	       GPIOF_DIR_IN : GPIOF_DIR_OUT;
-+}
-+
- static int bgpio_setup_accessors(struct device *dev,
- 				 struct bgpio_chip *bgc,
- 				 bool bit_be,
-@@ -452,10 +468,12 @@ static int bgpio_setup_direction(struct bgpio_chip *bgc,
- 		bgc->reg_dir = dirout;
- 		bgc->gc.direction_output = bgpio_dir_out;
- 		bgc->gc.direction_input = bgpio_dir_in;
-+		bgc->gc.get_direction = bgpio_get_dir;
- 	} else if (dirin) {
- 		bgc->reg_dir = dirin;
- 		bgc->gc.direction_output = bgpio_dir_out_inv;
- 		bgc->gc.direction_input = bgpio_dir_in_inv;
-+		bgc->gc.get_direction = bgpio_get_dir_inv;
- 	} else {
- 		bgc->gc.direction_output = bgpio_simple_dir_out;
- 		bgc->gc.direction_input = bgpio_simple_dir_in;
+Can't you ? Both Documentation/devicetree/bindings/pinctrl/pinctrl-
+bindings.txt and Documentation/devicetree/bindings/pinctrl/renesas,pfc-
+pinctrl.txt document the usage of pinconf with groups (see for instance 
+example 3 in the latter).
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
 
