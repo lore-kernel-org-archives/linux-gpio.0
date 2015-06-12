@@ -1,51 +1,141 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 3/6] pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V operation
-Date: Fri, 12 Jun 2015 22:07:19 +0300
-Message-ID: <34148355.aYdSK9R7Ck@avalon>
-References: <1433892104.12074.49.camel@codethink.co.uk> <2554026.6LTcTIWBdF@avalon> <1434115435.25446.1.camel@codethink.co.uk>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 1/2] pinctrl: rockchip: generalize perpin driver-strength setting
+Date: Fri, 12 Jun 2015 23:50:11 +0200
+Message-ID: <2322857.kblfsanYOB@diego>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1434115435.25446.1.camel@codethink.co.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:53858 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750753AbbFLVuU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 12 Jun 2015 17:50:20 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 
-Hi Ben,
+The upcoming support for the RK3368 ARM64 SoC also supports perpin
+drive strength settings (at different register positions), so generalize
+the register and offset calculation to easily support this one too.
 
-On Friday 12 June 2015 14:23:55 Ben Hutchings wrote:
-> On Fri, 2015-06-12 at 10:18 +0300, Laurent Pinchart wrote:
-> > Hi Ben,
-> > 
-> > (CC'ing Linus Walleij)
-> > 
-> > Thank you for the patch.
-> > 
-> > On Wednesday 10 June 2015 00:23:31 Ben Hutchings wrote:
-> > > All the SHDIs can operate with either 3.3V or 1.8V signals, depending
-> > > on negotiation with the card.
-> > > 
-> > > Add separate functions for the 1.8V mode, and implement the set_mux
-> > > operation on all SDHI functions to configure the voltage for each
-> > > group of pins.
-> > 
-> > I don't think duplicating all functions for 1.8V and 3.3V is the right way
-> > to go. Can't we use the pinconf API instead, and in particular the
-> > PIN_CONFIG_POWER_SOURCE configuration ?
-> 
-> [...]
-> 
-> So far as I could see, you can't use the pinconf API with pinmux groups.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-Can't you ? Both Documentation/devicetree/bindings/pinctrl/pinctrl-
-bindings.txt and Documentation/devicetree/bindings/pinctrl/renesas,pfc-
-pinctrl.txt document the usage of pinconf with groups (see for instance 
-example 3 in the latter).
-
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index dee7d5f..70423ae 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -163,6 +163,9 @@ struct rockchip_pin_ctrl {
+ 	void	(*pull_calc_reg)(struct rockchip_pin_bank *bank,
+ 				    int pin_num, struct regmap **regmap,
+ 				    int *reg, u8 *bit);
++	void	(*drv_calc_reg)(struct rockchip_pin_bank *bank,
++				    int pin_num, struct regmap **regmap,
++				    int *reg, u8 *bit);
+ };
+ 
+ struct rockchip_pin_config {
+@@ -581,7 +584,6 @@ static void rk3288_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+ #define RK3288_DRV_BITS_PER_PIN		2
+ #define RK3288_DRV_PINS_PER_REG		8
+ #define RK3288_DRV_BANK_STRIDE		16
+-static int rk3288_drv_list[] = { 2, 4, 8, 12 };
+ 
+ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 				    int pin_num, struct regmap **regmap,
+@@ -611,14 +613,19 @@ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	}
+ }
+ 
+-static int rk3288_get_drive(struct rockchip_pin_bank *bank, int pin_num)
++static int rockchip_perpin_drv_list[] = { 2, 4, 8, 12 };
++
++static int rockchip_get_drive_perpin(struct rockchip_pin_bank *bank,
++				     int pin_num)
+ {
++	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	struct regmap *regmap;
+ 	int reg, ret;
+ 	u32 data;
+ 	u8 bit;
+ 
+-	rk3288_calc_drv_reg_and_bit(bank, pin_num, &regmap, &reg, &bit);
++	ctrl->drv_calc_reg(bank, pin_num, &regmap, &reg, &bit);
+ 
+ 	ret = regmap_read(regmap, reg, &data);
+ 	if (ret)
+@@ -627,24 +634,25 @@ static int rk3288_get_drive(struct rockchip_pin_bank *bank, int pin_num)
+ 	data >>= bit;
+ 	data &= (1 << RK3288_DRV_BITS_PER_PIN) - 1;
+ 
+-	return rk3288_drv_list[data];
++	return rockchip_perpin_drv_list[data];
+ }
+ 
+-static int rk3288_set_drive(struct rockchip_pin_bank *bank, int pin_num,
+-			    int strength)
++static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
++				     int pin_num, int strength)
+ {
+ 	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	struct regmap *regmap;
+ 	unsigned long flags;
+ 	int reg, ret, i;
+ 	u32 data, rmask;
+ 	u8 bit;
+ 
+-	rk3288_calc_drv_reg_and_bit(bank, pin_num, &regmap, &reg, &bit);
++	ctrl->drv_calc_reg(bank, pin_num, &regmap, &reg, &bit);
+ 
+ 	ret = -EINVAL;
+-	for (i = 0; i < ARRAY_SIZE(rk3288_drv_list); i++) {
+-		if (rk3288_drv_list[i] == strength) {
++	for (i = 0; i < ARRAY_SIZE(rockchip_perpin_drv_list); i++) {
++		if (rockchip_perpin_drv_list[i] == strength) {
+ 			ret = i;
+ 			break;
+ 		}
+@@ -983,10 +991,11 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			break;
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+ 			/* rk3288 is the first with per-pin drive-strength */
+-			if (info->ctrl->type != RK3288)
++			if (!info->ctrl->drv_calc_reg)
+ 				return -ENOTSUPP;
+ 
+-			rc = rk3288_set_drive(bank, pin - bank->pin_base, arg);
++			rc = rockchip_set_drive_perpin(bank,
++						pin - bank->pin_base, arg);
+ 			if (rc < 0)
+ 				return rc;
+ 			break;
+@@ -1041,10 +1050,10 @@ static int rockchip_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
+ 		break;
+ 	case PIN_CONFIG_DRIVE_STRENGTH:
+ 		/* rk3288 is the first with per-pin drive-strength */
+-		if (info->ctrl->type != RK3288)
++		if (!info->ctrl->drv_calc_reg)
+ 			return -ENOTSUPP;
+ 
+-		rc = rk3288_get_drive(bank, pin - bank->pin_base);
++		rc = rockchip_get_drive_perpin(bank, pin - bank->pin_base);
+ 		if (rc < 0)
+ 			return rc;
+ 
+@@ -2056,6 +2065,7 @@ static struct rockchip_pin_ctrl rk3288_pin_ctrl = {
+ 		.grf_mux_offset		= 0x0,
+ 		.pmu_mux_offset		= 0x84,
+ 		.pull_calc_reg		= rk3288_calc_pull_reg_and_bit,
++		.drv_calc_reg		= rk3288_calc_drv_reg_and_bit,
+ };
+ 
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
 -- 
-Regards,
+2.1.4
 
-Laurent Pinchart
 
