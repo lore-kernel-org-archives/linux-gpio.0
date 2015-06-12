@@ -1,75 +1,51 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/7] gpio: mvebu: Add limited PWM support
-Date: Fri, 12 Jun 2015 12:38:50 +0200
-Message-ID: <20150612103849.GI19400@ulmo.nvidia.com>
-References: <1420846493-31647-1-git-send-email-andrew@lunn.ch>
- <1420846493-31647-4-git-send-email-andrew@lunn.ch>
+From: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Fri, 12 Jun 2015 13:19:28 +0200
+Message-ID: <557AC040.40803@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>	<5579602F.1070801@ahsoftware.de>	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>	<5579B9E8.9040609@ahsoftware.de> <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JI+G0+mN8WmwPnOn"
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1420846493-31647-4-git-send-email-andrew@lunn.ch>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linus.walleij@linaro.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, kaloz@openwrt.org, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@googlemail.com>, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRM PANEL DRIVERS <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+Am 12.06.2015 um 09:25 schrieb Linus Walleij:
+> On Thu, Jun 11, 2015 at 6:40 PM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
+>> Am 11.06.2015 um 14:30 schrieb Linus Walleij:
+>
+>>> Certainly it is possible to create deadlocks in this scenario, but the
+>>> scope is not to create an ubreakable system.
+>>
+>> IAnd what happens if you run into a deadlock? Do you print "you've lost, try
+>> changing your kernel config" in some output hidden by a splash-screen? ;)
+>
+> Sorry it sounds like a blanket argument, the fact that there are
+> mutexes in the kernel makes it possible to deadlock, it doesn't
+> mean we don't use mutexes. Some programming problems are
+> just like such.
 
---JI+G0+mN8WmwPnOn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm not talking about specific deadlocks through mutexes. I'm talking 
+about what happens when driver A needs driver B which needs driver A. 
+How do you recognise and handle that with your instrumented on-demand 
+device initialization? Such a circular dependency might happen by just 
+adding a new fucntion call or by changing the kernel configuration. And 
+with the on-demand stuff, the possibility that the developer introducing 
+this new (maybe optional) call will never hit such a circular dependency 
+is high. So you will end up with a never ending stream of problem 
+reports whenever someone introduced such a circular dependecy without 
+having noticed it.
 
-On Sat, Jan 10, 2015 at 12:34:49AM +0100, Andrew Lunn wrote:
-> Armada 370/XP devices can 'blink' gpio lines with a configurable on
-> and off period. This can be modelled as a PWM.
->=20
-> However, there are only two sets of PWM configuration registers for
-> all the gpio lines. This driver simply allows a single gpio line per
-> gpio chip of 32 lines to be used as a PWM. Attempts to use more return
-> EBUSY.
->=20
-> Due to the interleaving of registers it is not simple to separate the
-> PWM driver from the gpio driver. Thus the gpio driver has been
-> extended with a PWM driver.
->=20
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> ---
->  drivers/gpio/Kconfig          |   5 ++
->  drivers/gpio/Makefile         |   1 +
->  drivers/gpio/gpio-mvebu-pwm.c | 202 ++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/gpio/gpio-mvebu.c     |  37 +++-----
->  drivers/gpio/gpio-mvebu.h     |  79 +++++++++++++++++
->  5 files changed, 299 insertions(+), 25 deletions(-)
->  create mode 100644 drivers/gpio/gpio-mvebu-pwm.c
->  create mode 100644 drivers/gpio/gpio-mvebu.h
+And to come back to specific deadlocks, if you are extending function 
+calls from something former simple to something which might initialize a 
+whole bunch of drivers, needing maybe seconds, I wouldn't say this is a 
+blanket argument, but a real thread.
 
-FWIW, I think this could easily just be all in the gpio-mvebu.c driver,
-no need to split it up.
-
-Thierry
-
---JI+G0+mN8WmwPnOn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVera2AAoJEN0jrNd/PrOhI08P/At/CW6g2GEXjcAIBg/pYMCw
-hG4UgdoWJkPg4uPPFtzbPlAuICPXRqGu7duQUMEQvI/glENJptqGHhVpWhPgIMVf
-QhYgq0lM6e6oQMYRJiLtI0et3EZjzeOmd91NJWvUSK5b7q+PeptJADmM2VLn8plC
-9zgHIE1ZCbNp0cx38Mhgy5t66F/COJ2qgdkCP4GAZquT6gpIrkhDzBSrAaKuQDtD
-L09IfEQkbhM4gtgYABOyOqbGt9oFLtphFTMz9iDlTYlEIa6fJoGIBq+o8lsXhRQQ
-Du4AZ000XwwChBF51RfHIn67bzhJNjmUGM5bAqdbgGvouaUYwYUfBiTutlToKYe6
-KaLILxEQcF3mQbs+sxQcoIJV2Pba++ZqKpRDE1dTV1j3dOsykmEX7mYC5Oe8+4Uv
-rk7qM5ZK+rTLu9+mCDUYMHRLnIGP07H++xSHBSj8nDeV9J8qDpnWDNnQY65sCWSc
-Q/rAKLBD+H5rrF/NT2yT2C7hkoZUenQTRLqBHdmHNJXn8d6m1NaNWgobcK7yi9Yj
-hMCJ6MJdM+aPjs+dl6tkx5rv6FZxfmKR7pHo1FZSwb91OmPEHvAyV0uVnYlbkMOU
-mDi3hfRgnl5ZbCQNC/cCZuJ16lEjx1INh4992cB7VLednNfAc/bqCtq0S4cMESW/
-TQMB8A8z4TqyiHhGpjoN
-=jJR3
------END PGP SIGNATURE-----
-
---JI+G0+mN8WmwPnOn--
+Alexander Holler
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
