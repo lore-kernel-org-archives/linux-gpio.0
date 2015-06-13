@@ -1,113 +1,143 @@
-From: Alexander Holler <holler@ahsoftware.de>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Sat, 13 Jun 2015 20:27:21 +0200
-Message-ID: <557C7609.30400@ahsoftware.de>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>	<5577F533.1060007@ahsoftware.de>	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>	<5579602F.1070801@ahsoftware.de>	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>	<5579B9E8.9040609@ahsoftware.de>
- <CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com>
- <557AC040.40803@ahsoftware.de> <557AC437.9000607@ahsoftware.de>
+From: Tobias Diedrich <ranma@tdiedrich.de>
+Subject: Re: [PATCH] gpio / ACPI: Add label to the gpio request
+Date: Sat, 13 Jun 2015 21:25:36 +0200
+Message-ID: <20150613192536.GA29802@yumi.tdiedrich.de>
+References: <20150611000822.GA21213@yumi.tdiedrich.de>
+ <20150612144927.GE1478@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <557AC437.9000607@ahsoftware.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-usb@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from yumi.uguu.de ([85.10.200.126]:46859 "EHLO mx.tdiedrich.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750802AbbFMTZj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 13 Jun 2015 15:25:39 -0400
+Content-Disposition: inline
+In-Reply-To: <20150612144927.GE1478@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-QW0gMTIuMDYuMjAxNSB1bSAxMzozNiBzY2hyaWViIEFsZXhhbmRlciBIb2xsZXI6Cj4gQW0gMTIu
-MDYuMjAxNSB1bSAxMzoxOSBzY2hyaWViIEFsZXhhbmRlciBIb2xsZXI6Cj4+IEFtIDEyLjA2LjIw
-MTUgdW0gMDk6MjUgc2NocmllYiBMaW51cyBXYWxsZWlqOgo+Pj4gT24gVGh1LCBKdW4gMTEsIDIw
-MTUgYXQgNjo0MCBQTSwgQWxleGFuZGVyIEhvbGxlcgo+Pj4gPGhvbGxlckBhaHNvZnR3YXJlLmRl
-PiB3cm90ZToKPj4+PiBBbSAxMS4wNi4yMDE1IHVtIDE0OjMwIHNjaHJpZWIgTGludXMgV2FsbGVp
-ajoKPj4+Cj4+Pj4+IENlcnRhaW5seSBpdCBpcyBwb3NzaWJsZSB0byBjcmVhdGUgZGVhZGxvY2tz
-IGluIHRoaXMgc2NlbmFyaW8sIGJ1dCB0aGUKPj4+Pj4gc2NvcGUgaXMgbm90IHRvIGNyZWF0ZSBh
-biB1YnJlYWthYmxlIHN5c3RlbS4KPj4+Pgo+Pj4+IElBbmQgd2hhdCBoYXBwZW5zIGlmIHlvdSBy
-dW4gaW50byBhIGRlYWRsb2NrPyBEbyB5b3UgcHJpbnQgInlvdSd2ZQo+Pj4+IGxvc3QsIHRyeQo+
-Pj4+IGNoYW5naW5nIHlvdXIga2VybmVsIGNvbmZpZyIgaW4gc29tZSBvdXRwdXQgaGlkZGVuIGJ5
-IGEKPj4+PiBzcGxhc2gtc2NyZWVuPyA7KQo+Pj4KPj4+IFNvcnJ5IGl0IHNvdW5kcyBsaWtlIGEg
-YmxhbmtldCBhcmd1bWVudCwgdGhlIGZhY3QgdGhhdCB0aGVyZSBhcmUKPj4+IG11dGV4ZXMgaW4g
-dGhlIGtlcm5lbCBtYWtlcyBpdCBwb3NzaWJsZSB0byBkZWFkbG9jaywgaXQgZG9lc24ndAo+Pj4g
-bWVhbiB3ZSBkb24ndCB1c2UgbXV0ZXhlcy4gU29tZSBwcm9ncmFtbWluZyBwcm9ibGVtcyBhcmUK
-Pj4+IGp1c3QgbGlrZSBzdWNoLgo+Pgo+PiBJJ20gbm90IHRhbGtpbmcgYWJvdXQgc3BlY2lmaWMg
-ZGVhZGxvY2tzIHRocm91Z2ggbXV0ZXhlcy4gSSdtIHRhbGtpbmcKPj4gYWJvdXQgd2hhdCBoYXBw
-ZW5zIHdoZW4gZHJpdmVyIEEgbmVlZHMgZHJpdmVyIEIgd2hpY2ggbmVlZHMgZHJpdmVyIEEuCj4+
-IEhvdyBkbyB5b3UgcmVjb2duaXNlIGFuZCBoYW5kbGUgdGhhdCB3aXRoIHlvdXIgaW5zdHJ1bWVu
-dGVkIG9uLWRlbWFuZAo+PiBkZXZpY2UgaW5pdGlhbGl6YXRpb24/IFN1Y2ggYSBjaXJjdWxhciBk
-ZXBlbmRlbmN5IG1pZ2h0IGhhcHBlbiBieSBqdXN0Cj4+IGFkZGluZyBhIG5ldyBmdWNudGlvbiBj
-YWxsIG9yIGJ5IGNoYW5naW5nIHRoZSBrZXJuZWwgY29uZmlndXJhdGlvbi4gQW5kCj4+IHdpdGgg
-dGhlIG9uLWRlbWFuZCBzdHVmZiwgdGhlIHBvc3NpYmlsaXR5IHRoYXQgdGhlIGRldmVsb3BlciBp
-bnRyb2R1Y2luZwo+PiB0aGlzIG5ldyAobWF5YmUgb3B0aW9uYWwpIGNhbGwgd2lsbCBuZXZlciBo
-aXQgc3VjaCBhIGNpcmN1bGFyIGRlcGVuZGVuY3kKPj4gaXMgaGlnaC4gU28geW91IHdpbGwgZW5k
-IHVwIHdpdGggYSBuZXZlciBlbmRpbmcgc3RyZWFtIG9mIHByb2JsZW0KPj4gcmVwb3J0cyB3aGVu
-ZXZlciBzb21lb25lIGludHJvZHVjZWQgc3VjaCBhIGNpcmN1bGFyIGRlcGVuZGVjeSB3aXRob3V0
-Cj4+IGhhdmluZyBub3RpY2VkIGl0Lgo+Pgo+PiBBbmQgdG8gY29tZSBiYWNrIHRvIHNwZWNpZmlj
-IGRlYWRsb2NrcywgaWYgeW91IGFyZSBleHRlbmRpbmcgZnVuY3Rpb24KPj4gY2FsbHMgZnJvbSBz
-b21ldGhpbmcgZm9ybWVyIHNpbXBsZSB0byBzb21ldGhpbmcgd2hpY2ggbWlnaHQgaW5pdGlhbGl6
-ZSBhCj4+IHdob2xlIGJ1bmNoIG9mIGRyaXZlcnMsIG5lZWRpbmcgbWF5YmUgc2Vjb25kcywgSSB3
-b3VsZG4ndCBzYXkgdGhpcyBpcyBhCj4+IGJsYW5rZXQgYXJndW1lbnQsIGJ1dCBhIHJlYWwgdGhy
-ZWFkLgo+Cj4gS2VlcCBpbiBtaW5kLCB0aGF0IHRoZSBwb3NzaWJpbGl0eSB0aGF0IGEgZnVuY3Rp
-b24gY2FsbCBlbmRzIHVwIHdpdGgKPiBpbml0aWFsaXppbmcgYSB3aG9sZSBidW5jaCBvZiBvdGhl
-ciBkcml2ZXJzLCBpcyBub3QgZGV0ZXJtaW5lZAo+IHN0YXRpY2FsbHksIGJ1dCBkZXBlbmRzIG9u
-IHRoZSBjb25maWd1cmF0aW9uIGFuZCBydW50aW1lIGJlaGF2aW91ciBvZgo+IHRoZSBhY3R1YWwg
-c3lzdGVtIHRoZSBvbi1kZW1hbmQgc3R1ZmYgYWN0dWFsbHkgaGFwcGVucy4KPgo+IEUuZy4gaWYg
-ZHJpdmVyIEEgaXMgZmFzdGVyIG9uZSBzeXN0ZW0gdGhhdCBkcml2ZXIgQiwgdGhlIHdob2xlIGJ1
-bmNoIG9mCj4gZHJpdmVycyBtaWdodCBiZWNvbWUgaW5pdGlhbGl6ZWQgYnkgYSBjYWxsIGluIGRy
-aXZlciBBLiBCdXQgaWYgZHJpdmVyIEIKPiB3YXMgZmFzdGVyIG9uIHRoZSBkZXZlbG9wZXJzIHN5
-c3RlbSAob3IgdGhlIHN5c3RlbSBpcyBjb25maWd1cmVkIHRvCj4gZmlyc3QgaW5pdCBkcml2ZXIg
-QiksIHRoYW4gdGhlIHdob2xlIGJ1bmNoIG9mIGRyaXZlcnMgbWlnaHQgaGF2ZSBiZWNvbWUKPiBp
-bml0aWFsaXplZCBieSBkcml2ZXIgQiBvbiB0aGUgZGV2ZWxvcGVycyBzeXN0ZW0uIFRodXMgaGUg
-bmV2ZXIgbWlnaHQKPiBoYXZlIGhpdCBhIHBvc3NpYmxlIHByb2JsZW0gd2hlbiB0aGUgd2hvbGUg
-YnVuY2ggb2YgZHJpdmVycyBnb3QKPiBpbml0aWFsaXplZCBpbiBkcml2ZXIgQS4KPgo+IFRoYXQg
-bWVhbnMgaXQgaXNuJ3QgYWx3YXlzIGEgZ29vZCBpZGVhIHRvIGNyZWF0ZSBkeW5hbWljIHN5c3Rl
-bXMgKGxpa2UKPiBvbi1kZW1hbmQgZGV2aWNlIGluaXRpYWxpemF0aW9uKSwgYmVjYXVzZSBpdCdz
-IHZlcnkgaGFyZCB0byBmb3Jlc2VlIGFuZAo+IGNvcnJlY3RseSBoYW5kbGUgdGhlaXIgcnVudGlt
-ZSBiZWhhdmlvdXIuCgpBbmQgYmVjYXVzZSB5b3UndmUgc2FpZCB0aGF0ICJwcm9ibGVtIHNwYWNl
-IGlzIGEgYml0IGNvbnZvbHV0ZWQiIGFuZCBJIApkaXNhZ3JlZSwgaGVyZSdzIGEgc3VtbWFyeSBm
-cm9tIG15IHBvaW50IG9mIHZpZXc6CgoxLiBBbGwgdGhlIG5lY2Vzc2FyeSBpbmZvcm1hdGlvbiAo
-ZGVwZW5kZW5jaWVzIGJldHdlZW4gZHJpdmVycykgYWxyZWFkeSAKZXhpc3RzIGF0IGNvbXBpbGUg
-dGltZS4gVGhlIHNldCBvZiBkZXBlbmRlbmNpZXMgYmV0d2VlbiBkcml2ZXJzIG1pZ2h0IApiZWNv
-bWUgc21hbGxlciBieSBjb25maWd1cmF0aW9uLCBidXQgd2lsbCBub3QgYmVjb21lIGxhcmdlci4g
-U28gdGhlcmUgCnNob3VsZCBiZSBOTyBuZWVkIHRvIGNvbGxlY3QgdGhlbSBhdCBydW50aW1lLCBl
-LmcuIGJ5IGluc3RydW1lbnRpbmcgCmZ1bmN0aW9uIGNhbGxzLiBJJ3ZlIGRlc2NyaWJlZCB0aGUg
-cHJvYmxlbXMgSSBzZWUgd2l0aCB0aGF0IGFib3ZlLiBJJ3ZlIApjaG9vc2VuIERUIGFzIHNvdXJj
-ZSBvZiBkZXBlbmRlbmNpZXMgYmVjYXVzZSBpdCBvZmZlcnMgYW4gZWFzeSAKYWNjZXNzaWJsZSBh
-bmQgYWxtb3N0IGNvbXBsZXRlIHNldCBvZiBkZXBlbmRlbmNpZXMuIEkganVzdCBoYWQgdG8gYWRk
-IApzb21lIHR5cGUgaW5mb3JtYXRpb24gdG8gdGhlIGR0YiBpbiBvcmRlciB0byBpZGVudGlmeSB0
-aGUgZGVwZW5kZW5jaWVzIAoocGhhbmRsZXMpLiBCdXQgb3RoZXIgd2F5cyB0byBjb2xsZWN0IHRo
-ZSBkZXBlbmRlbmNpZXMgd291bGQgd29yayB0b28uIApFdmVuIHRoZSBtb3N0IHNpbXBsZSB3YXkg
-dG8gYWRkIGEgc3RhdGljIGxpc3Qgb2YgZGVwZW5kZW5jaWVzIHRvIGVhY2ggCmRyaXZlciAod2hp
-Y2ggbGF0ZXIgb24gbWlnaHQgYmUgYXV0b21hdGVkIGJ5IHNvbWUgbW9yZSBjbGV2ZXIgc3R1ZmYg
-dGhhbiAKYWRkaW5nIHRoZW0gbWFudWFsbHkpIHdvdWxkIGRvIHRoZSB0cmljay4KCjIuIFRoZSBw
-cm9ibGVtIHRvIHNvcnQgYSBzZXQgb2Ygbm9kZXMgKGRyaXZlcnMpIHdpdGggZGVwZW5kZW5jaWVz
-IGlzIApzb2x2ZWQgc2luY2UgYSBsb25nIHRpbWUgYW5kIGFsbW9zdCBhbnkgZGV2ZWxvcGVycyB1
-c2VzIGl0IHJlZ3VsYXJseSBpbiAKZm9ybSBvZiBtYWtlLiBBbmQgZXZlcnlvbmUgd2hvIHVzZWQg
-bWFrZSAtak4ga25vd3MgdGhhdCB0aGUgcG9zc2libGUgCnBhcmFsbGVsIGluaXRpYWxpemF0aW9u
-IG9mIGRyaXZlcnMgSSd2ZSB0YWxrZWQgYWJvdXQsIGlzIGFscmVhZHkgc29sdmVkIHRvby4KCjMu
-IEluIG9yZGVyIHRvIGluaXRpYWxpemUgdGhlIGRyaXZlcnMgaW4gc29tZSBzcGVjaWZpYyBvcmRl
-ciwgdGhlaXIgCmluaXRjYWxscyBtdXN0IGJlIGlkZW50aWZpZWQuIEkndmUgb2ZmZXJlZCBhIHBv
-c3NpYmxlIHNvbHV0aW9uIHRvIHRoYXQgCndpdGhvdXQgbXVjaCBjaGFuZ2VzLCBidXQgbWFueSBv
-dGhlciwgZXZlbiBiZXR0ZXIgd2F5cywgYXJlIHBvc3NpYmxlIAp0b28uIEl0IGp1c3QgZGVwZW5k
-cyBvbiBob3cgbXVjaCB5b3Ugd2FudCB0byBjaGFuZ2UgYW5kIG9uIGhvdyBtdWNoIG9mIAp0aGVz
-ZSBjaGFuZ2VzIHlvdSB3aWxsIGJlIGFibGUgdG8gZmVlZCBpbnRvIG1haW5saW5lIGtlcm5lbCAo
-d2hpY2ggCmRlcGVuZHMgb24geW91ciBjb25uZWN0aW9ucy9yZWxhdGlvbnMgaW5zaWRlIHRoZSBj
-b3JlIGtlcm5lbCBjcmV3KS4gRS5nLiAKaW5zdGVhZCBvZiBzdGlsbCBqdXN0IHJlbHlpbmcgb24g
-b25lLWRpbWVuc2lvbmFsIGFycmF5cyB3aXRoIChhbm9ueW1vdXMpIApwb2ludGVycyB0byBpbml0
-Y2FsbHMsIGEgbXVsdGlkaW1lbnNpb25hbCBhcnJheSBvZiBpbml0Y2FsbHMgYW5kIApkcml2ZXJu
-YW1lIChhbmQgbWF5YmUgbW9yZSBpbmZvcm1hdGlvbikgbWlnaHQgYmUgdGhpbmthYmxlLgoKNC4g
-eDg2L2FtZDY0L0FDUEktcGVvcGxlLCBzbyBtb3N0IGxvbmd0aW1lIGFuZCBjb3JlIGtlcm5lbCBt
-YWludGFpbmVycyAKb2J2aW91c2x5IGRvbid0IGhhdmUgbXVjaCBpbnRlcmVzdCB1bnRpbCB5b3Un
-dmUgc29sdmVkIDEuIGluIGEgd2F5IHRoZXkgCmNhbiB1c2UgdG9vLiBTbyB0aGUgbmVjZXNzYXJ5
-IGNoYW5nZXMgZm9yIDIuIG9yIDMuIHdpbGwgaGF2ZSBhIGJpZyAKaHVyZGxlIHRvIHRha2UgaWYg
-MS4gaXNuJ3Qgc29sdmVkIHVzYWJsZSBmb3IgdGhlbSB0b28uCgo+PiBBbGV4YW5kZXIgSG9sbGVy
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Mika Westerberg wrote:
+> On Thu, Jun 11, 2015 at 02:08:22AM +0200, Tobias Diedrich wrote:
+> > In create_gpio_led only the legacy pass propagates the label by passing it into
+> > devm_gpio_request_one.
+> > 
+> > On the newer devicetree/acpi path the label is lost as far as the GPIO
+> > subsystem goes (it is only retained as name in struct gpio_led.
+> > 
+> > Amend devm_get_gpiod_from_child to also pass the label into the GPIO layer, so
+> > it will show up in /sys/kernel/debug/gpio, so instead of:
+> > 
+> > GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+> >  gpio-477 (?                   ) out hi
+> >  gpio-478 (?                   ) out lo
+> >  gpio-479 (?                   ) out hi
+> > 
+> > we get the much nicer output:
+> > 
+> > GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+> >  gpio-477 (led1                ) out hi
+> >  gpio-478 (led2                ) out lo
+> >  gpio-479 (led3                ) out hi
+> 
+> I wonder if we can just put the con_id there?
+
+leds-gpio doesn't seem to set con_id:
+  led.gpiod = devm_get_gpiod_from_child(dev, NULL, child);
+
+> > Signed-off-by: Tobias Diedrich <ranma+kernel@tdiedrich.de>
+> > ---
+> >  drivers/gpio/devres.c         | 6 +++++-
+> >  drivers/gpio/gpiolib.c        | 6 ++++--
+> >  include/linux/gpio/consumer.h | 3 ++-
+> >  3 files changed, 11 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+> > index 07ba823..089db97 100644
+> > --- a/drivers/gpio/devres.c
+> > +++ b/drivers/gpio/devres.c
+> > @@ -103,13 +103,17 @@ struct gpio_desc *__must_check __devm_gpiod_get_index(struct device *dev,
+> >  {
+> >  	struct gpio_desc **dr;
+> >  	struct gpio_desc *desc;
+> > +	const char *label = NULL;
+> >  
+> >  	dr = devres_alloc(devm_gpiod_release, sizeof(struct gpio_desc *),
+> >  			  GFP_KERNEL);
+> >  	if (!dr)
+> >  		return ERR_PTR(-ENOMEM);
+> >  
+> > -	desc = gpiod_get_index(dev, con_id, idx, flags);
+> > +	if (fwnode_property_present(child, "label"))
+> > +		fwnode_property_read_string(child, "label", &label);
+> 
+> This binding needs to be documented, I suppose.
+> 
+> But then again, does it really describe the hardware? We already have
+> names like "linux,label" in the bindings but as far as I understand
+> adding such things is not recommended.
+
+Strange, this shouldn't even have compiled, botched the merge to git
+HEAD.  Apparently my compile test didn't end up including this file.
+This was supposed to go into devm_get_gpiod_from_child.
+
+At least gpio-keys-polled and gpio-leds both use "label" and "gpios",
+but I suppose that might not be true for all users of
+devm_get_gpiod_from_child.
+
+> > +
+> > +	desc = gpiod_get_index(dev, con_id, idx, flags, label);
+> >  	if (IS_ERR(desc)) {
+> >  		devres_free(dr);
+> >  		return desc;
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index 6bc612b..fb2be68 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -2017,6 +2017,7 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
+> >   * fwnode_get_named_gpiod - obtain a GPIO from firmware node
+> >   * @fwnode:	handle of the firmware node
+> >   * @propname:	name of the firmware property representing the GPIO
+> > + * @label:	optional label for the GPIO
+> >   *
+> >   * This function can be used for drivers that get their configuration
+> >   * from firmware.
+> > @@ -2028,7 +2029,8 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index);
+> >   * In case of error an ERR_PTR() is returned.
+> >   */
+> >  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+> > -					 const char *propname)
+> > +					 const char *propname,
+> > +					 const char *label)
+> >  {
+> >  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+> >  	bool active_low = false;
+> > @@ -2056,7 +2058,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+> >  	if (IS_ERR(desc))
+> >  		return desc;
+> >  
+> > -	ret = gpiod_request(desc, NULL);
+> > +	ret = gpiod_request(desc, label);
+> >  	if (ret)
+> >  		return ERR_PTR(ret);
+> >  
+> > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> > index 3a7c9ff..ef7d322 100644
+> > --- a/include/linux/gpio/consumer.h
+> > +++ b/include/linux/gpio/consumer.h
+> > @@ -134,7 +134,8 @@ int desc_to_gpio(const struct gpio_desc *desc);
+> >  struct fwnode_handle;
+> >  
+> >  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+> > -					 const char *propname);
+> > +					 const char *propname,
+> > +					 const char *label);
+> >  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+> >  					    const char *con_id,
+> >  					    struct fwnode_handle *child);
+> > -- 
+> > 2.1.4
+
+-- 
+Tobias						PGP: http://8ef7ddba.uguu.de
