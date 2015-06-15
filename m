@@ -1,87 +1,55 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 3/6] pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V operation
-Date: Mon, 15 Jun 2015 05:02:50 +0300
-Message-ID: <11872302.fE1vlhM93k@avalon>
-References: <1433892104.12074.49.camel@codethink.co.uk> <34148355.aYdSK9R7Ck@avalon> <1434328840.25446.50.camel@codethink.co.uk>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2] gpio / ACPI: Add label to the gpio request
+Date: Mon, 15 Jun 2015 11:29:04 +0900
+Message-ID: <CAAVeFu+dfc3vH73_uhwDftrd0OEYrX0ZiqK1MSAqsCcpKpzRTw@mail.gmail.com>
+References: <20150614220057.GC29802@yumi.tdiedrich.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1434328840.25446.50.camel@codethink.co.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:35532 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752500AbbFOC3Z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 14 Jun 2015 22:29:25 -0400
+In-Reply-To: <20150614220057.GC29802@yumi.tdiedrich.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tobias Diedrich <ranma+kernel@tdiedrich.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Ben,
+On Mon, Jun 15, 2015 at 7:00 AM, Tobias Diedrich
+<ranma+kernel@tdiedrich.de> wrote:
+> In leds-gpio.c create_gpio_led only the legacy path propagates the label
+> by passing it into devm_gpio_request_one. Similarily gpio_keys_polled.c
+> also neglects to propagate the name to the gpio subsystem.
+>
+> On the newer devicetree/acpi path the label is lost as far as the GPIO
+> subsystem goes (it is only retained as name in struct gpio_led.
+>
+> Amend devm_get_gpiod_from_child to take an additonal (optional) label
+> argument and propagate it so it will show up in /sys/kernel/debug/gpio.
+>
+> So instead of:
+>
+> GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+>  gpio-475 (?                   ) in  hi
+>  gpio-477 (?                   ) out hi
+>  gpio-478 (?                   ) out lo
+>  gpio-479 (?                   ) out hi
+>
+> we get the much nicer output:
+>
+> GPIOs 288-511, platform/PRP0001:00, AMD SBX00:
+>  gpio-475 (switch1             ) in  hi
+>  gpio-477 (led1                ) out hi
+>  gpio-478 (led2                ) out lo
+>  gpio-479 (led3                ) out hi
 
-On Monday 15 June 2015 01:40:40 Ben Hutchings wrote:
-> On Fri, 2015-06-12 at 22:07 +0300, Laurent Pinchart wrote:
-> > On Friday 12 June 2015 14:23:55 Ben Hutchings wrote:
-> >> On Fri, 2015-06-12 at 10:18 +0300, Laurent Pinchart wrote:
-> >>> On Wednesday 10 June 2015 00:23:31 Ben Hutchings wrote:
-> >>>> All the SHDIs can operate with either 3.3V or 1.8V signals,
-> >>>> depending on negotiation with the card.
-> >>>> 
-> >>>> Add separate functions for the 1.8V mode, and implement the set_mux
-> >>>> operation on all SDHI functions to configure the voltage for each
-> >>>> group of pins.
-> >>> 
-> >>> I don't think duplicating all functions for 1.8V and 3.3V is the right
-> >>> way to go. Can't we use the pinconf API instead, and in particular the
-> >>> PIN_CONFIG_POWER_SOURCE configuration ?
-> >> 
-> >> [...]
-> >> 
-> >> So far as I could see, you can't use the pinconf API with pinmux groups.
-> > 
-> > Can't you ? Both Documentation/devicetree/bindings/pinctrl/pinctrl-
-> > bindings.txt and Documentation/devicetree/bindings/pinctrl/renesas,pfc-
-> > pinctrl.txt document the usage of pinconf with groups (see for instance
-> > example 3 in the latter).
-> 
-> Sorry, I should say you can't use them with pinmux *functions*.  You can
-> either bind a group to a function *or* set the various pinconf
-> properties for the group, but not both.  Unless I'm very much mistaken.
+We want to reuse higher-level information (like the con_id) as much as
+possible to generate labels, but in the case of
+devm_get_gpiod_from_child() there is no such information available
+anyway, so why not.
 
-One of us probably is :-)
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-I'd have to recheck whether this is really a standard behaviour, but the PFC 
-driver at least supports setting both functions and configuration as far as I 
-can tell. The relevant example from the PFC bindings is
-
-        mmcif_pins: mmcif {
-                mux {
-                        renesas,groups = "mmc0_data8_0", "mmc0_ctrl_0";
-                        renesas,function = "mmc0";
-                };
-                cfg {
-                        renesas,groups = "mmc0_data8_0";
-                        renesas,pins = "PORT279";
-                        bias-pull-up;
-                };
-        };
-
-It's a bit more verbose than I'd like, but I think the following should work 
-too.
-
-        mmcif_pins: mmcif {
-                renesas,groups = "mmc0_data8_0";
-                renesas,function = "mmc0";
-                bias-pull-up;
-        };
-
-(it requires all pins from the groups to use the same configuration though)
-
-I believe the former is the intended way to set both function and config, 
-while the latter is a PFC "extension".
-
-On a side note, I have a patch to support the standard "groups", "functions" 
-and "pins" properties instead of the Renesas-specific versions, I'll try to 
-revive it.
-
--- 
-Regards,
-
-Laurent Pinchart
-
+Generally speaking this label thing is almost useless, we should now
+be able to trace which device requested a GPIO and for what purpose
+and provide that complete information in debugfs.
