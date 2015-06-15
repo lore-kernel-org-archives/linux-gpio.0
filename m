@@ -1,47 +1,38 @@
-From: Chaotian Jing <chaotian.jing@mediatek.com>
-Subject: [PATCH v6 6/7] arm64: mediatek: Add Mediatek MMC support in defconfig
-Date: Mon, 15 Jun 2015 19:20:52 +0800
-Message-ID: <1434367253-26577-7-git-send-email-chaotian.jing@mediatek.com>
-References: <1434367253-26577-1-git-send-email-chaotian.jing@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1434367253-26577-1-git-send-email-chaotian.jing@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, srv_heupstream@mediatek.com, Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, bin.zhang@mediatek.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, Chaotian Jing <chaotian.jing@mediatek.com>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, linux-arm-kernel@lists.infradead.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: Remove double "base" in comment
+Date: Mon, 15 Jun 2015 13:31:33 +0200
+Message-ID: <1434367893-30361-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:37887 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753183AbbFOLbf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 15 Jun 2015 07:31:35 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-From: Eddie Huang <eddie.huang@mediatek.com>
-
-Add CONFIG_MMC_MTK=y in defconfig
-
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Perhaps this can still be fixed in commit af6c235d1a5c1129 ("gpio:
+discourage passing base to gpio_chip")?
+---
+ include/linux/gpio/driver.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index d3cedb5..78e3234 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -140,6 +140,7 @@ CONFIG_MMC_ARMMMCI=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SPI=y
-+CONFIG_MMC_MTK=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_EFI=y
- CONFIG_RTC_DRV_XGENE=y
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index cc7ec129b329efb9..c8393cd4d44f2d87 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -45,7 +45,7 @@ struct seq_file;
+  * @base: identifies the first GPIO number handled by this chip;
+  *	or, if negative during registration, requests dynamic ID allocation.
+  *	DEPRECATION: providing anything non-negative and nailing the base
+- *	base offset of GPIO chips is deprecated. Please pass -1 as base to
++ *	offset of GPIO chips is deprecated. Please pass -1 as base to
+  *	let gpiolib select the chip base in all possible cases. We want to
+  *	get rid of the static GPIO number space in the long run.
+  * @ngpio: the number of GPIOs handled by this controller; the last GPIO
 -- 
-1.8.1.1.dirty
+1.9.1
+
