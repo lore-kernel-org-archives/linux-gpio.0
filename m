@@ -1,31 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Tue, 16 Jun 2015 11:17:34 +0200
-Message-ID: <CACRpkdZGqXc1+b0L==Oen54zX9SgD4kZfYC3LmdJEn_imDx3Bg@mail.gmail.com>
-References: <1434097185-16464-1-git-send-email-jun.nie@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:35485 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933091AbbFPJRf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 05:17:35 -0400
-Received: by oiax193 with SMTP id x193so7236435oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2015 02:17:34 -0700 (PDT)
-In-Reply-To: <1434097185-16464-1-git-send-email-jun.nie@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+Subject: [PATCH RESEND v0] arm64: dts: Add APM X-Gene standby GPIO controller DTS entries
+Date: Tue, 16 Jun 2015 16:49:44 +0700
+Message-ID: <1434448184-10584-1-git-send-email-yvo@apm.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Toan Le <toanle-qTEPVZfXA3Y@public.gmane.org>, patches-qTEPVZfXA3Y@public.gmane.org, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jun Nie <jun.nie@linaro.org>, Tony Lindgren <tony@atomide.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, wan.zhijun@zte.com.cn, jason.liu@linaro.org
 
-On Fri, Jun 12, 2015 at 10:19 AM, Jun Nie <jun.nie@linaro.org> wrote:
+Add standby domain gpio controller for APM X-Gene SoC platform.
 
-> Support GPIO for one register control multiple pins case
-> with calculating register offset first, then bit offset.
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+---
+ arch/arm64/boot/dts/apm/apm-storm.dtsi |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
 
-You need to send this patch to Tony Lindgren for review.
+diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+index 0bb287c..0689c3f 100644
+--- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
++++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
+@@ -717,6 +717,19 @@
+ 			phy-names = "sata-phy";
+ 		};
+ 
++		sbgpio: sbgpio@17001000{
++			compatible = "apm,xgene-gpio-sb";
++			reg = <0x0 0x17001000 0x0 0x400>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			interrupts = 	<0x0 0x28 0x1>,
++					<0x0 0x29 0x1>,
++					<0x0 0x2a 0x1>,
++					<0x0 0x2b 0x1>,
++					<0x0 0x2c 0x1>,
++					<0x0 0x2d 0x1>;
++		};
++
+ 		rtc: rtc@10510000 {
+ 			compatible = "apm,xgene-rtc";
+ 			reg = <0x0 0x10510000 0x0 0x400>;
+-- 
+1.7.1
 
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
