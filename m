@@ -1,50 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: pcf857x: handle only enabled irqs
-Date: Tue, 16 Jun 2015 10:58:40 +0200
-Message-ID: <CACRpkdZdivhsJcYrxYpr+rizcj9ZVGcxr5f1PD5DjxvZSScu8Q@mail.gmail.com>
-References: <1433970069-30235-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] GPIO: Fix checkpatch.pl issues
+Date: Tue, 16 Jun 2015 11:01:24 +0200
+Message-ID: <CACRpkdaGLESZSRyQj7fzEDzF9LSWMO9ZENP_oJKA4bTBXCMbfQ@mail.gmail.com>
+References: <20150610132627.GA18814@eve.soton.ac.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1433970069-30235-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33820 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932097AbbFPJBY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 05:01:24 -0400
+Received: by obbsn1 with SMTP id sn1so7058508obb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2015 02:01:24 -0700 (PDT)
+In-Reply-To: <20150610132627.GA18814@eve.soton.ac.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Daniel Lockyer <thisisdaniellockyer@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jun 10, 2015 at 11:01 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Wed, Jun 10, 2015 at 3:26 PM, Daniel Lockyer
+<thisisdaniellockyer@gmail.com> wrote:
 
-> Now pcf857x_irq() IRQ's dispatcher will try to run nested
-> IRQ handlers for each GPIO pin which state has changed.
-> Such IRQs are, actually, spurious and nested IRQ handlers
-> have to be called only for IRQs wich were enabled by users.
-> This is not critical issue - just  /proc/interrupts
-> will display counters for unused IRQS:
-> 399:          4          0   pcf857x   0 Edge
-> 428:          1          0   pcf857x  13 Edge
-> 430:          1          0   pcf857x  15 Edge
+> This patch fixes some issues given by checkpatch. Fixes include
+> bracket placement, spacing and indenting.
 >
-> Hence, fix it by adding irq_enabled field in struct pcf857x to track
-> enabled GPIO IRQs and corresponding callbacks in pcf857x_irq_chip.
->
-> Similar functionality was presented in pcf857x driver, commit
-> 21fd3cd1874a ('gpio: pcf857x: call the gpio user handler iff...')
->
-> and then it was removed by commit
->  a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip...')
->
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Fixes: a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip helpers')
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
->
-> No functional changes.
-> It's just rebased on top of "devel" branch
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+> Signed-off-by: Daniel Lockyer <thisisdaniellockyer@gmail.com>
 
-Patch applied since no comments arrived.
+Patch applied with Alexandre's review tag.
 
 Yours,
 Linus Walleij
