@@ -1,39 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 0/3] Add Renesas R8A7794 PFC support
-Date: Tue, 16 Jun 2015 10:56:01 +0200
-Message-ID: <CACRpkdZ7r43PGcH0=qSnatM9eyVoFG6QpoQbW-+3SmBqCBvXYA@mail.gmail.com>
-References: <4547979.iqiS3iOv3s@wasted.cogentembedded.com>
-	<CACRpkdYLYeb7X52G7Et-6rXVpKpk67zAXB-UBO-vFFtrtLp+9Q@mail.gmail.com>
-	<5578260D.7040704@cogentembedded.com>
+Subject: Re: [PATCH v2] gpio: pcf857x: handle only enabled irqs
+Date: Tue, 16 Jun 2015 10:58:40 +0200
+Message-ID: <CACRpkdZdivhsJcYrxYpr+rizcj9ZVGcxr5f1PD5DjxvZSScu8Q@mail.gmail.com>
+References: <1433970069-30235-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33456 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933123AbbFPI4E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 04:56:04 -0400
-Received: by oiha141 with SMTP id a141so6958107oih.0
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2015 01:56:01 -0700 (PDT)
-In-Reply-To: <5578260D.7040704@cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1433970069-30235-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jun 10, 2015 at 1:57 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 6/10/2015 11:17 AM, Linus Walleij wrote:
+On Wed, Jun 10, 2015 at 11:01 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
->>> [1/3] sh-pfc: add R8A7794 PFC support
->>> [2/3] sh-pfc: r8a7794: add MMCIF pin groups
->>> [3/3] sh-pfc: r8a7794: add SDHI pin groups
+> Now pcf857x_irq() IRQ's dispatcher will try to run nested
+> IRQ handlers for each GPIO pin which state has changed.
+> Such IRQs are, actually, spurious and nested IRQ handlers
+> have to be called only for IRQs wich were enabled by users.
+> This is not critical issue - just  /proc/interrupts
+> will display counters for unused IRQS:
+> 399:          4          0   pcf857x   0 Edge
+> 428:          1          0   pcf857x  13 Edge
+> 430:          1          0   pcf857x  15 Edge
 >
->> Waiting for Laurent to review these patches.
+> Hence, fix it by adding irq_enabled field in struct pcf857x to track
+> enabled GPIO IRQs and corresponding callbacks in pcf857x_irq_chip.
 >
->    The previous version was already ACKed by Laurent, and there was no
-> significant changes since then.
+> Similar functionality was presented in pcf857x driver, commit
+> 21fd3cd1874a ('gpio: pcf857x: call the gpio user handler iff...')
+>
+> and then it was removed by commit
+>  a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip...')
+>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Fixes: a39294bdf4b0 ('gpio: pcf857x: Switch to use gpiolib irqchip helpers')
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>
+> No functional changes.
+> It's just rebased on top of "devel" branch
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
 
-Right, I missed that... Patches applied. Sorry for the delay.
+Patch applied since no comments arrived.
 
 Yours,
 Linus Walleij
