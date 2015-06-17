@@ -1,111 +1,114 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
-Date: Wed, 17 Jun 2015 16:10:02 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1506171609390.4107@nanos>
-References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+From: <Frank.Li@freescale.com>
+Subject: [PATCH 1/8] ARM: imx: add i.mx6ul msl support
+Date: Wed, 17 Jun 2015 23:39:22 +0800
+Message-ID: <1434555569-8237-2-git-send-email-Frank.Li@freescale.com>
+References: <1434555569-8237-1-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:49412 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752219AbbFQOKJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 10:10:09 -0400
-In-Reply-To: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+Received: from mail-by2on0143.outbound.protection.outlook.com ([207.46.100.143]:27213
+	"EHLO na01-by2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932510AbbFQPlu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 17 Jun 2015 11:41:50 -0400
+In-Reply-To: <1434555569-8237-1-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, Frank Li <Frank.Li@freescale.com>
 
-On Tue, 16 Jun 2015, Russell King wrote:
+From: Frank Li <Frank.Li@freescale.com>
 
-> Driver authors seem to get the ordering of irq_set_chained_handler()
-> and irq_set_handler_data() wrong - ordering the former before the
-> latter.  This opens a race window where, if there is an interrupt
-> pending, the handler will be called between these two calls,
-> potentially resulting in an oops.
-> 
-> Provide a single interface to set both of these together, especially
-> as that's commonly what is required.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> It probably makes sense to convert everything over to this new
-> registration function, and kill all users of irq_set_chained_handler()
-> to prevent this problem recurring.  Thoughts?
+i.MX6UL is a new SOC, add MSL support
 
-Yes. Classic coccinelle problem. Here is the semantic patch:
+Signed-off-by: Frank Li <Frank.Li@freescale.com>
+---
+ arch/arm/mach-imx/Kconfig       |  8 ++++++++
+ arch/arm/mach-imx/Makefile      |  1 +
+ arch/arm/mach-imx/mach-imx6ul.c | 43 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+)
+ create mode 100644 arch/arm/mach-imx/mach-imx6ul.c
 
-@@
-expression E1, E2, E3;
-@@
--irq_set_chained_handler(E1, E3);
-...
--irq_set_handler_data(E1, E2);
-+irq_set_chained_handler_and_data(E1, E3, E2);
-
-This finds and corrects all instances which get it wrong:
-
-arch:
- arm/common/locomo.c                   |    3 +--
- arm/common/sa1111.c                   |    3 +--
- arm/mach-gemini/gpio.c                |    4 ++--
- avr32/mach-at32ap/extint.c            |    3 +--
- m68k/mac/psc.c                        |   12 ++++--------
- mips/ath25/ar2315.c                   |    4 ++--
- mips/ath25/ar5312.c                   |    4 ++--
- mips/pci/pci-ar2315.c                 |    4 ++--
- mips/ralink/irq.c                     |    3 +--
- sh/intc/core.c                        |    5 +++--
-
-drivers:
- dma/ipu/ipu_irq.c                     |    6 ++----
- gpio/gpio-bcm-kona.c                  |    5 +++--
- gpio/gpio-davinci.c                   |   10 ++--------
- gpio/gpio-dwapb.c                     |    4 ++--
- gpio/gpio-msic.c                      |    3 +--
- gpio/gpio-mxc.c                       |   10 +++++-----
- gpio/gpio-mxs.c                       |    4 ++--
- gpio/gpio-tegra.c                     |    4 ++--
- gpu/ipu-v3/ipu-common.c               |   13 +++++--------
- irqchip/irq-keystone.c                |    4 ++--
- irqchip/spear-shirq.c                 |    3 +--
- mfd/pm8921-core.c                     |    6 ++----
- mfd/t7l66xb.c                         |    3 +--
- mfd/tc6393xb.c                        |    3 +--
- pci/host/pci-keystone.c               |    7 +++----
- pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
- pinctrl/pinctrl-adi2.c                |    4 ++--
- pinctrl/pinctrl-st.c                  |    4 ++--
- pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
- pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
- pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
- pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
- spmi/spmi-pmic-arb.c                  |    6 ++----
- 33 files changed, 70 insertions(+), 98 deletions(-)
-
-If we revert the search pattern we get the ones which got it right:
-
-@@
-expression E1, E2, E3;
-@@
--irq_set_handler_data(E1, E2);
-...
--irq_set_chained_handler(E1, E3);
-+irq_set_chained_handler_and_data(E1, E3, E2);
-
-That handles another bunch and leaves us with 135 instances of
-irq_set_chained_handler() which do not set handler data. So its
-trivial to change them to
-
- irq_set_chained_handler_and_data(irq, handler, NULL);
-
-and then remove irq_set_chained_handler()
-
-If thats ok for you, then i apply the lot you sent and run the cocci
-scripts right at rc1. I have another set of transformations in that
-area pending.
-
-Thanks,
-
-	tglx
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 573536f..8ceda28 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -548,6 +548,14 @@ config SOC_IMX6SX
+ 	help
+ 	  This enables support for Freescale i.MX6 SoloX processor.
+ 
++config SOC_IMX6UL
++	bool "i.MX6 UltraLite support"
++	select PINCTRL_IMX6UL
++	select SOC_IMX6
++
++	help
++	  This enables support for Freescale i.MX6 UltraLite processor.
++
+ config SOC_IMX7D
+ 	bool "i.MX7 Dual support"
+ 	select PINCTRL_IMX7D
+diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
+index 37c502a..fb689d8 100644
+--- a/arch/arm/mach-imx/Makefile
++++ b/arch/arm/mach-imx/Makefile
+@@ -83,6 +83,7 @@ endif
+ obj-$(CONFIG_SOC_IMX6Q) += mach-imx6q.o
+ obj-$(CONFIG_SOC_IMX6SL) += mach-imx6sl.o
+ obj-$(CONFIG_SOC_IMX6SX) += mach-imx6sx.o
++obj-$(CONFIG_SOC_IMX6UL) += mach-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D) += mach-imx7d.o
+ 
+ ifeq ($(CONFIG_SUSPEND),y)
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+new file mode 100644
+index 0000000..706d5f6
+--- /dev/null
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/irqchip.h>
++#include <linux/of_platform.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++
++#include "common.h"
++
++static void __init imx6ul_init_machine(void)
++{
++	struct device *parent;
++
++	parent = imx_soc_device_init();
++	if (parent == NULL)
++		pr_warn("failed to initialize soc device\n");
++
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++	imx_anatop_init();
++}
++
++static void __init imx6ul_init_irq(void)
++{
++	imx_init_revision_from_anatop();
++	imx_src_init();
++	irqchip_init();
++}
++
++static const char *imx6ul_dt_compat[] __initconst = {
++	"fsl,imx6ul",
++	NULL,
++};
++
++DT_MACHINE_START(IMX7D, "Freescale i.MX6 Ultralite (Device Tree)")
++	.init_irq	= imx6ul_init_irq,
++	.init_machine	= imx6ul_init_machine,
++	.dt_compat	= imx6ul_dt_compat,
++MACHINE_END
+-- 
+1.9.1
 
