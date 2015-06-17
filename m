@@ -1,115 +1,95 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
-Date: Wed, 17 Jun 2015 20:38:03 +0100
-Message-ID: <20150617193803.GY7557@n2100.arm.linux.org.uk>
-References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
- <alpine.DEB.2.11.1506171609390.4107@nanos>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v6 0/7] Add Mediatek MMC driver
+Date: Wed, 17 Jun 2015 17:01:33 -0400
+Message-ID: <CAP=VYLpBymmAVY7LoFJR5+QTxL4CN7t+PrLFCxaoAN_a9S4Jbw@mail.gmail.com>
+References: <1434367253-26577-1-git-send-email-chaotian.jing@mediatek.com> <CAPDyKFrAbAFR7_p5O4bPh6FZEBVhGZ2rq3htCKcF2QgQuCEf2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:38142 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751821AbbFQTiR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 15:38:17 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.11.1506171609390.4107@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFrAbAFR7_p5O4bPh6FZEBVhGZ2rq3htCKcF2QgQuCEf2g@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Chaotian Jing <chaotian.jing@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Wed, Jun 17, 2015 at 04:10:02PM +0200, Thomas Gleixner wrote:
-> On Tue, 16 Jun 2015, Russell King wrote:
-> 
-> > Driver authors seem to get the ordering of irq_set_chained_handler()
-> > and irq_set_handler_data() wrong - ordering the former before the
-> > latter.  This opens a race window where, if there is an interrupt
-> > pending, the handler will be called between these two calls,
-> > potentially resulting in an oops.
-> > 
-> > Provide a single interface to set both of these together, especially
-> > as that's commonly what is required.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > ---
-> > It probably makes sense to convert everything over to this new
-> > registration function, and kill all users of irq_set_chained_handler()
-> > to prevent this problem recurring.  Thoughts?
-> 
-> Yes. Classic coccinelle problem. Here is the semantic patch:
-> 
-> @@
-> expression E1, E2, E3;
-> @@
-> -irq_set_chained_handler(E1, E3);
-> ...
-> -irq_set_handler_data(E1, E2);
-> +irq_set_chained_handler_and_data(E1, E3, E2);
-> 
-> This finds and corrects all instances which get it wrong:
-> 
-> arch:
->  arm/common/locomo.c                   |    3 +--
->  arm/common/sa1111.c                   |    3 +--
->  arm/mach-gemini/gpio.c                |    4 ++--
->  avr32/mach-at32ap/extint.c            |    3 +--
->  m68k/mac/psc.c                        |   12 ++++--------
->  mips/ath25/ar2315.c                   |    4 ++--
->  mips/ath25/ar5312.c                   |    4 ++--
->  mips/pci/pci-ar2315.c                 |    4 ++--
->  mips/ralink/irq.c                     |    3 +--
->  sh/intc/core.c                        |    5 +++--
-> 
-> drivers:
->  dma/ipu/ipu_irq.c                     |    6 ++----
->  gpio/gpio-bcm-kona.c                  |    5 +++--
->  gpio/gpio-davinci.c                   |   10 ++--------
->  gpio/gpio-dwapb.c                     |    4 ++--
->  gpio/gpio-msic.c                      |    3 +--
->  gpio/gpio-mxc.c                       |   10 +++++-----
->  gpio/gpio-mxs.c                       |    4 ++--
->  gpio/gpio-tegra.c                     |    4 ++--
->  gpu/ipu-v3/ipu-common.c               |   13 +++++--------
->  irqchip/irq-keystone.c                |    4 ++--
->  irqchip/spear-shirq.c                 |    3 +--
->  mfd/pm8921-core.c                     |    6 ++----
->  mfd/t7l66xb.c                         |    3 +--
->  mfd/tc6393xb.c                        |    3 +--
->  pci/host/pci-keystone.c               |    7 +++----
->  pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
->  pinctrl/pinctrl-adi2.c                |    4 ++--
->  pinctrl/pinctrl-st.c                  |    4 ++--
->  pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
->  pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
->  pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
->  pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
->  spmi/spmi-pmic-arb.c                  |    6 ++----
->  33 files changed, 70 insertions(+), 98 deletions(-)
-> 
-> If we revert the search pattern we get the ones which got it right:
-> 
-> @@
-> expression E1, E2, E3;
-> @@
-> -irq_set_handler_data(E1, E2);
-> ...
-> -irq_set_chained_handler(E1, E3);
-> +irq_set_chained_handler_and_data(E1, E3, E2);
-> 
-> That handles another bunch and leaves us with 135 instances of
-> irq_set_chained_handler() which do not set handler data. So its
-> trivial to change them to
-> 
->  irq_set_chained_handler_and_data(irq, handler, NULL);
-> 
-> and then remove irq_set_chained_handler()
-> 
-> If thats ok for you, then i apply the lot you sent and run the cocci
-> scripts right at rc1. I have another set of transformations in that
-> area pending.
+On Tue, Jun 16, 2015 at 4:03 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 15 June 2015 at 13:20, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+>> This series enables MMC support on the MT8135/MT8173 platform.
+>> MT8135 has 5 MMC controllers and MT8173 has 4 MMC controllers.
+>>
+>> Changes base on Ulf's comments
+>> Make hclk mandatory in the driver code
+>> Change host->hclk to host->src_clk_freq
+>> Add linux/pm.h
+>>
+>> Chaotian Jing (3):
+>>   mmc: dt-bindings: add Mediatek MMC bindings
+>>   mmc: mediatek: Add Mediatek MMC driver.
 
-Totally fine with that.
+This commit breaks when merged to linux-next since it gets
+exposed as an implicit module.h user that does not include
+that header:
 
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+   drivers/mmc/host/mtk-sd.c:1459:1: note: in expansion of macro
+'module_platform_driver'
+    module_platform_driver(mt_msdc_driver);
+    ^
+   include/linux/device.h:1296:1: error: type defaults to 'int' in
+declaration of 'module_init' [-Werror=implicit-int]
+    module_init(__driver##_init); \
+    ^
+
+Since the code doesn't exist in mainline, I can't fix it from
+within my header cleanup series, so can you please add
+an appropriate include of module.h to the above?
+
+Also, I noticed the Makefile addition from this commit
+is whitespace mangled; might as well fix that too if
+rebasing to fix the include problem.
+
+Thanks,
+Paul.
+--
+
+>>   mmc: mediatek: Add PM support for MMC driver
+>>
+>> Eddie Huang (2):
+>>   arm64: dts: mediatek: Add MT8173 MMC dts
+>>   arm64: mediatek: Add Mediatek MMC support in defconfig
+>>
+>> Yingjoe Chen (2):
+>>   ARM: mediatek: dts: Add emmc support to mt8135
+>>   ARM: multi_v7_defconfig: Enable Mediatek MMC support multi-v7
+>>
+>>  Documentation/devicetree/bindings/mmc/mtk-sd.txt |   32 +
+>>  arch/arm/boot/dts/mt8135-evbp1.dts               |  158 +++
+>>  arch/arm/boot/dts/mt8135.dtsi                    |   55 +
+>>  arch/arm/configs/multi_v7_defconfig              |    1 +
+>>  arch/arm64/boot/dts/mediatek/mt8173-evb.dts      |  126 ++
+>>  arch/arm64/boot/dts/mediatek/mt8173.dtsi         |   45 +-
+>>  arch/arm64/configs/defconfig                     |    1 +
+>>  drivers/mmc/host/Kconfig                         |    8 +
+>>  drivers/mmc/host/Makefile                        |    1 +
+>>  drivers/mmc/host/mtk-sd.c                        | 1461 ++++++++++++++++++++++
+>>  include/linux/mmc/core.h                         |    1 +
+>>  11 files changed, 1888 insertions(+), 1 deletion(-)
+>>  create mode 100644 Documentation/devicetree/bindings/mmc/mtk-sd.txt
+>>  create mode 100644 drivers/mmc/host/mtk-sd.c
+>>
+>> --
+>> 1.8.1.1.dirty
+>>
+>
+> Hi Chaotian,
+>
+> I have applied patch 1->3 for my next branch, which thus includes the
+> mmc driver parts. I could potentially also pick the ARM patches, but
+> then those needs to be acked from the ARM SoC folks.
+>
+> Kind regards
+> Uffe
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
