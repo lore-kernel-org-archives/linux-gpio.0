@@ -1,49 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: rockchip: add support for the rk3368
-Date: Wed, 17 Jun 2015 10:21:40 +0200
-Message-ID: <CACRpkdYm0XL1w_5VnaaXjnt7gR=RtO0w=Q4kVdsJNH6o+12fOA@mail.gmail.com>
-References: <2322857.kblfsanYOB@diego>
-	<6672678.KPGUcFJOAs@diego>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] gpio: zynq: add missing module_exit function
+Date: Wed, 17 Jun 2015 17:51:41 +0900
+Message-ID: <1434531101-2585-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34480 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754758AbbFQIVl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 04:21:41 -0400
-Received: by obbsn1 with SMTP id sn1so28251081obb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 17 Jun 2015 01:21:40 -0700 (PDT)
-In-Reply-To: <6672678.KPGUcFJOAs@diego>
+Received: from conuserg009.nifty.com ([202.248.44.35]:33563 "EHLO
+	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752561AbbFQIwz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 04:52:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jun 12, 2015 at 11:51 PM, Heiko St=C3=BCbner <heiko@sntech.de> =
-wrote:
+This driver is tristate, so it should be cleanable.
 
-> The rk3368 is the first ARM64 soc from Rockchip, but seems to share m=
-ost
-> peripherals with the ARM32 soc, including the pinctrl functionality.
-> The only notable difference is - as with every Rockchip soc - that th=
-e
-> offsets in the General Register Files moved around and a split of the=
- pmu
-> section of the rk3288 into pmu and pmugrf (pmu general register files=
-)
-> sections. The pinctrl driver of course only needs the pmugrf register=
-s
-> for controlling the pin settings.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Patch applied.
+ drivers/gpio/gpio-zynq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 184c4b1..1d38da7 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -722,6 +722,12 @@ static int __init zynq_gpio_init(void)
+ }
+ postcore_initcall(zynq_gpio_init);
+ 
++static void __exit zynq_gpio_exit(void)
++{
++	platform_driver_unregister(&zynq_gpio_driver);
++}
++module_exit(zynq_gpio_exit);
++
+ MODULE_AUTHOR("Xilinx Inc.");
+ MODULE_DESCRIPTION("Zynq GPIO driver");
+ MODULE_LICENSE("GPL");
+-- 
+1.9.1
+
