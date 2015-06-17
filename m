@@ -1,67 +1,40 @@
-From: Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Wed, 17 Jun 2015 09:56:12 +0800
-Message-ID: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:32997 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752529AbbFQB4t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 21:56:49 -0400
-Received: by padev16 with SMTP id ev16so23740835pad.0
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2015 18:56:48 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 9/9] irq: spear-shirq: fix race in installing chained IRQ handler
+Date: Wed, 17 Jun 2015 08:10:55 +0530
+Message-ID: <CAOh2x=m2y+T0Z78nV5zDmSa6_7NH972EXcEEUKZMZ1dSxE6YKw@mail.gmail.com>
+References: <E1Z4z0X-0002T1-6U@rmk-PC.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <E1Z4z0X-0002T1-6U-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: tony@atomide.com, haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org, Jun Nie <jun.nie@linaro.org>
 
-Support GPIO for one register control multiple pins case
-with calculating register offset first, then bit offset.
+On Wed, Jun 17, 2015 at 3:37 AM, Russell King
+<rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> Fix a race where a pending interrupt could be received and the handler
+> called before the handler's data has been setup, by converting to
+> irq_set_chained_handler_and_data().
+>
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> ---
+> Depends on patch 1.
+>
+>  drivers/irqchip/spear-shirq.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
+> index 9c145a7cb056..a45121546caf 100644
+> --- a/drivers/irqchip/spear-shirq.c
+> +++ b/drivers/irqchip/spear-shirq.c
+> @@ -207,8 +207,7 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
+>         if (!shirq->irq_chip)
+>                 return;
+>
+> -       irq_set_chained_handler(parent_irq, shirq_handler);
+> -       irq_set_handler_data(parent_irq, shirq);
+> +       irq_set_chained_handler_and_data(parent_irq, shirq_handler, shirq);
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
----
- drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 13b45f2..bd69d9a 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
- 	struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
- 	struct pcs_gpiofunc_range *frange = NULL;
- 	struct list_head *pos, *tmp;
--	int mux_bytes = 0;
-+	int offset, mux_bytes = 0;
- 	unsigned data;
- 
- 	/* If function mask is null, return directly. */
-@@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
- 			|| pin < frange->offset)
- 			continue;
- 		mux_bytes = pcs->width / BITS_PER_BYTE;
--		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
--		data |= frange->gpiofunc;
--		pcs->write(data, pcs->base + pin * mux_bytes);
-+		if (pcs->bits_per_mux) {
-+			int pin_pos, byte_num, num_pins_in_register;
-+
-+			num_pins_in_register = pcs->width / pcs->bits_per_pin;
-+			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-+			offset = (byte_num / mux_bytes) * mux_bytes;
-+			pin_pos = pin % num_pins_in_register;
-+			pin_pos *= pcs->bits_per_pin;
-+			data = pcs->read(pcs->base + offset) &
-+				~(pcs->fmask << pin_pos);
-+			data |= frange->gpiofunc << pin_pos;
-+		} else {
-+			offset = pin * mux_bytes;
-+			data = pcs->read(pcs->base + offset) & ~pcs->fmask;
-+			data |= frange->gpiofunc;
-+		}
-+		pcs->write(data, pcs->base + offset);
- 		break;
- 	}
- 	return 0;
--- 
-1.9.1
-
+Acked-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
