@@ -1,58 +1,111 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [RESEND PATCH 2/2] pinctrl: introduce complex pin description
-Date: Wed, 17 Jun 2015 14:42:53 +0200
-Message-ID: <20150617124253.GC12295@odux.rfo.atmel.com>
-References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
- <1433948699-19800-3-git-send-email-ludovic.desroches@atmel.com>
- <557EF6D9.6050503@wwwdotorg.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
+Date: Wed, 17 Jun 2015 16:10:02 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1506171609390.4107@nanos>
+References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:1113 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754862AbbFQMmU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 08:42:20 -0400
-Content-Disposition: inline
-In-Reply-To: <557EF6D9.6050503@wwwdotorg.org>
+Received: from www.linutronix.de ([62.245.132.108]:49412 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752219AbbFQOKJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 10:10:09 -0400
+In-Reply-To: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Mon, Jun 15, 2015 at 10:01:29AM -0600, Stephen Warren wrote:
-> On 06/10/2015 09:04 AM, Ludovic Desroches wrote:
-> >Using a string to describe a pin in the device tree can be not enough.
-> >Some controllers may need extra information to fully describe a pin. It
-> >concerns mainly controllers which have a per pin muxing approach which
-> >don't fit well the notions of groups and functions.
-> >Instead of using a pin name, a 32 bit value is used. The 16 least
-> >significant bits are used for the pin number. Other 16 bits can be used to
-> >store extra parameters.
+On Tue, 16 Jun 2015, Russell King wrote:
+
+> Driver authors seem to get the ordering of irq_set_chained_handler()
+> and irq_set_handler_data() wrong - ordering the former before the
+> latter.  This opens a race window where, if there is an interrupt
+> pending, the handler will be called between these two calls,
+> potentially resulting in an oops.
 > 
-> The driver for the pin controller is supposed to provide this information in
-> a table. The whole point of having a driver, rather than a table/list of raw
-> register values in the DT, is so the driver can provide this information at
-> a semantic level. This information is fixed per SoC and so make sense to put
-> into a driver, while the board-specific configuration varies wildly, and
-> hence makes sense to put into DT.
+> Provide a single interface to set both of these together, especially
+> as that's commonly what is required.
 > 
-> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+> It probably makes sense to convert everything over to this new
+> registration function, and kill all users of irq_set_chained_handler()
+> to prevent this problem recurring.  Thoughts?
 
-I didn't think the controversery part would be about having this
-information in a driver or in the device tree. I think there are pros
-and cons for both cases.
+Yes. Classic coccinelle problem. Here is the semantic patch:
 
-We already have this description in our dt file with the previous at91
-pin controller and I think it is a good thing to not have to update the
-driver for each new SoC using the same pio controller. Tables could become
-huge, embedding several one into a 'single zImage' is something I am not
-confortable with. I know that some people could tell me that doing that
-may increase the boot time.                                     
-                                                                                
-We should debate about this patch later. If there is no acceptance for
-the previous one, I have to clarify if I need it.
+@@
+expression E1, E2, E3;
+@@
+-irq_set_chained_handler(E1, E3);
+...
+-irq_set_handler_data(E1, E2);
++irq_set_chained_handler_and_data(E1, E3, E2);
 
+This finds and corrects all instances which get it wrong:
 
-Regards
+arch:
+ arm/common/locomo.c                   |    3 +--
+ arm/common/sa1111.c                   |    3 +--
+ arm/mach-gemini/gpio.c                |    4 ++--
+ avr32/mach-at32ap/extint.c            |    3 +--
+ m68k/mac/psc.c                        |   12 ++++--------
+ mips/ath25/ar2315.c                   |    4 ++--
+ mips/ath25/ar5312.c                   |    4 ++--
+ mips/pci/pci-ar2315.c                 |    4 ++--
+ mips/ralink/irq.c                     |    3 +--
+ sh/intc/core.c                        |    5 +++--
 
-Ludovic   
+drivers:
+ dma/ipu/ipu_irq.c                     |    6 ++----
+ gpio/gpio-bcm-kona.c                  |    5 +++--
+ gpio/gpio-davinci.c                   |   10 ++--------
+ gpio/gpio-dwapb.c                     |    4 ++--
+ gpio/gpio-msic.c                      |    3 +--
+ gpio/gpio-mxc.c                       |   10 +++++-----
+ gpio/gpio-mxs.c                       |    4 ++--
+ gpio/gpio-tegra.c                     |    4 ++--
+ gpu/ipu-v3/ipu-common.c               |   13 +++++--------
+ irqchip/irq-keystone.c                |    4 ++--
+ irqchip/spear-shirq.c                 |    3 +--
+ mfd/pm8921-core.c                     |    6 ++----
+ mfd/t7l66xb.c                         |    3 +--
+ mfd/tc6393xb.c                        |    3 +--
+ pci/host/pci-keystone.c               |    7 +++----
+ pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
+ pinctrl/pinctrl-adi2.c                |    4 ++--
+ pinctrl/pinctrl-st.c                  |    4 ++--
+ pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
+ pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
+ pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
+ pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
+ spmi/spmi-pmic-arb.c                  |    6 ++----
+ 33 files changed, 70 insertions(+), 98 deletions(-)
+
+If we revert the search pattern we get the ones which got it right:
+
+@@
+expression E1, E2, E3;
+@@
+-irq_set_handler_data(E1, E2);
+...
+-irq_set_chained_handler(E1, E3);
++irq_set_chained_handler_and_data(E1, E3, E2);
+
+That handles another bunch and leaves us with 135 instances of
+irq_set_chained_handler() which do not set handler data. So its
+trivial to change them to
+
+ irq_set_chained_handler_and_data(irq, handler, NULL);
+
+and then remove irq_set_chained_handler()
+
+If thats ok for you, then i apply the lot you sent and run the cocci
+scripts right at rc1. I have another set of transformations in that
+area pending.
+
+Thanks,
+
+	tglx
+
