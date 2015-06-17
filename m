@@ -1,56 +1,115 @@
-From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-Subject: Re: [PATCH 4/9] ARM: gemini: fix race in installing GPIO chained
- IRQ handler
-Date: Wed, 17 Jun 2015 19:23:14 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1506171923010.27619@T520.local>
-References: <E1Z4z07-0002SO-Gv@rmk-PC.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
+Date: Wed, 17 Jun 2015 20:38:03 +0100
+Message-ID: <20150617193803.GY7557@n2100.arm.linux.org.uk>
+References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+ <alpine.DEB.2.11.1506171609390.4107@nanos>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:34530 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754163AbbFQRXS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 13:23:18 -0400
-In-Reply-To: <E1Z4z07-0002SO-Gv@rmk-PC.arm.linux.org.uk>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:38142 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751821AbbFQTiR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 17 Jun 2015 15:38:17 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.11.1506171609390.4107@nanos>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 
+On Wed, Jun 17, 2015 at 04:10:02PM +0200, Thomas Gleixner wrote:
+> On Tue, 16 Jun 2015, Russell King wrote:
+> 
+> > Driver authors seem to get the ordering of irq_set_chained_handler()
+> > and irq_set_handler_data() wrong - ordering the former before the
+> > latter.  This opens a race window where, if there is an interrupt
+> > pending, the handler will be called between these two calls,
+> > potentially resulting in an oops.
+> > 
+> > Provide a single interface to set both of these together, especially
+> > as that's commonly what is required.
+> > 
+> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > ---
+> > It probably makes sense to convert everything over to this new
+> > registration function, and kill all users of irq_set_chained_handler()
+> > to prevent this problem recurring.  Thoughts?
+> 
+> Yes. Classic coccinelle problem. Here is the semantic patch:
+> 
+> @@
+> expression E1, E2, E3;
+> @@
+> -irq_set_chained_handler(E1, E3);
+> ...
+> -irq_set_handler_data(E1, E2);
+> +irq_set_chained_handler_and_data(E1, E3, E2);
+> 
+> This finds and corrects all instances which get it wrong:
+> 
+> arch:
+>  arm/common/locomo.c                   |    3 +--
+>  arm/common/sa1111.c                   |    3 +--
+>  arm/mach-gemini/gpio.c                |    4 ++--
+>  avr32/mach-at32ap/extint.c            |    3 +--
+>  m68k/mac/psc.c                        |   12 ++++--------
+>  mips/ath25/ar2315.c                   |    4 ++--
+>  mips/ath25/ar5312.c                   |    4 ++--
+>  mips/pci/pci-ar2315.c                 |    4 ++--
+>  mips/ralink/irq.c                     |    3 +--
+>  sh/intc/core.c                        |    5 +++--
+> 
+> drivers:
+>  dma/ipu/ipu_irq.c                     |    6 ++----
+>  gpio/gpio-bcm-kona.c                  |    5 +++--
+>  gpio/gpio-davinci.c                   |   10 ++--------
+>  gpio/gpio-dwapb.c                     |    4 ++--
+>  gpio/gpio-msic.c                      |    3 +--
+>  gpio/gpio-mxc.c                       |   10 +++++-----
+>  gpio/gpio-mxs.c                       |    4 ++--
+>  gpio/gpio-tegra.c                     |    4 ++--
+>  gpu/ipu-v3/ipu-common.c               |   13 +++++--------
+>  irqchip/irq-keystone.c                |    4 ++--
+>  irqchip/spear-shirq.c                 |    3 +--
+>  mfd/pm8921-core.c                     |    6 ++----
+>  mfd/t7l66xb.c                         |    3 +--
+>  mfd/tc6393xb.c                        |    3 +--
+>  pci/host/pci-keystone.c               |    7 +++----
+>  pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
+>  pinctrl/pinctrl-adi2.c                |    4 ++--
+>  pinctrl/pinctrl-st.c                  |    4 ++--
+>  pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
+>  pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
+>  pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
+>  pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
+>  spmi/spmi-pmic-arb.c                  |    6 ++----
+>  33 files changed, 70 insertions(+), 98 deletions(-)
+> 
+> If we revert the search pattern we get the ones which got it right:
+> 
+> @@
+> expression E1, E2, E3;
+> @@
+> -irq_set_handler_data(E1, E2);
+> ...
+> -irq_set_chained_handler(E1, E3);
+> +irq_set_chained_handler_and_data(E1, E3, E2);
+> 
+> That handles another bunch and leaves us with 135 instances of
+> irq_set_chained_handler() which do not set handler data. So its
+> trivial to change them to
+> 
+>  irq_set_chained_handler_and_data(irq, handler, NULL);
+> 
+> and then remove irq_set_chained_handler()
+> 
+> If thats ok for you, then i apply the lot you sent and run the cocci
+> scripts right at rc1. I have another set of transformations in that
+> area pending.
 
+Totally fine with that.
 
-On Tue, 16 Jun 2015, Russell King wrote:
-
-> The gemini code was installing its chained interrupt handler (which
-> enables the interrupt) before it was setting its data, which is bad if
-> the IRQ was previously pending.  Avoid this problem by converting it to
-> irq_set_chained_handler_and_data().
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> Depends on patch 1.
-> 
->  arch/arm/mach-gemini/gpio.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-gemini/gpio.c b/arch/arm/mach-gemini/gpio.c
-> index f8cb5710d6ee..3292f2e6ed6f 100644
-> --- a/arch/arm/mach-gemini/gpio.c
-> +++ b/arch/arm/mach-gemini/gpio.c
-> @@ -223,8 +223,8 @@ void __init gemini_gpio_init(void)
->  			set_irq_flags(j, IRQF_VALID);
->  		}
->  
-> -		irq_set_chained_handler(IRQ_GPIO(i), gpio_irq_handler);
-> -		irq_set_handler_data(IRQ_GPIO(i), (void *)i);
-> +		irq_set_chained_handler_and_data(IRQ_GPIO(i), gpio_irq_handler,
-> +						 (void *)i);
->  	}
->  
->  	BUG_ON(gpiochip_add(&gemini_gpio_chip));
-> -- 
-> 2.1.0
-> 
-> 
-Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
