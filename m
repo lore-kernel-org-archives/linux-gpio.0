@@ -1,50 +1,49 @@
-From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH] GPU: ipu: fix lockup caused by pending chained interrupts
-Date: Tue, 16 Jun 2015 23:29:41 +0100
-Message-ID: <E1Z4zMT-0004Y7-KJ@rmk-PC.arm.linux.org.uk>
-References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Y Vo <yvo@apm.com>
+Subject: [PATCH v0] arm64: dts: Add poweroff button device node for APM X-Gene platform
+Date: Wed, 17 Jun 2015 08:41:52 +0700
+Message-ID: <1434505312-27977-1-git-send-email-yvo@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:35888 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757264AbbFPW3r (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 18:29:47 -0400
-In-Reply-To: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
-Content-Disposition: inline
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:34249 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752914AbbFQBmH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 16 Jun 2015 21:42:07 -0400
+Received: by pacgb13 with SMTP id gb13so23573768pac.1
+        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2015 18:42:07 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-kernel@vger.kernel.org
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com, Loc Ho <lho@apm.com>
 
-Even with the oops fixed by a previous patch, the system still fails to
-kexec, due to a stuck chained interrupt locking the system.  We must
-disable the child interrupts prior to setting up the irq chip to ensure
-we don't get stuck here.
+This patch adds poweroff button device node to support poweroff feature
+on APM X-Gene Mustang platform.
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Y Vo <yvo@apm.com>
 ---
-Maybe this is all that's really needed... would also be nice if this
-path had an etry in MAINTAINERS...
+ arch/arm64/boot/dts/apm/apm-mustang.dts |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
 
- drivers/gpu/ipu-v3/ipu-common.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
-index 6d2f39d36e44..00f2058944e5 100644
---- a/drivers/gpu/ipu-v3/ipu-common.c
-+++ b/drivers/gpu/ipu-v3/ipu-common.c
-@@ -1107,6 +1107,9 @@ static int ipu_irq_init(struct ipu_soc *ipu)
- 		return ret;
- 	}
- 
-+	for (i = 0; i < IPU_NUM_IRQS; i += 32)
-+		ipu_cm_write(ipu, 0, IPU_INT_CTRL(i / 32));
+diff --git a/arch/arm64/boot/dts/apm/apm-mustang.dts b/arch/arm64/boot/dts/apm/apm-mustang.dts
+index 83578e7..67979c8 100644
+--- a/arch/arm64/boot/dts/apm/apm-mustang.dts
++++ b/arch/arm64/boot/dts/apm/apm-mustang.dts
+@@ -23,6 +23,17 @@
+ 		device_type = "memory";
+ 		reg = < 0x1 0x00000000 0x0 0x80000000 >; /* Updated by bootloader */
+ 	};
 +
- 	for (i = 0; i < IPU_NUM_IRQS; i += 32) {
- 		gc = irq_get_domain_generic_chip(ipu->domain, i);
- 		gc->reg_base = ipu->cm_reg;
++	gpio-keys {
++		compatible = "gpio-keys";
++		apm_ctrl_name = "Power Button";
++		btn3 {
++			label = "EXT_PWR";
++			linux,code = <116>;
++			linux,input-type = <0x1>;     /* EV_KEY */
++			interrupts = <0x0 0x2d 0x1>;
++		};
++	};
+ };
+ 
+ &pcie0clk {
 -- 
-2.1.0
+1.7.1
 
