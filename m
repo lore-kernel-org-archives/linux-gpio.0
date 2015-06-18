@@ -1,62 +1,44 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 2/8] ARM: imx: add imx6ul clk tree support
-Date: Thu, 18 Jun 2015 07:40:00 +0200
-Message-ID: <20150618054000.GQ6325@pengutronix.de>
-References: <1434555569-8237-1-git-send-email-Frank.Li@freescale.com>
- <1434555569-8237-3-git-send-email-Frank.Li@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: simplify of_pinctrl_get()
+Date: Thu, 18 Jun 2015 14:42:45 +0900
+Message-ID: <1434606165-2629-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:43865 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751567AbbFRFkP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 01:40:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1434555569-8237-3-git-send-email-Frank.Li@freescale.com>
+Received: from conuserg009.nifty.com ([202.248.44.35]:17388 "EHLO
+	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751763AbbFRFm5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 01:42:57 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Frank.Li@freescale.com
-Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, Anson Huang <b20788@freescale.com>, Bai Ping <b51503@freescale.com>, Fugang Duan <B38611@freescale.com>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 11:39:23PM +0800, Frank.Li@freescale.com wrote:
-> From: Frank Li <Frank.Li@freescale.com>
-> 
-> Add imx6ul support
-> 
-> Signed-off-by: Anson Huang <b20788@freescale.com>
-> Signed-off-by: Bai Ping <b51503@freescale.com>
-> Signed-off-by: Fugang Duan <B38611@freescale.com>
-> Signed-off-by: Frank Li <Frank.Li@freescale.com>
-> ---
->  drivers/clk/imx/Makefile                 |   1 +
->  drivers/clk/imx/clk-imx6ul.c             | 436 +++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/imx6ul-clock.h | 240 +++++++++++++++++
->  3 files changed, 677 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-imx6ul.c
->  create mode 100644 include/dt-bindings/clock/imx6ul-clock.h
-> 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 75fae16..1ada68a 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -22,5 +22,6 @@ obj-$(CONFIG_SOC_IMX5)   += clk-imx51-imx53.o
->  obj-$(CONFIG_SOC_IMX6Q)  += clk-imx6q.o
->  obj-$(CONFIG_SOC_IMX6SL) += clk-imx6sl.o
->  obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
-> +obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
->  obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
->  obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
-> +
-> +	clk_register_clkdev(clks[IMX6UL_CLK_GPT1_BUS], "ipg",	"imx-gpt.0");
-> +	clk_register_clkdev(clks[IMX6UL_CLK_GPT1_SERIAL], "per", "imx-gpt.0");
-> +	clk_register_clkdev(clks[IMX6UL_CLK_GPT_3M], "gpt_3m", "imx-gpt.0");
+This commit does not change the logic at all.
 
-These are not needed.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Sascha
+ drivers/pinctrl/devicetree.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 0bbf7d7..fe04e74 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -97,13 +97,7 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 
+ struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
+ {
+-	struct pinctrl_dev *pctldev;
+-
+-	pctldev = get_pinctrl_dev_from_of_node(np);
+-	if (!pctldev)
+-		return NULL;
+-
+-	return pctldev;
++	return get_pinctrl_dev_from_of_node(np);
+ }
+ 
+ static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.9.1
+
