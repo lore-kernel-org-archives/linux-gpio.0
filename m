@@ -1,94 +1,58 @@
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: [PATCH 2/8] pinctrl: qcom: spmi-mpp: Fixes related to enable handling
-Date: Wed, 17 Jun 2015 23:47:26 -0700
-Message-ID: <1434610052-602-3-git-send-email-bjorn.andersson@sonymobile.com>
-References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
+Subject: [PATCH 0/8] Qualcomm PMIC pinctrl additions
+Date: Wed, 17 Jun 2015 23:47:24 -0700
+Message-ID: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([37.139.156.2]:16755 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752387AbbFRGvY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 18 Jun 2015 02:51:24 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, Andy Gross <agross@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org, marc.zyngier@arm.com
 
-There's currently no way to re-enable a mpp block once you've entered a state
-that disables the state, this patch makes it possible to leave the
-bias-high-impedance state.
+This series starts out by fixing various issues found in the pm8941 mpp driver.
+While doing this work, and trying to use the mpp driver from device tree it, it
+became obvious that the current binding is not fit for neither the driver
+implementation nor the dts implementation.
 
-Also read the enable state from the hardware on probe.
+The main reason for this is that we "inherited" the functions from the gpio
+driver, where there is a notion of functions. But in the MPP the logical
+mapping of digital, analog and current sink makes much more sense to map as
+"functions". The features previously exposed as functions are replaced by two
+properties (qcom,paired and qcom,dtest).
 
-With this in place the is_enabled variable is accurately tracking the state of
-the hardware and we can use that for the debug output as well.
+The end result is a more natural device tree definition.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
----
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+With this in place the series introduces the gpio and mpp drivers for the ssbi
+based pmics; found in 8660, 8960 and 8064.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index b247a17bc2af..6d9abeea810d 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -354,6 +354,9 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 	pad = pctldev->desc->pins[pin].drv_data;
- 
-+	/* Make it possible to enable the pin, by not setting high impedance */
-+	pad->is_enabled = true;
-+
- 	for (i = 0; i < nconfs; i++) {
- 		param = pinconf_to_config_param(configs[i]);
- 		arg = pinconf_to_config_argument(configs[i]);
-@@ -445,7 +448,13 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	val |= pad->function << PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
- 	val |= pad->out_value & PMIC_MPP_REG_MODE_VALUE_MASK;
- 
--	return pmic_mpp_write(state, pad, PMIC_MPP_REG_MODE_CTL, val);
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_MODE_CTL, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
-+
-+	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
- }
- 
- static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
-@@ -453,7 +462,7 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
- {
- 	struct pmic_mpp_state *state = pinctrl_dev_get_drvdata(pctldev);
- 	struct pmic_mpp_pad *pad;
--	int ret, val;
-+	int ret;
- 
- 	static const char *const biases[] = {
- 		"0.6kOhm", "10kOhm", "30kOhm", "Disabled"
-@@ -464,9 +473,7 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
- 
- 	seq_printf(s, " mpp%-2d:", pin + PMIC_MPP_PHYSICAL_OFFSET);
- 
--	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_EN_CTL);
--
--	if (val < 0 || !(val >> PMIC_MPP_REG_MASTER_EN_SHIFT)) {
-+	if (!pad->is_enabled) {
- 		seq_puts(s, " ---");
- 	} else {
- 
-@@ -706,8 +713,12 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
- 	pad->amux_input = val >> PMIC_MPP_REG_AIN_ROUTE_SHIFT;
- 	pad->amux_input &= PMIC_MPP_REG_AIN_ROUTE_MASK;
- 
--	/* Pin could be disabled with PIN_CONFIG_BIAS_HIGH_IMPEDANCE */
--	pad->is_enabled = true;
-+	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_EN_CTL);
-+	if (val < 0)
-+		return val;
-+
-+	pad->is_enabled = !!val;
-+
- 	return 0;
- }
- 
+Bjorn Andersson (8):
+  pinctrl: qcom: spmi-mpp: Transition to generic dt binding parser
+  pinctrl: qcom: spmi-mpp: Fixes related to enable handling
+  pinctrl: qcom: spmi-mpp: Introduce defines for MODE_CTL
+  pinctrl: qcom: spmi-mpp: Implement support for sink mode
+  pinctrl: qcom: spmi-mpp: Add support for setting analog output level
+  pinctrl: qcom: spmi-mpp: Transpose pinmux function
+  mfd: pm8921: Implement irq_get_irqchip_state
+  pinctrl: qcom: ssbi: Family A gpio & mpp drivers
+
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |  36 +-
+ drivers/mfd/pm8921-core.c                          |  43 +
+ drivers/pinctrl/qcom/Kconfig                       |  12 +
+ drivers/pinctrl/qcom/Makefile                      |   2 +
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            | 374 +++++----
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           | 795 ++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c            | 886 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/qcom,pmic-mpp.h        |  51 ++
+ 8 files changed, 1993 insertions(+), 206 deletions(-)
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+
 -- 
 1.8.2.2
+
