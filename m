@@ -1,106 +1,61 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: [PATCH 3/8] pinctrl: qcom: spmi-mpp: Introduce defines for MODE_CTL
-Date: Wed, 17 Jun 2015 23:47:27 -0700
-Message-ID: <1434610052-602-4-git-send-email-bjorn.andersson@sonymobile.com>
-References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v6 0/7] Add Mediatek MMC driver
+Date: Thu, 18 Jun 2015 09:26:44 +0200
+Message-ID: <CAPDyKFrG6iNQs6be3sWtVX8+UYs2du5=YUGHvyRsxnFH+8cA0A@mail.gmail.com>
+References: <1434367253-26577-1-git-send-email-chaotian.jing@mediatek.com>
+	<CAPDyKFrAbAFR7_p5O4bPh6FZEBVhGZ2rq3htCKcF2QgQuCEf2g@mail.gmail.com>
+	<CAP=VYLpBymmAVY7LoFJR5+QTxL4CN7t+PrLFCxaoAN_a9S4Jbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAP=VYLpBymmAVY7LoFJR5+QTxL4CN7t+PrLFCxaoAN_a9S4Jbw@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Chaotian Jing <chaotian.jing@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm>
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
----
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+On 17 June 2015 at 23:01, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> On Tue, Jun 16, 2015 at 4:03 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 15 June 2015 at 13:20, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+>>> This series enables MMC support on the MT8135/MT8173 platform.
+>>> MT8135 has 5 MMC controllers and MT8173 has 4 MMC controllers.
+>>>
+>>> Changes base on Ulf's comments
+>>> Make hclk mandatory in the driver code
+>>> Change host->hclk to host->src_clk_freq
+>>> Add linux/pm.h
+>>>
+>>> Chaotian Jing (3):
+>>>   mmc: dt-bindings: add Mediatek MMC bindings
+>>>   mmc: mediatek: Add Mediatek MMC driver.
+>
+> This commit breaks when merged to linux-next since it gets
+> exposed as an implicit module.h user that does not include
+> that header:
+>
+>    drivers/mmc/host/mtk-sd.c:1459:1: note: in expansion of macro
+> 'module_platform_driver'
+>     module_platform_driver(mt_msdc_driver);
+>     ^
+>    include/linux/device.h:1296:1: error: type defaults to 'int' in
+> declaration of 'module_init' [-Werror=implicit-int]
+>     module_init(__driver##_init); \
+>     ^
+>
+> Since the code doesn't exist in mainline, I can't fix it from
+> within my header cleanup series, so can you please add
+> an appropriate include of module.h to the above?
+>
+> Also, I noticed the Makefile addition from this commit
+> is whitespace mangled; might as well fix that too if
+> rebasing to fix the include problem.
+>
+> Thanks,
+> Paul.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 6d9abeea810d..745c37dea7d0 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -85,6 +85,14 @@
- #define PMIC_MPP_REG_AIN_ROUTE_SHIFT		0
- #define PMIC_MPP_REG_AIN_ROUTE_MASK		0x7
- 
-+#define PMIC_MPP_MODE_DIGITAL_INPUT		0
-+#define PMIC_MPP_MODE_DIGITAL_OUTPUT		1
-+#define PMIC_MPP_MODE_DIGITAL_BIDIR		2
-+#define PMIC_MPP_MODE_ANALOG_BIDIR		3
-+#define PMIC_MPP_MODE_ANALOG_INPUT		4
-+#define PMIC_MPP_MODE_ANALOG_OUTPUT		5
-+#define PMIC_MPP_MODE_CURRENT_SINK		6
-+
- #define PMIC_MPP_PHYSICAL_OFFSET		1
- 
- /* Qualcomm specific pin configurations */
-@@ -248,20 +256,20 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 	pad->function = function;
- 
- 	if (!pad->analog_mode) {
--		val = 0;	/* just digital input */
-+		val = PMIC_MPP_MODE_DIGITAL_INPUT;
- 		if (pad->output_enabled) {
- 			if (pad->input_enabled)
--				val = 2; /* digital input and output */
-+				val = PMIC_MPP_MODE_DIGITAL_BIDIR;
- 			else
--				val = 1; /* just digital output */
-+				val = PMIC_MPP_MODE_DIGITAL_OUTPUT;
- 		}
- 	} else {
--		val = 4;	/* just analog input */
-+		val = PMIC_MPP_MODE_ANALOG_INPUT;
- 		if (pad->output_enabled) {
- 			if (pad->input_enabled)
--				val = 3; /* analog input and output */
-+				val = PMIC_MPP_MODE_ANALOG_BIDIR;
- 			else
--				val = 5; /* just analog output */
-+				val = PMIC_MPP_MODE_ANALOG_OUTPUT;
- 		}
- 	}
- 
-@@ -654,32 +662,32 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
- 	dir &= PMIC_MPP_REG_MODE_DIR_MASK;
- 
- 	switch (dir) {
--	case 0:
-+	case PMIC_MPP_MODE_DIGITAL_INPUT:
- 		pad->input_enabled = true;
- 		pad->output_enabled = false;
- 		pad->analog_mode = false;
- 		break;
--	case 1:
-+	case PMIC_MPP_MODE_DIGITAL_OUTPUT:
- 		pad->input_enabled = false;
- 		pad->output_enabled = true;
- 		pad->analog_mode = false;
- 		break;
--	case 2:
-+	case PMIC_MPP_MODE_DIGITAL_BIDIR:
- 		pad->input_enabled = true;
- 		pad->output_enabled = true;
- 		pad->analog_mode = false;
- 		break;
--	case 3:
-+	case PMIC_MPP_MODE_ANALOG_BIDIR:
- 		pad->input_enabled = true;
- 		pad->output_enabled = true;
- 		pad->analog_mode = true;
- 		break;
--	case 4:
-+	case PMIC_MPP_MODE_ANALOG_INPUT:
- 		pad->input_enabled = true;
- 		pad->output_enabled = false;
- 		pad->analog_mode = true;
- 		break;
--	case 5:
-+	case PMIC_MPP_MODE_ANALOG_OUTPUT:
- 		pad->input_enabled = false;
- 		pad->output_enabled = true;
- 		pad->analog_mode = true;
--- 
-1.8.2.2
+Paul, appreciate your feedback!
+I have re-based my next branch and updated the commit according to
+your suggestions.
+
+Kind regards
+Uffe
