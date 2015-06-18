@@ -1,422 +1,1842 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: [PATCH 6/8] pinctrl: qcom: spmi-mpp: Transpose pinmux function
-Date: Wed, 17 Jun 2015 23:47:30 -0700
-Message-ID: <1434610052-602-7-git-send-email-bjorn.andersson@sonymobile.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH 8/8] pinctrl: qcom: ssbi: Family A gpio & mpp drivers
+Date: Wed, 17 Jun 2015 23:47:32 -0700
+Message-ID: <1434610052-602-9-git-send-email-bjorn.andersson@sonymobile.com>
 References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Ivan T. Ivanov" <ivan.ivanov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, marc.zyngier@arm.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The "function" of the MPP driver was inherited from the GPIO driver, but the
-differences between the two hardware blocks makes both the driver and the
-device tree binding to be awkward.
+This introduces pinctrl drivers for gpio and mpp blocks found in family A
+PMICs.
 
-Instead of overloading the "normal" function with various modes this patch
-transposes the pinmux function to represent the three operating modes of the
-MPP (digital, analog and current sink). The properties of pin pairing and DTEST
-routing is moved to separate properties.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 ---
- .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |  29 ++--
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            | 157 ++++++++++++---------
- 2 files changed, 99 insertions(+), 87 deletions(-)
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |   5 +
+ drivers/pinctrl/qcom/Kconfig                       |  12 +
+ drivers/pinctrl/qcom/Makefile                      |   2 +
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           | 795 ++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c            | 886 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/qcom,pmic-mpp.h        |  51 ++
+ 6 files changed, 1751 insertions(+)
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
-index 0e4d4e62e220..b096d8351b8f 100644
+index b096d8351b8f..d7803a2a94e9 100644
 --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
 +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
-@@ -77,12 +77,9 @@ to specify in a pin configuration subnode:
+@@ -7,8 +7,13 @@ of PMIC's from Qualcomm.
+ 	Usage: required
  	Value type: <string>
- 	Definition: Specify the alternative function to be configured for the
- 		    specified pins.  Valid values are:
--		    "normal",
--		    "paired",
--		    "dtest1",
--		    "dtest2",
--		    "dtest3",
--		    "dtest4"
-+		    "digital",
-+		    "analog",
-+		    "sink"
+ 	Definition: Should contain one of:
++		    "qcom,pm8018-mpp",
++		    "qcom,pm8038-mpp",
++		    "qcom,pm8821-mpp",
+ 		    "qcom,pm8841-mpp",
+ 		    "qcom,pm8916-mpp",
++		    "qcom,pm8917-mpp",
++		    "qcom,pm8921-mpp",
+ 		    "qcom,pm8941-mpp",
+ 		    "qcom,pma8084-mpp",
  
- - bias-disable:
- 	Usage: optional
-@@ -134,17 +131,11 @@ to specify in a pin configuration subnode:
- 		    defined in <dt-binding/pinctrl/qcom,pmic-mpp.h>
- 		    PMIC_MPP_AOUT_LVL_*
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index 58f5632b27f4..8eef820b216e 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -76,4 +76,16 @@ config PINCTRL_QCOM_SPMI_PMIC
+          which are using SPMI for communication with SoC. Example PMIC's
+          devices are pm8841, pm8941 and pma8084.
  
--- qcom,analog-mode:
-+- qcom,dtest:
- 	Usage: optional
--	Value type: <none>
--	Definition: Selects Analog mode of operation: combined with input-enable
--		    and/or output-high, output-low MPP could operate as
--		    Bidirectional Logic, Analog Input, Analog Output.
--
--- qcom,sink-mode:
--	Usage: optional
--	Value type: <u32> or <none>
--	Definition: Selects sink mode of operation
-+	Value type: <u32>
-+	Definition: Selects which dtest rail to be routed in the various functions.
-+		    Valid values are 1-4
- 
- - qcom,amux-route:
- 	Usage: optional
-@@ -152,6 +143,10 @@ to specify in a pin configuration subnode:
- 	Definition: Selects the source for analog input. Valid values are
- 		    defined in <dt-bindings/pinctrl/qcom,pmic-mpp.h>
- 		    PMIC_MPP_AMUX_ROUTE_CH5, PMIC_MPP_AMUX_ROUTE_CH6...
-+- qcom,paired:
-+	Usage: optional
-+	Value type: <none>
-+	Definition: Indicates that the pin should be operating in paired mode.
- 
- Example:
- 
-@@ -168,7 +163,7 @@ Example:
- 		pm8841_default: default {
- 			gpio {
- 				pins = "mpp1", "mpp2", "mpp3", "mpp4";
--				function = "normal";
-+				function = "digital";
- 				input-enable;
- 				power-source = <PM8841_MPP_S3>;
- 			};
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 24f471eee341..8a280ef6304e 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -95,13 +95,17 @@
- #define PMIC_MPP_MODE_ANALOG_OUTPUT		5
- #define PMIC_MPP_MODE_CURRENT_SINK		6
- 
-+#define PMIC_MPP_SELECTOR_NORMAL		0
-+#define PMIC_MPP_SELECTOR_PAIRED		1
-+#define PMIC_MPP_SELECTOR_DTEST_FIRST		4
++config PINCTRL_QCOM_SSBI_PMIC
++       tristate "Qualcomm SSBI PMIC pin controller driver"
++       depends on GPIOLIB && OF
++       select PINMUX
++       select PINCONF
++       select GENERIC_PINCONF
++       help
++         This is the pinctrl, pinmux, pinconf and gpiolib driver for the
++         Qualcomm GPIO and MPP blocks found in the Qualcomm PMIC's chips,
++         which are using SSBI for communication with SoC. Example PMIC's
++         devices are pm8058 and pm8921.
 +
- #define PMIC_MPP_PHYSICAL_OFFSET		1
- 
- /* Qualcomm specific pin configurations */
- #define PMIC_MPP_CONF_AMUX_ROUTE		(PIN_CONFIG_END + 1)
--#define PMIC_MPP_CONF_ANALOG_MODE		(PIN_CONFIG_END + 2)
--#define PMIC_MPP_CONF_SINK_MODE			(PIN_CONFIG_END + 3)
--#define PMIC_MPP_CONF_ANALOG_LEVEL		(PIN_CONFIG_END + 4)
-+#define PMIC_MPP_CONF_ANALOG_LEVEL		(PIN_CONFIG_END + 2)
-+#define PMIC_MPP_CONF_DTEST_SELECTOR		(PIN_CONFIG_END + 3)
-+#define PMIC_MPP_CONF_PAIRED			(PIN_CONFIG_END + 4)
- 
- /**
-  * struct pmic_mpp_pad - keep current MPP settings
-@@ -111,9 +115,7 @@
-  * @out_value: Cached pin output value.
-  * @output_enabled: Set to true if MPP output logic is enabled.
-  * @input_enabled: Set to true if MPP input buffer logic is enabled.
-- * @analog_mode: Set to true when MPP should operate in Analog Input, Analog
-- *	Output or Bidirectional Analog mode.
-- * @sink_mode: Boolean indicating if ink mode is slected
-+ * @paired: Pin operates in paired mode
-  * @num_sources: Number of power-sources supported by this MPP.
-  * @power_source: Current power-source used.
-  * @amux_input: Set the source for analog input.
-@@ -121,6 +123,7 @@
-  * @pullup: Pullup resistor value. Valid in Bidirectional mode only.
-  * @function: See pmic_mpp_functions[].
-  * @drive_strength: Amount of current in sink mode
-+ * @dtest: DTEST route selector
-  */
- struct pmic_mpp_pad {
- 	u16		base;
-@@ -129,8 +132,7 @@ struct pmic_mpp_pad {
- 	bool		out_value;
- 	bool		output_enabled;
- 	bool		input_enabled;
--	bool		analog_mode;
--	bool		sink_mode;
-+	bool		paired;
- 	unsigned int	num_sources;
- 	unsigned int	power_source;
- 	unsigned int	amux_input;
-@@ -138,6 +140,7 @@ struct pmic_mpp_pad {
- 	unsigned int	pullup;
- 	unsigned int	function;
- 	unsigned int	drive_strength;
-+	unsigned int	dtest;
- };
- 
- struct pmic_mpp_state {
-@@ -150,16 +153,16 @@ struct pmic_mpp_state {
- static const struct pinconf_generic_params pmic_mpp_bindings[] = {
- 	{"qcom,amux-route",	PMIC_MPP_CONF_AMUX_ROUTE,	0},
- 	{"qcom,analog-level",	PMIC_MPP_CONF_ANALOG_LEVEL,	0},
--	{"qcom,analog-mode",	PMIC_MPP_CONF_ANALOG_MODE,	0},
--	{"qcom,sink-mode",	PMIC_MPP_CONF_SINK_MODE,	0},
-+	{"qcom,dtest",		PMIC_MPP_CONF_DTEST_SELECTOR,	0},
-+	{"qcom,paired",		PMIC_MPP_CONF_PAIRED,		0},
- };
- 
- #ifdef CONFIG_DEBUG_FS
- static const struct pin_config_item pmic_conf_items[] = {
- 	PCONFDUMP(PMIC_MPP_CONF_AMUX_ROUTE, "analog mux", NULL, true),
- 	PCONFDUMP(PMIC_MPP_CONF_ANALOG_LEVEL, "analog level", NULL, true),
--	PCONFDUMP(PMIC_MPP_CONF_ANALOG_MODE, "analog output", NULL, false),
--	PCONFDUMP(PMIC_MPP_CONF_SINK_MODE, "sink mode", NULL, false),
-+	PCONFDUMP(PMIC_MPP_CONF_DTEST_SELECTOR, "dtest", NULL, true),
-+	PCONFDUMP(PMIC_MPP_CONF_PAIRED, "paired", NULL, false),
- };
- #endif
- 
-@@ -167,11 +170,12 @@ static const char *const pmic_mpp_groups[] = {
- 	"mpp1", "mpp2", "mpp3", "mpp4", "mpp5", "mpp6", "mpp7", "mpp8",
- };
- 
-+#define PMIC_MPP_DIGITAL	0
-+#define PMIC_MPP_ANALOG		1
-+#define PMIC_MPP_SINK		2
+ endif
+diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
+index 3666c703ce88..e321f7ab325b 100644
+--- a/drivers/pinctrl/qcom/Makefile
++++ b/drivers/pinctrl/qcom/Makefile
+@@ -9,3 +9,5 @@ obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
+ obj-$(CONFIG_PINCTRL_MSM8916)	+= pinctrl-msm8916.o
+ obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-gpio.o
+ obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-mpp.o
++obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) += pinctrl-ssbi-gpio.o
++obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) += pinctrl-ssbi-mpp.o
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+new file mode 100644
+index 000000000000..fb8e9164b16c
+--- /dev/null
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -0,0 +1,795 @@
++/*
++ * Copyright (c) 2015, Sony Mobile Communications AB.
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- static const char *const pmic_mpp_functions[] = {
--	PMIC_MPP_FUNC_NORMAL, PMIC_MPP_FUNC_PAIRED,
--	"reserved1", "reserved2",
--	PMIC_MPP_FUNC_DTEST1, PMIC_MPP_FUNC_DTEST2,
--	PMIC_MPP_FUNC_DTEST3, PMIC_MPP_FUNC_DTEST4,
-+	"digital", "analog", "sink"
- };
- 
- static inline struct pmic_mpp_state *to_mpp_state(struct gpio_chip *chip)
-@@ -260,31 +264,46 @@ static int pmic_mpp_get_function_groups(struct pinctrl_dev *pctldev,
- static int pmic_mpp_write_mode_ctl(struct pmic_mpp_state *state,
- 				   struct pmic_mpp_pad *pad)
- {
-+	unsigned int mode;
-+	unsigned int sel;
- 	unsigned int val;
--
--	if (pad->analog_mode) {
--		val = PMIC_MPP_MODE_ANALOG_INPUT;
--		if (pad->output_enabled) {
--			if (pad->input_enabled)
--				val = PMIC_MPP_MODE_ANALOG_BIDIR;
--			else
--				val = PMIC_MPP_MODE_ANALOG_OUTPUT;
--		}
--	} else if (pad->sink_mode) {
--		val = PMIC_MPP_MODE_CURRENT_SINK;
--	} else {
--		val = PMIC_MPP_MODE_DIGITAL_INPUT;
--		if (pad->output_enabled) {
--			if (pad->input_enabled)
--				val = PMIC_MPP_MODE_DIGITAL_BIDIR;
--			else
--				val = PMIC_MPP_MODE_DIGITAL_OUTPUT;
--		}
-+	unsigned int en;
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/slab.h>
++#include <linux/regmap.h>
++#include <linux/gpio.h>
++#include <linux/interrupt.h>
 +
-+	switch (pad->function) {
-+	case PMIC_MPP_ANALOG:
-+		if (pad->input_enabled && pad->output_enabled)
-+			mode = PMIC_MPP_MODE_ANALOG_BIDIR;
-+		else if (pad->input_enabled)
-+			mode = PMIC_MPP_MODE_ANALOG_INPUT;
-+		else
-+			mode = PMIC_MPP_MODE_ANALOG_OUTPUT;
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
++
++#include "../core.h"
++#include "../pinctrl-utils.h"
++
++/* mode */
++#define PM8XXX_GPIO_MODE_ENABLED	BIT(0)
++#define PM8XXX_GPIO_MODE_INPUT		0
++#define PM8XXX_GPIO_MODE_OUTPUT		2
++
++/* output buffer */
++#define PM8XXX_GPIO_PUSH_PULL		0
++#define PM8XXX_GPIO_OPEN_DRAIN		1
++
++/* bias */
++#define PM8XXX_GPIO_BIAS_PU_30		0
++#define PM8XXX_GPIO_BIAS_PU_1P5		1
++#define PM8XXX_GPIO_BIAS_PU_31P5	2
++#define PM8XXX_GPIO_BIAS_PU_1P5_30	3
++#define PM8XXX_GPIO_BIAS_PD		4
++#define PM8XXX_GPIO_BIAS_NP		5
++
++/* GPIO registers */
++#define SSBI_REG_ADDR_GPIO_BASE		0x150
++#define SSBI_REG_ADDR_GPIO(n)		(SSBI_REG_ADDR_GPIO_BASE + n)
++
++#define PM8XXX_BANK_WRITE		BIT(7)
++
++#define PM8XXX_MAX_GPIOS               44
++
++/* custom pinconf parameters */
++#define PM8XXX_QCOM_DRIVE_STRENGH      (PIN_CONFIG_END + 1)
++#define PM8XXX_QCOM_PULL_UP_STRENGTH   (PIN_CONFIG_END + 2)
++
++/**
++ * struct pm8xxx_pin_data - dynamic configuration for a pin
++ * @reg:               address of the control register
++ * @irq:               IRQ from the PMIC interrupt controller
++ * @power_source:      logical selected voltage source, mapping in static data
++ *                     is used translate to register values
++ * @mode:              operating mode for the pin (input/output)
++ * @open_drain:        output buffer configured as open-drain (vs push-pull)
++ * @output_value:      configured output value
++ * @bias:              register view of configured bias
++ * @pull_up_strength:  placeholder for selected pull up strength
++ *                     only used to configure bias when pull up is selected
++ * @output_strength:   selector of output-strength
++ * @disable:           pin disabled / configured as tristate
++ * @function:          pinmux selector
++ * @inverted:          pin logic is inverted
++ */
++struct pm8xxx_pin_data {
++	unsigned reg;
++	int irq;
++	u8 power_source;
++	u8 mode;
++	bool open_drain;
++	bool output_value;
++	u8 bias;
++	u8 pull_up_strength;
++	u8 output_strength;
++	bool disable;
++	u8 function;
++	bool inverted;
++};
++
++struct pm8xxx_gpio {
++	struct device *dev;
++	struct regmap *regmap;
++	struct pinctrl_dev *pctrl;
++	struct gpio_chip chip;
++
++	struct pinctrl_desc desc;
++	unsigned npins;
++};
++
++static const struct pinconf_generic_params pm8xxx_gpio_bindings[] = {
++	{"qcom,drive-strength",		PM8XXX_QCOM_DRIVE_STRENGH,	0},
++	{"qcom,pull-up-strength",	PM8XXX_QCOM_PULL_UP_STRENGTH,	0},
++};
++
++#ifdef CONFIG_DEBUG_FS
++static const struct pin_config_item pm8xxx_conf_items[ARRAY_SIZE(pm8xxx_gpio_bindings)] = {
++	PCONFDUMP(PM8XXX_QCOM_DRIVE_STRENGH, "drive-strength", NULL, true),
++	PCONFDUMP(PM8XXX_QCOM_PULL_UP_STRENGTH,  "pull up strength", NULL, true),
++};
++#endif
++
++static const char * const pm8xxx_groups[PM8XXX_MAX_GPIOS] = {
++	"gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7", "gpio8",
++	"gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14", "gpio15",
++	"gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21", "gpio22",
++	"gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28", "gpio29",
++	"gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35", "gpio36",
++	"gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42", "gpio43",
++	"gpio44",
++};
++
++static const char * const pm8xxx_gpio_functions[] = {
++	PMIC_GPIO_FUNC_NORMAL, PMIC_GPIO_FUNC_PAIRED,
++	PMIC_GPIO_FUNC_FUNC1, PMIC_GPIO_FUNC_FUNC2,
++	PMIC_GPIO_FUNC_DTEST1, PMIC_GPIO_FUNC_DTEST2,
++	PMIC_GPIO_FUNC_DTEST3, PMIC_GPIO_FUNC_DTEST4,
++};
++
++static int pm8xxx_read_bank(struct pm8xxx_gpio *pctrl,
++			    struct pm8xxx_pin_data *pin, int bank)
++{
++	unsigned int val = bank << 4;
++	int ret;
++
++	ret = regmap_write(pctrl->regmap, pin->reg, val);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to select bank %d\n", bank);
++		return ret;
++	}
++
++	ret = regmap_read(pctrl->regmap, pin->reg, &val);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to read register %d\n", bank);
++		return ret;
++	}
++
++	return val;
++}
++
++static int pm8xxx_write_bank(struct pm8xxx_gpio *pctrl,
++			     struct pm8xxx_pin_data *pin,
++			     int bank,
++			     u8 val)
++{
++	int ret;
++
++	val |= PM8XXX_BANK_WRITE;
++	val |= bank << 4;
++
++	ret = regmap_write(pctrl->regmap, pin->reg, val);
++	if (ret)
++		dev_err(pctrl->dev, "failed to write register\n");
++
++	return ret;
++}
++
++static int pm8xxx_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	return pctrl->npins;
++}
++
++static const char *pm8xxx_get_group_name(struct pinctrl_dev *pctldev,
++					 unsigned group)
++{
++	return pm8xxx_groups[group];
++}
++
++
++static int pm8xxx_get_group_pins(struct pinctrl_dev *pctldev,
++				 unsigned group,
++				 const unsigned **pins,
++				 unsigned *num_pins)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	*pins = &pctrl->desc.pins[group].number;
++	*num_pins = 1;
++
++	return 0;
++}
++
++static const struct pinctrl_ops pm8xxx_pinctrl_ops = {
++	.get_groups_count	= pm8xxx_get_groups_count,
++	.get_group_name		= pm8xxx_get_group_name,
++	.get_group_pins         = pm8xxx_get_group_pins,
++	.dt_node_to_map		= pinconf_generic_dt_node_to_map_group,
++	.dt_free_map		= pinctrl_utils_dt_free_map,
++};
++
++static int pm8xxx_get_functions_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(pm8xxx_gpio_functions);
++}
++
++static const char *pm8xxx_get_function_name(struct pinctrl_dev *pctldev,
++					    unsigned function)
++{
++	return pm8xxx_gpio_functions[function];
++}
++
++static int pm8xxx_get_function_groups(struct pinctrl_dev *pctldev,
++				      unsigned function,
++				      const char * const **groups,
++				      unsigned * const num_groups)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups = pm8xxx_groups;
++	*num_groups = pctrl->npins;
++	return 0;
++}
++
++static int pm8xxx_pinmux_set_mux(struct pinctrl_dev *pctldev,
++				 unsigned function,
++				 unsigned group)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[group].drv_data;
++	u8 val;
++
++	pin->function = function;
++	val = pin->function << 1;
++
++	pm8xxx_write_bank(pctrl, pin, 4, val);
++
++	return 0;
++}
++
++static const struct pinmux_ops pm8xxx_pinmux_ops = {
++	.get_functions_count	= pm8xxx_get_functions_count,
++	.get_function_name	= pm8xxx_get_function_name,
++	.get_function_groups	= pm8xxx_get_function_groups,
++	.set_mux		= pm8xxx_pinmux_set_mux,
++};
++
++static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
++				 unsigned int offset,
++				 unsigned long *config)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	unsigned param = pinconf_to_config_param(*config);
++	unsigned arg;
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
 +		break;
-+	case PMIC_MPP_DIGITAL:
-+		if (pad->input_enabled && pad->output_enabled)
-+			mode = PMIC_MPP_MODE_DIGITAL_BIDIR;
-+		else if (pad->input_enabled)
-+			mode = PMIC_MPP_MODE_DIGITAL_INPUT;
-+		else
-+			mode = PMIC_MPP_MODE_DIGITAL_OUTPUT;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
 +		break;
-+	case PMIC_MPP_SINK:
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
++		break;
++	case PM8XXX_QCOM_PULL_UP_STRENGTH:
++		arg = pin->pull_up_strength;
++		break;
++	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++		arg = pin->disable;
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
++		break;
++	case PIN_CONFIG_OUTPUT:
++		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
++			arg = pin->output_value;
++		else
++			arg = 0;
++		break;
++	case PIN_CONFIG_POWER_SOURCE:
++		arg = pin->power_source;
++		break;
++	case PM8XXX_QCOM_DRIVE_STRENGH:
++		arg = pin->output_strength;
++		break;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		arg = !pin->open_drain;
++		break;
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++		arg = pin->open_drain;
++		break;
 +	default:
-+		mode = PMIC_MPP_MODE_CURRENT_SINK;
-+		break;
- 	}
- 
--	val = val << PMIC_MPP_REG_MODE_DIR_SHIFT;
--	val |= pad->function << PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
--	val |= pad->out_value & PMIC_MPP_REG_MODE_VALUE_MASK;
-+	if (pad->dtest)
-+		sel = PMIC_MPP_SELECTOR_DTEST_FIRST + pad->dtest - 1;
-+	else if (pad->paired)
-+		sel = PMIC_MPP_SELECTOR_PAIRED;
-+	else
-+		sel = PMIC_MPP_SELECTOR_NORMAL;
++		return -EINVAL;
++	}
 +
-+	en = !!pad->out_value;
++	*config = pinconf_to_config_packed(param, arg);
 +
-+	val = mode << PMIC_MPP_REG_MODE_DIR_SHIFT |
-+	      sel << PMIC_MPP_REG_MODE_FUNCTION_SHIFT |
-+	      en;
- 
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_MODE_CTL, val);
- }
-@@ -358,21 +377,21 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
- 	case PIN_CONFIG_OUTPUT:
- 		arg = pad->out_value;
- 		break;
-+	case PMIC_MPP_CONF_DTEST_SELECTOR:
-+		arg = pad->dtest;
-+		break;
- 	case PMIC_MPP_CONF_AMUX_ROUTE:
- 		arg = pad->amux_input;
- 		break;
-+	case PMIC_MPP_CONF_PAIRED:
-+		arg = pad->paired;
-+		break;
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		arg = pad->drive_strength;
- 		break;
- 	case PMIC_MPP_CONF_ANALOG_LEVEL:
- 		arg = pad->aout_level;
- 		break;
--	case PMIC_MPP_CONF_ANALOG_MODE:
--		arg = pad->analog_mode;
--		break;
--	case PMIC_MPP_CONF_SINK_MODE:
--		arg = pad->sink_mode;
--		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -434,6 +453,9 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			pad->output_enabled = true;
- 			pad->out_value = arg;
- 			break;
-+		case PMIC_MPP_CONF_DTEST_SELECTOR:
-+			pad->dtest = arg;
++	return 0;
++}
++
++static int pm8xxx_pin_config_set(struct pinctrl_dev *pctldev,
++				 unsigned int offset,
++				 unsigned long *configs,
++				 unsigned num_configs)
++{
++	struct pm8xxx_gpio *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	unsigned param;
++	unsigned arg;
++	unsigned i;
++	u8 banks = 0;
++	u8 val;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			pin->bias = PM8XXX_GPIO_BIAS_NP;
++			banks |= BIT(2);
++			pin->disable = 0;
++			banks |= BIT(3);
 +			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
- 			arg = pad->drive_strength;
- 			break;
-@@ -445,11 +467,8 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 		case PMIC_MPP_CONF_ANALOG_LEVEL:
- 			pad->aout_level = arg;
- 			break;
--		case PMIC_MPP_CONF_ANALOG_MODE:
--			pad->analog_mode = !!arg;
--			break;
--		case PMIC_MPP_CONF_SINK_MODE:
--			pad->sink_mode = !!arg;
-+		case PMIC_MPP_CONF_PAIRED:
-+			pad->paired = !!arg;
- 			break;
- 		default:
- 			return -EINVAL;
-@@ -498,10 +517,6 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
- 		"0.6kOhm", "10kOhm", "30kOhm", "Disabled"
- 	};
- 
--	static const char *const modes[] = {
--		"digital", "analog", "sink"
--	};
--
- 	pad = pctldev->desc->pins[pin].drv_data;
- 
- 	seq_printf(s, " mpp%-2d:", pin + PMIC_MPP_PHYSICAL_OFFSET);
-@@ -520,12 +535,15 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
- 		}
- 
- 		seq_printf(s, " %-4s", pad->output_enabled ? "out" : "in");
--		seq_printf(s, " %-7s", modes[pad->analog_mode ? 1 : (pad->sink_mode ? 2 : 0)]);
- 		seq_printf(s, " %-7s", pmic_mpp_functions[pad->function]);
- 		seq_printf(s, " vin-%d", pad->power_source);
- 		seq_printf(s, " %d", pad->aout_level);
- 		seq_printf(s, " %-8s", biases[pad->pullup]);
- 		seq_printf(s, " %-4s", pad->out_value ? "high" : "low");
-+		if (pad->dtest)
-+			seq_printf(s, " dtest%d", pad->dtest);
-+		if (pad->paired)
-+			seq_puts(s, " paired");
- 	}
- }
- 
-@@ -646,6 +664,7 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
- 			     struct pmic_mpp_pad *pad)
- {
- 	int type, subtype, val, dir;
-+	unsigned int sel;
- 
- 	type = pmic_mpp_read(state, pad, PMIC_MPP_REG_TYPE);
- 	if (type < 0)
-@@ -691,52 +710,50 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
- 	case PMIC_MPP_MODE_DIGITAL_INPUT:
- 		pad->input_enabled = true;
- 		pad->output_enabled = false;
--		pad->analog_mode = false;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_DIGITAL;
- 		break;
- 	case PMIC_MPP_MODE_DIGITAL_OUTPUT:
- 		pad->input_enabled = false;
- 		pad->output_enabled = true;
--		pad->analog_mode = false;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_DIGITAL;
- 		break;
- 	case PMIC_MPP_MODE_DIGITAL_BIDIR:
- 		pad->input_enabled = true;
- 		pad->output_enabled = true;
--		pad->analog_mode = false;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_DIGITAL;
- 		break;
- 	case PMIC_MPP_MODE_ANALOG_BIDIR:
- 		pad->input_enabled = true;
- 		pad->output_enabled = true;
--		pad->analog_mode = true;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_ANALOG;
- 		break;
- 	case PMIC_MPP_MODE_ANALOG_INPUT:
- 		pad->input_enabled = true;
- 		pad->output_enabled = false;
--		pad->analog_mode = true;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_ANALOG;
- 		break;
- 	case PMIC_MPP_MODE_ANALOG_OUTPUT:
- 		pad->input_enabled = false;
- 		pad->output_enabled = true;
--		pad->analog_mode = true;
--		pad->sink_mode = false;
-+		pad->function = PMIC_MPP_ANALOG;
- 		break;
- 	case PMIC_MPP_MODE_CURRENT_SINK:
- 		pad->input_enabled = false;
- 		pad->output_enabled = true;
--		pad->analog_mode = false;
--		pad->sink_mode = true;
-+		pad->function = PMIC_MPP_SINK;
- 		break;
- 	default:
- 		dev_err(state->dev, "unknown MPP direction\n");
- 		return -ENODEV;
- 	}
- 
--	pad->function = val >> PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
--	pad->function &= PMIC_MPP_REG_MODE_FUNCTION_MASK;
-+	sel = val >> PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
-+	sel &= PMIC_MPP_REG_MODE_FUNCTION_MASK;
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			pin->bias = PM8XXX_GPIO_BIAS_PD;
++			banks |= BIT(2);
++			pin->disable = 0;
++			banks |= BIT(3);
++			break;
++		case PM8XXX_QCOM_PULL_UP_STRENGTH:
++			if (arg > PM8XXX_GPIO_BIAS_PU_1P5_30) {
++				dev_err(pctrl->dev, "invalid pull-up strength\n");
++				return -EINVAL;
++			}
++			pin->pull_up_strength = arg;
++			/* FALLTHROUGH */
++		case PIN_CONFIG_BIAS_PULL_UP:
++			pin->bias = pin->pull_up_strength;
++			banks |= BIT(2);
++			pin->disable = 0;
++			banks |= BIT(3);
++			break;
++		case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++			pin->disable = 1;
++			banks |= BIT(3);
++			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			pin->mode = PM8XXX_GPIO_MODE_INPUT;
++			banks |= BIT(0) | BIT(1);
++			break;
++		case PIN_CONFIG_OUTPUT:
++			pin->mode = PM8XXX_GPIO_MODE_OUTPUT;
++			pin->output_value = !!arg;
++			banks |= BIT(0) | BIT(1);
++			break;
++		case PIN_CONFIG_POWER_SOURCE:
++			pin->power_source = arg;
++			banks |= BIT(0);
++			break;
++		case PM8XXX_QCOM_DRIVE_STRENGH:
++			if (arg > PMIC_GPIO_STRENGTH_LOW) {
++				dev_err(pctrl->dev, "invalid drive strength\n");
++				return -EINVAL;
++			}
++			pin->output_strength = arg;
++			banks |= BIT(3);
++			break;
++		case PIN_CONFIG_DRIVE_PUSH_PULL:
++			pin->open_drain = 0;
++			banks |= BIT(1);
++			break;
++		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++			pin->open_drain = 1;
++			banks |= BIT(1);
++			break;
++		default:
++			dev_err(pctrl->dev,
++				"unsupported config parameter: %x\n",
++				param);
++			return -EINVAL;
++		}
++	}
 +
-+	if (sel >= PMIC_MPP_SELECTOR_DTEST_FIRST)
-+		pad->dtest = sel + 1;
-+	else if (sel == PMIC_MPP_SELECTOR_PAIRED)
-+		pad->paired = true;
++	if (banks & BIT(0)) {
++		val = pin->power_source << 1;
++		val |= PM8XXX_GPIO_MODE_ENABLED;
++		pm8xxx_write_bank(pctrl, pin, 0, val);
++	}
++
++	if (banks & BIT(1)) {
++		val = pin->mode << 2;
++		val |= pin->open_drain << 1;
++		val |= pin->output_value;
++		pm8xxx_write_bank(pctrl, pin, 1, val);
++	}
++
++	if (banks & BIT(2)) {
++		val = pin->bias << 1;
++		pm8xxx_write_bank(pctrl, pin, 2, val);
++	}
++
++	if (banks & BIT(3)) {
++		val = pin->output_strength << 2;
++		val |= pin->disable;
++		pm8xxx_write_bank(pctrl, pin, 3, val);
++	}
++
++	if (banks & BIT(4)) {
++		val = pin->function << 1;
++		pm8xxx_write_bank(pctrl, pin, 4, val);
++	}
++
++	if (banks & BIT(5)) {
++		val = 0;
++		if (!pin->inverted)
++			val |= BIT(3);
++		pm8xxx_write_bank(pctrl, pin, 5, val);
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops pm8xxx_pinconf_ops = {
++	.is_generic = true,
++	.pin_config_group_get = pm8xxx_pin_config_get,
++	.pin_config_group_set = pm8xxx_pin_config_set,
++};
++
++static struct pinctrl_desc pm8xxx_pinctrl_desc = {
++	.name = "pm8xxx_gpio",
++	.pctlops = &pm8xxx_pinctrl_ops,
++	.pmxops = &pm8xxx_pinmux_ops,
++	.confops = &pm8xxx_pinconf_ops,
++	.owner = THIS_MODULE,
++};
++
++static int pm8xxx_gpio_direction_input(struct gpio_chip *chip,
++				       unsigned offset)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	u8 val;
++
++	pin->mode = PM8XXX_GPIO_MODE_INPUT;
++	val = pin->mode << 2;
++
++	pm8xxx_write_bank(pctrl, pin, 1, val);
++
++	return 0;
++}
++
++static int pm8xxx_gpio_direction_output(struct gpio_chip *chip,
++					unsigned offset,
++					int value)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	u8 val;
++
++	pin->mode = PM8XXX_GPIO_MODE_OUTPUT;
++	pin->output_value = !!value;
++
++	val = pin->mode << 2;
++	val |= pin->open_drain << 1;
++	val |= pin->output_value;
++
++	pm8xxx_write_bank(pctrl, pin, 1, val);
++
++	return 0;
++}
++
++static int pm8xxx_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	bool state;
++	int ret;
++
++	if (pin->mode == PM8XXX_GPIO_MODE_OUTPUT) {
++		ret = pin->output_value;
++	} else {
++		ret = irq_get_irqchip_state(pin->irq, IRQCHIP_STATE_LINE_LEVEL, &state);
++		if (!ret)
++			ret = !!state;
++	}
++
++	return ret;
++}
++
++static void pm8xxx_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	u8 val;
++
++	pin->output_value = !!value;
++
++	val = pin->mode << 2;
++	val |= pin->open_drain << 1;
++	val |= pin->output_value;
++
++	pm8xxx_write_bank(pctrl, pin, 1, val);
++}
++
++static int pm8xxx_gpio_of_xlate(struct gpio_chip *chip,
++				const struct of_phandle_args *gpio_desc,
++				u32 *flags)
++{
++	if (chip->of_gpio_n_cells < 2)
++		return -EINVAL;
++
++	if (flags)
++		*flags = gpio_desc->args[1];
++
++	return gpio_desc->args[0] - 1;
++}
++
++
++static int pm8xxx_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	return pin->irq;
++}
++
++#ifdef CONFIG_DEBUG_FS
++#include <linux/seq_file.h>
++
++static void pm8xxx_gpio_dbg_show_one(struct seq_file *s,
++				  struct pinctrl_dev *pctldev,
++				  struct gpio_chip *chip,
++				  unsigned offset,
++				  unsigned gpio)
++{
++	struct pm8xxx_gpio *pctrl = container_of(chip, struct pm8xxx_gpio, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	static const char * const modes[] = {
++		"in", "both", "out", "off"
++	};
++	static const char * const biases[] = {
++		"pull-up 30uA", "pull-up 1.5uA", "pull-up 31.5uA",
++		"pull-up 1.5uA + 30uA boost", "pull-down 10uA", "no pull"
++	};
++	static const char * const buffer_types[] = {
++		"push-pull", "open-drain"
++	};
++	static const char * const strengths[] = {
++		"no", "high", "medium", "low"
++	};
++
++	seq_printf(s, " gpio%-2d:", offset + 1);
++	if (pin->disable) {
++		seq_puts(s, " ---");
++	} else {
++		seq_printf(s, " %-4s", modes[pin->mode]);
++		seq_printf(s, " %-7s", pm8xxx_gpio_functions[pin->function]);
++		seq_printf(s, " VIN%d", pin->power_source);
++		seq_printf(s, " %-27s", biases[pin->bias]);
++		seq_printf(s, " %-10s", buffer_types[pin->open_drain]);
++		seq_printf(s, " %-4s", pin->output_value ? "high" : "low");
++		seq_printf(s, " %-7s", strengths[pin->output_strength]);
++		if (pin->inverted)
++			seq_puts(s, " inverted");
++	}
++}
++
++static void pm8xxx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
++{
++	unsigned gpio = chip->base;
++	unsigned i;
++
++	for (i = 0; i < chip->ngpio; i++, gpio++) {
++		pm8xxx_gpio_dbg_show_one(s, NULL, chip, i, gpio);
++		seq_puts(s, "\n");
++	}
++}
++
++#else
++#define msm_gpio_dbg_show NULL
++#endif
++
++static struct gpio_chip pm8xxx_gpio_template = {
++	.direction_input = pm8xxx_gpio_direction_input,
++	.direction_output = pm8xxx_gpio_direction_output,
++	.get = pm8xxx_gpio_get,
++	.set = pm8xxx_gpio_set,
++	.of_xlate = pm8xxx_gpio_of_xlate,
++	.to_irq = pm8xxx_gpio_to_irq,
++	.dbg_show = pm8xxx_gpio_dbg_show,
++	.owner = THIS_MODULE,
++};
++
++static int pm8xxx_pin_populate(struct pm8xxx_gpio *pctrl,
++			       struct pm8xxx_pin_data *pin)
++{
++	int val;
++
++	val = pm8xxx_read_bank(pctrl, pin, 0);
++	if (val < 0)
++		return val;
++
++	pin->power_source = (val >> 1) & 0x7;
++
++	val = pm8xxx_read_bank(pctrl, pin, 1);
++	if (val < 0)
++		return val;
++
++	pin->mode = (val >> 2) & 0x3;
++	pin->open_drain = !!(val & BIT(1));
++	pin->output_value = val & BIT(0);
++
++	val = pm8xxx_read_bank(pctrl, pin, 2);
++	if (val < 0)
++		return val;
++
++	pin->bias = (val >> 1) & 0x7;
++	if (pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30)
++		pin->pull_up_strength = pin->bias;
++	else
++		pin->pull_up_strength = PM8XXX_GPIO_BIAS_PU_30;
++
++	val = pm8xxx_read_bank(pctrl, pin, 3);
++	if (val < 0)
++		return val;
++
++	pin->output_strength = (val >> 2) & 0x3;
++	pin->disable = val & BIT(0);
++
++	val = pm8xxx_read_bank(pctrl, pin, 4);
++	if (val < 0)
++		return val;
++
++	pin->function = (val >> 1) & 0x7;
++
++	val = pm8xxx_read_bank(pctrl, pin, 5);
++	if (val < 0)
++		return val;
++
++	pin->inverted = !(val & BIT(3));
++
++	return 0;
++}
++
++static const struct of_device_id pm8xxx_gpio_of_match[] = {
++	{ .compatible = "qcom,pm8018-gpio", .data = (void *)6 },
++	{ .compatible = "qcom,pm8038-gpio", .data = (void *)12 },
++	{ .compatible = "qcom,pm8058-gpio", .data = (void *)40 },
++	{ .compatible = "qcom,pm8917-gpio", .data = (void *)38 },
++	{ .compatible = "qcom,pm8921-gpio", .data = (void *)44 },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, pm8xxx_gpio_of_match);
++
++static int pm8xxx_gpio_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++	struct pm8xxx_pin_data *pin_data;
++	struct pinctrl_pin_desc *pins;
++	struct pm8xxx_gpio *pctrl;
++	int ret;
++	int i;
++
++	match = of_match_node(pm8xxx_gpio_of_match, pdev->dev.of_node);
++	if (!match)
++		return -ENXIO;
++
++	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
++	if (!pctrl)
++		return -ENOMEM;
++
++	pctrl->dev = &pdev->dev;
++	pctrl->npins = (unsigned)match->data;
++
++	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!pctrl->regmap) {
++		dev_err(&pdev->dev, "parent regmap unavailable\n");
++		return -ENXIO;
++	}
++
++	pctrl->desc = pm8xxx_pinctrl_desc;
++	pctrl->desc.npins = pctrl->npins;
++
++	pins = devm_kcalloc(&pdev->dev,
++			    pctrl->desc.npins,
++			    sizeof(struct pinctrl_pin_desc),
++			    GFP_KERNEL);
++	if (!pins)
++		return -ENOMEM;
++
++	pin_data = devm_kcalloc(&pdev->dev,
++				pctrl->desc.npins,
++				sizeof(struct pm8xxx_pin_data),
++				GFP_KERNEL);
++	if (!pin_data)
++		return -ENOMEM;
++
++	for (i = 0; i < pctrl->desc.npins; i++) {
++		pin_data[i].reg = SSBI_REG_ADDR_GPIO(i);
++		pin_data[i].irq = platform_get_irq(pdev, i);
++		if (pin_data[i].irq < 0) {
++			dev_err(&pdev->dev,
++				"missing interrupts for pin %d\n", i);
++			return pin_data[i].irq;
++		}
++
++		ret = pm8xxx_pin_populate(pctrl, &pin_data[i]);
++		if (ret)
++			return ret;
++
++		pins[i].number = i;
++		pins[i].name = pm8xxx_groups[i];
++		pins[i].drv_data = &pin_data[i];
++	}
++	pctrl->desc.pins = pins;
++
++	pctrl->desc.num_custom_params = ARRAY_SIZE(pm8xxx_gpio_bindings);
++	pctrl->desc.custom_params = pm8xxx_gpio_bindings;
++#ifdef CONFIG_DEBUG_FS
++	pctrl->desc.custom_conf_items = pm8xxx_conf_items;
++#endif
++
++	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
++	if (!pctrl->pctrl) {
++		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
++		return -ENODEV;
++	}
++
++	pctrl->chip = pm8xxx_gpio_template;
++	pctrl->chip.base = -1;
++	pctrl->chip.dev = &pdev->dev;
++	pctrl->chip.of_node = pdev->dev.of_node;
++	pctrl->chip.of_gpio_n_cells = 2;
++	pctrl->chip.label = dev_name(pctrl->dev);
++	pctrl->chip.ngpio = pctrl->npins;
++	ret = gpiochip_add(&pctrl->chip);
++	if (ret) {
++		dev_err(&pdev->dev, "failed register gpiochip\n");
++		goto unregister_pinctrl;
++	}
++
++	ret = gpiochip_add_pin_range(&pctrl->chip,
++				     dev_name(pctrl->dev),
++				     0, 0, pctrl->chip.ngpio);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to add pin range\n");
++		goto unregister_gpiochip;
++	}
++
++	platform_set_drvdata(pdev, pctrl);
++
++	dev_dbg(&pdev->dev, "Qualcomm pm8xxx gpio driver probed\n");
++
++	return 0;
++
++unregister_gpiochip:
++	gpiochip_remove(&pctrl->chip);
++
++unregister_pinctrl:
++	pinctrl_unregister(pctrl->pctrl);
++
++	return ret;
++}
++
++static int pm8xxx_gpio_remove(struct platform_device *pdev)
++{
++	struct pm8xxx_gpio *pctrl = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&pctrl->chip);
++
++	pinctrl_unregister(pctrl->pctrl);
++
++	return 0;
++}
++
++static struct platform_driver pm8xxx_gpio_driver = {
++	.driver = {
++		.name = "pm8xxx_gpio",
++		.of_match_table = pm8xxx_gpio_of_match,
++	},
++	.probe = pm8xxx_gpio_probe,
++	.remove = pm8xxx_gpio_remove,
++};
++
++module_platform_driver(pm8xxx_gpio_driver);
++
++MODULE_AUTHOR("Bjorn Andersson <bjorn.andersson@sonymobile.com>");
++MODULE_DESCRIPTION("Qualcomm PM8xxx GPIO driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+new file mode 100644
+index 000000000000..2b82d373c057
+--- /dev/null
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+@@ -0,0 +1,886 @@
++/*
++ * Copyright (c) 2015, Sony Mobile Communications AB.
++ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/slab.h>
++#include <linux/regmap.h>
++#include <linux/gpio.h>
++#include <linux/interrupt.h>
++
++#include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
++
++#include "../core.h"
++#include "../pinctrl-utils.h"
++
++/* MPP registers */
++#define SSBI_REG_ADDR_MPP_BASE		0x50
++#define SSBI_REG_ADDR_MPP(n)		(SSBI_REG_ADDR_MPP_BASE + n)
++
++/* MPP Type: type */
++#define PM8XXX_MPP_TYPE_D_INPUT         0
++#define PM8XXX_MPP_TYPE_D_OUTPUT        1
++#define PM8XXX_MPP_TYPE_D_BI_DIR        2
++#define PM8XXX_MPP_TYPE_A_INPUT         3
++#define PM8XXX_MPP_TYPE_A_OUTPUT        4
++#define PM8XXX_MPP_TYPE_SINK            5
++#define PM8XXX_MPP_TYPE_DTEST_SINK      6
++#define PM8XXX_MPP_TYPE_DTEST_OUTPUT    7
++
++/* Digital Input: control */
++#define PM8XXX_MPP_DIN_TO_INT           0
++#define PM8XXX_MPP_DIN_TO_DBUS1         1
++#define PM8XXX_MPP_DIN_TO_DBUS2         2
++#define PM8XXX_MPP_DIN_TO_DBUS3         3
++
++/* Digital Output: control */
++#define PM8XXX_MPP_DOUT_CTRL_LOW        0
++#define PM8XXX_MPP_DOUT_CTRL_HIGH       1
++#define PM8XXX_MPP_DOUT_CTRL_MPP        2
++#define PM8XXX_MPP_DOUT_CTRL_INV_MPP    3
++
++/* Bidirectional: control */
++#define PM8XXX_MPP_BI_PULLUP_1KOHM      0
++#define PM8XXX_MPP_BI_PULLUP_OPEN       1
++#define PM8XXX_MPP_BI_PULLUP_10KOHM     2
++#define PM8XXX_MPP_BI_PULLUP_30KOHM     3
++
++/* Analog Output: control */
++#define PM8XXX_MPP_AOUT_CTRL_DISABLE            0
++#define PM8XXX_MPP_AOUT_CTRL_ENABLE             1
++#define PM8XXX_MPP_AOUT_CTRL_MPP_HIGH_EN        2
++#define PM8XXX_MPP_AOUT_CTRL_MPP_LOW_EN         3
++
++/* Current Sink: control */
++#define PM8XXX_MPP_CS_CTRL_DISABLE      0
++#define PM8XXX_MPP_CS_CTRL_ENABLE       1
++#define PM8XXX_MPP_CS_CTRL_MPP_HIGH_EN  2
++#define PM8XXX_MPP_CS_CTRL_MPP_LOW_EN   3
++
++/* DTEST Current Sink: control */
++#define PM8XXX_MPP_DTEST_CS_CTRL_EN1    0
++#define PM8XXX_MPP_DTEST_CS_CTRL_EN2    1
++#define PM8XXX_MPP_DTEST_CS_CTRL_EN3    2
++#define PM8XXX_MPP_DTEST_CS_CTRL_EN4    3
++
++/* DTEST Digital Output: control */
++#define PM8XXX_MPP_DTEST_DBUS1          0
++#define PM8XXX_MPP_DTEST_DBUS2          1
++#define PM8XXX_MPP_DTEST_DBUS3          2
++#define PM8XXX_MPP_DTEST_DBUS4          3
++
++/* custom pinconf parameters */
++#define PM8XXX_CONFIG_AMUX		(PIN_CONFIG_END + 1)
++#define PM8XXX_CONFIG_DTEST_SELECTOR	(PIN_CONFIG_END + 2)
++#define PM8XXX_CONFIG_ALEVEL		(PIN_CONFIG_END + 3)
++#define PM8XXX_CONFIG_PAIRED		(PIN_CONFIG_END + 4)
++
++/**
++ * struct pm8xxx_pin_data - dynamic configuration for a pin
++ * @reg:		address of the control register
++ * @irq:		IRQ from the PMIC interrupt controller
++ * @mode:		operating mode for the pin (digital, analog or current sink)
++ * @input:		pin is input
++ * @output:		pin is output
++ * @high_z:		pin is floating
++ * @paired:		mpp operates in paired mode
++ * @output_value:	logical output value of the mpp
++ * @power_source:	selected power source
++ * @dtest:		DTEST route selector
++ * @amux:		input muxing in analog mode
++ * @aout_level:		selector of the output in analog mode
++ * @drive_strength:	drive strength of the current sink
++ * @pullup:		pull up value, when in digital bidirectional mode
++ */
++struct pm8xxx_pin_data {
++	unsigned reg;
++	int irq;
++
++	u8 mode;
++
++	bool input;
++	bool output;
++	bool high_z;
++	bool paired;
++	bool output_value;
++
++	u8 power_source;
++	u8 dtest;
++	u8 amux;
++	u8 aout_level;
++	u8 drive_strength;
++	unsigned pullup;
++};
++
++struct pm8xxx_mpp {
++	struct device *dev;
++	struct regmap *regmap;
++	struct pinctrl_dev *pctrl;
++	struct gpio_chip chip;
++
++	struct pinctrl_desc desc;
++	unsigned npins;
++};
++
++static const struct pinconf_generic_params pm8xxx_mpp_bindings[] = {
++	{"qcom,amux-route",	PM8XXX_CONFIG_AMUX,		0},
++	{"qcom,analog-level",	PM8XXX_CONFIG_ALEVEL,		0},
++	{"qcom,dtest",		PM8XXX_CONFIG_DTEST_SELECTOR,	0},
++	{"qcom,paired",		PM8XXX_CONFIG_PAIRED,		0},
++};
++
++#ifdef CONFIG_DEBUG_FS
++static const struct pin_config_item pm8xxx_conf_items[] = {
++	PCONFDUMP(PM8XXX_CONFIG_AMUX, "analog mux", NULL, true),
++	PCONFDUMP(PM8XXX_CONFIG_ALEVEL, "analog level", NULL, true),
++	PCONFDUMP(PM8XXX_CONFIG_DTEST_SELECTOR, "dtest", NULL, true),
++	PCONFDUMP(PM8XXX_CONFIG_PAIRED, "paired", NULL, false),
++};
++#endif
++
++#define PM8XXX_MAX_MPPS	12
++static const char * const pm8xxx_groups[PM8XXX_MAX_MPPS] = {
++	"mpp1", "mpp2", "mpp3", "mpp4", "mpp5", "mpp6", "mpp7", "mpp8",
++	"mpp9", "mpp10", "mpp11", "mpp12",
++};
++
++#define PM8XXX_MPP_DIGITAL	0
++#define PM8XXX_MPP_ANALOG	1
++#define PM8XXX_MPP_SINK		2
++
++static const char * const pm8xxx_mpp_functions[] = {
++	"digital", "analog", "sink",
++};
++
++static int pm8xxx_mpp_update(struct pm8xxx_mpp *pctrl,
++			     struct pm8xxx_pin_data *pin)
++{
++	unsigned level;
++	unsigned ctrl;
++	unsigned type;
++	int ret;
++	u8 val;
++
++	switch (pin->mode) {
++	case PM8XXX_MPP_DIGITAL:
++		if (pin->dtest) {
++			type = PM8XXX_MPP_TYPE_DTEST_OUTPUT;
++			ctrl = pin->dtest - 1;
++		} else if (pin->input && pin->output) {
++			type = PM8XXX_MPP_TYPE_D_BI_DIR;
++			if (pin->high_z)
++				ctrl = PM8XXX_MPP_BI_PULLUP_OPEN;
++			else if (pin->pullup == 600)
++				ctrl = PM8XXX_MPP_BI_PULLUP_1KOHM;
++			else if (pin->pullup == 10000)
++				ctrl = PM8XXX_MPP_BI_PULLUP_10KOHM;
++			else
++				ctrl = PM8XXX_MPP_BI_PULLUP_30KOHM;
++		} else if (pin->input) {
++			type = PM8XXX_MPP_TYPE_D_INPUT;
++			if (pin->dtest)
++				ctrl = pin->dtest;
++			else
++				ctrl = PM8XXX_MPP_DIN_TO_INT;
++		} else {
++			type = PM8XXX_MPP_TYPE_D_OUTPUT;
++			ctrl = !!pin->output_value;
++			if (pin->paired)
++				ctrl |= BIT(1);
++		}
++
++		level = pin->power_source;
++		break;
++	case PM8XXX_MPP_ANALOG:
++		if (pin->output) {
++			type = PM8XXX_MPP_TYPE_A_OUTPUT;
++			level = pin->aout_level;
++			ctrl = pin->output_value;
++			if (pin->paired)
++				ctrl |= BIT(1);
++		} else {
++			type = PM8XXX_MPP_TYPE_A_INPUT;
++			level = pin->amux;
++			ctrl = 0;
++		}
++		break;
++	case PM8XXX_MPP_SINK:
++		level = (pin->drive_strength / 5) - 1;
++		if (pin->dtest) {
++			type = PM8XXX_MPP_TYPE_DTEST_SINK;
++			ctrl = pin->dtest - 1;
++		} else {
++			type = PM8XXX_MPP_TYPE_SINK;
++			ctrl = pin->output_value;
++			if (pin->paired)
++				ctrl |= BIT(1);
++		}
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	val = type << 5 | level << 2 | ctrl;
++	ret = regmap_write(pctrl->regmap, pin->reg, val);
++	if (ret)
++		dev_err(pctrl->dev, "failed to write register\n");
++
++	return ret;
++}
++
++static int pm8xxx_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	return pctrl->npins;
++}
++
++static const char *pm8xxx_get_group_name(struct pinctrl_dev *pctldev,
++					 unsigned group)
++{
++	return pm8xxx_groups[group];
++}
++
++
++static int pm8xxx_get_group_pins(struct pinctrl_dev *pctldev,
++				 unsigned group,
++				 const unsigned **pins,
++				 unsigned *num_pins)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	*pins = &pctrl->desc.pins[group].number;
++	*num_pins = 1;
++
++	return 0;
++}
++
++static const struct pinctrl_ops pm8xxx_pinctrl_ops = {
++	.get_groups_count	= pm8xxx_get_groups_count,
++	.get_group_name		= pm8xxx_get_group_name,
++	.get_group_pins         = pm8xxx_get_group_pins,
++	.dt_node_to_map		= pinconf_generic_dt_node_to_map_group,
++	.dt_free_map		= pinctrl_utils_dt_free_map,
++};
++
++static int pm8xxx_get_functions_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(pm8xxx_mpp_functions);
++}
++
++static const char *pm8xxx_get_function_name(struct pinctrl_dev *pctldev,
++					    unsigned function)
++{
++	return pm8xxx_mpp_functions[function];
++}
++
++static int pm8xxx_get_function_groups(struct pinctrl_dev *pctldev,
++				      unsigned function,
++				      const char * const **groups,
++				      unsigned * const num_groups)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups = pm8xxx_groups;
++	*num_groups = pctrl->npins;
++	return 0;
++}
++
++static int pm8xxx_pinmux_set_mux(struct pinctrl_dev *pctldev,
++				 unsigned function,
++				 unsigned group)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[group].drv_data;
++
++	pin->mode = function;
++	pm8xxx_mpp_update(pctrl, pin);
++
++	return 0;
++}
++
++static const struct pinmux_ops pm8xxx_pinmux_ops = {
++	.get_functions_count	= pm8xxx_get_functions_count,
++	.get_function_name	= pm8xxx_get_function_name,
++	.get_function_groups	= pm8xxx_get_function_groups,
++	.set_mux		= pm8xxx_pinmux_set_mux,
++};
++
++static int pm8xxx_pin_config_get(struct pinctrl_dev *pctldev,
++				 unsigned int offset,
++				 unsigned long *config)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	unsigned param = pinconf_to_config_param(*config);
++	unsigned arg;
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_PULL_UP:
++		arg = pin->pullup;
++		break;
++	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++		arg = pin->high_z;
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		arg = pin->input;
++		break;
++	case PIN_CONFIG_OUTPUT:
++		arg = pin->output_value;
++		break;
++	case PIN_CONFIG_POWER_SOURCE:
++		arg = pin->power_source;
++		break;
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		arg = pin->drive_strength;
++		break;
++	case PM8XXX_CONFIG_DTEST_SELECTOR:
++		arg = pin->dtest;
++		break;
++	case PM8XXX_CONFIG_AMUX:
++		arg = pin->amux;
++		break;
++	case PM8XXX_CONFIG_ALEVEL:
++		arg = pin->aout_level;
++		break;
++	case PM8XXX_CONFIG_PAIRED:
++		arg = pin->paired;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++
++	return 0;
++}
++
++static int pm8xxx_pin_config_set(struct pinctrl_dev *pctldev,
++				 unsigned int offset,
++				 unsigned long *configs,
++				 unsigned num_configs)
++{
++	struct pm8xxx_mpp *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	unsigned param;
++	unsigned arg;
++	unsigned i;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_PULL_UP:
++			pin->pullup = arg;
++			break;
++		case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
++			pin->high_z = true;
++			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			pin->input = true;
++			break;
++		case PIN_CONFIG_OUTPUT:
++			pin->output = true;
++			pin->output_value = !!arg;
++			break;
++		case PIN_CONFIG_POWER_SOURCE:
++			pin->power_source = arg;
++			break;
++		case PIN_CONFIG_DRIVE_STRENGTH:
++			pin->drive_strength = arg;
++			break;
++		case PM8XXX_CONFIG_DTEST_SELECTOR:
++			pin->dtest = arg;
++			break;
++		case PM8XXX_CONFIG_AMUX:
++			pin->amux = arg;
++			break;
++		case PM8XXX_CONFIG_ALEVEL:
++			pin->aout_level = arg;
++			break;
++		case PM8XXX_CONFIG_PAIRED:
++			pin->paired = !!arg;
++			break;
++		default:
++			dev_err(pctrl->dev,
++				"unsupported config parameter: %x\n",
++				param);
++			return -EINVAL;
++		}
++	}
++
++	pm8xxx_mpp_update(pctrl, pin);
++
++	return 0;
++}
++
++static const struct pinconf_ops pm8xxx_pinconf_ops = {
++	.is_generic = true,
++	.pin_config_group_get = pm8xxx_pin_config_get,
++	.pin_config_group_set = pm8xxx_pin_config_set,
++};
++
++static struct pinctrl_desc pm8xxx_pinctrl_desc = {
++	.name = "pm8xxx_mpp",
++	.pctlops = &pm8xxx_pinctrl_ops,
++	.pmxops = &pm8xxx_pinmux_ops,
++	.confops = &pm8xxx_pinconf_ops,
++	.owner = THIS_MODULE,
++};
++
++static int pm8xxx_mpp_direction_input(struct gpio_chip *chip,
++				       unsigned offset)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	switch (pin->mode) {
++	case PM8XXX_MPP_DIGITAL:
++		pin->input = true;
++		break;
++	case PM8XXX_MPP_ANALOG:
++		pin->input = true;
++		pin->output = true;
++		break;
++	case PM8XXX_MPP_SINK:
++		return -EINVAL;
++	}
++
++	pm8xxx_mpp_update(pctrl, pin);
++
++	return 0;
++}
++
++static int pm8xxx_mpp_direction_output(struct gpio_chip *chip,
++					unsigned offset,
++					int value)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	switch (pin->mode) {
++	case PM8XXX_MPP_DIGITAL:
++		pin->output = true;
++		break;
++	case PM8XXX_MPP_ANALOG:
++		pin->input = false;
++		pin->output = true;
++		break;
++	case PM8XXX_MPP_SINK:
++		pin->input = false;
++		pin->output = true;
++		break;
++	}
++
++	pm8xxx_mpp_update(pctrl, pin);
++
++	return 0;
++}
++
++static int pm8xxx_mpp_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++	bool state;
++	int ret;
++
++	if (!pin->input)
++		return pin->output_value;
++
++	ret = irq_get_irqchip_state(pin->irq, IRQCHIP_STATE_LINE_LEVEL, &state);
++	if (!ret)
++		ret = !!state;
++
++	return ret;
++}
++
++static void pm8xxx_mpp_set(struct gpio_chip *chip, unsigned offset, int value)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	pin->output_value = !!value;
++
++	pm8xxx_mpp_update(pctrl, pin);
++}
++
++static int pm8xxx_mpp_of_xlate(struct gpio_chip *chip,
++				const struct of_phandle_args *gpio_desc,
++				u32 *flags)
++{
++	if (chip->of_gpio_n_cells < 2)
++		return -EINVAL;
++
++	if (flags)
++		*flags = gpio_desc->args[1];
++
++	return gpio_desc->args[0] - 1;
++}
++
++
++static int pm8xxx_mpp_to_irq(struct gpio_chip *chip, unsigned offset)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	return pin->irq;
++}
++
++#ifdef CONFIG_DEBUG_FS
++#include <linux/seq_file.h>
++
++static void pm8xxx_mpp_dbg_show_one(struct seq_file *s,
++				  struct pinctrl_dev *pctldev,
++				  struct gpio_chip *chip,
++				  unsigned offset,
++				  unsigned gpio)
++{
++	struct pm8xxx_mpp *pctrl = container_of(chip, struct pm8xxx_mpp, chip);
++	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
++
++	static const char * const aout_lvls[] = {
++		"1v25", "1v25_2", "0v625", "0v3125", "mpp", "abus1", "abus2",
++		"abus3"
++	};
++
++	static const char * const amuxs[] = {
++		"amux5", "amux6", "amux7", "amux8", "amux9", "abus1", "abus2",
++		"abus3",
++	};
++
++	seq_printf(s, " mpp%-2d:", offset + 1);
++
++	switch (pin->mode) {
++	case PM8XXX_MPP_DIGITAL:
++		seq_puts(s, " digital ");
++		if (pin->dtest) {
++			seq_printf(s, "dtest%d\n", pin->dtest);
++		} else if (pin->input && pin->output) {
++			if (pin->high_z)
++				seq_puts(s, "bi-dir high-z");
++			else
++				seq_printf(s, "bi-dir %dOhm", pin->pullup);
++		} else if (pin->input) {
++			if (pin->dtest)
++				seq_printf(s, "in dtest%d", pin->dtest);
++			else
++				seq_puts(s, "in gpio");
++		} else if (pin->output) {
++			seq_puts(s, "out ");
++
++			if (!pin->paired) {
++				seq_puts(s, pin->output_value ?
++					 "high" : "low");
++			} else {
++				seq_puts(s, pin->output_value ?
++					 "inverted" : "follow");
++			}
++		}
++		break;
++	case PM8XXX_MPP_ANALOG:
++		seq_puts(s, " analog ");
++		if (pin->output) {
++			seq_printf(s, "out %s ", aout_lvls[pin->aout_level]);
++			if (!pin->paired) {
++				seq_puts(s, pin->output_value ?
++					 "high" : "low");
++			} else {
++				seq_puts(s, pin->output_value ?
++					 "inverted" : "follow");
++			}
++		} else {
++			seq_printf(s, "input mux %s", amuxs[pin->amux]);
++		}
++		break;
++	case PM8XXX_MPP_SINK:
++		seq_printf(s, " sink %dmA ", pin->drive_strength);
++		if (pin->dtest) {
++			seq_printf(s, "dtest%d", pin->dtest);
++		} else {
++			if (!pin->paired) {
++				seq_puts(s, pin->output_value ?
++					 "high" : "low");
++			} else {
++				seq_puts(s, pin->output_value ?
++					 "inverted" : "follow");
++			}
++		}
++		break;
++	}
++
++}
++
++static void pm8xxx_mpp_dbg_show(struct seq_file *s, struct gpio_chip *chip)
++{
++	unsigned gpio = chip->base;
++	unsigned i;
++
++	for (i = 0; i < chip->ngpio; i++, gpio++) {
++		pm8xxx_mpp_dbg_show_one(s, NULL, chip, i, gpio);
++		seq_puts(s, "\n");
++	}
++}
++
++#else
++#define msm_mpp_dbg_show NULL
++#endif
++
++static struct gpio_chip pm8xxx_mpp_template = {
++	.direction_input = pm8xxx_mpp_direction_input,
++	.direction_output = pm8xxx_mpp_direction_output,
++	.get = pm8xxx_mpp_get,
++	.set = pm8xxx_mpp_set,
++	.of_xlate = pm8xxx_mpp_of_xlate,
++	.to_irq = pm8xxx_mpp_to_irq,
++	.dbg_show = pm8xxx_mpp_dbg_show,
++	.owner = THIS_MODULE,
++};
++
++static int pm8xxx_pin_populate(struct pm8xxx_mpp *pctrl,
++			       struct pm8xxx_pin_data *pin)
++{
++	unsigned int val;
++	unsigned level;
++	unsigned ctrl;
++	unsigned type;
++	int ret;
++
++	ret = regmap_read(pctrl->regmap, pin->reg, &val);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to read register\n");
++		return ret;
++	}
++
++	type = (val >> 5) & 7;
++	level = (val >> 2) & 7;
++	ctrl = (val) & 3;
++
++	switch (type) {
++	case PM8XXX_MPP_TYPE_D_INPUT:
++		pin->mode = PM8XXX_MPP_DIGITAL;
++		pin->input = true;
++		pin->power_source = level;
++		pin->dtest = ctrl;
++		break;
++	case PM8XXX_MPP_TYPE_D_OUTPUT:
++		pin->mode = PM8XXX_MPP_DIGITAL;
++		pin->output = true;
++		pin->power_source = level;
++		pin->output_value = !!(ctrl & BIT(0));
++		pin->paired = !!(ctrl & BIT(1));
++		break;
++	case PM8XXX_MPP_TYPE_D_BI_DIR:
++		pin->mode = PM8XXX_MPP_DIGITAL;
++		pin->input = true;
++		pin->output = true;
++		pin->power_source = level;
++		switch (ctrl) {
++		case PM8XXX_MPP_BI_PULLUP_1KOHM:
++			pin->pullup = 600;
++			break;
++		case PM8XXX_MPP_BI_PULLUP_OPEN:
++			pin->high_z = true;
++			break;
++		case PM8XXX_MPP_BI_PULLUP_10KOHM:
++			pin->pullup = 10000;
++			break;
++		case PM8XXX_MPP_BI_PULLUP_30KOHM:
++			pin->pullup = 30000;
++			break;
++		}
++		break;
++	case PM8XXX_MPP_TYPE_A_INPUT:
++		pin->mode = PM8XXX_MPP_ANALOG;
++		pin->input = true;
++		pin->amux = level;
++		break;
++	case PM8XXX_MPP_TYPE_A_OUTPUT:
++		pin->mode = PM8XXX_MPP_ANALOG;
++		pin->output = true;
++		pin->aout_level = level;
++		pin->output_value = !!(ctrl & BIT(0));
++		pin->paired = !!(ctrl & BIT(1));
++		break;
++	case PM8XXX_MPP_TYPE_SINK:
++		pin->mode = PM8XXX_MPP_SINK;
++		pin->drive_strength = 5 * (level + 1);
++		pin->output_value = !!(ctrl & BIT(0));
++		pin->paired = !!(ctrl & BIT(1));
++		break;
++	case PM8XXX_MPP_TYPE_DTEST_SINK:
++		pin->mode = PM8XXX_MPP_SINK;
++		pin->dtest = ctrl + 1;
++		pin->drive_strength = 5 * (level + 1);
++		break;
++	case PM8XXX_MPP_TYPE_DTEST_OUTPUT:
++		pin->mode = PM8XXX_MPP_DIGITAL;
++		pin->power_source = level;
++		if (ctrl >= 1)
++			pin->dtest = ctrl;
++		break;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id pm8xxx_mpp_of_match[] = {
++	{ .compatible = "qcom,pm8018-mpp", .data = (void *)6 },
++	{ .compatible = "qcom,pm8038-mpp", .data = (void *)6 },
++	{ .compatible = "qcom,pm8917-mpp", .data = (void *)10 },
++	{ .compatible = "qcom,pm8821-mpp", .data = (void *)4 },
++	{ .compatible = "qcom,pm8921-mpp", .data = (void *)12 },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, pm8xxx_mpp_of_match);
++
++static int pm8xxx_mpp_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++	struct pm8xxx_pin_data *pin_data;
++	struct pinctrl_pin_desc *pins;
++	struct pm8xxx_mpp *pctrl;
++	int ret;
++	int i;
++
++	match = of_match_node(pm8xxx_mpp_of_match, pdev->dev.of_node);
++	if (!match)
++		return -ENXIO;
++
++	pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
++	if (!pctrl)
++		return -ENOMEM;
++
++	pctrl->dev = &pdev->dev;
++	pctrl->npins = (unsigned)match->data;
++
++	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!pctrl->regmap) {
++		dev_err(&pdev->dev, "parent regmap unavailable\n");
++		return -ENXIO;
++	}
++
++	pctrl->desc = pm8xxx_pinctrl_desc;
++	pctrl->desc.npins = pctrl->npins;
++
++	pins = devm_kcalloc(&pdev->dev,
++			    pctrl->desc.npins,
++			    sizeof(struct pinctrl_pin_desc),
++			    GFP_KERNEL);
++	if (!pins)
++		return -ENOMEM;
++
++	pin_data = devm_kcalloc(&pdev->dev,
++				pctrl->desc.npins,
++				sizeof(struct pm8xxx_pin_data),
++				GFP_KERNEL);
++	if (!pin_data)
++		return -ENOMEM;
++
++	for (i = 0; i < pctrl->desc.npins; i++) {
++		pin_data[i].reg = SSBI_REG_ADDR_MPP(i);
++		pin_data[i].irq = platform_get_irq(pdev, i);
++		if (pin_data[i].irq < 0) {
++			dev_err(&pdev->dev,
++				"missing interrupts for pin %d\n", i);
++			return pin_data[i].irq;
++		}
++
++		ret = pm8xxx_pin_populate(pctrl, &pin_data[i]);
++		if (ret)
++			return ret;
++
++		pins[i].number = i;
++		pins[i].name = pm8xxx_groups[i];
++		pins[i].drv_data = &pin_data[i];
++	}
++	pctrl->desc.pins = pins;
++
++	pctrl->desc.num_custom_params = ARRAY_SIZE(pm8xxx_mpp_bindings);
++	pctrl->desc.custom_params = pm8xxx_mpp_bindings;
++#ifdef CONFIG_DEBUG_FS
++	pctrl->desc.custom_conf_items = pm8xxx_conf_items;
++#endif
++
++	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
++	if (!pctrl->pctrl) {
++		dev_err(&pdev->dev, "couldn't register pm8xxx mpp driver\n");
++		return -ENODEV;
++	}
++
++	pctrl->chip = pm8xxx_mpp_template;
++	pctrl->chip.base = -1;
++	pctrl->chip.dev = &pdev->dev;
++	pctrl->chip.of_node = pdev->dev.of_node;
++	pctrl->chip.of_gpio_n_cells = 2;
++	pctrl->chip.label = dev_name(pctrl->dev);
++	pctrl->chip.ngpio = pctrl->npins;
++	ret = gpiochip_add(&pctrl->chip);
++	if (ret) {
++		dev_err(&pdev->dev, "failed register gpiochip\n");
++		goto unregister_pinctrl;
++	}
++
++	ret = gpiochip_add_pin_range(&pctrl->chip,
++				     dev_name(pctrl->dev),
++				     0, 0, pctrl->chip.ngpio);
++	if (ret) {
++		dev_err(pctrl->dev, "failed to add pin range\n");
++		goto unregister_gpiochip;
++	}
++
++	platform_set_drvdata(pdev, pctrl);
++
++	dev_dbg(&pdev->dev, "Qualcomm pm8xxx mpp driver probed\n");
++
++	return 0;
++
++unregister_gpiochip:
++	gpiochip_remove(&pctrl->chip);
++
++unregister_pinctrl:
++	pinctrl_unregister(pctrl->pctrl);
++
++	return ret;
++}
++
++static int pm8xxx_mpp_remove(struct platform_device *pdev)
++{
++	struct pm8xxx_mpp *pctrl = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&pctrl->chip);
++
++	pinctrl_unregister(pctrl->pctrl);
++
++	return 0;
++}
++
++static struct platform_driver pm8xxx_mpp_driver = {
++	.driver = {
++		.name = "pm8xxx_mpp",
++		.of_match_table = pm8xxx_mpp_of_match,
++	},
++	.probe = pm8xxx_mpp_probe,
++	.remove = pm8xxx_mpp_remove,
++};
++
++module_platform_driver(pm8xxx_mpp_driver);
++
++MODULE_AUTHOR("Bjorn Andersson <bjorn.andersson@sonymobile.com>");
++MODULE_DESCRIPTION("Qualcomm PM8xxx MPP driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/dt-bindings/pinctrl/qcom,pmic-mpp.h b/include/dt-bindings/pinctrl/qcom,pmic-mpp.h
+index c10205491f8d..a15c1704d0ec 100644
+--- a/include/dt-bindings/pinctrl/qcom,pmic-mpp.h
++++ b/include/dt-bindings/pinctrl/qcom,pmic-mpp.h
+@@ -7,6 +7,47 @@
+ #define _DT_BINDINGS_PINCTRL_QCOM_PMIC_MPP_H
  
- 	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_DIG_VIN_CTL);
- 	if (val < 0)
+ /* power-source */
++
++/* Digital Input/Output: level [PM8058] */
++#define PM8058_MPP_VPH			0
++#define PM8058_MPP_S3			1
++#define PM8058_MPP_L2			2
++#define PM8058_MPP_L3			3
++
++/* Digital Input/Output: level [PM8901] */
++#define PM8901_MPP_MSMIO		0
++#define PM8901_MPP_DIG			1
++#define PM8901_MPP_L5			2
++#define PM8901_MPP_S4			3
++#define PM8901_MPP_VPH			4
++
++/* Digital Input/Output: level [PM8921] */
++#define PM8921_MPP_S4			1
++#define PM8921_MPP_L15			3
++#define PM8921_MPP_L17			4
++#define PM8921_MPP_VPH			7
++
++/* Digital Input/Output: level [PM8821] */
++#define PM8821_MPP_1P8			0
++#define PM8821_MPP_VPH			7
++
++/* Digital Input/Output: level [PM8018] */
++#define PM8018_MPP_L4			0
++#define PM8018_MPP_L14			1
++#define PM8018_MPP_S3			2
++#define PM8018_MPP_L6			3
++#define PM8018_MPP_L2			4
++#define PM8018_MPP_L5			5
++#define PM8018_MPP_VPH			7
++
++/* Digital Input/Output: level [PM8038] */
++#define PM8038_MPP_L20			0
++#define PM8038_MPP_L11			1
++#define PM8038_MPP_L5			2
++#define PM8038_MPP_L15			3
++#define PM8038_MPP_L17			4
++#define PM8038_MPP_VPH			7
++
+ #define PM8841_MPP_VPH			0
+ #define PM8841_MPP_S3			2
+ 
+@@ -37,6 +78,16 @@
+ #define PMIC_MPP_AMUX_ROUTE_ABUS3	6
+ #define PMIC_MPP_AMUX_ROUTE_ABUS4	7
+ 
++/* Analog Output: level */
++#define PMIC_MPP_AOUT_LVL_1V25		0
++#define PMIC_MPP_AOUT_LVL_1V25_2	1
++#define PMIC_MPP_AOUT_LVL_0V625		2
++#define PMIC_MPP_AOUT_LVL_0V3125	3
++#define PMIC_MPP_AOUT_LVL_MPP		4
++#define PMIC_MPP_AOUT_LVL_ABUS1		5
++#define PMIC_MPP_AOUT_LVL_ABUS2		6
++#define PMIC_MPP_AOUT_LVL_ABUS3		7
++
+ /* To be used with "function" */
+ #define PMIC_MPP_FUNC_NORMAL		"normal"
+ #define PMIC_MPP_FUNC_PAIRED		"paired"
 -- 
 1.8.2.2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
