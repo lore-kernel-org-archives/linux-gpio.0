@@ -1,79 +1,94 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 6/8] ARM: dts: imx: add imx6ul and imx6ul evk board
- support
-Date: Thu, 18 Jun 2015 07:50:06 +0200
-Message-ID: <20150618055006.GR6325@pengutronix.de>
-References: <1434555569-8237-1-git-send-email-Frank.Li@freescale.com>
- <1434555569-8237-7-git-send-email-Frank.Li@freescale.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH 2/8] pinctrl: qcom: spmi-mpp: Fixes related to enable handling
+Date: Wed, 17 Jun 2015 23:47:26 -0700
+Message-ID: <1434610052-602-3-git-send-email-bjorn.andersson@sonymobile.com>
+References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:43941 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127AbbFRFuT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 01:50:19 -0400
-Content-Disposition: inline
-In-Reply-To: <1434555569-8237-7-git-send-email-Frank.Li@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Frank.Li@freescale.com
-Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, Anson Huang <b20788@freescale.com>, Fugang Duan <B38611@freescale.com>, Fancy Fang <chen.fang@freescale.com>
 
-On Wed, Jun 17, 2015 at 11:39:27PM +0800, Frank.Li@freescale.com wrote:
-> From: Frank Li <Frank.Li@freescale.com>
-> 
-> +&uart1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +	fsl,uart-has-rtscts;
-> +	/* for DTE mode, add below change */
-> +	/* fsl,dte-mode; */
-> +	/* pinctrl-0 = <&pinctrl_uart2dte>; */
-> +	status = "okay";
-> +};
-> +
-> +&usdhc1 {
-> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-> +	pinctrl-0 = <&pinctrl_usdhc1>;
-> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-> +	cd-gpios = <&gpio1 19 0>;
+There's currently no way to re-enable a mpp block once you've entered a state
+that disables the state, this patch makes it possible to leave the
+bias-high-impedance state.
 
-Use the correct polarity here. This is probably GPIO_ACTIVE_LOW.
+Also read the enable state from the hardware on probe.
 
-> +	keep-power-in-suspend;
-> +	enable-sdio-wakeup;
-> +	vmmc-supply = <&reg_sd1_vmmc>;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc2>;
-> +	no-1-8-v;
-> +	keep-power-in-suspend;
-> +	enable-sdio-wakeup;
-> +	status = "okay";
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hog_1>;
-> +	imx6ul-evk {
+With this in place the is_enabled variable is accurately tracking the state of
+the hardware and we can use that for the debug output as well.
 
-You can put the pinctrl nodes directly under the iomux node since:
-5fcdf6a pinctrl: imx: Allow parsing DT without function nodes
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+---
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-Sascha
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index b247a17bc2af..6d9abeea810d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -354,6 +354,9 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 
+ 	pad = pctldev->desc->pins[pin].drv_data;
+ 
++	/* Make it possible to enable the pin, by not setting high impedance */
++	pad->is_enabled = true;
++
+ 	for (i = 0; i < nconfs; i++) {
+ 		param = pinconf_to_config_param(configs[i]);
+ 		arg = pinconf_to_config_argument(configs[i]);
+@@ -445,7 +448,13 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	val |= pad->function << PMIC_MPP_REG_MODE_FUNCTION_SHIFT;
+ 	val |= pad->out_value & PMIC_MPP_REG_MODE_VALUE_MASK;
+ 
+-	return pmic_mpp_write(state, pad, PMIC_MPP_REG_MODE_CTL, val);
++	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_MODE_CTL, val);
++	if (ret < 0)
++		return ret;
++
++	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
++
++	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+ }
+ 
+ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
+@@ -453,7 +462,7 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
+ {
+ 	struct pmic_mpp_state *state = pinctrl_dev_get_drvdata(pctldev);
+ 	struct pmic_mpp_pad *pad;
+-	int ret, val;
++	int ret;
+ 
+ 	static const char *const biases[] = {
+ 		"0.6kOhm", "10kOhm", "30kOhm", "Disabled"
+@@ -464,9 +473,7 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
+ 
+ 	seq_printf(s, " mpp%-2d:", pin + PMIC_MPP_PHYSICAL_OFFSET);
+ 
+-	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_EN_CTL);
+-
+-	if (val < 0 || !(val >> PMIC_MPP_REG_MASTER_EN_SHIFT)) {
++	if (!pad->is_enabled) {
+ 		seq_puts(s, " ---");
+ 	} else {
+ 
+@@ -706,8 +713,12 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
+ 	pad->amux_input = val >> PMIC_MPP_REG_AIN_ROUTE_SHIFT;
+ 	pad->amux_input &= PMIC_MPP_REG_AIN_ROUTE_MASK;
+ 
+-	/* Pin could be disabled with PIN_CONFIG_BIAS_HIGH_IMPEDANCE */
+-	pad->is_enabled = true;
++	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_EN_CTL);
++	if (val < 0)
++		return val;
++
++	pad->is_enabled = !!val;
++
+ 	return 0;
+ }
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.8.2.2
