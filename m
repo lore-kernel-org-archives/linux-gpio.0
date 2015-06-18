@@ -1,84 +1,133 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [Intel-gfx] [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
- driver
-Date: Thu, 18 Jun 2015 20:41:56 +0200
-Message-ID: <1434652916.2385.124.camel@x220>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
-	 <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
-	 <1430428322.2187.24.camel@x220>
-	 <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 1/4] sh-pfc: do not call sh_pfc_get_pin_index() when unnecessary
+Date: Thu, 18 Jun 2015 22:05:04 +0300
+Message-ID: <1860613.5T71vLz0D7@avalon>
+References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com> <10321666.EILxzFPKZf@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:55580 "EHLO
-	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755920AbbFRSmB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 18 Jun 2015 14:42:01 -0400
-In-Reply-To: <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38967 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754107AbbFRTEQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 15:04:16 -0400
+In-Reply-To: <10321666.EILxzFPKZf@wasted.cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shobhit Kumar <kumar@shobhit.info>
-Cc: Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Shobhit,
+Hi Sergei,
 
-On Thu, 2015-06-18 at 23:24 +0530, Shobhit Kumar wrote:
-> On Fri, May 1, 2015 at 2:42 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
-> > On Wed, 2015-04-29 at 19:30 +0530, Shobhit Kumar wrote:
-> >> --- a/drivers/pwm/Kconfig
-> >> +++ b/drivers/pwm/Kconfig
-> >
-> >> +config PWM_CRC
-> >> +     bool "Intel Crystalcove (CRC) PWM support"
-> >> +     depends on X86 && INTEL_SOC_PMIC
-> >> +     help
-> >> +       Generic PWM framework driver for Crystalcove (CRC) PMIC based PWM
-> >> +       control.
-> >
-> >> --- a/drivers/pwm/Makefile
-> >> +++ b/drivers/pwm/Makefile
-> >
-> >> +obj-$(CONFIG_PWM_CRC)                += pwm-crc.o
-> >
-> > PWM_CRC is a bool symbol. So pwm-crc.o can never be part of a module.
+Thank you for the patch.
+
+On Thursday 04 June 2015 16:25:01 Sergei Shtylyov wrote:
+> Calling sh_pfc_get_pin_index()  to calculate a pin index based on the
+> collected pin range data is unnecessary when we're dealing with
+> 'pfc->info->pins' and 'chip->pins' arrays as those always reperesent the
+> pins starting from index 0 sequentially. Being a  mere  optimization at
+> this time, this change will become crucial when we'll allow the "holes" in
+> those arrays...
+
+Pin information is stored in per-SoC pins arrays (a.k.a. pfc->info->pins). The 
+driver support two models to number pins:
+
+- The sequential model, in which pins are numbered sequentially starting at 0. 
+Pin numbers are equal to the index in the array.
+
+- The explicit numbering model, in which each pin entry has an explicit number 
+(stored in struct sh_pfc_pin.pin). Pins numbers are not necessarily equal to 
+the index of the pin entry in the array.
+
+The sh_pfc_get_pin_index() function converts a pin number to the pin index in 
+the pins array.
+
+Let's consider the sh_pfc_pinconf_validate() from which your patch removes the 
+call to sh_pfc_get_pin_index() and uses the pin number directly. The function 
+is called from the .pin_config_get() and .pin_config_set() handlers. One 
+possible call path is
+
+pinconf_pins_show() -> pinconf_dump_pin() -> pinconf_dump_pins() -> 
+pinconf_generic_dump_pins() -> pinconf_generic_dump_one() -> 
+pin_config_get_for_pin() -> .pin_config_get()
+
+The pin value passed to the .pin_config_get() function is pctldev->desc-
+>pins[i].number, which is the pin number, not its index. It thus looks like 
+this patch introduces a bug.
+
+There might be something obvious I'm not getting though, so please feel free 
+to prove me wrong.
+
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
-> I actually started this as a module but later decided to make it as
-> bool because INTEL_SOC_PMIC on which this depends is itself a bool as
-> well.
+> ---
+> Changes in version 2:
+> - new patch.
+> 
+>  drivers/pinctrl/sh-pfc/gpio.c    |    6 ++----
+>  drivers/pinctrl/sh-pfc/pinctrl.c |    7 +++----
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+> 
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/gpio.c
+> ===================================================================
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/gpio.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/gpio.c
+> @@ -52,8 +52,7 @@ static void gpio_get_data_reg(struct sh_
+>  			      struct sh_pfc_gpio_data_reg **reg,
+>  			      unsigned int *bit)
+>  {
+> -	int idx = sh_pfc_get_pin_index(chip->pfc, offset);
+> -	struct sh_pfc_gpio_pin *gpio_pin = &chip->pins[idx];
+> +	struct sh_pfc_gpio_pin *gpio_pin = &chip->pins[offset];
+> 
+>  	*reg = &chip->regs[gpio_pin->dreg];
+>  	*bit = gpio_pin->dbit;
+> @@ -138,9 +137,8 @@ static int gpio_setup_data_regs(struct s
+>  static int gpio_pin_request(struct gpio_chip *gc, unsigned offset)
+>  {
+>  	struct sh_pfc *pfc = gpio_to_pfc(gc);
+> -	int idx = sh_pfc_get_pin_index(pfc, offset);
+> 
+> -	if (idx < 0 || pfc->info->pins[idx].enum_id == 0)
+> +	if (pfc->info->pins[offset].enum_id == 0)
+>  		return -EINVAL;
+> 
+>  	return pinctrl_request_gpio(offset);
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
+> ===================================================================
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -370,7 +370,7 @@ static int sh_pfc_gpio_request_enable(st
+>  		/* If GPIOs are handled externally the pin mux type need to be
+>  		 * set to GPIO here.
+>  		 */
+> -		const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
+> +		const struct sh_pfc_pin *pin = &pfc->info->pins[offset];
+> 
+>  		ret = sh_pfc_config_mux(pfc, pin->enum_id, PINMUX_TYPE_GPIO);
+>  		if (ret < 0)
+> @@ -410,7 +410,7 @@ static int sh_pfc_gpio_set_direction(str
+>  	struct sh_pfc *pfc = pmx->pfc;
+>  	int new_type = input ? PINMUX_TYPE_INPUT : PINMUX_TYPE_OUTPUT;
+>  	int idx = sh_pfc_get_pin_index(pfc, offset);
+> -	const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
+> +	const struct sh_pfc_pin *pin = &pfc->info->pins[offset];
+>  	struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
+>  	unsigned long flags;
+>  	unsigned int dir;
+> @@ -452,8 +452,7 @@ static const struct pinmux_ops sh_pfc_pi
+>  static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
+>  				    enum pin_config_param param)
+>  {
+> -	int idx = sh_pfc_get_pin_index(pfc, _pin);
+> -	const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
+> +	const struct sh_pfc_pin *pin = &pfc->info->pins[_pin];
+> 
+>  	switch (param) {
+>  	case PIN_CONFIG_BIAS_DISABLE:
 
-As does GPIO_CRYSTAL_COVE and that's a tristate. So?
+-- 
+Regards,
 
-> Still it is good to keep the module based initialization.
-> Firstly because it causes no harm
-
-If I got a dime for every time people used an argument like that I ... I
-could treat myself to an ice cream. A really big ice cream. Hmm, that
-doesn't sound too impressive. But still, "causes no harm" is below the
-bar for kernel code. Kernel code needs to add value.
-
-> and even though some of the macros
-> are pre-processed out, gives info about the driver.
-
-None of which can't be gotten elsewhere (ie, the commit message, or the
-file these macro reside in).
-
-> Secondly there
-> were discussion on why INTEL_SOC_PMIC is bool (note this driver also
-> has module based initialization even when bool).
-
-Yes, there's copy and paste going on even in kernel development.
-
-> I am guessing because
-> of some tricky module load order dependencies. If ever that becomes a
-> module, this can mostly be unchanged to be loaded as a module.
-
-You put in a macro, or any other bit of code, when it's needed, not
-beforehand, "just in case". That's silly.
-
-Thanks,
-
-
-Paul Bolle
+Laurent Pinchart
 
