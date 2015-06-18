@@ -1,61 +1,49 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v6 0/7] Add Mediatek MMC driver
-Date: Thu, 18 Jun 2015 09:26:44 +0200
-Message-ID: <CAPDyKFrG6iNQs6be3sWtVX8+UYs2du5=YUGHvyRsxnFH+8cA0A@mail.gmail.com>
-References: <1434367253-26577-1-git-send-email-chaotian.jing@mediatek.com>
-	<CAPDyKFrAbAFR7_p5O4bPh6FZEBVhGZ2rq3htCKcF2QgQuCEf2g@mail.gmail.com>
-	<CAP=VYLpBymmAVY7LoFJR5+QTxL4CN7t+PrLFCxaoAN_a9S4Jbw@mail.gmail.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH] gpio: zynq: add missing module_exit function
+Date: Thu, 18 Jun 2015 13:24:48 +0200
+Message-ID: <5582AA80.8090603@xilinx.com>
+References: <1434531101-2585-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLpBymmAVY7LoFJR5+QTxL4CN7t+PrLFCxaoAN_a9S4Jbw@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Chris Ball <chris@printf.net>, Mark Rutland <mark.rutland@arm.com>, James Liao <jamesjj.liao@mediatek.com>, srv_heupstream <srv_heupstream@mediatek.com>, Arnd Bergmann <arnd@arndb.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-mmc <linux-mmc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "Joe.C" <yingjoe.chen@mediatek.com>, Eddie Huang <eddie.huang@mediatek.com>, =?UTF-8?B?QmluIFpoYW5nICjnq6Dmlowp?= <bin.zhang@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1434531101-2585-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
+Cc: =?windows-1252?Q?S=F6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 17 June 2015 at 23:01, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> On Tue, Jun 16, 2015 at 4:03 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 15 June 2015 at 13:20, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
->>> This series enables MMC support on the MT8135/MT8173 platform.
->>> MT8135 has 5 MMC controllers and MT8173 has 4 MMC controllers.
->>>
->>> Changes base on Ulf's comments
->>> Make hclk mandatory in the driver code
->>> Change host->hclk to host->src_clk_freq
->>> Add linux/pm.h
->>>
->>> Chaotian Jing (3):
->>>   mmc: dt-bindings: add Mediatek MMC bindings
->>>   mmc: mediatek: Add Mediatek MMC driver.
->
-> This commit breaks when merged to linux-next since it gets
-> exposed as an implicit module.h user that does not include
-> that header:
->
->    drivers/mmc/host/mtk-sd.c:1459:1: note: in expansion of macro
-> 'module_platform_driver'
->     module_platform_driver(mt_msdc_driver);
->     ^
->    include/linux/device.h:1296:1: error: type defaults to 'int' in
-> declaration of 'module_init' [-Werror=implicit-int]
->     module_init(__driver##_init); \
->     ^
->
-> Since the code doesn't exist in mainline, I can't fix it from
-> within my header cleanup series, so can you please add
-> an appropriate include of module.h to the above?
->
-> Also, I noticed the Makefile addition from this commit
-> is whitespace mangled; might as well fix that too if
-> rebasing to fix the include problem.
->
-> Thanks,
-> Paul.
+On 06/17/2015 10:51 AM, Masahiro Yamada wrote:
+> This driver is tristate, so it should be cleanable.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  drivers/gpio/gpio-zynq.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+> index 184c4b1..1d38da7 100644
+> --- a/drivers/gpio/gpio-zynq.c
+> +++ b/drivers/gpio/gpio-zynq.c
+> @@ -722,6 +722,12 @@ static int __init zynq_gpio_init(void)
+>  }
+>  postcore_initcall(zynq_gpio_init);
+>  
+> +static void __exit zynq_gpio_exit(void)
+> +{
+> +	platform_driver_unregister(&zynq_gpio_driver);
+> +}
+> +module_exit(zynq_gpio_exit);
+> +
+>  MODULE_AUTHOR("Xilinx Inc.");
+>  MODULE_DESCRIPTION("Zynq GPIO driver");
+>  MODULE_LICENSE("GPL");
+> 
 
-Paul, appreciate your feedback!
-I have re-based my next branch and updated the commit according to
-your suggestions.
+Looks reasonable to me.
 
-Kind regards
-Uffe
+Tested-by: Michal Simek <michal.simek@xilinx.com>
+
+Thanks,
+Michal
