@@ -1,44 +1,79 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: simplify of_pinctrl_get()
-Date: Thu, 18 Jun 2015 14:42:45 +0900
-Message-ID: <1434606165-2629-1-git-send-email-yamada.masahiro@socionext.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 6/8] ARM: dts: imx: add imx6ul and imx6ul evk board
+ support
+Date: Thu, 18 Jun 2015 07:50:06 +0200
+Message-ID: <20150618055006.GR6325@pengutronix.de>
+References: <1434555569-8237-1-git-send-email-Frank.Li@freescale.com>
+ <1434555569-8237-7-git-send-email-Frank.Li@freescale.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg009.nifty.com ([202.248.44.35]:17388 "EHLO
-	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751763AbbFRFm5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 01:42:57 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43941 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752127AbbFRFuT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 01:50:19 -0400
+Content-Disposition: inline
+In-Reply-To: <1434555569-8237-7-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+To: Frank.Li@freescale.com
+Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, Anson Huang <b20788@freescale.com>, Fugang Duan <B38611@freescale.com>, Fancy Fang <chen.fang@freescale.com>
 
-This commit does not change the logic at all.
+On Wed, Jun 17, 2015 at 11:39:27PM +0800, Frank.Li@freescale.com wrote:
+> From: Frank Li <Frank.Li@freescale.com>
+> 
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +	fsl,uart-has-rtscts;
+> +	/* for DTE mode, add below change */
+> +	/* fsl,dte-mode; */
+> +	/* pinctrl-0 = <&pinctrl_uart2dte>; */
+> +	status = "okay";
+> +};
+> +
+> +&usdhc1 {
+> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+> +	pinctrl-0 = <&pinctrl_usdhc1>;
+> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+> +	cd-gpios = <&gpio1 19 0>;
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Use the correct polarity here. This is probably GPIO_ACTIVE_LOW.
 
- drivers/pinctrl/devicetree.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+> +	keep-power-in-suspend;
+> +	enable-sdio-wakeup;
+> +	vmmc-supply = <&reg_sd1_vmmc>;
+> +	status = "okay";
+> +};
+> +
+> +&usdhc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc2>;
+> +	no-1-8-v;
+> +	keep-power-in-suspend;
+> +	enable-sdio-wakeup;
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hog_1>;
+> +	imx6ul-evk {
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 0bbf7d7..fe04e74 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -97,13 +97,7 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
- 
- struct pinctrl_dev *of_pinctrl_get(struct device_node *np)
- {
--	struct pinctrl_dev *pctldev;
--
--	pctldev = get_pinctrl_dev_from_of_node(np);
--	if (!pctldev)
--		return NULL;
--
--	return pctldev;
-+	return get_pinctrl_dev_from_of_node(np);
- }
- 
- static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
+You can put the pinctrl nodes directly under the iomux node since:
+5fcdf6a pinctrl: imx: Allow parsing DT without function nodes
+
+Sascha
+
 -- 
-1.9.1
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
