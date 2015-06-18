@@ -1,42 +1,106 @@
-From: Vitaly Andrianov <vitalya@ti.com>
-Subject: [PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
-Date: Thu, 18 Jun 2015 13:10:49 -0400
-Message-ID: <1434647449-5393-1-git-send-email-vitalya@ti.com>
+From: Shobhit Kumar <kumar@shobhit.info>
+Subject: Re: [Intel-gfx] [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM driver
+Date: Thu, 18 Jun 2015 23:24:35 +0530
+Message-ID: <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
+References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
+	<1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
+	<1430428322.2187.24.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:46148 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755974AbbFRRGj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 18 Jun 2015 13:06:39 -0400
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:32810 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932773AbbFRRyf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 13:54:35 -0400
+Received: by igbqq3 with SMTP id qq3so21467058igb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2015 10:54:35 -0700 (PDT)
+In-Reply-To: <1430428322.2187.24.camel@x220>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Vitaly Andrianov <vitalya@ti.com>, Reece Pollack <x0183204@ti.com>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
-"binten" register (offset 8). Previous versions of GPIO only
-used bit 0, which enables GPIO 0-15 interrupts.
+On Fri, May 1, 2015 at 2:42 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+> On Wed, 2015-04-29 at 19:30 +0530, Shobhit Kumar wrote:
+>> --- a/drivers/pwm/Kconfig
+>> +++ b/drivers/pwm/Kconfig
+>
+>> +config PWM_CRC
+>> +     bool "Intel Crystalcove (CRC) PWM support"
+>> +     depends on X86 && INTEL_SOC_PMIC
+>> +     help
+>> +       Generic PWM framework driver for Crystalcove (CRC) PMIC based PWM
+>> +       control.
+>
+>> --- a/drivers/pwm/Makefile
+>> +++ b/drivers/pwm/Makefile
+>
+>> +obj-$(CONFIG_PWM_CRC)                += pwm-crc.o
+>
+> PWM_CRC is a bool symbol. So pwm-crc.o can never be part of a module.
 
-Signed-off-by: Reece Pollack <x0183204@ti.com>
-Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
----
- drivers/gpio/gpio-davinci.c | 2 ++
- 1 file changed, 2 insertions(+)
+I actually started this as a module but later decided to make it as
+bool because INTEL_SOC_PMIC on which this depends is itself a bool as
+well. Still it is good to keep the module based initialization.
+Firstly because it causes no harm and even though some of the macros
+are pre-processed out, gives info about the driver. Secondly there
+were discussion on why INTEL_SOC_PMIC is bool (note this driver also
+has module based initialization even when bool). I am guessing because
+of some tricky module load order dependencies. If ever that becomes a
+module, this can mostly be unchanged to be loaded as a module.
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index c5e05c8..c90629f 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -546,6 +546,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 		chips[0].gpio_irq = bank_irq;
- 		chips[0].gpio_unbanked = pdata->gpio_unbanked;
- 		binten = BIT(0);
-+		if (pdata->gpio_unbanked > 16)
-+			binten |= BIT(1);
- 
- 		/* AINTC handles mask/unmask; GPIO handles triggering */
- 		irq = bank_irq;
--- 
-1.9.1
+Regards
+Shobhit
 
+>
+> (If I'm wrong, and that object file can actually be part of a module,
+> you can stop reading here.)
+>
+>> --- /dev/null
+>> +++ b/drivers/pwm/pwm-crc.c
+>
+>> +#include <linux/module.h>
+>
+> Perhaps this include is not needed.
+>
+>> +static const struct pwm_ops crc_pwm_ops = {
+>> +     .config = crc_pwm_config,
+>> +     .enable = crc_pwm_enable,
+>> +     .disable = crc_pwm_disable,
+>> +     .owner = THIS_MODULE,
+>
+> For built-in only code THIS_MODULE is basically equivalent to NULL (see
+> include/linux/export.h). So I guess this line can be dropped.
+>
+>> +};
+>
+>> +static struct platform_driver crystalcove_pwm_driver = {
+>> +     .probe = crystalcove_pwm_probe,
+>> +     .remove = crystalcove_pwm_remove,
+>> +     .driver = {
+>> +             .name = "crystal_cove_pwm",
+>> +     },
+>> +};
+>> +
+>> +module_platform_driver(crystalcove_pwm_driver);
+>
+> Speaking from memory: for built-in only code this is equivalent to
+> calling
+>     platform_driver_register(&crystalcove_pwm_driver);
+>
+> from a wrapper, and marking that wrapper with device_initcall().
+>
+>> +MODULE_AUTHOR("Shobhit Kumar <shobhit.kumar@intel.com>");
+>> +MODULE_DESCRIPTION("Intel Crystal Cove PWM Driver");
+>> +MODULE_LICENSE("GPL v2");
+>
+> These macros will be effectively preprocessed away for built-in only
+> code.
+>
+>
+> Paul Bolle
+>
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/intel-gfx
