@@ -1,133 +1,93 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 1/4] sh-pfc: do not call sh_pfc_get_pin_index() when unnecessary
-Date: Thu, 18 Jun 2015 22:05:04 +0300
-Message-ID: <1860613.5T71vLz0D7@avalon>
-References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com> <10321666.EILxzFPKZf@wasted.cogentembedded.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [Question] How to implement GPIO driver for sparse hw numbers?
+Date: Fri, 19 Jun 2015 12:27:42 +0900
+Message-ID: <CAK7LNARNUqjwcOvTwjsq8ck=hPgn83Gk=1vikkmq5KUxmYSjnQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38967 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754107AbbFRTEQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 18 Jun 2015 15:04:16 -0400
-In-Reply-To: <10321666.EILxzFPKZf@wasted.cogentembedded.com>
+Received: from conssluserg003.nifty.com ([202.248.44.41]:42843 "EHLO
+	conssluserg003-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752261AbbFSD1s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 18 Jun 2015 23:27:48 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Sergei,
+Hi GPIO experts,
 
-Thank you for the patch.
 
-On Thursday 04 June 2015 16:25:01 Sergei Shtylyov wrote:
-> Calling sh_pfc_get_pin_index()  to calculate a pin index based on the
-> collected pin range data is unnecessary when we're dealing with
-> 'pfc->info->pins' and 'chip->pins' arrays as those always reperesent the
-> pins starting from index 0 sequentially. Being a  mere  optimization at
-> this time, this change will become crucial when we'll allow the "holes" in
-> those arrays...
+I am trying to implement a new GPIO driver for a new SoC.
 
-Pin information is stored in per-SoC pins arrays (a.k.a. pfc->info->pins). The 
-driver support two models to number pins:
+I'd like to consult experts how to solve my problem.
 
-- The sequential model, in which pins are numbered sequentially starting at 0. 
-Pin numbers are equal to the index in the array.
+According to the hardware specification book,
+the GPIO ports on my SoC are labelled from PORT0 to PORT307 as follows:
 
-- The explicit numbering model, in which each pin entry has an explicit number 
-(stored in struct sh_pfc_pin.pin). Pins numbers are not necessarily equal to 
-the index of the pin entry in the array.
+ PORT0,   PORT1,   PORT2,       PORT7,    --> register offset 0x0
+ PORT10,  PORT11,  PORT12, ..., PORT17    --> register offset 0x8
+ PORT20,  PORT21,  PORT22, ..., PORT27,   --> register offset 0x10
+       ...
+ PORT290, PORT291, PORT292, ... PORT297   --> register offset 0xe8
+ PORT300, PORT301, PORT302, ... PORT307   --> register offset 0x90
 
-The sh_pfc_get_pin_index() function converts a pin number to the pin index in 
-the pins array.
 
-Let's consider the sh_pfc_pinconf_validate() from which your patch removes the 
-call to sh_pfc_get_pin_index() and uses the pin number directly. The function 
-is called from the .pin_config_get() and .pin_config_set() handlers. One 
-possible call path is
+Unfortunately, the port numbers are not contiguous.
+The port numbers with 8 or 9 in the one's place
+(such as PORT8, PORT9, PORT18, PORT19, ...) are missing.
 
-pinconf_pins_show() -> pinconf_dump_pin() -> pinconf_dump_pins() -> 
-pinconf_generic_dump_pins() -> pinconf_generic_dump_one() -> 
-pin_config_get_for_pin() -> .pin_config_get()
 
-The pin value passed to the .pin_config_get() function is pctldev->desc-
->pins[i].number, which is the pin number, not its index. It thus looks like 
-this patch introduces a bug.
+In my understanding, the GPIO driver framework requires that
+the hw numbers should be contiguous within each GPIO chip.
 
-There might be something obvious I'm not getting though, so please feel free 
-to prove me wrong.
+If I try to follow this rule, the hwnum given to GPIOLIB functions
+does not correspond to the port documented in the hardware specification.
 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> Changes in version 2:
-> - new patch.
-> 
->  drivers/pinctrl/sh-pfc/gpio.c    |    6 ++----
->  drivers/pinctrl/sh-pfc/pinctrl.c |    7 +++----
->  2 files changed, 5 insertions(+), 8 deletions(-)
-> 
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/gpio.c
-> ===================================================================
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/gpio.c
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/gpio.c
-> @@ -52,8 +52,7 @@ static void gpio_get_data_reg(struct sh_
->  			      struct sh_pfc_gpio_data_reg **reg,
->  			      unsigned int *bit)
->  {
-> -	int idx = sh_pfc_get_pin_index(chip->pfc, offset);
-> -	struct sh_pfc_gpio_pin *gpio_pin = &chip->pins[idx];
-> +	struct sh_pfc_gpio_pin *gpio_pin = &chip->pins[offset];
-> 
->  	*reg = &chip->regs[gpio_pin->dreg];
->  	*bit = gpio_pin->dbit;
-> @@ -138,9 +137,8 @@ static int gpio_setup_data_regs(struct s
->  static int gpio_pin_request(struct gpio_chip *gc, unsigned offset)
->  {
->  	struct sh_pfc *pfc = gpio_to_pfc(gc);
-> -	int idx = sh_pfc_get_pin_index(pfc, offset);
-> 
-> -	if (idx < 0 || pfc->info->pins[idx].enum_id == 0)
-> +	if (pfc->info->pins[offset].enum_id == 0)
->  		return -EINVAL;
-> 
->  	return pinctrl_request_gpio(offset);
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
-> ===================================================================
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -370,7 +370,7 @@ static int sh_pfc_gpio_request_enable(st
->  		/* If GPIOs are handled externally the pin mux type need to be
->  		 * set to GPIO here.
->  		 */
-> -		const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
-> +		const struct sh_pfc_pin *pin = &pfc->info->pins[offset];
-> 
->  		ret = sh_pfc_config_mux(pfc, pin->enum_id, PINMUX_TYPE_GPIO);
->  		if (ret < 0)
-> @@ -410,7 +410,7 @@ static int sh_pfc_gpio_set_direction(str
->  	struct sh_pfc *pfc = pmx->pfc;
->  	int new_type = input ? PINMUX_TYPE_INPUT : PINMUX_TYPE_OUTPUT;
->  	int idx = sh_pfc_get_pin_index(pfc, offset);
-> -	const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
-> +	const struct sh_pfc_pin *pin = &pfc->info->pins[offset];
->  	struct sh_pfc_pin_config *cfg = &pmx->configs[idx];
->  	unsigned long flags;
->  	unsigned int dir;
-> @@ -452,8 +452,7 @@ static const struct pinmux_ops sh_pfc_pi
->  static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc, unsigned int _pin,
->  				    enum pin_config_param param)
->  {
-> -	int idx = sh_pfc_get_pin_index(pfc, _pin);
-> -	const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
-> +	const struct sh_pfc_pin *pin = &pfc->info->pins[_pin];
-> 
->  	switch (param) {
->  	case PIN_CONFIG_BIAS_DISABLE:
+  gpiochip_get_desc(chip, 0);   /* get descripter of PORT0 */
+  gpiochip_get_desc(chip, 1);   /* get descripter of PORT1 */
+        ...
+  gpiochip_get_desc(chip, 7);   /* get descripter of PORT7 */
+  gpiochip_get_desc(chip, 8);   /* get descripter of PORT10 */  /* confusing! */
+  gpiochip_get_desc(chip, 9);   /* get descripter of PORT11 */  /* confusing! */
+  gpiochip_get_desc(chip, 10);   /* get descripter of PORT12 */  /*
+confusing! */
+        ...
+
+
+One solution I have come up with is to divide the GPIO chip into 31 banks,
+with 8 ports in each.
+But, I hesitate to describe 31 nodes in my device tree.
+
+   port0x : gpio@55000000 {
+             compatible = ...
+             reg = <0x55000000 0x8>;
+   };
+
+   port1x : gpio@55000008 {
+             compatible = ...
+             reg = <0x55000008 0x8>;
+   };
+
+          ...
+
+   port29x : gpio@5500008c {
+             compatible = ...
+             reg = <0x5500008c 0x8>;
+   };
+
+   port30x : gpio@55000090 {
+             compatible = ...
+             reg = <0x55000090 0x8>;
+   };
+
+
+Any good ideas?
+
+Thanks,
+
+
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+Best Regards
+Masahiro Yamada
