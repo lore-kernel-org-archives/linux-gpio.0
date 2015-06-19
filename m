@@ -1,93 +1,99 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [Question] How to implement GPIO driver for sparse hw numbers?
-Date: Fri, 19 Jun 2015 12:27:42 +0900
-Message-ID: <CAK7LNARNUqjwcOvTwjsq8ck=hPgn83Gk=1vikkmq5KUxmYSjnQ@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and
+ r8a7740/armadillo
+Date: Fri, 19 Jun 2015 12:41:00 +0900
+Message-ID: <20150619034052.GA22912@verge.net.au>
+References: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg003.nifty.com ([202.248.44.41]:42843 "EHLO
-	conssluserg003-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752261AbbFSD1s (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 18 Jun 2015 23:27:48 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, linux-gpio@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi GPIO experts,
+[ CC Linus, Laurent, linux-gpio ]
 
+On Wed, Jun 17, 2015 at 11:31:16AM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> The KZM-A9-GT and Armadillo-800 EVA boards are now sufficiently
+> supported by DT-based and board-less SH-Mobile AG5 (sh73a0) and R-Mobile
+> A1 (r8a7740) multi-platform kernels.
+> 
+> Lacking areas are:
+>   - USB (it does't work in legacy, neither),
+>   - HDMI on armadillo (it doesn't work in legacy, neither),
+>   - Camera on armadillo (we don't care),
+>   - LCDC:
+>       - on armadillo, this is supported by the board staging code,
+>       - on kzm9g, the LCDC is wired to the legacy INTC, which is not
+> 	planned to be supported with DT,
+>   - DMAC/IPMMU (no DT bindings are planned).
+> 
+> Hence this patch series removes legacy board and SoC code for
+> sh73a0/kzm9g and r8a7740/armadillo.
+> 
+> It consists of 4 parts:
+>   - Patches 1-4 remove legacy support for kzm9g (board code, defconfig,
+>     dtb) and sh73a0,
+>   - Patches 5-8 remove legacy support for armadillo (board code,
+>     defconfig, dtb) and r8a7740,
+>   - Patches 9-11 remove generic shmobile support code (dma-register.h,
+>     legacy PM Domains, zboot) that became unused by the removal of
+>     legacy sh73a0/kzm9g and r8a7740/armadillo,
+>   - Patches 12-15 remove legacy sh73a0 and r8a7740 support in the
+>     pinctrl drivers.
+> 
+> Dependencies:
+>   - This is against next-20150617,
+>   - To keep up with existing LCDC functionality for armadillo-legacy,
+>     the r8a7740/armadillo part (and later parts) depends on "[PATCH v2
+>     0/7] staging: board: armadillo800eva: Board staging for
+>     sh_mobile_lcdc_fb" (https://lkml.org/lkml/2015/6/17/115).
+>     However, it can be applied as-is now, and board staging can he
+>     handled in parallel (if at all).
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (15):
+>   ARM: shmobile: Remove legacy board code for KZM-A9-GT
+>   ARM: shmobile: Remove legacy kzm9g_defconfig
+>   ARM: shmobile: Drop sh73a0-kzm9g.dtb for legacy builds
+>   ARM: shmobile: Remove legacy SoC code for SH-Mobile AG5
+>   ARM: shmobile: Remove legacy board code for Armadillo-800 EVA
+>   ARM: shmobile: Remove legacy armadillo800eva_defconfig
+>   ARM: shmobile: Drop r8a7740-armadillo800eva.dtb for legacy builds
+>   ARM: shmobile: Remove legacy SoC code for R-Mobile A1
+>   ARM: shmobile: Remove unused dma-register.h
+>   ARM: shmobile: R-Mobile: Remove legacy PM Domain code
+>   ARM: shmobile: Remove obsolete zboot support
 
-I am trying to implement a new GPIO driver for a new SoC.
+I have queued up the above patches for v4.3.
 
-I'd like to consult experts how to solve my problem.
+>   pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
+>   pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
+>   pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
+>   pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
 
-According to the hardware specification book,
-the GPIO ports on my SoC are labelled from PORT0 to PORT307 as follows:
+As the above patches are sh-pfc patches they would typically
+be steered through Linus's tree via Laurent. If they wish
+to take that path then I'm happy for this to be attached:
 
- PORT0,   PORT1,   PORT2,       PORT7,    --> register offset 0x0
- PORT10,  PORT11,  PORT12, ..., PORT17    --> register offset 0x8
- PORT20,  PORT21,  PORT22, ..., PORT27,   --> register offset 0x10
-       ...
- PORT290, PORT291, PORT292, ... PORT297   --> register offset 0xe8
- PORT300, PORT301, PORT302, ... PORT307   --> register offset 0x90
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
+FWIW the above path is the one that the removal of mackerel/sh7372 took.
 
-Unfortunately, the port numbers are not contiguous.
-The port numbers with 8 or 9 in the one's place
-(such as PORT8, PORT9, PORT18, PORT19, ...) are missing.
-
-
-In my understanding, the GPIO driver framework requires that
-the hw numbers should be contiguous within each GPIO chip.
-
-If I try to follow this rule, the hwnum given to GPIOLIB functions
-does not correspond to the port documented in the hardware specification.
-
-  gpiochip_get_desc(chip, 0);   /* get descripter of PORT0 */
-  gpiochip_get_desc(chip, 1);   /* get descripter of PORT1 */
-        ...
-  gpiochip_get_desc(chip, 7);   /* get descripter of PORT7 */
-  gpiochip_get_desc(chip, 8);   /* get descripter of PORT10 */  /* confusing! */
-  gpiochip_get_desc(chip, 9);   /* get descripter of PORT11 */  /* confusing! */
-  gpiochip_get_desc(chip, 10);   /* get descripter of PORT12 */  /*
-confusing! */
-        ...
-
-
-One solution I have come up with is to divide the GPIO chip into 31 banks,
-with 8 ports in each.
-But, I hesitate to describe 31 nodes in my device tree.
-
-   port0x : gpio@55000000 {
-             compatible = ...
-             reg = <0x55000000 0x8>;
-   };
-
-   port1x : gpio@55000008 {
-             compatible = ...
-             reg = <0x55000008 0x8>;
-   };
-
-          ...
-
-   port29x : gpio@5500008c {
-             compatible = ...
-             reg = <0x5500008c 0x8>;
-   };
-
-   port30x : gpio@55000090 {
-             compatible = ...
-             reg = <0x55000090 0x8>;
-   };
-
-
-Any good ideas?
-
-Thanks,
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Alternatively, I am happy to take the above sh-pfc patches through
+my tree but I would like to do so with an Ack from at least Linus.
