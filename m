@@ -1,65 +1,46 @@
-From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH v2 6/8] ARM: dts: imx: add imx6ul and imx6ul evk board
- support
-Date: Fri, 19 Jun 2015 13:55:46 -0500
-Message-ID: <CAHrpEqQMtaL_ReeFP4VR2bfg_HDaQAHc0BUMB3X4KM3b23ra0A@mail.gmail.com>
-References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
- <1434727951-4852-7-git-send-email-Frank.Li@freescale.com>
- <CAH=tA9G_x=6wNTOWbOc2FGGARTxioikUSwqyENKk74wL=7uzaw@mail.gmail.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH 2/4] ARM: dts: imx: imx7d add iomuxc lpsr register base address
+Date: Fri, 19 Jun 2015 14:59:08 -0500
+Message-ID: <1434743950-7771-2-git-send-email-aalonso@freescale.com>
+References: <1434743950-7771-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAH=tA9G_x=6wNTOWbOc2FGGARTxioikUSwqyENKk74wL=7uzaw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nicolae Rosia <nicolae.rosia@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Fancy Fang <chen.fang@freescale.com>, Frank Li <Frank.Li@freescale.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Fugang Duan <B38611@freescale.com>, Anson Huang <b20788@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Shawn Guo <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0107.outbound.protection.outlook.com ([65.55.169.107]:12395
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750906AbbFSUAM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 19 Jun 2015 16:00:12 -0400
+In-Reply-To: <1434743950-7771-1-git-send-email-aalonso@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Fri, Jun 19, 2015 at 12:05 PM, Nicolae Rosia <nicolae.rosia@gmail.com> wrote:
-> Hi,
->
-> On Fri, Jun 19, 2015 at 6:32 PM,  <Frank.Li@freescale.com> wrote:
->> From: Frank Li <Frank.Li@freescale.com>
-> [...]
->> +       cpus {
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +
->> +               cpu0: cpu@0 {
->> +                       compatible = "arm,cortex-a7";
->> +                       device_type = "cpu";
->> +                       reg = <0>;
->> +                       clock-latency = <61036>; /* two CLK32 periods */
->> +                       operating-points = <
->> +                               /* kHz  uV */
->> +                               528000  1250000
->> +                               396000  1150000
->> +                               198000  1150000
->> +                       >;
->> +                       fsl,soc-operating-points = <
->> +                               /* KHz  uV */
->> +                               528000  1250000
->> +                               396000  1150000
->> +                               198000  1150000
->> +                       >;
-> Why is this necessary? Can't you adapt the driver to use operating-points?
-> I have looked through other imx dts and saw that some had different
-> values in these two tables.
+* Add iomuxc lpsr register base address to extend
+  pinctrl-imx driver to support the iomux settings for pins
+  that support LPSR operation mode.
 
-It is used by internal busfreq driver. I will remove it at next version.
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+ arch/arm/boot/dts/imx7d.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-best regards
-Frank Li
+diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
+index c42cf8d..294a6c6 100644
+--- a/arch/arm/boot/dts/imx7d.dtsi
++++ b/arch/arm/boot/dts/imx7d.dtsi
+@@ -253,7 +253,7 @@
+ 
+ 			iomuxc: iomuxc@30330000 {
+ 				compatible = "fsl,imx7d-iomuxc";
+-				reg = <0x30330000 0x10000>;
++				reg = <0x30330000 0x10000>, <0x302c0000 0x10000>;
+ 			};
+ 
+ 			gpr: iomuxc-gpr@30340000 {
+-- 
+2.1.4
 
->
-> Best regards,
-> Nicolae Rosia
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
