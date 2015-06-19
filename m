@@ -1,84 +1,116 @@
-From: Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Fri, 19 Jun 2015 22:55:05 +0800
-Message-ID: <CAD6h2NSTimDRXixQJWisaP4yUyxZgnnvNthH0UDUD585VHaJqw@mail.gmail.com>
-References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
-	<20150617071740.GL2712@atomide.com>
+From: <Frank.Li@freescale.com>
+Subject: [PATCH v2 1/8] ARM: imx: add i.mx6ul msl support
+Date: Fri, 19 Jun 2015 23:32:24 +0800
+Message-ID: <1434727951-4852-2-git-send-email-Frank.Li@freescale.com>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f41.google.com ([209.85.192.41]:36492 "EHLO
-	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054AbbFSOzH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jun 2015 10:55:07 -0400
-Received: by qgal13 with SMTP id l13so37066095qga.3
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Jun 2015 07:55:05 -0700 (PDT)
-In-Reply-To: <20150617071740.GL2712@atomide.com>
+Received: from mail-bl2on0135.outbound.protection.outlook.com ([65.55.169.135]:13119
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751309AbbFSPe6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 19 Jun 2015 11:34:58 -0400
+In-Reply-To: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Jun Nie <jun.nie@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, wan.zhijun@zte.com.cn, Jason Liu <jason.liu@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, Frank Li <Frank.Li@freescale.com>
 
-On 17 June 2015 at 15:17, Tony Lindgren <tony@atomide.com> wrote:
-> * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
->> Support GPIO for one register control multiple pins case
->> with calculating register offset first, then bit offset.
->>
->> Signed-off-by: Jun Nie <jun.nie@linaro.org>
->> ---
->>  drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
->>  1 file changed, 18 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
->> index 13b45f2..bd69d9a 100644
->> --- a/drivers/pinctrl/pinctrl-single.c
->> +++ b/drivers/pinctrl/pinctrl-single.c
->> @@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
->>       struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
->>       struct pcs_gpiofunc_range *frange = NULL;
->>       struct list_head *pos, *tmp;
->> -     int mux_bytes = 0;
->> +     int offset, mux_bytes = 0;
->>       unsigned data;
->>
->>       /* If function mask is null, return directly. */
->> @@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
->>                       || pin < frange->offset)
->>                       continue;
->>               mux_bytes = pcs->width / BITS_PER_BYTE;
->> -             data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
->> -             data |= frange->gpiofunc;
->> -             pcs->write(data, pcs->base + pin * mux_bytes);
->> +             if (pcs->bits_per_mux) {
->> +                     int pin_pos, byte_num, num_pins_in_register;
->> +
->> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
->> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
->> +                     offset = (byte_num / mux_bytes) * mux_bytes;
->> +                     pin_pos = pin % num_pins_in_register;
->> +                     pin_pos *= pcs->bits_per_pin;
->> +                     data = pcs->read(pcs->base + offset) &
->> +                             ~(pcs->fmask << pin_pos);
->
-> Should you check the pcs->fmask here too in case some bits are reserved?
->
->> +                     data |= frange->gpiofunc << pin_pos;
->> +             } else {
->> +                     offset = pin * mux_bytes;
->> +                     data = pcs->read(pcs->base + offset) & ~pcs->fmask;
->> +                     data |= frange->gpiofunc;
->> +             }
->> +             pcs->write(data, pcs->base + offset);
->>               break;
->>       }
->>       return 0;
->
-> Other than that looks OK to me, would be good to also wait for Haojian's
-> comments here.
->
+From: Frank Li <Frank.Li@freescale.com>
 
-I'm fine on this.
+i.MX6UL is a new SOC, add MSL support
 
-Reviewed-by: Haojian Zhuang <haojian.zhuang@linaro.org>
+Signed-off-by: Frank Li <Frank.Li@freescale.com>
+---
+ arch/arm/mach-imx/Kconfig       |  8 ++++++++
+ arch/arm/mach-imx/Makefile      |  1 +
+ arch/arm/mach-imx/mach-imx6ul.c | 43 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 52 insertions(+)
+ create mode 100644 arch/arm/mach-imx/mach-imx6ul.c
+
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index 573536f..8ceda28 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -548,6 +548,14 @@ config SOC_IMX6SX
+ 	help
+ 	  This enables support for Freescale i.MX6 SoloX processor.
+ 
++config SOC_IMX6UL
++	bool "i.MX6 UltraLite support"
++	select PINCTRL_IMX6UL
++	select SOC_IMX6
++
++	help
++	  This enables support for Freescale i.MX6 UltraLite processor.
++
+ config SOC_IMX7D
+ 	bool "i.MX7 Dual support"
+ 	select PINCTRL_IMX7D
+diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
+index 37c502a..fb689d8 100644
+--- a/arch/arm/mach-imx/Makefile
++++ b/arch/arm/mach-imx/Makefile
+@@ -83,6 +83,7 @@ endif
+ obj-$(CONFIG_SOC_IMX6Q) += mach-imx6q.o
+ obj-$(CONFIG_SOC_IMX6SL) += mach-imx6sl.o
+ obj-$(CONFIG_SOC_IMX6SX) += mach-imx6sx.o
++obj-$(CONFIG_SOC_IMX6UL) += mach-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D) += mach-imx7d.o
+ 
+ ifeq ($(CONFIG_SUSPEND),y)
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+new file mode 100644
+index 0000000..706d5f6
+--- /dev/null
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2015 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/irqchip.h>
++#include <linux/of_platform.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++
++#include "common.h"
++
++static void __init imx6ul_init_machine(void)
++{
++	struct device *parent;
++
++	parent = imx_soc_device_init();
++	if (parent == NULL)
++		pr_warn("failed to initialize soc device\n");
++
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++	imx_anatop_init();
++}
++
++static void __init imx6ul_init_irq(void)
++{
++	imx_init_revision_from_anatop();
++	imx_src_init();
++	irqchip_init();
++}
++
++static const char *imx6ul_dt_compat[] __initconst = {
++	"fsl,imx6ul",
++	NULL,
++};
++
++DT_MACHINE_START(IMX7D, "Freescale i.MX6 Ultralite (Device Tree)")
++	.init_irq	= imx6ul_init_irq,
++	.init_machine	= imx6ul_init_machine,
++	.dt_compat	= imx6ul_dt_compat,
++MACHINE_END
+-- 
+1.9.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
