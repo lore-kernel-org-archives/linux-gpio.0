@@ -1,79 +1,81 @@
-From: Shobhit Kumar <kumar@shobhit.info>
-Subject: Re: [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
-	driver
-Date: Fri, 19 Jun 2015 12:16:47 +0530
-Message-ID: <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
- <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
- <1430428322.2187.24.camel@x220>
- <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
- <1434652916.2385.124.camel@x220>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and r8a7740/armadillo
+Date: Fri, 19 Jun 2015 09:30:56 +0200
+Message-ID: <CAMuHMdUqO2_rMpx0akeS1j+pNmQ_S150ei0B6a1ubFu_iTBF3g@mail.gmail.com>
+References: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
+	<20150619034052.GA22912@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1434652916.2385.124.camel@x220>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, Povilas Staniulis <wdmonster@gmail.com>, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20150619034052.GA22912@verge.net.au>
+Sender: linux-sh-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Arnd Bergmann <arnd@arndb.de>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgUGF1bCwKCk9uIEZyaSwgSnVuIDE5LCAyMDE1IGF0IDEyOjExIEFNLCBQYXVsIEJvbGxlIDxw
-ZWJvbGxlQHRpc2NhbGkubmw+IHdyb3RlOgo+IEhpIFNob2JoaXQsCj4KPiBPbiBUaHUsIDIwMTUt
-MDYtMTggYXQgMjM6MjQgKzA1MzAsIFNob2JoaXQgS3VtYXIgd3JvdGU6Cj4+IE9uIEZyaSwgTWF5
-IDEsIDIwMTUgYXQgMjo0MiBBTSwgUGF1bCBCb2xsZSA8cGVib2xsZUB0aXNjYWxpLm5sPiB3cm90
-ZToKPj4gPiBPbiBXZWQsIDIwMTUtMDQtMjkgYXQgMTk6MzAgKzA1MzAsIFNob2JoaXQgS3VtYXIg
-d3JvdGU6Cj4+ID4+IC0tLSBhL2RyaXZlcnMvcHdtL0tjb25maWcKPj4gPj4gKysrIGIvZHJpdmVy
-cy9wd20vS2NvbmZpZwo+PiA+Cj4+ID4+ICtjb25maWcgUFdNX0NSQwo+PiA+PiArICAgICBib29s
-ICJJbnRlbCBDcnlzdGFsY292ZSAoQ1JDKSBQV00gc3VwcG9ydCIKPj4gPj4gKyAgICAgZGVwZW5k
-cyBvbiBYODYgJiYgSU5URUxfU09DX1BNSUMKPj4gPj4gKyAgICAgaGVscAo+PiA+PiArICAgICAg
-IEdlbmVyaWMgUFdNIGZyYW1ld29yayBkcml2ZXIgZm9yIENyeXN0YWxjb3ZlIChDUkMpIFBNSUMg
-YmFzZWQgUFdNCj4+ID4+ICsgICAgICAgY29udHJvbC4KPj4gPgo+PiA+PiAtLS0gYS9kcml2ZXJz
-L3B3bS9NYWtlZmlsZQo+PiA+PiArKysgYi9kcml2ZXJzL3B3bS9NYWtlZmlsZQo+PiA+Cj4+ID4+
-ICtvYmotJChDT05GSUdfUFdNX0NSQykgICAgICAgICAgICAgICAgKz0gcHdtLWNyYy5vCj4+ID4K
-Pj4gPiBQV01fQ1JDIGlzIGEgYm9vbCBzeW1ib2wuIFNvIHB3bS1jcmMubyBjYW4gbmV2ZXIgYmUg
-cGFydCBvZiBhIG1vZHVsZS4KPj4KPj4gSSBhY3R1YWxseSBzdGFydGVkIHRoaXMgYXMgYSBtb2R1
-bGUgYnV0IGxhdGVyIGRlY2lkZWQgdG8gbWFrZSBpdCBhcwo+PiBib29sIGJlY2F1c2UgSU5URUxf
-U09DX1BNSUMgb24gd2hpY2ggdGhpcyBkZXBlbmRzIGlzIGl0c2VsZiBhIGJvb2wgYXMKPj4gd2Vs
-bC4KPgo+IEFzIGRvZXMgR1BJT19DUllTVEFMX0NPVkUgYW5kIHRoYXQncyBhIHRyaXN0YXRlLiBT
-bz8KPgo+PiBTdGlsbCBpdCBpcyBnb29kIHRvIGtlZXAgdGhlIG1vZHVsZSBiYXNlZCBpbml0aWFs
-aXphdGlvbi4KPj4gRmlyc3RseSBiZWNhdXNlIGl0IGNhdXNlcyBubyBoYXJtCj4KPiBJZiBJIGdv
-dCBhIGRpbWUgZm9yIGV2ZXJ5IHRpbWUgcGVvcGxlIHVzZWQgYW4gYXJndW1lbnQgbGlrZSB0aGF0
-IEkgLi4uIEkKPiBjb3VsZCB0cmVhdCBteXNlbGYgdG8gYW4gaWNlIGNyZWFtLiBBIHJlYWxseSBi
-aWcgaWNlIGNyZWFtLiBIbW0sIHRoYXQKPiBkb2Vzbid0IHNvdW5kIHRvbyBpbXByZXNzaXZlLiBC
-dXQgc3RpbGwsICJjYXVzZXMgbm8gaGFybSIgaXMgYmVsb3cgdGhlCj4gYmFyIGZvciBrZXJuZWwg
-Y29kZS4gS2VybmVsIGNvZGUgbmVlZHMgdG8gYWRkIHZhbHVlLgo+Cj4+IGFuZCBldmVuIHRob3Vn
-aCBzb21lIG9mIHRoZSBtYWNyb3MKPj4gYXJlIHByZS1wcm9jZXNzZWQgb3V0LCBnaXZlcyBpbmZv
-IGFib3V0IHRoZSBkcml2ZXIuCj4KPiBOb25lIG9mIHdoaWNoIGNhbid0IGJlIGdvdHRlbiBlbHNl
-d2hlcmUgKGllLCB0aGUgY29tbWl0IG1lc3NhZ2UsIG9yIHRoZQo+IGZpbGUgdGhlc2UgbWFjcm8g
-cmVzaWRlIGluKS4KPgoKQ2F1c2VzIG5vIGhhcm0gY29tbWVudCBoYWQgdG8gYmUgcmVhZCB0b2dl
-dGhlciB3aXRoIG1vcmUgaW5mbyBhYm91dAp0aGUgZHJpdmVyLiBJdCBjYXVzZXMgbm8gaGFybSB3
-aGlsZSBwcm92aWRpbmcgbW9yZSBpbmZvLiBBbmQgYXMgeW91Cm9ubHkgc2FpZCB0aG9zZSBtYWNy
-b3MgYXJlIHByZS1wcm9jZXNzZWQgb3V0IHRvIHJlYWxseSB0aGUgZGVmYXVsdHMKZm9yIGJ1aWx0
-LWluIGRyaXZlcnMuIFNvIHdoYXQgaXMgdGhlIGV4YWN0IGJpZyBwcm9ibGVtIHdpdGggdGhpcyA/
-IEkKY2FuIGFueXdheSBzaG92ZSBvdXQgdGhlc2UgbWFjcm9zIHRvIGVuZCB0aGUgZGlzY3Vzc2lv
-bi4KCkJUVyB3aGV0aGVyIHlvdSAgYnV5IHRoZSBhcmd1bWVudCBvciBub3QsIHBsZWFzZSBkbyB0
-cmVhdCB5b3Vyc2VsZgp3aXRoIGljZSBjcmVhbSBmb3IgYmVpbmcgYWJsZSB0byBtYWtlIHN1Y2gg
-YSBjb21tZW50LgoKPj4gU2Vjb25kbHkgdGhlcmUKPj4gd2VyZSBkaXNjdXNzaW9uIG9uIHdoeSBJ
-TlRFTF9TT0NfUE1JQyBpcyBib29sIChub3RlIHRoaXMgZHJpdmVyIGFsc28KPj4gaGFzIG1vZHVs
-ZSBiYXNlZCBpbml0aWFsaXphdGlvbiBldmVuIHdoZW4gYm9vbCkuCj4KPiBZZXMsIHRoZXJlJ3Mg
-Y29weSBhbmQgcGFzdGUgZ29pbmcgb24gZXZlbiBpbiBrZXJuZWwgZGV2ZWxvcG1lbnQuCj4KClRo
-ZXJlIGFyZSBvdGhlciBleGFtcGxlcyBpbiB0aGUga2VybmVsLiBJIGp1c3QgZ2F2ZSB0aGUgb25l
-IHdoaWNoIGlzCnJlbGF0ZWQgYXMgd2VsbC4KClJlZ2FyZHMKU2hvYmhpdAoKPj4gSSBhbSBndWVz
-c2luZyBiZWNhdXNlCj4+IG9mIHNvbWUgdHJpY2t5IG1vZHVsZSBsb2FkIG9yZGVyIGRlcGVuZGVu
-Y2llcy4gSWYgZXZlciB0aGF0IGJlY29tZXMgYQo+PiBtb2R1bGUsIHRoaXMgY2FuIG1vc3RseSBi
-ZSB1bmNoYW5nZWQgdG8gYmUgbG9hZGVkIGFzIGEgbW9kdWxlLgo+Cj4gWW91IHB1dCBpbiBhIG1h
-Y3JvLCBvciBhbnkgb3RoZXIgYml0IG9mIGNvZGUsIHdoZW4gaXQncyBuZWVkZWQsIG5vdAo+IGJl
-Zm9yZWhhbmQsICJqdXN0IGluIGNhc2UiLiBUaGF0J3Mgc2lsbHkuCj4KPiBUaGFua3MsCj4KPgo+
-IFBhdWwgQm9sbGUKPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdm
-eAo=
+On Fri, Jun 19, 2015 at 5:41 AM, Simon Horman <horms@verge.net.au> wrote:
+> [ CC Linus, Laurent, linux-gpio ]
+>
+> On Wed, Jun 17, 2015 at 11:31:16AM +0200, Geert Uytterhoeven wrote:
+>>       Hi Simon, Magnus,
+>>
+>> The KZM-A9-GT and Armadillo-800 EVA boards are now sufficiently
+>> supported by DT-based and board-less SH-Mobile AG5 (sh73a0) and R-Mobile
+>> A1 (r8a7740) multi-platform kernels.
+
+>> Hence this patch series removes legacy board and SoC code for
+>> sh73a0/kzm9g and r8a7740/armadillo.
+
+>> Geert Uytterhoeven (15):
+>>   ARM: shmobile: Remove legacy board code for KZM-A9-GT
+>>   ARM: shmobile: Remove legacy kzm9g_defconfig
+>>   ARM: shmobile: Drop sh73a0-kzm9g.dtb for legacy builds
+>>   ARM: shmobile: Remove legacy SoC code for SH-Mobile AG5
+>>   ARM: shmobile: Remove legacy board code for Armadillo-800 EVA
+>>   ARM: shmobile: Remove legacy armadillo800eva_defconfig
+>>   ARM: shmobile: Drop r8a7740-armadillo800eva.dtb for legacy builds
+>>   ARM: shmobile: Remove legacy SoC code for R-Mobile A1
+>>   ARM: shmobile: Remove unused dma-register.h
+>>   ARM: shmobile: R-Mobile: Remove legacy PM Domain code
+>>   ARM: shmobile: Remove obsolete zboot support
+>
+> I have queued up the above patches for v4.3.
+
+Thanks!
+
+>>   pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
+>>   pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
+>>   pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
+>>   pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
+>
+> As the above patches are sh-pfc patches they would typically
+> be steered through Linus's tree via Laurent. If they wish
+> to take that path then I'm happy for this to be attached:
+>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> FWIW the above path is the one that the removal of mackerel/sh7372 took.
+>
+> Alternatively, I am happy to take the above sh-pfc patches through
+> my tree but I would like to do so with an Ack from at least Linus.
+
+I didn't CC Linus and linux-gpio at this stage yet, to prevent the pfc
+patches from getting applied prematurely.
+But things have gone more smoothly (esp. w.r.t. board staging) than expected,
+which is always pleasant.
+
+I can resend later, I have a few more areas of sh73a0/r8a7740 cleanup
+outside arch/arm/mach-shmobile waiting anyway...
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
