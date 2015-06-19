@@ -1,34 +1,117 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [patch] pinctrl: samsung: don't truncate the last char of "-grp"
-Date: Fri, 19 Jun 2015 11:52:03 +0300
-Message-ID: <20150619085203.GO28762@mwanda>
-References: <20150611154631.GA13202@mwanda>
- <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and r8a7740/armadillo
+Date: Fri, 19 Jun 2015 12:05:08 +0300
+Message-ID: <2048890.5QyZKokOfh@avalon>
+References: <1434533491-21979-1-git-send-email-geert+renesas@glider.be> <20150619034052.GA22912@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPe8Pv5t9tLdFZAV+9CSiM302GTVt6_j3vKHkeFOK8U=Lw@mail.gmail.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20150619034052.GA22912@verge.net.au>
+Sender: linux-sh-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 15, 2015 at 01:17:36PM +0900, Krzysztof Kozlowski wrote:
-> I would prefer splitting this into two patches: one for fixing
-> truncated name (by usage of kasprintf) and second for ENOMEM message.
-> The second patch can get rid of ENOMEM message in other places as
-> well.
+Hi Simon,
+
+On Friday 19 June 2015 12:41:00 Simon Horman wrote:
+> [ CC Linus, Laurent, linux-gpio ]
 > 
-> As for the first issue I think that function suffix would also be
-> truncated in the same way.
+> On Wed, Jun 17, 2015 at 11:31:16AM +0200, Geert Uytterhoeven wrote:
+> > 	Hi Simon, Magnus,
+> > 
+> > The KZM-A9-GT and Armadillo-800 EVA boards are now sufficiently
+> > supported by DT-based and board-less SH-Mobile AG5 (sh73a0) and R-Mobile
+> > A1 (r8a7740) multi-platform kernels.
+> > 
+> > Lacking areas are:
+> >   - USB (it does't work in legacy, neither),
+> >   - HDMI on armadillo (it doesn't work in legacy, neither),
+> >   - Camera on armadillo (we don't care),
+> >   
+> >   - LCDC:
+> >       - on armadillo, this is supported by the board staging code,
+> >       - on kzm9g, the LCDC is wired to the legacy INTC, which is not
+> > 	
+> > 	planned to be supported with DT,
+> > 	
+> >   - DMAC/IPMMU (no DT bindings are planned).
+> > 
+> > Hence this patch series removes legacy board and SoC code for
+> > sh73a0/kzm9g and r8a7740/armadillo.
+> > 
+> > It consists of 4 parts:
+> >   - Patches 1-4 remove legacy support for kzm9g (board code, defconfig,
+> >   
+> >     dtb) and sh73a0,
+> >   
+> >   - Patches 5-8 remove legacy support for armadillo (board code,
+> >   
+> >     defconfig, dtb) and r8a7740,
+> >   
+> >   - Patches 9-11 remove generic shmobile support code (dma-register.h,
+> >   
+> >     legacy PM Domains, zboot) that became unused by the removal of
+> >     legacy sh73a0/kzm9g and r8a7740/armadillo,
+> >   
+> >   - Patches 12-15 remove legacy sh73a0 and r8a7740 support in the
+> >   
+> >     pinctrl drivers.
+> > 
+> > Dependencies:
+> >   - This is against next-20150617,
+> >   - To keep up with existing LCDC functionality for armadillo-legacy,
+> >   
+> >     the r8a7740/armadillo part (and later parts) depends on "[PATCH v2
+> >     0/7] staging: board: armadillo800eva: Board staging for
+> >     sh_mobile_lcdc_fb" (https://lkml.org/lkml/2015/6/17/115).
+> >     However, it can be applied as-is now, and board staging can he
+> >     handled in parallel (if at all).
+> > 
+> > Thanks for applying!
+> > 
+> > Geert Uytterhoeven (15):
+> >   ARM: shmobile: Remove legacy board code for KZM-A9-GT
+> >   ARM: shmobile: Remove legacy kzm9g_defconfig
+> >   ARM: shmobile: Drop sh73a0-kzm9g.dtb for legacy builds
+> >   ARM: shmobile: Remove legacy SoC code for SH-Mobile AG5
+> >   ARM: shmobile: Remove legacy board code for Armadillo-800 EVA
+> >   ARM: shmobile: Remove legacy armadillo800eva_defconfig
+> >   ARM: shmobile: Drop r8a7740-armadillo800eva.dtb for legacy builds
+> >   ARM: shmobile: Remove legacy SoC code for R-Mobile A1
+> >   ARM: shmobile: Remove unused dma-register.h
+> >   ARM: shmobile: R-Mobile: Remove legacy PM Domain code
+> >   ARM: shmobile: Remove obsolete zboot support
+> 
+> I have queued up the above patches for v4.3.
+> 
+> >   pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
+> >   pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
+> >   pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
+> >   pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
+> 
+> As the above patches are sh-pfc patches they would typically
+> be steered through Linus's tree via Laurent. If they wish
+> to take that path then I'm happy for this to be attached:
+> 
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Sorry for the delayed response, I've been offline for a few days.
+And
 
-Yeah, you're right.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Let me resend.
+> FWIW the above path is the one that the removal of mackerel/sh7372 took.
+> 
+> Alternatively, I am happy to take the above sh-pfc patches through
+> my tree but I would like to do so with an Ack from at least Linus.
 
-regards,
-dan carpenter
+I'm fine with both. I think it would be easier to applied them through your 
+tree if Linus is fine with that. Those patches shouldn't generate any 
+conflict.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
