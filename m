@@ -1,99 +1,79 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and
- r8a7740/armadillo
-Date: Fri, 19 Jun 2015 12:41:00 +0900
-Message-ID: <20150619034052.GA22912@verge.net.au>
-References: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
+From: Shobhit Kumar <kumar@shobhit.info>
+Subject: Re: [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
+	driver
+Date: Fri, 19 Jun 2015 12:16:47 +0530
+Message-ID: <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
+References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
+ <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
+ <1430428322.2187.24.camel@x220>
+ <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
+ <1434652916.2385.124.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, linux-gpio@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1434652916.2385.124.camel@x220>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, Povilas Staniulis <wdmonster@gmail.com>, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-[ CC Linus, Laurent, linux-gpio ]
-
-On Wed, Jun 17, 2015 at 11:31:16AM +0200, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> The KZM-A9-GT and Armadillo-800 EVA boards are now sufficiently
-> supported by DT-based and board-less SH-Mobile AG5 (sh73a0) and R-Mobile
-> A1 (r8a7740) multi-platform kernels.
-> 
-> Lacking areas are:
->   - USB (it does't work in legacy, neither),
->   - HDMI on armadillo (it doesn't work in legacy, neither),
->   - Camera on armadillo (we don't care),
->   - LCDC:
->       - on armadillo, this is supported by the board staging code,
->       - on kzm9g, the LCDC is wired to the legacy INTC, which is not
-> 	planned to be supported with DT,
->   - DMAC/IPMMU (no DT bindings are planned).
-> 
-> Hence this patch series removes legacy board and SoC code for
-> sh73a0/kzm9g and r8a7740/armadillo.
-> 
-> It consists of 4 parts:
->   - Patches 1-4 remove legacy support for kzm9g (board code, defconfig,
->     dtb) and sh73a0,
->   - Patches 5-8 remove legacy support for armadillo (board code,
->     defconfig, dtb) and r8a7740,
->   - Patches 9-11 remove generic shmobile support code (dma-register.h,
->     legacy PM Domains, zboot) that became unused by the removal of
->     legacy sh73a0/kzm9g and r8a7740/armadillo,
->   - Patches 12-15 remove legacy sh73a0 and r8a7740 support in the
->     pinctrl drivers.
-> 
-> Dependencies:
->   - This is against next-20150617,
->   - To keep up with existing LCDC functionality for armadillo-legacy,
->     the r8a7740/armadillo part (and later parts) depends on "[PATCH v2
->     0/7] staging: board: armadillo800eva: Board staging for
->     sh_mobile_lcdc_fb" (https://lkml.org/lkml/2015/6/17/115).
->     However, it can be applied as-is now, and board staging can he
->     handled in parallel (if at all).
-> 
-> Thanks for applying!
-> 
-> Geert Uytterhoeven (15):
->   ARM: shmobile: Remove legacy board code for KZM-A9-GT
->   ARM: shmobile: Remove legacy kzm9g_defconfig
->   ARM: shmobile: Drop sh73a0-kzm9g.dtb for legacy builds
->   ARM: shmobile: Remove legacy SoC code for SH-Mobile AG5
->   ARM: shmobile: Remove legacy board code for Armadillo-800 EVA
->   ARM: shmobile: Remove legacy armadillo800eva_defconfig
->   ARM: shmobile: Drop r8a7740-armadillo800eva.dtb for legacy builds
->   ARM: shmobile: Remove legacy SoC code for R-Mobile A1
->   ARM: shmobile: Remove unused dma-register.h
->   ARM: shmobile: R-Mobile: Remove legacy PM Domain code
->   ARM: shmobile: Remove obsolete zboot support
-
-I have queued up the above patches for v4.3.
-
->   pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
->   pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
->   pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
->   pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
-
-As the above patches are sh-pfc patches they would typically
-be steered through Linus's tree via Laurent. If they wish
-to take that path then I'm happy for this to be attached:
-
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-
-FWIW the above path is the one that the removal of mackerel/sh7372 took.
-
-Alternatively, I am happy to take the above sh-pfc patches through
-my tree but I would like to do so with an Ack from at least Linus.
+SGkgUGF1bCwKCk9uIEZyaSwgSnVuIDE5LCAyMDE1IGF0IDEyOjExIEFNLCBQYXVsIEJvbGxlIDxw
+ZWJvbGxlQHRpc2NhbGkubmw+IHdyb3RlOgo+IEhpIFNob2JoaXQsCj4KPiBPbiBUaHUsIDIwMTUt
+MDYtMTggYXQgMjM6MjQgKzA1MzAsIFNob2JoaXQgS3VtYXIgd3JvdGU6Cj4+IE9uIEZyaSwgTWF5
+IDEsIDIwMTUgYXQgMjo0MiBBTSwgUGF1bCBCb2xsZSA8cGVib2xsZUB0aXNjYWxpLm5sPiB3cm90
+ZToKPj4gPiBPbiBXZWQsIDIwMTUtMDQtMjkgYXQgMTk6MzAgKzA1MzAsIFNob2JoaXQgS3VtYXIg
+d3JvdGU6Cj4+ID4+IC0tLSBhL2RyaXZlcnMvcHdtL0tjb25maWcKPj4gPj4gKysrIGIvZHJpdmVy
+cy9wd20vS2NvbmZpZwo+PiA+Cj4+ID4+ICtjb25maWcgUFdNX0NSQwo+PiA+PiArICAgICBib29s
+ICJJbnRlbCBDcnlzdGFsY292ZSAoQ1JDKSBQV00gc3VwcG9ydCIKPj4gPj4gKyAgICAgZGVwZW5k
+cyBvbiBYODYgJiYgSU5URUxfU09DX1BNSUMKPj4gPj4gKyAgICAgaGVscAo+PiA+PiArICAgICAg
+IEdlbmVyaWMgUFdNIGZyYW1ld29yayBkcml2ZXIgZm9yIENyeXN0YWxjb3ZlIChDUkMpIFBNSUMg
+YmFzZWQgUFdNCj4+ID4+ICsgICAgICAgY29udHJvbC4KPj4gPgo+PiA+PiAtLS0gYS9kcml2ZXJz
+L3B3bS9NYWtlZmlsZQo+PiA+PiArKysgYi9kcml2ZXJzL3B3bS9NYWtlZmlsZQo+PiA+Cj4+ID4+
+ICtvYmotJChDT05GSUdfUFdNX0NSQykgICAgICAgICAgICAgICAgKz0gcHdtLWNyYy5vCj4+ID4K
+Pj4gPiBQV01fQ1JDIGlzIGEgYm9vbCBzeW1ib2wuIFNvIHB3bS1jcmMubyBjYW4gbmV2ZXIgYmUg
+cGFydCBvZiBhIG1vZHVsZS4KPj4KPj4gSSBhY3R1YWxseSBzdGFydGVkIHRoaXMgYXMgYSBtb2R1
+bGUgYnV0IGxhdGVyIGRlY2lkZWQgdG8gbWFrZSBpdCBhcwo+PiBib29sIGJlY2F1c2UgSU5URUxf
+U09DX1BNSUMgb24gd2hpY2ggdGhpcyBkZXBlbmRzIGlzIGl0c2VsZiBhIGJvb2wgYXMKPj4gd2Vs
+bC4KPgo+IEFzIGRvZXMgR1BJT19DUllTVEFMX0NPVkUgYW5kIHRoYXQncyBhIHRyaXN0YXRlLiBT
+bz8KPgo+PiBTdGlsbCBpdCBpcyBnb29kIHRvIGtlZXAgdGhlIG1vZHVsZSBiYXNlZCBpbml0aWFs
+aXphdGlvbi4KPj4gRmlyc3RseSBiZWNhdXNlIGl0IGNhdXNlcyBubyBoYXJtCj4KPiBJZiBJIGdv
+dCBhIGRpbWUgZm9yIGV2ZXJ5IHRpbWUgcGVvcGxlIHVzZWQgYW4gYXJndW1lbnQgbGlrZSB0aGF0
+IEkgLi4uIEkKPiBjb3VsZCB0cmVhdCBteXNlbGYgdG8gYW4gaWNlIGNyZWFtLiBBIHJlYWxseSBi
+aWcgaWNlIGNyZWFtLiBIbW0sIHRoYXQKPiBkb2Vzbid0IHNvdW5kIHRvbyBpbXByZXNzaXZlLiBC
+dXQgc3RpbGwsICJjYXVzZXMgbm8gaGFybSIgaXMgYmVsb3cgdGhlCj4gYmFyIGZvciBrZXJuZWwg
+Y29kZS4gS2VybmVsIGNvZGUgbmVlZHMgdG8gYWRkIHZhbHVlLgo+Cj4+IGFuZCBldmVuIHRob3Vn
+aCBzb21lIG9mIHRoZSBtYWNyb3MKPj4gYXJlIHByZS1wcm9jZXNzZWQgb3V0LCBnaXZlcyBpbmZv
+IGFib3V0IHRoZSBkcml2ZXIuCj4KPiBOb25lIG9mIHdoaWNoIGNhbid0IGJlIGdvdHRlbiBlbHNl
+d2hlcmUgKGllLCB0aGUgY29tbWl0IG1lc3NhZ2UsIG9yIHRoZQo+IGZpbGUgdGhlc2UgbWFjcm8g
+cmVzaWRlIGluKS4KPgoKQ2F1c2VzIG5vIGhhcm0gY29tbWVudCBoYWQgdG8gYmUgcmVhZCB0b2dl
+dGhlciB3aXRoIG1vcmUgaW5mbyBhYm91dAp0aGUgZHJpdmVyLiBJdCBjYXVzZXMgbm8gaGFybSB3
+aGlsZSBwcm92aWRpbmcgbW9yZSBpbmZvLiBBbmQgYXMgeW91Cm9ubHkgc2FpZCB0aG9zZSBtYWNy
+b3MgYXJlIHByZS1wcm9jZXNzZWQgb3V0IHRvIHJlYWxseSB0aGUgZGVmYXVsdHMKZm9yIGJ1aWx0
+LWluIGRyaXZlcnMuIFNvIHdoYXQgaXMgdGhlIGV4YWN0IGJpZyBwcm9ibGVtIHdpdGggdGhpcyA/
+IEkKY2FuIGFueXdheSBzaG92ZSBvdXQgdGhlc2UgbWFjcm9zIHRvIGVuZCB0aGUgZGlzY3Vzc2lv
+bi4KCkJUVyB3aGV0aGVyIHlvdSAgYnV5IHRoZSBhcmd1bWVudCBvciBub3QsIHBsZWFzZSBkbyB0
+cmVhdCB5b3Vyc2VsZgp3aXRoIGljZSBjcmVhbSBmb3IgYmVpbmcgYWJsZSB0byBtYWtlIHN1Y2gg
+YSBjb21tZW50LgoKPj4gU2Vjb25kbHkgdGhlcmUKPj4gd2VyZSBkaXNjdXNzaW9uIG9uIHdoeSBJ
+TlRFTF9TT0NfUE1JQyBpcyBib29sIChub3RlIHRoaXMgZHJpdmVyIGFsc28KPj4gaGFzIG1vZHVs
+ZSBiYXNlZCBpbml0aWFsaXphdGlvbiBldmVuIHdoZW4gYm9vbCkuCj4KPiBZZXMsIHRoZXJlJ3Mg
+Y29weSBhbmQgcGFzdGUgZ29pbmcgb24gZXZlbiBpbiBrZXJuZWwgZGV2ZWxvcG1lbnQuCj4KClRo
+ZXJlIGFyZSBvdGhlciBleGFtcGxlcyBpbiB0aGUga2VybmVsLiBJIGp1c3QgZ2F2ZSB0aGUgb25l
+IHdoaWNoIGlzCnJlbGF0ZWQgYXMgd2VsbC4KClJlZ2FyZHMKU2hvYmhpdAoKPj4gSSBhbSBndWVz
+c2luZyBiZWNhdXNlCj4+IG9mIHNvbWUgdHJpY2t5IG1vZHVsZSBsb2FkIG9yZGVyIGRlcGVuZGVu
+Y2llcy4gSWYgZXZlciB0aGF0IGJlY29tZXMgYQo+PiBtb2R1bGUsIHRoaXMgY2FuIG1vc3RseSBi
+ZSB1bmNoYW5nZWQgdG8gYmUgbG9hZGVkIGFzIGEgbW9kdWxlLgo+Cj4gWW91IHB1dCBpbiBhIG1h
+Y3JvLCBvciBhbnkgb3RoZXIgYml0IG9mIGNvZGUsIHdoZW4gaXQncyBuZWVkZWQsIG5vdAo+IGJl
+Zm9yZWhhbmQsICJqdXN0IGluIGNhc2UiLiBUaGF0J3Mgc2lsbHkuCj4KPiBUaGFua3MsCj4KPgo+
+IFBhdWwgQm9sbGUKPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdm
+eAo=
