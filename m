@@ -1,52 +1,65 @@
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
-Date: Fri, 19 Jun 2015 10:42:19 -0700
-Message-ID: <5584547B.9040203@oracle.com>
-References: <20150619170654.GA4937@linutronix.de>
+From: Zhi Li <lznuaa@gmail.com>
+Subject: Re: [PATCH v2 6/8] ARM: dts: imx: add imx6ul and imx6ul evk board
+ support
+Date: Fri, 19 Jun 2015 13:55:46 -0500
+Message-ID: <CAHrpEqQMtaL_ReeFP4VR2bfg_HDaQAHc0BUMB3X4KM3b23ra0A@mail.gmail.com>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+ <1434727951-4852-7-git-send-email-Frank.Li@freescale.com>
+ <CAH=tA9G_x=6wNTOWbOc2FGGARTxioikUSwqyENKk74wL=7uzaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:27491 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752517AbbFSRmp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jun 2015 13:42:45 -0400
-In-Reply-To: <20150619170654.GA4937@linutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAH=tA9G_x=6wNTOWbOc2FGGARTxioikUSwqyENKk74wL=7uzaw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nicolae Rosia <nicolae.rosia@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Fancy Fang <chen.fang@freescale.com>, Frank Li <Frank.Li@freescale.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Fugang Duan <B38611@freescale.com>, Anson Huang <b20788@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Shawn Guo <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On 6/19/2015 10:06 AM, Sebastian Andrzej Siewior wrote:
-> This patch converts gpio_bank.lock from a spin_lock into a
-> raw_spin_lock. The call path is to access this lock is always under a
-> raw_spin_lock, for instance
-> - __setup_irq() holds &desc->lock with irq off
->    + __irq_set_trigger()
->     + omap_gpio_irq_type()
+On Fri, Jun 19, 2015 at 12:05 PM, Nicolae Rosia <nicolae.rosia@gmail.com> wrote:
+> Hi,
 >
-> - handle_level_irq() (runs with irqs off therefore raw locks)
->    + mask_ack_irq()
->     + omap_gpio_mask_irq()
->
-> This fixes the obvious backtrace on -RT. However the locking vs context
-> is not and this is not limited to -RT:
-> - omap_gpio_irq_type() is called with IRQ off and has an conditional
->    call to pm_runtime_get_sync() which may sleep. Either it may happen or
->    it may not happen but pm_runtime_get_sync() should not be called with
->    irqs off.
->
-> - omap_gpio_debounce() is holding the lock with IRQs off.
->    + omap2_set_gpio_debounce()
->     + clk_prepare_enable()
->      + clk_prepare() this one might sleep.
->    The number of users of gpiod_set_debounce() / gpio_set_debounce()
->    looks low but still this is not good.
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-Should be safe to do it.
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> On Fri, Jun 19, 2015 at 6:32 PM,  <Frank.Li@freescale.com> wrote:
+>> From: Frank Li <Frank.Li@freescale.com>
+> [...]
+>> +       cpus {
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +
+>> +               cpu0: cpu@0 {
+>> +                       compatible = "arm,cortex-a7";
+>> +                       device_type = "cpu";
+>> +                       reg = <0>;
+>> +                       clock-latency = <61036>; /* two CLK32 periods */
+>> +                       operating-points = <
+>> +                               /* kHz  uV */
+>> +                               528000  1250000
+>> +                               396000  1150000
+>> +                               198000  1150000
+>> +                       >;
+>> +                       fsl,soc-operating-points = <
+>> +                               /* KHz  uV */
+>> +                               528000  1250000
+>> +                               396000  1150000
+>> +                               198000  1150000
+>> +                       >;
+> Why is this necessary? Can't you adapt the driver to use operating-points?
+> I have looked through other imx dts and saw that some had different
+> values in these two tables.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+It is used by internal busfreq driver. I will remove it at next version.
+
+best regards
+Frank Li
+
+>
+> Best regards,
+> Nicolae Rosia
