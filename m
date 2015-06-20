@@ -1,65 +1,76 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
-Date: Fri, 19 Jun 2015 23:54:59 +0200
-Message-ID: <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com>
-References: <20150619170654.GA4937@linutronix.de>
-	<5584547B.9040203@oracle.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [Intel-gfx] [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
+ driver
+Date: Sat, 20 Jun 2015 13:23:22 +0200
+Message-ID: <1434799402.19497.47.camel@x220>
+References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
+	 <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
+	 <1430428322.2187.24.camel@x220>
+	 <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
+	 <1434652916.2385.124.camel@x220>
+	 <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:36635 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751060AbbFSVzA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 19 Jun 2015 17:55:00 -0400
-Received: by ykdr198 with SMTP id r198so101047224ykd.3
-        for <linux-gpio@vger.kernel.org>; Fri, 19 Jun 2015 14:54:59 -0700 (PDT)
-In-Reply-To: <5584547B.9040203@oracle.com>
+Received: from lb1-smtp-cloud2.xs4all.net ([194.109.24.21]:47743 "EHLO
+	lb1-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753150AbbFTLXa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 20 Jun 2015 07:23:30 -0400
+In-Reply-To: <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: santosh shilimkar <santosh.shilimkar@oracle.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
+To: Shobhit Kumar <kumar@shobhit.info>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Jun 19, 2015 at 7:42 PM, santosh shilimkar
-<santosh.shilimkar@oracle.com> wrote:
-> On 6/19/2015 10:06 AM, Sebastian Andrzej Siewior wrote:
->>
->> This patch converts gpio_bank.lock from a spin_lock into a
->> raw_spin_lock. The call path is to access this lock is always under a
->> raw_spin_lock, for instance
->> - __setup_irq() holds &desc->lock with irq off
->>    + __irq_set_trigger()
->>     + omap_gpio_irq_type()
->>
->> - handle_level_irq() (runs with irqs off therefore raw locks)
->>    + mask_ack_irq()
->>     + omap_gpio_mask_irq()
->>
->> This fixes the obvious backtrace on -RT. However the locking vs context
->> is not and this is not limited to -RT:
->> - omap_gpio_irq_type() is called with IRQ off and has an conditional
->>    call to pm_runtime_get_sync() which may sleep. Either it may happen or
->>    it may not happen but pm_runtime_get_sync() should not be called with
->>    irqs off.
->>
->> - omap_gpio_debounce() is holding the lock with IRQs off.
->>    + omap2_set_gpio_debounce()
->>     + clk_prepare_enable()
->>      + clk_prepare() this one might sleep.
->>    The number of users of gpiod_set_debounce() / gpio_set_debounce()
->>    looks low but still this is not good.
->>
->> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> ---
->
-> Should be safe to do it.
-> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
->
+[Added Paul Gortmaker.]
 
-Answered on the wrong thread, sorry for the noise.
+Hi Shobhit,
 
-Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+On Fri, 2015-06-19 at 12:16 +0530, Shobhit Kumar wrote:
+> So what is the exact big problem with this ?
 
-Best regards,
-Javier
+The main problem I have is that it's hard to read a submitter's mind.
+And, I think, in cases like this we need to know if the submitter just
+made some silly mistake or that the mismatch (between Kconfig type and
+code) was intentional. So each time such a mismatch is spotted the
+submitter ought to be asked about it.
+
+(I'd guess that one or two new drivers are submitted _each_ day. And
+these mismatches are quite common. I'd say I receive answers like:
+- "Oops, yes bool should have been tristate"; or
+- "Oops, forgot to clean up after noticing tristate didn't work"; or
+- "I just copy-and-pasted a similar driver, the module stuff isn't
+  actually needed"
+at least once a week. Not sure, I don't keep track of this stuff.)
+
+Furthermore, it appears that Paul Gortmaker is on a mission to, badly
+summarized, untangle the module and init code. See for instance
+https://lkml.org/lkml/2015/5/28/809 and
+https://lkml.org/lkml/2015/5/31/205 .
+
+Now, I don't know whether (other) Paul is bothered by these MODULE_*
+macros. But Paul did submit a series that adds
+builtin_platform_driver(), see https://lkml.org/lkml/2015/5/10/131 .
+That new macro ensures built-in only code doesn't have to use
+module_platform_driver(), which your patch also uses. So perhaps Paul
+can explain some of the non-obvious issues caused by built-in only code
+using module specific constructs.
+
+> I can anyway shove out these macros to end the discussion.
+
+I'd rather convince you than annoy you into doing as I suggested.
+
+> BTW whether you  buy the argument or not, please do treat yourself
+> with ice cream for being able to make such a comment.
+
+Will do.
+
+Thanks,
+
+
+Paul Bolle
+
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
