@@ -1,114 +1,177 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [Intel-gfx] [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
- driver
-Date: Sat, 20 Jun 2015 14:04:36 -0400
-Message-ID: <20150620180435.GG16386@windriver.com>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
- <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
- <1430428322.2187.24.camel@x220>
- <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
- <1434652916.2385.124.camel@x220>
- <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
- <1434799402.19497.47.camel@x220>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/2] USB: ftdi_sio: add CBUS mode for FT232R devices
+Date: Sun, 21 Jun 2015 00:12:56 +0200
+Message-ID: <1434838377-8042-2-git-send-email-stefan@agner.ch>
+References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:61435 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932099AbbFTSEu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Jun 2015 14:04:50 -0400
-Content-Disposition: inline
-In-Reply-To: <1434799402.19497.47.camel@x220>
+Received: from mail.kmu-office.ch ([178.209.48.109]:50625 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752949AbbFTWNE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 20 Jun 2015 18:13:04 -0400
+In-Reply-To: <1434838377-8042-1-git-send-email-stefan@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Shobhit Kumar <kumar@shobhit.info>, Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+To: johan@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com
+Cc: grant.likely@secretlab.ca, gregkh@linuxfoundation.org, x-linux@infra-silbe.de, hachti@hachti.de, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 
-[Re: [Intel-gfx] [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM driver] On 20/06/2015 (Sat 13:23) Paul Bolle wrote:
+Add interface to allow CBUS access. The functions set_bitmode and
+read_pins use control transfers only hence should not interfere
+with the serial operation mode.
 
-> [Added Paul Gortmaker.]
-> 
-> Hi Shobhit,
-> 
-> On Fri, 2015-06-19 at 12:16 +0530, Shobhit Kumar wrote:
-> > So what is the exact big problem with this ?
-> 
-> The main problem I have is that it's hard to read a submitter's mind.
-> And, I think, in cases like this we need to know if the submitter just
-> made some silly mistake or that the mismatch (between Kconfig type and
-> code) was intentional. So each time such a mismatch is spotted the
-> submitter ought to be asked about it.
-> 
-> (I'd guess that one or two new drivers are submitted _each_ day. And
-> these mismatches are quite common. I'd say I receive answers like:
-> - "Oops, yes bool should have been tristate"; or
-> - "Oops, forgot to clean up after noticing tristate didn't work"; or
-> - "I just copy-and-pasted a similar driver, the module stuff isn't
->   actually needed"
-> at least once a week. Not sure, I don't keep track of this stuff.)
-> 
-> Furthermore, it appears that Paul Gortmaker is on a mission to, badly
-> summarized, untangle the module and init code. See for instance
-> https://lkml.org/lkml/2015/5/28/809 and
-> https://lkml.org/lkml/2015/5/31/205 .
-> 
-> Now, I don't know whether (other) Paul is bothered by these MODULE_*
-> macros. But Paul did submit a series that adds
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/usb/serial/ftdi_sio.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ drivers/usb/serial/ftdi_sio.h | 22 ++++++++++++++++++++++
+ include/linux/usb/ftdi_sio.h  | 32 ++++++++++++++++++++++++++++++++
+ include/linux/usb/serial.h    |  2 ++
+ 4 files changed, 97 insertions(+)
+ create mode 100644 include/linux/usb/ftdi_sio.h
 
-Yes, I agree that it would be nice to not see these mismatches,
-regardless of whether we can get away with it or not.
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index 4c8b3b8..23a3280 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1384,6 +1384,47 @@ static int change_speed(struct tty_struct *tty, struct usb_serial_port *port)
+ 	return rv;
+ }
+ 
++int ftdi_sio_set_bitmode(struct usb_serial_port *port, u8 bitmask, u8 bitmode)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	__u16 urb_value = 0;
++	int rv = 0;
++
++	urb_value = bitmode << 8 | bitmask;
++
++	rv = usb_control_msg(port->serial->dev,
++			     usb_sndctrlpipe(port->serial->dev, 0),
++			     FTDI_SIO_SET_BITMODE_REQUEST,
++			     FTDI_SIO_SET_BITMODE_REQUEST_TYPE,
++			     urb_value, priv->interface,
++			     NULL, 0, WDR_SHORT_TIMEOUT);
++	return rv;
++}
++EXPORT_SYMBOL(ftdi_sio_set_bitmode);
++
++int ftdi_sio_read_pins(struct usb_serial_port *port, u8 *pins)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	int rv;
++	u8 *buf;
++
++	buf = kmalloc(1, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	rv = usb_control_msg(port->serial->dev,
++			     usb_rcvctrlpipe(port->serial->dev, 0),
++			     FTDI_SIO_READ_PINS_REQUEST,
++			     FTDI_SIO_READ_PINS_REQUEST_TYPE,
++			     0, priv->interface,
++			     buf, 1, WDR_SHORT_TIMEOUT);
++	*pins = *buf;
++	kfree(buf);
++
++	return rv;
++}
++EXPORT_SYMBOL(ftdi_sio_read_pins);
++
+ static int write_latency_timer(struct usb_serial_port *port)
+ {
+ 	struct ftdi_private *priv = usb_get_serial_port_data(port);
+diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+index ed58c6f..a62eb15 100644
+--- a/drivers/usb/serial/ftdi_sio.h
++++ b/drivers/usb/serial/ftdi_sio.h
+@@ -35,6 +35,8 @@
+ #define FTDI_SIO_SET_ERROR_CHAR		7 /* Set the error character */
+ #define FTDI_SIO_SET_LATENCY_TIMER	9 /* Set the latency timer */
+ #define FTDI_SIO_GET_LATENCY_TIMER	10 /* Get the latency timer */
++#define FTDI_SIO_SET_BITMODE		11 /* Set the bitmode */
++#define FTDI_SIO_READ_PINS		12 /* Read pins in bitmode */
+ 
+ /* Interface indices for FT2232, FT2232H and FT4232H devices */
+ #define INTERFACE_A		1
+@@ -345,6 +347,26 @@ enum ftdi_sio_baudrate {
+  */
+ 
+ /*
++ * FTDI_SIO_SET_BITMODE
++ *
++ * Set the chip's bitbang mode. Used to switch FT232R into CBUS	mode.
++ * For details see of the bitbang modes supported by FT232R devices
++ * refer to the FTDI Application Note AN_232R-01.
++ */
++
++#define FTDI_SIO_SET_BITMODE_REQUEST FTDI_SIO_SET_BITMODE
++#define FTDI_SIO_SET_BITMODE_REQUEST_TYPE 0x40
++
++/*
++ * FTDI_SIO_READ_PINS
++ *
++ * Read the current value of the bit mode.
++ */
++
++#define FTDI_SIO_READ_PINS_REQUEST FTDI_SIO_READ_PINS
++#define FTDI_SIO_READ_PINS_REQUEST_TYPE 0xC0
++
++/*
+  * FTDI_SIO_SET_EVENT_CHAR
+  *
+  * Set the special event character for the specified communications port.
+diff --git a/include/linux/usb/ftdi_sio.h b/include/linux/usb/ftdi_sio.h
+new file mode 100644
+index 0000000..8e1a292
+--- /dev/null
++++ b/include/linux/usb/ftdi_sio.h
+@@ -0,0 +1,32 @@
++/*
++ * Interface for FTDI SIO driver used by CBUS GPIO driver
++ *
++ * Copyright 2015 Stefan Agner
++ *
++ * Author: Stefan Agner <stefan@agner.ch>
++ *
++ *  This program is free software; you can redistribute  it and/or modify it
++ *  under  the terms of  the GNU General  Public License as published by the
++ *  Free Software Foundation;  either version 2 of the  License, or (at your
++ *  option) any later version.
++ */
++
++#ifndef __LINUX_USB_FTDI_SIO_H
++#define __LINUX_USB_FTDI_SIO_H
++
++#include <linux/usb/serial.h>
++
++/* MPSSE bitbang modes */
++enum ftdi_mpsse_mode {
++	/* switch off bitbang mode, back to regular serial/FIFO */
++	BITMODE_RESET = 0x00,
++
++	/* Bitbang on CBUS pins of R-type chips, configure in EEPROM before */
++	BITMODE_CBUS = 0x20,
++};
++
++int ftdi_sio_set_bitmode(struct usb_serial_port *port, u8 bitmask, u8 bitmode);
++int ftdi_sio_read_pins(struct usb_serial_port *port, u8 *pins);
++
++#endif /* __LINUX_USB_FTDI_SIO_H */
++
+diff --git a/include/linux/usb/serial.h b/include/linux/usb/serial.h
+index 704a1ab..d710656 100644
+--- a/include/linux/usb/serial.h
++++ b/include/linux/usb/serial.h
+@@ -17,6 +17,8 @@
+ #include <linux/mutex.h>
+ #include <linux/serial.h>
+ #include <linux/sysrq.h>
++#include <linux/tty.h>
++#include <linux/usb.h>
+ #include <linux/kfifo.h>
+ 
+ /* The maximum number of ports one device can grab at once */
+-- 
+2.4.4
 
-> builtin_platform_driver(), see https://lkml.org/lkml/2015/5/10/131 .
-> That new macro ensures built-in only code doesn't have to use
-> module_platform_driver(), which your patch also uses. So perhaps Paul
-> can explain some of the non-obvious issues caused by built-in only code
-> using module specific constructs.
-
-In  https://lkml.org/lkml/2015/5/10/125 I'd written:
-
-  There are several downsides to this:
-  1) The code can appear modular to a reader of the code, and they
-     won't know if the code really is modular without checking the
-     Makefile and Kconfig to see if compilation is governed by a
-     bool or tristate.
-  2) Coders of drivers may be tempted to code up an __exit function
-     that is never used, just in order to satisfy the required three
-     args of the modular registration function.
-  3) Non-modular code ends up including the <module.h> which increases
-     CPP overhead that they don't need.
-  4) It hinders us from performing better separation of the module
-     init code and the generic init code.
-  
-The nature of linux means that thousands of developers are reading the
-code every day -- so I think that there is a genuine value in having the
-code convey a clear message on how it was designed to be used.  Only
-using module related headers/macros for genuinely modular code helps us
-(albeit in a small way) towards achieving that.
-
-Looking at this thread, I see that one of the reasons given for this
-code's ambiguous module vs. built-in identity was the observation of a
-similar identity crisis of the related INTEL_SOC_PMIC code. Does that
-not back up the point above about the value in having the code speak for
-itself?  So IMHO we probably should clarify the PMIC code vs. adding
-another example that looks just like it.
-
-Paul.
---
-
-> 
-> > I can anyway shove out these macros to end the discussion.
-> 
-> I'd rather convince you than annoy you into doing as I suggested.
-> 
-> > BTW whether you  buy the argument or not, please do treat yourself
-> > with ice cream for being able to make such a comment.
-> 
-> Will do.
-> 
-> Thanks,
-> 
-> 
-> Paul Bolle
-> 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
