@@ -1,96 +1,41 @@
-From: Philipp Hachtmann <hachti@hachti.de>
-Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
-Date: Sun, 21 Jun 2015 04:22:52 +0200
-Message-ID: <55861FFC.30704@hachti.de>
-References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: Pull-up/down control via sysfs
+Date: Sun, 21 Jun 2015 15:42:17 +0900
+Message-ID: <CAAVeFu+7y1dexCvtoOcYFn48DJGE5_jChQQ8nWpz7uwf7fNOHA@mail.gmail.com>
+References: <CAPoCmY+Py2Ngq4M8OwTV7egSp7bQoGR4kbFpyRN6+DGzHZnfHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from donald.hachti.de ([188.40.85.216]:34423 "EHLO donald.hachti.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753011AbbFUCcu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 20 Jun 2015 22:32:50 -0400
-In-Reply-To: <1434838377-8042-1-git-send-email-stefan@agner.ch>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:33367 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751291AbbFUGmh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jun 2015 02:42:37 -0400
+Received: by obpn3 with SMTP id n3so13583628obp.0
+        for <linux-gpio@vger.kernel.org>; Sat, 20 Jun 2015 23:42:37 -0700 (PDT)
+In-Reply-To: <CAPoCmY+Py2Ngq4M8OwTV7egSp7bQoGR4kbFpyRN6+DGzHZnfHA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, johan@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com
-Cc: grant.likely@secretlab.ca, gregkh@linuxfoundation.org, x-linux@infra-silbe.de, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Gottfried Haider <gottfried.haider@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Am 21.06.2015 um 00:12 schrieb Stefan Agner:
-> There are three GPIO modes supported by FTDI devices:
-> 1. Asynchronous Bit Bang Mode (used in Sacha's patch)
-> 2. Synchronous Bit Bang Mode (used in Philipp's patch)
-> 3. CBUS Bit Bang Mode (used in Philipp's patch and this patchset)
+On Mon, Jun 15, 2015 at 4:44 AM, Gottfried Haider
+<gottfried.haider@gmail.com> wrote:
+> Hello all,
+>
+> I am interested in implementing a sysfs way to control pull-up/down
+> bias for gpio pins. I believe the pinctrl subsystem offers a pin
+> configuration interface [1] that my driver could implement for this,
+> but I am not sure about cross-referencing this from the gpio subsystem
+> and getting sysfs access..
 
-1. No idea, could be
-2. wrong
-3. wrong
+GPIOs have open source/open drain flags that I think can be used for
+what you want. The only problem is that these flags cannot be
+controlled from the sysfs interface. It should not be hard to add one
+entry to control these as well.
 
-This is more complicated as I remember. The chip (I speak of FT232H here, 
-because it's "my" chip) has quite a lot of options.
-
-Reference: http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232H.pdf
-
-I did not use a bit bang mode. My patches were about synchronous FIFO mode and 
-CBUS control. I'll try to explain.
-
-There are eight data lines called ADBUS[7:0] and ten "other" lines called 
-ACBUS[9:0].
-
-When the chip is configured (EEPROM!) for UART mode (default), the RX, TX and 
-modem status lines are assigned to ADBUS[7:0]. ACBUS7 can be used as an USB 
-voltage detect input (and for nothing else in any case as it looks).
-The other ACBUS lines can be configured for several tasks like TXLED, RXLED, 
-SLEEP, clock output etc.
-The ACBUS5, ACBUS6, ACBUS8 and ACBUS9 can also individually be configured to I/O 
-mode which the datasheet calls "ACBUS BitBang".
-These up to four (depending on user's choice) GPIO lines can be accessed from 
-the host. They're usable for extra control to attached hardware. Controlling 
-these CBUS lines was the intent of my CBUS patch.
-
-My usblink board (FT232H plus FPGA etc.) makes use of the FT232H's asynchronous 
-and synchronous FIFO modes. The asynchronous FIFO mode has to be selected by 
-EEPROM settings. This works out of the box with the ftdi_sio driver. The driver 
-doesn't notice anything. Just works. Baud rate settings etc. become meaningless, 
-of course :-)
-If you want to get the full USB 2.0 speed you have to use the synchronous FIFO 
-mode. For this to work the chip has to be eeprom configured to asynchronous FIFO 
-mode and then the driver has to select synchronous FIFO mode. This was subject 
-of my other patch.
-
-The chip has some other more or less cool modes but I have no idea if and how 
-they work with the ftdi_sio driver. Two of them are named asynchronous and 
-synchronous BitBang mode.
-
-Conclusion:
-The FTDI chip has different *modes* of operation which can be selected by eeprom 
-and/or software. The mode determines the use of the *ADBUS* and some ACBUS pins. 
-Two of modes are called bit bang modes.
-
-ACBUS bit bang is an additional functionality which is *not to be confused* with 
-the chip's operation mode!
-
-The confusion comes from things like FTDI_SIO_SET_BITBANG_REQUEST to do anything...
-
-I have not forgotten about the comments on my patches a year ago. I just did not 
-yet find the time to do add that GPIO stuff.
-
-Two interfaces have to be added to the driver:
-
-- One for setting the mode (here: switch to synchronous FIFO)
-I suggest adding a sysfs property here.
-
-- One for the four CBUS bits
-I *still* suggest adding a sysfs property *and* adding GPIO support as well.
-
-I will most probably get back to the stuff in July.
-
-
-Kind regards
-
-Philipp
-
-
+What do you need to do exactly? Do you just want to set a pin as
+pull-up or pull-down? If so, using pinctrl seems more appropriate. My
+suggestion only applies if you need to control the GPIO's value after
+setting the open-source/open-drain property.
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
