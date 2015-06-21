@@ -1,47 +1,112 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: altera: fix return value of altera_gpio_remove()
-Date: Sun, 21 Jun 2015 16:25:26 +0900
-Message-ID: <CAAVeFuJoeN4O6Cc1Wsm+Ev+K6sT0PqNq1QtX-ZQp1ePGVUbiPA@mail.gmail.com>
-References: <1434542383-21314-1-git-send-email-yamada.masahiro@socionext.com> <1434542383-21314-2-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] [RFC] gpio: Retry deferred GPIO hogging on pin range change
+Date: Sun, 21 Jun 2015 10:52:31 +0200
+Message-ID: <CAMuHMdV0N0csFR7kT9GsaDddybg5pG2EdXqgJ2zjQ+AJW779bQ@mail.gmail.com>
+References: <1434458208-30600-1-git-send-email-geert+renesas@glider.be>
+	<CAAVeFuLLs+zkzoeh1BinFyEZ96mV27nV8MNAbgmsd18jLbdfew@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:35814 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751394AbbFUHZq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 21 Jun 2015 03:25:46 -0400
-In-Reply-To: <1434542383-21314-2-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuLLs+zkzoeh1BinFyEZ96mV27nV8MNAbgmsd18jLbdfew@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Benoit Parrot <bparrot@ti.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Tien Hock Loh <thloh@altera.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 17, 2015 at 8:59 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> The remove callback never succeeds, which seems odd.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
-> I wonder why nobody has pointed this out before me.
-> I am suspecting -EIO might be intentional.
-> I hope some Altera guys will give me comments.
->
->
->  drivers/gpio/gpio-altera.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-> index c653c83..5861550 100644
-> --- a/drivers/gpio/gpio-altera.c
-> +++ b/drivers/gpio/gpio-altera.c
-> @@ -339,7 +339,7 @@ static int altera_gpio_remove(struct platform_device *pdev)
->
->         of_mm_gpiochip_remove(&altera_gc->mmchip);
->
-> -       return -EIO;
-> +       return 0;
+Hi Alex,
 
-That looks weird indeed. Tien, can you comment on this?
+On Sun, Jun 21, 2015 at 9:21 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> On Tue, Jun 16, 2015 at 9:36 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
+>> case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
+>> doesn't work:
+>>
+>>     requesting hog GPIO lcd0 (chip r8a7740_pfc, offset 176) failed
+>>
+>> The actual error code is -517 == -EPROBE_DEFER.
+>>
+>> The problem is that PFC+GPIO registration is handled in multiple steps:
+>>   1. pinctrl_register(),
+>>   2. gpiochip_add(),
+>>   3. gpiochip_add_pin_range().
+>>
+>> Configuration of the hogs is handled in gpiochip_add():
+>>
+>>     gpiochip_add
+>>         of_gpiochip_add
+>>             of_gpiochip_scan_hogs
+>>                 gpiod_hog
+>>                     gpiochip_request_own_desc
+>>                         __gpiod_request
+>>                             chip->request
+>>                                 pinctrl_request_gpio
+>>                                     pinctrl_get_device_gpio_range
+>>
+>> However, at this point the GPIO controller hasn't been added to
+>> pinctrldev_list yet, so the range can't be found, and the operation fails
+>> with -EPROBE_DEFER.
+>>
+>>   - Exchanging the order of the calls to gpiochip_add() and
+>>     gpiochip_add_pin_range() is not an option, as the latter depends on
+>>     initialization done by the former.
+>>   - Just moving the call of of_gpiochip_scan_hogs() from gpiochip_add()
+>>     to gpiochip_add_pin_range() is also not an option, as the latter is
+>>     optional, and thus not used by all drivers.
+>>
+>> Hence if of_gpiochip_scan_hogs() fails with -EPROBE_DEFER, call it
+>> again every time the pin range is changed, until it succeeded.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Questions:
+>>   - Is there a better solution to handle this?
+>
+> I do not understand the issue well enough to propose a better
+> solution, but I really hope there is one. This turns GPIO into a
+> slightly bigger yarn mess that what it already is and does not help
+> understanding how probing is performed. Yielding in the middle of
+> adding hogs and re-trying later sounds like a recipe for issues like
+> hogs being added several times.
+>
+> So I am not really fond of this, to be honest. The GPIO hogging
+> mechanism is still quite new, so there is certainly a way to fix such
+> issues by addressing the fundamental cause instead of duct taping it?
+
+Sure, I'm all for fixing this properly, hence the "RFC" and my questions.
+
+I also don't understand how this interacts with non-PFC drivers calling
+gpiochip_add_pin_range():
+  - gpio-em, but only for legacy platform devices, which are no longer used
+    (I will remove the legacy support),
+  - gpio-rcar, but only for legacy platform devices, which is used on R-Car
+    Gen1 only until -legacy is removed,
+  - gpiolib-of, which handles this for the bulk of modern GPIO drivers using
+    the "gpio-ranges" and "gpio-ranges-group-names" properties in DT.
+
+When I noticed the failure on r8a7740/armadillo (sh-pfc provides both pfc
+and gpio), I tried GPIO hogging on r8a7791/koelsch (sh-pfc provides pfc
+only, gpio-rcar provides gpio, "gpio-ranges" is in DT), and there it worked
+fine without my patch.
+
+Thanks!
+
+>>   - Should the pin ranges be configured by passing an array of data to
+>>     gpiochip_add() instead of having calls to gpiochip_add_pin_range()?
+>>     That would require changing all drivers.
+>>
+>>   - What happens if you have multiple hogs in multiple ranges?
+>>     The first hog(s) may be configured multiple times.  Is that a problem?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe linux-sh" in
