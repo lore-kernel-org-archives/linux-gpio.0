@@ -1,158 +1,60 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] [RFC] gpio: Retry deferred GPIO hogging on pin range change
-Date: Mon, 22 Jun 2015 12:25:31 +0200
-Message-ID: <CAMuHMdWYpxiWvmo+ER5L6853COsx9OQzkz=uwmhDjtM6_F8+Aw@mail.gmail.com>
-References: <1434458208-30600-1-git-send-email-geert+renesas@glider.be>
-	<CAAVeFuLLs+zkzoeh1BinFyEZ96mV27nV8MNAbgmsd18jLbdfew@mail.gmail.com>
-	<CAMuHMdV0N0csFR7kT9GsaDddybg5pG2EdXqgJ2zjQ+AJW779bQ@mail.gmail.com>
+From: Shobhit Kumar <shobhit.kumar@intel.com>
+Subject: [v2 1/7] gpiolib: Add support for removing registered
+	consumer lookup table
+Date: Mon, 22 Jun 2015 16:24:19 +0530
+Message-ID: <1434970465-12687-2-git-send-email-shobhit.kumar@intel.com>
+References: <1434970465-12687-1-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdV0N0csFR7kT9GsaDddybg5pG2EdXqgJ2zjQ+AJW779bQ@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Benoit Parrot <bparrot@ti.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-SH <linux-sh@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1434970465-12687-1-git-send-email-shobhit.kumar@intel.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: linux-pwm <linux-pwm@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, Samuel Ortiz <sameo@linux.intel.com>, Povilas Staniulis <wdmonster@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, bloften80@gmail.com, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jun 21, 2015 at 10:52 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Sun, Jun 21, 2015 at 9:21 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> On Tue, Jun 16, 2015 at 9:36 PM, Geert Uytterhoeven
->> <geert+renesas@glider.be> wrote:
->>> If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
->>> case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
->>> doesn't work:
->>>
->>>     requesting hog GPIO lcd0 (chip r8a7740_pfc, offset 176) failed
->>>
->>> The actual error code is -517 == -EPROBE_DEFER.
->>>
->>> The problem is that PFC+GPIO registration is handled in multiple steps:
->>>   1. pinctrl_register(),
->>>   2. gpiochip_add(),
->>>   3. gpiochip_add_pin_range().
->>>
->>> Configuration of the hogs is handled in gpiochip_add():
->>>
->>>     gpiochip_add
->>>         of_gpiochip_add
->>>             of_gpiochip_scan_hogs
->>>                 gpiod_hog
->>>                     gpiochip_request_own_desc
->>>                         __gpiod_request
->>>                             chip->request
->>>                                 pinctrl_request_gpio
->>>                                     pinctrl_get_device_gpio_range
->>>
->>> However, at this point the GPIO controller hasn't been added to
->>> pinctrldev_list yet, so the range can't be found, and the operation fails
->>> with -EPROBE_DEFER.
->>>
->>>   - Exchanging the order of the calls to gpiochip_add() and
->>>     gpiochip_add_pin_range() is not an option, as the latter depends on
->>>     initialization done by the former.
->>>   - Just moving the call of of_gpiochip_scan_hogs() from gpiochip_add()
->>>     to gpiochip_add_pin_range() is also not an option, as the latter is
->>>     optional, and thus not used by all drivers.
->>>
->>> Hence if of_gpiochip_scan_hogs() fails with -EPROBE_DEFER, call it
->>> again every time the pin range is changed, until it succeeded.
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> ---
->>> Questions:
->>>   - Is there a better solution to handle this?
->>
->> I do not understand the issue well enough to propose a better
->> solution, but I really hope there is one. This turns GPIO into a
->> slightly bigger yarn mess that what it already is and does not help
->> understanding how probing is performed. Yielding in the middle of
->> adding hogs and re-trying later sounds like a recipe for issues like
->> hogs being added several times.
->>
->> So I am not really fond of this, to be honest. The GPIO hogging
->> mechanism is still quite new, so there is certainly a way to fix such
->> issues by addressing the fundamental cause instead of duct taping it?
->
-> Sure, I'm all for fixing this properly, hence the "RFC" and my questions.
->
-> I also don't understand how this interacts with non-PFC drivers calling
-> gpiochip_add_pin_range():
->   - gpio-em, but only for legacy platform devices, which are no longer used
->     (I will remove the legacy support),
->   - gpio-rcar, but only for legacy platform devices, which is used on R-Car
->     Gen1 only until -legacy is removed,
->   - gpiolib-of, which handles this for the bulk of modern GPIO drivers using
->     the "gpio-ranges" and "gpio-ranges-group-names" properties in DT.
->
-> When I noticed the failure on r8a7740/armadillo (sh-pfc provides both pfc
-> and gpio), I tried GPIO hogging on r8a7791/koelsch (sh-pfc provides pfc
-> only, gpio-rcar provides gpio, "gpio-ranges" is in DT), and there it worked
-> fine without my patch.
-
-"gpio-ranges" and gpiochip_add_pin_range() turned out to be the solution
-to the problem: on DT platforms, parsing "gpio-ranges" is doing from
-of_gpiochip_add(), which is called from gpiochip_add().
-Hence the ranges are set up from DT just before the hogs are handled:
-
-void of_gpiochip_add(struct gpio_chip *chip)
-{
-        ...
-        of_gpiochip_add_pin_range(chip);
-        ...
-        of_gpiochip_scan_hogs(chip);
-}
-
-Sticking a "gpio-ranges" in arch/arm/boot/dts/r8a7740.dtsi:
-
-@@ -288,12 +288,13 @@
-        pfc: pfc@e6050000 {
-                compatible = "renesas,pfc-r8a7740";
-                reg = <0xe6050000 0x8000>,
-                      <0xe605800c 0x20>;
-                gpio-controller;
-                #gpio-cells = <2>;
-+               gpio-ranges = <&pfc 0 0 212>;
-                interrupts-extended =
-                        <&irqpin0 0 0>, <&irqpin0 1 0>, <&irqpin0 2
-0>, <&irqpin0 3 0>,
-                        <&irqpin0 4 0>, <&irqpin0 5 0>, <&irqpin0 6
-0>, <&irqpin0 7 0>,
-                        <&irqpin1 0 0>, <&irqpin1 1 0>, <&irqpin1 2
-0>, <&irqpin1 3 0>,
-                        <&irqpin1 4 0>, <&irqpin1 5 0>, <&irqpin1 6
-0>, <&irqpin1 7 0>,
-                        <&irqpin2 0 0>, <&irqpin2 1 0>, <&irqpin2 2
-0>, <&irqpin2 3 0>,
-
-solved the problem for me.
-
-Note that "&pfc" is a reference to the gpio device node itself, as it provides
-both GPIO and PFC functionalities.
-
-After that, the calls to gpiochip_add_pin_range() in
-drivers/pinctrl/sh-pfc/gpio.c
-can be removed, at least for the ARM multi-platform case where GPIO is
-instantiated from DT (_and_ "gpio-ranges" is present --- I don't think we have
-to care about DT backwards compatibility for sh73a0/r8a73a4/r8a7740).
-
-Does this makes sense?
-
-I couldn't find any other in-tree DTS that has a gpio-controller with a
-gpio-ranges pointing to itself. All other GPIO+PFC combos lack such properties,
-and thus probably won't work with DT gpio-hogs.
-
-Thanks for your comments!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+SW4gY2FzZSB3ZSB1bmxvYWQgYW5kIGxvYWQgYSBkcml2ZXIgbW9kdWxlIGFnYWluIHRoYXQgaXMg
+cmVnaXN0ZXJpbmcgYQpsb29rdXAgdGFibGUsIHdpdGhvdXQgdGhpcyBpdCB3aWxsIHJlc3VsdCBp
+biBtdWx0aXBsZSBlbnRyaWVzLiBQcm92aWRlCmFuIG9wdGlvbiB0byByZW1vdmUgdGhlIGxvb2t1
+cCB0YWJsZSBvbiBkcml2ZXIgdW5sb2FkCgp2MjogQ2NpbmcgbWFpbnRhaW5lcnMKdjM6IENvcnJl
+Y3QgdGhlIHN1YmplY3QgbGluZSAoTGVlIGpvbmVzKQoKQ2M6IFNhbXVlbCBPcnRpeiA8c2FtZW9A
+bGludXguaW50ZWwuY29tPgpDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8u
+b3JnPgpDYzogQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+CkNjOiBUaGllcnJ5
+IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgpSZXZpZXdlZC1ieTogQWxleGFuZHJl
+IENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+ClJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlq
+IDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+ClNpZ25lZC1vZmYtYnk6IFNob2JoaXQgS3VtYXIg
+PHNob2JoaXQua3VtYXJAaW50ZWwuY29tPgotLS0KIGRyaXZlcnMvZ3Bpby9ncGlvbGliLmMgICAg
+ICAgfCAxMyArKysrKysrKysrKysrCiBpbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oIHwgIDEg
+KwogMiBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncGlvL2dwaW9saWIuYyBiL2RyaXZlcnMvZ3Bpby9ncGlvbGliLmMKaW5kZXggOTU3ZWRlNS4u
+OWQzZWE0ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncGlvL2dwaW9saWIuYworKysgYi9kcml2ZXJz
+L2dwaW8vZ3Bpb2xpYi5jCkBAIC0xNjc1LDYgKzE2NzUsMTkgQEAgdm9pZCBncGlvZF9hZGRfbG9v
+a3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQogCW11dGV4X3VubG9j
+aygmZ3Bpb19sb29rdXBfbG9jayk7CiB9CiAKKy8qKgorICogZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90
+YWJsZSgpIC0gdW5yZWdpc3RlciBHUElPIGRldmljZSBjb25zdW1lcnMKKyAqIEB0YWJsZTogdGFi
+bGUgb2YgY29uc3VtZXJzIHRvIHVucmVnaXN0ZXIKKyAqLwordm9pZCBncGlvZF9yZW1vdmVfbG9v
+a3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29rdXBfdGFibGUgKnRhYmxlKQoreworCW11dGV4X2xv
+Y2soJmdwaW9fbG9va3VwX2xvY2spOworCisJbGlzdF9kZWwoJnRhYmxlLT5saXN0KTsKKworCW11
+dGV4X3VubG9jaygmZ3Bpb19sb29rdXBfbG9jayk7Cit9CisKIHN0YXRpYyBzdHJ1Y3QgZ3Bpb19k
+ZXNjICpvZl9maW5kX2dwaW8oc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpjb25faWQs
+CiAJCQkJICAgICAgdW5zaWduZWQgaW50IGlkeCwKIAkJCQkgICAgICBlbnVtIGdwaW9fbG9va3Vw
+X2ZsYWdzICpmbGFncykKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5lLmgg
+Yi9pbmNsdWRlL2xpbnV4L2dwaW8vbWFjaGluZS5oCmluZGV4IGUyNzA2MTQuLmMwZDcxMmQgMTAw
+NjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZ3Bpby9tYWNoaW5lLmgKKysrIGIvaW5jbHVkZS9saW51
+eC9ncGlvL21hY2hpbmUuaApAQCAtNTcsNSArNTcsNiBAQCBzdHJ1Y3QgZ3Bpb2RfbG9va3VwX3Rh
+YmxlIHsKIH0KIAogdm9pZCBncGlvZF9hZGRfbG9va3VwX3RhYmxlKHN0cnVjdCBncGlvZF9sb29r
+dXBfdGFibGUgKnRhYmxlKTsKK3ZvaWQgZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90YWJsZShzdHJ1Y3Qg
+Z3Bpb2RfbG9va3VwX3RhYmxlICp0YWJsZSk7CiAKICNlbmRpZiAvKiBfX0xJTlVYX0dQSU9fTUFD
+SElORV9IICovCi0tIAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9p
+bnRlbC1nZngK
