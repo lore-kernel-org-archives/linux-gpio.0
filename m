@@ -1,96 +1,213 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
-Date: Mon, 22 Jun 2015 22:11:35 +0200
-Message-ID: <11dedbc454ab78f5e03497e2c5d8f5b3@agner.ch>
-References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
- <20150622172610.GK483@localhost>
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Subject: [PATCH] of: acpi: Rename of_node() and acpi_node() to to_of_node()
+ and to_acpi_node()
+Date: Mon, 22 Jun 2015 22:38:53 +0200
+Message-ID: <5588725D.6000101@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:33900 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751607AbbFVUOD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jun 2015 16:14:03 -0400
-In-Reply-To: <20150622172610.GK483@localhost>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:35218 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921AbbFVUi6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jun 2015 16:38:58 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@secretlab.ca, gregkh@linuxfoundation.org, x-linux@infra-silbe.de, hachti@hachti.de, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devel@acpica.org, devicetree@vger.kernel.org
 
-On 2015-06-22 19:26, Johan Hovold wrote:
-> On Sun, Jun 21, 2015 at 12:12:55AM +0200, Stefan Agner wrote:
-<snip>
->> Bit Bang mode, the pins need to be reprogrammed to I/O mode first
->> (EEPROM). All three modes are supported from userspace by libftdi afaik.
-> 
-> Is there a way to retrieve the settings from eeprom and only register
-> the gpio chip based on the configuration?
-> 
+Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
+but there were already ~63 of_node local variables or function parameters
+(no single acpi_node though, but anyway).
 
-Afaik, there is. Not sure if that is somewhat standardized between the
-different controllers, will have a look at it. 
+After debugging undefined but used of_node local varible (which turned out
+to reference static function of_node() instead) it became clear that the names
+for the functions are too short and too generic for global scope.
 
->> In my use case I would like to use the additional GPIOs to control an
->> embedded board (power off/reset etc.) and use the serial communication
->> alongside. Using libftdi to use the CBUS Bit Bang mode is cumbersome,
->> since libftdi requires to detach the kernel driver to get access to the
->> device. The user needs then to reconnect the serial terminal every time
->> a GPIO has been used. Hence, if any of these modes, I see most value in
->> supporting the CBUS mode through the kernel's gpiolib API. However,
->> since some functions are shared (e.g. set_bitmode to enable the
->> different bit modes), this patchset is does some ground work for the
->> other modes too, in case anybody wants to do further work on them.
-> 
-> I agree, the usb-serial driver should only provide access to the four
-> cbus pins if available (and use gpiolib).
-> 
->> This patchset currently supports FT232R type of devices and has been
->> tested using a FT232RL device. I think the FT232H (and probably later)
->> types of devices should work too (at least the Table 3.5 in the FT232H
->> data sheet mentions the ACBUS Signal Option "I/O mode"). However, I
->> don't have such a device to test at my disposal.
->>
->> On the implementation side, I created a distinct GPIO driver in
->> drivers/gpio and create that platform device directly from within the
->> ftdi_sio driver. I understand that the mfd subsystem would be the way to
->> go, however it seems to me quite a big change... At least all USB device
->> IDs would need to be moved to the mfd core device since the mfd device
->> would be registered as a USB driver. I guess the ftdi_sio driver would
->> become a platform device and still live under drivers/usb/serial/...?
->>
->> I just saw that recent discussion by Grant and Linus did not approve
->> this approach...?
-> 
-> Using the platform bus -- directly as you do or via MFD -- allows for
-> some (arguably contrived) abstraction but I think we should avoid it
-> nonetheless. USB (serial) does not use it as you already noted, and
-> there's not much to gain from creating a single-cell-mfd child device to
-> the USB interface.
-> 
-> Instead, hang the gpio chip directly off the usb interface (not the
-> port), add a new config option, and keep the gpio implementation under
-> drivers/usb/serial (possibly in its own file ftdi_sio-gpio.c).
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+---
 
-Agreed sounds like a good plan. Will try this approach in v2.
+Compile-tested on x86_64 with ACPI and ARM with OF.
 
-Except I don't think hanging it directly to the USB interface is the
-right thing to do.
+ drivers/base/property.c  | 26 +++++++++++++-------------
+ drivers/gpio/gpiolib.c   |  4 ++--
+ drivers/leds/leds-gpio.c |  2 +-
+ include/acpi/acpi_bus.h  |  2 +-
+ include/linux/acpi.h     |  4 ++--
+ include/linux/of.h       |  4 ++--
+ 6 files changed, 21 insertions(+), 21 deletions(-)
 
-Looking at the block diagram of FT232R or FT232H, the CBUS pins seem to
-be part of the UART/FIFO controller. And I think the dual UART FT2232D
-actually supports controlling the CBUS pins of the two UART controllers
-individually, at least the block diagram thereof suggests so.
+diff --git a/drivers/base/property.c b/drivers/base/property.c
+index 1d0b116..dfd4de6 100644
+--- a/drivers/base/property.c
++++ b/drivers/base/property.c
+@@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
+ bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
+ {
+ 	if (is_of_node(fwnode))
+-		return of_property_read_bool(of_node(fwnode), propname);
++		return of_property_read_bool(to_of_node(fwnode), propname);
+ 	else if (is_acpi_node(fwnode))
+-		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
++		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
 
+ 	return !!pset_prop_get(to_pset(fwnode), propname);
+ }
+@@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
+ ({ \
+ 	int _ret_; \
+ 	if (is_of_node(_fwnode_)) \
+-		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
++		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
+ 					       _type_, _val_, _nval_); \
+ 	else if (is_acpi_node(_fwnode_)) \
+-		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
++		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
+ 					   _proptype_, _val_, _nval_); \
+ 	else \
+ 		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
+@@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
+ {
+ 	if (is_of_node(fwnode))
+ 		return val ?
+-			of_property_read_string_array(of_node(fwnode), propname,
+-						      val, nval) :
+-			of_property_count_strings(of_node(fwnode), propname);
++			of_property_read_string_array(to_of_node(fwnode),
++						      propname, val, nval) :
++			of_property_count_strings(to_of_node(fwnode), propname);
+ 	else if (is_acpi_node(fwnode))
+-		return acpi_dev_prop_read(acpi_node(fwnode), propname,
++		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+ 					  DEV_PROP_STRING, val, nval);
 
-> Note that your current implementation fails to remove the gpio chip on
-> device disconnect, leaks resources in error paths, and lacks locking for
-> the gpio state.
+ 	return pset_prop_read_array(to_pset(fwnode), propname,
+@@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
+ 				const char *propname, const char **val)
+ {
+ 	if (is_of_node(fwnode))
+-		return of_property_read_string(of_node(fwnode), propname, val);
++		return of_property_read_string(to_of_node(fwnode), propname, val);
+ 	else if (is_acpi_node(fwnode))
+-		return acpi_dev_prop_read(acpi_node(fwnode), propname,
++		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
+ 					  DEV_PROP_STRING, val, 1);
 
-Oh true. I was aware that it is somewhat rough, should probably have
-sent the patch as RFC...
+ 	return -ENXIO;
+@@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
+ 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+ 		struct device_node *node;
 
---
-Stefan
+-		node = of_get_next_available_child(dev->of_node, of_node(child));
++		node = of_get_next_available_child(dev->of_node, to_of_node(child));
+ 		if (node)
+ 			return &node->fwnode;
+ 	} else if (IS_ENABLED(CONFIG_ACPI)) {
+ 		struct acpi_device *node;
+
+-		node = acpi_get_next_child(dev, acpi_node(child));
++		node = acpi_get_next_child(dev, to_acpi_node(child));
+ 		if (node)
+ 			return acpi_fwnode_handle(node);
+ 	}
+@@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
+ void fwnode_handle_put(struct fwnode_handle *fwnode)
+ {
+ 	if (is_of_node(fwnode))
+-		of_node_put(of_node(fwnode));
++		of_node_put(to_of_node(fwnode));
+ }
+ EXPORT_SYMBOL_GPL(fwnode_handle_put);
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 6bc612b..5d8b2b3 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+ 	if (is_of_node(fwnode)) {
+ 		enum of_gpio_flags flags;
+
+-		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
++		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
+ 						&flags);
+ 		if (!IS_ERR(desc))
+ 			active_low = flags & OF_GPIO_ACTIVE_LOW;
+ 	} else if (is_acpi_node(fwnode)) {
+ 		struct acpi_gpio_info info;
+
+-		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
++		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
+ 					       &info);
+ 		if (!IS_ERR(desc))
+ 			active_low = info.active_low;
+diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+index 15eb3f8..d2d54d6 100644
+--- a/drivers/leds/leds-gpio.c
++++ b/drivers/leds/leds-gpio.c
+@@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+ 			goto err;
+ 		}
+
+-		np = of_node(child);
++		np = to_of_node(child);
+
+ 		if (fwnode_property_present(child, "label")) {
+ 			fwnode_property_read_string(child, "label", &led.name);
+diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+index 8de4fa9..1224be8 100644
+--- a/include/acpi/acpi_bus.h
++++ b/include/acpi/acpi_bus.h
+@@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+ 	return fwnode && fwnode->type == FWNODE_ACPI;
+ }
+
+-static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
++static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+ {
+ 	return is_acpi_node(fwnode) ?
+ 		container_of(fwnode, struct acpi_device, fwnode) : NULL;
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index e4da5e3..ec3c98e 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
+ 	return adev ? adev->handle : NULL;
+ }
+
+-#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
++#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
+ #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
+ 	acpi_fwnode_handle(adev) : NULL)
+ #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
+@@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
+ 	return false;
+ }
+
+-static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
++static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
+ {
+ 	return NULL;
+ }
+diff --git a/include/linux/of.h b/include/linux/of.h
+index b871ff9..f05fdce 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+ 	return fwnode && fwnode->type == FWNODE_OF;
+ }
+
+-static inline struct device_node *of_node(struct fwnode_handle *fwnode)
++static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+ {
+ 	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
+ }
+@@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
+ 	return false;
+ }
+
+-static inline struct device_node *of_node(struct fwnode_handle *fwnode)
++static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
+ {
+ 	return NULL;
+ }
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
