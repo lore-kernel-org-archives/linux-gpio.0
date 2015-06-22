@@ -1,106 +1,276 @@
-From: Shobhit Kumar <kumar@shobhit.info>
-Subject: Re: [PATCH 6/8] drivers/pwm: Add Crystalcove (CRC) PWM
-	driver
-Date: Mon, 22 Jun 2015 13:25:13 +0530
-Message-ID: <CAAbrOmfoPtK9neoB=V2oGBkuDZiMW5AKxpOYcgBwLTMM9QuB5Q@mail.gmail.com>
-References: <1430316005-16480-1-git-send-email-shobhit.kumar@intel.com>
- <1430316005-16480-7-git-send-email-shobhit.kumar@intel.com>
- <1430428322.2187.24.camel@x220>
- <CAAbrOmc-71MO2N9sezbOONPAf8_XSCOtHBSGD9AS9hOk0vsE=A@mail.gmail.com>
- <1434652916.2385.124.camel@x220>
- <CAAbrOmdGesnA+-1gz8mAWFgpSwP-R-=CZ0WjBwLamMT0f_X6bw@mail.gmail.com>
- <1434799402.19497.47.camel@x220>
- <20150620180435.GG16386@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO bulk changes for v4.2
+Date: Mon, 22 Jun 2015 11:07:22 +0200
+Message-ID: <CACRpkdaPhrVaEG5uVyBDv3-KfQG=DgSn=Loo3E2GXq29UT23=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20150620180435.GG16386@windriver.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, Povilas Staniulis <wdmonster@gmail.com>, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:33657 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521AbbFVJHX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jun 2015 05:07:23 -0400
+Received: by obpn3 with SMTP id n3so26121281obp.0
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jun 2015 02:07:22 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-T24gU2F0LCBKdW4gMjAsIDIwMTUgYXQgMTE6MzQgUE0sIFBhdWwgR29ydG1ha2VyCjxwYXVsLmdv
-cnRtYWtlckB3aW5kcml2ZXIuY29tPiB3cm90ZToKPiBbUmU6IFtJbnRlbC1nZnhdIFtQQVRDSCA2
-LzhdIGRyaXZlcnMvcHdtOiBBZGQgQ3J5c3RhbGNvdmUgKENSQykgUFdNIGRyaXZlcl0gT24gMjAv
-MDYvMjAxNSAoU2F0IDEzOjIzKSBQYXVsIEJvbGxlIHdyb3RlOgo+Cj4+IFtBZGRlZCBQYXVsIEdv
-cnRtYWtlci5dCj4+Cj4+IEhpIFNob2JoaXQsCj4+Cj4+IE9uIEZyaSwgMjAxNS0wNi0xOSBhdCAx
-MjoxNiArMDUzMCwgU2hvYmhpdCBLdW1hciB3cm90ZToKPj4gPiBTbyB3aGF0IGlzIHRoZSBleGFj
-dCBiaWcgcHJvYmxlbSB3aXRoIHRoaXMgPwo+Pgo+PiBUaGUgbWFpbiBwcm9ibGVtIEkgaGF2ZSBp
-cyB0aGF0IGl0J3MgaGFyZCB0byByZWFkIGEgc3VibWl0dGVyJ3MgbWluZC4KPj4gQW5kLCBJIHRo
-aW5rLCBpbiBjYXNlcyBsaWtlIHRoaXMgd2UgbmVlZCB0byBrbm93IGlmIHRoZSBzdWJtaXR0ZXIg
-anVzdAo+PiBtYWRlIHNvbWUgc2lsbHkgbWlzdGFrZSBvciB0aGF0IHRoZSBtaXNtYXRjaCAoYmV0
-d2VlbiBLY29uZmlnIHR5cGUgYW5kCj4+IGNvZGUpIHdhcyBpbnRlbnRpb25hbC4gU28gZWFjaCB0
-aW1lIHN1Y2ggYSBtaXNtYXRjaCBpcyBzcG90dGVkIHRoZQo+PiBzdWJtaXR0ZXIgb3VnaHQgdG8g
-YmUgYXNrZWQgYWJvdXQgaXQuCj4+Cj4+IChJJ2QgZ3Vlc3MgdGhhdCBvbmUgb3IgdHdvIG5ldyBk
-cml2ZXJzIGFyZSBzdWJtaXR0ZWQgX2VhY2hfIGRheS4gQW5kCj4+IHRoZXNlIG1pc21hdGNoZXMg
-YXJlIHF1aXRlIGNvbW1vbi4gSSdkIHNheSBJIHJlY2VpdmUgYW5zd2VycyBsaWtlOgo+PiAtICJP
-b3BzLCB5ZXMgYm9vbCBzaG91bGQgaGF2ZSBiZWVuIHRyaXN0YXRlIjsgb3IKPj4gLSAiT29wcywg
-Zm9yZ290IHRvIGNsZWFuIHVwIGFmdGVyIG5vdGljaW5nIHRyaXN0YXRlIGRpZG4ndCB3b3JrIjsg
-b3IKPj4gLSAiSSBqdXN0IGNvcHktYW5kLXBhc3RlZCBhIHNpbWlsYXIgZHJpdmVyLCB0aGUgbW9k
-dWxlIHN0dWZmIGlzbid0Cj4+ICAgYWN0dWFsbHkgbmVlZGVkIgo+PiBhdCBsZWFzdCBvbmNlIGEg
-d2Vlay4gTm90IHN1cmUsIEkgZG9uJ3Qga2VlcCB0cmFjayBvZiB0aGlzIHN0dWZmLikKPj4KPj4g
-RnVydGhlcm1vcmUsIGl0IGFwcGVhcnMgdGhhdCBQYXVsIEdvcnRtYWtlciBpcyBvbiBhIG1pc3Np
-b24gdG8sIGJhZGx5Cj4+IHN1bW1hcml6ZWQsIHVudGFuZ2xlIHRoZSBtb2R1bGUgYW5kIGluaXQg
-Y29kZS4gU2VlIGZvciBpbnN0YW5jZQo+PiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNS81LzI4
-LzgwOSBhbmQKPj4gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTUvNS8zMS8yMDUgLgo+Pgo+PiBO
-b3csIEkgZG9uJ3Qga25vdyB3aGV0aGVyIChvdGhlcikgUGF1bCBpcyBib3RoZXJlZCBieSB0aGVz
-ZSBNT0RVTEVfKgo+PiBtYWNyb3MuIEJ1dCBQYXVsIGRpZCBzdWJtaXQgYSBzZXJpZXMgdGhhdCBh
-ZGRzCj4KPiBZZXMsIEkgYWdyZWUgdGhhdCBpdCB3b3VsZCBiZSBuaWNlIHRvIG5vdCBzZWUgdGhl
-c2UgbWlzbWF0Y2hlcywKPiByZWdhcmRsZXNzIG9mIHdoZXRoZXIgd2UgY2FuIGdldCBhd2F5IHdp
-dGggaXQgb3Igbm90Lgo+Cj4+IGJ1aWx0aW5fcGxhdGZvcm1fZHJpdmVyKCksIHNlZSBodHRwczov
-L2xrbWwub3JnL2xrbWwvMjAxNS81LzEwLzEzMSAuCj4+IFRoYXQgbmV3IG1hY3JvIGVuc3VyZXMg
-YnVpbHQtaW4gb25seSBjb2RlIGRvZXNuJ3QgaGF2ZSB0byB1c2UKPj4gbW9kdWxlX3BsYXRmb3Jt
-X2RyaXZlcigpLCB3aGljaCB5b3VyIHBhdGNoIGFsc28gdXNlcy4gU28gcGVyaGFwcyBQYXVsCj4+
-IGNhbiBleHBsYWluIHNvbWUgb2YgdGhlIG5vbi1vYnZpb3VzIGlzc3VlcyBjYXVzZWQgYnkgYnVp
-bHQtaW4gb25seSBjb2RlCj4+IHVzaW5nIG1vZHVsZSBzcGVjaWZpYyBjb25zdHJ1Y3RzLgo+Cj4g
-SW4gIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE1LzUvMTAvMTI1IEknZCB3cml0dGVuOgo+Cj4g
-ICBUaGVyZSBhcmUgc2V2ZXJhbCBkb3duc2lkZXMgdG8gdGhpczoKPiAgIDEpIFRoZSBjb2RlIGNh
-biBhcHBlYXIgbW9kdWxhciB0byBhIHJlYWRlciBvZiB0aGUgY29kZSwgYW5kIHRoZXkKPiAgICAg
-IHdvbid0IGtub3cgaWYgdGhlIGNvZGUgcmVhbGx5IGlzIG1vZHVsYXIgd2l0aG91dCBjaGVja2lu
-ZyB0aGUKPiAgICAgIE1ha2VmaWxlIGFuZCBLY29uZmlnIHRvIHNlZSBpZiBjb21waWxhdGlvbiBp
-cyBnb3Zlcm5lZCBieSBhCj4gICAgICBib29sIG9yIHRyaXN0YXRlLgo+ICAgMikgQ29kZXJzIG9m
-IGRyaXZlcnMgbWF5IGJlIHRlbXB0ZWQgdG8gY29kZSB1cCBhbiBfX2V4aXQgZnVuY3Rpb24KPiAg
-ICAgIHRoYXQgaXMgbmV2ZXIgdXNlZCwganVzdCBpbiBvcmRlciB0byBzYXRpc2Z5IHRoZSByZXF1
-aXJlZCB0aHJlZQo+ICAgICAgYXJncyBvZiB0aGUgbW9kdWxhciByZWdpc3RyYXRpb24gZnVuY3Rp
-b24uCj4gICAzKSBOb24tbW9kdWxhciBjb2RlIGVuZHMgdXAgaW5jbHVkaW5nIHRoZSA8bW9kdWxl
-Lmg+IHdoaWNoIGluY3JlYXNlcwo+ICAgICAgQ1BQIG92ZXJoZWFkIHRoYXQgdGhleSBkb24ndCBu
-ZWVkLgo+ICAgNCkgSXQgaGluZGVycyB1cyBmcm9tIHBlcmZvcm1pbmcgYmV0dGVyIHNlcGFyYXRp
-b24gb2YgdGhlIG1vZHVsZQo+ICAgICAgaW5pdCBjb2RlIGFuZCB0aGUgZ2VuZXJpYyBpbml0IGNv
-ZGUuCj4KCk9rYXkuIEdldCB0aGUgaWRlYSBhbmQgdGhlIG5lZWQgaW4gdGVybXMgb2YgY2xlYXIg
-c2VwYXJhdGlvbi4gSXRzIGp1c3QKdGhhdCB0aGVyZSBhcmUgcXVpdGUgYSBmZXcgYnVpbHQtaW4g
-ZHJpdmVycyB1c2luZyBtb2R1bGUKaW5pdGlhbGl6YXRpb24gdGhhdCBJIGFzc3VtZWQgaXRzIG9r
-YXkuCgo+IFRoZSBuYXR1cmUgb2YgbGludXggbWVhbnMgdGhhdCB0aG91c2FuZHMgb2YgZGV2ZWxv
-cGVycyBhcmUgcmVhZGluZyB0aGUKPiBjb2RlIGV2ZXJ5IGRheSAtLSBzbyBJIHRoaW5rIHRoYXQg
-dGhlcmUgaXMgYSBnZW51aW5lIHZhbHVlIGluIGhhdmluZyB0aGUKPiBjb2RlIGNvbnZleSBhIGNs
-ZWFyIG1lc3NhZ2Ugb24gaG93IGl0IHdhcyBkZXNpZ25lZCB0byBiZSB1c2VkLiAgT25seQo+IHVz
-aW5nIG1vZHVsZSByZWxhdGVkIGhlYWRlcnMvbWFjcm9zIGZvciBnZW51aW5lbHkgbW9kdWxhciBj
-b2RlIGhlbHBzIHVzCj4gKGFsYmVpdCBpbiBhIHNtYWxsIHdheSkgdG93YXJkcyBhY2hpZXZpbmcg
-dGhhdC4KPgo+IExvb2tpbmcgYXQgdGhpcyB0aHJlYWQsIEkgc2VlIHRoYXQgb25lIG9mIHRoZSBy
-ZWFzb25zIGdpdmVuIGZvciB0aGlzCj4gY29kZSdzIGFtYmlndW91cyBtb2R1bGUgdnMuIGJ1aWx0
-LWluIGlkZW50aXR5IHdhcyB0aGUgb2JzZXJ2YXRpb24gb2YgYQo+IHNpbWlsYXIgaWRlbnRpdHkg
-Y3Jpc2lzIG9mIHRoZSByZWxhdGVkIElOVEVMX1NPQ19QTUlDIGNvZGUuIERvZXMgdGhhdAo+IG5v
-dCBiYWNrIHVwIHRoZSBwb2ludCBhYm92ZSBhYm91dCB0aGUgdmFsdWUgaW4gaGF2aW5nIHRoZSBj
-b2RlIHNwZWFrIGZvcgo+IGl0c2VsZj8gIFNvIElNSE8gd2UgcHJvYmFibHkgc2hvdWxkIGNsYXJp
-ZnkgdGhlIFBNSUMgY29kZSB2cy4gYWRkaW5nCj4gYW5vdGhlciBleGFtcGxlIHRoYXQgbG9va3Mg
-anVzdCBsaWtlIGl0Lgo+CgpPa2F5IGFncmVlLiBJIHRoaW5rIHRoZXJlIGFyZSBxdWl0ZSBvZiB0
-aGVtIGx1cmtpbmcgaW4gdGhlIHNvdXJjZXMKd2hpY2ggd291bGQgbmVlZCBjb3JyZWN0aW9uLiBG
-b3IgdGhpcyBQV00gZHJpdmVyIEkgd2lsbCB0YWtlIGNhcmUgYXMKc3VnZ2VzdGVkLgoKUmVnYXJk
-cwpTaG9iaGl0Cgo+IFBhdWwuCj4gLS0KPgo+Pgo+PiA+IEkgY2FuIGFueXdheSBzaG92ZSBvdXQg
-dGhlc2UgbWFjcm9zIHRvIGVuZCB0aGUgZGlzY3Vzc2lvbi4KPj4KPj4gSSdkIHJhdGhlciBjb252
-aW5jZSB5b3UgdGhhbiBhbm5veSB5b3UgaW50byBkb2luZyBhcyBJIHN1Z2dlc3RlZC4KPj4KPj4g
-PiBCVFcgd2hldGhlciB5b3UgIGJ1eSB0aGUgYXJndW1lbnQgb3Igbm90LCBwbGVhc2UgZG8gdHJl
-YXQgeW91cnNlbGYKPj4gPiB3aXRoIGljZSBjcmVhbSBmb3IgYmVpbmcgYWJsZSB0byBtYWtlIHN1
-Y2ggYSBjb21tZW50Lgo+Pgo+PiBXaWxsIGRvLgo+Pgo+PiBUaGFua3MsCj4+Cj4+Cj4+IFBhdWwg
-Qm9sbGUKPj4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-SW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Hi Linus,
+
+this is the big bulk of GPIO changes for the v4.2 kernel series.
+Details are in the signed tag as always.
+
+The included I2C changes have been ACKed by the I2C
+maintainer.
+
+Please pull this in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 030bbdbf4c833bc69f502eae58498bc5572db736:
+
+  Linux 4.1-rc3 (2015-05-10 15:12:29 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.2-1
+
+for you to fetch changes up to 38e003f4b5dc405158b9ce625d8cc2b336d45497:
+
+  gpio: Fix checkpatch.pl issues (2015-06-16 11:00:06 +0200)
+
+----------------------------------------------------------------
+This is the big bulk of GPIO changes queued for the v4.2
+kernel series:
+
+- A big set of cleanups to the aged sysfs interface from
+  Johan Hovold. To get these in, v4.1-rc3 was merged into
+  the tree as the first patch in that series had to go
+  into stable. This makes the locking much more fine-grained
+  (get rid of the "big GPIO lock(s)" and store states in the
+  GPIO descriptors.
+
+- Rename gpiod_[g|s]et_array() to gpiod_[g|s]et_array_value()
+  to avoid confusions.
+
+- New drivers for:
+  - NXP LPC18xx (currently LPC1850)
+  - NetLogic XLP
+  - Broadcom STB SoC's
+  - Axis ETRAXFS
+  - Zynq Ultrascale+ (subdriver)
+
+- ACPI:
+  - Make it possible to retrieve GpioInt resources from
+    a GPIO device using acpi_dev_gpio_irq_get()
+  - Merge some dependent I2C changes exploiting this.
+  - Support the ARM X-Gene GPIO standby driver.
+
+- Make it possible for the generic GPIO driver to read
+  back the value set registers to reflect current
+  status.
+
+- Loads of OMAP IRQ handling fixes.
+
+- Incremental improvements to Kona, max732x, OMAP, MXC, RCAR,
+  PCA953x, STP-XWAY, PCF857x, Crystalcove, TB10x.
+
+- Janitorial (contification, checkpatch cleanups)
+
+----------------------------------------------------------------
+Aaron Lu (1):
+      gpio: crystalcove: set IRQCHIP_SKIP_SET_WAKE for the irqchip
+
+Anurag Kumar Vulisha (1):
+      gpio: Added support to Zynq Ultrascale+ MPSoC
+
+Axel Lin (3):
+      gpio: bcm-kona: Implement get_direction callback
+      gpio: xlp: Add missing .owner and .label settings for gpio_chip
+      gpio: tb10x: Drop unneeded free_irq() call
+
+Christophe Jaillet (1):
+      gpio: x-gene: Remove a useless memset
+
+Colin Cronin (1):
+      Drivers: gpio: Fix spelling errors
+
+Daniel Lockyer (1):
+      gpio: Fix checkpatch.pl issues
+
+Dmitry Eremin-Solenikov (1):
+      gpiolib: cleanup chained handler and data
+
+Geert Uytterhoeven (2):
+      gpio: rcar: Check for irq_set_irq_wake() failures
+      gpio: pcf857x: Check for irq_set_irq_wake() failures
+
+Gregory Fong (2):
+      dt-bindings: add brcmstb-gpio GPIO binding
+      gpio: Add GPIO support for Broadcom STB SoCs
+
+Grygorii Strashko (6):
+      gpio: omap: fix omap_gpio_free to not clean up irq configuration
+      gpio: omap: fix error handling in omap_gpio_irq_type
+      gpio: omap: rework omap_x_irq_shutdown to touch only irqs
+specific registers
+      gpio: omap: rework omap_gpio_request to touch only gpio specific registers
+      gpio: omap: rework omap_gpio_irq_startup to handle current pin
+state properly
+      gpio: pcf857x: handle only enabled irqs
+
+Hanjun Guo (1):
+      GPIO / ACPI: export acpi_gpiochip_request(free)_interrupts for module use
+
+Joachim Eastwood (2):
+      gpio: add lpc18xx gpio driver
+      gpio: add DT bindings for lpc1850-gpio driver
+
+Johan Hovold (23):
+      gpio: clean up gpiochip_remove
+      gpio: sysfs: fix redundant lock-as-irq handling
+      gpio: sysfs: preparatory clean ups
+      gpio: sysfs: reduce gpiochip-export locking scope
+      gpio: sysfs: clean up chip class-device handling
+      gpio: sysfs: rename gpiochip registration functions
+      gpio: remove gpiod_sysfs_set_active_low
+      gpio: sysfs: use DEVICE_ATTR macros
+      gpio: sysfs: release irq after class-device deregistration
+      gpio: sysfs: remove redundant export tests
+      gpio: sysfs: add gpiod class-device data
+      gpio: sysfs: remove redundant gpio-descriptor parameters
+      gpio: sysfs: clean up interrupt-interface implementation
+      gpio: sysfs: only call irq helper if needed
+      gpio: sysfs: split irq allocation and deallocation
+      gpio: sysfs: clean up edge_store
+      gpio: sysfs: clean up gpiod_export_link locking
+      gpio: sysfs: use per-gpio locking
+      gpio: sysfs: fix race between gpiod export and unexport
+      gpio: sysfs: rename active-low helper
+      gpio: sysfs: remove FLAG_SYSFS_DIR
+      gpio: sysfs: move irq trigger flags to class-device data
+      gpio: dln2: fix build breakage
+
+Joshua Scott (1):
+      gpio: Prevent an integer overflow in the pca953x driver
+
+Kamlakant Patel (2):
+      gpio: Add Netlogic XLP GPIO devicetree bindings documentation
+      gpio: xlp: GPIO controller for Netlogic XLP SoCs
+
+Krzysztof Kozlowski (1):
+      gpio: Constify platform_device_id
+
+Linus Walleij (4):
+      Merge tag 'v4.1-rc3' into devel
+      gpio: discourage passing base to gpio_chip
+      gpio: promote own request failure to pr_err()
+      gpio: improve error reporting on own descriptors
+
+Martin Blumenstingl (2):
+      gpio-stp-xway: Fix enabling the highest bit of the PHY LEDs
+      gpio: stp-xway: Use the of_property_read_u32 helper
+
+Michal Simek (1):
+      gpio: xilinx: Fix kernel-doc warnings
+
+Mika Westerberg (4):
+      gpio / ACPI: Add support for retrieving GpioInt resources from a device
+      i2c / ACPI: Use 0 to indicate that device does not have interrupt assigned
+      i2c / ACPI: Assign IRQ for devices that have GpioInt automatically
+      gpio / ACPI: Return -EPROBE_DEFER if the gpiochip was not found
+
+Paul Gortmaker (1):
+      drivers/gpio: include <module.h> for modular crystalcove code
+
+Rabin Vincent (1):
+      gpio: add ETRAXFS GPIO driver
+
+Rojhalat Ibrahim (2):
+      gpiolib: rename gpiod_set_array to gpiod_set_array_value
+      fix documentation after renaming gpiod_set_array to gpiod_set_array_value
+
+Semen Protsenko (3):
+      gpio: max732x: Propagate wake-up setting to parent irq controller
+      gpio: max732x: Add IRQF_SHARED to irq flags
+      gpio: max732x: Fix irq-events handler
+
+Tony Lindgren (1):
+      gpio: omap: Allow building as a loadable module
+
+Vladimir Zapolskiy (3):
+      gpio: gpio-generic: add flag to read out output value from reg_set
+      gpio: moxart: get value of output gpio from generic driver
+      gpio: mxc: read output value from GPIO_DR register
+
+Y Vo (1):
+      gpio: xgene: add ACPI support for APM X-Gene GPIO standby driver
+
+ .../devicetree/bindings/gpio/brcm,brcmstb-gpio.txt |  65 +++
+ .../devicetree/bindings/gpio/gpio-etraxfs.txt      |  21 +
+ .../devicetree/bindings/gpio/gpio-xlp.txt          |  47 ++
+ .../devicetree/bindings/gpio/gpio-zynq.txt         |   2 +-
+ .../devicetree/bindings/gpio/nxp,lpc1850-gpio.txt  |  39 ++
+ Documentation/gpio/consumer.txt                    |  28 +-
+ Documentation/gpio/gpio-legacy.txt                 |   9 -
+ Documentation/gpio/sysfs.txt                       |   8 -
+ Documentation/zh_CN/gpio.txt                       |   8 -
+ MAINTAINERS                                        |   7 +
+ drivers/gpio/Kconfig                               |  39 +-
+ drivers/gpio/Makefile                              |   4 +
+ drivers/gpio/gpio-altera.c                         |   3 +-
+ drivers/gpio/gpio-bcm-kona.c                       |  26 +-
+ drivers/gpio/gpio-brcmstb.c                        | 252 +++++++++
+ drivers/gpio/gpio-crystalcove.c                    |   5 +-
+ drivers/gpio/gpio-dln2.c                           |   1 -
+ drivers/gpio/gpio-etraxfs.c                        | 176 +++++++
+ drivers/gpio/gpio-f7188x.c                         |   4 +-
+ drivers/gpio/gpio-generic.c                        |  22 +-
+ drivers/gpio/gpio-it8761e.c                        |   2 +-
+ drivers/gpio/gpio-lpc18xx.c                        | 180 +++++++
+ drivers/gpio/gpio-lynxpoint.c                      |   2 +-
+ drivers/gpio/gpio-max732x.c                        |  21 +-
+ drivers/gpio/gpio-moxart.c                         |  17 +-
+ drivers/gpio/gpio-mxc.c                            |   5 +-
+ drivers/gpio/gpio-mxs.c                            |   2 +-
+ drivers/gpio/gpio-omap.c                           |  83 ++-
+ drivers/gpio/gpio-pca953x.c                        |  23 +-
+ drivers/gpio/gpio-pcf857x.c                        |  56 +-
+ drivers/gpio/gpio-rcar.c                           |  13 +-
+ drivers/gpio/gpio-stp-xway.c                       |  29 +-
+ drivers/gpio/gpio-tb10x.c                          |   1 -
+ drivers/gpio/gpio-tegra.c                          |   2 +-
+ drivers/gpio/gpio-ts5500.c                         |   2 +-
+ drivers/gpio/gpio-xgene-sb.c                       |  22 +-
+ drivers/gpio/gpio-xilinx.c                         |   4 +-
+ drivers/gpio/gpio-xlp.c                            | 427 ++++++++++++++++
+ drivers/gpio/gpio-zynq.c                           | 193 ++++---
+ drivers/gpio/gpiolib-acpi.c                        |  40 +-
+ drivers/gpio/gpiolib-of.c                          |   2 +-
+ drivers/gpio/gpiolib-sysfs.c                       | 567 ++++++++++-----------
+ drivers/gpio/gpiolib.c                             | 112 ++--
+ drivers/gpio/gpiolib.h                             |  16 +-
+ drivers/i2c/i2c-core.c                             |  12 +-
+ drivers/net/phy/mdio-mux-gpio.c                    |   3 +-
+ drivers/tty/serial/serial_mctrl_gpio.c             |   2 +-
+ include/asm-generic/gpio.h                         |   5 -
+ include/linux/acpi.h                               |   7 +
+ include/linux/basic_mmio_gpio.h                    |   1 +
+ include/linux/gpio.h                               |   7 -
+ include/linux/gpio/consumer.h                      |  43 +-
+ include/linux/gpio/driver.h                        |  13 +-
+ include/linux/platform_data/gpio-omap.h            |  12 +-
+ 54 files changed, 2047 insertions(+), 645 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-etraxfs.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xlp.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc1850-gpio.txt
+ create mode 100644 drivers/gpio/gpio-brcmstb.c
+ create mode 100644 drivers/gpio/gpio-etraxfs.c
+ create mode 100644 drivers/gpio/gpio-lpc18xx.c
+ create mode 100644 drivers/gpio/gpio-xlp.c
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
