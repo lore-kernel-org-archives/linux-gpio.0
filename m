@@ -1,213 +1,74 @@
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: [PATCH] of: acpi: Rename of_node() and acpi_node() to to_of_node()
- and to_acpi_node()
-Date: Mon, 22 Jun 2015 22:38:53 +0200
-Message-ID: <5588725D.6000101@gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2 1/4] sh-pfc: do not call sh_pfc_get_pin_index() when
+ unnecessary
+Date: Tue, 23 Jun 2015 01:42:41 +0300
+Message-ID: <55888F61.800@cogentembedded.com>
+References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com> <10321666.EILxzFPKZf@wasted.cogentembedded.com> <1860613.5T71vLz0D7@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:35218 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750921AbbFVUi6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jun 2015 16:38:58 -0400
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:34737 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751370AbbFVWmq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 22 Jun 2015 18:42:46 -0400
+Received: by lbnk3 with SMTP id k3so11636035lbn.1
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jun 2015 15:42:44 -0700 (PDT)
+In-Reply-To: <1860613.5T71vLz0D7@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devel@acpica.org, devicetree@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
-but there were already ~63 of_node local variables or function parameters
-(no single acpi_node though, but anyway).
+Hello.
 
-After debugging undefined but used of_node local varible (which turned out
-to reference static function of_node() instead) it became clear that the names
-for the functions are too short and too generic for global scope.
+On 06/18/2015 10:05 PM, Laurent Pinchart wrote:
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
+>> Calling sh_pfc_get_pin_index()  to calculate a pin index based on the
+>> collected pin range data is unnecessary when we're dealing with
+>> 'pfc->info->pins' and 'chip->pins' arrays as those always reperesent the
+>> pins starting from index 0 sequentially. Being a  mere  optimization at
+>> this time, this change will become crucial when we'll allow the "holes" in
+>> those arrays...
 
-Compile-tested on x86_64 with ACPI and ARM with OF.
+> Pin information is stored in per-SoC pins arrays (a.k.a. pfc->info->pins). The
+> driver support two models to number pins:
 
- drivers/base/property.c  | 26 +++++++++++++-------------
- drivers/gpio/gpiolib.c   |  4 ++--
- drivers/leds/leds-gpio.c |  2 +-
- include/acpi/acpi_bus.h  |  2 +-
- include/linux/acpi.h     |  4 ++--
- include/linux/of.h       |  4 ++--
- 6 files changed, 21 insertions(+), 21 deletions(-)
+> - The sequential model, in which pins are numbered sequentially starting at 0.
+> Pin numbers are equal to the index in the array.
 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 1d0b116..dfd4de6 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
- bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
- {
- 	if (is_of_node(fwnode))
--		return of_property_read_bool(of_node(fwnode), propname);
-+		return of_property_read_bool(to_of_node(fwnode), propname);
- 	else if (is_acpi_node(fwnode))
--		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
-+		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
+    And I didn't touch this case.
 
- 	return !!pset_prop_get(to_pset(fwnode), propname);
- }
-@@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
- ({ \
- 	int _ret_; \
- 	if (is_of_node(_fwnode_)) \
--		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
-+		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
- 					       _type_, _val_, _nval_); \
- 	else if (is_acpi_node(_fwnode_)) \
--		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
-+		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
- 					   _proptype_, _val_, _nval_); \
- 	else \
- 		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
-@@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
- {
- 	if (is_of_node(fwnode))
- 		return val ?
--			of_property_read_string_array(of_node(fwnode), propname,
--						      val, nval) :
--			of_property_count_strings(of_node(fwnode), propname);
-+			of_property_read_string_array(to_of_node(fwnode),
-+						      propname, val, nval) :
-+			of_property_count_strings(to_of_node(fwnode), propname);
- 	else if (is_acpi_node(fwnode))
--		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-+		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
- 					  DEV_PROP_STRING, val, nval);
+> - The explicit numbering model, in which each pin entry has an explicit number
+> (stored in struct sh_pfc_pin.pin). Pins numbers are not necessarily equal to
+> the index of the pin entry in the array.
 
- 	return pset_prop_read_array(to_pset(fwnode), propname,
-@@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
- 				const char *propname, const char **val)
- {
- 	if (is_of_node(fwnode))
--		return of_property_read_string(of_node(fwnode), propname, val);
-+		return of_property_read_string(to_of_node(fwnode), propname, val);
- 	else if (is_acpi_node(fwnode))
--		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-+		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
- 					  DEV_PROP_STRING, val, 1);
+    Ah... I was just looking at _GP_GPIO() which still assigns sequential pin 
+#'s equal to the indices.
 
- 	return -ENXIO;
-@@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
- 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
- 		struct device_node *node;
+> The sh_pfc_get_pin_index() function converts a pin number to the pin index in
+> the pins array.
 
--		node = of_get_next_available_child(dev->of_node, of_node(child));
-+		node = of_get_next_available_child(dev->of_node, to_of_node(child));
- 		if (node)
- 			return &node->fwnode;
- 	} else if (IS_ENABLED(CONFIG_ACPI)) {
- 		struct acpi_device *node;
+> Let's consider the sh_pfc_pinconf_validate() from which your patch removes the
+> call to sh_pfc_get_pin_index() and uses the pin number directly. The function
+> is called from the .pin_config_get() and .pin_config_set() handlers. One
+> possible call path is
 
--		node = acpi_get_next_child(dev, acpi_node(child));
-+		node = acpi_get_next_child(dev, to_acpi_node(child));
- 		if (node)
- 			return acpi_fwnode_handle(node);
- 	}
-@@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
- void fwnode_handle_put(struct fwnode_handle *fwnode)
- {
- 	if (is_of_node(fwnode))
--		of_node_put(of_node(fwnode));
-+		of_node_put(to_of_node(fwnode));
- }
- EXPORT_SYMBOL_GPL(fwnode_handle_put);
+> pinconf_pins_show() -> pinconf_dump_pin() -> pinconf_dump_pins() ->
+> pinconf_generic_dump_pins() -> pinconf_generic_dump_one() ->
+> pin_config_get_for_pin() -> .pin_config_get()
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6bc612b..5d8b2b3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 	if (is_of_node(fwnode)) {
- 		enum of_gpio_flags flags;
+> The pin value passed to the .pin_config_get() function is pctldev->desc->
+> pins[i].number, which is the pin number, not its index. It thus looks like
+> this patch introduces a bug.
 
--		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
-+		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
- 						&flags);
- 		if (!IS_ERR(desc))
- 			active_low = flags & OF_GPIO_ACTIVE_LOW;
- 	} else if (is_acpi_node(fwnode)) {
- 		struct acpi_gpio_info info;
+> There might be something obvious I'm not getting though, so please feel free
+> to prove me wrong.
 
--		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
-+		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
- 					       &info);
- 		if (!IS_ERR(desc))
- 			active_low = info.active_low;
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 15eb3f8..d2d54d6 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			goto err;
- 		}
+    The bug seems more like theoretical one at this point (unless you have the 
+examples with non-sequential pin #'s)...
 
--		np = of_node(child);
-+		np = to_of_node(child);
+WBR, Sergei
 
- 		if (fwnode_property_present(child, "label")) {
- 			fwnode_property_read_string(child, "label", &led.name);
-diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-index 8de4fa9..1224be8 100644
---- a/include/acpi/acpi_bus.h
-+++ b/include/acpi/acpi_bus.h
-@@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
- 	return fwnode && fwnode->type == FWNODE_ACPI;
- }
-
--static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-+static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
- {
- 	return is_acpi_node(fwnode) ?
- 		container_of(fwnode, struct acpi_device, fwnode) : NULL;
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index e4da5e3..ec3c98e 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
- 	return adev ? adev->handle : NULL;
- }
-
--#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
-+#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
- #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
- 	acpi_fwnode_handle(adev) : NULL)
- #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
-@@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
- 	return false;
- }
-
--static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-+static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
- {
- 	return NULL;
- }
-diff --git a/include/linux/of.h b/include/linux/of.h
-index b871ff9..f05fdce 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
- 	return fwnode && fwnode->type == FWNODE_OF;
- }
-
--static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-+static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
- {
- 	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
- }
-@@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
- 	return false;
- }
-
--static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-+static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
- {
- 	return NULL;
- }
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
