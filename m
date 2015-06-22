@@ -1,141 +1,92 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Mon, 22 Jun 2015 17:23:53 +0200
-Message-ID: <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
+Date: Mon, 22 Jun 2015 19:26:10 +0200
+Message-ID: <20150622172610.GK483@localhost>
+References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rob Herring <robherring2@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Linux PWM List <linux-pwm@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Alexander Holler <holler@ahsoftware.de>, linux-clk@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1434838377-8042-1-git-send-email-stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org, hachti-c1YPqJpaggmzQB+pC5nmwQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-T24gMjggTWF5IDIwMTUgYXQgMDY6MzMsIFJvYiBIZXJyaW5nIDxyb2JoZXJyaW5nMkBnbWFpbC5j
-b20+IHdyb3RlOgo+IE9uIE1vbiwgTWF5IDI1LCAyMDE1IGF0IDk6NTMgQU0sIFRvbWV1IFZpem9z
-bwo+IDx0b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4+IEhlbGxvLAo+Pgo+PiBJ
-IGhhdmUgYSBwcm9ibGVtIHdpdGggdGhlIHBhbmVsIG9uIG15IFRlZ3JhIENocm9tZWJvb2sgdGFr
-aW5nIGxvbmdlciB0aGFuCj4+IGV4cGVjdGVkIHRvIGJlIHJlYWR5IGR1cmluZyBib290IChTdMOp
-cGhhbmUgTWFyY2hlc2luIHJlcG9ydGVkIHdoYXQgaXMKPj4gYmFzaWNhbGx5IHRoZSBzYW1lIGlz
-c3VlIGluIFswXSksIGFuZCBoYXZlIGxvb2tlZCBpbnRvIG9yZGVyZWQgcHJvYmluZyBhcyBhCj4+
-IGJldHRlciB3YXkgb2Ygc29sdmluZyB0aGlzIHRoYW4gbW92aW5nIG5vZGVzIGFyb3VuZCBpbiB0
-aGUgRFQgb3IgcGxheWluZyB3aXRoCj4+IGluaXRjYWxsIGxldmVscy4KPj4KPj4gV2hpbGUgcmVh
-ZGluZyB0aGUgdGhyZWFkIFsxXSB0aGF0IEFsZXhhbmRlciBIb2xsZXIgc3RhcnRlZCB3aXRoIGhp
-cyBzZXJpZXMgdG8KPj4gbWFrZSBwcm9iaW5nIG9yZGVyIGRldGVybWluaXN0aWMsIGl0IG9jY3Vy
-cmVkIHRvIG1lIHRoYXQgaXQgc2hvdWxkIGJlIHBvc3NpYmxlCj4+IHRvIGFjaGlldmUgdGhlIHNh
-bWUgYnkgcmVnaXN0ZXJpbmcgZGV2aWNlcyBhcyB0aGV5IGFyZSByZWZlcmVuY2VkIGJ5IG90aGVy
-Cj4+IGRldmljZXMuCj4KPiBJIGxpa2UgdGhlIGNvbmNlcHQgYW5kIG5vdmVsIGFwcHJvYWNoLgo+
-Cj4+IFRoaXMgYmFzaWNhbGx5IHJldXNlcyB0aGUgaW5mb3JtYXRpb24gdGhhdCBpcyBhbHJlYWR5
-IGltcGxpY2l0IGluIHRoZSBwcm9iZSgpCj4+IGltcGxlbWVudGF0aW9ucywgc2F2aW5nIHVzIGZy
-b20gcmVmYWN0b3JpbmcgZXhpc3RpbmcgZHJpdmVycyBvciBhZGRpbmcKPj4gaW5mb3JtYXRpb24g
-dG8gRFRCcy4KPj4KPj4gU29tZXRoaW5nIEknbSBub3QgY29tcGxldGVseSBoYXBweSB3aXRoIGlz
-IHRoYXQgSSBoYXZlIGhhZCB0byBtb3ZlIHRoZSBjYWxsIHRvCj4+IG9mX3BsYXRmb3JtX3BvcHVs
-YXRlIGFmdGVyIGFsbCBwbGF0Zm9ybSBkcml2ZXJzIGhhdmUgYmVlbiByZWdpc3RlcmVkLgo+PiBP
-dGhlcndpc2UgSSBkb24ndCBzZWUgaG93IEkgY291bGQgcmVnaXN0ZXIgZHJpdmVycyBvbiBkZW1h
-bmQgYXMgd2UgZG9uJ3QgaGF2ZQo+PiB5ZXQgZWFjaCBkcml2ZXIncyBjb21wYXRpYmxlIHN0cmlu
-Z3MuCj4KPiBZZWFoLCB0aGlzIGlzIHRoZSBvcHBvc2l0ZSBvZiB3aGF0IHdlJ2QgcmVhbGx5IGxp
-a2UuCgpDYW4geW91IGVsYWJvcmF0ZSBvbiB0aGUgcmVhc29ucyB3aHkgd2Ugd291bGQgbGlrZSB0
-byBoYXZlIGRldmljZXMKcmVnaXN0ZXJlZCBiZWZvcmUgYnVpbHQtaW4gZHJpdmVycyBmaW5pc2gg
-cmVnaXN0ZXJpbmcsIGV2ZW4gaWYgd2UKZG9uJ3QgcHJvYmUgdGhlbSB5ZXQ/Cgo+IElkZWFsbHks
-IHdlIHdvdWxkCj4gaGF2ZSBhIHNvbHV0aW9uIHRoYXQgd29ya3MgZm9yIG1vZHVsZXMgdG9vLiBI
-b3dldmVyLCB3ZSdyZSBubyB3b3JzZQo+IG9mZi4gV2UgcHJldHR5IG11Y2ggYnVpbGQtaW4gZGVw
-ZW5kZW5jaWVzIHRvIGF2b2lkIG1vZHVsZSBvcmRlcmluZwo+IHByb2JsZW1zLgoKTm9kLCBJIGhh
-dmVuJ3QgbG9va2VkIHlldCBhdCByZXF1ZXN0aW5nIG1vZHVsZXMgb24tZGVtYW5kLCBidXQgSSBn
-dWVzcwppdCBzaG91bGQgYmUgZG9hYmxlLiBNb2R1bGVzIHRoYXQgaGF2ZSBkZXBlbmRlbmNpZXMg
-ZGVzY3JpYmVkIGluIHRoZQpmaXJtd2FyZSBzaG91bGQgZ2V0IHRoZW0gcHJvYmVkIGF1dG9tYXRp
-Y2FsbHkgYWxyZWFkeSB0aG91Z2guCgo+IFBlcmhhcHMgd2UgbmVlZCB0byBtYWtlIHRoZSBwcm9i
-aW5nIG9uLWRlbWFuZCByYXRoZXIgdGhhbiBzaW1wbHkgb24KPiBkZXZpY2U8LT5kcml2ZXIgbWF0
-Y2ggb2NjdXJyaW5nLgoKSSdtIGFmcmFpZCB0aGF0IHRvbyBtdWNoIG9sZCBjb2RlIGRlcGVuZHMg
-b24gdGhhdC4gRm9yIGV4YW1wbGUsIFJhZmFlbApwb2ludGVkIG91dCB0byB0aGUgUE5QIHN1YnN5
-c3RlbSwgd2hpY2ggcmVnaXN0ZXJzIGEgZHJpdmVyIHRoYXQgd2lsbApwcm9iZSBkZXZpY2VzIHdp
-dGggdGhlIEVJU0EgSUQgUE5QMGMwMiB0byByZXNlcnZlIG1lbW9yeSByZWdpb25zIGZvcgpkZXZp
-Y2VzIHRoYXQgd2lsbCBiZSBwcm9iZWQgbGF0ZXIuCgpodHRwOi8vbHhyLmZyZWUtZWxlY3Ryb25z
-LmNvbS9zb3VyY2UvZHJpdmVycy9wbnAvc3lzdGVtLmMKCk15IHVuZGVyc3RhbmRpbmcgaXMgdGhh
-dCBwcm9iaW5nIG9mIFBOUDBjMDIgZGV2aWNlcyBtdXN0IGhhcHBlbiBiZWZvcmUKdGhlIGFjdHVh
-bCBkZXZpY2VzIHRoYXQgZGVwZW5kIG9uIHRob3NlIHJlZ2lvbnMgYXJlIHByb2JlZCwgc28gaWYg
-d2UKZGVjb3VwbGVkIHRoZSBwcm9iaW5nIGZyb20gdGhlIGRyaXZlci9kZXZpY2UgcmVnaXN0cmF0
-aW9uLCB3ZSB3b3VsZCBiZQpicmVha2luZyB0aGF0IGFzc3VtcHRpb24uCgo+PiBGb3IgbWFjaHMg
-dGhhdCBkb24ndCBtb3ZlIG9mX3BsYXRmb3JtX3BvcHVsYXRlKCkgdG8gYSBsYXRlciBwb2ludCwg
-dGhlc2UKPj4gcGF0Y2hlcyBzaG91bGRuJ3QgY2F1c2UgYW55IHByb2JsZW1zIGJ1dCBpdCdzIG5v
-dCBndWFyYW50ZWVkIHRoYXQgd2UnbGwgYXZvaWQKPj4gYWxsIHRoZSBkZWZlcnJlZCBwcm9iZXMg
-YXMgc29tZSBkcml2ZXJzIG1heSBub3QgYmUgcmVnaXN0ZXJlZCB5ZXQuCj4KPiBJZGVhbGx5LCBv
-Zl9wbGF0Zm9ybV9wb3B1bGF0ZSBpcyBub3QgZXhwbGljaXRseSBjYWxsZWQgYnkgZWFjaAo+IHBs
-YXRmb3JtLiBTbyBJIHRoaW5rIHdlIG5lZWQgdG8gbWFrZSB0aGlzIHdvcmsgZm9yIHRoZSBkZWZh
-dWx0IGNhc2UuCgpUaGUgcHJvYmxlbSBpcyB0aGF0IHNvbWUgcGxhdGZvcm1zIHdpbGwgbmVlZCBm
-aXhpbmcgYmVjYXVzZSBzb21lCmluaXRjYWxscyBhc3N1bWUgdGhhdCBzb21lIGRldmljZXMgd2ls
-bCBoYXZlIGJlZW4gcmVnaXN0ZXJlZCBhbHJlYWR5LApvciBldmVuIHByb2JlZC4gSSB0aGluayBy
-ZW1vdmluZyB0aG9zZSBhc3N1bXB0aW9ucyBzaG91bGRuJ3QgYmUKcHJvYmxlbWF0aWMgYmVjYXVz
-ZSBJIGhhdmVuJ3QgaGFkIG11Y2ggdHJvdWJsZSB3aXRoIHRoaXMgb24gdGhlIGZvdXIKcGxhdGZv
-cm1zIEkgaGF2ZSB0ZXN0ZWQgd2l0aCwgYnV0IEkgY2Fubm90IHRlc3QgZXZlcnkgYm9hcmQgdGhh
-dCBpcwpzdXBwb3J0ZWQgdXBzdHJlYW0uCgpJIGNhbiBhc2sgdGhvdWdoIHRoZSBLZXJuZWxDSSBm
-b2xrcyB0byBib290IG15IGJyYW5jaCBpbiBhbGwgdGhlaXIKYm9hcmRzIGFuZCBtYWtlIHN1cmUg
-dGhhdCB0aG9zZSB3b3JrIHdoZW4gb2ZfcGxhdGZvcm1fcG9wdWxhdGUgaXMKY2FsbGVkIGluIGxh
-dGVfaW5pdGNhbGwuCgpodHRwOi8va2VybmVsY2kub3JnL2Jvb3QvYWxsL2pvYi9uZXh0L2tlcm5l
-bC9uZXh0LTIwMTUwNjE5LwoKPj4gSSBoYXZlIHRlc3RlZCB0aGlzIG9uIGJvYXJkcyB3aXRoIFRl
-Z3JhLCBpTVguNiBhbmQgRXh5bm9zIFNvQ3MsIGFuZCB0aGVzZQo+PiBwYXRjaGVzIHdlcmUgZW5v
-dWdoIHRvIGVsaW1pbmF0ZSBhbGwgdGhlIGRlZmVycmVkIHByb2Jlcy4KPj4KPj4gV2l0aCB0aGlz
-IHNlcmllcyBJIGdldCB0aGUga2VybmVsIHRvIG91dHB1dCB0byB0aGUgcGFuZWwgaW4gMC41cywg
-aW5zdGVhZCBvZiAyLjhzLgo+Cj4gVGhhdCdzIGNlcnRhaW5seSBjb21wZWxsaW5nLgoKSGF2ZSB0
-byBzYXkgdGhhdCB0aG9zZSBudW1iZXJzIGFyZSB3aXRoIHRoZSBzZXJpYWwgY29uc29sZSBlbmFi
-bGVkCih3aXRob3V0LCBpdCdzIDAuNXMgdnMgMS41cyksIGJ1dCBvbiBtYWNoaW5lcyB0aGF0IHRh
-a2UgbG9uZ2VyIHRvIGJvb3QKd2Ugc2hvdWxkIHNlZSBiaWdnZXIgZ2FpbnMgYmVjYXVzZSB3ZSB3
-b24ndCBiZSBzZW5kaW5nIGRldmljZXMgdG8gdGhlCmVuZCBvZiB0aGUgcXVldWUgd2hlbiB0aGVp
-ciBwcm9iZSBpcyBkZWZlcnJlZC4KClJlZ2FyZHMsCgpUb21ldQoKPiBSb2IKPgo+Pgo+PiBSZWdh
-cmRzLAo+Pgo+PiBUb21ldQo+Pgo+PiBbMF0gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9h
-cmNoaXZlcy9kcmktZGV2ZWwvMjAxNC1BdWd1c3QvMDY2NTI3Lmh0bWwKPj4KPj4gWzFdIGh0dHBz
-Oi8vbGttbC5vcmcvbGttbC8yMDE0LzUvMTIvNDUyCj4+Cj4+IFRvbWV1IFZpem9zbyAoMjEpOgo+
-PiAgIHJlZ3VsYXRvcjogY29yZTogUmVkdWNlIGNyaXRpY2FsIGFyZWEgaW4gX3JlZ3VsYXRvcl9n
-ZXQKPj4gICBBUk06IHRlZ3JhOiBBZGQgZ3Bpby1yYW5nZXMgcHJvcGVydHkKPj4gICBBUk06IHRl
-Z3JhOiBSZWdpc3RlciBkcml2ZXJzIGJlZm9yZSBkZXZpY2VzCj4+ICAgQVJNOiBFWFlOT1M6IFJl
-Z2lzdGVyIGRyaXZlcnMgYmVmb3JlIGRldmljZXMKPj4gICBBUk0gaS5NWDZxOiBSZWdpc3RlciBk
-cml2ZXJzIGJlZm9yZSBkZXZpY2VzCj4+ICAgb2YvcGxhdGZvcm06IEFkZCBvZl9wbGF0Zm9ybV9k
-ZXZpY2VfZW5zdXJlKCkKPj4gICBvZi9wbGF0Zm9ybTogRW5zdXJlIGRldmljZSByZWdpc3RyYXRp
-b24gb24gbG9va3VwCj4+ICAgZ3BpbzogUHJvYmUgR1BJTyBkcml2ZXJzIG9uIGRlbWFuZAo+PiAg
-IGdwaW86IFByb2JlIHBpbmN0cmwgZGV2aWNlcyBvbiBkZW1hbmQKPj4gICByZWd1bGF0b3I6IGNv
-cmU6IFByb2JlIHJlZ3VsYXRvcnMgb24gZGVtYW5kCj4+ICAgZHJtOiBQcm9iZSBwYW5lbHMgb24g
-ZGVtYW5kCj4+ICAgZHJtL3RlZ3JhOiBQcm9iZSBkcGF1eCBkZXZpY2VzIG9uIGRlbWFuZAo+PiAg
-IGkyYzogY29yZTogUHJvYmUgaTJjIG1hc3RlciBkZXZpY2VzIG9uIGRlbWFuZAo+PiAgIHB3bTog
-UHJvYmUgUFdNIGNoaXAgZGV2aWNlcyBvbiBkZW1hbmQKPj4gICBiYWNrbGlnaHQ6IFByb2JlIGJh
-Y2tsaWdodCBkZXZpY2VzIG9uIGRlbWFuZAo+PiAgIHVzYjogcGh5OiBQcm9iZSBwaHkgZGV2aWNl
-cyBvbiBkZW1hbmQKPj4gICBjbGs6IFByb2JlIGNsayBwcm92aWRlcnMgb24gZGVtYW5kCj4+ICAg
-cGluY3RybDogUHJvYmUgcGluY3RybCBkZXZpY2VzIG9uIGRlbWFuZAo+PiAgIHBoeTogY29yZTog
-UHJvYmUgcGh5IHByb3ZpZGVycyBvbiBkZW1hbmQKPj4gICBkbWE6IG9mOiBQcm9iZSBETUEgY29u
-dHJvbGxlcnMgb24gZGVtYW5kCj4+ICAgcG93ZXItc3VwcGx5OiBQcm9iZSBwb3dlciBzdXBwbGll
-cyBvbiBkZW1hbmQKPj4KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LmR0c2kgICAgIHwg
-IDEgKwo+PiAgYXJjaC9hcm0vbWFjaC1leHlub3MvZXh5bm9zLmMgICAgICAgfCAgNCArLS0KPj4g
-IGFyY2gvYXJtL21hY2gtaW14L21hY2gtaW14NnEuYyAgICAgIHwgMTIgKysrKy0tLS0tCj4+ICBh
-cmNoL2FybS9tYWNoLXRlZ3JhL3RlZ3JhLmMgICAgICAgICB8IDIxICsrKysrKy0tLS0tLS0tLQo+
-PiAgZHJpdmVycy9jbGsvY2xrLmMgICAgICAgICAgICAgICAgICAgfCAgMyArKysKPj4gIGRyaXZl
-cnMvZG1hL29mLWRtYS5jICAgICAgICAgICAgICAgIHwgIDMgKysrCj4+ICBkcml2ZXJzL2dwaW8v
-Z3Bpb2xpYi1vZi5jICAgICAgICAgICB8ICA1ICsrKysKPj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1f
-cGFuZWwuYyAgICAgICAgIHwgIDMgKysrCj4+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXgu
-YyAgICAgICB8ICAzICsrKwo+PiAgZHJpdmVycy9pMmMvaTJjLWNvcmUuYyAgICAgICAgICAgICAg
-fCAgMyArKysKPj4gIGRyaXZlcnMvb2YvcGxhdGZvcm0uYyAgICAgICAgICAgICAgIHwgNTMgKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiAgZHJpdmVycy9waHkvcGh5LWNv
-cmUuYyAgICAgICAgICAgICAgfCAgMyArKysKPj4gIGRyaXZlcnMvcGluY3RybC9kZXZpY2V0cmVl
-LmMgICAgICAgIHwgIDIgKysKPj4gIGRyaXZlcnMvcG93ZXIvcG93ZXJfc3VwcGx5X2NvcmUuYyAg
-IHwgIDMgKysrCj4+ICBkcml2ZXJzL3B3bS9jb3JlLmMgICAgICAgICAgICAgICAgICB8ICAzICsr
-Kwo+PiAgZHJpdmVycy9yZWd1bGF0b3IvY29yZS5jICAgICAgICAgICAgfCA0NSArKysrKysrKysr
-KysrKystLS0tLS0tLS0tLS0tLS0tCj4+ICBkcml2ZXJzL3VzYi9waHkvcGh5LmMgICAgICAgICAg
-ICAgICB8ICAzICsrKwo+PiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYmFja2xpZ2h0LmMgfCAg
-MyArKysKPj4gIGluY2x1ZGUvbGludXgvb2ZfcGxhdGZvcm0uaCAgICAgICAgIHwgIDIgKysKPj4g
-IDE5IGZpbGVzIGNoYW5nZWQsIDEzMCBpbnNlcnRpb25zKCspLCA0NSBkZWxldGlvbnMoLSkKPj4K
-Pj4gLS0KPj4gMi40LjEKPj4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJvZHkgb2Yg
-YSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBp
-bmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiBQbGVh
-c2UgcmVhZCB0aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Sun, Jun 21, 2015 at 12:12:55AM +0200, Stefan Agner wrote:
+> Yet another FTDI GPIO patchset. Yet somewhat different to previous
+> implementations...
+> 
+> There are three GPIO modes supported by FTDI devices:
+> 1. Asynchronous Bit Bang Mode (used in Sacha's patch)
+> 2. Synchronous Bit Bang Mode (used in Philipp's patch)
+> 3. CBUS Bit Bang Mode (used in Philipp's patch and this patchset)
+> 
+> Previous implementations:
+> - Philipp Hachtmann (https://lkml.org/lkml/2014/5/31/181)
+> - Sascha Silbe (https://lkml.org/lkml/2014/6/9/406)
+> 
+> The first two modes allow to control the serial pins and use the USB
+> standard data transfer (write/read) to set the GPIO output values. Hence
+> these modes interference with the standard serial mode of the devices,
+> but are fast. The third option uses the USB control transfer to set
+> GPIOs (which makes bit banging slower), and allows to control only 4
+> pins. The controllable pins are predefined per device type (in FT232R
+> CBUS0-3, in FT232H ACBUS5-9) and are not required for standard
+> UART/serial communication. However, the default configuration is set to
+> auxiliary functions such as TX/RXLED. Hence to make use of them in CBUS
+> Bit Bang mode, the pins need to be reprogrammed to I/O mode first
+> (EEPROM). All three modes are supported from userspace by libftdi afaik.
+
+Is there a way to retrieve the settings from eeprom and only register
+the gpio chip based on the configuration?
+
+> In my use case I would like to use the additional GPIOs to control an
+> embedded board (power off/reset etc.) and use the serial communication
+> alongside. Using libftdi to use the CBUS Bit Bang mode is cumbersome,
+> since libftdi requires to detach the kernel driver to get access to the
+> device. The user needs then to reconnect the serial terminal every time
+> a GPIO has been used. Hence, if any of these modes, I see most value in
+> supporting the CBUS mode through the kernel's gpiolib API. However,
+> since some functions are shared (e.g. set_bitmode to enable the
+> different bit modes), this patchset is does some ground work for the
+> other modes too, in case anybody wants to do further work on them.
+
+I agree, the usb-serial driver should only provide access to the four
+cbus pins if available (and use gpiolib).
+
+> This patchset currently supports FT232R type of devices and has been
+> tested using a FT232RL device. I think the FT232H (and probably later)
+> types of devices should work too (at least the Table 3.5 in the FT232H
+> data sheet mentions the ACBUS Signal Option "I/O mode"). However, I
+> don't have such a device to test at my disposal.
+> 
+> On the implementation side, I created a distinct GPIO driver in
+> drivers/gpio and create that platform device directly from within the
+> ftdi_sio driver. I understand that the mfd subsystem would be the way to
+> go, however it seems to me quite a big change... At least all USB device
+> IDs would need to be moved to the mfd core device since the mfd device
+> would be registered as a USB driver. I guess the ftdi_sio driver would
+> become a platform device and still live under drivers/usb/serial/...?
+> 
+> I just saw that recent discussion by Grant and Linus did not approve
+> this approach...?
+
+Using the platform bus -- directly as you do or via MFD -- allows for
+some (arguably contrived) abstraction but I think we should avoid it
+nonetheless. USB (serial) does not use it as you already noted, and
+there's not much to gain from creating a single-cell-mfd child device to
+the USB interface.
+
+Instead, hang the gpio chip directly off the usb interface (not the
+port), add a new config option, and keep the gpio implementation under
+drivers/usb/serial (possibly in its own file ftdi_sio-gpio.c).
+
+Note that your current implementation fails to remove the gpio chip on
+device disconnect, leaks resources in error paths, and lacks locking for
+the gpio state.
+
+Thanks,
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
