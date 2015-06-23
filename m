@@ -1,79 +1,95 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2 1/4] sh-pfc: do not call sh_pfc_get_pin_index() when
- unnecessary
-Date: Tue, 23 Jun 2015 23:00:13 +0300
-Message-ID: <5589BACD.9080205@cogentembedded.com>
-References: <4326653.qPvIJDU6F2@wasted.cogentembedded.com> <10321666.EILxzFPKZf@wasted.cogentembedded.com> <1860613.5T71vLz0D7@avalon> <55888F61.800@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Paul Osmialowski <pawelo@king.net.pl>
+Subject: [PATCH 4/9] arm: allow copying of vector table to internal SRAM memory
+Date: Tue, 23 Jun 2015 23:19:42 +0200
+Message-ID: <1435094387-20146-5-git-send-email-pawelo@king.net.pl>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:33274 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754766AbbFWUAS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2015 16:00:18 -0400
-Received: by lbbvz5 with SMTP id vz5so13606230lbb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 23 Jun 2015 13:00:16 -0700 (PDT)
-In-Reply-To: <55888F61.800@cogentembedded.com>
+Received: from fish.king.net.pl ([79.190.246.46]:36999 "EHLO king.net.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S934039AbbFWVuO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 23 Jun 2015 17:50:14 -0400
+In-Reply-To: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>, Dmitry Cherkassov <d_cherkasov@emcraft.com>, Alexander Potashev <aspotashev@emcraft.com>
 
-Hello.
+Based on part of the commit published on Emcraft git repo:
 
-On 06/23/2015 01:42 AM, Sergei Shtylyov wrote:
+https://github.com/EmcraftSystems/linux-emcraft.git
 
->>> Calling sh_pfc_get_pin_index()  to calculate a pin index based on the
->>> collected pin range data is unnecessary when we're dealing with
->>> 'pfc->info->pins' and 'chip->pins' arrays as those always reperesent the
->>> pins starting from index 0 sequentially. Being a  mere  optimization at
->>> this time, this change will become crucial when we'll allow the "holes" in
->>> those arrays...
+2ce1841b590d014d8738215fb1ffe05f53c8d9f0 "some commit"
 
->> Pin information is stored in per-SoC pins arrays (a.k.a. pfc->info->pins). The
->> driver support two models to number pins:
+by: Dmitry Cherkassov <d_cherkasov@emcraft.com>
 
->> - The sequential model, in which pins are numbered sequentially starting at 0.
->> Pin numbers are equal to the index in the array.
+The ARM v7M allows setting the vector table either in
+the boot memory or in the internal SRAM memory, controlled
+by Bit 29 in the Vector Table Base register. This implies
+that the OS vector table needs to be copied to the internal RAM.
 
->     And I didn't touch this case.
+New option CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR allows specification
+of the desired destination for the OS vector table.
 
->> - The explicit numbering model, in which each pin entry has an explicit number
->> (stored in struct sh_pfc_pin.pin). Pins numbers are not necessarily equal to
->> the index of the pin entry in the array.
+Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+---
+ arch/arm/Kconfig-nommu      | 11 +++++++++++
+ arch/arm/kernel/entry-v7m.S |  3 +++
+ arch/arm/mm/proc-v7m.S      | 11 +++++++++++
+ 3 files changed, 25 insertions(+)
 
->     Ah... I was just looking at _GP_GPIO() which still assigns sequential pin
-> #'s equal to the indices.
-
-    And forgot about SH_PFC_PIN_NAMED()...
-
->> The sh_pfc_get_pin_index() function converts a pin number to the pin index in
->> the pins array.
-
->> Let's consider the sh_pfc_pinconf_validate() from which your patch removes the
->> call to sh_pfc_get_pin_index() and uses the pin number directly. The function
->> is called from the .pin_config_get() and .pin_config_set() handlers. One
->> possible call path is
-
->> pinconf_pins_show() -> pinconf_dump_pin() -> pinconf_dump_pins() ->
->> pinconf_generic_dump_pins() -> pinconf_generic_dump_one() ->
->> pin_config_get_for_pin() -> .pin_config_get()
-
->> The pin value passed to the .pin_config_get() function is pctldev->desc->
->> pins[i].number, which is the pin number, not its index. It thus looks like
->> this patch introduces a bug.
-
->> There might be something obvious I'm not getting though, so please feel free
->> to prove me wrong.
-
->     The bug seems more like theoretical one at this point (unless you have the
-> examples with non-sequential pin #'s)...
-
-    No, with non-GPIO pins it seems to be an actual bug.
-
-    What if we remove the explicit array index from _GP_GPIO() and so don't 
-have the holes at all?
-
-WBR, Sergei
+diff --git a/arch/arm/Kconfig-nommu b/arch/arm/Kconfig-nommu
+index 965ca97..98220e8 100644
+--- a/arch/arm/Kconfig-nommu
++++ b/arch/arm/Kconfig-nommu
+@@ -66,3 +66,14 @@ config ARM_MPU
+ config ZLIB_INFLATE_STACK_SAVING
+ 	bool 'Do not place huge encoder tables on stack' if ZLIB_INFLATE
+ 	depends on ZLIB_INFLATE
++
++config COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	hex 'If non-zero, copy Vector Table to this SRAM Address' if CPU_V7M
++	default 0x00000000
++	depends on CPU_V7M
++	help
++	  The ARM v7M allows setting the vector table either in
++	  the boot memory or in the internal SRAM memory, controlled
++	  by Bit 29 in the Vector Table Base register.
++	  This implies that the OS vector table needs to be copied to
++	  the internal RAM.
+diff --git a/arch/arm/kernel/entry-v7m.S b/arch/arm/kernel/entry-v7m.S
+index b6c8bb9..114096e 100644
+--- a/arch/arm/kernel/entry-v7m.S
++++ b/arch/arm/kernel/entry-v7m.S
+@@ -146,3 +146,6 @@ ENTRY(vector_table)
+ 	.rept	CONFIG_CPU_V7M_NUM_IRQ
+ 	.long	__irq_entry		@ External Interrupts
+ 	.endr
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++ENTRY(vector_table_end)
++#endif
+diff --git a/arch/arm/mm/proc-v7m.S b/arch/arm/mm/proc-v7m.S
+index 67d9209..ded9504 100644
+--- a/arch/arm/mm/proc-v7m.S
++++ b/arch/arm/mm/proc-v7m.S
+@@ -83,7 +83,18 @@ ENDPROC(cpu_v7m_do_resume)
+ __v7m_setup:
+ 	@ Configure the vector table base address
+ 	ldr	r0, =BASEADDR_V7M_SCB
++#if CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR > 0x00000000
++	ldr	r12, =CONFIG_COPY_VECTOR_TABLE_TO_SRAM_ADDR
++	mov	r5, r12			@ Copy the kernel vector_table to
++	ldr	r6, =vector_table	@ the in-SRAM vector table
++	ldr	r4, =vector_table_end
++1:	ldr	r3, [r6], #4
++	str	r3, [r5], #4
++	cmp	r6, r4
++	bne	1b			@ End of the copy code
++#else
+ 	ldr	r12, =vector_table
++#endif
+ 	str	r12, [r0, V7M_SCB_VTOR]
+ 
+ 	@ enable UsageFault, BusFault and MemManage fault.
+-- 
+2.3.6
 
