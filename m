@@ -1,48 +1,86 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
-Date: Tue, 23 Jun 2015 11:22:19 +0200
-Message-ID: <20150623092219.GA28202@localhost>
-References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
- <20150622172610.GK483@localhost>
- <11dedbc454ab78f5e03497e2c5d8f5b3@agner.ch>
+From: Jun Nie <jun.nie@linaro.org>
+Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
+Date: Tue, 23 Jun 2015 17:54:49 +0800
+Message-ID: <CABymUCPb7ouZ8DVww=d=K87tkS13Qr1CuGs0+Qnb4skD7_0g2g@mail.gmail.com>
+References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
+	<20150617071740.GL2712@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <11dedbc454ab78f5e03497e2c5d8f5b3@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Johan Hovold <johan@kernel.org>, linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@secretlab.ca, gregkh@linuxfoundation.org, x-linux@infra-silbe.de, hachti@hachti.de, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:32871 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754442AbbFWJyv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2015 05:54:51 -0400
+Received: by laka10 with SMTP id a10so3137479lak.0
+        for <linux-gpio@vger.kernel.org>; Tue, 23 Jun 2015 02:54:49 -0700 (PDT)
+In-Reply-To: <20150617071740.GL2712@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
 
-On Mon, Jun 22, 2015 at 10:11:35PM +0200, Stefan Agner wrote:
-> On 2015-06-22 19:26, Johan Hovold wrote:
+2015-06-17 15:17 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+> * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
+>> Support GPIO for one register control multiple pins case
+>> with calculating register offset first, then bit offset.
+>>
+>> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+>> ---
+>>  drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
+>>  1 file changed, 18 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+>> index 13b45f2..bd69d9a 100644
+>> --- a/drivers/pinctrl/pinctrl-single.c
+>> +++ b/drivers/pinctrl/pinctrl-single.c
+>> @@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>>       struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
+>>       struct pcs_gpiofunc_range *frange = NULL;
+>>       struct list_head *pos, *tmp;
+>> -     int mux_bytes = 0;
+>> +     int offset, mux_bytes = 0;
+>>       unsigned data;
+>>
+>>       /* If function mask is null, return directly. */
+>> @@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>>                       || pin < frange->offset)
+>>                       continue;
+>>               mux_bytes = pcs->width / BITS_PER_BYTE;
+>> -             data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+>> -             data |= frange->gpiofunc;
+>> -             pcs->write(data, pcs->base + pin * mux_bytes);
+>> +             if (pcs->bits_per_mux) {
+>> +                     int pin_pos, byte_num, num_pins_in_register;
+>> +
+>> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
+>> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+>> +                     offset = (byte_num / mux_bytes) * mux_bytes;
+>> +                     pin_pos = pin % num_pins_in_register;
+>> +                     pin_pos *= pcs->bits_per_pin;
+>> +                     data = pcs->read(pcs->base + offset) &
+>> +                             ~(pcs->fmask << pin_pos);
+>
+> Should you check the pcs->fmask here too in case some bits are reserved?
+>
+Did not catch your idea? Those bits set in fmask are dedicated for one
+pin mux control and should be clear before set as desired value per my
+understanding. Do you mean some bits may be reserved and not for any
+function?
 
-> > Instead, hang the gpio chip directly off the usb interface (not the
-> > port), add a new config option, and keep the gpio implementation under
-> > drivers/usb/serial (possibly in its own file ftdi_sio-gpio.c).
-> 
-> Agreed sounds like a good plan. Will try this approach in v2.
-> 
-> Except I don't think hanging it directly to the USB interface is the
-> right thing to do.
-> 
-> Looking at the block diagram of FT232R or FT232H, the CBUS pins seem to
-> be part of the UART/FIFO controller. And I think the dual UART FT2232D
-> actually supports controlling the CBUS pins of the two UART controllers
-> individually, at least the block diagram thereof suggests so.
-
-The port is a Linux abstraction, and for FTDI we happen to have exactly
-one port child device per USB interface. As I see it, the gpio
-controller for the CBUS pins should be a sibling rather than a child
-device to the port.
-
-Note that we'd still have two gpio-controllers on FT2232D (one per USB
-interface).
-
-I'm aware that this requires some restructuring of the ftdi_sio-driver
-(e.g. the device type and ftdi-interface number should be a feature of
-the usb-serial rather than usb-serial-port device).
-
-Thanks,
-Johan
+>> +                     data |= frange->gpiofunc << pin_pos;
+>> +             } else {
+>> +                     offset = pin * mux_bytes;
+>> +                     data = pcs->read(pcs->base + offset) & ~pcs->fmask;
+>> +                     data |= frange->gpiofunc;
+>> +             }
+>> +             pcs->write(data, pcs->base + offset);
+>>               break;
+>>       }
+>>       return 0;
+>
+> Other than that looks OK to me, would be good to also wait for Haojian's
+> comments here.
+>
+> Regards,
+>
+> Tony
