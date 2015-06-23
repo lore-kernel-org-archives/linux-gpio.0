@@ -1,229 +1,40 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
- SoC
-Date: Tue, 23 Jun 2015 15:24:57 -0700
-Message-ID: <5589DCB9.2000908__22446.6181513437$1435098333$gmane$org@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis SoC
+Date: Wed, 24 Jun 2015 00:25:11 +0200
+Message-ID: <1914738.cJbsHkbelI@wuerfel>
 References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46220 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932319AbbFWWZC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2015 18:25:02 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:56358 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755044AbbFWWZa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 23 Jun 2015 18:25:30 -0400
 In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan
-Cc: Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>, Dmitry Cherkassov <d_cherkasov@emcraft.com>, Alexander Potashev <aspotashev@emcraft.com>
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>, Maxime
 
-On 06/23/2015 02:19 PM, Paul Osmialowski wrote:
->
-> diff --git a/drivers/clk/clk-kinetis.c b/drivers/clk/clk-kinetis.c
-> new file mode 100644
-> index 0000000..dea1054
-> --- /dev/null
-> +++ b/drivers/clk/clk-kinetis.c
-> @@ -0,0 +1,226 @@
-> +/*
-> + * clk-kinetis.c - Clock driver for Kinetis K70 MCG
-> + *
-> + * Based on legacy pre-OF code by Alexander Potashev <aspotashev@emcraft.com>
-> + *
-> + * Copyright (C) 2015 Paul Osmialowski <pawelo@king.net.pl>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it under
-> + * the terms of the GNU General Public License version 2 as published by the
-> + * Free Software Foundation.
-> + */
-> +
-> +#include <linux/clk.h>
+On Tuesday 23 June 2015 23:19:44 Paul Osmialowski wrote:
+> +#define KINETIS_CG_UART0       KINETIS_MKCG(3, 10)     /* SIM_SCGC4[10] */
+> +#define KINETIS_CG_UART1       KINETIS_MKCG(3, 11)     /* SIM_SCGC4[11] */
+> +#define KINETIS_CG_UART2       KINETIS_MKCG(3, 12)     /* SIM_SCGC4[12] */
+> +#define KINETIS_CG_UART3       KINETIS_MKCG(3, 13)     /* SIM_SCGC4[13] */
+> +#define KINETIS_CG_UART4       KINETIS_MKCG(0, 10)     /* SIM_SCGC1[10] */
+> +#define KINETIS_CG_UART5       KINETIS_MKCG(0, 11)     /* SIM_SCGC1[11] */
+> +/* Ports */
+> +#define KINETIS_CG_PORTA       KINETIS_MKCG(4, 9)      /* SIM_SCGC5[9] */
+> +#define KINETIS_CG_PORTB       KINETIS_MKCG(4, 10)     /* SIM_SCGC5[10] */
+> +#define KINETIS_CG_PORTC       KINETIS_MKCG(4, 11)     /* SIM_SCGC5[11] */
+> +#define KINETIS_CG_PORTD       KINETIS_MKCG(4, 12)     /* SIM_SCGC5[12] */
+> +#define KINETIS_CG_PORTE       KINETIS_MKCG(4, 13)     /* SIM_SCGC5[13] */
+> +#define KINETIS_CG_PORTF       KINETIS_MKCG(4, 14)     /* SIM_SCGC5[14] */
+> 
 
-Is this using the consumer API? Please remove this include.
+Instead of using a triple indirection here, just put the tuples
+in the DT directly using #clock-cells=<2>, and get rid of both this
+header file and the dt-bindings/clock/kinetis-mcg.h file.
 
-> +#include <linux/io.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/err.h>
-> +#include <mach/kinetis.h>
-> +#include <mach/power.h>
-
-It would be nice if we didn't need these mach includes so that this
-driver can be easily build tested.
-
-> +
-> +#include <dt-bindings/clock/kinetis-mcg.h>
-[..]
-> +}
-> +
-> +CLK_OF_DECLARE(kinetis_mcg, "fsl,kinetis-cmu", kinetis_mcg_init);
-
-A clocksource isn't the same as a clk provider. Please split this patch
-into two, one for the clk provider (drivers/clk) and one for the
-clocksource driver (drivers/clocksource).
-
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 0f1c77e..1d2ecde 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -106,6 +106,11 @@ config CLKSRC_EFM32
->  	  Support to use the timers of EFM32 SoCs as clock source and clock
->  	  event device.
->  
-> +config CLKSRC_KINETIS
-> +	bool "Clocksource for Kinetis SoCs"
-> +	depends on OF && ARM && ARCH_KINETIS
-
-Doesn't ARCH_KINETIS imply ARM? Seems that we can drop the ARM
-dependency here.
-
-> +	select CLKSRC_OF
->
->
-> diff --git a/drivers/clocksource/timer-kinetis.c b/drivers/clocksource/timer-kinetis.c
-> new file mode 100644
-> index 0000000..634f365
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-kinetis.c
-[..]
-> +
-> +/*
-> + * Clock event device set mode function
-> + */
-> +static void kinetis_clockevent_tmr_set_mode(
-> +	enum clock_event_mode mode, struct clock_event_device *clk)
-
-s/clk/evt/ ?
-
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
-> +
-> +	switch (mode) {
-> +	case CLOCK_EVT_MODE_PERIODIC:
-> +		kinetis_pit_enable(pit->base, 1);
-> +		break;
-> +	case CLOCK_EVT_MODE_ONESHOT:
-> +	case CLOCK_EVT_MODE_UNUSED:
-> +	case CLOCK_EVT_MODE_SHUTDOWN:
-> +	default:
-> +		kinetis_pit_enable(pit->base, 0);
-> +	}
-> +}
-> +
-> +/*
-> + * Configure the timer to generate an interrupt in the specified amount of ticks
-> + */
-> +static int kinetis_clockevent_tmr_set_next_event(
-> +	unsigned long delta, struct clock_event_device *c)
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
-> +	unsigned long flags;
-> +
-> +	raw_local_irq_save(flags);
-
-What is this protecting against?
-
-> +	kinetis_pit_init(pit->base, delta);
-> +	kinetis_pit_enable(pit->base, 1);
-> +	raw_local_irq_restore(flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct kinetis_clock_event_ddata
-> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer0",
-> +			.rating		= 200,
-> +			.features	=
-> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +			.set_mode	= kinetis_clockevent_tmr_set_mode,
-> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer1",
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer2",
-> +		},
-> +	},
-> +	{
-> +		.evtdev = {
-> +			.name		= "fsl,kinetis-pit-timer3",
-> +		},
-> +	},
-> +};
-> +
-> +/*
-> + * Timer IRQ handler
-> + */
-> +static irqreturn_t kinetis_clockevent_tmr_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct kinetis_clock_event_ddata *tmr = dev_id;
-> +
-> +	KINETIS_PIT_WR(tmr->base, tflg, KINETIS_PIT_TFLG_TIF_MSK);
-> +
-> +	tmr->evtdev.event_handler(&(tmr->evtdev));
-
-Unnecessary parentheses, please remove them.
-
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +/*
-> + * System timer IRQ action
-> + */
-> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
-> +	{
-> +		.name = "Kinetis Kernel Time Tick (pit0)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[0],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit1)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[1],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit2)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[2],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit3)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[3],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	},
-> +};
-
-Any reason we can't just use request_irq() instead of having a set of
-static irq actions?
-
-> +
-> +static void __init kinetis_clockevent_init(struct device_node *np)
-> +{
-[..]
-> irq;
-> +	}
-> +
-> +	chan = of_alias_get_id(np, "pit");
-> +	if ((chan < 0) || (chan >= KINETIS_PIT_CHANNELS)) {
-
-Unnecessary parentheses, please remove them.
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+	Arnd
