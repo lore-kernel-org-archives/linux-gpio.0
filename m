@@ -1,51 +1,37 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] added device tree support to gpio-generic driver
-Date: Wed, 24 Jun 2015 13:07:57 +0200
-Message-ID: <CAMuHMdUCNQV=9vEmNPHtuwXw3jZ_NWwpJaTb6eBXvYJiDKhGaw@mail.gmail.com>
-References: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
-	<CACRpkdbWhtkMgz2qTg1y7AguLQCJXnAoi7gVnFvPb1sR7eES_g@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH V3] added device tree support to gpio-generic driver
+Date: Wed, 24 Jun 2015 20:55:29 +0900
+Message-ID: <CAK7LNATOzogcZ_Hmbz-_AHbSP9+aQAxVaqjrmto-VGV2pFYSkw@mail.gmail.com>
+References: <CACRpkdaOQmRQFNn7z1UOxMpQpi=ZVMzWBm=YpcPP=2EXSXZHBQ@mail.gmail.com>
+	<1435139689-5800-1-git-send-email-romain.baeriswyl@alitech.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:34940 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751777AbbFXLH5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 07:07:57 -0400
-In-Reply-To: <CACRpkdbWhtkMgz2qTg1y7AguLQCJXnAoi7gVnFvPb1sR7eES_g@mail.gmail.com>
+Received: from conssluserg002.nifty.com ([202.248.44.40]:43891 "EHLO
+	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752441AbbFXLzh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Jun 2015 07:55:37 -0400
+In-Reply-To: <1435139689-5800-1-git-send-email-romain.baeriswyl@alitech.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>
+To: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>, devicetree@vger.kernel.org
 
-On Wed, Jun 10, 2015 at 10:42 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Jun 5, 2015 at 8:51 AM, Romain Baeriswyl
-> <romain.baeriswyl@alitech.com> wrote:
->
->> +Required properties:
->> +- compatible : "basic-mmio-gpio" for little endian register access or
->> +               "basic-mmio-gpio-be" for big endian register access
->
-> Basic I don't know.
->
-> "single-register-gpio" is more to the point, don't you think?
->
->> +- ngpios: Specifies the number of gpio mapped in the register. The value is
->> +          limited to the number of bits of the LONG type.
->
-> So if it is 8 for a 32 bit register, does it mean bits 0..7 little endian or
-> big endian, or does it depend on endianness? Clarify this
-> in the binding.
+Just cosmetic comments.
 
-LONG can be 64-bit too.
+> added device tree support to gpio-generic driver
 
-Gr{oetje,eeting}s,
+ - Please use the present tense in your commit subject
+ - Please prefix the subject with a word describing which area your
+patch is related to, in this case "gpio: "
 
-                        Geert
+So, your patch subject can be improved as  "gpio: add device tree
+support to gpio-generic driver"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+
+-- 
+Best Regards
+Masahiro Yamada
