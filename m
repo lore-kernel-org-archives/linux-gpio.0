@@ -1,43 +1,54 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: Use of pinctrl-single for external device over I2C
-Date: Wed, 24 Jun 2015 06:33:50 -0700
-Message-ID: <20150624133349.GI4156@atomide.com>
-References: <55893B2C.1070800@linaro.org>
- <558A9CC7.6070409@linaro.org>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [4.2-rc1][PATCH] gpio: omap: add missed spin_unlock_irqrestore in omap_gpio_irq_type
+Date: Wed, 24 Jun 2015 17:54:17 +0300
+Message-ID: <1435157657-17843-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:59513 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752006AbbFXNdy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Jun 2015 09:33:54 -0400
-Content-Disposition: inline
-In-Reply-To: <558A9CC7.6070409@linaro.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:40956 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752765AbbFXOy1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 10:54:27 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, lee.jones@linaro.org, sameo@linux.intel.com, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, tony@atomide.com, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@linaro.org>
 
-* Vaibhav Hiremath <vaibhav.hiremath@linaro.org> [150624 05:06]:
-> On Tuesday 23 June 2015 04:25 PM, Vaibhav Hiremath wrote:
-> >
-> >/*
-> >  * REVISIT: Reads and writes could eventually use regmap or something
-> >  * generic. But at least on omaps, some mux registers are performance
-> >  * critical as they may need to be remuxed every time before and after
-> >  * idle. Adding tests for register access width for every read and
-> >  * write like regmap is doing is not desired, and caching the registers
-> >  * does not help in this case.
-> >  */
-> >
-> >
-> >Should be not have flag for this and use regmap_ variants? If we
-> >implement flag based approach then same driver can be reused for pinmux
-> >configuration of external device.
+From: Grygorii Strashko <grygorii.strashko@linaro.org>
 
-Nothing stopping you from adding regmap support to it. It just needs
-to be made optional as the users so far don't need it.
+Add missed spin_unlock_irqrestore in omap_gpio_irq_type when
+omap_set_gpio_triggering() is failed.
 
-Regards,
+It fixes static checker warning:
 
-Tony
+	drivers/gpio/gpio-omap.c:523 omap_gpio_irq_type()
+	warn: inconsistent returns 'spin_lock:&bank->lock'.
+
+This fixes commit:
+1562e4618ded ('gpio: omap: fix error handling in omap_gpio_irq_type')
+
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+---
+ drivers/gpio/gpio-omap.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index b0c57d5..a0ad803 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -500,8 +500,10 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 	retval = omap_set_gpio_triggering(bank, offset, type);
+-	if (retval)
++	if (retval) {
++		spin_unlock_irqrestore(&bank->lock, flags);
+ 		goto error;
++	}
+ 	omap_gpio_init_irq(bank, offset);
+ 	if (!omap_gpio_is_input(bank, offset)) {
+ 		spin_unlock_irqrestore(&bank->lock, flags);
+-- 
+2.4.4
+
