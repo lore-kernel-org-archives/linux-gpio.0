@@ -1,231 +1,70 @@
-From: Paul Osmialowski <pawelo@king.net.pl>
-Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
- SoC
-Date: Wed, 24 Jun 2015 07:09:06 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1506240703440.24366@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl> <5589DCB9.2000908@codeaurora.org>
+From: =?ISO-8859-1?Q?Rapha=EBl?= Teysseyre <rteysseyre@gmail.com>
+Subject: [PATCH v2] gpio/xilinx: Use correct address when setting initial
+ values.
+Date: Wed, 24 Jun 2015 09:19:45 +0200
+Message-ID: <1435130385.30543.3.camel@localhost>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5589DCB9.2000908@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:36004 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767AbbFXHXw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 03:23:52 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+xgpio_save_regs() is used in this driver to setup the initial
+values of the registers in the hardware.
 
-Thanks for the valuable input - all of those points are now on my 
-checklist for the work on the second iteration of this patchset.
+The relevant registers at that time are:
+0x0 -> channel 0 data (32 bits, one for each GPIO on this channel).
+0x4 -> channel 0 tri, controls in/out status for each GPIO of this chan=
+nel.
+0x8 -> channel 1 data
+0xC -> channel 1 tri
 
-On Tue, 23 Jun 2015, Stephen Boyd wrote:
+gpio-xilinx.c defines these:
+XGPIO_DATA_OFFSET   (0x0)
+XGPIO_TRI_OFFSET    (0x4)
+XGPIO_CHANNEL_OFFSET	0x8
 
-> On 06/23/2015 02:19 PM, Paul Osmialowski wrote:
->>
->> diff --git a/drivers/clk/clk-kinetis.c b/drivers/clk/clk-kinetis.c
->> new file mode 100644
->> index 0000000..dea1054
->> --- /dev/null
->> +++ b/drivers/clk/clk-kinetis.c
->> @@ -0,0 +1,226 @@
->> +/*
->> + * clk-kinetis.c - Clock driver for Kinetis K70 MCG
->> + *
->> + * Based on legacy pre-OF code by Alexander Potashev <aspotashev@emcraft.com>
->> + *
->> + * Copyright (C) 2015 Paul Osmialowski <pawelo@king.net.pl>
->> + *
->> + * This program is free software; you can redistribute it and/or modify it under
->> + * the terms of the GNU General Public License version 2 as published by the
->> + * Free Software Foundation.
->> + */
->> +
->> +#include <linux/clk.h>
->
-> Is this using the consumer API? Please remove this include.
->
->> +#include <linux/io.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_device.h>
->> +#include <linux/err.h>
->> +#include <mach/kinetis.h>
->> +#include <mach/power.h>
->
-> It would be nice if we didn't need these mach includes so that this
-> driver can be easily build tested.
->
->> +
->> +#include <dt-bindings/clock/kinetis-mcg.h>
-> [..]
->> +}
->> +
->> +CLK_OF_DECLARE(kinetis_mcg, "fsl,kinetis-cmu", kinetis_mcg_init);
->
-> A clocksource isn't the same as a clk provider. Please split this patch
-> into two, one for the clk provider (drivers/clk) and one for the
-> clocksource driver (drivers/clocksource).
->
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index 0f1c77e..1d2ecde 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -106,6 +106,11 @@ config CLKSRC_EFM32
->>  	  Support to use the timers of EFM32 SoCs as clock source and clock
->>  	  event device.
->>
->> +config CLKSRC_KINETIS
->> +	bool "Clocksource for Kinetis SoCs"
->> +	depends on OF && ARM && ARCH_KINETIS
->
-> Doesn't ARCH_KINETIS imply ARM? Seems that we can drop the ARM
-> dependency here.
->
->> +	select CLKSRC_OF
->>
->>
->> diff --git a/drivers/clocksource/timer-kinetis.c b/drivers/clocksource/timer-kinetis.c
->> new file mode 100644
->> index 0000000..634f365
->> --- /dev/null
->> +++ b/drivers/clocksource/timer-kinetis.c
-> [..]
->> +
->> +/*
->> + * Clock event device set mode function
->> + */
->> +static void kinetis_clockevent_tmr_set_mode(
->> +	enum clock_event_mode mode, struct clock_event_device *clk)
->
-> s/clk/evt/ ?
->
->> +{
->> +	struct kinetis_clock_event_ddata *pit =
->> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
->> +
->> +	switch (mode) {
->> +	case CLOCK_EVT_MODE_PERIODIC:
->> +		kinetis_pit_enable(pit->base, 1);
->> +		break;
->> +	case CLOCK_EVT_MODE_ONESHOT:
->> +	case CLOCK_EVT_MODE_UNUSED:
->> +	case CLOCK_EVT_MODE_SHUTDOWN:
->> +	default:
->> +		kinetis_pit_enable(pit->base, 0);
->> +	}
->> +}
->> +
->> +/*
->> + * Configure the timer to generate an interrupt in the specified amount of ticks
->> + */
->> +static int kinetis_clockevent_tmr_set_next_event(
->> +	unsigned long delta, struct clock_event_device *c)
->> +{
->> +	struct kinetis_clock_event_ddata *pit =
->> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
->> +	unsigned long flags;
->> +
->> +	raw_local_irq_save(flags);
->
-> What is this protecting against?
->
->> +	kinetis_pit_init(pit->base, delta);
->> +	kinetis_pit_enable(pit->base, 1);
->> +	raw_local_irq_restore(flags);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct kinetis_clock_event_ddata
->> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
->> +	{
->> +		.evtdev = {
->> +			.name		= "fsl,kinetis-pit-timer0",
->> +			.rating		= 200,
->> +			.features	=
->> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->> +			.set_mode	= kinetis_clockevent_tmr_set_mode,
->> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
->> +		},
->> +	},
->> +	{
->> +		.evtdev = {
->> +			.name		= "fsl,kinetis-pit-timer1",
->> +		},
->> +	},
->> +	{
->> +		.evtdev = {
->> +			.name		= "fsl,kinetis-pit-timer2",
->> +		},
->> +	},
->> +	{
->> +		.evtdev = {
->> +			.name		= "fsl,kinetis-pit-timer3",
->> +		},
->> +	},
->> +};
->> +
->> +/*
->> + * Timer IRQ handler
->> + */
->> +static irqreturn_t kinetis_clockevent_tmr_irq_handler(int irq, void *dev_id)
->> +{
->> +	struct kinetis_clock_event_ddata *tmr = dev_id;
->> +
->> +	KINETIS_PIT_WR(tmr->base, tflg, KINETIS_PIT_TFLG_TIF_MSK);
->> +
->> +	tmr->evtdev.event_handler(&(tmr->evtdev));
->
-> Unnecessary parentheses, please remove them.
->
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +/*
->> + * System timer IRQ action
->> + */
->> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
->> +	{
->> +		.name = "Kinetis Kernel Time Tick (pit0)",
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +		.dev_id = &kinetis_clockevent_tmrs[0],
->> +		.handler = kinetis_clockevent_tmr_irq_handler,
->> +	}, {
->> +		.name = "Kinetis Kernel Time Tick (pit1)",
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +		.dev_id = &kinetis_clockevent_tmrs[1],
->> +		.handler = kinetis_clockevent_tmr_irq_handler,
->> +	}, {
->> +		.name = "Kinetis Kernel Time Tick (pit2)",
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +		.dev_id = &kinetis_clockevent_tmrs[2],
->> +		.handler = kinetis_clockevent_tmr_irq_handler,
->> +	}, {
->> +		.name = "Kinetis Kernel Time Tick (pit3)",
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +		.dev_id = &kinetis_clockevent_tmrs[3],
->> +		.handler = kinetis_clockevent_tmr_irq_handler,
->> +	},
->> +};
->
-> Any reason we can't just use request_irq() instead of having a set of
-> static irq actions?
->
->> +
->> +static void __init kinetis_clockevent_init(struct device_node *np)
->> +{
-> [..]
->> irq;
->> +	}
->> +
->> +	chan = of_alias_get_id(np, "pit");
->> +	if ((chan < 0) || (chan >= KINETIS_PIT_CHANNELS)) {
->
-> Unnecessary parentheses, please remove them.
->
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Before this patch, the "data" register value of channel 1 was written
+at 0x4 intead of 0x8 (overwriting the channel 0 "tri" register),
+and the "tri" register value for channel 1 was written at 0x8 instead o=
+f 0xC.
+
+Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
+---
+ drivers/gpio/gpio-xilinx.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 61243d1..e544b7a 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -220,9 +220,9 @@ static void xgpio_save_regs(struct of_mm_gpio_chip =
+*mm_gc)
+ 	if (!chip->gpio_width[1])
+ 		return;
+=20
+-	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_TRI_OFFSET,
++	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_CHANNEL_OFFSET=
+,
+ 		       chip->gpio_state[1]);
+-	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_TRI_OFFSET,
++	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_CHANNEL_OFFSET,
+ 		       chip->gpio_dir[1]);
+ }
+=20
+--=20
+1.7.1
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
