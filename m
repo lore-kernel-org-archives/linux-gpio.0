@@ -1,65 +1,129 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-Date: Wed, 24 Jun 2015 12:21:22 +0200
-Message-ID: <1435141282.4528.71.camel@tiscali.nl>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-	 <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v2] gpio: zx: Add ZTE zx296702 GPIO support
+Date: Wed, 24 Jun 2015 16:26:39 +0530
+Message-ID: <558A8CE7.7020709@gmail.com>
+References: <1435138299-20561-1-git-send-email-jun.nie@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lb3-smtp-cloud3.xs4all.net ([194.109.24.30]:42186 "EHLO
-	lb3-smtp-cloud3.xs4all.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750847AbbFXKVg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Jun 2015 06:21:36 -0400
-In-Reply-To: <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:35322 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbbFXK5O (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 06:57:14 -0400
+Received: by pdbci14 with SMTP id ci14so28267452pdb.2
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2015 03:57:13 -0700 (PDT)
+In-Reply-To: <1435138299-20561-1-git-send-email-jun.nie@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan
-Cc: Yuri Tikhonov <yur@emcraft.com>, Sergei Poselenov <sposelenov@emcraft.com>, Dmitry Cherkassov <d_cherkasov@emcraft.com>, Alexander Potashev <aspotashev@emcraft.com>
+To: Jun Nie <jun.nie@linaro.org>, haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: tony@atomide.com, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org
 
-On Tue, 2015-06-23 at 23:19 +0200, Paul Osmialowski wrote:
-> --- a/drivers/pinctrl/freescale/Kconfig
-> +++ b/drivers/pinctrl/freescale/Kconfig
- 
-> +config PINCTRL_KINETIS
-> +	bool "Kinetis pinctrl driver"
-> +	depends on OF
-> +	depends on SOC_K70
-> +	select PINMUX
-> +	help
-> +	  Say Y here to enable the Kinetis pinctrl driver
+Hi Jun Nie,
 
-> --- a/drivers/pinctrl/freescale/Makefile
-> +++ b/drivers/pinctrl/freescale/Makefile
+On 06/24/2015 03:01 PM, Jun Nie wrote:
 
-> +obj-$(CONFIG_PINCTRL_KINETIS)	+= pinctrl-kinetis.o
+> Add ZTE zx296702 GPIO controller support
+>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
 
-> --- /dev/null
-> +++ b/drivers/pinctrl/freescale/pinctrl-kinetis.c
+(...)
 
-> +#include <linux/module.h>
-
-> +static struct pinctrl_desc kinetis_pinctrl_desc = {
-> +	[...]
-> +	.owner = THIS_MODULE,
-> +};
-
-> +static void __exit kinetis_pinctrl_exit(void)
+> +static int zx_gpio_probe(struct platform_device *pdev)
 > +{
-> +	platform_driver_unregister(&kinetis_pinctrl_driver);
-> +}
-> +module_exit(kinetis_pinctrl_exit);
+> +	struct device *dev = &pdev->dev;
+> +	struct zx_gpio *chip;
+> +	struct resource *res;
+> +	int irq, id, ret;
 > +
-> +MODULE_DESCRIPTION("Freescale Kinetis pinctrl driver");
-> +MODULE_LICENSE("GPL v2");
+> +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> +	if (chip == NULL)
+> +		return -ENOMEM;
 
-pinctrl-kinetis.o can only be built-in, right? But the code uses a few
-module specific constructs. Did you mean to make PINCTRL_KINETIS
-tristate instead?
+We can simply check some thing like this:
+	if (!chip)
+		return -ENOMEM;
 
-Thanks,
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	chip->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(chip->base))
+> +		return PTR_ERR(chip->base);
+> +
+> +	spin_lock_init(&chip->lock);
+> +	if (of_property_read_bool(dev->of_node, "gpio-ranges"))
+> +		chip->uses_pinctrl = true;
+> +
+> +	id = of_alias_get_id(dev->of_node, "gpio");
+> +	chip->gc.request = zx_gpio_request;
+> +	chip->gc.free = zx_gpio_free;
+> +	chip->gc.direction_input = zx_direction_input;
+> +	chip->gc.direction_output = zx_direction_output;
+> +	chip->gc.get = zx_get_value;
+> +	chip->gc.set = zx_set_value;
+> +	chip->gc.base = ZX_GPIO_NR * id;
+> +	chip->gc.ngpio = ZX_GPIO_NR;
+> +	chip->gc.label = dev_name(dev);
+> +	chip->gc.dev = dev;
+> +	chip->gc.owner = THIS_MODULE;
+> +
+> +	ret = gpiochip_add(&chip->gc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * irq_chip support
+> +	 */
+> +	writew_relaxed(0xffff, chip->base + ZX_GPIO_IM);
+> +	writew_relaxed(0, chip->base + ZX_GPIO_IE);
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0) {
+> +		dev_err(dev, "invalid IRQ\n");
+
+You added the gpiochio, but not removing on error here.
+
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = gpiochip_irqchip_add(&chip->gc, &zx_irqchip,
+> +				   0, handle_simple_irq,
+> +				   IRQ_TYPE_NONE);
+> +	if (ret) {
+> +		dev_info(dev, "could not add irqchip\n");
+
+I think it should be dev_err().
+
+Here also gpiochip_remove() ?
+
+> +		return ret;
+> +	}
+> +	gpiochip_set_chained_irqchip(&chip->gc, &zx_irqchip,
+> +				     irq, zx_irq_handler);
+> +
+> +	platform_set_drvdata(pdev, chip);
+> +	dev_info(dev, "ZX GPIO chip registered\n");
+> +
+> +	return 0;
+> +}
+> +
+> +#if defined(CONFIG_OF)
+> +static const struct of_device_id zx_gpio_match[] = {
+> +	{
+> +		.compatible = "zte,zx296702-gpio",
+> +	},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, zx_gpio_match);
+> +#endif
+> +
+
+This driver may be populated through OF.
+
+Do you think this #if..#endif is required ?
 
 
-Paul Bolle
+-- 
+Best regards,
+Varka Bhadram.
+
