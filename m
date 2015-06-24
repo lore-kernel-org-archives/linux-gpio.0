@@ -1,47 +1,56 @@
 From: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
-Subject: Re: [PATCH 8/8] pinctrl: qcom: ssbi: Family A gpio & mpp drivers
-Date: Wed, 24 Jun 2015 11:17:23 +0300
-Message-ID: <1435133843.2334.34.camel@linaro.org>
+Subject: Re: [PATCH 0/8] Qualcomm PMIC pinctrl additions
+Date: Wed, 24 Jun 2015 11:29:35 +0300
+Message-ID: <1435134575.2334.36.camel@linaro.org>
 References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
-	 <1434610052-602-9-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1434610052-602-9-git-send-email-bjorn.andersson@sonymobile.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, marc.zyngier@arm.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:34546 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751777AbbFXI3i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 04:29:38 -0400
+Received: by wicnd19 with SMTP id nd19so127554286wic.1
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2015 01:29:37 -0700 (PDT)
+In-Reply-To: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Andy Gross <agross@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org, marc.zyngier@arm.com
 
-Hi Bjorn, 
 
 On Wed, 2015-06-17 at 23:47 -0700, Bjorn Andersson wrote:
-> This introduces pinctrl drivers for gpio and mpp blocks found in family A
-> PMICs.
+> This series starts out by fixing various issues found in the pm8941 mpp driver.
+> While doing this work, and trying to use the mpp driver from device tree it, it
+> became obvious that the current binding is not fit for neither the driver
+> implementation nor the dts implementation.
 > 
-> +
-> +static struct platform_driver pm8xxx_gpio_driver = {
-> +       .driver = {
-> +               .name = "pm8xxx_gpio",
+> The main reason for this is that we "inherited" the functions from the gpio
+> driver, where there is a notion of functions. But in the MPP the logical
+> mapping of digital, analog and current sink makes much more sense to map as
+> "functions". The features previously exposed as functions are replaced by two
+> properties (qcom,paired and qcom,dtest).
+> 
+> The end result is a more natural device tree definition.
+> 
+> With this in place the series introduces the gpio and mpp drivers for the ssbi
+> based pmics; found in 8660, 8960 and 8064.
+> 
+> Bjorn Andersson (8):
+>   pinctrl: qcom: spmi-mpp: Transition to generic dt binding parser
+>   pinctrl: qcom: spmi-mpp: Fixes related to enable handling
+>   pinctrl: qcom: spmi-mpp: Introduce defines for MODE_CTL
+>   pinctrl: qcom: spmi-mpp: Implement support for sink mode
+>   pinctrl: qcom: spmi-mpp: Add support for setting analog output level
+>   pinctrl: qcom: spmi-mpp: Transpose pinmux function
+>   mfd: pm8921: Implement irq_get_irqchip_state
+>   pinctrl: qcom: ssbi: Family A gpio & mpp drivers
 
-Name of the SPMI based GPIO PMIC driver is "qcom-spmi-gpio".
+Thank you Bjorn.
 
-You know, all of the PMIC's are PM8..something. Could we have 
-SSBI in the name of this one?
+Now MPP drivers have its full functionality.
 
-> +               .of_match_table = pm8xxx_gpio_of_match,
-> +       },
-> +       .probe = pm8xxx_gpio_probe,
-> +       .remove = pm8xxx_gpio_remove,
-> +};
-> +
-> +module_platform_driver(pm8xxx_gpio_driver);
-> +
-> +MODULE_AUTHOR("Bjorn Andersson andersson@sonymobile.com>");
-> +MODULE_DESCRIPTION("Qualcomm PM8xxx GPIO driver");
+With two small comments on patch 5 and 8,
 
-And the same of MPP driver.
-
-Regards,
-Ivan
+Reviewed-by: Ivan T. Ivanov <iivanov@mm-sol.com>
