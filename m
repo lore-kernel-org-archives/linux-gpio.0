@@ -1,385 +1,223 @@
-From: Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH v2] gpio: zx: Add ZTE zx296702 GPIO support
-Date: Wed, 24 Jun 2015 17:31:39 +0800
-Message-ID: <1435138299-20561-1-git-send-email-jun.nie@linaro.org>
+From: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+Subject: [PATCH V3] added device tree support to gpio-generic driver
+Date: Wed, 24 Jun 2015 11:54:49 +0200
+Message-ID: <1435139689-5800-1-git-send-email-romain.baeriswyl@alitech.com>
+References: <CACRpkdaOQmRQFNn7z1UOxMpQpi=ZVMzWBm=YpcPP=2EXSXZHBQ@mail.gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:36638 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752390AbbFXJcS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 05:32:18 -0400
-Received: by pdcu2 with SMTP id u2so26878752pdc.3
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2015 02:32:17 -0700 (PDT)
+Received: from nopam.alitech.com ([202.3.176.31]:52976 "EHLO nopam.alitech.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752417AbbFXJzJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 24 Jun 2015 05:55:09 -0400
+In-Reply-To: <CACRpkdaOQmRQFNn7z1UOxMpQpi=ZVMzWBm=YpcPP=2EXSXZHBQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: tony@atomide.com, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org, Jun Nie <jun.nie@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>, devicetree@vger.kernel.org
+Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>
 
-Add ZTE zx296702 GPIO controller support
+This patch adds support of device tree to the gpio-generic driver.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
+Signed-off-by: Romain Baeriswyl <romain.baeriswyl@alitech.com> 
 ---
- drivers/gpio/Kconfig         |   6 +
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-zx296702.c | 324 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 331 insertions(+)
- create mode 100644 drivers/gpio/gpio-zx296702.c
+ .../devicetree/bindings/gpio/gpio-generic.txt      |   62 ++++++++++++++++++++
+ drivers/gpio/gpio-generic.c                        |   60 ++++++++++++++++++-
+ include/linux/basic_mmio_gpio.h                    |    1 +
+ 3 files changed, 120 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-generic.txt
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index caefe80..aba5226 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -970,6 +970,12 @@ config GPIO_MC33880
- 	  SPI driver for Freescale MC33880 high-side/low-side switch.
- 	  This provides GPIO interface supporting inputs and outputs.
- 
-+config GPIO_ZX296702
-+	bool "ZTE ZX296702 GPIO support"
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to support the ZTE ZX296702 GPIO device
-+
- endmenu
- 
- menu "USB GPIO expanders"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index f71bb97..c26d81e 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -112,3 +112,4 @@ obj-$(CONFIG_GPIO_XILINX)	+= gpio-xilinx.o
- obj-$(CONFIG_GPIO_XTENSA)	+= gpio-xtensa.o
- obj-$(CONFIG_GPIO_ZEVIO)	+= gpio-zevio.o
- obj-$(CONFIG_GPIO_ZYNQ)		+= gpio-zynq.o
-+obj-$(CONFIG_GPIO_ZX296702)	+= gpio-zx296702.o
-diff --git a/drivers/gpio/gpio-zx296702.c b/drivers/gpio/gpio-zx296702.c
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-generic.txt b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
 new file mode 100644
-index 0000000..26ef6d0
+index 0000000..5259b2c
 --- /dev/null
-+++ b/drivers/gpio/gpio-zx296702.c
-@@ -0,0 +1,324 @@
-+/*
-+ * Copyright (C) 2015 Linaro Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/module.h>
++++ b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
+@@ -0,0 +1,62 @@
++Bindings for gpio-generic
++
++Required properties:
++- compatible : should be "single-register-gpio"
++- ngpios: specifies the number of gpio mapped in the register from bit 0 to
++          bit ngpios-1. The value is limited to the number of bits of the
++	  LONG type.
++- reg-names: must contain
++      "dat" - data register
++  may contain
++      "set" - data set register
++      "clr" - data clear register
++      "dirout" - direction output register
++      "dirin" - direction input register
++- reg: address + size pairs describing the GPIO register sets; order must
++       correspond with the order of entries in reg-names
++- #gpio-cells = must be set to 2
++
++Optional property:
++- big-endian: tells that register is big endian.
++
++For setting GPIO's there are three supported configurations:
++- single input/output register resource (named "dat"),
++- set/clear pair (named "set" and "clr"),
++- single output register resource and single input resource ("set" and dat").
++
++For the single output register, this drives a 1 by setting a bit and a zero
++by clearing a bit.  For the set clr pair, this drives a 1 by setting a bit
++in the set register and clears it by setting a bit in the clear register.
++The configuration is detected by which resources are present.
++
++For setting the GPIO direction, there are three supported configurations:
++- simple bidirection GPIO that requires no configuration,
++- an output direction register (named "dirout") where a 1 bit
++  indicates the GPIO is an output,
++- an input direction register (named "dirin") where a 1 bit indicates
++  the GPIO is an input.
++
++Examples:
++
++	/* Configuration with single input/output register and
++	 * simple bidirection GPIO.
++	 */
++	gpio_a {
++		compatible = "basic-mmio-gpio";
++		ngpios = <32>;
++		reg = <0x18000000 0x4>;
++		reg-names = "dat";
++		#gpio-cells = <2>;
++	};
++
++	/* Configuration with set/clear pair registers and with an output
++	 * direction register
++	 */
++	gpio_b {
++		compatible = "single-register-gpio";
++		ngpios = <32>;
++		reg = <0x18000000 0x4>, <0x18000010 0x4>,
++		      <0x18000004 0x4>, <0x18000008 0x4>;
++		reg-names = "dat", "set", "clr", "dirout";
++		#gpio-cells = <2>;
++	};
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index b92a690..da1408a 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+ #include <linux/platform_device.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/basic_mmio_gpio.h>
 +#include <linux/of.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#define ZX_GPIO_DIR	0x00
-+#define ZX_GPIO_IVE	0x04
-+#define ZX_GPIO_IV	0x08
-+#define ZX_GPIO_IEP	0x0C
-+#define ZX_GPIO_IEN	0x10
-+#define ZX_GPIO_DI	0x14
-+#define ZX_GPIO_DO1	0x18
-+#define ZX_GPIO_DO0	0x1C
-+#define ZX_GPIO_DO	0x20
-+
-+#define ZX_GPIO_IM	0x28
-+#define ZX_GPIO_IE	0x2C
-+
-+#define ZX_GPIO_MIS	0x30
-+#define ZX_GPIO_IC	0x34
-+
-+#define ZX_GPIO_NR	16
-+
-+struct zx_gpio {
-+	spinlock_t		lock;
-+
-+	void __iomem		*base;
-+	struct gpio_chip	gc;
-+	bool			uses_pinctrl;
-+};
-+
-+static inline struct zx_gpio *to_zx(struct gpio_chip *gc)
++#include <linux/of_device.h>
+ 
+ static void bgpio_write8(void __iomem *reg, unsigned long data)
+ {
+@@ -564,6 +566,35 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_OF
++static int bgpio_parse_dt(struct device *dev)
 +{
-+	return container_of(gc, struct zx_gpio, gc);
-+}
++	struct bgpio_pdata *pdata;
 +
-+static int zx_gpio_request(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+	int gpio = gc->base + offset;
-+
-+	if (chip->uses_pinctrl)
-+		return pinctrl_request_gpio(gpio);
-+	return 0;
-+}
-+
-+static void zx_gpio_free(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+	int gpio = gc->base + offset;
-+
-+	if (chip->uses_pinctrl)
-+		pinctrl_free_gpio(gpio);
-+}
-+
-+static int zx_direction_input(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+	unsigned long flags;
-+	unsigned char gpiodir;
-+
-+	if (offset >= gc->ngpio)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	gpiodir = readw_relaxed(chip->base + ZX_GPIO_DIR);
-+	gpiodir &= ~BIT(offset);
-+	writew_relaxed(gpiodir, chip->base + ZX_GPIO_DIR);
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int zx_direction_output(struct gpio_chip *gc, unsigned offset,
-+		int value)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+	unsigned long flags;
-+	unsigned char gpiodir;
-+
-+	if (offset >= gc->ngpio)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+	gpiodir = readw_relaxed(chip->base + ZX_GPIO_DIR);
-+	gpiodir |= BIT(offset);
-+	writew_relaxed(gpiodir, chip->base + ZX_GPIO_DIR);
-+
-+	if (value)
-+		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO1);
-+	else
-+		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO0);
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int zx_get_value(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+
-+	return !!(readw_relaxed(chip->base + ZX_GPIO_DI) & BIT(offset));
-+}
-+
-+static void zx_set_value(struct gpio_chip *gc, unsigned offset, int value)
-+{
-+	struct zx_gpio *chip = to_zx(gc);
-+
-+	if (value)
-+		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO1);
-+	else
-+		writew_relaxed(BIT(offset), chip->base + ZX_GPIO_DO0);
-+}
-+
-+static int zx_irq_type(struct irq_data *d, unsigned trigger)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct zx_gpio *chip = to_zx(gc);
-+	int offset = irqd_to_hwirq(d);
-+	unsigned long flags;
-+	u8 gpiois, gpioi_epos, gpioi_eneg, gpioiev;
-+	u8 bit = BIT(offset);
-+
-+	if (offset < 0 || offset >= ZX_GPIO_NR)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+
-+	gpioiev = readw_relaxed(chip->base + ZX_GPIO_IV);
-+	gpiois = readw_relaxed(chip->base + ZX_GPIO_IVE);
-+	gpioi_epos = readw_relaxed(chip->base + ZX_GPIO_IEP);
-+	gpioi_eneg = readw_relaxed(chip->base + ZX_GPIO_IEN);
-+
-+	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
-+		gpiois |= bit;
-+		if (trigger & IRQ_TYPE_LEVEL_HIGH)
-+			gpioiev |= bit;
-+		else
-+			gpioiev &= ~bit;
-+	} else
-+		gpiois &= ~bit;
-+
-+	if ((trigger & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
-+		gpioi_epos |= bit;
-+		gpioi_eneg |= bit;
-+	} else {
-+		if (trigger & IRQ_TYPE_EDGE_RISING) {
-+			gpioi_epos |= bit;
-+			gpioi_eneg &= ~bit;
-+		} else if (trigger & IRQ_TYPE_EDGE_FALLING) {
-+			gpioi_eneg |= bit;
-+			gpioi_epos &= ~bit;
-+		}
-+	}
-+
-+	writew_relaxed(gpiois, chip->base + ZX_GPIO_IVE);
-+	writew_relaxed(gpioi_epos, chip->base + ZX_GPIO_IEP);
-+	writew_relaxed(gpioi_eneg, chip->base + ZX_GPIO_IEN);
-+	writew_relaxed(gpioiev, chip->base + ZX_GPIO_IV);
-+	spin_unlock_irqrestore(&chip->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void zx_irq_handler(unsigned irq, struct irq_desc *desc)
-+{
-+	unsigned long pending;
-+	int offset;
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct zx_gpio *chip = to_zx(gc);
-+	struct irq_chip *irqchip = irq_desc_get_chip(desc);
-+
-+	chained_irq_enter(irqchip, desc);
-+
-+	pending = readw_relaxed(chip->base + ZX_GPIO_MIS);
-+	writew_relaxed(pending, chip->base + ZX_GPIO_IC);
-+	if (pending) {
-+		for_each_set_bit(offset, &pending, ZX_GPIO_NR)
-+			generic_handle_irq(irq_find_mapping(gc->irqdomain,
-+							    offset));
-+	}
-+
-+	chained_irq_exit(irqchip, desc);
-+}
-+
-+static void zx_irq_mask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct zx_gpio *chip = to_zx(gc);
-+	u8 mask = BIT(irqd_to_hwirq(d) % ZX_GPIO_NR);
-+	u8 gpioie;
-+
-+	spin_lock(&chip->lock);
-+	gpioie = readw_relaxed(chip->base + ZX_GPIO_IM) | mask;
-+	writew_relaxed(gpioie, chip->base + ZX_GPIO_IM);
-+	gpioie = readw_relaxed(chip->base + ZX_GPIO_IE) & ~mask;
-+	writew_relaxed(gpioie, chip->base + ZX_GPIO_IE);
-+	spin_unlock(&chip->lock);
-+}
-+
-+static void zx_irq_unmask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct zx_gpio *chip = to_zx(gc);
-+	u8 mask = BIT(irqd_to_hwirq(d) % ZX_GPIO_NR);
-+	u8 gpioie;
-+
-+	spin_lock(&chip->lock);
-+	gpioie = readw_relaxed(chip->base + ZX_GPIO_IM) & ~mask;
-+	writew_relaxed(gpioie, chip->base + ZX_GPIO_IM);
-+	gpioie = readw_relaxed(chip->base + ZX_GPIO_IE) | mask;
-+	writew_relaxed(gpioie, chip->base + ZX_GPIO_IE);
-+	spin_unlock(&chip->lock);
-+}
-+
-+static struct irq_chip zx_irqchip = {
-+	.name		= "zx",
-+	.irq_mask	= zx_irq_mask,
-+	.irq_unmask	= zx_irq_unmask,
-+	.irq_set_type	= zx_irq_type,
-+};
-+
-+static int zx_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct zx_gpio *chip;
-+	struct resource *res;
-+	int irq, id, ret;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (chip == NULL)
++	pdata = devm_kzalloc(dev, sizeof(struct bgpio_pdata),
++			     GFP_KERNEL);
++	if (!pdata)
 +		return -ENOMEM;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	chip->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(chip->base))
-+		return PTR_ERR(chip->base);
-+
-+	spin_lock_init(&chip->lock);
-+	if (of_property_read_bool(dev->of_node, "gpio-ranges"))
-+		chip->uses_pinctrl = true;
-+
-+	id = of_alias_get_id(dev->of_node, "gpio");
-+	chip->gc.request = zx_gpio_request;
-+	chip->gc.free = zx_gpio_free;
-+	chip->gc.direction_input = zx_direction_input;
-+	chip->gc.direction_output = zx_direction_output;
-+	chip->gc.get = zx_get_value;
-+	chip->gc.set = zx_set_value;
-+	chip->gc.base = ZX_GPIO_NR * id;
-+	chip->gc.ngpio = ZX_GPIO_NR;
-+	chip->gc.label = dev_name(dev);
-+	chip->gc.dev = dev;
-+	chip->gc.owner = THIS_MODULE;
-+
-+	ret = gpiochip_add(&chip->gc);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * irq_chip support
-+	 */
-+	writew_relaxed(0xffff, chip->base + ZX_GPIO_IM);
-+	writew_relaxed(0, chip->base + ZX_GPIO_IE);
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(dev, "invalid IRQ\n");
-+		return -ENODEV;
++	if (of_property_read_u32(dev->of_node, "ngpio", &pdata->ngpio)) {
++		dev_err(dev, "Failed to get field ngpio");
++		return -EINVAL;
 +	}
++	pdata->base = -1;
 +
-+	ret = gpiochip_irqchip_add(&chip->gc, &zx_irqchip,
-+				   0, handle_simple_irq,
-+				   IRQ_TYPE_NONE);
-+	if (ret) {
-+		dev_info(dev, "could not add irqchip\n");
-+		return ret;
-+	}
-+	gpiochip_set_chained_irqchip(&chip->gc, &zx_irqchip,
-+				     irq, zx_irq_handler);
++	if (of_device_is_big_endian(dev->of_node))
++		pdata->flags = BGPIOF_BIG_ENDIAN;
 +
-+	platform_set_drvdata(pdev, chip);
-+	dev_info(dev, "ZX GPIO chip registered\n");
-+
++	dev->platform_data = pdata;
 +	return 0;
 +}
++#else
++static int bgpio_parse_dt(struct device *dev)
++{
++	return 0;
++}
++#endif /* CONFIG_OF */
 +
-+#if defined(CONFIG_OF)
-+static const struct of_device_id zx_gpio_match[] = {
-+	{
-+		.compatible = "zte,zx296702-gpio",
-+	},
-+	{ },
+ static int bgpio_pdev_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -574,10 +605,21 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+ 	void __iomem *dirout;
+ 	void __iomem *dirin;
+ 	unsigned long sz;
+-	unsigned long flags = pdev->id_entry->driver_data;
+ 	int err;
+ 	struct bgpio_chip *bgc;
+-	struct bgpio_pdata *pdata = dev_get_platdata(dev);
++	struct bgpio_pdata *pdata;
++
++	if (of_have_populated_dt()) {
++		err = bgpio_parse_dt(dev);
++		if (err < 0) {
++			dev_err(dev, "Failed to get DT data\n");
++			return err;
++		}
++	}
++	pdata = dev_get_platdata(dev);
++
++	if (!of_have_populated_dt())
++		pdata->flags = pdev->id_entry->driver_data;
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
+ 	if (!r)
+@@ -609,7 +651,8 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
+ 	if (!bgc)
+ 		return -ENOMEM;
+ 
+-	err = bgpio_init(bgc, dev, sz, dat, set, clr, dirout, dirin, flags);
++	err = bgpio_init(bgc, dev, sz, dat, set, clr, dirout, dirin,
++			 pdata->flags);
+ 	if (err)
+ 		return err;
+ 
+@@ -633,6 +676,14 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
+ 	return bgpio_remove(bgc);
+ }
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id  bgpio_of_match[] = {
++	{ .compatible = "basic-mmio-gpio" },
++	{ }
 +};
-+MODULE_DEVICE_TABLE(of, zx_gpio_match);
++MODULE_DEVICE_TABLE(of, bgpio_of_match);
 +#endif
 +
-+static struct platform_driver zx_gpio_driver = {
-+	.probe		= zx_gpio_probe,
-+	.driver = {
-+		.name	= "zx_gpio",
-+		.of_match_table = of_match_ptr(zx_gpio_match),
-+	},
-+};
-+
-+module_platform_driver(zx_gpio_driver)
-+
-+MODULE_AUTHOR("Jun Nie <jun.nie@linaro.org>");
-+MODULE_DESCRIPTION("ZTE ZX296702 GPIO driver");
-+MODULE_LICENSE("GPL");
+ static const struct platform_device_id bgpio_id_table[] = {
+ 	{
+ 		.name		= "basic-mmio-gpio",
+@@ -648,6 +699,9 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
+ static struct platform_driver bgpio_driver = {
+ 	.driver = {
+ 		.name = "basic-mmio-gpio",
++#ifdef CONFIG_OF
++		.of_match_table = of_match_ptr(bgpio_of_match),
++#endif
+ 	},
+ 	.id_table = bgpio_id_table,
+ 	.probe = bgpio_pdev_probe,
+diff --git a/include/linux/basic_mmio_gpio.h b/include/linux/basic_mmio_gpio.h
+index 0e97856..d85d9ca 100644
+--- a/include/linux/basic_mmio_gpio.h
++++ b/include/linux/basic_mmio_gpio.h
+@@ -22,6 +22,7 @@ struct bgpio_pdata {
+ 	const char *label;
+ 	int base;
+ 	int ngpio;
++	int flags;
+ };
+ 
+ struct device;
 -- 
-1.9.1
+1.7.1
+
+*********************************************************
+This message contains information that may be confidential and/or privileged and is intended only for the individual or entity named in the body of email above. If this message has been received in error, your receipt of this message is not intended to waive any applicable privilege. No one else may disclose, copy, distribute or use the contents of this message. Unauthorized use, dissemination and duplication is strictly prohibited, and may be unlawful.
+
+
+
 
