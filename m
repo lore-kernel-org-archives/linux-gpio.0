@@ -1,129 +1,51 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH v2] gpio: zx: Add ZTE zx296702 GPIO support
-Date: Wed, 24 Jun 2015 16:26:39 +0530
-Message-ID: <558A8CE7.7020709@gmail.com>
-References: <1435138299-20561-1-git-send-email-jun.nie@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] added device tree support to gpio-generic driver
+Date: Wed, 24 Jun 2015 13:07:57 +0200
+Message-ID: <CAMuHMdUCNQV=9vEmNPHtuwXw3jZ_NWwpJaTb6eBXvYJiDKhGaw@mail.gmail.com>
+References: <1433487062-10647-1-git-send-email-romain.baeriswyl@alitech.com>
+	<CACRpkdbWhtkMgz2qTg1y7AguLQCJXnAoi7gVnFvPb1sR7eES_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:35322 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061AbbFXK5O (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 06:57:14 -0400
-Received: by pdbci14 with SMTP id ci14so28267452pdb.2
-        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2015 03:57:13 -0700 (PDT)
-In-Reply-To: <1435138299-20561-1-git-send-email-jun.nie@linaro.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:34940 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751777AbbFXLH5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 07:07:57 -0400
+In-Reply-To: <CACRpkdbWhtkMgz2qTg1y7AguLQCJXnAoi7gVnFvPb1sR7eES_g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jun Nie <jun.nie@linaro.org>, haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: tony@atomide.com, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>
 
-Hi Jun Nie,
-
-On 06/24/2015 03:01 PM, Jun Nie wrote:
-
-> Add ZTE zx296702 GPIO controller support
+On Wed, Jun 10, 2015 at 10:42 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Fri, Jun 5, 2015 at 8:51 AM, Romain Baeriswyl
+> <romain.baeriswyl@alitech.com> wrote:
 >
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
+>> +Required properties:
+>> +- compatible : "basic-mmio-gpio" for little endian register access or
+>> +               "basic-mmio-gpio-be" for big endian register access
+>
+> Basic I don't know.
+>
+> "single-register-gpio" is more to the point, don't you think?
+>
+>> +- ngpios: Specifies the number of gpio mapped in the register. The value is
+>> +          limited to the number of bits of the LONG type.
+>
+> So if it is 8 for a 32 bit register, does it mean bits 0..7 little endian or
+> big endian, or does it depend on endianness? Clarify this
+> in the binding.
 
-(...)
+LONG can be 64-bit too.
 
-> +static int zx_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct zx_gpio *chip;
-> +	struct resource *res;
-> +	int irq, id, ret;
-> +
-> +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +	if (chip == NULL)
-> +		return -ENOMEM;
+Gr{oetje,eeting}s,
 
-We can simply check some thing like this:
-	if (!chip)
-		return -ENOMEM;
+                        Geert
 
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	chip->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(chip->base))
-> +		return PTR_ERR(chip->base);
-> +
-> +	spin_lock_init(&chip->lock);
-> +	if (of_property_read_bool(dev->of_node, "gpio-ranges"))
-> +		chip->uses_pinctrl = true;
-> +
-> +	id = of_alias_get_id(dev->of_node, "gpio");
-> +	chip->gc.request = zx_gpio_request;
-> +	chip->gc.free = zx_gpio_free;
-> +	chip->gc.direction_input = zx_direction_input;
-> +	chip->gc.direction_output = zx_direction_output;
-> +	chip->gc.get = zx_get_value;
-> +	chip->gc.set = zx_set_value;
-> +	chip->gc.base = ZX_GPIO_NR * id;
-> +	chip->gc.ngpio = ZX_GPIO_NR;
-> +	chip->gc.label = dev_name(dev);
-> +	chip->gc.dev = dev;
-> +	chip->gc.owner = THIS_MODULE;
-> +
-> +	ret = gpiochip_add(&chip->gc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * irq_chip support
-> +	 */
-> +	writew_relaxed(0xffff, chip->base + ZX_GPIO_IM);
-> +	writew_relaxed(0, chip->base + ZX_GPIO_IE);
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0) {
-> +		dev_err(dev, "invalid IRQ\n");
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-You added the gpiochio, but not removing on error here.
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = gpiochip_irqchip_add(&chip->gc, &zx_irqchip,
-> +				   0, handle_simple_irq,
-> +				   IRQ_TYPE_NONE);
-> +	if (ret) {
-> +		dev_info(dev, "could not add irqchip\n");
-
-I think it should be dev_err().
-
-Here also gpiochip_remove() ?
-
-> +		return ret;
-> +	}
-> +	gpiochip_set_chained_irqchip(&chip->gc, &zx_irqchip,
-> +				     irq, zx_irq_handler);
-> +
-> +	platform_set_drvdata(pdev, chip);
-> +	dev_info(dev, "ZX GPIO chip registered\n");
-> +
-> +	return 0;
-> +}
-> +
-> +#if defined(CONFIG_OF)
-> +static const struct of_device_id zx_gpio_match[] = {
-> +	{
-> +		.compatible = "zte,zx296702-gpio",
-> +	},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, zx_gpio_match);
-> +#endif
-> +
-
-This driver may be populated through OF.
-
-Do you think this #if..#endif is required ?
-
-
--- 
-Best regards,
-Varka Bhadram.
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
