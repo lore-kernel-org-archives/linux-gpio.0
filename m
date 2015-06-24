@@ -1,98 +1,78 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 6/9] arm: twr-k70f120m: clock source drivers for Kinetis
- SoC
-Date: Wed, 24 Jun 2015 09:53:30 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1506240947330.4037@nanos>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
+Date: Wed, 24 Jun 2015 09:56:48 +0200
+Message-ID: <20150624075648.GD4976@localhost>
+References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
+ <20150622172610.GK483@localhost>
+ <11dedbc454ab78f5e03497e2c5d8f5b3@agner.ch>
+ <20150623092219.GA28202@localhost>
+ <77568c206b51c50da927d69ea6b15957@agner.ch>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:43456 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751527AbbFXHy2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 03:54:28 -0400
-In-Reply-To: <1435094387-20146-7-git-send-email-pawelo@king.net.pl>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:33453 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbbFXH4q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 03:56:46 -0400
+Content-Disposition: inline
+In-Reply-To: <77568c206b51c50da927d69ea6b15957@agner.ch>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas
+To: Stefan Agner <stefan@agner.ch>
+Cc: Johan Hovold <johan@kernel.org>, linus.walleij@linaro.org, gnurou@gmail.com, grant.likely@secretlab.ca, gregkh@linuxfoundation.org, x-linux@infra-silbe.de, hachti@hachti.de, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
 
-On Tue, 23 Jun 2015, Paul Osmialowski wrote:
-> +/*
-> + * Clock event device set mode function
-> + */
-> +static void kinetis_clockevent_tmr_set_mode(
-> +	enum clock_event_mode mode, struct clock_event_device *clk)
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(clk, struct kinetis_clock_event_ddata, evtdev);
-> +
-> +	switch (mode) {
-> +	case CLOCK_EVT_MODE_PERIODIC:
-> +		kinetis_pit_enable(pit->base, 1);
-> +		break;
-> +	case CLOCK_EVT_MODE_ONESHOT:
-> +	case CLOCK_EVT_MODE_UNUSED:
-> +	case CLOCK_EVT_MODE_SHUTDOWN:
-> +	default:
-> +		kinetis_pit_enable(pit->base, 0);
-> +	}
-> +}
+On Wed, Jun 24, 2015 at 12:08:50AM +0200, Stefan Agner wrote:
+> On 2015-06-23 11:22, Johan Hovold wrote:
+> > On Mon, Jun 22, 2015 at 10:11:35PM +0200, Stefan Agner wrote:
+> >> On 2015-06-22 19:26, Johan Hovold wrote:
+> > 
+> >> > Instead, hang the gpio chip directly off the usb interface (not the
+> >> > port), add a new config option, and keep the gpio implementation under
+> >> > drivers/usb/serial (possibly in its own file ftdi_sio-gpio.c).
+> >>
+> >> Agreed sounds like a good plan. Will try this approach in v2.
+> >>
+> >> Except I don't think hanging it directly to the USB interface is the
+> >> right thing to do.
+> >>
+> >> Looking at the block diagram of FT232R or FT232H, the CBUS pins seem to
+> >> be part of the UART/FIFO controller. And I think the dual UART FT2232D
+> >> actually supports controlling the CBUS pins of the two UART controllers
+> >> individually, at least the block diagram thereof suggests so.
+> > 
+> > The port is a Linux abstraction, and for FTDI we happen to have exactly
+> > one port child device per USB interface. As I see it, the gpio
+> > controller for the CBUS pins should be a sibling rather than a child
+> > device to the port.
+> > 
+> > Note that we'd still have two gpio-controllers on FT2232D (one per USB
+> > interface).
+> 
+> I did some research. I think the FT2232D or FT2232H devices do not
+> support the CBUS Bit Bang mode. For instance the D2XX Programmer's Guide
+> indicates that on page 69 (CBUS Bit Bang Mode (FT232R and FT232H devices
+> only)) as well as the AN_184 "FTDI Device Input Output Pin States", does
+> not mention that the CBUS pins as EEPROM selectable (the same document
+> does so for FT232R/FT232H devices)...
+> 
+> I don't have such a device, hence I can't try it out...
 
-Please move to the new set_state_* interfaces. set_mode() is deprecated.
+Just make sure to only register the gpio chip for device types that
+support it (and devices that are configured for it...).
 
-> +static int kinetis_clockevent_tmr_set_next_event(
-> +	unsigned long delta, struct clock_event_device *c)
-> +{
-> +	struct kinetis_clock_event_ddata *pit =
-> +		container_of(c, struct kinetis_clock_event_ddata, evtdev);
-> +	unsigned long flags;
-> +
-> +	raw_local_irq_save(flags);
+> > I'm aware that this requires some restructuring of the ftdi_sio-driver
+> > (e.g. the device type and ftdi-interface number should be a feature of
+> > the usb-serial rather than usb-serial-port device).
+> 
+> The findings above probably do not change the fact that we should not
+> use the Linux port abstraction to attach the GPIO controller...
+> 
+> I looked into that a bit more in depth. Do I see things right that the
+> multi-port devices have multiple USB interfaces, which leads to
+> usb_serial_probe and in turn ftdi_sio_probe getting called multiple
+> times by the USB stack? If yes, I think I have the bigger picture to go
+> ahead and try to implement it accordingly.
 
-Pointless exercise. This is called with interrupts disabled.
+Yes, that is correct.
 
-> +	kinetis_pit_init(pit->base, delta);
-> +	kinetis_pit_enable(pit->base, 1);
-> +	raw_local_irq_restore(flags);
-
-
-> +static struct irqaction kinetis_clockevent_irqaction[KINETIS_PIT_CHANNELS] = {
-> +	{
-> +		.name = "Kinetis Kernel Time Tick (pit0)",
-
-Please use oneword descriptive names not half sentences.
-
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[0],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit1)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[1],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit2)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[2],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	}, {
-> +		.name = "Kinetis Kernel Time Tick (pit3)",
-> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-> +		.dev_id = &kinetis_clockevent_tmrs[3],
-> +		.handler = kinetis_clockevent_tmr_irq_handler,
-> +	},
-
-Aside of that. Please use standard request_irq() there is no reason to
-use setup_irq here.
-
-> +
-> +	setup_irq(irq, &(kinetis_clockevent_irqaction[chan]));
-
-  request_irq(irq, handler, flags, "name", &kinetis_clockevent_tmrs[chan]);
-
-....
-
-Thanks,
-
-	tglx
+Johan
