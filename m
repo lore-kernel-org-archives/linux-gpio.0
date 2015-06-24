@@ -1,223 +1,392 @@
-From: Romain Baeriswyl <romain.baeriswyl@alitech.com>
-Subject: [PATCH V3] added device tree support to gpio-generic driver
-Date: Wed, 24 Jun 2015 11:54:49 +0200
-Message-ID: <1435139689-5800-1-git-send-email-romain.baeriswyl@alitech.com>
-References: <CACRpkdaOQmRQFNn7z1UOxMpQpi=ZVMzWBm=YpcPP=2EXSXZHBQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control bulk changes for the v4.2 series
+Date: Wed, 24 Jun 2015 12:12:31 +0200
+Message-ID: <CACRpkdatozF+HsmuW5D_Oy955KwBpxaXhopvsmPWu12zGZUXPw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from nopam.alitech.com ([202.3.176.31]:52976 "EHLO nopam.alitech.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752417AbbFXJzJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 24 Jun 2015 05:55:09 -0400
-In-Reply-To: <CACRpkdaOQmRQFNn7z1UOxMpQpi=ZVMzWBm=YpcPP=2EXSXZHBQ@mail.gmail.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:34919 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751486AbbFXKMc convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 24 Jun 2015 06:12:32 -0400
+Received: by obbop1 with SMTP id op1so23648480obb.2
+        for <linux-gpio@vger.kernel.org>; Wed, 24 Jun 2015 03:12:32 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Ruppert <christian.ruppert@alitech.com>, Anton Vorontsov <cbouatmailru@gmail.com>, Rojhalat Ibrahim <imr@rtschenk.de>, abdoulaye berthe <berthe.ab@gmail.com>, Anthony Fee <anthony.fee@emutex.com>, Alexander Shiyan <shc_work@mail.ru>, devicetree@vger.kernel.org
-Cc: Romain Baeriswyl <romain.baeriswyl@alitech.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This patch adds support of device tree to the gpio-generic driver.
+Hi Linus,
 
-Signed-off-by: Romain Baeriswyl <romain.baeriswyl@alitech.com> 
----
- .../devicetree/bindings/gpio/gpio-generic.txt      |   62 ++++++++++++++++++++
- drivers/gpio/gpio-generic.c                        |   60 ++++++++++++++++++-
- include/linux/basic_mmio_gpio.h                    |    1 +
- 3 files changed, 120 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-generic.txt
+here is my collected sack of patches for the v4.2 series. Quite a
+lot of new SoC subdrivers and two new main drivers this time,
+apart from that business as usual.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-generic.txt b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
-new file mode 100644
-index 0000000..5259b2c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-generic.txt
-@@ -0,0 +1,62 @@
-+Bindings for gpio-generic
-+
-+Required properties:
-+- compatible : should be "single-register-gpio"
-+- ngpios: specifies the number of gpio mapped in the register from bit 0 to
-+          bit ngpios-1. The value is limited to the number of bits of the
-+	  LONG type.
-+- reg-names: must contain
-+      "dat" - data register
-+  may contain
-+      "set" - data set register
-+      "clr" - data clear register
-+      "dirout" - direction output register
-+      "dirin" - direction input register
-+- reg: address + size pairs describing the GPIO register sets; order must
-+       correspond with the order of entries in reg-names
-+- #gpio-cells = must be set to 2
-+
-+Optional property:
-+- big-endian: tells that register is big endian.
-+
-+For setting GPIO's there are three supported configurations:
-+- single input/output register resource (named "dat"),
-+- set/clear pair (named "set" and "clr"),
-+- single output register resource and single input resource ("set" and dat").
-+
-+For the single output register, this drives a 1 by setting a bit and a zero
-+by clearing a bit.  For the set clr pair, this drives a 1 by setting a bit
-+in the set register and clears it by setting a bit in the clear register.
-+The configuration is detected by which resources are present.
-+
-+For setting the GPIO direction, there are three supported configurations:
-+- simple bidirection GPIO that requires no configuration,
-+- an output direction register (named "dirout") where a 1 bit
-+  indicates the GPIO is an output,
-+- an input direction register (named "dirin") where a 1 bit indicates
-+  the GPIO is an input.
-+
-+Examples:
-+
-+	/* Configuration with single input/output register and
-+	 * simple bidirection GPIO.
-+	 */
-+	gpio_a {
-+		compatible = "basic-mmio-gpio";
-+		ngpios = <32>;
-+		reg = <0x18000000 0x4>;
-+		reg-names = "dat";
-+		#gpio-cells = <2>;
-+	};
-+
-+	/* Configuration with set/clear pair registers and with an output
-+	 * direction register
-+	 */
-+	gpio_b {
-+		compatible = "single-register-gpio";
-+		ngpios = <32>;
-+		reg = <0x18000000 0x4>, <0x18000010 0x4>,
-+		      <0x18000004 0x4>, <0x18000008 0x4>;
-+		reg-names = "dat", "set", "clr", "dirout";
-+		#gpio-cells = <2>;
-+	};
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index b92a690..da1408a 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -61,6 +61,8 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
- #include <linux/platform_device.h>
- #include <linux/mod_devicetable.h>
- #include <linux/basic_mmio_gpio.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
- 
- static void bgpio_write8(void __iomem *reg, unsigned long data)
- {
-@@ -564,6 +566,35 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
- 	return ret;
- }
- 
-+#ifdef CONFIG_OF
-+static int bgpio_parse_dt(struct device *dev)
-+{
-+	struct bgpio_pdata *pdata;
-+
-+	pdata = devm_kzalloc(dev, sizeof(struct bgpio_pdata),
-+			     GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
-+
-+	if (of_property_read_u32(dev->of_node, "ngpio", &pdata->ngpio)) {
-+		dev_err(dev, "Failed to get field ngpio");
-+		return -EINVAL;
-+	}
-+	pdata->base = -1;
-+
-+	if (of_device_is_big_endian(dev->of_node))
-+		pdata->flags = BGPIOF_BIG_ENDIAN;
-+
-+	dev->platform_data = pdata;
-+	return 0;
-+}
-+#else
-+static int bgpio_parse_dt(struct device *dev)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_OF */
-+
- static int bgpio_pdev_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -574,10 +605,21 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 	void __iomem *dirout;
- 	void __iomem *dirin;
- 	unsigned long sz;
--	unsigned long flags = pdev->id_entry->driver_data;
- 	int err;
- 	struct bgpio_chip *bgc;
--	struct bgpio_pdata *pdata = dev_get_platdata(dev);
-+	struct bgpio_pdata *pdata;
-+
-+	if (of_have_populated_dt()) {
-+		err = bgpio_parse_dt(dev);
-+		if (err < 0) {
-+			dev_err(dev, "Failed to get DT data\n");
-+			return err;
-+		}
-+	}
-+	pdata = dev_get_platdata(dev);
-+
-+	if (!of_have_populated_dt())
-+		pdata->flags = pdev->id_entry->driver_data;
- 
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dat");
- 	if (!r)
-@@ -609,7 +651,8 @@ static int bgpio_pdev_probe(struct platform_device *pdev)
- 	if (!bgc)
- 		return -ENOMEM;
- 
--	err = bgpio_init(bgc, dev, sz, dat, set, clr, dirout, dirin, flags);
-+	err = bgpio_init(bgc, dev, sz, dat, set, clr, dirout, dirin,
-+			 pdata->flags);
- 	if (err)
- 		return err;
- 
-@@ -633,6 +676,14 @@ static int bgpio_pdev_remove(struct platform_device *pdev)
- 	return bgpio_remove(bgc);
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id  bgpio_of_match[] = {
-+	{ .compatible = "basic-mmio-gpio" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bgpio_of_match);
-+#endif
-+
- static const struct platform_device_id bgpio_id_table[] = {
- 	{
- 		.name		= "basic-mmio-gpio",
-@@ -648,6 +699,9 @@ MODULE_DEVICE_TABLE(platform, bgpio_id_table);
- static struct platform_driver bgpio_driver = {
- 	.driver = {
- 		.name = "basic-mmio-gpio",
-+#ifdef CONFIG_OF
-+		.of_match_table = of_match_ptr(bgpio_of_match),
-+#endif
- 	},
- 	.id_table = bgpio_id_table,
- 	.probe = bgpio_pdev_probe,
-diff --git a/include/linux/basic_mmio_gpio.h b/include/linux/basic_mmio_gpio.h
-index 0e97856..d85d9ca 100644
---- a/include/linux/basic_mmio_gpio.h
-+++ b/include/linux/basic_mmio_gpio.h
-@@ -22,6 +22,7 @@ struct bgpio_pdata {
- 	const char *label;
- 	int base;
- 	int ngpio;
-+	int flags;
- };
- 
- struct device;
--- 
-1.7.1
+Please pull it in!
 
-*********************************************************
-This message contains information that may be confidential and/or privileged and is intended only for the individual or entity named in the body of email above. If this message has been received in error, your receipt of this message is not intended to waive any applicable privilege. No one else may disclose, copy, distribute or use the contents of this message. Unauthorized use, dissemination and duplication is strictly prohibited, and may be unlawful.
+Yours,
+Linus Walleij
 
+The following changes since commit 5ebe6afaf0057ac3eaeb98defd5456894b44=
+6d22:
 
+  Linux 4.1-rc2 (2015-05-03 19:22:23 -0700)
 
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.gi=
+t
+tags/pinctrl-v4.2-1
+
+for you to fetch changes up to daecdc66968f122fe53038ded8cb7abe93e0aa8c=
+:
+
+  pinctrl: rockchip: add support for the rk3368 (2015-06-17 10:21:02 +0=
+200)
+
+----------------------------------------------------------------
+Here is the bulk of pin control changes for the v4.2 series:
+
+- Core functionality:
+  - Enable exclusive pin ownership: it is possible to flag a pin
+    controller so that GPIO and other functions cannot use a single
+    pin simultaneously.
+
+- New drivers:
+  - NXP LPC18xx System Control Unit pin controller
+  - Imagination Pistachio SoC pin controller
+
+- New subdrivers:
+  - Freescale i.MX7d SoC
+  - Intel Sunrisepoint-H PCH
+  - Renesas PFC R8A7793
+  - Renesas PFC R8A7794
+  - Mediatek MT6397, MT8127
+  - SiRF Atlas 7
+  - Allwinner A33
+  - Qualcomm MSM8660
+  - Marvell Armada 395
+  - Rockchip RK3368
+
+- Cleanups:
+  - A big cleanup of the Marvell MVEBU driver rectifying it to
+    correspond to reality
+  - Drop platform device probing from the SH PFC driver, we are now a
+    DT only shop for SuperH
+  - Drop obsolte multi-platform check for SH PFC
+  - Various janitorial: constification, grammar etc
+
+- Improvements:
+  - The AT91 GPIO portions now supports the set_multiple() feature
+  - Split out SPI pins on the Xilinx Zynq
+  - Support DTs without specific function nodes in the i.MX driver
+
+----------------------------------------------------------------
+Alexander Stein (1):
+      pinctrl: at91: Add set_multiple GPIO chip feature
+
+Andrew Bresticker (2):
+      pinctrl: Add Pistachio SoC pin control binding document
+      pinctrl: Add Pistachio SoC pin control driver
+
+Antoine Tenart (2):
+      pinctrl: berlin: fix spi1 SS0n function name
+      pinctrl: berlin: comment the spi functions
+
+Bjorn Andersson (2):
+      pinctrl: qcom: Add MSM8660 pinctrl definitions
+      pinctrl: dt-binding: Add DT binding documentation for MSM8660
+
+=46abian Frederick (1):
+      pinctrl: use ERR_CAST instead of ERR_PTR/PTR_ERR
+
+=46abio Estevam (2):
+      pinctrl: Remove .owner field
+      pinctrl: samsung: Fix the pointer in PTR_ERR()
+
+=46rank Li (1):
+      pinctrl: add imx7d support
+
+Geert Uytterhoeven (5):
+      pinctrl: sh-pfc: Remove r8a73a4 platform_device_id entry
+      pinctrl: Grammar s/used in as/used as/
+      pinctrl: sh-pfc: r8a7740: Fix typo SCIFAB in comment
+      pinctrl: sh-pfc: r8a73a4: Remove obsolete multi-platform check
+      pinctrl: Spelling s/reseved/reserved/
+
+Heiko St=C3=BCbner (2):
+      pinctrl: rockchip: generalize perpin driver-strength setting
+      pinctrl: rockchip: add support for the rk3368
+
+Helmut Buchsbaum (1):
+      pinctrl: zynq: configure SPI SSx pins separately
+
+Hisashi Nakamura (1):
+      pinctrl: sh-pfc: add R8A7794 PFC support
+
+Hongzhou Yang (6):
+      pinctrl: mediatek: Modify pinctrl bindings for mt6397.
+      pinctrl: mt6397: Add pinfunc header file for mt6397.
+      pinctrl: mediatek: add ies/smt control to common code.
+      pinctrl: mediatek: Add Pinctrl/GPIO driver for mt6397.
+      pinctrl: mediatek: Fix bug of ies/smt setting for mt8173.
+      pinctrl: mediatek: Fix pinctrl register irq fail bug.
+
+Joachim Eastwood (4):
+      pinctrl: add lpc18xx pinctrl driver
+      pinctrl: add DT bindings for lpc1850-scu pinctrl driver
+      pinctrl: lpc18xx: create pin cap lookup helper
+      pinctrl: lpc18xx: add the missing group function map
+
+Jon Hunter (2):
+      pinctrl: tegra-xusb: Remove unused structure
+      pinctrl: tegra-xusb: Fix allocation of pins
+
+Krzysztof Kozlowski (2):
+      pinctrl: single: Constify irq_domain_ops
+      gpio: Constify irq_domain_ops
+
+Linus Walleij (5):
+      pinctrl: move strict option to pinmux_ops
+      pinctrl: nomadik: activate strict mux mode
+      pinctrl: nomadik: assign chips dynamically
+      pinctrl: mediatek: add OF dependency to MT6397
+      pinctrl: improve debugfs for strict controllers
+
+Ludovic Desroches (1):
+      pinctrl: don't print unavailable function groups
+
+Markus Pargmann (1):
+      pinctrl: imx: Allow parsing DT without function nodes
+
+Masahiro Yamada (9):
+      pinctrl: zynq: add static to platform_driver remove callback
+      pinctrl: zynq: fix DEFINE_ZYNQ_PINMUX_FUNCTION_MUX macro
+      pinctrl: zynq: fix offset address for {SD0,SD1}_WP_CD_SEL
+      pinctrl: remove useless const qualifier
+      pinctrl: use "const struct ..." rather than "struct ... const"
+      pinctrl: zynq: add static to zynq_pins
+      pinctrl: zynq: add static const to zynq_pctrl_groups
+      pinctrl: fix confusing debug message in pinctrl_register_map()
+      pinctrl: make pinctrl_register() return proper error code
+
+Mika Westerberg (1):
+      pinctrl: intel: sunrisepoint: Add Intel Sunrisepoint-H support
+
+Ray Jui (1):
+      pinctrl: cygnus: fixed typo in the gpio driver
+
+Shinobu Uehara (2):
+      pinctrl: sh-pfc: r8a7794: add MMCIF pin groups
+      pinctrl: sh-pfc: r8a7794: add SDHI pin groups
+
+Sonic Zhang (1):
+      pinctrl: allow exlusive GPIO/mux pin allocation
+
+Thomas Petazzoni (34):
+      pinctrl: mvebu: armada-38x: fix PCIe functions
+      pinctrl: mvebu: armada-370: fix spi0 pin description
+      pinctrl: mvebu: armada-375: remove non-existing NAND re/we pins
+      pinctrl: mvebu: armada-xp: remove non-existing NAND pins
+      pinctrl: mvebu: armada-xp: remove non-existing VDD cpu_pd functio=
+ns
+      pinctrl: mvebu: armada-xp: fix functions of MPP48
+      pinctrl: mvebu: armada-375: remove incorrect space in pin descrip=
+tion
+      pinctrl: mvebu: armada-38x: fix incorrect total number of GPIOs
+      pinctrl: mvebu: armada-39x: fix incorrect total number of GPIOs
+      pinctrl: mvebu: armada-{375,38x,39x}: normalize naming of PTP sub=
+names
+      pinctrl: mvebu: armada-{38x,39x,xp}: normalize naming of DRAM fun=
+ctions
+      pinctrl: mvebu: armada-39x: normalize SATA present functionality =
+naming
+      pinctrl: mvebu: armada-39x: normalize SDIO pin naming
+      pinctrl: mvebu: armada-{370,375,38x,39x}: normalize dev pins
+      pinctrl: mvebu: armada-39x: align NAND pin naming
+      pinctrl: mvebu: armada-{370,375,38x,39x,xp}: normalize TDM pins
+      pinctrl: mvebu: armada-{370,375}: normalize PCIe pins
+      pinctrl: mvebu: armada-{370,375}: normalize audio pins
+      pinctrl: mvebu: armada-{370,xp}: normalize ethernet txclkout pins
+      pinctrl: mvebu: armada-xp: fix binding documentation of ge1 pins
+      pinctrl: mvebu: armada-370: align VDD cpu-pd pin naming with data=
+sheet
+      pinctrl: mvebu: armada-370: align spi1 clock pin naming
+      pinctrl: mvebu: armada-xp: rename spi to spi0
+      pinctrl: mvebu: armada-39x: normalize ref clock naming
+      pinctrl: mvebu: armada-xp: add spi1 function
+      pinctrl: mvebu: armada-xp: add nand rb function
+      pinctrl: mvebu: armada-xp: add dram functions
+      pinctrl: mvebu: armada-38x: add sata functions
+      pinctrl: mvebu: armada-38x: add nand functions
+      pinctrl: mvebu: armada-38x: add ua1 functions
+      pinctrl: mvebu: armada-38x: add ptp functions
+      pinctrl: mvebu: armada-39x: add missing PCIe functions
+      pinctrl: mvebu: armada-39x: add missing SATA functions
+      pinctrl: mvebu: armada-39x: add support for Armada 395 variant
+
+Ulrich Hecht (3):
+      pinctrl: sh-pfc: Add r8a7793 support
+      pinctrl: sh-pfc: Enable building of r8a7793 PFC support
+      pinctrl: sh-pfc: Add renesas,pfc-r8a7793 to binding documentation
+
+Vishnu Patekar (1):
+      pinctrl: sunxi: Add allwinner A33 PIO controller support
+
+Wei Chen (1):
+      pinctrl: sirf: add sirf atlas7 pinctrl and gpio support
+
+Yingjoe Chen (3):
+      pinctrl: mediatek: data struct optimize and remove unused member
+      pinctrl: mediatek: add mtk_pctrl_spec_pull_set_samereg common cod=
+e
+      pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt8127
+
+Yoshihiro Shimoda (2):
+      pinctrl: sh-pfc: r8a7790: Add PWM pin groups and functions
+      pinctrl: sh-pfc: r8a7791: Add PWM pin groups and functions
+
+ .../devicetree/bindings/gpio/gpio-atlas7.txt       |   50 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    2 +
+ .../bindings/pinctrl/img,pistachio-pinctrl.txt     |  217 +
+ .../pinctrl/marvell,armada-370-pinctrl.txt         |   18 +-
+ .../pinctrl/marvell,armada-375-pinctrl.txt         |   34 +-
+ .../pinctrl/marvell,armada-38x-pinctrl.txt         |   66 +-
+ .../pinctrl/marvell,armada-39x-pinctrl.txt         |   84 +-
+ .../bindings/pinctrl/marvell,armada-xp-pinctrl.txt |   80 +-
+ .../bindings/pinctrl/nxp,lpc1850-scu.txt           |   57 +
+ .../devicetree/bindings/pinctrl/pinctrl-atlas7.txt |  109 +
+ .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +-
+ .../bindings/pinctrl/qcom,msm8660-pinctrl.txt      |   90 +
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    4 +-
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |    5 +-
+ .../bindings/pinctrl/xlnx,zynq-pinctrl.txt         |    7 +-
+ Documentation/pinctrl.txt                          |   11 +
+ drivers/gpio/gpio-bcm-kona.c                       |    2 +-
+ drivers/gpio/gpio-em.c                             |    2 +-
+ drivers/gpio/gpio-grgpio.c                         |    2 +-
+ drivers/gpio/gpio-mpc8xxx.c                        |    2 +-
+ drivers/gpio/gpio-sa1100.c                         |    2 +-
+ drivers/gpio/gpio-sodaville.c                      |    2 +-
+ drivers/pinctrl/Kconfig                            |   19 +
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c             |    4 +-
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c              |    4 +-
+ drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c          |    8 +-
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c           |    4 +-
+ drivers/pinctrl/berlin/berlin-bg2.c                |   18 +-
+ drivers/pinctrl/berlin/berlin-bg2cd.c              |    8 +-
+ drivers/pinctrl/berlin/berlin-bg2q.c               |   16 +-
+ drivers/pinctrl/berlin/berlin.c                    |    4 +-
+ drivers/pinctrl/core.c                             |   21 +-
+ drivers/pinctrl/freescale/Kconfig                  |    7 +
+ drivers/pinctrl/freescale/Makefile                 |    1 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            |   59 +-
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c      |    4 +-
+ drivers/pinctrl/freescale/pinctrl-imx7d.c          |  384 ++
+ drivers/pinctrl/freescale/pinctrl-mxs.c            |    4 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c         |    4 +-
+ drivers/pinctrl/intel/pinctrl-intel.c              |    4 +-
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c       |  263 ++
+ drivers/pinctrl/mediatek/Kconfig                   |   13 +
+ drivers/pinctrl/mediatek/Makefile                  |    2 +
+ drivers/pinctrl/mediatek/pinctrl-mt6397.c          |   77 +
+ drivers/pinctrl/mediatek/pinctrl-mt8127.c          |  358 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8135.c          |   13 +-
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c          |  377 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  161 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h      |   75 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6397.h      |  424 ++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8127.h      | 1318 ++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |    4 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c         |   22 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c         |   50 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c         |  120 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c         |  131 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c          |   98 +-
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c              |    4 +-
+ drivers/pinctrl/nomadik/pinctrl-ab8505.c           |    2 +-
+ drivers/pinctrl/nomadik/pinctrl-abx500.c           |    5 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   66 +-
+ drivers/pinctrl/pinctrl-adi2.c                     |    5 +-
+ drivers/pinctrl/pinctrl-amd.c                      |    5 +-
+ drivers/pinctrl/pinctrl-as3722.c                   |    4 +-
+ drivers/pinctrl/pinctrl-at91.c                     |   20 +-
+ drivers/pinctrl/pinctrl-lantiq.c                   |    4 +-
+ drivers/pinctrl/pinctrl-lpc18xx.c                  | 1220 +++++
+ drivers/pinctrl/pinctrl-palmas.c                   |    4 +-
+ drivers/pinctrl/pinctrl-pistachio.c                | 1504 +++++++
+ drivers/pinctrl/pinctrl-rockchip.c                 |  131 +-
+ drivers/pinctrl/pinctrl-single.c                   |    6 +-
+ drivers/pinctrl/pinctrl-st.c                       |    4 +-
+ drivers/pinctrl/pinctrl-tb10x.c                    |    4 +-
+ drivers/pinctrl/pinctrl-tegra-xusb.c               |   27 +-
+ drivers/pinctrl/pinctrl-tegra.c                    |    4 +-
+ drivers/pinctrl/pinctrl-tz1090-pdc.c               |    4 +-
+ drivers/pinctrl/pinctrl-tz1090.c                   |    4 +-
+ drivers/pinctrl/pinctrl-u300.c                     |    4 +-
+ drivers/pinctrl/pinctrl-zynq.c                     |   91 +-
+ drivers/pinctrl/pinmux.c                           |   59 +-
+ drivers/pinctrl/qcom/Kconfig                       |    8 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |    4 +-
+ drivers/pinctrl/qcom/pinctrl-msm8660.c             |  984 +++++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |    4 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            |    4 +-
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c       |    4 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |    6 +-
+ drivers/pinctrl/sh-pfc/Kconfig                     |   10 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    2 +
+ drivers/pinctrl/sh-pfc/core.c                      |   15 +-
+ drivers/pinctrl/sh-pfc/core.h                      |    2 +
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c               |    4 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |    2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |  101 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |  186 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c               | 4207 ++++++++++++=
+++++++
+ drivers/pinctrl/sh-pfc/pinctrl.c                   |    4 +-
+ drivers/pinctrl/sirf/Makefile                      |    1 +
+ drivers/pinctrl/sirf/pinctrl-atlas7.c              | 4637 ++++++++++++=
+++++++++
+ drivers/pinctrl/sirf/pinctrl-sirf.c                |    4 +-
+ drivers/pinctrl/spear/pinctrl-spear.c              |    4 +-
+ drivers/pinctrl/sunxi/Kconfig                      |    4 +
+ drivers/pinctrl/sunxi/Makefile                     |    1 +
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31s.c         |    1 -
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |  513 +++
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |    4 +-
+ drivers/pinctrl/vt8500/pinctrl-wmt.c               |    4 +-
+ include/dt-bindings/pinctrl/mt6397-pinfunc.h       |  256 ++
+ include/linux/pinctrl/consumer.h                   |    2 +-
+ include/linux/pinctrl/pinctrl.h                    |    2 +-
+ include/linux/pinctrl/pinmux.h                     |    6 +-
+ 113 files changed, 18261 insertions(+), 843 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-atlas7.=
+txt
+ create mode 100644
+Documentation/devicetree/bindings/pinctrl/img,pistachio-pinctrl.txt
+ create mode 100644
+Documentation/devicetree/bindings/pinctrl/nxp,lpc1850-scu.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-a=
+tlas7.txt
+ create mode 100644
+Documentation/devicetree/bindings/pinctrl/qcom,msm8660-pinctrl.txt
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7d.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6397.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8127.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6397.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8127.h
+ create mode 100644 drivers/pinctrl/pinctrl-lpc18xx.c
+ create mode 100644 drivers/pinctrl/pinctrl-pistachio.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8660.c
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+ create mode 100644 drivers/pinctrl/sirf/pinctrl-atlas7.c
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
+ create mode 100644 include/dt-bindings/pinctrl/mt6397-pinfunc.h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
