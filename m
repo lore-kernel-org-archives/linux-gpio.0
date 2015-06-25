@@ -1,65 +1,136 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v2] gpio/xilinx: Use correct address when setting initial
- values.
-Date: Thu, 25 Jun 2015 10:50:19 +0200
-Message-ID: <558BC0CB.4000908@xilinx.com>
-References: <1435130385.30543.3.camel@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1435130385.30543.3.camel@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?UmFwaGHDq2wgVGV5c3NleXJl?= <rteysseyre@gmail.com>, linus.walleij@linaro.org, gnurou@gmail.com, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: Convert to platform_get_*()
+Date: Thu, 25 Jun 2015 11:39:53 +0200
+Message-ID: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On 06/24/2015 09:19 AM, Rapha=C3=ABl Teysseyre wrote:
-> xgpio_save_regs() is used in this driver to setup the initial
-> values of the registers in the hardware.
->=20
-> The relevant registers at that time are:
-> 0x0 -> channel 0 data (32 bits, one for each GPIO on this channel).
-> 0x4 -> channel 0 tri, controls in/out status for each GPIO of this ch=
-annel.
-> 0x8 -> channel 1 data
-> 0xC -> channel 1 tri
->=20
-> gpio-xilinx.c defines these:
-> XGPIO_DATA_OFFSET   (0x0)
-> XGPIO_TRI_OFFSET    (0x4)
-> XGPIO_CHANNEL_OFFSET	0x8
->=20
-> Before this patch, the "data" register value of channel 1 was written
-> at 0x4 intead of 0x8 (overwriting the channel 0 "tri" register),
-> and the "tri" register value for channel 1 was written at 0x8 instead=
- of 0xC.
->=20
-> Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
-> ---
->  drivers/gpio/gpio-xilinx.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index 61243d1..e544b7a 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -220,9 +220,9 @@ static void xgpio_save_regs(struct of_mm_gpio_chi=
-p *mm_gc)
->  	if (!chip->gpio_width[1])
->  		return;
-> =20
-> -	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_TRI_OFFSET,
-> +	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_CHANNEL_OFFS=
-ET,
->  		       chip->gpio_state[1]);
-> -	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_TRI_OFFSET,
-> +	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_CHANNEL_OFFSE=
-T,
->  		       chip->gpio_dir[1]);
->  }
+If the pin function controller (which can be a GPIO controller) is
+instantiated before the interrupt controllers, due to the ordering in
+the DTS, the irq domains for the interrupt controllers referenced by its
+"interrupts-extended" property cannot be found yet:
 
+    irq: no irq domain found for /interrupt-controller@e61c0000 !
 
-Reviewed-by: Michal Simek <michal.simek@xilinx.com>
+As the sh-pfc driver accesses the platform device's resources directly,
+it cannot find the (optional) IRQ resources, and thinks no interrupts
+are available. This may lead to failures later, when GPIOs are used as
+interupts:
 
-Thanks,
-Michal
+    gpio-keys keyboard: Unable to claim irq 0; error -22
+    gpio-keys: probe of keyboard failed with error -22
+
+To fix this, add support for deferred probing to sh-pfc, by converting
+the driver from direct platform device resource access to using the
+platform_get_resource() and platform_get_irq() helpers.
+
+Note that while this fixes the root cause worked around by commit
+e4ba0a9bddff3ba5 ("ARM: shmobile: r8a73a4: Move pfc node to work around
+probe ordering bug"), I strongly recommend against reverting the
+workaround now, as this would lead to lots of probe deferrals in drivers
+relying on pinctrl. This may be reconsidered once the DT code starts
+taking into account phandle dependencies during device instantation.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This patch is against next-20150625
+
+"[PATCH] [RFC] OF: probe order dependency aware of_platform_populate"
+(https://www.marc.info/?l=devicetree&m=141873189825553&w=1) is a first
+step, but it doesn't postpone the instantiation of the pfc.
+
+Tested:
+  - r8a73a4/ape6evm (with pfc before/after irqc in DT),
+  - sh73a0/kzm9g (with pfc before/after intc-irqpin in DT).
+
+Regression-tested:
+  - r8a7791/koelsch (pfc doesn't have interrupts),
+  - r8a7740/armadillo (pfc after intc-irqpin in DT),
+  - r8a7740/armadillo-legacy (gpio-keys wired to pfc),
+  - sh73a0/kzm9g-legacy (gpio-keys not wired to pfc).
+
+Compile-tested:
+  - sh/se7724_defconfig.
+---
+ drivers/pinctrl/sh-pfc/core.c | 46 ++++++++++++++++++++-----------------------
+ 1 file changed, 21 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 865d235612c5200a..9796238959047508 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -29,24 +29,25 @@
+ static int sh_pfc_map_resources(struct sh_pfc *pfc,
+ 				struct platform_device *pdev)
+ {
+-	unsigned int num_windows = 0;
+-	unsigned int num_irqs = 0;
++	unsigned int num_windows, num_irqs;
+ 	struct sh_pfc_window *windows;
+ 	unsigned int *irqs = NULL;
+ 	struct resource *res;
+ 	unsigned int i;
++	int irq;
+ 
+ 	/* Count the MEM and IRQ resources. */
+-	for (i = 0; i < pdev->num_resources; ++i) {
+-		switch (resource_type(&pdev->resource[i])) {
+-		case IORESOURCE_MEM:
+-			num_windows++;
++	for (num_windows = 0;; num_windows++) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, num_windows);
++		if (!res)
+ 			break;
+-
+-		case IORESOURCE_IRQ:
+-			num_irqs++;
++	}
++	for (num_irqs = 0;; num_irqs++) {
++		irq = platform_get_irq(pdev, num_irqs);
++		if (irq == -EPROBE_DEFER)
++			return irq;
++		if (irq < 0)
+ 			break;
+-		}
+ 	}
+ 
+ 	if (num_windows == 0)
+@@ -72,22 +73,17 @@ static int sh_pfc_map_resources(struct sh_pfc *pfc,
+ 	}
+ 
+ 	/* Fill them. */
+-	for (i = 0, res = pdev->resource; i < pdev->num_resources; i++, res++) {
+-		switch (resource_type(res)) {
+-		case IORESOURCE_MEM:
+-			windows->phys = res->start;
+-			windows->size = resource_size(res);
+-			windows->virt = devm_ioremap_resource(pfc->dev, res);
+-			if (IS_ERR(windows->virt))
+-				return -ENOMEM;
+-			windows++;
+-			break;
+-
+-		case IORESOURCE_IRQ:
+-			*irqs++ = res->start;
+-			break;
+-		}
++	for (i = 0; i < num_windows; i++) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		windows->phys = res->start;
++		windows->size = resource_size(res);
++		windows->virt = devm_ioremap_resource(pfc->dev, res);
++		if (IS_ERR(windows->virt))
++			return -ENOMEM;
++		windows++;
+ 	}
++	for (i = 0; i < num_irqs; i++)
++		*irqs++ = platform_get_irq(pdev, i);
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
+
