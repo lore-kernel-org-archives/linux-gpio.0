@@ -1,67 +1,51 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v0] arm64: dts: Add poweroff button device node for APM
- X-Gene platform
-Date: Thu, 25 Jun 2015 16:09:38 +0100
-Message-ID: <20150625150938.GB6844@leverpostej>
-References: <1434505312-27977-1-git-send-email-yvo@apm.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: omap: prevent module from being unloaded while in use
+Date: Thu, 25 Jun 2015 18:13:33 +0300
+Message-ID: <1435245213-17858-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:57442 "EHLO foss.arm.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:44789 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751782AbbFYPJ4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 25 Jun 2015 11:09:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1434505312-27977-1-git-send-email-yvo@apm.com>
+	id S1751337AbbFYPN7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 25 Jun 2015 11:13:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "arm@kernel.org" <arm@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, "patches@apm.com" <patches@apm.com>, Loc Ho <lho@apm.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, tony@atomide.com
+Cc: Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Wed, Jun 17, 2015 at 02:41:52AM +0100, Y Vo wrote:
-> This patch adds poweroff button device node to support poweroff feature
-> on APM X-Gene Mustang platform.
-> 
-> Signed-off-by: Y Vo <yvo@apm.com>
-> ---
->  arch/arm64/boot/dts/apm/apm-mustang.dts |   11 +++++++++++
->  1 files changed, 11 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/apm/apm-mustang.dts b/arch/arm64/boot/dts/apm/apm-mustang.dts
-> index 83578e7..67979c8 100644
-> --- a/arch/arm64/boot/dts/apm/apm-mustang.dts
-> +++ b/arch/arm64/boot/dts/apm/apm-mustang.dts
-> @@ -23,6 +23,17 @@
->  		device_type = "memory";
->  		reg = < 0x1 0x00000000 0x0 0x80000000 >; /* Updated by bootloader */
->  	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		apm_ctrl_name = "Power Button";
+OMAP GPIO driver allowed to be built as loadable module, but it
+doesn't set owner field in GPIO chip structure. As result,
+module_get/put() API is not working and it's possible to unload
+OMAP driver while in use:
 
-Huh?
+  omap_gpio 48051000.gpio: REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED
 
-Undocumented, unused, and doesn't follwo the "vendor,property" naming
-scheme...
+Hence, add missing configuration.
 
-Mark.
+Cc: Tony Lindgren <tony@atomide.com>
+Fixes: cac089f9026e ('gpio: omap: Allow building as a loadable module')
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+Hi Linus,
 
-> +		btn3 {
-> +			label = "EXT_PWR";
-> +			linux,code = <116>;
-> +			linux,input-type = <0x1>;     /* EV_KEY */
-> +			interrupts = <0x0 0x2d 0x1>;
-> +		};
-> +	};
->  };
->  
->  &pcie0clk {
-> -- 
-> 1.7.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Seems this one is for 4.2-rc.
+
+ drivers/gpio/gpio-omap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index a0ad803..61a731f 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1187,6 +1187,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	bank->irq = res->start;
+ 	bank->dev = dev;
+ 	bank->chip.dev = dev;
++	bank->chip.owner = THIS_MODULE;
+ 	bank->dbck_flag = pdata->dbck_flag;
+ 	bank->stride = pdata->bank_stride;
+ 	bank->width = pdata->bank_width;
+-- 
+2.4.4
+
