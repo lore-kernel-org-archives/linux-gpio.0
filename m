@@ -1,79 +1,55 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpio: pcf857x: get rid of slock spinlock
-Date: Thu, 25 Jun 2015 18:18:11 +0300
-Message-ID: <1435245491-18012-1-git-send-email-grygorii.strashko@ti.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
+Date: Thu, 25 Jun 2015 12:42:56 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-4-git-send-email-pawelo@king.net.pl> <2235698.8UjxLOMCMb@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:56248 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751239AbbFYPSS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 25 Jun 2015 11:18:18 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2235698.8UjxLOMCMb@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Max
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-The spinlock 'slock' is used now to protect pcf857x_irq() from itself
-which is unnecessary (especially after switching to use threaded
-IRQs). Hence, remove it and use mutex to protect device data in IRQ
-handler.
+On Tue, 23 Jun 2015, Arnd Bergmann wrote:
 
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-pcf857x.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+> On Tuesday 23 June 2015 23:19:41 Paul Osmialowski wrote:
+> > Some SoCs need additional actions to be performed after arch idle,
+> > e.g. Kinetis requires invalidation of the I/D bus cache.
+> > 
+> > Such handler could be held in provided <mach/idle.h> header file.
+> > 
+> > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+> > ---
+> >  arch/arm/Kconfig          | 7 +++++++
+> >  arch/arm/kernel/process.c | 7 +++++++
+> >  2 files changed, 14 insertions(+)
+> > 
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index 8e3a833..8ef8f8f 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -98,6 +98,13 @@ config ARM_HAS_SG_CHAIN
+> >  config NEED_SG_DMA_LENGTH
+> >  	bool
+> >  
+> > +config NEED_MACH_IDLE_H
+> > +	bool
+> > +
+> > +config ARM_CPU_IDLE_QUIRKS
+> > +	bool
+> > +	select NEED_MACH_IDLE_H
+> > +
+> 
+> We're not adding header files like this, please come up
+> with another solution. How about a cpuidle driver, or
+> possibly just overriding arm_pm_idle()?
 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 404f3c6..1d4d9bc 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -88,7 +88,6 @@ struct pcf857x {
- 	struct gpio_chip	chip;
- 	struct i2c_client	*client;
- 	struct mutex		lock;		/* protect 'out' */
--	spinlock_t		slock;		/* protect irq demux */
- 	unsigned		out;		/* software latch */
- 	unsigned		status;		/* current status */
- 	unsigned int		irq_parent;
-@@ -185,23 +184,21 @@ static void pcf857x_set(struct gpio_chip *chip, unsigned offset, int value)
- static irqreturn_t pcf857x_irq(int irq, void *data)
- {
- 	struct pcf857x  *gpio = data;
--	unsigned long change, i, status, flags;
-+	unsigned long change, i, status;
- 
- 	status = gpio->read(gpio->client);
- 
--	spin_lock_irqsave(&gpio->slock, flags);
--
- 	/*
- 	 * call the interrupt handler iff gpio is used as
- 	 * interrupt source, just to avoid bad irqs
- 	 */
--
-+	mutex_lock(&gpio->lock);
- 	change = (gpio->status ^ status) & gpio->irq_enabled;
--	for_each_set_bit(i, &change, gpio->chip.ngpio)
--		handle_nested_irq(irq_find_mapping(gpio->chip.irqdomain, i));
- 	gpio->status = status;
-+	mutex_unlock(&gpio->lock);
- 
--	spin_unlock_irqrestore(&gpio->slock, flags);
-+	for_each_set_bit(i, &change, gpio->chip.ngpio)
-+		handle_nested_irq(irq_find_mapping(gpio->chip.irqdomain, i));
- 
- 	return IRQ_HANDLED;
- }
-@@ -293,7 +290,6 @@ static int pcf857x_probe(struct i2c_client *client,
- 		return -ENOMEM;
- 
- 	mutex_init(&gpio->lock);
--	spin_lock_init(&gpio->slock);
- 
- 	gpio->chip.base			= pdata ? pdata->gpio_base : -1;
- 	gpio->chip.can_sleep		= true;
--- 
-2.4.4
+If the WFI instruction always requires I and D flushing, then it might 
+be a better idea to provide a replacement for the corresponding 
+cpu_*_do_idle function.  Plenty of examples exist for other cpu_* 
+functions.
 
+
+Nicolas
