@@ -1,51 +1,64 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
-Date: Fri, 26 Jun 2015 01:40:56 +0300
-Message-ID: <2925145.E3lLFJfWJW@wasted.cogentembedded.com>
+Subject: [PATCH v3 2/3] sh-pfc: r8a7790: remove non-existing GPIO pins
+Date: Fri, 26 Jun 2015 01:42:04 +0300
+Message-ID: <14360647.s1qTxSuam8@wasted.cogentembedded.com>
 References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:32957 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993AbbFYWlA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 18:41:00 -0400
-Received: by laka10 with SMTP id a10so53605810lak.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2015 15:40:59 -0700 (PDT)
+Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-sh-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-The PFC driver causes the kernel to hang on the R-Car gen2 SoC based  boards
-when the CPU_ALL_PORT() macro is fixed to reflect the reality, i.e. when the
-GPIO space becomes actually sparse.  This happens because the _GP_GPIO() macro
-includes  an indexed initializer which causes the "holes" (array entries filled
-with all 0s) between the groups  of the existing GPIOs; and the driver can't
-cope with that.  There seems to  be no reason to use the indexed initializer,
-so we can remove the index specifier and so avoid the "holes".
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+GPIO banks 1 and 2 are missing pins 30 and 31. Remove them.
+
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
-Changes in version 3:
-- new patch.
+Changes in version 2:
+- renamed the patch.
 
- drivers/pinctrl/sh-pfc/sh_pfc.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
 ===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -224,7 +224,7 @@ struct sh_pfc_soc_info {
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -27,10 +27,27 @@
+ #include "core.h"
+ #include "sh_pfc.h"
  
- /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
- #define _GP_GPIO(bank, _pin, _name, sfx)				\
--	[(bank * 32) + _pin] = {					\
-+	{								\
- 		.pin = (bank * 32) + _pin,				\
- 		.name = __stringify(_name),				\
- 		.enum_id = _name##_DATA,				\
++#define PORT_GP_30(bank, fn, sfx)					\
++	PORT_GP_1(bank, 0,  fn, sfx), PORT_GP_1(bank, 1,  fn, sfx),	\
++	PORT_GP_1(bank, 2,  fn, sfx), PORT_GP_1(bank, 3,  fn, sfx),	\
++	PORT_GP_1(bank, 4,  fn, sfx), PORT_GP_1(bank, 5,  fn, sfx),	\
++	PORT_GP_1(bank, 6,  fn, sfx), PORT_GP_1(bank, 7,  fn, sfx),	\
++	PORT_GP_1(bank, 8,  fn, sfx), PORT_GP_1(bank, 9,  fn, sfx),	\
++	PORT_GP_1(bank, 10, fn, sfx), PORT_GP_1(bank, 11, fn, sfx),	\
++	PORT_GP_1(bank, 12, fn, sfx), PORT_GP_1(bank, 13, fn, sfx),	\
++	PORT_GP_1(bank, 14, fn, sfx), PORT_GP_1(bank, 15, fn, sfx),	\
++	PORT_GP_1(bank, 16, fn, sfx), PORT_GP_1(bank, 17, fn, sfx),	\
++	PORT_GP_1(bank, 18, fn, sfx), PORT_GP_1(bank, 19, fn, sfx),	\
++	PORT_GP_1(bank, 20, fn, sfx), PORT_GP_1(bank, 21, fn, sfx),	\
++	PORT_GP_1(bank, 22, fn, sfx), PORT_GP_1(bank, 23, fn, sfx),	\
++	PORT_GP_1(bank, 24, fn, sfx), PORT_GP_1(bank, 25, fn, sfx),	\
++	PORT_GP_1(bank, 26, fn, sfx), PORT_GP_1(bank, 27, fn, sfx),	\
++	PORT_GP_1(bank, 28, fn, sfx), PORT_GP_1(bank, 29, fn, sfx)
++
+ #define CPU_ALL_PORT(fn, sfx)						\
+ 	PORT_GP_32(0, fn, sfx),						\
+-	PORT_GP_32(1, fn, sfx),						\
+-	PORT_GP_32(2, fn, sfx),						\
++	PORT_GP_30(1, fn, sfx),						\
++	PORT_GP_30(2, fn, sfx),						\
+ 	PORT_GP_32(3, fn, sfx),						\
+ 	PORT_GP_32(4, fn, sfx),						\
+ 	PORT_GP_32(5, fn, sfx)
 
