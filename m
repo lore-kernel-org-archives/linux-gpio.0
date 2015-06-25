@@ -1,30 +1,51 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 0/3] Remove non-existing GPIO pins for R8A7790/1
-Date: Fri, 26 Jun 2015 01:39:14 +0300
-Message-ID: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
+Subject: [PATCH v3 1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
+Date: Fri, 26 Jun 2015 01:40:56 +0300
+Message-ID: <2925145.E3lLFJfWJW@wasted.cogentembedded.com>
+References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f47.google.com ([209.85.215.47]:33372 "EHLO
-	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750993AbbFYWjS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 18:39:18 -0400
-Received: by laka10 with SMTP id a10so53589485lak.0
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2015 15:39:16 -0700 (PDT)
+Received: from mail-la0-f43.google.com ([209.85.215.43]:32957 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750993AbbFYWlA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 18:41:00 -0400
+Received: by laka10 with SMTP id a10so53605810lak.0
+        for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2015 15:40:59 -0700 (PDT)
+In-Reply-To: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-Hello.
+The PFC driver causes the kernel to hang on the R-Car gen2 SoC based  boards
+when the CPU_ALL_PORT() macro is fixed to reflect the reality, i.e. when the
+GPIO space becomes actually sparse.  This happens because the _GP_GPIO() macro
+includes  an indexed initializer which causes the "holes" (array entries filled
+with all 0s) between the groups  of the existing GPIOs; and the driver can't
+cope with that.  There seems to  be no reason to use the indexed initializer,
+so we can remove the index specifier and so avoid the "holes".
 
-   Here's the set of 3 patches against the 'fixes' branch of Linus Walleij's
-'linux-pinctrl.git' repo. Here we eliminate the pin array "holes" on R-Car SoCs
-and then remove unused GPIO pins for R8A7790/1.
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
-[2/3] sh-pfc: r8a7790 remove non-existing GPIO pins
-[3/3] sh-pfc: r8a7791 remove non-existing GPIO pins
+---
+Changes in version 3:
+- new patch.
 
-WBR, Sergei
+ drivers/pinctrl/sh-pfc/sh_pfc.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -224,7 +224,7 @@ struct sh_pfc_soc_info {
+ 
+ /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
+ #define _GP_GPIO(bank, _pin, _name, sfx)				\
+-	[(bank * 32) + _pin] = {					\
++	{								\
+ 		.pin = (bank * 32) + _pin,				\
+ 		.name = __stringify(_name),				\
+ 		.enum_id = _name##_DATA,				\
 
