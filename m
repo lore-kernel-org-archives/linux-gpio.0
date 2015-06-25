@@ -1,136 +1,99 @@
-From: Shobhit Kumar <kumar@shobhit.info>
-Subject: Re: [Intel-gfx] [v2 7/7] drm/i915: Backlight control using CRC PMIC
- based PWM driver
-Date: Thu, 25 Jun 2015 18:54:09 +0530
-Message-ID: <CAAbrOmfyyNGMOi9XE-u_Wc9zc0jeOEond=YpMuf73kQcVLaSqg@mail.gmail.com>
-References: <1434970465-12687-1-git-send-email-shobhit.kumar@intel.com>
-	<1434970465-12687-8-git-send-email-shobhit.kumar@intel.com>
-	<20150625084841.GZ5176@intel.com>
-	<CAAbrOmeFcQGRa4_rv82vqgNx2rUXQOAxAfnTm7N=hjcfwNkbJA@mail.gmail.com>
-	<20150625124732.GB5176@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] gpio: rcar: Fine-grained Runtime PM support
+Date: Thu, 25 Jun 2015 16:45:57 +0200
+Message-ID: <1435243557-7050-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:33843 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbbFYNYK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 09:24:10 -0400
-Received: by igcsj18 with SMTP id sj18so8222105igc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2015 06:24:10 -0700 (PDT)
-In-Reply-To: <20150625124732.GB5176@intel.com>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:43827 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751952AbbFYOqA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 10:46:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: Shobhit Kumar <shobhit.kumar@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, Samuel Ortiz <sameo@linux.intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Povilas Staniulis <wdmonster@gmail.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Brain WrecK <bloften80@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Chih-Wei Huang <cwhuang@android-x86.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Jun 25, 2015 at 6:17 PM, Ville Syrj=C3=A4l=C3=A4
-<ville.syrjala@linux.intel.com> wrote:
-> On Thu, Jun 25, 2015 at 05:38:50PM +0530, Shobhit Kumar wrote:
->> On Thu, Jun 25, 2015 at 2:18 PM, Ville Syrj=C3=A4l=C3=A4
->> <ville.syrjala@linux.intel.com> wrote:
->> > On Mon, Jun 22, 2015 at 04:24:25PM +0530, Shobhit Kumar wrote:
->> >> Use the CRC PWM device in intel_panel.c and add new MIPI backligh=
-t
->> >> specififc callbacks
->> >>
->> >> v2: Modify to use pwm_config callback
->> >> v3: Addressed Jani's comments
->> >>     - Renamed all function as pwm_* instead of vlv_*
->> >>     - Call intel_panel_actually_set_backlight in enable function
->> >>     - Return -ENODEV in case pwm_get fails
->> >>     - in case pwm_config error return error cdoe from pwm_config
->> >>     - Cleanup pwm in intel_panel_destroy_backlight
->> >>
->> >> CC: Samuel Ortiz <sameo@linux.intel.com>
->> >> Cc: Linus Walleij <linus.walleij@linaro.org>
->> >> Cc: Alexandre Courbot <gnurou@gmail.com>
->> >> Cc: Thierry Reding <thierry.reding@gmail.com>
->> >> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
->> >> ---
->> >>  drivers/gpu/drm/i915/intel_drv.h   |  4 ++
->> >>  drivers/gpu/drm/i915/intel_dsi.c   |  6 +++
->> >>  drivers/gpu/drm/i915/intel_panel.c | 95 ++++++++++++++++++++++++=
-++++++++++++--
->> >>  3 files changed, 100 insertions(+), 5 deletions(-)
->> >>
->> >> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i=
-915/intel_drv.h
->> >> index 2afb31a..561c17f 100644
->> >> --- a/drivers/gpu/drm/i915/intel_drv.h
->> >> +++ b/drivers/gpu/drm/i915/intel_drv.h
->> >> @@ -182,6 +182,10 @@ struct intel_panel {
->> >>               bool enabled;
->> >>               bool combination_mode;  /* gen 2/4 only */
->> >>               bool active_low_pwm;
->> >> +
->> >> +             /* PWM chip */
->> >> +             struct pwm_device *pwm;
->> >> +
->> >>               struct backlight_device *device;
->> >>       } backlight;
->> >>
->> >> diff --git a/drivers/gpu/drm/i915/intel_dsi.c b/drivers/gpu/drm/i=
-915/intel_dsi.c
->> >> index c4db74a..be8722c 100644
->> >> --- a/drivers/gpu/drm/i915/intel_dsi.c
->> >> +++ b/drivers/gpu/drm/i915/intel_dsi.c
->> >> @@ -402,6 +402,8 @@ static void intel_dsi_enable(struct intel_enc=
-oder *encoder)
->> >>
->> >>               intel_dsi_port_enable(encoder);
->> >>       }
->> >> +
->> >> +     intel_panel_enable_backlight(intel_dsi->attached_connector)=
-;
->> >>  }
->> >>
->> >>  static void intel_dsi_pre_enable(struct intel_encoder *encoder)
->> >> @@ -466,6 +468,8 @@ static void intel_dsi_pre_disable(struct inte=
-l_encoder *encoder)
->> >>
->> >>       DRM_DEBUG_KMS("\n");
->> >>
->> >> +     intel_panel_disable_backlight(intel_dsi->attached_connector=
-);
->> >> +
->> >>       if (is_vid_mode(intel_dsi)) {
->> >>               /* Send Shutdown command to the panel in LP mode */
->> >>               for_each_dsi_port(port, intel_dsi->ports)
->> >> @@ -1132,6 +1136,8 @@ void intel_dsi_init(struct drm_device *dev)
->> >>       }
->> >>
->> >>       intel_panel_init(&intel_connector->panel, fixed_mode, NULL)=
-;
->> >> +     intel_panel_setup_backlight(connector,
->> >> +             (intel_encoder->crtc_mask =3D (1 << PIPE_A)) ? PIPE=
-_A : PIPE_B);
->> >                                           ^
->> >
->> > Whoops. But since the PWM backlight doesn't need the initial pipe =
-for
->> > anything you can actually just pass INVALID_PIPE here.
->> >
->>
->> You are right, its unused, but I thought passing right value still
->> made sense. Otherwise it makes it look like I am setting up back-lig=
-ht
->> for invalid pipe, when the real meaning is something like
->> DONTCARE_PIPE
->
-> Well it's not really about the pipe. It's about which set of BLC
-> registers we're supoosed to use when using the BLC built into the
-> display engine. And that's only done so that we take over the
-> hardware state correctly. So INVALID_PIPE is just fine in this case
-> since the backlight control has nothing to do with the pipe.
->
+Currently gpio modules are runtime-resumed at probe time. This means the
+gpio module will be active all the time (except during system suspend,
+if not configured as a wake-up source).
 
-Ok, will update.
+While an R-Car Gen2 gpio module retains pins configured for output at
+the requested level while put in standby mode, gpio registercannot be
+accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
+called from all contexts where gpio register access is needed. Hence
+move the Runtime PM handling from probe/remove time to gpio request/free
+time, which is probably the best we can do.
 
-Regards
-Shobhit
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
+normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
+for SD-Card CD & WP, gpio7 for keys and regulators).
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpio-rcar.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 29089ef6969fd33f..099a6f508f867821 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -251,17 +251,32 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+ 
+ static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
+ {
+-	return pinctrl_request_gpio(chip->base + offset);
++	struct gpio_rcar_priv *p = gpio_to_priv(chip);
++	int error;
++
++	error = pm_runtime_get_sync(&p->pdev->dev);
++	if (error < 0)
++		return error;
++
++	error = pinctrl_request_gpio(chip->base + offset);
++	if (error)
++		pm_runtime_put(&p->pdev->dev);
++
++	return error;
+ }
+ 
+ static void gpio_rcar_free(struct gpio_chip *chip, unsigned offset)
+ {
++	struct gpio_rcar_priv *p = gpio_to_priv(chip);
++
+ 	pinctrl_free_gpio(chip->base + offset);
+ 
+ 	/* Set the GPIO as an input to ensure that the next GPIO request won't
+ 	 * drive the GPIO pin as an output.
+ 	 */
+ 	gpio_rcar_config_general_input_output_mode(chip, offset, false);
++
++	pm_runtime_put(&p->pdev->dev);
+ }
+ 
+ static int gpio_rcar_direction_input(struct gpio_chip *chip, unsigned offset)
+@@ -405,7 +420,6 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-	pm_runtime_get_sync(dev);
+ 
+ 	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+@@ -488,7 +502,6 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ err1:
+ 	gpiochip_remove(gpio_chip);
+ err0:
+-	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
+ 	return ret;
+ }
+@@ -499,7 +512,6 @@ static int gpio_rcar_remove(struct platform_device *pdev)
+ 
+ 	gpiochip_remove(&p->gpio_chip);
+ 
+-	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	return 0;
+ }
+-- 
+1.9.1
+
