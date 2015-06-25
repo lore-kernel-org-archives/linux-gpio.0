@@ -1,55 +1,58 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
-Date: Thu, 25 Jun 2015 12:42:56 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <1435094387-20146-4-git-send-email-pawelo@king.net.pl> <2235698.8UjxLOMCMb@wuerfel>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 1/2] gpiolib: irqchip: prevent driver unloading if gpio is used as irq only
+Date: Thu, 25 Jun 2015 20:30:50 +0300
+Message-ID: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2235698.8UjxLOMCMb@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Paul Osmialowski <pawelo@king.net.pl>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Max
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:45710 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbbFYRbA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 25 Jun 2015 13:31:00 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Johan Hovold <johan@kernel.org>
 
-On Tue, 23 Jun 2015, Arnd Bergmann wrote:
+Now nothing prevents GPIO driver from being unloaded if its gpios
+were requested as GPIO IRQs only (without calling gpio_request()).
 
-> On Tuesday 23 June 2015 23:19:41 Paul Osmialowski wrote:
-> > Some SoCs need additional actions to be performed after arch idle,
-> > e.g. Kinetis requires invalidation of the I/D bus cache.
-> > 
-> > Such handler could be held in provided <mach/idle.h> header file.
-> > 
-> > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
-> > ---
-> >  arch/arm/Kconfig          | 7 +++++++
-> >  arch/arm/kernel/process.c | 7 +++++++
-> >  2 files changed, 14 insertions(+)
-> > 
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index 8e3a833..8ef8f8f 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -98,6 +98,13 @@ config ARM_HAS_SG_CHAIN
-> >  config NEED_SG_DMA_LENGTH
-> >  	bool
-> >  
-> > +config NEED_MACH_IDLE_H
-> > +	bool
-> > +
-> > +config ARM_CPU_IDLE_QUIRKS
-> > +	bool
-> > +	select NEED_MACH_IDLE_H
-> > +
-> 
-> We're not adding header files like this, please come up
-> with another solution. How about a cpuidle driver, or
-> possibly just overriding arm_pm_idle()?
+Hence, add calls of try_module_get()/module_put() into
+gpiochip_irq_reqres/relres() to track such scenario properly.
 
-If the WFI instruction always requires I and D flushing, then it might 
-be a better idea to provide a replacement for the corresponding 
-cpu_*_do_idle function.  Plenty of examples exist for other cpu_* 
-functions.
+Cc: Johan Hovold <johan@kernel.org>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpiolib.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index be42ab3..9b1d247 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -522,10 +522,14 @@ static int gpiochip_irq_reqres(struct irq_data *d)
+ {
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+ 
++	if (!try_module_get(chip->owner))
++		return -ENODEV;
++
+ 	if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+ 		chip_err(chip,
+ 			"unable to lock HW IRQ %lu for IRQ\n",
+ 			d->hwirq);
++		module_put(chip->owner);
+ 		return -EINVAL;
+ 	}
+ 	return 0;
+@@ -536,6 +540,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+ 
+ 	gpiochip_unlock_as_irq(chip, d->hwirq);
++	module_put(chip->owner);
+ }
+ 
+ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+-- 
+2.4.4
 
-Nicolas
