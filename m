@@ -1,35 +1,28 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 3/9] arm: add call to CPU idle quirks handler
-Date: Fri, 26 Jun 2015 09:40:10 +0200
-Message-ID: <2139691.3OPR29uKdT@wuerfel>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl> <alpine.LFD.2.11.1506251237000.2617@knanqh.ubzr> <alpine.LNX.2.00.1506260715300.499@localhost.localdomain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Y Vo <yvo@apm.com>
+Subject: [PATCH v1] arm64: dts: Add poweroff button device node for APM X-Gene platform
+Date: Fri, 26 Jun 2015 15:01:46 +0700
+Message-ID: <1435305707-22786-1-git-send-email-yvo@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:62996 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751759AbbFZHli (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jun 2015 03:41:38 -0400
-In-Reply-To: <alpine.LNX.2.00.1506260715300.499@localhost.localdomain>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:36701 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751796AbbFZICI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jun 2015 04:02:08 -0400
+Received: by pdcu2 with SMTP id u2so70444671pdc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 26 Jun 2015 01:02:07 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, Anson Huang <b20788@freescale.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Frank Li <Frank.Li@freescale.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-kernel@vger.kernel.org
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, patches@apm.com, Loc Ho <lho@apm.com>
 
-On Friday 26 June 2015 07:30:49 Paul Osmialowski wrote:
-> ENDPROC(cpu_kinetis_do_idle)
-> 
-> But... what about the rest of this hypothetical proc_kinetis.S file?
-> 
-> It would be a lot of code duplication with proc-v7m.S I think.
-> 
+This patch adds poweroff button device node to support poweroff feature
+on APM X-Gene Mustang platform.
 
-I doubt that the Kinetis has a custom version of the CPU core. Are you
-sure that not all Cortex-M4 need this?
+V1 change:
+	- Remove unused property.
 
-As long as the idle implementation depends only on the CPU core type,
-it's easy to just define multiple .proc.info.init entries in the
-same file, like we do in proc-v7.S.
+Y Vo (1):
+  arm64: dts: Add poweroff button device node for APM X-Gene platform
 
-	Arnd
+ arch/arm64/boot/dts/apm/apm-mustang.dts |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
