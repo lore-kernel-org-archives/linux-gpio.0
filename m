@@ -1,66 +1,104 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v3 3/3] sh-pfc: r8a7791: remove non-existing GPIO pins
-Date: Fri, 26 Jun 2015 01:43:07 +0300
-Message-ID: <1503001.TnFHhSFjY8@wasted.cogentembedded.com>
-References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
+From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+Subject: [Resend][PATCH] Pinctrl: imx1: fix wrong pin-name resolving
+Date: Fri, 26 Jun 2015 08:26:49 +0800
+Message-ID: <558C9C49.7090600@gtsys.com.hk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.fpasia.hk ([202.130.89.98]:36920 "EHLO fpa01n0.fpasia.hk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751500AbbFZA05 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 25 Jun 2015 20:26:57 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Chris Ruehl <chris.ruehl@gtsys.com.hk>
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Bug in function imx1_pinconf_set() cause crash when
+princtrl debug is enabled and the pin_id becomes larger
+then the info->pins[] contains data.
 
-GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
+imx27-pinctrl 10015000.iomuxc: request pin 134 (MX27_PAD_UART2_TXD) for 
+1000b000.serial
+imx27-pinctrl 10015000.iomuxc: request pin 135 (MX27_PAD_UART2_RXD) for 
+1000b000.serial
+imx27-pinctrl 10015000.iomuxc: request pin 131 (MX27_PAD_UART2_CTS) for 
+1000b000.serial
+imx27-pinctrl 10015000.iomuxc: request pin 132 (MX27_PAD_UART2_RTS) for 
+1000b000.serial
+imx27-pinctrl 10015000.iomuxc: enable function uart group uart2-1
+imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x86, function 0, gpio 0, 
+direction 1, oconf 0, iconfa 0, iconfb 0
+imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x87, function 0, gpio 0, 
+direction 0, oconf 0, iconfa 0, iconfb 0
+imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x83, function 0, gpio 0, 
+direction 1, oconf 0, iconfa 0, iconfb 0
+imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x84, function 0, gpio 0, 
+direction 0, oconf 0, iconfa 0, iconfb 0
+imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=134
+imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RTS
+imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=135
+imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_RTCK
+imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=131
+imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_TXD
+imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=132
+imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RXD
+...
+imx27-pinctrl 10015000.iomuxc: write: register 0xf4415508 offset 4 value 0x3
+imx27-pinctrl 10015000.iomuxc: write: register 0xf4415510 offset 4 value 0x0
+imx27-pinctrl 10015000.iomuxc: write: register 0xf4415518 offset 4 value 0x0
+imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0xb5, function 0, gpio 0, 
+direction 1, oconf 0, iconfa 0, iconfb 0
+imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=171
+Unable to handle kernel paging request at virtual address 6c61765f
+pgd = c0004000
+6c61765f] *pgd=00000000
+Internal error: Oops: 5 [#1] ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.1.0-rc4-next-20150522-dirty #8
+Hardware name: GTSYS i.MX27GTSIR (Device Tree Support)
+task: ce832000 ti: ce848000 task.ti: ce848000
+PC is at strnlen+0x28/0x3c
+LR is at string.isra.4+0x34/0xcc
+pc : [<c01ae188>]    lr : [<c01af9a4>]    psr: 20000093
+sp : ce849a88  ip : ce849a98  fp : ce849a94
+r10: c05d7e3a  r9 : c05d81e4  r8 : 00000000
+r7 : 6c61765f  r6 : c05d81e4  r5 : ffffffff  r4 : c05d7e3a
+r3 : 6c61765f  r2 : 6c61765f  r1 : 6c61765e  r0 : 6c61765f
+Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
 ---
-Changes in version 2:
-- renamed the patch.
+  drivers/pinctrl/freescale/pinctrl-imx1-core.c |    6 ++++--
+  1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -14,15 +14,30 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
-+#define PORT_GP_26(bank, fn, sfx)					\
-+	PORT_GP_1(bank, 0,  fn, sfx), PORT_GP_1(bank, 1,  fn, sfx),	\
-+	PORT_GP_1(bank, 2,  fn, sfx), PORT_GP_1(bank, 3,  fn, sfx),	\
-+	PORT_GP_1(bank, 4,  fn, sfx), PORT_GP_1(bank, 5,  fn, sfx),	\
-+	PORT_GP_1(bank, 6,  fn, sfx), PORT_GP_1(bank, 7,  fn, sfx),	\
-+	PORT_GP_1(bank, 8,  fn, sfx), PORT_GP_1(bank, 9,  fn, sfx),	\
-+	PORT_GP_1(bank, 10, fn, sfx), PORT_GP_1(bank, 11, fn, sfx),	\
-+	PORT_GP_1(bank, 12, fn, sfx), PORT_GP_1(bank, 13, fn, sfx),	\
-+	PORT_GP_1(bank, 14, fn, sfx), PORT_GP_1(bank, 15, fn, sfx),	\
-+	PORT_GP_1(bank, 16, fn, sfx), PORT_GP_1(bank, 17, fn, sfx),	\
-+	PORT_GP_1(bank, 18, fn, sfx), PORT_GP_1(bank, 19, fn, sfx),	\
-+	PORT_GP_1(bank, 20, fn, sfx), PORT_GP_1(bank, 21, fn, sfx),	\
-+	PORT_GP_1(bank, 22, fn, sfx), PORT_GP_1(bank, 23, fn, sfx),	\
-+	PORT_GP_1(bank, 24, fn, sfx), PORT_GP_1(bank, 25, fn, sfx)
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c 
+b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+index 5ac59fb..8408bd8 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+@@ -403,14 +403,16 @@ static int imx1_pinconf_set(struct pinctrl_dev *pctldev,
+  			     unsigned num_configs)
+  {
+  	struct imx1_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+-	const struct imx1_pinctrl_soc_info *info = ipctl->info;
++	struct pin_desc *desc;
+  	int i;
+  +	desc = pin_desc_get(pctldev, pin_id);
 +
- #define CPU_ALL_PORT(fn, sfx)						\
- 	PORT_GP_32(0, fn, sfx),						\
--	PORT_GP_32(1, fn, sfx),						\
-+	PORT_GP_26(1, fn, sfx),						\
- 	PORT_GP_32(2, fn, sfx),						\
- 	PORT_GP_32(3, fn, sfx),						\
- 	PORT_GP_32(4, fn, sfx),						\
- 	PORT_GP_32(5, fn, sfx),						\
- 	PORT_GP_32(6, fn, sfx),						\
--	PORT_GP_32(7, fn, sfx)
-+	PORT_GP_26(7, fn, sfx)
- 
- enum {
- 	PINMUX_RESERVED = 0,
+  	for (i = 0; i != num_configs; ++i) {
+  		imx1_write_bit(ipctl, pin_id, configs[i] & 0x01, MX1_PUEN);
+   		dev_dbg(ipctl->dev, "pinconf set pullup pin %s\n",
+-			info->pins[pin_id].name);
++			desc->name);
+  	}
+   	return 0;
+-- 
+1.7.10.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
