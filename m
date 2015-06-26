@@ -1,57 +1,78 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [v3 5/7] pwm: crc: Add Crystalcove (CRC) PWM driver
-Date: Fri, 26 Jun 2015 18:01:53 +0530
-Message-ID: <558D4639.8000102@gmail.com>
-References: <1435309330-50725-1-git-send-email-shobhit.kumar@intel.com>
- <1435309330-50725-6-git-send-email-shobhit.kumar@intel.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH v3 0/6] UHS-I support for sh_mobile_sdhi
+Date: Fri, 26 Jun 2015 16:21:56 +0100
+Message-ID: <1435332116.23818.7.camel@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1435309330-50725-6-git-send-email-shobhit.kumar@intel.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Shobhit Kumar <shobhit.kumar@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Paul Bolle <pebolle@tiscali.nl>, Samuel Ortiz <sameo@linux.intel.com>, Povilas Staniulis <wdmonster@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, bloften80@gmail.com, David Airlie <airlied@linux.ie>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:39133 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751999AbbFZPWB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 26 Jun 2015 11:22:01 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ian Molton <ian@mnementh.co.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-T24gMDYvMjYvMjAxNSAwMjozMiBQTSwgU2hvYmhpdCBLdW1hciB3cm90ZToKPiBUaGUgQ3J5c3Rh
-bGNvdmUgUE1JQyBwcm92aWRlcyB0aHJlZSBQV00gc2lnbmFscyBhbmQgdGhpcyBkcml2ZXIgZXhw
-b3J0cwo+IG9uZSBvZiB0aGVtIG9uIHRoZSBCWVQgcGxhdGZvcm0gd2hpY2ggaXMgdXNlZCB0byBj
-b250cm9sIGJhY2tsaWdodCBmb3IKPiBEU0kgcGFuZWwuIFRoaXMgaXMgcGxhdGZvcm0gZGV2aWNl
-IGltcGxlbWVudGF0aW9uIG9mIHRoZSBkcml2ZXJzL21mZAo+IGNlbGwgZGV2aWNlIGZvciBDUkMg
-UE1JQy4KPgo+IENDOiBTYW11ZWwgT3J0aXogPHNhbWVvQGxpbnV4LmludGVsLmNvbT4KPiBDYzog
-TGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPgo+IENjOiBBbGV4YW5kcmUg
-Q291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4KPiBDYzogUGF1bCBCb2xsZSA8cGVib2xsZUB0aXNjYWxpLm5sPgo+
-IENjOiBQYXVsIEdvcnRtYWtlciA8cGF1bC5nb3J0bWFrZXJAd2luZHJpdmVyLmNvbT4KPiBUZXN0
-ZWQtYnk6IFZpbGxlIFN5cmrDpGzDpCA8dmlsbGUuc3lyamFsYUBsaW51eC5pbnRlbC5jb20+Cj4g
-U2lnbmVkLW9mZi1ieTogU2hvYmhpdCBLdW1hciA8c2hvYmhpdC5rdW1hckBpbnRlbC5jb20+Cj4g
-LS0tCj4gdjI6IFVzZSB0aGUgZXhpc3RpbmcgY29uZmlnIGNhbGxiYWNrIHdpdGggZHV0eV9ucyBh
-bmQgcGVyaW9kX25zKFRoaWVycnkpCj4KPiB2MzogQ29ycmVjdCB0aGUgc3ViamVjdCBsaW5lIChM
-ZWUgam9uZXMpCj4KPiB2NDogQWRkcmVzcyBjb21tZW50IGJ5IFRoaWVycnkgJiBQYXVsCj4gICAg
-ICAtIENvbW1pdCBtZXNzYWdlIHVwZGF0ZSBhbmQgZml4ZXMgZm9yIGZldyBzeW50YXggZXJyb3Jz
-Cj4gICAgICAtIEFkZCBQV01fQ1JDIGluIEtjb25maWcgYW5kIE1ha2VmaWxlIHNvcnRlZCBhbHBo
-YWJldGljYWxseQo+ICAgICAgLSBVc2UgdGhlIFBXTV9CQVNFX0NMSyBhcyA2MDAwMDAwIGZvciBi
-ZXR0ZXIgY29kZSByZWFkYWJpbGl0eQo+ICAgICAgLSBSZW1vdmUgdGhlIHJlZHVuZGFudCBydWxl
-IG9mIHRocmVlIHdoaWxlIGNhbGN1bGF0aW5nIHB3bSBsZXZlbAo+ICAgICAgLSBVc2UgdGhlIHBs
-YXRmb3JtX2RldmljZSBpbiBwd21fY2hpcAo+ICAgICAgLSBVc2UgYnVpbGluX3BsYXRmb3JtX2Ry
-aXZlcgo+Cj4gdjU6IEFkZHJlc3MgY29tbWVudHMgYnkgVmFya2EKPiAgICAgIC0gTWFrZSB0aGUg
-Yml0IGRlZmluaXRpb24gdXNpbmcgQklUIG1hY3JvCj4gICAgICAtIHJlb3JkZXIgcHJvYmUgYW5k
-IHJlbW92ZSBjb2RlIHRvIGRpcmVjdGx5IHJldHVybiBmcm9tIHB3bWNoaXBfYWRkL3JlbW92ZQo+
-Cj4gICBkcml2ZXJzL3B3bS9LY29uZmlnICAgfCAgIDcgKysrCj4gICBkcml2ZXJzL3B3bS9NYWtl
-ZmlsZSAgfCAgIDEgKwo+ICAgZHJpdmVycy9wd20vcHdtLWNyYy5jIHwgMTQzICsrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gICAzIGZpbGVzIGNoYW5n
-ZWQsIDE1MSBpbnNlcnRpb25zKCspCj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9wd20v
-cHdtLWNyYy5jCgpSZXZpZXdlZC1ieTogVmFya2EgQmhhZHJhbSA8dmFya2FiaGFkcmFtQGdtYWls
-LmNvbT4KCi0tIApCZXN0IHJlZ2FyZHMsClZhcmthIEJoYWRyYW0uCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0Cklu
-dGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+This series adds support for UHS-I in sh_mobile_sdhi, partly implemented
+in tmio_mmc.  This does not yet include tuning for SDR-104, but SDR-50 now
+works on the R8A7790 Lager board and another development board.
+
+The pfc block needs to be reconfigured from 3.3V to 1.8V signalling on
+the pins wired to the SD card.  This is supported by implementing the
+pinconf power-source parameter.  I expect that several SH SoCs have this
+capability, but I only have the R8A7790 data sheet so I only implemented
+it for that one.
+
+Changes since v2:
+- Implement the pinconf power-source parameter instead of separate
+  functions for the low-voltage mode
+- Adjust low-voltage mode setter function and device tree accordingly
+- Add low-voltage mode getter function for R8A7790
+
+Changes since v1:
+- Reword commit message for "mmc: tmio: Add UHS-I mode support"
+- Make sh_mobile_sdhi_start_signal_voltage_switch() succeed if asked
+  to switch to 3.3V and the regulator or pinctrl or pinctrl state is
+  missing
+- Drop change to mmcif clock on Lager
+- Correct original author for sdhi clock changes on Lager
+
+Changes since the RFC:
+- Replace the 'regulator' devices for signal voltage switching with
+  pinctrl functions and states
+- Drop 'mmc: sh_mobile_sdhi: Add actual clock rate support' as it's
+  redundant
+- Use a switch statement in sh_mobile_sdhi_start_signal_voltage_switch()
+- Fix subject prefix for the DT changes
+
+Ben.
+
+Ben Hutchings (5):
+  mmc: tmio: Add UHS-I mode support
+  pinctrl: sh-pfc: Add low-voltage pinconf parameter
+  pinctrl: sh-pfc: r8a7790: Implement voltage switching for SDHI
+  mmc: sh_mobile_sdhi: Add UHS-I mode support
+  ARM: shmobile: lager: Enable UHS-I SDR-50
+
+Ian Molton (1):
+  ARM: shmobile: lager: Set clock rates for SDHI
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  6 +-
+ arch/arm/boot/dts/r8a7790-lager.dts                | 28 ++++++++-
+ drivers/mmc/host/sh_mobile_sdhi.c                  | 60 +++++++++++++++++++
+ drivers/mmc/host/tmio_mmc.h                        |  3 +
+ drivers/mmc/host/tmio_mmc_pio.c                    | 31 ++++++++++
+ drivers/pinctrl/sh-pfc/core.c                      |  2 +-
+ drivers/pinctrl/sh-pfc/core.h                      |  1 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c               | 67 +++++++++++++++++++++-
+ drivers/pinctrl/sh-pfc/pinctrl.c                   | 57 +++++++++++++++---
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    | 11 ++++
+ 10 files changed, 252 insertions(+), 14 deletions(-)
+
+-- 
+2.1.4
+
+
+
