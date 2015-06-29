@@ -1,49 +1,100 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] gpiolib: Fix docs for gpiochip_add_pingroup_range
-Date: Mon, 29 Jun 2015 17:05:42 +0200
-Message-ID: <CABxcv=mSembBjxsR9GSL0cxhP8YrS9wqxfEkba2Jb69pHYsKmw@mail.gmail.com>
-References: <1435589806-31079-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: Re: [PATCH v3 2/6] pinctrl: sh-pfc: Implement pinconf power-source
+ param for voltage switching
+Date: Mon, 29 Jun 2015 22:55:18 +0100
+Message-ID: <1435614918.23818.23.camel@codethink.co.uk>
+References: <1435332116.23818.7.camel@codethink.co.uk>
+	 <1435332204.23818.9.camel@codethink.co.uk> <3056637.adr2b5Zij1@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f173.google.com ([209.85.160.173]:33736 "EHLO
-	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752625AbbF2PFm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2015 11:05:42 -0400
-Received: by ykdt186 with SMTP id t186so117115624ykd.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2015 08:05:42 -0700 (PDT)
-In-Reply-To: <1435589806-31079-1-git-send-email-tomeu.vizoso@collabora.com>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:33883 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752712AbbF2VzY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2015 17:55:24 -0400
+In-Reply-To: <3056637.adr2b5Zij1@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux GPIO List <linux-gpio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Hello Tomeu,
+On Mon, 2015-06-29 at 11:32 +0300, Laurent Pinchart wrote:
+> Hi Ben,
+> 
+> Thank you for the patch.
+> 
+> On Friday 26 June 2015 16:23:24 Ben Hutchings wrote:
+> > The pfc in the R8A7790 (and probably others in the R-Car gen 2 family)
+> > supports switching SDHI signals between 3.3V and 1.8V voltage, and the
+> > SD driver should do that when selecting a higher-speed mode.
+> > 
+> > Add a flag for pins that support low voltage mode and SoC operations to
+> > get and set it.  Implement the pinconf power-source parameter using these
+> > operations.
+> 
+> As Geert has already pointed out, we should use an integer value instead of a 
+> boolean for voltages. How about expressing them in microvolts as done by the 
+> regulators API ?
 
-On Mon, Jun 29, 2015 at 4:56 PM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> gpiochip_add_pingroup_range() has a pctldev argument, not pinctrl.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> ---
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index bf4bd1d..b1b08b3 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -671,7 +671,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip) {}
->  /**
->   * gpiochip_add_pingroup_range() - add a range for GPIO <-> pin mapping
->   * @chip: the gpiochip to add the range for
-> - * @pinctrl: the dev_name() of the pin controller to map to
-> + * @pctldev: the pin controller to map to
->   * @gpio_offset: the start offset in the current gpio_chip number space
->   * @pin_group: name of the pin group inside the pin controller
->   */
+I did consider doing that but it seemed like over-engineering.  However,
+given what Geert said about the other SoCs it seems worth doing.
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+However, pinconf arguments are limited to 16 bits so I think I will have
+to make the units millivolts not microvolts.
 
-Best regards,
-Javier
+[...]
+> > diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> > b/drivers/pinctrl/sh-pfc/sh_pfc.h index c7508d5f6886..b95d60bf2f1b 100644
+> > --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> > +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> > @@ -13,6 +13,7 @@
+> > 
+> >  #include <linux/bug.h>
+> >  #include <linux/stringify.h>
+> > +#include <linux/pinctrl/pinconf-generic.h>
+> 
+> Could you please keep the headers alphabetically sorted ?
+> 
+> > 
+> >  enum {
+> >  	PINMUX_TYPE_NONE,
+> > @@ -26,8 +27,11 @@ enum {
+> >  #define SH_PFC_PIN_CFG_OUTPUT		(1 << 1)
+> >  #define SH_PFC_PIN_CFG_PULL_UP		(1 << 2)
+> >  #define SH_PFC_PIN_CFG_PULL_DOWN	(1 << 3)
+> > +#define SH_PFC_PIN_CFG_LOW_VOLTAGE	(1 << 4)
+> 
+> As we should move away from using a bool to represent the voltage, I would 
+> name this SH_PFC_PIN_CFG_IO_VOLTAGE, or possibly SH_PFC_PIN_CFG_POWER_SOURCE.
+
+Right.
+
+> >  #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
+> > 
+> > +struct sh_pfc;
+> > +
+> 
+> I don't think this is needed, struct sh_pfc is already forward-declared right 
+> above struct sh_pfc_soc_operations.
+
+Right, this is left over from the previous version where I added an
+operation to struct sh_pfc_pin.
+
+> >  struct sh_pfc_pin {
+> >  	u16 pin;
+> >  	u16 enum_id;
+> > @@ -121,6 +125,8 @@ struct sh_pfc_soc_operations {
+> >  	unsigned int (*get_bias)(struct sh_pfc *pfc, unsigned int pin);
+> >  	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+> >  			 unsigned int bias);
+> > +	bool (*get_low_voltage)(struct sh_pfc *pfc, unsigned int pin);
+> > +	void (*set_low_voltage)(struct sh_pfc *pfc, unsigned int pin, bool low);
+> 
+> [gs]et_io_voltage() or [gs]et_power_source() ?
+
+I prefer the former.
+
+Ben.
+
+
