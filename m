@@ -1,76 +1,72 @@
-From: Haojian Zhuang <haojian.zhuang@linaro.org>
-Subject: Re: [PATCH] power/reset: zx: Register restart handler
-Date: Mon, 29 Jun 2015 14:32:05 +0800
-Message-ID: <1435559525.1744.6.camel@linaro.org>
-References: <1435547191-18405-1-git-send-email-jun.nie@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 2/6] pinctrl: sh-pfc: Implement pinconf power-source
+ param for voltage switching
+Date: Mon, 29 Jun 2015 10:17:30 +0200
+Message-ID: <CAMuHMdXk7GZDQ2sexTy5E9-9xOMm6GLnyUgS_e034uFmPqQ2gw@mail.gmail.com>
+References: <1435332116.23818.7.camel@codethink.co.uk>
+	<1435332204.23818.9.camel@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:34206 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159AbbF2GcC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2015 02:32:02 -0400
-Received: by pdbep18 with SMTP id ep18so89320764pdb.1
-        for <linux-gpio@vger.kernel.org>; Sun, 28 Jun 2015 23:32:02 -0700 (PDT)
-In-Reply-To: <1435547191-18405-1-git-send-email-jun.nie@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1435332204.23818.9.camel@codethink.co.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ian Molton <ian@mnementh.co.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux MMC List <linux-mmc@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Jun Nie <jun.nie@linaro.org>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, tony@atomide.com, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org
 
-On Mon, 2015-06-29 at 11:06 +0800, Jun Nie wrote:
-> Register with kernel restart handler instead of setting arm_pm_restart
-> directly.
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+On Fri, Jun 26, 2015 at 5:23 PM, Ben Hutchings
+<ben.hutchings@codethink.co.uk> wrote:
+> The pfc in the R8A7790 (and probably others in the R-Car gen 2 family)
+> supports switching SDHI signals between 3.3V and 1.8V voltage, and the
+> SD driver should do that when selecting a higher-speed mode.
+>
+> Add a flag for pins that support low voltage mode and SoC operations to
+> get and set it.  Implement the pinconf power-source parameter using these
+> operations.
+>
+> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 > ---
->  drivers/power/reset/Kconfig     |  7 ++++
->  drivers/power/reset/Makefile    |  1 +
->  drivers/power/reset/zx-reboot.c | 79 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 87 insertions(+)
->  create mode 100644 drivers/power/reset/zx-reboot.c
-> 
-> diff --git a/drivers/power/reset/zx-reboot.c b/drivers/power/reset/zx-reboot.c
-> new file mode 100644
-> index 0000000..fbfee0b
-> --- /dev/null
-> +++ b/drivers/power/reset/zx-reboot.c
-> @@ -0,0 +1,79 @@
-> +/*
-> + * ZTE zx296702 SoC reset code
-> + *
-> + * Copyright (c) 2015 Linaro Ltd.
-> + *
-> + * Author: Jun Nie <jun.nie@linaro.org>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +
-> +#include <asm/proc-fns.h>
-> +
-> +static void __iomem *base;
-> +
-> +static int zx_restart_handler(struct notifier_block *this,
-> +			      unsigned long mode, void *cmd)
-> +{
-> +	struct device_node *np;
-> +	void __iomem *pcu_base;
-> +
-> +	np = of_find_compatible_node(NULL, NULL, "zte,zx296702-pcu");
-> +	pcu_base = of_iomap(np, 0);
+>  .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  4 ++-
+>  drivers/pinctrl/sh-pfc/pinctrl.c                   | 34 ++++++++++++++++++++--
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                    |  6 ++++
+>  3 files changed, 41 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> index bfe72ec055e3..93651742f1c1 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> @@ -69,7 +69,9 @@ Pin Configuration Node Properties:
+>
+>  The pin configuration parameters use the generic pinconf bindings defined in
+>  pinctrl-bindings.txt in this directory. The supported parameters are
+> -bias-disable, bias-pull-up and bias-pull-down.
+> +bias-disable, bias-pull-up, bias-pull-down and power-source. For pins that
+> +can operate with either 3.3V or 1.8V signals, the power-source value should
+> +be 0 for 3.3V or 1 for 1.8V.
 
-Why not move these above code into zx_reboot_probe()? And you can check
-the value of pcu_base at there.
+> @@ -121,6 +125,8 @@ struct sh_pfc_soc_operations {
+>         unsigned int (*get_bias)(struct sh_pfc *pfc, unsigned int pin);
+>         void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+>                          unsigned int bias);
+> +       bool (*get_low_voltage)(struct sh_pfc *pfc, unsigned int pin);
+> +       void (*set_low_voltage)(struct sh_pfc *pfc, unsigned int pin, bool low);
+>  };
 
+Given the sh-pfc driver is used for a whole range of SoCs, I think a boolean
+value is a bit too limiting.
 
+E.g. In addition to 1.8V and 3.3 V, R-Car M2 has pins supporting three
+voltage levels (1.35V, 1.5V, and 18.V).
+R-Mobile APE6 supports 1.2V, 1.8V, and 3.3V, but max. only 2 out of 3 for
+a single pin.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
