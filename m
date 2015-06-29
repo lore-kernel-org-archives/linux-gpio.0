@@ -1,57 +1,141 @@
 From: Jun Nie <jun.nie@linaro.org>
-Subject: [PATCH v3 1/2] dt/bindings: gpio: Document ZTE zx296702 GPIO
-Date: Mon, 29 Jun 2015 10:35:56 +0800
-Message-ID: <1435545357-4494-1-git-send-email-jun.nie@linaro.org>
+Subject: [PATCH] power/reset: zx: Register restart handler
+Date: Mon, 29 Jun 2015 11:06:31 +0800
+Message-ID: <1435547191-18405-1-git-send-email-jun.nie@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:32851 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752944AbbF2CgQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Jun 2015 22:36:16 -0400
-Received: by padev16 with SMTP id ev16so97470580pad.0
-        for <linux-gpio@vger.kernel.org>; Sun, 28 Jun 2015 19:36:16 -0700 (PDT)
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:33485 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753064AbbF2DGv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 28 Jun 2015 23:06:51 -0400
+Received: by pdjn11 with SMTP id n11so108426646pdj.0
+        for <linux-gpio@vger.kernel.org>; Sun, 28 Jun 2015 20:06:51 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 Cc: tony@atomide.com, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org, Jun Nie <jun.nie@linaro.org>
 
-Add document of ZTE zx296702 GPIO binding
+Register with kernel restart handler instead of setting arm_pm_restart
+directly.
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- .../devicetree/bindings/gpio/zx296702-gpio.txt     | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
+ drivers/power/reset/Kconfig     |  7 ++++
+ drivers/power/reset/Makefile    |  1 +
+ drivers/power/reset/zx-reboot.c | 79 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 87 insertions(+)
+ create mode 100644 drivers/power/reset/zx-reboot.c
 
-diff --git a/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt b/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
+diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+index aad9c33..4ed90f3 100644
+--- a/drivers/power/reset/Kconfig
++++ b/drivers/power/reset/Kconfig
+@@ -165,5 +165,12 @@ config POWER_RESET_RMOBILE
+ 	help
+ 	  Reboot support for Renesas R-Mobile and SH-Mobile SoCs.
+ 
++config POWER_RESET_ZX
++	tristate "ZTE SoCs reset driver"
++	depends on ARCH_ZX || COMPILE_TEST
++	depends on HAS_IOMEM
++	help
++	  Reboot support for ZTE SoCs.
++
+ endif
+ 
+diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+index dbe06c3..096fa67 100644
+--- a/drivers/power/reset/Makefile
++++ b/drivers/power/reset/Makefile
+@@ -19,3 +19,4 @@ obj-$(CONFIG_POWER_RESET_KEYSTONE) += keystone-reset.o
+ obj-$(CONFIG_POWER_RESET_SYSCON) += syscon-reboot.o
+ obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) += syscon-poweroff.o
+ obj-$(CONFIG_POWER_RESET_RMOBILE) += rmobile-reset.o
++obj-$(CONFIG_POWER_RESET_ZX) += zx-reboot.o
+diff --git a/drivers/power/reset/zx-reboot.c b/drivers/power/reset/zx-reboot.c
 new file mode 100644
-index 0000000..0dab156
+index 0000000..fbfee0b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/zx296702-gpio.txt
-@@ -0,0 +1,24 @@
-+ZTE ZX296702 GPIO controller
++++ b/drivers/power/reset/zx-reboot.c
+@@ -0,0 +1,79 @@
++/*
++ * ZTE zx296702 SoC reset code
++ *
++ * Copyright (c) 2015 Linaro Ltd.
++ *
++ * Author: Jun Nie <jun.nie@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+Required properties:
-+- compatible : "zte,zx296702-gpio"
-+- #gpio-cells : Should be two. The first cell is the pin number and the
-+  second cell is used to specify optional parameters:
-+  - bit 0 specifies polarity (0 for normal, 1 for inverted)
-+- gpio-controller : Marks the device node as a GPIO controller.
-+- interrupts : Interrupt mapping for GPIO IRQ.
-+- gpio-ranges : Interaction with the PINCTRL subsystem.
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
 +
-+gpio1: gpio@b008040 {
-+	compatible = "zte,zx296702-gpio";
-+	reg = <0xb008040 0x40>;
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+	gpio-ranges = < &pmx0 0 54 2 &pmx0 2 59 14>;
-+	interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+	interrupt-parent = <&intc>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	clock-names = "gpio_pclk";
-+	clocks = <&lsp0clk ZX296702_GPIO_CLK>;
++#include <asm/proc-fns.h>
++
++static void __iomem *base;
++
++static int zx_restart_handler(struct notifier_block *this,
++			      unsigned long mode, void *cmd)
++{
++	struct device_node *np;
++	void __iomem *pcu_base;
++
++	np = of_find_compatible_node(NULL, NULL, "zte,zx296702-pcu");
++	pcu_base = of_iomap(np, 0);
++
++	writel_relaxed(1, base + 0xb0);
++	writel_relaxed(1, pcu_base + 0x34);
++
++	while (1)
++		cpu_do_idle();
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block zx_restart_nb = {
++	.notifier_call = zx_restart_handler,
++	.priority = 128,
 +};
++
++static int zx_reboot_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	int err;
++
++	base = of_iomap(np, 0);
++	if (!base) {
++		WARN(1, "failed to map base address");
++		return -ENODEV;
++	}
++
++	err = register_restart_handler(&zx_restart_nb);
++	if (err)
++		dev_err(&pdev->dev, "Register restart handler failed(err=%d)\n",
++			err);
++
++	return err;
++}
++
++static const struct of_device_id zx_reboot_of_match[] = {
++	{ .compatible = "zte,sysctrl" },
++	{}
++};
++
++static struct platform_driver zx_reboot_driver = {
++	.probe = zx_reboot_probe,
++	.driver = {
++		.name = "zx-reboot",
++		.of_match_table = zx_reboot_of_match,
++	},
++};
++module_platform_driver(zx_reboot_driver);
 -- 
 1.9.1
 
