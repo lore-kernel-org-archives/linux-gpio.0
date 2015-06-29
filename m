@@ -1,76 +1,37 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 2/2] gpio: mvebu: kill bogus dependency on GPIO_GENERIC
-Date: Mon, 29 Jun 2015 14:25:53 +0200
-Message-ID: <55913951.2020401@free-electrons.com>
-References: <1434713464-32069-1-git-send-email-yamada.masahiro@socionext.com>	<1434713464-32069-2-git-send-email-yamada.masahiro@socionext.com> <CAK7LNAR_uGLtGYt0ioOwbOA=iAH1dOE4q+TQ2yRuMqf5P242Yg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH] gpiolib: Fix docs for gpiochip_add_pingroup_range
+Date: Mon, 29 Jun 2015 16:56:46 +0200
+Message-ID: <1435589806-31079-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:46797 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752604AbbF2MZ4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2015 08:25:56 -0400
-In-Reply-To: <CAK7LNAR_uGLtGYt0ioOwbOA=iAH1dOE4q+TQ2yRuMqf5P242Yg@mail.gmail.com>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:34151 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753064AbbF2O6J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 29 Jun 2015 10:58:09 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Axel Lin <axel.lin@ingics.com>, Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+gpiochip_add_pingroup_range() has a pctldev argument, not pinctrl.
 
-On 21/06/2015 01:54, Masahiro Yamada wrote:
-> Adding more people.
-> 
-> I'd like them to check if this patch is correct.
-> 
-> 
-> 2015-06-19 20:31 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> The driver gpio-mvebu.c does not depend on gpio-generic.c at all.
->> Drop unneeded "select GPIO_GENERIC".
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This would have come from a wrong copy and paste, because indeed we
-have never used the gpio-generic.
-
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-
-Thanks,
-
-Gregory
-
->> ---
->>
->>  drivers/gpio/Kconfig | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->> index 25c232e..241d441 100644
->> --- a/drivers/gpio/Kconfig
->> +++ b/drivers/gpio/Kconfig
->> @@ -283,7 +283,6 @@ config GPIO_MVEBU
->>         def_bool y
->>         depends on PLAT_ORION
->>         depends on OF
->> -       select GPIO_GENERIC
->>         select GENERIC_IRQ_CHIP
->>
->>  config GPIO_MXC
->> --
->> 1.9.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> Please read the FAQ at  http://www.tux.org/lkml/
-> 
-> 
-> 
-
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bf4bd1d..b1b08b3 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -671,7 +671,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip) {}
+ /**
+  * gpiochip_add_pingroup_range() - add a range for GPIO <-> pin mapping
+  * @chip: the gpiochip to add the range for
+- * @pinctrl: the dev_name() of the pin controller to map to
++ * @pctldev: the pin controller to map to
+  * @gpio_offset: the start offset in the current gpio_chip number space
+  * @pin_group: name of the pin group inside the pin controller
+  */
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.4.1
+
