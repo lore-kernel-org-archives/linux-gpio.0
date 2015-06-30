@@ -1,65 +1,78 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: omap: prevent module from being unloaded while in use
-Date: Tue, 30 Jun 2015 22:52:21 +0900
-Message-ID: <CAAVeFuK5j+s+Wj2kAHT7K9dj3RtK2aYZ50xDLb7S-73MJ7FTHA@mail.gmail.com>
-References: <1435245213-17858-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio/xilinx: Use correct address when setting initial values.
+Date: Tue, 30 Jun 2015 22:58:43 +0900
+Message-ID: <CAAVeFuLEUECgFeHr4q-N=7omSAL8+hPHoNponUWpkFGCxVYybw@mail.gmail.com>
+References: <1435130385.30543.3.camel@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:34425 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752379AbbF3Nwp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:52:45 -0400
-In-Reply-To: <1435245213-17858-1-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33026 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752689AbbF3N7E convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:59:04 -0400
+In-Reply-To: <1435130385.30543.3.camel@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, tony@atomide.com, Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: =?UTF-8?Q?Rapha=C3=ABl_Teysseyre?= <rteysseyre@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 26, 2015 at 12:13 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> OMAP GPIO driver allowed to be built as loadable module, but it
-> doesn't set owner field in GPIO chip structure. As result,
-> module_get/put() API is not working and it's possible to unload
-> OMAP driver while in use:
+On Wed, Jun 24, 2015 at 4:19 PM, Rapha=C3=ABl Teysseyre <rteysseyre@gma=
+il.com> wrote:
+> xgpio_save_regs() is used in this driver to setup the initial
+> values of the registers in the hardware.
 >
->   omap_gpio 48051000.gpio: REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED
+> The relevant registers at that time are:
+> 0x0 -> channel 0 data (32 bits, one for each GPIO on this channel).
+> 0x4 -> channel 0 tri, controls in/out status for each GPIO of this ch=
+annel.
+> 0x8 -> channel 1 data
+> 0xC -> channel 1 tri
 >
-> Hence, add missing configuration.
+> gpio-xilinx.c defines these:
+> XGPIO_DATA_OFFSET   (0x0)
+> XGPIO_TRI_OFFSET    (0x4)
+> XGPIO_CHANNEL_OFFSET    0x8
+>
+> Before this patch, the "data" register value of channel 1 was written
+> at 0x4 intead of 0x8 (overwriting the channel 0 "tri" register),
+> and the "tri" register value for channel 1 was written at 0x8 instead=
+ of 0xC.
 
-Isn't this also fixed by your other patch "gpiolib: assign chip owner
-to dev->driver->owner if not set"?
+Nice, descriptive commit log. ;)
 
-Nevertheless,
-
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-
-For inclusion into -rc if the other patch is for the next cycle.
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
 >
-> Cc: Tony Lindgren <tony@atomide.com>
-> Fixes: cac089f9026e ('gpio: omap: Allow building as a loadable module')
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
 > ---
-> Hi Linus,
+>  drivers/gpio/gpio-xilinx.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
 >
-> Seems this one is for 4.2-rc.
+> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+> index 61243d1..e544b7a 100644
+> --- a/drivers/gpio/gpio-xilinx.c
+> +++ b/drivers/gpio/gpio-xilinx.c
+> @@ -220,9 +220,9 @@ static void xgpio_save_regs(struct of_mm_gpio_chi=
+p *mm_gc)
+>         if (!chip->gpio_width[1])
+>                 return;
 >
->  drivers/gpio/gpio-omap.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index a0ad803..61a731f 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1187,6 +1187,7 @@ static int omap_gpio_probe(struct platform_device *pdev)
->         bank->irq = res->start;
->         bank->dev = dev;
->         bank->chip.dev = dev;
-> +       bank->chip.owner = THIS_MODULE;
->         bank->dbck_flag = pdata->dbck_flag;
->         bank->stride = pdata->bank_stride;
->         bank->width = pdata->bank_width;
-> --
-> 2.4.4
->
+> -       xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_TRI_OF=
+=46SET,
+> +       xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_CHANNE=
+L_OFFSET,
+>                        chip->gpio_state[1]);
+> -       xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_TRI_OFF=
+SET,
+> +       xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_CHANNEL=
+_OFFSET,
+>                        chip->gpio_dir[1]);
+
+Nit: Maybe XGPIO_CHANNEL_OFFSET should have come before the other
+offset for clarity, but that's no big deal.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
