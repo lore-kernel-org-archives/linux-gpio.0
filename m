@@ -1,41 +1,61 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] gpiolib: assign chip owner to dev->driver->owner if
- not set
-Date: Tue, 30 Jun 2015 22:41:21 +0900
-Message-ID: <CAAVeFuLpBjnA0uq6vjpawWpzEG76sDe7pCgS6nG6CwGaar-JKA@mail.gmail.com>
-References: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com> <1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: zynq: Fix problem with unbalanced pm_runtime_enable
+Date: Tue, 30 Jun 2015 22:46:53 +0900
+Message-ID: <CAAVeFu+Ur_3ZKsRJh2hH1fzsAouNPxOvqdU_hqDUVu26U5EkDg@mail.gmail.com>
+References: <b4b2bb2d7747f8c9223fb50fd2868f77a7c7f63a.1435220957.git.michal.simek@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:33985 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752858AbbF3Nll (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:41:41 -0400
-In-Reply-To: <1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:32905 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752416AbbF3NrN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:47:13 -0400
+In-Reply-To: <b4b2bb2d7747f8c9223fb50fd2868f77a7c7f63a.1435220957.git.michal.simek@xilinx.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, monstr@monstr.eu, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jun 26, 2015 at 2:30 AM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> Assign GPIO chip owner field to chip->dev->driver->owner if it was not
-> configured by GPIO driver.
+On Thu, Jun 25, 2015 at 5:29 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+> Add missing pm_runtime_disabled to remove().
+>
+> Error log:
+> root@zynqmp:~# modprobe gpio_zynq
+> root@zynqmp:~# lsmod
+>     Not tainted
+> gpio_zynq 7086 0 - Live 0xffffffbffc00a000
+> root@zynqmp:~# rmmod gpio_zynq
+> root@zynqmp:~# lsmod
+>     Not tainted
+> root@zynqmp:~# modprobe gpio_zynq
+> [  246.924438] zynq-gpio ff0a0000.gpio: Unbalanced pm_runtime_enable!
+> root@zynqmp:~# rmmod gpio_zynq
+> root@zynqmp:~# lsmod
+>     Not tainted
 
-Sounds good, setting this field manually seems to make less and less
-sense anyway as most drivers follow the device model.
+Yup, this was missing indeed.
+
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
 >
-> Cc: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
-> Hi,
 >
->  There is also one positive additional side effect:
->  lines like below can be removed from a lot of GPIO
->  drivers
->         rdc321x_gpio_dev->chip.owner = THIS_MODULE;
-
-A good idea for a follow-up patch! ;)
-
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+>  drivers/gpio/gpio-zynq.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+> index 2e87c4b8da26..a78882389836 100644
+> --- a/drivers/gpio/gpio-zynq.c
+> +++ b/drivers/gpio/gpio-zynq.c
+> @@ -757,6 +757,7 @@ static int zynq_gpio_remove(struct platform_device *pdev)
+>         gpiochip_remove(&gpio->chip);
+>         clk_disable_unprepare(gpio->clk);
+>         device_set_wakeup_capable(&pdev->dev, 0);
+> +       pm_runtime_disable(&pdev->dev);
+>         return 0;
+>  }
+>
+> --
+> 2.3.5
+>
