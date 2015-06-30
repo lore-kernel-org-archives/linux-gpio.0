@@ -1,111 +1,148 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 6/7] pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up
-Date: Tue, 30 Jun 2015 12:35:29 +0300
-Message-ID: <2241869.R00PfnOgEO@avalon>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be> <1435650327-2542-7-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 7/7] pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+Date: Tue, 30 Jun 2015 12:38:15 +0300
+Message-ID: <10481403.sNoQCGtpkA@avalon>
+References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be> <1435650327-2542-8-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1435650327-2542-7-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50620 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085AbbF3JiM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 05:38:12 -0400
+In-Reply-To: <1435650327-2542-8-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-gpio@vger.kernel.org
 
 Hi Geert,
 
 Thank you for the patch.
 
-On Tuesday 30 June 2015 09:45:26 Geert Uytterhoeven wrote:
-> Move sh_pfc_add_gpiochip() to the generic helper section at the top of
-> the file, so it can be called from the "Function GPIOs" section later.
+On Tuesday 30 June 2015 09:45:27 Geert Uytterhoeven wrote:
+> Legacy function GPIOs are no longer used on ARM since commit
+> a27c5cd1a08cc95c ("sh-pfc: sh73a0: Remove function GPIOs").
+> Extract its setup code into a separate function, and make all function
+> GPIO related code and data depend on CONFIG_SUPERH.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 > ---
->  drivers/pinctrl/sh-pfc/gpio.c | 58  +++++++++++++++++++--------------------
->  1 file changed, 29 insertions(+), 29 deletions(-)
+> Compile-tested on sh using se7724_defconfig.
+> ---
+>  drivers/pinctrl/sh-pfc/core.h   |  2 ++
+>  drivers/pinctrl/sh-pfc/gpio.c   | 39 ++++++++++++++++++++++++++----------
+>  drivers/pinctrl/sh-pfc/sh_pfc.h |  2 ++
+>  3 files changed, 32 insertions(+), 11 deletions(-)
 > 
+> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+> index 4c3c37bf7161804d..c38ace46d7111b0d 100644
+> --- a/drivers/pinctrl/sh-pfc/core.h
+> +++ b/drivers/pinctrl/sh-pfc/core.h
+> @@ -46,7 +46,9 @@ struct sh_pfc {
+>  	unsigned int nr_gpio_pins;
+> 
+>  	struct sh_pfc_chip *gpio;
+> +#ifdef CONFIG_SUPERH
+>  	struct sh_pfc_chip *func;
+> +#endif
+> 
+>  	struct sh_pfc_pinctrl *pinctrl;
+>  };
 > diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-> index b8929b5e2fa26c53..30654e800580524d 100644
+> index 30654e800580524d..15f4eea186e2ba56 100644
 > --- a/drivers/pinctrl/sh-pfc/gpio.c
 > +++ b/drivers/pinctrl/sh-pfc/gpio.c
-> @@ -131,6 +131,35 @@ static int gpio_setup_data_regs(struct sh_pfc_chip
+> @@ -290,6 +290,7 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
+>   * Function GPIOs
+>   */
+> 
+> +#ifdef CONFIG_SUPERH
+>  static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+>  {
+>  	static bool __print_once;
+> @@ -330,6 +331,31 @@ static int gpio_function_setup(struct sh_pfc_chip
 > *chip) return 0;
 >  }
 > 
-> +static struct sh_pfc_chip *
-> +sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
-> +		    struct sh_pfc_window *mem)
+> +static int sh_pfc_add_function_gpios(struct sh_pfc *pfc)
 > +{
 > +	struct sh_pfc_chip *chip;
-> +	int ret;
 > +
-> +	chip = devm_kzalloc(pfc->dev, sizeof(*chip), GFP_KERNEL);
-> +	if (unlikely(!chip))
-> +		return ERR_PTR(-ENOMEM);
+> +	if (!pfc->info->nr_func_gpios)
+> +		return 0;
 > +
-> +	chip->mem = mem;
-> +	chip->pfc = pfc;
+> +	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
 > +
-> +	ret = setup(chip);
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
+> +	pfc->func = chip;
 > +
-> +	ret = gpiochip_add(&chip->gpio_chip);
-> +	if (unlikely(ret < 0))
-> +		return ERR_PTR(ret);
-> +
-> +	dev_info(pfc->dev, "%s handling gpio %u -> %u\n",
-> +		 chip->gpio_chip.label, chip->gpio_chip.base,
-> +		 chip->gpio_chip.base + chip->gpio_chip.ngpio - 1);
-> +
-> +	return chip;
+> +	return 0;
 > +}
+> +
+> +static void sh_pfc_remove_function_gpios(struct sh_pfc *pfc)
+> +{
+> +	gpiochip_remove(&pfc->func->gpio_chip);
+> +}
+> +#else
+> +static inline int sh_pfc_add_function_gpios(struct sh_pfc *pfc) { return 0;
+> }
+> +static inline int sh_pfc_remove_function_gpios(struct sh_pfc *pfc) {
+> return 0; }
+
+Given that those functions are only called from a single location, would it 
+make sense to just compile the calls conditionally instead ? I would find that 
+slightly more readable as it would be more explicit.
+
+> +#endif
 > +
 >  /*
 > ---------------------------------------------------------------------------
-> -- * Pin GPIOs
+> -- * Register/unregister
 >   */
-> @@ -305,35 +334,6 @@ static int gpio_function_setup(struct sh_pfc_chip
-> *chip) * Register/unregister
->   */
+> @@ -397,22 +423,13 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+>  	}
 > 
-> -static struct sh_pfc_chip *
-> -sh_pfc_add_gpiochip(struct sh_pfc *pfc, int(*setup)(struct sh_pfc_chip *),
-> -		    struct sh_pfc_window *mem)
-> -{
-> -	struct sh_pfc_chip *chip;
-> -	int ret;
+>  	/* Register the function GPIOs chip. */
+> -	if (pfc->info->nr_func_gpios == 0)
+> -		return 0;
 > -
-> -	chip = devm_kzalloc(pfc->dev, sizeof(*chip), GFP_KERNEL);
-> -	if (unlikely(!chip))
-> -		return ERR_PTR(-ENOMEM);
+> -	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
+> -	if (IS_ERR(chip))
+> -		return PTR_ERR(chip);
 > -
-> -	chip->mem = mem;
-> -	chip->pfc = pfc;
+> -	pfc->func = chip;
 > -
-> -	ret = setup(chip);
-> -	if (ret < 0)
-> -		return ERR_PTR(ret);
-> -
-> -	ret = gpiochip_add(&chip->gpio_chip);
-> -	if (unlikely(ret < 0))
-> -		return ERR_PTR(ret);
-> -
-> -	dev_info(pfc->dev, "%s handling gpio %u -> %u\n",
-> -		 chip->gpio_chip.label, chip->gpio_chip.base,
-> -		 chip->gpio_chip.base + chip->gpio_chip.ngpio - 1);
-> -
-> -	return chip;
-> -}
-> -
->  int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+> -	return 0;
+> +	return sh_pfc_add_function_gpios(pfc);
+>  }
+> 
+>  int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
 >  {
->  	struct sh_pfc_chip *chip;
+>  	gpiochip_remove(&pfc->gpio->gpio_chip);
+> -	gpiochip_remove(&pfc->func->gpio_chip);
+> +	sh_pfc_remove_function_gpios(pfc);
+> 
+>  	return 0;
+>  }
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index c7508d5f688613b2..c6f9163b3e23041f
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -138,8 +138,10 @@ struct sh_pfc_soc_info {
+>  	const struct sh_pfc_function *functions;
+>  	unsigned int nr_functions;
+> 
+> +#ifdef CONFIG_SUPERH
+>  	const struct pinmux_func *func_gpios;
+>  	unsigned int nr_func_gpios;
+> +#endif
+> 
+>  	const struct pinmux_cfg_reg *cfg_regs;
+>  	const struct pinmux_data_reg *data_regs;
 
 -- 
 Regards,
