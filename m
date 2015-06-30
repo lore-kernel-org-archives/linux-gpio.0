@@ -1,78 +1,105 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2] gpio/xilinx: Use correct address when setting initial values.
-Date: Tue, 30 Jun 2015 22:58:43 +0900
-Message-ID: <CAAVeFuLEUECgFeHr4q-N=7omSAL8+hPHoNponUWpkFGCxVYybw@mail.gmail.com>
-References: <1435130385.30543.3.camel@localhost>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
+Date: Tue, 30 Jun 2015 18:36:50 +0200
+Message-ID: <5592C5A2.5050809@linutronix.de>
+References: <20150619170654.GA4937@linutronix.de> <5584547B.9040203@oracle.com> <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com> <20150622070821.GB4156@atomide.com> <559275B9.3040909@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:33026 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752689AbbF3N7E convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:59:04 -0400
-In-Reply-To: <1435130385.30543.3.camel@localhost>
+Received: from www.linutronix.de ([62.245.132.108]:35278 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832AbbF3Qgx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 12:36:53 -0400
+In-Reply-To: <559275B9.3040909@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Rapha=C3=ABl_Teysseyre?= <rteysseyre@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, santosh shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Sekhar Nori <nsekhar@ti.com>
 
-On Wed, Jun 24, 2015 at 4:19 PM, Rapha=C3=ABl Teysseyre <rteysseyre@gma=
-il.com> wrote:
-> xgpio_save_regs() is used in this driver to setup the initial
-> values of the registers in the hardware.
->
-> The relevant registers at that time are:
-> 0x0 -> channel 0 data (32 bits, one for each GPIO on this channel).
-> 0x4 -> channel 0 tri, controls in/out status for each GPIO of this ch=
-annel.
-> 0x8 -> channel 1 data
-> 0xC -> channel 1 tri
->
-> gpio-xilinx.c defines these:
-> XGPIO_DATA_OFFSET   (0x0)
-> XGPIO_TRI_OFFSET    (0x4)
-> XGPIO_CHANNEL_OFFSET    0x8
->
-> Before this patch, the "data" register value of channel 1 was written
-> at 0x4 intead of 0x8 (overwriting the channel 0 "tri" register),
-> and the "tri" register value for channel 1 was written at 0x8 instead=
- of 0xC.
+On 06/30/2015 12:55 PM, Grygorii Strashko wrote:
+> Hi Sebastian, All,
+Hi Grygorii,
 
-Nice, descriptive commit log. ;)
+> The problem here is that OMAPs code implemented using PM runtime based
+> approach and PM runtime is used everywhere. We don't see warnings form
+> other drivers just because their HW IRQ handlers forced to be threaded, but
+> that's not the case for OMAP GPIO :(
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Only for the case where it is used as an interrupt controller. So the
+primary interrupt controller is not using RPM then (or else you would
+have the same problem).
 
->
-> Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
-> ---
->  drivers/gpio/gpio-xilinx.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-> index 61243d1..e544b7a 100644
-> --- a/drivers/gpio/gpio-xilinx.c
-> +++ b/drivers/gpio/gpio-xilinx.c
-> @@ -220,9 +220,9 @@ static void xgpio_save_regs(struct of_mm_gpio_chi=
-p *mm_gc)
->         if (!chip->gpio_width[1])
->                 return;
->
-> -       xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_TRI_OF=
-=46SET,
-> +       xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET + XGPIO_CHANNE=
-L_OFFSET,
->                        chip->gpio_state[1]);
-> -       xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_TRI_OFF=
-SET,
-> +       xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET + XGPIO_CHANNEL=
-_OFFSET,
->                        chip->gpio_dir[1]);
+> PM runtime for OMAP GPIO is implemented in irq_safe manner and it works for
+> non-RT case, but the main question here - How can we proceed for -RT case?
+> 
+> May be you have some thought?
 
-Nit: Maybe XGPIO_CHANNEL_OFFSET should have come before the other
-offset for clarity, but that's no big deal.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+If I remember it properly, you must not sleep but you do so on wakeup.
+At least you take spinlocks (spinlocks not raw_spinlocks). One question
+is why do you need (or why is it okay) to put a device to sleep (via
+RPM) if the device is used as an interrupt controller? From what I
+understand, if the GPIO controller is really sleeping you won't receive
+any interrupts.
+
+So I think you shouldn't put a GPIO controller to sleep if it is
+active. If you avoid this, there should be nothing calling you from
+IRQ-context on -RT.
+
+>>From my side what I've tried or thought about:
+> 1) OMAP HW IRQ handler can be transformed to threaded IRQ on -RT.
+>    Can it be acceptable?
+
+It could. In theory. It would work, too. Not sure you really want this.
+You lose the cascaded handler that you have now. The obvious change
+would be that you see another IRQ used in /proc/interrupts. This is
+harmless :) However each time an IRQ (on the GPIO side) arrives you
+have a hardirq which is defered into thread context. Then it wakes
+another thread (the GPIO-IRQ-handler). So this adds a little of
+overhead on your call path. Since you won't have IRQF_NO_THREAD flag on
+any user, this should remain the only price you pay.
+
+Also I try not grow the -RT queue. I sent patches upstream where
+possible. That means for this I would like to have this addressed
+upstream as there is no joy carrying this patch (that means please
+don't do a -RT only fix).
+
+> 2) I've tried to use irq_chip->irq_bus_lock/irq_bus_sync_unlock() callbacks.
+>    It helps a bit, but there are two problems:
+>    - These callbacks are not expected to fail;
+>    - PM runtime calls are still present in omap_gpio_irq_handler().
+>    Hypothetically, they can be removed, but we'd need to ensure that OMAP GPIO HW
+>    is powered and ready to process IRQs all the time while GPIO bank IRQ is in use.
+>    Not trivial thing to do taking into account multi-SoC support, suspend, cpuidle :(
+
+What I still don't understand how can a GPIO create an interrupt if it
+is sleeping? I know CAN and a few others peripherals can do such
+things. Is this also the case for the GPIO?
+
+Or is the problem more that the CPU can't properly enter suspend/
+cpuidle if the GPIO bank remains active?
+
+>   [code provided just to illustrate idea]
+>   static void omap_gpio_irq_bus_lock(struct irq_data *data)
+>   {
+>        struct gpio_bank *bank = irq_data_get_irq_chip_data(data);
+> 
+>        if (!BANK_USED(bank))
+>                pm_runtime_get_sync(bank->dev);
+>   }
+
+I don't really like the !BANK_USED(bank) check because it is either in
+use or not. Things like that may hide the pm_runtime_get_sync() call and
+explode with debug-off.
+
+> I would be appreciated for any comments on this (1 or 2 or ..), thanks. 
+
+Another way would be to turn the lock into a raw lock so it won't block
+on -RT. However each time you hold the lock in process context you
+block a possible -RT task from becoming run-able. Also this could
+include larger hacker across the RPM code depending on how this lock
+issue is solved.
+Either way: the longer you hold the lock the longer you block the -RT
+task and the important part is the worst-case scenario.
+
+Sebastian
