@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/7] pinctrl: sh-pfc: Remove empty gpio_function_free()
-Date: Tue, 30 Jun 2015 09:45:25 +0200
-Message-ID: <1435650327-2542-6-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 7/7] pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+Date: Tue, 30 Jun 2015 09:45:27 +0200
+Message-ID: <1435650327-2542-8-git-send-email-geert+renesas@glider.be>
 References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
@@ -10,37 +10,118 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-gpio_chip.free() is optional, and can just be left unimplemented.
+Legacy function GPIOs are no longer used on ARM since commit
+a27c5cd1a08cc95c ("sh-pfc: sh73a0: Remove function GPIOs").
+Extract its setup code into a separate function, and make all function
+GPIO related code and data depend on CONFIG_SUPERH.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Untested due to lack of hardware (used on sh only).
+Compile-tested on sh using se7724_defconfig.
 ---
- drivers/pinctrl/sh-pfc/gpio.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/pinctrl/sh-pfc/core.h   |  2 ++
+ drivers/pinctrl/sh-pfc/gpio.c   | 39 ++++++++++++++++++++++++++++-----------
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  2 ++
+ 3 files changed, 32 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+index 4c3c37bf7161804d..c38ace46d7111b0d 100644
+--- a/drivers/pinctrl/sh-pfc/core.h
++++ b/drivers/pinctrl/sh-pfc/core.h
+@@ -46,7 +46,9 @@ struct sh_pfc {
+ 	unsigned int nr_gpio_pins;
+ 
+ 	struct sh_pfc_chip *gpio;
++#ifdef CONFIG_SUPERH
+ 	struct sh_pfc_chip *func;
++#endif
+ 
+ 	struct sh_pfc_pinctrl *pinctrl;
+ };
 diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index 1be118e4865fd3f8..b8929b5e2fa26c53 100644
+index 30654e800580524d..15f4eea186e2ba56 100644
 --- a/drivers/pinctrl/sh-pfc/gpio.c
 +++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -286,17 +286,12 @@ static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
- 	return ret;
+@@ -290,6 +290,7 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
+  * Function GPIOs
+  */
+ 
++#ifdef CONFIG_SUPERH
+ static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+ {
+ 	static bool __print_once;
+@@ -330,6 +331,31 @@ static int gpio_function_setup(struct sh_pfc_chip *chip)
+ 	return 0;
  }
  
--static void gpio_function_free(struct gpio_chip *gc, unsigned offset)
--{
--}
++static int sh_pfc_add_function_gpios(struct sh_pfc *pfc)
++{
++	struct sh_pfc_chip *chip;
++
++	if (!pfc->info->nr_func_gpios)
++		return 0;
++
++	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++
++	pfc->func = chip;
++
++	return 0;
++}
++
++static void sh_pfc_remove_function_gpios(struct sh_pfc *pfc)
++{
++	gpiochip_remove(&pfc->func->gpio_chip);
++}
++#else
++static inline int sh_pfc_add_function_gpios(struct sh_pfc *pfc) { return 0; }
++static inline int sh_pfc_remove_function_gpios(struct sh_pfc *pfc) { return 0; }
++#endif
++
+ /* -----------------------------------------------------------------------------
+  * Register/unregister
+  */
+@@ -397,22 +423,13 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ 	}
+ 
+ 	/* Register the function GPIOs chip. */
+-	if (pfc->info->nr_func_gpios == 0)
+-		return 0;
 -
- static int gpio_function_setup(struct sh_pfc_chip *chip)
+-	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
+-	if (IS_ERR(chip))
+-		return PTR_ERR(chip);
+-
+-	pfc->func = chip;
+-
+-	return 0;
++	return sh_pfc_add_function_gpios(pfc);
+ }
+ 
+ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
  {
- 	struct sh_pfc *pfc = chip->pfc;
- 	struct gpio_chip *gc = &chip->gpio_chip;
+ 	gpiochip_remove(&pfc->gpio->gpio_chip);
+-	gpiochip_remove(&pfc->func->gpio_chip);
++	sh_pfc_remove_function_gpios(pfc);
  
- 	gc->request = gpio_function_request;
--	gc->free = gpio_function_free;
+ 	return 0;
+ }
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index c7508d5f688613b2..c6f9163b3e23041f 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -138,8 +138,10 @@ struct sh_pfc_soc_info {
+ 	const struct sh_pfc_function *functions;
+ 	unsigned int nr_functions;
  
- 	gc->label = pfc->info->name;
- 	gc->owner = THIS_MODULE;
++#ifdef CONFIG_SUPERH
+ 	const struct pinmux_func *func_gpios;
+ 	unsigned int nr_func_gpios;
++#endif
+ 
+ 	const struct pinmux_cfg_reg *cfg_regs;
+ 	const struct pinmux_data_reg *data_regs;
 -- 
 1.9.1
 
