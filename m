@@ -1,233 +1,80 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH] of: acpi: Rename of_node() and acpi_node() to
- to_of_node() and to_acpi_node()
-Date: Tue, 30 Jun 2015 18:26:39 +0100
-Message-ID: <20150630172639.F02C2C407A6@trevor.secretlab.ca>
-References: <5588725D.6000101@gmail.com>
-	<2099562.7T915zWny0@vostro.rjw.lan> <10569034.P3OFQNPcxE@vostro.rjw.lan>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Tue, 30 Jun 2015 22:36:38 +0200
+Message-ID: <28154735.0HeJqZBqop@wuerfel>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-4-git-send-email-pawelo@king.net.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <10569034.P3OFQNPcxE@vostro.rjw.lan>
+In-Reply-To: <1435667250-28299-4-git-send-email-pawelo@king.net.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Robert Moore <robert.moore@intel.com>, Lv Zheng <lv.zheng@intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org, linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>Rob
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 25 Jun 2015 00:20:31 +0200
-, "Rafael J. Wysocki" <rjw@rjwysocki.net>
- wrote:
-> On Tuesday, June 23, 2015 01:45:00 AM Rafael J. Wysocki wrote:
-> > On Monday, June 22, 2015 10:38:53 PM Alexander Sverdlin wrote:
-> > > Commit 8a0662d9 introduced of_node and acpi_node symbols in global namespace
-> > > but there were already ~63 of_node local variables or function parameters
-> > > (no single acpi_node though, but anyway).
-> > > 
-> > > After debugging undefined but used of_node local varible (which turned out
-> > > to reference static function of_node() instead) it became clear that the names
-> > > for the functions are too short and too generic for global scope.
-> > > 
-> > > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> > 
-> > Putting the whole world into the To: field of your messages is not a good idea
-> > in general.
-> > 
-> > I'm fine with this change, personally.
-> > 
-> > Does anyone in the CC list have any objections?
+On Tuesday 30 June 2015 14:27:24 Paul Osmialowski wrote:
+> Based on K70P256M150SF3RM.pdf K70 Sub-Family Reference Manual, Rev. 3.
 > 
-> No objections apparently.
+> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+> ---
+>  .../devicetree/bindings/clock/kinetis-clock.txt    |  63 +++
+>  arch/arm/boot/dts/kinetis.dtsi                     |  36 ++
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-kinetis.c                          | 463 +++++++++++++++++++++
+>  4 files changed, 563 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/kinetis-clock.txt
+>  create mode 100644 drivers/clk/clk-kinetis.c
 > 
-> OK, I've queued this one up for the next PM+ACPI pull request, thanks!
+> diff --git a/Documentation/devicetree/bindings/clock/kinetis-clock.txt b/Documentation/devicetree/bindings/clock/kinetis-clock.txt
+> new file mode 100644
+> index 0000000..63af6a5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/kinetis-clock.txt
+> @@ -0,0 +1,63 @@
+> +* Clock bindings for Freescale Kinetis SoC
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,kinetis-cmu".
+> +- reg: Two address ranges, one for the Clock Genetator register set,
+> +	one for System Integration Module register set.
+> +- Set of clock devices: one fixed-rate-root, fixed-rate clocks and clock-gates.
+> +
+> +For clock-gate addresses see K70 Sub-Family Reference Manual, Rev. 3 pg. 341
+> +and later. Notice that addresses are zero-based, so SIM_SCGC1 has address 0,
+> +SIM_SCGC2 has address 1 and so on. The second address component is the bit
+> +index.
 
-Acked-by: Grant Likely <grant.likely@linaro.org>
+Please document the sub-nodes that are allowed, and the format
+of the clock specifiers.
 
-g.
-> 
-> > 
-> > 
-> > > ---
-> > > 
-> > > Compile-tested on x86_64 with ACPI and ARM with OF.
-> > > 
-> > >  drivers/base/property.c  | 26 +++++++++++++-------------
-> > >  drivers/gpio/gpiolib.c   |  4 ++--
-> > >  drivers/leds/leds-gpio.c |  2 +-
-> > >  include/acpi/acpi_bus.h  |  2 +-
-> > >  include/linux/acpi.h     |  4 ++--
-> > >  include/linux/of.h       |  4 ++--
-> > >  6 files changed, 21 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/drivers/base/property.c b/drivers/base/property.c
-> > > index 1d0b116..dfd4de6 100644
-> > > --- a/drivers/base/property.c
-> > > +++ b/drivers/base/property.c
-> > > @@ -128,9 +128,9 @@ EXPORT_SYMBOL_GPL(device_property_present);
-> > >  bool fwnode_property_present(struct fwnode_handle *fwnode, const char *propname)
-> > >  {
-> > >  	if (is_of_node(fwnode))
-> > > -		return of_property_read_bool(of_node(fwnode), propname);
-> > > +		return of_property_read_bool(to_of_node(fwnode), propname);
-> > >  	else if (is_acpi_node(fwnode))
-> > > -		return !acpi_dev_prop_get(acpi_node(fwnode), propname, NULL);
-> > > +		return !acpi_dev_prop_get(to_acpi_node(fwnode), propname, NULL);
-> > > 
-> > >  	return !!pset_prop_get(to_pset(fwnode), propname);
-> > >  }
-> > > @@ -285,10 +285,10 @@ EXPORT_SYMBOL_GPL(device_property_read_string);
-> > >  ({ \
-> > >  	int _ret_; \
-> > >  	if (is_of_node(_fwnode_)) \
-> > > -		_ret_ = OF_DEV_PROP_READ_ARRAY(of_node(_fwnode_), _propname_, \
-> > > +		_ret_ = OF_DEV_PROP_READ_ARRAY(to_of_node(_fwnode_), _propname_, \
-> > >  					       _type_, _val_, _nval_); \
-> > >  	else if (is_acpi_node(_fwnode_)) \
-> > > -		_ret_ = acpi_dev_prop_read(acpi_node(_fwnode_), _propname_, \
-> > > +		_ret_ = acpi_dev_prop_read(to_acpi_node(_fwnode_), _propname_, \
-> > >  					   _proptype_, _val_, _nval_); \
-> > >  	else \
-> > >  		_ret_ = pset_prop_read_array(to_pset(_fwnode_), _propname_, \
-> > > @@ -424,11 +424,11 @@ int fwnode_property_read_string_array(struct fwnode_handle *fwnode,
-> > >  {
-> > >  	if (is_of_node(fwnode))
-> > >  		return val ?
-> > > -			of_property_read_string_array(of_node(fwnode), propname,
-> > > -						      val, nval) :
-> > > -			of_property_count_strings(of_node(fwnode), propname);
-> > > +			of_property_read_string_array(to_of_node(fwnode),
-> > > +						      propname, val, nval) :
-> > > +			of_property_count_strings(to_of_node(fwnode), propname);
-> > >  	else if (is_acpi_node(fwnode))
-> > > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-> > > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
-> > >  					  DEV_PROP_STRING, val, nval);
-> > > 
-> > >  	return pset_prop_read_array(to_pset(fwnode), propname,
-> > > @@ -455,9 +455,9 @@ int fwnode_property_read_string(struct fwnode_handle *fwnode,
-> > >  				const char *propname, const char **val)
-> > >  {
-> > >  	if (is_of_node(fwnode))
-> > > -		return of_property_read_string(of_node(fwnode), propname, val);
-> > > +		return of_property_read_string(to_of_node(fwnode), propname, val);
-> > >  	else if (is_acpi_node(fwnode))
-> > > -		return acpi_dev_prop_read(acpi_node(fwnode), propname,
-> > > +		return acpi_dev_prop_read(to_acpi_node(fwnode), propname,
-> > >  					  DEV_PROP_STRING, val, 1);
-> > > 
-> > >  	return -ENXIO;
-> > > @@ -475,13 +475,13 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
-> > >  	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
-> > >  		struct device_node *node;
-> > > 
-> > > -		node = of_get_next_available_child(dev->of_node, of_node(child));
-> > > +		node = of_get_next_available_child(dev->of_node, to_of_node(child));
-> > >  		if (node)
-> > >  			return &node->fwnode;
-> > >  	} else if (IS_ENABLED(CONFIG_ACPI)) {
-> > >  		struct acpi_device *node;
-> > > 
-> > > -		node = acpi_get_next_child(dev, acpi_node(child));
-> > > +		node = acpi_get_next_child(dev, to_acpi_node(child));
-> > >  		if (node)
-> > >  			return acpi_fwnode_handle(node);
-> > >  	}
-> > > @@ -500,7 +500,7 @@ EXPORT_SYMBOL_GPL(device_get_next_child_node);
-> > >  void fwnode_handle_put(struct fwnode_handle *fwnode)
-> > >  {
-> > >  	if (is_of_node(fwnode))
-> > > -		of_node_put(of_node(fwnode));
-> > > +		of_node_put(to_of_node(fwnode));
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(fwnode_handle_put);
-> > > 
-> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > index 6bc612b..5d8b2b3 100644
-> > > --- a/drivers/gpio/gpiolib.c
-> > > +++ b/drivers/gpio/gpiolib.c
-> > > @@ -2040,14 +2040,14 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
-> > >  	if (is_of_node(fwnode)) {
-> > >  		enum of_gpio_flags flags;
-> > > 
-> > > -		desc = of_get_named_gpiod_flags(of_node(fwnode), propname, 0,
-> > > +		desc = of_get_named_gpiod_flags(to_of_node(fwnode), propname, 0,
-> > >  						&flags);
-> > >  		if (!IS_ERR(desc))
-> > >  			active_low = flags & OF_GPIO_ACTIVE_LOW;
-> > >  	} else if (is_acpi_node(fwnode)) {
-> > >  		struct acpi_gpio_info info;
-> > > 
-> > > -		desc = acpi_get_gpiod_by_index(acpi_node(fwnode), propname, 0,
-> > > +		desc = acpi_get_gpiod_by_index(to_acpi_node(fwnode), propname, 0,
-> > >  					       &info);
-> > >  		if (!IS_ERR(desc))
-> > >  			active_low = info.active_low;
-> > > diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> > > index 15eb3f8..d2d54d6 100644
-> > > --- a/drivers/leds/leds-gpio.c
-> > > +++ b/drivers/leds/leds-gpio.c
-> > > @@ -191,7 +191,7 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
-> > >  			goto err;
-> > >  		}
-> > > 
-> > > -		np = of_node(child);
-> > > +		np = to_of_node(child);
-> > > 
-> > >  		if (fwnode_property_present(child, "label")) {
-> > >  			fwnode_property_read_string(child, "label", &led.name);
-> > > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> > > index 8de4fa9..1224be8 100644
-> > > --- a/include/acpi/acpi_bus.h
-> > > +++ b/include/acpi/acpi_bus.h
-> > > @@ -385,7 +385,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
-> > >  	return fwnode && fwnode->type == FWNODE_ACPI;
-> > >  }
-> > > 
-> > > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-> > > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
-> > >  {
-> > >  	return is_acpi_node(fwnode) ?
-> > >  		container_of(fwnode, struct acpi_device, fwnode) : NULL;
-> > > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > > index e4da5e3..ec3c98e 100644
-> > > --- a/include/linux/acpi.h
-> > > +++ b/include/linux/acpi.h
-> > > @@ -53,7 +53,7 @@ static inline acpi_handle acpi_device_handle(struct acpi_device *adev)
-> > >  	return adev ? adev->handle : NULL;
-> > >  }
-> > > 
-> > > -#define ACPI_COMPANION(dev)		acpi_node((dev)->fwnode)
-> > > +#define ACPI_COMPANION(dev)		to_acpi_node((dev)->fwnode)
-> > >  #define ACPI_COMPANION_SET(dev, adev)	set_primary_fwnode(dev, (adev) ? \
-> > >  	acpi_fwnode_handle(adev) : NULL)
-> > >  #define ACPI_HANDLE(dev)		acpi_device_handle(ACPI_COMPANION(dev))
-> > > @@ -473,7 +473,7 @@ static inline bool is_acpi_node(struct fwnode_handle *fwnode)
-> > >  	return false;
-> > >  }
-> > > 
-> > > -static inline struct acpi_device *acpi_node(struct fwnode_handle *fwnode)
-> > > +static inline struct acpi_device *to_acpi_node(struct fwnode_handle *fwnode)
-> > >  {
-> > >  	return NULL;
-> > >  }
-> > > diff --git a/include/linux/of.h b/include/linux/of.h
-> > > index b871ff9..f05fdce 100644
-> > > --- a/include/linux/of.h
-> > > +++ b/include/linux/of.h
-> > > @@ -128,7 +128,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
-> > >  	return fwnode && fwnode->type == FWNODE_OF;
-> > >  }
-> > > 
-> > > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-> > > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
-> > >  {
-> > >  	return fwnode ? container_of(fwnode, struct device_node, fwnode) : NULL;
-> > >  }
-> > > @@ -387,7 +387,7 @@ static inline bool is_of_node(struct fwnode_handle *fwnode)
-> > >  	return false;
-> > >  }
-> > > 
-> > > -static inline struct device_node *of_node(struct fwnode_handle *fwnode)
-> > > +static inline struct device_node *to_of_node(struct fwnode_handle *fwnode)
-> > >  {
-> > >  	return NULL;
-> > >  }
-> > > --
-> 
+> +
+> +Example:
+> +
+> +cmu@40064000 {
+> +	compatible = "fsl,kinetis-cmu";
+> +	reg = <0x40064000 0x14>, <0x40047000 0x1100>;
+> +
+> +	mcg_outclk: fixed-rate-root@mcgout {
+> +		device_type = "mcgout";
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	mcg_cclk: fixed-rate@cclk {
+
+'@' is a reserved character here that is used before the address
+of the device, so this has to be a hexadecimal number without leading
+'0x', and it should match the 'reg' property of the device.
+
+> +		device_type = "cclk";
+> +		#clock-cells = <0>;
+> +		clocks = <&mcg_outclk>;
+> +	};
+
+The device_type property here is not a standard identifier,
+and you don't list it as an optional or mandatory property.
+
+Please remove it and instead use the compatible property, the
+name or the address.
+
+	Arnd
