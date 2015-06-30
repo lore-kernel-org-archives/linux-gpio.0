@@ -1,88 +1,195 @@
-From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
-Subject: Re: Use of pinctrl-single for external device over I2C
-Date: Tue, 30 Jun 2015 13:28:15 +0530
-Message-ID: <55924C17.6090604@linaro.org>
-References: <55893B2C.1070800@linaro.org> <558A9CC7.6070409@linaro.org> <20150624133349.GI4156@atomide.com> <558AE478.2080802@linaro.org> <20150625043838.GK4156@atomide.com> <558B95CA.9070105@linaro.org> <55924953.80802@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH] pinctrl: sh-pfc: Accept standard function, pins and groups properties
+Date: Tue, 30 Jun 2015 11:29:57 +0300
+Message-ID: <1435652997-25254-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:33076 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752924AbbF3H6Y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 03:58:24 -0400
-Received: by pacws9 with SMTP id ws9so1614033pac.0
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2015 00:58:23 -0700 (PDT)
-In-Reply-To: <55924953.80802@linaro.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50544 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750952AbbF3I35 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 04:29:57 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, lee.jones@linaro.org, sameo@linux.intel.com, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
+The "function", "pins" and "groups" pinmux and pinctrl properties have
+been standardized. Support them in addition to the custom "renesas,*"
+properties. New-style and old-style properties can't be mixed in DT.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       | 20 +++++------
+ drivers/pinctrl/sh-pfc/pinctrl.c                   | 42 +++++++++++++++++-----
+ 2 files changed, 44 insertions(+), 18 deletions(-)
 
-On Tuesday 30 June 2015 01:16 PM, Vaibhav Hiremath wrote:
->
->
-> On Thursday 25 June 2015 11:16 AM, Vaibhav Hiremath wrote:
->>
->>
->> On Thursday 25 June 2015 10:08 AM, Tony Lindgren wrote:
->>> * Vaibhav Hiremath <vaibhav.hiremath@linaro.org> [150624 10:12]:
->>>>
->>>> I do not like this, as this is not HW feature, so DT may not be right
->>>> approach.
->>>>
->>>> So I will dig more from either runtime or Compile time option to use
->>>> regmap_ Vs raw read/writes.
->>>
->>> Can't you just check if the pinctrl node has compatible = "syscon"
->>> property?
->>>
->>> A compile time option won't work for sure. I don't know what you
->>> would check at runtime as you do not know what the bus is behind
->>> syscon.
->>>
->>
->> Although, I haven't gone through syscon, but not sure whether syscon
->> would be useful.
->>
->> As you rightly stated, we need to know the bus behind regmap.
->>
->
-> Trying to understand what is the right way of doing pinctrl of external
-> device on board,
->
-> I feel it would not be good idea to pollute pinctrl-single driver, and
-> also I am still not able to figure out how can I have access to bus
-> behind regmap.
->
->
-> How about having separate driver (generic for all I2C), say pinctrl-
-> i2c.c, which is i2c_client driver and would support pinctrl and pinmux
-> on I2C client device.
->
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+index 51cee44fc140..e089142cfb14 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+@@ -58,12 +58,12 @@ are parsed through phandles and processed purely based on their content.
+ 
+ Pin Configuration Node Properties:
+ 
+-- renesas,pins : An array of strings, each string containing the name of a pin.
+-- renesas,groups : An array of strings, each string containing the name of a pin
++- pins : An array of strings, each string containing the name of a pin.
++- groups : An array of strings, each string containing the name of a pin
+   group.
+ 
+-- renesas,function: A string containing the name of the function to mux to the
+-  pin group(s) specified by the renesas,groups property
++- function: A string containing the name of the function to mux to the pin
++  group(s) specified by the groups property.
+ 
+   Valid values for pin, group and function names can be found in the group and
+   function arrays of the PFC data file corresponding to the SoC
+@@ -141,19 +141,19 @@ Example 3: KZM-A9-GT (SH-Mobile AG5) default pin state hog and pin control maps
+ 
+ 		mmcif_pins: mmcif {
+ 			mux {
+-				renesas,groups = "mmc0_data8_0", "mmc0_ctrl_0";
+-				renesas,function = "mmc0";
++				groups = "mmc0_data8_0", "mmc0_ctrl_0";
++				function = "mmc0";
+ 			};
+ 			cfg {
+-				renesas,groups = "mmc0_data8_0";
+-				renesas,pins = "PORT279";
++				groups = "mmc0_data8_0";
++				pins = "PORT279";
+ 				bias-pull-up;
+ 			};
+ 		};
+ 
+ 		scifa4_pins: scifa4 {
+-			renesas,groups = "scifa4_data", "scifa4_ctrl";
+-			renesas,function = "scifa4";
++			groups = "scifa4_data", "scifa4_ctrl";
++			function = "scifa4";
+ 		};
+ 	};
+ 
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index ff678966008b..6fe7459f0ccb 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -40,6 +40,10 @@ struct sh_pfc_pinctrl {
+ 
+ 	struct pinctrl_pin_desc *pins;
+ 	struct sh_pfc_pin_config *configs;
++
++	const char *func_prop_name;
++	const char *groups_prop_name;
++	const char *pins_prop_name;
+ };
+ 
+ static int sh_pfc_get_groups_count(struct pinctrl_dev *pctldev)
+@@ -96,10 +100,13 @@ static int sh_pfc_map_add_config(struct pinctrl_map *map,
+ 	return 0;
+ }
+ 
+-static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
++static int sh_pfc_dt_subnode_to_map(struct pinctrl_dev *pctldev,
++				    struct device_node *np,
+ 				    struct pinctrl_map **map,
+ 				    unsigned int *num_maps, unsigned int *index)
+ {
++	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
++	struct device *dev = pmx->pfc->dev;
+ 	struct pinctrl_map *maps = *map;
+ 	unsigned int nmaps = *num_maps;
+ 	unsigned int idx = *index;
+@@ -113,10 +120,27 @@ static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
+ 	const char *pin;
+ 	int ret;
+ 
++	/* Support both the old Renesas-specific properties and the new standard
++	 * properties. Mixing old and new properties isn't allowed, neither
++	 * inside a subnode nor across subnodes.
++	 */
++	if (!pmx->func_prop_name) {
++		if (of_find_property(np, "groups", NULL) ||
++		    of_find_property(np, "pins", NULL)) {
++			pmx->func_prop_name = "function";
++			pmx->groups_prop_name = "groups";
++			pmx->pins_prop_name = "pins";
++		} else {
++			pmx->func_prop_name = "renesas,function";
++			pmx->groups_prop_name = "renesas,groups";
++			pmx->pins_prop_name = "renesas,pins";
++		}
++	}
++
+ 	/* Parse the function and configuration properties. At least a function
+ 	 * or one configuration must be specified.
+ 	 */
+-	ret = of_property_read_string(np, "renesas,function", &function);
++	ret = of_property_read_string(np, pmx->func_prop_name, &function);
+ 	if (ret < 0 && ret != -EINVAL) {
+ 		dev_err(dev, "Invalid function in DT\n");
+ 		return ret;
+@@ -129,11 +153,12 @@ static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
+ 	if (!function && num_configs == 0) {
+ 		dev_err(dev,
+ 			"DT node must contain at least a function or config\n");
++		ret = -ENODEV;
+ 		goto done;
+ 	}
+ 
+ 	/* Count the number of pins and groups and reallocate mappings. */
+-	ret = of_property_count_strings(np, "renesas,pins");
++	ret = of_property_count_strings(np, pmx->pins_prop_name);
+ 	if (ret == -EINVAL) {
+ 		num_pins = 0;
+ 	} else if (ret < 0) {
+@@ -143,7 +168,7 @@ static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
+ 		num_pins = ret;
+ 	}
+ 
+-	ret = of_property_count_strings(np, "renesas,groups");
++	ret = of_property_count_strings(np, pmx->groups_prop_name);
+ 	if (ret == -EINVAL) {
+ 		num_groups = 0;
+ 	} else if (ret < 0) {
+@@ -174,7 +199,7 @@ static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
+ 	*num_maps = nmaps;
+ 
+ 	/* Iterate over pins and groups and create the mappings. */
+-	of_property_for_each_string(np, "renesas,groups", prop, group) {
++	of_property_for_each_string(np, pmx->groups_prop_name, prop, group) {
+ 		if (function) {
+ 			maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
+ 			maps[idx].data.mux.group = group;
+@@ -198,7 +223,7 @@ static int sh_pfc_dt_subnode_to_map(struct device *dev, struct device_node *np,
+ 		goto done;
+ 	}
+ 
+-	of_property_for_each_string(np, "renesas,pins", prop, pin) {
++	of_property_for_each_string(np, pmx->pins_prop_name, prop, pin) {
+ 		ret = sh_pfc_map_add_config(&maps[idx], pin,
+ 					    PIN_MAP_TYPE_CONFIGS_PIN,
+ 					    configs, num_configs);
+@@ -246,7 +271,7 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	index = 0;
+ 
+ 	for_each_child_of_node(np, child) {
+-		ret = sh_pfc_dt_subnode_to_map(dev, child, map, num_maps,
++		ret = sh_pfc_dt_subnode_to_map(pctldev, child, map, num_maps,
+ 					       &index);
+ 		if (ret < 0)
+ 			goto done;
+@@ -254,7 +279,8 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 
+ 	/* If no mapping has been found in child nodes try the config node. */
+ 	if (*num_maps == 0) {
+-		ret = sh_pfc_dt_subnode_to_map(dev, np, map, num_maps, &index);
++		ret = sh_pfc_dt_subnode_to_map(pctldev, np, map, num_maps,
++					       &index);
+ 		if (ret < 0)
+ 			goto done;
+ 	}
+-- 
+Regards,
 
-I mean, part of mfd here (mfd_cell)
+Laurent Pinchart
 
->
-> The current usecase which I have is pretty simple in nature,
->
-> 88PM860 has few GPIO pins which can be configured to different
-> functionality, based on board design.
-> In most of the cases they are one/init/boot time settings.
->
-> GPIO_0:
-> =======
->    000 = GPIO input mode
->    001 = GPIO output mode
->    010 = SLEEPOUTN mirror mode
->    011 = Buck4 FPWM enable
->    100 = 32 Khz output buffer mode
->    101 = PMICINTN output mode
->    110 = HW_RESET1 mode
->    111 = HW_RESET2 mode
->
->
-> Thanks,
-> Vaibhav
