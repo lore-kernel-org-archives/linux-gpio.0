@@ -1,61 +1,68 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: zynq: Fix problem with unbalanced pm_runtime_enable
-Date: Tue, 30 Jun 2015 22:46:53 +0900
-Message-ID: <CAAVeFu+Ur_3ZKsRJh2hH1fzsAouNPxOvqdU_hqDUVu26U5EkDg@mail.gmail.com>
-References: <b4b2bb2d7747f8c9223fb50fd2868f77a7c7f63a.1435220957.git.michal.simek@xilinx.com>
+Subject: Re: [PATCH 1/2] gpiolib: irqchip: prevent driver unloading if gpio is
+ used as irq only
+Date: Tue, 30 Jun 2015 22:47:51 +0900
+Message-ID: <CAAVeFu+t1+Q_2Da1kG-3OHruK9CytgX0zhVJV2FEbqKFCxEgWg@mail.gmail.com>
+References: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:32905 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752416AbbF3NrN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:47:13 -0400
-In-Reply-To: <b4b2bb2d7747f8c9223fb50fd2868f77a7c7f63a.1435220957.git.michal.simek@xilinx.com>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:36614 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753715AbbF3NsL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 09:48:11 -0400
+In-Reply-To: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, monstr@monstr.eu, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Thu, Jun 25, 2015 at 5:29 PM, Michal Simek <michal.simek@xilinx.com> wrote:
-> Add missing pm_runtime_disabled to remove().
+On Fri, Jun 26, 2015 at 2:30 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> Now nothing prevents GPIO driver from being unloaded if its gpios
+> were requested as GPIO IRQs only (without calling gpio_request()).
 >
-> Error log:
-> root@zynqmp:~# modprobe gpio_zynq
-> root@zynqmp:~# lsmod
->     Not tainted
-> gpio_zynq 7086 0 - Live 0xffffffbffc00a000
-> root@zynqmp:~# rmmod gpio_zynq
-> root@zynqmp:~# lsmod
->     Not tainted
-> root@zynqmp:~# modprobe gpio_zynq
-> [  246.924438] zynq-gpio ff0a0000.gpio: Unbalanced pm_runtime_enable!
-> root@zynqmp:~# rmmod gpio_zynq
-> root@zynqmp:~# lsmod
->     Not tainted
+> Hence, add calls of try_module_get()/module_put() into
+> gpiochip_irq_reqres/relres() to track such scenario properly.
 
-Yup, this was missing indeed.
+Bad things could happen indeed.
 
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
 >
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 > ---
+>  drivers/gpio/gpiolib.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
->  drivers/gpio/gpio-zynq.c | 1 +
->  1 file changed, 1 insertion(+)
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index be42ab3..9b1d247 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -522,10 +522,14 @@ static int gpiochip_irq_reqres(struct irq_data *d)
+>  {
+>         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
 >
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index 2e87c4b8da26..a78882389836 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -757,6 +757,7 @@ static int zynq_gpio_remove(struct platform_device *pdev)
->         gpiochip_remove(&gpio->chip);
->         clk_disable_unprepare(gpio->clk);
->         device_set_wakeup_capable(&pdev->dev, 0);
-> +       pm_runtime_disable(&pdev->dev);
+> +       if (!try_module_get(chip->owner))
+> +               return -ENODEV;
+> +
+>         if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+>                 chip_err(chip,
+>                         "unable to lock HW IRQ %lu for IRQ\n",
+>                         d->hwirq);
+> +               module_put(chip->owner);
+>                 return -EINVAL;
+>         }
 >         return 0;
+> @@ -536,6 +540,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
+>         struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+>
+>         gpiochip_unlock_as_irq(chip, d->hwirq);
+> +       module_put(chip->owner);
 >  }
 >
+>  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
 > --
-> 2.3.5
+> 2.4.4
 >
