@@ -1,39 +1,86 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 3/6] pinctrl: sh-pfc: r8a7790: Add separate functions for SDHI 1.8V operation
-Date: Tue, 30 Jun 2015 11:30:14 +0300
-Message-ID: <35893480.E0l0AdJZnQ@avalon>
-References: <1433892104.12074.49.camel@codethink.co.uk> <11872302.fE1vlhM93k@avalon> <CACRpkdbcrW-AQxpBd-w-FrBKZ8tDTtkeAG_mutYOqk8mNV1LJQ@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per
+ pin muxing controllers
+Date: Tue, 30 Jun 2015 11:17:37 +0200
+Message-ID: <55925EB1.1030500@atmel.com>
+References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com> <1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com> <557EF60D.8020007@wwwdotorg.org> <20150617123816.GB12295@odux.rfo.atmel.com> <5581988C.50000@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50545 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014AbbF3IaL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 04:30:11 -0400
-In-Reply-To: <CACRpkdbcrW-AQxpBd-w-FrBKZ8tDTtkeAG_mutYOqk8mNV1LJQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5581988C.50000-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>, Ian Molton <ian@mnementh.co.uk>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On Tuesday 30 June 2015 08:05:34 Linus Walleij wrote:
-> On Mon, Jun 15, 2015 at 4:02 AM, Laurent Pinchart
-> 
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > On a side note, I have a patch to support the standard "groups",
-> > "functions" and "pins" properties instead of the Renesas-specific
-> > versions, I'll try to revive it.
-> 
-> Yes please :)
+Le 17/06/2015 17:55, Stephen Warren a =E9crit :
+> On 06/17/2015 06:38 AM, Ludovic Desroches wrote:
 
-Done :-)
+[..]
 
-> Makes things a little less confusing in this confusing boundary between
-> electronics and code...
+>> I have sent patches months ago trying to improve things by having
+>> something more flexible. I don't think I introduce too big changes.
+>> The only answers I got were from people thinking that pinctrl framew=
+ork
+>> conception is not good to fit all kind of controllers. I re-sent the
+>> patch series to gain more expose and have no  answer...
+>=20
+> I don't see anything in your description which implies pinctrl isn't=20
+> perfectly suitable for your HW.
 
--- 
-Regards,
+We are not talking about suitability, we are talking about some little
+changes to the generic part, just to have more accurate information and
+a little bit more flexibility with our controller.
 
-Laurent Pinchart
+We read the drivers that Stephen pointed out and it seems that it even
+doesn't use the whole generic part of the pinconf. Moreover, we do thin=
+k
+that the statement "one pin" =3D=3D "one group" leads to a loss of
+information and ease of use.
+We are not talking about the use of defines, tables, macros to reach an
+usable pinctrl: let's say that we have different views.
 
+> Note that I'm on vacation for a couple weeks soon, and I don't expect=
+ to=20
+> follow this conversation during that time. Ultimately, LinusW owns th=
+e=20
+> pinctrl subsystem, and you need to convince him of any changes.
+
+Okay, so we are back at the same situation we had ended up with several
+months ago:
+
+- no agreement on 3 points:
+1/ ways to use groups in generic pinctrl
+2/ ways to describe a comprehensive configuration in device tree
+3/ readability of a sysfs information
+
+- no way out on the generic pinctrl little changes that Ludovic propose=
+d
+as Linus W. never gave his point of view (RFC posts on April the 2nd).
+
+Ludovic explained at length our point of view and gave detailed
+technical arguments. We don't intend to convince you, we just would lik=
+e
+the harmless modifications to be integrated.
+
+As we preferred to give a chance to the generic pinconf/pinctrl for our
+use by adding a little bit of flexibility, we are now in a situation
+where we are nearly obliged to give up this approach and write a new
+driver without the use of the generic facilities: what a pity!
+We lost several months of useless work to match what we thought the
+maintainer would prefer.
+
+So Linus, do you confirm that we won't go further with this approach?
+
+We are pretty disappointed by the way this interaction with the pinctrl
+sub-system went.
+
+Best regards,
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
