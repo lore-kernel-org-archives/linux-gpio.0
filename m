@@ -1,89 +1,97 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/7] ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
-Date: Tue, 30 Jun 2015 12:49:47 +0300
-Message-ID: <32630741.rNENluEsDE@avalon>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be> <1435650327-2542-2-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 4/7] pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+Date: Tue, 30 Jun 2015 12:54:26 +0300
+Message-ID: <3279913.JTNeygRbFq@avalon>
+References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be> <3655225.qDiVN00LS0@avalon> <CAMuHMdWTQrhFeuoiCUM==xkHv4RednxB+-Eb8_zVUiESAaTbYQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50657 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:50675 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751344AbbF3Jtn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 05:49:43 -0400
-In-Reply-To: <1435650327-2542-2-git-send-email-geert+renesas@glider.be>
+	with ESMTP id S1750846AbbF3JyX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 05:54:23 -0400
+In-Reply-To: <CAMuHMdWTQrhFeuoiCUM==xkHv4RednxB+-Eb8_zVUiESAaTbYQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
 Hi Geert,
 
-Thank you for the patch.
+On Tuesday 30 June 2015 11:44:24 Geert Uytterhoeven wrote:
+> On Tue, Jun 30, 2015 at 11:30 AM, Laurent Pinchart wrote:
+> > On Tuesday 30 June 2015 09:45:24 Geert Uytterhoeven wrote:
+> >> On platforms where the PFC/GPIO controller is instantiated from DT, the
+> >> mapping between GPIOs and pins is set up using the "gpio-ranges"
+> >> property in DT.
+> >> 
+> >> Hence stop setting up the mapping from C code on DT platforms.
+> >> This code is still used for SH or ARM-legacy platforms.
+> >> 
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> 
+> >>  drivers/pinctrl/sh-pfc/gpio.c | 36 ++++++++++++++++++++----------------
+> >>  1 file changed, 20 insertions(+), 16 deletions(-)
+> >> 
+> >> diff --git a/drivers/pinctrl/sh-pfc/gpio.c
+> >> b/drivers/pinctrl/sh-pfc/gpio.c
+> >> index ba353735ecf2be9a..1be118e4865fd3f8 100644
+> >> --- a/drivers/pinctrl/sh-pfc/gpio.c
+> >> +++ b/drivers/pinctrl/sh-pfc/gpio.c
+> >> @@ -379,22 +379,26 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+> >> 
+> >>       pfc->gpio = chip;
+> >> 
+> >> -     /* Register the GPIO to pin mappings. As pins with GPIO ports must
+> >> come
+> >> -      * first in the ranges, skip the pins without GPIO ports by
+> >> stopping at
+> >> -      * the first range that contains such a pin.
+> >> -      */
+> >> -     for (i = 0; i < pfc->nr_ranges; ++i) {
+> >> -             const struct sh_pfc_pin_range *range = &pfc->ranges[i];
+> >> -
+> >> -             if (range->start >= pfc->nr_gpio_pins)
+> >> -                     break;
+> >> -
+> >> -             ret = gpiochip_add_pin_range(&chip->gpio_chip,
+> >> -                                          dev_name(pfc->dev),
+> >> -                                          range->start, range->start,
+> >> -                                          range->end - range->start +
+> >> 1);
+> >> -             if (ret < 0)
+> >> -                     return ret;
+> >> +     if (IS_ENABLED(CONFIG_SUPERH) ||
+> >> +         IS_ENABLED(CONFIG_ARCH_SHMOBILE_LEGACY)) {
+> > 
+> > I'd prefer checking IS_ENABLED(CONFIG_OF) && pfc->dev->of_node as that
+> > doesn't explicitly depend on the platform type.
+> 
+> Note that CONFIG_OF is also set for ARM-legacy (and soon for SH). But that's
+> a minor problem. But due to the runtime check on pfc->dev->of_node, the
+> unused code below won't be left out by the compiler, and I want to get rid
+> of that code.
+> 
+> The platform check make it clear when the code can be removed.
 
-On Tuesday 30 June 2015 09:45:21 Geert Uytterhoeven wrote:
-> If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
-> case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
-> doesn't work:
-> 
->     requesting hog GPIO led1-high (chip r8a73a4_pfc, offset 28) failed
-> 
-> The actual error code is -517 == -EPROBE_DEFER.
-> 
-> The problem is that PFC+GPIO registration is handled in multiple steps:
->   1. pinctrl_register(),
->   2. gpiochip_add(),
->   3. gpiochip_add_pin_range().
-> 
-> Configuration of the hogs is handled in gpiochip_add():
-> 
->     gpiochip_add
->         of_gpiochip_add
->             of_gpiochip_scan_hogs
->                 gpiod_hog
->                     gpiochip_request_own_desc
->                         __gpiod_request
->                             chip->request
->                                 pinctrl_request_gpio
->                                     pinctrl_get_device_gpio_range
-> 
-> However, at this point the GPIO controller hasn't been added to
-> pinctrldev_list yet, so the range can't be found, and the operation fails
-> with -EPROBE_DEFER.
-> 
-> To fix this, add a "gpio-ranges" property to the gpio device node, so
-> the ranges are added by of_gpiochip_add_pin_range(), which is called by
-> of_gpiochip_add() before the call to of_gpiochip_scan_hogs().
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Not any time soon I'm afraid as arch/sh won't fully move to DT in the near 
+future, but ARCH_SHMOBILE_LEGACY should go away soon, so I'm fine with 
+compile-time optimization.
 
-This looks sane to me, even though referencing the same DT node seems a bit 
-dodgy. I'll let Linus comment on that, but for the implementation itself,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  arch/arm/boot/dts/r8a73a4.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+> > As the code after this if block also don't need to run on non-DT
+> > platforms,
+> > how about just using
+> > 
+> >         if (IS_ENABLED(CONFIG_OF) && pfc->dev->of_node)
+> >         
+> >                 return 0;
+> > 
+> > ?
 > 
-> diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
-> index 5090d1a8f652e8be..cb4f7b2798fe23be 100644
-> --- a/arch/arm/boot/dts/r8a73a4.dtsi
-> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
-> @@ -207,6 +207,13 @@
->  		reg = <0 0xe6050000 0 0x9000>;
->  		gpio-controller;
->  		#gpio-cells = <2>;
-> +		gpio-ranges =
-> +			<&pfc 0 0 31>, <&pfc 32 32 9>,
-> +			<&pfc 64 64 22>, <&pfc 96 96 31>,
-> +			<&pfc 128 128 7>, <&pfc 160 160 19>,
-> +			<&pfc 192 192 31>, <&pfc 224 224 27>,
-> +			<&pfc 256 256 28>, <&pfc 288 288 21>,
-> +			<&pfc 320 320 10>;
->  		interrupts-extended =
->  			<&irqc0  0 0>, <&irqc0  1 0>, <&irqc0  2 0>, <&irqc0  3 0>,
->  			<&irqc0  4 0>, <&irqc0  5 0>, <&irqc0  6 0>, <&irqc0  7 0>,
+> Early return is indeed an option, as we don't need the function GPIOs on
+> DT platforms.
 
 -- 
 Regards,
