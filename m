@@ -1,100 +1,35 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 4/7] pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
-Date: Tue, 30 Jun 2015 12:54:26 +0300
-Message-ID: <3279913.JTNeygRbFq@avalon>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be> <3655225.qDiVN00LS0@avalon> <CAMuHMdWTQrhFeuoiCUM==xkHv4RednxB+-Eb8_zVUiESAaTbYQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] gpio / ACPI: Add label to the gpio request
+Date: Tue, 30 Jun 2015 13:03:30 +0300
+Message-ID: <1435658610.10393.147.camel@linux.intel.com>
+References: <20150614220057.GC29802@yumi.tdiedrich.de>
+	 <CAAVeFu+dfc3vH73_uhwDftrd0OEYrX0ZiqK1MSAqsCcpKpzRTw@mail.gmail.com>
+	 <CACRpkdY-Zm+Yoh5NuVHShgGDNWKW9jqwGHNYKgGoz5YgRK4bgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50675 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750846AbbF3JyX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 05:54:23 -0400
-In-Reply-To: <CAMuHMdWTQrhFeuoiCUM==xkHv4RednxB+-Eb8_zVUiESAaTbYQ@mail.gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:36744 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750952AbbF3KDj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 30 Jun 2015 06:03:39 -0400
+In-Reply-To: <CACRpkdY-Zm+Yoh5NuVHShgGDNWKW9jqwGHNYKgGoz5YgRK4bgw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Tobias Diedrich <ranma+kernel@tdiedrich.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Geert,
+On Tue, 2015-06-30 at 08:32 +0200, Linus Walleij wrote:
+> On Mon, Jun 15, 2015 at 4:29 AM, Alexandre Courbot <gnurou@gmail.com> 
+> wrote:
 
-On Tuesday 30 June 2015 11:44:24 Geert Uytterhoeven wrote:
-> On Tue, Jun 30, 2015 at 11:30 AM, Laurent Pinchart wrote:
-> > On Tuesday 30 June 2015 09:45:24 Geert Uytterhoeven wrote:
-> >> On platforms where the PFC/GPIO controller is instantiated from DT, the
-> >> mapping between GPIOs and pins is set up using the "gpio-ranges"
-> >> property in DT.
-> >> 
-> >> Hence stop setting up the mapping from C code on DT platforms.
-> >> This code is still used for SH or ARM-legacy platforms.
-> >> 
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> ---
-> >> 
-> >>  drivers/pinctrl/sh-pfc/gpio.c | 36 ++++++++++++++++++++----------------
-> >>  1 file changed, 20 insertions(+), 16 deletions(-)
-> >> 
-> >> diff --git a/drivers/pinctrl/sh-pfc/gpio.c
-> >> b/drivers/pinctrl/sh-pfc/gpio.c
-> >> index ba353735ecf2be9a..1be118e4865fd3f8 100644
-> >> --- a/drivers/pinctrl/sh-pfc/gpio.c
-> >> +++ b/drivers/pinctrl/sh-pfc/gpio.c
-> >> @@ -379,22 +379,26 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
-> >> 
-> >>       pfc->gpio = chip;
-> >> 
-> >> -     /* Register the GPIO to pin mappings. As pins with GPIO ports must
-> >> come
-> >> -      * first in the ranges, skip the pins without GPIO ports by
-> >> stopping at
-> >> -      * the first range that contains such a pin.
-> >> -      */
-> >> -     for (i = 0; i < pfc->nr_ranges; ++i) {
-> >> -             const struct sh_pfc_pin_range *range = &pfc->ranges[i];
-> >> -
-> >> -             if (range->start >= pfc->nr_gpio_pins)
-> >> -                     break;
-> >> -
-> >> -             ret = gpiochip_add_pin_range(&chip->gpio_chip,
-> >> -                                          dev_name(pfc->dev),
-> >> -                                          range->start, range->start,
-> >> -                                          range->end - range->start +
-> >> 1);
-> >> -             if (ret < 0)
-> >> -                     return ret;
-> >> +     if (IS_ENABLED(CONFIG_SUPERH) ||
-> >> +         IS_ENABLED(CONFIG_ARCH_SHMOBILE_LEGACY)) {
-> > 
-> > I'd prefer checking IS_ENABLED(CONFIG_OF) && pfc->dev->of_node as that
-> > doesn't explicitly depend on the platform type.
+> > I don't have the actual v2 patch in my inbox :(
 > 
-> Note that CONFIG_OF is also set for ARM-legacy (and soon for SH). But that's
-> a minor problem. But due to the runtime check on pfc->dev->of_node, the
-> unused code below won't be left out by the compiler, and I want to get rid
-> of that code.
-> 
-> The platform check make it clear when the code can be removed.
+> Tobias, can you resend a v3 with the ACKs.
 
-Not any time soon I'm afraid as arch/sh won't fully move to DT in the near 
-future, but ARCH_SHMOBILE_LEGACY should go away soon, so I'm fine with 
-compile-time optimization.
-
-> > As the code after this if block also don't need to run on non-DT
-> > platforms,
-> > how about just using
-> > 
-> >         if (IS_ENABLED(CONFIG_OF) && pfc->dev->of_node)
-> >         
-> >                 return 0;
-> > 
-> > ?
-> 
-> Early return is indeed an option, as we don't need the function GPIOs on
-> DT platforms.
+Just a hint: sometimes it's convenient to forward from lkml.org. Like
+this one from https://lkml.org/lkml/2015/6/14/199.
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
