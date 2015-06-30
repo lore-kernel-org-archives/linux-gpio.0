@@ -1,69 +1,82 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/7] ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
-Date: Tue, 30 Jun 2015 09:45:22 +0200
-Message-ID: <1435650327-2542-3-git-send-email-geert+renesas@glider.be>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: Re: Use of pinctrl-single for external device over I2C
+Date: Tue, 30 Jun 2015 13:16:27 +0530
+Message-ID: <55924953.80802@linaro.org>
+References: <55893B2C.1070800@linaro.org> <558A9CC7.6070409@linaro.org> <20150624133349.GI4156@atomide.com> <558AE478.2080802@linaro.org> <20150625043838.GK4156@atomide.com> <558B95CA.9070105@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:44599 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752425AbbF3HqG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 03:46:06 -0400
-In-Reply-To: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:35477 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751151AbbF3Hqe (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 30 Jun 2015 03:46:34 -0400
+Received: by pactm7 with SMTP id tm7so1363662pac.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2015 00:46:33 -0700 (PDT)
+In-Reply-To: <558B95CA.9070105@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, lee.jones@linaro.org, sameo@linux.intel.com, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
 
-If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
-case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
-doesn't work:
 
-    requesting hog GPIO lcd0 (chip r8a7740_pfc, offset 176) failed
 
-The actual error code is -517 == -EPROBE_DEFER.
+On Thursday 25 June 2015 11:16 AM, Vaibhav Hiremath wrote:
+>
+>
+> On Thursday 25 June 2015 10:08 AM, Tony Lindgren wrote:
+>> * Vaibhav Hiremath <vaibhav.hiremath@linaro.org> [150624 10:12]:
+>>>
+>>> I do not like this, as this is not HW feature, so DT may not be right
+>>> approach.
+>>>
+>>> So I will dig more from either runtime or Compile time option to use
+>>> regmap_ Vs raw read/writes.
+>>
+>> Can't you just check if the pinctrl node has compatible = "syscon"
+>> property?
+>>
+>> A compile time option won't work for sure. I don't know what you
+>> would check at runtime as you do not know what the bus is behind
+>> syscon.
+>>
+>
+> Although, I haven't gone through syscon, but not sure whether syscon
+> would be useful.
+>
+> As you rightly stated, we need to know the bus behind regmap.
+>
 
-The problem is that PFC+GPIO registration is handled in multiple steps:
-  1. pinctrl_register(),
-  2. gpiochip_add(),
-  3. gpiochip_add_pin_range().
+Trying to understand what is the right way of doing pinctrl of external
+device on board,
 
-Configuration of the hogs is handled in gpiochip_add():
+I feel it would not be good idea to pollute pinctrl-single driver, and 
+also I am still not able to figure out how can I have access to bus
+behind regmap.
 
-    gpiochip_add
-        of_gpiochip_add
-            of_gpiochip_scan_hogs
-                gpiod_hog
-                    gpiochip_request_own_desc
-                        __gpiod_request
-                            chip->request
-                                pinctrl_request_gpio
-                                    pinctrl_get_device_gpio_range
 
-However, at this point the GPIO controller hasn't been added to
-pinctrldev_list yet, so the range can't be found, and the operation fails
-with -EPROBE_DEFER.
+How about having separate driver (generic for all I2C), say pinctrl-
+i2c.c, which is i2c_client driver and would support pinctrl and pinmux
+on I2C client device.
 
-To fix this, add a "gpio-ranges" property to the gpio device node, so
-the range is added by of_gpiochip_add_pin_range(), which is called by
-of_gpiochip_add() before the call to of_gpiochip_scan_hogs().
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7740.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+The current usecase which I have is pretty simple in nature,
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index 3aaab195132bfc2c..15977b5834de9579 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -316,6 +316,7 @@
- 		      <0xe605800c 0x20>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&pfc 0 0 212>;
- 		interrupts-extended =
- 			<&irqpin0 0 0>, <&irqpin0 1 0>, <&irqpin0 2 0>, <&irqpin0 3 0>,
- 			<&irqpin0 4 0>, <&irqpin0 5 0>, <&irqpin0 6 0>, <&irqpin0 7 0>,
--- 
-1.9.1
+88PM860 has few GPIO pins which can be configured to different
+functionality, based on board design.
+In most of the cases they are one/init/boot time settings.
 
+GPIO_0:
+=======
+   000 = GPIO input mode
+   001 = GPIO output mode
+   010 = SLEEPOUTN mirror mode
+   011 = Buck4 FPWM enable
+   100 = 32 Khz output buffer mode
+   101 = PMICINTN output mode
+   110 = HW_RESET1 mode
+   111 = HW_RESET2 mode
+
+
+Thanks,
+Vaibhav
