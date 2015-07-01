@@ -1,148 +1,180 @@
-From: Paul Osmialowski <pawelo@king.net.pl>
-Subject: Re: [PATCH v2 7/9] arm: twr-k70f120m: use Freescale eDMA driver with
- Kinetis SoC
-Date: Wed, 1 Jul 2015 08:54:56 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1507010849390.8255@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-8-git-send-email-pawelo@king.net.pl> <1650263.FfdEQKm1Bu@wuerfel>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 1/8] pinctrl: sh-pfc: Implement pinconf power-source param for voltage switching
+Date: Wed, 01 Jul 2015 10:24:05 +0300
+Message-ID: <2811849.YDX6UYqz97@avalon>
+References: <1435683177.23818.60.camel@codethink.co.uk> <1435683239.23818.61.camel@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="98048-2106302197-1435733717=:8255"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fish.king.net.pl ([79.190.246.46]:57650 "EHLO king.net.pl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752114AbbGAG5n (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 1 Jul 2015 02:57:43 -0400
-In-Reply-To: <1650263.FfdEQKm1Bu@wuerfel>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51590 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753057AbbGAHYD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 03:24:03 -0400
+In-Reply-To: <1435683239.23818.61.camel@codethink.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Paul Osmialowski <pawelo@king.net.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Ben,
 
---98048-2106302197-1435733717=:8255
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Thank you for the patch.
 
-Hi Arnd,
+On Tuesday 30 June 2015 17:53:59 Ben Hutchings wrote:
+> The pfc in the R8A7790 (and probably others in the R-Car gen 2 family)
+> supports switching SDHI signals between 3.3V and 1.8V nominal voltage,
+> and the SD driver should do that when switching to and from UHS modes.
+> 
+> Add a flag for pins that have configurable I/O voltage and SoC
+> operations to get and set the nominal voltage.  Implement the pinconf
+> power-source parameter using these operations.
+> 
+> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-Thanks for pointing this - dma-ranges seem to work properly. This makes 
-the patch much simpler. To be included to the next iteration.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-I also removed DMA_OF from Kconfig and CONFIG_DMA_OF from my defconfig and 
-it was automatically added during preparation of .cofing for build.
+> ---
+>  .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  4 +-
+>  drivers/pinctrl/sh-pfc/pinctrl.c                   | 44 ++++++++++++++++++-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                    |  5 +++
+>  3 files changed, 50 insertions(+), 3 deletions(-)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt index
+> bfe72ec055e3..57487481ce8c 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
+> @@ -69,7 +69,9 @@ Pin Configuration Node Properties:
+> 
+>  The pin configuration parameters use the generic pinconf bindings defined
+> in pinctrl-bindings.txt in this directory. The supported parameters are
+> -bias-disable, bias-pull-up and bias-pull-down.
+> +bias-disable, bias-pull-up, bias-pull-down and power-source. For pins that
+> +have a configurable I/O voltage, the power-source value should be the
+> +nominal I/O voltage in millivolts.
+> 
+> 
+>  GPIO
+> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
+> b/drivers/pinctrl/sh-pfc/pinctrl.c index 072e7c62cab7..72ae7d0d8b75 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -465,6 +465,9 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc,
+> unsigned int _pin, case PIN_CONFIG_BIAS_PULL_DOWN:
+>  		return pin->configs & SH_PFC_PIN_CFG_PULL_DOWN;
+> 
+> +	case PIN_CONFIG_POWER_SOURCE:
+> +		return pin->configs & SH_PFC_PIN_CFG_IO_VOLTAGE;
+> +
+>  	default:
+>  		return false;
+>  	}
+> @@ -477,7 +480,6 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
+> *pctldev, unsigned _pin, struct sh_pfc *pfc = pmx->pfc;
+>  	enum pin_config_param param = pinconf_to_config_param(*config);
+>  	unsigned long flags;
+> -	unsigned int bias;
+> 
+>  	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+>  		return -ENOTSUPP;
+> @@ -485,7 +487,9 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
+> *pctldev, unsigned _pin, switch (param) {
+>  	case PIN_CONFIG_BIAS_DISABLE:
+>  	case PIN_CONFIG_BIAS_PULL_UP:
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +	case PIN_CONFIG_BIAS_PULL_DOWN: {
+> +		unsigned int bias;
+> +
+>  		if (!pfc->info->ops || !pfc->info->ops->get_bias)
+>  			return -ENOTSUPP;
+> 
+> @@ -498,6 +502,24 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
+> *pctldev, unsigned _pin,
+> 
+>  		*config = 0;
+>  		break;
+> +	}
+> +
+> +	case PIN_CONFIG_POWER_SOURCE: {
+> +		int ret;
+> +
+> +		if (!pfc->info->ops || !pfc->info->ops->get_io_voltage)
+> +			return -ENOTSUPP;
+> +
+> +		spin_lock_irqsave(&pfc->lock, flags);
+> +		ret = pfc->info->ops->get_io_voltage(pfc, _pin);
+> +		spin_unlock_irqrestore(&pfc->lock, flags);
+> +
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		*config = ret;
+> +		break;
+> +	}
+> 
+>  	default:
+>  		return -ENOTSUPP;
+> @@ -534,6 +556,24 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev
+> *pctldev, unsigned _pin,
+> 
+>  			break;
+> 
+> +		case PIN_CONFIG_POWER_SOURCE: {
+> +			unsigned int arg =
+> +				pinconf_to_config_argument(configs[i]);
+> +			int ret;
+> +
+> +			if (!pfc->info->ops || !pfc->info->ops->set_io_voltage)
+> +				return -ENOTSUPP;
+> +
+> +			spin_lock_irqsave(&pfc->lock, flags);
+> +			ret = pfc->info->ops->set_io_voltage(pfc, _pin, arg);
+> +			spin_unlock_irqrestore(&pfc->lock, flags);
+> +
+> +			if (ret)
+> +				return ret;
+> +
+> +			break;
+> +		}
+> +
+>  		default:
+>  			return -ENOTSUPP;
+>  		}
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index c7508d5f6886..734f7a92229c 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -12,6 +12,7 @@
+>  #define __SH_PFC_H
+> 
+>  #include <linux/bug.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/stringify.h>
+> 
+>  enum {
+> @@ -26,6 +27,7 @@ enum {
+>  #define SH_PFC_PIN_CFG_OUTPUT		(1 << 1)
+>  #define SH_PFC_PIN_CFG_PULL_UP		(1 << 2)
+>  #define SH_PFC_PIN_CFG_PULL_DOWN	(1 << 3)
+> +#define SH_PFC_PIN_CFG_IO_VOLTAGE	(1 << 4)
+>  #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
+> 
+>  struct sh_pfc_pin {
+> @@ -121,6 +123,9 @@ struct sh_pfc_soc_operations {
+>  	unsigned int (*get_bias)(struct sh_pfc *pfc, unsigned int pin);
+>  	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+>  			 unsigned int bias);
+> +	int (*get_io_voltage)(struct sh_pfc *pfc, unsigned int pin);
+> +	int (*set_io_voltage)(struct sh_pfc *pfc, unsigned int pin,
+> +			      u16 voltage_mV);
+>  };
+> 
+>  struct sh_pfc_soc_info {
 
-On Tue, 30 Jun 2015, Arnd Bergmann wrote:
+-- 
+Regards,
 
-> On Tuesday 30 June 2015 14:27:28 Paul Osmialowski wrote:
->> Note that <mach/memory.h> is needed (which is denoted by
->> CONFIG_NEED_MACH_MEMORY_H) as it provides macros required for proper
->> operation of DMA allocation functions.
->
-> You can't do this, it breaks compilation when multiple platforms
-> are enabled.
->
->> Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
->> ---
->>  arch/arm/Kconfig                            |  4 ++
->>  arch/arm/boot/dts/kinetis.dtsi              | 34 ++++++++++++++++
->>  arch/arm/mach-kinetis/include/mach/memory.h | 61 +++++++++++++++++++++++++++++
->>  3 files changed, 99 insertions(+)
->>  create mode 100644 arch/arm/mach-kinetis/include/mach/memory.h
->>
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index b21592b..8ccffee 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -971,6 +971,10 @@ config ARCH_KINETIS
->>  	select CLKSRC_KINETIS
->>  	select PINCTRL
->>  	select PINCTRL_KINETIS
->> +	select DMADEVICES
->> +	select FSL_EDMA
->> +	select DMA_OF
->> +	select NEED_MACH_MEMORY_H
->
-> I think DMA_OF is implied by dmaengine support in combination with CONFIG_OF
->
->> +
->> +#ifndef _MACH_KINETIS_MEMORY_H
->> +#define _MACH_KINETIS_MEMORY_H
->> +
->> +#ifndef __ASSEMBLY__
->> +
->> +/*
->> + * On Kinetis K70, consistent DMA memory resides in a special
->> + * DDRAM alias region (non-cacheable DDRAM at 0x80000000).
->> + *
->> + */
->> +#define KINETIS_PHYS_DMA_OFFSET UL(0x80000000)
->> +
->> +/*
->> + * Mask of the field used to distinguish DDRAM aliases
->> + */
->> +#define KINETIS_DRAM_ALIAS_MASK UL(0xf8000000)
->
-> This should be expressed using the 'dma-ranges' properties in the
-> bus nodes above any DMA master, the normal DMA mapping code will
-> then do the right thing.
->
-> 	Arnd
->
---98048-2106302197-1435733717=:8255
-Content-Type: TEXT/x-diff; name=0007-arm-twr-k70f120m-use-Freescale-eDMA-driver-with-Kine.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <alpine.LNX.2.00.1507010854560.8255@localhost.localdomain>
-Content-Description: 
-Content-Disposition: attachment; filename=0007-arm-twr-k70f120m-use-Freescale-eDMA-driver-with-Kine.patch
+Laurent Pinchart
 
-RnJvbSBlMGI1NDkxNTFiM2VlOGQ0NDE5MzQ0YTJiNWVmNDYxYmFkMTliMmFm
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogUGF1bCBPc21pYWxv
-d3NraSA8cGF3ZWxvQGtpbmcubmV0LnBsPg0KRGF0ZTogTW9uLCAyOSBKdW4g
-MjAxNSAyMzozNzoyMCArMDIwMA0KU3ViamVjdDogW1BBVENIIDcvOV0gYXJt
-OiB0d3ItazcwZjEyMG06IHVzZSBGcmVlc2NhbGUgZURNQSBkcml2ZXIgd2l0
-aCBLaW5ldGlzDQogU29DDQoNClNpZ25lZC1vZmYtYnk6IFBhdWwgT3NtaWFs
-b3dza2kgPHBhd2Vsb0BraW5nLm5ldC5wbD4NCi0tLQ0KIGFyY2gvYXJtL0tj
-b25maWcgICAgICAgICAgICAgICB8ICAyICsrDQogYXJjaC9hcm0vYm9vdC9k
-dHMva2luZXRpcy5kdHNpIHwgMzYgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrDQogMiBmaWxlcyBjaGFuZ2VkLCAzOCBpbnNlcnRpb25z
-KCspDQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybS9LY29uZmlnIGIvYXJjaC9h
-cm0vS2NvbmZpZw0KaW5kZXggYjIxNTkyYi4uODFhNjMyOCAxMDA2NDQNCi0t
-LSBhL2FyY2gvYXJtL0tjb25maWcNCisrKyBiL2FyY2gvYXJtL0tjb25maWcN
-CkBAIC05NzEsNiArOTcxLDggQEAgY29uZmlnIEFSQ0hfS0lORVRJUw0KIAlz
-ZWxlY3QgQ0xLU1JDX0tJTkVUSVMNCiAJc2VsZWN0IFBJTkNUUkwNCiAJc2Vs
-ZWN0IFBJTkNUUkxfS0lORVRJUw0KKwlzZWxlY3QgRE1BREVWSUNFUw0KKwlz
-ZWxlY3QgRlNMX0VETUENCiAJaGVscA0KIAkgIFRoaXMgZW5hYmxlcyBzdXBw
-b3J0IGZvciB0aGUgRnJlZXNjYWxlIEtpbmV0aXMgTUNVcw0KIA0KZGlmZiAt
-LWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2tpbmV0aXMuZHRzaSBiL2FyY2gv
-YXJtL2Jvb3QvZHRzL2tpbmV0aXMuZHRzaQ0KaW5kZXggNWZmMWQzYi4uNzVm
-YzZkNCAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2tpbmV0aXMu
-ZHRzaQ0KKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMva2luZXRpcy5kdHNpDQpA
-QCAtMTksNiArMTksNDIgQEANCiAJfTsNCiANCiAJc29jIHsNCisJCWRtYS1y
-YW5nZXMgPSA8MHg4MDAwMDAwMCAweDAwMDAwMDAwIDB4MDgwMDAwMDA+Ow0K
-Kw0KKwkJZWRtYTogZG1hLWNvbnRyb2xsZXJANDAwMDgwMDAgew0KKwkJCWNv
-bXBhdGlibGUgPSAiZnNsLGtpbmV0aXMtZWRtYSI7DQorCQkJcmVnID0gPDB4
-NDAwMDgwMDAgMHgyMDAwPiwgLyogRE1BQyAqLw0KKwkJCQk8MHg0MDAyMTAw
-MCAweDEwMDA+LCAvKiBETUFNVVgwICovDQorCQkJCTwweDQwMDIyMDAwIDB4
-MTAwMD47IC8qIERNQU1VWDEgKi8NCisJCQkjZG1hLWNlbGxzID0gPDI+Ow0K
-KwkJCWRtYS1jaGFubmVscyA9IDwzMj47DQorCQkJaW50ZXJydXB0cyA9CSA8
-MD4sICA8MT4sICA8Mj4sICA8Mz4sDQorCQkJCQkgPDQ+LCAgPDU+LCAgPDY+
-LCAgPDc+LA0KKwkJCQkJIDw4PiwgIDw5PiwgPDEwPiwgPDExPiwNCisJCQkJ
-CTwxMj4sIDwxMz4sIDwxND4sIDwxNT4sDQorCQkJCQk8MTY+Ow0KKwkJCWlu
-dGVycnVwdC1uYW1lcyA9ICJlZG1hLXR4LTAsMTYiLA0KKwkJCQkJICAiZWRt
-YS10eC0xLDE3IiwNCisJCQkJCSAgImVkbWEtdHgtMiwxOCIsDQorCQkJCQkg
-ICJlZG1hLXR4LTMsMTkiLA0KKwkJCQkJICAiZWRtYS10eC00LDIwIiwNCisJ
-CQkJCSAgImVkbWEtdHgtNSwyMSIsDQorCQkJCQkgICJlZG1hLXR4LTYsMjIi
-LA0KKwkJCQkJICAiZWRtYS10eC03LDIzIiwNCisJCQkJCSAgImVkbWEtdHgt
-OCwyNCIsDQorCQkJCQkgICJlZG1hLXR4LTksMjUiLA0KKwkJCQkJICAiZWRt
-YS10eC0xMCwyNiIsDQorCQkJCQkgICJlZG1hLXR4LTExLDI3IiwNCisJCQkJ
-CSAgImVkbWEtdHgtMTIsMjgiLA0KKwkJCQkJICAiZWRtYS10eC0xMywyOSIs
-DQorCQkJCQkgICJlZG1hLXR4LTE0LDMwIiwNCisJCQkJCSAgImVkbWEtdHgt
-MTUsMzEiLA0KKwkJCQkJICAiZWRtYS1lcnIiOw0KKwkJCWNsb2NrcyA9IDwm
-bWNnX2NjbGtfZ2F0ZSA2IDE+LA0KKwkJCQkgPCZtY2dfcGNsa19nYXRlIDUg
-MT4sIDwmbWNnX3BjbGtfZ2F0ZSA1IDI+Ow0KKwkJCWNsb2NrLW5hbWVzID0g
-ImVkbWEiLCAiZG1hbXV4MCIsICJkbWFtdXgxIjsNCisJCX07DQorDQogCQlw
-b3J0QTogcGlubXV4QDQwMDQ5MDAwIHsNCiAJCQljb21wYXRpYmxlID0gImZz
-bCxraW5ldGlzLXBhZGNvbmYiOw0KIAkJCXJlZyA9IDwweDQwMDQ5MDAwIDB4
-MTAwMD47DQotLSANCjIuMy42DQoNCg==
-
---98048-2106302197-1435733717=:8255--
