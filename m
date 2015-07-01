@@ -1,49 +1,37 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 10/12] pwm: register dependency parser for firmware nodes
-Date: Wed,  1 Jul 2015 11:41:05 +0200
-Message-ID: <1435743667-11987-11-git-send-email-tomeu.vizoso@collabora.com>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
+Date: Wed, 1 Jul 2015 04:29:29 -0700
+Message-ID: <20150701112928.GW4156@atomide.com>
+References: <20150619170654.GA4937@linutronix.de>
+ <5584547B.9040203@oracle.com>
+ <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com>
+ <20150622070821.GB4156@atomide.com>
+ <559275B9.3040909@ti.com>
+ <5592C5A2.5050809@linutronix.de>
+ <20150701073205.GT4156@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-pwm@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:60573 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753342AbbGAL3d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 1 Jul 2015 07:29:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20150701073205.GT4156@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, santosh shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Sekhar Nori <nsekhar@ti.com>
 
-U28gb3RoZXJzIGNhbiBmaW5kIG91dCB3aGF0IGRlcGVuZHMgb24gcHdtIGNvbnRyb2xsZXJzLCBh
-cyBzcGVjaWZpZWQKaW4gYmluZGluZ3MvcHdtL3B3bS50eHQuCgpTaWduZWQtb2ZmLWJ5OiBUb21l
-dSBWaXpvc28gPHRvbWV1LnZpem9zb0Bjb2xsYWJvcmEuY29tPgotLS0KCkNoYW5nZXMgaW4gdjI6
-IE5vbmUKCiBkcml2ZXJzL3B3bS9jb3JlLmMgfCAyOCArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrCiAxIGZpbGUgY2hhbmdlZCwgMjggaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvcHdtL2NvcmUuYyBiL2RyaXZlcnMvcHdtL2NvcmUuYwppbmRleCAzYTc3NjlmLi44MWI0ZmMw
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL3B3bS9jb3JlLmMKKysrIGIvZHJpdmVycy9wd20vY29yZS5j
-CkBAIC05MTcsMTEgKzkxNywzOSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9u
-cyBwd21fZGVidWdmc19vcHMgPSB7CiAJLnJlbGVhc2UgPSBzZXFfcmVsZWFzZSwKIH07CiAKK3N0
-YXRpYyB2b2lkIHB3bV9nZXRfZGVwZW5kZW5jaWVzKHN0cnVjdCBmd25vZGVfaGFuZGxlICpmd25v
-ZGUsCisJCQkJIHN0cnVjdCBsaXN0X2hlYWQgKmRlcHMpCit7CisJc3RydWN0IGRldmljZV9ub2Rl
-ICpucDsKKwlzdHJ1Y3Qgb2ZfcGhhbmRsZV9hcmdzIHBzcGVjOworCWludCBjb3VudCwgaSwgcmV0
-OworCisJbnAgPSB0b19vZl9ub2RlKGZ3bm9kZSk7CisJaWYgKCFucCkKKwkJcmV0dXJuOworCisJ
-Y291bnQgPSBvZl9jb3VudF9waGFuZGxlX3dpdGhfYXJncyhucCwgInB3bXMiLAorCQkJCQkgICAi
-I3B3bS1jZWxscyIpOworCWZvciAoaSA9IDA7IGkgPCBjb3VudDsgaSsrKSB7CisJCXJldCA9IG9m
-X3BhcnNlX3BoYW5kbGVfd2l0aF9hcmdzKG5wLCAicHdtcyIsCisJCQkJCQkgIiNwd20tY2VsbHMi
-LCBpLAorCQkJCQkJICZwc3BlYyk7CisJCWlmIChyZXQgfHwgIXBzcGVjLm5wKQorCQkJY29udGlu
-dWU7CisKKwkJZndub2RlX2FkZF9kZXBlbmRlbmN5KCZwc3BlYy5ucC0+Zndub2RlLCBkZXBzKTsK
-KworCQlvZl9ub2RlX3B1dChwc3BlYy5ucCk7CisJfQorfQorCiBzdGF0aWMgaW50IF9faW5pdCBw
-d21fZGVidWdmc19pbml0KHZvaWQpCiB7CiAJZGVidWdmc19jcmVhdGVfZmlsZSgicHdtIiwgU19J
-RlJFRyB8IFNfSVJVR08sIE5VTEwsIE5VTEwsCiAJCQkgICAgJnB3bV9kZWJ1Z2ZzX29wcyk7CiAK
-Kwlmd25vZGVfYWRkX2RlcGVuZGVuY3lfcGFyc2VyKHB3bV9nZXRfZGVwZW5kZW5jaWVzKTsKKwog
-CXJldHVybiAwOwogfQogCi0tIAoyLjQuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+* Tony Lindgren <tony@atomide.com> [150701 00:34]:
+>
+> This should be OK for most cases as the GPIO interrupt devices are
+> typically on some external bus like I2C or GPMC. The hurting case
+> would be bitbanging GPIO devices, like the CBUS I2C driver.
+
+Thinking about it the CBUS I2C driver does not need interrupts
+for the bitbanging part either :)
+
+So I think we can just make it threaded IRQ for GPIO.
+
+Tony
