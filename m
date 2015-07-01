@@ -1,36 +1,70 @@
-From: Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
-Date: Wed, 1 Jul 2015 10:42:07 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1507011031050.9009@localhost.localdomain>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl> <alpine.DEB.2.11.1507010944580.3916@nanos>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 01/12] device: property: delay device-driver matches
+Date: Wed,  1 Jul 2015 11:40:56 +0200
+Message-ID: <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.11.1507010944580.3916@nanos>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>Uwe Kleine-Koenig <u>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-pwm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Thomas,
-
-On Wed, 1 Jul 2015, Thomas Gleixner wrote:
-
->> +		clockevents_register_device(
->> +				&kinetis_clockevent_tmrs[chan].evtdev);
->> +
->> +		kinetis_pit_init(&kinetis_clockevent_tmrs[chan],
->> +						(rate / HZ) - 1);
->> +		kinetis_pit_enable(&kinetis_clockevent_tmrs[chan], 1);
->
-> No point doing this. The core code has invoked the set_periodic call
-> back via clockevents_register_device() already.
->
-
-As I removed this kinetis_pit_enable() line, the timer did not start, 
-therefore the system became unusable. What could be possible reason for 
-that?
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RGVsYXkgbWF0Y2hlcyBvZiBwbGF0Zm9ybSBkZXZpY2VzIHVudGlsIGxhdGVfaW5pdGNhbGwsIHdo
+ZW4gd2UgYXJlIHN1cmUKdGhhdCBhbGwgYnVpbHQtaW4gZHJpdmVycyBoYXZlIGJlZW4gcmVnaXN0
+ZXJlZCBhbHJlYWR5LiBUaGlzIGlzIG5lZWRlZAp0byBwcmV2ZW50IGRlZmVycmVkIHByb2JlcyBi
+ZWNhdXNlIG9mIHNvbWUgZGVwZW5kZW5jaWVzJyBkcml2ZXJzIG5vdApoYXZpbmcgcmVnaXN0ZXJl
+ZCB5ZXQuCgpUaGlzIHJlZHVjZXMgdGhlIHRvdGFsIGFtb3VudCBvZiB3b3JrIHRoYXQgdGhlIGtl
+cm5lbCBkb2VzIGR1cmluZyBib290CmJlY2F1c2UgaXQgd29uJ3QgdHJ5IHRvIG1hdGNoIGRldmlj
+ZXMgdG8gZHJpdmVycyB3aGVuIGJ1aWx0LWluIGRyaXZlcnMKYXJlIHN0aWxsIHJlZ2lzdGVyaW5n
+IGJ1dCBhbHNvIHJlZHVjZXMgc29tZSBwYXJhbGxlbGlzbSwgc28gdG90YWwgYm9vdAp0aW1lIG1p
+Z2h0IHNsaWdodGx5IGluY3JlYXNlIG9yIGRlY3JlYXNlIGRlcGVuZGluZyBvbiB0aGUgcGxhdGZv
+cm0gYW5kCmtlcm5lbCBjb25maWd1cmF0aW9uLgoKVGhpcyBjaGFuZ2Ugd2lsbCBtYWtlIG1ha2Ug
+cG9zc2libGUgdG8gcHJldmVudCBhbnkgZGVmZXJyZWQgcHJvYmVzIG9uY2UKZGV2aWNlcyBhcmUg
+cHJvYmVkIGluIGRlcGVuZGVuY3kgb3JkZXIuCgpTaWduZWQtb2ZmLWJ5OiBUb21ldSBWaXpvc28g
+PHRvbWV1LnZpem9zb0Bjb2xsYWJvcmEuY29tPgotLS0KCkNoYW5nZXMgaW4gdjI6Ci0gSW5zdGVh
+ZCBvZiBkZWxheWluZyBhbGwgcHJvYmVzIHVudGlsIGxhdGVfaW5pdGNhbGwsIG9ubHkgZGVsYXkg
+bWF0Y2hlcwogIG9mIHBsYXRmb3JtIGRldmljZXMgdGhhdCBoYXZlIGEgZmlybXdhcmUgbm9kZSBh
+dHRhY2hlZC4KCiBkcml2ZXJzL2Jhc2UvcHJvcGVydHkuYyB8IDI5ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMjkgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvYmFzZS9wcm9wZXJ0eS5jIGIvZHJpdmVycy9iYXNlL3Byb3BlcnR5LmMKaW5k
+ZXggODUyOGViOS4uOGVhZDFiYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9iYXNlL3Byb3BlcnR5LmMK
+KysrIGIvZHJpdmVycy9iYXNlL3Byb3BlcnR5LmMKQEAgLTE2LDggKzE2LDExIEBACiAjaW5jbHVk
+ZSA8bGludXgvb2YuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9hZGRyZXNzLmg+CiAjaW5jbHVkZSA8
+bGludXgvb2ZfZGV2aWNlLmg+CisjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CiAj
+aW5jbHVkZSA8bGludXgvcHJvcGVydHkuaD4KIAorc3RhdGljIGJvb2wgZndub2RlX21hdGNoX2Vu
+YWJsZSA9IGZhbHNlOworCiAvKioKICAqIGRldmljZV9hZGRfcHJvcGVydHlfc2V0IC0gQWRkIGEg
+Y29sbGVjdGlvbiBvZiBwcm9wZXJ0aWVzIHRvIGEgZGV2aWNlIG9iamVjdC4KICAqIEBkZXY6IERl
+dmljZSB0byBhZGQgcHJvcGVydGllcyB0by4KQEAgLTYwNCw2ICs2MDcsMTUgQEAgRVhQT1JUX1NZ
+TUJPTF9HUEwoZndub2RlX2lzX2NvbXBhdGlibGUpOwogYm9vbCBmd25vZGVfZHJpdmVyX21hdGNo
+X2RldmljZShzdHJ1Y3QgZGV2aWNlICpkZXYsCiAJCQkJY29uc3Qgc3RydWN0IGRldmljZV9kcml2
+ZXIgKmRydikKIHsKKwkvKgorCSAqIERlbGF5IG1hdGNoZXMgb2YgcGxhdGZvcm0gZGV2aWNlcyB1
+bnRpbCBsYXRlX2luaXRjYWxsLCB3aGVuIHdlIGFyZQorCSAqIHN1cmUgdGhhdCBhbGwgYnVpbHQt
+aW4gZHJpdmVycyBoYXZlIGJlZW4gcmVnaXN0ZXJlZCBhbHJlYWR5LiBUaGlzCisJICogaXMgbmVl
+ZGVkIHRvIHByZXZlbnQgZGVmZXJyZWQgcHJvYmVzIGJlY2F1c2Ugb2Ygc29tZSBkcml2ZXJzCisJ
+ICogbm90IGhhdmluZyByZWdpc3RlcmVkIHlldC4KKwkgKi8KKwlpZihkZXYtPmJ1cyA9PSAmcGxh
+dGZvcm1fYnVzX3R5cGUgJiYgIWZ3bm9kZV9tYXRjaF9lbmFibGUpCisJCXJldHVybiBmYWxzZTsK
+KwogCWlmIChpc19vZl9ub2RlKGRldi0+Zndub2RlKSkKIAkJcmV0dXJuIG9mX2RyaXZlcl9tYXRj
+aF9kZXZpY2UoZGV2LCBkcnYpOwogCWVsc2UgaWYgKGlzX2FjcGlfbm9kZShkZXYtPmZ3bm9kZSkp
+CkBAIC02MTIsMyArNjI0LDIwIEBAIGJvb2wgZndub2RlX2RyaXZlcl9tYXRjaF9kZXZpY2Uoc3Ry
+dWN0IGRldmljZSAqZGV2LAogCXJldHVybiBmYWxzZTsKIH0KIEVYUE9SVF9TWU1CT0xfR1BMKGZ3
+bm9kZV9kcml2ZXJfbWF0Y2hfZGV2aWNlKTsKKworc3RhdGljIGludCBfX2RldmljZV9hdHRhY2go
+c3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQoreworCWRldmljZV9pbml0aWFsX3Byb2Jl
+KGRldik7CisKKwlyZXR1cm4gMDsKK30KKworc3RhdGljIGludCBmd25vZGVfbWF0Y2hfaW5pdGNh
+bGwodm9pZCkKK3sKKwlmd25vZGVfbWF0Y2hfZW5hYmxlID0gdHJ1ZTsKKworCWJ1c19mb3JfZWFj
+aF9kZXYoJnBsYXRmb3JtX2J1c190eXBlLCBOVUxMLCBOVUxMLCBfX2RldmljZV9hdHRhY2gpOwor
+CisJcmV0dXJuIDA7Cit9CitsYXRlX2luaXRjYWxsKGZ3bm9kZV9tYXRjaF9pbml0Y2FsbCk7Ci0t
+IAoyLjQuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
