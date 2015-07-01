@@ -1,29 +1,37 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] gpio: msm: Remove empty msm_gpio_{request,free}()
-Date: Wed, 01 Jul 2015 10:40:25 -0700
-Message-ID: <55942609.6020804@codeaurora.org>
-References: <1435753639-13627-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1435753639-13627-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Richard Cochran <richardcochran@gmail.com>
+Subject: [PATCH 0/2] gpio: dwapb: allow sane gpio numbering
+Date: Wed,  1 Jul 2015 21:34:01 +0200
+Message-ID: <cover.1435777856.git.rcochran@linutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:38852 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753230AbbGATeJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 15:34:09 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On 07/01/2015 05:27 AM, Geert Uytterhoeven wrote:
-> gpio_chip.request() and gpio_chip.free() are optional, and can just be
-> left unimplemented.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Untested due to lack of hardware.
+The dwapb driver always uses dynamic (pseudo-random) gpio numbers
+selected in blocks *descending* from the arch's maximum gpio value.
+Maybe this was meant for some theoretical hot pluggable gpio
+controller, but normal SoC devices have their gpio numbering set in
+stone.
 
-Actually we should just delete this driver now that we have an msm8660
-pinctrl implementation.
+This series extends the driver to accept a base number from the device
+tree and add the correct base numbers into the dts for the Altera
+socfpga.
+
+
+Richard Cochran (2):
+  gpio: dwapb: Use human understandable gpio numbering.
+  arm: dts: socfpga: Provide the gpio numbers in the controller nodes.
+
+ Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt | 2 ++
+ arch/arm/boot/dts/socfpga.dtsi                             | 3 +++
+ drivers/gpio/gpio-dwapb.c                                  | 8 +++++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
+
