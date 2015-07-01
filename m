@@ -1,180 +1,83 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 1/8] pinctrl: sh-pfc: Implement pinconf power-source param for voltage switching
-Date: Wed, 01 Jul 2015 10:24:05 +0300
-Message-ID: <2811849.YDX6UYqz97@avalon>
-References: <1435683177.23818.60.camel@codethink.co.uk> <1435683239.23818.61.camel@codethink.co.uk>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
+Date: Wed, 1 Jul 2015 00:32:06 -0700
+Message-ID: <20150701073205.GT4156@atomide.com>
+References: <20150619170654.GA4937@linutronix.de>
+ <5584547B.9040203@oracle.com>
+ <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com>
+ <20150622070821.GB4156@atomide.com>
+ <559275B9.3040909@ti.com>
+ <5592C5A2.5050809@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51590 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753057AbbGAHYD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 03:24:03 -0400
-In-Reply-To: <1435683239.23818.61.camel@codethink.co.uk>
+Received: from muru.com ([72.249.23.125]:60531 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750958AbbGAHcK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 1 Jul 2015 03:32:10 -0400
+Content-Disposition: inline
+In-Reply-To: <5592C5A2.5050809@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, santosh shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Sekhar Nori <nsekhar@ti.com>
 
-Hi Ben,
+* Sebastian Andrzej Siewior <bigeasy@linutronix.de> [150630 09:39]:
+> On 06/30/2015 12:55 PM, Grygorii Strashko wrote:
+> > 
+> > May be you have some thought?
+> 
+> If I remember it properly, you must not sleep but you do so on wakeup.
+> At least you take spinlocks (spinlocks not raw_spinlocks). One question
+> is why do you need (or why is it okay) to put a device to sleep (via
+> RPM) if the device is used as an interrupt controller? From what I
+> understand, if the GPIO controller is really sleeping you won't receive
+> any interrupts.
 
-Thank you for the patch.
+Not quite so. In many cases the GPIO interrupt just provides a wake-up
+event for a device that's in deeper idle state. Such as a touch screen
+interrupt. And the interrupt works just fine, just it's latency can
+be really bad :)
 
-On Tuesday 30 June 2015 17:53:59 Ben Hutchings wrote:
-> The pfc in the R8A7790 (and probably others in the R-Car gen 2 family)
-> supports switching SDHI signals between 3.3V and 1.8V nominal voltage,
-> and the SD driver should do that when switching to and from UHS modes.
-> 
-> Add a flag for pins that have configurable I/O voltage and SoC
-> operations to get and set the nominal voltage.  Implement the pinconf
-> power-source parameter using these operations.
-> 
-> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+The first GPIO bank is always on, the others need to use dedicated
+IO chain wake-up interrupts with pinctrl-single.
+ 
+> So I think you shouldn't put a GPIO controller to sleep if it is
+> active. If you avoid this, there should be nothing calling you from
+> IRQ-context on -RT.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+That seems like a workaround though.. It seems we're better off
+making things work with threaded IRQ (and removing runtime PM from
+the IRQ path). For the GPIO banks requiring the use of a dedicated
+wakeirq, his is mostly already done with recent commit 4990d4fe327b
+("PM / Wakeirq: Add automated device wake IRQ handling") where the
+wakeirq handling is a completely separate threaded IRQ handler.
 
-> ---
->  .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |  4 +-
->  drivers/pinctrl/sh-pfc/pinctrl.c                   | 44 ++++++++++++++++++-
->  drivers/pinctrl/sh-pfc/sh_pfc.h                    |  5 +++
->  3 files changed, 50 insertions(+), 3 deletions(-)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-> b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt index
-> bfe72ec055e3..57487481ce8c 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt
-> @@ -69,7 +69,9 @@ Pin Configuration Node Properties:
-> 
->  The pin configuration parameters use the generic pinconf bindings defined
-> in pinctrl-bindings.txt in this directory. The supported parameters are
-> -bias-disable, bias-pull-up and bias-pull-down.
-> +bias-disable, bias-pull-up, bias-pull-down and power-source. For pins that
-> +have a configurable I/O voltage, the power-source value should be the
-> +nominal I/O voltage in millivolts.
-> 
-> 
->  GPIO
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
-> b/drivers/pinctrl/sh-pfc/pinctrl.c index 072e7c62cab7..72ae7d0d8b75 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -465,6 +465,9 @@ static bool sh_pfc_pinconf_validate(struct sh_pfc *pfc,
-> unsigned int _pin, case PIN_CONFIG_BIAS_PULL_DOWN:
->  		return pin->configs & SH_PFC_PIN_CFG_PULL_DOWN;
-> 
-> +	case PIN_CONFIG_POWER_SOURCE:
-> +		return pin->configs & SH_PFC_PIN_CFG_IO_VOLTAGE;
-> +
->  	default:
->  		return false;
->  	}
-> @@ -477,7 +480,6 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
-> *pctldev, unsigned _pin, struct sh_pfc *pfc = pmx->pfc;
->  	enum pin_config_param param = pinconf_to_config_param(*config);
->  	unsigned long flags;
-> -	unsigned int bias;
-> 
->  	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
->  		return -ENOTSUPP;
-> @@ -485,7 +487,9 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
-> *pctldev, unsigned _pin, switch (param) {
->  	case PIN_CONFIG_BIAS_DISABLE:
->  	case PIN_CONFIG_BIAS_PULL_UP:
-> -	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +	case PIN_CONFIG_BIAS_PULL_DOWN: {
-> +		unsigned int bias;
-> +
->  		if (!pfc->info->ops || !pfc->info->ops->get_bias)
->  			return -ENOTSUPP;
-> 
-> @@ -498,6 +502,24 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
-> *pctldev, unsigned _pin,
-> 
->  		*config = 0;
->  		break;
-> +	}
-> +
-> +	case PIN_CONFIG_POWER_SOURCE: {
-> +		int ret;
-> +
-> +		if (!pfc->info->ops || !pfc->info->ops->get_io_voltage)
-> +			return -ENOTSUPP;
-> +
-> +		spin_lock_irqsave(&pfc->lock, flags);
-> +		ret = pfc->info->ops->get_io_voltage(pfc, _pin);
-> +		spin_unlock_irqrestore(&pfc->lock, flags);
-> +
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		*config = ret;
-> +		break;
-> +	}
-> 
->  	default:
->  		return -ENOTSUPP;
-> @@ -534,6 +556,24 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev
-> *pctldev, unsigned _pin,
-> 
->  			break;
-> 
-> +		case PIN_CONFIG_POWER_SOURCE: {
-> +			unsigned int arg =
-> +				pinconf_to_config_argument(configs[i]);
-> +			int ret;
-> +
-> +			if (!pfc->info->ops || !pfc->info->ops->set_io_voltage)
-> +				return -ENOTSUPP;
-> +
-> +			spin_lock_irqsave(&pfc->lock, flags);
-> +			ret = pfc->info->ops->set_io_voltage(pfc, _pin, arg);
-> +			spin_unlock_irqrestore(&pfc->lock, flags);
-> +
-> +			if (ret)
-> +				return ret;
-> +
-> +			break;
-> +		}
-> +
->  		default:
->  			return -ENOTSUPP;
->  		}
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index c7508d5f6886..734f7a92229c 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -12,6 +12,7 @@
->  #define __SH_PFC_H
-> 
->  #include <linux/bug.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/stringify.h>
-> 
->  enum {
-> @@ -26,6 +27,7 @@ enum {
->  #define SH_PFC_PIN_CFG_OUTPUT		(1 << 1)
->  #define SH_PFC_PIN_CFG_PULL_UP		(1 << 2)
->  #define SH_PFC_PIN_CFG_PULL_DOWN	(1 << 3)
-> +#define SH_PFC_PIN_CFG_IO_VOLTAGE	(1 << 4)
->  #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
-> 
->  struct sh_pfc_pin {
-> @@ -121,6 +123,9 @@ struct sh_pfc_soc_operations {
->  	unsigned int (*get_bias)(struct sh_pfc *pfc, unsigned int pin);
->  	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
->  			 unsigned int bias);
-> +	int (*get_io_voltage)(struct sh_pfc *pfc, unsigned int pin);
-> +	int (*set_io_voltage)(struct sh_pfc *pfc, unsigned int pin,
-> +			      u16 voltage_mV);
->  };
-> 
->  struct sh_pfc_soc_info {
+The obvious solution seems to make GPIO interrupt handling all
+happen in a bottom half. That should allow removing the
+pm_runtime_irq_safe, which is not good to have in general.
 
--- 
+> >>From my side what I've tried or thought about:
+> > 1) OMAP HW IRQ handler can be transformed to threaded IRQ on -RT.
+> >    Can it be acceptable?
+> 
+> It could. In theory. It would work, too. Not sure you really want this.
+> You lose the cascaded handler that you have now. The obvious change
+> would be that you see another IRQ used in /proc/interrupts. This is
+> harmless :) However each time an IRQ (on the GPIO side) arrives you
+> have a hardirq which is defered into thread context. Then it wakes
+> another thread (the GPIO-IRQ-handler). So this adds a little of
+> overhead on your call path. Since you won't have IRQF_NO_THREAD flag on
+> any user, this should remain the only price you pay.
+
+This should be OK for most cases as the GPIO interrupt devices are
+typically on some external bus like I2C or GPMC. The hurting case
+would be bitbanging GPIO devices, like the CBUS I2C driver.
+
+If something faster is needed, we could allow configuring GPIO banks
+in a different way where the non-threaded banks don't allow idling
+the bank?
+
 Regards,
 
-Laurent Pinchart
-
+Tony
