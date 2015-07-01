@@ -1,52 +1,44 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Wed, 1 Jul 2015 12:36:00 -0500
-Message-ID: <CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg@mail.gmail.com>
-References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com> <1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Vitaly Andrianov <vitalya@ti.com>
+Subject: [Resend PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
+Date: Wed, 1 Jul 2015 13:41:20 -0400
+Message-ID: <1435772480-928-1-git-send-email-vitalya@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:33677 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752072AbbGARgV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 13:36:21 -0400
-In-Reply-To: <1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
+Received: from comal.ext.ti.com ([198.47.26.152]:38337 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753014AbbGARgp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 1 Jul 2015 13:36:45 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Vitaly Andrianov <vitalya@ti.com>
 
-On Wed, Jul 1, 2015 at 7:45 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
-> the pin controller isn't available.
->
-> Otherwise, the GPIO range wouldn't be set at all unless the pin
-> controller probed always before the GPIO chip.
->
-> With this change, the probe of the GPIO chip will be deferred and will
-> be retried at a later point, hopefully once the pin controller has been
-> registered and probed already.
+Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
+"binten" register (offset 8). Previous versions of GPIO only
+used bit 0, which enables GPIO 0-15 interrupts.
 
-This will break cases where the pinctrl driver does not exist, but the
-DT contains pinctrl bindings. We can have similar problems already
-with clocks though. However, IMO this problem is a bit different in
-that pinctrl is more likely entirely optional while clocks are often
-required. You may do all pin setup in bootloader/firmware on some
-boards and not others. Of course then why put pinctrl in the DT in
-that case? They could be present just due to how chip vs. board dts
-files are structured.
+Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+---
+I posted this patch on 06/18/15 and didn't get any response.
+Please, could you review the patch.
 
-We could address this by simply marking the pin controller node
-disabled. However, ...
+ drivers/gpio/gpio-davinci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->
->                 pctldev = of_pinctrl_get(pinspec.np);
->                 if (!pctldev)
-> -                       break;
-> +                       return -EPROBE_DEFER;
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index c5e05c8..c90629f 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -546,6 +546,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		chips[0].gpio_irq = bank_irq;
+ 		chips[0].gpio_unbanked = pdata->gpio_unbanked;
+ 		binten = BIT(0);
++		if (pdata->gpio_unbanked > 16)
++			binten |= BIT(1);
+ 
+ 		/* AINTC handles mask/unmask; GPIO handles triggering */
+ 		irq = bank_irq;
+-- 
+1.9.1
 
-But you cannot distinguish that case here. I think of_pinctrl_get
-needs to set the error code appropriately.
-
-Rob
