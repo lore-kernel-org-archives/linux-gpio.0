@@ -1,198 +1,88 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 2/8] pinctrl: sh-pfc: r8a7790: Implement voltage switching for SDHI
-Date: Wed, 01 Jul 2015 10:37:20 +0300
-Message-ID: <6355006.FnTDFbP0bb@avalon>
-References: <1435683177.23818.60.camel@codethink.co.uk> <1435683249.23818.62.camel@codethink.co.uk>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [v3 1/7] gpiolib: Add support for removing registered consumer
+ lookup table
+Date: Wed, 1 Jul 2015 08:46:01 +0100
+Message-ID: <20150701074601.GE3210@x1>
+References: <1435309330-50725-1-git-send-email-shobhit.kumar@intel.com>
+ <1435309330-50725-2-git-send-email-shobhit.kumar@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:51607 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024AbbGAHhQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 03:37:16 -0400
-In-Reply-To: <1435683249.23818.62.camel@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1435309330-50725-2-git-send-email-shobhit.kumar@intel.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Shobhit Kumar <shobhit.kumar@intel.com>
+Cc: linux-pwm <linux-pwm@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, bloften80@gmail.com, varkabhadram@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Hi Ben,
+On Fri, 26 Jun 2015, Shobhit Kumar wrote:
 
-Thank you for the patch.
-
-On Tuesday 30 June 2015 17:54:09 Ben Hutchings wrote:
-> All the SHDIs can operate with either 3.3V or 1.8V signals, depending
-> on negotiation with the card.
-> 
-> Implement the {get,set}_io_voltage operations and set the related
-> capability flag for the associated pins.
-> 
-> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> In case we unload and load a driver module again that is registering =
+a
+> lookup table, without this it will result in multiple entries. Provid=
+e
+> an option to remove the lookup table on driver unload
+>=20
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Tested-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
 > ---
->  drivers/pinctrl/sh-pfc/core.c        |  2 +-
->  drivers/pinctrl/sh-pfc/core.h        |  1 +
->  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 71 ++++++++++++++++++++++++++++++++-
->  3 files changed, 72 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-> index 7b2c9495c383..7d51f96afc9a 100644
-> --- a/drivers/pinctrl/sh-pfc/core.c
-> +++ b/drivers/pinctrl/sh-pfc/core.c
-> @@ -92,7 +92,7 @@ static int sh_pfc_map_resources(struct sh_pfc *pfc,
->  	return 0;
+> v2: Ccing maintainers
+> v3: Correct the subject line (Lee jones)
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  drivers/gpio/gpiolib.c       | 13 +++++++++++++
+>  include/linux/gpio/machine.h |  1 +
+>  2 files changed, 14 insertions(+)
+>=20
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 957ede5..9d3ea4e 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1675,6 +1675,19 @@ void gpiod_add_lookup_table(struct gpiod_looku=
+p_table *table)
+>  	mutex_unlock(&gpio_lookup_lock);
 >  }
-> 
-> -static void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 reg)
-> +void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 reg)
->  {
->  	struct sh_pfc_window *window;
->  	phys_addr_t address = reg;
-> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-> index 6dc8a6fc2746..af355629c5d2 100644
-> --- a/drivers/pinctrl/sh-pfc/core.h
-> +++ b/drivers/pinctrl/sh-pfc/core.h
-> @@ -57,6 +57,7 @@ int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc);
->  int sh_pfc_register_pinctrl(struct sh_pfc *pfc);
->  int sh_pfc_unregister_pinctrl(struct sh_pfc *pfc);
-> 
-> +void __iomem *sh_pfc_phys_to_virt(struct sh_pfc *pfc, u32 address);
->  u32 sh_pfc_read_raw_reg(void __iomem *mapped_reg, unsigned int reg_width);
->  void sh_pfc_write_raw_reg(void __iomem *mapped_reg, unsigned int reg_width,
-> u32 data);
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c index 22a5470889f5..ec6657de6a46
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> @@ -21,6 +21,7 @@
->   * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 
-> USA */
-> 
-> +#include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/platform_data/gpio-rcar.h>
-> 
-> @@ -1739,10 +1740,20 @@ static const u16 pinmux_data[] = {
->  #define PIN_NUMBER(r, c) (((r) - 'A') * 31 + (c) + 200)
->  #define PIN_A_NUMBER(r, c) PIN_NUMBER(ROW_GROUP_A(r), c)
-> 
-> +#define PIN_IO_VOLTAGE(bank, _pin, _name, sfx)		\
-> +	[RCAR_GP_PIN(bank, _pin)].configs = SH_PFC_PIN_CFG_IO_VOLTAGE
-> +
->  static const struct sh_pfc_pin pinmux_pins[] = {
->  	PINMUX_GPIO_GP_ALL(),
-> 
-> -	/* Pins not associated with a GPIO port */
-> +	/*
-> +	 * All pins assigned to GPIO bank 3 can be used for SD interfaces
-> +	 * in which case they support both 3.3V and 1.8V signalling.
-> +	 */
-> +	PORT_GP_32(3, PIN_IO_VOLTAGE, unused),
-> +
-> +	/* Pins not associated with a GPIO port, placed after all the GPIOs */
-> +	[RCAR_GP_PIN(5, 31) + 1] =
-
-I'm sorry but I still don't like this. gcc outputs a warning when overriding 
-an initializer if you enable -Wextra, which leads me to believe this construct 
-is dubious. It should at least be tested with LLVM.
-
-I'd much prefer replacing PINMUX_GPIO_GP_ALL() with a version that will 
-initialize the pins correctly right away.
-
-Another option which might be better would be to add a new operation to 
-retrieve the pin config bitmask instead of storing it in sh_pfc_pin. Most SoCs 
-don't have per-pin config bitmasks, so we could save a bit of memory by doing 
-so. r8a73a4 and r8a7790 could easily compute the bitmask in C code, while 
-sh73a0 and r8a7740 would have a private table. The drawback would be a 
-slightly increased execution time.
-
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('F'), 15, AF15),
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('G'), 15, AG15),
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('H'), 15, AH15),
-> @@ -4595,6 +4606,58 @@ static const char * const vin3_groups[] = {
->  	"vin3_clk",
->  };
-> 
-> +static int sdhi_get_io_voltage(struct sh_pfc *pfc, unsigned int pin)
+> =20
+> +/**
+> + * gpiod_remove_lookup_table() - unregister GPIO device consumers
+> + * @table: table of consumers to unregister
+> + */
+> +void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
 > +{
-> +	void __iomem *mapped_reg;
-> +	u32 data, mask;
+> +	mutex_lock(&gpio_lookup_lock);
 > +
-> +	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31),
-> +		 "sdhi_get_low_voltage: invalid pin %#x", pin))
-
-The function name is wrong. You could use __func__, but as WARN() will output 
-a backtrace I think you can just drop it. And given that this shouldn't happen 
-at all given that only port 3 pins have the IO_VOLTAGE flag set, I'd just drop 
-the warning completely. Same for shdi_set_io_voltage().
-
-> +		return -EIO;
+> +	list_del(&table->list);
 > +
-> +	/* Map IOCTRL6 */
-> +	mapped_reg = sh_pfc_phys_to_virt(pfc, 0xe606008c);
-> +
-> +	/* Bits in IOCTRL6 are numbered in opposite order to pins */
-> +	mask = 0x80000000 >> (pin & 0x1f);
-> +
-> +	data = ioread32(mapped_reg);
-> +
-> +	return (data & mask) ? 3300 : 1800;
+> +	mutex_unlock(&gpio_lookup_lock);
 > +}
 > +
-> +static int
-> +sdhi_set_io_voltage(struct sh_pfc *pfc, unsigned int pin, u16 voltage_mV)
-> +{
-> +	void __iomem *mapped_reg;
-> +	u32 data, mask;
-> +
-> +	if (WARN(pin < RCAR_GP_PIN(3, 0) || pin > RCAR_GP_PIN(3, 31),
-> +		 "invalid pin %#x", pin))
-> +		return -EIO;
-> +
-> +	if (voltage_mV != 1800 && voltage_mV != 3300)
-> +		return -EINVAL;
-> +
-> +	/* Map IOCTRL6 */
-> +	mapped_reg = sh_pfc_phys_to_virt(pfc, 0xe606008c);
-> +
-> +	/* Bits in IOCTRL6 are numbered in opposite order to pins */
-> +	mask = 0x80000000 >> (pin & 0x1f);
-> +
-> +	data = ioread32(mapped_reg);
-> +
-> +	if (voltage_mV == 3300)
-> +		data |= mask;
-> +	else
-> +		data &= ~mask;
-> +
-> +	iowrite32(~data, sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg));
-> +	iowrite32(data, mapped_reg);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(audio_clk),
->  	SH_PFC_FUNCTION(avb),
-> @@ -5586,8 +5649,14 @@ static const struct pinmux_cfg_reg
-> pinmux_config_regs[] = { { },
->  };
-> 
-> +static const struct sh_pfc_soc_operations pinmux_ops = {
-> +	.get_io_voltage = sdhi_get_io_voltage,
-> +	.set_io_voltage = sdhi_set_io_voltage,
-> +};
-> +
->  const struct sh_pfc_soc_info r8a7790_pinmux_info = {
->  	.name = "r8a77900_pfc",
-> +	.ops = &pinmux_ops,
->  	.unlock_reg = 0xe6060000, /* PMMR */
-> 
->  	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+>  static struct gpio_desc *of_find_gpio(struct device *dev, const char=
+ *con_id,
+>  				      unsigned int idx,
+>  				      enum gpio_lookup_flags *flags)
+> diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machin=
+e.h
+> index e270614..c0d712d 100644
+> --- a/include/linux/gpio/machine.h
+> +++ b/include/linux/gpio/machine.h
+> @@ -57,5 +57,6 @@ struct gpiod_lookup_table {
+>  }
+> =20
+>  void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
+> +void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
+> =20
+>  #endif /* __LINUX_GPIO_MACHINE_H */
 
--- 
-Regards,
-
-Laurent Pinchart
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
