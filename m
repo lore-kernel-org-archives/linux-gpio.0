@@ -1,75 +1,37 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Subject: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Wed,  1 Jul 2015 21:34:02 +0200
-Message-ID: <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
-References: <cover.1435777856.git.rcochran@linutronix.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:34249 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751433AbbGATeL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 15:34:11 -0400
-In-Reply-To: <cover.1435777856.git.rcochran@linutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND v0] arm64: dts: Add APM X-Gene standby GPIO controller DTS entries
+Date: Wed, 01 Jul 2015 13:33:20 -0700
+Message-ID: <7hd20bmxdb.fsf@deeprootsystems.com>
+References: <1434448184-10584-1-git-send-email-yvo@apm.com>
+	<CACRpkdajRMBBs1SN3vz81hCnr6isTSsuHejiZBJkTAXeG8M4og@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdajRMBBs1SN3vz81hCnr6isTSsuHejiZBJkTAXeG8M4og-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+	(Linus Walleij's message of "Tue, 30 Jun 2015 08:34:54 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arm@kernel.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Toan Le <toanle-qTEPVZfXA3Y@public.gmane.org>, patches <patches-qTEPVZfXA3Y@public.gmane.org>, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-The system-on-chips using this IP core have well defined gpio numbers.
-Instead of using random numbers, this patch lets the device tree specify
-the correct gpio numbering.
+Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
 
-Signed-off-by: Richard Cochran <rcochran@linutronix.de>
----
- Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt | 2 ++
- drivers/gpio/gpio-dwapb.c                                  | 8 +++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+> On Tue, Jun 16, 2015 at 11:49 AM, Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org> wrote:
+>
+>> Add standby domain gpio controller for APM X-Gene SoC platform.
+>>
+>> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+>
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> Please funnel this through the ARM SoC tree.
 
-diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-index dd5d2c0..5c9effd 100644
---- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-@@ -28,6 +28,7 @@ controller.
- - interrupt-parent : The parent interrupt controller.
- - interrupts : The interrupt to the parent controller raised when GPIOs
-   generate the interrupts.
-+- snps,base : The base gpio number.
- - snps,nr-gpios : The number of pins in the port, a single cell.
- 
- Example:
-@@ -42,6 +43,7 @@ gpio: gpio@20000 {
- 		compatible = "snps,dw-apb-gpio-port";
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		snps,base = <8>;
- 		snps,nr-gpios = <8>;
- 		reg = <0>;
- 		interrupt-controller;
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 58faf04..b7e7977 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -491,6 +491,13 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
-+		if (of_property_read_u32(port_np, "snps,base",
-+					 &pp->gpio_base)) {
-+			dev_info(dev, "no base gpio specified for %s\n",
-+				 port_np->full_name);
-+			pp->gpio_base = -1;
-+		}
-+
- 		if (of_property_read_u32(port_np, "snps,nr-gpios",
- 					 &pp->ngpio)) {
- 			dev_info(dev, "failed to get number of gpios for %s\n",
-@@ -512,7 +519,6 @@ dwapb_gpio_get_pdata_of(struct device *dev)
- 		}
- 
- 		pp->irq_shared	= false;
--		pp->gpio_base	= -1;
- 		pp->name	= port_np->full_name;
- 	}
- 
--- 
-2.1.4
+Picking this up with Linus' ack for the arm-soc/late branch, which might
+make it before -rc1, if not will make it for -rc2.
 
+Kevin
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
