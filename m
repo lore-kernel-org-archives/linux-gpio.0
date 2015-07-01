@@ -1,44 +1,58 @@
-From: Vitaly Andrianov <vitalya@ti.com>
-Subject: [Resend PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
-Date: Wed, 1 Jul 2015 13:41:20 -0400
-Message-ID: <1435772480-928-1-git-send-email-vitalya@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 11/12] ASoC: tegra: register dependency parser for
+ firmware nodes
+Date: Wed, 1 Jul 2015 18:38:02 +0100
+Message-ID: <20150701173802.GW11162@sirena.org.uk>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TcuvTDpCAASXpu1W"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:38337 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753014AbbGARgp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 1 Jul 2015 13:36:45 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35313 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750808AbbGARiZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 13:38:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Vitaly Andrianov <vitalya@ti.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Takashi Iwai <tiwai@suse.de>, Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
-"binten" register (offset 8). Previous versions of GPIO only
-used bit 0, which enables GPIO 0-15 interrupts.
 
-Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
----
-I posted this patch on 06/18/15 and didn't get any response.
-Please, could you review the patch.
+--TcuvTDpCAASXpu1W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/gpio/gpio-davinci.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, Jul 01, 2015 at 11:41:06AM +0200, Tomeu Vizoso wrote:
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index c5e05c8..c90629f 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -546,6 +546,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 		chips[0].gpio_irq = bank_irq;
- 		chips[0].gpio_unbanked = pdata->gpio_unbanked;
- 		binten = BIT(0);
-+		if (pdata->gpio_unbanked > 16)
-+			binten |= BIT(1);
- 
- 		/* AINTC handles mask/unmask; GPIO handles triggering */
- 		irq = bank_irq;
--- 
-1.9.1
+> +static void tegra_max98090_get_dependencies(struct fwnode_handle *fwnode,
+> +					    struct list_head *deps)
+> +{
+> +	add_dependency(fwnode, "nvidia,i2s-controller", deps);
+> +	add_dependency(fwnode, "nvidia,audio-codec", deps);
+> +}
 
+Why is this all being open coded in an individual driver (we already
+know about and manage all these dependencies in the core...)?  If we're
+going to do this I'd expect the interface for specifying DT nodes to the
+core to be changed to support this.
+
+--TcuvTDpCAASXpu1W
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVlCV6AAoJECTWi3JdVIfQ9sQH/07qCQICx8rYy7I6jC+6lWam
+k0oQM1iJtoGIzxrnjZ3kPkumKA1N/p1bXAx3NVcmrD7KcOhALqe50qpheQ+CmVOZ
+LYAhUrbBYuPUBBqd9hsT7ZfLnAM9/jHCI04ch/Z8qo2khMwXmPPcm4tQeijJLLki
+dpvepRs8pRozlpKkQroJJQ1zleI/D64IxnqRbKauI+3MPBxyZeUe9ozjZI8VjxWq
+7N/AUIKachCgud0DNxjtdmsNMh6teCXQeV5YOGqcOsFHXQodpiRozw+2/As5N/Te
+fllk/BbgQInsWyI9MG0D69+KvSgNkBB+k4YODNzV7AKYE3IqKxJdDP+C+HKeubg=
+=TvF/
+-----END PGP SIGNATURE-----
+
+--TcuvTDpCAASXpu1W--
