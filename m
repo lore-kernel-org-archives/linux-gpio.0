@@ -1,88 +1,62 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [v3 1/7] gpiolib: Add support for removing registered consumer
- lookup table
-Date: Wed, 1 Jul 2015 08:46:01 +0100
-Message-ID: <20150701074601.GE3210@x1>
-References: <1435309330-50725-1-git-send-email-shobhit.kumar@intel.com>
- <1435309330-50725-2-git-send-email-shobhit.kumar@intel.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
+Date: Wed, 1 Jul 2015 09:51:49 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1507010944580.3916@nanos>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1435309330-50725-2-git-send-email-shobhit.kumar@intel.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: linux-pwm <linux-pwm@vger.kernel.org>, intel-gfx <intel-gfx@lists.freedesktop.org>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>, Jani Nikula <jani.nikula@intel.com>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Povilas Staniulis <wdmonster@gmail.com>, Chih-Wei Huang <cwhuang@android-x86.org>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, bloften80@gmail.com, varkabhadram@gmail.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:37471 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbbGAHwd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Jul 2015 03:52:33 -0400
+In-Reply-To: <1435667250-28299-5-git-send-email-pawelo@king.net.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Paul Bolle <pebolle@tiscali.nl>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Anson
 
-On Fri, 26 Jun 2015, Shobhit Kumar wrote:
+On Tue, 30 Jun 2015, Paul Osmialowski wrote:
+> +static struct kinetis_clock_event_ddata
+> +		kinetis_clockevent_tmrs[KINETIS_PIT_CHANNELS] = {
+> +	{
+> +		.evtdev = {
+> +			.name		= "kinetis-clockevent0",
+> +			.rating		= 200,
+> +			.features	=
+> +			    CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+> +			.set_next_event	= kinetis_clockevent_tmr_set_next_event,
+> +			.set_state_periodic =
+> +				kinetis_clockevent_tmr_set_state_periodic,
+> +			.set_state_oneshot =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +			.set_state_oneshot_stopped =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +			.set_state_shutdown =
+> +				kinetis_clockevent_tmr_set_state_oneshot,
+> +		},
+> +	},
+> +	{
+> +		.evtdev = {
+> +			.name		= "kinetis-clockevent1",
+> +		},
 
-> In case we unload and load a driver module again that is registering =
-a
-> lookup table, without this it will result in multiple entries. Provid=
-e
-> an option to remove the lookup table on driver unload
->=20
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Tested-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-> Signed-off-by: Shobhit Kumar <shobhit.kumar@intel.com>
-> ---
-> v2: Ccing maintainers
-> v3: Correct the subject line (Lee jones)
+So how is that supposed to work if timer 1,2 or 3 is selected from
+device tree? The function pointers are not initialized.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+You really do not need that array at all. You can simply set the name
+at init time.
 
->  drivers/gpio/gpiolib.c       | 13 +++++++++++++
->  include/linux/gpio/machine.h |  1 +
->  2 files changed, 14 insertions(+)
->=20
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 957ede5..9d3ea4e 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1675,6 +1675,19 @@ void gpiod_add_lookup_table(struct gpiod_looku=
-p_table *table)
->  	mutex_unlock(&gpio_lookup_lock);
->  }
-> =20
-> +/**
-> + * gpiod_remove_lookup_table() - unregister GPIO device consumers
-> + * @table: table of consumers to unregister
-> + */
-> +void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
-> +{
-> +	mutex_lock(&gpio_lookup_lock);
+> +		clockevents_register_device(
+> +				&kinetis_clockevent_tmrs[chan].evtdev);
 > +
-> +	list_del(&table->list);
-> +
-> +	mutex_unlock(&gpio_lookup_lock);
-> +}
-> +
->  static struct gpio_desc *of_find_gpio(struct device *dev, const char=
- *con_id,
->  				      unsigned int idx,
->  				      enum gpio_lookup_flags *flags)
-> diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machin=
-e.h
-> index e270614..c0d712d 100644
-> --- a/include/linux/gpio/machine.h
-> +++ b/include/linux/gpio/machine.h
-> @@ -57,5 +57,6 @@ struct gpiod_lookup_table {
->  }
-> =20
->  void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
-> +void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
-> =20
->  #endif /* __LINUX_GPIO_MACHINE_H */
+> +		kinetis_pit_init(&kinetis_clockevent_tmrs[chan],
+> +						(rate / HZ) - 1);
+> +		kinetis_pit_enable(&kinetis_clockevent_tmrs[chan], 1);
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+No point doing this. The core code has invoked the set_periodic call
+back via clockevents_register_device() already.
+
+Thanks,
+
+	tglx
