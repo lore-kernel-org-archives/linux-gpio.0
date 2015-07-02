@@ -1,60 +1,33 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [Resend PATCH] gpio/davinci: add interrupt support for GPIOs
- 16-31
-Date: Thu, 2 Jul 2015 16:03:30 +0530
-Message-ID: <5595137A.6010605@ti.com>
-References: <1435772480-928-1-git-send-email-vitalya@ti.com> <55950EE7.2040405@ti.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Thu, 02 Jul 2015 14:40:23 +0200
+Message-ID: <1861313.aMcV1xHCIq@wuerfel>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:48018 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752876AbbGBKde (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 06:33:34 -0400
-In-Reply-To: <55950EE7.2040405@ti.com>
+Received: from mout.kundenserver.de ([212.227.17.24]:60328 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958AbbGBMla (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 08:41:30 -0400
+In-Reply-To: <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Vitaly Andrianov <vitalya@ti.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>
 
-On Thursday 02 July 2015 03:43 PM, Grygorii Strashko wrote:
-> On 07/01/2015 08:41 PM, Vitaly Andrianov wrote:
->> Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
->> "binten" register (offset 8). Previous versions of GPIO only
->> used bit 0, which enables GPIO 0-15 interrupts.
+On Thursday 02 July 2015 12:08:39 Paul Osmialowski wrote:
+> Nah, I've found this code hard to maintain. I'm attaching simplified 
+> version.
 > 
-> Cc: Sekhar Nori
-> 
->>
->> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
-> 
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
->> ---
->> I posted this patch on 06/18/15 and didn't get any response.
->> Please, could you review the patch.
->>
->>   drivers/gpio/gpio-davinci.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index c5e05c8..c90629f 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -546,6 +546,8 @@ static int davinci_gpio_irq_setup(struct
->> platform_device *pdev)
->>           chips[0].gpio_irq = bank_irq;
->>           chips[0].gpio_unbanked = pdata->gpio_unbanked;
->>           binten = BIT(0);
->> +        if (pdata->gpio_unbanked > 16)
->> +            binten |= BIT(1);
 
-Or
+Looks better to me, but of course needs full review from the clock
+maintainers.
 
-	binten = GENMASK(pdata->gpio_unbanked / 16, 0);
+I wonder if you could move out the fixed rate clocks into their own
+nodes. Are they actually controlled by the same block? If they are
+just fixed, you can use the normal binding for fixed rate clocks
+and only describe the clocks that are related to the driver.
 
-?
-
-Thanks,
-Sekhar
-
+	Arnd
