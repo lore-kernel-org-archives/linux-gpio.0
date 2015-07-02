@@ -1,45 +1,49 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Thu, 02 Jul 2015 09:36:22 +0200
-Message-ID: <5594E9F6.7040701@linutronix.de>
-References: <cover.1435777856.git.rcochran@linutronix.de> <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] gpio: of: remove unnecessary variable in of_get_gpio_hog()
+Date: Thu,  2 Jul 2015 17:27:12 +0900
+Message-ID: <1435825632-16103-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:41563 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751290AbbGBHg0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 03:36:26 -0400
-In-Reply-To: <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
+Received: from conuserg009.nifty.com ([202.248.44.35]:37391 "EHLO
+	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751279AbbGBI1b (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 04:27:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Cochran <richardcochran@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 
-On 07/01/2015 09:34 PM, Richard Cochran wrote:
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 58faf04..b7e7977 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -491,6 +491,13 @@ dwapb_gpio_get_pdata_of(struct device *dev)
->  			return ERR_PTR(-EINVAL);
->  		}
->  
-> +		if (of_property_read_u32(port_np, "snps,base",
-> +					 &pp->gpio_base)) {
-> +			dev_info(dev, "no base gpio specified for %s\n",
-> +				 port_np->full_name);
-> +			pp->gpio_base = -1;
-> +		}
-> +
+The variable "desc" is only used for storing the return value at the
+end of the function.  It is is unneeded.
 
-If you are in a specific SoC you could do
-	base = of_alias_get_id(np, "gpio") * num_of_gpio_per_chip
-and get consistent numbers / sane.
-I think this is the one reason why there is no generic binding for the
-starting address. The other reason might be that this is simply a user
-space problem. To get consistent numbers all you need to do to lookup
-each gpio's memory address and decide if this is the one you look for.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Sebastian
+ drivers/gpio/gpiolib-of.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 9a0ec48..fd2db4b 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -136,7 +136,6 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
+ {
+ 	struct device_node *chip_np;
+ 	enum of_gpio_flags xlate_flags;
+-	struct gpio_desc *desc;
+ 	struct gg_data gg_data = {
+ 		.flags = &xlate_flags,
+ 	};
+@@ -193,9 +192,7 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
+ 	if (name && of_property_read_string(np, "line-name", name))
+ 		*name = np->name;
+ 
+-	desc = gg_data.out_gpio;
+-
+-	return desc;
++	return gg_data.out_gpio;
+ }
+ 
+ /**
+-- 
+1.9.1
+
