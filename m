@@ -1,49 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] gpio: of: remove unnecessary variable in of_get_gpio_hog()
-Date: Thu,  2 Jul 2015 17:27:12 +0900
-Message-ID: <1435825632-16103-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg009.nifty.com ([202.248.44.35]:37391 "EHLO
-	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751279AbbGBI1b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 04:27:31 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Thu, 2 Jul 2015 10:49:27 +0200
+Message-ID: <CAMuHMdWvvc0Tfppif5bpBU-ZqLF6ME1EC19cwq4Zj4q1nU_ZLQ@mail.gmail.com>
+References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435754753-31307-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 
-The variable "desc" is only used for storing the return value at the
-end of the function.  It is is unneeded.
+Hi Tomeu,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On Wed, Jul 1, 2015 at 2:45 PM, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+> the pin controller isn't available.
+>
+> Otherwise, the GPIO range wouldn't be set at all unless the pin
+> controller probed always before the GPIO chip.
+>
+> With this change, the probe of the GPIO chip will be deferred and will
+> be retried at a later point, hopefully once the pin controller has been
+> registered and probed already.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
- drivers/gpio/gpiolib-of.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+I was a bit afraid this would break the case of gpio controllers that are
+also pin controllers, i.e. where "gpio-ranges" points to the gpio controller
+itself[*], but it doesn't.
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9a0ec48..fd2db4b 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -136,7 +136,6 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
- {
- 	struct device_node *chip_np;
- 	enum of_gpio_flags xlate_flags;
--	struct gpio_desc *desc;
- 	struct gg_data gg_data = {
- 		.flags = &xlate_flags,
- 	};
-@@ -193,9 +192,7 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
- 	if (name && of_property_read_string(np, "line-name", name))
- 		*name = np->name;
- 
--	desc = gg_data.out_gpio;
--
--	return desc;
-+	return gg_data.out_gpio;
- }
- 
- /**
--- 
-1.9.1
+Tested-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
 
+[*] E.g. "[PATCH 2/7] ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges"
+    to gpio node" (http://www.spinics.net/lists/linux-sh/msg43077.html)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
