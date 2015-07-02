@@ -1,33 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-Date: Thu, 02 Jul 2015 14:40:23 +0200
-Message-ID: <1861313.aMcV1xHCIq@wuerfel>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <alpine.LNX.2.00.1507011756140.14440@localhost.localdomain> <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
+From: Richard Cochran <richardcochran@gmail.com>
+Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
+Date: Thu, 2 Jul 2015 16:20:59 +0200
+Message-ID: <20150702142058.GA9349@localhost.localdomain>
+References: <cover.1435777856.git.rcochran@linutronix.de>
+ <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
+ <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:60328 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958AbbGBMla (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 08:41:30 -0400
-In-Reply-To: <alpine.LNX.2.00.1507021206410.13210@localhost.localdomain>
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:33608 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753204AbbGBOVF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Jul 2015 10:21:05 -0400
+Content-Disposition: inline
+In-Reply-To: <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Sergei Poselenov <sposelenov@emcraft.com>, Paul Bolle <pebolle@tiscali.nl>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>
+To: Michael van der Westhuizen <michael@smart-africa.com>
+Cc: linux-arm-kernel@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alan Tull <atull@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dinh Nguyen <dinguyen@altera.com>
 
-On Thursday 02 July 2015 12:08:39 Paul Osmialowski wrote:
-> Nah, I've found this code hard to maintain. I'm attaching simplified 
-> version.
-> 
+On Thu, Jul 02, 2015 at 08:05:26AM +0100, Michael van der Westhuizen wr=
+ote:
+> Ultimately, the numbering is inconsequential to users in kernel-space=
+ when DT is
+> in use.  It=E2=80=99s the userland users we=E2=80=99re trying to help=
+=2E
 
-Looks better to me, but of course needs full review from the clock
-maintainers.
+Yes.  Lets help the users!
+=20
+> In my case, I have quite a lot of vendor-supplied code that needs the=
+ numbers to
+> be stable and backward compatible.  This quickly devolves into a disc=
+ussion of
+> GPIOs in sysfs as an ABI, which is not a discussion I want to have :)
 
-I wonder if you could move out the fixed rate clocks into their own
-nodes. Are they actually controlled by the same block? If they are
-just fixed, you can use the normal binding for fixed rate clocks
-and only describe the clocks that are related to the driver.
+In the present state, the gpio numbers on the Altera socfpga change
+with changing kernel releases.  Not only does that suck, but it also
+proves that the gpio numbering is not any kind of ABI.  Rather, it is
+some kind of oversight.
 
-	Arnd
+Anyhow, the whole point is, when the data sheet says that the SoC has
+GPIO0 to GPION, then those numbers should be exposed to user space.
+
+Thanks,
+Richard
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
