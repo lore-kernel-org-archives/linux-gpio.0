@@ -1,35 +1,49 @@
-From: Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Fri, 3 Jul 2015 12:36:26 +0200
-Message-ID: <20150703103626.GA18893@localhost.localdomain>
+Date: Fri, 3 Jul 2015 11:55:26 +0100
+Message-ID: <20150703105525.GU7557@n2100.arm.linux.org.uk>
 References: <cover.1435777856.git.rcochran@linutronix.de>
  <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
  <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com>
  <20150703091347.GA17808@localhost.localdomain>
  <C1BD6DA3-F32E-4CAD-8DA9-6F74A7966DBE@smart-africa.com>
+ <20150703103626.GA18893@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:45314 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754966AbbGCKzg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jul 2015 06:55:36 -0400
 Content-Disposition: inline
-In-Reply-To: <C1BD6DA3-F32E-4CAD-8DA9-6F74A7966DBE-XrNoQAPr3WXM9gW82pYGhQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael van der Westhuizen <michael-XrNoQAPr3WXM9gW82pYGhQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20150703103626.GA18893@localhost.localdomain>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: Michael van der Westhuizen <michael@smart-africa.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alan Tull <atull@altera.com>, Dinh Nguyen <dinguyen@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jul 03, 2015 at 10:18:28AM +0100, Michael van der Westhuizen wrote:
-> The subject should be:
->   gpio: dwapb: Use human understandable gpio numbering
-> Not:
->   gpio: dwapb: Use human understandable gpio numbering.
+On Fri, Jul 03, 2015 at 12:36:26PM +0200, Richard Cochran wrote:
+> On Fri, Jul 03, 2015 at 10:18:28AM +0100, Michael van der Westhuizen wrote:
+> > The subject should be:
+> >   gpio: dwapb: Use human understandable gpio numbering
+> > Not:
+> >   gpio: dwapb: Use human understandable gpio numbering.
+> 
+> Ok, I see.  I would call that dot a "period", not a full-stop.
+> 
+> Must be a British thing...
 
-Ok, I see.  I would call that dot a "period", not a full-stop.
+https://en.wikipedia.org/wiki/Full_stop
 
-Must be a British thing...
+says that '.' is a period in both American and British English, but when
+used at the end of a sentence, the period is called a "full stop" in both.
+(A full stop is a period used to end a sentence.)
 
-Thanks,
-Richard
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It also says that in British English, '.' used elsewhere has also become
+known as a "full stop" (I regard that as incorrect, despite myself being
+British - it's a dilution of terms, and we'd now be in need of a new term
+to describe the '.' at the end of a sentence because of this.)
+
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
