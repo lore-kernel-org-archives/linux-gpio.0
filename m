@@ -1,41 +1,132 @@
-From: Michael van der Westhuizen <michael@smart-africa.com>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Fri, 3 Jul 2015 10:18:28 +0100
-Message-ID: <C1BD6DA3-F32E-4CAD-8DA9-6F74A7966DBE@smart-africa.com>
-References: <cover.1435777856.git.rcochran@linutronix.de> <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de> <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com> <20150703091347.GA17808@localhost.localdomain>
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2102\))
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH] pinctrl: at91: fix null pointer dereference
+Date: Fri, 3 Jul 2015 11:38:40 +0200
+Message-ID: <20150703093840.GA3124@odux.rfo.atmel.com>
+References: <1435853202-1632-1-git-send-email-davidcdueck@googlemail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:36682 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754992AbbGCJTC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jul 2015 05:19:02 -0400
-Received: by widjy10 with SMTP id jy10so104934579wid.1
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2015 02:19:00 -0700 (PDT)
-In-Reply-To: <20150703091347.GA17808@localhost.localdomain>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:47207 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754857AbbGCJh7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Jul 2015 05:37:59 -0400
+Content-Disposition: inline
+In-Reply-To: <1435853202-1632-1-git-send-email-davidcdueck@googlemail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alan Tull <atull@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dinh Nguyen <dinguyen@altera.com>
+To: David Dueck <davidcdueck@googlemail.com>
+Cc: plagnioj@jcrosoft.com, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Ludovic Desroches <ludovic.desroches@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-
-> On 03 Jul 2015, at 10:13 AM, Richard Cochran <richardcochran@gmail.com> wrote:
+On Thu, Jul 02, 2015 at 06:06:42PM +0200, David Dueck wrote:
+> Not all gpio banks are necessarily enabled, in the current code this can
+> lead to null pointer dereferences.
 > 
-> On Thu, Jul 02, 2015 at 08:05:26AM +0100, Michael van der Westhuizen wrote:
->>> On 01 Jul 2015, at 8:34 PM, Richard Cochran <richardcochran@gmail.com> wrote:
->>> 
->>> The system-on-chips using this IP core have well defined gpio numbers.
->>> Instead of using random numbers, this patch lets the device tree specify
->>> the correct gpio numbering.
->> 
->> The subject should not end with a full-stop.
+> [   51.130000] Unable to handle kernel NULL pointer dereference at virtual address 00000058
+> [   51.130000] pgd = dee04000
+> [   51.130000] [00000058] *pgd=3f66d831, *pte=00000000, *ppte=00000000
+> [   51.140000] Internal error: Oops: 17 [#1] ARM
+> [   51.140000] Modules linked in:
+> [   51.140000] CPU: 0 PID: 1664 Comm: cat Not tainted 4.1.1+ #6
+> [   51.140000] Hardware name: Atmel SAMA5
+> [   51.140000] task: df6dd880 ti: dec60000 task.ti: dec60000
+> [   51.140000] PC is at at91_pinconf_get+0xb4/0x200
+> [   51.140000] LR is at at91_pinconf_get+0xb4/0x200
+> [   51.140000] pc : [<c01e71a0>]    lr : [<c01e71a0>]    psr: 600f0013
+> sp : dec61e48  ip : 600f0013  fp : df522538
+> [   51.140000] r10: df52250c  r9 : 00000058  r8 : 00000068
+> [   51.140000] r7 : 00000000  r6 : df53c910  r5 : 00000000  r4 : dec61e7c
+> [   51.140000] r3 : 00000000  r2 : c06746d4  r1 : 00000000  r0 : 00000003
+> [   51.140000] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+> [   51.140000] Control: 10c53c7d  Table: 3ee04059  DAC: 00000015
+> [   51.140000] Process cat (pid: 1664, stack limit = 0xdec60208)
+> [   51.140000] Stack: (0xdec61e48 to 0xdec62000)
+> [   51.140000] 1e40:                   00000358 00000000 df522500 ded15f80 c05a9d08 ded15f80
+> [   51.140000] 1e60: 0000048c 00000061 df522500 ded15f80 c05a9d08 c01e7304 ded15f80 00000000
+> [   51.140000] 1e80: c01e6008 00000060 0000048c c01e6034 c01e5f6c ded15f80 dec61ec0 00000000
+> [   51.140000] 1ea0: 00020000 ded6f280 dec61f80 00000001 00000001 c00ae0b8 b6e80000 ded15fb0
+> [   51.140000] 1ec0: 00000000 00000000 df4bc974 00000055 00000800 ded6f280 b6e80000 ded6f280
+> [   51.140000] 1ee0: ded6f280 00020000 b6e80000 00000000 00020000 c0090dec c0671e1c dec61fb0
+> [   51.140000] 1f00: b6f8b510 00000001 00004201 c000924c 00000000 00000003 00000003 00000000
+> [   51.140000] 1f20: df4bc940 00022000 00000022 c066e188 b6e7f000 c00836f4 000b6e7f ded6f280
+> [   51.140000] 1f40: ded6f280 b6e80000 dec61f80 ded6f280 00020000 c0091508 00000000 00000003
+> [   51.140000] 1f60: 00022000 00000000 00000000 ded6f280 ded6f280 00020000 b6e80000 c0091d9c
+> [   51.140000] 1f80: 00000000 00000000 ffffffff 00020000 00020000 b6e80000 00000003 c000f124
+> [   51.140000] 1fa0: dec60000 c000efa0 00020000 00020000 00000003 b6e80000 00020000 000271c4
+> [   51.140000] 1fc0: 00020000 00020000 b6e80000 00000003 7fffe000 00000000 00000000 00020000
+> [   51.140000] 1fe0: 00000000 bef50b64 00013835 b6f29c76 400f0030 00000003 00000000 00000000
+> [   51.140000] [<c01e71a0>] (at91_pinconf_get) from [<c01e7304>] (at91_pinconf_dbg_show+0x18/0x2c0)
+> [   51.140000] [<c01e7304>] (at91_pinconf_dbg_show) from [<c01e6034>] (pinconf_pins_show+0xc8/0xf8)
+> [   51.140000] [<c01e6034>] (pinconf_pins_show) from [<c00ae0b8>] (seq_read+0x1a0/0x464)
+> [   51.140000] [<c00ae0b8>] (seq_read) from [<c0090dec>] (__vfs_read+0x20/0xd0)
+> [   51.140000] [<c0090dec>] (__vfs_read) from [<c0091508>] (vfs_read+0x7c/0x108)
+> [   51.140000] [<c0091508>] (vfs_read) from [<c0091d9c>] (SyS_read+0x40/0x94)
+> [   51.140000] [<c0091d9c>] (SyS_read) from [<c000efa0>] (ret_fast_syscall+0x0/0x3c)
+> [   51.140000] Code: eb010ec2 e30a0d08 e34c005a eb0ae5a7 (e5993000)
+> [   51.150000] ---[ end trace fb3c370da3ea4794 ]---
 > 
-> Sorry, I really have no idea what you mean.
+> Signed-off-by: David Dueck <davidcdueck@googlemail.com>
+> CC: Nicolas Ferre <nicolas.ferre@atmel.com>
+> CC: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> CC: Ludovic Desroches <ludovic.desroches@atmel.com>
+> CC: Boris Brezillon <boris.brezillon@free-electrons.com>
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-kernel@vger.kernel.org
 
-The subject should be:
-  gpio: dwapb: Use human understandable gpio numbering
-Not:
-  gpio: dwapb: Use human understandable gpio numbering.
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
 
-Michael
+Thanks. I have added linux-gpio@vger.kernel.org to recipients.
+
+> ---
+>  drivers/pinctrl/pinctrl-at91.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
+> index a082447..2deb130 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -320,6 +320,9 @@ static const struct pinctrl_ops at91_pctrl_ops = {
+>  static void __iomem *pin_to_controller(struct at91_pinctrl *info,
+>  				 unsigned int bank)
+>  {
+> +	if (!gpio_chips[bank])
+> +		return NULL;
+> +
+>  	return gpio_chips[bank]->regbase;
+>  }
+>  
+> @@ -729,6 +732,10 @@ static int at91_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+>  		pin = &pins_conf[i];
+>  		at91_pin_dbg(info->dev, pin);
+>  		pio = pin_to_controller(info, pin->bank);
+> +
+> +		if (!pio)
+> +			continue;
+> +
+>  		mask = pin_to_mask(pin->pin);
+>  		at91_mux_disable_interrupt(pio, mask);
+>  		switch (pin->mux) {
+> @@ -848,6 +855,10 @@ static int at91_pinconf_get(struct pinctrl_dev *pctldev,
+>  	*config = 0;
+>  	dev_dbg(info->dev, "%s:%d, pin_id=%d", __func__, __LINE__, pin_id);
+>  	pio = pin_to_controller(info, pin_to_bank(pin_id));
+> +
+> +	if (!pio)
+> +		return -EINVAL;
+> +
+>  	pin = pin_id % MAX_NB_GPIO_PER_BANK;
+>  
+>  	if (at91_mux_get_multidrive(pio, pin))
+> @@ -889,6 +900,10 @@ static int at91_pinconf_set(struct pinctrl_dev *pctldev,
+>  			"%s:%d, pin_id=%d, config=0x%lx",
+>  			__func__, __LINE__, pin_id, config);
+>  		pio = pin_to_controller(info, pin_to_bank(pin_id));
+> +
+> +		if (!pio)
+> +			return -EINVAL;
+> +
+>  		pin = pin_id % MAX_NB_GPIO_PER_BANK;
+>  		mask = pin_to_mask(pin);
+>  
+> -- 
+> 2.4.4
+> 
