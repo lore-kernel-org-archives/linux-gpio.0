@@ -1,55 +1,72 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: single: ensure pcs irq will not be forced
- threaded
-Date: Mon, 6 Jul 2015 08:29:21 -0700
-Message-ID: <20150706152921.GM10705@atomide.com>
-References: <1436195617-24003-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] pinctrl: single: support GPIO for bits pinctrl
+Date: Mon, 6 Jul 2015 08:42:05 -0700
+Message-ID: <20150706154205.GE10644@atomide.com>
+References: <1436191025-9024-1-git-send-email-jun.nie@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:33405 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753994AbbGFPmJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jul 2015 11:42:09 -0400
 Content-Disposition: inline
-In-Reply-To: <1436195617-24003-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+In-Reply-To: <1436191025-9024-1-git-send-email-jun.nie@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jun Nie <jun.nie@linaro.org>
+Cc: haojian.zhuang@linaro.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, shawn.guo@linaro.org, wan.zhijun@zte.com.cn, jason.liu@linaro.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [150706 08:16]:
-> The PSC IRQ is requested using request_irq() API and as result it can
-> be forced to be threaded IRQ in RT-Kernel if PCS_QUIRK_HAS_SHARED_IRQ
-> is enabled for pinctrl domain.
+* Jun Nie <jun.nie@linaro.org> [150706 06:59]:
+> Support GPIO for one register control multiple pins case
+> with calculating register offset first, then bit offset.
 > 
-> As result, following 'possible irq lock inversion dependency' report
-> can be seen:
-...
- 
-> To fix it use IRQF_NO_THREAD to ensure that pcs irq will not be forced threaded.
-> 
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
 > ---
->  drivers/pinctrl/pinctrl-single.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/pinctrl/pinctrl-single.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> index b2de09d..0b8d480 100644
+> index 13b45f2..4f23ef0 100644
 > --- a/drivers/pinctrl/pinctrl-single.c
 > +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -1760,7 +1760,8 @@ static int pcs_irq_init_chained_handler(struct pcs_device *pcs,
->  		int res;
+> @@ -494,7 +494,7 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>  	struct pcs_device *pcs = pinctrl_dev_get_drvdata(pctldev);
+>  	struct pcs_gpiofunc_range *frange = NULL;
+>  	struct list_head *pos, *tmp;
+> -	int mux_bytes = 0;
+> +	int offset, mux_bytes = 0;
+>  	unsigned data;
 >  
->  		res = request_irq(pcs_soc->irq, pcs_irq_handler,
-> -				  IRQF_SHARED | IRQF_NO_SUSPEND,
-> +				  IRQF_SHARED | IRQF_NO_SUSPEND |
-> +				  IRQF_NO_THREAD,
->  				  name, pcs_soc);
->  		if (res) {
->  			pcs_soc->irq = -1;
+>  	/* If function mask is null, return directly. */
+> @@ -507,9 +507,23 @@ static int pcs_request_gpio(struct pinctrl_dev *pctldev,
+>  			|| pin < frange->offset)
+>  			continue;
+>  		mux_bytes = pcs->width / BITS_PER_BYTE;
+> -		data = pcs->read(pcs->base + pin * mux_bytes) & ~pcs->fmask;
+> -		data |= frange->gpiofunc;
+> -		pcs->write(data, pcs->base + pin * mux_bytes);
+> +		if (pcs->bits_per_mux) {
+> +			int pin_pos, byte_num, num_pins_in_register;
+> +
+> +			num_pins_in_register = pcs->width / pcs->bits_per_pin;
+> +			byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+> +			offset = (byte_num / mux_bytes) * mux_bytes;
+> +			pin_pos = pin % num_pins_in_register;
+> +			pin_pos *= pcs->bits_per_pin;
+> +			data = pcs->read(pcs->base + offset) &
+> +				~(pcs->fmask << pin_pos);
+> +			data |= (frange->gpiofunc & pcs->fmask) << pin_pos;
 
-Looks OK to me. The only case this would be a problem if a system has
-a huge number of wake-up events as the list of status registers to
-check could grow to the number of GPIO pins in theory. Anyways,
-feel free to add:
+I don't quite follow you here.. The pcs->fmask is for the whole register,
+so I think the fmask should be checked the same way in this case also:
+		
+			data = pcs->read(pcs->base + offset) & ~pcs->fmask;
+			...
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+I don't think we can safely assume the fmask would behave differently
+in this case.
+
+Regards,
+
+Tony
