@@ -1,42 +1,67 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] pinctrl: single: dra7: remove PCS_QUIRK_SHARED_IRQ
-Date: Mon, 6 Jul 2015 18:11:50 +0300
-Message-ID: <1436195510-23880-1-git-send-email-grygorii.strashko@ti.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: Allow compile test of LEDS_AAT1290 and LEDS_KTD2692
+ if !GPIOLIB
+Date: Mon, 06 Jul 2015 17:13:05 +0200
+Message-ID: <559A9B01.9080206@samsung.com>
+References: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:52088 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753372AbbGFPMH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 6 Jul 2015 11:12:07 -0400
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33283 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751935AbbGFPNJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2015 11:13:09 -0400
+In-reply-to: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, Tony Lindgren <tony@atomide.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On DRA7 there is one pinctrl domain (dra7_pmx_core) and
-PRCM wake-up IRQ is not shared, so remove quirk.
+Hi Geert,
 
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Fixes: 31320beaa3d3 ('pinctrl: single: Add DRA7 pinctrl compatibility')
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/pinctrl/pinctrl-single.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks for the patch.
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 0b8d480..9b24b343 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1983,7 +1983,6 @@ static const struct pcs_soc_data pinctrl_single_omap_wkup = {
- };
- 
- static const struct pcs_soc_data pinctrl_single_dra7 = {
--	.flags = PCS_QUIRK_SHARED_IRQ,
- 	.irq_enable_mask = (1 << 24),	/* WAKEUPENABLE */
- 	.irq_status_mask = (1 << 25),	/* WAKEUPEVENT */
- };
+On 07/06/2015 03:42 PM, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>
+> If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
+> recently introduced symbols LEDS_AAT1290 and LEDS_KTD2692.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>   drivers/leds/Kconfig | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 94eced66d877182b..cf0248b8dbb9c023 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -43,7 +43,7 @@ config LEDS_AAT1290
+>   	tristate "LED support for the AAT1290"
+>   	depends on LEDS_CLASS_FLASH
+>   	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	depends on OF
+>   	depends on PINCTRL
+>   	help
+> @@ -543,7 +543,8 @@ config LEDS_MENF21BMC
+>
+>   config LEDS_KTD2692
+>   	tristate "LED support for KTD2692 flash LED controller"
+> -	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
+> +	depends on LEDS_CLASS_FLASH && OF
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	help
+>   	  This option enables support for KTD2692 LED flash connected
+>   	  through ExpressWire interface.
+>
+
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+
 -- 
-2.4.5
-
+Best Regards,
+Jacek Anaszewski
