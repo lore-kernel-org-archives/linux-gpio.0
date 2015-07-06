@@ -1,35 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] MIPS: ath79: Move the GPIO driver to drivers/gpio
-Date: Mon, 6 Jul 2015 12:36:37 +0200
-Message-ID: <CACRpkdbS8mTLN0de6neJNk=+0VBNZOwhzT-18CSS8n=uwLGa1A@mail.gmail.com>
-References: <1435914709-15092-1-git-send-email-albeu@free.fr>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
+Date: Mon, 6 Jul 2015 03:40:00 -0700
+Message-ID: <20150706103959.GD10644@atomide.com>
+References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
+ <20150617071740.GL2712@atomide.com>
+ <CABymUCPb7ouZ8DVww=d=K87tkS13Qr1CuGs0+Qnb4skD7_0g2g@mail.gmail.com>
+ <20150623101415.GV20628@atomide.com>
+ <CABymUCO-mV-yBrVm8oyNfo_96HTX7qveHKTPK_-TcLvhwQ-GOA@mail.gmail.com>
+ <CABymUCNM1fC1OAnw7nJteC=owX6iKLH1okRpiQuxPvszncY3zw@mail.gmail.com>
+ <20150706090321.GC10644@atomide.com>
+ <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1435914709-15092-1-git-send-email-albeu@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:33223 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753784AbbGFKkE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jul 2015 06:40:04 -0400
+Content-Disposition: inline
+In-Reply-To: <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
 
-On Fri, Jul 3, 2015 at 11:11 AM, Alban Bedel <albeu@free.fr> wrote:
+* Jun Nie <jun.nie@linaro.org> [150706 02:21]:
+> 2015-07-06 17:03 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+> > * Jun Nie <jun.nie@linaro.org> [150706 01:43]:
+> >> 2015-06-23 18:18 GMT+08:00 Jun Nie <jun.nie@linaro.org>:
+> >> > 2015-06-23 18:14 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+> >> >> * Jun Nie <jun.nie@linaro.org> [150623 02:56]:
+> >> >>> 2015-06-17 15:17 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+> >> >>> > * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
+> >> >>> >> +             if (pcs->bits_per_mux) {
+> >> >>> >> +                     int pin_pos, byte_num, num_pins_in_register;
+> >> >>> >> +
+> >> >>> >> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
+> >> >>> >> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+> >> >>> >> +                     offset = (byte_num / mux_bytes) * mux_bytes;
+> >> >>> >> +                     pin_pos = pin % num_pins_in_register;
+> >> >>> >> +                     pin_pos *= pcs->bits_per_pin;
+> >> >>> >> +                     data = pcs->read(pcs->base + offset) &
+> >> >>> >> +                             ~(pcs->fmask << pin_pos);
+> >> >>> >
+> >> >>> > Should you check the pcs->fmask here too in case some bits are reserved?
+> >> >>> >
+> >> >>> Did not catch your idea? Those bits set in fmask are dedicated for one
+> >> >>> pin mux control and should be clear before set as desired value per my
+> >> >>> understanding. Do you mean some bits may be reserved and not for any
+> >> >>> function?
+> >> >>
+> >> >> Right, can you please check that we don't try to write to reserved
+> >> >> bits in the hardawre if the mask is set?
+> >>
+> >> > Then I have question that how can I know what bits is for function
+> >> > mask, what bits are for reserved? Do we have any other value to
+> >> > indicate it? I did not find it in one register for one pin mux case.
+> >>
+> >> Could you help elaborate this? Thanks!
+> >
+> > We can only write to the bits specified in pinctrl-single,function-mask.
+> >
+> I see, you want below mask to make sure gpiofunc value does not exceed
+> expected bits though it should be safe if dts data is correct. Right?
+> +                       data = pcs->read(pcs->base + offset) &
+> +                               ~(pcs->fmask << pin_pos);
+> +                       data |= (pcs->fmask & frange->gpiofunc) << pin_pos;
 
-> as requested when I posted the ATH79 OF support serie, here is the move of
-> the GPIO driver to the GPIO drivers directory. While at it I also removed
-> the custom pinmux API as it not used by any board.
+Yes please :)
 
-First:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Please apply to the MIPS tree, because it is better to have all
-GPIO mess collected in one place than spread out over the kernel.
-
-Admittedly not having it in "my" folder makes me sloppy and not try to
-push for modernizing the GPIO driver(s)...
-
-This driver could use some modernization and platform cleanup though.
-I'll comment on the move patch for reference, don't see it as any blocker,
-more as a TODO list.
-
-Yours,
-Linus Walleij
+Tony
