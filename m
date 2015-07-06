@@ -1,72 +1,111 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Mon, 6 Jul 2015 03:40:00 -0700
-Message-ID: <20150706103959.GD10644@atomide.com>
-References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
- <20150617071740.GL2712@atomide.com>
- <CABymUCPb7ouZ8DVww=d=K87tkS13Qr1CuGs0+Qnb4skD7_0g2g@mail.gmail.com>
- <20150623101415.GV20628@atomide.com>
- <CABymUCO-mV-yBrVm8oyNfo_96HTX7qveHKTPK_-TcLvhwQ-GOA@mail.gmail.com>
- <CABymUCNM1fC1OAnw7nJteC=owX6iKLH1okRpiQuxPvszncY3zw@mail.gmail.com>
- <20150706090321.GC10644@atomide.com>
- <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: Re: [RFC PATCH] pinctrl-single: Use of pinctrl-single for external
+ device over I2C
+Date: Mon, 06 Jul 2015 17:32:37 +0530
+Message-ID: <559A6E5D.9040202@linaro.org>
+References: <1435855992-10312-1-git-send-email-vaibhav.hiremath@linaro.org> <20150706063532.GB10705@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:33223 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753784AbbGFKkE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 6 Jul 2015 06:40:04 -0400
-Content-Disposition: inline
-In-Reply-To: <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:34848 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753795AbbGFMCp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2015 08:02:45 -0400
+Received: by pdbci14 with SMTP id ci14so105046129pdb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2015 05:02:44 -0700 (PDT)
+In-Reply-To: <20150706063532.GB10705@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-* Jun Nie <jun.nie@linaro.org> [150706 02:21]:
-> 2015-07-06 17:03 GMT+08:00 Tony Lindgren <tony@atomide.com>:
-> > * Jun Nie <jun.nie@linaro.org> [150706 01:43]:
-> >> 2015-06-23 18:18 GMT+08:00 Jun Nie <jun.nie@linaro.org>:
-> >> > 2015-06-23 18:14 GMT+08:00 Tony Lindgren <tony@atomide.com>:
-> >> >> * Jun Nie <jun.nie@linaro.org> [150623 02:56]:
-> >> >>> 2015-06-17 15:17 GMT+08:00 Tony Lindgren <tony@atomide.com>:
-> >> >>> > * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
-> >> >>> >> +             if (pcs->bits_per_mux) {
-> >> >>> >> +                     int pin_pos, byte_num, num_pins_in_register;
-> >> >>> >> +
-> >> >>> >> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
-> >> >>> >> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
-> >> >>> >> +                     offset = (byte_num / mux_bytes) * mux_bytes;
-> >> >>> >> +                     pin_pos = pin % num_pins_in_register;
-> >> >>> >> +                     pin_pos *= pcs->bits_per_pin;
-> >> >>> >> +                     data = pcs->read(pcs->base + offset) &
-> >> >>> >> +                             ~(pcs->fmask << pin_pos);
-> >> >>> >
-> >> >>> > Should you check the pcs->fmask here too in case some bits are reserved?
-> >> >>> >
-> >> >>> Did not catch your idea? Those bits set in fmask are dedicated for one
-> >> >>> pin mux control and should be clear before set as desired value per my
-> >> >>> understanding. Do you mean some bits may be reserved and not for any
-> >> >>> function?
-> >> >>
-> >> >> Right, can you please check that we don't try to write to reserved
-> >> >> bits in the hardawre if the mask is set?
-> >>
-> >> > Then I have question that how can I know what bits is for function
-> >> > mask, what bits are for reserved? Do we have any other value to
-> >> > indicate it? I did not find it in one register for one pin mux case.
-> >>
-> >> Could you help elaborate this? Thanks!
-> >
-> > We can only write to the bits specified in pinctrl-single,function-mask.
-> >
-> I see, you want below mask to make sure gpiofunc value does not exceed
-> expected bits though it should be safe if dts data is correct. Right?
-> +                       data = pcs->read(pcs->base + offset) &
-> +                               ~(pcs->fmask << pin_pos);
-> +                       data |= (pcs->fmask & frange->gpiofunc) << pin_pos;
 
-Yes please :)
 
-Tony
+On Monday 06 July 2015 12:05 PM, Tony Lindgren wrote:
+> * Vaibhav Hiremath <vaibhav.hiremath@linaro.org> [150702 09:58]:
+>> --- a/drivers/pinctrl/pinctrl-single.c
+>> +++ b/drivers/pinctrl/pinctrl-single.c
+>>
+>> -static unsigned __maybe_unused pcs_readb(void __iomem *reg)
+>> +static unsigned pcs_read(struct regmap *map, unsigned int reg)
+>>   {
+>> -	return readb(reg);
+>> -}
+>> +	unsigned int val;
+>>
+>> -static unsigned __maybe_unused pcs_readw(void __iomem *reg)
+>> -{
+>> -	return readw(reg);
+>> -}
+>> -
+>> -static unsigned __maybe_unused pcs_readl(void __iomem *reg)
+>> -{
+>> -	return readl(reg);
+>> -}
+>> -
+>> -static void __maybe_unused pcs_writeb(unsigned val, void __iomem *reg)
+>> -{
+>> -	writeb(val, reg);
+>> -}
+>> +	regmap_read(map, reg, &val);
+>
+> Sorry this won't work. Most platforms don't need regmap here, and I
+> certainly don't want to use regmap for toggling pins for runtime
+> PM because of the extra overhead.
+>
+
+That's exactly my question was in my first email. It's ok.
+
+What is your openion on overall code changes for regmap support ?
+Any other feedback or suggestions?
+
+> It seems you need to stash the regmap pointer to struct pcs_device
+> and just the function pointers. As this driver is ioremapping the
+> region, we certainly want to keep things using void __iomem * too.
+> You can cast that to whatever regmap needs in the wrapper functions
+> for regmap. Note that the extra overhead there won't matter as we
+> are using regmap mostly for devices over I2C and so on.
+>
+
+The issue I have here with the signature of read/write fn
+
+static unsigned __maybe_unused pcs_read(void __iomem *reg)
+static void __maybe_unused pcs_writeX(unsigned val, void __iomem *reg)
+
+
+For regmap, I need 2 arguments,
+
+1. Pointer to regmap
+2. Offset to register
+
+
+So I will have to change the signature to
+
+static unsigned __maybe_unused pcs_read(void __iomem *reg, unsigned int 
+offset)
+static void __maybe_unused pcs_write(void __iomem *reg, unsigned val, 
+unsigned int offset)
+
+
+And,
+On the same direction, will having separate functions for regmap.
+
+static unsigned pcs_read_regmap(void __iomem *reg, unsigned int offset)
+{
+	unsigned int val;
+
+	regmap_read((struct regmap *)reg, offset, &val);
+}
+
+static void pcs_write_regmap(void __iomem *reg, unsigned val, unsigned 
+int offset)
+{
+        regmap_write((struct regmap *)reg, offset, val);
+  }
+
+
+This functions will be initialized to pcs_device->read/write.
+
+I will have to do some more changes, specially around pcs_interrupt
+usage.
