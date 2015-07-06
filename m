@@ -1,78 +1,71 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH gpio-for-next 09/10] usb: pass flags parameter to gpiod_get functions
-Date: Mon,  6 Jul 2015 11:09:49 +0200
-Message-ID: <1436173790-29963-9-git-send-email-u.kleine-koenig@pengutronix.de>
-References: <20150706090759.GS11824@pengutronix.de>
+From: Jun Nie <jun.nie@linaro.org>
+Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
+Date: Mon, 6 Jul 2015 17:19:06 +0800
+Message-ID: <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
+References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
+	<20150617071740.GL2712@atomide.com>
+	<CABymUCPb7ouZ8DVww=d=K87tkS13Qr1CuGs0+Qnb4skD7_0g2g@mail.gmail.com>
+	<20150623101415.GV20628@atomide.com>
+	<CABymUCO-mV-yBrVm8oyNfo_96HTX7qveHKTPK_-TcLvhwQ-GOA@mail.gmail.com>
+	<CABymUCNM1fC1OAnw7nJteC=owX6iKLH1okRpiQuxPvszncY3zw@mail.gmail.com>
+	<20150706090321.GC10644@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150706090759.GS11824-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f42.google.com ([209.85.215.42]:35686 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751215AbbGFJTH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2015 05:19:07 -0400
+Received: by lazt12 with SMTP id t12so1760625laz.2
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2015 02:19:06 -0700 (PDT)
+In-Reply-To: <20150706090321.GC10644@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
 
-Since 39b2bbe3d715 (gpio: add flags argument to gpiod_get*() functions)
-which appeared in v3.17-rc1, the gpiod_get* functions take an additiona=
-l
-parameter that allows to specify direction and initial value for output=
-=2E
+2015-07-06 17:03 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+> * Jun Nie <jun.nie@linaro.org> [150706 01:43]:
+>> 2015-06-23 18:18 GMT+08:00 Jun Nie <jun.nie@linaro.org>:
+>> > 2015-06-23 18:14 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+>> >> * Jun Nie <jun.nie@linaro.org> [150623 02:56]:
+>> >>> 2015-06-17 15:17 GMT+08:00 Tony Lindgren <tony@atomide.com>:
+>> >>> > * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
+>> >>> >> +             if (pcs->bits_per_mux) {
+>> >>> >> +                     int pin_pos, byte_num, num_pins_in_register;
+>> >>> >> +
+>> >>> >> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
+>> >>> >> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
+>> >>> >> +                     offset = (byte_num / mux_bytes) * mux_bytes;
+>> >>> >> +                     pin_pos = pin % num_pins_in_register;
+>> >>> >> +                     pin_pos *= pcs->bits_per_pin;
+>> >>> >> +                     data = pcs->read(pcs->base + offset) &
+>> >>> >> +                             ~(pcs->fmask << pin_pos);
+>> >>> >
+>> >>> > Should you check the pcs->fmask here too in case some bits are reserved?
+>> >>> >
+>> >>> Did not catch your idea? Those bits set in fmask are dedicated for one
+>> >>> pin mux control and should be clear before set as desired value per my
+>> >>> understanding. Do you mean some bits may be reserved and not for any
+>> >>> function?
+>> >>
+>> >> Right, can you please check that we don't try to write to reserved
+>> >> bits in the hardawre if the mask is set?
+>>
+>> > Then I have question that how can I know what bits is for function
+>> > mask, what bits are for reserved? Do we have any other value to
+>> > indicate it? I did not find it in one register for one pin mux case.
+>>
+>> Could you help elaborate this? Thanks!
+>
+> We can only write to the bits specified in pinctrl-single,function-mask.
+>
+I see, you want below mask to make sure gpiofunc value does not exceed
+expected bits though it should be safe if dts data is correct. Right?
++                       data = pcs->read(pcs->base + offset) &
++                               ~(pcs->fmask << pin_pos);
++                       data |= (pcs->fmask & frange->gpiofunc) << pin_pos;
 
-Currently this parameter is made optional with the help of a cpp trick.
-To allow dropping this hack convert callers to explictly pass a value
-for flags.
-
-Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Acked-by: Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
----
- drivers/usb/gadget/udc/pxa27x_udc.c | 2 +-
- drivers/usb/phy/phy-generic.c       | 6 ++++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/u=
-dc/pxa27x_udc.c
-index b51226abade6..042f06b52677 100644
---- a/drivers/usb/gadget/udc/pxa27x_udc.c
-+++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-@@ -2422,7 +2422,7 @@ static int pxa_udc_probe(struct platform_device *=
-pdev)
- 		}
- 		udc->udc_command =3D mach->udc_command;
- 	} else {
--		udc->gpiod =3D devm_gpiod_get(&pdev->dev, NULL);
-+		udc->gpiod =3D devm_gpiod_get(&pdev->dev, NULL, GPIOD_ASIS);
- 	}
-=20
- 	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-generi=
-c.c
-index deee68eafb72..ec6ecd03269c 100644
---- a/drivers/usb/phy/phy-generic.c
-+++ b/drivers/usb/phy/phy-generic.c
-@@ -218,11 +218,13 @@ int usb_phy_gen_create_phy(struct device *dev, st=
-ruct usb_phy_generic *nop,
- 			clk_rate =3D 0;
-=20
- 		needs_vcc =3D of_property_read_bool(node, "vcc-supply");
--		nop->gpiod_reset =3D devm_gpiod_get_optional(dev, "reset");
-+		nop->gpiod_reset =3D devm_gpiod_get_optional(dev, "reset",
-+							   GPIOD_ASIS);
- 		err =3D PTR_ERR_OR_ZERO(nop->gpiod_reset);
- 		if (!err) {
- 			nop->gpiod_vbus =3D devm_gpiod_get_optional(dev,
--							 "vbus-detect");
-+							 "vbus-detect",
-+							 GPIOD_ASIS);
- 			err =3D PTR_ERR_OR_ZERO(nop->gpiod_vbus);
- 		}
- 	} else if (pdata) {
---=20
-2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Regards,
+>
+> Tony
