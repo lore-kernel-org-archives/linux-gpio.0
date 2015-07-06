@@ -1,56 +1,35 @@
-From: "Breana, Tiberiu A" <tiberiu.a.breana@intel.com>
-Subject: RE: [PATCH gpio-for-next 03/10] iio: light: stk3310: use flags
- argument of devm_gpiod_get
-Date: Mon, 6 Jul 2015 09:35:44 +0000
-Message-ID: <4586F61A4A291F4DA44D32824E7C0F402216D8E5@IRSMSX109.ger.corp.intel.com>
-References: <20150706090759.GS11824@pengutronix.de>
- <1436173790-29963-3-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] MIPS: ath79: Move the GPIO driver to drivers/gpio
+Date: Mon, 6 Jul 2015 12:36:37 +0200
+Message-ID: <CACRpkdbS8mTLN0de6neJNk=+0VBNZOwhzT-18CSS8n=uwLGa1A@mail.gmail.com>
+References: <1435914709-15092-1-git-send-email-albeu@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:15338 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753234AbbGFJgN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 6 Jul 2015 05:36:13 -0400
-In-Reply-To: <1436173790-29963-3-git-send-email-u.kleine-koenig@pengutronix.de>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1435914709-15092-1-git-send-email-albeu@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alban Bedel <albeu@free.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBVd2UgS2xlaW5lLUvDtm5pZyBb
-bWFpbHRvOnUua2xlaW5lLWtvZW5pZ0BwZW5ndXRyb25peC5kZV0NCj4gU2VudDogTW9uZGF5LCBK
-dWx5IDYsIDIwMTUgMTI6MTAgUE0NCj4gVG86IExpbnVzIFdhbGxlaWo7IEFsZXhhbmRyZSBDb3Vy
-Ym90DQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsga2VybmVsQHBlbmd1dHJvbml4
-LmRlOyBCcmVhbmEsIFRpYmVyaXUgQTsNCj4gSm9uYXRoYW4gQ2FtZXJvbjsgSGFydG11dCBLbmFh
-Y2s7IExhcnMtUGV0ZXIgQ2xhdXNlbjsgUGV0ZXIgTWVlcndhbGQ7DQo+IGxpbnV4LWlpb0B2Z2Vy
-Lmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIIGdwaW8tZm9yLW5leHQgMDMvMTBdIGlpbzog
-bGlnaHQ6IHN0azMzMTA6IHVzZSBmbGFncyBhcmd1bWVudCBvZg0KPiBkZXZtX2dwaW9kX2dldA0K
-PiANCj4gU2luY2UgMzliMmJiZTNkNzE1IChncGlvOiBhZGQgZmxhZ3MgYXJndW1lbnQgdG8gZ3Bp
-b2RfZ2V0KigpIGZ1bmN0aW9ucykNCj4gd2hpY2ggYXBwZWFyZWQgaW4gdjMuMTctcmMxLCB0aGUg
-Z3Bpb2RfZ2V0KiBmdW5jdGlvbnMgdGFrZSBhbiBhZGRpdGlvbmFsDQo+IHBhcmFtZXRlciB0aGF0
-IGFsbG93cyB0byBzcGVjaWZ5IGRpcmVjdGlvbiBhbmQgaW5pdGlhbCB2YWx1ZSBmb3Igb3V0cHV0
-Lg0KPiANCj4gU2ltcGxpZnkgZHJpdmVyIGFjY29yZGluZ2x5LiBGdXJ0aGVybW9yZSB0aGlzIGlz
-IG9uZSBjYWxsZXIgbGVzcyB0aGF0IHN0b3BzIHVzDQo+IG1ha2luZyB0aGUgZmxhZ3MgYXJndW1l
-bnQgdG8gZ3Bpb2RfZ2V0KigpIG1hbmRhdG9yeS4NCj4gDQo+IEFja2VkLWJ5OiBKb25hdGhhbiBD
-YW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBVd2UgS2xlaW5lLUvD
-tm5pZyA8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPg0KDQorMQ0KDQpSZXZpZXdlZC1i
-eTogVGliZXJpdSBCcmVhbmEgPHRpYmVyaXUuYS5icmVhbmFAaW50ZWwuY29tPg0KDQo+IC0tLQ0K
-PiAgZHJpdmVycy9paW8vbGlnaHQvc3RrMzMxMC5jIHwgNiArLS0tLS0NCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2lpby9saWdodC9zdGszMzEwLmMgYi9kcml2ZXJzL2lpby9saWdodC9zdGszMzEwLmMg
-aW5kZXgNCj4gZmVlNDI5N2Q3YzhmLi44NGM3N2Q0MmEyYzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
-cnMvaWlvL2xpZ2h0L3N0azMzMTAuYw0KPiArKysgYi9kcml2ZXJzL2lpby9saWdodC9zdGszMzEw
-LmMNCj4gQEAgLTQ4OCwxNiArNDg4LDEyIEBAIHN0YXRpYyBpbnQgc3RrMzMxMF9ncGlvX3Byb2Jl
-KHN0cnVjdCBpMmNfY2xpZW50DQo+ICpjbGllbnQpDQo+ICAJZGV2ID0gJmNsaWVudC0+ZGV2Ow0K
-PiANCj4gIAkvKiBncGlvIGludGVycnVwdCBwaW4gKi8NCj4gLQlncGlvID0gZGV2bV9ncGlvZF9n
-ZXRfaW5kZXgoZGV2LCBTVEszMzEwX0dQSU8sIDApOw0KPiArCWdwaW8gPSBkZXZtX2dwaW9kX2dl
-dF9pbmRleChkZXYsIFNUSzMzMTBfR1BJTywgMCwgR1BJT0RfSU4pOw0KPiAgCWlmIChJU19FUlIo
-Z3BpbykpIHsNCj4gIAkJZGV2X2VycihkZXYsICJhY3BpIGdwaW8gZ2V0IGluZGV4IGZhaWxlZFxu
-Iik7DQo+ICAJCXJldHVybiBQVFJfRVJSKGdwaW8pOw0KPiAgCX0NCj4gDQo+IC0JcmV0ID0gZ3Bp
-b2RfZGlyZWN0aW9uX2lucHV0KGdwaW8pOw0KPiAtCWlmIChyZXQpDQo+IC0JCXJldHVybiByZXQ7
-DQo+IC0NCj4gIAlyZXQgPSBncGlvZF90b19pcnEoZ3Bpbyk7DQo+ICAJZGV2X2RiZyhkZXYsICJH
-UElPIHJlc291cmNlLCBubzolZCBpcnE6JWRcbiIsIGRlc2NfdG9fZ3BpbyhncGlvKSwNCj4gcmV0
-KTsNCj4gDQo+IC0tDQo+IDIuMS40DQoNCg==
+On Fri, Jul 3, 2015 at 11:11 AM, Alban Bedel <albeu@free.fr> wrote:
+
+> as requested when I posted the ATH79 OF support serie, here is the move of
+> the GPIO driver to the GPIO drivers directory. While at it I also removed
+> the custom pinmux API as it not used by any board.
+
+First:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please apply to the MIPS tree, because it is better to have all
+GPIO mess collected in one place than spread out over the kernel.
+
+Admittedly not having it in "my" folder makes me sloppy and not try to
+push for modernizing the GPIO driver(s)...
+
+This driver could use some modernization and platform cleanup though.
+I'll comment on the move patch for reference, don't see it as any blocker,
+more as a TODO list.
+
+Yours,
+Linus Walleij
