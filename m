@@ -1,8 +1,8 @@
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
 	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH gpio-for-next 04/10] iio: magn: bmc150: use flags argument of devm_gpiod_get
-Date: Mon,  6 Jul 2015 11:09:44 +0200
-Message-ID: <1436173790-29963-4-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH gpio-for-next 03/10] iio: light: stk3310: use flags argument of devm_gpiod_get
+Date: Mon,  6 Jul 2015 11:09:43 +0200
+Message-ID: <1436173790-29963-3-git-send-email-u.kleine-koenig@pengutronix.de>
 References: <20150706090759.GS11824@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -11,7 +11,7 @@ Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20150706090759.GS11824-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Irina Tirdea <irina.tirdea-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Tiberiu Breana <tiberiu.a.breana-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 Since 39b2bbe3d715 (gpio: add flags argument to gpiod_get*() functions)
@@ -26,24 +26,22 @@ stops us making the flags argument to gpiod_get*() mandatory.
 Acked-by: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 ---
- drivers/iio/magnetometer/bmc150_magn.c | 6 +-----
+ drivers/iio/light/stk3310.c | 6 +-----
  1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/iio/magnetometer/bmc150_magn.c b/drivers/iio/magne=
-tometer/bmc150_magn.c
-index d4c178869991..187a31fdc35a 100644
---- a/drivers/iio/magnetometer/bmc150_magn.c
-+++ b/drivers/iio/magnetometer/bmc150_magn.c
-@@ -839,16 +839,12 @@ static int bmc150_magn_gpio_probe(struct i2c_clie=
-nt *client)
+diff --git a/drivers/iio/light/stk3310.c b/drivers/iio/light/stk3310.c
+index fee4297d7c8f..84c77d42a2c6 100644
+--- a/drivers/iio/light/stk3310.c
++++ b/drivers/iio/light/stk3310.c
+@@ -488,16 +488,12 @@ static int stk3310_gpio_probe(struct i2c_client *=
+client)
  	dev =3D &client->dev;
 =20
- 	/* data ready GPIO interrupt pin */
--	gpio =3D devm_gpiod_get_index(dev, BMC150_MAGN_GPIO_INT, 0);
-+	gpio =3D devm_gpiod_get_index(dev, BMC150_MAGN_GPIO_INT, 0, GPIOD_IN)=
-;
+ 	/* gpio interrupt pin */
+-	gpio =3D devm_gpiod_get_index(dev, STK3310_GPIO, 0);
++	gpio =3D devm_gpiod_get_index(dev, STK3310_GPIO, 0, GPIOD_IN);
  	if (IS_ERR(gpio)) {
- 		dev_err(dev, "ACPI GPIO get index failed\n");
+ 		dev_err(dev, "acpi gpio get index failed\n");
  		return PTR_ERR(gpio);
  	}
 =20
@@ -52,8 +50,8 @@ nt *client)
 -		return ret;
 -
  	ret =3D gpiod_to_irq(gpio);
-=20
  	dev_dbg(dev, "GPIO resource, no:%d irq:%d\n", desc_to_gpio(gpio), ret=
 );
+=20
 --=20
 2.1.4
