@@ -1,71 +1,56 @@
-From: Jun Nie <jun.nie@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: support GPIO for bits pinctrl
-Date: Mon, 6 Jul 2015 17:19:06 +0800
-Message-ID: <CABymUCPJFcdhvy__yGV_sjJQ+Ts9s9mAORaQet9htaqUXAseVQ@mail.gmail.com>
-References: <1434506172-4401-1-git-send-email-jun.nie@linaro.org>
-	<20150617071740.GL2712@atomide.com>
-	<CABymUCPb7ouZ8DVww=d=K87tkS13Qr1CuGs0+Qnb4skD7_0g2g@mail.gmail.com>
-	<20150623101415.GV20628@atomide.com>
-	<CABymUCO-mV-yBrVm8oyNfo_96HTX7qveHKTPK_-TcLvhwQ-GOA@mail.gmail.com>
-	<CABymUCNM1fC1OAnw7nJteC=owX6iKLH1okRpiQuxPvszncY3zw@mail.gmail.com>
-	<20150706090321.GC10644@atomide.com>
+From: "Breana, Tiberiu A" <tiberiu.a.breana@intel.com>
+Subject: RE: [PATCH gpio-for-next 03/10] iio: light: stk3310: use flags
+ argument of devm_gpiod_get
+Date: Mon, 6 Jul 2015 09:35:44 +0000
+Message-ID: <4586F61A4A291F4DA44D32824E7C0F402216D8E5@IRSMSX109.ger.corp.intel.com>
+References: <20150706090759.GS11824@pengutronix.de>
+ <1436173790-29963-3-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:35686 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751215AbbGFJTH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2015 05:19:07 -0400
-Received: by lazt12 with SMTP id t12so1760625laz.2
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2015 02:19:06 -0700 (PDT)
-In-Reply-To: <20150706090321.GC10644@atomide.com>
+Received: from mga09.intel.com ([134.134.136.24]:15338 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753234AbbGFJgN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 6 Jul 2015 05:36:13 -0400
+In-Reply-To: <1436173790-29963-3-git-send-email-u.kleine-koenig@pengutronix.de>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
+To: =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
 
-2015-07-06 17:03 GMT+08:00 Tony Lindgren <tony@atomide.com>:
-> * Jun Nie <jun.nie@linaro.org> [150706 01:43]:
->> 2015-06-23 18:18 GMT+08:00 Jun Nie <jun.nie@linaro.org>:
->> > 2015-06-23 18:14 GMT+08:00 Tony Lindgren <tony@atomide.com>:
->> >> * Jun Nie <jun.nie@linaro.org> [150623 02:56]:
->> >>> 2015-06-17 15:17 GMT+08:00 Tony Lindgren <tony@atomide.com>:
->> >>> > * Jun Nie <jun.nie@linaro.org> [150616 18:58]:
->> >>> >> +             if (pcs->bits_per_mux) {
->> >>> >> +                     int pin_pos, byte_num, num_pins_in_register;
->> >>> >> +
->> >>> >> +                     num_pins_in_register = pcs->width / pcs->bits_per_pin;
->> >>> >> +                     byte_num = (pcs->bits_per_pin * pin) / BITS_PER_BYTE;
->> >>> >> +                     offset = (byte_num / mux_bytes) * mux_bytes;
->> >>> >> +                     pin_pos = pin % num_pins_in_register;
->> >>> >> +                     pin_pos *= pcs->bits_per_pin;
->> >>> >> +                     data = pcs->read(pcs->base + offset) &
->> >>> >> +                             ~(pcs->fmask << pin_pos);
->> >>> >
->> >>> > Should you check the pcs->fmask here too in case some bits are reserved?
->> >>> >
->> >>> Did not catch your idea? Those bits set in fmask are dedicated for one
->> >>> pin mux control and should be clear before set as desired value per my
->> >>> understanding. Do you mean some bits may be reserved and not for any
->> >>> function?
->> >>
->> >> Right, can you please check that we don't try to write to reserved
->> >> bits in the hardawre if the mask is set?
->>
->> > Then I have question that how can I know what bits is for function
->> > mask, what bits are for reserved? Do we have any other value to
->> > indicate it? I did not find it in one register for one pin mux case.
->>
->> Could you help elaborate this? Thanks!
->
-> We can only write to the bits specified in pinctrl-single,function-mask.
->
-I see, you want below mask to make sure gpiofunc value does not exceed
-expected bits though it should be safe if dts data is correct. Right?
-+                       data = pcs->read(pcs->base + offset) &
-+                               ~(pcs->fmask << pin_pos);
-+                       data |= (pcs->fmask & frange->gpiofunc) << pin_pos;
-
-> Regards,
->
-> Tony
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBVd2UgS2xlaW5lLUvDtm5pZyBb
+bWFpbHRvOnUua2xlaW5lLWtvZW5pZ0BwZW5ndXRyb25peC5kZV0NCj4gU2VudDogTW9uZGF5LCBK
+dWx5IDYsIDIwMTUgMTI6MTAgUE0NCj4gVG86IExpbnVzIFdhbGxlaWo7IEFsZXhhbmRyZSBDb3Vy
+Ym90DQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsga2VybmVsQHBlbmd1dHJvbml4
+LmRlOyBCcmVhbmEsIFRpYmVyaXUgQTsNCj4gSm9uYXRoYW4gQ2FtZXJvbjsgSGFydG11dCBLbmFh
+Y2s7IExhcnMtUGV0ZXIgQ2xhdXNlbjsgUGV0ZXIgTWVlcndhbGQ7DQo+IGxpbnV4LWlpb0B2Z2Vy
+Lmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIIGdwaW8tZm9yLW5leHQgMDMvMTBdIGlpbzog
+bGlnaHQ6IHN0azMzMTA6IHVzZSBmbGFncyBhcmd1bWVudCBvZg0KPiBkZXZtX2dwaW9kX2dldA0K
+PiANCj4gU2luY2UgMzliMmJiZTNkNzE1IChncGlvOiBhZGQgZmxhZ3MgYXJndW1lbnQgdG8gZ3Bp
+b2RfZ2V0KigpIGZ1bmN0aW9ucykNCj4gd2hpY2ggYXBwZWFyZWQgaW4gdjMuMTctcmMxLCB0aGUg
+Z3Bpb2RfZ2V0KiBmdW5jdGlvbnMgdGFrZSBhbiBhZGRpdGlvbmFsDQo+IHBhcmFtZXRlciB0aGF0
+IGFsbG93cyB0byBzcGVjaWZ5IGRpcmVjdGlvbiBhbmQgaW5pdGlhbCB2YWx1ZSBmb3Igb3V0cHV0
+Lg0KPiANCj4gU2ltcGxpZnkgZHJpdmVyIGFjY29yZGluZ2x5LiBGdXJ0aGVybW9yZSB0aGlzIGlz
+IG9uZSBjYWxsZXIgbGVzcyB0aGF0IHN0b3BzIHVzDQo+IG1ha2luZyB0aGUgZmxhZ3MgYXJndW1l
+bnQgdG8gZ3Bpb2RfZ2V0KigpIG1hbmRhdG9yeS4NCj4gDQo+IEFja2VkLWJ5OiBKb25hdGhhbiBD
+YW1lcm9uIDxqaWMyM0BrZXJuZWwub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBVd2UgS2xlaW5lLUvD
+tm5pZyA8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPg0KDQorMQ0KDQpSZXZpZXdlZC1i
+eTogVGliZXJpdSBCcmVhbmEgPHRpYmVyaXUuYS5icmVhbmFAaW50ZWwuY29tPg0KDQo+IC0tLQ0K
+PiAgZHJpdmVycy9paW8vbGlnaHQvc3RrMzMxMC5jIHwgNiArLS0tLS0NCj4gIDEgZmlsZSBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKSwgNSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2lpby9saWdodC9zdGszMzEwLmMgYi9kcml2ZXJzL2lpby9saWdodC9zdGszMzEwLmMg
+aW5kZXgNCj4gZmVlNDI5N2Q3YzhmLi44NGM3N2Q0MmEyYzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvaWlvL2xpZ2h0L3N0azMzMTAuYw0KPiArKysgYi9kcml2ZXJzL2lpby9saWdodC9zdGszMzEw
+LmMNCj4gQEAgLTQ4OCwxNiArNDg4LDEyIEBAIHN0YXRpYyBpbnQgc3RrMzMxMF9ncGlvX3Byb2Jl
+KHN0cnVjdCBpMmNfY2xpZW50DQo+ICpjbGllbnQpDQo+ICAJZGV2ID0gJmNsaWVudC0+ZGV2Ow0K
+PiANCj4gIAkvKiBncGlvIGludGVycnVwdCBwaW4gKi8NCj4gLQlncGlvID0gZGV2bV9ncGlvZF9n
+ZXRfaW5kZXgoZGV2LCBTVEszMzEwX0dQSU8sIDApOw0KPiArCWdwaW8gPSBkZXZtX2dwaW9kX2dl
+dF9pbmRleChkZXYsIFNUSzMzMTBfR1BJTywgMCwgR1BJT0RfSU4pOw0KPiAgCWlmIChJU19FUlIo
+Z3BpbykpIHsNCj4gIAkJZGV2X2VycihkZXYsICJhY3BpIGdwaW8gZ2V0IGluZGV4IGZhaWxlZFxu
+Iik7DQo+ICAJCXJldHVybiBQVFJfRVJSKGdwaW8pOw0KPiAgCX0NCj4gDQo+IC0JcmV0ID0gZ3Bp
+b2RfZGlyZWN0aW9uX2lucHV0KGdwaW8pOw0KPiAtCWlmIChyZXQpDQo+IC0JCXJldHVybiByZXQ7
+DQo+IC0NCj4gIAlyZXQgPSBncGlvZF90b19pcnEoZ3Bpbyk7DQo+ICAJZGV2X2RiZyhkZXYsICJH
+UElPIHJlc291cmNlLCBubzolZCBpcnE6JWRcbiIsIGRlc2NfdG9fZ3BpbyhncGlvKSwNCj4gcmV0
+KTsNCj4gDQo+IC0tDQo+IDIuMS40DQoNCg==
