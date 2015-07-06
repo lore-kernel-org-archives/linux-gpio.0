@@ -1,56 +1,57 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] arm: twr-k70f120m: timer driver for Kinetis SoC
-Date: Sun, 5 Jul 2015 09:39:26 -0500
-Message-ID: <CAL_Jsq+r9fNWqD9O8Kz7Tn7oCaiJv7fSjEJ5QNcf+YLO146wPw@mail.gmail.com>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
- <1435667250-28299-5-git-send-email-pawelo@king.net.pl> <2939807.q7WvOoYzDX@wuerfel>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RFC PATCH] pinctrl-single: Use of pinctrl-single for external
+ device over I2C
+Date: Sun, 5 Jul 2015 23:35:32 -0700
+Message-ID: <20150706063532.GB10705@atomide.com>
+References: <1435855992-10312-1-git-send-email-vaibhav.hiremath@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2939807.q7WvOoYzDX@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1435855992-10312-1-git-send-email-vaibhav.hiremath@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 30, 2015 at 3:43 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Tuesday 30 June 2015 14:27:25 Paul Osmialowski wrote:
->
+* Vaibhav Hiremath <vaibhav.hiremath@linaro.org> [150702 09:58]:
+> --- a/drivers/pinctrl/pinctrl-single.c
+> +++ b/drivers/pinctrl/pinctrl-single.c
+>  
+> -static unsigned __maybe_unused pcs_readb(void __iomem *reg)
+> +static unsigned pcs_read(struct regmap *map, unsigned int reg)
+>  {
+> -	return readb(reg);
+> -}
+> +	unsigned int val;
+>  
+> -static unsigned __maybe_unused pcs_readw(void __iomem *reg)
+> -{
+> -	return readw(reg);
+> -}
+> -
+> -static unsigned __maybe_unused pcs_readl(void __iomem *reg)
+> -{
+> -	return readl(reg);
+> -}
+> -
+> -static void __maybe_unused pcs_writeb(unsigned val, void __iomem *reg)
+> -{
+> -	writeb(val, reg);
+> -}
+> +	regmap_read(map, reg, &val);
 
->>  / {
->> +     aliases {
->> +             pit0 = &pit0;
->> +             pit1 = &pit1;
->> +             pit2 = &pit2;
->> +             pit3 = &pit3;
->> +     };
->> +
->>       soc {
->> +             pit@40037000 {
->> +                     compatible = "fsl,kinetis-pit-timer";
->> +                     reg = <0x40037000 0x100>;
->> +                     clocks = <&mcg_pclk_gate 5 23>;
->> +                     #address-cells = <1>;
->> +                     #size-cells = <1>;
->> +                     ranges;
->> +
->> +                     pit0: timer@40037100 {
->> +                             reg = <0x40037100 0x10>;
->> +                             interrupts = <68>;
->> +                             status = "disabled";
->> +                     };
->
-> I don't think it's necessary to have both an alias
-> and a label here. What do you use the alias for?
+Sorry this won't work. Most platforms don't need regmap here, and I
+certainly don't want to use regmap for toggling pins for runtime
+PM because of the extra overhead.
 
-Yes, don't use aliases. If you really need a specific timer to be used
-then there must be some feature it has or doesn't have (e.g. always
-on, output compare pin, specific clock, etc.) Put those those
-properties in DT if that is the case. See OMAP timers for a complex
-example of this.
+It seems you need to stash the regmap pointer to struct pcs_device
+and just the function pointers. As this driver is ioremapping the
+region, we certainly want to keep things using void __iomem * too.
+You can cast that to whatever regmap needs in the wrapper functions
+for regmap. Note that the extra overhead there won't matter as we
+are using regmap mostly for devices over I2C and so on.
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+
+Tony
