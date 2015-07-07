@@ -1,53 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: single: dra7: remove PCS_QUIRK_SHARED_IRQ
-Date: Tue, 7 Jul 2015 00:43:21 -0700
-Message-ID: <20150707074321.GQ10705@atomide.com>
-References: <1436195510-23880-1-git-send-email-grygorii.strashko@ti.com>
- <20150706152549.GL10705@atomide.com>
- <559B7E5C.2010204@ti.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
+Date: Tue, 7 Jul 2015 11:58:00 +0300
+Message-ID: <559B9498.5060405@ti.com>
+References: <20150619170654.GA4937@linutronix.de> <5584547B.9040203@oracle.com> <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com> <20150622070821.GB4156@atomide.com> <559275B9.3040909@ti.com> <5592C5A2.5050809@linutronix.de> <20150701073205.GT4156@atomide.com> <20150701112928.GW4156@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <559B7E5C.2010204@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tero Kristo <t-kristo@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nishanth Menon <nm@ti.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:49444 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755848AbbGGI6U (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 04:58:20 -0400
+In-Reply-To: <20150701112928.GW4156@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, santosh shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Sekhar Nori <nsekhar@ti.com>
 
-* Tero Kristo <t-kristo@ti.com> [150707 00:25]:
-> On 07/06/2015 06:25 PM, Tony Lindgren wrote:
-> >* Grygorii Strashko <grygorii.strashko@ti.com> [150706 08:14]:
-> >>On DRA7 there is one pinctrl domain (dra7_pmx_core) and
-> >>PRCM wake-up IRQ is not shared, so remove quirk.
-> >>
-> >>Cc: Nishanth Menon <nm@ti.com>
-> >>Cc: Tony Lindgren <tony@atomide.com>
-> >>Fixes: 31320beaa3d3 ('pinctrl: single: Add DRA7 pinctrl compatibility')
-> >>Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> >>---
-> >>  drivers/pinctrl/pinctrl-single.c | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >>
-> >>diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> >>index 0b8d480..9b24b343 100644
-> >>--- a/drivers/pinctrl/pinctrl-single.c
-> >>+++ b/drivers/pinctrl/pinctrl-single.c
-> >>@@ -1983,7 +1983,6 @@ static const struct pcs_soc_data pinctrl_single_omap_wkup = {
-> >>  };
-> >>
-> >>  static const struct pcs_soc_data pinctrl_single_dra7 = {
-> >>-	.flags = PCS_QUIRK_SHARED_IRQ,
-> >>  	.irq_enable_mask = (1 << 24),	/* WAKEUPENABLE */
-> >>  	.irq_status_mask = (1 << 25),	/* WAKEUPEVENT */
-> >>  };
-> >
-> >Tero, care to take a look at this one and ack if OK?
-> 
-> Looks fine to me.
-> 
-> Acked-by: Tero Kristo <t-kristo@ti.com>
+Hi Tony, Sebastian,
 
-OK thanks for checking, so from me too:
+On 07/01/2015 02:29 PM, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [150701 00:34]:
+>>
+>> This should be OK for most cases as the GPIO interrupt devices are
+>> typically on some external bus like I2C or GPMC. The hurting case
+>> would be bitbanging GPIO devices, like the CBUS I2C driver.
+>
+> Thinking about it the CBUS I2C driver does not need interrupts
+> for the bitbanging part either :)
+>
+> So I think we can just make it threaded IRQ for GPIO.
+>
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Thanks for your comments, I'll try to do patch to make
+GPIO IRQ threaded (may be as option).
+
+
+-- 
+regards,
+-grygorii
