@@ -1,41 +1,65 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH REPOST] gpio: omap: use raw locks for locking
-Date: Tue, 7 Jul 2015 11:58:00 +0300
-Message-ID: <559B9498.5060405@ti.com>
-References: <20150619170654.GA4937@linutronix.de> <5584547B.9040203@oracle.com> <CABxcv==5Fo-x9CdSu6BYNfBpAS7rp63fHA319J_KvWZZG9q=ng@mail.gmail.com> <20150622070821.GB4156@atomide.com> <559275B9.3040909@ti.com> <5592C5A2.5050809@linutronix.de> <20150701073205.GT4156@atomide.com> <20150701112928.GW4156@atomide.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 1/7] pinctrl: UniPhier: add UniPhier pinctrl core support
+Date: Tue, 07 Jul 2015 11:14:32 +0200
+Message-ID: <1436260472.20057.121.camel@tiscali.nl>
+References: <1436185763-4308-1-git-send-email-yamada.masahiro@socionext.com>
+	 <1436185763-4308-2-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:49444 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755848AbbGGI6U (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 04:58:20 -0400
-In-Reply-To: <20150701112928.GW4156@atomide.com>
+Received: from lb2-smtp-cloud2.xs4all.net ([194.109.24.25]:60421 "EHLO
+	lb2-smtp-cloud2.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756511AbbGGJOp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 05:14:45 -0400
+In-Reply-To: <1436185763-4308-2-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, santosh shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Sekhar Nori <nsekhar@ti.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-Hi Tony, Sebastian,
+(I only comment on 1/7, because it's not useful to repeat one remark
+seven times.)
 
-On 07/01/2015 02:29 PM, Tony Lindgren wrote:
-> * Tony Lindgren <tony@atomide.com> [150701 00:34]:
->>
->> This should be OK for most cases as the GPIO interrupt devices are
->> typically on some external bus like I2C or GPMC. The hurting case
->> would be bitbanging GPIO devices, like the CBUS I2C driver.
->
-> Thinking about it the CBUS I2C driver does not need interrupts
-> for the bitbanging part either :)
->
-> So I think we can just make it threaded IRQ for GPIO.
->
+On ma, 2015-07-06 at 21:29 +0900, Masahiro Yamada wrote:
+> --- /dev/null
+> +++ b/drivers/pinctrl/uniphier/Kconfig
 
-Thanks for your comments, I'll try to do patch to make
-GPIO IRQ threaded (may be as option).
+> +config PINCTRL_UNIPHIER_CORE
+> +	bool
+> +	select PINMUX
+> +	select GENERIC_PINCONF
+
+> --- /dev/null
+> +++ b/drivers/pinctrl/uniphier/Makefile
+
+> +obj-$(CONFIG_PINCTRL_UNIPHIER_CORE)		+= pinctrl-uniphier-core.o
+
+> --- /dev/null
+> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
+
+> +#include <linux/module.h>
+
+> +int uniphier_pinctrl_probe(struct platform_device *pdev,
+> +			   struct pinctrl_desc *desc,
+> +			   struct uniphier_pinctrl_socdata *socdata)
+> +{
+> +	[...]
+
+> +	desc->owner = THIS_MODULE;
+
+> +	[...]
+> +}
+
+This series adds a number of bool Kconfig symbols. So, as far as I can
+see, the code it adds can only be built-in.
+
+This series also uses a number of module specific constructs (ie,
+THIS_MODULE, MODULE_DEVICE_TABLE, module_exit, MODULE_AUTHOR,
+MODULE_DESCRIPTION, and MODULE_LICENSE). So I wonder whether it was
+intended to make these new Kconfig symbols tristate instead?
+
+Thanks,
 
 
--- 
-regards,
--grygorii
+Paul Bolle
