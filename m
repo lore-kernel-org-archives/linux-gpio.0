@@ -1,73 +1,255 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
-Date: Tue, 07 Jul 2015 20:39:42 +0300
-Message-ID: <1756227.uoeezymTmX@avalon>
-References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com> <2925145.E3lLFJfWJW@wasted.cogentembedded.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc lpsr
+Date: Tue, 7 Jul 2015 14:02:05 -0500
+Message-ID: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:58041 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932446AbbGGRje (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 13:39:34 -0400
-In-Reply-To: <2925145.E3lLFJfWJW@wasted.cogentembedded.com>
+Received: from mail-bn1bon0118.outbound.protection.outlook.com ([157.56.111.118]:18882
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S932789AbbGGTDF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 7 Jul 2015 15:03:05 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-Hi Sergei,
+* Extend pinctrl-imx driver to support iomux lpsr conntroller,
+* iMX7D has two iomuxc controllers, iomuxc controller similar as
+  previous iMX SoC generation and iomuxc-lpsr which provides
+  low power state rentetion capabilities on gpios that are part of
+  iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
+* Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
+  properly configure iomuxc/iomuxc-lpsr settings.
 
-Thank you for the patch.
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 
-On Friday 26 June 2015 01:40:56 Sergei Shtylyov wrote:
-> The PFC driver causes the kernel to hang on the R-Car gen2 SoC based  boards
-> when the CPU_ALL_PORT() macro is fixed to reflect the reality, i.e. when
-> the GPIO space becomes actually sparse.  This happens because the
-> _GP_GPIO() macro includes  an indexed initializer which causes the "holes"
-> (array entries filled with all 0s) between the groups  of the existing
-> GPIOs; and the driver can't cope with that.  There seems to  be no reason
-> to use the indexed initializer, so we can remove the index specifier and so
-> avoid the "holes".
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+* Change from v1 to v2:
+  - Add suggested comment for input select register shared between
+    iomuxc-lpsr and normal iomuxc controller.
+  - Use IOMUXC_LPSR_MASK to extract pad group id and aling pin_id to
+    16 bit representation.
+* Change from v2 to v3
+  - Use devm_ioremap_resource instead of of_iomap to get iomuxc-lpsr
+    base register address.
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 72 ++++++++++++++++++++++-----------
+ drivers/pinctrl/freescale/pinctrl-imx.h |  7 +++-
+ 2 files changed, 55 insertions(+), 24 deletions(-)
 
-I initially thought that this patch looked too good to be true. The fix is so 
-simple, there must have been a reason why _GP_GPIO used indexed initializers. 
-I then tried to find that reason and failed.
-
-I still feel that this is too simple to be true, but I have no objective 
-reason to push back, so
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-for the whole series, provided you have tested it, and paid attention to pins 
-after the holes.
-
-> ---
-> Changes in version 3:
-> - new patch.
-> 
->  drivers/pinctrl/sh-pfc/sh_pfc.h |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
-> ===================================================================
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -224,7 +224,7 @@ struct sh_pfc_soc_info {
-> 
->  /* PINMUX_GPIO_GP_ALL - Expand to a list of sh_pfc_pin entries */
->  #define _GP_GPIO(bank, _pin, _name, sfx)				\
-> -	[(bank * 32) + _pin] = {					\
-> +	{								\
->  		.pin = (bank * 32) + _pin,				\
->  		.name = __stringify(_name),				\
->  		.enum_id = _name##_DATA,				\
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index d7b98ba..aef4ca3 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -1,7 +1,7 @@
+ /*
+  * Core driver for the imx pin controller
+  *
+- * Copyright (C) 2012 Freescale Semiconductor, Inc.
++ * Copyright (C) 2012-2015 Freescale Semiconductor, Inc.
+  * Copyright (C) 2012 Linaro Ltd.
+  *
+  * Author: Dong Aisheng <dong.aisheng@linaro.org>
+@@ -38,7 +38,6 @@
+ struct imx_pinctrl {
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctl;
+-	void __iomem *base;
+ 	const struct imx_pinctrl_soc_info *info;
+ };
+ 
+@@ -212,12 +211,12 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 
+ 		if (info->flags & SHARE_MUX_CONF_REG) {
+ 			u32 reg;
+-			reg = readl(ipctl->base + pin_reg->mux_reg);
++			reg = readl(pin_reg->base + pin_reg->mux_reg);
+ 			reg &= ~(0x7 << 20);
+ 			reg |= (pin->mux_mode << 20);
+-			writel(reg, ipctl->base + pin_reg->mux_reg);
++			writel(reg, pin_reg->base + pin_reg->mux_reg);
+ 		} else {
+-			writel(pin->mux_mode, ipctl->base + pin_reg->mux_reg);
++			writel(pin->mux_mode, pin_reg->base + pin_reg->mux_reg);
+ 		}
+ 		dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%x\n",
+ 			pin_reg->mux_reg, pin->mux_mode);
+@@ -245,16 +244,22 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 			 * The input_reg[i] here is actually some IOMUXC general
+ 			 * purpose register, not regular select input register.
+ 			 */
+-			val = readl(ipctl->base + pin->input_reg);
++			val = readl(pin_reg->base + pin->input_reg);
+ 			val &= ~mask;
+ 			val |= select << shift;
+-			writel(val, ipctl->base + pin->input_reg);
++			writel(val, pin_reg->base + pin->input_reg);
+ 		} else if (pin->input_reg) {
+ 			/*
+ 			 * Regular select input register can never be at offset
+ 			 * 0, and we only print register value for regular case.
+ 			 */
+-			writel(pin->input_val, ipctl->base + pin->input_reg);
++			if (info->flags & IOMUXC_LPSR_SUPPORT &&
++					IOMUXC_LPSR_MASK(pin->input_val))
++			/* iomuxc-lpsr select input register shared with normal iomuxc */
++				writel(pin->input_val, info->base + pin->input_reg);
++			else
++				writel(pin->input_val, pin_reg->base + pin->input_reg);
++
+ 			dev_dbg(ipctl->dev,
+ 				"==>select_input: offset 0x%x val 0x%x\n",
+ 				pin->input_reg, pin->input_val);
+@@ -326,10 +331,10 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	return -EINVAL;
+ 
+ mux_pin:
+-	reg = readl(ipctl->base + pin_reg->mux_reg);
++	reg = readl(pin_reg->base + pin_reg->mux_reg);
+ 	reg &= ~(0x7 << 20);
+ 	reg |= imx_pin->config;
+-	writel(reg, ipctl->base + pin_reg->mux_reg);
++	writel(reg, pin_reg->base + pin_reg->mux_reg);
+ 
+ 	return 0;
+ }
+@@ -354,12 +359,12 @@ static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 
+ 	/* IBE always enabled allows us to read the value "on the wire" */
+-	reg = readl(ipctl->base + pin_reg->mux_reg);
++	reg = readl(pin_reg->base + pin_reg->mux_reg);
+ 	if (input)
+ 		reg &= ~0x2;
+ 	else
+ 		reg |= 0x2;
+-	writel(reg, ipctl->base + pin_reg->mux_reg);
++	writel(reg, pin_reg->base + pin_reg->mux_reg);
+ 
+ 	return 0;
+ }
+@@ -386,7 +391,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
+ 		return -EINVAL;
+ 	}
+ 
+-	*config = readl(ipctl->base + pin_reg->conf_reg);
++	*config = readl(pin_reg->base + pin_reg->conf_reg);
+ 
+ 	if (info->flags & SHARE_MUX_CONF_REG)
+ 		*config &= 0xffff;
+@@ -415,12 +420,12 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
+ 	for (i = 0; i < num_configs; i++) {
+ 		if (info->flags & SHARE_MUX_CONF_REG) {
+ 			u32 reg;
+-			reg = readl(ipctl->base + pin_reg->conf_reg);
++			reg = readl(pin_reg->base + pin_reg->conf_reg);
+ 			reg &= ~0xffff;
+ 			reg |= configs[i];
+-			writel(reg, ipctl->base + pin_reg->conf_reg);
++			writel(reg, pin_reg->base + pin_reg->conf_reg);
+ 		} else {
+-			writel(configs[i], ipctl->base + pin_reg->conf_reg);
++			writel(configs[i], pin_reg->base + pin_reg->conf_reg);
+ 		}
+ 		dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%lx\n",
+ 			pin_reg->conf_reg, configs[i]);
+@@ -442,7 +447,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
+ 		return;
+ 	}
+ 
+-	config = readl(ipctl->base + pin_reg->conf_reg);
++	config = readl(pin_reg->base + pin_reg->conf_reg);
+ 	seq_printf(s, "0x%lx", config);
+ }
+ 
+@@ -551,14 +556,25 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+ 		}
+ 
+ 		pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
++
++		pin->input_reg = be32_to_cpu(*list++);
++		pin->mux_mode = be32_to_cpu(*list++);
++		pin->input_val = be32_to_cpu(*list++);
++
++		if (info->flags & IOMUXC_LPSR_SUPPORT &&
++			IOMUXC_LPSR_MASK(pin->input_val))
++				pin_id = IOMUXC_LPSR_MASK(pin->input_val);
++
+ 		pin_reg = &info->pin_regs[pin_id];
+ 		pin->pin = pin_id;
+ 		grp->pin_ids[i] = pin_id;
+ 		pin_reg->mux_reg = mux_reg;
+ 		pin_reg->conf_reg = conf_reg;
+-		pin->input_reg = be32_to_cpu(*list++);
+-		pin->mux_mode = be32_to_cpu(*list++);
+-		pin->input_val = be32_to_cpu(*list++);
++		pin_reg->base = info->base;
++
++		if (info->flags & IOMUXC_LPSR_SUPPORT &&
++			IOMUXC_LPSR_MASK(pin->input_val))
++				pin_reg->base = info->base_lpsr;
+ 
+ 		/* SION bit is in mux register */
+ 		config = be32_to_cpu(*list++);
+@@ -709,9 +725,19 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ipctl->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(ipctl->base))
+-		return PTR_ERR(ipctl->base);
++	info->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(info->base))
++		return PTR_ERR(info->base);
++
++	if (info->flags & IOMUXC_LPSR_SUPPORT) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++		info->base_lpsr = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(info->base_lpsr)) {
++			dev_err(&pdev->dev,
++				"iomuxc-lpsr base address not found\n");
++			return PTR_ERR(info->base_lpsr);
++		}
++	}
+ 
+ 	imx_pinctrl_desc.name = dev_name(&pdev->dev);
+ 	imx_pinctrl_desc.pins = info->pins;
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 49e55d3..5e0f2e0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -1,7 +1,7 @@
+ /*
+  * IMX pinmux core definitions
+  *
+- * Copyright (C) 2012 Freescale Semiconductor, Inc.
++ * Copyright (C) 2012-2015 Freescale Semiconductor, Inc.
+  * Copyright (C) 2012 Linaro Ltd.
+  *
+  * Author: Dong Aisheng <dong.aisheng@linaro.org>
+@@ -69,6 +69,7 @@ struct imx_pmx_func {
+ struct imx_pin_reg {
+ 	s16 mux_reg;
+ 	s16 conf_reg;
++	void __iomem *base;
+ };
+ 
+ struct imx_pinctrl_soc_info {
+@@ -81,9 +82,13 @@ struct imx_pinctrl_soc_info {
+ 	struct imx_pmx_func *functions;
+ 	unsigned int nfunctions;
+ 	unsigned int flags;
++	void __iomem *base;
++	void __iomem *base_lpsr;
+ };
+ 
+ #define SHARE_MUX_CONF_REG	0x1
++#define IOMUXC_LPSR_SUPPORT 	0x2
++#define IOMUXC_LPSR_MASK(id)	((id >> 0x10) & 0xffff)
+ 
+ #define NO_MUX		0x0
+ #define NO_PAD		0x0
 -- 
-Regards,
-
-Laurent Pinchart
+2.1.4
 
