@@ -1,284 +1,173 @@
-From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH 3/4][v2] ARM: imx: pinctrl-imx: imx7d: add support for
- iomuxc lpsr
-Date: Mon, 6 Jul 2015 22:02:48 -0500
-Message-ID: <CAHrpEqQJk+n=FwF_G-ugXmRtboyD2uc9LcAU9_2r2S+ra5brXg@mail.gmail.com>
-References: <1436223546-6333-1-git-send-email-aalonso@freescale.com>
-	<1436223546-6333-3-git-send-email-aalonso@freescale.com>
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: Fix warning when HW interrupts are
+ rescheduled by the softirq tasklet
+Date: Tue, 7 Jul 2015 08:29:16 +0200
+Message-ID: <CAH9NwWefBmpMua3oxjDOmMuEjRkutFPdAfVGCm8FtwjQi4Rpgg@mail.gmail.com>
+References: <1410251533-4990-1-git-send-email-LW@KARO-electronics.de>
+ <CACRpkdbTXtx+EU4Dw1fxeThRUG4s5XvcJnAJ9PJd8i4KKGC65A@mail.gmail.com>
+ <5421670D.10200@ti.com> <CACRpkdYCsdMcJY7Y0gK4_zPxiWRFKkzi2TaZUi1Vn7Kp0Cbgzg@mail.gmail.com>
+ <5422B8F0.9060803@ti.com> <CACRpkdYtjQC_hCiqSB7fidct6CjJ5kMbj0PegW3MEuouBajv+g@mail.gmail.com>
+ <54244243.3090904@ti.com> <CACRpkdahDFpP_3eJuAweYua4Cp2iJAd1BDUQHJ90O_bU3cuheg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34900 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751524AbbGGDCt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Jul 2015 23:02:49 -0400
-In-Reply-To: <1436223546-6333-3-git-send-email-aalonso@freescale.com>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:32902 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751384AbbGGG3h (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 02:29:37 -0400
+In-Reply-To: <CACRpkdahDFpP_3eJuAweYua4Cp2iJAd1BDUQHJ90O_bU3cuheg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Adrian Alonso <aalonso@freescale.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Anson.Huang@freescale.com, "Frank.Li@freescale.com" <Frank.Li@freescale.com>, yibin.gong@freescale.com, nitin.garg@freescale.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, =?UTF-8?Q?Lothar_Wa=C3=9Fmann?= <LW@karo-electronics.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, Jul 6, 2015 at 5:59 PM, Adrian Alonso <aalonso@freescale.com> wrote:
-> * Extend pinctrl-imx driver to support iomux lpsr conntroller,
-> * iMX7D has two iomuxc controllers, iomuxc controller similar as
->   previous iMX SoC generation and iomuxc-lpsr which provides
->   low power state rentetion capabilities on gpios that are part of
->   iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
-> * Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
->   properly configure iomuxc/iomuxc-lpsr settings.
-> * Version 2:
->   - Add suggested comment for input select register shared between
->     iomuxc-lpsr and normal iomuxc controller.
->   - Use IOMUXC_LPSR_MASK to extract pad group id and aling pin_id to
->     16 bit representation.
->
-> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
-> ---
+Hi all
 
-Change log should be here
+2014-09-26 11:07 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Sep 25, 2014 at 6:26 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+>> On 09/25/2014 11:07 AM, Linus Walleij wrote:
+>>> On Wed, Sep 24, 2014 at 2:28 PM, Grygorii Strashko
+>>> <grygorii.strashko@ti.com> wrote:
+>>>> On 09/24/2014 02:17 PM, Linus Walleij wrote:
+>>>
+>>>>> So PCA cannot use gpiochip_set_chained_irqchip()?
+>>>>
+>>>> Yes. It can't - pca is i2c device.
+>>>
+>>> ? I don't get this statement.
+>>>
+>>> Why does the fact that it is an I2C device matter?
+>>> We have several devices that are in fact on top of
+>>> I2C (albeit as MFD cells) like gpio-tc3589x.c.
+>>
+>> gpio-tc3589x.c doesn't call gpiochip_set_chained_irqchip()
+>
+> Ah yeah you're right of course. I considered adding a separate
+> registration function for the sleeping handlers, like
+> gpiochip_set_threaded_irqchip() that would handle
+> setting up the nested case.
+>
+>>> Yes, but the .map function isn't called until a client
+>>> wants to use an IRQ. And that won't happen until after
+>>> we exit the whole .probe() function.
+>>
+>> .map function is called from irq_create_mapping() which,
+>> in turn, can be called as from irq_domain_add_simple() -
+>> as result .map will be always called from gpiochip_irqchip_add().
+>
+> Ah yeah you're right, I was just wrong here :-/
+>
+>>> Well it happens in one single driver, and was done by me.
+>>> Maybe I should either disallow that, as that means we're adding
+>>> multiple parents (which is what you want, right?) or actually
+>>> implement it in a way so that multiple parents can be handled
+>>> by the helpers, by adding the parents to a list or something.
+>>
+>> Sorry, but It seems the simplest way is to allow drivers to manage
+>> parent IRQs for the complex cases. So, I vote for custom .map()
+>> callback, but It could be not too simple to implement it, because
+>> private driver data need to be passed as parameter to this callback
+>> somehow.
+>
+> Yeah. Well what I'm thinking as subsystem maintainer, is that
+> when I added the generic GPIOlib irqchip helpers we managed to
+> smoke out a large:ish set of subtle bugs that different drivers
+> had created independently of each other.
+>
+> So centralizing code is very important if at all possible to bring
+> down the maintainer burden.
+>
+> So for that reason I'm looking a second and a third time at these
+> things before going ahead with custom code in drivers...
+>
+>> === Simple one - driver need to set parent_irq before adding gpiochip ===
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index 8aa84d5..292840b 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -447,8 +447,11 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+>>         irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
+>>         irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
+>>         /* Chips that can sleep need nested thread handlers */
+>> -       if (chip->can_sleep)
+>> +       if (chip->can_sleep) {
+>>                 irq_set_nested_thread(irq, 1);
+>> +               if (chip->parent_irq)
+>> +                       irq_set_parent(irq, chip->parent_irq);
+>> +       }
+>
+> Yeah I need to think of something like this...
+>
 
- * Version 2:
-   - Add suggested comment for input select register shared between
-     iomuxc-lpsr and normal iomuxc controller.
-   - Use IOMUXC_LPSR_MASK to extract pad group id and aling pin_id to
-     16 bit representation.
+I did run into exact the same situation with a 4.1.1 kernel :)
 
->  drivers/pinctrl/freescale/pinctrl-imx.c | 73 ++++++++++++++++++++++-----------
->  drivers/pinctrl/freescale/pinctrl-imx.h |  7 +++-
->  2 files changed, 56 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index d7b98ba..8de1790 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -1,7 +1,7 @@
->  /*
->   * Core driver for the imx pin controller
->   *
-> - * Copyright (C) 2012 Freescale Semiconductor, Inc.
-> + * Copyright (C) 2012-2015 Freescale Semiconductor, Inc.
->   * Copyright (C) 2012 Linaro Ltd.
->   *
->   * Author: Dong Aisheng <dong.aisheng@linaro.org>
-> @@ -18,6 +18,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_address.h>
->  #include <linux/pinctrl/machine.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/pinctrl/pinctrl.h>
-> @@ -38,7 +39,6 @@
->  struct imx_pinctrl {
->         struct device *dev;
->         struct pinctrl_dev *pctl;
-> -       void __iomem *base;
->         const struct imx_pinctrl_soc_info *info;
->  };
->
-> @@ -212,12 +212,12 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
->
->                 if (info->flags & SHARE_MUX_CONF_REG) {
->                         u32 reg;
-> -                       reg = readl(ipctl->base + pin_reg->mux_reg);
-> +                       reg = readl(pin_reg->base + pin_reg->mux_reg);
->                         reg &= ~(0x7 << 20);
->                         reg |= (pin->mux_mode << 20);
-> -                       writel(reg, ipctl->base + pin_reg->mux_reg);
-> +                       writel(reg, pin_reg->base + pin_reg->mux_reg);
->                 } else {
-> -                       writel(pin->mux_mode, ipctl->base + pin_reg->mux_reg);
-> +                       writel(pin->mux_mode, pin_reg->base + pin_reg->mux_reg);
->                 }
->                 dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%x\n",
->                         pin_reg->mux_reg, pin->mux_mode);
-> @@ -245,16 +245,22 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
->                          * The input_reg[i] here is actually some IOMUXC general
->                          * purpose register, not regular select input register.
->                          */
-> -                       val = readl(ipctl->base + pin->input_reg);
-> +                       val = readl(pin_reg->base + pin->input_reg);
->                         val &= ~mask;
->                         val |= select << shift;
-> -                       writel(val, ipctl->base + pin->input_reg);
-> +                       writel(val, pin_reg->base + pin->input_reg);
->                 } else if (pin->input_reg) {
->                         /*
->                          * Regular select input register can never be at offset
->                          * 0, and we only print register value for regular case.
->                          */
-> -                       writel(pin->input_val, ipctl->base + pin->input_reg);
-> +                       if (info->flags & IOMUXC_LPSR_SUPPORT &&
-> +                                       IOMUXC_LPSR_MASK(pin->input_val))
-> +                       /* iomuxc-lpsr select input register shared with normal iomuxc */
-> +                               writel(pin->input_val, info->base + pin->input_reg);
-> +                       else
-> +                               writel(pin->input_val, pin_reg->base + pin->input_reg);
-> +
->                         dev_dbg(ipctl->dev,
->                                 "==>select_input: offset 0x%x val 0x%x\n",
->                                 pin->input_reg, pin->input_val);
-> @@ -326,10 +332,10 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
->         return -EINVAL;
->
->  mux_pin:
-> -       reg = readl(ipctl->base + pin_reg->mux_reg);
-> +       reg = readl(pin_reg->base + pin_reg->mux_reg);
->         reg &= ~(0x7 << 20);
->         reg |= imx_pin->config;
-> -       writel(reg, ipctl->base + pin_reg->mux_reg);
-> +       writel(reg, pin_reg->base + pin_reg->mux_reg);
->
->         return 0;
->  }
-> @@ -354,12 +360,12 @@ static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
->                 return -EINVAL;
->
->         /* IBE always enabled allows us to read the value "on the wire" */
-> -       reg = readl(ipctl->base + pin_reg->mux_reg);
-> +       reg = readl(pin_reg->base + pin_reg->mux_reg);
->         if (input)
->                 reg &= ~0x2;
->         else
->                 reg |= 0x2;
-> -       writel(reg, ipctl->base + pin_reg->mux_reg);
-> +       writel(reg, pin_reg->base + pin_reg->mux_reg);
->
->         return 0;
->  }
-> @@ -386,7 +392,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
->                 return -EINVAL;
->         }
->
-> -       *config = readl(ipctl->base + pin_reg->conf_reg);
-> +       *config = readl(pin_reg->base + pin_reg->conf_reg);
->
->         if (info->flags & SHARE_MUX_CONF_REG)
->                 *config &= 0xffff;
-> @@ -415,12 +421,12 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
->         for (i = 0; i < num_configs; i++) {
->                 if (info->flags & SHARE_MUX_CONF_REG) {
->                         u32 reg;
-> -                       reg = readl(ipctl->base + pin_reg->conf_reg);
-> +                       reg = readl(pin_reg->base + pin_reg->conf_reg);
->                         reg &= ~0xffff;
->                         reg |= configs[i];
-> -                       writel(reg, ipctl->base + pin_reg->conf_reg);
-> +                       writel(reg, pin_reg->base + pin_reg->conf_reg);
->                 } else {
-> -                       writel(configs[i], ipctl->base + pin_reg->conf_reg);
-> +                       writel(configs[i], pin_reg->base + pin_reg->conf_reg);
->                 }
->                 dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%lx\n",
->                         pin_reg->conf_reg, configs[i]);
-> @@ -442,7 +448,7 @@ static void imx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
->                 return;
->         }
->
-> -       config = readl(ipctl->base + pin_reg->conf_reg);
-> +       config = readl(pin_reg->base + pin_reg->conf_reg);
->         seq_printf(s, "0x%lx", config);
->  }
->
-> @@ -551,14 +557,25 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
->                 }
->
->                 pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
-> +
-> +               pin->input_reg = be32_to_cpu(*list++);
-> +               pin->mux_mode = be32_to_cpu(*list++);
-> +               pin->input_val = be32_to_cpu(*list++);
-> +
-> +               if (info->flags & IOMUXC_LPSR_SUPPORT &&
-> +                       IOMUXC_LPSR_MASK(pin->input_val))
-> +                               pin_id = IOMUXC_LPSR_MASK(pin->input_val);
-> +
->                 pin_reg = &info->pin_regs[pin_id];
->                 pin->pin = pin_id;
->                 grp->pin_ids[i] = pin_id;
->                 pin_reg->mux_reg = mux_reg;
->                 pin_reg->conf_reg = conf_reg;
-> -               pin->input_reg = be32_to_cpu(*list++);
-> -               pin->mux_mode = be32_to_cpu(*list++);
-> -               pin->input_val = be32_to_cpu(*list++);
-> +               pin_reg->base = info->base;
-> +
-> +               if (info->flags & IOMUXC_LPSR_SUPPORT &&
-> +                       IOMUXC_LPSR_MASK(pin->input_val))
-> +                               pin_reg->base = info->base_lpsr;
->
->                 /* SION bit is in mux register */
->                 config = be32_to_cpu(*list++);
-> @@ -683,6 +700,7 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
->  int imx_pinctrl_probe(struct platform_device *pdev,
->                       struct imx_pinctrl_soc_info *info)
->  {
-> +       struct device_node *dev_np = pdev->dev.of_node;
->         struct imx_pinctrl *ipctl;
->         struct resource *res;
->         int ret, i;
-> @@ -709,9 +727,18 @@ int imx_pinctrl_probe(struct platform_device *pdev,
->         }
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       ipctl->base = devm_ioremap_resource(&pdev->dev, res);
-> -       if (IS_ERR(ipctl->base))
-> -               return PTR_ERR(ipctl->base);
-> +       info->base = devm_ioremap_resource(&pdev->dev, res);
-> +       if (IS_ERR(info->base))
-> +               return PTR_ERR(info->base);
-> +
-> +       if (info->flags & IOMUXC_LPSR_SUPPORT) {
-> +               info->base_lpsr = of_iomap(dev_np, 1);
+[  312.863047] ------------[ cut here ]------------
+[  312.867681] WARNING: CPU: 1 PID: 12 at kernel/irq/manage.c:696
+irq_nested_primary_handler+0x30/0x38()
+[  312.876901] Primary handler called for nested irq 301
+[  312.881953] Modules linked in: uinput ipv6 smsc95xx usbnet mii
+imx2_wdt etnaviv(C) matrix_keypad matrix_keymap ar1021_i2c
+[  312.893067] CPU: 1 PID: 12 Comm: ksoftirqd/1 Tainted: G        WC
+   4.1.1 #9
+[  312.900378] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[  312.906906] Backtrace:
+[  312.909377] [<c0013298>] (dump_backtrace) from [<c0013488>]
+(show_stack+0x20/0x24)
+[  312.916947]  r6:00000009 r5:ffffffff r4:00000000 r3:dc8ba301
+[  312.922673] [<c0013468>] (show_stack) from [<c05743c4>]
+(dump_stack+0x70/0xc0)
+[  312.929924] [<c0574354>] (dump_stack) from [<c002b7b8>]
+(warn_slowpath_common+0x88/0xc0)
+[  312.938029]  r5:000002b8 r4:00000000
+[  312.941678] [<c002b730>] (warn_slowpath_common) from [<c002b8ac>]
+(warn_slowpath_fmt+0x40/0x48)
+[  312.950391]  r8:00000000 r7:c07b1314 r6:0000012d r5:eea07720 r4:c3048840
+[  312.957233] [<c002b870>] (warn_slowpath_fmt) from [<c0075798>]
+(irq_nested_primary_handler+0x30/0x38)
+[  312.966467]  r3:0000012d r2:c06b9128
+[  312.970113] [<c0075768>] (irq_nested_primary_handler) from
+[<c0075200>] (handle_irq_event_percpu+0x70/0x2d0)
+[  312.979967] [<c0075190>] (handle_irq_event_percpu) from
+[<c00754ac>] (handle_irq_event+0x4c/0x6c)
+[  312.988854]  r10:00000002 r9:00000018 r8:00000000 r7:c07b1314
+r6:c3048840 r5:eea07720
+[  312.996812]  r4:eea076c0
+[  312.999395] [<c0075460>] (handle_irq_event) from [<c0078204>]
+(handle_simple_irq+0xa4/0xc8)
+[  313.007760]  r6:c07c5404 r5:eea07720 r4:eea076c0 r3:00000003
+[  313.013536] [<c0078160>] (handle_simple_irq) from [<c0077cd4>]
+(resend_irqs+0x50/0x7c)
+[  313.021468]  r5:c07c5404 r4:0000012d
+[  313.025119] [<c0077c84>] (resend_irqs) from [<c002f99c>]
+(tasklet_action+0x94/0x140)
+[  313.032877]  r6:00000000 r5:c07c5444 r4:c07c5440 r3:c0077c84
+[  313.038655] [<c002f908>] (tasklet_action) from [<c002eea8>]
+(__do_softirq+0xa0/0x3c8)
+[  313.046500]  r8:c07c1908 r7:00000006 r6:00000001 r5:00000040
+r4:c07ba098 r3:c002f908
+[  313.054387] [<c002ee08>] (__do_softirq) from [<c002f208>]
+(run_ksoftirqd+0x38/0x54)
+[  313.062058]  r10:00000002 r9:00000000 r8:c07c1908 r7:00000000
+r6:00000001 r5:00000001
+[  313.070017]  r4:ee893980
+[  313.072605] [<c002f1d0>] (run_ksoftirqd) from [<c004b1e4>]
+(smpboot_thread_fn+0x1f8/0x2f0)
+[  313.080906] [<c004afec>] (smpboot_thread_fn) from [<c0047744>]
+(kthread+0xe8/0x104)
+[  313.088578]  r10:00000000 r8:00000000 r7:c004afec r6:ee893980
+r5:00000000 r4:ee893a40
+[  313.096558] [<c004765c>] (kthread) from [<c000fac8>]
+(ret_from_fork+0x14/0x2c)
+[  313.103796]  r7:00000000 r6:00000000 r5:c004765c r4:ee893a40
+[  313.109560] ---[ end trace 96052cda48865769 ]---
 
-Can you use ?
-           res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-           info->base_lpsr = evm_ioremap_resource(&pdev->dev, res);
 
-> +               if (IS_ERR(info->base_lpsr)) {
-> +                       dev_err(&pdev->dev,
-> +                               "iomuxc-lpsr base address not found\n");
-> +                       return PTR_ERR(info->base_lpsr);
-> +               }
-> +       }
->
->         imx_pinctrl_desc.name = dev_name(&pdev->dev);
->         imx_pinctrl_desc.pins = info->pins;
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
-> index 49e55d3..5e0f2e0 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.h
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-> @@ -1,7 +1,7 @@
->  /*
->   * IMX pinmux core definitions
->   *
-> - * Copyright (C) 2012 Freescale Semiconductor, Inc.
-> + * Copyright (C) 2012-2015 Freescale Semiconductor, Inc.
->   * Copyright (C) 2012 Linaro Ltd.
->   *
->   * Author: Dong Aisheng <dong.aisheng@linaro.org>
-> @@ -69,6 +69,7 @@ struct imx_pmx_func {
->  struct imx_pin_reg {
->         s16 mux_reg;
->         s16 conf_reg;
-> +       void __iomem *base;
->  };
->
->  struct imx_pinctrl_soc_info {
-> @@ -81,9 +82,13 @@ struct imx_pinctrl_soc_info {
->         struct imx_pmx_func *functions;
->         unsigned int nfunctions;
->         unsigned int flags;
-> +       void __iomem *base;
-> +       void __iomem *base_lpsr;
->  };
->
->  #define SHARE_MUX_CONF_REG     0x1
-> +#define IOMUXC_LPSR_SUPPORT    0x2
-> +#define IOMUXC_LPSR_MASK(id)   ((id >> 0x10) & 0xffff)
->
->  #define NO_MUX         0x0
->  #define NO_PAD         0x0
-> --
-> 2.1.4
->
+Linus, what is the state of the your last thinking about this topic?
+
+greets
+--
+Christian Gmeiner, MSc
+
+https://soundcloud.com/christian-gmeiner
