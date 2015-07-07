@@ -1,39 +1,39 @@
-From: Laurent Navet <laurent.navet@gmail.com>
-Subject: [PATCH] gpiolib: remove unneeded assignation
-Date: Tue,  7 Jul 2015 22:22:15 +0200
-Message-ID: <1436300535-1230-1-git-send-email-laurent.navet@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:33391 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932603AbbGGUOn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Jul 2015 16:14:43 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v3 0/3] Remove non-existing GPIO pins for R8A7790/1
+Date: Tue, 07 Jul 2015 23:58:49 +0300
+Message-ID: <4071361.aKboP8jfz3@avalon>
+References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com> <558DBB45.3020507@cogentembedded.com> <CACRpkdZNqkoz9xSikCgKdp3LGgQnb4BRcOuF0nnc1rd49aS6xQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZNqkoz9xSikCgKdp3LGgQnb4BRcOuF0nnc1rd49aS6xQ@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Navet <laurent.navet@gmail.com>
 
-ret is assigned value from of_property_read_string_index but is
-overwritten before being used so remove it.
-Also fix coverity CID 1309759
+Hi Linus,
 
-Signed-off-by: Laurent Navet <laurent.navet@gmail.com>
----
- drivers/gpio/gpiolib-of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Monday 29 June 2015 12:43:09 Linus Walleij wrote:
+> On Fri, Jun 26, 2015 at 10:51 PM, Sergei Shtylyov wrote:
+> > On 06/26/2015 01:39 AM, Sergei Shtylyov wrote:
+> >> Here's the set of 3 patches against the 'fixes' branch of Linus
+> >> Walleij's 'linux-pinctrl.git' repo. Here we eliminate the pin array
+> >> "holes" on R-Car SoCs and then remove unused GPIO pins for R8A7790/1.
+> >> 
+> >> [1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
+> >> 
+> > Note that this patch is necessary for the R8A7794 driver (already in
+> > Linus' tree to work correctly.
+> 
+> Laurent is it OK to apply these three for fixes?
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6c67c6..346da01 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -365,7 +365,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 
- 		if (pinspec.args[2]) {
- 			if (group_names) {
--				ret = of_property_read_string_index(np,
-+				of_property_read_string_index(np,
- 						group_names_propname,
- 						index, &name);
- 				if (strlen(name)) {
+You can apply 1/3 as a v4.2-rc fix, as pfc-r8a7794 merged in v4.2-rc1 is 
+broken without it. I would prefer delaying 2/3 and 3/3 to v4.3.
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
 
