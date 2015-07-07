@@ -1,71 +1,62 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v4 7/8] ARM: shmobile: r8a7790: Set maximum frequencies
- for SDHI clocks
-Date: Tue, 7 Jul 2015 09:39:52 +0900
-Message-ID: <20150707003949.GE13326@verge.net.au>
-References: <1435683177.23818.60.camel@codethink.co.uk>
- <1435683436.23818.69.camel@codethink.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1435683436.23818.69.camel@codethink.co.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] pinctrl: qcom: Hook pm_power_down for shutdown support
+Date: Mon,  6 Jul 2015 18:09:30 -0700
+Message-ID: <1436231370-18301-1-git-send-email-sboyd@codeaurora.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Pramod Gurav <pramod.gurav@smartplayin.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Morimoto-san,
+Assign pm_power_off() if we have the PS_HOLD functionality so
+that we can properly shutdown the SoC. Otherwise, shutdown won't
+do anything besides put the CPU into a tight loop. Unfortunately,
+we have to use a singleton here because pm_power_off() doesn't
+take any arguments. Fortunately there's only one instance of the
+pinctrl device on a running system so this isn't a problem.
 
-could you find some time to review this patch?
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Pramod Gurav <pramod.gurav@smartplayin.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On Tue, Jun 30, 2015 at 05:57:16PM +0100, Ben Hutchings wrote:
-> Taken from the datasheet.
-> 
-> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> ---
->  arch/arm/boot/dts/r8a7790.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-> index 4bb2f4c17321..618b38938b24 100644
-> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> @@ -490,6 +490,7 @@
->  		reg = <0 0xee100000 0 0x328>;
->  		interrupts = <0 165 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&mstp3_clks R8A7790_CLK_SDHI0>;
-> +		max-frequency = <156000000>;
->  		dmas = <&dmac1 0xcd>, <&dmac1 0xce>;
->  		dma-names = "tx", "rx";
->  		status = "disabled";
-> @@ -500,6 +501,7 @@
->  		reg = <0 0xee120000 0 0x328>;
->  		interrupts = <0 166 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&mstp3_clks R8A7790_CLK_SDHI1>;
-> +		max-frequency = <156000000>;
->  		dmas = <&dmac1 0xc9>, <&dmac1 0xca>;
->  		dma-names = "tx", "rx";
->  		status = "disabled";
-> @@ -510,6 +512,7 @@
->  		reg = <0 0xee140000 0 0x100>;
->  		interrupts = <0 167 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&mstp3_clks R8A7790_CLK_SDHI2>;
-> +		max-frequency = <97500000>;
->  		dmas = <&dmac1 0xc1>, <&dmac1 0xc2>;
->  		dma-names = "tx", "rx";
->  		status = "disabled";
-> @@ -520,6 +523,7 @@
->  		reg = <0 0xee160000 0 0x100>;
->  		interrupts = <0 168 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&mstp3_clks R8A7790_CLK_SDHI3>;
-> +		max-frequency = <97500000>;
->  		dmas = <&dmac1 0xd3>, <&dmac1 0xd4>;
->  		dma-names = "tx", "rx";
->  		status = "disabled";
-> -- 
-> 2.1.4
-> 
-> 
-> 
-> 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index e457d52302a2..6242af8a42d5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -28,6 +28,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/reboot.h>
++#include <linux/pm.h>
+ 
+ #include "../core.h"
+ #include "../pinconf.h"
+@@ -855,6 +856,13 @@ static int msm_ps_hold_restart(struct notifier_block *nb, unsigned long action,
+ 	return NOTIFY_DONE;
+ }
+ 
++static struct msm_pinctrl *poweroff_pctrl;
++
++static void msm_ps_hold_poweroff(void)
++{
++	msm_ps_hold_restart(&poweroff_pctrl->restart_nb, 0, NULL);
++}
++
+ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+ {
+ 	int i;
+@@ -867,6 +875,8 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+ 			if (register_restart_handler(&pctrl->restart_nb))
+ 				dev_err(pctrl->dev,
+ 					"failed to setup restart handler.\n");
++			poweroff_pctrl = pctrl;
++			pm_power_off = msm_ps_hold_poweroff;
+ 			break;
+ 		}
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
