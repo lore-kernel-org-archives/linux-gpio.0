@@ -1,58 +1,33 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
-Date: Wed, 8 Jul 2015 09:37:20 +0200
-Message-ID: <CAMuHMdWPJ8B1-zETVvJUwh9+EYkjHi+s1qLURd_XVEHgFs2+ZQ@mail.gmail.com>
-References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
-	<2925145.E3lLFJfWJW@wasted.cogentembedded.com>
-	<1756227.uoeezymTmX@avalon>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 1/2] MIPS: ath79: Remove the unused GPIO function API
+Date: Wed, 8 Jul 2015 10:55:14 +0200
+Message-ID: <20150708105514.1156aba3@tock>
+References: <1435914709-15092-1-git-send-email-albeu@free.fr>
+	<1435914709-15092-2-git-send-email-albeu@free.fr>
+	<CAHNKnsSgyzQu5uxZHu80X9MRQ5sJ+WEBatv9599QYxBsty66pg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1756227.uoeezymTmX@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHNKnsSgyzQu5uxZHu80X9MRQ5sJ+WEBatv9599QYxBsty66pg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Aban Bedel <albeu@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Gabor Juhos <juhosg@openwrt.org>, Linux MIPS <linux-mips@linux-mips.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 7, 2015 at 7:39 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Friday 26 June 2015 01:40:56 Sergei Shtylyov wrote:
->> The PFC driver causes the kernel to hang on the R-Car gen2 SoC based  boards
->> when the CPU_ALL_PORT() macro is fixed to reflect the reality, i.e. when
->> the GPIO space becomes actually sparse.  This happens because the
->> _GP_GPIO() macro includes  an indexed initializer which causes the "holes"
->> (array entries filled with all 0s) between the groups  of the existing
->> GPIOs; and the driver can't cope with that.  There seems to  be no reason
->> to use the indexed initializer, so we can remove the index specifier and so
->> avoid the "holes".
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
-> I initially thought that this patch looked too good to be true. The fix is so
-> simple, there must have been a reason why _GP_GPIO used indexed initializers.
-> I then tried to find that reason and failed.
->
-> I still feel that this is too simple to be true, but I have no objective
-> reason to push back, so
+On Sat, 4 Jul 2015 19:58:32 +0300
+Sergey Ryazanov <ryazanov.s.a@gmail.com> wrote:
 
-:-)
+> 2015-07-03 12:11 GMT+03:00 Alban Bedel <albeu@free.fr>:
+> > To prepare moving the GPIO driver to drivers/gpio remove the
+> > platform specific pinmux API. As it is not used by any board,
+> > and such functionality should better be implemented using the
+> > pinmux subsystem just removing it seems to be the best option.
+> >
+> For reference: OpenWRT uses this functions to activate UART.
 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> for the whole series, provided you have tested it, and paid attention to pins
-> after the holes.
+The pinctrl-single driver should be usable for all SoC where this code
+was used. I haven't tried it yet, but it should only be a matter of
+writing the DTS down.
 
-On r8a7791/koelsch, the switches (gpio banks 5 and 7) and LEDs (gpio bank 2)
-still work, so
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Alban
