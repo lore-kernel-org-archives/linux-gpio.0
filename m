@@ -1,37 +1,27 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 1/7] pinctrl: UniPhier: add UniPhier pinctrl core support
-Date: Wed, 08 Jul 2015 22:39:56 +0200
-Message-ID: <1436387996.20619.54.camel@tiscali.nl>
-References: <1436185763-4308-1-git-send-email-yamada.masahiro@socionext.com>
-	 <1436185763-4308-2-git-send-email-yamada.masahiro@socionext.com>
-	 <1436260472.20057.121.camel@tiscali.nl>
-	 <CAK7LNASnaN47cPHyyH-DTrF4pE4XqhgUdZLuOspuqHtKoDxmRQ@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v1 3/3] ARM: tegra: Add gpio-ranges property
+Date: Wed, 08 Jul 2015 14:55:18 -0600
+Message-ID: <559D8E36.50209@wwwdotorg.org>
+References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com> <1435754753-31307-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNASnaN47cPHyyH-DTrF4pE4XqhgUdZLuOspuqHtKoDxmRQ@mail.gmail.com>
+In-Reply-To: <1435754753-31307-4-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Masahiro,
+On 07/01/2015 06:45 AM, Tomeu Vizoso wrote:
+> Specify how the GPIOs map to the pins in Tegra SoCs, so the dependency is
+> explicit.
+>
+> This currently will add a duplicated entry in the map from pins to gpios
+> in the pinmux controller but it should be harmless and will be fixed in a
+> later commit.
 
-On wo, 2015-07-08 at 14:01 +0900, Masahiro Yamada wrote:
-> Actually, most of pinctrl drivers are boolean, but most of them
-> conventionally have MODULE_AUTHOR, THIS_MODULE, etc.
-> 
-> I do not think it looks so weird.  Thought?
+Isn't it in an earlier commit now (patch 2/3)? :-)
 
-It's a rather common pattern, but I think it's an anti-pattern
-nevertheless. See the discussion that Shobhit Kumar, Paul Gortmaker, and
-I had starting in https://lkml.org/lkml/2015/6/20/63 .
-
-Please let me know if you're unconvinced by the arguments brought
-forward by both Pauls in that discussion.
-
-Thanks,
-
-
-Paul Bolle
+At a quick glance, I think this approach will be fine, so the series,
+Acked-by: Stephen Warren <swarren@nvidia.com>
