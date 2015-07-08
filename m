@@ -1,26 +1,46 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 3/3] sh-pfc: r8a7791: remove non-existing GPIO pins
-Date: Wed, 8 Jul 2015 09:38:30 +0200
-Message-ID: <CAMuHMdWK=42TXv8213kjPxAXMB+wDtnOTOOhyD65-cs8ncV_1A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] sh-pfc: fix sparse GPIOs for R-Car SoCs
+Date: Wed, 8 Jul 2015 09:37:20 +0200
+Message-ID: <CAMuHMdWPJ8B1-zETVvJUwh9+EYkjHi+s1qLURd_XVEHgFs2+ZQ@mail.gmail.com>
 References: <1460630.GxHT4lRd7u@wasted.cogentembedded.com>
-	<1503001.TnFHhSFjY8@wasted.cogentembedded.com>
+	<2925145.E3lLFJfWJW@wasted.cogentembedded.com>
+	<1756227.uoeezymTmX@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1503001.TnFHhSFjY8@wasted.cogentembedded.com>
+In-Reply-To: <1756227.uoeezymTmX@avalon>
 Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 26, 2015 at 12:43 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Tue, Jul 7, 2015 at 7:39 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Friday 26 June 2015 01:40:56 Sergei Shtylyov wrote:
+>> The PFC driver causes the kernel to hang on the R-Car gen2 SoC based  boards
+>> when the CPU_ALL_PORT() macro is fixed to reflect the reality, i.e. when
+>> the GPIO space becomes actually sparse.  This happens because the
+>> _GP_GPIO() macro includes  an indexed initializer which causes the "holes"
+>> (array entries filled with all 0s) between the groups  of the existing
+>> GPIOs; and the driver can't cope with that.  There seems to  be no reason
+>> to use the indexed initializer, so we can remove the index specifier and so
+>> avoid the "holes".
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
-> GPIO banks 1 and 7 are missing pins 26 to 31. Remove them.
+> I initially thought that this patch looked too good to be true. The fix is so
+> simple, there must have been a reason why _GP_GPIO used indexed initializers.
+> I then tried to find that reason and failed.
 >
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> I still feel that this is too simple to be true, but I have no objective
+> reason to push back, so
+
+:-)
+
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> for the whole series, provided you have tested it, and paid attention to pins
+> after the holes.
 
 On r8a7791/koelsch, the switches (gpio banks 5 and 7) and LEDs (gpio bank 2)
 still work, so
