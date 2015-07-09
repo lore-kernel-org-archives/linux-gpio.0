@@ -1,42 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Subject: [RFT PATCH] gpio: etraxfs: Fix devm_ioremap_resource return value check
-Date: Thu,  9 Jul 2015 22:19:53 +0900
-Message-ID: <1436447993-24630-1-git-send-email-k.kozlowski.k@gmail.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>, stable@vger.kernel.org
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 6/8] ARM: dts: imx: add imx6ul and imx6ul evk board
+ support
+Date: Thu, 9 Jul 2015 21:42:00 +0800
+Message-ID: <20150709134200.GH23464@tiger>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+ <1434727951-4852-7-git-send-email-Frank.Li@freescale.com>
+ <CAH=tA9G_x=6wNTOWbOc2FGGARTxioikUSwqyENKk74wL=7uzaw@mail.gmail.com>
+ <CAHrpEqQMtaL_ReeFP4VR2bfg_HDaQAHc0BUMB3X4KM3b23ra0A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:47173 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752375AbbGINmP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 9 Jul 2015 09:42:15 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHrpEqQMtaL_ReeFP4VR2bfg_HDaQAHc0BUMB3X4KM3b23ra0A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Zhi Li <lznuaa@gmail.com>
+Cc: Nicolae Rosia <nicolae.rosia@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Fancy Fang <chen.fang@freescale.com>, Frank Li <Frank.Li@freescale.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Fugang Duan <B38611@freescale.com>, Anson Huang <b20788@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Value returned by devm_ioremap_resource() was checked for non-NULL but
-devm_ioremap_resource() returns IOMEM_ERR_PTR, not NULL. In case of
-error this could lead to dereference of ERR_PTR.
+On Fri, Jun 19, 2015 at 01:55:46PM -0500, Zhi Li wrote:
+> On Fri, Jun 19, 2015 at 12:05 PM, Nicolae Rosia <nicolae.rosia@gmail.com> wrote:
+> > Hi,
+> >
+> > On Fri, Jun 19, 2015 at 6:32 PM,  <Frank.Li@freescale.com> wrote:
+> >> From: Frank Li <Frank.Li@freescale.com>
+> > [...]
+> >> +       cpus {
+> >> +               #address-cells = <1>;
+> >> +               #size-cells = <0>;
+> >> +
+> >> +               cpu0: cpu@0 {
+> >> +                       compatible = "arm,cortex-a7";
+> >> +                       device_type = "cpu";
+> >> +                       reg = <0>;
+> >> +                       clock-latency = <61036>; /* two CLK32 periods */
+> >> +                       operating-points = <
+> >> +                               /* kHz  uV */
+> >> +                               528000  1250000
+> >> +                               396000  1150000
+> >> +                               198000  1150000
+> >> +                       >;
+> >> +                       fsl,soc-operating-points = <
+> >> +                               /* KHz  uV */
+> >> +                               528000  1250000
+> >> +                               396000  1150000
+> >> +                               198000  1150000
+> >> +                       >;
+> > Why is this necessary? Can't you adapt the driver to use operating-points?
+> > I have looked through other imx dts and saw that some had different
+> > values in these two tables.
+> 
+> It is used by internal busfreq driver. I will remove it at next version.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Fixes: d342571efea8 ("gpio: add ETRAXFS GPIO driver")
-Cc: <stable@vger.kernel.org>
+It's used by mainline imx6q-cpufreq driver, but it's a piece of
+undocumented binding.  Basically, on i.MX6 series, when CPU frequency
+scales, there are two voltages, 'core' and 'soc', need to scale
+accordingly.  The OPP binding v1 only supports one voltage.
 
----
-
-Patch only compile tested.
----
- drivers/gpio/gpio-etraxfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-etraxfs.c b/drivers/gpio/gpio-etraxfs.c
-index 28071f4a5672..0e643140efde 100644
---- a/drivers/gpio/gpio-etraxfs.c
-+++ b/drivers/gpio/gpio-etraxfs.c
-@@ -117,8 +117,8 @@ static int etraxfs_gpio_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
--	if (!regs)
--		return -ENOMEM;
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
- 
- 	match = of_match_node(etraxfs_gpio_of_table, dev->of_node);
- 	if (!match)
--- 
-2.1.4
+Shawn
