@@ -1,42 +1,72 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] pinctrl: Drop owner assignment from platform_driver
-Date: Fri, 10 Jul 2015 15:27:30 +0900
-Message-ID: <1436509650-5218-1-git-send-email-k.kozlowski@samsung.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Fri, 10 Jul 2015 11:29:25 +0200
+Message-ID: <CAAObsKBS0OOhPNEAEV5Bh_+WMVWYhuGtGLqaVdCbzxPuT8a_gA@mail.gmail.com>
+References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com> <CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:61628 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752755AbbGJG1d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Jul 2015 02:27:33 -0400
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:36721 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752462AbbGJJ3q (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Jul 2015 05:29:46 -0400
+In-Reply-To: <CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-platform_driver does not need to set an owner because
-platform_driver_register() will set it.
+On 1 July 2015 at 19:36, Rob Herring <robherring2@gmail.com> wrote:
+> On Wed, Jul 1, 2015 at 7:45 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+>> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+>> the pin controller isn't available.
+>>
+>> Otherwise, the GPIO range wouldn't be set at all unless the pin
+>> controller probed always before the GPIO chip.
+>>
+>> With this change, the probe of the GPIO chip will be deferred and will
+>> be retried at a later point, hopefully once the pin controller has been
+>> registered and probed already.
+>
+> This will break cases where the pinctrl driver does not exist, but the
+> DT contains pinctrl bindings. We can have similar problems already
+> with clocks though. However, IMO this problem is a bit different in
+> that pinctrl is more likely entirely optional while clocks are often
+> required. You may do all pin setup in bootloader/firmware on some
+> boards and not others. Of course then why put pinctrl in the DT in
+> that case? They could be present just due to how chip vs. board dts
+> files are structured.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I see. My instinct tells me that it would be better if the gpio-ranges
+property was set in the board dts, but I don't really know what each
+mach does with its DTSs.
 
----
+> We could address this by simply marking the pin controller node
+> disabled. However, ...
+>
+>> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>>
+>>                 pctldev = of_pinctrl_get(pinspec.np);
+>>                 if (!pctldev)
+>> -                       break;
+>> +                       return -EPROBE_DEFER;
+>
+> But you cannot distinguish that case here. I think of_pinctrl_get
+> needs to set the error code appropriately.
 
-The coccinelle script which generated the patch was sent here:
-http://www.spinics.net/lists/kernel/msg2029903.html
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 1 -
- 1 file changed, 1 deletion(-)
+Why not? I was thinking of just doing this before we call of_pinctrl_get():
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index 9384e0aa3996..d6e80fe1c7f7 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -4621,7 +4621,6 @@ failed:
- static struct platform_driver atlas7_gpio_driver = {
- 	.driver = {
- 		.name = "atlas7-gpio",
--		.owner = THIS_MODULE,
- 		.of_match_table = atlas7_gpio_ids,
- 	},
- 	.probe = atlas7_gpio_probe,
--- 
-1.9.1
+        if (!of_device_is_available(pinspec.np))
+            continue;
 
+Thanks,
+
+Tomeu
+
+> Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
