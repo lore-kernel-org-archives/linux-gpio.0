@@ -1,41 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: bcm2835: Clear the event latch register when
- disabling interrupts
-Date: Fri, 10 Jul 2015 22:15:40 -0600
-Message-ID: <55A0986C.1030905@wwwdotorg.org>
-References: <55927F0B.80602@raspberrypi.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <55927F0B.80602-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
-List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Jonathan Bell <jonathan-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Dirk Behme <dirk.behme@gmail.com>
+Subject: [PATCH] Documentation: gpio: consumer: describe the con_id parameter
+Date: Sat, 11 Jul 2015 07:46:02 +0200
+Message-ID: <1436593562-5119-1-git-send-email-dirk.behme@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:36072 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751649AbbGKGQ5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Jul 2015 02:16:57 -0400
+Received: by wgxm20 with SMTP id m20so80015124wgx.3
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Jul 2015 23:16:56 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Dirk Behme <dirk.behme@gmail.com>
 
-On 06/30/2015 05:35 AM, Jonathan Bell wrote:
-> It's possible to hit a race condition if interrupts are generated on a GPIO
-> pin when the IRQ line in question is being disabled.
-> 
-> If the interrupt is freed, bcm2835_gpio_irq_disable() is called which
-> disables the event generation sources (edge, level). If an event occurred
-> between the last disabling of hard IRQs and the write to the event
-> source registers, a bit would be set in the GPIO event detect register
-> (GPEDSn) which goes unacknowledged by bcm2835_gpio_irq_handler()
-> so Linux complains loudly.
-> 
-> There is no per-GPIO mask register, so when disabling GPIO interrupts
-> write 1 to the relevant bit in GPEDSn to clear out any stale events.
+The con_id parameter has to match the GPIO description and is automatically
+extended by the GPIO suffix if not NULL. I had to look into the code to
+understand this and properly find the GPIO I've been looking for, so document
+this.
 
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+---
+ Documentation/gpio/consumer.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-(Sorry for the slow response; I was on vacation)
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 75542b9..d0d1e47 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -39,6 +39,18 @@ device that displays digits), an additional index argument can be specified:
+ 					  const char *con_id, unsigned int idx,
+ 					  enum gpiod_flags flags)
+ 
++The con_id string parameter has to be either NULL or the prefix of the GPIO
++suffixes ("gpios" or "gpio"):
++
++* If the GPIO description is just named with one of the GPIO suffixes
++  ("gpios" or "gpio") use NULL.
++* If the GPIO description is prefixed with anything, e.g. "reset-gpios", use the
++  prefix without the "-" as con_id parameter (in this example "reset").
++
++In case con_id is not NULL, the gpiod subsystem prefixes the GPIO suffix
++("gpios" or "gpio") with the string passed in con_id to get the resulting string
++(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
++
+ The flags parameter is used to optionally specify a direction and initial value
+ for the GPIO. Values can be:
+ 
+-- 
+2.4.5
+
