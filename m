@@ -1,22 +1,18 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 17/19] gpio/sa1100: Prepare sa1100_gpio_handler for irq
+Subject: [patch 15/19] gpio/ep93xx: Prepare ep93xx_gpio_f_irq_handler for irq
  argument removal
-Date: Mon, 13 Jul 2015 20:41:41 -0000
-Message-ID: <20150712232406.179748622@linutronix.de>
+Date: Mon, 13 Jul 2015 20:41:38 -0000
+Message-ID: <20150712232405.988906210@linutronix.de>
 References: <20150712232317.244138485@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:55831 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753473AbbGMUlu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 16:41:50 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=gpio-sa1100-prepare-flowhandler-for-irq-argument-removal.patch
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+ filename=gpio-ep93xx-prepare-flowhandler-for-irq-argument-removal.patch
+Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+List-Id: linux-gpio@vger.kernel.org
 
 The irq argument of most interrupt flow handlers is unused or merily
 used instead of a local variable. The handlers which need the irq
@@ -32,24 +28,27 @@ Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/gpio/gpio-sa1100.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-ep93xx.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Index: tip/drivers/gpio/gpio-sa1100.c
+Index: tip/drivers/gpio/gpio-ep93xx.c
 ===================================================================
---- tip.orig/drivers/gpio/gpio-sa1100.c
-+++ tip/drivers/gpio/gpio-sa1100.c
-@@ -173,9 +173,9 @@ static struct irq_domain *sa1100_gpio_ir
-  * and call the handler.
-  */
- static void
--sa1100_gpio_handler(unsigned int irq, struct irq_desc *desc)
-+sa1100_gpio_handler(unsigned int __irq, struct irq_desc *desc)
- {
--	unsigned int mask;
-+	unsigned int irq, mask;
+--- tip.orig/drivers/gpio/gpio-ep93xx.c
++++ tip/drivers/gpio/gpio-ep93xx.c
+@@ -100,13 +100,15 @@ static void ep93xx_gpio_ab_irq_handler(u
+ 	}
+ }
  
- 	mask = GEDR;
- 	do {
-
-
+-static void ep93xx_gpio_f_irq_handler(unsigned int irq, struct irq_desc *desc)
++static void ep93xx_gpio_f_irq_handler(unsigned int __irq,
++				      struct irq_desc *desc)
+ {
+ 	/*
+ 	 * map discontiguous hw irq range to continuous sw irq range:
+ 	 *
+ 	 *  IRQ_EP93XX_GPIO{0..7}MUX -> gpio_to_irq(EP93XX_GPIO_LINE_F({0..7})
+ 	 */
++	unsigned int irq = irq_desc_get_irq(desc);
+ 	int port_f_idx = ((irq + 1) & 7) ^ 4; /* {19..22,47..50} -> {0..7} */
+ 	int gpio_irq = gpio_to_irq(EP93XX_GPIO_LINE_F(0)) + port_f_idx;
+ 
