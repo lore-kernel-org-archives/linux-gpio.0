@@ -1,38 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per pin
- muxing controllers
-Date: Mon, 13 Jul 2015 14:13:36 +0200
-Message-ID: <CACRpkdaR1TP_cRY+oR91SijTungpFzmYACw5R-230yMbkPvmvg@mail.gmail.com>
-References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
-	<1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com>
-	<557EF60D.8020007@wwwdotorg.org>
-	<20150617123816.GB12295@odux.rfo.atmel.com>
+From: Clemens Gruber <clemens.gruber@pqgruber.com>
+Subject: gpio-pca953x: Spurious interrupts
+Date: Mon, 13 Jul 2015 14:18:46 +0200
+Message-ID: <20150713121845.GA1043@pqgruber.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35479 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751196AbbGMMNh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 08:13:37 -0400
-Received: by obbop1 with SMTP id op1so227719312obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2015 05:13:36 -0700 (PDT)
-In-Reply-To: <20150617123816.GB12295@odux.rfo.atmel.com>
+Received: from mail.pqgruber.com ([178.189.19.235]:54573 "EHLO
+	mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751123AbbGMMSt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 08:18:49 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Sascha Hauer <kernel@pengutronix.de>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linux Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Wed, Jun 17, 2015 at 2:38 PM, Ludovic Desroches
-<ludovic.desroches@atmel.com> wrote:
+Hi,
 
-> It is not the first time, there are discussions about it. Sascha sent a
-> patch which fits part of my needs:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-January/318452.html
+after some more research, I found the reason why the pca953x driver in its
+current state does not work well with my use case:
+The problem occurs when using a PCA9555 and rapidly changing input states which
+asserts and deasserts the INT line rapidly.
 
-It would be helpful to have Sascha's review of this patch set.
+For the PCA9555 there is no solution, other than requiring that the interrupt
+stays asserted until the inputs are read and that they do not change in between.
 
-If it also fixes his issues, we will have some partial consensus,
-as in "fixes more that AT91 problems".
+The PCAL9555A can latch its inputs and not assert the interrupt again until the
+inputs are read. To find out which interrupt triggered, the interrupt status
+registers need to be read. Otherwise the source of the interrupt is unknown,
+which leads to the "nobody cared, disabling IRQ.." error after some time.
 
-Yours,
-Linus Walleij
+With the current logic (comparing with the old input values) the interrupts stay
+unhandled because with a rapidly asserting and deasserting interrupt line, it
+looks like the state did not change in the first place.
+
+My idea for fixing this would be to treat the PCAL9555A interrupts differently:
+By default, enabling the input latch for all inputs and clearing the hw
+interrupt mask. Then in the interrupt handler, instead of comparing the input
+values, read the status registers and after that read the corresponding input
+registers. Then the interrupt line deasserts and we should no longer have
+spurious interrupts.
+
+If someone wants to use the PCAL9555A in the same way as a PCA9555, he can just
+use the pca9555 dt id.
+
+What do you think?
+
+Btw: I marked the previous patchset as superseded in patchwork and I will send
+a new version after having tested it thoroughly with PWM outputs connected to
+the inputs, changing the input states with 1kHz or more.
+
+Cheers,
+Clemens
