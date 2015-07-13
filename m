@@ -1,45 +1,69 @@
-From: Zhi Li <lznuaa@gmail.com>
-Subject: Re: [PATCH v2 4/8] ARM: pinctrl: imx: add i.mx6ul pinctrl driver
-Date: Mon, 13 Jul 2015 15:52:21 -0500
-Message-ID: <CAHrpEqRaqUqrcPJmSXZ6iGUrU-8Bki-TWGsBt82kKMcw+QSjPQ@mail.gmail.com>
-References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
-	<1434727951-4852-5-git-send-email-Frank.Li@freescale.com>
-	<CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ@mail.gmail.com>
-	<CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: [patch 10/22] pinctrl/at91: Use irq_set_handler_locked()
+Date: Mon, 13 Jul 2015 20:47:49 -0000
+Message-ID: <20150713072815.127791552@linutronix.de>
+References: <20150713072703.919712512@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:35704 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753674AbbGMUwW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 16:52:22 -0400
-In-Reply-To: <CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline;
+ filename=pinctrl-at91-Use-irq_set_handler_locked.patch
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-On Mon, Jul 13, 2015 at 3:50 PM, Zhi Li <lznuaa@gmail.com> wrote:
-> On Mon, Jul 13, 2015 at 3:38 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li@freescale.com> wrote:
->>
->>> From: Frank Li <Frank.Li@freescale.com>
->>>
->>> Add i.MX6UL pinctrl driver support.
->>>
->>> Signed-off-by: Anson Huang <b20788@freescale.com>
->>> Signed-off-by: Frank Li <Frank.Li@freescale.com>
->>
->> Can I get a review from Shawn and/or Sascha for this patch?
->>
->> Is it OK if I apply this to the pinctrl tree directly?
->
-> Shawn already Acked in version 1.
-> I forget added his ACK at version 2.
+Use irq_set_handler_locked() as it avoids a redundant lookup of the
+irq descriptor.
 
-See,  http://www.spinics.net/lists/devicetree/msg86160.html
+Search and replacement was done with coccinelle.
 
->
->>
->> Yours,
->> Linus Walleij
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/pinctrl-at91.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+Index: tip/drivers/pinctrl/pinctrl-at91.c
+===================================================================
+--- tip.orig/drivers/pinctrl/pinctrl-at91.c
++++ tip/drivers/pinctrl/pinctrl-at91.c
+@@ -1444,22 +1444,22 @@ static int alt_gpio_irq_type(struct irq_
+ 
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+-		__irq_set_handler_locked(d->irq, handle_simple_irq);
++		irq_set_handler_locked(d, handle_simple_irq);
+ 		writel_relaxed(mask, pio + PIO_ESR);
+ 		writel_relaxed(mask, pio + PIO_REHLSR);
+ 		break;
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		__irq_set_handler_locked(d->irq, handle_simple_irq);
++		irq_set_handler_locked(d, handle_simple_irq);
+ 		writel_relaxed(mask, pio + PIO_ESR);
+ 		writel_relaxed(mask, pio + PIO_FELLSR);
+ 		break;
+ 	case IRQ_TYPE_LEVEL_LOW:
+-		__irq_set_handler_locked(d->irq, handle_level_irq);
++		irq_set_handler_locked(d, handle_level_irq);
+ 		writel_relaxed(mask, pio + PIO_LSR);
+ 		writel_relaxed(mask, pio + PIO_FELLSR);
+ 		break;
+ 	case IRQ_TYPE_LEVEL_HIGH:
+-		__irq_set_handler_locked(d->irq, handle_level_irq);
++		irq_set_handler_locked(d, handle_level_irq);
+ 		writel_relaxed(mask, pio + PIO_LSR);
+ 		writel_relaxed(mask, pio + PIO_REHLSR);
+ 		break;
+@@ -1468,7 +1468,7 @@ static int alt_gpio_irq_type(struct irq_
+ 		 * disable additional interrupt modes:
+ 		 * fall back to default behavior
+ 		 */
+-		__irq_set_handler_locked(d->irq, handle_simple_irq);
++		irq_set_handler_locked(d, handle_simple_irq);
+ 		writel_relaxed(mask, pio + PIO_AIMDR);
+ 		return 0;
+ 	case IRQ_TYPE_NONE:
