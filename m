@@ -1,42 +1,49 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 06/19] gpio/zynq: Use irq_set_chip_handler_name_locked()
-Date: Mon, 13 Jul 2015 20:41:24 -0000
-Message-ID: <20150712232405.223520113@linutronix.de>
+Subject: [patch 04/19] gpio/tz1090: Consolidate chained IRQ handler
+ install/remove
+Date: Mon, 13 Jul 2015 20:41:21 -0000
+Message-ID: <20150712232405.045794604@linutronix.de>
 References: <20150712232317.244138485@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=gpio-zynq-Use-irq_set_chip_handler_name_locked.patch
+ filename=gpio-tz1090-Consolidate-chained-IRQ-handler-install-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Julia Lawall <Julia.Lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-Hand in irq_data and avoid the redundant lookup of irq_desc.
+Chained irq handlers usually set up handler data as well. We now have
+a function to set both under irq_desc->lock. Replace the two calls
+with one.
 
-Originally-from: Jiang Liu <jiang.liu@linux.intel.com>
+Search and conversion was done with coccinelle:
+
+Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
 ---
- drivers/gpio/gpio-zynq.c | 4 ++--
+ drivers/gpio/gpio-tz1090.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 184c4b1b2558..8162f7952073 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -423,10 +423,10 @@ static int zynq_gpio_set_irq_type(struct irq_data *irq_data, unsigned int type)
- 		       gpio->base_addr + ZYNQ_GPIO_INTANY_OFFSET(bank_num));
+diff --git a/drivers/gpio/gpio-tz1090.c b/drivers/gpio/gpio-tz1090.c
+index 445660adc898..bbac92ae4c32 100644
+--- a/drivers/gpio/gpio-tz1090.c
++++ b/drivers/gpio/gpio-tz1090.c
+@@ -510,8 +510,8 @@ static int tz1090_gpio_bank_probe(struct tz1090_gpio_bank_info *info)
+ 	gc->chip_types[1].chip.flags		= IRQCHIP_MASK_ON_SUSPEND;
  
- 	if (type & IRQ_TYPE_LEVEL_MASK) {
--		__irq_set_chip_handler_name_locked(irq_data->irq,
-+		irq_set_chip_handler_name_locked(irq_data,
- 			&zynq_gpio_level_irqchip, handle_fasteoi_irq, NULL);
- 	} else {
--		__irq_set_chip_handler_name_locked(irq_data->irq,
-+		irq_set_chip_handler_name_locked(irq_data,
- 			&zynq_gpio_edge_irqchip, handle_level_irq, NULL);
- 	}
+ 	/* Setup chained handler for this GPIO bank */
+-	irq_set_handler_data(bank->irq, bank);
+-	irq_set_chained_handler(bank->irq, tz1090_gpio_irq_handler);
++	irq_set_chained_handler_and_data(bank->irq, tz1090_gpio_irq_handler,
++					 bank);
  
+ 	return 0;
+ }
 -- 
 2.1.4
