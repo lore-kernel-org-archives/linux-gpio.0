@@ -1,43 +1,46 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 12/19] gpio/davinci: Use accessor function
- irq_data_get_irq_handler_data()
-Date: Mon, 13 Jul 2015 20:41:34 -0000
-Message-ID: <20150712232405.731695368@linutronix.de>
+Subject: [patch 05/19] gpiolib: Consolidate chained IRQ handler install/remove
+Date: Mon, 13 Jul 2015 20:41:22 -0000
+Message-ID: <20150712232405.127041870@linutronix.de>
 References: <20150712232317.244138485@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=gpio-davinci-Use-helper-irq_data_get_irq_handler_dat.patch
+ filename=gpiolib-Consolidate-chained-IRQ-handler-install-remo.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Julia Lawall <Julia.Lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Jiang Liu <jiang.liu@linux.intel.com>
+Chained irq handlers usually set up handler data as well. We now have
+a function to set both under irq_desc->lock. Replace the two calls
+with one.
 
-This is a preparatory patch for moving irq_data struct members.
+Search and conversion was done with coccinelle:
 
-Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-gpio@vger.kernel.org
 ---
- drivers/gpio/gpio-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index c5e05c82d67c..477d5b8616ab 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -396,7 +396,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
- 	struct davinci_gpio_regs __iomem *g;
- 	u32 mask;
+Index: tip/drivers/gpio/gpiolib.c
+===================================================================
+--- tip.orig/drivers/gpio/gpiolib.c
++++ tip/drivers/gpio/gpiolib.c
+@@ -443,8 +443,8 @@ void gpiochip_set_chained_irqchip(struct
+ 		 * The parent irqchip is already using the chip_data for this
+ 		 * irqchip, so our callbacks simply use the handler_data.
+ 		 */
+-		irq_set_handler_data(parent_irq, gpiochip);
+-		irq_set_chained_handler(parent_irq, parent_handler);
++		irq_set_chained_handler_and_data(parent_irq, parent_handler,
++						 gpiochip);
  
--	d = (struct davinci_gpio_controller *)data->handler_data;
-+	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
- 	g = (struct davinci_gpio_regs __iomem *)d->regs;
- 	mask = __gpio_mask(data->irq - d->gpio_irq);
- 
--- 
-2.1.4
+ 		gpiochip->irq_parent = parent_irq;
+ 	}
