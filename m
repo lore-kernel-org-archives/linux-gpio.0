@@ -1,46 +1,45 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 16/22] pinctrl/amd: Prepare amd_gpio_irq_handler for irq
- argument removal
-Date: Mon, 13 Jul 2015 20:47:58 -0000
-Message-ID: <20150713072815.631870913@linutronix.de>
+Subject: [patch 13/22] pinctrl/exynos: Use irq_set_handler_locked()
+Date: Mon, 13 Jul 2015 20:47:53 -0000
+Message-ID: <20150713072815.387745085@linutronix.de>
 References: <20150713072703.919712512@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=pinctrl-amd-prepare-amd_gpio_irq_handler-for-irq-argument-removal.patch
+ filename=pinctrl-exynos-Use-irq_set_handler_locked.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-The irq argument of most interrupt flow handlers is unused or merily
-used instead of a local variable. The handlers which need the irq
-argument can retrieve the irq number from the irq descriptor.
+Use irq_set_handler_locked() as it avoids a redundant lookup of the
+irq descriptor.
 
-Search and update was done with coccinelle and the invaluable help of
-Julia Lawall.
+Search and replacement was done with coccinelle.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
 Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 ---
- drivers/pinctrl/pinctrl-amd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: tip/drivers/pinctrl/pinctrl-amd.c
+Index: tip/drivers/pinctrl/samsung/pinctrl-exynos.c
 ===================================================================
---- tip.orig/drivers/pinctrl/pinctrl-amd.c
-+++ tip/drivers/pinctrl/pinctrl-amd.c
-@@ -492,8 +492,9 @@ static struct irq_chip amd_gpio_irqchip
- 	.irq_set_type = amd_gpio_irq_set_type,
- };
+--- tip.orig/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ tip/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -148,9 +148,9 @@ static int exynos_irq_set_type(struct ir
+ 	}
  
--static void amd_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-+static void amd_gpio_irq_handler(unsigned int __irq, struct irq_desc *desc)
- {
-+	unsigned int irq = irq_desc_get_irq(desc);
- 	u32 i;
- 	u32 off;
- 	u32 reg;
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+-		__irq_set_handler_locked(irqd->irq, handle_edge_irq);
++		irq_set_handler_locked(irqd, handle_edge_irq);
+ 	else
+-		__irq_set_handler_locked(irqd->irq, handle_level_irq);
++		irq_set_handler_locked(irqd, handle_level_irq);
+ 
+ 	con = readl(d->virt_base + reg_con);
+ 	con &= ~(EXYNOS_EINT_CON_MASK << shift);
