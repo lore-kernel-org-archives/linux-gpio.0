@@ -1,14 +1,14 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 03/22] pinctrl/exynos: Consolidate chained IRQ handler
+Subject: [patch 01/22] pinctrl/rockchip: Consolidate chained IRQ handler
  install/remove
-Date: Mon, 13 Jul 2015 20:47:38 -0000
-Message-ID: <20150713072814.512097285@linutronix.de>
+Date: Mon, 13 Jul 2015 20:47:34 -0000
+Message-ID: <20150713072814.334902056@linutronix.de>
 References: <20150713072703.919712512@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=pinctrl-exynos-Consolidate-chained-IRQ-handler-insta.patch
+ filename=pinctrl-rockchip-Consolidate-chained-IRQ-handler-ins.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Julia Lawall <Julia.Lawall@lip6.fr>
@@ -26,22 +26,21 @@ Cc: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: tip/drivers/pinctrl/samsung/pinctrl-exynos.c
+Index: tip/drivers/pinctrl/pinctrl-rockchip.c
 ===================================================================
---- tip.orig/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ tip/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -542,8 +542,9 @@ static int exynos_eint_wkup_init(struct
- 			}
- 			weint_data[idx].irq = idx;
- 			weint_data[idx].bank = bank;
--			irq_set_handler_data(irq, &weint_data[idx]);
--			irq_set_chained_handler(irq, exynos_irq_eint0_15);
-+			irq_set_chained_handler_and_data(irq,
-+							 exynos_irq_eint0_15,
-+							 &weint_data[idx]);
- 		}
+--- tip.orig/drivers/pinctrl/pinctrl-rockchip.c
++++ tip/drivers/pinctrl/pinctrl-rockchip.c
+@@ -1689,8 +1689,8 @@ static int rockchip_interrupts_register(
+ 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
+ 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
+ 
+-		irq_set_handler_data(bank->irq, bank);
+-		irq_set_chained_handler(bank->irq, rockchip_irq_demux);
++		irq_set_chained_handler_and_data(bank->irq,
++						 rockchip_irq_demux, bank);
  	}
  
+ 	return 0;
