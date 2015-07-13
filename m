@@ -1,47 +1,48 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 09/19] gpio/omap: Use irq_set_handler_locked()
-Date: Mon, 13 Jul 2015 20:41:29 -0000
-Message-ID: <20150712232405.478477804@linutronix.de>
+Subject: [patch 03/19] gpio/timberdale: Consolidate chained IRQ handler
+ install/remove
+Date: Mon, 13 Jul 2015 20:41:19 -0000
+Message-ID: <20150712232404.964774292@linutronix.de>
 References: <20150712232317.244138485@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=gpio-omap-Use-irq_set_handler_locked.patch
+ filename=gpio-timberdale-Consolidate-chained-IRQ-handler-inst.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>, Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Julia Lawall <Julia.Lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-Use irq_set_handler_locked() as it avoids a redundant lookup of the
-irq descriptor.
+Chained irq handlers usually set up handler data as well. We now have
+a function to set both under irq_desc->lock. Replace the two calls
+with one.
 
-Search and replacement was done with coccinelle:
+Search and conversion was done with coccinelle:
 
+Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/gpio/gpio-omap.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-timberdale.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Index: tip/drivers/gpio/gpio-omap.c
-===================================================================
---- tip.orig/drivers/gpio/gpio-omap.c
-+++ tip/drivers/gpio/gpio-omap.c
-@@ -511,9 +511,9 @@ static int omap_gpio_irq_type(struct irq
- 	spin_unlock_irqrestore(&bank->lock, flags);
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index e8f97e03c9bb..fd1970ed15e6 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -299,8 +299,7 @@ static int timbgpio_probe(struct platform_device *pdev)
+ #endif
+ 	}
  
- 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
--		__irq_set_handler_locked(d->irq, handle_level_irq);
-+		irq_set_handler_locked(d, handle_level_irq);
- 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
--		__irq_set_handler_locked(d->irq, handle_edge_irq);
-+		irq_set_handler_locked(d, handle_edge_irq);
+-	irq_set_handler_data(irq, tgpio);
+-	irq_set_chained_handler(irq, timbgpio_irq);
++	irq_set_chained_handler_and_data(irq, timbgpio_irq, tgpio);
  
  	return 0;
- 
+ }
+-- 
+2.1.4
