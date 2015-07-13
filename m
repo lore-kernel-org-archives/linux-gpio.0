@@ -1,63 +1,92 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH] leds: Allow compile test of LEDS_AAT1290 and LEDS_KTD2692
- if !GPIOLIB
-Date: Mon, 13 Jul 2015 14:39:53 +0200
-Message-ID: <55A3B199.7010308@samsung.com>
-References: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 3/4] gpio: brcmstb: Add interrupt and wakeup source support
+Date: Mon, 13 Jul 2015 14:58:22 +0200
+Message-ID: <CACRpkdYNGdWHk1kqhFWHziLPy3mZXTcUjYFBCVo5dRCh60bQ_A@mail.gmail.com>
+References: <1434589243-502-1-git-send-email-gregory.0xf0@gmail.com>
+	<1434589243-502-4-git-send-email-gregory.0xf0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-reply-to: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-leds-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33171 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751284AbbGMM6W (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 08:58:22 -0400
+Received: by oiyy130 with SMTP id y130so253005503oiy.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2015 05:58:22 -0700 (PDT)
+In-Reply-To: <1434589243-502-4-git-send-email-gregory.0xf0@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-Hi Geert,
+On Thu, Jun 18, 2015 at 3:00 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
 
-Thanks for the patch.
+> Uses the gpiolib irqchip helpers.  For this to work, the irq setup
+> function is called once per bank instead of once per device.  Note
+> that all known uses of this block have a BCM7120 L2 interrupt
+> controller as a parent.  Supports interrupts for all GPIOs.
+>
+> In the IRQ handler, we check for raised IRQs for invalid GPIOs and
+> warn (ratelimited) if they're encountered.
+>
+> Also, several drivers (e.g. gpio-keys) allow for GPIOs to be
+> configured as wakeup sources, and this GPIO controller supports that
+> through a separate interrupt path.
+>
+> The de-facto standard DT property "wakeup-source" is checked, since
+> that indicates whether the GPIO controller hardware can wake.  Uses
+> the IRQCHIP_MASK_ON_SUSPEND irq_chip flag because UPG GIO doesn't have
+> any of its own wakeup source configuration.
+>
+> Aside regarding gpiolib irqchip helpers: It wasn't obvious (to me)
+> that you can have multiple chained irqchips and associated IRQ domains
+> for a single parent IRQ, and as long as the xlate function is written
+> correctly, a GPIO IRQ request end up checking the correct domain and
+> will get associated with the correct IRQ.  What helps make this clear
+> is to read
+>   drivers/gpio/gpiolib-of.c:
+>    - of_gpiochip_find_and_xlate()
+>    - of_get_named_gpiod_flags()
+>   drivers/gpio/gpiolib.c:
+>    - gpiochip_find()
 
-On 07/06/2015 03:42 PM, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
->
-> If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
-> recently introduced symbols LEDS_AAT1290 and LEDS_KTD2692.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->   drivers/leds/Kconfig | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 94eced66d877182b..cf0248b8dbb9c023 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -43,7 +43,7 @@ config LEDS_AAT1290
->   	tristate "LED support for the AAT1290"
->   	depends on LEDS_CLASS_FLASH
->   	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->   	depends on OF
->   	depends on PINCTRL
->   	help
-> @@ -543,7 +543,8 @@ config LEDS_MENF21BMC
->
->   config LEDS_KTD2692
->   	tristate "LED support for KTD2692 flash LED controller"
-> -	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
-> +	depends on LEDS_CLASS_FLASH && OF
-> +	depends on GPIOLIB || COMPILE_TEST
->   	help
->   	  This option enables support for KTD2692 LED flash connected
->   	  through ExpressWire interface.
->
+Sorry for the unclarities, this is a bit hairy. Suggestions as to
+how we can make it easier and/or bring code for this into gpiolib
+are welcome. Right now I have a hard time seeing any way to
+make this more generic and helpful :/
 
-Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Overall this patch looks real nice. Some nitpicks below.
 
--- 
-Best Regards,
-Jacek Anaszewski
+> @@ -164,6 +398,16 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>         priv->reg_base = reg_base;
+>         priv->pdev = pdev;
+>
+> +       if (of_property_read_bool(np, "interrupt-controller")) {
+> +               priv->parent_irq = platform_get_irq(pdev, 0);
+> +               if (priv->parent_irq < 0) {
+
+This should be <= 0 since 0 is NO_IRQ
+
+> +                       dev_err(dev, "Couldn't get IRQ");
+> +                       return -ENOENT;
+> +               }
+> +       } else {
+> +               priv->parent_irq = -ENOENT;
+> +       }
+
+Why should this code only execute if the node is marked
+"interrupt-controller"? It makes it seem like IRQs cannot arrive
+to it unless it is intended to serve other consumers.
+
+Maybe in practice this is true, but...
+
+> +               if (priv->parent_irq >= 0) {
+> +                       err = brcmstb_gpio_irq_setup(pdev, bank);
+> +                       if (err)
+> +                               goto fail;
+> +               }
+
+Again 0 is NO_IRQ so this should be > 0 not >= 0.
+
+Yours,
+Linus Walleij
