@@ -1,72 +1,88 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and r8a7740/armadillo
-Date: Mon, 13 Jul 2015 12:06:13 +0200
-Message-ID: <CAMuHMdUcY56tWbD6r6mxLF_a1bpy0q7URY1qJGRvsxxvTx5gnA@mail.gmail.com>
-References: <1434533491-21979-1-git-send-email-geert+renesas@glider.be>
-	<20150619034052.GA22912@verge.net.au>
-	<CAMuHMdUqO2_rMpx0akeS1j+pNmQ_S150ei0B6a1ubFu_iTBF3g@mail.gmail.com>
-	<CACRpkdZFPCo8x0p6MnG-m4DVHBefRDj4PLC8zi3tj1zgUkT2fA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per pin
+ muxing controllers
+Date: Mon, 13 Jul 2015 14:07:45 +0200
+Message-ID: <CACRpkdb3+9=seJo7w5nrJS-iURH3SnH-PYVvJCQ-S619KOcKbg@mail.gmail.com>
+References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
+	<1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com>
+	<557EF60D.8020007@wwwdotorg.org>
+	<20150617123816.GB12295@odux.rfo.atmel.com>
+	<5581988C.50000@wwwdotorg.org>
+	<55925EB1.1030500@atmel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:34383 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751004AbbGMKGO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 06:06:14 -0400
-In-Reply-To: <CACRpkdZFPCo8x0p6MnG-m4DVHBefRDj4PLC8zi3tj1zgUkT2fA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55925EB1.1030500-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <damm+renesas@opensource.se>, Arnd Bergmann <arnd@arndb.de>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Tue, Jun 30, 2015 at 11:17 AM, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org> wrote:
 
-On Mon, Jul 13, 2015 at 12:00 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Jun 19, 2015 at 9:30 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Fri, Jun 19, 2015 at 5:41 AM, Simon Horman <horms@verge.net.au> wrote:
->>> [ CC Linus, Laurent, linux-gpio ]
+> - no agreement on 3 points:
+> 1/ ways to use groups in generic pinctrl
+> 2/ ways to describe a comprehensive configuration in device tree
+> 3/ readability of a sysfs information
 >
->>>>   pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
->>>>   pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
->>>>   pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
->>>>   pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
->>>
->>> As the above patches are sh-pfc patches they would typically
->>> be steered through Linus's tree via Laurent. If they wish
->>> to take that path then I'm happy for this to be attached:
->>>
->>> Acked-by: Simon Horman <horms+renesas@verge.net.au>
->>>
->>> FWIW the above path is the one that the removal of mackerel/sh7372 took.
->>>
->>> Alternatively, I am happy to take the above sh-pfc patches through
->>> my tree but I would like to do so with an Ack from at least Linus.
->>
->> I didn't CC Linus and linux-gpio at this stage yet, to prevent the pfc
->> patches from getting applied prematurely.
->> But things have gone more smoothly (esp. w.r.t. board staging) than expected,
->> which is always pleasant.
+> - no way out on the generic pinctrl little changes that Ludovic proposed
+> as Linus W. never gave his point of view (RFC posts on April the 2nd).
+
+Yeah I know. I am battling with this, it is one of those topics
+where you feel "eeeehhhh" and try to avoid looking at it. Sadly
+I have to...
+
+I refer to Documentation/ManagementStyle, chapter 1,
+"Decisions".
+
+What makes me feel uneasy about these things is that the decisions
+are irreversible due to the nature of the device tree bindings.
+
+I am not a manager, but a maintainer...
+
+> Ludovic explained at length our point of view and gave detailed
+> technical arguments. We don't intend to convince you, we just would like
+> the harmless modifications to be integrated.
+
+So is it universally agreed that the changes are harmless?
+
+If they are harmless, I would be able to revert the patch and
+nothing breaks in the world, I don't think that is the case. The
+case is a piece of code and functionality that is not AT91-specific
+but has to be maintained in the core pinctrl code forever.
+
+That is basically the big problem with anything device tree.
+It etches stuff in stone so it can't be changed, like ever.
+Further, the decision on whether to etch this or that is
+pushed to Linux subsystem maintainers, who are clearly
+unsuited for the task. :(
+
+> As we preferred to give a chance to the generic pinconf/pinctrl for our
+> use by adding a little bit of flexibility, we are now in a situation
+> where we are nearly obliged to give up this approach and write a new
+> driver without the use of the generic facilities: what a pity!
+> We lost several months of useless work to match what we thought the
+> maintainer would prefer.
 >
-> I would prefer to take these four into the pin control tree when you
-> consider them finished as there is obviously more PFC stuff coming
-> for this next kernel cycle and I want to avoid collisions and keep
-> things together. Will you send them to me separately?
+> So Linus, do you confirm that we won't go further with this approach?
+>
+> We are pretty disappointed by the way this interaction with the pinctrl
+> sub-system went.
 
-OK, I will send them your way.
+I'm sorry, I am just trying to wait for consensus but it seems to
+be hard for that to happen.
 
-I think at this point we're quite sure the sh73a0/r8a7740 removal will hit v4.3.
-This does mean sh73a0/r8a7740-legacy will be broken in pinctrl/for-next,
-but we don't care, as the support is gone in -next anyway.
+Things I need:
 
-Gr{oetje,eeting}s,
+- More DT bindings people to look at this patch.
 
-                        Geert
+- More other driver maintainers to look at this patch.
+  Sacha is one of those I'd like to get an opinion from
+  for example. ACKs, Reviewed-by's are always good.
 
+Yours,
+Linus Walleij
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
