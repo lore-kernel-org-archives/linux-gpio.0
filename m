@@ -1,18 +1,22 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 18/22] pinctrl/pistachio: Prepare pistachio_gpio_irq_handler
- for irq argument removal
-Date: Mon, 13 Jul 2015 20:48:01 -0000
-Message-ID: <20150713072815.803039611@linutronix.de>
+Subject: [patch 22/22] pinctrl/sunxi: Prepare sunxi_pinctrl_irq_handler for
+ irq argument removal
+Date: Mon, 13 Jul 2015 20:48:07 -0000
+Message-ID: <20150713072816.137686428@linutronix.de>
 References: <20150713072703.919712512@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:56186 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754325AbbGMUsP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 16:48:15 -0400
 Content-Disposition: inline;
- filename=pinctrl-pistachio-prepare-pistachio_gpio_irq_handler-for-irq-argument-removal.patch
-Sender: linux-kernel-owner@vger.kernel.org
+ filename=pinctrl-sunxi-prepare-sunxi_pinctrl_irq_handler-for-irq-argument-removal.patch
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <Julia.Lawall@lip6.fr>
-List-Id: linux-gpio@vger.kernel.org
 
 The irq argument of most interrupt flow handlers is unused or merily
 used instead of a local variable. The handlers which need the irq
@@ -27,24 +31,23 @@ Cc: Jiang Liu <jiang.liu@linux.intel.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/pinctrl/pinctrl-pistachio.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Index: tip/drivers/pinctrl/pinctrl-pistachio.c
+Index: tip/drivers/pinctrl/sunxi/pinctrl-sunxi.c
 ===================================================================
---- tip.orig/drivers/pinctrl/pinctrl-pistachio.c
-+++ tip/drivers/pinctrl/pinctrl-pistachio.c
-@@ -1310,9 +1310,11 @@ static int pistachio_gpio_irq_set_type(s
- 	return 0;
- }
+--- tip.orig/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ tip/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -709,8 +709,9 @@ static struct irq_chip sunxi_pinctrl_lev
+ 			  IRQCHIP_EOI_IF_HANDLED,
+ };
  
--static void pistachio_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-+static void pistachio_gpio_irq_handler(unsigned int __irq,
-+				       struct irq_desc *desc)
+-static void sunxi_pinctrl_irq_handler(unsigned irq, struct irq_desc *desc)
++static void sunxi_pinctrl_irq_handler(unsigned __irq, struct irq_desc *desc)
  {
--	struct gpio_chip *gc = irq_get_handler_data(irq);
 +	unsigned int irq = irq_desc_get_irq(desc);
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
- 	struct pistachio_gpio_bank *bank = gc_to_bank(gc);
- 	struct irq_chip *chip = irq_get_chip(irq);
- 	unsigned long pending;
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct sunxi_pinctrl *pctl = irq_desc_get_handler_data(desc);
+ 	unsigned long bank, reg, val;
+
+
