@@ -1,45 +1,45 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 11/22] pinctrl/rockchip: Use irq_set_handler_locked()
-Date: Mon, 13 Jul 2015 20:47:50 -0000
-Message-ID: <20150713072815.209490110@linutronix.de>
-References: <20150713072703.919712512@linutronix.de>
+From: Zhi Li <lznuaa@gmail.com>
+Subject: Re: [PATCH v2 4/8] ARM: pinctrl: imx: add i.mx6ul pinctrl driver
+Date: Mon, 13 Jul 2015 15:52:21 -0500
+Message-ID: <CAHrpEqRaqUqrcPJmSXZ6iGUrU-8Bki-TWGsBt82kKMcw+QSjPQ@mail.gmail.com>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+	<1434727951-4852-5-git-send-email-Frank.Li@freescale.com>
+	<CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ@mail.gmail.com>
+	<CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline;
- filename=pinctrl-rockchip-Use-irq_set_handler_locked.patch
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35704 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753674AbbGMUwW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 16:52:22 -0400
+In-Reply-To: <CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Frank.Li@freescale.com" <Frank.Li@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Anson Huang <b20788@freescale.com>
 
-Use irq_set_handler_locked() as it avoids a redundant lookup of the
-irq descriptor.
+On Mon, Jul 13, 2015 at 3:50 PM, Zhi Li <lznuaa@gmail.com> wrote:
+> On Mon, Jul 13, 2015 at 3:38 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li@freescale.com> wrote:
+>>
+>>> From: Frank Li <Frank.Li@freescale.com>
+>>>
+>>> Add i.MX6UL pinctrl driver support.
+>>>
+>>> Signed-off-by: Anson Huang <b20788@freescale.com>
+>>> Signed-off-by: Frank Li <Frank.Li@freescale.com>
+>>
+>> Can I get a review from Shawn and/or Sascha for this patch?
+>>
+>> Is it OK if I apply this to the pinctrl tree directly?
+>
+> Shawn already Acked in version 1.
+> I forget added his ACK at version 2.
 
-Search and replacement was done with coccinelle.
+See,  http://www.spinics.net/lists/devicetree/msg86160.html
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/pinctrl-rockchip.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-Index: tip/drivers/pinctrl/pinctrl-rockchip.c
-===================================================================
---- tip.orig/drivers/pinctrl/pinctrl-rockchip.c
-+++ tip/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1555,9 +1555,9 @@ static int rockchip_irq_set_type(struct
- 	spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	if (type & IRQ_TYPE_EDGE_BOTH)
--		__irq_set_handler_locked(d->irq, handle_edge_irq);
-+		irq_set_handler_locked(d, handle_edge_irq);
- 	else
--		__irq_set_handler_locked(d->irq, handle_level_irq);
-+		irq_set_handler_locked(d, handle_level_irq);
- 
- 	spin_lock_irqsave(&bank->slock, flags);
- 	irq_gc_lock(gc);
+>
+>>
+>> Yours,
+>> Linus Walleij
