@@ -1,71 +1,76 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v2 11/12] ASoC: tegra: register dependency
- parser for firmware nodes
-Date: Mon, 13 Jul 2015 16:42:55 +0100
-Message-ID: <20150713154254.GH11162@sirena.org.uk>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
- <20150701173802.GW11162@sirena.org.uk>
- <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A@mail.gmail.com>
+From: Florian Fainelli <fainelli-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: brcmstb-gpio: document properties
+ for wakeup
+Date: Mon, 13 Jul 2015 10:35:57 -0700
+Message-ID: <55A3F6FD.1070006@broadcom.com>
+References: <1434589243-502-1-git-send-email-gregory.0xf0@gmail.com>	<1434589243-502-3-git-send-email-gregory.0xf0@gmail.com> <CACRpkdY5YH7MwGxA_UFg1bzwojT6XouBErBm86PtL_8RCSej0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xZKIQynyWHxCFrdv"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CACRpkdY5YH7MwGxA_UFg1bzwojT6XouBErBm86PtL_8RCSej0Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux PWM List <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On 13/07/15 05:29, Linus Walleij wrote:
+> On Thu, Jun 18, 2015 at 3:00 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org=
+> wrote:
+>=20
+>> Some brcmstb GPIO controllers can be used to wake from suspend, so u=
+se
+>> the de facto standard property 'wakeup-source' to mark the nodes of
+>> controllers with that capability.
+>>
+>> Also document interrupts-extended, which will be used for wakeup
+>> handling because the interrupt parent for the wake IRQ is different
+>> from the regular IRQ.
+>>
+>> While we're at it, a few more fixes: We don't actually use the
+>> "interrupt-names" property, so remove it from the listed optional
+>> properties and from the examples.  And since we're modifying the
+>> examples, also follow Brian's suggestions to:
+>> - change #gpio-cells, #interrupt-cells, and brcm,gpio-bank-widths fr=
+om
+>>   hex to dec
+>> - use phandles
+>>
+>> Reviewed-by: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>> v3: Update per Brian's suggestions described in above message.
+>=20
+> I'm very uncertain regarding these interrupts-extended etc.
 
---xZKIQynyWHxCFrdv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Gregory's additions to the binding are correct and comply with how the
+'interrupts-extended' property is meant to be used. FYI, this is
+required because most wake-up capable HW on brcmstb chips have N
+interrupts feeding to a GIC, but their wake-up interrupt(s) feed to an
+always-on interrupt controller. With the 'interrupts' +
+'interrupt-parent' property, you can "cross" multiple interrupt domains=
+=2E
 
-On Mon, Jul 13, 2015 at 02:10:45PM +0200, Tomeu Vizoso wrote:
-> On 1 July 2015 at 19:38, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > On Wed, Jul 01, 2015 at 11:41:06AM +0200, Tomeu Vizoso wrote:
+The precedence and rules for interpreting the "legacy" interrupts
+property vs. interrupts-extended is documented in the tree.
 
-> >> +static void tegra_max98090_get_dependencies(struct fwnode_handle *fwnode,
-> >> +                                         struct list_head *deps)
-> >> +{
-> >> +     add_dependency(fwnode, "nvidia,i2s-controller", deps);
-> >> +     add_dependency(fwnode, "nvidia,audio-codec", deps);
-> >> +}
+>=20
+> Can someone who understands that ACK this?
 
-> > Why is this all being open coded in an individual driver (we already
-> > know about and manage all these dependencies in the core...)?  If we're
-> > going to do this I'd expect the interface for specifying DT nodes to the
-> > core to be changed to support this.
+Acked-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-> Are you thinking of changing drivers to acquire their resources
-> through Arnd's devm_probe (only that the resource table would have to
-> be in struct device_driver)?
+>=20
+> E.g. Grant Likely, Bj=C3=B6rn Helgaas, Rob Herring.
+>=20
+> Yours,
+> Linus Walleij
+>=20
 
-> https://lkml.kernel.org/g/4742258.TBitC3hVuO@wuerfel
 
-No, I'm looking at how we already have all the "did all my dependencies
-appear" logic in the core based on data provided by the drivers.
-
---xZKIQynyWHxCFrdv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVo9x+AAoJECTWi3JdVIfQCtwH/iR0OWw9MmX0rTpPvdi+DKPm
-GHa0Sy8ieGKrBj60HzGLfLWerctXgSsB/dFWytfnpg4ebqe3Yc4TIcvADmbcA84L
-4nq+I73X1bB9XrAd6+DEAAZ3pWdInbgw+P+VBdZJAmFHaY7pg7SeQmZr4xs3vaPh
-6awa7eHWto27IT7zrOLHy12bBcFwmWZTQ/qh4XMWUPMc30/mfUoGBFzw+YokJGnw
-sFv3JkWM7bXEDdv2y1Vd39730mDC3K8dCMadzDBIcgfECKUR2/Gmh0vxttkhyy6d
-jTa4et1Urk1BsEoVSTT70QFvrvMveGGfFO7tXOD9qWE96pV7B6yIYEhjEne0Eg4=
-=Q8CS
------END PGP SIGNATURE-----
-
---xZKIQynyWHxCFrdv--
+--=20
+=46lorian
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
