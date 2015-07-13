@@ -1,98 +1,40 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 14/22] pinctrl/samsung: Use irq_set_handler_locked()
-Date: Mon, 13 Jul 2015 20:47:55 -0000
-Message-ID: <20150713072815.467278047@linutronix.de>
-References: <20150713072703.919712512@linutronix.de>
+From: Zhi Li <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 4/8] ARM: pinctrl: imx: add i.mx6ul pinctrl driver
+Date: Mon, 13 Jul 2015 15:50:39 -0500
+Message-ID: <CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+	<1434727951-4852-5-git-send-email-Frank.Li@freescale.com>
+	<CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline;
- filename=pinctrl-samsung-Use-irq_set_handler_locked.patch
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Use irq_set_handler_locked() as it avoids a redundant lookup of the
-irq descriptor.
+On Mon, Jul 13, 2015 at 3:38 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org> wrote:
+>
+>> From: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+>>
+>> Add i.MX6UL pinctrl driver support.
+>>
+>> Signed-off-by: Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+>> Signed-off-by: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+>
+> Can I get a review from Shawn and/or Sascha for this patch?
+>
+> Is it OK if I apply this to the pinctrl tree directly?
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c |   10 +++++-----
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c |   10 +++++-----
- 2 files changed, 10 insertions(+), 10 deletions(-)
+Shawn already Acked in version 1.
+I forget added his ACK at version 2.
 
-Index: tip/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-===================================================================
---- tip.orig/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ tip/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -131,13 +131,13 @@ static int s3c24xx_eint_get_trigger(unsi
- 	}
- }
- 
--static void s3c24xx_eint_set_handler(unsigned int irq, unsigned int type)
-+static void s3c24xx_eint_set_handler(struct irq_data *d, unsigned int type)
- {
- 	/* Edge- and level-triggered interrupts need different handlers */
- 	if (type & IRQ_TYPE_EDGE_BOTH)
--		__irq_set_handler_locked(irq, handle_edge_irq);
-+		irq_set_handler_locked(d, handle_edge_irq);
- 	else
--		__irq_set_handler_locked(irq, handle_level_irq);
-+		irq_set_handler_locked(d, handle_level_irq);
- }
- 
- static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
-@@ -180,8 +180,8 @@ static int s3c24xx_eint_type(struct irq_
- 		dev_err(d->dev, "unsupported external interrupt type\n");
- 		return -EINVAL;
- 	}
--
--	s3c24xx_eint_set_handler(data->irq, type);
-+x
-+	s3c24xx_eint_set_handler(data, type);
- 
- 	/* Set up interrupt trigger */
- 	reg = d->virt_base + EINT_REG(index);
-Index: tip/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-===================================================================
---- tip.orig/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ tip/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -260,13 +260,13 @@ static int s3c64xx_irq_get_trigger(unsig
- 	return trigger;
- }
- 
--static void s3c64xx_irq_set_handler(unsigned int irq, unsigned int type)
-+static void s3c64xx_irq_set_handler(struct irq_data *d, unsigned int type)
- {
- 	/* Edge- and level-triggered interrupts need different handlers */
- 	if (type & IRQ_TYPE_EDGE_BOTH)
--		__irq_set_handler_locked(irq, handle_edge_irq);
-+		irq_set_handler_locked(d, handle_edge_irq);
- 	else
--		__irq_set_handler_locked(irq, handle_level_irq);
-+		irq_set_handler_locked(d, handle_level_irq);
- }
- 
- static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
-@@ -356,7 +356,7 @@ static int s3c64xx_gpio_irq_set_type(str
- 		return -EINVAL;
- 	}
- 
--	s3c64xx_irq_set_handler(irqd->irq, type);
-+	s3c64xx_irq_set_handler(irqd, type);
- 
- 	/* Set up interrupt trigger */
- 	reg = d->virt_base + EINTCON_REG(bank->eint_offset);
-@@ -567,7 +567,7 @@ static int s3c64xx_eint0_irq_set_type(st
- 		return -EINVAL;
- 	}
- 
--	s3c64xx_irq_set_handler(irqd->irq, type);
-+	s3c64xx_irq_set_handler(irqd, type);
- 
- 	/* Set up interrupt trigger */
- 	reg = d->virt_base + EINT0CON0_REG;
+>
+> Yours,
+> Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
