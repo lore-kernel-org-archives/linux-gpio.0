@@ -1,18 +1,22 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 14/19] gpio/davinci: Prepare gpio_irq_handler for irq argument
- removal
-Date: Mon, 13 Jul 2015 20:41:37 -0000
-Message-ID: <20150712232405.907979256@linutronix.de>
+Subject: [patch 17/19] gpio/sa1100: Prepare sa1100_gpio_handler for irq
+ argument removal
+Date: Mon, 13 Jul 2015 20:41:41 -0000
+Message-ID: <20150712232406.179748622@linutronix.de>
 References: <20150712232317.244138485@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:55831 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753473AbbGMUlu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 16:41:50 -0400
 Content-Disposition: inline;
- filename=gpio-davinci-prepare-flowhandler-for-irq-arg-removal.patch
-Sender: linux-kernel-owner@vger.kernel.org
+ filename=gpio-sa1100-prepare-flowhandler-for-irq-argument-removal.patch
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <Julia.Lawall@lip6.fr>
-List-Id: linux-gpio@vger.kernel.org
 
 The irq argument of most interrupt flow handlers is unused or merily
 used instead of a local variable. The handlers which need the irq
@@ -28,21 +32,24 @@ Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
 Cc: linux-gpio@vger.kernel.org
 ---
- drivers/gpio/gpio-davinci.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-sa1100.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: tip/drivers/gpio/gpio-davinci.c
+Index: tip/drivers/gpio/gpio-sa1100.c
 ===================================================================
---- tip.orig/drivers/gpio/gpio-davinci.c
-+++ tip/drivers/gpio/gpio-davinci.c
-@@ -327,8 +327,9 @@ static struct irq_chip gpio_irqchip = {
- };
- 
+--- tip.orig/drivers/gpio/gpio-sa1100.c
++++ tip/drivers/gpio/gpio-sa1100.c
+@@ -173,9 +173,9 @@ static struct irq_domain *sa1100_gpio_ir
+  * and call the handler.
+  */
  static void
--gpio_irq_handler(unsigned irq, struct irq_desc *desc)
-+gpio_irq_handler(unsigned __irq, struct irq_desc *desc)
+-sa1100_gpio_handler(unsigned int irq, struct irq_desc *desc)
++sa1100_gpio_handler(unsigned int __irq, struct irq_desc *desc)
  {
-+	unsigned int irq = irq_desc_get_irq(desc);
- 	struct davinci_gpio_regs __iomem *g;
- 	u32 mask = 0xffff;
- 	struct davinci_gpio_controller *d;
+-	unsigned int mask;
++	unsigned int irq, mask;
+ 
+ 	mask = GEDR;
+ 	do {
+
+
