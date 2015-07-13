@@ -1,40 +1,45 @@
-From: Zhi Li <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/8] ARM: pinctrl: imx: add i.mx6ul pinctrl driver
-Date: Mon, 13 Jul 2015 15:50:39 -0500
-Message-ID: <CAHrpEqTYfGR=jH-jZqfhkbaeOdzVWY=v65xMxb2rPE_5Ld3tGA@mail.gmail.com>
-References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
-	<1434727951-4852-5-git-send-email-Frank.Li@freescale.com>
-	<CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: [patch 11/22] pinctrl/rockchip: Use irq_set_handler_locked()
+Date: Mon, 13 Jul 2015 20:47:50 -0000
+Message-ID: <20150713072815.209490110@linutronix.de>
+References: <20150713072703.919712512@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYszNKQqFuRrSqW0qmBp1ONO0vztG6e9LzKpG6f-_joJQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline;
+ filename=pinctrl-rockchip-Use-irq_set_handler_locked.patch
+Sender: linux-kernel-owner@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jul 13, 2015 at 3:38 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org> wrote:
->
->> From: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
->>
->> Add i.MX6UL pinctrl driver support.
->>
->> Signed-off-by: Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
->> Signed-off-by: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
->
-> Can I get a review from Shawn and/or Sascha for this patch?
->
-> Is it OK if I apply this to the pinctrl tree directly?
+Use irq_set_handler_locked() as it avoids a redundant lookup of the
+irq descriptor.
 
-Shawn already Acked in version 1.
-I forget added his ACK at version 2.
+Search and replacement was done with coccinelle.
 
->
-> Yours,
-> Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+---
+ drivers/pinctrl/pinctrl-rockchip.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: tip/drivers/pinctrl/pinctrl-rockchip.c
+===================================================================
+--- tip.orig/drivers/pinctrl/pinctrl-rockchip.c
++++ tip/drivers/pinctrl/pinctrl-rockchip.c
+@@ -1555,9 +1555,9 @@ static int rockchip_irq_set_type(struct
+ 	spin_unlock_irqrestore(&bank->slock, flags);
+ 
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+-		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		irq_set_handler_locked(d, handle_edge_irq);
+ 	else
+-		__irq_set_handler_locked(d->irq, handle_level_irq);
++		irq_set_handler_locked(d, handle_level_irq);
+ 
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 	irq_gc_lock(gc);
