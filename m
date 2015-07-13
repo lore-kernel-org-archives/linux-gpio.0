@@ -1,55 +1,63 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/4] dt-bindings: brcmstb-gpio: document properties for wakeup
-Date: Mon, 13 Jul 2015 14:29:46 +0200
-Message-ID: <CACRpkdY5YH7MwGxA_UFg1bzwojT6XouBErBm86PtL_8RCSej0Q@mail.gmail.com>
-References: <1434589243-502-1-git-send-email-gregory.0xf0@gmail.com>
-	<1434589243-502-3-git-send-email-gregory.0xf0@gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] leds: Allow compile test of LEDS_AAT1290 and LEDS_KTD2692
+ if !GPIOLIB
+Date: Mon, 13 Jul 2015 14:39:53 +0200
+Message-ID: <55A3B199.7010308@samsung.com>
+References: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1434589243-502-3-git-send-email-gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-reply-to: <1436190154-11517-1-git-send-email-geert@linux-m68k.org>
+Sender: linux-leds-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 18, 2015 at 3:00 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =
-wrote:
+Hi Geert,
 
-> Some brcmstb GPIO controllers can be used to wake from suspend, so us=
-e
-> the de facto standard property 'wakeup-source' to mark the nodes of
-> controllers with that capability.
+Thanks for the patch.
+
+On 07/06/2015 03:42 PM, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
 >
-> Also document interrupts-extended, which will be used for wakeup
-> handling because the interrupt parent for the wake IRQ is different
-> from the regular IRQ.
+> If COMPILE_TEST is enabled, relax the dependency on GPIOLIB for the
+> recently introduced symbols LEDS_AAT1290 and LEDS_KTD2692.
 >
-> While we're at it, a few more fixes: We don't actually use the
-> "interrupt-names" property, so remove it from the listed optional
-> properties and from the examples.  And since we're modifying the
-> examples, also follow Brian's suggestions to:
-> - change #gpio-cells, #interrupt-cells, and brcm,gpio-bank-widths fro=
-m
->   hex to dec
-> - use phandles
->
-> Reviewed-by: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > ---
-> v3: Update per Brian's suggestions described in above message.
+>   drivers/leds/Kconfig | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 94eced66d877182b..cf0248b8dbb9c023 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -43,7 +43,7 @@ config LEDS_AAT1290
+>   	tristate "LED support for the AAT1290"
+>   	depends on LEDS_CLASS_FLASH
+>   	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	depends on OF
+>   	depends on PINCTRL
+>   	help
+> @@ -543,7 +543,8 @@ config LEDS_MENF21BMC
+>
+>   config LEDS_KTD2692
+>   	tristate "LED support for KTD2692 flash LED controller"
+> -	depends on LEDS_CLASS_FLASH && GPIOLIB && OF
+> +	depends on LEDS_CLASS_FLASH && OF
+> +	depends on GPIOLIB || COMPILE_TEST
+>   	help
+>   	  This option enables support for KTD2692 LED flash connected
+>   	  through ExpressWire interface.
+>
 
-I'm very uncertain regarding these interrupts-extended etc.
+Acked-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Can someone who understands that ACK this?
-
-E.g. Grant Likely, Bj=C3=B6rn Helgaas, Rob Herring.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best Regards,
+Jacek Anaszewski
