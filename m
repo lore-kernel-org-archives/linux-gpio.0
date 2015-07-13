@@ -1,24 +1,22 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpiolib: remove unneeded assignation
-Date: Mon, 13 Jul 2015 23:20:13 +0900
-Message-ID: <CAAVeFuJ8UKwf9G9r8jONcgpdpRSCaMqXR7wtQniLgmVbUm-nEA@mail.gmail.com>
-References: <1436300535-1230-1-git-send-email-laurent.navet@gmail.com>
+Subject: Re: [PATCH] gpio: of: remove unnecessary variable in of_get_gpio_hog()
+Date: Mon, 13 Jul 2015 23:27:36 +0900
+Message-ID: <CAAVeFuKJSUVv-pvy-zHHTPGyKV16UwejXK9SJWzoitw_oDrnmg@mail.gmail.com>
+References: <1435825632-16103-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436300535-1230-1-git-send-email-laurent.navet@gmail.com>
+In-Reply-To: <1435825632-16103-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Navet <laurent.navet@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 8, 2015 at 5:22 AM, Laurent Navet <laurent.navet@gmail.com> wrote:
-> ret is assigned value from of_property_read_string_index but is
-> overwritten before being used so remove it.
-> Also fix coverity CID 1309759
+On Thu, Jul 2, 2015 at 5:27 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> The variable "desc" is only used for storing the return value at the
+> end of the function.  It is is unneeded.
 
-You should probably have a line that says
+Fair enough.
 
-Reported-by: coverity (CID 1309759)
-
-As other similar patches do.
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
