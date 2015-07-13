@@ -1,35 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/4] gpio: brcmstb: fix null ptr dereference in driver remove
-Date: Mon, 13 Jul 2015 14:24:12 +0200
-Message-ID: <CACRpkdY_ER-=ig=zeGNKaGFmVrrLrTqXPCJ+75F9eZZ9JOOmxA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: brcmstb-gpio: document properties for wakeup
+Date: Mon, 13 Jul 2015 14:29:46 +0200
+Message-ID: <CACRpkdY5YH7MwGxA_UFg1bzwojT6XouBErBm86PtL_8RCSej0Q@mail.gmail.com>
 References: <1434589243-502-1-git-send-email-gregory.0xf0@gmail.com>
-	<1434589243-502-2-git-send-email-gregory.0xf0@gmail.com>
+	<1434589243-502-3-git-send-email-gregory.0xf0@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434589243-502-2-git-send-email-gregory.0xf0@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434589243-502-3-git-send-email-gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 18, 2015 at 3:00 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+On Thu, Jun 18, 2015 at 3:00 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =
+wrote:
 
-> If a failure occurs during probe, brcmstb_gpio_remove() is called. In
-> remove, we call platform_get_drvdata(), but at the time of failure in
-> the probe the driver data hadn't yet been set which leads to a NULL
-> ptr dereference in the remove's list_for_each.  Call
-> platform_set_drvdata() and set up list head right after allocating the
-> priv struct to both avoid the null pointer dereference that could
-> occur today.  To guard against potential future changes, check for
-> null pointer in remove.
+> Some brcmstb GPIO controllers can be used to wake from suspend, so us=
+e
+> the de facto standard property 'wakeup-source' to mark the nodes of
+> controllers with that capability.
 >
-> Reported-by: Tim Ross <tross@broadcom.com>
-> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
+> Also document interrupts-extended, which will be used for wakeup
+> handling because the interrupt parent for the wake IRQ is different
+> from the regular IRQ.
+>
+> While we're at it, a few more fixes: We don't actually use the
+> "interrupt-names" property, so remove it from the listed optional
+> properties and from the examples.  And since we're modifying the
+> examples, also follow Brian's suggestions to:
+> - change #gpio-cells, #interrupt-cells, and brcm,gpio-bank-widths fro=
+m
+>   hex to dec
+> - use phandles
+>
+> Reviewed-by: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
-> New in v3.
+> v3: Update per Brian's suggestions described in above message.
 
-Patch applied.
+I'm very uncertain regarding these interrupts-extended etc.
+
+Can someone who understands that ACK this?
+
+E.g. Grant Likely, Bj=C3=B6rn Helgaas, Rob Herring.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
