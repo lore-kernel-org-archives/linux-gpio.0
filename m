@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
-Date: Tue, 14 Jul 2015 13:56:52 +0200
-Message-ID: <1436875015-13706-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
+Date: Tue, 14 Jul 2015 13:56:55 +0200
+Message-ID: <1436875015-13706-5-git-send-email-geert+renesas@glider.be>
 References: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:35439 "EHLO
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35442 "EHLO
 	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752046AbbGNL47 (ORCPT
+	with ESMTP id S1752151AbbGNL47 (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 07:56:59 -0400
 In-Reply-To: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -14,39 +14,38 @@ List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Since the removal of the sh73a0 legacy SoC code in commit
-9a9863987bf7307f ("ARM: shmobile: Remove legacy SoC code for SH-Mobile
-AG5"), sh73a0 is only supported in generic ARM multi-platform builds.
-Hence CONFIG_ARCH_MULTIPLATFORM is always set, and the check can be
-removed.
+Since the removal of the r8a7740 legacy SoC code in commit
+44d88c754e57a6d9 ("ARM: shmobile: Remove legacy SoC code for R-Mobile
+A1"), r8a7740 is only supported in generic DT-only ARM multi-platform
+builds.  The driver doesn't need to match platform devices by name
+anymore, hence remove the corresponding platform_device_id entry.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Acked-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-The commit mentioned above is in -next, destined for v4.3.
+The commit mentioned above is in -next, destined for v4.3. Please apply.
 
 v2:
   - Add Acked-by.
 ---
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/pinctrl/sh-pfc/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-index d2efbfb776ac57d6..097526576f88181f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-@@ -26,10 +26,6 @@
- #include <linux/regulator/machine.h>
- #include <linux/slab.h>
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index ceb7dbc1995c7c7f..98d465f37a469743 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -591,9 +591,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
+ }
  
--#ifndef CONFIG_ARCH_MULTIPLATFORM
--#include <mach/irqs.h>
+ static const struct platform_device_id sh_pfc_id_table[] = {
+-#ifdef CONFIG_PINCTRL_PFC_R8A7740
+-	{ "pfc-r8a7740", (kernel_ulong_t)&r8a7740_pinmux_info },
 -#endif
--
- #include "core.h"
- #include "sh_pfc.h"
- 
+ #ifdef CONFIG_PINCTRL_PFC_R8A7778
+ 	{ "pfc-r8a7778", (kernel_ulong_t)&r8a7778_pinmux_info },
+ #endif
 -- 
 1.9.1
 
