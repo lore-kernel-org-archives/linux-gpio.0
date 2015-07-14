@@ -1,42 +1,53 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] pinctrl: qcom: Hook pm_power_down for shutdown support
-Date: Mon, 13 Jul 2015 15:59:57 -0700
-Message-ID: <20150713225957.GF15178@usrtlx11787.corpusers.net>
-References: <1436231370-18301-1-git-send-email-sboyd@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2] gpio: of: remove unnecessary variable in of_get_gpio_hog()
+Date: Tue, 14 Jul 2015 10:01:44 +0900
+Message-ID: <1436835704-6371-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:13681 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752590AbbGMXAE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 13 Jul 2015 19:00:04 -0400
-Content-Disposition: inline
-In-Reply-To: <1436231370-18301-1-git-send-email-sboyd@codeaurora.org>
+Received: from conuserg012.nifty.com ([202.248.44.38]:65351 "EHLO
+	conuserg012-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752055AbbGNBC3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Jul 2015 21:02:29 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Pramod Gurav <pramod.gurav@smartplayin.com>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 
-On Mon 06 Jul 18:09 PDT 2015, Stephen Boyd wrote:
+The variable "desc" is only used for storing the return value at the
+end of the function.  It is unneeded.
 
-> Assign pm_power_off() if we have the PS_HOLD functionality so
-> that we can properly shutdown the SoC. Otherwise, shutdown won't
-> do anything besides put the CPU into a tight loop. Unfortunately,
-> we have to use a singleton here because pm_power_off() doesn't
-> take any arguments. Fortunately there's only one instance of the
-> pinctrl device on a running system so this isn't a problem.
-> 
-> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Cc: Pramod Gurav <pramod.gurav@smartplayin.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+---
 
+Changes in v2:
+  - Fix a typo in git-log.   "It is is unneeded" -> "It is unneeded"
 
-I do find it odd that there's generic handling for restart but only the
-crude way pm_power_off to shut the system down... But this seems to be
-the way it should be done...
+ drivers/gpio/gpiolib-of.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 9a0ec48..fd2db4b 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -136,7 +136,6 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
+ {
+ 	struct device_node *chip_np;
+ 	enum of_gpio_flags xlate_flags;
+-	struct gpio_desc *desc;
+ 	struct gg_data gg_data = {
+ 		.flags = &xlate_flags,
+ 	};
+@@ -193,9 +192,7 @@ static struct gpio_desc *of_get_gpio_hog(struct device_node *np,
+ 	if (name && of_property_read_string(np, "line-name", name))
+ 		*name = np->name;
+ 
+-	desc = gg_data.out_gpio;
+-
+-	return desc;
++	return gg_data.out_gpio;
+ }
+ 
+ /**
+-- 
+1.9.1
 
-Regards,
-Bjorn
