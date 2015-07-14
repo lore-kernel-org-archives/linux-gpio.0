@@ -1,165 +1,239 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Tue, 14 Jul 2015 10:29:54 +0200
-Message-ID: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:34312 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752619AbbGNIbN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 04:31:13 -0400
-In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
+Date: Tue, 14 Jul 2015 10:53:04 +0200
+Message-ID: <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+	<1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435094387-20146-8-git-send-email-pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Jingchang Lu <jingchang.lu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Magnus Damm <damm+renesas-yzvPICuk2ACczHhG9Qg4qA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Nathan Lynch <nathan_lynch-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Nicolas Pitre <nico-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Coquelin stm32 <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>Ste
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
-the pin controller isn't available.
+On Tue, Jun 23, 2015 at 11:19 PM, Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org> wrote:
+> This is very cheap and simple implementation of pinctrl driver
+> for Kinetis SoC - its primary role is to provide means for enabling UART
+> fuctionality on I/O PORT_E which will be utilized by the commits
+> yet to come.
+>
+> Signed-off-by: Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>
 
-Otherwise, the GPIO range wouldn't be set at all unless the pin
-controller probed always before the GPIO chip.
+OK...
 
-With this change, the probe of the GPIO chip will be deferred and will
-be retried at a later point, hopefully once the pin controller has been
-registered and probed already.
+I want Shawn and Sascha to look at this as they worked with
+other Freescale pin controllers. Especially I want to know if this
+is a sibling to the other Freescale controllers or a separate hardware.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
+If it is *not* a sibling I will *insist* that it use more generic pin
+control bindings and move away from the older Freescale-specific
+stuff.
 
-Changes in v2:
-- Don't defer probe if the pinctrl node is disabled
+>  arch/arm/Kconfig                                   |   1 +
+>  arch/arm/boot/dts/kinetis.dtsi                     |  48 ++
+>  arch/arm/mach-kinetis/Kconfig                      |   6 +
+>  drivers/clk/clk-kinetis.c                          |  28 ++
 
- drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
- drivers/gpio/gpiolib.c    |  5 ++++-
- include/linux/of_gpio.h   |  4 ++--
- 3 files changed, 24 insertions(+), 12 deletions(-)
+>  include/dt-bindings/clock/kinetis-mcg.h            |   8 +-
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9a0ec48a4737..4e1f73b9136a 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
- EXPORT_SYMBOL(of_mm_gpiochip_remove);
- 
- #ifdef CONFIG_PINCTRL
--static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
-+static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- {
- 	struct device_node *np = chip->of_node;
- 	struct of_phandle_args pinspec;
-@@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	struct property *group_names;
- 
- 	if (!np)
--		return;
-+		return 0;
- 
- 	group_names = of_find_property(np, group_names_propname, NULL);
- 
-@@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 
- 		pctldev = of_pinctrl_get(pinspec.np);
- 		if (!pctldev)
--			break;
-+			return -EPROBE_DEFER;
- 
- 		if (pinspec.args[2]) {
- 			if (group_names) {
-@@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 					pinspec.args[1],
- 					pinspec.args[2]);
- 			if (ret)
--				break;
-+				return ret;
- 		} else {
- 			/* npins == 0: special range */
- 			if (pinspec.args[1]) {
-@@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 			ret = gpiochip_add_pingroup_range(chip, pctldev,
- 						pinspec.args[0], name);
- 			if (ret)
--				break;
-+				return ret;
- 		}
- 	}
-+
-+	return 0;
- }
- 
- #else
--static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
-+static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
- #endif
- 
--void of_gpiochip_add(struct gpio_chip *chip)
-+int of_gpiochip_add(struct gpio_chip *chip)
- {
-+	int status;
-+
- 	if ((!chip->of_node) && (chip->dev))
- 		chip->of_node = chip->dev->of_node;
- 
- 	if (!chip->of_node)
--		return;
-+		return 0;
- 
- 	if (!chip->of_xlate) {
- 		chip->of_gpio_n_cells = 2;
- 		chip->of_xlate = of_gpio_simple_xlate;
- 	}
- 
--	of_gpiochip_add_pin_range(chip);
-+	status = of_gpiochip_add_pin_range(chip);
-+	if (status)
-+		return status;
-+
- 	of_node_get(chip->of_node);
- 
- 	of_gpiochip_scan_hogs(chip);
-+
-+	return 0;
- }
- 
- void of_gpiochip_remove(struct gpio_chip *chip)
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d120c3..a8cab335c0cc 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
- 	INIT_LIST_HEAD(&chip->pin_ranges);
- #endif
- 
--	of_gpiochip_add(chip);
-+	status = of_gpiochip_add(chip);
-+	if (status)
-+		goto err_remove_chip;
-+
- 	acpi_gpiochip_add(chip);
- 
- 	status = gpiochip_sysfs_register(chip);
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 69dbe312b11b..f3191828f037 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
- 			      struct of_mm_gpio_chip *mm_gc);
- extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
- 
--extern void of_gpiochip_add(struct gpio_chip *gc);
-+extern int of_gpiochip_add(struct gpio_chip *gc);
- extern void of_gpiochip_remove(struct gpio_chip *gc);
- extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- 				const struct of_phandle_args *gpiospec,
-@@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
- 	return -ENOSYS;
- }
- 
--static inline void of_gpiochip_add(struct gpio_chip *gc) { }
-+static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
- static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- 
- #endif /* CONFIG_OF_GPIO */
--- 
-2.4.3
+I see that you are trying to hold together "pin control support" in a
+patch hitting all over the world. I don't think this is good, I think it is
+better if you make a separate patch for bindings, clock, DTS and
+mach-kinetis.
 
+I think the clock support could go into the one big clock support
+patch in the series simply, but its a question for the clk maintainer.
+
+I only want the below change for the pin control subsystem and I
+want to merge that into my tree. I will also merge the device tree
+bindings for it. The rest goes to the clock tree and ARM SoC.
+You can merge the Kconfig selects
+of the symbols orthogonally so you need not keep it together,
+and DTS changes are by definition orthogonal.
+
+>  .../bindings/pinctrl/fsl,kinetis-pinctrl.txt       |  31 ++
+
+>  drivers/pinctrl/freescale/Kconfig                  |   8 +
+>  drivers/pinctrl/freescale/Makefile                 |   1 +
+>  drivers/pinctrl/freescale/pinctrl-kinetis.c        | 529 +++++++++++++++++++++
+>  9 files changed, 659 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/freescale/pinctrl-kinetis.c
+
+So I will take these things once we are done with review etc.
+
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt
+> new file mode 100644
+> index 0000000..04798c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,kinetis-pinctrl.txt
+> @@ -0,0 +1,31 @@
+> +Freescale Kinetis IOMUX Controller
+> +
+> +This controller is largely based on i.MX IOMUX Controller. Please refer to
+> +fsl,imx-pinctrl.txt in this directory for more detailed description.
+> +
+> +Required properties:
+> +- compatible: Should be "fsl,kinetis-iomuxc".
+> +- reg: Should contain the physical address and length of the gpio/pinmux
+> +  register range.
+> +- clocks: Clock that drives this I/O port.
+> +- fsl,pins: Two integers array, represents a group of pins mux and config
+> +  setting. The format is fsl,pins = <PIN_FUNC_ID CONFIG>, PIN_FUNC_ID is
+> +  a pin working on a specific function, CONFIG is the pad setting value
+> +  such as pull enable, pull select, drive strength enable. Please refer to
+> +  Kinetis datasheet for the valid pad config settings.
+
+There exist generic pin config bindings, see
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+
+I suggest to to function+group paring and then use generic pin config
+with this driver unless it is a very close sibling to the existing Freescale
+pin controllers.
+
+Hint: if it is a sibling, it should share code with them.
+
+There are several drivers doing generic pin control/pin config in the kernel
+tree.
+
+> diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
+> index 12ef544..2d0dfa9 100644
+> --- a/drivers/pinctrl/freescale/Kconfig
+> +++ b/drivers/pinctrl/freescale/Kconfig
+> @@ -94,6 +94,14 @@ config PINCTRL_IMX7D
+>         help
+>           Say Y here to enable the imx7d pinctrl driver
+>
+> +config PINCTRL_KINETIS
+> +       bool "Kinetis pinctrl driver"
+> +       depends on OF
+> +       depends on SOC_K70
+
+I don't know if that cryptic symbol is very good. FREESCALE_SOC_K70
+makes more sense.
+
+> @@ -0,0 +1,529 @@
+> +/*
+> + * pinctrl-kinetis.c - iomux for Kinetis MCUs
+> + *
+> + * Based on pinctrl-imx.c by Dong Aisheng <dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> + *
+> + * Copyright (C) 2015 Paul Osmialowski <pawelo-rhuoMcPwk82rDJvtcaxF/A@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it under
+> + * the terms of the GNU General Public License version 2 as published by the
+> + * Free Software Foundation.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/clk.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pinctrl/machine.h>
+
+Why are you including this? It seems wrong. Machine
+definitions should not be in the driver, in your case it should
+probably be in the device tree.
+
+> +/*
+> + * PORTx register map
+> + */
+> +struct kinetis_port_regs {
+> +       u32 pcr[32];    /* Pin Control Registers */
+> +       u32 gpclr;      /* Global Pin Control Low Register */
+> +       u32 gpchr;      /* Global Pin Control High Register */
+> +       u32 rsv0[6];
+> +       u32 isfr;       /* Interrupt Status Flag Register */
+> +       u32 rsv1[7];
+> +       u32 dfer;       /* Digital Filter Enable Register */
+> +       u32 dfcr;       /* Digital Filter Clock Register */
+> +       u32 dfwr;       /* Digital Filter Width Register */
+> +};
+
+Why do you need this ... I don't get it.
+Please elaborate on why you are keeping a struct model of
+the register map around.
+
+> +/*
+> + * PORTx registers base
+> + */
+> +#define KINETIS_PORT_PTR(base, reg) \
+> +       (&(((struct kinetis_port_regs *)(base))->reg))
+> +#define KINETIS_PORT_RD(base, reg) readl_relaxed(KINETIS_PORT_PTR(base, reg))
+> +#define KINETIS_PORT_WR(base, reg, val) \
+> +               writel_relaxed((val), KINETIS_PORT_PTR(base, reg))
+> +#define KINETIS_PORT_SET(base, reg, mask) \
+> +       KINETIS_PORT_WR(base, reg, (KINETIS_PORT_RD(base, reg)) | (mask))
+> +#define KINETIS_PORT_RESET(base, reg, mask) \
+> +       KINETIS_PORT_WR(base, reg, (KINETIS_PORT_RD(base, reg)) & (~(mask)))
+
+Convert these to static inline functions instead. It is way easier to read
+than this compact and terse defines.
+
+> +static int kinetis_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                       struct device_node *np,
+> +                       struct pinctrl_map **map, unsigned *num_maps)
+> +{
+> +       struct kinetis_pinctrl *kpctl = pinctrl_dev_get_drvdata(pctldev);
+> +       const struct kinetis_pinctrl_soc_info *info = &kpctl->info;
+> +       const struct kinetis_pin_group *grp;
+> +       struct pinctrl_map *new_map;
+> +       struct device_node *parent;
+> +
+> +       /*
+> +        * first find the group of this node and check if we need create
+> +        * config maps for pins
+> +        */
+> +       grp = kinetis_pinctrl_find_group_by_name(info, np->name);
+> +       if (!grp) {
+> +               dev_err(info->dev, "unable to find group for node %s\n",
+> +                       np->name);
+> +               return -EINVAL;
+> +       }
+> +
+> +       new_map = kmalloc(sizeof(struct pinctrl_map), GFP_KERNEL);
+> +       if (!new_map)
+> +               return -ENOMEM;
+
+
+Use pinctrl_utils_reserve_map() from pinctrl-utils.h
+
+> +static void kinetis_dt_free_map(struct pinctrl_dev *pctldev,
+> +                               struct pinctrl_map *map, unsigned num_maps)
+> +{
+> +       kfree(map);
+> +}
+
+Use pinctrl_utils_dt_free_map().
+
+> +static int kinetis_pinctrl_probe_dt(struct platform_device *pdev,
+> +                               struct kinetis_pinctrl_soc_info *info)
+> +{
+> +       struct device_node *np = pdev->dev.of_node;
+> +       struct device_node *child;
+> +       u32 nfuncs = 0;
+> +       u32 i = 0;
+> +       bool flat_funcs;
+> +
+> +       if (!np)
+> +               return -ENODEV;
+> +
+> +       flat_funcs = kinetis_pinctrl_dt_is_flat_functions(np);
+
+Why is there an _is_ in that function name? Totally unintuitive
+to me.
+
+I think I will have more comments on v2, this is just a first rough look.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
