@@ -1,72 +1,33 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [alsa-devel] [PATCH v2 11/12] ASoC: tegra: register dependency
- parser for firmware nodes
-Date: Tue, 14 Jul 2015 09:34:22 +0200
-Message-ID: <CAAObsKAVY7-QpcRyT4juc2RyB+vqibvzKO7wFCT2VsL9R8bzPw@mail.gmail.com>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
- <20150701173802.GW11162@sirena.org.uk>
- <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A@mail.gmail.com>
- <20150713154254.GH11162@sirena.org.uk>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/8] ARM: pinctrl: imx: add i.mx6ul pinctrl driver
+Date: Tue, 14 Jul 2015 09:51:53 +0200
+Message-ID: <CACRpkdahkFgmjCQPTQp4M0r=+UrGtp-s5EAcderFS8b0zZvkDg@mail.gmail.com>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+	<1434727951-4852-5-git-send-email-Frank.Li@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150713154254.GH11162@sirena.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-acpi@vger.kernel.org, Linux PWM List <linux-pwm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434727951-4852-5-git-send-email-Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, =?UTF-8?B?5p2O5pm6?= <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gMTMgSnVseSAyMDE1IGF0IDE3OjQyLCBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
-IHdyb3RlOgo+IE9uIE1vbiwgSnVsIDEzLCAyMDE1IGF0IDAyOjEwOjQ1UE0gKzAyMDAsIFRvbWV1
-IFZpem9zbyB3cm90ZToKPj4gT24gMSBKdWx5IDIwMTUgYXQgMTk6MzgsIE1hcmsgQnJvd24gPGJy
-b29uaWVAa2VybmVsLm9yZz4gd3JvdGU6Cj4+ID4gT24gV2VkLCBKdWwgMDEsIDIwMTUgYXQgMTE6
-NDE6MDZBTSArMDIwMCwgVG9tZXUgVml6b3NvIHdyb3RlOgo+Cj4+ID4+ICtzdGF0aWMgdm9pZCB0
-ZWdyYV9tYXg5ODA5MF9nZXRfZGVwZW5kZW5jaWVzKHN0cnVjdCBmd25vZGVfaGFuZGxlICpmd25v
-ZGUsCj4+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
-dCBsaXN0X2hlYWQgKmRlcHMpCj4+ID4+ICt7Cj4+ID4+ICsgICAgIGFkZF9kZXBlbmRlbmN5KGZ3
-bm9kZSwgIm52aWRpYSxpMnMtY29udHJvbGxlciIsIGRlcHMpOwo+PiA+PiArICAgICBhZGRfZGVw
-ZW5kZW5jeShmd25vZGUsICJudmlkaWEsYXVkaW8tY29kZWMiLCBkZXBzKTsKPj4gPj4gK30KPgo+
-PiA+IFdoeSBpcyB0aGlzIGFsbCBiZWluZyBvcGVuIGNvZGVkIGluIGFuIGluZGl2aWR1YWwgZHJp
-dmVyICh3ZSBhbHJlYWR5Cj4+ID4ga25vdyBhYm91dCBhbmQgbWFuYWdlIGFsbCB0aGVzZSBkZXBl
-bmRlbmNpZXMgaW4gdGhlIGNvcmUuLi4pPyAgSWYgd2UncmUKPj4gPiBnb2luZyB0byBkbyB0aGlz
-IEknZCBleHBlY3QgdGhlIGludGVyZmFjZSBmb3Igc3BlY2lmeWluZyBEVCBub2RlcyB0byB0aGUK
-Pj4gPiBjb3JlIHRvIGJlIGNoYW5nZWQgdG8gc3VwcG9ydCB0aGlzLgo+Cj4+IEFyZSB5b3UgdGhp
-bmtpbmcgb2YgY2hhbmdpbmcgZHJpdmVycyB0byBhY3F1aXJlIHRoZWlyIHJlc291cmNlcwo+PiB0
-aHJvdWdoIEFybmQncyBkZXZtX3Byb2JlIChvbmx5IHRoYXQgdGhlIHJlc291cmNlIHRhYmxlIHdv
-dWxkIGhhdmUgdG8KPj4gYmUgaW4gc3RydWN0IGRldmljZV9kcml2ZXIpPwo+Cj4+IGh0dHBzOi8v
-bGttbC5rZXJuZWwub3JnL2cvNDc0MjI1OC5UQml0QzNoVnVPQHd1ZXJmZWwKPgo+IE5vLCBJJ20g
-bG9va2luZyBhdCBob3cgd2UgYWxyZWFkeSBoYXZlIGFsbCB0aGUgImRpZCBhbGwgbXkgZGVwZW5k
-ZW5jaWVzCj4gYXBwZWFyIiBsb2dpYyBpbiB0aGUgY29yZSBiYXNlZCBvbiBkYXRhIHByb3ZpZGVk
-IGJ5IHRoZSBkcml2ZXJzLgoKU29ycnksIGJ1dCBJIHN0aWxsIGRvbid0IGdldCB3aGF0IHlvdSBt
-ZWFuLgoKSW5mb3JtYXRpb24gYWJvdXQgZGVwZW5kZW5jaWVzIGlzIGN1cnJlbnRseSBhdmFpbGFi
-bGUgb25seSBhZnRlcgpwcm9iZSgpIHN0YXJ0cyBleGVjdXRpbmcsIGFuZCB1c2VkIHRvIGRlY2lk
-ZSB3aGV0aGVyIHdlIHdhbnQgdG8gZGVmZXIKdGhlIHByb2JlLgoKVGhlIGdvYWwgb2YgdGhpcyBz
-ZXJpZXMgaXMgdG8gZWxpbWluYXRlIG1vc3Qgb3IgYWxsIG9mIHRoZSBkZWZlcnJlZApwcm9iZXMg
-YnkgY2hlY2tpbmcgdGhhdCBhbGwgZGVwZW5kZW5jaWVzIGFyZSBhdmFpbGFibGUgYmVmb3JlIHBy
-b2JlKCkKaXMgY2FsbGVkLgoKQmVjYXVzZSBjdXJyZW50bHkgd2Ugb25seSBoYXZlIGRlcGVuZGVu
-Y3kgaW5mb3JtYXRpb24gYWZ0ZXIgcHJvYmUoKQpzdGFydHMgZXhlY3V0aW5nLCB3ZSBoYXZlIHRv
-IG1ha2UgaXQgYXZhaWxhYmxlIGVhcmxpZXIuIEluIHRoaXMKcGFydGljdWxhciB2ZXJzaW9uLCBp
-biBjYWxsYmFja3MgdGhhdCBhcmUgcmVnaXN0ZXJlZCBmcm9tIHRoZQppbml0Y2FsbHMgdGhhdCBy
-ZWdpc3RlciBzdWJzeXN0ZW1zLCBjbGFzc2VzLCBkcml2ZXJzLCBldGMuIFdoYXRldmVyCmtub3dz
-IGhvdyB0aGVzZSBkZXBlbmRlbmNpZXMgYXJlIGV4cHJlc3NlZCBpbiB0aGUgZmlybXdhcmUgZGF0
-YS4KCkkgdGhvdWdodCB5b3Ugd2VyZSBwb2ludGluZyBvdXQgdGhhdCB0aGUgcHJvcGVydHkgbmFt
-ZXMgd291bGQgYmUKZHVwbGljYXRlZCwgb25jZSBpbiB0aGUgcHJvYmUoKSBpbXBsZW1lbnRhdGlv
-biBhbmQgYWxzbyBpbiB0aGUKaW1wbGVtZW50YXRpb24gb2YgdGhlIGdldF9kZXBlbmRlbmNpZXMg
-Y2FsbGJhY2suCgpBIHdheSB0byBjb25zb2xpZGF0ZSB0aGUgY29kZSBhbmQgcmVtb3ZlIHRoYXQg
-ZHVwbGljYXRpb24gd291bGQgYmUKaGF2aW5nIGEgZGVjbGFyYXRpdmUgQVBJIGZvciBleHByZXNz
-aW5nIGRlcGVuZGVuY2llcywgd2hpY2ggY291bGQgYmUKdXNlZCBmb3IgYm90aCBmZXRjaGluZyBk
-ZXBlbmRlbmNpZXMgYW5kIGZvciBwcmV2ZW50aW5nIGRlZmVycmVkCnByb2Jlcy4gVGhhdCdzIHdo
-eSBJIG1lbnRpb25lZCBkZXZtX3Byb2JlLgoKVGhhbmtzLAoKVG9tZXUKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org> wrote:
+
+> From: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+>
+> Add i.MX6UL pinctrl driver support.
+>
+> Signed-off-by: Anson Huang <b20788-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+> Signed-off-by: Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+
+Patch applied for v4.3 with Shawn's ACK. Please
+merge all the DTS stuff through ARM SoC.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
