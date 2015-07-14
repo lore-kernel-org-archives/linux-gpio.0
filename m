@@ -1,51 +1,51 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
-Date: Tue, 14 Jul 2015 13:56:55 +0200
-Message-ID: <1436875015-13706-5-git-send-email-geert+renesas@glider.be>
-References: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:35442 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752151AbbGNL47 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 07:56:59 -0400
-In-Reply-To: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v2 0/4] pinctrl: sh-pfc: sh73a0/r8a7740 legacy is gone
+Date: Tue, 14 Jul 2015 13:56:51 +0200
+Message-ID: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-Since the removal of the r8a7740 legacy SoC code in commit
-44d88c754e57a6d9 ("ARM: shmobile: Remove legacy SoC code for R-Mobile
-A1"), r8a7740 is only supported in generic DT-only ARM multi-platform
-builds.  The driver doesn't need to match platform devices by name
-anymore, hence remove the corresponding platform_device_id entry.
+	Hi Linus,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-The commit mentioned above is in -next, destined for v4.3. Please apply.
+In -next, legacy support for the Renesas SH-Mobile AG5 (sh73a0) and
+R-Mobile A1 (r8a7740) SoCs has been removed, and these SoCs are now only
+supported in generic ARM multi-platform builds.
 
-v2:
-  - Add Acked-by.
----
- drivers/pinctrl/sh-pfc/core.c | 3 ---
- 1 file changed, 3 deletions(-)
+Hence this patch series, which is the remaining part of series "[PATCH
+00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and r8a7740/armadillo"
+(http://www.spinics.net/lists/arm-kernel/msg425987.html) removes
+multi-platform checks and platform_device_id entries that are no longer
+needed.
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index ceb7dbc1995c7c7f..98d465f37a469743 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -591,9 +591,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id sh_pfc_id_table[] = {
--#ifdef CONFIG_PINCTRL_PFC_R8A7740
--	{ "pfc-r8a7740", (kernel_ulong_t)&r8a7740_pinmux_info },
--#endif
- #ifdef CONFIG_PINCTRL_PFC_R8A7778
- 	{ "pfc-r8a7778", (kernel_ulong_t)&r8a7778_pinmux_info },
- #endif
+Changes in v2:
+  - Add Laurent's Acked-by.
+
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
+  pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
+  pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
+  pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
+
+ drivers/pinctrl/sh-pfc/core.c        | 6 ------
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 4 ----
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 4 ----
+ 3 files changed, 14 deletions(-)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
