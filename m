@@ -1,106 +1,72 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per pin
- muxing controllers
-Date: Tue, 14 Jul 2015 08:54:15 +0200
-Message-ID: <20150714065415.GD5161@pengutronix.de>
-References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
- <1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com>
- <557EF60D.8020007@wwwdotorg.org>
- <20150617123816.GB12295@odux.rfo.atmel.com>
- <5581988C.50000@wwwdotorg.org>
- <55925EB1.1030500@atmel.com>
- <CACRpkdb3+9=seJo7w5nrJS-iURH3SnH-PYVvJCQ-S619KOcKbg@mail.gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [alsa-devel] [PATCH v2 11/12] ASoC: tegra: register dependency
+ parser for firmware nodes
+Date: Tue, 14 Jul 2015 09:34:22 +0200
+Message-ID: <CAAObsKAVY7-QpcRyT4juc2RyB+vqibvzKO7wFCT2VsL9R8bzPw@mail.gmail.com>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
+ <20150701173802.GW11162@sirena.org.uk>
+ <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A@mail.gmail.com>
+ <20150713154254.GH11162@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:48247 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbbGNGy1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 02:54:27 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb3+9=seJo7w5nrJS-iURH3SnH-PYVvJCQ-S619KOcKbg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150713154254.GH11162@sirena.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-acpi@vger.kernel.org, Linux PWM List <linux-pwm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Stephen Warren <swarren@wwwdotorg.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 13, 2015 at 02:07:45PM +0200, Linus Walleij wrote:
-> On Tue, Jun 30, 2015 at 11:17 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wrote:
-> 
-> > - no agreement on 3 points:
-> > 1/ ways to use groups in generic pinctrl
-> > 2/ ways to describe a comprehensive configuration in device tree
-> > 3/ readability of a sysfs information
-> >
-> > - no way out on the generic pinctrl little changes that Ludovic proposed
-> > as Linus W. never gave his point of view (RFC posts on April the 2nd).
-> 
-> Yeah I know. I am battling with this, it is one of those topics
-> where you feel "eeeehhhh" and try to avoid looking at it. Sadly
-> I have to...
-> 
-> I refer to Documentation/ManagementStyle, chapter 1,
-> "Decisions".
-> 
-> What makes me feel uneasy about these things is that the decisions
-> are irreversible due to the nature of the device tree bindings.
-> 
-> I am not a manager, but a maintainer...
-> 
-> > Ludovic explained at length our point of view and gave detailed
-> > technical arguments. We don't intend to convince you, we just would like
-> > the harmless modifications to be integrated.
-> 
-> So is it universally agreed that the changes are harmless?
-> 
-> If they are harmless, I would be able to revert the patch and
-> nothing breaks in the world, I don't think that is the case. The
-> case is a piece of code and functionality that is not AT91-specific
-> but has to be maintained in the core pinctrl code forever.
-
-If this change turns out to be wrong it doesn't necessarily have to stay
-in the core pinctrl code. It can be pushed back into the AT91 driver
-(and the others using it), won't be used for new bindings and after some
-years can be pushed into some dark corner.
-
-> 
-> That is basically the big problem with anything device tree.
-> It etches stuff in stone so it can't be changed, like ever.
-> Further, the decision on whether to etch this or that is
-> pushed to Linux subsystem maintainers, who are clearly
-> unsuited for the task. :(
-> 
-> > As we preferred to give a chance to the generic pinconf/pinctrl for our
-> > use by adding a little bit of flexibility, we are now in a situation
-> > where we are nearly obliged to give up this approach and write a new
-> > driver without the use of the generic facilities: what a pity!
-> > We lost several months of useless work to match what we thought the
-> > maintainer would prefer.
-> >
-> > So Linus, do you confirm that we won't go further with this approach?
-> >
-> > We are pretty disappointed by the way this interaction with the pinctrl
-> > sub-system went.
-> 
-> I'm sorry, I am just trying to wait for consensus but it seems to
-> be hard for that to happen.
-> 
-> Things I need:
-> 
-> - More DT bindings people to look at this patch.
-> 
-> - More other driver maintainers to look at this patch.
->   Sacha is one of those I'd like to get an opinion from
->   for example. ACKs, Reviewed-by's are always good.
-
-I welcome the addition of the combined pin number / mux value
-properties like we have in the Mediatek driver. Making the pinctrl
-core aware of these defines like Ludovic did is a good idea IMO.
-
-Sascha with two 's'
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+T24gMTMgSnVseSAyMDE1IGF0IDE3OjQyLCBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
+IHdyb3RlOgo+IE9uIE1vbiwgSnVsIDEzLCAyMDE1IGF0IDAyOjEwOjQ1UE0gKzAyMDAsIFRvbWV1
+IFZpem9zbyB3cm90ZToKPj4gT24gMSBKdWx5IDIwMTUgYXQgMTk6MzgsIE1hcmsgQnJvd24gPGJy
+b29uaWVAa2VybmVsLm9yZz4gd3JvdGU6Cj4+ID4gT24gV2VkLCBKdWwgMDEsIDIwMTUgYXQgMTE6
+NDE6MDZBTSArMDIwMCwgVG9tZXUgVml6b3NvIHdyb3RlOgo+Cj4+ID4+ICtzdGF0aWMgdm9pZCB0
+ZWdyYV9tYXg5ODA5MF9nZXRfZGVwZW5kZW5jaWVzKHN0cnVjdCBmd25vZGVfaGFuZGxlICpmd25v
+ZGUsCj4+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
+dCBsaXN0X2hlYWQgKmRlcHMpCj4+ID4+ICt7Cj4+ID4+ICsgICAgIGFkZF9kZXBlbmRlbmN5KGZ3
+bm9kZSwgIm52aWRpYSxpMnMtY29udHJvbGxlciIsIGRlcHMpOwo+PiA+PiArICAgICBhZGRfZGVw
+ZW5kZW5jeShmd25vZGUsICJudmlkaWEsYXVkaW8tY29kZWMiLCBkZXBzKTsKPj4gPj4gK30KPgo+
+PiA+IFdoeSBpcyB0aGlzIGFsbCBiZWluZyBvcGVuIGNvZGVkIGluIGFuIGluZGl2aWR1YWwgZHJp
+dmVyICh3ZSBhbHJlYWR5Cj4+ID4ga25vdyBhYm91dCBhbmQgbWFuYWdlIGFsbCB0aGVzZSBkZXBl
+bmRlbmNpZXMgaW4gdGhlIGNvcmUuLi4pPyAgSWYgd2UncmUKPj4gPiBnb2luZyB0byBkbyB0aGlz
+IEknZCBleHBlY3QgdGhlIGludGVyZmFjZSBmb3Igc3BlY2lmeWluZyBEVCBub2RlcyB0byB0aGUK
+Pj4gPiBjb3JlIHRvIGJlIGNoYW5nZWQgdG8gc3VwcG9ydCB0aGlzLgo+Cj4+IEFyZSB5b3UgdGhp
+bmtpbmcgb2YgY2hhbmdpbmcgZHJpdmVycyB0byBhY3F1aXJlIHRoZWlyIHJlc291cmNlcwo+PiB0
+aHJvdWdoIEFybmQncyBkZXZtX3Byb2JlIChvbmx5IHRoYXQgdGhlIHJlc291cmNlIHRhYmxlIHdv
+dWxkIGhhdmUgdG8KPj4gYmUgaW4gc3RydWN0IGRldmljZV9kcml2ZXIpPwo+Cj4+IGh0dHBzOi8v
+bGttbC5rZXJuZWwub3JnL2cvNDc0MjI1OC5UQml0QzNoVnVPQHd1ZXJmZWwKPgo+IE5vLCBJJ20g
+bG9va2luZyBhdCBob3cgd2UgYWxyZWFkeSBoYXZlIGFsbCB0aGUgImRpZCBhbGwgbXkgZGVwZW5k
+ZW5jaWVzCj4gYXBwZWFyIiBsb2dpYyBpbiB0aGUgY29yZSBiYXNlZCBvbiBkYXRhIHByb3ZpZGVk
+IGJ5IHRoZSBkcml2ZXJzLgoKU29ycnksIGJ1dCBJIHN0aWxsIGRvbid0IGdldCB3aGF0IHlvdSBt
+ZWFuLgoKSW5mb3JtYXRpb24gYWJvdXQgZGVwZW5kZW5jaWVzIGlzIGN1cnJlbnRseSBhdmFpbGFi
+bGUgb25seSBhZnRlcgpwcm9iZSgpIHN0YXJ0cyBleGVjdXRpbmcsIGFuZCB1c2VkIHRvIGRlY2lk
+ZSB3aGV0aGVyIHdlIHdhbnQgdG8gZGVmZXIKdGhlIHByb2JlLgoKVGhlIGdvYWwgb2YgdGhpcyBz
+ZXJpZXMgaXMgdG8gZWxpbWluYXRlIG1vc3Qgb3IgYWxsIG9mIHRoZSBkZWZlcnJlZApwcm9iZXMg
+YnkgY2hlY2tpbmcgdGhhdCBhbGwgZGVwZW5kZW5jaWVzIGFyZSBhdmFpbGFibGUgYmVmb3JlIHBy
+b2JlKCkKaXMgY2FsbGVkLgoKQmVjYXVzZSBjdXJyZW50bHkgd2Ugb25seSBoYXZlIGRlcGVuZGVu
+Y3kgaW5mb3JtYXRpb24gYWZ0ZXIgcHJvYmUoKQpzdGFydHMgZXhlY3V0aW5nLCB3ZSBoYXZlIHRv
+IG1ha2UgaXQgYXZhaWxhYmxlIGVhcmxpZXIuIEluIHRoaXMKcGFydGljdWxhciB2ZXJzaW9uLCBp
+biBjYWxsYmFja3MgdGhhdCBhcmUgcmVnaXN0ZXJlZCBmcm9tIHRoZQppbml0Y2FsbHMgdGhhdCBy
+ZWdpc3RlciBzdWJzeXN0ZW1zLCBjbGFzc2VzLCBkcml2ZXJzLCBldGMuIFdoYXRldmVyCmtub3dz
+IGhvdyB0aGVzZSBkZXBlbmRlbmNpZXMgYXJlIGV4cHJlc3NlZCBpbiB0aGUgZmlybXdhcmUgZGF0
+YS4KCkkgdGhvdWdodCB5b3Ugd2VyZSBwb2ludGluZyBvdXQgdGhhdCB0aGUgcHJvcGVydHkgbmFt
+ZXMgd291bGQgYmUKZHVwbGljYXRlZCwgb25jZSBpbiB0aGUgcHJvYmUoKSBpbXBsZW1lbnRhdGlv
+biBhbmQgYWxzbyBpbiB0aGUKaW1wbGVtZW50YXRpb24gb2YgdGhlIGdldF9kZXBlbmRlbmNpZXMg
+Y2FsbGJhY2suCgpBIHdheSB0byBjb25zb2xpZGF0ZSB0aGUgY29kZSBhbmQgcmVtb3ZlIHRoYXQg
+ZHVwbGljYXRpb24gd291bGQgYmUKaGF2aW5nIGEgZGVjbGFyYXRpdmUgQVBJIGZvciBleHByZXNz
+aW5nIGRlcGVuZGVuY2llcywgd2hpY2ggY291bGQgYmUKdXNlZCBmb3IgYm90aCBmZXRjaGluZyBk
+ZXBlbmRlbmNpZXMgYW5kIGZvciBwcmV2ZW50aW5nIGRlZmVycmVkCnByb2Jlcy4gVGhhdCdzIHdo
+eSBJIG1lbnRpb25lZCBkZXZtX3Byb2JlLgoKVGhhbmtzLAoKVG9tZXUKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
