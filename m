@@ -1,39 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/4] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc lpsr
-Date: Tue, 14 Jul 2015 09:57:52 +0200
-Message-ID: <CACRpkdYt227EmLW3SngChp-mHd4TO38W2FswCZRar-MET7dztw@mail.gmail.com>
-References: <1434743950-7771-1-git-send-email-aalonso@freescale.com>
-	<1434743950-7771-3-git-send-email-aalonso@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36648 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694AbbGNH5w (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 03:57:52 -0400
-Received: by oibn4 with SMTP id n4so1357679oib.3
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 00:57:52 -0700 (PDT)
-In-Reply-To: <1434743950-7771-3-git-send-email-aalonso@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 2/3] pinctrl: tegra: Only set the gpio range if needed
+Date: Tue, 14 Jul 2015 10:29:55 +0200
+Message-ID: <1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Adrian Alonso <aalonso@freescale.com>, Shawn Guo <shawnguo@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "Anson.Huang@freescale.com" <Anson.Huang@freescale.com>, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Fri, Jun 19, 2015 at 9:59 PM, Adrian Alonso <aalonso@freescale.com> wrote:
+If the gpio DT node has the gpio-ranges property, the range will be
+added by the gpio core and doesn't need to be added by the pinctrl
+driver.
 
-> * Extend pinctrl-imx driver to support iomux lpsr conntroller,
-> * iMX7D has two iomuxc controllers, iomuxc controller similar as
->   previous iMX SoC generation and iomuxc-lpsr which provides
->   low power state rentetion capabilities on gpios that are part of
->   iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
-> * Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
->   properly configure iomuxc/iomuxc-lpsr settings.
->
-> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+By having the gpio-ranges property, we have an explicit dependency from
+the gpio node to the pinctrl node and we can stop using the deprecated
+pinctrl_add_gpio_range() function.
 
-I'm waiting for Shawn's ACK on this before I do anything, and you also
-need to address Zhi Li's comments. (Or there is already such
-a version higher up in my mailbox, in that case, sorry.)
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
 
-Yours,
-Linus Walleij
+Changes in v2: None
+
+ drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 0f982b829be1..0fd7fd2b0f72 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -624,6 +624,22 @@ static struct pinctrl_desc tegra_pinctrl_desc = {
+ 	.owner = THIS_MODULE,
+ };
+ 
++static bool gpio_node_has_range(void)
++{
++	struct device_node *np;
++	bool has_prop = false;
++
++	np = of_find_compatible_node(NULL, NULL, "nvidia,tegra30-gpio");
++	if (!np)
++		return has_prop;
++
++	has_prop = of_find_property(np, "gpio-ranges", NULL);
++
++	of_node_put(np);
++
++	return has_prop;
++}
++
+ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 			const struct tegra_pinctrl_soc_data *soc_data)
+ {
+@@ -708,7 +724,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 		return PTR_ERR(pmx->pctl);
+ 	}
+ 
+-	pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
++	if (!gpio_node_has_range())
++		pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
+ 
+ 	platform_set_drvdata(pdev, pmx);
+ 
+-- 
+2.4.3
