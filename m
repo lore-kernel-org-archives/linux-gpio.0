@@ -1,51 +1,102 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/4] pinctrl: sh-pfc: sh73a0/r8a7740 legacy is gone
-Date: Tue, 14 Jul 2015 13:56:51 +0200
-Message-ID: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/7] ARM: shmobile: r8a73a4 dtsi: Add missing
+ "gpio-ranges" to gpio node
+Date: Tue, 14 Jul 2015 14:05:14 +0200
+Message-ID: <CAMuHMdX4=C6DsbsaphndXQuPm8WFqv08kwq+cdQRJJQtDph1cg@mail.gmail.com>
+References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+	<1435650327-2542-2-git-send-email-geert+renesas@glider.be>
+	<32630741.rNENluEsDE@avalon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <32630741.rNENluEsDE@avalon>
 Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-	Hi Linus,
+Hi Laurent, Linus,
 
-In -next, legacy support for the Renesas SH-Mobile AG5 (sh73a0) and
-R-Mobile A1 (r8a7740) SoCs has been removed, and these SoCs are now only
-supported in generic ARM multi-platform builds.
+On Tue, Jun 30, 2015 at 11:49 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 30 June 2015 09:45:21 Geert Uytterhoeven wrote:
+>> If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
+>> case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
+>> doesn't work:
+>>
+>>     requesting hog GPIO led1-high (chip r8a73a4_pfc, offset 28) failed
+>>
+>> The actual error code is -517 == -EPROBE_DEFER.
+>>
+>> The problem is that PFC+GPIO registration is handled in multiple steps:
+>>   1. pinctrl_register(),
+>>   2. gpiochip_add(),
+>>   3. gpiochip_add_pin_range().
+>>
+>> Configuration of the hogs is handled in gpiochip_add():
+>>
+>>     gpiochip_add
+>>         of_gpiochip_add
+>>             of_gpiochip_scan_hogs
+>>                 gpiod_hog
+>>                     gpiochip_request_own_desc
+>>                         __gpiod_request
+>>                             chip->request
+>>                                 pinctrl_request_gpio
+>>                                     pinctrl_get_device_gpio_range
+>>
+>> However, at this point the GPIO controller hasn't been added to
+>> pinctrldev_list yet, so the range can't be found, and the operation fails
+>> with -EPROBE_DEFER.
+>>
+>> To fix this, add a "gpio-ranges" property to the gpio device node, so
+>> the ranges are added by of_gpiochip_add_pin_range(), which is called by
+>> of_gpiochip_add() before the call to of_gpiochip_scan_hogs().
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> This looks sane to me, even though referencing the same DT node seems a bit
+> dodgy. I'll let Linus comment on that, but for the implementation itself,
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Hence this patch series, which is the remaining part of series "[PATCH
-00/15] ARM: shmobile: Remove legacy sh73a0/kzm9g and r8a7740/armadillo"
-(http://www.spinics.net/lists/arm-kernel/msg425987.html) removes
-multi-platform checks and platform_device_id entries that are no longer
-needed.
+Thank you!
 
-Changes in v2:
-  - Add Laurent's Acked-by.
+Any wise words from Linus?
 
-Thanks for applying!
+Thanks again!
 
-Geert Uytterhoeven (4):
-  pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
-  pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
-  pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
-  pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
-
- drivers/pinctrl/sh-pfc/core.c        | 6 ------
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 4 ----
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 4 ----
- 3 files changed, 14 deletions(-)
-
--- 
-1.9.1
+>
+>> ---
+>>  arch/arm/boot/dts/r8a73a4.dtsi | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+>> index 5090d1a8f652e8be..cb4f7b2798fe23be 100644
+>> --- a/arch/arm/boot/dts/r8a73a4.dtsi
+>> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
+>> @@ -207,6 +207,13 @@
+>>               reg = <0 0xe6050000 0 0x9000>;
+>>               gpio-controller;
+>>               #gpio-cells = <2>;
+>> +             gpio-ranges =
+>> +                     <&pfc 0 0 31>, <&pfc 32 32 9>,
+>> +                     <&pfc 64 64 22>, <&pfc 96 96 31>,
+>> +                     <&pfc 128 128 7>, <&pfc 160 160 19>,
+>> +                     <&pfc 192 192 31>, <&pfc 224 224 27>,
+>> +                     <&pfc 256 256 28>, <&pfc 288 288 21>,
+>> +                     <&pfc 320 320 10>;
+>>               interrupts-extended =
+>>                       <&irqc0  0 0>, <&irqc0  1 0>, <&irqc0  2 0>, <&irqc0  3 0>,
+>>                       <&irqc0  4 0>, <&irqc0  5 0>, <&irqc0  6 0>, <&irqc0  7 0>,
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
