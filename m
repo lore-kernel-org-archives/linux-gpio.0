@@ -1,43 +1,39 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: of: remove unnecessary variable in of_get_gpio_hog()
-Date: Tue, 14 Jul 2015 10:03:28 +0900
-Message-ID: <CAK7LNAR9wq1FaHbq7qUHt_iiWfE42dZCezeJ-d7vkmPDN5127w@mail.gmail.com>
-References: <1435825632-16103-1-git-send-email-yamada.masahiro@socionext.com>
-	<CAAVeFuKJSUVv-pvy-zHHTPGyKV16UwejXK9SJWzoitw_oDrnmg@mail.gmail.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 5/8] ARM: dts: add i.mx6ul pin function include file
+Date: Tue, 14 Jul 2015 09:16:17 +0800
+Message-ID: <20150714011617.GA3264@tiger>
+References: <1434727951-4852-1-git-send-email-Frank.Li@freescale.com>
+ <1434727951-4852-6-git-send-email-Frank.Li@freescale.com>
+ <CACRpkdbgKhXgcnncrHKDPC1hC1QEdhTyxFH61J4vG8ftoasHPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg001.nifty.com ([202.248.44.39]:32386 "EHLO
-	conssluserg001-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751966AbbGNBDj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 13 Jul 2015 21:03:39 -0400
-In-Reply-To: <CAAVeFuKJSUVv-pvy-zHHTPGyKV16UwejXK9SJWzoitw_oDrnmg@mail.gmail.com>
+Received: from mail.kernel.org ([198.145.29.136]:54050 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751671AbbGNBQa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 13 Jul 2015 21:16:30 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbgKhXgcnncrHKDPC1hC1QEdhTyxFH61J4vG8ftoasHPQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Frank.Li@freescale.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bai Ping <b51503@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, =?utf-8?B?5p2O5pm6?= <lznuaa@gmail.com>, Anson Huang <b20788@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-2015-07-13 23:27 GMT+09:00 Alexandre Courbot <gnurou@gmail.com>:
-> On Thu, Jul 2, 2015 at 5:27 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> The variable "desc" is only used for storing the return value at the
->> end of the function.  It is is unneeded.
->
-> Fair enough.
->
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> --
+On Mon, Jul 13, 2015 at 10:40:57PM +0200, Linus Walleij wrote:
+> On Fri, Jun 19, 2015 at 5:32 PM,  <Frank.Li@freescale.com> wrote:
+> 
+> > From: Frank Li <Frank.Li@freescale.com>
+> >
+> > add pin mux define file
+> >
+> > Signed-off-by: Bai Ping <b51503@freescale.com>
+> > Signed-off-by: Anson Huang <b20788@freescale.com>
+> > Signed-off-by: Frank Li <Frank.Li@freescale.com>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Are you taking this through the ARM SoC tree?
 
+Yes, I plan to take it via IMX tree.
 
-I've noticed my typo.  "It is is unneeded" -> "It is unneeded"
-
-
-Just in case, I've sent v2 with your Acked-by.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Shawn
