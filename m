@@ -1,19 +1,20 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/8] pinctrl: qcom: spmi-mpp: Implement support for sink mode
-Date: Tue, 14 Jul 2015 13:01:31 +0200
-Message-ID: <CACRpkdZKWhf6=iDNN3-9=LY6H2EC52NgQJgj2yLJYDPEPpdsRg@mail.gmail.com>
+Subject: Re: [PATCH 5/8] pinctrl: qcom: spmi-mpp: Add support for setting
+ analog output level
+Date: Tue, 14 Jul 2015 13:04:00 +0200
+Message-ID: <CACRpkdZ+8Ct1sfi2yh1uBM1Q5vonkm8M5Aw4rL70OGqcCBDKqw@mail.gmail.com>
 References: <1434610052-602-1-git-send-email-bjorn.andersson@sonymobile.com>
-	<1434610052-602-5-git-send-email-bjorn.andersson@sonymobile.com>
+	<1434610052-602-6-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35703 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277AbbGNLBb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 07:01:31 -0400
-Received: by obbop1 with SMTP id op1so3640228obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 04:01:31 -0700 (PDT)
-In-Reply-To: <1434610052-602-5-git-send-email-bjorn.andersson@sonymobile.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:33503 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753483AbbGNLEB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 07:04:01 -0400
+Received: by oige126 with SMTP id e126so3935636oig.0
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 04:04:00 -0700 (PDT)
+In-Reply-To: <1434610052-602-6-git-send-email-bjorn.andersson@sonymobile.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
@@ -22,24 +23,14 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutl
 On Thu, Jun 18, 2015 at 8:47 AM, Bjorn Andersson
 <bjorn.andersson@sonymobile.com> wrote:
 
-> The MPP supports three modes; digital, analog and sink mode. This patch
-> implements support for the latter.
+> When the MPP is configured for analog output the output level is selected by
+> the AOUT_CTL register, this patch makes it possible to control this.
 >
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-(...)
-> +- qcom,sink-mode:
-> +       Usage: optional
-> +       Value type: <u32> or <none>
-> +       Definition: Selects sink mode of operation
 
-Do we have some idea of what this actually means?
-
-Just thinking whether it should be something generic "sink-mode" or
-not.
-
-Do we know?
-
-Patch tentatively applied, anyways.
+Holding the application of patches here until Ivan's
+comment is addressed, its OK to resend just the patches that need
+alterations, just preserve the 5/8 please so I don't get too confused...
 
 Yours,
 Linus Walleij
