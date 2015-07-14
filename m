@@ -1,45 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc lpsr
-Date: Tue, 14 Jul 2015 11:06:13 +0200
-Message-ID: <CACRpkdYXaUsCFzbm9Dp7MtVCbyB_qcuDOp-rLPRx7_cSfT-1tw@mail.gmail.com>
-References: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v0] arm64: dts: Add APM X-Gene standby GPIO controller
+ DTS entries
+Date: Tue, 14 Jul 2015 11:46:42 +0200
+Message-ID: <20150714094642.GH20686@localhost>
+References: <1433402344-20836-1-git-send-email-yvo@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:35745 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751793AbbGNJGN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 05:06:13 -0400
-Received: by obbop1 with SMTP id op1so2161981obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 02:06:13 -0700 (PDT)
-In-Reply-To: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1433402344-20836-1-git-send-email-yvo-qTEPVZfXA3Y@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Toan Le <toanle-qTEPVZfXA3Y@public.gmane.org>, patches-qTEPVZfXA3Y@public.gmane.org, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Adrian Alonso <aalonso@freescale.com>, Shawn Guo <shawnguo@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "Anson.Huang@freescale.com" <Anson.Huang@freescale.com>, Frank Li <Frank.Li@freescale.com>, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Tue, Jul 7, 2015 at 9:02 PM, Adrian Alonso <aalonso@freescale.com> wrote:
+On Thu, Jun 04, 2015 at 02:19:04PM +0700, Y Vo wrote:
+> Add standby domain gpio controller for APM X-Gene SoC platform.
+> 
+> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
 
-> * Extend pinctrl-imx driver to support iomux lpsr conntroller,
-> * iMX7D has two iomuxc controllers, iomuxc controller similar as
->   previous iMX SoC generation and iomuxc-lpsr which provides
->   low power state rentetion capabilities on gpios that are part of
->   iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
-> * Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
->   properly configure iomuxc/iomuxc-lpsr settings.
->
-> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
->
-> * Change from v1 to v2:
->   - Add suggested comment for input select register shared between
->     iomuxc-lpsr and normal iomuxc controller.
->   - Use IOMUXC_LPSR_MASK to extract pad group id and aling pin_id to
->     16 bit representation.
-> * Change from v2 to v3
->   - Use devm_ioremap_resource instead of of_iomap to get iomuxc-lpsr
->     base register address.
+Hi,
 
-I'm waiting for Shawn to review these patches.
+What does patch v0 mean here? Is this just an RFC for comments or do
+you want us to apply it?
 
-Yours,
-Linus Walleij
+Again, same comments as I made on another patch from APM developers
+today: You all send patches to us without coordination. Please find one
+maintainer of the common pieces and have him/her coordinate or at least
+ack these patches so we have one submaintainer to deal with instead of
+the whole team. (Over time that can of course be expanded to several
+people, but it's easiest to start with a single person).
+
+
+Thanks,
+
+-Olof
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
