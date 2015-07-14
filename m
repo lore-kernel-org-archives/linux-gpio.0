@@ -1,42 +1,53 @@
 From: Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH 0/2] LPC18xx pintrl patches
-Date: Wed, 15 Jul 2015 00:25:25 +0200
-Message-ID: <1436912727-11559-1-git-send-email-manabian@gmail.com>
+Subject: [PATCH 1/2] pinctrl: lpc18xx: fix schmitt trigger setup
+Date: Wed, 15 Jul 2015 00:25:26 +0200
+Message-ID: <1436912727-11559-2-git-send-email-manabian@gmail.com>
+References: <1436912727-11559-1-git-send-email-manabian@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f68.google.com ([209.85.215.68]:34910 "EHLO
-	mail-la0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563AbbGNWZm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 18:25:42 -0400
-Received: by laem6 with SMTP id m6so1013926lae.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 15:25:40 -0700 (PDT)
+Received: from mail-lb0-f193.google.com ([209.85.217.193]:33739 "EHLO
+	mail-lb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751746AbbGNWZn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 18:25:43 -0400
+Received: by lbbnr7 with SMTP id nr7so1043647lbb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 15:25:41 -0700 (PDT)
+In-Reply-To: <1436912727-11559-1-git-send-email-manabian@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: Joachim Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org
 
-Hej Linus,
+The param_val variable is what determines if schmitt
+trigger is enabled on a pin or not. A typo here mean
+that schmitt trigger was always enabled for standard
+and i2c pins.
 
-This small patch set contains one new feature and one fix. While
-implementing pinconf for USB1 I noticed a typo in a variable name
-that meant that schmitt trigger was always begin enabled when
-setting up pins. It would be nice if this fix (1st patch) to go
-into 4.2 if possible.
+Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+---
+ drivers/pinctrl/pinctrl-lpc18xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The 2nd 'USB1 pinconf' patch is 4.3 material.
-
-Both patches are based on 4.2-rc1. Note that the patches doesn't
-touch any of the same code so they can be applied in any order.
-
-At this point I don't except any more changes to pinctrl-lpc18xx
-this time around.
-
-Joachim Eastwood (2):
-  pinctrl: lpc18xx: fix schmitt trigger setup
-  pinctrl: lpc18xx: add support for usb1 pinconf
-
- drivers/pinctrl/pinctrl-lpc18xx.c | 58 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 52 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
+index ef0b697639a7..347c763a6a78 100644
+--- a/drivers/pinctrl/pinctrl-lpc18xx.c
++++ b/drivers/pinctrl/pinctrl-lpc18xx.c
+@@ -823,7 +823,7 @@ static int lpc18xx_pconf_set_i2c0(struct pinctrl_dev *pctldev,
+ 		break;
+ 
+ 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+-		if (param)
++		if (param_val)
+ 			*reg &= ~(LPC18XX_SCU_I2C0_ZIF << shift);
+ 		else
+ 			*reg |= (LPC18XX_SCU_I2C0_ZIF << shift);
+@@ -876,7 +876,7 @@ static int lpc18xx_pconf_set_pin(struct pinctrl_dev *pctldev,
+ 		break;
+ 
+ 	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+-		if (param)
++		if (param_val)
+ 			*reg &= ~LPC18XX_SCU_PIN_ZIF;
+ 		else
+ 			*reg |= LPC18XX_SCU_PIN_ZIF;
 -- 
 1.8.0
 
