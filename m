@@ -1,90 +1,71 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [patch 19/19] gpio/davinci: Avoid redundant lookup of irq_data
-Date: Tue, 14 Jul 2015 12:16:40 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1507141215020.20072@nanos>
-References: <20150712232317.244138485@linutronix.de> <20150712232406.341044190@linutronix.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] pinctrl: pinconf: Allow groups to be configured via debugfs
+Date: Tue, 14 Jul 2015 11:17:58 +0100
+Message-ID: <1436869079-26594-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150712232406.341044190@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16932 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752633AbbGNKSL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 06:18:11 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-On Mon, 13 Jul 2015, Thomas Gleixner wrote:
-> -	g = (__force struct davinci_gpio_regs __iomem *)irq_get_chip_data(irq);
-> +	g = (__force struct davinci_gpio_regs __iomem *)irq_data_get_chip_data(d);
+The function pinconf_dbg_config_write() currently only supports configuring
+a pin configuration mapping via the debugfs. Allow group mappings to also
+be configured via the debugfs.
 
-Too tired to use the proper function AND enable the Kconfig switch to
-compile it actually. Updated patch below. git branch irq/gpio is
-updated as well.
-
-Thanks,
-
-	tglx
-
---------------->
-Subject: gpio/davinci: Avoid redundant lookup of irq_data
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 13 Jul 2015 01:18:56 +0200
-
-It's pretty silly to do
-
-     void *cd = irq_get_chip_data(irq_data->irq);
-
-because that results in cd = irq_data->chip_data, but goes through a
-redundant lookup of the irq_data. Use irq_data directly.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Jiang Liu <jiang.liu@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/gpio/gpio-davinci.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinconf.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 1fc09dc20199..4744d6363dfb 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -470,10 +470,12 @@ exit:
+  * pinconf_dbg_config_write() - modify the pinctrl config in the pinctrl
+  * map, of a dev/pin/state entry based on user entries to pinconf-config
+  * @user_buf: contains the modification request with expected format:
+- *     modify config_pin <devicename> <state> <pinname> <newvalue>
++ *     modify <config> <devicename> <state> <name> <newvalue>
+  * modify is literal string, alternatives like add/delete not supported yet
+- * config_pin is literal, alternatives like config_mux not supported yet
+- * <devicename> <state> <pinname> are values that should match the pinctrl-maps
++ * <config> is the configuration to be changed. Supported configs are
++ *     "config_pin" or "config_group", alternatives like config_mux are not
++ *     supported yet.
++ * <devicename> <state> <name> are values that should match the pinctrl-maps
+  * <newvalue> reflects the new config and is driver dependant
+  */
+ static ssize_t pinconf_dbg_config_write(struct file *file,
+@@ -511,13 +513,19 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 	if (strcmp(token, "modify"))
+ 		return -EINVAL;
+ 
+-	/* Get arg type: "config_pin" type supported so far */
++	/*
++	 * Get arg type: "config_pin" and "config_group"
++	 *                types are supported so far
++	 */
+ 	token = strsep(&b, " ");
+ 	if (!token)
+ 		return -EINVAL;
+-	if (strcmp(token, "config_pin"))
++	if (!strcmp(token, "config_pin"))
++		dbg->map_type = PIN_MAP_TYPE_CONFIGS_PIN;
++	else if (!strcmp(token, "config_group"))
++		dbg->map_type = PIN_MAP_TYPE_CONFIGS_GROUP;
++	else
+ 		return -EINVAL;
+-	dbg->map_type = PIN_MAP_TYPE_CONFIGS_PIN;
+ 
+ 	/* get arg 'device_name' */
+ 	token = strsep(&b, " ");
+-- 
+2.1.4
 
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/gpio/gpio-davinci.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-Index: tip/drivers/gpio/gpio-davinci.c
-===================================================================
---- tip.orig/drivers/gpio/gpio-davinci.c
-+++ tip/drivers/gpio/gpio-davinci.c
-@@ -65,11 +65,11 @@ static struct davinci_gpio_regs __iomem
- 	return ptr;
- }
- 
--static inline struct davinci_gpio_regs __iomem *irq2regs(int irq)
-+static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
- {
- 	struct davinci_gpio_regs __iomem *g;
- 
--	g = (__force struct davinci_gpio_regs __iomem *)irq_get_chip_data(irq);
-+	g = (__force struct davinci_gpio_regs __iomem *)irq_data_get_irq_chip_data(d);
- 
- 	return g;
- }
-@@ -287,7 +287,7 @@ static int davinci_gpio_probe(struct pla
- 
- static void gpio_irq_disable(struct irq_data *d)
- {
--	struct davinci_gpio_regs __iomem *g = irq2regs(d->irq);
-+	struct davinci_gpio_regs __iomem *g = irq2regs(d);
- 	u32 mask = (u32) irq_data_get_irq_handler_data(d);
- 
- 	writel_relaxed(mask, &g->clr_falling);
-@@ -296,7 +296,7 @@ static void gpio_irq_disable(struct irq_
- 
- static void gpio_irq_enable(struct irq_data *d)
- {
--	struct davinci_gpio_regs __iomem *g = irq2regs(d->irq);
-+	struct davinci_gpio_regs __iomem *g = irq2regs(d);
- 	u32 mask = (u32) irq_data_get_irq_handler_data(d);
- 	unsigned status = irqd_get_trigger_type(d);
- 
