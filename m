@@ -1,102 +1,105 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/7] ARM: shmobile: r8a73a4 dtsi: Add missing
- "gpio-ranges" to gpio node
-Date: Tue, 14 Jul 2015 14:05:14 +0200
-Message-ID: <CAMuHMdX4=C6DsbsaphndXQuPm8WFqv08kwq+cdQRJJQtDph1cg@mail.gmail.com>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
-	<1435650327-2542-2-git-send-email-geert+renesas@glider.be>
-	<32630741.rNENluEsDE@avalon>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [alsa-devel] [PATCH v2 11/12] ASoC: tegra: register dependency
+ parser for firmware nodes
+Date: Tue, 14 Jul 2015 14:47:04 +0200
+Message-ID: <CAAObsKAHviKKTrEBhuge-KQ115p-kOf69miNnmpR+7knOeg+qg@mail.gmail.com>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
+ <20150701173802.GW11162@sirena.org.uk>
+ <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A@mail.gmail.com>
+ <20150713154254.GH11162@sirena.org.uk>
+ <CAAObsKAVY7-QpcRyT4juc2RyB+vqibvzKO7wFCT2VsL9R8bzPw@mail.gmail.com>
+ <20150714110713.GT11162@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <32630741.rNENluEsDE@avalon>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150714110713.GT11162@sirena.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-acpi@vger.kernel.org, Linux PWM List <linux-pwm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Laurent, Linus,
-
-On Tue, Jun 30, 2015 at 11:49 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday 30 June 2015 09:45:21 Geert Uytterhoeven wrote:
->> If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
->> case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
->> doesn't work:
->>
->>     requesting hog GPIO led1-high (chip r8a73a4_pfc, offset 28) failed
->>
->> The actual error code is -517 == -EPROBE_DEFER.
->>
->> The problem is that PFC+GPIO registration is handled in multiple steps:
->>   1. pinctrl_register(),
->>   2. gpiochip_add(),
->>   3. gpiochip_add_pin_range().
->>
->> Configuration of the hogs is handled in gpiochip_add():
->>
->>     gpiochip_add
->>         of_gpiochip_add
->>             of_gpiochip_scan_hogs
->>                 gpiod_hog
->>                     gpiochip_request_own_desc
->>                         __gpiod_request
->>                             chip->request
->>                                 pinctrl_request_gpio
->>                                     pinctrl_get_device_gpio_range
->>
->> However, at this point the GPIO controller hasn't been added to
->> pinctrldev_list yet, so the range can't be found, and the operation fails
->> with -EPROBE_DEFER.
->>
->> To fix this, add a "gpio-ranges" property to the gpio device node, so
->> the ranges are added by of_gpiochip_add_pin_range(), which is called by
->> of_gpiochip_add() before the call to of_gpiochip_scan_hogs().
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> This looks sane to me, even though referencing the same DT node seems a bit
-> dodgy. I'll let Linus comment on that, but for the implementation itself,
->
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Thank you!
-
-Any wise words from Linus?
-
-Thanks again!
-
->
->> ---
->>  arch/arm/boot/dts/r8a73a4.dtsi | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
->> index 5090d1a8f652e8be..cb4f7b2798fe23be 100644
->> --- a/arch/arm/boot/dts/r8a73a4.dtsi
->> +++ b/arch/arm/boot/dts/r8a73a4.dtsi
->> @@ -207,6 +207,13 @@
->>               reg = <0 0xe6050000 0 0x9000>;
->>               gpio-controller;
->>               #gpio-cells = <2>;
->> +             gpio-ranges =
->> +                     <&pfc 0 0 31>, <&pfc 32 32 9>,
->> +                     <&pfc 64 64 22>, <&pfc 96 96 31>,
->> +                     <&pfc 128 128 7>, <&pfc 160 160 19>,
->> +                     <&pfc 192 192 31>, <&pfc 224 224 27>,
->> +                     <&pfc 256 256 28>, <&pfc 288 288 21>,
->> +                     <&pfc 320 320 10>;
->>               interrupts-extended =
->>                       <&irqc0  0 0>, <&irqc0  1 0>, <&irqc0  2 0>, <&irqc0  3 0>,
->>                       <&irqc0  4 0>, <&irqc0  5 0>, <&irqc0  6 0>, <&irqc0  7 0>,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gMTQgSnVseSAyMDE1IGF0IDEzOjA3LCBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
+IHdyb3RlOgo+IE9uIFR1ZSwgSnVsIDE0LCAyMDE1IGF0IDA5OjM0OjIyQU0gKzAyMDAsIFRvbWV1
+IFZpem9zbyB3cm90ZToKPj4gT24gMTMgSnVseSAyMDE1IGF0IDE3OjQyLCBNYXJrIEJyb3duIDxi
+cm9vbmllQGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4+ID4gTm8sIEknbSBsb29raW5nIGF0IGhvdyB3
+ZSBhbHJlYWR5IGhhdmUgYWxsIHRoZSAiZGlkIGFsbCBteSBkZXBlbmRlbmNpZXMKPj4gPiBhcHBl
+YXIiIGxvZ2ljIGluIHRoZSBjb3JlIGJhc2VkIG9uIGRhdGEgcHJvdmlkZWQgYnkgdGhlIGRyaXZl
+cnMuCj4KPj4gU29ycnksIGJ1dCBJIHN0aWxsIGRvbid0IGdldCB3aGF0IHlvdSBtZWFuLgo+Cj4g
+SSdtIG5vdCBzdXJlIGhvdyBJIGNhbiBiZSBjbGVhcmVyIGhlcmUuLi4gIHlvdSdyZSByZXBsYWNp
+bmcgc29tZXRoaW5nCj4gdGhhdCBpcyBjdXJyZW50bHkgcHVyZSBkYXRhIHdpdGggb3BlbiBjb2Rp
+bmcgaW4gZWFjaCBkZXZpY2UuICBUaGF0IHNlZW1zCj4gbGlrZSBhIHN0ZXAgYmFjayBpbiB0ZXJt
+cyBvZiBlYXNlIG9mIHVzZS4KCkkgY291bGQgdW5kZXJzdGFuZCB0aGF0IGlmIHNuZF9zb2NfZGFp
+X2xpbmsgaGFkIGEgZmllbGQgd2l0aCB0aGUKcHJvcGVydHkgbmFtZSwgYW5kIHRoZSBjb3JlIGNh
+bGxlZCBvZl9wYXJzZV9waGFuZGxlIG9uIGl0LCBidXQKY3VycmVudGx5IHdoYXQgSSdtIGR1cGxp
+Y2F0aW5nIGlzOgoKICAgIHRlZ3JhX21heDk4MDkwX2RhaS5jcHVfb2Zfbm9kZSA9IG9mX3BhcnNl
+X3BoYW5kbGUobnAsCiAgICAgICAgICAgICJudmlkaWEsaTJzLWNvbnRyb2xsZXIiLCAwKTsKCndp
+dGg6CgogICAgYWRkX2RlcGVuZGVuY3koZndub2RlLCAibnZpZGlhLGkycy1jb250cm9sbGVyIiwg
+ZGVwcyk7CgpBZG1pdHRlZGx5LCB3ZSBjb3VsZCBhZGQgYSBjcHVfZndfcHJvcGVydHkgZmllbGQg
+dG8gc25kX3NvY19kYWlfbGluawphbmQgaGF2ZSB0aGUgY29yZSBjYWxsIG9mX3BhcnNlX3BoYW5k
+bGUgaXRzZWxmLgoKQnV0IGV2ZW4gdGhlbiwgdGhlIGNvcmUgZG9lc24ndCBrbm93IGFib3V0IGEg
+ZGV2aWNlJ3Mgc25kX3NvY19kYWlfbGluawp1bnRpbCBwcm9iZSgpIGlzIGNhbGxlZCBhbmQgdGhl
+biBpdCdzIHRvbyBsYXRlIGZvciB0aGUgcHVycG9zZXMgb2YKdGhpcyBzZXJpZXMuCgpUaGF0J3Mg
+d2h5IEkgbWVudGlvbmVkIGRldm1fcHJvYmUsIGFzIGl0IHdvdWxkIGFkZCBhIGNvbW1vbiB3YXkg
+dG8Kc3BlY2lmeSB0aGUgZGF0YSBuZWVkZWQgdG8gYWNxdWlyZSByZXNvdXJjZXMgaW4gZWFjaCBk
+cml2ZXIsIHdoaWNoCmNvdWxkIGJlIG1hZGUgYXZhaWxhYmxlIGJlZm9yZSBwcm9iZSgpIGlzIGNh
+bGxlZC4KCkZyb20gdGhlIHByb29mIG9mIGNvbmNlcHQgdGhhdCBBcm5kIHNlbnQgaW4KaHR0cHM6
+Ly9sa21sLmtlcm5lbC5vcmcvZy80NzQyMjU4LlRCaXRDM2hWdU9Ad3VlcmZlbCA6CgpzdHJ1Y3Qg
+Zm9vX3ByaXYgewogICAgICAgIHNwaW5sb2NrX3QgbG9jazsKICAgICAgICB2b2lkIF9faW9tZW0g
+KnJlZ3M7CiAgICAgICAgaW50IGlycTsKICAgICAgICBzdHJ1Y3QgZ3Bpb19kZXNjICpncGlvOwog
+ICAgICAgIHN0cnVjdCBkbWFfY2hhbiAqcnhkbWE7CiAgICAgICAgc3RydWN0IGRtYV9jaGFuICp0
+eGRtYTsKICAgICAgICBib29sIG9sZHN0eWxlX2RtYTsKfTsKCi8qCiAqIHRoaXMgbGlzdHMgYWxs
+IHByb3BlcnRpZXMgd2UgYWNjZXNzIGZyb20gdGhlIGRyaXZlci4gVGhlIGxpc3QKICogaXMgaW50
+ZXJwcmV0ZWQgYnkgZGV2bV9wcm9iZSgpIGFuZCBjYW4gYmUgcHJvZ3JhbW1hdGljYWxseQogKiB2
+ZXJpZmllZCB0byBtYXRjaCB0aGUgYmluZGluZy4KICovCnN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2
+bV9wcm9iZSBmb29fcHJvYmVfbGlzdFtdID0gewogICAgICAgIERFVk1fQUxMT0MoZm9vX3ByaXYp
+LAogICAgICAgIERFVk1fSU9NQVAoZm9vX3ByaXYsIHJlZ3MsIDAsIDApLAogICAgICAgIERFVk1f
+UFJPUF9CT09MKGZvb19wcml2LCBvbGRzdHlsZV9kbWEsICJmb28sb2xkc3R5bGUtZG1hIiksCiAg
+ICAgICAgREVWTV9ETUFfU0xBVkUoZm9vX3ByaXYsIHJ4ZG1hLCAicngiKTsKICAgICAgICBERVZN
+X0RNQV9TTEFWRShmb29fcHJpdiwgdHhkbWEsICJ0eCIpOwogICAgICAgIERFVk1fR1BJTyhmb29f
+cHJpdiwgZ3BpbywgMCk7CiAgICAgICAgREVWTV9JUlFfTkFNRUQoZm9vX3ByaXYsIGlycSwgZm9v
+X2lycV9oYW5kbGVyLCAiZmlmbyIsIElSUUZfU0hBUkVEKSwKICAgICAgICB7fSwKfTsKClRoYW5r
+cywKClRvbWV1Cgo+PiBJbmZvcm1hdGlvbiBhYm91dCBkZXBlbmRlbmNpZXMgaXMgY3VycmVudGx5
+IGF2YWlsYWJsZSBvbmx5IGFmdGVyCj4+IHByb2JlKCkgc3RhcnRzIGV4ZWN1dGluZywgYW5kIHVz
+ZWQgdG8gZGVjaWRlIHdoZXRoZXIgd2Ugd2FudCB0byBkZWZlcgo+PiB0aGUgcHJvYmUuCj4KPj4g
+VGhlIGdvYWwgb2YgdGhpcyBzZXJpZXMgaXMgdG8gZWxpbWluYXRlIG1vc3Qgb3IgYWxsIG9mIHRo
+ZSBkZWZlcnJlZAo+PiBwcm9iZXMgYnkgY2hlY2tpbmcgdGhhdCBhbGwgZGVwZW5kZW5jaWVzIGFy
+ZSBhdmFpbGFibGUgYmVmb3JlIHByb2JlKCkKPj4gaXMgY2FsbGVkLgo+Cj4gUmlnaHQsIGJ1dCB0
+aGUgd2F5IGl0IGRvZXMgdGhpcyBpcyBieSBtb3ZpbmcgY29kZSBvdXQgb2YgdGhlIGNvcmUgaW50
+bwo+IHRoZSBkcml2ZXJzIC0gY3VycmVudGx5IGRyaXZlcnMganVzdCB0ZWxsIHRoZSBjb3JlIHdo
+YXQgcmVzb3VyY2VzIHRvCj4gbG9vayB1cCBhbmQgdGhlIGNvcmUgdGhlbiBtYWtlcyBzdXJlIHRo
+YXQgdGhleSdyZSBhbGwgcHJlc2VudC4KPgo+PiBJIHRob3VnaHQgeW91IHdlcmUgcG9pbnRpbmcg
+b3V0IHRoYXQgdGhlIHByb3BlcnR5IG5hbWVzIHdvdWxkIGJlCj4+IGR1cGxpY2F0ZWQsIG9uY2Ug
+aW4gdGhlIHByb2JlKCkgaW1wbGVtZW50YXRpb24gYW5kIGFsc28gaW4gdGhlCj4+IGltcGxlbWVu
+dGF0aW9uIG9mIHRoZSBnZXRfZGVwZW5kZW5jaWVzIGNhbGxiYWNrLgo+Cj4gWWVzLCB0aGF0IGlz
+IGFub3RoZXIgcGFydCBvZiBpc3N1ZSB3aXRoIHRoaXMgYXBwcm9hY2ggLSBkcml2ZXJzIG5vdyBo
+YXZlCj4gdG8gc3BlY2lmeSB0aGluZ3MgdHdpY2UsIG9uY2UgZm9yIHRoaXMgbmV3IGludGVyZmFj
+ZSBhbmQgb25jZSBmb3IKPiBhY3R1YWxseSBsb29raW5nIHRoaW5ncyB1cC4gIFRoYXQgZG9lc24n
+dCBzZWVtIGF3ZXNvbWUgYW5kIGFkZGluZyB0aGUKPiBjb2RlIGludG8gdGhlIGluZGl2aWR1YWwg
+ZHJpdmVycyBhbmQgdGhlbiBoYXZpbmcgdG8gcHVsbCBpdCBvdXQgYWdhaW4KPiB3aGVuIHRoZSBy
+ZWR1bmRhbmN5IGlzIHJlbW92ZWQgaXMgZ29pbmcgdG8gYmUgYW4gZW5vcm1vdXMgYW1vdW50IG9m
+Cj4gY2h1cm4uCj4KPj4gQSB3YXkgdG8gY29uc29saWRhdGUgdGhlIGNvZGUgYW5kIHJlbW92ZSB0
+aGF0IGR1cGxpY2F0aW9uIHdvdWxkIGJlCj4+IGhhdmluZyBhIGRlY2xhcmF0aXZlIEFQSSBmb3Ig
+ZXhwcmVzc2luZyBkZXBlbmRlbmNpZXMsIHdoaWNoIGNvdWxkIGJlCj4+IHVzZWQgZm9yIGJvdGgg
+ZmV0Y2hpbmcgZGVwZW5kZW5jaWVzIGFuZCBmb3IgcHJldmVudGluZyBkZWZlcnJlZAo+PiBwcm9i
+ZXMuIFRoYXQncyB3aHkgSSBtZW50aW9uZWQgZGV2bV9wcm9iZS4KPgo+IFBhcnQgb2Ygd2hhdCBJ
+J20gc2F5aW5nIGhlcmUgaXMgdGhhdCBpbiBBU29DIHdlIGFscmVhZHkgaGF2ZSAoYXQgbGVhc3QK
+PiBhcyBmYXIgYXMgdGhlIGluZGl2aWR1YWwgZHJpdmVycyBhcmUgY29uY2VybmVkKSBhIGRlY2xh
+cmF0aXZlIHdheSBvZgo+IHNwZWNpZnlpbmcgZGVwZW5kZW5jaWVzLiAgVGhpcyBuZXcgY29kZSBz
+aG91bGQgYmUgYWJsZSB0byBtYWtlIHVzZSBvZgo+IHRoYXQsIGlmIGl0IGNhbid0IGFuZCBlc3Bl
+Y2lhbGx5IGlmIG5vbmUgb2YgdGhlIGNvZGUgY2FuIGJlIHNoYXJlZAo+IGJldHdlZW4gZHJpdmVy
+cyB0aGVuIHRoYXQgc2VlbXMgbGlrZSB0aGUgaW50ZXJmYWNlIG5lZWRzIGFub3RoZXIgc3Bpbi4K
+Pgo+IEkndmUgbm90IHNlZW4gdGhpcyBkZXZtX3Byb2JlKCkgY29kZSBidXQgdGhlIG5hbWUgc291
+bmRzIHdvcnJ5aW5nbHkgbGlrZQo+IGl0IG1pZ2h0IGJlIGZpeGluZyB0aGUgd3JvbmcgcHJvYmxl
+bSA6LwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
