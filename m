@@ -1,94 +1,103 @@
 From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [RESEND PATCH 2/2] pinctrl: introduce complex pin description
-Date: Tue, 14 Jul 2015 08:13:59 +0200
-Message-ID: <20150714061359.GC5161@pengutronix.de>
+Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per pin
+ muxing controllers
+Date: Tue, 14 Jul 2015 08:54:15 +0200
+Message-ID: <20150714065415.GD5161@pengutronix.de>
 References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
- <1433948699-19800-3-git-send-email-ludovic.desroches@atmel.com>
+ <1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com>
+ <557EF60D.8020007@wwwdotorg.org>
+ <20150617123816.GB12295@odux.rfo.atmel.com>
+ <5581988C.50000@wwwdotorg.org>
+ <55925EB1.1030500@atmel.com>
+ <CACRpkdb3+9=seJo7w5nrJS-iURH3SnH-PYVvJCQ-S619KOcKbg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:33771 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:48247 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751858AbbGNGOC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 02:14:02 -0400
+	with ESMTP id S1752001AbbGNGy1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 02:54:27 -0400
 Content-Disposition: inline
-In-Reply-To: <1433948699-19800-3-git-send-email-ludovic.desroches@atmel.com>
+In-Reply-To: <CACRpkdb3+9=seJo7w5nrJS-iURH3SnH-PYVvJCQ-S619KOcKbg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Stephen Warren <swarren@wwwdotorg.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jun 10, 2015 at 05:04:57PM +0200, Ludovic Desroches wrote:
-> Using a string to describe a pin in the device tree can be not enough.
-> Some controllers may need extra information to fully describe a pin. It
-> concerns mainly controllers which have a per pin muxing approach which
-> don't fit well the notions of groups and functions.
-> Instead of using a pin name, a 32 bit value is used. The 16 least
-> significant bits are used for the pin number. Other 16 bits can be used to
-> store extra parameters.
+On Mon, Jul 13, 2015 at 02:07:45PM +0200, Linus Walleij wrote:
+> On Tue, Jun 30, 2015 at 11:17 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wrote:
+> 
+> > - no agreement on 3 points:
+> > 1/ ways to use groups in generic pinctrl
+> > 2/ ways to describe a comprehensive configuration in device tree
+> > 3/ readability of a sysfs information
+> >
+> > - no way out on the generic pinctrl little changes that Ludovic proposed
+> > as Linus W. never gave his point of view (RFC posts on April the 2nd).
+> 
+> Yeah I know. I am battling with this, it is one of those topics
+> where you feel "eeeehhhh" and try to avoid looking at it. Sadly
+> I have to...
+> 
+> I refer to Documentation/ManagementStyle, chapter 1,
+> "Decisions".
+> 
+> What makes me feel uneasy about these things is that the decisions
+> are irreversible due to the nature of the device tree bindings.
+> 
+> I am not a manager, but a maintainer...
+> 
+> > Ludovic explained at length our point of view and gave detailed
+> > technical arguments. We don't intend to convince you, we just would like
+> > the harmless modifications to be integrated.
+> 
+> So is it universally agreed that the changes are harmless?
+> 
+> If they are harmless, I would be able to revert the patch and
+> nothing breaks in the world, I don't think that is the case. The
+> case is a piece of code and functionality that is not AT91-specific
+> but has to be maintained in the core pinctrl code forever.
 
-In the Mediatek driver we use 'pinmux' as name for the property
-containing the combined pin number / mux value defines. 'pinmux' better
-describes what it is...
+If this change turns out to be wrong it doesn't necessarily have to stay
+in the core pinctrl code. It can be pushed back into the AT91 driver
+(and the others using it), won't be used for new bindings and after some
+years can be pushed into some dark corner.
 
-> +
-> +	if (pctldesc->complex_pin_desc)
-> +		ret = of_property_count_u32_elems(np, "pins");
-> +	else
-> +		ret = of_property_count_strings(np, "pins");
+> 
+> That is basically the big problem with anything device tree.
+> It etches stuff in stone so it can't be changed, like ever.
+> Further, the decision on whether to etch this or that is
+> pushed to Linux subsystem maintainers, who are clearly
+> unsuited for the task. :(
+> 
+> > As we preferred to give a chance to the generic pinconf/pinctrl for our
+> > use by adding a little bit of flexibility, we are now in a situation
+> > where we are nearly obliged to give up this approach and write a new
+> > driver without the use of the generic facilities: what a pity!
+> > We lost several months of useless work to match what we thought the
+> > maintainer would prefer.
+> >
+> > So Linus, do you confirm that we won't go further with this approach?
+> >
+> > We are pretty disappointed by the way this interaction with the pinctrl
+> > sub-system went.
+> 
+> I'm sorry, I am just trying to wait for consensus but it seems to
+> be hard for that to happen.
+> 
+> Things I need:
+> 
+> - More DT bindings people to look at this patch.
+> 
+> - More other driver maintainers to look at this patch.
+>   Sacha is one of those I'd like to get an opinion from
+>   for example. ACKs, Reviewed-by's are always good.
 
-... and has the advantage that you don't have to pass in a
-complex_pin_desc variable from the driver as the different property
-name inherently carries this information. 'pins' can then stay a
-property containing only strings.
+I welcome the addition of the combined pin number / mux value
+properties like we have in the Mediatek driver. Making the pinctrl
+core aware of these defines like Ludovic did is a good idea IMO.
 
->  	if (ret < 0) {
->  		ret = of_property_count_strings(np, "groups");
->  		if (ret < 0)
-> @@ -297,11 +305,12 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->  		if (type == PIN_MAP_TYPE_INVALID)
->  			type = PIN_MAP_TYPE_CONFIGS_GROUP;
->  		subnode_target_type = "groups";
-> +		pins_prop = false;
->  	} else {
->  		if (type == PIN_MAP_TYPE_INVALID)
->  			type = PIN_MAP_TYPE_CONFIGS_PIN;
->  	}
-> -	strings_count = ret;
-> +	items_count = ret;
->  
->  	ret = of_property_read_string(np, "function", &function);
->  	if (ret < 0) {
-> @@ -326,17 +335,31 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->  	if (num_configs)
->  		reserve++;
->  
-> -	reserve *= strings_count;
-> +	reserve *= items_count;
->  
->  	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps,
->  			num_maps, reserve);
->  	if (ret < 0)
->  		goto exit;
->  
-> -	of_property_for_each_string(np, subnode_target_type, prop, group) {
-> +	items_name = kmalloc_array(items_count, sizeof(char *), GFP_KERNEL);
-> +	if (!items_name)
-> +		goto exit;
-> +	if (pctldesc->complex_pin_desc && pins_prop) {
-> +		of_property_for_each_u32(np, subnode_target_type, prop, cur, val) {
-> +			pin_id = val & PINCTRL_PIN_MASK;
-> +			items_name[i++] = pctldesc->pins[pin_id].name;
-> +		}
-
-I don't like that even though pins have numbers here they are converted
-to strings which the driver later has to search in a list just to
-convert it back into the number. This is quite inefficient.
-
-I guess this could be optimized later, but it would be nice to have the
-pin number directly in the driver.
-
-Sascha
+Sascha with two 's'
 
 -- 
 Pengutronix e.K.                           |                             |
