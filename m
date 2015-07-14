@@ -1,109 +1,194 @@
-From: Joachim Eastwood <manabian@gmail.com>
-Subject: [PATCH 2/2] pinctrl: lpc18xx: add support for usb1 pinconf
-Date: Wed, 15 Jul 2015 00:25:27 +0200
-Message-ID: <1436912727-11559-3-git-send-email-manabian@gmail.com>
-References: <1436912727-11559-1-git-send-email-manabian@gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH] pinctrl: add support for Qualcomm Technologies QDF2xxx ARM64 SoCs
+Date: Tue, 14 Jul 2015 18:29:04 -0500
+Message-ID: <1436916544-811-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f67.google.com ([209.85.215.67]:33588 "EHLO
-	mail-la0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563AbbGNWZn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 18:25:43 -0400
-Received: by lahh5 with SMTP id h5so1017852lah.0
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 15:25:42 -0700 (PDT)
-In-Reply-To: <1436912727-11559-1-git-send-email-manabian@gmail.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51227 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752825AbbGNX3I (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 19:29:08 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Joachim Eastwood <manabian@gmail.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
 
-The dedicated USB1 pins can be configured with pull-down and
-for low power mode (suspend). Add support for this in the
-pinctrl driver.
+Add the pinctrl driver for the Qualcomm Technologies QDF2xxx ARM64 SoCs,
+which uses the Qualcomm Technologies TLMM pinctrl/gpio device.  This
+driver is probed via ACPI and uses the pinctrl-msm.c backend driver.
 
-Signed-off-by: Joachim Eastwood <manabian@gmail.com>
+This driver is intended to be used only an ACPI-enabled system.  As such,
+UEFI will handle all pin control configuration, so this driver does not
+provide pin control functions.  It is effectively a GPIO-only driver.
+
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
 ---
- drivers/pinctrl/pinctrl-lpc18xx.c | 54 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 4 deletions(-)
+ drivers/pinctrl/qcom/Kconfig           |   8 +++
+ drivers/pinctrl/qcom/Makefile          |   1 +
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 124 +++++++++++++++++++++++++++++++++
+ 3 files changed, 133 insertions(+)
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
 
-diff --git a/drivers/pinctrl/pinctrl-lpc18xx.c b/drivers/pinctrl/pinctrl-lpc18xx.c
-index 347c763a6a78..f0bebbe0682b 100644
---- a/drivers/pinctrl/pinctrl-lpc18xx.c
-+++ b/drivers/pinctrl/pinctrl-lpc18xx.c
-@@ -37,6 +37,9 @@
- #define LPC18XX_SCU_PIN_EHD_MASK	0x300
- #define LPC18XX_SCU_PIN_EHD_POS		8
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index 58f5632..8a38323 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -63,6 +63,14 @@ config PINCTRL_MSM8916
+ 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+ 	  Qualcomm TLMM block found on the Qualcomm 8916 platform.
  
-+#define LPC18XX_SCU_USB1_EPD		BIT(2)
-+#define LPC18XX_SCU_USB1_EPWR		BIT(4)
++config PINCTRL_QDF2XXX
++	tristate "Qualcomm Technologies QDF2xxx pin controller driver"
++	depends on GPIOLIB && ACPI
++	select PINCTRL_MSM
++	help
++	  This is the GPIO driver for the TLMM block found on the
++	  Qualcomm Technologies QDF2xxx SOCs.
 +
- #define LPC18XX_SCU_I2C0_EFP		BIT(0)
- #define LPC18XX_SCU_I2C0_EHD		BIT(2)
- #define LPC18XX_SCU_I2C0_EZI		BIT(3)
-@@ -617,8 +620,31 @@ static const struct pinctrl_pin_desc lpc18xx_pins[] = {
- 
- static int lpc18xx_pconf_get_usb1(enum pin_config_param param, int *arg, u32 reg)
- {
--	/* TODO */
--	return -ENOTSUPP;
-+	switch (param) {
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		if (reg & LPC18XX_SCU_USB1_EPWR)
-+			*arg = 0;
-+		else
-+			*arg = 1;
-+		break;
+ config PINCTRL_QCOM_SPMI_PMIC
+        tristate "Qualcomm SPMI PMIC pin controller driver"
+        depends on GPIOLIB && OF && SPMI
+diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
+index 3666c70..798d662 100644
+--- a/drivers/pinctrl/qcom/Makefile
++++ b/drivers/pinctrl/qcom/Makefile
+@@ -7,5 +7,6 @@ obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
+ obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
+ obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
+ obj-$(CONFIG_PINCTRL_MSM8916)	+= pinctrl-msm8916.o
++obj-$(CONFIG_PINCTRL_QDF2XXX)	+= pinctrl-qdf2xxx.o
+ obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-gpio.o
+ obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-mpp.o
+diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+new file mode 100644
+index 0000000..e88943e
+--- /dev/null
++++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+@@ -0,0 +1,124 @@
++/*
++ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * GPIO and pin control functions on this SOC are handled by the "TLMM"
++ * device.  The driver which controls this device is pinctrl-msm.c.  Each
++ * SOC with a TLMM is expected to create a client driver that registers
++ * with pinctrl-msm.c.  This means that all TLMM drivers are pin control
++ * drivers.
++ *
++ * This pin control driver is intended to be used only an ACPI-enabled
++ * system.  As such, UEFI will handle all pin control configuration, so
++ * this driver does not provide pin control functions.  It is effectively
++ * a GPIO-only driver.  The alternative is to duplicate the GPIO code of
++ * pinctrl-msm.c into another driver.
++ */
 +
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		if (reg & LPC18XX_SCU_USB1_EPD)
-+			return -EINVAL;
-+		break;
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/acpi.h>
 +
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		if (reg & LPC18XX_SCU_USB1_EPD)
-+			*arg = 1;
-+		else
-+			return -EINVAL;
-+		break;
++#include "pinctrl-msm.h"
 +
-+	default:
-+		return -ENOTSUPP;
++static struct msm_pinctrl_soc_data qdf2xxx_pinctrl;
++
++static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
++{
++	struct pinctrl_pin_desc *pins;
++	struct msm_pingroup *groups;
++	unsigned int i;
++	u32 num_gpios;
++	int ret;
++
++	/* Query the number of GPIOs from ACPI */
++	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
++	if (ret < 0)
++		return ret;
++
++	if (!num_gpios) {
++		dev_warn(&pdev->dev, "missing num-gpios property\n");
++		return -ENODEV;
 +	}
 +
-+	return 0;
- }
- 
- static int lpc18xx_pconf_get_i2c0(enum pin_config_param param, int *arg, u32 reg,
-@@ -782,8 +808,28 @@ static int lpc18xx_pconf_set_usb1(struct pinctrl_dev *pctldev,
- 				  enum pin_config_param param,
- 				  u16 param_val, u32 *reg)
- {
--	/* TODO */
--	return -ENOTSUPP;
-+	switch (param) {
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		if (param_val)
-+			*reg &= ~LPC18XX_SCU_USB1_EPWR;
-+		else
-+			*reg |= LPC18XX_SCU_USB1_EPWR;
-+		break;
++	pins = devm_kcalloc(&pdev->dev, num_gpios,
++		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
++	groups = devm_kcalloc(&pdev->dev, num_gpios,
++		sizeof(struct msm_pingroup), GFP_KERNEL);
 +
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		*reg &= ~LPC18XX_SCU_USB1_EPD;
-+		break;
++	for (i = 0; i < num_gpios; i++) {
++		pins[i].number = i;
 +
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		*reg |= LPC18XX_SCU_USB1_EPD;
-+		break;
++		groups[i].npins = 1,
++		groups[i].pins = &pins[i].number;
++		groups[i].ctl_reg = 0x10000 * i;
++		groups[i].io_reg = 0x04 + 0x10000 * i;
++		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
++		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
++		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
 +
-+	default:
-+		dev_err(pctldev->dev, "Property not supported\n");
-+		return -ENOTSUPP;
++		groups[i].mux_bit = 2;
++		groups[i].pull_bit = 0;
++		groups[i].drv_bit = 6;
++		groups[i].oe_bit = 9;
++		groups[i].in_bit = 0;
++		groups[i].out_bit = 1;
++		groups[i].intr_enable_bit = 0;
++		groups[i].intr_status_bit = 0;
++		groups[i].intr_target_bit = 5;
++		groups[i].intr_target_kpss_val = 1;
++		groups[i].intr_raw_status_bit = 4;
++		groups[i].intr_polarity_bit = 1;
++		groups[i].intr_detection_bit = 2;
++		groups[i].intr_detection_width = 2;
 +	}
 +
-+	return 0;
- }
- 
- static int lpc18xx_pconf_set_i2c0(struct pinctrl_dev *pctldev,
++	qdf2xxx_pinctrl.pins = pins;
++	qdf2xxx_pinctrl.groups = groups;
++	qdf2xxx_pinctrl.npins = num_gpios;
++	qdf2xxx_pinctrl.ngroups = num_gpios;
++	qdf2xxx_pinctrl.ngpios = num_gpios;
++
++	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
++}
++
++static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
++	{"QCOM8001"},
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
++
++static struct platform_driver qdf2xxx_pinctrl_driver = {
++	.driver = {
++		.name = "qdf2xxx-pinctrl",
++		.owner = THIS_MODULE,
++		.acpi_match_table = ACPI_PTR(qdf2xxx_acpi_ids),
++	},
++	.probe = qdf2xxx_pinctrl_probe,
++	.remove = msm_pinctrl_remove,
++};
++
++static int __init qdf2xxx_pinctrl_init(void)
++{
++	return platform_driver_register(&qdf2xxx_pinctrl_driver);
++}
++arch_initcall(qdf2xxx_pinctrl_init);
++
++static void __exit qdf2xxx_pinctrl_exit(void)
++{
++	platform_driver_unregister(&qdf2xxx_pinctrl_driver);
++}
++module_exit(qdf2xxx_pinctrl_exit);
++
++MODULE_DESCRIPTION("Qualcomm Technologies QDF2xxx pin control driver");
++MODULE_LICENSE("GPL v2");
 -- 
-1.8.0
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
 
