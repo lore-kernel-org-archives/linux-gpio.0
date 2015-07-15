@@ -1,88 +1,69 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] pinctrl: add support for Qualcomm Technologies QDF2xxx
- ARM64 SoCs
-Date: Tue, 14 Jul 2015 22:21:32 -0700
-Message-ID: <20150715052132.GF32767@usrtlx11787.corpusers.net>
-References: <1436916544-811-1-git-send-email-timur@codeaurora.org>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PULL gpio-for-next] gpio: make flags mandatory for gpiod_get
+ functions
+Date: Wed, 15 Jul 2015 08:28:25 +0200
+Message-ID: <20150715062825.GC1426@pengutronix.de>
+References: <1434404169-4639-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20150706090759.GS11824@pengutronix.de>
+ <20150708105138.GD1426@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:33616 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751316AbbGOG23 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 02:28:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1436916544-811-1-git-send-email-timur@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
+In-Reply-To: <20150708105138.GD1426@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-On Tue 14 Jul 16:29 PDT 2015, Timur Tabi wrote:
+Hello Linus, hello Alexandre,
 
-[..]
+On Wed, Jul 08, 2015 at 12:51:38PM +0200, Uwe Kleine-K=F6nig wrote:
+> On Mon, Jul 06, 2015 at 11:07:59AM +0200, Uwe Kleine-K=F6nig wrote:
+> > now that all patches that were in next hit Linus Torvalds' tree and
+> > v4.2-rc1 is out here comes the promised pull request that makes usa=
+ge of
+> > the flags parameter mandatory for gpiod_get et al:
+> >=20
+> > The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d=
+7d4f0754:
+> >=20
+> >   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   git://git.pengutronix.de/git/ukl/linux.git tags/gpiod-flags-for-4=
+=2E3
+> >=20
+> > for you to fetch changes up to b17d1bf16cc72a374a48d748940f700009d4=
+0ff4:
+> >=20
+> >   gpio: make flags mandatory for gpiod_get functions (2015-07-06 10=
+:39:24 +0200)
+> gentle ping!
+the (or at least my) plan was to get this into next early after the
+merge window for 4.2 closes. Now we're already at -rc2. Can you please
+comment?
 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+As of next-20150715 there don't seem to be any new users of gpiod
+without flags btw.
 
-[..]
+Best regards
+Uwe
 
-> + *
-> + * GPIO and pin control functions on this SOC are handled by the "TLMM"
-> + * device.  The driver which controls this device is pinctrl-msm.c.  Each
-> + * SOC with a TLMM is expected to create a client driver that registers
-> + * with pinctrl-msm.c.  This means that all TLMM drivers are pin control
-> + * drivers.
-> + *
-> + * This pin control driver is intended to be used only an ACPI-enabled
-> + * system.  As such, UEFI will handle all pin control configuration, so
-> + * this driver does not provide pin control functions.  It is effectively
-> + * a GPIO-only driver.  The alternative is to duplicate the GPIO code of
-> + * pinctrl-msm.c into another driver.
-> + */
-
-That should be fine, better reuse the existing code than duplicating it.
-
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-
-Do you really need pinmux.h?
-
-> +#include <linux/acpi.h>
-> +
-> +#include "pinctrl-msm.h"
-> +
-
-[..]
-
-> +
-> +static struct platform_driver qdf2xxx_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "qdf2xxx-pinctrl",
-> +		.owner = THIS_MODULE,
-
-No need to specify 'owner' of a platform_driver, so please drop this.
-
-> +		.acpi_match_table = ACPI_PTR(qdf2xxx_acpi_ids),
-> +	},
-> +	.probe = qdf2xxx_pinctrl_probe,
-> +	.remove = msm_pinctrl_remove,
-> +};
-> +
-> +static int __init qdf2xxx_pinctrl_init(void)
-> +{
-> +	return platform_driver_register(&qdf2xxx_pinctrl_driver);
-> +}
-> +arch_initcall(qdf2xxx_pinctrl_init);
-> +
-> +static void __exit qdf2xxx_pinctrl_exit(void)
-> +{
-> +	platform_driver_unregister(&qdf2xxx_pinctrl_driver);
-> +}
-> +module_exit(qdf2xxx_pinctrl_exit);
-> +
-> +MODULE_DESCRIPTION("Qualcomm Technologies QDF2xxx pin control driver");
-> +MODULE_LICENSE("GPL v2");
-
-Looks good with above nits fixed.
-
-Regards,
-Bjorn
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
