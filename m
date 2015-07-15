@@ -1,37 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] Make generic MMIO GPIO aware of the pinctrl subsystem
-Date: Wed, 15 Jul 2015 08:49:13 +0200
-Message-ID: <CACRpkdZNFMHLnpT_R2SgBi12qnUoHoH3L9rHOYgpmB=NnHGU3w@mail.gmail.com>
-References: <1434718697-31335-1-git-send-email-michael@smart-africa.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc
+ lpsr
+Date: Wed, 15 Jul 2015 15:23:07 +0800
+Message-ID: <20150715072307.GM4119@tiger>
+References: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:35284 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751598AbbGOGtO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 02:49:14 -0400
-Received: by oihq81 with SMTP id q81so22214027oih.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 23:49:13 -0700 (PDT)
-In-Reply-To: <1434718697-31335-1-git-send-email-michael@smart-africa.com>
+Received: from mail.kernel.org ([198.145.29.136]:34758 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752046AbbGOHXQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Jul 2015 03:23:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael van der Westhuizen <michael@smart-africa.com>, Jonas Jensen <jonas.jensen@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Kamlakant Patel <kamlakant.patel@linaro.org>
+To: Adrian Alonso <aalonso@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@linaro.org, lznuaa@gmail.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, yibin.gong@freescale.com
 
-On Fri, Jun 19, 2015 at 2:58 PM, Michael van der Westhuizen
-<michael@smart-africa.com> wrote:
+On Tue, Jul 07, 2015 at 02:02:05PM -0500, Adrian Alonso wrote:
+> * Extend pinctrl-imx driver to support iomux lpsr conntroller,
+> * iMX7D has two iomuxc controllers, iomuxc controller similar as
+>   previous iMX SoC generation and iomuxc-lpsr which provides
+>   low power state rentetion capabilities on gpios that are part of
+>   iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
+> * Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
+>   properly configure iomuxc/iomuxc-lpsr settings.
+> 
+> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 
-> While adding pinctrl awareness to gpio-dwapb it became clear to me that
-> all but one GPIO driver using generic MMIO GPIO lacked pinctrl
-> awareness.
->
-> I moved my pinctrl integration efforts to the gpio-generic driver and
-> cleaned up moxart-gpio, the only pinctrl-integrated gpio-generic user
-> in-tree.
+It took me quite some time to understand what the patch does.  Before I
+gave specific comments on your implementation, I would discuss if there
+is a better solution, as I do not like the idea of encoding these
+artificial pin id of LPSR pads in the input_val.
 
-I'd like to see Jonas' Tested-by before applying this, if possible.
+Ideally, the LPSR controller should be implemented as a second instance
+of IOMUXC.  But the problem seems to be the select input register is
+shared between these two instances.  Is my understanding correct?
 
-Jonas?
+How select input register is shared?  With different bits in a single
+register which is only laid on normal IOMUXC controller?
 
-Yours,
-Linus Walleij
+I need more details to understand the problem.
+
+Shawn
