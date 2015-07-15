@@ -1,59 +1,98 @@
-From: Vinay Simha <simhavcs@gmail.com>
-Subject: Re: [PATCH] pinctrl/qcom Kconfig CFG repeated
-Date: Wed, 15 Jul 2015 21:05:28 +0530
-Message-ID: <CAGWqDJ7Epdm7tVYj0F8mCJA7rC-rO3CXq_Gd0c13mqQ8zxBZ-g@mail.gmail.com>
-References: <1436972027-2914-1-git-send-email-simhavcs@gmail.com>
-	<55A6768A.7010605@mm-sol.com>
+From: Alonso Adrian <aalonso@freescale.com>
+Subject: RE: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc
+ lpsr
+Date: Wed, 15 Jul 2015 15:55:59 +0000
+Message-ID: <BN3PR03MB1509DFB6A1513A23C48476CFA89A0@BN3PR03MB1509.namprd03.prod.outlook.com>
+References: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
+ <20150715072307.GM4119@tiger>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vn0-f47.google.com ([209.85.216.47]:34497 "EHLO
-	mail-vn0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751546AbbGOPf3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 11:35:29 -0400
-In-Reply-To: <55A6768A.7010605@mm-sol.com>
+Received: from mail-bn1on0143.outbound.protection.outlook.com ([157.56.110.143]:1824
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751640AbbGOP4B convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 11:56:01 -0400
+In-Reply-To: <20150715072307.GM4119@tiger>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Joonwoo Park <joonwoop@codeaurora.org>, Georgi Djakov <gdjakov@mm-sol.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Yibin Gong <yibin.gong@freescale.com>
 
-sorry. My mistake. i saw both as 8064.
+Hi Shawn,
 
-On Wed, Jul 15, 2015 at 8:34 PM, Stanimir Varbanov <svarbanov@mm-sol.com> wrote:
-> On 07/15/2015 05:53 PM, Vinay Simha BN wrote:
->> repeatation of the same configs
->> obj-$(CONFIG_PINCTRL_APQ8084)   += pinctrl-apq8084.o
->
-> hm you might be kidding, apq8064 and apq8084 are different SoCs.
->
->>
->> Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
->> ---
->>  drivers/pinctrl/qcom/Makefile | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
->> index 3666c70..d26a878 100644
->> --- a/drivers/pinctrl/qcom/Makefile
->> +++ b/drivers/pinctrl/qcom/Makefile
->> @@ -1,7 +1,6 @@
->>  # Qualcomm pin control drivers
->>  obj-$(CONFIG_PINCTRL_MSM)    += pinctrl-msm.o
->>  obj-$(CONFIG_PINCTRL_APQ8064)        += pinctrl-apq8064.o
->> -obj-$(CONFIG_PINCTRL_APQ8084)        += pinctrl-apq8084.o
->>  obj-$(CONFIG_PINCTRL_IPQ8064)        += pinctrl-ipq8064.o
->>  obj-$(CONFIG_PINCTRL_MSM8660)        += pinctrl-msm8660.o
->>  obj-$(CONFIG_PINCTRL_MSM8960)        += pinctrl-msm8960.o
->>
->
->
-> --
-> regards,
-> Stan
+Comments inline, thanks for reviewing :)
 
+Regards
+Adrian
 
+-----Original Message-----
+From: Shawn Guo [mailto:shawnguo@kernel.org] 
+Sent: Wednesday, July 15, 2015 2:23 AM
+To: Alonso Lazcano Adrian-B38018
+Cc: linux-arm-kernel@lists.infradead.org; shawn.guo@linaro.org; linus.walleij@linaro.org; lznuaa@gmail.com; devicetree@vger.kernel.org; Li Frank-B20596; Garg Nitin-B37173; Huang Yongcai-B20788; linux-gpio@vger.kernel.org; robh+dt@kernel.org; Gong Yibin-B38343
+Subject: Re: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc lpsr
 
--- 
-Regards,
+On Tue, Jul 07, 2015 at 02:02:05PM -0500, Adrian Alonso wrote:
+> * Extend pinctrl-imx driver to support iomux lpsr conntroller,
+> * iMX7D has two iomuxc controllers, iomuxc controller similar as
+>   previous iMX SoC generation and iomuxc-lpsr which provides
+>   low power state rentetion capabilities on gpios that are part of
+>   iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0).
+> * Use IOMUXC_LPSR_SUPPORT and iput_val most significant bits to
+>   properly configure iomuxc/iomuxc-lpsr settings.
+> 
+> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 
-Vinay Simha.B.N.
+It took me quite some time to understand what the patch does.  Before I gave specific comments on your implementation, I would discuss if there is a better solution, as I do not like the idea of encoding these artificial pin id of LPSR pads in the input_val.
+
+Ideally, the LPSR controller should be implemented as a second instance of IOMUXC.  But the problem seems to be the select input register is shared between these two instances.  Is my understanding correct?
+
+[Adrian] Yes that's the case SELECT_INPUT register is shared between IOMUXC and IOMUXC-LPSR controllers.
+
+How select input register is shared?  With different bits in a single register which is only laid on normal IOMUXC controller?
+
+[Adrian] IOMUXC and IOMUXC-LPSR are in different base address; each controller provides SW_PAD_CTL  (CONF_REG) and SW_MUX_CTL (MUX_REG) but only IOMUXC provides SELECT_INPUT registers for pad daisy chain configuration, so pads from IOMUXC-LPSR that need daisy chain settings need to access the IOMUXC register space address to access SELECT_INPUT.
+
+[Adrian] One disadvantage that we found if we created two driver instances for IOMUXC and IOMUXC-LPSR controllers is that in the device tree machine files "end-users" could be creating pinctrl nodes mixing pads from different IOMUXC controllers resulting that pad that doesn't belong to that domain controller it will not be configured properly.
+
+For example a valid pad configuration for I2C1 could use pads as shown below: 
+&iomuxc {
+	pinctrl_i2c1_1: i2c1grp-1 {
+		fsl,pins = <
+			MX7D_PAD_GPIO1_IO04__I2C1_SCL  	/* IOMUXC-LPSR domain */
+			MX7D_PAD_I2C1_SDA__I2C1_SDA   	/* IOMUXC domain */
+		>;
+	};
+};
+
+By extending pinctrl-imx to support both controllers the above configuration is supported,
+Otherwise using two driver instances "end-users" will need to do something like:
+
+&iomuxc {
+	pinctrl_i2c1_1: i2c1grp-1 {
+		fsl,pins = <
+			MX7D_PAD_I2C1_SDA__I2C1_SDA   	/* IOMUXC domain */
+		>;
+	};
+};
+
+&iomuxc_lpsr {
+	pinctrl_i2c1_1: i2c1grp-1 {
+		fsl,pins = <
+			MX7D_PAD_GPIO1_IO04__I2C1_SCL  	/* IOMUXC-LPSR domain */
+		>;
+	};
+};
+
+And this is something that we will like to avoid so "end-user" don't have to worry about and configure pads as they are used to.
+
+[Adrian] For the artificial encoding of pad group id's for IOMUXC-LPSR, I think there is no other way to do it (limited imagination here :P);
+Pad group id's are extracted from MUX_REG offset address (pad_id = mux_reg / 4) but when combining both IOMUXC and IOMUXC-LPSR
+Pad group ID's overlap so end up encoding the pad_id for IOMUXC-LPSR to resolve the proper pad group ID.
+
+I need more details to understand the problem.
+
+Shawn
