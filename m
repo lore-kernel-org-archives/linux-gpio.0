@@ -1,194 +1,63 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH] pinctrl: add support for Qualcomm Technologies QDF2xxx ARM64 SoCs
-Date: Tue, 14 Jul 2015 18:29:04 -0500
-Message-ID: <1436916544-811-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:51227 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752825AbbGNX3I (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Jul 2015 19:29:08 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Wed, 15 Jul 2015 11:01:57 +1000
+Message-ID: <20150715110157.72e7fc7a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Jiang Liu <jiang.liu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
 
-Add the pinctrl driver for the Qualcomm Technologies QDF2xxx ARM64 SoCs,
-which uses the Qualcomm Technologies TLMM pinctrl/gpio device.  This
-driver is probed via ACPI and uses the pinctrl-msm.c backend driver.
+Hi all,
 
-This driver is intended to be used only an ACPI-enabled system.  As such,
-UEFI will handle all pin control configuration, so this driver does not
-provide pin control functions.  It is effectively a GPIO-only driver.
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
+drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_gpio_handle_irq':
+drivers/pinctrl/sirf/pinctrl-atlas7.c:4300:20: error: 'irq' undeclared (first use in this function)
+   if (bank->irq == irq)
+                    ^
+
+Caused by commit
+
+  5dc1aeb0340f ("pinctrl/sirf: Prepare-x-gpio-handle-irq-for-irq-argument-removal.patch")
+[hmmm, not a wonderful commit summary line]
+
+I tried to use the tip tree from next-20150714, but for some reason that
+broke the perf build:
+
+  BUILD:   Doing 'make -j48' parallel build
+make[3]: *** No rule to make target '../lib/hweight.c', needed by '/scratch/sfr/next/tools/perf/util/hweight.o'.  Stop.
+
+So instead, I applied the following fix patch for today's issue:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 15 Jul 2015 10:56:28 +1000
+Subject: [PATCH] pinctrl/sirf: fix for Prepare-x-gpio-handle-irq-for-irq-argument-removal.patch
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/pinctrl/qcom/Kconfig           |   8 +++
- drivers/pinctrl/qcom/Makefile          |   1 +
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 124 +++++++++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 58f5632..8a38323 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -63,6 +63,14 @@ config PINCTRL_MSM8916
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found on the Qualcomm 8916 platform.
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index f55c931f1088..7917b7719939 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -4294,6 +4294,7 @@ static void atlas7_gpio_handle_irq(unsigned int __irq, struct irq_desc *desc)
+ 	u32 status, ctrl;
+ 	int pin_in_bank = 0, idx;
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
++	unsigned int irq = irq_desc_get_irq(desc);
  
-+config PINCTRL_QDF2XXX
-+	tristate "Qualcomm Technologies QDF2xxx pin controller driver"
-+	depends on GPIOLIB && ACPI
-+	select PINCTRL_MSM
-+	help
-+	  This is the GPIO driver for the TLMM block found on the
-+	  Qualcomm Technologies QDF2xxx SOCs.
-+
- config PINCTRL_QCOM_SPMI_PMIC
-        tristate "Qualcomm SPMI PMIC pin controller driver"
-        depends on GPIOLIB && OF && SPMI
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 3666c70..798d662 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -7,5 +7,6 @@ obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
- obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
- obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
- obj-$(CONFIG_PINCTRL_MSM8916)	+= pinctrl-msm8916.o
-+obj-$(CONFIG_PINCTRL_QDF2XXX)	+= pinctrl-qdf2xxx.o
- obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-gpio.o
- obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-mpp.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-new file mode 100644
-index 0000000..e88943e
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-@@ -0,0 +1,124 @@
-+/*
-+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * GPIO and pin control functions on this SOC are handled by the "TLMM"
-+ * device.  The driver which controls this device is pinctrl-msm.c.  Each
-+ * SOC with a TLMM is expected to create a client driver that registers
-+ * with pinctrl-msm.c.  This means that all TLMM drivers are pin control
-+ * drivers.
-+ *
-+ * This pin control driver is intended to be used only an ACPI-enabled
-+ * system.  As such, UEFI will handle all pin control configuration, so
-+ * this driver does not provide pin control functions.  It is effectively
-+ * a GPIO-only driver.  The alternative is to duplicate the GPIO code of
-+ * pinctrl-msm.c into another driver.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/acpi.h>
-+
-+#include "pinctrl-msm.h"
-+
-+static struct msm_pinctrl_soc_data qdf2xxx_pinctrl;
-+
-+static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct pinctrl_pin_desc *pins;
-+	struct msm_pingroup *groups;
-+	unsigned int i;
-+	u32 num_gpios;
-+	int ret;
-+
-+	/* Query the number of GPIOs from ACPI */
-+	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!num_gpios) {
-+		dev_warn(&pdev->dev, "missing num-gpios property\n");
-+		return -ENODEV;
-+	}
-+
-+	pins = devm_kcalloc(&pdev->dev, num_gpios,
-+		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
-+	groups = devm_kcalloc(&pdev->dev, num_gpios,
-+		sizeof(struct msm_pingroup), GFP_KERNEL);
-+
-+	for (i = 0; i < num_gpios; i++) {
-+		pins[i].number = i;
-+
-+		groups[i].npins = 1,
-+		groups[i].pins = &pins[i].number;
-+		groups[i].ctl_reg = 0x10000 * i;
-+		groups[i].io_reg = 0x04 + 0x10000 * i;
-+		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
-+		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
-+		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
-+
-+		groups[i].mux_bit = 2;
-+		groups[i].pull_bit = 0;
-+		groups[i].drv_bit = 6;
-+		groups[i].oe_bit = 9;
-+		groups[i].in_bit = 0;
-+		groups[i].out_bit = 1;
-+		groups[i].intr_enable_bit = 0;
-+		groups[i].intr_status_bit = 0;
-+		groups[i].intr_target_bit = 5;
-+		groups[i].intr_target_kpss_val = 1;
-+		groups[i].intr_raw_status_bit = 4;
-+		groups[i].intr_polarity_bit = 1;
-+		groups[i].intr_detection_bit = 2;
-+		groups[i].intr_detection_width = 2;
-+	}
-+
-+	qdf2xxx_pinctrl.pins = pins;
-+	qdf2xxx_pinctrl.groups = groups;
-+	qdf2xxx_pinctrl.npins = num_gpios;
-+	qdf2xxx_pinctrl.ngroups = num_gpios;
-+	qdf2xxx_pinctrl.ngpios = num_gpios;
-+
-+	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
-+}
-+
-+static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-+	{"QCOM8001"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
-+
-+static struct platform_driver qdf2xxx_pinctrl_driver = {
-+	.driver = {
-+		.name = "qdf2xxx-pinctrl",
-+		.owner = THIS_MODULE,
-+		.acpi_match_table = ACPI_PTR(qdf2xxx_acpi_ids),
-+	},
-+	.probe = qdf2xxx_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
-+
-+static int __init qdf2xxx_pinctrl_init(void)
-+{
-+	return platform_driver_register(&qdf2xxx_pinctrl_driver);
-+}
-+arch_initcall(qdf2xxx_pinctrl_init);
-+
-+static void __exit qdf2xxx_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&qdf2xxx_pinctrl_driver);
-+}
-+module_exit(qdf2xxx_pinctrl_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies QDF2xxx pin control driver");
-+MODULE_LICENSE("GPL v2");
+ 	for (idx = 0; idx < a7gc->nbank; idx++) {
+ 		bank = &a7gc->banks[idx];
 -- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.1.4
 
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
