@@ -1,68 +1,151 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PULL gpio-for-next] gpio: make flags mandatory for gpiod_get functions
-Date: Wed, 15 Jul 2015 15:39:24 +0900
-Message-ID: <CAAVeFuKTwuO6O106oq0=f6eWAaa1NTiOJZ8Pw-VRG_i0E+4g+w@mail.gmail.com>
-References: <1434404169-4639-1-git-send-email-u.kleine-koenig@pengutronix.de>
- <20150706090759.GS11824@pengutronix.de> <20150708105138.GD1426@pengutronix.de>
- <20150715062825.GC1426@pengutronix.de>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH v2 5/8] pinctrl: qcom: spmi-mpp: Add support for setting analog output level
+Date: Tue, 14 Jul 2015 23:40:33 -0700
+Message-ID: <1436942435-25611-1-git-send-email-bjorn.andersson@sonymobile.com>
+References: <1434610052-602-6-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34287 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751032AbbGOGjo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 02:39:44 -0400
-Received: by obre1 with SMTP id e1so20578845obr.1
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Jul 2015 23:39:43 -0700 (PDT)
-In-Reply-To: <20150715062825.GC1426@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1434610052-602-6-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Wed, Jul 15, 2015 at 3:28 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello Linus, hello Alexandre,
->
-> On Wed, Jul 08, 2015 at 12:51:38PM +0200, Uwe Kleine-K=C3=B6nig wrote=
-:
->> On Mon, Jul 06, 2015 at 11:07:59AM +0200, Uwe Kleine-K=C3=B6nig wrot=
-e:
->> > now that all patches that were in next hit Linus Torvalds' tree an=
-d
->> > v4.2-rc1 is out here comes the promised pull request that makes us=
-age of
->> > the flags parameter mandatory for gpiod_get et al:
->> >
->> > The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5=
-d7d4f0754:
->> >
->> >   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
->> >
->> > are available in the git repository at:
->> >
->> >   git://git.pengutronix.de/git/ukl/linux.git tags/gpiod-flags-for-=
-4.3
->> >
->> > for you to fetch changes up to b17d1bf16cc72a374a48d748940f700009d=
-40ff4:
->> >
->> >   gpio: make flags mandatory for gpiod_get functions (2015-07-06 1=
-0:39:24 +0200)
->> gentle ping!
-> the (or at least my) plan was to get this into next early after the
-> merge window for 4.2 closes. Now we're already at -rc2. Can you pleas=
-e
-> comment?
->
-> As of next-20150715 there don't seem to be any new users of gpiod
-> without flags btw.
+When the MPP is configured for analog output the output level is selected by
+the AOUT_CTL register, this patch makes it possible to control this.
 
-I'm all for taking this into -next ASAP then. Linus has control over
-the tree though, so his action is required.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+---
+
+Changes since v1:
+- Assign aout_level in pmic_mpp_populate()
+
+ .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |  7 +++++++
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            | 23 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
+index d29fb96a57d3..0e4d4e62e220 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
+@@ -127,6 +127,13 @@ to specify in a pin configuration subnode:
+ 	Definition: Selects the power source for the specified pins. Valid power
+ 		    sources are defined in <dt-bindings/pinctrl/qcom,pmic-mpp.h>
+ 
++- qcom,analog-level:
++	Usage: optional
++	Value type: <u32>
++	Definition: Selects the source for analog output. Valued values are
++		    defined in <dt-binding/pinctrl/qcom,pmic-mpp.h>
++		    PMIC_MPP_AOUT_LVL_*
++
+ - qcom,analog-mode:
+ 	Usage: optional
+ 	Value type: <none>
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+index 9dde023640ba..e52a72348a67 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -61,6 +61,7 @@
+ #define PMIC_MPP_REG_DIG_PULL_CTL		0x42
+ #define PMIC_MPP_REG_DIG_IN_CTL			0x43
+ #define PMIC_MPP_REG_EN_CTL			0x46
++#define PMIC_MPP_REG_AOUT_CTL			0x48
+ #define PMIC_MPP_REG_AIN_CTL			0x4a
+ #define PMIC_MPP_REG_SINK_CTL			0x4c
+ 
+@@ -100,6 +101,7 @@
+ #define PMIC_MPP_CONF_AMUX_ROUTE		(PIN_CONFIG_END + 1)
+ #define PMIC_MPP_CONF_ANALOG_MODE		(PIN_CONFIG_END + 2)
+ #define PMIC_MPP_CONF_SINK_MODE			(PIN_CONFIG_END + 3)
++#define PMIC_MPP_CONF_ANALOG_LEVEL		(PIN_CONFIG_END + 4)
+ 
+ /**
+  * struct pmic_mpp_pad - keep current MPP settings
+@@ -115,6 +117,7 @@
+  * @num_sources: Number of power-sources supported by this MPP.
+  * @power_source: Current power-source used.
+  * @amux_input: Set the source for analog input.
++ * @aout_level: Analog output level
+  * @pullup: Pullup resistor value. Valid in Bidirectional mode only.
+  * @function: See pmic_mpp_functions[].
+  * @drive_strength: Amount of current in sink mode
+@@ -131,6 +134,7 @@ struct pmic_mpp_pad {
+ 	unsigned int	num_sources;
+ 	unsigned int	power_source;
+ 	unsigned int	amux_input;
++	unsigned int	aout_level;
+ 	unsigned int	pullup;
+ 	unsigned int	function;
+ 	unsigned int	drive_strength;
+@@ -145,6 +149,7 @@ struct pmic_mpp_state {
+ 
+ static const struct pinconf_generic_params pmic_mpp_bindings[] = {
+ 	{"qcom,amux-route",	PMIC_MPP_CONF_AMUX_ROUTE,	0},
++	{"qcom,analog-level",	PMIC_MPP_CONF_ANALOG_LEVEL,	0},
+ 	{"qcom,analog-mode",	PMIC_MPP_CONF_ANALOG_MODE,	0},
+ 	{"qcom,sink-mode",	PMIC_MPP_CONF_SINK_MODE,	0},
+ };
+@@ -152,6 +157,7 @@ static const struct pinconf_generic_params pmic_mpp_bindings[] = {
+ #ifdef CONFIG_DEBUG_FS
+ static const struct pin_config_item pmic_conf_items[] = {
+ 	PCONFDUMP(PMIC_MPP_CONF_AMUX_ROUTE, "analog mux", NULL, true),
++	PCONFDUMP(PMIC_MPP_CONF_ANALOG_LEVEL, "analog level", NULL, true),
+ 	PCONFDUMP(PMIC_MPP_CONF_ANALOG_MODE, "analog output", NULL, false),
+ 	PCONFDUMP(PMIC_MPP_CONF_SINK_MODE, "sink mode", NULL, false),
+ };
+@@ -358,6 +364,9 @@ static int pmic_mpp_config_get(struct pinctrl_dev *pctldev,
+ 	case PIN_CONFIG_DRIVE_STRENGTH:
+ 		arg = pad->drive_strength;
+ 		break;
++	case PMIC_MPP_CONF_ANALOG_LEVEL:
++		arg = pad->aout_level;
++		break;
+ 	case PMIC_MPP_CONF_ANALOG_MODE:
+ 		arg = pad->analog_mode;
+ 		break;
+@@ -433,6 +442,9 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 				return -EINVAL;
+ 			pad->amux_input = arg;
+ 			break;
++		case PMIC_MPP_CONF_ANALOG_LEVEL:
++			pad->aout_level = arg;
++			break;
+ 		case PMIC_MPP_CONF_ANALOG_MODE:
+ 			pad->analog_mode = !!arg;
+ 			break;
+@@ -462,6 +474,10 @@ static int pmic_mpp_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_AOUT_CTL, pad->aout_level);
++	if (ret < 0)
++		return ret;
++
+ 	ret = pmic_mpp_write_mode_ctl(state, pad);
+ 	if (ret < 0)
+ 		return ret;
+@@ -507,6 +523,7 @@ static void pmic_mpp_config_dbg_show(struct pinctrl_dev *pctldev,
+ 		seq_printf(s, " %-7s", modes[pad->analog_mode ? 1 : (pad->sink_mode ? 2 : 0)]);
+ 		seq_printf(s, " %-7s", pmic_mpp_functions[pad->function]);
+ 		seq_printf(s, " vin-%d", pad->power_source);
++		seq_printf(s, " %d", pad->aout_level);
+ 		seq_printf(s, " %-8s", biases[pad->pullup]);
+ 		seq_printf(s, " %-4s", pad->out_value ? "high" : "low");
+ 	}
+@@ -748,6 +765,12 @@ static int pmic_mpp_populate(struct pmic_mpp_state *state,
+ 
+ 	pad->drive_strength = val;
+ 
++	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_AOUT_CTL);
++	if (val < 0)
++		return val;
++
++	pad->aout_level = val;
++
+ 	val = pmic_mpp_read(state, pad, PMIC_MPP_REG_EN_CTL);
+ 	if (val < 0)
+ 		return val;
+-- 
+1.8.2.2
