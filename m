@@ -1,63 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Wed, 15 Jul 2015 11:01:57 +1000
-Message-ID: <20150715110157.72e7fc7a@canb.auug.org.au>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] pinctrl: add support for Qualcomm Technologies QDF2xxx
+ ARM64 SoCs
+Date: Tue, 14 Jul 2015 22:21:32 -0700
+Message-ID: <20150715052132.GF32767@usrtlx11787.corpusers.net>
+References: <1436916544-811-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>, Jiang Liu <jiang.liu@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1436916544-811-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi all,
+On Tue 14 Jul 16:29 PDT 2015, Timur Tabi wrote:
 
-After merging the tip tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+[..]
 
-drivers/pinctrl/sirf/pinctrl-atlas7.c: In function 'atlas7_gpio_handle_irq':
-drivers/pinctrl/sirf/pinctrl-atlas7.c:4300:20: error: 'irq' undeclared (first use in this function)
-   if (bank->irq == irq)
-                    ^
+> diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
 
-Caused by commit
+[..]
 
-  5dc1aeb0340f ("pinctrl/sirf: Prepare-x-gpio-handle-irq-for-irq-argument-removal.patch")
-[hmmm, not a wonderful commit summary line]
+> + *
+> + * GPIO and pin control functions on this SOC are handled by the "TLMM"
+> + * device.  The driver which controls this device is pinctrl-msm.c.  Each
+> + * SOC with a TLMM is expected to create a client driver that registers
+> + * with pinctrl-msm.c.  This means that all TLMM drivers are pin control
+> + * drivers.
+> + *
+> + * This pin control driver is intended to be used only an ACPI-enabled
+> + * system.  As such, UEFI will handle all pin control configuration, so
+> + * this driver does not provide pin control functions.  It is effectively
+> + * a GPIO-only driver.  The alternative is to duplicate the GPIO code of
+> + * pinctrl-msm.c into another driver.
+> + */
 
-I tried to use the tip tree from next-20150714, but for some reason that
-broke the perf build:
+That should be fine, better reuse the existing code than duplicating it.
 
-  BUILD:   Doing 'make -j48' parallel build
-make[3]: *** No rule to make target '../lib/hweight.c', needed by '/scratch/sfr/next/tools/perf/util/hweight.o'.  Stop.
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
 
-So instead, I applied the following fix patch for today's issue:
+Do you really need pinmux.h?
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 15 Jul 2015 10:56:28 +1000
-Subject: [PATCH] pinctrl/sirf: fix for Prepare-x-gpio-handle-irq-for-irq-argument-removal.patch
+> +#include <linux/acpi.h>
+> +
+> +#include "pinctrl-msm.h"
+> +
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 1 +
- 1 file changed, 1 insertion(+)
+[..]
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index f55c931f1088..7917b7719939 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -4294,6 +4294,7 @@ static void atlas7_gpio_handle_irq(unsigned int __irq, struct irq_desc *desc)
- 	u32 status, ctrl;
- 	int pin_in_bank = 0, idx;
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int irq = irq_desc_get_irq(desc);
- 
- 	for (idx = 0; idx < a7gc->nbank; idx++) {
- 		bank = &a7gc->banks[idx];
--- 
-2.1.4
+> +
+> +static struct platform_driver qdf2xxx_pinctrl_driver = {
+> +	.driver = {
+> +		.name = "qdf2xxx-pinctrl",
+> +		.owner = THIS_MODULE,
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+No need to specify 'owner' of a platform_driver, so please drop this.
+
+> +		.acpi_match_table = ACPI_PTR(qdf2xxx_acpi_ids),
+> +	},
+> +	.probe = qdf2xxx_pinctrl_probe,
+> +	.remove = msm_pinctrl_remove,
+> +};
+> +
+> +static int __init qdf2xxx_pinctrl_init(void)
+> +{
+> +	return platform_driver_register(&qdf2xxx_pinctrl_driver);
+> +}
+> +arch_initcall(qdf2xxx_pinctrl_init);
+> +
+> +static void __exit qdf2xxx_pinctrl_exit(void)
+> +{
+> +	platform_driver_unregister(&qdf2xxx_pinctrl_driver);
+> +}
+> +module_exit(qdf2xxx_pinctrl_exit);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Technologies QDF2xxx pin control driver");
+> +MODULE_LICENSE("GPL v2");
+
+Looks good with above nits fixed.
+
+Regards,
+Bjorn
