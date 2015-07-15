@@ -1,38 +1,54 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] [v2] pinctrl: add support for Qualcomm Technologies
- QDF2xxx ARM64 SoCs
-Date: Wed, 15 Jul 2015 11:37:35 -0700
-Message-ID: <20150715183735.GG32767@usrtlx11787.corpusers.net>
-References: <1436978834-7271-1-git-send-email-timur@codeaurora.org>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH v2 2/2] pinctrl: driver for Conexant Digicolor CX92755
+ pin mapping
+Date: Wed, 15 Jul 2015 22:08:23 +0300
+Message-ID: <20150715190822.GH2332@tarshish>
+References: <eaf294961247ac7c105156d6fae6d7389a4c0dfc.1430823310.git.baruch@tkos.co.il>
+ <28c81769f3ed3e4c24ce00bbe2773009259ba3fe.1430823310.git.baruch@tkos.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:9239 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751592AbbGOShk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 15 Jul 2015 14:37:40 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:33424 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751592AbbGOTI3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Jul 2015 15:08:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1436978834-7271-1-git-send-email-timur@codeaurora.org>
+In-Reply-To: <28c81769f3ed3e4c24ce00bbe2773009259ba3fe.1430823310.git.baruch@tkos.co.il>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On Wed 15 Jul 09:47 PDT 2015, Timur Tabi wrote:
+Hi Linus,
 
-> Add the pinctrl driver for the Qualcomm Technologies QDF2xxx ARM64 SoCs,
-> which uses the Qualcomm Technologies TLMM pinctrl/gpio device.  This
-> driver is probed via ACPI and uses the pinctrl-msm.c backend driver.
+On Tue, May 05, 2015 at 01:55:10PM +0300, Baruch Siach wrote:
+> This adds pinctrl and gpio driver to the CX92755 SoC "General Purpose Pin
+> Mapping" hardware block. The CX92755 is one SoC from the Conexant Digicolor
+> series. Pin mapping hardware supports configuring pins as either GPIO, or up to
+> 3 other "client select" functions. This driver adds support for pin muxing
+> using the generic device tree binding, and a basic gpiolib driver for the GPIO
+> functionality.
 > 
-> This driver is intended to be used only an ACPI-enabled system.  As such,
-> UEFI will handle all pin control configuration, so this driver does not
-> provide pin control functions.  It is effectively a GPIO-only driver.
+> This driver does not currently support GPIO interrupts, and pad configuration.
 > 
-> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 > ---
+> v2:
+>    * Address review comments for Linus Walleij:
+>      - Add a pointer to pinctrl_desc in struct dc_pinmap
+>      - Drop the now redundant pinctrl_pin_desc field
+>      - Adapt dc_get_group_{name,pins} to these changes, and add a comment
+>        explaining the 1-to-1 pin-groups relation
+>    * Staticise dc_pmxops
+>    * Protect the GP_CLIENTSEL clct parameter with parenthesis
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Ping?
+Any chance of having this driver queued for 4.3?
 
-Regards,
-Bjorn
+Thanks,
+baruch
+
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
