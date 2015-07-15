@@ -1,192 +1,98 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH] [v2] pinctrl: add support for Qualcomm Technologies QDF2xxx ARM64 SoCs
-Date: Wed, 15 Jul 2015 11:47:14 -0500
-Message-ID: <1436978834-7271-1-git-send-email-timur@codeaurora.org>
+From: Paul Osmialowski <pawelo@king.net.pl>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Wed, 15 Jul 2015 19:34:09 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1507151931200.7048@localhost.localdomain>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl> <1435667250-28299-4-git-send-email-pawelo@king.net.pl> <CACRpkdasMqFCwy=ZEvMLeG2Z-xV01dbf8cXaPACP1=RSz2gdjw@mail.gmail.com> <alpine.LNX.2.00.1507150917470.32721@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56145 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751946AbbGOQrS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Jul 2015 12:47:18 -0400
+Received: from fish.king.net.pl ([79.190.246.46]:35501 "EHLO king.net.pl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752760AbbGORid (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 15 Jul 2015 13:38:33 -0400
+In-Reply-To: <alpine.LNX.2.00.1507150917470.32721@localhost.localdomain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Vipul Gandhi <vgandhi@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Paul Osmialowski <pawelo@king.net.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jiri Slaby <jslaby@suse.cz>, Kumar Gala <galak@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Geert
 
-Add the pinctrl driver for the Qualcomm Technologies QDF2xxx ARM64 SoCs,
-which uses the Qualcomm Technologies TLMM pinctrl/gpio device.  This
-driver is probed via ACPI and uses the pinctrl-msm.c backend driver.
+Hi Linus,
 
-This driver is intended to be used only an ACPI-enabled system.  As such,
-UEFI will handle all pin control configuration, so this driver does not
-provide pin control functions.  It is effectively a GPIO-only driver.
+I had some discussion with an expert here and now I see drawbacks of using 
+struct for regs, I'll turn it into defines as you suggested.
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/Kconfig           |   8 +++
- drivers/pinctrl/qcom/Makefile          |   1 +
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 122 +++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+On Wed, 15 Jul 2015, Paul Osmialowski wrote:
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 58f5632..8a38323 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -63,6 +63,14 @@ config PINCTRL_MSM8916
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found on the Qualcomm 8916 platform.
- 
-+config PINCTRL_QDF2XXX
-+	tristate "Qualcomm Technologies QDF2xxx pin controller driver"
-+	depends on GPIOLIB && ACPI
-+	select PINCTRL_MSM
-+	help
-+	  This is the GPIO driver for the TLMM block found on the
-+	  Qualcomm Technologies QDF2xxx SOCs.
-+
- config PINCTRL_QCOM_SPMI_PMIC
-        tristate "Qualcomm SPMI PMIC pin controller driver"
-        depends on GPIOLIB && OF && SPMI
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 3666c70..798d662 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -7,5 +7,6 @@ obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
- obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
- obj-$(CONFIG_PINCTRL_MSM8X74)	+= pinctrl-msm8x74.o
- obj-$(CONFIG_PINCTRL_MSM8916)	+= pinctrl-msm8916.o
-+obj-$(CONFIG_PINCTRL_QDF2XXX)	+= pinctrl-qdf2xxx.o
- obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-gpio.o
- obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) += pinctrl-spmi-mpp.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-new file mode 100644
-index 0000000..e9ff3bc
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-@@ -0,0 +1,122 @@
-+/*
-+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * GPIO and pin control functions on this SOC are handled by the "TLMM"
-+ * device.  The driver which controls this device is pinctrl-msm.c.  Each
-+ * SOC with a TLMM is expected to create a client driver that registers
-+ * with pinctrl-msm.c.  This means that all TLMM drivers are pin control
-+ * drivers.
-+ *
-+ * This pin control driver is intended to be used only an ACPI-enabled
-+ * system.  As such, UEFI will handle all pin control configuration, so
-+ * this driver does not provide pin control functions.  It is effectively
-+ * a GPIO-only driver.  The alternative is to duplicate the GPIO code of
-+ * pinctrl-msm.c into another driver.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/acpi.h>
-+
-+#include "pinctrl-msm.h"
-+
-+static struct msm_pinctrl_soc_data qdf2xxx_pinctrl;
-+
-+static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct pinctrl_pin_desc *pins;
-+	struct msm_pingroup *groups;
-+	unsigned int i;
-+	u32 num_gpios;
-+	int ret;
-+
-+	/* Query the number of GPIOs from ACPI */
-+	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!num_gpios) {
-+		dev_warn(&pdev->dev, "missing num-gpios property\n");
-+		return -ENODEV;
-+	}
-+
-+	pins = devm_kcalloc(&pdev->dev, num_gpios,
-+		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
-+	groups = devm_kcalloc(&pdev->dev, num_gpios,
-+		sizeof(struct msm_pingroup), GFP_KERNEL);
-+
-+	for (i = 0; i < num_gpios; i++) {
-+		pins[i].number = i;
-+
-+		groups[i].npins = 1,
-+		groups[i].pins = &pins[i].number;
-+		groups[i].ctl_reg = 0x10000 * i;
-+		groups[i].io_reg = 0x04 + 0x10000 * i;
-+		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
-+		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
-+		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
-+
-+		groups[i].mux_bit = 2;
-+		groups[i].pull_bit = 0;
-+		groups[i].drv_bit = 6;
-+		groups[i].oe_bit = 9;
-+		groups[i].in_bit = 0;
-+		groups[i].out_bit = 1;
-+		groups[i].intr_enable_bit = 0;
-+		groups[i].intr_status_bit = 0;
-+		groups[i].intr_target_bit = 5;
-+		groups[i].intr_target_kpss_val = 1;
-+		groups[i].intr_raw_status_bit = 4;
-+		groups[i].intr_polarity_bit = 1;
-+		groups[i].intr_detection_bit = 2;
-+		groups[i].intr_detection_width = 2;
-+	}
-+
-+	qdf2xxx_pinctrl.pins = pins;
-+	qdf2xxx_pinctrl.groups = groups;
-+	qdf2xxx_pinctrl.npins = num_gpios;
-+	qdf2xxx_pinctrl.ngroups = num_gpios;
-+	qdf2xxx_pinctrl.ngpios = num_gpios;
-+
-+	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
-+}
-+
-+static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-+	{"QCOM8001"},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
-+
-+static struct platform_driver qdf2xxx_pinctrl_driver = {
-+	.driver = {
-+		.name = "qdf2xxx-pinctrl",
-+		.acpi_match_table = ACPI_PTR(qdf2xxx_acpi_ids),
-+	},
-+	.probe = qdf2xxx_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
-+
-+static int __init qdf2xxx_pinctrl_init(void)
-+{
-+	return platform_driver_register(&qdf2xxx_pinctrl_driver);
-+}
-+arch_initcall(qdf2xxx_pinctrl_init);
-+
-+static void __exit qdf2xxx_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&qdf2xxx_pinctrl_driver);
-+}
-+module_exit(qdf2xxx_pinctrl_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies QDF2xxx pin control driver");
-+MODULE_LICENSE("GPL v2");
--- 
-Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
-
+> Hi Linus,
+> 
+> Thanks for all of your comments, I'll consider them during my works on the 
+> next iteration. However, I have doubts about this one:
+> 
+> On Tue, 14 Jul 2015, Linus Walleij wrote:
+> 
+> > On Tue, Jun 30, 2015 at 2:27 PM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+> > 
+> > > Based on K70P256M150SF3RM.pdf K70 Sub-Family Reference Manual, Rev. 3.
+> > >
+> > > Signed-off-by: Paul Osmialowski <pawelo@king.net.pl>
+> > (...)
+> > > +struct kinetis_sim_regs {
+> > > +       u32 sopt1;      /* System Options Register 1 */
+> > > +       u32 rsv0[1024];
+> > > +       u32 sopt2;      /* System Options Register 2 */
+> > > +       u32 rsv1;
+> > > +       u32 sopt4;      /* System Options Register 4 */
+> > > +       u32 sopt5;      /* System Options Register 5 */
+> > > +       u32 sopt6;      /* System Options Register 6 */
+> > > +       u32 sopt7;      /* System Options Register 7 */
+> > > +       u32 rsv2[2];
+> > > +       u32 sdid;       /* System Device Identification Register */
+> > > +       u32 scgc[KINETIS_SIM_CG_NUMREGS];       /* Clock Gating Regs 1...7 */
+> > > +       u32 clkdiv1;    /* System Clock Divider Register 1 */
+> > > +       u32 clkdiv2;    /* System Clock Divider Register 2 */
+> > > +       u32 fcfg1;      /* Flash Configuration Register 1 */
+> > > +       u32 fcfg2;      /* Flash Configuration Register 2 */
+> > > +       u32 uidh;       /* Unique Identification Register High */
+> > > +       u32 uidmh;      /* Unique Identification Register Mid-High */
+> > > +       u32 uidml;      /* Unique Identification Register Mid Low */
+> > > +       u32 uidl;       /* Unique Identification Register Low */
+> > > +       u32 clkdiv3;    /* System Clock Divider Register 3 */
+> > > +       u32 clkdiv4;    /* System Clock Divider Register 4 */
+> > > +       u32 mcr;        /* Misc Control Register */
+> > > +};
+> > 
+> > Now there is this design pattern where you copy the datasheet
+> > register map to a struct again.
+> > 
+> > This is not good if there is a second revision of the hardware and some
+> > registers are shuffled around. IMO it is better to just use #defines
+> > for register
+> > offsets, so you can do exceptions later. Else a new hardware revision
+> > leads to a new struct with new accessor functions etc etc.
+> > 
+> 
+> I don't see how replacing this structure with bunch of defines could make 
+> anyones life easier. As registers are shuffled around due to updated 
+> hardware revision they could be shuffled in this structure too. Doing 
+> this with buch of defines would require eager and careful adaptation of 
+> all the defines. I don't see how this could be easier.
+> 
+> Note that I'm not making any instances of the structure (it is used only 
+> for casting), so shuffling its fields around should not affect the code 
+> that follows.
+> 
+> After recent purge it is only used within this macro:
+> 
+> #define KINETIS_SIM_PTR(base, reg) \
+>         (&(((struct kinetis_sim_regs *)(base))->reg))
+> 
+> ...and used like this:
+> 
+>         ioread32(KINETIS_SIM_PTR(sim, clkdiv1));
+> 
+> IMHO changing the struct internals does not require subsequent changes in 
+> any of those.
+> 
+> Thanks,
+> Paul
+> 
