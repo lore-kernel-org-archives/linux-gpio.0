@@ -1,30 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: altera: use of_mm_gpiochip_remove() to fix
- memory leak
-Date: Wed, 15 Jul 2015 11:45:29 +0200
-Message-ID: <CACRpkdYRWOCBjFByrhg69hNAreVZxQRi6khV4_E6yE3vh+TEuQ@mail.gmail.com>
-References: <1434542383-21314-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 2/2] gpio: mvebu: kill bogus dependency on GPIO_GENERIC
+Date: Wed, 15 Jul 2015 11:47:06 +0200
+Message-ID: <CACRpkdbAg4CvhWdsdRii7rykBRhxM-gz4Vw9_8OE5dL5NGDU0g@mail.gmail.com>
+References: <1434713464-32069-1-git-send-email-yamada.masahiro@socionext.com>
+	<1434713464-32069-2-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434542383-21314-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1434713464-32069-2-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 1:59 PM, Masahiro Yamada
+On Fri, Jun 19, 2015 at 1:31 PM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 
-> This driver calls of_mm_gpiochip_add() to add a memory mapped gpio
-> chip.  So, of_mm_gpiochip_remove() should be used when removing it.
->
-> The direct call of gpiochip_remove() misses unmapping the register
-> and freeing the label.
+> The driver gpio-mvebu.c does not depend on gpio-generic.c at all.
+> Drop unneeded "select GPIO_GENERIC".
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Patch applied with the ACKs.
+Patch applied with Gregory's ACK.
 
 Yours,
 Linus Walleij
