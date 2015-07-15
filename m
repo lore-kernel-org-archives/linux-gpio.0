@@ -1,27 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: mvebu: kill bogus dependency on GPIO_GENERIC
-Date: Wed, 15 Jul 2015 11:47:06 +0200
-Message-ID: <CACRpkdbAg4CvhWdsdRii7rykBRhxM-gz4Vw9_8OE5dL5NGDU0g@mail.gmail.com>
-References: <1434713464-32069-1-git-send-email-yamada.masahiro@socionext.com>
-	<1434713464-32069-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2] gpio: of: remove unnecessary variable in of_get_gpio_hog()
+Date: Wed, 15 Jul 2015 11:49:00 +0200
+Message-ID: <CACRpkdZTvPWXs1kUykfuQqvtH+gHadH_S4hoDTzZonLjRTz-Jw@mail.gmail.com>
+References: <1436835704-6371-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434713464-32069-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1436835704-6371-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 19, 2015 at 1:31 PM, Masahiro Yamada
+On Tue, Jul 14, 2015 at 3:01 AM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 
-> The driver gpio-mvebu.c does not depend on gpio-generic.c at all.
-> Drop unneeded "select GPIO_GENERIC".
+> The variable "desc" is only used for storing the return value at the
+> end of the function.  It is unneeded.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Patch applied with Gregory's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
