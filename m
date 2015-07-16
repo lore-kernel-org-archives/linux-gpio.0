@@ -1,33 +1,48 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Thu, 16 Jul 2015 20:19:08 +0200
-Message-ID: <20150716181908.GA27856@localhost.localdomain>
-References: <cover.1435777856.git.rcochran@linutronix.de>
- <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
- <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com>
- <20150702142058.GA9349@localhost.localdomain>
- <CACRpkdb_3B8749X-p_XEPGvZPEQ56-gMdLBcPrgjXkqWCiz1PQ@mail.gmail.com>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 1/4] gpio: mpc8xxx: constify of_device_id
+Date: Thu, 16 Jul 2015 21:08:21 +0200
+Message-ID: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:33619 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752055AbbGPSTN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 14:19:13 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb_3B8749X-p_XEPGvZPEQ56-gMdLBcPrgjXkqWCiz1PQ@mail.gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:57676 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755768AbbGPTIa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 15:08:30 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael van der Westhuizen <michael@smart-africa.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alan Tull <atull@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dinh Nguyen <dinguyen@altera.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-On Thu, Jul 16, 2015 at 09:57:23AM +0200, Linus Walleij wrote:
-> So what about making a patch to drivers/gpio/gpio-dwapb.c that adds the
-> .names property to its GPIO chip?
+This variable is not modified in the driver and all functions it it
+passed to don't change it either. So it can and should be marked const.
 
-OK, so the user knows that he wants the instance with .name = "gpio0".
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/gpio/gpio-mpc8xxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What should he write into /sys/class/gpio/export?
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index da8e89205f37..0e2dbbb1645b 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -334,7 +334,7 @@ static const struct irq_domain_ops mpc8xxx_gpio_irq=
+_ops =3D {
+ 	.xlate	=3D irq_domain_xlate_twocell,
+ };
+=20
+-static struct of_device_id mpc8xxx_gpio_ids[] =3D {
++static const struct of_device_id mpc8xxx_gpio_ids[] =3D {
+ 	{ .compatible =3D "fsl,mpc8349-gpio", },
+ 	{ .compatible =3D "fsl,mpc8572-gpio", },
+ 	{ .compatible =3D "fsl,mpc8610-gpio", },
+--=20
+2.1.4
 
-Thanks,
-Richard
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
