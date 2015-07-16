@@ -1,42 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 2/2] gpiolib: assign chip owner to dev->driver->owner if
  not set
-Date: Thu, 16 Jul 2015 13:22:04 +0200
-Message-ID: <CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com>
+Date: Thu, 16 Jul 2015 13:25:58 +0200
+Message-ID: <CACRpkdbiLmx6EuL8o1=RgrbMMfagbXHPK2VjrkNons6E=mm8bA@mail.gmail.com>
 References: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>
 	<1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>
+	<CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35614 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753147AbbGPLWF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 07:22:05 -0400
-Received: by oihq81 with SMTP id q81so48081510oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 04:22:04 -0700 (PDT)
-In-Reply-To: <1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35626 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752679AbbGPLZ7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 07:25:59 -0400
+Received: by obbop1 with SMTP id op1so44794554obb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 04:25:58 -0700 (PDT)
+In-Reply-To: <CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Grygorii Strashko <grygorii.strashko@ti.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Thu, Jun 25, 2015 at 7:30 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-
-> Assign GPIO chip owner field to chip->dev->driver->owner if it was not
-> configured by GPIO driver.
+On Thu, Jul 16, 2015 at 1:22 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Jun 25, 2015 at 7:30 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
 >
-> Cc: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Assign GPIO chip owner field to chip->dev->driver->owner if it was not
+>> configured by GPIO driver.
+>>
+>> Cc: Johan Hovold <johan@kernel.org>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>
+> Patch applied with Alex' review tag.
+>
+>>  There is also one positive additional side effect:
+>>  lines like below can be removed from a lot of GPIO
+>>  drivers
+>>         rdc321x_gpio_dev->chip.owner = THIS_MODULE;
+>
+> Yes let's do this :)
 
-Patch applied with Alex' review tag.
+Or actually, I have had some second thought to why gpio_chip
+is duplicating struct members from struct device at all.
 
->  There is also one positive additional side effect:
->  lines like below can be removed from a lot of GPIO
->  drivers
->         rdc321x_gpio_dev->chip.owner = THIS_MODULE;
+Why should it even have "owner" and "of_node"?
 
-Yes let's do this :)
+Should we not just rewrite this code to follow the struct device *dev
+pointer in gpio_chip and use "owner" and "of_node" from there?
 
 Yours,
 Linus Walleij
