@@ -1,42 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: max732x: Add missing dev reference to gpiochip
-Date: Thu, 16 Jul 2015 13:43:13 +0200
-Message-ID: <CACRpkdZ_MWwfjExjvW59+dQ=E2rv4c9_MsSsjNwO5M8yM+j9fg@mail.gmail.com>
-References: <1435687458-4671-1-git-send-email-marex@denx.de>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 2/2] gpiolib: assign chip owner to dev->driver->owner
+ if not set
+Date: Thu, 16 Jul 2015 14:53:17 +0300
+Message-ID: <55A79B2D.2080900@ti.com>
+References: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>	<1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>	<CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com> <CACRpkdbiLmx6EuL8o1=RgrbMMfagbXHPK2VjrkNons6E=mm8bA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33482 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752180AbbGPLnN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 07:43:13 -0400
-Received: by oige126 with SMTP id e126so48377499oig.0
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 04:43:13 -0700 (PDT)
-In-Reply-To: <1435687458-4671-1-git-send-email-marex@denx.de>
+Received: from devils.ext.ti.com ([198.47.26.153]:47090 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752163AbbGPLxX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 07:53:23 -0400
+In-Reply-To: <CACRpkdbiLmx6EuL8o1=RgrbMMfagbXHPK2VjrkNons6E=mm8bA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Vasut <marex@denx.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mans Rullgard <mans@mansr.com>, Olaf Mandel <o.mandel@menlosystems.com>, Semen Protsenko <semen.protsenko@globallogic.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Tue, Jun 30, 2015 at 8:04 PM, Marek Vasut <marex@denx.de> wrote:
-
-> In case the gpiochip doesn't have the .dev field set, as is the case
-> in here, it is not possible to reference this device in DT as a GPIO
-> controller. A good example of this problem is that gpio-leds can not
-> be used when connected to this chip, the gpio-leds driver bails out
-> with -EPROBE_DEFER.
+On 07/16/2015 02:25 PM, Linus Walleij wrote:
+> On Thu, Jul 16, 2015 at 1:22 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Jun 25, 2015 at 7:30 PM, Grygorii Strashko
+>> <grygorii.strashko@ti.com> wrote:
+>>
+>>> Assign GPIO chip owner field to chip->dev->driver->owner if it was not
+>>> configured by GPIO driver.
+>>>
+>>> Cc: Johan Hovold <johan@kernel.org>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>
+>> Patch applied with Alex' review tag.
+>>
+>>>   There is also one positive additional side effect:
+>>>   lines like below can be removed from a lot of GPIO
+>>>   drivers
+>>>          rdc321x_gpio_dev->chip.owner = THIS_MODULE;
+>>
+>> Yes let's do this :)
 >
-> Fix this problem by setting the .dev field of the gpio_chip to the
-> parent i2c device.
+> Or actually, I have had some second thought to why gpio_chip
+> is duplicating struct members from struct device at all.
 >
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mans Rullgard <mans@mansr.com>
-> Cc: Olaf Mandel <o.mandel@menlosystems.com>
-> Cc: Semen Protsenko <semen.protsenko@globallogic.com>
+> Why should it even have "owner" and "of_node"?
+>
+> Should we not just rewrite this code to follow the struct device *dev
+> pointer in gpio_chip and use "owner" and "of_node" from there?
+>
 
-Patch applied for fixes.
+Seems not all drivers implemented using Dev/Driver approach,
+so they don't have dev at all ;)
 
-Yours,
-Linus Walleij
+gpio-samsung.c for example (non-DT driver).
+
+
+-- 
+regards,
+-grygorii
