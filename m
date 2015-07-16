@@ -1,34 +1,80 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Accept standard function, pins and
- groups properties
-Date: Thu, 16 Jul 2015 11:06:07 +0200
-Message-ID: <CACRpkdaZLmDxbs3P-pV7SWnTWHoDa82mYH4Sjg3D3oR=DJizQA@mail.gmail.com>
-References: <1435652997-25254-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/7] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Thu, 16 Jul 2015 11:06:06 +0200
+Message-ID: <CAMuHMdVvaFN_zQCcAog2akUJNxCZ2RzdENvmMqk2G33jb=0sWQ@mail.gmail.com>
+References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdYFE1xDV75_ecR36OTePPm8Ta_O1G1fSqOHO=s4TQw20A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:35630 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755096AbbGPJGI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 05:06:08 -0400
-Received: by oihq81 with SMTP id q81so46256703oih.2
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 02:06:07 -0700 (PDT)
-In-Reply-To: <1435652997-25254-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYFE1xDV75_ecR36OTePPm8Ta_O1G1fSqOHO=s4TQw20A@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Jun 30, 2015 at 10:29 AM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
+Hi Linus,
 
-> The "function", "pins" and "groups" pinmux and pinctrl properties have
-> been standardized. Support them in addition to the custom "renesas,*"
-> properties. New-style and old-style properties can't be mixed in DT.
+On Thu, Jul 16, 2015 at 11:00 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Tue, Jun 30, 2015 at 9:45 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> This patch series moves the setup of the GPIO-PFC pin mapping for
+>> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
+>> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
+>> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
+>> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
+>>
+>> The series consists of 3 parts:
+>>   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
+>>      files for all affected SoCs,
+>>   b. Patch 4 disables the C code to set up the mapping on DT platforms
+>>      (it's still needed on SH or ARM-legacy),
+>>   c. Patches 5-7 do a few more cleanups in the sh-pfc gpio code.
+>>
+>> Dependencies:
+>>   - This series applies against next-next-20150630.
+>>   - Part a must go in first, to avoid regressions.
+>>     In addition, it's a prerequisite for "ARM: shmobile: armadillo800eva
+>>     dts: Add pinctrl and gpio-hog for lcdc0", which has been queued up
+>>     already in Simon's dt-for-v4.3 branch. Perhaps it can still be
+>>     reordered?
+>>   - While I didn't notice any bad behavior by having part a only, part b
+>>     should go in immediately after part a. Hence I think it's best if
+>>     Simon can take this one, too.
+>>   - Part c is independent (it doesn't touch the same code), so it can go
+>>     in before or after the other parts, or in parallel.
+>>
+>> Thanks for applying!
+>>
+>> Geert Uytterhoeven (7):
+>>   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
+>>   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
+>>   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
+>>   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+>>   pinctrl: sh-pfc: Remove empty gpio_function_free()
+>>   pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up
+>>   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
 >
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> I'm happy of shmobile people are happy.
 
-Patch applied.
+Laurent was mostly worried about the phandle in the "gpio-ranges" property
+pointing to the gpio/pfc combo node itself. Do you see any issues with that?
 
-Yours,
-Linus Walleij
+As there were comments on some of the patches, I have to resend this
+series anyway...
+
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
