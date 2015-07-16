@@ -1,52 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 01/12] device: property: delay device-driver matches
-Date: Thu, 16 Jul 2015 21:23:12 +0100
-Message-ID: <20150716202312.GD11162@sirena.org.uk>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH 2/4][v4] ARM: dts: imx: imx7d add iomuxc lpsr register base address
+Date: Thu, 16 Jul 2015 15:34:45 -0500
+Message-ID: <1437078887-2524-2-git-send-email-aalonso@freescale.com>
+References: <1437078887-2524-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ec3vSN46Jxtc8xEl"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn1bn0101.outbound.protection.outlook.com ([157.56.110.101]:43840
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751131AbbGPUft (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 16 Jul 2015 16:35:49 -0400
+In-Reply-To: <1437078887-2524-1-git-send-email-aalonso@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
+* Add iomuxc lpsr register base address to extend
+  pinctrl-imx driver to support the iomux settings for pins
+  that support LPSR operation mode.
 
---ec3vSN46Jxtc8xEl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+- Version 2: Resend
+- Version 3: Resend
+- Version 4: Resend
 
-On Wed, Jul 01, 2015 at 11:40:56AM +0200, Tomeu Vizoso wrote:
+ arch/arm/boot/dts/imx7d.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Delay matches of platform devices until late_initcall, when we are sure
-> that all built-in drivers have been registered already. This is needed
-> to prevent deferred probes because of some dependencies' drivers not
-> having registered yet.
+diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
+index 9014b80..7edfa42 100644
+--- a/arch/arm/boot/dts/imx7d.dtsi
++++ b/arch/arm/boot/dts/imx7d.dtsi
+@@ -487,7 +487,7 @@
+ 
+ 			iomuxc: iomuxc@30330000 {
+ 				compatible = "fsl,imx7d-iomuxc";
+-				reg = <0x30330000 0x10000>;
++				reg = <0x30330000 0x10000>, <0x302c0000 0x10000>;
+ 			};
+ 
+ 			gpr: iomuxc-gpr@30340000 {
+-- 
+2.1.4
 
-I have to say I'm still not 100% clear that special casing platform
-devices makes sense here - I can see that platform devices are usually
-the first devices to instantiate but there are other kinds of devices
-and it's not obvious what the benefit of specifically picking out
-platform devices as opposed to just deferring all devices is.
-
---ec3vSN46Jxtc8xEl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVqBKvAAoJECTWi3JdVIfQlTsH/RXV9XfaZAGK0pNr9p/kND/R
-uXvreuA2aWGY2yegWXN1tE6pZoLjM18lOibs3dQes0xY7JmZ3QgWwDq46ZdT8wCD
-mXlcO6E5d5QFKWa2bRcaXn02uROZmSH7X/XDk4hPVw1mh/sSxvYrj6Y0Ro0n/7Q6
-RRbg1kCfVPmuBJl10kMhwC9XalK5q2g4U2xC76edvSu2kRe2TXB/J89iq9LKg+Li
-LqQr20pwmwu6oIhI5YQPNa+bXNDEq5gdbq/j3hK5RRF9iXUbsuSdRDAQxTM8+5ri
-/qHqGpBhW3umrDgLMBfp36F+aWy+gk1rwUFBwOB5VyG426LWzgdc7AIGPwT7i+I=
-=OTlG
------END PGP SIGNATURE-----
-
---ec3vSN46Jxtc8xEl--
