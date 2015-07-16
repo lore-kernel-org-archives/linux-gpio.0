@@ -1,37 +1,74 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [4.2-rc1][PATCH] gpio: omap: add missed spin_unlock_irqrestore in omap_gpio_irq_type
-Date: Thu, 16 Jul 2015 10:36:22 +0200
-Message-ID: <CACRpkdZeBYrff4ZwVyzSKk9Gcy_57WK-3FcfwbzbD8DY06Adng@mail.gmail.com>
-References: <1435157657-17843-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Convert to platform_get_*()
+Date: Thu, 16 Jul 2015 10:37:11 +0200
+Message-ID: <CACRpkdYAtrp-tk1+0WGS3UJy3ZJvKAMkAF=Kky3MwHBd4Fk=sg@mail.gmail.com>
+References: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1435157657-17843-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35810 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754015AbbGPIhM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 04:37:12 -0400
+Received: by oihq81 with SMTP id q81so45863427oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 01:37:12 -0700 (PDT)
+In-Reply-To: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Jun 24, 2015 at 4:54 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Thu, Jun 25, 2015 at 11:39 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> From: Grygorii Strashko <grygorii.strashko@linaro.org>
+> If the pin function controller (which can be a GPIO controller) is
+> instantiated before the interrupt controllers, due to the ordering in
+> the DTS, the irq domains for the interrupt controllers referenced by its
+> "interrupts-extended" property cannot be found yet:
 >
-> Add missed spin_unlock_irqrestore in omap_gpio_irq_type when
-> omap_set_gpio_triggering() is failed.
+>     irq: no irq domain found for /interrupt-controller@e61c0000 !
 >
-> It fixes static checker warning:
+> As the sh-pfc driver accesses the platform device's resources directly,
+> it cannot find the (optional) IRQ resources, and thinks no interrupts
+> are available. This may lead to failures later, when GPIOs are used as
+> interupts:
 >
->         drivers/gpio/gpio-omap.c:523 omap_gpio_irq_type()
->         warn: inconsistent returns 'spin_lock:&bank->lock'.
+>     gpio-keys keyboard: Unable to claim irq 0; error -22
+>     gpio-keys: probe of keyboard failed with error -22
 >
-> This fixes commit:
-> 1562e4618ded ('gpio: omap: fix error handling in omap_gpio_irq_type')
+> To fix this, add support for deferred probing to sh-pfc, by converting
+> the driver from direct platform device resource access to using the
+> platform_get_resource() and platform_get_irq() helpers.
 >
-> Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+> Note that while this fixes the root cause worked around by commit
+> e4ba0a9bddff3ba5 ("ARM: shmobile: r8a73a4: Move pfc node to work around
+> probe ordering bug"), I strongly recommend against reverting the
+> workaround now, as this would lead to lots of probe deferrals in drivers
+> relying on pinctrl. This may be reconsidered once the DT code starts
+> taking into account phandle dependencies during device instantation.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This patch is against next-20150625
+>
+> "[PATCH] [RFC] OF: probe order dependency aware of_platform_populate"
+> (https://www.marc.info/?l=devicetree&m=141873189825553&w=1) is a first
+> step, but it doesn't postpone the instantiation of the pfc.
+>
+> Tested:
+>   - r8a73a4/ape6evm (with pfc before/after irqc in DT),
+>   - sh73a0/kzm9g (with pfc before/after intc-irqpin in DT).
+>
+> Regression-tested:
+>   - r8a7791/koelsch (pfc doesn't have interrupts),
+>   - r8a7740/armadillo (pfc after intc-irqpin in DT),
+>   - r8a7740/armadillo-legacy (gpio-keys wired to pfc),
+>   - sh73a0/kzm9g-legacy (gpio-keys not wired to pfc).
+>
+> Compile-tested:
+>   - sh/se7724_defconfig.
 
-Patch applied for fixes.
+Waiting for Laurent's ACK on this.
 
 Yours,
 Linus Walleij
