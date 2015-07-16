@@ -1,53 +1,35 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: Convert to platform_get_*()
-Date: Thu, 16 Jul 2015 11:08:16 +0200
-Message-ID: <CACRpkdbp6FccWH5+8FT=y_Es389_oCkVp9-Wveb1HG73a1719A@mail.gmail.com>
-References: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/4] pinctrl: sh-pfc: sh73a0: Remove obsolete
+ multi-platform check
+Date: Thu, 16 Jul 2015 11:38:02 +0200
+Message-ID: <CACRpkdYWaxPs15SNs=JEimyxwrxQjcY-X2g_scU7XEE35Xce9w@mail.gmail.com>
+References: <1436875015-13706-1-git-send-email-geert+renesas@glider.be>
+	<1436875015-13706-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1435225193-10078-1-git-send-email-geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1436875015-13706-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 25, 2015 at 11:39 AM, Geert Uytterhoeven
-<geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org> wrote:
+On Tue, Jul 14, 2015 at 1:56 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> If the pin function controller (which can be a GPIO controller) is
-> instantiated before the interrupt controllers, due to the ordering in
-> the DTS, the irq domains for the interrupt controllers referenced by its
-> "interrupts-extended" property cannot be found yet:
+> Since the removal of the sh73a0 legacy SoC code in commit
+> 9a9863987bf7307f ("ARM: shmobile: Remove legacy SoC code for SH-Mobile
+> AG5"), sh73a0 is only supported in generic ARM multi-platform builds.
+> Hence CONFIG_ARCH_MULTIPLATFORM is always set, and the check can be
+> removed.
 >
->     irq: no irq domain found for /interrupt-controller@e61c0000 !
->
-> As the sh-pfc driver accesses the platform device's resources directly,
-> it cannot find the (optional) IRQ resources, and thinks no interrupts
-> are available. This may lead to failures later, when GPIOs are used as
-> interupts:
->
->     gpio-keys keyboard: Unable to claim irq 0; error -22
->     gpio-keys: probe of keyboard failed with error -22
->
-> To fix this, add support for deferred probing to sh-pfc, by converting
-> the driver from direct platform device resource access to using the
-> platform_get_resource() and platform_get_irq() helpers.
->
-> Note that while this fixes the root cause worked around by commit
-> e4ba0a9bddff3ba5 ("ARM: shmobile: r8a73a4: Move pfc node to work around
-> probe ordering bug"), I strongly recommend against reverting the
-> workaround now, as this would lead to lots of probe deferrals in drivers
-> relying on pinctrl. This may be reconsidered once the DT code starts
-> taking into account phandle dependencies during device instantation.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> The commit mentioned above is in -next, destined for v4.3.
 
-Patch applied with Laurent's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
