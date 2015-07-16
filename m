@@ -1,45 +1,53 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH] gpio: rcar: Fine-grained Runtime PM support
-Date: Thu, 16 Jul 2015 18:05:53 +0900
-Message-ID: <CANqRtoTfCZoH61dcDgVH9sGX76WK6OW6YPKv3XAFb31Ri=ZXPw@mail.gmail.com>
-References: <1435243557-7050-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdagkFPVvU3Ox1YHhg9edzxPQyd6XddC1vLMj20HhAyY7A@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Convert to platform_get_*()
+Date: Thu, 16 Jul 2015 11:08:16 +0200
+Message-ID: <CACRpkdbp6FccWH5+8FT=y_Es389_oCkVp9-Wveb1HG73a1719A@mail.gmail.com>
+References: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdagkFPVvU3Ox1YHhg9edzxPQyd6XddC1vLMj20HhAyY7A@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435225193-10078-1-git-send-email-geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Thu, Jun 25, 2015 at 11:39 AM, Geert Uytterhoeven
+<geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org> wrote:
 
-On Thu, Jul 16, 2015 at 5:43 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 25, 2015 at 4:45 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+> If the pin function controller (which can be a GPIO controller) is
+> instantiated before the interrupt controllers, due to the ordering in
+> the DTS, the irq domains for the interrupt controllers referenced by its
+> "interrupts-extended" property cannot be found yet:
 >
->> Currently gpio modules are runtime-resumed at probe time. This means the
->> gpio module will be active all the time (except during system suspend,
->> if not configured as a wake-up source).
->>
->> While an R-Car Gen2 gpio module retains pins configured for output at
->> the requested level while put in standby mode, gpio registercannot be
->> accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
->> called from all contexts where gpio register access is needed. Hence
->> move the Runtime PM handling from probe/remove time to gpio request/free
->> time, which is probably the best we can do.
->>
->> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
->> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
->> for SD-Card CD & WP, gpio7 for keys and regulators).
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>     irq: no irq domain found for /interrupt-controller@e61c0000 !
 >
-> Patch applied unless Magnus complains.
+> As the sh-pfc driver accesses the platform device's resources directly,
+> it cannot find the (optional) IRQ resources, and thinks no interrupts
+> are available. This may lead to failures later, when GPIOs are used as
+> interupts:
+>
+>     gpio-keys keyboard: Unable to claim irq 0; error -22
+>     gpio-keys: probe of keyboard failed with error -22
+>
+> To fix this, add support for deferred probing to sh-pfc, by converting
+> the driver from direct platform device resource access to using the
+> platform_get_resource() and platform_get_irq() helpers.
+>
+> Note that while this fixes the root cause worked around by commit
+> e4ba0a9bddff3ba5 ("ARM: shmobile: r8a73a4: Move pfc node to work around
+> probe ordering bug"), I strongly recommend against reverting the
+> workaround now, as this would lead to lots of probe deferrals in drivers
+> relying on pinctrl. This may be reconsidered once the DT code starts
+> taking into account phandle dependencies during device instantation.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
 
-No complaints, just happy Magnus!
+Patch applied with Laurent's ACK.
 
-Thanks,
-
-/ magnus
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
