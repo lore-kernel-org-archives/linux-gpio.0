@@ -1,30 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt/bindings: gpio: Document ZTE zx296702 GPIO
-Date: Thu, 16 Jul 2015 10:12:20 +0200
-Message-ID: <CACRpkdaJijC2g5wx__+X28TBPUqBw6czAUg+wrXv8QkWHxRgYw@mail.gmail.com>
-References: <1435545357-4494-1-git-send-email-jun.nie@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Michael van der Westhuizen <michael@smart-africa.com>
+Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
+Date: Thu, 16 Jul 2015 10:16:46 +0200
+Message-ID: <60651945-976B-42B3-AD64-769AB10990C2@smart-africa.com>
+References: <cover.1435777856.git.rcochran@linutronix.de> <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de> <267A46E7-C5C5-4696-90CC-D44F4130B3EF@smart-africa.com> <CACRpkdavWungUrU02dxObW1BUK5uELFHgDQMXmQwqdzzem2zuA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2102\))
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35081 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753626AbbGPIMV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 04:12:21 -0400
-Received: by obbop1 with SMTP id op1so42364273obb.2
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 01:12:20 -0700 (PDT)
-In-Reply-To: <1435545357-4494-1-git-send-email-jun.nie@linaro.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:35655 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751208AbbGPIQz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 04:16:55 -0400
+Received: by wibxm9 with SMTP id xm9so6241395wib.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 01:16:54 -0700 (PDT)
+In-Reply-To: <CACRpkdavWungUrU02dxObW1BUK5uELFHgDQMXmQwqdzzem2zuA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawn.guo@linaro.org>, wan.zhijun@zte.com.cn, Jason Liu <jason.liu@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Richard Cochran <richardcochran@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alan Tull <atull@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dinh Nguyen <dinguyen@altera.com>
 
-On Mon, Jun 29, 2015 at 4:35 AM, Jun Nie <jun.nie@linaro.org> wrote:
 
-> Add document of ZTE zx296702 GPIO binding
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> On 16 Jul 2015, at 9:52 AM, Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+>=20
+> On Thu, Jul 2, 2015 at 9:05 AM, Michael van der Westhuizen
+> <michael@smart-africa.com> wrote:
+>=20
+>> In my case, I have quite a lot of vendor-supplied code that needs th=
+e numbers to
+>> be stable and backward compatible.  This quickly devolves into a dis=
+cussion of
+>> GPIOs in sysfs as an ABI, which is not a discussion I want to have :=
+)
+>=20
+> That is impossible to avoid.
+>=20
+> What you're saying is you just want to drill a hole in the boat and n=
+ot
+> have a discussion whether the boat is going to float after this or
+> not.
 
-Patch applied with Shawn's ACK.
+Not at all.  I was just noting that this patch will touch on this topic=
+, and it=E2=80=99s not a
+topic that I would weigh in on as my opinions are irrelevant in this di=
+scussion.
 
-Yours,
-Linus Walleij
+No incendiary topic intended :-)
+
+Michael
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
