@@ -1,56 +1,77 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [Question] How to implement GPIO driver for sparse hw numbers?
-Date: Thu, 16 Jul 2015 13:07:20 +0900
-Message-ID: <CAK7LNATaT74Cr8S6WBkgezQJfnh6w4qRe8dqxS0_Zz6c_onJfA@mail.gmail.com>
-References: <CAK7LNARNUqjwcOvTwjsq8ck=hPgn83Gk=1vikkmq5KUxmYSjnQ@mail.gmail.com>
-	<CACRpkdYU62-2VV0FoJAO6-YA587w3wQ7ZpPXDEYTM9DdN51rUw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: UniPhier: add driver for UniPhier GPIO controller
+Date: Thu, 16 Jul 2015 09:07:26 +0200
+Message-ID: <CACRpkdZK41P-1JQsL6RiywqFEUj6=g5xJMKy86wDdp6BxLJNzQ@mail.gmail.com>
+References: <1436841787-7734-1-git-send-email-yamada.masahiro@socionext.com>
+	<CACRpkdYaAMw5U3pctf96j0QpY2Qf+e=LX740F0okCmVU6pXkhA@mail.gmail.com>
+	<CAK7LNAQ+_ynWT944fPZsHCzMBLtfNu5AnppzaOxNgPSBTvj_tw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg001.nifty.com ([202.248.44.39]:25697 "EHLO
-	conssluserg001-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751188AbbGPEHb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 16 Jul 2015 00:07:31 -0400
-In-Reply-To: <CACRpkdYU62-2VV0FoJAO6-YA587w3wQ7ZpPXDEYTM9DdN51rUw@mail.gmail.com>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:35678 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752124AbbGPHH1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 03:07:27 -0400
+Received: by oihq81 with SMTP id q81so44674258oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 00:07:26 -0700 (PDT)
+In-Reply-To: <CAK7LNAQ+_ynWT944fPZsHCzMBLtfNu5AnppzaOxNgPSBTvj_tw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus,
+On Thu, Jul 16, 2015 at 5:44 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2015-07-15 23:15 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
 
-
-2015-07-15 7:04 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Fri, Jun 19, 2015 at 5:27 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
+>>> +       for (i = 0; i < chip->ngpio; i += UNIPHIER_GPIO_PORTS_PER_BANK) {
+>>> +               bank = i / UNIPHIER_GPIO_PORTS_PER_BANK;
+>>> +               shift = i % BITS_PER_LONG;
+>>> +               bank_mask = (mask[BIT_WORD(i)] >> shift) &
+>>> +                                               UNIPHIER_GPIO_BANK_MASK;
+>>> +               bank_bits = bits[BIT_WORD(i)] >> shift;
+>>> +
+>>> +               uniphier_gpio_bank_write(chip, bank, UNIPHIER_GPIO_REG_DATA,
+>>> +                                        bank_mask, bank_bits);
+>>> +       }
+>>
+>> This looks like a piece of algorithm that we could make generic like in a
+>> static function in drivers/gpio/gpiolib.h or so, that it may be shared with
+>> other drivers. Do you see some clear way to break out the core of this?
+>> Or is it as generic as I think?
 >
->> In my understanding, the GPIO driver framework requires that
->> the hw numbers should be contiguous within each GPIO chip.
+> I assume this comment has no intention to block my patch.
+
+Nah. Just thinking the code looks neat.
+
+>>> +       ret = of_property_read_u32(dev->of_node, "ngpio", &ngpio);
+>>> +       if (ret) {
+>>> +               dev_err(dev, "failed to get ngpio property\n");
+>>> +               return ret;
+>>> +       }
+>>
+>> This needs to be documented, plus I don't see why it's needed.
+>> The driver for this very specific hardware should already know
+>> how many GPIOs there are in this hardware, it should not come
+>> from the device tree.
 >
-> Yes but noone says that .request() to the driver has to succeed
-> on every GPIO so just cover all GPIOs from 0 to 307 with
-> your GPIO chip and then implement your "holes" in the GPIO
-> range from 0 to 307 by letting .request() fail.
+> I want to use this driver on various SoCs, but
+> the number of GPIO pins varies by SoC.
+>
+> ngpio == 248 for some SoCs,
+> and ngpio == 136 for some, etc.
 
-Thanks,
-At first I also thought about it, but finally I did not adopt it.
+That is the wrong way to handle different SoC. That should be handled
+by different compatible strings, and then you select the number of GPIOs
+for the version corresponding to that compatibe string.
 
-Having holes in the GPIO range is not handy because:
+>>> +static const struct of_device_id uniphier_gpio_match[] = {
+>>> +       { .compatible = "socionext,uniphier-gpio" },
+>>> +       { /* sentinel */ }
+>>> +};
 
-[1] When we map a gpio range into a pin range,
-    we must divide "gpio-ranges" property into many lines
-       gpio-ranges = <phandle  0    x      8
-                      phandle  10   (x+8)  8
-                      phandle  20   (x+16) 8
-                      phandle  30   (x+24) 8
-                              ...
+i.e. you should use the .data field of of_device_id to carry variant-specific
+information.
 
-[2] implementation of .set_multiple() gets more complicated
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
