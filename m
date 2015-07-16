@@ -1,57 +1,54 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [patch 00/19] gpio: Interrupt cleanups and API change
- preparation
-Date: Thu, 16 Jul 2015 16:13:06 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1507161611320.18576@nanos>
-References: <20150712232317.244138485@linutronix.de> <CACRpkdZqGfB-5e+gt8qk+m+iXnO8+S7K_-qQbL+nvHQaxD36BQ@mail.gmail.com>
+From: Vaibhav Hiremath <vaibhav.hiremath@linaro.org>
+Subject: Re: [RFC PATCH] pinctrl-single: Use of pinctrl-single for external
+ device over I2C
+Date: Thu, 16 Jul 2015 19:46:03 +0530
+Message-ID: <55A7BCA3.2010607@linaro.org>
+References: <1435855992-10312-1-git-send-email-vaibhav.hiremath@linaro.org> <CACRpkdZwucqETn3OkX1GPO43JpwWL67OB1FExHFD5CzWTA3D5g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:42620 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783AbbGPONS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 10:13:18 -0400
-In-Reply-To: <CACRpkdZqGfB-5e+gt8qk+m+iXnO8+S7K_-qQbL+nvHQaxD36BQ@mail.gmail.com>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:35472 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755441AbbGPOQL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 10:16:11 -0400
+Received: by pactm7 with SMTP id tm7so43864092pac.2
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 07:16:10 -0700 (PDT)
+In-Reply-To: <CACRpkdZwucqETn3OkX1GPO43JpwWL67OB1FExHFD5CzWTA3D5g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiang Liu <jiang.liu@linux.intel.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>, Will Deacon <will.deacon@arm.com>, Tony Lindgren <tony@atomide.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, 16 Jul 2015, Linus Walleij wrote:
-> On Mon, Jul 13, 2015 at 10:41 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > The following patch series contains the following changes:
-> >
-> >     - Consolidation of chained interrupt handler setup/removal
-> >
-> >     - Switch to functions which avoid a redundant interrupt
-> >       descriptor lookup
-> >
-> >     - Preparation of interrupt flow handlers for the 'irq' argument
-> >       removal
-> >
-> > The series has no dependencies and is also available as a git branch
-> > for your convenience:
-> >
-> >  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/gpio
-> 
-> Hmm.....
-> 
-> git pull git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/gpio
-> fatal: Couldn't find remote ref irq/gpio
-> 
-> Same with pinctrl, did you push it?
-> 
-> Or am I a shitty git operator ... don't rule that out :/
 
-No, I have moved the branches because they got accidentally pulled
-into next :)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git queue/irq/gpio
- git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git queue/irq/pinctrl
+On Thursday 16 July 2015 06:28 PM, Linus Walleij wrote:
+> On Thu, Jul 2, 2015 at 6:53 PM, Vaibhav Hiremath
+> <vaibhav.hiremath@linaro.org> wrote:
+>
+>> In some usecases, the external device (in my case it PMIC over I2C)
+>> does support pin in multiple configuration, we may need to control/configure them
+>> during boot or runtime.
+>
+> What is missing from this patch is an explanation why pinctrl-single should
+> be used for this PMIC.
+>
+> Repeat: pinctrl-single: when you have exactly one register per pin, and
+> the description of the pins is delivered in an opaque ASIC-specific format
+> without developers knowing much about how the hardware actually works,
+> just "set these magic values".
+>
+> I strongly prefer that this PMIC has its own pin controller using standard
+> bindings with groups and functions, see eg. drivers/pinctrl/nomadik/pinctrl-ab*
+> for a PMIC pinctrl driver.
+>
 
-Both have the latest fixes included.
+Thanks for the reference, good to know this.
+Let me check this driver before commenting anything further on this.
 
 Thanks,
+Vaibhav
 
-	tglx
+> Yours,
+> Linus Walleij
+>
