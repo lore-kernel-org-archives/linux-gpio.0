@@ -1,67 +1,52 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH 4/4] dt-bindings: gpio: document bindings supported by gpio-mpc8xxx.c
-Date: Thu, 16 Jul 2015 21:08:24 +0200
-Message-ID: <1437073704-13881-4-git-send-email-u.kleine-koenig@pengutronix.de>
-References: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 01/12] device: property: delay device-driver matches
+Date: Thu, 16 Jul 2015 21:23:12 +0100
+Message-ID: <20150716202312.GD11162@sirena.org.uk>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:37434 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754262AbbGPTKJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 15:10:09 -0400
-In-Reply-To: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ec3vSN46Jxtc8xEl"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
- .../devicetree/bindings/gpio/gpio-mpc8xxx.txt      | 24 ++++++++++++++=
-++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-mpc8xxx=
-=2Etxt
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/=
-Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-new file mode 100644
-index 000000000000..0449fc4013f2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-@@ -0,0 +1,24 @@
-+* Freescale MPC512x/MPC8xxx GPIO controller
-+
-+Required properties:
-+- compatible : Should be "fsl,<soc>-gpio"
-+  The following <soc>s are known to be supported:
-+    mpc5121, mpc5125, mpc8349, mpc8572, mpc8610, pq3, qoriq
-+- reg : Address and length of the register set for the device
-+- interrupts : Should be the port interrupt shared by all 32 pins.
-+- #gpio-cells : Should be two.  The first cell is the pin number and
-+  the second cell is used to specify the gpio polarity:
-+      0 =3D active high
-+      1 =3D active low
-+
-+Example:
-+
-+gpio0: gpio@1100 {
-+	compatible =3D "fsl,mpc5125-gpio";
-+	#gpio-cells =3D <2>;
-+	reg =3D <0x1100 0x080>;
-+	interrupts =3D <78 0x8>;
-+	status =3D "okay";
-+};
-+
-+
---=20
-2.1.4
+--ec3vSN46Jxtc8xEl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, Jul 01, 2015 at 11:40:56AM +0200, Tomeu Vizoso wrote:
+
+> Delay matches of platform devices until late_initcall, when we are sure
+> that all built-in drivers have been registered already. This is needed
+> to prevent deferred probes because of some dependencies' drivers not
+> having registered yet.
+
+I have to say I'm still not 100% clear that special casing platform
+devices makes sense here - I can see that platform devices are usually
+the first devices to instantiate but there are other kinds of devices
+and it's not obvious what the benefit of specifically picking out
+platform devices as opposed to just deferring all devices is.
+
+--ec3vSN46Jxtc8xEl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJVqBKvAAoJECTWi3JdVIfQlTsH/RXV9XfaZAGK0pNr9p/kND/R
+uXvreuA2aWGY2yegWXN1tE6pZoLjM18lOibs3dQes0xY7JmZ3QgWwDq46ZdT8wCD
+mXlcO6E5d5QFKWa2bRcaXn02uROZmSH7X/XDk4hPVw1mh/sSxvYrj6Y0Ro0n/7Q6
+RRbg1kCfVPmuBJl10kMhwC9XalK5q2g4U2xC76edvSu2kRe2TXB/J89iq9LKg+Li
+LqQr20pwmwu6oIhI5YQPNa+bXNDEq5gdbq/j3hK5RRF9iXUbsuSdRDAQxTM8+5ri
+/qHqGpBhW3umrDgLMBfp36F+aWy+gk1rwUFBwOB5VyG426LWzgdc7AIGPwT7i+I=
+=OTlG
+-----END PGP SIGNATURE-----
+
+--ec3vSN46Jxtc8xEl--
