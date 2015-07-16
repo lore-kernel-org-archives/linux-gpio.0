@@ -1,51 +1,44 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Thu, 16 Jul 2015 19:19:30 +0200
-Message-ID: <20150716171930.GB27060@localhost.localdomain>
-References: <cover.1435777856.git.rcochran@linutronix.de>
- <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
- <CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>
+From: Vitaly Andrianov <vitalya@ti.com>
+Subject: Re: [PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
+Date: Thu, 16 Jul 2015 13:41:53 -0400
+Message-ID: <55A7ECE1.2060704@ti.com>
+References: <1434647449-5393-1-git-send-email-vitalya@ti.com> <CACRpkda-OSsFdGHN9de00TsQjgdzC1Eg=vHXpeSvqBKH64wPmg@mail.gmail.com> <55A77392.30400@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:34734 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755555AbbGPRTg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 13:19:36 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55A77392.30400@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On Thu, Jul 16, 2015 at 09:50:44AM +0200, Linus Walleij wrote:
-> NACK. And it has been NACKed before again and again, search
-> the mailinglist for repetitive answers.
 
-Yeah, ok, I give up.
 
-This happens with every DT discussion that tries to make things
-logical for the end user.
-
-> The GPIO numbers inside the Linux kernel are Linux specific and
-> have nothing to do with the hardware numbers. If they sometimes
-> match it is a lucky coincidence.
-
-Someone should tell the users that.
-
-> The same goes for IRQ numbers
-> in the kernel FWIW.
-
-Isn't there a mapping interface for irq numbers?
- 
-> So this "binding" has nothing to do with describing the hardware,
-> which device tree is for. If it ever comes to exist it needs to be
-> a "linux-*" property. But I doubt it will.
-
-How can you say that the GPIO numbers associated with the pins and
-appearing in published data sheets (and used in every schematic) are
-not part of the hardware?
-
+On 07/16/2015 05:04 AM, Sekhar Nori wrote:
+> On Tuesday 14 July 2015 07:31 PM, Linus Walleij wrote:
+>> On Thu, Jun 18, 2015 at 7:10 PM, Vitaly Andrianov <vitalya@ti.com> wrote:
+>>
+>>> Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
+>>> "binten" register (offset 8). Previous versions of GPIO only
+>>> used bit 0, which enables GPIO 0-15 interrupts.
+>>>
+>>> Signed-off-by: Reece Pollack <x0183204@ti.com>
+>>> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+>>
+>> Sekhar/Kevin: OK with this? We don't have a maintainer
+>> listed for davinci GPIO so I assume it's you guys...
+>
+> Hi Linus, I had reviewed this patch and there was a v2 send based on my
+> comments on July 03.
+>
+>> Should this be tagged for stable?
+>
+> Not sure about that. It affects Keystone devices. Vitaly?
+>
+> Thanks,
+> Sekhar
+>
+We used this patch for a long time. So, I guess it is stable.
 Thanks,
-Richard
+Vitaly
