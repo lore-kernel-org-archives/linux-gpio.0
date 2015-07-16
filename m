@@ -1,38 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: Fine-grained Runtime PM support
-Date: Thu, 16 Jul 2015 10:43:05 +0200
-Message-ID: <CACRpkdagkFPVvU3Ox1YHhg9edzxPQyd6XddC1vLMj20HhAyY7A@mail.gmail.com>
-References: <1435243557-7050-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio: pcf857x: get rid of slock spinlock
+Date: Thu, 16 Jul 2015 10:45:26 +0200
+Message-ID: <CACRpkdbjJN1KbBjT4=tL0kBjJ8Y=5cd4LDrPNN6xJkjCqbNnUQ@mail.gmail.com>
+References: <1435245491-18012-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1435243557-7050-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1435245491-18012-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jun 25, 2015 at 4:45 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Jun 25, 2015 at 5:18 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> Currently gpio modules are runtime-resumed at probe time. This means the
-> gpio module will be active all the time (except during system suspend,
-> if not configured as a wake-up source).
+> The spinlock 'slock' is used now to protect pcf857x_irq() from itself
+> which is unnecessary (especially after switching to use threaded
+> IRQs). Hence, remove it and use mutex to protect device data in IRQ
+> handler.
 >
-> While an R-Car Gen2 gpio module retains pins configured for output at
-> the requested level while put in standby mode, gpio registercannot be
-> accessed while suspended.  Unfortunately pm_runtime_get_sync() cannot be
-> called from all contexts where gpio register access is needed. Hence
-> move the Runtime PM handling from probe/remove time to gpio request/free
-> time, which is probably the best we can do.
->
-> On r8a7791/koelsch, gpio modules 0, 1, 3, and 4 are now suspended during
-> normal use (gpio2 is used for LEDs and regulators, gpio5 for keys, gpio6
-> for SD-Card CD & WP, gpio7 for keys and regulators).
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Patch applied unless Magnus complains.
+No comments, so patch applied.
 
 Yours,
 Linus Walleij
