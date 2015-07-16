@@ -1,44 +1,29 @@
-From: Vitaly Andrianov <vitalya@ti.com>
-Subject: Re: [PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
-Date: Thu, 16 Jul 2015 13:41:53 -0400
-Message-ID: <55A7ECE1.2060704@ti.com>
-References: <1434647449-5393-1-git-send-email-vitalya@ti.com> <CACRpkda-OSsFdGHN9de00TsQjgdzC1Eg=vHXpeSvqBKH64wPmg@mail.gmail.com> <55A77392.30400@ti.com>
+From: Rabin Vincent <rabin@rab.in>
+Subject: Re: [RFT PATCH] gpio: etraxfs: Fix devm_ioremap_resource return
+ value check
+Date: Thu, 16 Jul 2015 19:36:58 +0200
+Message-ID: <20150716173658.GA1824@debian>
+References: <1436447993-24630-1-git-send-email-k.kozlowski.k@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55A77392.30400@ti.com>
+Content-Disposition: inline
+In-Reply-To: <1436447993-24630-1-git-send-email-k.kozlowski.k@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Jul 09, 2015 at 10:19:53PM +0900, Krzysztof Kozlowski wrote:
+> Value returned by devm_ioremap_resource() was checked for non-NULL but
+> devm_ioremap_resource() returns IOMEM_ERR_PTR, not NULL. In case of
+> error this could lead to dereference of ERR_PTR.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> Fixes: d342571efea8 ("gpio: add ETRAXFS GPIO driver")
 
+Acked-by: Rabin Vincent <rabin@rab.in>
 
-On 07/16/2015 05:04 AM, Sekhar Nori wrote:
-> On Tuesday 14 July 2015 07:31 PM, Linus Walleij wrote:
->> On Thu, Jun 18, 2015 at 7:10 PM, Vitaly Andrianov <vitalya@ti.com> wrote:
->>
->>> Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
->>> "binten" register (offset 8). Previous versions of GPIO only
->>> used bit 0, which enables GPIO 0-15 interrupts.
->>>
->>> Signed-off-by: Reece Pollack <x0183204@ti.com>
->>> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
->>
->> Sekhar/Kevin: OK with this? We don't have a maintainer
->> listed for davinci GPIO so I assume it's you guys...
->
-> Hi Linus, I had reviewed this patch and there was a v2 send based on my
-> comments on July 03.
->
->> Should this be tagged for stable?
->
-> Not sure about that. It affects Keystone devices. Vitaly?
->
-> Thanks,
-> Sekhar
->
-We used this patch for a long time. So, I guess it is stable.
-Thanks,
-Vitaly
+> Cc: <stable@vger.kernel.org>
+
+I don't think this demands a stable backport though.
