@@ -1,57 +1,43 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio:Fix build warning about void to integer cast in the
- function mmio_74xx_gpio_probe
-Date: Thu, 16 Jul 2015 22:31:21 +0900
-Message-ID: <CAAVeFuJRQVHNw8ZNb2+MqYJQ=Pr=GGS888sYNzssG8wRah7q+g@mail.gmail.com>
-References: <1436042072-7496-1-git-send-email-xerofoify@gmail.com>
- <CACRpkdbj61+XoTCambLEGG=PNdkunvqnmRpV1VKi5pX1ouPzGw@mail.gmail.com> <55A79EFD.3050100@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: bcm2835: Clear the event latch register when
+ disabling interrupts
+Date: Thu, 16 Jul 2015 15:33:09 +0200
+Message-ID: <CACRpkdY8+7JHi2KMvTW257DUSr=NzwqZAz5pWn46iTnxtRaNXQ@mail.gmail.com>
+References: <55927F0B.80602@raspberrypi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33349 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751677AbbGPNbk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 09:31:40 -0400
-In-Reply-To: <55A79EFD.3050100@gmail.com>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:32805 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346AbbGPNdJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 09:33:09 -0400
+Received: by obbgp5 with SMTP id gp5so46775489obb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 06:33:09 -0700 (PDT)
+In-Reply-To: <55927F0B.80602@raspberrypi.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: nick <xerofoify@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jonathan Bell <jonathan@raspberrypi.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>
 
-On Thu, Jul 16, 2015 at 9:09 PM, nick <xerofoify@gmail.com> wrote:
+On Tue, Jun 30, 2015 at 1:35 PM, Jonathan Bell <jonathan@raspberrypi.org> wrote:
+
+> It's possible to hit a race condition if interrupts are generated on a GPIO
+> pin when the IRQ line in question is being disabled.
 >
+> If the interrupt is freed, bcm2835_gpio_irq_disable() is called which
+> disables the event generation sources (edge, level). If an event occurred
+> between the last disabling of hard IRQs and the write to the event
+> source registers, a bit would be set in the GPIO event detect register
+> (GPEDSn) which goes unacknowledged by bcm2835_gpio_irq_handler()
+> so Linux complains loudly.
 >
-> On 2015-07-16 08:00 AM, Linus Walleij wrote:
->> On Sat, Jul 4, 2015 at 10:34 PM, Nicholas Krause <xerofoify@gmail.com> wrote:
->>
->>> This fixes the build warning , warning: cast from pointer to integer
->>> of different size when building this file on a x86 allmodconfig
->>> configuration. In order for me to fix this build warning I changed
->>> the cast in the function mmio_74xx_gpio_probe from casting the
->>> variable data of the stucture pointer of_id to uintptr_t rather
->>> then unsigned when assigning to the variable flag of the structure
->>> pointer priv of the structure type mmio_74xx_gpio_priv.
->>>
->>>
->>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
->>
->> Patch applied with some tweaks to the long subject line.
->>
->> Yours,
->> Linus Walleij
->>
-> Sorry about that I kinda suck at commit messages if you would like to some me the edit
-> so I can get better at it, that would be helpful.
+> There is no per-GPIO mask register, so when disabling GPIO interrupts
+> write 1 to the relevant bit in GPEDSn to clear out any stale events.
+>
+> Signed-off-by: Jonathan Bell <jonathan@raspberrypi.org>
 
-As explained in Documentation/SubmittingPatches: (probably a good idea
-to re-read that document)
+Patch applied for fixes with Stephen's ACK, I had to rebase it
+because of something, maybe whitespace mangling.
 
-"For these reasons, the "summary" must be no more than 70-75
-characters, and it must describe both what the patch changes, as well
-as why the patch might be necessary.  It is challenging to be both
-succinct and descriptive, but that is what a well-written summary
-should do."
-
-Your patch subject line should not be longer than 70-75 characters. If
-you need to be more extensive, do so in the first paragraph of your
-commit log.
+Yours,
+Linus Walleij
