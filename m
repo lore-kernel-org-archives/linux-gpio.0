@@ -1,95 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3] gpio: UniPhier: add driver for UniPhier GPIO controller
-Date: Thu, 16 Jul 2015 16:48:20 +0900
-Message-ID: <CAK7LNAQH+Ge61+MJo2rLmjCBJRnYviT3LyCo0nrOPRQL+RtK2g@mail.gmail.com>
-References: <1436841787-7734-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdYaAMw5U3pctf96j0QpY2Qf+e=LX740F0okCmVU6pXkhA@mail.gmail.com>
-	<CAK7LNAQ+_ynWT944fPZsHCzMBLtfNu5AnppzaOxNgPSBTvj_tw@mail.gmail.com>
-	<CACRpkdZK41P-1JQsL6RiywqFEUj6=g5xJMKy86wDdp6BxLJNzQ@mail.gmail.com>
-	<CAK7LNASd9z99RBmUgLVEM1WuLNSzGFM8qzrHwDf58tgGDy2SAw@mail.gmail.com>
-	<CACRpkdbBfidn_otxzSV-8HMv2AuD-htUbcRHZ8n9CHAUO=TB9w@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
+Date: Thu, 16 Jul 2015 09:50:44 +0200
+Message-ID: <CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>
+References: <cover.1435777856.git.rcochran@linutronix.de>
+	<d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg004.nifty.com ([202.248.44.42]:59217 "EHLO
-	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752086AbbGPHs1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 16 Jul 2015 03:48:27 -0400
-In-Reply-To: <CACRpkdbBfidn_otxzSV-8HMv2AuD-htUbcRHZ8n9CHAUO=TB9w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Cochran <richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Tull <atull-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus,
+On Wed, Jul 1, 2015 at 9:34 PM, Richard Cochran
+<richardcochran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-2015-07-16 16:42 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Jul 16, 2015 at 9:35 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2015-07-16 16:07 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> The system-on-chips using this IP core have well defined gpio numbers.
+> Instead of using random numbers, this patch lets the device tree specify
+> the correct gpio numbering.
 >
->>>> ngpio == 248 for some SoCs,
->>>> and ngpio == 136 for some, etc.
->>>
->>> That is the wrong way to handle different SoC. That should be handled
->>> by different compatible strings, and then you select the number of GPIOs
->>> for the version corresponding to that compatibe string.
->>>
->>>>>> +static const struct of_device_id uniphier_gpio_match[] = {
->>>>>> +       { .compatible = "socionext,uniphier-gpio" },
->>>>>> +       { /* sentinel */ }
->>>>>> +};
->>>
->>> i.e. you should use the .data field of of_device_id to carry variant-specific
->>> information.
->>
->>
->> Currently, I want to use this driver on 7 SoCs
->>
->> PH1-sLD3:    ngpio == 136
->> PH1-LD4 :    ngpio == 136
->> PH1-Pro4:    ngpio == 248
->> PH1-sLD8:    ngpio == 136
->> PH1-Pro5:    ngpio == 248
->> ProXstream2: ngpio == 232
->> PH1-LD6b:    ngpio == 232
->>
->> So, should I describe the OF match table like this?
->>
->> static const struct of_device_id uniphier_gpio_match[] = {
->>        { .compatible = "socionext,ph1-sld3-gpio"       .data = (void *)136 },
->>        { .compatible = "socionext,ph1-ld4-gpio"        .data = (void *)136 },
->>        { .compatible = "socionext,ph1-pro4-gpio"       .data = (void *)248 },
->>        { .compatible = "socionext,ph1-sld8-gpio"       .data = (void *)136 },
->>        { .compatible = "socionext,ph1-pro5-gpio"       .data = (void *)248 },
->>        { .compatible = "socionext,proxstream2-gpio",   .data = (void *)232 },
->>        { .compatible = "socionext,ph1-ld6b-gpio",      .data = (void *)232 },
->>        { /* sentinel */ }
->> };
->
-> Yes.
->
->> One disadvantage for this way is that
->> I need to touch the driver file every time I add a new SoC support.
->
-> That is appropriate since it is a new hardware. This is the same as
-> the fact that we touch the kernel to add new USB IDs and PCI IDs
-> every time a new hardware comes out for x86, we should know
-> what hardware we are toying with.
->
-> Since you seem to have a pin controller in parallel anyways I see
-> it as natural to do this at the same time as you do that anyways.
->
+> Signed-off-by: Richard Cochran <rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+(...)
+> +- snps,base : The base gpio number.
 
-OK, I will do it in v4.
+NACK. And it has been NACKed before again and again, search
+the mailinglist for repetitive answers.
 
+The GPIO numbers inside the Linux kernel are Linux specific and
+have nothing to do with the hardware numbers. If they sometimes
+match it is a lucky coincidence. The same goes for IRQ numbers
+in the kernel FWIW.
 
+So this "binding" has nothing to do with describing the hardware,
+which device tree is for. If it ever comes to exist it needs to be
+a "linux-*" property. But I doubt it will.
 
+We are working to remove dependency on them by introducing GPIO
+descriptors and thinking heavily about how to handle the userspace
+sysfs ABI moving forward. But for the ABI the numbers just need to
+be stable, not intuitive.
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
