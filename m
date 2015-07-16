@@ -1,32 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio:Fix build warning about void to integer cast in the
- function mmio_74xx_gpio_probe
-Date: Thu, 16 Jul 2015 14:00:24 +0200
-Message-ID: <CACRpkdbj61+XoTCambLEGG=PNdkunvqnmRpV1VKi5pX1ouPzGw@mail.gmail.com>
-References: <1436042072-7496-1-git-send-email-xerofoify@gmail.com>
+Subject: Re: [PATCH] gpio: omap: prevent module from being unloaded while in use
+Date: Thu, 16 Jul 2015 14:27:17 +0200
+Message-ID: <CACRpkdbfPab9rv8Pz0gO5P69jbSQe-_ReCou=U4RHZyX--9SuQ@mail.gmail.com>
+References: <1435245213-17858-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436042072-7496-1-git-send-email-xerofoify@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:36289 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699AbbGPM1R (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 08:27:17 -0400
+Received: by oibn4 with SMTP id n4so49071319oib.3
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 05:27:17 -0700 (PDT)
+In-Reply-To: <1435245213-17858-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Javier Martinez Canillas <javier@dowhile0.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Jul 4, 2015 at 10:34 PM, Nicholas Krause <xerofoify@gmail.com> wrote:
+On Thu, Jun 25, 2015 at 5:13 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> This fixes the build warning , warning: cast from pointer to integer
-> of different size when building this file on a x86 allmodconfig
-> configuration. In order for me to fix this build warning I changed
-> the cast in the function mmio_74xx_gpio_probe from casting the
-> variable data of the stucture pointer of_id to uintptr_t rather
-> then unsigned when assigning to the variable flag of the structure
-> pointer priv of the structure type mmio_74xx_gpio_priv.
+> OMAP GPIO driver allowed to be built as loadable module, but it
+> doesn't set owner field in GPIO chip structure. As result,
+> module_get/put() API is not working and it's possible to unload
+> OMAP driver while in use:
 >
+>   omap_gpio 48051000.gpio: REMOVING GPIOCHIP WITH GPIOS STILL REQUESTED
 >
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> Hence, add missing configuration.
+>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Fixes: cac089f9026e ('gpio: omap: Allow building as a loadable module')
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+> Hi Linus,
+>
+> Seems this one is for 4.2-rc.
 
-Patch applied with some tweaks to the long subject line.
+Yup applied for fixes with Alex' ACK.
+
+The bigger fix is applied for devel and the best way to handle this
+is open for discussion.
 
 Yours,
 Linus Walleij
