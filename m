@@ -1,73 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/7] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Thu, 16 Jul 2015 11:00:34 +0200
-Message-ID: <CACRpkdYFE1xDV75_ecR36OTePPm8Ta_O1G1fSqOHO=s4TQw20A@mail.gmail.com>
-References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Convert to platform_get_*()
+Date: Thu, 16 Jul 2015 11:00:56 +0200
+Message-ID: <CAMuHMdVoC9iR0PTZ5TD9w8H8DbnuLxNyUAu6gHObFPx=oKhB7Q@mail.gmail.com>
+References: <1435225193-10078-1-git-send-email-geert+renesas@glider.be>
+	<1971413.ULIg8n17Hy@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1971413.ULIg8n17Hy@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jun 30, 2015 at 9:45 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Hi Laurent,
 
->         Hi Linus, Alex, Laurent, Simon, Magnus,
+On Thu, Jul 16, 2015 at 10:41 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>>  drivers/pinctrl/sh-pfc/core.c | 46 ++++++++++++++++++----------------------
+>>  1 file changed, 21 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+>> index 865d235612c5200a..9796238959047508 100644
+>> --- a/drivers/pinctrl/sh-pfc/core.c
+>> +++ b/drivers/pinctrl/sh-pfc/core.c
+>> @@ -29,24 +29,25 @@
+>>  static int sh_pfc_map_resources(struct sh_pfc *pfc,
+>>                               struct platform_device *pdev)
+>>  {
+>> -     unsigned int num_windows = 0;
+>> -     unsigned int num_irqs = 0;
+>> +     unsigned int num_windows, num_irqs;
+>>       struct sh_pfc_window *windows;
+>>       unsigned int *irqs = NULL;
+>>       struct resource *res;
+>>       unsigned int i;
+>> +     int irq;
+>>
+>>       /* Count the MEM and IRQ resources. */
+>> -     for (i = 0; i < pdev->num_resources; ++i) {
+>> -             switch (resource_type(&pdev->resource[i])) {
+>> -             case IORESOURCE_MEM:
+>> -                     num_windows++;
+>> +     for (num_windows = 0;; num_windows++) {
 >
-> This patch series moves the setup of the GPIO-PFC pin mapping for
-> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
-> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
-> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
-> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
->
-> The series consists of 3 parts:
->   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
->      files for all affected SoCs,
->   b. Patch 4 disables the C code to set up the mapping on DT platforms
->      (it's still needed on SH or ARM-legacy),
->   c. Patches 5-7 do a few more cleanups in the sh-pfc gpio code.
->
-> Dependencies:
->   - This series applies against next-next-20150630.
->   - Part a must go in first, to avoid regressions.
->     In addition, it's a prerequisite for "ARM: shmobile: armadillo800eva
->     dts: Add pinctrl and gpio-hog for lcdc0", which has been queued up
->     already in Simon's dt-for-v4.3 branch. Perhaps it can still be
->     reordered?
->   - While I didn't notice any bad behavior by having part a only, part b
->     should go in immediately after part a. Hence I think it's best if
->     Simon can take this one, too.
->   - Part c is independent (it doesn't touch the same code), so it can go
->     in before or after the other parts, or in parallel.
->
-> Thanks for applying!
->
-> Geert Uytterhoeven (7):
->   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
->   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
->   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
->   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
->   pinctrl: sh-pfc: Remove empty gpio_function_free()
->   pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up
->   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+> Just a bit of nit-picking, I'd add a space between the two ; (same for the
+> next loop).
 
-I'm happy of shmobile people are happy.
+I had done my research ;-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+$ git grep 'for.*;;' | wc -l
+1410
+$ git grep 'for.*; ;' | wc -l
+190
+$
 
-For all.
+>> +             res = platform_get_resource(pdev, IORESOURCE_MEM, num_windows);
+>> +             if (!res)
+>>                       break;
+>> -
+>> -             case IORESOURCE_IRQ:
+>> -                     num_irqs++;
+>> +     }
+>
+> And a blank line here.
 
-Yours,
-Linus Walleij
+I didn't add one, to make clear the block falls under the "Count the MEM
+and IRQ resources. " comment, too.
+
+Let's leave this to Linus to decide...
+
+> The rest looks fine to me.
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
