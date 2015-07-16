@@ -1,52 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpiolib: assign chip owner to dev->driver->owner if
- not set
-Date: Thu, 16 Jul 2015 13:25:58 +0200
-Message-ID: <CACRpkdbiLmx6EuL8o1=RgrbMMfagbXHPK2VjrkNons6E=mm8bA@mail.gmail.com>
-References: <1435253451-19817-1-git-send-email-grygorii.strashko@ti.com>
-	<1435253451-19817-2-git-send-email-grygorii.strashko@ti.com>
-	<CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio/xilinx: Use correct address when setting initial values.
+Date: Thu, 16 Jul 2015 13:28:18 +0200
+Message-ID: <CACRpkdZUQ+-q28dPiEMy7PXgY6vUBHHrGfq+gANx62B9aJd20Q@mail.gmail.com>
+References: <1435130385.30543.3.camel@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35626 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752679AbbGPLZ7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 07:25:59 -0400
-Received: by obbop1 with SMTP id op1so44794554obb.2
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 04:25:58 -0700 (PDT)
-In-Reply-To: <CACRpkdYbVros042MPKx4eYv4RiMM30KUh8ej3Ouwbn2LE+9EDA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1435130385.30543.3.camel@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Rapha=C3=ABl_Teysseyre?= <rteysseyre@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johan Hovold <johan@kernel.org>
 
-On Thu, Jul 16, 2015 at 1:22 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 25, 2015 at 7:30 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->
->> Assign GPIO chip owner field to chip->dev->driver->owner if it was not
->> configured by GPIO driver.
->>
->> Cc: Johan Hovold <johan@kernel.org>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->
-> Patch applied with Alex' review tag.
->
->>  There is also one positive additional side effect:
->>  lines like below can be removed from a lot of GPIO
->>  drivers
->>         rdc321x_gpio_dev->chip.owner = THIS_MODULE;
->
-> Yes let's do this :)
+On Wed, Jun 24, 2015 at 9:19 AM, Rapha=C3=ABl Teysseyre <rteysseyre@gma=
+il.com> wrote:
 
-Or actually, I have had some second thought to why gpio_chip
-is duplicating struct members from struct device at all.
+> xgpio_save_regs() is used in this driver to setup the initial
+> values of the registers in the hardware.
+>
+> The relevant registers at that time are:
+> 0x0 -> channel 0 data (32 bits, one for each GPIO on this channel).
+> 0x4 -> channel 0 tri, controls in/out status for each GPIO of this ch=
+annel.
+> 0x8 -> channel 1 data
+> 0xC -> channel 1 tri
+>
+> gpio-xilinx.c defines these:
+> XGPIO_DATA_OFFSET   (0x0)
+> XGPIO_TRI_OFFSET    (0x4)
+> XGPIO_CHANNEL_OFFSET    0x8
+>
+> Before this patch, the "data" register value of channel 1 was written
+> at 0x4 intead of 0x8 (overwriting the channel 0 "tri" register),
+> and the "tri" register value for channel 1 was written at 0x8 instead=
+ of 0xC.
+>
+> Signed-off-by: Rapha=C3=ABl Teysseyre <rteysseyre@gmail.com>
 
-Why should it even have "owner" and "of_node"?
-
-Should we not just rewrite this code to follow the struct device *dev
-pointer in gpio_chip and use "owner" and "of_node" from there?
+Patch applied with review tags.
 
 Yours,
 Linus Walleij
