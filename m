@@ -1,83 +1,73 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [Resend][PATCH] Pinctrl: imx1: fix wrong pin-name resolving
-Date: Thu, 16 Jul 2015 10:52:58 +0200
-Message-ID: <CACRpkdZ4h59v6i6_htLGj2K9n_-qidd2wtZFW21N2J1p=OK=Cw@mail.gmail.com>
-References: <558C9C49.7090600@gtsys.com.hk>
+Subject: Re: [PATCH 0/7] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Thu, 16 Jul 2015 11:00:34 +0200
+Message-ID: <CACRpkdYFE1xDV75_ecR36OTePPm8Ta_O1G1fSqOHO=s4TQw20A@mail.gmail.com>
+References: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34577 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755071AbbGPIw7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Jul 2015 04:52:59 -0400
-Received: by obre1 with SMTP id e1so42997539obr.1
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2015 01:52:58 -0700 (PDT)
-In-Reply-To: <558C9C49.7090600@gtsys.com.hk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1435650327-2542-1-git-send-email-geert+renesas@glider.be>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Ruehl <chris.ruehl@gtsys.com.hk>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Markus Pargmann <mpa@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jun 26, 2015 at 2:26 AM, Chris Ruehl <chris.ruehl@gtsys.com.hk> wrote:
+On Tue, Jun 30, 2015 at 9:45 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Bug in function imx1_pinconf_set() cause crash when
-> princtrl debug is enabled and the pin_id becomes larger
-> then the info->pins[] contains data.
+>         Hi Linus, Alex, Laurent, Simon, Magnus,
 >
-> imx27-pinctrl 10015000.iomuxc: request pin 134 (MX27_PAD_UART2_TXD) for
-> 1000b000.serial
-> imx27-pinctrl 10015000.iomuxc: request pin 135 (MX27_PAD_UART2_RXD) for
-> 1000b000.serial
-> imx27-pinctrl 10015000.iomuxc: request pin 131 (MX27_PAD_UART2_CTS) for
-> 1000b000.serial
-> imx27-pinctrl 10015000.iomuxc: request pin 132 (MX27_PAD_UART2_RTS) for
-> 1000b000.serial
-> imx27-pinctrl 10015000.iomuxc: enable function uart group uart2-1
-> imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x86, function 0, gpio 0,
-> direction 1, oconf 0, iconfa 0, iconfb 0
-> imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x87, function 0, gpio 0,
-> direction 0, oconf 0, iconfa 0, iconfb 0
-> imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x83, function 0, gpio 0,
-> direction 1, oconf 0, iconfa 0, iconfb 0
-> imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0x84, function 0, gpio 0,
-> direction 0, oconf 0, iconfa 0, iconfb 0
-> imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=134
-> imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RTS
-> imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=135
-> imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_RTCK
-> imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=131
-> imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_TXD
-> imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=132
-> imx27-pinctrl 10015000.iomuxc: pinconf set pullup pin MX27_PAD_UART1_RXD
-> ...
-> imx27-pinctrl 10015000.iomuxc: write: register 0xf4415508 offset 4 value 0x3
-> imx27-pinctrl 10015000.iomuxc: write: register 0xf4415510 offset 4 value 0x0
-> imx27-pinctrl 10015000.iomuxc: write: register 0xf4415518 offset 4 value 0x0
-> imx27-pinctrl 10015000.iomuxc: imx1_pmx_set, pin 0xb5, function 0, gpio 0,
-> direction 1, oconf 0, iconfa 0, iconfb 0
-> imx27-pinctrl 10015000.iomuxc: num_configs=1 PinID=171
-> Unable to handle kernel paging request at virtual address 6c61765f
-> pgd = c0004000
-> 6c61765f] *pgd=00000000
-> Internal error: Oops: 5 [#1] ARM
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper Not tainted 4.1.0-rc4-next-20150522-dirty #8
-> Hardware name: GTSYS i.MX27GTSIR (Device Tree Support)
-> task: ce832000 ti: ce848000 task.ti: ce848000
-> PC is at strnlen+0x28/0x3c
-> LR is at string.isra.4+0x34/0xcc
-> pc : [<c01ae188>]    lr : [<c01af9a4>]    psr: 20000093
-> sp : ce849a88  ip : ce849a98  fp : ce849a94
-> r10: c05d7e3a  r9 : c05d81e4  r8 : 00000000
-> r7 : 6c61765f  r6 : c05d81e4  r5 : ffffffff  r4 : c05d7e3a
-> r3 : 6c61765f  r2 : 6c61765f  r1 : 6c61765e  r0 : 6c61765f
-> Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+> This patch series moves the setup of the GPIO-PFC pin mapping for
+> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
+> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
+> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
+> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
 >
+> The series consists of 3 parts:
+>   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
+>      files for all affected SoCs,
+>   b. Patch 4 disables the C code to set up the mapping on DT platforms
+>      (it's still needed on SH or ARM-legacy),
+>   c. Patches 5-7 do a few more cleanups in the sh-pfc gpio code.
 >
-> Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+> Dependencies:
+>   - This series applies against next-next-20150630.
+>   - Part a must go in first, to avoid regressions.
+>     In addition, it's a prerequisite for "ARM: shmobile: armadillo800eva
+>     dts: Add pinctrl and gpio-hog for lcdc0", which has been queued up
+>     already in Simon's dt-for-v4.3 branch. Perhaps it can still be
+>     reordered?
+>   - While I didn't notice any bad behavior by having part a only, part b
+>     should go in immediately after part a. Hence I think it's best if
+>     Simon can take this one, too.
+>   - Part c is independent (it doesn't touch the same code), so it can go
+>     in before or after the other parts, or in parallel.
+>
+> Thanks for applying!
+>
+> Geert Uytterhoeven (7):
+>   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
+>   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
+>   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
+>   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+>   pinctrl: sh-pfc: Remove empty gpio_function_free()
+>   pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up
+>   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
 
-Patch applied. Can't seem so see anyone who's safeguarding this
-driver recently, putting some people on To:
+I'm happy of shmobile people are happy.
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+For all.
 
 Yours,
 Linus Walleij
