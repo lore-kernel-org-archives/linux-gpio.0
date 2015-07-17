@@ -1,38 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio/davinci: add interrupt support for GPIOs 16-31
-Date: Fri, 17 Jul 2015 14:16:19 +0200
-Message-ID: <CACRpkdb0ORjwAyA5r4khK0Xa3_N0vpRjrXq76pe+GTFjLux+2w@mail.gmail.com>
-References: <1435861890-23147-1-git-send-email-vitalya@ti.com>
+Subject: Re: [PATCH 1/2] pinctrl: pinconf: Allow groups to be configured via debugfs
+Date: Fri, 17 Jul 2015 14:20:02 +0200
+Message-ID: <CACRpkdYyMV849ZgXwE-ZJNRZEqrgcDtyzb_TMetoVPP2F_44dw@mail.gmail.com>
+References: <1436869079-26594-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35311 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751403AbbGQMQT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2015 08:16:19 -0400
-Received: by oihq81 with SMTP id q81so69410526oih.2
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 05:16:19 -0700 (PDT)
-In-Reply-To: <1435861890-23147-1-git-send-email-vitalya@ti.com>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35440 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753268AbbGQMUD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2015 08:20:03 -0400
+Received: by obbop1 with SMTP id op1so64683599obb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 05:20:02 -0700 (PDT)
+In-Reply-To: <1436869079-26594-1-git-send-email-jonathanh@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vitaly Andrianov <vitalya@ti.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Muralidharan Karicheri <m-karicheri2@ti.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jul 2, 2015 at 8:31 PM, Vitaly Andrianov <vitalya@ti.com> wrote:
+On Tue, Jul 14, 2015 at 12:17 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
 
-> Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
-> "binten" register (offset 8). Previous versions of GPIO only
-> used bit 0, which enables GPIO 0-15 interrupts.
+> The function pinconf_dbg_config_write() currently only supports configuring
+> a pin configuration mapping via the debugfs. Allow group mappings to also
+> be configured via the debugfs.
 >
-> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
-> History
->
-> v2.
-> - use GENMASK to set binten. Thanks to Nori Sekhar's.
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-This version applied for v4.3 with Sekhar's review tag.
+Oh, nice! Patch applied.
 
 Yours,
 Linus Walleij
