@@ -1,34 +1,55 @@
-From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4][v4] ARM: imx: imx7d-pinfunc: add gpio pad iomuxc
- settings
-Date: Fri, 17 Jul 2015 11:51:15 +0800
-Message-ID: <20150717035115.GE12927@tiger>
-References: <1437078887-2524-1-git-send-email-aalonso@freescale.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH] gpio/davinci: add interrupt support for GPIOs 16-31
+Date: Fri, 17 Jul 2015 10:32:11 +0530
+Message-ID: <55A88C53.7090408@ti.com>
+References: <1434647449-5393-1-git-send-email-vitalya@ti.com> <CACRpkda-OSsFdGHN9de00TsQjgdzC1Eg=vHXpeSvqBKH64wPmg@mail.gmail.com> <55A77392.30400@ti.com> <55A7ECE1.2060704@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1437078887-2524-1-git-send-email-aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Alonso <aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org, nitin.garg-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Anson.Huang-KZfg59tc24xl57MIdRCFDg@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, yibin.gong-KZfg59tc24xl57MIdRCFDg@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:49638 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750796AbbGQFCR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 17 Jul 2015 01:02:17 -0400
+In-Reply-To: <55A7ECE1.2060704@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vitaly Andrianov <vitalya@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jul 16, 2015 at 03:34:44PM -0500, Adrian Alonso wrote:
-> * Add iMX7D SoC imx7d-pinfunc gpio pad settings
->   <mux_reg conf_reg input_reg mux_mode input_val>
-> * iMX7D GPIO1_IO7 to GPIO1_IO0 encode the pad group id in the most
->   significant bits of input_val to avoid group id overlap bweeten
->   iomuxc and iomuxc-lpsr.
+On Thursday 16 July 2015 11:11 PM, Vitaly Andrianov wrote:
 > 
-> Signed-off-by: Adrian Alonso <aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+> 
+> On 07/16/2015 05:04 AM, Sekhar Nori wrote:
+>> On Tuesday 14 July 2015 07:31 PM, Linus Walleij wrote:
+>>> On Thu, Jun 18, 2015 at 7:10 PM, Vitaly Andrianov <vitalya@ti.com>
+>>> wrote:
+>>>
+>>>> Interrupts for GPIOs 16 through 31 are enabled by bit 1 in the
+>>>> "binten" register (offset 8). Previous versions of GPIO only
+>>>> used bit 0, which enables GPIO 0-15 interrupts.
+>>>>
+>>>> Signed-off-by: Reece Pollack <x0183204@ti.com>
+>>>> Signed-off-by: Vitaly Andrianov <vitalya@ti.com>
+>>>
+>>> Sekhar/Kevin: OK with this? We don't have a maintainer
+>>> listed for davinci GPIO so I assume it's you guys...
+>>
+>> Hi Linus, I had reviewed this patch and there was a v2 send based on my
+>> comments on July 03.
+>>
+>>> Should this be tagged for stable?
+>>
+>> Not sure about that. It affects Keystone devices. Vitaly?
+>>
+>> Thanks,
+>> Sekhar
+>>
+> We used this patch for a long time. So, I guess it is stable.
 
-Unless you can convince me that this approach which hacks select input
-value is better than two instances one, it's an NACK for me on the whole
-patch series.
+You misunderstood. Should this patch be marked for backporting to older
+kernels because it fixes a critical issue on devices otherwise working
+in that kernel? See Documentation/stable_kernel_rules.txt
 
-Shawn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Sekhar
