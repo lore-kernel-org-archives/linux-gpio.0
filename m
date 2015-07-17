@@ -1,33 +1,24 @@
-From: kbuild test robot <fengguang.wu@intel.com>
-Subject: [pinctrl:devel 30/37] drivers/pinctrl/pinconf.c:205:6: sparse:
- symbol 'pinconf_show_config' was not declared. Should it be static?
-Date: Fri, 17 Jul 2015 21:37:09 +0800
-Message-ID: <201507172143.e7QtgNrM%fengguang.wu@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH pinctrl] pinctrl: pinconf: pinconf_show_config() can be static
+Date: Fri, 17 Jul 2015 15:40:18 +0200
+Message-ID: <CACRpkdb6jLpPh21sT9W5BgWKezf+SJOzT=XVih3=U3wJ2gZ2BA@mail.gmail.com>
+References: <201507172143.e7QtgNrM%fengguang.wu@intel.com>
+	<20150717133709.GA122054@snb>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <20150717133709.GA122054@snb>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kbuild test robot <fengguang.wu@intel.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-tree:   git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-head:   16c06171faa4ad430393ca896fc62eb9e2e6dd40
-commit: d96310aeddc692cf1f06861cf722c4843e0a3f28 [30/37] pinctrl: pinconf: Fix display of configs
-reproduce:
-  # apt-get install sparse
-  git checkout d96310aeddc692cf1f06861cf722c4843e0a3f28
-  make ARCH=x86_64 allmodconfig
-  make C=1 CF=-D__CHECK_ENDIAN__
+On Fri, Jul 17, 2015 at 3:37 PM, kbuild test robot
+<fengguang.wu@intel.com> wrote:
 
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 
-sparse warnings: (new ones prefixed by >>)
+Patch applied.
 
->> drivers/pinctrl/pinconf.c:205:6: sparse: symbol 'pinconf_show_config' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Yours,
+Linus Walleij
