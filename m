@@ -1,68 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 01/12] device: property: delay device-driver matches
-Date: Fri, 17 Jul 2015 01:06:22 +0100
-Message-ID: <20150717000622.GH1602@sirena.org.uk>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435743667-11987-2-git-send-email-tomeu.vizoso@collabora.com>
- <20150716202312.GD11162@sirena.org.uk>
- <CAJZ5v0gMx=DA0f8i9wdMvkYTyOhr0WKh-T6L7rjcxeaAjNMW3g@mail.gmail.com>
+From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+Subject: Re: [Resend][PATCH] Pinctrl: imx1: fix wrong pin-name resolving
+Date: Fri, 17 Jul 2015 09:33:13 +0800
+Message-ID: <55A85B59.5060906@gtsys.com.hk>
+References: <558C9C49.7090600@gtsys.com.hk>	<CACRpkdZ4h59v6i6_htLGj2K9n_-qidd2wtZFW21N2J1p=OK=Cw@mail.gmail.com>	<20150716113458.GM1426@pengutronix.de> <CACRpkdawo3048Kt-_Jio0kgSkUU5mkKkZ4gAJRZom3uKisEF0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gMx=DA0f8i9wdMvkYTyOhr0WKh-T6L7rjcxeaAjNMW3g@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-pwm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.fpasia.hk ([202.130.89.98]:46553 "EHLO fpa01n0.fpasia.hk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751033AbbGQBd0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 16 Jul 2015 21:33:26 -0400
+In-Reply-To: <CACRpkdawo3048Kt-_Jio0kgSkUU5mkKkZ4gAJRZom3uKisEF0A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?B?VXdlIEtsZWluZS1Lw7Y=?= =?UTF-8?B?bmln?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+
+>>>
+>>> Patch applied. Can't seem so see anyone who's safeguarding this
+>>> driver recently, putting some people on To:
+>>
+>> I commented in that thread and the outcome from my POV was that the fix
+>> needs a better changelog and it could be optimised to not lookup the pin
+>> if debug is off. (I don't know the patch content, as it was stripped in
+>> the reply.)
+>
+> OK Chris will you send a new version of this patch?
+>
+> Yours,
+> Linus Walleij
+>
+
+Hi Uwe
+
+If you don't mind take over the ownership of patching this issue?
+
+I'm very busy at the moment and afraid it takes too long to bring the right
+comments etc..
+
+Thanks
+Chris
 
 
---CNfT9TXqV7nd4cfk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+-- 
+GTSYS Limited RFID Technology
+9/F, Unit E, R07, Kwai Shing Industrial Building Phase 2,
+42-46 Tai Lin Pai Road, Kwai Chung, N.T., Hong Kong
+Tel (852) 9079 9521
 
-On Fri, Jul 17, 2015 at 01:41:16AM +0200, Rafael J. Wysocki wrote:
-> On Thu, Jul 16, 2015 at 10:23 PM, Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, Jul 01, 2015 at 11:40:56AM +0200, Tomeu Vizoso wrote:
-
-> > I have to say I'm still not 100% clear that special casing platform
-> > devices makes sense here - I can see that platform devices are usually
-> > the first devices to instantiate but there are other kinds of devices
-> > and it's not obvious what the benefit of specifically picking out
-> > platform devices as opposed to just deferring all devices is.
-
-> Some existing devices cannot be deferred without redesigning things quite a bit.
-
-OK, that should go in the changelog then - right now it's just a bit
-obtuse why we're doing this (and as you say it's a bit awkward).  Now
-you mention this I'm thinking that some of the affected devices might be
-platform devices on some systems, IOMMUs spring to mind for example...
-they're one of the main bits of the system I'm aware of that still rely
-on probe ordering and they do tend to be platform devices.
-
-> What I was talking about, though, was to use an opt-in mechanism for
-> that which could be set for all platform devices, for example, by
-> default, but it might be set for other bus types too if that's useful.
-
-Sure, I got that and do agree with you that a mechanism like you suggest
-would be good.  I just wasn't clear why we were targetting platform
-devices in the first place.
-
---CNfT9TXqV7nd4cfk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVqEb6AAoJECTWi3JdVIfQ6igH/1lfzgngw+QMPD3PzShllj57
-i/HPqcOa7NFybef7ZM2t00i3/PCAPOhg2EsaPaV34euzZ57FZX0DvS89+1K1q3sw
-h+u95jS4c8GMJnO9gAnQZ1u5S6OM40j/livOl/HaVb0qUSIFwEeRHbJfW3uJ/wZf
-3phgAXmVjPQRqJS054a/CGEyU2lwZW+4enxtBs49TbY1EHE8TbQIG9EM5kqAu23I
-t4Y5+RDaft1SNXacAjjc0cwYIFY9xh5UnYDLDhNc1mabklu9selE0PKhgS8PUkl5
-X+D87P00jPDUd99qbILBZhRqIw+72BKECQ/ddJCQXIW2u0pjJc1W81iYl/LF2bw=
-=w0V2
------END PGP SIGNATURE-----
-
---CNfT9TXqV7nd4cfk--
+Disclaimer: http://www.gtsys.com.hk/email/classified.html
