@@ -1,33 +1,30 @@
-From: Jonas Jensen <jonas.jensen@gmail.com>
-Subject: Re: [PATCH 0/2] Make generic MMIO GPIO aware of the pinctrl subsystem
-Date: Fri, 17 Jul 2015 22:38:40 +0200
-Message-ID: <CACmBeS0zPM9AipkGzOKbH-Mu8Ryf9Hg_Tvfey+k1d+Y_3vf+8g@mail.gmail.com>
-References: <1434718697-31335-1-git-send-email-michael@smart-africa.com>
+From: david.wei@asia.com
+Subject: Letter of Intent.
+Date: Fri, 17 Jul 2015 22:47:24 +0200
+Message-ID: <20150717212610.A1597552B2__43270.6290427179$1437187760$gmane$org@mail-iae.iae.cta.br>
+Reply-To: david.wei@asia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:34859 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752756AbbGQUil (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2015 16:38:41 -0400
-Received: by ykdu72 with SMTP id u72so98818493ykd.2
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 13:38:41 -0700 (PDT)
-In-Reply-To: <1434718697-31335-1-git-send-email-michael@smart-africa.com>
+Received: from t00-pc98.iae.cta.br ([161.24.47.98]:56412 "EHLO
+	mail-iae.iae.cta.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367AbbGRCsu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Jul 2015 22:48:50 -0400
+Content-Description: Mail message body
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael van der Westhuizen <michael@smart-africa.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Kamlakant Patel <kamlakant.patel@linaro.org>
+To: Recipients <david.wei@asia.com>
 
-On 19 June 2015 at 14:58, Michael van der Westhuizen
-<michael@smart-africa.com> wrote:
->   gpio: bgpio: Teach gpio-generic about the pinctrl subsystem
->   gpio: moxart-gpio: Use generic-gpio pinctrl integration
-
-Thanks,
-
-Patches applied (to v4.1) and verified OK on UC-7112-LX.
-
-https://bitbucket.org/Kasreyn/linux-next/commits/1f113e8e2083d88a8b7972e952e4550dcc79e4fb
+I am David Wei .I am involved with the Guiyang Intellectual property bureau which is in the Guizhou province of mainland China. I am getting in touch with you regarding property investment that was facilitated by myself and my colleagues a few years ago.
 
 
-Tested-by: Jonas Jensen <jonas.jensen@gmail.com>
+We had started this process with a gentleman by the name of Mr. Norman Gerr a while back but had to suspend same due to unfortunate events concerning Mr. Norman . I would respectfully request that you keep the contents of this mail confidential and respect the integrity of the information you come by as a result of this mail. I contact you independently and no one is informed of this communication.
+
+
+We contact you however because you share a similar surname with Norman, please get back to me once you get this letter regardless of being related to Mr. Norman in anyway as this can be very beneficial for all involved.
+
+I  await your response.
+
+David Wei.
+david.wei@asia.com
