@@ -1,34 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 8/8] pinctrl: qcom: ssbi: Family A gpio & mpp drivers
-Date: Fri, 17 Jul 2015 14:35:45 +0200
-Message-ID: <CACRpkdY0Nx_Rm7jtL1hpJ-_zB4iXRmeA=-_cUV_zQQU5En2GDg@mail.gmail.com>
-References: <1436942435-25611-1-git-send-email-bjorn.andersson@sonymobile.com>
-	<1434610052-602-9-git-send-email-bjorn.andersson@sonymobile.com>
-	<1436942435-25611-3-git-send-email-bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] pinctrl/qcom Kconfig CFG repeated
+Date: Fri, 17 Jul 2015 14:37:49 +0200
+Message-ID: <CACRpkdbPG25KRbswfdhWU=8kbYQCTSu-KPATm3wGJe9GC6dpDA@mail.gmail.com>
+References: <1436972027-2914-1-git-send-email-simhavcs@gmail.com>
+	<55A6768A.7010605@mm-sol.com>
+	<CAGWqDJ7Epdm7tVYj0F8mCJA7rC-rO3CXq_Gd0c13mqQ8zxBZ-g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1436942435-25611-3-git-send-email-bjorn.andersson@sonymobile.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, Lee Jones <lee.jones@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGWqDJ7Epdm7tVYj0F8mCJA7rC-rO3CXq_Gd0c13mqQ8zxBZ-g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinay Simha <simhavcs@gmail.com>
+Cc: Stanimir Varbanov <svarbanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Joonwoo Park <joonwoop@codeaurora.org>, Georgi Djakov <gdjakov@mm-sol.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 15, 2015 at 8:40 AM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
+On Wed, Jul 15, 2015 at 5:35 PM, Vinay Simha <simhavcs@gmail.com> wrote:
 
-> This introduces pinctrl drivers for gpio and mpp blocks found in family A
-> PMICs.
->
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> ---
->
-> Changes since v1:
-> - Update platform_driver name
-> - Use of_device_get_match_data()
+> sorry. My mistake. i saw both as 8064.
 
-This v2 version applied for v4.3.
+Perceptual problem, happens to me too, all the time.
+
+Qualcomm: give your chips more distinguishable names,
+the neural hamming distance is too short.
 
 Yours,
 Linus Walleij
