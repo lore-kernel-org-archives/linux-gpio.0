@@ -1,74 +1,56 @@
 From: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH v2] Documentation: gpio: consumer: describe active low property
-Date: Sat, 18 Jul 2015 08:02:07 +0200
-Message-ID: <1437199327-4410-1-git-send-email-dirk.behme@gmail.com>
+Subject: [PATCH v2] Documentation: gpio: consumer: describe the con_id parameter
+Date: Sat, 18 Jul 2015 08:24:07 +0200
+Message-ID: <1437200647-5138-1-git-send-email-dirk.behme@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:34761 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755901AbbGRGCL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jul 2015 02:02:11 -0400
-Received: by wgkl9 with SMTP id l9so95361134wgk.1
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 23:02:10 -0700 (PDT)
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:35661 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750848AbbGRGYM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jul 2015 02:24:12 -0400
+Received: by wibxm9 with SMTP id xm9so53293556wib.0
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 23:24:11 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Alexandre Courbot <acourbot@nvidia.com>, Dirk Behme <dirk.behme@gmail.com>
 
-I've been searching for any documentation of 'the active-low property of a GPIO'
-already mentioned in this documenation. But couldn't find any. Add it.
+The con_id parameter has to match the GPIO description and is automatically
+extended by the GPIO suffix if not NULL. I had to look into the code to
+understand this and properly find the GPIO I've been looking for, so document
+this.
 
-Sigend-off-by: Dirk Behme <dirk.behme@gmail.com>
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
 Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
 Changes in v2: Incorporate the review comments from Alexandre.
 
- Documentation/gpio/consumer.txt | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ Documentation/gpio/consumer.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 75542b9..df7c51a 100644
+index 75542b9..5f7437b 100644
 --- a/Documentation/gpio/consumer.txt
 +++ b/Documentation/gpio/consumer.txt
-@@ -237,6 +237,39 @@ Note that these functions should only be used with great moderation ; a driver
- should not have to care about the physical line level.
+@@ -39,6 +39,19 @@ device that displays digits), an additional index argument can be specified:
+ 					  const char *con_id, unsigned int idx,
+ 					  enum gpiod_flags flags)
  
++The con_id string parameter has to be either NULL or the prefix of the GPIO
++suffixes ("gpios" or "gpio", automatically looked up by the gpiod functions
++internally):
++
++* If the GPIO description is just named with one of the GPIO suffixes
++  ("gpios" or "gpio"), use NULL.
++* If the GPIO description is prefixed with anything, e.g. "reset-gpios", use the
++  prefix without the "-" as con_id parameter (in this example "reset").
++
++In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
++("gpios" or "gpio") with the string passed in con_id to get the resulting string
++(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
++
+ The flags parameter is used to optionally specify a direction and initial value
+ for the GPIO. Values can be:
  
-+The active-low property
-+-----------------------
-+
-+As a driver should not have to care about the physical line level, all of the
-+gpiod_set_value_xxx() or gpiod_set_array_value_xxx() functions operate with
-+the *logical* value. With this they take the active-low property into account.
-+This does mean that they check whether the GPIO is configured to be active-low.
-+And if so, they manipulate the passed value before the physical line level is
-+driven.
-+
-+With this, all the gpiod_set_(array)_value_xxx() functions interpret the parameter
-+"value" as "active" ("1") or "inactive" ("0"). The physical line level will be
-+driven accordingly.
-+
-+As an example, if the active-low poperty for a dedicated GPIO is set, and the
-+gpiod_set_(array)_value_xxx() passes "active" ("1"), the physical line level will be
-+driven low.
-+
-+To summarize:
-+
-+Function (example)               active-low proporty  physical line
-+gpiod_set_raw_value(desc, 0);        don't care           low
-+gpiod_set_raw_value(desc, 1);        don't care           high
-+gpiod_set_value(desc, 0);       default (active-high)     low
-+gpiod_set_value(desc, 1);       default (active-high)     high
-+gpiod_set_value(desc, 0);             active-low          high
-+gpiod_set_value(desc, 1);             active-low          low
-+
-+Please note again that the set_raw/get_raw functions should be avoided as much
-+as possible, especially by drivers which should not care about the actual physical
-+line level and worry about the logical value instead.
-+
-+
- Set multiple GPIO outputs with a single function call
- -----------------------------------------------------
- The following functions set the output values of an array of GPIOs:
 -- 
 2.4.6
 
