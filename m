@@ -1,56 +1,82 @@
-From: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH v2] Documentation: gpio: consumer: describe the con_id parameter
-Date: Sat, 18 Jul 2015 08:24:07 +0200
-Message-ID: <1437200647-5138-1-git-send-email-dirk.behme@gmail.com>
+From: Tal Shorer <tal.shorer@gmail.com>
+Subject: Re: [PATCH v2 2/2] tracing: gpio: add Kconfig option for
+ enabling/disabling trace events
+Date: Sat, 18 Jul 2015 13:12:53 +0300
+Message-ID: <CAFDyS3Nuq8FPx4z5GW1Ht+NBGd+8O9rjPZ+DaMU1XU1QYgA=2g@mail.gmail.com>
+References: <20150713143459.09582cb9@gandalf.local.home>
+	<1437068376-24617-1-git-send-email-tal.shorer@gmail.com>
+	<1437068376-24617-3-git-send-email-tal.shorer@gmail.com>
+	<20150717143606.200d97d7@gandalf.local.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:35661 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750848AbbGRGYM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jul 2015 02:24:12 -0400
-Received: by wibxm9 with SMTP id xm9so53293556wib.0
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2015 23:24:11 -0700 (PDT)
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:37875 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414AbbGRKMy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Jul 2015 06:12:54 -0400
+In-Reply-To: <20150717143606.200d97d7@gandalf.local.home>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Dirk Behme <dirk.behme@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mingo@redhat.com, "<linux-kernel@vger.kernel.org>" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-The con_id parameter has to match the GPIO description and is automatically
-extended by the GPIO suffix if not NULL. I had to look into the code to
-understand this and properly find the GPIO I've been looking for, so document
-this.
+On second thought, I wonder if the config option shouldn't be in
+kernel/trace/Kconfig
+Imagine there's an option for every subsystem. Disabling all of them
+but the one you actually care about is going to be a mess if they're
+scattered all over the place.
+Your thoughts?
 
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
----
-Changes in v2: Incorporate the review comments from Alexandre.
-
- Documentation/gpio/consumer.txt | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-index 75542b9..5f7437b 100644
---- a/Documentation/gpio/consumer.txt
-+++ b/Documentation/gpio/consumer.txt
-@@ -39,6 +39,19 @@ device that displays digits), an additional index argument can be specified:
- 					  const char *con_id, unsigned int idx,
- 					  enum gpiod_flags flags)
- 
-+The con_id string parameter has to be either NULL or the prefix of the GPIO
-+suffixes ("gpios" or "gpio", automatically looked up by the gpiod functions
-+internally):
-+
-+* If the GPIO description is just named with one of the GPIO suffixes
-+  ("gpios" or "gpio"), use NULL.
-+* If the GPIO description is prefixed with anything, e.g. "reset-gpios", use the
-+  prefix without the "-" as con_id parameter (in this example "reset").
-+
-+In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
-+("gpios" or "gpio") with the string passed in con_id to get the resulting string
-+(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
-+
- The flags parameter is used to optionally specify a direction and initial value
- for the GPIO. Values can be:
- 
--- 
-2.4.6
-
+On Fri, Jul 17, 2015 at 9:36 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 16 Jul 2015 20:39:36 +0300
+> Tal Shorer <tal.shorer@gmail.com> wrote:
+>
+>> Add a new options to gpio Kconfig, CONFIG_GPIO_TRACING, that is used
+>> for enabling/disabling compilation of gpio function trace events.
+>>
+>
+> If I can get acks from the gpio maintainers, I can take this in my
+> tree, as it depends on code that modifies the core tracing facility.
+>
+> -- Steve
+>
+>> Signed-off-by: Tal Shorer <tal.shorer@gmail.com>
+>> ---
+>>  drivers/gpio/Kconfig        | 7 +++++++
+>>  include/trace/events/gpio.h | 4 ++++
+>>  2 files changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index c1e2ca3..2829e8e 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -88,6 +88,13 @@ config GPIO_SYSFS
+>>  config GPIO_GENERIC
+>>       tristate
+>>
+>> +config GPIO_TRACING
+>> +     bool "gpio tracing"
+>> +     depends on TRACING
+>> +     help
+>> +       Enable tracing for gpio subsystem
+>> +
+>> +
+>>  # put drivers in the right section, in alphabetical order
+>>
+>>  config GPIO_DA9052
+>> diff --git a/include/trace/events/gpio.h b/include/trace/events/gpio.h
+>> index 927a8ad..09af636 100644
+>> --- a/include/trace/events/gpio.h
+>> +++ b/include/trace/events/gpio.h
+>> @@ -1,6 +1,10 @@
+>>  #undef TRACE_SYSTEM
+>>  #define TRACE_SYSTEM gpio
+>>
+>> +#ifndef CONFIG_GPIO_TRACING
+>> +#define NOTRACE
+>> +#endif
+>> +
+>>  #if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ)
+>>  #define _TRACE_GPIO_H
+>>
+>
