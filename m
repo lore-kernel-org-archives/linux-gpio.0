@@ -1,50 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PULL gpio-for-next] gpio: make flags mandatory for gpiod_get functions
-Date: Mon, 20 Jul 2015 10:28:51 +0200
-Message-ID: <CACRpkdbyJSeV6NjeieGOUP6Sqw1unT-gAztrKECmD987zn3v1g@mail.gmail.com>
-References: <1434404169-4639-1-git-send-email-u.kleine-koenig@pengutronix.de>
-	<20150706090759.GS11824@pengutronix.de>
-	<20150708105138.GD1426@pengutronix.de>
-	<20150715062825.GC1426@pengutronix.de>
-	<CAAVeFuKTwuO6O106oq0=f6eWAaa1NTiOJZ8Pw-VRG_i0E+4g+w@mail.gmail.com>
-	<CACRpkdbDtg=Ssod4K881juitv4fu3iPO8TkE+ZqEALKMqeTwDA@mail.gmail.com>
-	<20150720065605.GP7013@pengutronix.de>
+Subject: Re: [PATCH 1/2] gpio: bgpio: Teach gpio-generic about the pinctrl subsystem
+Date: Mon, 20 Jul 2015 10:46:51 +0200
+Message-ID: <CACRpkda0Tk9SaO6dySBC3ONpH1nQb8imYkgYGA7dTO8em=Dr=g@mail.gmail.com>
+References: <1434718697-31335-1-git-send-email-michael@smart-africa.com>
+	<1434718697-31335-2-git-send-email-michael@smart-africa.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:34140 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756359AbbGTI2w convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jul 2015 04:28:52 -0400
-Received: by obre1 with SMTP id e1so97654103obr.1
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2015 01:28:51 -0700 (PDT)
-In-Reply-To: <20150720065605.GP7013@pengutronix.de>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33509 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756387AbbGTIqv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jul 2015 04:46:51 -0400
+Received: by obdeg2 with SMTP id eg2so1777070obd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2015 01:46:51 -0700 (PDT)
+In-Reply-To: <1434718697-31335-2-git-send-email-michael@smart-africa.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Michael van der Westhuizen <michael@smart-africa.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Kamlakant Patel <kamlakant.patel@linaro.org>
 
-On Mon, Jul 20, 2015 at 8:56 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Fri, Jun 19, 2015 at 2:58 PM, Michael van der Westhuizen
+<michael@smart-africa.com> wrote:
 
->> I finally found this message in my messy inbox. I'm a bit up over my
->> ears in patches...
+> The basic MMIO gpio driver is unaware of the pinctrl subsystem,
+> and this lack of pinctrl awareness extends to drivers using bgpio
+> unless the drivers handle pinctrl interaction by overriding the
+> request and free methods of gpiochip.
 >
-> This somehow failed.  My tag is merged in your devel branch, but this
-> contains several commits missing in your for-next. Is this intended?
+> Since pinctrl consumer interfaces are stubbed when pinctrl is not
+> enabled this implementation is very simple, and there is no
+> behaviour change when pinctrl is not enabled.
+>
+> Tested on picoXcell pc3x3 using gpio-dwapb.
+>
+> Signed-off-by: Michael van der Westhuizen <michael@smart-africa.com>
 
-Ah wait I see.
+>  static int bgpio_request(struct gpio_chip *chip, unsigned gpio_pin)
+>  {
+>         if (gpio_pin < chip->ngpio)
+> -               return 0;
+> +               return pinctrl_request_gpio(chip->base + gpio_pin);
+>
+>         return -EINVAL;
+>  }
+>
+> +static void bgpio_free(struct gpio_chip *chip, unsigned gpio_pin)
+> +{
+> +       if (gpio_pin < chip->ngpio)
+> +               pinctrl_free_gpio(chip->base + gpio_pin);
+> +}
 
-I pushed it to devel for testing, but the 0day build was not completing
-so I did not get green light to push it to next.
+I found a problem with this patch unfortunately.
 
-I'll push to linux-next now.
+If you have several MMIO controllers on the same system, some
+that use a backing pin controller and some that doesn't, this
+will not work, because all instances will call
+pinctrl_[request|free]_gpio() regardless if there is a pin
+controller behind it or not.
+
+Can you please augment the driver to handle this... I don't
+know the best way for boardfiles, but I guess (see
+drivers/gpio/gpio-pl061.c for exampe):
+
+- In struct bgpio_chip, introduce bool uses_pinctrl
+
+- Assume no backing pin controller so this will be false
+  by default (propbably no code needed)
+
+- Only call pinctrl_[request|free]_gpio if uses_pinctrl
+  is true
+
+- Explicitly set it to true for drivers that have backing pin
+  control (like Jonas' system) or pass that flag from
+  platform data.
+
+- A quirk like this for DT enabled systems:
+          if (of_property_read_bool(dev->of_node, "gpio-ranges"))
+                chip->uses_pinctrl = true;
+
+I need to move the BGPIO header to include/linux/gpio too...
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
