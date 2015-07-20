@@ -1,30 +1,65 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/7] pinctrl: UniPhier: add UniPhier pinctrl core support
-Date: Mon, 20 Jul 2015 11:18:45 +0200
-Message-ID: <CACRpkdZuuAzjcXupuHsi6BSkZzomaR6uVafWsVTS_BjiHG8u1g@mail.gmail.com>
-References: <1436841607-7556-1-git-send-email-yamada.masahiro@socionext.com>
-	<1436841607-7556-2-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdZFfypZfDAmULcC1_q_bYD-nsh2H0rMAqo+ncWsBx6m=A@mail.gmail.com>
-	<CAK7LNARjFdM6du3tM7RfdXEHktM=4z6XrYag9DM-z+Y0o79jNA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNARjFdM6du3tM7RfdXEHktM=4z6XrYag9DM-z+Y0o79jNA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 1/4] pinctrl: sunxi: Use common functions to change irq_chip and handler
+Date: Mon, 20 Jul 2015 14:41:11 +0200
+Message-ID: <1437396074-15791-2-git-send-email-maxime.ripard@free-electrons.com>
+References: <1437396074-15791-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:50539 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752523AbbGTMpF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jul 2015 08:45:05 -0400
+In-Reply-To: <1437396074-15791-1-git-send-email-maxime.ripard@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 
-On Sun, Jul 19, 2015 at 6:19 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+The current code uses some custom variable affectations, while we have
+common functions to do exactly that. Move to the common functions.
 
-> I saw the applied patch and noticed "Changes in v2"
-> was moved to git-description.
-(...)
-> Do we need to record such stuff in the git history?
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-There is no "we", it is up to the subsystem maintainer what
-s/he wants to record in the commit blurb.
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index f09573e13203..777669d0a955 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -588,7 +588,6 @@ static void sunxi_pinctrl_irq_release_resources(struct irq_data *d)
+ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	struct irq_desc *desc = container_of(d, struct irq_desc, irq_data);
+ 	u32 reg = sunxi_irq_cfg_reg(d->hwirq);
+ 	u8 index = sunxi_irq_cfg_offset(d->hwirq);
+ 	unsigned long flags;
+@@ -615,16 +614,17 @@ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (type & IRQ_TYPE_LEVEL_MASK) {
+-		d->chip = &sunxi_pinctrl_level_irq_chip;
+-		desc->handle_irq = handle_fasteoi_irq;
+-	} else {
+-		d->chip = &sunxi_pinctrl_edge_irq_chip;
+-		desc->handle_irq = handle_edge_irq;
+-	}
+-
+ 	spin_lock_irqsave(&pctl->lock, flags);
+ 
++	if (type & IRQ_TYPE_LEVEL_MASK)
++		__irq_set_chip_handler_name_locked(d->irq,
++						   &sunxi_pinctrl_level_irq_chip,
++						   handle_fasteoi_irq, NULL);
++	else
++		__irq_set_chip_handler_name_locked(d->irq,
++						   &sunxi_pinctrl_edge_irq_chip,
++						   handle_edge_irq, NULL);
++
+ 	regval = readl(pctl->membase + reg);
+ 	regval &= ~(IRQ_CFG_IRQ_MASK << index);
+ 	writel(regval | (mode << index), pctl->membase + reg);
+-- 
+2.4.5
 
-Yours,
-Linus Walleij
