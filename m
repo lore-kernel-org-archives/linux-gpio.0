@@ -1,67 +1,45 @@
 From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
 	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 3/9] gpio: Allow hogged gpios to be requested
-Date: Mon, 20 Jul 2015 08:32:49 +0200
-Message-ID: <20150720063249.GM7013@pengutronix.de>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-4-git-send-email-mpa@pengutronix.de>
- <20150717202702.GK7013@pengutronix.de>
- <20150719140142.GV26287@pengutronix.de>
+Subject: Re: [PULL gpio-for-next] gpio: make flags mandatory for gpiod_get
+ functions
+Date: Mon, 20 Jul 2015 08:56:05 +0200
+Message-ID: <20150720065605.GP7013@pengutronix.de>
+References: <1434404169-4639-1-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20150706090759.GS11824@pengutronix.de>
+ <20150708105138.GD1426@pengutronix.de>
+ <20150715062825.GC1426@pengutronix.de>
+ <CAAVeFuKTwuO6O106oq0=f6eWAaa1NTiOJZ8Pw-VRG_i0E+4g+w@mail.gmail.com>
+ <CACRpkdbDtg=Ssod4K881juitv4fu3iPO8TkE+ZqEALKMqeTwDA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:51393 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43535 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751960AbbGTGcx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jul 2015 02:32:53 -0400
+	with ESMTP id S1755290AbbGTG4J (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Jul 2015 02:56:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20150719140142.GV26287@pengutronix.de>
+In-Reply-To: <CACRpkdbDtg=Ssod4K881juitv4fu3iPO8TkE+ZqEALKMqeTwDA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
-Hello Markus,
+Hello Linus,
 
-On Sun, Jul 19, 2015 at 04:01:42PM +0200, Markus Pargmann wrote:
-> On Fri, Jul 17, 2015 at 10:27:02PM +0200, Uwe Kleine-K=F6nig wrote:
-> > On Fri, Jul 17, 2015 at 11:32:44AM +0200, Markus Pargmann wrote:
-> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > index bf4bd1d120c3..9f402b159cbe 100644
-> > > --- a/drivers/gpio/gpiolib.c
-> > > +++ b/drivers/gpio/gpiolib.c
-> > > @@ -798,7 +798,8 @@ static int __gpiod_request(struct gpio_desc *=
-desc, const char *label)
-> > >  	 * before IRQs are enabled, for non-sleeping (SOC) GPIOs.
-> > >  	 */
-> > > =20
-> > > -	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) =3D=3D 0) {
-> > > +	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) =3D=3D 0 ||
-> > > +	    test_and_clear_bit(FLAG_IS_HOGGED, &desc->flags) =3D=3D 1) =
-{
-> > >  		desc_set_label(desc, label ? : "?");
-> > >  		status =3D 0;
-> > I don't like this patch. IMHO hogging is a "use" of a GPIO that sho=
-uld
-> > prevent it being requested.
+On Fri, Jul 17, 2015 at 02:28:25PM +0200, Linus Walleij wrote:
+> On Wed, Jul 15, 2015 at 8:39 AM, Alexandre Courbot <gnurou@gmail.com>=
+ wrote:
+> > I'm all for taking this into -next ASAP then. Linus has control ove=
+r
+> > the tree though, so his action is required.
 >=20
-> I disagree with you here. The original patch stated in its descriptio=
-n
-> that it was designed to initialize GPIOs. In my understanding this do=
-es
-> not necessarily mean that a hogged GPIO has to be blocked forever.
-Assume for a moment I can agree with "not necessarily". But now, what
-about the cases where a hogged GPIO should be blocked?
-IMHO, if you want to drive the GPIO from userspace anyhow, you don't
-need to add a hog for it.
-
-> The IS_HOGGED flag is cleared at the same time it is tested so only o=
-ne
-> consumer can request one hogged GPIO. The GPIO is not considered to b=
-e
-> hogged after it is normally requested.
-You're right here, I missed the and_clear_bit part on the test.
+> I am pushing it today.
+>=20
+> I finally found this message in my messy inbox. I'm a bit up over my
+> ears in patches...
+This somehow failed.  My tag is merged in your devel branch, but this
+contains several commits missing in your for-next. Is this intended?
 
 Best regards
 Uwe
