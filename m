@@ -1,112 +1,75 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [Intel-gfx] [v3 0/7] Crystalcove (CRC) PMIC based panel and pwm
- control
-Date: Tue, 21 Jul 2015 09:24:01 +0200
-Message-ID: <20150721072401.GR16722@phenom.ffwll.local>
-References: <1435309330-50725-1-git-send-email-shobhit.kumar@intel.com>
- <20150626163137.GB30960@phenom.ffwll.local>
- <20150626174756.GC5176@intel.com>
- <20150628221836.GH4633@windriver.com>
- <CAAbrOmcOt_XKJP+2+=vmezSXLTU0woavsNDreU7haK-ADoE4JQ@mail.gmail.com>
- <CAAbrOmd5woeZ3jcWq-Xz7f1H5go-RujaUqO=2VSfth5MO60tRA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
+Date: Tue, 21 Jul 2015 18:00:37 +0900
+Message-ID: <CAAVeFuL5F=Y2boCWp_TZEAN-kdT-Ob9r-h1-eNVDjBHftFYkeg@mail.gmail.com>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de> <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:35543 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752506AbbGUHVW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2015 03:21:22 -0400
-Received: by wibxm9 with SMTP id xm9so111604353wib.0
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2015 00:21:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAAbrOmd5woeZ3jcWq-Xz7f1H5go-RujaUqO=2VSfth5MO60tRA@mail.gmail.com>
+Received: from mail-la0-f49.google.com ([209.85.215.49]:33892 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752346AbbGUJA6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2015 05:00:58 -0400
+Received: by lahe2 with SMTP id e2so50760792lah.1
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2015 02:00:57 -0700 (PDT)
+In-Reply-To: <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shobhit Kumar <kumar@shobhit.info>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Daniel Vetter <daniel.vetter@intel.com>, linux-pwm <linux-pwm@vger.kernel.org>, Paul Bolle <pebolle@tiscali.nl>, Samuel Ortiz <sameo@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Jani Nikula <jani.nikula@intel.com>, Shobhit Kumar <shobhit.kumar@intel.com>, intel-gfx <intel-gfx@lists.freedesktop.org>, Varka Bhadram <varkabhadram@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-gpio <linux-gpio@vger.kernel.org>, Brain WrecK <bloften80@gmail.com>, Povilas Staniulis <wdmonster@gmail.com>, Lee Jones <lee.jones@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, Jul 21, 2015 at 12:43:48PM +0530, Shobhit Kumar wrote:
-> On Fri, Jul 10, 2015 at 6:36 PM, Shobhit Kumar <kumar@shobhit.info> w=
-rote:
-> > On Mon, Jun 29, 2015 at 3:48 AM, Paul Gortmaker
-> > <paul.gortmaker@windriver.com> wrote:
-> >> [Re: [Intel-gfx] [v3 0/7] Crystalcove (CRC) PMIC based panel and p=
-wm control] On 26/06/2015 (Fri 20:47) Ville Syrj=E4l=E4 wrote:
-> >>
-> >>> On Fri, Jun 26, 2015 at 06:31:37PM +0200, Daniel Vetter wrote:
-> >>> > On Fri, Jun 26, 2015 at 02:32:03PM +0530, Shobhit Kumar wrote:
-> >>> > > Hi,
-> >>> > > Next update of the series reviewed at
-> >>> > > https://lkml.org/lkml/2015/6/22/155
-> >>> > >
-> >>> > > Major changes are few review comments from Varka and Ville be=
-ing addressed. Also except
-> >>> > > for intel-gfx patches, all patches reviesion history is moved=
- out of commit message.
-> >>> > >
-> >>> > > Hope this series finally finds its mark.
-> >>> > >
-> >>> > > Regards
-> >>> > > Shobhit
-> >>> > >
-> >>> > > Shobhit Kumar (7):
-> >>> > >   gpiolib: Add support for removing registered consumer looku=
-p table
-> >>> > >   mfd: intel_soc_pmic_core: Add lookup table for Panel Contro=
-l as GPIO
-> >>> > >     signal
-> >>> > >   mfd: intel_soc_pmic_crc: Add PWM cell device for Crystalcov=
-e PMIC
-> >>> > >   mfd: intel_soc_pmic_core: ADD PWM lookup table for CRC PMIC=
- based PWM
-> >>> > >   pwm: crc: Add Crystalcove (CRC) PWM driver
-> >>> > >   drm/i915: Use the CRC gpio for panel enable/disable
-> >>> > >   drm/i915: Backlight control using CRC PMIC based PWM driver
-> >>> >
-> >>> > I think we have r-b/acks on all the patches now. Ok if I pull t=
-his in
-> >>> > through drm-intel.git for 4.3? Or should I make a topic branch =
-with tag
-> >>> > and then send out pull requests to everyone? Or will each maint=
-ainer merge
-> >>> > on their own since it's all only coupled at runtime anyway? Any=
- of these
-> >>> > would suit me.
-> >>>
-> >>> I forgot to mention that I had a build failure due to
-> >>> builtin_platform_driver() when I tried this (just changed it to
-> >>> module_platform_driver() to get past it). So I'm not sure if this
-> >>> now depends on some tree which isn't included in -nightly...
-> >>
-> >> builtin_platform_register does not yet exist in mainline; as Paul =
-(the
-> >> other one) said earlier.  So you can either open-code what it does=
- for
-> >> now, or use  module_platform_register.  If you do the latter, then
-> >> ensure you (temorarily) also include module.h or you risk addition=
-al
-> >> breakage in the future.
-> >>
-> >
-> > Guess its in mainline now. Whats the plan for the merge of these pa=
-tches ?
-> >
->=20
-> Do I need to do anything further on these patches ? Daniel can you
-> help in the next steps.
+On Sat, Jul 18, 2015 at 5:05 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Jul 17, 2015 at 11:32 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+>
+>> This is a proposal to add GPIO names to the kernel based on devicetree
+>> descriptions.
+>>
+>> This series adds GPIO name support. Until now it is only possible to use names
+>> for already requested GPIOs (for example what they are used for). It is not
+>> possible to identify GPIOs by a name although most of them have a name for
+>> example in the schematics of the board. This makes it difficult to identify
+>> a specific GPIO from userspace.
+>>
+>> As the GPIO name information is a hardware description this series uses the
+>> devicetree bindings introduced by the GPIO hogging mechanism, specifically
+>> 'line-name', to identify GPIOs. The sysfs 'export' file is changed to accept
+>> names as fallback. The gpio numbers still have a higher priority to ensure
+>> backwards compatibility.
+>>
+>> Exported GPIOs are still using their number as directory name (gpio<ID>). But the
+>> directories now contain a 'name' file which is '(null)' for non-existent names
+>> and the name otherwise.
+>>
+>> This series can be used to have an easy name mapping for udev with a quite
+>> simple rule similar to this:
+>>         SUBSYSTEM=="gpio", KERNEL=="gpio*", ATTR{name}!="(null)", ACTION=="add", \
+>>         PROGRAM+="/bin/sh -c 'mkdir -p /dev/gpios; rm -f /dev/gpios/$attr{name}; ln -s /sys%p/ /dev/gpios/$attr{name}"
+>> With this rule udev adds a link for each exported GPIO with a name into
+>> /dev/gpios/. This way it is not necessary to know the number of a GPIO to use
+>> it.
+>
+> I must say I like this series.
+>
+> Because it makes the GPIO sysfs ABI *less* insane. Especially
+> I like the patch that makes a distinction between "label" (use)
+> and "name" (the name of the actual line). That illustrates clearly
+> that this is thought-through.
+>
+> However I still have some doubts as it will expand the sysfs ABI,
+> and we have discussed a char device for GPIO chips as a better
+> alternative, for example since these can do get/set multiple GPIOs
+> with a single context switch (ioctl), whereas sysfs is "one value per file"
+> and would be able to expose some flags better.
 
-I'm pulling them into a topic branch and then get it merged through
-drm-intel.git. If other maintainers want to I can send them a pull requ=
-est
-for that topic branch too.
--Daniel
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Even if we introduce a new interface (and I don't see traction towards
+this yet), sysfs is just too convenient for 90% of the cases to leave
+it borderline-unusable as it is currently. The obligation to use
+global numbers that potentially change every boot is getting us
+complaints every week or so - this series sounds like a good way to
+reduce our inbox volume, and if only for that, I encourage it being
+pursued. :)
+
+It will also not get in the way of a new user-space interface, so why
+refrain from these extra ~90 lines of code?
+
+Alex.
