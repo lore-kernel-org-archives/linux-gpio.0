@@ -1,50 +1,44 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: remove unneeded initializer in gpiochip_add_to_list()
-Date: Tue, 21 Jul 2015 14:50:49 +0900
-Message-ID: <CAAVeFuKMvTmwkPdVB4-6-sr1ErZ6FUzc+_UEvhz=Nq3Na=N5NA@mail.gmail.com>
-References: <1437457540-1778-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 2/2] pinctrl: use dev_err() to show message in pinmux_func_name_to_selector()
+Date: Tue, 21 Jul 2015 15:25:27 +0900
+Message-ID: <1437459927-5278-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1437459927-5278-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:36441 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751027AbbGUFvK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2015 01:51:10 -0400
-In-Reply-To: <1437457540-1778-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from conuserg011.nifty.com ([202.248.44.37]:50034 "EHLO
+	conuserg011-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751802AbbGUGZ5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2015 02:25:57 -0400
+In-Reply-To: <1437459927-5278-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-On Tue, Jul 21, 2015 at 2:45 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> This variable is used as an iterator and initialized in the
-> list_for_each() loop.
->
+Use dev_err() rather than pr_err() to display the error message.
 
-Looks good, thanks!
+pinctrl_dev_get_name(pctldev) is no longer necessary because
+dev_err() shows which device the message is related to.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  drivers/gpio/gpiolib.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index bf4bd1d..adb03c6 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -190,7 +190,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
->   */
->  static int gpiochip_add_to_list(struct gpio_chip *chip)
->  {
-> -       struct list_head *pos = &gpio_chips;
-> +       struct list_head *pos;
->         struct gpio_chip *_chip;
->         int err = 0;
->
-> --
-> 1.9.1
->
+ drivers/pinctrl/pinmux.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 766ec57..18ce18c 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -322,8 +322,7 @@ static int pinmux_func_name_to_selector(struct pinctrl_dev *pctldev,
+ 		selector++;
+ 	}
+ 
+-	pr_err("%s does not support function %s\n",
+-	       pinctrl_dev_get_name(pctldev), function);
++	dev_err(pctldev->dev, "function '%s' not supported\n", function);
+ 	return -EINVAL;
+ }
+ 
+-- 
+1.9.1
+
