@@ -1,80 +1,192 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
-Date: Tue, 21 Jul 2015 12:10:37 +0200
-Message-ID: <20150721101037.GB20023@pengutronix.de>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
- <CAAVeFuL5F=Y2boCWp_TZEAN-kdT-Ob9r-h1-eNVDjBHftFYkeg@mail.gmail.com>
- <20150721095457.GA9981@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1] gpio: mpc8xxx: Convert mpc8xxx_gpio_chip.lock to raw_spinlock
+Date: Tue, 21 Jul 2015 15:54:30 +0200
+Message-ID: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:33895 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754336AbbGUKKk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Jul 2015 06:10:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20150721095457.GA9981@pengutronix.de>
+Received: from webbox1416.server-home.net ([77.236.96.61]:36705 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754345AbbGUODN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 21 Jul 2015 10:03:13 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
+mpc8xxx_gpio_chip.lock needs to be a real spinlock in preempt-rt.
+Especially the interrupt related functions can not be converted to a
+sleeping lock.
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+ drivers/gpio/gpio-mpc8xxx.c | 48 ++++++++++++++++++++++-----------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-Hi,
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 20aa66f..72cc616 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -32,7 +32,7 @@
+ 
+ struct mpc8xxx_gpio_chip {
+ 	struct of_mm_gpio_chip mm_gc;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 
+ 	/*
+ 	 * shadowed data register to be able to clear/set output pins in
+@@ -95,7 +95,7 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	if (val)
+ 		mpc8xxx_gc->data |= mpc8xxx_gpio2mask(gpio);
+@@ -104,7 +104,7 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ 	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+ 
+ static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
+@@ -115,7 +115,7 @@ static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
+ 	unsigned long flags;
+ 	int i;
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	for (i = 0; i < gc->ngpio; i++) {
+ 		if (*mask == 0)
+@@ -130,7 +130,7 @@ static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
+ 
+ 	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+ 
+ static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+@@ -139,11 +139,11 @@ static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -156,11 +156,11 @@ static int mpc8xxx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val
+ 
+ 	mpc8xxx_gpio_set(gc, gpio, val);
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -206,11 +206,11 @@ static void mpc8xxx_irq_unmask(struct irq_data *d)
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	setbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+ 
+ static void mpc8xxx_irq_mask(struct irq_data *d)
+@@ -219,11 +219,11 @@ static void mpc8xxx_irq_mask(struct irq_data *d)
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+ 	clrbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+-	spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+ 
+ static void mpc8xxx_irq_ack(struct irq_data *d)
+@@ -242,17 +242,17 @@ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 		setbits32(mm->regs + GPIO_ICR,
+ 			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+-		spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 		clrbits32(mm->regs + GPIO_ICR,
+ 			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+-		spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	default:
+@@ -282,22 +282,22 @@ static int mpc512x_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 	case IRQ_TYPE_LEVEL_LOW:
+-		spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 		clrsetbits_be32(reg, 3 << shift, 2 << shift);
+-		spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_RISING:
+ 	case IRQ_TYPE_LEVEL_HIGH:
+-		spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 		clrsetbits_be32(reg, 3 << shift, 1 << shift);
+-		spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
++		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 		clrbits32(reg, 3 << shift);
+-		spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
++		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	default:
+@@ -359,7 +359,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, mpc8xxx_gc);
+ 
+-	spin_lock_init(&mpc8xxx_gc->lock);
++	raw_spin_lock_init(&mpc8xxx_gc->lock);
+ 
+ 	mm_gc = &mpc8xxx_gc->mm_gc;
+ 	gc = &mm_gc->gc;
+-- 
+2.3.6
 
-On Tue, Jul 21, 2015 at 11:54:57AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> Hello,
->=20
-> On Tue, Jul 21, 2015 at 06:00:37PM +0900, Alexandre Courbot wrote:
-> > On Sat, Jul 18, 2015 at 5:05 AM, Linus Walleij <linus.walleij@linaro.or=
-g> wrote:
-> > > I must say I like this series.
-> I think apart from patch 3 which I'd like to have discussed a bit more,
-> I like it, too. I didn't try, but the series should work fine without
-> patch 3 such that this patch can be discussed separately and the
-> remaining 8 patches can go in?
-
-This series should work without patch 3, yes. Just remove the hogging
-keyword from the gpios defined in the devicetree.
-However some test coverage for this series would be good.
-
-Best regards,
-
-Markus
-
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVrhqcAAoJEEpcgKtcEGQQAq0P/jRBEz2g8DtmWjGHu1CMKv5Y
-Tu1QcL2vKtzXgi+XvPbtV6KjHFPLpL8kCyMn4oap97hZ8iPx2khk54C0M3tVOYag
-KAFq9eFZ4AANcCQMcTu4KImzQ3C3FQMdQ+PA+Dj7pH4ZuANVj9mptafxtRCYXOrA
-rPKln5/IzDYkZuyWN91wSZzRhoK+sccAs0k6x6t+sHRg4f5fTQPK3YSaPQpL54IW
-xlrbOMEq/W0N+E7e2cjDQqKQkNRwiVlG29DV/ocRwN5V2Z4HjSndz/9JTOqBVp8Y
-a5F7ps4NQk99FMKevYsrC2LhNQWlFx0Fjl8pDKAXuaDLrb6mFEZfdHRbMjj+Hfqm
-gXnNnzob6TyMEhaSVt0tjHdl0zHkoaKM3MRyarhKNFhJxDUvc++fiSsHCRTKpqM6
-MM2b+90d9mEtIo4+XTj3VC25Cfp6oxMZFu/WYA75MpNdfoG0aoHwYM0feEDunUab
-eFi9tAMqtKg6jbW7Sm03nGRaGFyqQF6nzyu73u42IGaoR6LWpM1femtLdzGHQH9X
-a2kcpSW9hLrgG5KkEr3mgkoSZHDW5yh7v6C6BuUoKOU86rDJpusEv/BzWn+gepLn
-rSSnHltDHn+iTAm9k5hhQcSfn4+iflvtaKTnEuTBwuEWGwD5jxhETvgme7psQDyr
-546UvnXMWUg+hOgjyhGx
-=jJ4m
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
