@@ -1,145 +1,91 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/5] pinctrl: nomadik: find chip from local array
-Date: Thu, 23 Jul 2015 09:09:29 +0200
-Message-ID: <1437635369-23369-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 3/5] pinctrl: nomadik: assure GPIO chips are populated
+Date: Thu, 23 Jul 2015 09:09:38 +0200
+Message-ID: <1437635378-23415-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:33241 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751173AbbGWHJf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jul 2015 03:09:35 -0400
-Received: by laah7 with SMTP id h7so20295646laa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2015 00:09:33 -0700 (PDT)
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:35716 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbbGWHJq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jul 2015 03:09:46 -0400
+Received: by lblf12 with SMTP id f12so151304520lbl.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2015 00:09:45 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Instead of indexing around the GPIO ranges to find a chip, look directly
-in the local array of state containers for nmk_gpio_chip:s.
+If the pin controller probes before the GPIO driver it needs to
+populate the GPIO driver state containers ahead of the actual
+driver probe as the addresses are used by both halves of the
+driver.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 64 +++++++++++++------------------
- 1 file changed, 26 insertions(+), 38 deletions(-)
+ .../devicetree/bindings/pinctrl/ste,nomadik.txt    |  7 ++++--
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          | 25 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
+index f63fcb3ed352..2213802435e0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
++++ b/Documentation/devicetree/bindings/pinctrl/ste,nomadik.txt
+@@ -3,7 +3,9 @@ ST Ericsson Nomadik pinmux controller
+ Required properties:
+ - compatible: "stericsson,db8500-pinctrl", "stericsson,db8540-pinctrl",
+               "stericsson,stn8815-pinctrl"
+-- reg: Should contain the register physical address and length of the PRCMU.
++- nomadik-gpio-chips: array of phandles to the corresponding GPIO chips
++              (these have the register ranges used by the pin controller).
++- prcm: phandle to the PRCMU managing the back end of this pin controller
+ 
+ Please refer to pinctrl-bindings.txt in this directory for details of the
+ common pinctrl bindings used by client devices, including the meaning of the
+@@ -74,7 +76,8 @@ Example board file extract:
+ 
+ 	pinctrl@80157000 {
+ 		compatible = "stericsson,db8500-pinctrl";
+-		reg = <0x80157000 0x2000>;
++		nomadik-gpio-chips = <&gpio0>, <&gpio1>, <&gpio2>, <&gpio3>;
++		prcm = <&prcmu>;
+ 
+ 		pinctrl-names = "default";
+ 
 diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index c5b8c89dbe1a..f068583fdc9b 100644
+index f068583fdc9b..d1020256c999 100644
 --- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
 +++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1356,35 +1356,40 @@ static int nmk_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
- 	return 0;
- }
+@@ -2021,6 +2021,31 @@ static int nmk_pinctrl_probe(struct platform_device *pdev)
+ 	if (version == PINCTRL_NMK_DB8540)
+ 		nmk_pinctrl_db8540_init(&npct->soc);
  
--static struct pinctrl_gpio_range *
--nmk_match_gpio_range(struct pinctrl_dev *pctldev, unsigned offset)
-+static struct nmk_gpio_chip *find_nmk_gpio_from_pin(unsigned pin)
- {
--	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
- 	int i;
-+	struct nmk_gpio_chip *nmk_gpio;
- 
--	for (i = 0; i < npct->soc->gpio_num_ranges; i++) {
--		struct pinctrl_gpio_range *range;
--
--		range = &npct->soc->gpio_ranges[i];
--		if (offset >= range->pin_base &&
--		    offset <= (range->pin_base + range->npins - 1))
--			return range;
-+	for(i = 0; i < NMK_MAX_BANKS; i++) {
-+		nmk_gpio = nmk_gpio_chips[i];
-+		if (!nmk_gpio)
-+			continue;
-+		if (pin >= nmk_gpio->chip.base &&
-+			pin < nmk_gpio->chip.base + nmk_gpio->chip.ngpio)
-+			return nmk_gpio;
- 	}
- 	return NULL;
- }
- 
-+static struct gpio_chip *find_gc_from_pin(unsigned pin)
-+{
-+	struct nmk_gpio_chip *nmk_gpio = find_nmk_gpio_from_pin(pin);
++	/*
++	 * Since we depend on the GPIO chips to provide clock and register base
++	 * for the pin control operations, make sure that we have these
++	 * populated before we continue. Follow the phandles to instantiate
++	 * them. The GPIO portion of the actual hardware may be probed before
++	 * or after this point: it shouldn't matter as the APIs are orthogonal.
++	 */
++	for (i = 0; i < NMK_MAX_BANKS; i++) {
++		struct device_node *gpio_np;
++		struct nmk_gpio_chip *nmk_chip;
 +
-+	if (nmk_gpio)
-+		return &nmk_gpio->chip;
-+	return NULL;
-+}
++		gpio_np = of_parse_phandle(np, "nomadik-gpio-chips", i);
++		if (gpio_np) {
++			dev_info(&pdev->dev,
++				 "populate NMK GPIO %d \"%s\"\n",
++				 i, gpio_np->name);
++			nmk_chip = nmk_gpio_populate_chip(gpio_np, pdev);
++			if (IS_ERR(nmk_chip))
++				dev_err(&pdev->dev,
++					"could not populate nmk chip struct "
++					"- continue anyway\n");
++			of_node_put(gpio_np);
++		}
++	}
 +
- static void nmk_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
- 		   unsigned offset)
- {
--	struct pinctrl_gpio_range *range;
--	struct gpio_chip *chip;
-+	struct gpio_chip *chip = find_gc_from_pin(offset);
- 
--	range = nmk_match_gpio_range(pctldev, offset);
--	if (!range || !range->gc) {
-+	if (!chip) {
- 		seq_printf(s, "invalid pin offset");
- 		return;
- 	}
--	chip = range->gc;
- 	nmk_gpio_dbg_show_one(s, pctldev, chip, offset - chip->base, offset);
- }
- 
-@@ -1729,25 +1734,16 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned function,
- 	}
- 
- 	for (i = 0; i < g->npins; i++) {
--		struct pinctrl_gpio_range *range;
- 		struct nmk_gpio_chip *nmk_chip;
--		struct gpio_chip *chip;
- 		unsigned bit;
- 
--		range = nmk_match_gpio_range(pctldev, g->pins[i]);
--		if (!range) {
-+		nmk_chip = find_nmk_gpio_from_pin(g->pins[i]);
-+		if (!nmk_chip) {
- 			dev_err(npct->dev,
- 				"invalid pin offset %d in group %s at index %d\n",
- 				g->pins[i], g->name, i);
- 			goto out_glitch;
- 		}
--		if (!range->gc) {
--			dev_err(npct->dev, "GPIO chip missing in range for pin offset %d in group %s at index %d\n",
--				g->pins[i], g->name, i);
--			goto out_glitch;
--		}
--		chip = range->gc;
--		nmk_chip = container_of(chip, struct nmk_gpio_chip, chip);
- 		dev_dbg(npct->dev, "setting pin %d to altsetting %d\n", g->pins[i], g->altsetting);
- 
- 		clk_enable(nmk_chip->clk);
-@@ -1863,25 +1859,17 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned pin,
- 	};
- 	struct nmk_pinctrl *npct = pinctrl_dev_get_drvdata(pctldev);
- 	struct nmk_gpio_chip *nmk_chip;
--	struct pinctrl_gpio_range *range;
--	struct gpio_chip *chip;
- 	unsigned bit;
- 	pin_cfg_t cfg;
- 	int pull, slpm, output, val, i;
- 	bool lowemi, gpiomode, sleep;
- 
--	range = nmk_match_gpio_range(pctldev, pin);
--	if (!range) {
--		dev_err(npct->dev, "invalid pin offset %d\n", pin);
-+	nmk_chip = find_nmk_gpio_from_pin(pin);
-+	if (!nmk_chip) {
-+		dev_err(npct->dev,
-+			"invalid pin offset %d\n", pin);
- 		return -EINVAL;
- 	}
--	if (!range->gc) {
--		dev_err(npct->dev, "GPIO chip missing in range for pin %d\n",
--			pin);
--		return -EINVAL;
--	}
--	chip = range->gc;
--	nmk_chip = container_of(chip, struct nmk_gpio_chip, chip);
- 
- 	for (i = 0; i < num_configs; i++) {
- 		/*
+ 	prcm_np = of_parse_phandle(np, "prcm", 0);
+ 	if (prcm_np)
+ 		npct->prcm_base = of_iomap(prcm_np, 0);
 -- 
 2.4.3
 
