@@ -1,37 +1,69 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] MIPS: Remove most of the custom gpio.h
-Date: Thu, 23 Jul 2015 20:25:53 +0200
-Message-ID: <55B131B1.10302@metafoo.de>
-References: <1437586416-14735-1-git-send-email-albeu@free.fr>
+From: Alonso Adrian <aalonso@freescale.com>
+Subject: RE: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc
+ lpsr
+Date: Thu, 23 Jul 2015 19:34:56 +0000
+Message-ID: <BN3PR03MB150926F2FABADED18630B27CA8820@BN3PR03MB1509.namprd03.prod.outlook.com>
+References: <1436295725-19011-1-git-send-email-aalonso@freescale.com>
+ <20150715072307.GM4119@tiger>
+ <BN3PR03MB1509DFB6A1513A23C48476CFA89A0@BN3PR03MB1509.namprd03.prod.outlook.com>
+ <20150716155034.GN4119@tiger>
+ <CAHrpEqQv4uzQ7+EnFV7rwnhAzaSnEfwoo+_SFRsvMh-nR3PdBw@mail.gmail.com>
+ <BN3PR03MB15095AD84AD5738B142F6F8CA8990@BN3PR03MB1509.namprd03.prod.outlook.com>
+ <20150717033429.GC12927@tiger>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1437586416-14735-1-git-send-email-albeu@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>, linux-mips@linux-mips.org
-Cc: Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Waldemar Brodkorb <wbx@openadk.org>, James Hogan <james.hogan@imgtec.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Levente Kurusa <levex@linux.com>, abdoulaye berthe <berthe.ab@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0119.outbound.protection.outlook.com ([65.55.169.119]:1024
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753346AbbGWTe7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Jul 2015 15:34:59 -0400
+In-Reply-To: <20150717033429.GC12927@tiger>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Zhi Li <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, Huang Anson <Anson.Huang@freescale.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yibin Gong <yibin.gong@freescale.com>
 
-On 07/22/2015 07:33 PM, Alban Bedel wrote:
-> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
-> index 54c80d4..3dc500c 100644
-> --- a/arch/mips/jz4740/gpio.c
-> +++ b/arch/mips/jz4740/gpio.c
-> @@ -262,18 +262,6 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t mask)
->   }
->   EXPORT_SYMBOL(jz_gpio_port_get_value);
->
-> -int gpio_to_irq(unsigned gpio)
-> -{
-> -	return JZ4740_IRQ_GPIO(0) + gpio;
-> -}
-> -EXPORT_SYMBOL_GPL(gpio_to_irq);
+Hi Shawn,
 
-This need to be hooked up the gpio_to_irq() callback of the gpio_chip struct 
-of this driver rather than completely removing it. Otherwise this 
-functionality will be broken.
+The approach you mention is already supported in FSL kernel tree see
+http://git.freescale.com/git/cgit.cgi/imx/linux-2.6-imx.git/commit/?h=imx_3.14.38_6ul7d_beta&id=a37ea06ddccbefb8660af0ac259c30d98540bdc2
 
-Similar for other platforms which implement the function.
+I will rework and proposed a new patch series soon.
 
-- Lars
+Thanks for your reviews :)
+
+Regards
+Adrian
+
+> -----Original Message-----
+> From: linux-gpio-owner@vger.kernel.org [mailto:linux-gpio-
+> owner@vger.kernel.org] On Behalf Of Shawn Guo
+> Sent: Thursday, July 16, 2015 10:34 PM
+> To: Alonso Lazcano Adrian-B38018
+> Cc: Zhi Li; devicetree@vger.kernel.org; Li Frank-B20596; Garg Nitin-B37173;
+> linus.walleij@linaro.org; linux-gpio@vger.kernel.org; robh+dt@kernel.org;
+> shawn.guo@linaro.org; Huang Yongcai-B20788; linux-arm-
+> kernel@lists.infradead.org; Gong Yibin-B38343
+> Subject: Re: [PATCH][v3] ARM: imx: pinctrl-imx: imx7d: add support for iomuxc
+> lpsr
+> 
+> On Thu, Jul 16, 2015 at 08:39:33PM +0000, Alonso Adrian wrote:
+> > Hi All,
+> >
+> > I will sent a new patch series including documentation for pad group
+> > id encoding in
+> > Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+> >
+> > Thanks for your comments :)
+> 
+> Do not get me wrong.  The problem with the patch is not merely missing the
+> document update.
+> 
+> Shawn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in the body
+> of a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
