@@ -1,36 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
 Subject: Re: [PATCH] MIPS: Remove most of the custom gpio.h
-Date: Thu, 23 Jul 2015 15:03:36 +0200
-Message-ID: <CACRpkdYqwOymyK31rwhe7EQnSxLFrcy3PTBvCsyK1TR+J7=EQg@mail.gmail.com>
+Date: Thu, 23 Jul 2015 20:25:53 +0200
+Message-ID: <55B131B1.10302@metafoo.de>
 References: <1437586416-14735-1-git-send-email-albeu@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-ide-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1437586416-14735-1-git-send-email-albeu@free.fr>
-Sender: linux-ide-owner@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>
-Cc: Linux MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Waldemar Brodkorb <wbx@openadk.org>, James Hogan <james.hogan@imgtec.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Levente Kurusa <levex@linux.com>, abdoulaye berthe <berthe.ab@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alban Bedel <albeu@free.fr>, linux-mips@linux-mips.org
+Cc: Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Waldemar Brodkorb <wbx@openadk.org>, James Hogan <james.hogan@imgtec.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Levente Kurusa <levex@linux.com>, abdoulaye berthe <berthe.ab@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 22, 2015 at 7:33 PM, Alban Bedel <albeu@free.fr> wrote:
-
-> Currently CONFIG_ARCH_HAVE_CUSTOM_GPIO_H is defined for all MIPS
-> machines, and each machine type provides its own gpio.h. However only
-> the Alchemy machine really use the feature, all other machines only
-> use the default wrappers.
+On 07/22/2015 07:33 PM, Alban Bedel wrote:
+> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
+> index 54c80d4..3dc500c 100644
+> --- a/arch/mips/jz4740/gpio.c
+> +++ b/arch/mips/jz4740/gpio.c
+> @@ -262,18 +262,6 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t mask)
+>   }
+>   EXPORT_SYMBOL(jz_gpio_port_get_value);
 >
-> For most machine types we can just remove the custom gpio.h, as well
-> as the custom wrappers if some exists. A few more fixes are need in
-> a few drivers as they rely on linux/gpio.h to provides some machine
-> specific definitions, or used asm/gpio.h instead of linux/gpio.h for
-> the gpio API.
->
-> Signed-off-by: Alban Bedel <albeu@free.fr>
+> -int gpio_to_irq(unsigned gpio)
+> -{
+> -	return JZ4740_IRQ_GPIO(0) + gpio;
+> -}
+> -EXPORT_SYMBOL_GPL(gpio_to_irq);
 
-This is exactly what the kernel needs. Enjoy my:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This need to be hooked up the gpio_to_irq() callback of the gpio_chip struct 
+of this driver rather than completely removing it. Otherwise this 
+functionality will be broken.
 
-And feel free to merge this through the MIPS tree.
+Similar for other platforms which implement the function.
 
-Yours,
-Linus Walleij
+- Lars
