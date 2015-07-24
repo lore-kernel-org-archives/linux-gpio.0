@@ -1,192 +1,170 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
-Date: Thu, 23 Jul 2015 20:42:29 -0700
-Message-ID: <20150724034229.642.88156@quantum>
-References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
- <alpine.LNX.2.00.1507022338070.28322@localhost.localdomain>
- <alpine.DEB.2.11.1507030006280.3916@nanos> <2009463.YLtdMegFel@wuerfel>
- <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Fri, 24 Jul 2015 11:15:52 +0200
+Message-ID: <CAAObsKB+fV8rMyctBee83PHQBcXbubdMuMZo=WZv5ivSSaaP+w@mail.gmail.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
+In-Reply-To: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <r.herring@freescale.com>, Alexander Potashev <aspotashev@emcraft.com>, Frank Li <Frank.Li@freescale.com>, Jiri Slaby <jslaby@suse.cz>, linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Anson Huang <b20788@freescale.com>, devicetree@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Yuri Tikhonov <yur@emcraft.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Quoting Paul Osmialowski (2015-07-04 14:50:03)
-> Hi Arnd,
-> 
-> I'm attaching excerpt from Kinetis reference manual that may make 
-> situation clearer.
+On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+> the pin controller isn't available.
+>
+> Otherwise, the GPIO range wouldn't be set at all unless the pin
+> controller probed always before the GPIO chip.
+>
+> With this change, the probe of the GPIO chip will be deferred and will
+> be retried at a later point, hopefully once the pin controller has been
+> registered and probed already.
 
-Hi Paul,
+Ping :)
 
-Can you please post the patch in the body of the email instead of an
-attachment? It makes it easier to review. Another small nitpick is that
-the $SUBJECT for this patch might be better off as something like:
+Thanks,
 
-clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
+Tomeu
 
-At least it helps me find the patch I care about when skimming the
-series ;-)
-
-> 
-> These MCG and SIM registers are used only to determine configuration 
-> (clock fixed rates and clock signal origins) at run time.
-> 
-> Namely, the real MCGOUTCLK source (in the middle) which is the parent for 
-> core clock (CCLK) and peripheral clock (PCLK) is determined at run time by 
-> reading MCG registers, let me quote commit message from Emcraft git repo:
-> 
->       * Determine in run-time what oscillator module (OSC0 or OSC1) is used
->      as clock source for the main PLL.
-
-According to [0] there are three options: a 32k RTC osc clock and osc0
-both feed into a mux. You should model this 32k clock with the
-fixed-rate binding.
-
->       * When OSC1 is selected, assume its frequency to be 12 MHz on all
->      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1 on K70-SOM and
->      TWR-K70F120M boards).
-> 
-> In my .dts I'm trying to possibly follow real clock hierarchy, but to go 
-> anywhere behind MCGOUTCLK would require ability to rewrite .dtb e.g. by 
-> U-boot. But that's too demanding for any potential users of this BSP. So 
-> let's asume that MCGOUTCLK is the root clock and a parent for CCLK and 
-> PCLK.
-
-I'm confused. The point of device tree is to solve problems like this;
-i.e. board-specific differences such as different oscillator
-frequencies.
-
-OSC0 and OSC1 should each be a fixed-rate clock in your board-specific
-TWR-K70F120M DTS (not a chip-specific file). They do not belong in the
-cmu node, and they should use the "fixed-clock" binding. The 32k RTC osc
-can probably go in your chip-specific .dtsi as a fixed-rate clock since
-it appears to mandated in the reference manual[0].
-
-These three fixed-rate clocks are your root clock nodes. Customers only
-need to worry about this if they spin a board, and then they will need
-to populate the frequencies of OSC0 and OSC1 in their board-specific
-.dts.
-
-Please break clk-kinetis.c into two files:
-drivers/clk/kinetis/clk-mcg.c
-drivers/clk/kinetis/clk-sim.c
-
-Below is what your binding/dts should look like:
-
-{
-	osc0: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <50000000>;
-	};
-
-	osc1: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <12000000>;
-	};
-
-	rtc: clock {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <32768>;
-	};
-
-	soc: soc {
-		mcg: clock-controller@40064000 {
-			compatible = "fsl,kinetis-mcg";
-			clock-cells = <1>;
-			reg = <0x40064000 0x14>;
-			clocks = <&osc0>, <&osc1>, <&rtc>;
-			clock-names = "osc0", "osc1", "rtc";
-		};
-
-		sim: clock-controller@40047000 {
-			compatible = "fsl,kinetis-sim";
-			clock-cells = <1>;
-			reg = <0x40047000 0x1100>;
-			clocks = <&mcg MCG_MCGOUTCLK_DIV1>, <&mcg MCG_MCGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_DIV4>;
-			clock-names = "core", "bus", "flexbus", "flash";
-		};
-	};
-
-	uart0: serial@4006a000 {
-		compatible = "fsl,kinetis-lpuart";
-		reg = <0x4006a000 0x1000>;
-		clocks = <&sim SIM_SCGC4_UART1_CLK>;
-		clock-names = "gate";
-	};
-
-I removed the interrupts and dma stuff from the uart0 node for clarity.
-The above is the only style of binding that I have been accepting for
-some time; first declare the clock controller and establish its register
-space, and then consumers can consume clocks by providing the phandle to
-the controller plus an offset corresponding to a unique clock. The
-clock-names property makes it really easy to use with the clkdev stuff
-(e.g. clk_get()).
-
-I've covered this before on the mailing list so here is a link
-describing how the qcom bindings do it in detail:
-
-http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
-
-Technically you could encode the same bits as sub-nodes of the mcg and
-sim nodes, but the shared header is how the magic happens with the
-driver so it's best to keep the clock controller binding small and
-light.
-
-I think this means you can also get rid of kinetis_of_clk_get_name and
-kinetis_clk_gate_get but my brain is tired so I'll leave that as an
-exercise to the reader.
-
-[0] http://cache.freescale.com/files/microcontrollers/doc/ref_manual/K70P256M150SF3RM.pdf
-
-Regards,
-Mike
-
-> 
-> In my most recent version I added OSC0ERCLK explicitly as one more root 
-> clock, since it is also used directly (through CG reg. 1 bit 0) by 
-> Freescale fec network device whose in-tree driver I'm trying to make 
-> usable for Kinetis.
-> 
-> On Sat, 4 Jul 2015, Arnd Bergmann wrote:
-> 
-> > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
-> >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
-> >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
-> >>>
-> >>>> I wonder if you could move out the fixed rate clocks into their own
-> >>>> nodes. Are they actually controlled by the same block? If they are
-> >>>> just fixed, you can use the normal binding for fixed rate clocks
-> >>>> and only describe the clocks that are related to the driver.
-> >>>
-> >>> In my view having these clocks grouped together looks more convincing. After
-> >>> all, they all share the same I/O regs in order to read configuration.
-> >>
-> >> The fact that they share a register is not making them a group. That's
-> >> just a HW design decision and you need to deal with that by protecting
-> >> the register access, but not by trying to group them artificially at
-> >> the functional level.
-> >
-> > I'd disagree with that: The clock controller is the device that owns the
-> > registers and that should be one node in DT, as Paul's first version does.
-> >
-> > The part I'm still struggling with is understanding how the fixed-rate
-> > clocks are controlled through those registers. If they are indeed configured
-> > through the registers, the name is probably wrong and should be changed
-> > to whatever kind of non-fixed clock this is.
-> >
-> >       Arnd
-> >
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
+>
+> Changes in v2:
+> - Don't defer probe if the pinctrl node is disabled
+>
+>  drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
+>  drivers/gpio/gpiolib.c    |  5 ++++-
+>  include/linux/of_gpio.h   |  4 ++--
+>  3 files changed, 24 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 9a0ec48a4737..4e1f73b9136a 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
+>  EXPORT_SYMBOL(of_mm_gpiochip_remove);
+>
+>  #ifdef CONFIG_PINCTRL
+> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>  {
+>         struct device_node *np = chip->of_node;
+>         struct of_phandle_args pinspec;
+> @@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>         struct property *group_names;
+>
+>         if (!np)
+> -               return;
+> +               return 0;
+>
+>         group_names = of_find_property(np, group_names_propname, NULL);
+>
+> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>
+>                 pctldev = of_pinctrl_get(pinspec.np);
+>                 if (!pctldev)
+> -                       break;
+> +                       return -EPROBE_DEFER;
+>
+>                 if (pinspec.args[2]) {
+>                         if (group_names) {
+> @@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>                                         pinspec.args[1],
+>                                         pinspec.args[2]);
+>                         if (ret)
+> -                               break;
+> +                               return ret;
+>                 } else {
+>                         /* npins == 0: special range */
+>                         if (pinspec.args[1]) {
+> @@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>                         ret = gpiochip_add_pingroup_range(chip, pctldev,
+>                                                 pinspec.args[0], name);
+>                         if (ret)
+> -                               break;
+> +                               return ret;
+>                 }
+>         }
+> +
+> +       return 0;
+>  }
+>
+>  #else
+> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
+> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+>  #endif
+>
+> -void of_gpiochip_add(struct gpio_chip *chip)
+> +int of_gpiochip_add(struct gpio_chip *chip)
+>  {
+> +       int status;
+> +
+>         if ((!chip->of_node) && (chip->dev))
+>                 chip->of_node = chip->dev->of_node;
+>
+>         if (!chip->of_node)
+> -               return;
+> +               return 0;
+>
+>         if (!chip->of_xlate) {
+>                 chip->of_gpio_n_cells = 2;
+>                 chip->of_xlate = of_gpio_simple_xlate;
+>         }
+>
+> -       of_gpiochip_add_pin_range(chip);
+> +       status = of_gpiochip_add_pin_range(chip);
+> +       if (status)
+> +               return status;
+> +
+>         of_node_get(chip->of_node);
+>
+>         of_gpiochip_scan_hogs(chip);
+> +
+> +       return 0;
+>  }
+>
+>  void of_gpiochip_remove(struct gpio_chip *chip)
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index bf4bd1d120c3..a8cab335c0cc 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
+>         INIT_LIST_HEAD(&chip->pin_ranges);
+>  #endif
+>
+> -       of_gpiochip_add(chip);
+> +       status = of_gpiochip_add(chip);
+> +       if (status)
+> +               goto err_remove_chip;
+> +
+>         acpi_gpiochip_add(chip);
+>
+>         status = gpiochip_sysfs_register(chip);
+> diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+> index 69dbe312b11b..f3191828f037 100644
+> --- a/include/linux/of_gpio.h
+> +++ b/include/linux/of_gpio.h
+> @@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
+>                               struct of_mm_gpio_chip *mm_gc);
+>  extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
+>
+> -extern void of_gpiochip_add(struct gpio_chip *gc);
+> +extern int of_gpiochip_add(struct gpio_chip *gc);
+>  extern void of_gpiochip_remove(struct gpio_chip *gc);
+>  extern int of_gpio_simple_xlate(struct gpio_chip *gc,
+>                                 const struct of_phandle_args *gpiospec,
+> @@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
+>         return -ENOSYS;
+>  }
+>
+> -static inline void of_gpiochip_add(struct gpio_chip *gc) { }
+> +static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
+>  static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+>
+>  #endif /* CONFIG_OF_GPIO */
+> --
+> 2.4.3
+>
