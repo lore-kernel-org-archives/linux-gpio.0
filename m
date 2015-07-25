@@ -1,78 +1,67 @@
-From: Dirk Behme <dirk.behme@gmail.com>
-Subject: Re: [PATCH v2] Documentation: gpio: consumer: describe the con_id
- parameter
-Date: Sat, 25 Jul 2015 09:15:49 +0200
-Message-ID: <55B337A5.4020207@gmail.com>
-References: <1437200647-5138-1-git-send-email-dirk.behme@gmail.com> <CAAVeFuJZgiKu+8=Nugmsq9f70CLju2d=SJX6vHi8ismSHFh-Ag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: nomadik: split stn8815 UART0 pin groups
+Date: Sat, 25 Jul 2015 11:23:12 +0200
+Message-ID: <1437816192-7796-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:33787 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751513AbbGYHPw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2015 03:15:52 -0400
-Received: by wicmv11 with SMTP id mv11so84401016wic.0
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2015 00:15:51 -0700 (PDT)
-In-Reply-To: <CAAVeFuJZgiKu+8=Nugmsq9f70CLju2d=SJX6vHi8ismSHFh-Ag@mail.gmail.com>
+Received: from mail-la0-f48.google.com ([209.85.215.48]:32934 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752838AbbGYJXU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2015 05:23:20 -0400
+Received: by laah7 with SMTP id h7so25939383laa.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2015 02:23:19 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On 21.07.2015 07:12, Alexandre Courbot wrote:
-> On Sat, Jul 18, 2015 at 3:24 PM, Dirk Behme <dirk.behme@gmail.com> wrote:
->> The con_id parameter has to match the GPIO description and is automatically
->> extended by the GPIO suffix if not NULL. I had to look into the code to
->> understand this and properly find the GPIO I've been looking for, so document
->> this.
->>
->> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->> Changes in v2: Incorporate the review comments from Alexandre.
->>
->>   Documentation/gpio/consumer.txt | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
->> index 75542b9..5f7437b 100644
->> --- a/Documentation/gpio/consumer.txt
->> +++ b/Documentation/gpio/consumer.txt
->> @@ -39,6 +39,19 @@ device that displays digits), an additional index argument can be specified:
->>                                            const char *con_id, unsigned int idx,
->>                                            enum gpiod_flags flags)
->>
->> +The con_id string parameter has to be either NULL or the prefix of the GPIO
->> +suffixes ("gpios" or "gpio", automatically looked up by the gpiod functions
->> +internally):
->> +
->> +* If the GPIO description is just named with one of the GPIO suffixes
->> +  ("gpios" or "gpio"), use NULL.
->> +* If the GPIO description is prefixed with anything, e.g. "reset-gpios", use the
->> +  prefix without the "-" as con_id parameter (in this example "reset").
->> +
->> +In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
->> +("gpios" or "gpio") with the string passed in con_id to get the resulting string
->> +(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
->
-> Ah, there is still an issue with this description. It is correct as
-> far as GPIOs are assigned by the device tree ; but it turns out that
-> we have two other ways of assigning GPIOs: ACPI and platform data.
-> Have a look at the board.txt file which describes how this works. And
-> actually, instead of repeating the same stuff in consumer.txt, maybe
-> we can just redirect the reader to the other file?
+Split the UART pin groups so we can activate RX/TX, CTS/RTS and
+the modem pins (DCD, DSR, RI, DTR) as three different groups
+with function u0.
 
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-Please have a look to
-
-http://article.gmane.org/gmane.linux.kernel.gpio/9816
-
-http://article.gmane.org/gmane.linux.kernel.gpio/9815
-
-They should replace this patch, then.
-
-Best regards
-
-Dirk
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
+index a2de3b7a57a0..587b222f12f3 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
+@@ -271,9 +271,11 @@ static const struct pinctrl_pin_desc nmk_stn8815_pins[] = {
+  */
+ 
+ /* Altfunction A */
+-static const unsigned u0_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5,
+-	STN8815_PIN_C5, STN8815_PIN_A4, STN8815_PIN_B5, STN8815_PIN_D6,
+-	STN8815_PIN_C6, STN8815_PIN_B6 };
++static const unsigned u0txrx_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5 };
++static const unsigned u0ctsrts_a_1_pins[] = { STN8815_PIN_C5, STN8815_PIN_B6 };
++/* Modem pins: DCD, DSR, RI, DTR */
++static const unsigned u0modem_a_1_pins[] = { STN8815_PIN_A4, STN8815_PIN_B5,
++	STN8815_PIN_D6, STN8815_PIN_C6 };
+ static const unsigned mmcsd_a_1_pins[] = { STN8815_PIN_B10, STN8815_PIN_A10,
+ 	STN8815_PIN_C11, STN8815_PIN_B11, STN8815_PIN_A11, STN8815_PIN_C12,
+ 	STN8815_PIN_B12, STN8815_PIN_A12, STN8815_PIN_C13, STN8815_PIN_C15 };
+@@ -290,7 +292,9 @@ static const unsigned i2cusb_b_1_pins[] = { STN8815_PIN_C21, STN8815_PIN_C20 };
+ 			.npins = ARRAY_SIZE(a##_pins), .altsetting = b }
+ 
+ static const struct nmk_pingroup nmk_stn8815_groups[] = {
+-	STN8815_PIN_GROUP(u0_a_1, NMK_GPIO_ALT_A),
++	STN8815_PIN_GROUP(u0txrx_a_1, NMK_GPIO_ALT_A),
++	STN8815_PIN_GROUP(u0ctsrts_a_1, NMK_GPIO_ALT_A),
++	STN8815_PIN_GROUP(u0modem_a_1, NMK_GPIO_ALT_A),
+ 	STN8815_PIN_GROUP(mmcsd_a_1, NMK_GPIO_ALT_A),
+ 	STN8815_PIN_GROUP(mmcsd_b_1, NMK_GPIO_ALT_B),
+ 	STN8815_PIN_GROUP(u1_a_1, NMK_GPIO_ALT_A),
+@@ -304,7 +308,7 @@ static const struct nmk_pingroup nmk_stn8815_groups[] = {
+ #define STN8815_FUNC_GROUPS(a, b...)	   \
+ static const char * const a##_groups[] = { b };
+ 
+-STN8815_FUNC_GROUPS(u0, "u0_a_1");
++STN8815_FUNC_GROUPS(u0, "u0txrx_a_1", "u0ctsrts_a_1", "u0modem_a_1");
+ STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1", "mmcsd_b_1");
+ STN8815_FUNC_GROUPS(u1, "u1_a_1", "u1_b_1");
+ STN8815_FUNC_GROUPS(i2c1, "i2c1_a_1");
+-- 
+2.4.3
 
