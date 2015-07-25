@@ -1,170 +1,93 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Fri, 24 Jul 2015 11:15:52 +0200
-Message-ID: <CAAObsKB+fV8rMyctBee83PHQBcXbubdMuMZo=WZv5ivSSaaP+w@mail.gmail.com>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+From: Dirk Behme <dirk.behme@gmail.com>
+Subject: [PATCH 2/2] Documentation: gpio: board: describe the con_id parameter
+Date: Sat, 25 Jul 2015 09:11:58 +0200
+Message-ID: <1437808318-4453-2-git-send-email-dirk.behme@gmail.com>
+References: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:38611 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751001AbbGYHMG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2015 03:12:06 -0400
+Received: by wibxm9 with SMTP id xm9so57251815wib.1
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2015 00:12:04 -0700 (PDT)
+In-Reply-To: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Dirk Behme <dirk.behme@gmail.com>
 
-On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
-> the pin controller isn't available.
->
-> Otherwise, the GPIO range wouldn't be set at all unless the pin
-> controller probed always before the GPIO chip.
->
-> With this change, the probe of the GPIO chip will be deferred and will
-> be retried at a later point, hopefully once the pin controller has been
-> registered and probed already.
+The con_id parameter has to match the GPIO description and is automatically
+extended by the GPIO suffix if not NULL. I had to look into the code to
+understand this and properly find the GPIO I've been looking for, so document
+this.
 
-Ping :)
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+---
+ Documentation/gpio/board.txt    | 36 ++++++++++++++++++++++++++++++++++++
+ Documentation/gpio/consumer.txt |  3 +++
+ 2 files changed, 39 insertions(+)
 
-Thanks,
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+index 7605773..eac78fc 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -48,6 +48,42 @@ This property will make GPIOs 15, 16 and 17 available to the driver under the
+ The led GPIOs will be active-high, while the power GPIO will be active-low (i.e.
+ gpiod_is_active_low(power) will be true).
+ 
++If in the consumer device's node the property doesn't have a <function>- prefix,
++the second parameter (con_id) of the gpiod_get*() functions has to be NULL:
++
++E.g. if in the above device tree example the GPIO array is just called 'gpios'
++
++	foo_device {
++		compatible = "acme,foo";
++		...
++		gpios = <&gpio 15 GPIO_ACTIVE_HIGH>, /* red */
++			<&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
++			<&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
++	};
++
++the gpiod_get*() calls will be:
++
++	struct gpio_desc *red, *green, *blue, *power;
++
++	red = gpiod_get_index(dev, NULL, 0, GPIOD_OUT_HIGH);
++	green = gpiod_get_index(dev, NULL, 1, GPIOD_OUT_HIGH);
++	blue = gpiod_get_index(dev, NULL, 2, GPIOD_OUT_HIGH);
++
++To summarize:
++
++The con_id string parameter has to be either NULL or the <function>-prefix
++of the GPIO suffixes ("gpios" or "gpio", automatically looked up by the
++gpiod functions internally):
++
++* If the GPIO description is just named with one of the GPIO suffixes
++  ("gpios" or "gpio"), use NULL.
++* If the GPIO description is prefixed with anything, e.g. "led-gpios", use the
++  prefix without the "-" as con_id parameter (in this example "led").
++
++In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
++("gpios" or "gpio") with the string passed in con_id to get the resulting string
++(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
++
+ ACPI
+ ----
+ ACPI also supports function names for GPIOs in a similar fashion to DT.
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 75542b9..47ce4fd 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -39,6 +39,9 @@ device that displays digits), an additional index argument can be specified:
+ 					  const char *con_id, unsigned int idx,
+ 					  enum gpiod_flags flags)
+ 
++For a more detailed description of the con_id parameter in the DeviceTree case
++see Documentation/gpio/board.txt
++
+ The flags parameter is used to optionally specify a direction and initial value
+ for the GPIO. Values can be:
+ 
+-- 
+2.4.6
 
-Tomeu
-
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> ---
->
-> Changes in v2:
-> - Don't defer probe if the pinctrl node is disabled
->
->  drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
->  drivers/gpio/gpiolib.c    |  5 ++++-
->  include/linux/of_gpio.h   |  4 ++--
->  3 files changed, 24 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 9a0ec48a4737..4e1f73b9136a 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
->  EXPORT_SYMBOL(of_mm_gpiochip_remove);
->
->  #ifdef CONFIG_PINCTRL
-> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
-> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
->  {
->         struct device_node *np = chip->of_node;
->         struct of_phandle_args pinspec;
-> @@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->         struct property *group_names;
->
->         if (!np)
-> -               return;
-> +               return 0;
->
->         group_names = of_find_property(np, group_names_propname, NULL);
->
-> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->
->                 pctldev = of_pinctrl_get(pinspec.np);
->                 if (!pctldev)
-> -                       break;
-> +                       return -EPROBE_DEFER;
->
->                 if (pinspec.args[2]) {
->                         if (group_names) {
-> @@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->                                         pinspec.args[1],
->                                         pinspec.args[2]);
->                         if (ret)
-> -                               break;
-> +                               return ret;
->                 } else {
->                         /* npins == 0: special range */
->                         if (pinspec.args[1]) {
-> @@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->                         ret = gpiochip_add_pingroup_range(chip, pctldev,
->                                                 pinspec.args[0], name);
->                         if (ret)
-> -                               break;
-> +                               return ret;
->                 }
->         }
-> +
-> +       return 0;
->  }
->
->  #else
-> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
-> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
->  #endif
->
-> -void of_gpiochip_add(struct gpio_chip *chip)
-> +int of_gpiochip_add(struct gpio_chip *chip)
->  {
-> +       int status;
-> +
->         if ((!chip->of_node) && (chip->dev))
->                 chip->of_node = chip->dev->of_node;
->
->         if (!chip->of_node)
-> -               return;
-> +               return 0;
->
->         if (!chip->of_xlate) {
->                 chip->of_gpio_n_cells = 2;
->                 chip->of_xlate = of_gpio_simple_xlate;
->         }
->
-> -       of_gpiochip_add_pin_range(chip);
-> +       status = of_gpiochip_add_pin_range(chip);
-> +       if (status)
-> +               return status;
-> +
->         of_node_get(chip->of_node);
->
->         of_gpiochip_scan_hogs(chip);
-> +
-> +       return 0;
->  }
->
->  void of_gpiochip_remove(struct gpio_chip *chip)
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index bf4bd1d120c3..a8cab335c0cc 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
->         INIT_LIST_HEAD(&chip->pin_ranges);
->  #endif
->
-> -       of_gpiochip_add(chip);
-> +       status = of_gpiochip_add(chip);
-> +       if (status)
-> +               goto err_remove_chip;
-> +
->         acpi_gpiochip_add(chip);
->
->         status = gpiochip_sysfs_register(chip);
-> diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-> index 69dbe312b11b..f3191828f037 100644
-> --- a/include/linux/of_gpio.h
-> +++ b/include/linux/of_gpio.h
-> @@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
->                               struct of_mm_gpio_chip *mm_gc);
->  extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
->
-> -extern void of_gpiochip_add(struct gpio_chip *gc);
-> +extern int of_gpiochip_add(struct gpio_chip *gc);
->  extern void of_gpiochip_remove(struct gpio_chip *gc);
->  extern int of_gpio_simple_xlate(struct gpio_chip *gc,
->                                 const struct of_phandle_args *gpiospec,
-> @@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
->         return -ENOSYS;
->  }
->
-> -static inline void of_gpiochip_add(struct gpio_chip *gc) { }
-> +static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
->  static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
->
->  #endif /* CONFIG_OF_GPIO */
-> --
-> 2.4.3
->
