@@ -1,67 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: split stn8815 UART0 pin groups
-Date: Sat, 25 Jul 2015 11:23:12 +0200
-Message-ID: <1437816192-7796-1-git-send-email-linus.walleij@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 4/5] pinctrl/ARM: move GPIO and pinctrl deps to device
+ tree
+Date: Sun, 26 Jul 2015 20:55:42 +0200
+Message-ID: <20150726185542.GC24272@localhost>
+References: <1437635389-23463-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:32934 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752838AbbGYJXU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Jul 2015 05:23:20 -0400
-Received: by laah7 with SMTP id h7so25939383laa.0
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2015 02:23:19 -0700 (PDT)
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:33493 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755242AbbGZS4A (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Jul 2015 14:56:00 -0400
+Received: by lbbyj8 with SMTP id yj8so41171286lbb.0
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2015 11:55:59 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1437635389-23463-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, arm@kernel.org
 
-Split the UART pin groups so we can activate RX/TX, CTS/RTS and
-the modem pins (DCD, DSR, RI, DTR) as three different groups
-with function u0.
+On Thu, Jul 23, 2015 at 09:09:49AM +0200, Linus Walleij wrote:
+> This gets the GPIO ranges out of the driver and into the device
+> tree where they belong. Standard DT bindings already exist for
+> this. Since no systems with this are deployed we can just augment
+> all device trees and the drivers at the same time and simplify
+> the world.
+> 
+> This also defines the array of GPIO chips related to the pin
+> controller.
+> 
+> Cc: arm@kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ARM SoC: please ACK this if you are OK with it. I am using these
+> systems as showcase, so I want things to look clean and nice.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Acked-by: Olof Johansson <olof@lixom.net>
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-index a2de3b7a57a0..587b222f12f3 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-@@ -271,9 +271,11 @@ static const struct pinctrl_pin_desc nmk_stn8815_pins[] = {
-  */
- 
- /* Altfunction A */
--static const unsigned u0_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5,
--	STN8815_PIN_C5, STN8815_PIN_A4, STN8815_PIN_B5, STN8815_PIN_D6,
--	STN8815_PIN_C6, STN8815_PIN_B6 };
-+static const unsigned u0txrx_a_1_pins[] = { STN8815_PIN_B4, STN8815_PIN_D5 };
-+static const unsigned u0ctsrts_a_1_pins[] = { STN8815_PIN_C5, STN8815_PIN_B6 };
-+/* Modem pins: DCD, DSR, RI, DTR */
-+static const unsigned u0modem_a_1_pins[] = { STN8815_PIN_A4, STN8815_PIN_B5,
-+	STN8815_PIN_D6, STN8815_PIN_C6 };
- static const unsigned mmcsd_a_1_pins[] = { STN8815_PIN_B10, STN8815_PIN_A10,
- 	STN8815_PIN_C11, STN8815_PIN_B11, STN8815_PIN_A11, STN8815_PIN_C12,
- 	STN8815_PIN_B12, STN8815_PIN_A12, STN8815_PIN_C13, STN8815_PIN_C15 };
-@@ -290,7 +292,9 @@ static const unsigned i2cusb_b_1_pins[] = { STN8815_PIN_C21, STN8815_PIN_C20 };
- 			.npins = ARRAY_SIZE(a##_pins), .altsetting = b }
- 
- static const struct nmk_pingroup nmk_stn8815_groups[] = {
--	STN8815_PIN_GROUP(u0_a_1, NMK_GPIO_ALT_A),
-+	STN8815_PIN_GROUP(u0txrx_a_1, NMK_GPIO_ALT_A),
-+	STN8815_PIN_GROUP(u0ctsrts_a_1, NMK_GPIO_ALT_A),
-+	STN8815_PIN_GROUP(u0modem_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(mmcsd_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(mmcsd_b_1, NMK_GPIO_ALT_B),
- 	STN8815_PIN_GROUP(u1_a_1, NMK_GPIO_ALT_A),
-@@ -304,7 +308,7 @@ static const struct nmk_pingroup nmk_stn8815_groups[] = {
- #define STN8815_FUNC_GROUPS(a, b...)	   \
- static const char * const a##_groups[] = { b };
- 
--STN8815_FUNC_GROUPS(u0, "u0_a_1");
-+STN8815_FUNC_GROUPS(u0, "u0txrx_a_1", "u0ctsrts_a_1", "u0modem_a_1");
- STN8815_FUNC_GROUPS(mmcsd, "mmcsd_a_1", "mmcsd_b_1");
- STN8815_FUNC_GROUPS(u1, "u1_a_1", "u1_b_1");
- STN8815_FUNC_GROUPS(i2c1, "i2c1_a_1");
--- 
-2.4.3
 
+-Olof
