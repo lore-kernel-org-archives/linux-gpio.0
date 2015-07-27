@@ -1,46 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] ARM: sunxi: dt: Convert users to the PIO
- interrupts binding
-Date: Mon, 27 Jul 2015 14:58:29 +0200
-Message-ID: <CACRpkdYT0gsrZZcWrkES4EdF0G1oY_t0isOTbJtbCGx2KP2HTw@mail.gmail.com>
-References: <1438000918-9026-1-git-send-email-maxime.ripard@free-electrons.com>
-	<1438000918-9026-3-git-send-email-maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 1/3] gpio: etraxfs: fix set register flag
+Date: Mon, 27 Jul 2015 14:59:50 +0200
+Message-ID: <CACRpkdYvuqE+0f8e_u371ghb_OSOHoHYfH8o19_ecqSEzP_wXA@mail.gmail.com>
+References: <1437570319-25297-1-git-send-email-rabin@rab.in>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438000918-9026-3-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:33433 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbbG0M7u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:59:50 -0400
+Received: by obdeg2 with SMTP id eg2so58674989obd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:59:50 -0700 (PDT)
+In-Reply-To: <1437570319-25297-1-git-send-email-rabin@rab.in>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rabin Vincent <rabin@rab.in>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 27, 2015 at 2:41 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+On Wed, Jul 22, 2015 at 3:05 PM, Rabin Vincent <rabin@rab.in> wrote:
 
-> The current DTs were setting the cell size to 2, but used the default xlate
-> function that was assuming an interrupt cell size of 1, leading to the
-> second part of the cell (the flags) being ignored, while we were having an
-> inconsistent binding between the interrupts and gpio (that could also be
-> used as interrupts).
+> BGPIO_F_UNREADABLE_REG_SET is incorrect, since the set register _is_
+> readable.  What's really required is BGPIO_F_READ_OUTPUT_REG_SET:
+> reading the set register reads the set output value.
 >
-> That "binding" doesn't work either with newer SoCs that have multiple irq
-> banks.
->
-> Now that we fixed the pinctrl driver to handle this like it should always
-> have been handled, convert the DT users, and while we're at it, remove the
-> size-cells property of PIO that is completely useless.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Rabin Vincent <rabin@rab.in>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-I guess this will be merged through ARM SoC?
-
-If you want me to carry it in pinctrl and you're *certain* it
-will not collide with something else coming in from ARM SoC
-then tell me ... prefer to even have ARM SoC maintainers
-ACK on this actually.
+Patch applied.
 
 Yours,
 Linus Walleij
