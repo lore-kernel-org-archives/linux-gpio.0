@@ -1,96 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Mon, 27 Jul 2015 12:19:08 +0200
-Message-ID: <CACRpkdYUcXjJz+jZ5ZMXK1a7GLi8eL+ecr-yL6Y8901f_-pknQ@mail.gmail.com>
-References: <cover.1435777856.git.rcochran@linutronix.de>
-	<d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
-	<CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>
-	<20150716171930.GB27060@localhost.localdomain>
+Subject: Re: [PATCH 1/4] gpio: mpc8xxx: constify of_device_id
+Date: Mon, 27 Jul 2015 12:21:26 +0200
+Message-ID: <CACRpkdZL1AAEc58vT3es3pH9FS0H2LUWRC973zhm3qkQa22i4A@mail.gmail.com>
+References: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:36175 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752589AbbG0KTJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 06:19:09 -0400
-Received: by oibn4 with SMTP id n4so48692152oib.3
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 03:19:09 -0700 (PDT)
-In-Reply-To: <20150716171930.GB27060@localhost.localdomain>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33588 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753271AbbG0KV1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 06:21:27 -0400
+Received: by obdeg2 with SMTP id eg2so56081542obd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 03:21:26 -0700 (PDT)
+In-Reply-To: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Johan Hovold <johan@kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Thu, Jul 16, 2015 at 7:19 PM, Richard Cochran
-<richardcochran@gmail.com> wrote:
-> On Thu, Jul 16, 2015 at 09:50:44AM +0200, Linus Walleij wrote:
->> NACK. And it has been NACKed before again and again, search
->> the mailinglist for repetitive answers.
+On Thu, Jul 16, 2015 at 9:08 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+
+> This variable is not modified in the driver and all functions it it
+> passed to don't change it either. So it can and should be marked cons=
+t.
 >
-> Yeah, ok, I give up.
->
-> This happens with every DT discussion that tries to make things
-> logical for the end user.
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-Are you assuming bad faith?
+Patch applied.
 
-I'm trying to maintain the GPIO subsystem, the problem with DT
-is that there are no proper DT reviewers for stuff like this, instead
-the task of reviewing DT stuff is pushed down to Linux subsystem
-maintainers like me.
-
-I think Michael made a very very nice patch series trying to make
-things logical for end users, please participate in that discussion.
-
->> The GPIO numbers inside the Linux kernel are Linux specific and
->> have nothing to do with the hardware numbers. If they sometimes
->> match it is a lucky coincidence.
->
-> Someone should tell the users that.
->
->> The same goes for IRQ numbers
->> in the kernel FWIW.
->
-> Isn't there a mapping interface for irq numbers?
-
-I don't see what you mean here. The numbers that appear in
-say /proc/interrupts may seem stable but they are not.
-They depend on things like probe order between irqchips
-and can change between two boots.
-
-The reason users don't have an issue with it is that there is
-(thank god) no userspace ABI for interrupts.
-
->> So this "binding" has nothing to do with describing the hardware,
->> which device tree is for. If it ever comes to exist it needs to be
->> a "linux-*" property. But I doubt it will.
->
-> How can you say that the GPIO numbers associated with the pins and
-> appearing in published data sheets (and used in every schematic) are
-> not part of the hardware?
-
-What the Linux kernel call GPIO numbers (or IRQ numbers for that
-matter) is something different from the hardware numbers in the
-datasheets. To the kernel it is just some cookie number.
-
-In the irqchip subsystem we have ->hwirq that corresponds to
-whatever the datasheet says, and which appears in the second
-column i /proc/interrupts, and in the GPIO subdrivers I tend to
-try to use "offset" the same way, giving a local number for that
-GPIO controller.
-
-Things were simple in the past because the GPIO numberspace
-was designed under the assumption that there would be only
-one GPIO controller on a system, but the exploding complexity
-of systems made it unmanageable.
-
-The problem is for example if I have a SoC with a GPIO expander:
-both have a GPIO line named "0". Which one wins? The SoC
-because it is "more important"? This issue is all over the place
-in any modern chipset. In Ux500 I have sometimes three GPIO
-expanders, all three with GPIO line 0, and also a GPIO 0 on
-the SoC of course. So we need to express this complexity to
-userspace, not try to simplify the world.
+I'll push the tree later today, pls verify that your diacritics look
+right now!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
