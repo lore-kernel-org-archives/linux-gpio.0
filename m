@@ -1,54 +1,32 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [RESEND PATCH 1/2] pinctrl: change function behavior for per pin
- muxing controllers
-Date: Mon, 27 Jul 2015 14:12:09 +0200
-Message-ID: <20150727121209.GE15112@odux.rfo.atmel.com>
-References: <1433948699-19800-1-git-send-email-ludovic.desroches@atmel.com>
- <1433948699-19800-2-git-send-email-ludovic.desroches@atmel.com>
- <557EF60D.8020007@wwwdotorg.org>
- <20150617123816.GB12295@odux.rfo.atmel.com>
- <5581988C.50000@wwwdotorg.org>
- <20150618123348.GB20227@odux.rfo.atmel.com>
- <20150714055749.GB5161@pengutronix.de>
- <20150715074642.GA14886@odux.rfo.atmel.com>
- <CACRpkdZOeMqT0cZWYPOrtKGL2FdAy4=19JZMmF8KuU7pYZYuMQ@mail.gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
+Date: Mon, 27 Jul 2015 14:26:28 +0200
+Message-ID: <55B62374.1030004@linutronix.de>
+References: <cover.1435777856.git.rcochran@linutronix.de>	<d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>	<CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>	<20150716171930.GB27060@localhost.localdomain> <CACRpkdYUcXjJz+jZ5ZMXK1a7GLi8eL+ecr-yL6Y8901f_-pknQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:34235 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbbG0MMI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:12:08 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZOeMqT0cZWYPOrtKGL2FdAy4=19JZMmF8KuU7pYZYuMQ@mail.gmail.com>
+Received: from www.linutronix.de ([62.245.132.108]:56856 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752167AbbG0M0d (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:26:33 -0400
+In-Reply-To: <CACRpkdYUcXjJz+jZ5ZMXK1a7GLi8eL+ecr-yL6Y8901f_-pknQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Richard Cochran <richardcochran@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Johan Hovold <johan@kernel.org>
 
-On Mon, Jul 27, 2015 at 11:43:52AM +0200, Linus Walleij wrote:
-> On Wed, Jul 15, 2015 at 9:46 AM, Ludovic Desroches
-> <ludovic.desroches@atmel.com> wrote:
-> > On Tue, Jul 14, 2015 at 07:57:49AM +0200, Sascha Hauer wrote:
-> >>
-> >> Note that in the recently introduced Mediatek pinctrl driver we used
-> >> 'pinmux' for the property that you name 'pins' here. We probably want to
-> >> use the same name.
-> >
-> > This driver fits most of my needs but I didn't do it in this way for the
-> > two previous reasons. If it is not an issue to add a new
-> > dt_node_to_map() implementation which should be quite close to the
-> > mediatek one, let's do it.
-> 
-> OK if you can do that so we have some order and obtain Sascha's
-> ACK I'm in for the patch.
-> 
-> Maybe there is something like that further up in my mailbox, need
-> to browse :)
+On 07/27/2015 12:19 PM, Linus Walleij wrote:
+> I don't see what you mean here. The numbers that appear in
+> say /proc/interrupts may seem stable but they are not.
+> They depend on things like probe order between irqchips
+> and can change between two boots.
 
-I am doing the changes and merging my gpio driver into it. I'll send a
-new version probably this week.
+Not only on DT platforms but also on X86 where one has MSI interrupts
+which are allocated on probe time of the driver for a PCI device.
 
-Regards
+> Yours,
+> Linus Walleij
 
-Ludovic
+Sebastian
