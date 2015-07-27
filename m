@@ -1,75 +1,48 @@
-From: Clemens Gruber <clemens.gruber@pqgruber.com>
-Subject: Re: [PATCH] gpio-pca953x: Support NXP PCAL9555A with Agile I/O
-Date: Mon, 27 Jul 2015 14:37:09 +0200
-Message-ID: <20150727123709.GA2601@pqgruber.com>
-References: <1435858426-19623-1-git-send-email-clemens.gruber@pqgruber.com>
- <1435858426-19623-2-git-send-email-clemens.gruber@pqgruber.com>
- <CACRpkdbVQwkLfVdXyuWr4gOezeNcuFHHb5A2VLBwOnHb=k0o5Q@mail.gmail.com>
- <20150716135202.GA2328@pqgruber.com>
- <CACRpkdZAugG66rz8ouH+n=QvpkMC9RCfbXuavJY615=frwc2Gg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] gpio: mpc8xxx: constify of_device_id
+Date: Mon, 27 Jul 2015 14:37:36 +0200
+Message-ID: <CACRpkdarEeewXQk8PxdwW-HzEFfpUaHvGF7+e3DrFHsUci4H7Q@mail.gmail.com>
+References: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<CACRpkdZL1AAEc58vT3es3pH9FS0H2LUWRC973zhm3qkQa22i4A@mail.gmail.com>
+	<20150727123222.GI15360@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.pqgruber.com ([178.189.19.235]:59659 "EHLO
-	mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347AbbG0MhM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:37:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZAugG66rz8ouH+n=QvpkMC9RCfbXuavJY615=frwc2Gg@mail.gmail.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33659 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751293AbbG0Mhh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:37:37 -0400
+Received: by oige126 with SMTP id e126so50543974oig.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:37:36 -0700 (PDT)
+In-Reply-To: <20150727123222.GI15360@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, Jul 27, 2015 at 12:07:14PM +0200, Linus Walleij wrote:
-> OK so should we not do this change and always use the latched IRQs if
-> available on the hardware? I don't see why we would need a device tree
-> property for this.
-> 
-> I would more think something like, if the compatible string is so and
-> so, our hardware supports latching, and then we just use it. That is more
-> helpful than adding extra flags.
+On Mon, Jul 27, 2015 at 2:32 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-Sounds good, if somebody does not want latching, he can just specify the pca9555
-compatible string. Then, no GPIO_INPUT_LATCH flag is necessary.
+>> I'll push the tree later today, pls verify that your diacritics look
+>> right now!
+>
+> It's not urgent, right?
 
-> I'd say mask off all IRQs in probe and mask them on selectively as the
-> irqchip portions request IRQs. Should work, right?
+Nope...
 
-I think so, yes. I'll give it a try!
+Ah, I mean check I got it RIGHT now, not check that
+RIGHT NOW, hehehhhh.
 
-> OK so implement it on a first-come-first-served order.
-> 
-> Add a bool open_drain state to your state container, set it to true
-> when the first consumer requests open drain, but noone else has
-> yet requested any pins. So logic:
-> 
-> request(req_open_drain):
->    if (req_open_drain && any_pins_requested && !state->open_drain)
->        print_verbose_error
->    if (!any_pins_requested)
->        state->open_drain = true;
->    increase_requested_pins
->    ...
-> 
-> So the API should assume we can request this per-pin (since such controllers
-> exist) and then the driver will impose this limitation for the PCA953x
-> and deny consumers to configure conflicting modes.
+> (i.e. you pushed for inclusion in next, not for
+> the other Linus.) Then I have a script that will catch you :-)
 
-OK, will do!
+Awesome, thanks!
 
-> 
-> Too keep track of how many pins are currently requested you can use
-> a bitmask or <linux/kref.h> if you want to be fancy but I think some simple
-> solution should be OK.
-
-Thank you very much for your feedback.
-
-I'll come back with a RFC patch series.
-
-> 
-> Yours,
-> Linus Walleij
-
-Regards,
-Clemens Gruber
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
