@@ -1,29 +1,49 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: dt-binding: document Conexant CX92755 SoC
-Date: Mon, 27 Jul 2015 11:47:12 +0200
-Message-ID: <CACRpkdYt9txoqoD2pRsQbPmhyh=dXdyhPh2JBRJbs3RN3a3fzQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: driver for Conexant Digicolor CX92755 pin mapping
+Date: Mon, 27 Jul 2015 11:49:26 +0200
+Message-ID: <CACRpkdbvW8KWiLCfGUvqCeyxznBiSrOFgSCPSyF9=c_pLENwyg@mail.gmail.com>
 References: <eaf294961247ac7c105156d6fae6d7389a4c0dfc.1430823310.git.baruch@tkos.co.il>
+	<28c81769f3ed3e4c24ce00bbe2773009259ba3fe.1430823310.git.baruch@tkos.co.il>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <eaf294961247ac7c105156d6fae6d7389a4c0dfc.1430823310.git.baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:32971 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754579AbbG0Jt0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 05:49:26 -0400
+Received: by oige126 with SMTP id e126so48653866oig.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 02:49:26 -0700 (PDT)
+In-Reply-To: <28c81769f3ed3e4c24ce00bbe2773009259ba3fe.1430823310.git.baruch@tkos.co.il>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, May 5, 2015 at 12:55 PM, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org> wrote:
+On Tue, May 5, 2015 at 12:55 PM, Baruch Siach <baruch@tkos.co.il> wrote:
 
-> Add pinctrl device tree binding documentation for the General Purpose Pin
-> Mapping module of the Conexant CX92755 SoC.
+> This adds pinctrl and gpio driver to the CX92755 SoC "General Purpose Pin
+> Mapping" hardware block. The CX92755 is one SoC from the Conexant Digicolor
+> series. Pin mapping hardware supports configuring pins as either GPIO, or up to
+> 3 other "client select" functions. This driver adds support for pin muxing
+> using the generic device tree binding, and a basic gpiolib driver for the GPIO
+> functionality.
 >
-> Signed-off-by: Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+> This driver does not currently support GPIO interrupts, and pad configuration.
+>
+> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> ---
+> v2:
+>    * Address review comments for Linus Walleij:
+>      - Add a pointer to pinctrl_desc in struct dc_pinmap
+>      - Drop the now redundant pinctrl_pin_desc field
+>      - Adapt dc_get_group_{name,pins} to these changes, and add a comment
+>        explaining the 1-to-1 pin-groups relation
+>    * Staticise dc_pmxops
+>    * Protect the GP_CLIENTSEL clct parameter with parenthesis
 
-Patch applied.
+This v2 patch applied.
+
+Sorry for fat delays. It's a nice driver and looks good.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
