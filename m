@@ -1,72 +1,41 @@
-From: Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: dwapb: Use human understandable gpio numbering.
-Date: Mon, 27 Jul 2015 13:28:35 +0200
-Message-ID: <20150727112835.GA5617@localhost.localdomain>
-References: <cover.1435777856.git.rcochran@linutronix.de>
- <d6b5ce85a17164970d454583560e07f7aed7b8ca.1435777856.git.rcochran@linutronix.de>
- <CACRpkdY+prqSeohT5BEoOKS6sfXdFTA6ZzuKzH4GSPX5jcjgzA@mail.gmail.com>
- <20150716171930.GB27060@localhost.localdomain>
- <CACRpkdYUcXjJz+jZ5ZMXK1a7GLi8eL+ecr-yL6Y8901f_-pknQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/4] gpio: mpc8xxx: add support for MPC5125
+Date: Mon, 27 Jul 2015 13:52:41 +0200
+Message-ID: <CACRpkdbuzpX7BRyYVomrQktfYcLJ7MSezS9jRsfj0NMmZi4Ztg@mail.gmail.com>
+References: <1437073704-13881-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<1437073704-13881-3-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:38856 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750753AbbG0L2l (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 07:28:41 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYUcXjJz+jZ5ZMXK1a7GLi8eL+ecr-yL6Y8901f_-pknQ@mail.gmail.com>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:36005 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750722AbbG0Lwl convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 07:52:41 -0400
+Received: by obnw1 with SMTP id w1so57150568obn.3
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 04:52:41 -0700 (PDT)
+In-Reply-To: <1437073704-13881-3-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alan Tull <atull@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Dinh Nguyen <dinguyen@altera.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Johan Hovold <johan@kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, Jul 27, 2015 at 12:19:08PM +0200, Linus Walleij wrote:
-> On Thu, Jul 16, 2015 at 7:19 PM, Richard Cochran
-> > This happens with every DT discussion that tries to make things
-> > logical for the end user.
-> 
-> Are you assuming bad faith?
+On Thu, Jul 16, 2015 at 9:08 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-No, I was reacting to the NAK (which I can accept) that does not
-address or even acknowledge the problem (which I cannot accept so
-easily).
+> The gpio controller on MPC5125 is identical to the MPC5121 register
+> wise, the only difference is that the lines 0..3 are input only inste=
+ad
+> of 28..31 on MPC5121.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-But now that a solution has appeared, I am happy again.
+Patch applied.
 
-> I think Michael made a very very nice patch series trying to make
-> things logical for end users, please participate in that discussion.
-
-Yes, I read it, and it sounds like it will solve the problem.  I will
-give the series a try...
- 
-> > Isn't there a mapping interface for irq numbers?
-> 
-> I don't see what you mean here. The numbers that appear in
-> say /proc/interrupts may seem stable but they are not.
-> They depend on things like probe order between irqchips
-> and can change between two boots.
-> 
-> The reason users don't have an issue with it is that there is
-> (thank god) no userspace ABI for interrupts.
-
-I was talking about CONFIG_IRQ_DOMAIN_DEBUG.
- 
-> The problem is for example if I have a SoC with a GPIO expander:
-> both have a GPIO line named "0". Which one wins? The SoC
-> because it is "more important"? This issue is all over the place
-> in any modern chipset. In Ux500 I have sometimes three GPIO
-> expanders, all three with GPIO line 0, and also a GPIO 0 on
-> the SoC of course. So we need to express this complexity to
-> userspace, not try to simplify the world.
-
-Thanks for the explanation.  Of course I don't want an arbitrarily
-simplified interface, but I can't understand why the simple case of
-built-in SoC GPIOs must have such a weird and variable numbering
-patterns.
-
-But once user space can call GPIOs by name, then it doesn't matter
-anymore what the kernel numbers are.
-
-Thanks,
-Richard
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
