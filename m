@@ -1,33 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: mpc8xxx: Convert mpc8xxx_gpio_chip.lock to raw_spinlock
-Date: Mon, 27 Jul 2015 14:42:54 +0200
-Message-ID: <CACRpkdaWmv9o4Yvc_zH_3_r1dg2oq3tNiFKbc3mMNGp4U1wehQ@mail.gmail.com>
-References: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH 1/2] pinctrl: use dev_err() to show message in pinctrl_register_one_pin()
+Date: Mon, 27 Jul 2015 14:44:02 +0200
+Message-ID: <CACRpkdZc4iB1+DoTu2dK1d7ooQgvem2huL7Hb=UcSskdMcjxxA@mail.gmail.com>
+References: <1437459927-5278-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34278 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbbG0Mmz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:42:55 -0400
-Received: by obre1 with SMTP id e1so58368326obr.1
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:42:54 -0700 (PDT)
-In-Reply-To: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35054 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753255AbbG0MoE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:44:04 -0400
+Received: by oihq81 with SMTP id q81so50598093oih.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:44:03 -0700 (PDT)
+In-Reply-To: <1437459927-5278-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 21, 2015 at 3:54 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Tue, Jul 21, 2015 at 8:25 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> mpc8xxx_gpio_chip.lock needs to be a real spinlock in preempt-rt.
-> Especially the interrupt related functions can not be converted to a
-> sleeping lock.
+> Use dev_err() rather than pr_err() to display the error message.
+> (Besides, dev_err() is already used 7 lines below in this function.)
 >
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> Also, drop the redundant information "on %s" because dev_err() shows
+> which device the message is related to.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Uwe, can you have a look at this patch?
+Patch applied.
 
 Yours,
 Linus Walleij
