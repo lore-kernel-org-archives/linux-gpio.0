@@ -1,34 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: etraxfs: add support for ARTPEC-3
-Date: Mon, 27 Jul 2015 15:03:02 +0200
-Message-ID: <CACRpkdZcdsgQ43iOrXk410aFfuvtoyoTpB1BxF-LwDg3uc+Q8w@mail.gmail.com>
-References: <1437570319-25297-1-git-send-email-rabin@rab.in>
-	<1437570319-25297-3-git-send-email-rabin@rab.in>
+Subject: Re: [PATCH] MIPS: Remove most of the custom gpio.h
+Date: Mon, 27 Jul 2015 15:20:08 +0200
+Message-ID: <CACRpkdZon9XHSMyieGDU8F037+4TxyCq=6z5vJwQ3k6QJm6MTg@mail.gmail.com>
+References: <1437586416-14735-1-git-send-email-albeu@free.fr>
+	<55B131B1.10302@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33083 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753273AbbG0NDC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 09:03:02 -0400
-Received: by oige126 with SMTP id e126so50897481oig.0
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 06:03:02 -0700 (PDT)
-In-Reply-To: <1437570319-25297-3-git-send-email-rabin@rab.in>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55B131B1.10302@metafoo.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Alban Bedel <albeu@free.fr>, Linux MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Waldemar Brodkorb <wbx@openadk.org>, James Hogan <james.hogan@imgtec.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Levente Kurusa <levex@linux.com>, abdoulaye berthe <berthe.ab@gmail.com>, Wolfram Sang <wsa@the-d>
 List-Id: linux-gpio@vger.kernel.org
-To: Rabin Vincent <rabin@rab.in>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Jul 22, 2015 at 3:05 PM, Rabin Vincent <rabin@rab.in> wrote:
-
-> Add support for the GIO block in the ARTPEC-3 SoC.  The basic
-> functionality is essentialy the same as the version in the ETRAX FS,
-> except for a different set of ports, including a read-only port.
+On Thu, Jul 23, 2015 at 8:25 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 07/22/2015 07:33 PM, Alban Bedel wrote:
+>>
+>> diff --git a/arch/mips/jz4740/gpio.c b/arch/mips/jz4740/gpio.c
+>> index 54c80d4..3dc500c 100644
+>> --- a/arch/mips/jz4740/gpio.c
+>> +++ b/arch/mips/jz4740/gpio.c
+>> @@ -262,18 +262,6 @@ uint32_t jz_gpio_port_get_value(int port, uint32_t
+>> mask)
+>>   }
+>>   EXPORT_SYMBOL(jz_gpio_port_get_value);
+>>
+>> -int gpio_to_irq(unsigned gpio)
+>> -{
+>> -       return JZ4740_IRQ_GPIO(0) + gpio;
+>> -}
+>> -EXPORT_SYMBOL_GPL(gpio_to_irq);
 >
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Rabin Vincent <rabin@rab.in>
+>
+> This need to be hooked up the gpio_to_irq() callback of the gpio_chip struct
+> of this driver rather than completely removing it. Otherwise this
+> functionality will be broken.
+>
+> Similar for other platforms which implement the function.
 
-Uncontroversial DT bindings, so patch applied.
+Even better is to see if we can convert the driver to
+GPIOLIB_IRQCHIP which moves the handling of IRQ mapping
+to the gpiolib core. This works for all simple cascading GPIO-with-IRQ
+controllers with a local mask register. (Not when the system intcon
+and GPIO is mashed up though.)
+
+But no hurry with that.
 
 Yours,
 Linus Walleij
