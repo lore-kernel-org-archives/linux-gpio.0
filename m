@@ -1,150 +1,62 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH v2 2/2] ARM: sunxi: dt: Convert users to the PIO interrupts binding
-Date: Mon, 27 Jul 2015 14:41:58 +0200
-Message-ID: <1438000918-9026-3-git-send-email-maxime.ripard@free-electrons.com>
-References: <1438000918-9026-1-git-send-email-maxime.ripard@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438000918-9026-1-git-send-email-maxime.ripard@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: omap: use raw locks for locking
+Date: Mon, 27 Jul 2015 14:50:53 +0200
+Message-ID: <CACRpkdaHiJ5qYGu=t7hDTvvUuf4h-Q2_5Xv4GzvSPS1SZ6F_Gw@mail.gmail.com>
+References: <1437496011-11486-1-git-send-email-bigeasy@linutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35565 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751940AbbG0Mux (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:50:53 -0400
+Received: by oihq81 with SMTP id q81so50690149oih.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:50:53 -0700 (PDT)
+In-Reply-To: <1437496011-11486-1-git-send-email-bigeasy@linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, ext Kevin Hilman <khilman@deeprootsystems.com>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-The current DTs were setting the cell size to 2, but used the default xlate
-function that was assuming an interrupt cell size of 1, leading to the
-second part of the cell (the flags) being ignored, while we were having an
-inconsistent binding between the interrupts and gpio (that could also be
-used as interrupts).
+On Tue, Jul 21, 2015 at 6:26 PM, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
 
-That "binding" doesn't work either with newer SoCs that have multiple irq
-banks.
+> This patch converts gpio_bank.lock from a spin_lock into a
+> raw_spin_lock. The call path is to access this lock is always under a
+> raw_spin_lock, for instance
+> - __setup_irq() holds &desc->lock with irq off
+>   + __irq_set_trigger()
+>    + omap_gpio_irq_type()
+>
+> - handle_level_irq() (runs with irqs off therefore raw locks)
+>   + mask_ack_irq()
+>    + omap_gpio_mask_irq()
+>
+> This fixes the obvious backtrace on -RT. However the locking vs context
+> is not and this is not limited to -RT:
+> - omap_gpio_irq_type() is called with IRQ off and has an conditional
+>   call to pm_runtime_get_sync() which may sleep. Either it may happen or
+>   it may not happen but pm_runtime_get_sync() should not be called with
+>   irqs off.
+>
+> - omap_gpio_debounce() is holding the lock with IRQs off.
+>   + omap2_set_gpio_debounce()
+>    + clk_prepare_enable()
+>     + clk_prepare() this one might sleep.
+>   The number of users of gpiod_set_debounce() / gpio_set_debounce()
+>   looks low but still this is not good.
+>
+> Acked-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Now that we fixed the pinctrl driver to handle this like it should always
-have been handled, convert the DT users, and while we're at it, remove the
-size-cells property of PIO that is completely useless.
+Patch applied.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Now this question appear in my head:
 
----
- arch/arm/boot/dts/sun4i-a10.dtsi           | 3 +--
- arch/arm/boot/dts/sun5i-a13-utoo-p66.dts   | 2 +-
- arch/arm/boot/dts/sun5i.dtsi               | 3 +--
- arch/arm/boot/dts/sun6i-a31.dtsi           | 3 +--
- arch/arm/boot/dts/sun7i-a20-cubietruck.dts | 2 +-
- arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts  | 2 +-
- arch/arm/boot/dts/sun7i-a20.dtsi           | 3 +--
- arch/arm/boot/dts/sun8i-a23-a33.dtsi       | 3 +--
- 8 files changed, 8 insertions(+), 13 deletions(-)
+Is drivers/gpio full of stuff that will not work with the -RT kernel,
+and is this a change that should be done mutatis mutandis on
+all the GPIO drivers?
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 61c03d1fe530..710a0531953e 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -713,8 +713,7 @@
- 			clocks = <&apb0_gates 5>;
- 			gpio-controller;
- 			interrupt-controller;
--			#interrupt-cells = <2>;
--			#size-cells = <0>;
-+			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
- 			pwm0_pins_a: pwm0@0 {
-diff --git a/arch/arm/boot/dts/sun5i-a13-utoo-p66.dts b/arch/arm/boot/dts/sun5i-a13-utoo-p66.dts
-index 514f159a14d4..9303fa035b0e 100644
---- a/arch/arm/boot/dts/sun5i-a13-utoo-p66.dts
-+++ b/arch/arm/boot/dts/sun5i-a13-utoo-p66.dts
-@@ -93,7 +93,7 @@
- 		compatible = "chipone,icn8318";
- 		reg = <0x40>;
- 		interrupt-parent = <&pio>;
--		interrupts = <9 IRQ_TYPE_EDGE_FALLING>; /* EINT9 (PG9) */
-+		interrupts = <6 9 IRQ_TYPE_EDGE_FALLING>; /* EINT9 (PG9) */
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&ts_wake_pin_p66>;
- 		wake-gpios = <&pio 1 3 GPIO_ACTIVE_HIGH>; /* PB3 */
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 54b097830434..c58d5a62605f 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -475,8 +475,7 @@
- 			clocks = <&apb0_gates 5>;
- 			gpio-controller;
- 			interrupt-controller;
--			#interrupt-cells = <2>;
--			#size-cells = <0>;
-+			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
- 			i2c0_pins_a: i2c0@0 {
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index 008047a018cf..2541412cabb0 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -599,8 +599,7 @@
- 			clocks = <&apb1_gates 5>;
- 			gpio-controller;
- 			interrupt-controller;
--			#interrupt-cells = <2>;
--			#size-cells = <0>;
-+			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
- 			uart0_pins_a: uart0@0 {
-diff --git a/arch/arm/boot/dts/sun7i-a20-cubietruck.dts b/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
-index 4611e2f5a99e..70d0f85a636d 100644
---- a/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
-@@ -181,7 +181,7 @@
- 		reg = <1>;
- 		compatible = "brcm,bcm4329-fmac";
- 		interrupt-parent = <&pio>;
--		interrupts = <10 IRQ_TYPE_LEVEL_LOW>; /* PH10 / EINT10 */
-+		interrupts = <7 10 IRQ_TYPE_LEVEL_LOW>; /* PH10 / EINT10 */
- 		interrupt-names = "host-wake";
- 	};
- };
-diff --git a/arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts b/arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts
-index f32f6f20d923..1e6bd360dac0 100644
---- a/arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts
-@@ -178,7 +178,7 @@
- 		reg = <1>;
- 		compatible = "brcm,bcm4329-fmac";
- 		interrupt-parent = <&pio>;
--		interrupts = <10 IRQ_TYPE_LEVEL_LOW>; /* PH10 / EINT10 */
-+		interrupts = <7 10 IRQ_TYPE_LEVEL_LOW>; /* PH10 / EINT10 */
- 		interrupt-names = "host-wake";
- 	};
- };
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 6a63f30c9a69..d3497a51f0c4 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -794,8 +794,7 @@
- 			clocks = <&apb0_gates 5>;
- 			gpio-controller;
- 			interrupt-controller;
--			#interrupt-cells = <2>;
--			#size-cells = <0>;
-+			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
- 			pwm0_pins_a: pwm0@0 {
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 7abd0ae3143d..f93105709680 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -339,8 +339,7 @@
- 			clocks = <&apb1_gates 5>;
- 			gpio-controller;
- 			interrupt-controller;
--			#address-cells = <1>;
--			#size-cells = <0>;
-+			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
- 
- 			uart0_pins_a: uart0@0 {
--- 
-2.4.6
+Yours,
+Linus Walleij
