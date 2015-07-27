@@ -1,58 +1,43 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] gpio: omap: use raw locks for locking
-Date: Mon, 27 Jul 2015 15:25:59 +0200
-Message-ID: <55B63167.9000107@linutronix.de>
-References: <1437496011-11486-1-git-send-email-bigeasy@linutronix.de> <CACRpkdaHiJ5qYGu=t7hDTvvUuf4h-Q2_5Xv4GzvSPS1SZ6F_Gw@mail.gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/1] gpio: mpc8xxx: Convert mpc8xxx_gpio_chip.lock to
+ raw_spinlock
+Date: Mon, 27 Jul 2015 16:08:57 +0200
+Message-ID: <20150727140857.GN15360@pengutronix.de>
+References: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:57234 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347AbbG0N0I (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 09:26:08 -0400
-In-Reply-To: <CACRpkdaHiJ5qYGu=t7hDTvvUuf4h-Q2_5Xv4GzvSPS1SZ6F_Gw@mail.gmail.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:49095 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753281AbbG0OJA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 10:09:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, ext Kevin Hilman <khilman@deeprootsystems.com>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, 'Thomas Gleixner' <tglx@linutronix.de>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On 07/27/2015 02:50 PM, Linus Walleij wrote:
-> Patch applied.
-thanks.
+Hello,
 
-> 
-> Now this question appear in my head:
-> 
-> Is drivers/gpio full of stuff that will not work with the -RT kernel,
-> and is this a change that should be done mutatis mutandis on
-> all the GPIO drivers?
+On Tue, Jul 21, 2015 at 03:54:30PM +0200, Alexander Stein wrote:
+> mpc8xxx_gpio_chip.lock needs to be a real spinlock in preempt-rt.
+> Especially the interrupt related functions can not be converted to a
+> sleeping lock.
+>=20
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com=
+>
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-I described two call paths where you need a rawlock_t. If your gpio
-driver uses irq_chip_generic then you a rawlock here and things should
-be fine.
-
-In general: If your gpio controller acts as an interrupts controller
-(that is via chained handler) then you need the raw-locks if you need
-any locking (if you have a write 1 to mask/unmask/enable/disable
-register then you probably don't need any locking here at all). If the
-gpio controller does not act as an interrupt controller than the
-spinlock_t type should be enough.
-If your gpio-interrupt controller requests its interrupt via
-requested_threaded_irq() then it should do handle_nested_irq() and a
-mutex is probably used for locking.
-
-Using request_irq() with "0" flags is kind of broken. It works in
-IRQ-context and delivers the interrupts with generic_handle_irq() and
-this one passes it the handler (like handle_edge_irq() /
-handle_level_irq()) which takes a raw_lock. Now, if you boot the
-vanilla kernel with threadedirq then the irq-handler runs in threaded
-context and you can't take a spinlock here anymore. So I think you
-should use here IRQF_NO_THREAD here (and the raw lock type). I added
-tglx on Cc: to back up because it is Monday.
-
-> Yours,
-> Linus Walleij
-> 
-
-Sebastian
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
