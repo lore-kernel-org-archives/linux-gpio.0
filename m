@@ -1,35 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: use dev_err() to show message in pinmux_func_name_to_selector()
-Date: Mon, 27 Jul 2015 14:45:11 +0200
-Message-ID: <CACRpkdZ-eZgQ251rcgP0+yU+H8=wYaM1dY-sFU+eEVKRsRFyVg@mail.gmail.com>
-References: <1437459927-5278-1-git-send-email-yamada.masahiro@socionext.com>
-	<1437459927-5278-2-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36708 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753344AbbG0MpL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Jul 2015 08:45:11 -0400
-Received: by oibn4 with SMTP id n4so50350886oib.3
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2015 05:45:11 -0700 (PDT)
-In-Reply-To: <1437459927-5278-2-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 0/2] pinctrl: sunxi: Implement proper irq DT parsing
+Date: Mon, 27 Jul 2015 14:41:56 +0200
+Message-ID: <1438000918-9026-1-git-send-email-maxime.ripard@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 21, 2015 at 8:25 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+Hi,
 
-> Use dev_err() rather than pr_err() to display the error message.
->
-> pinctrl_dev_get_name(pctldev) is no longer necessary because
-> dev_err() shows which device the message is related to.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+So far the GPIO and pinctrl driver had a limited support for
+interrupts, and no documentation about the DT bindings. A few DT ended
+up using these external interrupts, relying on the default DT parsing
+logic.
 
-Patch applied.
+However, this doesn't really work, since there's still no
+documentation describing the expected behaviour, and we ended up with
+bindings different if you want to use a GPIO as interrupt (using the
+gpios property), or an interrupt over a GPIO (using the interrupts
+property) that doesn't really make sense and only brings confusion.
 
-Yours,
-Linus Walleij
+Moreover, the "new" SoCs from Allwinner have multiple interrupt banks,
+while the previous generation had only one, which means that we cannot
+really express those interrupts with the default bindings anymore
+either.
+
+The point of this serie is to fix the current situation by introducing
+some custom DT parsing code to have a consistent binding with the GPIO
+one, which will also fix the multiple banks issues, and document it.
+
+Let me know what you think,
+Maxime
+
+Changes from v1:
+  - Rebased on top of pinctrl/devel
+  - Added Hans' Reviewed-by
+
+Maxime Ripard (2):
+  pinctrl: sunxi: Add custom irq_domain_ops
+  ARM: sunxi: dt: Convert users to the PIO interrupts binding
+
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   | 37 +++++++++++++++++++++-
+ arch/arm/boot/dts/sun4i-a10.dtsi                   |  3 +-
+ arch/arm/boot/dts/sun5i-a13-utoo-p66.dts           |  2 +-
+ arch/arm/boot/dts/sun5i.dtsi                       |  3 +-
+ arch/arm/boot/dts/sun6i-a31.dtsi                   |  3 +-
+ arch/arm/boot/dts/sun7i-a20-cubietruck.dts         |  2 +-
+ arch/arm/boot/dts/sun7i-a20-i12-tvbox.dts          |  2 +-
+ arch/arm/boot/dts/sun7i-a20.dtsi                   |  3 +-
+ arch/arm/boot/dts/sun8i-a23-a33.dtsi               |  3 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              | 35 ++++++++++++++++++--
+ 10 files changed, 77 insertions(+), 16 deletions(-)
+
+-- 
+2.4.6
