@@ -1,55 +1,54 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
- /sys/kernel/debug/gpio
-Date: Tue, 28 Jul 2015 11:58:42 +0200
-Message-ID: <20150728095842.GO28535@localhost>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] pinctrl: kill off set_irq_flags usage
+Date: Tue, 28 Jul 2015 12:15:59 +0200
+Message-ID: <CACRpkdZO3VL6-te9U5oHjGQot3faefyH4k=LPWasRAAUZxP1JA@mail.gmail.com>
+References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+	<1438030523-15853-10-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:35810 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932706AbbG1J6m (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 05:58:42 -0400
-Received: by lahh5 with SMTP id h5so65200435lah.2
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 02:58:41 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1438030523-15853-10-git-send-email-robh@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
 
-On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
-> Add some information about gpio names to the debugfs gpio file. name and
-> label of a GPIO are then displayed next to each other. This way it is
-> easy to see what the real name of GPIO is and what the driver requested
-> it for.
-> 
-> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+On Mon, Jul 27, 2015 at 10:55 PM, Rob Herring <robh@kernel.org> wrote:
+
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+>
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also modify IRQ_NOPROBE and this has been maintained although it
+> is not clear that is really needed. There appears to be a great deal of
+> blind copy and paste of this code.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Lee Jones <lee@kernel.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
 > ---
->  drivers/gpio/gpiolib.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index dcac3bcf21dd..0f1d1f5faf5d 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->  	int			is_irq;
->  
->  	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
-> -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-> +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
-> +			if (gdesc->name) {
-> +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
-> +					   gpio, gdesc->name);
-> +			}
+> Thomas asked that this be merged thru subsystem trees instead of arm-soc,
+> so please apply this to your tree.
 
-So now we'd no longer just be listing requested gpios, but on a similar
-format to how requested ones used to be represented.
+Patch applied, and thanks for driving this.
 
-Then there's the debugfs as ABI discussion...
-
-Johan
+Yours,
+Linus Walleij
