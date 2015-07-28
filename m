@@ -1,33 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: mpc8xxx: Convert mpc8xxx_gpio_chip.lock to raw_spinlock
-Date: Tue, 28 Jul 2015 14:40:57 +0200
-Message-ID: <CACRpkdZ67vr5kg0OG989EPyaSb440PDKBD1xpCy9_tgTOcQmCg@mail.gmail.com>
-References: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
+Subject: Re: [RESEND PATCH] pinctrl: at91: fix null pointer dereference
+Date: Tue, 28 Jul 2015 14:48:09 +0200
+Message-ID: <CACRpkdaiwcTzxG=KqPZxk6ijLOE0PAh9ybkNqUYhkmAcQV40eg@mail.gmail.com>
+References: <20150715133048.GD14886@odux.rfo.atmel.com>
+	<1438069696-25303-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:36158 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755116AbbG1Mk6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 08:40:58 -0400
-Received: by obnw1 with SMTP id w1so82676830obn.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 05:40:57 -0700 (PDT)
-In-Reply-To: <1437486870-11135-1-git-send-email-alexander.stein@systec-electronic.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:34206 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752316AbbG1MsK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 08:48:10 -0400
+Received: by oigd21 with SMTP id d21so68228489oig.1
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 05:48:09 -0700 (PDT)
+In-Reply-To: <1438069696-25303-1-git-send-email-ludovic.desroches@atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Ludovic Desroches <ludovic.desroches@atmel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, davidcdueck@googlemail.com, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 21, 2015 at 3:54 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Tue, Jul 28, 2015 at 9:48 AM, Ludovic Desroches
+<ludovic.desroches@atmel.com> wrote:
 
-> mpc8xxx_gpio_chip.lock needs to be a real spinlock in preempt-rt.
-> Especially the interrupt related functions can not be converted to a
-> sleeping lock.
+> From: David Dueck <davidcdueck@googlemail.com>
 >
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> Not all gpio banks are necessarily enabled, in the current code this can
+> lead to null pointer dereferences.
+>
+> [   51.130000] Unable to handle kernel NULL pointer dereference at virtual address 00000058
+(...)
+>
+> Signed-off-by: David Dueck <davidcdueck@googlemail.com>
+> Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> CC: Nicolas Ferre <nicolas.ferre@atmel.com>
+> CC: Boris Brezillon <boris.brezillon@free-electrons.com>
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>
+> This patch fixes a oops in the kernel because of a NULL pointer in a table.
+> Having a NULL pointer in this table is the normal behavior if a PIO controller
+> is not enabled. So this fix is not a quick and dirty hack, it's usual to skip
+> an entry from a table if it is not filled.
 
-Patch applied with Uwe's ACK.
+Fair enough, better too many checks than too few.
+
+Is this a regression to v4.2 that should go to stable or v4.3 material?
 
 Yours,
 Linus Walleij
