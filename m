@@ -1,53 +1,56 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] MAINTAINERS: pinctrl: Move Thomas Abraham to CREDITS
-Date: Tue, 28 Jul 2015 17:21:47 +0900
-Message-ID: <1438071707-20685-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio: kill off set_irq_flags usage
+Date: Tue, 28 Jul 2015 10:49:53 +0200
+Message-ID: <CACRpkdY8FyxDT=aYfCRof_b+P06MhRVWvuip+TZdZGHpLhvL-Q@mail.gmail.com>
+References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+	<1438030523-15853-4-git-send-email-robh@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35612 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932141AbbG1Ity (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 04:49:54 -0400
+Received: by obbop1 with SMTP id op1so79073927obb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 01:49:53 -0700 (PDT)
+In-Reply-To: <1438030523-15853-4-git-send-email-robh@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-Thomas Abraham's Linaro email address bounces for several months. Also
-there were no replies for several emails sent on LKML to his Samsung
-address. Move his name to CREDITS.
+On Mon, Jul 27, 2015 at 10:55 PM, Rob Herring <robh@kernel.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Link: http://lkml.org/lkml/2015/6/15/15
----
- CREDITS     | 4 ++++
- MAINTAINERS | 1 -
- 2 files changed, 4 insertions(+), 1 deletion(-)
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+>
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also modify IRQ_NOPROBE and this has been maintained although it
+> is not clear that is really needed as most platforms don't use probing.
+> There appears to be a great deal of blind copy and paste of this code.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Michael Hennerich <michael.hennerich@analog.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: linux-tegra@vger.kernel.org
+> ---
+> Thomas asked that this be merged thru subsystem trees instead of arm-soc,
+> so please apply this to your tree.
 
-diff --git a/CREDITS b/CREDITS
-index 4fcf9cd8544c..bcb8efaa9459 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -20,6 +20,10 @@ D: One of assisting postmasters for vger.kernel.org's lists
- S: (ask for current address)
- S: Finland
- 
-+N: Thomas Abraham
-+E: thomas.ab@samsung.com
-+D: Samsung pin controller driver
-+
- N: Dragos Acostachioaie
- E: dragos@iname.com
- W: http://www.arbornet.org/~dragos
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4bed1920eb2a..f0a63f06ca33 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8008,7 +8008,6 @@ F:	drivers/pinctrl/sh-pfc/
- 
- PIN CONTROLLER - SAMSUNG
- M:	Tomasz Figa <tomasz.figa@gmail.com>
--M:	Thomas Abraham <thomas.abraham@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- S:	Maintained
--- 
-1.9.1
+Patch applied with some fuzzing, thanks!
+
+Yours,
+Linus Walleij
