@@ -1,55 +1,88 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 1/9] gpiolib: Fix possible use of wrong name
-Date: Tue, 28 Jul 2015 11:03:31 +0200
-Message-ID: <20150728090331.GI28535@localhost>
+Subject: Re: [PATCH 3/9] gpio: Allow hogged gpios to be requested
+Date: Tue, 28 Jul 2015 11:17:53 +0200
+Message-ID: <20150728091753.GJ28535@localhost>
 References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-2-git-send-email-mpa@pengutronix.de>
+ <1437125570-28623-4-git-send-email-mpa@pengutronix.de>
+ <20150717202702.GK7013@pengutronix.de>
+ <20150719140142.GV26287@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:36518 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932206AbbG1JDx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 05:03:53 -0400
-Received: by lagw2 with SMTP id w2so64447365lag.3
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 02:03:52 -0700 (PDT)
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:33349 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187AbbG1JRz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 05:17:55 -0400
+Received: by lbbyj8 with SMTP id yj8so70429567lbb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 02:17:53 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1437125570-28623-2-git-send-email-mpa@pengutronix.de>
+In-Reply-To: <20150719140142.GV26287@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, linux-gpio@vger.kernel.org
 
-On Fri, Jul 17, 2015 at 11:32:42AM +0200, Markus Pargmann wrote:
-> The name is set optionally from DT. Therefore we need to reset the name
-> variable for every loop iteration. Otherwise we could use a wrong or
-> uninitialized name.
+On Sun, Jul 19, 2015 at 04:01:42PM +0200, Markus Pargmann wrote:
+> Hi Uwe,
+>=20
+> On Fri, Jul 17, 2015 at 10:27:02PM +0200, Uwe Kleine-K=F6nig wrote:
+> > Hello,
+> >=20
+> > On Fri, Jul 17, 2015 at 11:32:44AM +0200, Markus Pargmann wrote:
+> > > It can be useful to claim hogged gpios later, for example from
+> > > userspace. This allows to set defaults for GPIOs using the hoggin=
+g
+> > > mechanism and override the setup later from userspace or a kernel=
+ driver.
+> > >=20
+> > > This patch adds a check for hogged gpios to allow requesting them=
+=2E If
+> > > the gpio is not hogged but marked as requested, it still fails wi=
+th
+> > > -EBUSY.
+> > >=20
+> > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> > > ---
+> > >  drivers/gpio/gpiolib.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > index bf4bd1d120c3..9f402b159cbe 100644
+> > > --- a/drivers/gpio/gpiolib.c
+> > > +++ b/drivers/gpio/gpiolib.c
+> > > @@ -798,7 +798,8 @@ static int __gpiod_request(struct gpio_desc *=
+desc, const char *label)
+> > >  	 * before IRQs are enabled, for non-sleeping (SOC) GPIOs.
+> > >  	 */
+> > > =20
+> > > -	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) =3D=3D 0) {
+> > > +	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) =3D=3D 0 ||
+> > > +	    test_and_clear_bit(FLAG_IS_HOGGED, &desc->flags) =3D=3D 1) =
+{
+> > >  		desc_set_label(desc, label ? : "?");
+> > >  		status =3D 0;
+> > I don't like this patch. IMHO hogging is a "use" of a GPIO that sho=
+uld
+> > prevent it being requested.
+>=20
+> I disagree with you here. The original patch stated in its descriptio=
+n
+> that it was designed to initialize GPIOs. In my understanding this do=
+es
+> not necessarily mean that a hogged GPIO has to be blocked forever.
 
-This doesn't make sense. of_get_gpio_hog falls back to using the node
-name so name will always be updated (unless there's an error).
+IIRC, this use case was discussed but was rejected by Linus when hogs
+were added:
 
-Could be better documented, though.
+	https://lkml.kernel.org/r/CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF=
+9pdWa5g@mail.gmail.com
 
-> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> ---
->  drivers/gpio/gpiolib-of.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 9a0ec48a4737..60aebe4d7c26 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -209,11 +209,11 @@ static void of_gpiochip_scan_hogs(struct gpio_chip *chip)
->  {
->  	struct gpio_desc *desc = NULL;
->  	struct device_node *np;
-> -	const char *name;
->  	enum gpio_lookup_flags lflags;
->  	enum gpiod_flags dflags;
->  
->  	for_each_child_of_node(chip->of_node, np) {
-> +		const char *name = NULL;
->  		if (!of_property_read_bool(np, "gpio-hog"))
->  			continue;
+Linus?
 
 Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
