@@ -1,128 +1,189 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [RESEND PATCH] pinctrl: at91: fix null pointer dereference
-Date: Tue, 28 Jul 2015 09:48:16 +0200
-Message-ID: <1438069696-25303-1-git-send-email-ludovic.desroches@atmel.com>
-References: <20150715133048.GD14886@odux.rfo.atmel.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [RESEND PATCH] pinctrl: at91: fix null pointer dereference
+Date: Tue, 28 Jul 2015 10:00:34 +0200
+Message-ID: <55B736A2.6020900@atmel.com>
+References: <20150715133048.GD14886@odux.rfo.atmel.com> <1438069696-25303-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150715133048.GD14886@odux.rfo.atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: plagnioj@jcrosoft.com, davidcdueck@googlemail.com, alexandre.belloni@free-electrons.com, Nicolas Ferre <nicolas.ferre@atmel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:43142 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754820AbbG1IBn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 04:01:43 -0400
+In-Reply-To: <1438069696-25303-1-git-send-email-ludovic.desroches@atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: plagnioj@jcrosoft.com, davidcdueck@googlemail.com, alexandre.belloni@free-electrons.com, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: David Dueck <davidcdueck@googlemail.com>
+Le 28/07/2015 09:48, Ludovic Desroches a =E9crit :
+> From: David Dueck <davidcdueck@googlemail.com>
+>=20
+> Not all gpio banks are necessarily enabled, in the current code this =
+can
+> lead to null pointer dereferences.
+>=20
+> [   51.130000] Unable to handle kernel NULL pointer dereference at vi=
+rtual address 00000058
+> [   51.130000] pgd =3D dee04000
+> [   51.130000] [00000058] *pgd=3D3f66d831, *pte=3D00000000, *ppte=3D0=
+0000000
+> [   51.140000] Internal error: Oops: 17 [#1] ARM
+> [   51.140000] Modules linked in:
+> [   51.140000] CPU: 0 PID: 1664 Comm: cat Not tainted 4.1.1+ #6
+> [   51.140000] Hardware name: Atmel SAMA5
+> [   51.140000] task: df6dd880 ti: dec60000 task.ti: dec60000
+> [   51.140000] PC is at at91_pinconf_get+0xb4/0x200
+> [   51.140000] LR is at at91_pinconf_get+0xb4/0x200
+> [   51.140000] pc : [<c01e71a0>]    lr : [<c01e71a0>]    psr: 600f001=
+3
+> sp : dec61e48  ip : 600f0013  fp : df522538
+> [   51.140000] r10: df52250c  r9 : 00000058  r8 : 00000068
+> [   51.140000] r7 : 00000000  r6 : df53c910  r5 : 00000000  r4 : dec6=
+1e7c
+> [   51.140000] r3 : 00000000  r2 : c06746d4  r1 : 00000000  r0 : 0000=
+0003
+> [   51.140000] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  S=
+egment user
+> [   51.140000] Control: 10c53c7d  Table: 3ee04059  DAC: 00000015
+> [   51.140000] Process cat (pid: 1664, stack limit =3D 0xdec60208)
+> [   51.140000] Stack: (0xdec61e48 to 0xdec62000)
+> [   51.140000] 1e40:                   00000358 00000000 df522500 ded=
+15f80 c05a9d08 ded15f80
+> [   51.140000] 1e60: 0000048c 00000061 df522500 ded15f80 c05a9d08 c01=
+e7304 ded15f80 00000000
+> [   51.140000] 1e80: c01e6008 00000060 0000048c c01e6034 c01e5f6c ded=
+15f80 dec61ec0 00000000
+> [   51.140000] 1ea0: 00020000 ded6f280 dec61f80 00000001 00000001 c00=
+ae0b8 b6e80000 ded15fb0
+> [   51.140000] 1ec0: 00000000 00000000 df4bc974 00000055 00000800 ded=
+6f280 b6e80000 ded6f280
+> [   51.140000] 1ee0: ded6f280 00020000 b6e80000 00000000 00020000 c00=
+90dec c0671e1c dec61fb0
+> [   51.140000] 1f00: b6f8b510 00000001 00004201 c000924c 00000000 000=
+00003 00000003 00000000
+> [   51.140000] 1f20: df4bc940 00022000 00000022 c066e188 b6e7f000 c00=
+836f4 000b6e7f ded6f280
+> [   51.140000] 1f40: ded6f280 b6e80000 dec61f80 ded6f280 00020000 c00=
+91508 00000000 00000003
+> [   51.140000] 1f60: 00022000 00000000 00000000 ded6f280 ded6f280 000=
+20000 b6e80000 c0091d9c
+> [   51.140000] 1f80: 00000000 00000000 ffffffff 00020000 00020000 b6e=
+80000 00000003 c000f124
+> [   51.140000] 1fa0: dec60000 c000efa0 00020000 00020000 00000003 b6e=
+80000 00020000 000271c4
+> [   51.140000] 1fc0: 00020000 00020000 b6e80000 00000003 7fffe000 000=
+00000 00000000 00020000
+> [   51.140000] 1fe0: 00000000 bef50b64 00013835 b6f29c76 400f0030 000=
+00003 00000000 00000000
+> [   51.140000] [<c01e71a0>] (at91_pinconf_get) from [<c01e7304>] (at9=
+1_pinconf_dbg_show+0x18/0x2c0)
+> [   51.140000] [<c01e7304>] (at91_pinconf_dbg_show) from [<c01e6034>]=
+ (pinconf_pins_show+0xc8/0xf8)
+> [   51.140000] [<c01e6034>] (pinconf_pins_show) from [<c00ae0b8>] (se=
+q_read+0x1a0/0x464)
+> [   51.140000] [<c00ae0b8>] (seq_read) from [<c0090dec>] (__vfs_read+=
+0x20/0xd0)
+> [   51.140000] [<c0090dec>] (__vfs_read) from [<c0091508>] (vfs_read+=
+0x7c/0x108)
+> [   51.140000] [<c0091508>] (vfs_read) from [<c0091d9c>] (SyS_read+0x=
+40/0x94)
+> [   51.140000] [<c0091d9c>] (SyS_read) from [<c000efa0>] (ret_fast_sy=
+scall+0x0/0x3c)
+> [   51.140000] Code: eb010ec2 e30a0d08 e34c005a eb0ae5a7 (e5993000)
+> [   51.150000] ---[ end trace fb3c370da3ea4794 ]---
+>=20
+> Signed-off-by: David Dueck <davidcdueck@googlemail.com>
+> Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> CC: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Not all gpio banks are necessarily enabled, in the current code this can
-lead to null pointer dereferences.
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-[   51.130000] Unable to handle kernel NULL pointer dereference at virtual address 00000058
-[   51.130000] pgd = dee04000
-[   51.130000] [00000058] *pgd=3f66d831, *pte=00000000, *ppte=00000000
-[   51.140000] Internal error: Oops: 17 [#1] ARM
-[   51.140000] Modules linked in:
-[   51.140000] CPU: 0 PID: 1664 Comm: cat Not tainted 4.1.1+ #6
-[   51.140000] Hardware name: Atmel SAMA5
-[   51.140000] task: df6dd880 ti: dec60000 task.ti: dec60000
-[   51.140000] PC is at at91_pinconf_get+0xb4/0x200
-[   51.140000] LR is at at91_pinconf_get+0xb4/0x200
-[   51.140000] pc : [<c01e71a0>]    lr : [<c01e71a0>]    psr: 600f0013
-sp : dec61e48  ip : 600f0013  fp : df522538
-[   51.140000] r10: df52250c  r9 : 00000058  r8 : 00000068
-[   51.140000] r7 : 00000000  r6 : df53c910  r5 : 00000000  r4 : dec61e7c
-[   51.140000] r3 : 00000000  r2 : c06746d4  r1 : 00000000  r0 : 00000003
-[   51.140000] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-[   51.140000] Control: 10c53c7d  Table: 3ee04059  DAC: 00000015
-[   51.140000] Process cat (pid: 1664, stack limit = 0xdec60208)
-[   51.140000] Stack: (0xdec61e48 to 0xdec62000)
-[   51.140000] 1e40:                   00000358 00000000 df522500 ded15f80 c05a9d08 ded15f80
-[   51.140000] 1e60: 0000048c 00000061 df522500 ded15f80 c05a9d08 c01e7304 ded15f80 00000000
-[   51.140000] 1e80: c01e6008 00000060 0000048c c01e6034 c01e5f6c ded15f80 dec61ec0 00000000
-[   51.140000] 1ea0: 00020000 ded6f280 dec61f80 00000001 00000001 c00ae0b8 b6e80000 ded15fb0
-[   51.140000] 1ec0: 00000000 00000000 df4bc974 00000055 00000800 ded6f280 b6e80000 ded6f280
-[   51.140000] 1ee0: ded6f280 00020000 b6e80000 00000000 00020000 c0090dec c0671e1c dec61fb0
-[   51.140000] 1f00: b6f8b510 00000001 00004201 c000924c 00000000 00000003 00000003 00000000
-[   51.140000] 1f20: df4bc940 00022000 00000022 c066e188 b6e7f000 c00836f4 000b6e7f ded6f280
-[   51.140000] 1f40: ded6f280 b6e80000 dec61f80 ded6f280 00020000 c0091508 00000000 00000003
-[   51.140000] 1f60: 00022000 00000000 00000000 ded6f280 ded6f280 00020000 b6e80000 c0091d9c
-[   51.140000] 1f80: 00000000 00000000 ffffffff 00020000 00020000 b6e80000 00000003 c000f124
-[   51.140000] 1fa0: dec60000 c000efa0 00020000 00020000 00000003 b6e80000 00020000 000271c4
-[   51.140000] 1fc0: 00020000 00020000 b6e80000 00000003 7fffe000 00000000 00000000 00020000
-[   51.140000] 1fe0: 00000000 bef50b64 00013835 b6f29c76 400f0030 00000003 00000000 00000000
-[   51.140000] [<c01e71a0>] (at91_pinconf_get) from [<c01e7304>] (at91_pinconf_dbg_show+0x18/0x2c0)
-[   51.140000] [<c01e7304>] (at91_pinconf_dbg_show) from [<c01e6034>] (pinconf_pins_show+0xc8/0xf8)
-[   51.140000] [<c01e6034>] (pinconf_pins_show) from [<c00ae0b8>] (seq_read+0x1a0/0x464)
-[   51.140000] [<c00ae0b8>] (seq_read) from [<c0090dec>] (__vfs_read+0x20/0xd0)
-[   51.140000] [<c0090dec>] (__vfs_read) from [<c0091508>] (vfs_read+0x7c/0x108)
-[   51.140000] [<c0091508>] (vfs_read) from [<c0091d9c>] (SyS_read+0x40/0x94)
-[   51.140000] [<c0091d9c>] (SyS_read) from [<c000efa0>] (ret_fast_syscall+0x0/0x3c)
-[   51.140000] Code: eb010ec2 e30a0d08 e34c005a eb0ae5a7 (e5993000)
-[   51.150000] ---[ end trace fb3c370da3ea4794 ]---
+> CC: Boris Brezillon <boris.brezillon@free-electrons.com>
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: linux-kernel@vger.kernel.org
+> ---
+>=20
+> This patch fixes a oops in the kernel because of a NULL pointer in a =
+table.
+> Having a NULL pointer in this table is the normal behavior if a PIO c=
+ontroller
+> is not enabled. So this fix is not a quick and dirty hack, it's usual=
+ to skip
+> an entry from a table if it is not filled.
 
-Signed-off-by: David Dueck <davidcdueck@googlemail.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>
-CC: Boris Brezillon <boris.brezillon@free-electrons.com>
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
----
+Absolutely.
 
-This patch fixes a oops in the kernel because of a NULL pointer in a table.
-Having a NULL pointer in this table is the normal behavior if a PIO controller
-is not enabled. So this fix is not a quick and dirty hack, it's usual to skip
-an entry from a table if it is not filled.
+Thanks David for having written the fix and Ludovic for having verified
+and confirmed that it's actually the proper way to fix the bug.
 
- drivers/pinctrl/pinctrl-at91.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Bye,
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index a082447..2deb130 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -320,6 +320,9 @@ static const struct pinctrl_ops at91_pctrl_ops = {
- static void __iomem *pin_to_controller(struct at91_pinctrl *info,
- 				 unsigned int bank)
+>  drivers/pinctrl/pinctrl-at91.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl=
+-at91.c
+> index a082447..2deb130 100644
+> --- a/drivers/pinctrl/pinctrl-at91.c
+> +++ b/drivers/pinctrl/pinctrl-at91.c
+> @@ -320,6 +320,9 @@ static const struct pinctrl_ops at91_pctrl_ops =3D=
  {
-+	if (!gpio_chips[bank])
-+		return NULL;
-+
- 	return gpio_chips[bank]->regbase;
- }
- 
-@@ -729,6 +732,10 @@ static int at91_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 		pin = &pins_conf[i];
- 		at91_pin_dbg(info->dev, pin);
- 		pio = pin_to_controller(info, pin->bank);
-+
-+		if (!pio)
-+			continue;
-+
- 		mask = pin_to_mask(pin->pin);
- 		at91_mux_disable_interrupt(pio, mask);
- 		switch (pin->mux) {
-@@ -848,6 +855,10 @@ static int at91_pinconf_get(struct pinctrl_dev *pctldev,
- 	*config = 0;
- 	dev_dbg(info->dev, "%s:%d, pin_id=%d", __func__, __LINE__, pin_id);
- 	pio = pin_to_controller(info, pin_to_bank(pin_id));
-+
-+	if (!pio)
-+		return -EINVAL;
-+
- 	pin = pin_id % MAX_NB_GPIO_PER_BANK;
- 
- 	if (at91_mux_get_multidrive(pio, pin))
-@@ -889,6 +900,10 @@ static int at91_pinconf_set(struct pinctrl_dev *pctldev,
- 			"%s:%d, pin_id=%d, config=0x%lx",
- 			__func__, __LINE__, pin_id, config);
- 		pio = pin_to_controller(info, pin_to_bank(pin_id));
-+
-+		if (!pio)
-+			return -EINVAL;
-+
- 		pin = pin_id % MAX_NB_GPIO_PER_BANK;
- 		mask = pin_to_mask(pin);
- 
--- 
-2.2.0
+>  static void __iomem *pin_to_controller(struct at91_pinctrl *info,
+>  				 unsigned int bank)
+>  {
+> +	if (!gpio_chips[bank])
+> +		return NULL;
+> +
+>  	return gpio_chips[bank]->regbase;
+>  }
+> =20
+> @@ -729,6 +732,10 @@ static int at91_pmx_set(struct pinctrl_dev *pctl=
+dev, unsigned selector,
+>  		pin =3D &pins_conf[i];
+>  		at91_pin_dbg(info->dev, pin);
+>  		pio =3D pin_to_controller(info, pin->bank);
+> +
+> +		if (!pio)
+> +			continue;
+> +
+>  		mask =3D pin_to_mask(pin->pin);
+>  		at91_mux_disable_interrupt(pio, mask);
+>  		switch (pin->mux) {
+> @@ -848,6 +855,10 @@ static int at91_pinconf_get(struct pinctrl_dev *=
+pctldev,
+>  	*config =3D 0;
+>  	dev_dbg(info->dev, "%s:%d, pin_id=3D%d", __func__, __LINE__, pin_id=
+);
+>  	pio =3D pin_to_controller(info, pin_to_bank(pin_id));
+> +
+> +	if (!pio)
+> +		return -EINVAL;
+> +
+>  	pin =3D pin_id % MAX_NB_GPIO_PER_BANK;
+> =20
+>  	if (at91_mux_get_multidrive(pio, pin))
+> @@ -889,6 +900,10 @@ static int at91_pinconf_set(struct pinctrl_dev *=
+pctldev,
+>  			"%s:%d, pin_id=3D%d, config=3D0x%lx",
+>  			__func__, __LINE__, pin_id, config);
+>  		pio =3D pin_to_controller(info, pin_to_bank(pin_id));
+> +
+> +		if (!pio)
+> +			return -EINVAL;
+> +
+>  		pin =3D pin_id % MAX_NB_GPIO_PER_BANK;
+>  		mask =3D pin_to_mask(pin);
+> =20
+>=20
+
+
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
