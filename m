@@ -1,13 +1,24 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 18/22] pinctrl: Probe pinctrl devices on demand
-Date: Tue, 28 Jul 2015 15:19:49 +0200
-Message-ID: <1438089593-7696-19-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 08/22] gpio: Probe pinctrl devices on demand
+Date: Tue, 28 Jul 2015 15:19:39 +0200
+Message-ID: <1438089593-7696-9-git-send-email-tomeu.vizoso@collabora.com>
 References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-acpi-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-arm-kernel@lists.infradead.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 When looking up a pin controller through its firmware node, probe it if
@@ -22,21 +33,21 @@ Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
 Changes in v2: None
 
- drivers/pinctrl/devicetree.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib-of.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index fe04e748dfe4..490860f6374e 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -112,6 +112,7 @@ static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 31a6b18a6542..2a6379c1fea7 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -358,6 +358,8 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 		if (ret)
+ 			break;
  
- 	/* Find the pin controller containing np_config */
- 	np_pctldev = of_node_get(np_config);
-+	fwnode_ensure_device(&np_pctldev->fwnode);
- 	for (;;) {
- 		np_pctldev = of_get_next_parent(np_pctldev);
- 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
++		fwnode_ensure_device(&pinspec.np->fwnode);
++
+ 		pctldev = of_pinctrl_get(pinspec.np);
+ 		if (!pctldev)
+ 			return -EPROBE_DEFER;
 -- 
 2.4.3
-
