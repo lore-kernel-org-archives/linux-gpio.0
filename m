@@ -1,56 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: kill off set_irq_flags usage
-Date: Tue, 28 Jul 2015 10:49:53 +0200
-Message-ID: <CACRpkdY8FyxDT=aYfCRof_b+P06MhRVWvuip+TZdZGHpLhvL-Q@mail.gmail.com>
-References: <1438030523-15853-1-git-send-email-robh@kernel.org>
-	<1438030523-15853-4-git-send-email-robh@kernel.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/9] gpiolib: Fix possible use of wrong name
+Date: Tue, 28 Jul 2015 11:03:31 +0200
+Message-ID: <20150728090331.GI28535@localhost>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
+ <1437125570-28623-2-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:35612 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932141AbbG1Ity (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 04:49:54 -0400
-Received: by obbop1 with SMTP id op1so79073927obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 01:49:53 -0700 (PDT)
-In-Reply-To: <1438030523-15853-4-git-send-email-robh@kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:36518 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932206AbbG1JDx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Jul 2015 05:03:53 -0400
+Received: by lagw2 with SMTP id w2so64447365lag.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2015 02:03:52 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1437125570-28623-2-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
 
-On Mon, Jul 27, 2015 at 10:55 PM, Rob Herring <robh@kernel.org> wrote:
+On Fri, Jul 17, 2015 at 11:32:42AM +0200, Markus Pargmann wrote:
+> The name is set optionally from DT. Therefore we need to reset the name
+> variable for every loop iteration. Otherwise we could use a wrong or
+> uninitialized name.
 
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, so we
-> can kill off set_irq_flags. The translation of flags is as follows:
->
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
->
-> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. Some
-> users also modify IRQ_NOPROBE and this has been maintained although it
-> is not clear that is really needed as most platforms don't use probing.
-> There appears to be a great deal of blind copy and paste of this code.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-tegra@vger.kernel.org
+This doesn't make sense. of_get_gpio_hog falls back to using the node
+name so name will always be updated (unless there's an error).
+
+Could be better documented, though.
+
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
 > ---
-> Thomas asked that this be merged thru subsystem trees instead of arm-soc,
-> so please apply this to your tree.
+>  drivers/gpio/gpiolib-of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 9a0ec48a4737..60aebe4d7c26 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -209,11 +209,11 @@ static void of_gpiochip_scan_hogs(struct gpio_chip *chip)
+>  {
+>  	struct gpio_desc *desc = NULL;
+>  	struct device_node *np;
+> -	const char *name;
+>  	enum gpio_lookup_flags lflags;
+>  	enum gpiod_flags dflags;
+>  
+>  	for_each_child_of_node(chip->of_node, np) {
+> +		const char *name = NULL;
+>  		if (!of_property_read_bool(np, "gpio-hog"))
+>  			continue;
 
-Patch applied with some fuzzing, thanks!
-
-Yours,
-Linus Walleij
+Johan
