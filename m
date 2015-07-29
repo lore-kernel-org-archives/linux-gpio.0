@@ -1,79 +1,108 @@
-From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Subject: Re: [PATCH v2 0/22] On-demand device probing
-Date: Wed, 29 Jul 2015 02:36:33 +0200
-Message-ID: <2554489.GlTphZsHuX@vostro.rjw.lan>
-References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH 1/9] gpiolib: Fix possible use of wrong name
+Date: Wed, 29 Jul 2015 08:46:54 +0200
+Message-ID: <20150729064654.GB30895@pengutronix.de>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
+ <1437125570-28623-2-git-send-email-mpa@pengutronix.de>
+ <20150728090331.GI28535@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438089593-7696-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Sebastian
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:45148 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbbG2GrA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jul 2015 02:47:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20150728090331.GI28535@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Tuesday, July 28, 2015 03:19:31 PM Tomeu Vizoso wrote:
-> Hello,
->=20
-> I have a problem with the panel on my Tegra Chromebook taking longer
-> than expected to be ready during boot (St=C3=A9phane Marchesin report=
-ed what
-> is basically the same issue in [0]), and have looked into ordered
-> probing as a better way of solving this than moving nodes around in t=
-he
-> DT or playing with initcall levels and linking order.
->=20
-> While reading the thread [1] that Alexander Holler started with his
-> series to make probing order deterministic, it occurred to me that it
-> should be possible to achieve the same by probing devices as they are
-> referenced by other devices.
->=20
-> This basically reuses the information that is already implicit in the
-> probe() implementations, saving us from refactoring existing drivers =
-or
-> adding information to DTBs.
->=20
-> During review of v1 of this series Linus Walleij suggested that it
-> should be the device driver core to make sure that dependencies are
-> ready before probing a device. I gave this idea a try [2] but Mark Br=
-own
-> pointed out to the logic duplication between the resource acquisition
-> and dependency discovery code paths (though I think it's fairly minor=
-).
->=20
-> To address that code duplication I experimented with Arnd's devm_prob=
-e
-> [3] concept of having drivers declare their dependencies instead of
-> acquiring them during probe, and while it worked [4], I don't think w=
-e
-> end up winning anything when compared to just probing devices on-dema=
-nd
-> from resource getters.
->=20
-> One remaining objection is to the "sprinkling" of calls to
-> fwnode_ensure_device() in the resource getters of each subsystem, but=
- I
-> think it's the right thing to do given that the storage of resources =
-is
-> currently subsystem-specific.
->=20
-> We could avoid the above by moving resource storage into the core, bu=
-t I
-> don't think there's a compelling case for that.
->=20
-> I have tested this on boards with Tegra, iMX.6, Exynos and OMAP SoCs,
-> and these patches were enough to eliminate all the deferred probes
-> (except one in PandaBoard because omap_dma_system doesn't have a
-> firmware node as of yet).
->=20
-> With this series I get the kernel to output to the panel in 0.5s,
-> instead of 2.8s.
 
-Can you trim your CC list somewhat, please?
+--DBIVS5p969aUjpLe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm definitely going to look at this, but not before then next week.
-Sorry about that.
+On Tue, Jul 28, 2015 at 11:03:31AM +0200, Johan Hovold wrote:
+> On Fri, Jul 17, 2015 at 11:32:42AM +0200, Markus Pargmann wrote:
+> > The name is set optionally from DT. Therefore we need to reset the name
+> > variable for every loop iteration. Otherwise we could use a wrong or
+> > uninitialized name.
+>=20
+> This doesn't make sense. of_get_gpio_hog falls back to using the node
+> name so name will always be updated (unless there's an error).
+>=20
+> Could be better documented, though.
 
-Thanks,
-Rafael
+Thanks, just got the two lines wrong. Yes the name is always set
+correctly.
+Will fix it.
+
+Best regards,
+
+Markus
+
+>=20
+> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> > ---
+> >  drivers/gpio/gpiolib-of.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> > index 9a0ec48a4737..60aebe4d7c26 100644
+> > --- a/drivers/gpio/gpiolib-of.c
+> > +++ b/drivers/gpio/gpiolib-of.c
+> > @@ -209,11 +209,11 @@ static void of_gpiochip_scan_hogs(struct gpio_chi=
+p *chip)
+> >  {
+> >  	struct gpio_desc *desc =3D NULL;
+> >  	struct device_node *np;
+> > -	const char *name;
+> >  	enum gpio_lookup_flags lflags;
+> >  	enum gpiod_flags dflags;
+> > =20
+> >  	for_each_child_of_node(chip->of_node, np) {
+> > +		const char *name =3D NULL;
+> >  		if (!of_property_read_bool(np, "gpio-hog"))
+> >  			continue;
+>=20
+> Johan
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--DBIVS5p969aUjpLe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVuHbeAAoJEEpcgKtcEGQQ0u0P/RVwxNLmKymG5g6HefsCEw1C
+h9HOPIiWq522Mt0lGD0UwR6vwqHOUyDiPrlyvOFG9m6jvMgR/HTDGuJZNmUokUAf
+Po03VVjBJ8hoBaxafTv9AcfShRTH6+D093aForaeA7mIW9C1CwmM0kk0LDpIS5I4
+tvYVYB0CIoE/h9I3fsx6FDfNh2jUS5YtEfWjmK2psRfk0wrtILrPp7drsG5dryHw
+kcFmSkJpcR/Zm+GTIqZ2sdGEDp3Ukfuo65CQbXq2lWT16Twc2XXEX5FgeHW+kC7W
+2W+DrTkUp2Ft0qMM887Vk3/ifmeTEFt9/vJJ5NLwgPnrr1p8TPRFt1rzavStJ1gM
+lwjHX4EziMa5BUReCGCh9hyndFHmf6LhnCcAj5VKTe0gwZdChsvnqXAIhu2Flptp
+4ejOfC/UOhYGSE2nDjHC9LPN15R45UJv48j8er2DItfAurMSs8t0I21GZZMhnGDn
+f+teLZ4gxogGD8KTT1ACw1pUKl+dB6GY647A8Bdbnnuxq9w1Aro5QQWY1kpNVeIq
+5VetaSXXgjJ5sNsbU9gbMmQ7u34NWkYuBmZDuX81Af99UXVSmMDf1PEd06cXWimP
+QStiljk3C8PWUGogIqg/KU/JZZuFkCopdetYrvAD1QYAxAORQWbW4kML9B+bGmpN
+qrGV+9rwWTLbj/VCepPD
+=zcQL
+-----END PGP SIGNATURE-----
+
+--DBIVS5p969aUjpLe--
