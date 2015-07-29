@@ -1,72 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
-Date: Wed, 29 Jul 2015 11:23:10 +0200
-Message-ID: <CACRpkdYV=MDcEmsknuAXghGe_PcnqCQdvK2AQd8N28g7weGtFA@mail.gmail.com>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
-	<CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
-	<20150728141619.GP28535@localhost>
+From: <maoguang.meng@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: Implement pictrl irq wake handler
+Date: Wed, 29 Jul 2015 17:36:40 +0800
+Message-ID: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:36266 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbbG2JXL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jul 2015 05:23:11 -0400
-Received: by obnw1 with SMTP id w1so2839078obn.3
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2015 02:23:10 -0700 (PDT)
-In-Reply-To: <20150728141619.GP28535@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, Maoguang Meng <maoguang.meng@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <acourbot@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, Jul 28, 2015 at 4:16 PM, Johan Hovold <johan@kernel.org> wrote:
+From: Maoguang Meng <maoguang.meng@mediatek.com>
 
-> That said, this is a step along the lines that we have discussed in the
-> past. Adding pin functions (line names) to generic pin nodes in DT makes
-> sense, but we need to think through the details first. For example:
->
->  - Should we allow duplicate pin functions (line names)? We need to
->    consider not just on-chip controllers, but also hot-pluggable
->    controllers and device-tree overlays.
+This patch implement irq_set_wake for suspend resume.
 
-I guess the typical example is if we have two identical GPIO
-expanders. We have this with arch/arm/boot/dts/ste-nomadik-nhk15.dts
-for example.
+Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-With this scheme, they will simply have to name their lines
-uniquely for things to work since /sys/class/gpio is a flat
-space, not hierarchic per-gpiochip (as would be preferred,
-should this be sane to maintain).
-
->  - Should we allow initial configurations to be specified and still
->    allow (some) pins to be requested later ("soft" hogging)?
-
-That is a key idea in this patch set.
-
-Maybe we need a "userspace hog" to mark these specifically as
-not used by the operating system. (Bringing me back to my
-tirade about people doing stupid things in userspace just because
-they don't know about all the nice GPIO stuff in the kernel.)
-
->  - Should we specify pin directionality? I've suggested elsewhere that
->    adding such limitations (e.g. as a mask) may make sense in cases were
->    changing pin direction is known to cause damage.
-
-We have the flag jamming IRQ lines to be input, but input-only
-and output-only seems reasonable for hogs in reaction to the
-current "input", "output-low" and "output-high" properties.
-
-Could be a separate patch though.
-
->  - What would a new gpio interface look like?
-
-Yeah :/ people are scared of adding chardevs it seems.
-
-I think they are kind of nice, the biggest problem seems to be
-totally confused userspace with udev and mdev and none of
-them ever knows about new stuff and people get problems
-becuase of old rootfs:es.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ad1ea16..a3d137e 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1,7 +1,9 @@
+ /*
+  * mt65xx pinctrl driver based on Allwinner A1X pinctrl driver.
+  * Copyright (c) 2014 MediaTek Inc.
+- * Author: Hongzhou.Yang <hongzhou.yang@mediatek.com>
++ * Author:
++ *  Hongzhou.Yang <hongzhou.yang@mediatek.com>
++ *  Maoguang.Meng <maoguang.meng@mediatek.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -1062,6 +1064,16 @@ static int mtk_eint_set_type(struct irq_data *d,
+ 	return 0;
+ }
+ 
++static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++	if (on)
++		d->chip->flags |= IRQF_NO_SUSPEND;
++	else
++		d->chip->flags &= ~IRQF_NO_SUSPEND;
++
++	return 0;
++}
++
+ static void mtk_eint_ack(struct irq_data *d)
+ {
+ 	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+@@ -1075,11 +1087,13 @@ static void mtk_eint_ack(struct irq_data *d)
+ }
+ 
+ static struct irq_chip mtk_pinctrl_irq_chip = {
+-	.name = "mt-eint",
++	.name = "mtk-eint",
++	.irq_disable = mtk_eint_mask,
+ 	.irq_mask = mtk_eint_mask,
+ 	.irq_unmask = mtk_eint_unmask,
+ 	.irq_ack = mtk_eint_ack,
+ 	.irq_set_type = mtk_eint_set_type,
++	.irq_set_wake = mtk_eint_irq_set_wake,
+ 	.irq_request_resources = mtk_pinctrl_irq_request_resources,
+ 	.irq_release_resources = mtk_pinctrl_irq_release_resources,
+ };
+-- 
+1.8.1.1.dirty
