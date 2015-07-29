@@ -1,126 +1,94 @@
 From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 7/9] gpiolib-sysfs: Add gpio name parsing for sysfs export
-Date: Wed, 29 Jul 2015 08:57:36 +0200
-Message-ID: <20150729065736.GE30895@pengutronix.de>
+Subject: Re: [PATCH 8/9] gpiolib-sysfs: Show gpio-name in
+ /sys/class/gpio/gpio*/name
+Date: Wed, 29 Jul 2015 09:02:07 +0200
+Message-ID: <20150729070207.GF30895@pengutronix.de>
 References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-8-git-send-email-mpa@pengutronix.de>
- <20150728095004.GM28535@localhost>
+ <1437125570-28623-9-git-send-email-mpa@pengutronix.de>
+ <20150728095337.GN28535@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KuLpqunXa7jZSBt+"
+	protocol="application/pgp-signature"; boundary="NGIwU0kFl1Z1A3An"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42294 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:45964 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752012AbbG2G5l (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jul 2015 02:57:41 -0400
+	with ESMTP id S1752770AbbG2HCK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Jul 2015 03:02:10 -0400
 Content-Disposition: inline
-In-Reply-To: <20150728095004.GM28535@localhost>
+In-Reply-To: <20150728095337.GN28535@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Johan Hovold <johan@kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
 
 
---KuLpqunXa7jZSBt+
+--NGIwU0kFl1Z1A3An
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 28, 2015 at 11:50:04AM +0200, Johan Hovold wrote:
-> On Fri, Jul 17, 2015 at 11:32:48AM +0200, Markus Pargmann wrote:
+On Tue, Jul 28, 2015 at 11:53:37AM +0200, Johan Hovold wrote:
+> On Fri, Jul 17, 2015 at 11:32:49AM +0200, Markus Pargmann wrote:
+> > This patch adds a sysfs attribute 'name' to gpios that were exported. It
+> > exposes the newly added name property of gpio descriptors.
+> >=20
 > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
 > > ---
-> >  drivers/gpio/gpiolib-sysfs.c | 41 ++++++++++++++++++++++++++++--------=
------
-> >  1 file changed, 28 insertions(+), 13 deletions(-)
+> >  drivers/gpio/gpiolib-sysfs.c | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
 > >=20
 > > diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> > index b57ed8e55ab5..c3b74440ca67 100644
+> > index c3b74440ca67..058019879bab 100644
 > > --- a/drivers/gpio/gpiolib-sysfs.c
 > > +++ b/drivers/gpio/gpiolib-sysfs.c
-> > @@ -443,18 +443,25 @@ static ssize_t export_store(struct class *class,
-> >  				const char *buf, size_t len)
-> >  {
-> >  	long			gpio;
-> > -	struct gpio_desc	*desc;
-> > +	struct gpio_desc	*desc =3D NULL;
-> >  	int			status;
+> > @@ -139,6 +139,25 @@ static ssize_t value_store(struct device *dev,
+> >  }
+> >  static DEVICE_ATTR_RW(value);
 > > =20
-> >  	status =3D kstrtol(buf, 0, &gpio);
-> > -	if (status < 0)
-> > -		goto done;
-> > +	if (!status)
-> > +		desc =3D gpio_to_desc(gpio);
-> > =20
-> > -	desc =3D gpio_to_desc(gpio);
-> > -	/* reject invalid GPIOs */
-> > +	/* Fall back on detection by name */
-> >  	if (!desc) {
-> > -		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> > -		return -EINVAL;
-> > +		char *gpio_name =3D kstrdup(buf, GFP_KERNEL);
+> > +static ssize_t gpio_name_show(struct device *dev,
+> > +		struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct gpio_desc	*desc =3D dev_get_drvdata(dev);
+> > +	ssize_t			status;
+> > +
+> > +	mutex_lock(&sysfs_lock);
+> > +
+> > +	if (!test_bit(FLAG_EXPORT, &desc->flags))
 >=20
-> Must check for allocation failures, but why use kstrdup at all?
+> No need to check flag export, and no need for the mutex either.
+>=20
+> > +		status =3D -EIO;
+> > +	else
+> > +		status =3D sprintf(buf, "%s\n", desc->name);
+>=20
+> Depending on sprintfs representation of NULL is not a good idea here.
+>=20
+> > +
+> > +	mutex_unlock(&sysfs_lock);
+> > +	return status;
+> > +}
+> > +
+> > +static DEVICE_ATTR(name, 0444, gpio_name_show, NULL);
+>=20
+> DEVICE_ATTR_RO
+>=20
+> > +
+> >  static irqreturn_t gpio_sysfs_irq(int irq, void *priv)
+> >  {
+> >  	struct gpiod_data *data =3D priv;
+> > @@ -377,6 +396,7 @@ static struct attribute *gpio_attrs[] =3D {
+> >  	&dev_attr_edge.attr,
+> >  	&dev_attr_value.attr,
+> >  	&dev_attr_active_low.attr,
+> > +	&dev_attr_name.attr,
+> >  	NULL,
+> >  };
 
-Yes have to check that.
-strim() may modify the buf variable which is constant.
+Thanks, will fix all of them.
 
 Best regards,
 
 Markus
-
->=20
-> > +
-> > +		desc =3D gpio_name_to_desc(strim(gpio_name));
-> > +		kfree(gpio_name);
-> > +
-> > +		/* reject invalid GPIOs */
-> > +		if (!desc) {
-> > +			pr_warn("%s: invalid GPIO %s\n", __func__, buf);
-> > +			return -EINVAL;
-> > +		}
-> >  	}
-> > =20
-> >  	/* No extra locking here; FLAG_SYSFS just signifies that the
-> > @@ -485,17 +492,25 @@ static ssize_t unexport_store(struct class *class,
-> >  				const char *buf, size_t len)
-> >  {
-> >  	long			gpio;
-> > -	struct gpio_desc	*desc;
-> > +	struct gpio_desc	*desc =3D NULL;
-> >  	int			status;
-> > =20
-> >  	status =3D kstrtol(buf, 0, &gpio);
-> > -	if (status < 0)
-> > -		goto done;
-> > +	if (!status)
-> > +		desc =3D gpio_to_desc(gpio);
-> > +
-> > +	/* Fall back on detection by name */
-> > +	if (!desc) {
-> > +		char *gpio_name =3D kstrdup(buf, GFP_KERNEL);
->=20
-> Same here.
->=20
-> > +
-> > +		desc =3D gpio_name_to_desc(strim(gpio_name));
-> > +		kfree(gpio_name);
-> > +	}
-> > +
->=20
-> Random whitespace change.
->=20
-> > =20
-> > -	desc =3D gpio_to_desc(gpio);
-> >  	/* reject bogus commands (gpio_unexport ignores them) */
-> >  	if (!desc) {
-> > -		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> > +		pr_warn("%s: invalid GPIO %s\n", __func__, buf);
-> >  		return -EINVAL;
-> >  	}
->=20
-> Johan
->=20
 
 --=20
 Pengutronix e.K.                           |                             |
@@ -128,26 +96,26 @@ Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
---KuLpqunXa7jZSBt+
+--NGIwU0kFl1Z1A3An
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJVuHlgAAoJEEpcgKtcEGQQNeIP/26nwzWAnz83smaMEUohizmm
-CM30pf+2vsnX065NQ//qOZL3L2O1inATDpV6amFAjJvwgeHyncizRz+znaA3PXZw
-9w5Ks9X7eIo5/dT8IsqdCAhfZ1HuOLBrqClFTi5/KWI0grhimilT7KHi/33LkC+B
-x0uf861mYrWZk+NoFLPSeIS9Wj3BXMQ7E6aI3qH7hQz40nLNjpol09UVf5MmrQ3R
-t9ygvEfEvZLHGy78eNRzxfCQAfEF6gRJFFvPXtljXDsLg6HPIB4a4Rove0mpDX2e
-DdtosusA2pcLyu/ad9JRw/U2LM3y7VVCT8EEkfZCL6Jjix383qZlG24+oKYWTN/J
-ZiVUmJH8hfLe1yo5Z3gi0UX0NXyDzYJiC1h34l+OrZ68JYV0i3RtB1tmwHAr29X5
-i43OTc/hYihxSTD41eC/hPr7gN8H+pb66lZT00zm93gboygjIPAhUED6D4+hMRli
-koNTshn0fT5izoTj7Id9Emq9sLmjDVNL4e8dwKosy2wfuxVuu04jkJtjW2KPdbJF
-hW7CtSiSo5qsmk2hzBpImcbmQ9snY12jcFTiZkYqey61/2JjQyeWYXUCdT9IqlRO
-5RPqprrZmaZgY+6yKCVFYvfDWi3Hfmho3tIp/GLCKFz3Bw2SmtG+RVbrroC4pL6B
-9pU7fmdXpTix0nHJFuow
-=cFW/
+iQIcBAEBAgAGBQJVuHpuAAoJEEpcgKtcEGQQ/2UQAIWePwK/ANbIgZMwnt1JMQuo
+ajfZz5K+V45n6FlokBAroQTJIdVdbYC+Akto8zDSJ5DqvyHtcO+xFslizSU2U7S7
+J8cIAoURmCKYCzwLL+aYUWbk/kzDPluvVS90VLCnfM+3w9C+MkyBwFfcOwrqcyQl
+b9QDuDgXvVI3+YIiEfnZIfW12u1deh1e55A/YDR50MAWPOmTF6CxofVvBcbDidvr
+qeLyha9XavXiEJ+pXQPfQc9CQhXWrT7G9zLcZIKBx0rufSBtMnxOcXU5Khv9M5Uh
+AUKF3I1Rg1ksBcSGeJ0WJ/WqqAsvP9ak+Z6CzDlRfEjQHzMdh0Hq1QKldMsdPwFi
+q1fPCm2ZQq6n2T963ZBoAHnlXRqqU+2t/qAcdozYU+WywdTdLSl+UOIE1vrs7RQr
+ngG9mbkAH6XqpHzeCNUmDrA4tNpD5L13OUwXcCgbu4LJjxe/BrEP6Q4kqHyrPEck
+RQw2/NJJ89Y2ZOJnbVJjwK8eDV8I75DgcsThPn9Ap/n6Shsfu4oSl8NptCUsNU87
+9ZR3vdg/ol2yNOnHNH+dqGLZ1XIQ8lhCeR7gp3mRB2zuSlrjIGQIDQ/Y5dcbJbsn
+r42aRB97fglvXOP7C7oFHX0wylEOKQ2Xj9e/qPGMF4bLj1/Y1zWuV81H6tElTY2O
+Xic//7vPLChvcDQBHE3/
+=4NIo
 -----END PGP SIGNATURE-----
 
---KuLpqunXa7jZSBt+--
+--NGIwU0kFl1Z1A3An--
