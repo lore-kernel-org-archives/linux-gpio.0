@@ -1,94 +1,40 @@
-From: Shaveta Leekha <shaveta@freescale.com>
-Subject: [PATCH 3/3] arm/dts/ls1021a: Add GPIO controller nodes
-Date: Thu, 30 Jul 2015 12:57:19 +0530
-Message-ID: <1438241239-15178-3-git-send-email-shaveta@freescale.com>
-References: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: join dev_dbg strings into a single line
+Date: Thu, 30 Jul 2015 17:27:44 +0900
+Message-ID: <1438244864-30737-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1bbn0104.outbound.protection.outlook.com ([157.56.111.104]:50624
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751610AbbG3Hls (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 30 Jul 2015 03:41:48 -0400
-In-Reply-To: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
+Received: from conuserg010.nifty.com ([202.248.44.36]:54558 "EHLO
+	conuserg010-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751177AbbG3I2X (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Jul 2015 04:28:23 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: r64188@freescale.com, gnurou@gmail.com, linus.walleij@linaro.org, Shaveta Leekha <shaveta@freescale.com>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-Signed-off-by: Shaveta Leekha <shaveta@freescale.com>
+These are user-visible strings, so can exceed 80 columns.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-Tested on Freescale SDK 1.8, as LS1021aQDS support is not yet complete in upstream
 
- arch/arm/boot/dts/ls1021a.dtsi |   47 ++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 47 insertions(+), 0 deletions(-)
+ drivers/pinctrl/pinconf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index 71ea37d..2630b59 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -60,6 +60,11 @@
- 		serial4 = &lpuart4;
- 		serial5 = &lpuart5;
- 		sysclk = &sysclk;
-+		gpio0 = &gpio1;
-+		gpio1 = &gpio2;
-+		gpio2 = &gpio3;
-+		gpio3 = &gpio4;
-+
- 	};
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 1fc09dc..c4ba738 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -61,8 +61,8 @@ int pin_config_get_for_pin(struct pinctrl_dev *pctldev, unsigned pin,
+ 	const struct pinconf_ops *ops = pctldev->desc->confops;
  
- 	cpus {
-@@ -332,6 +337,48 @@
- 			status = "disabled";
- 		};
+ 	if (!ops || !ops->pin_config_get) {
+-		dev_dbg(pctldev->dev, "cannot get pin configuration, missing "
+-			"pin_config_get() function in driver\n");
++		dev_dbg(pctldev->dev,
++			"cannot get pin configuration, .pin_config_get missing in driver\n");
+ 		return -ENOTSUPP;
+ 	}
  
-+
-+		gpio1: gpio@2300000 {
-+			compatible = "fsl,ls1021a-gpio";
-+			reg = <0x0 0x2300000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2310000 {
-+			compatible = "fsl,ls1021a-gpio";
-+			reg = <0x0 0x2310000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2320000 {
-+			compatible = "fsl,ls1021a-gpio";
-+			reg = <0x0 0x2320000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio4: gpio@2330000 {
-+			compatible = "fsl,ls1021a-gpio";
-+			reg = <0x0 0x2330000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+        		#gpio-cells = <2>;
-+			interrupt-controller;
-+           		#interrupt-cells = <2>;
-+		};
-+
-+
- 		wdog0: watchdog@2ad0000 {
- 			compatible = "fsl,imx21-wdt";
- 			reg = <0x0 0x2ad0000 0x0 0x10000>;
 -- 
-1.7.7.4
+1.9.1
 
