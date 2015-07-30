@@ -1,77 +1,232 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v2 0/22] On-demand device probing
-Date: Wed, 29 Jul 2015 22:06:02 -0500
-Message-ID: <CAL_Jsq+2q=c6JbER8EMOGFtR=a6gvHermb8DRo9dKyj6fvdnXg@mail.gmail.com>
-References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Shaveta Leekha <shaveta@freescale.com>
+Subject: [PATCH 1/3] drivers/gpio: Port gpio driver to ls1021a-qds platform
+Date: Thu, 30 Jul 2015 12:57:17 +0530
+Message-ID: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux PWM List <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Linux-ALSA <alsa-devel@alsa-project.org>, dri-devel <dri-devel@lists.freedesktop.org>, Sebastian Reichel <sre@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Vinod Koul <vinod.koul@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn1bbn0104.outbound.protection.outlook.com ([157.56.111.104]:56544
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751301AbbG3H12 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 30 Jul 2015 03:27:28 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: r64188@freescale.com, gnurou@gmail.com, linus.walleij@linaro.org, Shaveta Leekha <shaveta@freescale.com>
 
-T24gVHVlLCBKdWwgMjgsIDIwMTUgYXQgODoxOSBBTSwgVG9tZXUgVml6b3NvCjx0b21ldS52aXpv
-c29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4gSGVsbG8sCj4KPiBJIGhhdmUgYSBwcm9ibGVtIHdp
-dGggdGhlIHBhbmVsIG9uIG15IFRlZ3JhIENocm9tZWJvb2sgdGFraW5nIGxvbmdlcgo+IHRoYW4g
-ZXhwZWN0ZWQgdG8gYmUgcmVhZHkgZHVyaW5nIGJvb3QgKFN0w6lwaGFuZSBNYXJjaGVzaW4gcmVw
-b3J0ZWQgd2hhdAo+IGlzIGJhc2ljYWxseSB0aGUgc2FtZSBpc3N1ZSBpbiBbMF0pLCBhbmQgaGF2
-ZSBsb29rZWQgaW50byBvcmRlcmVkCj4gcHJvYmluZyBhcyBhIGJldHRlciB3YXkgb2Ygc29sdmlu
-ZyB0aGlzIHRoYW4gbW92aW5nIG5vZGVzIGFyb3VuZCBpbiB0aGUKPiBEVCBvciBwbGF5aW5nIHdp
-dGggaW5pdGNhbGwgbGV2ZWxzIGFuZCBsaW5raW5nIG9yZGVyLgo+Cj4gV2hpbGUgcmVhZGluZyB0
-aGUgdGhyZWFkIFsxXSB0aGF0IEFsZXhhbmRlciBIb2xsZXIgc3RhcnRlZCB3aXRoIGhpcwo+IHNl
-cmllcyB0byBtYWtlIHByb2Jpbmcgb3JkZXIgZGV0ZXJtaW5pc3RpYywgaXQgb2NjdXJyZWQgdG8g
-bWUgdGhhdCBpdAo+IHNob3VsZCBiZSBwb3NzaWJsZSB0byBhY2hpZXZlIHRoZSBzYW1lIGJ5IHBy
-b2JpbmcgZGV2aWNlcyBhcyB0aGV5IGFyZQo+IHJlZmVyZW5jZWQgYnkgb3RoZXIgZGV2aWNlcy4K
-Pgo+IFRoaXMgYmFzaWNhbGx5IHJldXNlcyB0aGUgaW5mb3JtYXRpb24gdGhhdCBpcyBhbHJlYWR5
-IGltcGxpY2l0IGluIHRoZQo+IHByb2JlKCkgaW1wbGVtZW50YXRpb25zLCBzYXZpbmcgdXMgZnJv
-bSByZWZhY3RvcmluZyBleGlzdGluZyBkcml2ZXJzIG9yCj4gYWRkaW5nIGluZm9ybWF0aW9uIHRv
-IERUQnMuCj4KPiBEdXJpbmcgcmV2aWV3IG9mIHYxIG9mIHRoaXMgc2VyaWVzIExpbnVzIFdhbGxl
-aWogc3VnZ2VzdGVkIHRoYXQgaXQKPiBzaG91bGQgYmUgdGhlIGRldmljZSBkcml2ZXIgY29yZSB0
-byBtYWtlIHN1cmUgdGhhdCBkZXBlbmRlbmNpZXMgYXJlCj4gcmVhZHkgYmVmb3JlIHByb2Jpbmcg
-YSBkZXZpY2UuIEkgZ2F2ZSB0aGlzIGlkZWEgYSB0cnkgWzJdIGJ1dCBNYXJrIEJyb3duCj4gcG9p
-bnRlZCBvdXQgdG8gdGhlIGxvZ2ljIGR1cGxpY2F0aW9uIGJldHdlZW4gdGhlIHJlc291cmNlIGFj
-cXVpc2l0aW9uCj4gYW5kIGRlcGVuZGVuY3kgZGlzY292ZXJ5IGNvZGUgcGF0aHMgKHRob3VnaCBJ
-IHRoaW5rIGl0J3MgZmFpcmx5IG1pbm9yKS4KPgo+IFRvIGFkZHJlc3MgdGhhdCBjb2RlIGR1cGxp
-Y2F0aW9uIEkgZXhwZXJpbWVudGVkIHdpdGggQXJuZCdzIGRldm1fcHJvYmUKPiBbM10gY29uY2Vw
-dCBvZiBoYXZpbmcgZHJpdmVycyBkZWNsYXJlIHRoZWlyIGRlcGVuZGVuY2llcyBpbnN0ZWFkIG9m
-Cj4gYWNxdWlyaW5nIHRoZW0gZHVyaW5nIHByb2JlLCBhbmQgd2hpbGUgaXQgd29ya2VkIFs0XSwg
-SSBkb24ndCB0aGluayB3ZQo+IGVuZCB1cCB3aW5uaW5nIGFueXRoaW5nIHdoZW4gY29tcGFyZWQg
-dG8ganVzdCBwcm9iaW5nIGRldmljZXMgb24tZGVtYW5kCj4gZnJvbSByZXNvdXJjZSBnZXR0ZXJz
-Lgo+Cj4gT25lIHJlbWFpbmluZyBvYmplY3Rpb24gaXMgdG8gdGhlICJzcHJpbmtsaW5nIiBvZiBj
-YWxscyB0bwo+IGZ3bm9kZV9lbnN1cmVfZGV2aWNlKCkgaW4gdGhlIHJlc291cmNlIGdldHRlcnMg
-b2YgZWFjaCBzdWJzeXN0ZW0sIGJ1dCBJCj4gdGhpbmsgaXQncyB0aGUgcmlnaHQgdGhpbmcgdG8g
-ZG8gZ2l2ZW4gdGhhdCB0aGUgc3RvcmFnZSBvZiByZXNvdXJjZXMgaXMKPiBjdXJyZW50bHkgc3Vi
-c3lzdGVtLXNwZWNpZmljLgoKU2VlbXMgbGlrZSBhIG1pbm9yIGNoYW5nZSB0byBtZS4KCj4gV2Ug
-Y291bGQgYXZvaWQgdGhlIGFib3ZlIGJ5IG1vdmluZyByZXNvdXJjZSBzdG9yYWdlIGludG8gdGhl
-IGNvcmUsIGJ1dCBJCj4gZG9uJ3QgdGhpbmsgdGhlcmUncyBhIGNvbXBlbGxpbmcgY2FzZSBmb3Ig
-dGhhdC4KPgo+IEkgaGF2ZSB0ZXN0ZWQgdGhpcyBvbiBib2FyZHMgd2l0aCBUZWdyYSwgaU1YLjYs
-IEV4eW5vcyBhbmQgT01BUCBTb0NzLAo+IGFuZCB0aGVzZSBwYXRjaGVzIHdlcmUgZW5vdWdoIHRv
-IGVsaW1pbmF0ZSBhbGwgdGhlIGRlZmVycmVkIHByb2Jlcwo+IChleGNlcHQgb25lIGluIFBhbmRh
-Qm9hcmQgYmVjYXVzZSBvbWFwX2RtYV9zeXN0ZW0gZG9lc24ndCBoYXZlIGEKPiBmaXJtd2FyZSBu
-b2RlIGFzIG9mIHlldCkuCj4KPiBXaXRoIHRoaXMgc2VyaWVzIEkgZ2V0IHRoZSBrZXJuZWwgdG8g
-b3V0cHV0IHRvIHRoZSBwYW5lbCBpbiAwLjVzLAo+IGluc3RlYWQgb2YgMi44cy4KCkdlbmVyYWxs
-eSwgSSB0aGluayB0aGlzIGxvb2tzIHByZXR0eSBnb29kLiBJdCBpcyBzaW1wbGUgYW5kIHRoZSBl
-cnJvcgpwYXRoIGlzIHNpbXBseSBmYWxsaW5nIGJhY2sgdG8gZGVmZXJyZWQgcHJvYmUuCgpPbmUg
-b3ZlcmFsbCBjb21tZW50IGlzIEknbSBub3Qgc28gc3VyZSBpZiBmd25vZGVfZW5zdXJlX2Rldmlj
-ZQpzaG91bGRuJ3QganVzdCBiZSBvZl9lbnN1cmVfZGV2aWNlLiBBdCBsZWFzdCBjdXJyZW50bHks
-IGl0IGxvb2tzIGxpa2UKYWxsIHRoZSBjYWxsaW5nIGxvY2F0aW9ucyBhcmUgRFQgc3BlY2lmaWMg
-ZnVuY3Rpb25zIGFueXdheS4gVGhlcmUncwp2ZXJ5IGxpdHRsZSBsb2dpYyB3aXRoaW4gdGhlIGZ1
-bmN0aW9uIHRvIHJlYWxseSBiZW5lZml0IHNoYXJpbmcgd2l0aApBQ1BJLiBJdCBpcyBiYXNpY2Fs
-bHkganVzdCBhIGNhbGwgdG8gb2ZfcGxhdGZvcm1fZGV2aWNlX2ZpbmQgYW5kIHRoZW4KYnVzX3By
-b2JlX2RldmljZS4gSSBleHBlY3QgdGhlIGdldCBmdW5jdGlvbnMgd2lsbCBhbHdheXMgY2FsbCBp
-bnRvCkRUL0FDUEkgc3BlY2lmaWMgZnVuY3Rpb25zIHdoaWNoIGNhbiB0aGVuIGNhbGwgdGhlIGZp
-cm13YXJlIHNwZWNpZmljCmRldmljZSBmaW5kIGZ1bmN0aW9uLgoKUm9iCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxp
-bmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
-LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+LS1021a-qds has the same ip block/controller as
+GPIO on powerpc platform(MPC8XXX).
+
+So use portable i/o accessors, as in_be32/out_be32
+accessors are Power architecture specific whereas
+ioread/writebe32 are available in other architectures.
+
+GPIO controller's registers are big endian, the
+accessors ioread32be/iowrite32be matches this one
+and portable on powerpc as well on ARM.
+
+Signed-off-by: Shaveta Leekha <shaveta@freescale.com>
+---
+Tested on Freescale SDK 1.8, as LS1021aQDS support is not yet complete in upstream
+
+ drivers/gpio/gpio-mpc8xxx.c |   53 ++++++++++++++++++++++++++----------------
+ 1 files changed, 33 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 8ef7a12..9cd90e8 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -1,5 +1,5 @@
+ /*
+- * GPIOs on MPC512x/8349/8572/8610 and compatible
++ * GPIOs on MPC512x/8349/8572/8610/LS1020A and compatible
+  *
+  * Copyright (C) 2008 Peter Korsgaard <jacmet@sunsite.dk>
+  *
+@@ -19,6 +19,7 @@
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+ #include <linux/irq.h>
++#include <linux/irqdomain.h>
+ 
+ #define MPC8XXX_GPIO_PINS	32
+ 
+@@ -59,9 +60,17 @@ static void mpc8xxx_gpio_save_regs(struct of_mm_gpio_chip *mm)
+ {
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 
+-	mpc8xxx_gc->data = in_be32(mm->regs + GPIO_DAT);
++	mpc8xxx_gc->data = ioread32be(mm->regs + GPIO_DAT);
+ }
+ 
++/* Generic set and clear bits accessor ports */
++#define bgpio_setbits32(_addr, _v) \
++		iowrite32be(ioread32be(_addr) |  (_v), (_addr))
++#define bgpio_clrbits32(_addr, _v) \
++		iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
++#define bgpio_clrsetbits32(addr, clear, set) \
++		iowrite32be((ioread32be(addr) & ~(clear)) | (set), (addr))
++
+ /* Workaround GPIO 1 errata on MPC8572/MPC8536. The status of GPIOs
+  * defined as output cannot be determined by reading GPDAT register,
+  * so we use shadow data register instead. The status of input pins
+@@ -74,9 +83,9 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 	u32 out_mask, out_shadow;
+ 
+-	out_mask = in_be32(mm->regs + GPIO_DIR);
++	out_mask = ioread32be(mm->regs + GPIO_DIR);
+ 
+-	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
++	val = ioread32be(mm->regs + GPIO_DAT) & ~out_mask;
+ 	out_shadow = mpc8xxx_gc->data & out_mask;
+ 
+ 	return (val | out_shadow) & mpc8xxx_gpio2mask(gpio);
+@@ -86,7 +95,7 @@ static int mpc8xxx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
+ 
+-	return in_be32(mm->regs + GPIO_DAT) & mpc8xxx_gpio2mask(gpio);
++	return ioread32be(mm->regs + GPIO_DAT) & mpc8xxx_gpio2mask(gpio);
+ }
+ 
+ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+@@ -102,7 +111,7 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	else
+ 		mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(gpio);
+ 
+-	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
++	iowrite32be(mpc8xxx_gc->data, mm->regs + GPIO_DAT);
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -128,7 +137,7 @@ static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
+ 		}
+ 	}
+ 
+-	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
++	iowrite32be(mpc8xxx_gc->data, mm->regs + GPIO_DAT);
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -141,7 +150,7 @@ static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
++	bgpio_clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+@@ -158,7 +167,7 @@ static int mpc8xxx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
++	bgpio_setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+@@ -201,7 +210,8 @@ static void mpc8xxx_gpio_irq_cascade(unsigned int irq, struct irq_desc *desc)
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 	unsigned int mask;
+ 
+-	mask = in_be32(mm->regs + GPIO_IER) & in_be32(mm->regs + GPIO_IMR);
++	mask = ioread32be(mm->regs + GPIO_IER)
++		& ioread32be(mm->regs + GPIO_IMR);
+ 	if (mask)
+ 		generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
+ 						     32 - ffs(mask)));
+@@ -217,7 +227,8 @@ static void mpc8xxx_irq_unmask(struct irq_data *d)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	setbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	bgpio_setbits32(mm->regs + GPIO_IMR,
++			mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -230,7 +241,8 @@ static void mpc8xxx_irq_mask(struct irq_data *d)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	clrbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	bgpio_clrbits32(mm->regs + GPIO_IMR,
++			mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -240,7 +252,7 @@ static void mpc8xxx_irq_ack(struct irq_data *d)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = irq_data_get_irq_chip_data(d);
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 
+-	out_be32(mm->regs + GPIO_IER, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	iowrite32be(mpc8xxx_gpio2mask(irqd_to_hwirq(d)), mm->regs + GPIO_IER);
+ }
+ 
+ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
+@@ -252,14 +264,14 @@ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		setbits32(mm->regs + GPIO_ICR,
++		bgpio_setbits32(mm->regs + GPIO_ICR,
+ 			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrbits32(mm->regs + GPIO_ICR,
++		bgpio_clrbits32(mm->regs + GPIO_ICR,
+ 			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+@@ -292,20 +304,20 @@ static int mpc512x_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 	case IRQ_TYPE_LEVEL_LOW:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrsetbits_be32(reg, 3 << shift, 2 << shift);
++		bgpio_clrsetbits32(reg, 3 << shift, 2 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_RISING:
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrsetbits_be32(reg, 3 << shift, 1 << shift);
++		bgpio_clrsetbits32(reg, 3 << shift, 1 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrbits32(reg, 3 << shift);
++		bgpio_clrbits32(reg, 3 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+@@ -373,6 +385,7 @@ static const struct of_device_id mpc8xxx_gpio_ids[] = {
+ 	{ .compatible = "fsl,mpc5125-gpio", .data = &mpc5125_gpio_devtype, },
+ 	{ .compatible = "fsl,pq3-gpio",     },
+ 	{ .compatible = "fsl,qoriq-gpio",   },
++	{ .compatible = "fsl,ls1021a-gpio",   },
+ 	{}
+ };
+ 
+@@ -435,8 +448,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 		mpc8xxx_gc->of_dev_id_data = id->data;
+ 
+ 	/* ack and mask all irqs */
+-	out_be32(mm_gc->regs + GPIO_IER, 0xffffffff);
+-	out_be32(mm_gc->regs + GPIO_IMR, 0);
++	iowrite32be(0xffffffff, mm_gc->regs + GPIO_IER);
++	iowrite32be(0, mm_gc->regs + GPIO_IMR);
+ 
+ 	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+ 					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
+-- 
+1.7.7.4
+
