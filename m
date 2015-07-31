@@ -1,106 +1,50 @@
 From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
- /sys/kernel/debug/gpio
-Date: Fri, 31 Jul 2015 12:41:01 +0200
-Message-ID: <20150731104101.GB1994@pengutronix.de>
+Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
+Date: Fri, 31 Jul 2015 12:42:51 +0200
+Message-ID: <20150731104251.GC1994@pengutronix.de>
 References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
- <20150728095842.GO28535@localhost>
- <20150729070842.GG30895@pengutronix.de>
- <20150731085407.GO28535@localhost>
+ <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
+ <CAAVeFuL5F=Y2boCWp_TZEAN-kdT-Ob9r-h1-eNVDjBHftFYkeg@mail.gmail.com>
+ <20150721095457.GA9981@pengutronix.de>
+ <20150721101037.GB20023@pengutronix.de>
+ <CAGmoSHt0Kg-cxe3U6uV40=ttmFbDruRcJZNxtmSZ=gmZQN5fTw@mail.gmail.com>
+ <20150731094928.GQ28535@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
+	protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:37797 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:45973 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbbGaKlH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 06:41:07 -0400
+	with ESMTP id S1751137AbbGaKmz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 06:42:55 -0400
 Content-Disposition: inline
-In-Reply-To: <20150731085407.GO28535@localhost>
+In-Reply-To: <20150731094928.GQ28535@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Johan Hovold <johan@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: Arun Bharadwaj <arun@gumstix.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@linaro.org>
 
 
---tjCHc7DPkfUGtrlw
+--lCAWRPmW1mITcIfM
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 31, 2015 at 10:54:07AM +0200, Johan Hovold wrote:
-> On Wed, Jul 29, 2015 at 09:08:42AM +0200, Markus Pargmann wrote:
-> > On Tue, Jul 28, 2015 at 11:58:42AM +0200, Johan Hovold wrote:
-> > > On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
-> > > > Add some information about gpio names to the debugfs gpio file. nam=
-e and
-> > > > label of a GPIO are then displayed next to each other. This way it =
-is
-> > > > easy to see what the real name of GPIO is and what the driver reque=
-sted
-> > > > it for.
-> > > >=20
-> > > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> > > > ---
-> > > >  drivers/gpio/gpiolib.c | 11 ++++++++---
-> > > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > > index dcac3bcf21dd..0f1d1f5faf5d 100644
-> > > > --- a/drivers/gpio/gpiolib.c
-> > > > +++ b/drivers/gpio/gpiolib.c
-> > > > @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_fil=
-e *s, struct gpio_chip *chip)
-> > > >  	int			is_irq;
-> > > > =20
-> > > >  	for (i =3D 0; i < chip->ngpio; i++, gpio++, gdesc++) {
-> > > > -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-> > > > +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
-> > > > +			if (gdesc->name) {
-> > > > +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
-> > > > +					   gpio, gdesc->name);
-> > > > +			}
-> > >=20
-> > > So now we'd no longer just be listing requested gpios, but on a simil=
-ar
-> > > format to how requested ones used to be represented.
-> >=20
-> > Better suggestions on how to display those extra information in debugfs?
+On Fri, Jul 31, 2015 at 11:49:28AM +0200, Johan Hovold wrote:
+> On Thu, Jul 30, 2015 at 05:13:37PM -0700, Arun Bharadwaj wrote:
 >=20
-> Perhaps a new file only listing the line names.
+> > 2) Some times I get a kernel dump when I try to unexport the gpio or ev=
+en
+> > when I try to read the "name" file. This is not very repeatable and see=
+ms
+> > to happen at random. I haven't had the time to look into this in more
+> > detail yet, but here's the dump FWIW: http://pastebin.com/xq9cpCQE
+>=20
+> This is probably because of patch 8/9 erroneously taking the sysfs_lock
+> in gpio_name_show.
 
-Yes that's a possibility. On the other side having it all in one place
-is nice. As it helps you to debug faster, you can directly see which
-line name was requested for what purpose and so on.
-
->=20
-> > > Then there's the debugfs as ABI discussion...
-> >=20
-> > I didn't consider debugfs as ABI as I thought it is just for debugging
-> > purposes?
->=20
-> Some people seem to have expressed a different position:
->=20
-> 	"The fact that something is documented (whether correctly or
->         not) has absolutely _zero_ impact on anything at all. What makes
->         something an ABI is that it's useful and available. The only way
->         something isn't an ABI is by _explicitly_ making sure that it's
->         not available even by mistake in a stable form for binary use.
->=20
->         Example: kernel internal data structures and function calls. We
->         make sure that you simply _cannot_ make a binary that works
->         across kernel versions. That is the only way for an ABI to not
->         form."
->=20
->         https://lwn.net/Articles/309298/
->=20
-
-Oh, I see. But I think that debugfs should help us to debug issues.
-If we start to care about breaking userspace tools it is not as helpful
-anymore. If I develop some tool against information that are
-clearly marked for debugging, I would somehow expect that my tool breaks
-at some point. But thats just my opinion.
+Arun, thank you for testing. I will send a fixed series at the beginning
+of next week.
 
 Best regards,
 
@@ -112,26 +56,26 @@ Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
---tjCHc7DPkfUGtrlw
+--lCAWRPmW1mITcIfM
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJVu1C9AAoJEEpcgKtcEGQQb/YP/0ij8G2mVUV1lVW1NMiYjnpQ
-5+2VSahEZG13gi6ILAehFBruVi+uGe6BvApkYFKI3TEqtzI+wMqwuC4uFOIykzbo
-0r0UFwvRdK7orv5rYLeAFbIFJlFwET41KR38AvZ5MdBqSTbhOgL2FJuLSt+q5z2I
-fzAXNPMGtL0l+dpDoAiLVQTT48dks7tqFB92lyiwRlCa/kVOIznXSuJHjdLs95aV
-BA8kf9P6S9jNwFYvwNKLry7bKnihM/eZ+PbmqxEP2ab1MPfwr1bYn4GkQeCI4MrO
-xhawXPMuV0M+BeWgtQiQOQWRaa53+AplGxXDwvhqrXW+sGJZA9a/0xuDy/r5TXdE
-HljOLzg2PipZiwRGlX0Bk95bRypSO6or1e5hOT5sr89YE0FfXNREuLjh/BzkeXKc
-vecEgfoWeBjhEawHXhunfqoF6ECyA3yS/QdH7Ew6CaMMaJH2gWkruUplbHG0944i
-6n24ZhsRr6cTqS74Pcm9Urjxt6juZSYmiyVzfRVq3uhqAfac/AFfxnjz8+e8sWrn
-uNFoXxLI1msyPjza3UEF+tPsoVcfPONWW9Z+Z6LhzKxBplkjBSiRg0fuBxJlsRZv
-Rtc4J5Tq+sP/oUU/9ry0Ggk6KfcqpIUhb2mG4ijYLrBGNHxP9OwbeVxrIV2Afsu/
-N6zmfCrfDiQGn+oU7lFc
-=Y0AH
+iQIcBAEBAgAGBQJVu1ErAAoJEEpcgKtcEGQQMMsP/3/Vmkch7UTyP7RMPjaoEi8j
+RnwyVTwCCGDHiAh61vjo6OfposuK+3yK6l2BvusIAkx90j+xItWYjMLY22uGwP4C
+1J/1lhaCdgLuGiWCJap4UdtrN6gAc9LZU3EGzjjDYtwfRwx3NN5HvCUrXHCkjDUH
+Db+xVQLXRkW8cdI5qv6KVZW88X+73DDq++F2OAn7ycGSMy/hC058adV2EBBPKSwe
+dekqqLMJcRmzialF3j8xIUNozFsrY9dF4yeXycbhOpRCLsUdBgSm7KQ1RL7IPUrC
+Ke8wLv9txiGCtPbac7AMoOAJWmcUcnh7Ro355fQ1Ir3IHA05syAqu2PxMiQpjvpa
+zOcSZzStvig85nUBlreUY3MD77c9w5vnwNbb+anNxSVRHM9p/ePO4JP3K6dd1meR
+jgWOzU8ukHZwtQHmrWS3juKvMw7fk8rJYq/Wj366xvIsxW8PeXFuqrvQODf2kMIJ
+PenNDSEXo6q+E7B2Nme2oFr+CxtPN+EBf8TDrlcsTkM+pyiZT7PXKiyOqth8tjGN
+ynWDwGL++J2c/uSZjkMCPfCKxPL+abxjnzhAsbg/BNaNMYsFVIW/ONc3DjdjuF3w
+/31nbexC+XJiqIw00mM8kVD8zJwYQRnVY02UF6Qmo2AgRioMa1ndIr2elBbuNXqm
+u0vvrXKJumlKwbSgFAYk
+=957j
 -----END PGP SIGNATURE-----
 
---tjCHc7DPkfUGtrlw--
+--lCAWRPmW1mITcIfM--
