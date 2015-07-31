@@ -1,20 +1,16 @@
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] powerpc: dts: don't fall back to fsl,pq3-gpio for fsl,mpc8572-gpio devices
-Date: Fri, 31 Jul 2015 11:12:01 +0200
-Message-ID: <1438333921-8999-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: [PATCH RESENT] powerpc: dts: don't fall back to fsl,pq3-gpio for fsl,mpc8572-gpio devices
+Date: Fri, 31 Jul 2015 11:16:06 +0200
+Message-ID: <1438334166-12579-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:46238 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750804AbbGaJMK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 05:12:10 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: kernel@pengutronix.de
 
 While the handling of fsl,pq3-gpio and fsl,mpc8572-gpio is done in the
 same driver and the two hardly differ, the latter controller needs a
@@ -22,8 +18,17 @@ workaround for an erratum in the gpio_get callback. To make this
 difference more explicit remove fsl,pq3-gpio from the list of
 compatibles for mpc8572 machines.
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 ---
+Hello,
+
+got the parameters for git-send-email wrong and forgot to send this to =
+the
+powerpc folks.
+
+Best regards
+Uwe
+
  arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi | 2 +-
  arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
@@ -60,7 +65,7 @@ index d44e25a48734..49294cf36b4e 100644
 2.1.4
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
 n
-the body of a message to majordomo@vger.kernel.org
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
