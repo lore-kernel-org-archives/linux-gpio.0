@@ -1,81 +1,66 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
- /sys/kernel/debug/gpio
-Date: Fri, 31 Jul 2015 10:54:07 +0200
-Message-ID: <20150731085407.GO28535@localhost>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
- <20150728095842.GO28535@localhost>
- <20150729070842.GG30895@pengutronix.de>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] powerpc: dts: don't fall back to fsl,pq3-gpio for fsl,mpc8572-gpio devices
+Date: Fri, 31 Jul 2015 11:12:01 +0200
+Message-ID: <1438333921-8999-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:35068 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750977AbbGaIyI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 04:54:08 -0400
-Received: by lacct8 with SMTP id ct8so6821845lac.2
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2015 01:54:07 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20150729070842.GG30895@pengutronix.de>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:46238 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750804AbbGaJMK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 05:12:10 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: kernel@pengutronix.de
 
-On Wed, Jul 29, 2015 at 09:08:42AM +0200, Markus Pargmann wrote:
-> On Tue, Jul 28, 2015 at 11:58:42AM +0200, Johan Hovold wrote:
-> > On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
-> > > Add some information about gpio names to the debugfs gpio file. name and
-> > > label of a GPIO are then displayed next to each other. This way it is
-> > > easy to see what the real name of GPIO is and what the driver requested
-> > > it for.
-> > > 
-> > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> > > ---
-> > >  drivers/gpio/gpiolib.c | 11 ++++++++---
-> > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > index dcac3bcf21dd..0f1d1f5faf5d 100644
-> > > --- a/drivers/gpio/gpiolib.c
-> > > +++ b/drivers/gpio/gpiolib.c
-> > > @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-> > >  	int			is_irq;
-> > >  
-> > >  	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
-> > > -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-> > > +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
-> > > +			if (gdesc->name) {
-> > > +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
-> > > +					   gpio, gdesc->name);
-> > > +			}
-> > 
-> > So now we'd no longer just be listing requested gpios, but on a similar
-> > format to how requested ones used to be represented.
-> 
-> Better suggestions on how to display those extra information in debugfs?
+While the handling of fsl,pq3-gpio and fsl,mpc8572-gpio is done in the
+same driver and the two hardly differ, the latter controller needs a
+workaround for an erratum in the gpio_get callback. To make this
+difference more explicit remove fsl,pq3-gpio from the list of
+compatibles for mpc8572 machines.
 
-Perhaps a new file only listing the line names.
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi | 2 +-
+ arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> > Then there's the debugfs as ABI discussion...
-> 
-> I didn't consider debugfs as ABI as I thought it is just for debugging
-> purposes?
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi b/arch/power=
+pc/boot/dts/fsl/mpc8536si-post.dtsi
+index c8b2daa40ac8..41935709ebe8 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
+@@ -172,7 +172,7 @@
+=20
+ 	/* mark compat w/8572 to get some erratum treatment */
+ 	gpio-controller@f000 {
+-		compatible =3D "fsl,mpc8572-gpio", "fsl,pq3-gpio";
++		compatible =3D "fsl,mpc8572-gpio";
+ 	};
+=20
+ 	sata@18000 {
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi b/arch/power=
+pc/boot/dts/fsl/mpc8572si-post.dtsi
+index d44e25a48734..49294cf36b4e 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
+@@ -162,7 +162,7 @@
+ /include/ "pq3-dma-1.dtsi"
+ /include/ "pq3-gpio-0.dtsi"
+ 	gpio-controller@f000 {
+-		compatible =3D "fsl,mpc8572-gpio", "fsl,pq3-gpio";
++		compatible =3D "fsl,mpc8572-gpio";
+ 	};
+=20
+ 	L2: l2-cache-controller@20000 {
+--=20
+2.1.4
 
-Some people seem to have expressed a different position:
-
-	"The fact that something is documented (whether correctly or
-        not) has absolutely _zero_ impact on anything at all. What makes
-        something an ABI is that it's useful and available. The only way
-        something isn't an ABI is by _explicitly_ making sure that it's
-        not available even by mistake in a stable form for binary use.
-
-        Example: kernel internal data structures and function calls. We
-        make sure that you simply _cannot_ make a binary that works
-        across kernel versions. That is the only way for an ABI to not
-        form."
-
-        https://lwn.net/Articles/309298/
-
-Johan
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
