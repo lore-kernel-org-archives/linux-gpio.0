@@ -1,91 +1,39 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
- /sys/kernel/debug/gpio
-Date: Fri, 31 Jul 2015 12:49:44 +0200
-Message-ID: <1438339784.20618.21.camel@pengutronix.de>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
-	 <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
-	 <20150728095842.GO28535@localhost> <20150729070842.GG30895@pengutronix.de>
-	 <20150731085407.GO28535@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:37791 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750804AbbGaKts (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 06:49:48 -0400
-In-Reply-To: <20150731085407.GO28535@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rabin Vincent <rabin@rab.in>
+Subject: [PATCH 1/2] gpio: don't override irq_*_resources() callbacks
+Date: Fri, 31 Jul 2015 14:48:56 +0200
+Message-ID: <1438346937-9020-1-git-send-email-rabin@rab.in>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin@rab.in>
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-Am Freitag, den 31.07.2015, 10:54 +0200 schrieb Johan Hovold:
-> On Wed, Jul 29, 2015 at 09:08:42AM +0200, Markus Pargmann wrote:
-> > On Tue, Jul 28, 2015 at 11:58:42AM +0200, Johan Hovold wrote:
-> > > On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
-> > > > Add some information about gpio names to the debugfs gpio file. name and
-> > > > label of a GPIO are then displayed next to each other. This way it is
-> > > > easy to see what the real name of GPIO is and what the driver requested
-> > > > it for.
-> > > > 
-> > > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> > > > ---
-> > > >  drivers/gpio/gpiolib.c | 11 ++++++++---
-> > > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > > > index dcac3bcf21dd..0f1d1f5faf5d 100644
-> > > > --- a/drivers/gpio/gpiolib.c
-> > > > +++ b/drivers/gpio/gpiolib.c
-> > > > @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-> > > >  	int			is_irq;
-> > > >  
-> > > >  	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
-> > > > -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
-> > > > +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
-> > > > +			if (gdesc->name) {
-> > > > +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
-> > > > +					   gpio, gdesc->name);
-> > > > +			}
-> > > 
-> > > So now we'd no longer just be listing requested gpios, but on a similar
-> > > format to how requested ones used to be represented.
-> > 
-> > Better suggestions on how to display those extra information in debugfs?
-> 
-> Perhaps a new file only listing the line names.
-> 
-> > > Then there's the debugfs as ABI discussion...
-> > 
-> > I didn't consider debugfs as ABI as I thought it is just for debugging
-> > purposes?
-> 
-> Some people seem to have expressed a different position:
-> 
-> 	"The fact that something is documented (whether correctly or
->         not) has absolutely _zero_ impact on anything at all. What makes
->         something an ABI is that it's useful and available. The only way
->         something isn't an ABI is by _explicitly_ making sure that it's
->         not available even by mistake in a stable form for binary use.
-> 
->         Example: kernel internal data structures and function calls. We
->         make sure that you simply _cannot_ make a binary that works
->         across kernel versions. That is the only way for an ABI to not
->         form."
-> 
->         https://lwn.net/Articles/309298/
+If the driver has specified its own irq_{request/release}_resources()
+functions, don't override them.  The gpio-etraxfs driver will use this.
 
-Assuming debugfs is ABI is completely backwards. debugfs makes no ABI
-guarantees, that's why stuff that needs a stable ABI like tracing is
-actively moving out of debugfs into other places, where ABI stability
-can be assumed.
+Signed-off-by: Rabin Vincent <rabin@rab.in>
+---
+ drivers/gpio/gpiolib.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Regards,
-Lucas 
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bf4bd1d..6865874 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -636,8 +636,12 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 		gpiochip->irqchip = NULL;
+ 		return -EINVAL;
+ 	}
+-	irqchip->irq_request_resources = gpiochip_irq_reqres;
+-	irqchip->irq_release_resources = gpiochip_irq_relres;
++
++	if (!irqchip->irq_request_resources &&
++	    !irqchip->irq_release_resources) {
++		irqchip->irq_request_resources = gpiochip_irq_reqres;
++		irqchip->irq_release_resources = gpiochip_irq_relres;
++	}
+ 
+ 	/*
+ 	 * Prepare the mapping since the irqchip shall be orthogonal to
 -- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
-
+2.1.4
