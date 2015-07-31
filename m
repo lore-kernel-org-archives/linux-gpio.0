@@ -1,41 +1,81 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 7/9] gpiolib-sysfs: Add gpio name parsing for sysfs export
-Date: Fri, 31 Jul 2015 10:44:56 +0200
-Message-ID: <20150731084456.GN28535@localhost>
+Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
+ /sys/kernel/debug/gpio
+Date: Fri, 31 Jul 2015 10:54:07 +0200
+Message-ID: <20150731085407.GO28535@localhost>
 References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
- <1437125570-28623-8-git-send-email-mpa@pengutronix.de>
- <20150728095004.GM28535@localhost>
- <20150729065736.GE30895@pengutronix.de>
+ <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
+ <20150728095842.GO28535@localhost>
+ <20150729070842.GG30895@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:35400 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753465AbbGaIo6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 04:44:58 -0400
-Received: by lblf12 with SMTP id f12so42230826lbl.2
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2015 01:44:56 -0700 (PDT)
+Received: from mail-la0-f44.google.com ([209.85.215.44]:35068 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750977AbbGaIyI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 04:54:08 -0400
+Received: by lacct8 with SMTP id ct8so6821845lac.2
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2015 01:54:07 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20150729065736.GE30895@pengutronix.de>
+In-Reply-To: <20150729070842.GG30895@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Wed, Jul 29, 2015 at 08:57:36AM +0200, Markus Pargmann wrote:
-> On Tue, Jul 28, 2015 at 11:50:04AM +0200, Johan Hovold wrote:
-> > On Fri, Jul 17, 2015 at 11:32:48AM +0200, Markus Pargmann wrote:
-
-> > > +		char *gpio_name = kstrdup(buf, GFP_KERNEL);
+On Wed, Jul 29, 2015 at 09:08:42AM +0200, Markus Pargmann wrote:
+> On Tue, Jul 28, 2015 at 11:58:42AM +0200, Johan Hovold wrote:
+> > On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
+> > > Add some information about gpio names to the debugfs gpio file. name and
+> > > label of a GPIO are then displayed next to each other. This way it is
+> > > easy to see what the real name of GPIO is and what the driver requested
+> > > it for.
+> > > 
+> > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> > > ---
+> > >  drivers/gpio/gpiolib.c | 11 ++++++++---
+> > >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > index dcac3bcf21dd..0f1d1f5faf5d 100644
+> > > --- a/drivers/gpio/gpiolib.c
+> > > +++ b/drivers/gpio/gpiolib.c
+> > > @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+> > >  	int			is_irq;
+> > >  
+> > >  	for (i = 0; i < chip->ngpio; i++, gpio++, gdesc++) {
+> > > -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
+> > > +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
+> > > +			if (gdesc->name) {
+> > > +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
+> > > +					   gpio, gdesc->name);
+> > > +			}
 > > 
-> > Must check for allocation failures, but why use kstrdup at all?
+> > So now we'd no longer just be listing requested gpios, but on a similar
+> > format to how requested ones used to be represented.
 > 
-> Yes have to check that.
-> strim() may modify the buf variable which is constant.
->
-> > > +
-> > > +		desc = gpio_name_to_desc(strim(gpio_name));
+> Better suggestions on how to display those extra information in debugfs?
 
-Ah, I missed that strim.
+Perhaps a new file only listing the line names.
+
+> > Then there's the debugfs as ABI discussion...
+> 
+> I didn't consider debugfs as ABI as I thought it is just for debugging
+> purposes?
+
+Some people seem to have expressed a different position:
+
+	"The fact that something is documented (whether correctly or
+        not) has absolutely _zero_ impact on anything at all. What makes
+        something an ABI is that it's useful and available. The only way
+        something isn't an ABI is by _explicitly_ making sure that it's
+        not available even by mistake in a stable form for binary use.
+
+        Example: kernel internal data structures and function calls. We
+        make sure that you simply _cannot_ make a binary that works
+        across kernel versions. That is the only way for an ABI to not
+        form."
+
+        https://lwn.net/Articles/309298/
 
 Johan
