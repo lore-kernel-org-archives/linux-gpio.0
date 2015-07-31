@@ -1,87 +1,137 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v2 0/22] On-demand device probing
-Date: Fri, 31 Jul 2015 12:28:13 +0200
-Message-ID: <CAAObsKDALm94ZFwY+jBv3o8++-trTviiaGctAvvuySw9sxmLRQ@mail.gmail.com>
-References: <1438089593-7696-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_Jsq+2q=c6JbER8EMOGFtR=a6gvHermb8DRo9dKyj6fvdnXg@mail.gmail.com>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH 9/9] gpiolib: Add gpio name information to
+ /sys/kernel/debug/gpio
+Date: Fri, 31 Jul 2015 12:41:01 +0200
+Message-ID: <20150731104101.GB1994@pengutronix.de>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
+ <1437125570-28623-10-git-send-email-mpa@pengutronix.de>
+ <20150728095842.GO28535@localhost>
+ <20150729070842.GG30895@pengutronix.de>
+ <20150731085407.GO28535@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAL_Jsq+2q=c6JbER8EMOGFtR=a6gvHermb8DRo9dKyj6fvdnXg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Linux-ALSA <alsa-devel@alsa-project.org>, dri-devel <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Vinod Koul <vinod.koul@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-acpi@vger.ke
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:37797 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751287AbbGaKlH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 06:41:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20150731085407.GO28535@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-T24gMzAgSnVseSAyMDE1IGF0IDA1OjA2LCBSb2IgSGVycmluZyA8cm9iaGVycmluZzJAZ21haWwu
-Y29tPiB3cm90ZToKPiBPbiBUdWUsIEp1bCAyOCwgMjAxNSBhdCA4OjE5IEFNLCBUb21ldSBWaXpv
-c28KPiA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+PiBIZWxsbywKPj4KPj4g
-SSBoYXZlIGEgcHJvYmxlbSB3aXRoIHRoZSBwYW5lbCBvbiBteSBUZWdyYSBDaHJvbWVib29rIHRh
-a2luZyBsb25nZXIKPj4gdGhhbiBleHBlY3RlZCB0byBiZSByZWFkeSBkdXJpbmcgYm9vdCAoU3TD
-qXBoYW5lIE1hcmNoZXNpbiByZXBvcnRlZCB3aGF0Cj4+IGlzIGJhc2ljYWxseSB0aGUgc2FtZSBp
-c3N1ZSBpbiBbMF0pLCBhbmQgaGF2ZSBsb29rZWQgaW50byBvcmRlcmVkCj4+IHByb2JpbmcgYXMg
-YSBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91bmQgaW4g
-dGhlCj4+IERUIG9yIHBsYXlpbmcgd2l0aCBpbml0Y2FsbCBsZXZlbHMgYW5kIGxpbmtpbmcgb3Jk
-ZXIuCj4+Cj4+IFdoaWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9s
-bGVyIHN0YXJ0ZWQgd2l0aCBoaXMKPj4gc2VyaWVzIHRvIG1ha2UgcHJvYmluZyBvcmRlciBkZXRl
-cm1pbmlzdGljLCBpdCBvY2N1cnJlZCB0byBtZSB0aGF0IGl0Cj4+IHNob3VsZCBiZSBwb3NzaWJs
-ZSB0byBhY2hpZXZlIHRoZSBzYW1lIGJ5IHByb2JpbmcgZGV2aWNlcyBhcyB0aGV5IGFyZQo+PiBy
-ZWZlcmVuY2VkIGJ5IG90aGVyIGRldmljZXMuCj4+Cj4+IFRoaXMgYmFzaWNhbGx5IHJldXNlcyB0
-aGUgaW5mb3JtYXRpb24gdGhhdCBpcyBhbHJlYWR5IGltcGxpY2l0IGluIHRoZQo+PiBwcm9iZSgp
-IGltcGxlbWVudGF0aW9ucywgc2F2aW5nIHVzIGZyb20gcmVmYWN0b3JpbmcgZXhpc3RpbmcgZHJp
-dmVycyBvcgo+PiBhZGRpbmcgaW5mb3JtYXRpb24gdG8gRFRCcy4KPj4KPj4gRHVyaW5nIHJldmll
-dyBvZiB2MSBvZiB0aGlzIHNlcmllcyBMaW51cyBXYWxsZWlqIHN1Z2dlc3RlZCB0aGF0IGl0Cj4+
-IHNob3VsZCBiZSB0aGUgZGV2aWNlIGRyaXZlciBjb3JlIHRvIG1ha2Ugc3VyZSB0aGF0IGRlcGVu
-ZGVuY2llcyBhcmUKPj4gcmVhZHkgYmVmb3JlIHByb2JpbmcgYSBkZXZpY2UuIEkgZ2F2ZSB0aGlz
-IGlkZWEgYSB0cnkgWzJdIGJ1dCBNYXJrIEJyb3duCj4+IHBvaW50ZWQgb3V0IHRvIHRoZSBsb2dp
-YyBkdXBsaWNhdGlvbiBiZXR3ZWVuIHRoZSByZXNvdXJjZSBhY3F1aXNpdGlvbgo+PiBhbmQgZGVw
-ZW5kZW5jeSBkaXNjb3ZlcnkgY29kZSBwYXRocyAodGhvdWdoIEkgdGhpbmsgaXQncyBmYWlybHkg
-bWlub3IpLgo+Pgo+PiBUbyBhZGRyZXNzIHRoYXQgY29kZSBkdXBsaWNhdGlvbiBJIGV4cGVyaW1l
-bnRlZCB3aXRoIEFybmQncyBkZXZtX3Byb2JlCj4+IFszXSBjb25jZXB0IG9mIGhhdmluZyBkcml2
-ZXJzIGRlY2xhcmUgdGhlaXIgZGVwZW5kZW5jaWVzIGluc3RlYWQgb2YKPj4gYWNxdWlyaW5nIHRo
-ZW0gZHVyaW5nIHByb2JlLCBhbmQgd2hpbGUgaXQgd29ya2VkIFs0XSwgSSBkb24ndCB0aGluayB3
-ZQo+PiBlbmQgdXAgd2lubmluZyBhbnl0aGluZyB3aGVuIGNvbXBhcmVkIHRvIGp1c3QgcHJvYmlu
-ZyBkZXZpY2VzIG9uLWRlbWFuZAo+PiBmcm9tIHJlc291cmNlIGdldHRlcnMuCj4+Cj4+IE9uZSBy
-ZW1haW5pbmcgb2JqZWN0aW9uIGlzIHRvIHRoZSAic3ByaW5rbGluZyIgb2YgY2FsbHMgdG8KPj4g
-Zndub2RlX2Vuc3VyZV9kZXZpY2UoKSBpbiB0aGUgcmVzb3VyY2UgZ2V0dGVycyBvZiBlYWNoIHN1
-YnN5c3RlbSwgYnV0IEkKPj4gdGhpbmsgaXQncyB0aGUgcmlnaHQgdGhpbmcgdG8gZG8gZ2l2ZW4g
-dGhhdCB0aGUgc3RvcmFnZSBvZiByZXNvdXJjZXMgaXMKPj4gY3VycmVudGx5IHN1YnN5c3RlbS1z
-cGVjaWZpYy4KPgo+IFNlZW1zIGxpa2UgYSBtaW5vciBjaGFuZ2UgdG8gbWUuCj4KPj4gV2UgY291
-bGQgYXZvaWQgdGhlIGFib3ZlIGJ5IG1vdmluZyByZXNvdXJjZSBzdG9yYWdlIGludG8gdGhlIGNv
-cmUsIGJ1dCBJCj4+IGRvbid0IHRoaW5rIHRoZXJlJ3MgYSBjb21wZWxsaW5nIGNhc2UgZm9yIHRo
-YXQuCj4+Cj4+IEkgaGF2ZSB0ZXN0ZWQgdGhpcyBvbiBib2FyZHMgd2l0aCBUZWdyYSwgaU1YLjYs
-IEV4eW5vcyBhbmQgT01BUCBTb0NzLAo+PiBhbmQgdGhlc2UgcGF0Y2hlcyB3ZXJlIGVub3VnaCB0
-byBlbGltaW5hdGUgYWxsIHRoZSBkZWZlcnJlZCBwcm9iZXMKPj4gKGV4Y2VwdCBvbmUgaW4gUGFu
-ZGFCb2FyZCBiZWNhdXNlIG9tYXBfZG1hX3N5c3RlbSBkb2Vzbid0IGhhdmUgYQo+PiBmaXJtd2Fy
-ZSBub2RlIGFzIG9mIHlldCkuCj4+Cj4+IFdpdGggdGhpcyBzZXJpZXMgSSBnZXQgdGhlIGtlcm5l
-bCB0byBvdXRwdXQgdG8gdGhlIHBhbmVsIGluIDAuNXMsCj4+IGluc3RlYWQgb2YgMi44cy4KPgo+
-IEdlbmVyYWxseSwgSSB0aGluayB0aGlzIGxvb2tzIHByZXR0eSBnb29kLiBJdCBpcyBzaW1wbGUg
-YW5kIHRoZSBlcnJvcgo+IHBhdGggaXMgc2ltcGx5IGZhbGxpbmcgYmFjayB0byBkZWZlcnJlZCBw
-cm9iZS4KPgo+IE9uZSBvdmVyYWxsIGNvbW1lbnQgaXMgSSdtIG5vdCBzbyBzdXJlIGlmIGZ3bm9k
-ZV9lbnN1cmVfZGV2aWNlCj4gc2hvdWxkbid0IGp1c3QgYmUgb2ZfZW5zdXJlX2RldmljZS4gQXQg
-bGVhc3QgY3VycmVudGx5LCBpdCBsb29rcyBsaWtlCj4gYWxsIHRoZSBjYWxsaW5nIGxvY2F0aW9u
-cyBhcmUgRFQgc3BlY2lmaWMgZnVuY3Rpb25zIGFueXdheS4gVGhlcmUncwo+IHZlcnkgbGl0dGxl
-IGxvZ2ljIHdpdGhpbiB0aGUgZnVuY3Rpb24gdG8gcmVhbGx5IGJlbmVmaXQgc2hhcmluZyB3aXRo
-Cj4gQUNQSS4gSXQgaXMgYmFzaWNhbGx5IGp1c3QgYSBjYWxsIHRvIG9mX3BsYXRmb3JtX2Rldmlj
-ZV9maW5kIGFuZCB0aGVuCj4gYnVzX3Byb2JlX2RldmljZS4gSSBleHBlY3QgdGhlIGdldCBmdW5j
-dGlvbnMgd2lsbCBhbHdheXMgY2FsbCBpbnRvCj4gRFQvQUNQSSBzcGVjaWZpYyBmdW5jdGlvbnMg
-d2hpY2ggY2FuIHRoZW4gY2FsbCB0aGUgZmlybXdhcmUgc3BlY2lmaWMKPiBkZXZpY2UgZmluZCBm
-dW5jdGlvbi4KClRoYXQncyBmaW5lIHdpdGggbWUuIEkganVzdCB3ZW50IHRoYXQgd2F5IGJlY2F1
-c2UgSSBhc3N1bWVkIHRoZSBwbGFuCndhcyBmb3Igc3Vic3lzdGVtcyB0byBtb3ZlIHRvIGNvbnN1
-bWUgZncgZGF0YSB0aHJvdWdoIGZ3bm9kZSBhbmQgZHJvcAphcyBtdWNoIGZ3LXNwZWNpZmljIGNv
-ZGUgYXMgcG9zc2libGUuCgpCdXQgSSBoYXZlIGp1c3QgbG9va2VkIGF0IGZ3bm9kZV9nZXRfbmFt
-ZWRfZ3Bpb2QgYW5kIHRoZSBPRiBhbmQgQUNQSQpjb2RlIHBhdGhzIGFyZSBzbyBkaXNzaW1pbGFy
-IHRoYXQgSSBndWVzcyB0aGF0J3Mgbm90IHNvIGFuZCB3b3VsZCBiZQpiZXR0ZXIgdG8gZG8gYXMg
-eW91IHNheS4KClRoYW5rcywKClRvbWV1CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+
+--tjCHc7DPkfUGtrlw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 31, 2015 at 10:54:07AM +0200, Johan Hovold wrote:
+> On Wed, Jul 29, 2015 at 09:08:42AM +0200, Markus Pargmann wrote:
+> > On Tue, Jul 28, 2015 at 11:58:42AM +0200, Johan Hovold wrote:
+> > > On Fri, Jul 17, 2015 at 11:32:50AM +0200, Markus Pargmann wrote:
+> > > > Add some information about gpio names to the debugfs gpio file. nam=
+e and
+> > > > label of a GPIO are then displayed next to each other. This way it =
+is
+> > > > easy to see what the real name of GPIO is and what the driver reque=
+sted
+> > > > it for.
+> > > >=20
+> > > > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> > > > ---
+> > > >  drivers/gpio/gpiolib.c | 11 ++++++++---
+> > > >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > > index dcac3bcf21dd..0f1d1f5faf5d 100644
+> > > > --- a/drivers/gpio/gpiolib.c
+> > > > +++ b/drivers/gpio/gpiolib.c
+> > > > @@ -2308,14 +2308,19 @@ static void gpiolib_dbg_show(struct seq_fil=
+e *s, struct gpio_chip *chip)
+> > > >  	int			is_irq;
+> > > > =20
+> > > >  	for (i =3D 0; i < chip->ngpio; i++, gpio++, gdesc++) {
+> > > > -		if (!test_bit(FLAG_REQUESTED, &gdesc->flags))
+> > > > +		if (!test_bit(FLAG_REQUESTED, &gdesc->flags)) {
+> > > > +			if (gdesc->name) {
+> > > > +				seq_printf(s, " gpio-%-3d (%-20.20s)\n",
+> > > > +					   gpio, gdesc->name);
+> > > > +			}
+> > >=20
+> > > So now we'd no longer just be listing requested gpios, but on a simil=
+ar
+> > > format to how requested ones used to be represented.
+> >=20
+> > Better suggestions on how to display those extra information in debugfs?
+>=20
+> Perhaps a new file only listing the line names.
+
+Yes that's a possibility. On the other side having it all in one place
+is nice. As it helps you to debug faster, you can directly see which
+line name was requested for what purpose and so on.
+
+>=20
+> > > Then there's the debugfs as ABI discussion...
+> >=20
+> > I didn't consider debugfs as ABI as I thought it is just for debugging
+> > purposes?
+>=20
+> Some people seem to have expressed a different position:
+>=20
+> 	"The fact that something is documented (whether correctly or
+>         not) has absolutely _zero_ impact on anything at all. What makes
+>         something an ABI is that it's useful and available. The only way
+>         something isn't an ABI is by _explicitly_ making sure that it's
+>         not available even by mistake in a stable form for binary use.
+>=20
+>         Example: kernel internal data structures and function calls. We
+>         make sure that you simply _cannot_ make a binary that works
+>         across kernel versions. That is the only way for an ABI to not
+>         form."
+>=20
+>         https://lwn.net/Articles/309298/
+>=20
+
+Oh, I see. But I think that debugfs should help us to debug issues.
+If we start to care about breaking userspace tools it is not as helpful
+anymore. If I develop some tool against information that are
+clearly marked for debugging, I would somehow expect that my tool breaks
+at some point. But thats just my opinion.
+
+Best regards,
+
+Markus
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--tjCHc7DPkfUGtrlw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVu1C9AAoJEEpcgKtcEGQQb/YP/0ij8G2mVUV1lVW1NMiYjnpQ
+5+2VSahEZG13gi6ILAehFBruVi+uGe6BvApkYFKI3TEqtzI+wMqwuC4uFOIykzbo
+0r0UFwvRdK7orv5rYLeAFbIFJlFwET41KR38AvZ5MdBqSTbhOgL2FJuLSt+q5z2I
+fzAXNPMGtL0l+dpDoAiLVQTT48dks7tqFB92lyiwRlCa/kVOIznXSuJHjdLs95aV
+BA8kf9P6S9jNwFYvwNKLry7bKnihM/eZ+PbmqxEP2ab1MPfwr1bYn4GkQeCI4MrO
+xhawXPMuV0M+BeWgtQiQOQWRaa53+AplGxXDwvhqrXW+sGJZA9a/0xuDy/r5TXdE
+HljOLzg2PipZiwRGlX0Bk95bRypSO6or1e5hOT5sr89YE0FfXNREuLjh/BzkeXKc
+vecEgfoWeBjhEawHXhunfqoF6ECyA3yS/QdH7Ew6CaMMaJH2gWkruUplbHG0944i
+6n24ZhsRr6cTqS74Pcm9Urjxt6juZSYmiyVzfRVq3uhqAfac/AFfxnjz8+e8sWrn
+uNFoXxLI1msyPjza3UEF+tPsoVcfPONWW9Z+Z6LhzKxBplkjBSiRg0fuBxJlsRZv
+Rtc4J5Tq+sP/oUU/9ry0Ggk6KfcqpIUhb2mG4ijYLrBGNHxP9OwbeVxrIV2Afsu/
+N6zmfCrfDiQGn+oU7lFc
+=Y0AH
+-----END PGP SIGNATURE-----
+
+--tjCHc7DPkfUGtrlw--
