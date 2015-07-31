@@ -1,99 +1,37 @@
 From: Johan Hovold <johan@kernel.org>
 Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
-Date: Fri, 31 Jul 2015 11:40:17 +0200
-Message-ID: <20150731094017.GP28535@localhost>
+Date: Fri, 31 Jul 2015 11:49:28 +0200
+Message-ID: <20150731094928.GQ28535@localhost>
 References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
  <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
- <20150728141619.GP28535@localhost>
- <CACRpkdYV=MDcEmsknuAXghGe_PcnqCQdvK2AQd8N28g7weGtFA@mail.gmail.com>
+ <CAAVeFuL5F=Y2boCWp_TZEAN-kdT-Ob9r-h1-eNVDjBHftFYkeg@mail.gmail.com>
+ <20150721095457.GA9981@pengutronix.de>
+ <20150721101037.GB20023@pengutronix.de>
+ <CAGmoSHt0Kg-cxe3U6uV40=ttmFbDruRcJZNxtmSZ=gmZQN5fTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:34710 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752408AbbGaJta (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 05:49:30 -0400
+Received: by lbqc9 with SMTP id c9so17680634lbq.1
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2015 02:49:28 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYV=MDcEmsknuAXghGe_PcnqCQdvK2AQd8N28g7weGtFA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Markus Pargmann <mpa@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <CAGmoSHt0Kg-cxe3U6uV40=ttmFbDruRcJZNxtmSZ=gmZQN5fTw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arun Bharadwaj <arun@gumstix.com>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Jul 29, 2015 at 11:23:10AM +0200, Linus Walleij wrote:
-> On Tue, Jul 28, 2015 at 4:16 PM, Johan Hovold <johan@kernel.org> wrote:
-> 
-> > That said, this is a step along the lines that we have discussed in the
-> > past. Adding pin functions (line names) to generic pin nodes in DT makes
-> > sense, but we need to think through the details first. For example:
-> >
-> >  - Should we allow duplicate pin functions (line names)? We need to
-> >    consider not just on-chip controllers, but also hot-pluggable
-> >    controllers and device-tree overlays.
-> 
-> I guess the typical example is if we have two identical GPIO
-> expanders. We have this with arch/arm/boot/dts/ste-nomadik-nhk15.dts
-> for example.
-> 
-> With this scheme, they will simply have to name their lines
-> uniquely for things to work since /sys/class/gpio is a flat
-> space, not hierarchic per-gpiochip (as would be preferred,
-> should this be sane to maintain).
+On Thu, Jul 30, 2015 at 05:13:37PM -0700, Arun Bharadwaj wrote:
 
-/sys/class/gpio and the pin numbers is a flat space, but the line names
-must not necessarily be unique. With a new userspace interface duplicate
-line names could be handled.
+> 2) Some times I get a kernel dump when I try to unexport the gpio or even
+> when I try to read the "name" file. This is not very repeatable and seems
+> to happen at random. I haven't had the time to look into this in more
+> detail yet, but here's the dump FWIW: http://pastebin.com/xq9cpCQE
 
-Consider also DT overlays and hot-pluggable buses (e.g. USB when it gets
-a DT representation). A driver for a device on such a bus, be it USB or
-Greybus, could even be providing line names through some other means
-when registering the controller.
-
-> >  - Should we allow initial configurations to be specified and still
-> >    allow (some) pins to be requested later ("soft" hogging)?
-> 
-> That is a key idea in this patch set.
-> 
-> Maybe we need a "userspace hog" to mark these specifically as
-> not used by the operating system. (Bringing me back to my
-> tirade about people doing stupid things in userspace just because
-> they don't know about all the nice GPIO stuff in the kernel.)
-
-Should we then refuse such "userspace hogs" from being requested from
-the kernel? This can't really be considered hardware description...
-
-> >  - Should we specify pin directionality? I've suggested elsewhere that
-> >    adding such limitations (e.g. as a mask) may make sense in cases were
-> >    changing pin direction is known to cause damage.
-> 
-> We have the flag jamming IRQ lines to be input, but input-only
-> and output-only seems reasonable for hogs in reaction to the
-> current "input", "output-low" and "output-high" properties.
-> 
-> Could be a separate patch though.
-
-Indeed. I'm just suggesting we not rush into adding more ABI, before
-really determining what these interfaces should look like.
-
-> >  - What would a new gpio interface look like?
-> 
-> Yeah :/ people are scared of adding chardevs it seems.
-> 
-> I think they are kind of nice, the biggest problem seems to be
-> totally confused userspace with udev and mdev and none of
-> them ever knows about new stuff and people get problems
-> becuase of old rootfs:es.
-
-Really? But that's not our problem, right?
-
-I keep rejecting vendor-specific gpio ioctl-interfaces for usb-serial
-devices, while the current sysfs interface really isn't a good
-replacement (but we must use standard interfaces of course). It's not
-just about the line names.
+This is probably because of patch 8/9 erroneously taking the sysfs_lock
+in gpio_name_show.
 
 Johan
