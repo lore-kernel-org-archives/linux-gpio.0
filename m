@@ -1,71 +1,99 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH RESENT] powerpc: dts: don't fall back to fsl,pq3-gpio for fsl,mpc8572-gpio devices
-Date: Fri, 31 Jul 2015 11:16:06 +0200
-Message-ID: <1438334166-12579-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 0/9] gpiolib: Add GPIO name support
+Date: Fri, 31 Jul 2015 11:40:17 +0200
+Message-ID: <20150731094017.GP28535@localhost>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
+ <CACRpkdY=SLGyrcvWT355b3Z+pBwb9gPzVcieD8mOn=zdyJ1mFw@mail.gmail.com>
+ <20150728141619.GP28535@localhost>
+ <CACRpkdYV=MDcEmsknuAXghGe_PcnqCQdvK2AQd8N28g7weGtFA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Paul Mackerras <paulus-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Michael Ellerman <mpe-Gsx/Oe8HsFggBc27wqDAHg@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYV=MDcEmsknuAXghGe_PcnqCQdvK2AQd8N28g7weGtFA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Grant Likely <grant.likely@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Markus Pargmann <mpa@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-While the handling of fsl,pq3-gpio and fsl,mpc8572-gpio is done in the
-same driver and the two hardly differ, the latter controller needs a
-workaround for an erratum in the gpio_get callback. To make this
-difference more explicit remove fsl,pq3-gpio from the list of
-compatibles for mpc8572 machines.
+On Wed, Jul 29, 2015 at 11:23:10AM +0200, Linus Walleij wrote:
+> On Tue, Jul 28, 2015 at 4:16 PM, Johan Hovold <johan@kernel.org> wrote:
+> 
+> > That said, this is a step along the lines that we have discussed in the
+> > past. Adding pin functions (line names) to generic pin nodes in DT makes
+> > sense, but we need to think through the details first. For example:
+> >
+> >  - Should we allow duplicate pin functions (line names)? We need to
+> >    consider not just on-chip controllers, but also hot-pluggable
+> >    controllers and device-tree overlays.
+> 
+> I guess the typical example is if we have two identical GPIO
+> expanders. We have this with arch/arm/boot/dts/ste-nomadik-nhk15.dts
+> for example.
+> 
+> With this scheme, they will simply have to name their lines
+> uniquely for things to work since /sys/class/gpio is a flat
+> space, not hierarchic per-gpiochip (as would be preferred,
+> should this be sane to maintain).
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
----
-Hello,
+/sys/class/gpio and the pin numbers is a flat space, but the line names
+must not necessarily be unique. With a new userspace interface duplicate
+line names could be handled.
 
-got the parameters for git-send-email wrong and forgot to send this to =
-the
-powerpc folks.
+Consider also DT overlays and hot-pluggable buses (e.g. USB when it gets
+a DT representation). A driver for a device on such a bus, be it USB or
+Greybus, could even be providing line names through some other means
+when registering the controller.
 
-Best regards
-Uwe
+> >  - Should we allow initial configurations to be specified and still
+> >    allow (some) pins to be requested later ("soft" hogging)?
+> 
+> That is a key idea in this patch set.
+> 
+> Maybe we need a "userspace hog" to mark these specifically as
+> not used by the operating system. (Bringing me back to my
+> tirade about people doing stupid things in userspace just because
+> they don't know about all the nice GPIO stuff in the kernel.)
 
- arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi | 2 +-
- arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Should we then refuse such "userspace hogs" from being requested from
+the kernel? This can't really be considered hardware description...
 
-diff --git a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi b/arch/power=
-pc/boot/dts/fsl/mpc8536si-post.dtsi
-index c8b2daa40ac8..41935709ebe8 100644
---- a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
-+++ b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
-@@ -172,7 +172,7 @@
-=20
- 	/* mark compat w/8572 to get some erratum treatment */
- 	gpio-controller@f000 {
--		compatible =3D "fsl,mpc8572-gpio", "fsl,pq3-gpio";
-+		compatible =3D "fsl,mpc8572-gpio";
- 	};
-=20
- 	sata@18000 {
-diff --git a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi b/arch/power=
-pc/boot/dts/fsl/mpc8572si-post.dtsi
-index d44e25a48734..49294cf36b4e 100644
---- a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
-+++ b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
-@@ -162,7 +162,7 @@
- /include/ "pq3-dma-1.dtsi"
- /include/ "pq3-gpio-0.dtsi"
- 	gpio-controller@f000 {
--		compatible =3D "fsl,mpc8572-gpio", "fsl,pq3-gpio";
-+		compatible =3D "fsl,mpc8572-gpio";
- 	};
-=20
- 	L2: l2-cache-controller@20000 {
---=20
-2.1.4
+> >  - Should we specify pin directionality? I've suggested elsewhere that
+> >    adding such limitations (e.g. as a mask) may make sense in cases were
+> >    changing pin direction is known to cause damage.
+> 
+> We have the flag jamming IRQ lines to be input, but input-only
+> and output-only seems reasonable for hogs in reaction to the
+> current "input", "output-low" and "output-high" properties.
+> 
+> Could be a separate patch though.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Indeed. I'm just suggesting we not rush into adding more ABI, before
+really determining what these interfaces should look like.
+
+> >  - What would a new gpio interface look like?
+> 
+> Yeah :/ people are scared of adding chardevs it seems.
+> 
+> I think they are kind of nice, the biggest problem seems to be
+> totally confused userspace with udev and mdev and none of
+> them ever knows about new stuff and people get problems
+> becuase of old rootfs:es.
+
+Really? But that's not our problem, right?
+
+I keep rejecting vendor-specific gpio ioctl-interfaces for usb-serial
+devices, while the current sysfs interface really isn't a good
+replacement (but we must use standard interfaces of course). It's not
+just about the line names.
+
+Johan
