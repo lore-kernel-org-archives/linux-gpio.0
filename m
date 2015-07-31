@@ -1,45 +1,69 @@
-From: Manuel Lauss <manuel.lauss@gmail.com>
-Subject: Re: [PATCH] MIPS: Remove all the uses of custom gpio.h
-Date: Fri, 31 Jul 2015 08:04:09 +0200
-Message-ID: <CAOLZvyFdY9z9tVd6BR4H4xnito=X5m_=71bmUr=7FHRGcB-SEw@mail.gmail.com>
-References: <1438277338-7246-1-git-send-email-albeu@free.fr>
+From: Jun Nie <jun.nie@linaro.org>
+Subject: Re: [PATCH v3 2/2] gpio: zx: Add ZTE zx296702 GPIO support
+Date: Fri, 31 Jul 2015 16:42:23 +0800
+Message-ID: <CABymUCOaHCjwpETawf==AvY-ZBjh=mbpURHJJJkN7csQ1G83ow@mail.gmail.com>
+References: <1435545357-4494-1-git-send-email-jun.nie@linaro.org>
+	<1435545357-4494-2-git-send-email-jun.nie@linaro.org>
+	<CACRpkdatFhHezJ9csU6WrOq88ekf+zNY_5xcLRi3KNZF_w+N+w@mail.gmail.com>
+	<CABymUCPc_EA57fRDdVH7z5tRXQiPHRiczs_MKXBeq0pVCctceg@mail.gmail.com>
+	<CACRpkdZToXL11wFKuDEWqVd8XKHzX8bfZWFUS2z+CTk4s-w9Rg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1438277338-7246-1-git-send-email-albeu@free.fr>
-Sender: linux-input-owner@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>
-Cc: Linux-MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Bjorn Helgaas <bhelgaas@google.com>, Wolfram Sang <wsa@the-dreams.de>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Varka Bhadram <varkabhadram@gmail.com>, Ma
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:33059 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751526AbbGaImZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 04:42:25 -0400
+Received: by lbbyj8 with SMTP id yj8so42053977lbb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2015 01:42:23 -0700 (PDT)
+In-Reply-To: <CACRpkdZToXL11wFKuDEWqVd8XKHzX8bfZWFUS2z+CTk4s-w9Rg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawn.guo@linaro.org>, "wan.zhijun" <wan.zhijun@zte.com.cn>, Jason Liu <jason.liu@linaro.org>
 
-On Thu, Jul 30, 2015 at 7:28 PM, Alban Bedel <albeu@free.fr> wrote:
-> Currently CONFIG_ARCH_HAVE_CUSTOM_GPIO_H is defined for all MIPS
-> machines, and each machine type provides its own gpio.h. However
-> only a handful really implement the GPIO API, most just forward
-> everythings to gpiolib.
+2015-07-27 17:51 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Jul 16, 2015 at 3:08 PM, Jun Nie <jun.nie@linaro.org> wrote:
+>> 2015-07-16 16:17 GMT+08:00 Linus Walleij <linus.walleij@linaro.org>:
 >
-> The Alchemy machine is notable as it provides a system to allow
-> implementing the GPIO API at the board level. But it is not used by
-> any board currently supported, so it can also be removed.
+>>>> +       if (of_property_read_bool(dev->of_node, "gpio-ranges"))
+>>>> +               chip->uses_pinctrl = true;
+>>>
+>>> I see this follows the PL061 pattern, maybe we should start doing this
+>>> in the gpiolib core.
+>>
+>> A structure with all functions and flags can be feed to a new function
+>> that calls gpiochip_add(). We can abstract logic of struct gpio_chip
+>> members value assignment. For example, a struct gpio_chip with these
+>> members assigned at compiling stage can be copied directly to
+>> instantiation memory space and call gpiochip_add(). We can do this in
+>> driver too.
+>
+> Hm anything that will result in a lot of code lines saved in drivers
+> is by definition good. This could be a good start.
 
-Threre's only out-of-tree users which I also maintain, so it's fine with me.
+Above solution only save runtime CPU cycle with a memory copy because
+structure with member assigned in compile time also takes code lines.
 
+We can wrap gpiochip_add into new function gpiochip_add_arg() and feed
+below info to it and assign the value in the common code. It is make
+the function argument list too long. Any better idea? Or you think it
+is OK, then I can draft a patch for review.
 
->  arch/mips/alchemy/Kconfig                       |   7 --
->  arch/mips/alchemy/board-gpr.c                   |   1 +
->  arch/mips/alchemy/board-mtx1.c                  |   1 +
->  arch/mips/alchemy/common/Makefile               |   7 +-
->  arch/mips/alchemy/devboards/db1000.c            |   1 +
->  arch/mips/alchemy/devboards/db1300.c            |   1 +
->  arch/mips/alchemy/devboards/db1550.c            |   1 +
->  arch/mips/alchemy/devboards/pm.c                |   2 +-
->  arch/mips/include/asm/mach-au1x00/gpio-au1000.h | 148 ++----------------------
->  arch/mips/include/asm/mach-au1x00/gpio.h        |  86 --------------
+gpio_chip members: direction_input, direction_output, get, set,
+request, free, ngpio, label, dev.
 
-For the alchemy parts:
+Jun
 
-Acked-by: Manuel Lauss <manuel.lauss@gmail.com>
-
-
--- 
-   Manuel
+>
+>> For interrupt stuff, it is hard to abstract because argument vary much
+>> from driver to driver and different functions are called in different
+>> drivers. A structure can also serve more or less to abstract function
+>> calls, but not much.
+>
+> Yeah I really tried my best with gpiolib_irqchip_add() and managed
+> to cut down on all the simple IRQ drivers. Don't think we get
+> any further with these.
+>
+> Yours,
+> Linus Walleij
