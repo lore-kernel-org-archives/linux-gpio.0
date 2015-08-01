@@ -1,163 +1,62 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: [PATCH v4 3/4] gpio: brcmstb: support wakeup from S5 cold boot
-Date: Fri, 31 Jul 2015 18:17:44 -0700
-Message-ID: <1438391865-7862-4-git-send-email-gregory.0xf0@gmail.com>
-References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory Fong <gregory.0xf0@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: UniPhier: PH1-Pro5: add I2C ch6 pin-mux setting
+Date: Sat,  1 Aug 2015 12:38:52 +0900
+Message-ID: <1438400332-2933-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg009.nifty.com ([202.248.44.35]:24734 "EHLO
+	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750789AbbHADjm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Jul 2015 23:39:42 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-For wake from S5, we need to:
-- register a reboot handler
-- set wakeup capability before requesting IRQ so wakeup count is
-  incremented
-- mask all GPIO IRQs and clear any pending interrupts during driver
-  probe to since no driver will yet be registered to handle any IRQs
-  carried over from boot at that time, and it's possible that the
-  booted kernel does not request the same IRQ anyway.
+The initial version of this driver missed to add I2C ch6 pin-muxing.
 
-This means that /sys/.../power/wakeup_count is valid at boot time, and
-we can properly account for S5 wakeup stats. e.g.:
-
-  ### After waking from S5 from a GPIO key
-  # cat /sys/bus/platform/drivers/brcmstb-gpio/f04172c0.gpio/power/wakeup
-  enabled
-  # cat /sys/bus/platform/drivers/brcmstb-gpio/f04172c0.gpio/power/wakeup_count
-  1
-
-Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v4: rename __brcmstb_gpio_irq_set_wake() to brcmstb_gpio_priv_set_wake().
 
- drivers/gpio/gpio-brcmstb.c | 56 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 6 deletions(-)
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 46cc4e9..9ea86d2 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -20,6 +20,7 @@
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/interrupt.h>
-+#include <linux/reboot.h>
- 
- #define GIO_BANK_SIZE           0x20
- #define GIO_ODEN(bank)          (((bank) * GIO_BANK_SIZE) + 0x00)
-@@ -48,6 +49,7 @@ struct brcmstb_gpio_priv {
- 	int gpio_base;
- 	bool can_wake;
- 	int parent_wake_irq;
-+	struct notifier_block reboot_notifier;
- };
- 
- #define MAX_GPIO_PER_BANK           32
-@@ -167,10 +169,9 @@ static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
- 
--static int brcmstb_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
-+static int brcmstb_gpio_priv_set_wake(struct brcmstb_gpio_priv *priv,
-+		unsigned int enable)
- {
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
- 	int ret = 0;
- 
- 	/*
-@@ -188,6 +189,14 @@ static int brcmstb_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
- 	return ret;
- }
- 
-+static int brcmstb_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
-+
-+	return brcmstb_gpio_priv_set_wake(priv, enable);
-+}
-+
- static irqreturn_t brcmstb_gpio_wake_irq_handler(int irq, void *data)
- {
- 	struct brcmstb_gpio_priv *priv = data;
-@@ -246,6 +255,19 @@ static void brcmstb_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static int brcmstb_gpio_reboot(struct notifier_block *nb,
-+		unsigned long action, void *data)
-+{
-+	struct brcmstb_gpio_priv *priv =
-+		container_of(nb, struct brcmstb_gpio_priv, reboot_notifier);
-+
-+	/* Enable GPIO for S5 cold boot */
-+	if (action == SYS_POWER_OFF)
-+		brcmstb_gpio_priv_set_wake(priv, 1);
-+
-+	return NOTIFY_DONE;
-+}
-+
- /* Make sure that the number of banks matches up between properties */
- static int brcmstb_gpio_sanity_check_banks(struct device *dev,
- 		struct device_node *np, struct resource *res)
-@@ -285,6 +307,12 @@ static int brcmstb_gpio_remove(struct platform_device *pdev)
- 		if (ret)
- 			dev_err(&pdev->dev, "gpiochip_remove fail in cleanup\n");
- 	}
-+	if (priv->reboot_notifier.notifier_call) {
-+		ret = unregister_reboot_notifier(&priv->reboot_notifier);
-+		if (ret)
-+			dev_err(&pdev->dev,
-+				"failed to unregister reboot notifier\n");
-+	}
- 	return ret;
- }
- 
-@@ -342,7 +370,16 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 			dev_warn(dev,
- 				"Couldn't get wake IRQ - GPIOs will not be able to wake from sleep");
- 		} else {
--			int err = devm_request_irq(dev, priv->parent_wake_irq,
-+			int err;
-+
-+			/*
-+			 * Set wakeup capability before requesting wakeup
-+			 * interrupt, so we can process boot-time "wakeups"
-+			 * (e.g., from S5 cold boot)
-+			 */
-+			device_set_wakeup_capable(dev, true);
-+			device_wakeup_enable(dev);
-+			err = devm_request_irq(dev, priv->parent_wake_irq,
- 					brcmstb_gpio_wake_irq_handler, 0,
- 					"brcmstb-gpio-wake", priv);
- 
-@@ -351,8 +388,9 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 				return err;
- 			}
- 
--			device_set_wakeup_capable(dev, true);
--			device_wakeup_enable(dev);
-+			priv->reboot_notifier.notifier_call =
-+				brcmstb_gpio_reboot;
-+			register_reboot_notifier(&priv->reboot_notifier);
- 			priv->can_wake = true;
- 		}
- 	}
-@@ -455,6 +493,12 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 		/* not all ngpio lines are valid, will use bank width later */
- 		gc->ngpio = MAX_GPIO_PER_BANK;
- 
-+		/*
-+		 * Mask all interrupts by default, since wakeup interrupts may
-+		 * be retained from S5 cold boot
-+		 */
-+		bank->bgc.write_reg(reg_base + GIO_MASK(bank->id), 0);
-+
- 		err = gpiochip_add(gc);
- 		if (err) {
- 			dev_err(dev, "Could not add gpiochip for bank %d\n",
+diff --git a/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c b/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
+index b35cf4a..9af4559 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
++++ b/drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
+@@ -810,6 +810,8 @@ static const unsigned i2c5b_pins[] = {196, 197};
+ static const unsigned i2c5b_muxvals[] = {2, 2};
+ static const unsigned i2c5c_pins[] = {215, 216};
+ static const unsigned i2c5c_muxvals[] = {2, 2};
++static const unsigned i2c6_pins[] = {101, 102};
++static const unsigned i2c6_muxvals[] = {2, 2};
+ static const unsigned nand_pins[] = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30,
+ 				     31, 32, 33, 34, 35};
+ static const unsigned nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+@@ -927,6 +929,7 @@ static const struct uniphier_pinctrl_group ph1_pro5_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(i2c5),
+ 	UNIPHIER_PINCTRL_GROUP(i2c5b),
+ 	UNIPHIER_PINCTRL_GROUP(i2c5c),
++	UNIPHIER_PINCTRL_GROUP(i2c6),
+ 	UNIPHIER_PINCTRL_GROUP(uart0),
+ 	UNIPHIER_PINCTRL_GROUP(uart0b),
+ 	UNIPHIER_PINCTRL_GROUP(uart1),
+@@ -1204,6 +1207,7 @@ static const char * const i2c1_groups[] = {"i2c1"};
+ static const char * const i2c2_groups[] = {"i2c2"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+ static const char * const i2c5_groups[] = {"i2c5", "i2c5b", "i2c5c"};
++static const char * const i2c6_groups[] = {"i2c6"};
+ static const char * const nand_groups[] = {"nand", "nand_cs1"};
+ static const char * const uart0_groups[] = {"uart0", "uart0b"};
+ static const char * const uart1_groups[] = {"uart1"};
+@@ -1290,6 +1294,7 @@ static const struct uniphier_pinmux_function ph1_pro5_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(i2c2),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c5),
++	UNIPHIER_PINMUX_FUNCTION(i2c6),
+ 	UNIPHIER_PINMUX_FUNCTION(nand),
+ 	UNIPHIER_PINMUX_FUNCTION(uart0),
+ 	UNIPHIER_PINMUX_FUNCTION(uart1),
 -- 
 1.9.1
+
