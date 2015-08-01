@@ -1,1498 +1,590 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [RFC PATCH 3/3] ARM: at91/dt: add pinctrl
-Date: Fri, 31 Jul 2015 17:08:10 +0200
-Message-ID: <1438355290-28255-4-git-send-email-ludovic.desroches@atmel.com>
-References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 3/9] arm: twr-k70f120m: clock driver for Kinetis SoC
+Date: Fri, 31 Jul 2015 17:58:10 -0700
+Message-ID: <20150801005810.23791.8199@quantum>
+References: <1435667250-28299-1-git-send-email-pawelo@king.net.pl>
+ <alpine.DEB.2.11.1507030006280.3916@nanos> <2009463.YLtdMegFel@wuerfel>
+ <alpine.LNX.2.00.1507042327490.1296@localhost.localdomain>
+ <20150724034229.642.88156@quantum>
+ <alpine.LNX.2.00.1507262211470.28341@localhost.localdomain>
+ <20150728160347.642.31950@quantum>
+ <alpine.LNX.2.00.1507282201220.2619@localhost.localdomain>
+ <20150729230517.642.66061@quantum>
+ <alpine.LNX.2.00.1507302326500.20387@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: s.hauer@pengutronix.de, linus.walleij@linaro.org, nicolas.ferre@atmel.com, Ludovic Desroches <ludovic.desroches@atmel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <alpine.LNX.2.00.1507302326500.20387@localhost.localdomain>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <r.herring@freescale.com>, Alexander Potashev <aspotashev@emcraft.com>, Frank Li <Frank.Li@freescale.com>, Jiri Slaby <jslaby@suse.cz>, linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vinod.koul@intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-serial@vger.kernel.org, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Anson Huang <b20788@freescale.com>, devicetree@vger.kernel.org, Paul Osmialowski <pawelo@king.net.pl>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Yuri Tikhonov <yur@emcraft.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
----
- arch/arm/boot/dts/at91-sama5d2_xplained.dts |  386 ++++++++++
- arch/arm/boot/dts/sama5d2.dtsi              | 1076 +++++++++++++++++++++++++++
- 2 files changed, 1462 insertions(+)
- create mode 100644 arch/arm/boot/dts/at91-sama5d2_xplained.dts
- create mode 100644 arch/arm/boot/dts/sama5d2.dtsi
+Quoting Paul Osmialowski (2015-07-30 14:40:48)
+> Hi Mike,
+> 
+> I encountered some trouble while I tried to implement code fitting to DTS 
+> that you proposed. SIM_CLKDIVx are SIM device registers, not MCG. 
+> Therefore, in MCG device code I won't be able to figure out clock rate 
+> for outputed clocks unles I try to access SIM registers from MCG driver - 
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-new file mode 100644
-index 0000000..4ee6f6a
---- /dev/null
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -0,0 +1,386 @@
-+/*
-+ * at91-sama5d2_xplained.dts - Device Tree file for SAMA5D2 Xplained board
-+ *
-+ *  Copyright (C) 2015 Atmel,
-+ *                2015 Nicolas Ferre <nicolas.ferre@atmel.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+/dts-v1/;
-+#include "sama5d2.dtsi"
-+#include "sama5d2-pinfunc.h"
-+
-+/ {
-+	model = "Atmel SAMA5D2 Xplained";
-+	compatible = "atmel,sama5d2-xplained", "atmel,sama5d2", "atmel,sama5";
-+
-+	chosen {
-+		bootargs = "console=ttyS0,115200";
-+	};
-+
-+	memory {
-+		reg = <0x20000000 0x80000>;
-+	};
-+
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		main_clock: clock@0 {
-+			compatible = "atmel,osc", "fixed-clock";
-+			clock-frequency = <12000000>;
-+		};
-+
-+		slow_xtal {
-+			clock-frequency = <32768>;
-+		};
-+
-+		main_xtal {
-+			clock-frequency = <12000000>;
-+		};
-+	};
-+
-+	ahb {
-+		usb0: gadget@00300000 {
-+			atmel,vbus-gpio = <&pioA 31 GPIO_ACTIVE_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usba_vbus>;
-+			status = "okay";
-+		};
-+
-+		usb1: ohci@00400000 {
-+			num-ports = <3>;
-+			atmel,vbus-gpio = <0 /* &pioA 41 GPIO_ACTIVE_HIGH */
-+					   &pioA 42 GPIO_ACTIVE_HIGH
-+					   0
-+					  >;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_usb_default>;
-+			status = "okay";
-+		};
-+
-+		usb2: ehci@00500000 {
-+			status = "okay";
-+		};
-+
-+		sdmmc0: sdio-host@a0000000 {
-+			bus-width = <8>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_sdmmc0_default>;
-+			non-removable;
-+			status = "okay";
-+		};
-+
-+		sdmmc1: sdio-host@b0000000 {
-+			bus-width = <4>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_sdmmc1_default>;
-+			status = "okay";
-+		};
-+
-+		apb {
-+			spi0: spi@f8000000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_spi0_default>;
-+				status = "okay";
-+
-+				m25p80@0 {
-+					compatible = "atmel,at25df321a";
-+					reg = <0>;
-+					spi-max-frequency = <50000000>;
-+				};
-+			};
-+
-+			macb0: ethernet@f8008000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_macb0_rmii>;
-+				phy-mode = "rmii";
-+				status = "okay";
-+			};
-+
-+			uart1: serial@f8020000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_uart1_default>;
-+				status = "okay";
-+			};
-+
-+			i2c0: i2c@f8028000 {
-+				dmas = <0>, <0>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2c0_default>;
-+				status = "okay";
-+			};
-+
-+			flx0: flexcom@f8034000 {
-+				atmel,flexcom-mode = "usart";
-+				status = "okay";
-+
-+				uart5: serial@f8034200 {
-+					compatible = "atmel,at91sam9260-usart";
-+					reg = <0x200 0x200>;
-+					interrupts = <19 IRQ_TYPE_LEVEL_HIGH 7>;
-+					clocks = <&flx0_clk>;
-+					clock-names = "usart";
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&pinctrl_flx0_default>;
-+					atmel,fifo-size = <32>;
-+					status = "okay";
-+				};
-+			};
-+
-+			shdwc@f8048010 {
-+				atmel,shdwc-debouncer = <976>;
-+
-+				input@0 {
-+					reg = <0>;
-+					atmel,wakeup-type = "low";
-+				};
-+			};
-+
-+			watchdog@f8048040 {
-+				status = "okay";
-+			};
-+
-+			uart3: serial@fc008000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_uart3_default>;
-+				status = "okay";
-+			};
-+
-+			flx4: flexcom@fc018000 {
-+				atmel,flexcom-mode = "i2c";
-+				status = "okay";
-+
-+				i2c2: i2c@fc018600 {
-+					compatible = "atmel,sama5d2-i2c";
-+					reg = <0x600 0x200>;
-+					interrupts = <23 IRQ_TYPE_LEVEL_HIGH 7>;
-+					dmas = <0>, <0>;
-+					dma-names = "tx", "rx";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					clocks = <&flx4_clk>;
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&pinctrl_flx4_default>;
-+					atmel,fifo-size = <16>;
-+					status = "okay";
-+				};
-+			};
-+
-+			i2c1: i2c@fc028000 {
-+				dmas = <0>, <0>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2c1_default>;
-+				status = "okay";
-+
-+				at24@54 {
-+					compatible = "atmel,24c02";
-+					reg = <0x54>;
-+					pagesize = <16>;
-+				};
-+			};
-+
-+			pinctrl@fc038000 {
-+				pinctrl_flx0_default: flx0_default {
-+					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
-+						 <PIN_PB29__FLEXCOM0_IO1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_flx4_default: flx4_default {
-+					pinmux = <PIN_PD12__FLEXCOM4_IO0>,
-+						 <PIN_PD13__FLEXCOM4_IO1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2c0_default: i2c0_default {
-+					pinmux = <PIN_PD21__TWD0>,
-+						 <PIN_PD22__TWCK0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2c1_default: i2c1_default {
-+					pinmux = <PIN_PD4__TWD1>,
-+						 <PIN_PD5__TWCK1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_key_gpio_default: key_gpio_default {
-+					pinmux = <PIN_PB6>;
-+					bias-pull-up;
-+				};
-+
-+				pinctrl_led_gpio_default: led_gpio_default {
-+					pinmux = <PIN_PB0>,
-+						 <PIN_PB5>;
-+					bias-pull-up;
-+				};
-+
-+				pinctrl_macb0_rmii: macb0_rmii {
-+					pinmux = <PIN_PB14__GTXCK>,
-+						 <PIN_PB15__GTXEN>,
-+						 <PIN_PB16__GRXDV>,
-+						 <PIN_PB17__GRXER>,
-+						 <PIN_PB18__GRX0>,
-+						 <PIN_PB19__GRX1>,
-+						 <PIN_PB20__GTX0>,
-+						 <PIN_PB21__GTX1>,
-+						 <PIN_PB22__GMDC>,
-+						 <PIN_PB23__GMDIO>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_sdmmc0_default: sdmmc0_default {
-+					data {
-+						pinmux = <PIN_PA2__SDMMC0_DAT0>,
-+							 <PIN_PA3__SDMMC0_DAT1>,
-+							 <PIN_PA4__SDMMC0_DAT2>,
-+							 <PIN_PA5__SDMMC0_DAT3>,
-+							 <PIN_PA6__SDMMC0_DAT4>,
-+							 <PIN_PA7__SDMMC0_DAT5>,
-+							 <PIN_PA8__SDMMC0_DAT6>,
-+							 <PIN_PA9__SDMMC0_DAT7>;
-+						bias-pull-up;
-+					};
-+
-+					cmd_ck_cd_rstn_vddsel {
-+						pinmux = <PIN_PA1__SDMMC0_CMD>,
-+							 <PIN_PA0__SDMMC0_CK>,
-+							 <PIN_PA10__SDMMC0_RSTN>,
-+							 <PIN_PA11__SDMMC0_VDDSEL>;
-+						bias-disable;
-+					};
-+				};
-+
-+				pinctrl_sdmmc1_default: sdmmc1_default {
-+					cmd_data {
-+						pinmux = <PIN_PA28__SDMMC1_CMD>,
-+							 <PIN_PA18__SDMMC1_DAT0>,
-+							 <PIN_PA19__SDMMC1_DAT1>,
-+							 <PIN_PA20__SDMMC1_DAT2>,
-+							 <PIN_PA21__SDMMC1_DAT3>;
-+						bias-pull-up;
-+					};
-+
-+					ck_cd {
-+						pinmux = <PIN_PA22__SDMMC1_CK>,
-+							 <PIN_PA30__SDMMC1_CD>;
-+						bias-disable;
-+					};
-+				};
-+
-+				pinctrl_spi0_default: spi0_default {
-+					pinmux = <PIN_PA14__SPI0_SPCK>,
-+						 <PIN_PA15__SPI0_MOSI>,
-+						 <PIN_PA16__SPI0_MISO>,
-+						 <PIN_PA17__SPI0_NPCS0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_uart1_default: uart1_default {
-+					pinmux = <PIN_PD2__URXD1>,
-+						 <PIN_PD3__UTXD1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_uart3_default: uart3_default {
-+					pinmux = <PIN_PB11__URXD3>,
-+						 <PIN_PB12__UTXD3>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_usb_default: usb_default {
-+					pinmux = <PIN_PB10>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_usba_vbus: usba_vbus {
-+					conf-vbus_input {
-+						pinmux = <PIN_PB9>;
-+						bias-disable;
-+						output-low;
-+					};
-+
-+					conf-vbus_irq {
-+						pinmux = <PIN_PA31>;
-+						bias-disable;
-+					};
-+				};
-+
-+				pinctrl_i2c1_default: i2c1_default {
-+					pinmux = <PIN_PD4__TWD1>,
-+						 <PIN_PD5__TWCK1>;
-+					bias-disable;
-+				};
-+			};
-+		};
-+	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_key_gpio_default>;
-+
-+		bp1 {
-+			label = "PB_USER";
-+			gpios = <&pioA 38 GPIO_ACTIVE_LOW>;
-+			linux,code = <0x104>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_led_gpio_default>;
-+		status = "okay";
-+
-+		green {
-+			label = "green";
-+			gpios = <&pioA 37 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		blue {
-+			label = "blue";
-+			gpios = <&pioA 32 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-new file mode 100644
-index 0000000..710b3e4
---- /dev/null
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -0,0 +1,1076 @@
-+/*
-+ * sama5d2.dtsi - Device Tree Include file for SAMA5D2 family SoC
-+ *
-+ *  Copyright (C) 2015 Atmel,
-+ *                2015 Ludovic Desroches <ludovic.desroches@atmel.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include "skeleton.dtsi"
-+#include <dt-bindings/dma/at91.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/at91.h>
-+
-+/ {
-+	model = "Atmel SAMA5D2 family SoC";
-+	compatible = "atmel,sama5d2";
-+	interrupt-parent = <&aic>;
-+
-+	aliases {
-+		serial0 = &uart1;
-+		serial1 = &uart3;
-+		tcb0 = &tcb0;
-+		tcb1 = &tcb1;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a5";
-+			reg = <0>;
-+			next-level-cache = <&L2>;
-+		};
-+	};
-+
-+	memory {
-+		reg = <0x20000000 0x20000000>;
-+	};
-+
-+	clocks {
-+		slow_xtal: slow_xtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+		};
-+
-+		main_xtal: main_xtal {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <0>;
-+		};
-+
-+		adc_op_clk: adc_op_clk{
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <1000000>;
-+		};
-+	};
-+
-+	ns_sram: sram@00200000 {
-+		compatible = "mmio-sram";
-+		reg = <0x00200000 0x20000>;
-+	};
-+
-+	ahb {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		usb0: gadget@00300000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "atmel,sama5d3-udc";
-+			reg = <0x00300000 0x100000
-+			       0xfc02c000 0x400>;
-+			interrupts = <42 IRQ_TYPE_LEVEL_HIGH 2>;
-+			clocks = <&udphs_clk>, <&utmi>;
-+			clock-names = "pclk", "hclk";
-+			status = "disabled";
-+
-+			ep0 {
-+				reg = <0>;
-+				atmel,fifo-size = <64>;
-+				atmel,nb-banks = <1>;
-+			};
-+
-+			ep1 {
-+				reg = <1>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <3>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep2 {
-+				reg = <2>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <3>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep3 {
-+				reg = <3>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep4 {
-+				reg = <4>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep5 {
-+				reg = <5>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep6 {
-+				reg = <6>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep7 {
-+				reg = <7>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-dma;
-+				atmel,can-isoc;
-+			};
-+
-+			ep8 {
-+				reg = <8>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep9 {
-+				reg = <9>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep10 {
-+				reg = <10>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep11 {
-+				reg = <11>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep12 {
-+				reg = <12>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep13 {
-+				reg = <13>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep14 {
-+				reg = <14>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+
-+			ep15 {
-+				reg = <15>;
-+				atmel,fifo-size = <1024>;
-+				atmel,nb-banks = <2>;
-+				atmel,can-isoc;
-+			};
-+		};
-+
-+		usb1: ohci@00400000 {
-+			compatible = "atmel,at91rm9200-ohci", "usb-ohci";
-+			reg = <0x00400000 0x100000>;
-+			interrupts = <41 IRQ_TYPE_LEVEL_HIGH 2>;
-+			clocks = <&uhphs_clk>, <&uhphs_clk>, <&uhpck>;
-+			clock-names = "ohci_clk", "hclk", "uhpck";
-+			status = "disabled";
-+		};
-+
-+		usb2: ehci@00500000 {
-+			compatible = "atmel,at91sam9g45-ehci", "usb-ehci";
-+			reg = <0x00500000 0x100000>;
-+			interrupts = <41 IRQ_TYPE_LEVEL_HIGH 2>;
-+			clocks = <&utmi>, <&uhphs_clk>;
-+			clock-names = "usb_clk", "ehci_clk";
-+			status = "disabled";
-+		};
-+
-+		L2: cache-controller@00a00000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x00a00000 0x1000>;
-+			interrupts = <63 IRQ_TYPE_LEVEL_HIGH 4>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+
-+		sdmmc0: sdio-host@a0000000 {
-+			compatible = "atmel,sama5d2-sdhci";
-+			reg = <0xa0000000 0x300>;
-+			interrupts = <31 IRQ_TYPE_LEVEL_HIGH 0>;
-+			clocks = <&sdmmc0_hclk>, <&sdmmc0_gclk>, <&main>;
-+			clock-names = "hclock", "multclk", "baseclk";
-+			status = "disabled";
-+		};
-+
-+		sdmmc1: sdio-host@b0000000 {
-+			compatible = "atmel,sama5d2-sdhci";
-+			reg = <0xb0000000 0x300>;
-+			interrupts = <32 IRQ_TYPE_LEVEL_HIGH 0>;
-+			clocks = <&sdmmc1_hclk>, <&sdmmc1_gclk>, <&main>;
-+			clock-names = "hclock", "multclk", "baseclk";
-+			status = "disabled";
-+		};
-+
-+		apb {
-+			compatible = "simple-bus";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			hlcdc: hlcdc@f0000000 {
-+				compatible = "atmel,sama5d2-hlcdc";
-+				reg = <0xf0000000 0x2000>;
-+				interrupts = <45 IRQ_TYPE_LEVEL_HIGH 0>;
-+				clocks = <&lcdc_clk>, <&lcdck>, <&clk32k>;
-+				clock-names = "periph_clk","sys_clk", "slow_clk";
-+				status = "disabled";
-+
-+				hlcdc-display-controller {
-+					compatible = "atmel,hlcdc-display-controller";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						#address-cells = <1>;
-+						#size-cells = <0>;
-+						reg = <0>;
-+					};
-+				};
-+
-+				hlcdc_pwm: hlcdc-pwm {
-+					compatible = "atmel,hlcdc-pwm";
-+					#pwm-cells = <3>;
-+				};
-+			};
-+
-+			ramc0: ramc@f000c000 {
-+				compatible = "atmel,sama5d3-ddramc";
-+				reg = <0xf000c000 0x200>;
-+				clocks = <&ddrck>, <&mpddr_clk>;
-+				clock-names = "ddrck", "mpddr";
-+			};
-+
-+			dma0: dma-controller@f0010000 {
-+				compatible = "atmel,sama5d4-dma";
-+				reg = <0xf0010000 0x1000>;
-+				interrupts = <6 IRQ_TYPE_LEVEL_HIGH 0>;
-+				#dma-cells = <1>;
-+				clocks = <&dma0_clk>;
-+				clock-names = "dma_clk";
-+			};
-+
-+			pmc: pmc@f0014000 {
-+				compatible = "atmel,sama5d2-pmc";
-+				reg = <0xf0014000 0x160>;
-+				interrupts = <74 IRQ_TYPE_LEVEL_HIGH 7>;
-+				interrupt-controller;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				#interrupt-cells = <1>;
-+
-+				main_rc_osc: main_rc_osc {
-+					compatible = "atmel,at91sam9x5-clk-main-rc-osc";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_MOSCRCS>;
-+					clock-frequency = <12000000>;
-+					clock-accuracy = <100000000>;
-+				};
-+
-+				main_osc: main_osc {
-+					compatible = "atmel,at91rm9200-clk-main-osc";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_MOSCS>;
-+					clocks = <&main_xtal>;
-+				};
-+
-+				main: mainck {
-+					compatible = "atmel,at91sam9x5-clk-main";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_MOSCSELS>;
-+					clocks = <&main_rc_osc &main_osc>;
-+				};
-+
-+				plla: pllack {
-+					compatible = "atmel,sama5d3-clk-pll";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_LOCKA>;
-+					clocks = <&main>;
-+					reg = <0>;
-+					atmel,clk-input-range = <12000000 12000000>;
-+					#atmel,pll-clk-output-range-cells = <4>;
-+					atmel,pll-clk-output-ranges = <600000000 1200000000 0 0>;
-+				};
-+
-+				plladiv: plladivck {
-+					compatible = "atmel,at91sam9x5-clk-plldiv";
-+					#clock-cells = <0>;
-+					clocks = <&plla>;
-+				};
-+
-+				utmi: utmick {
-+					compatible = "atmel,at91sam9x5-clk-utmi";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_LOCKU>;
-+					clocks = <&main>;
-+				};
-+
-+				mck: masterck {
-+					compatible = "atmel,at91sam9x5-clk-master";
-+					#clock-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					interrupts = <AT91_PMC_MCKRDY>;
-+					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>;
-+					atmel,clk-output-range = <124000000 166000000>;
-+					atmel,clk-divisors = <1 2 4 3>;
-+				};
-+
-+				h32ck: h32mxck {
-+					#clock-cells = <0>;
-+					compatible = "atmel,sama5d4-clk-h32mx";
-+					clocks = <&mck>;
-+				};
-+
-+				usb: usbck {
-+					compatible = "atmel,at91sam9x5-clk-usb";
-+					#clock-cells = <0>;
-+					clocks = <&plladiv>, <&utmi>;
-+				};
-+
-+				prog: progck {
-+					compatible = "atmel,at91sam9x5-clk-programmable";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
-+
-+					prog0: prog0 {
-+						#clock-cells = <0>;
-+						reg = <0>;
-+						interrupts = <AT91_PMC_PCKRDY(0)>;
-+					};
-+
-+					prog1: prog1 {
-+						#clock-cells = <0>;
-+						reg = <1>;
-+						interrupts = <AT91_PMC_PCKRDY(1)>;
-+					};
-+
-+					prog2: prog2 {
-+						#clock-cells = <0>;
-+						reg = <2>;
-+						interrupts = <AT91_PMC_PCKRDY(2)>;
-+					};
-+				};
-+
-+				systemck {
-+					compatible = "atmel,at91rm9200-clk-system";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					ddrck: ddrck {
-+						#clock-cells = <0>;
-+						reg = <2>;
-+						clocks = <&mck>;
-+					};
-+
-+					lcdck: lcdck {
-+						#clock-cells = <0>;
-+						reg = <3>;
-+						clocks = <&mck>;
-+					};
-+
-+					uhpck: uhpck {
-+						#clock-cells = <0>;
-+						reg = <6>;
-+						clocks = <&usb>;
-+					};
-+
-+					udpck: udpck {
-+						#clock-cells = <0>;
-+						reg = <7>;
-+						clocks = <&usb>;
-+					};
-+
-+					pck0: pck0 {
-+						#clock-cells = <0>;
-+						reg = <8>;
-+						clocks = <&prog0>;
-+					};
-+
-+					pck1: pck1 {
-+						#clock-cells = <0>;
-+						reg = <9>;
-+						clocks = <&prog1>;
-+					};
-+
-+					pck2: pck2 {
-+						#clock-cells = <0>;
-+						reg = <10>;
-+						clocks = <&prog2>;
-+					};
-+
-+					iscck: iscck {
-+						#clock-cells = <0>;
-+						reg = <18>;
-+						clocks = <&mck>;
-+					};
-+				};
-+
-+				periph32ck {
-+					compatible = "atmel,at91sam9x5-clk-peripheral";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					clocks = <&h32ck>;
-+
-+					macb0_clk: macb0_clk {
-+						#clock-cells = <0>;
-+						reg = <5>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					tdes_clk: tdes_clk {
-+						#clock-cells = <0>;
-+						reg = <11>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					matrix1_clk: matrix1_clk {
-+						#clock-cells = <0>;
-+						reg = <14>;
-+					};
-+
-+					hsmc_clk: hsmc_clk {
-+						#clock-cells = <0>;
-+						reg = <17>;
-+					};
-+
-+					pioA_clk: pioA_clk {
-+						#clock-cells = <0>;
-+						reg = <18>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					flx0_clk: flx0_clk {
-+						#clock-cells = <0>;
-+						reg = <19>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					flx1_clk: flx1_clk {
-+						#clock-cells = <0>;
-+						reg = <20>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					flx2_clk: flx2_clk {
-+						#clock-cells = <0>;
-+						reg = <21>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					flx3_clk: flx3_clk {
-+						#clock-cells = <0>;
-+						reg = <22>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					flx4_clk: flx4_clk {
-+						#clock-cells = <0>;
-+						reg = <23>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uart0_clk: uart0_clk {
-+						#clock-cells = <0>;
-+						reg = <24>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uart1_clk: uart1_clk {
-+						#clock-cells = <0>;
-+						reg = <25>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uart2_clk: uart2_clk {
-+						#clock-cells = <0>;
-+						reg = <26>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uart3_clk: uart3_clk {
-+						#clock-cells = <0>;
-+						reg = <27>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uart4_clk: uart4_clk {
-+						#clock-cells = <0>;
-+						reg = <28>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					twi0_clk: twi0_clk {
-+						reg = <29>;
-+						#clock-cells = <0>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					twi1_clk: twi1_clk {
-+						#clock-cells = <0>;
-+						reg = <30>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					spi0_clk: spi0_clk {
-+						#clock-cells = <0>;
-+						reg = <33>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					spi1_clk: spi1_clk {
-+						#clock-cells = <0>;
-+						reg = <34>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					tcb0_clk: tcb0_clk {
-+						#clock-cells = <0>;
-+						reg = <35>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					tcb1_clk: tcb1_clk {
-+						#clock-cells = <0>;
-+						reg = <36>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					pwm_clk: pwm_clk {
-+						#clock-cells = <0>;
-+						reg = <38>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					adc_clk: adc_clk {
-+						#clock-cells = <0>;
-+						reg = <40>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					uhphs_clk: uhphs_clk {
-+						#clock-cells = <0>;
-+						reg = <41>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					udphs_clk: udphs_clk {
-+						#clock-cells = <0>;
-+						reg = <42>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					ssc0_clk: ssc0_clk {
-+						#clock-cells = <0>;
-+						reg = <43>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					ssc1_clk: ssc1_clk {
-+						#clock-cells = <0>;
-+						reg = <44>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					trng_clk: trng_clk {
-+						#clock-cells = <0>;
-+						reg = <47>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+				};
-+
-+				periph64ck {
-+					compatible = "atmel,at91sam9x5-clk-peripheral";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					clocks = <&mck>;
-+
-+					dma0_clk: dma0_clk {
-+						#clock-cells = <0>;
-+						reg = <6>;
-+					};
-+
-+					dma1_clk: dma1_clk {
-+						#clock-cells = <0>;
-+						reg = <7>;
-+					};
-+
-+					aes_clk: aes_clk {
-+						#clock-cells = <0>;
-+						reg = <9>;
-+					};
-+
-+					aesb_clk: aesb_clk {
-+						#clock-cells = <0>;
-+						reg = <10>;
-+					};
-+
-+					sha_clk: sha_clk {
-+						#clock-cells = <0>;
-+						reg = <12>;
-+					};
-+
-+					mpddr_clk: mpddr_clk {
-+						#clock-cells = <0>;
-+						reg = <13>;
-+					};
-+
-+					matrix0_clk: matrix0_clk {
-+						#clock-cells = <0>;
-+						reg = <15>;
-+					};
-+
-+					sdmmc0_hclk: sdmmc0_hclk {
-+						#clock-cells = <0>;
-+						reg = <31>;
-+					};
-+
-+					sdmmc1_hclk: sdmmc1_hclk {
-+						#clock-cells = <0>;
-+						reg = <32>;
-+					};
-+
-+					lcdc_clk: lcdc_clk {
-+						#clock-cells = <0>;
-+						reg = <45>;
-+					};
-+
-+					isc_clk: isc_clk {
-+						#clock-cells = <0>;
-+						reg = <46>;
-+					};
-+				};
-+
-+				gck {
-+					compatible = "atmel,sama5d2-clk-generated";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					interrupt-parent = <&pmc>;
-+					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
-+
-+					sdmmc0_gclk: sdmmc0_gclk {
-+						#clock-cells = <0>;
-+						reg = <31>;
-+					};
-+
-+					sdmmc1_gclk: sdmmc1_gclk {
-+						#clock-cells = <0>;
-+						reg = <32>;
-+					};
-+
-+					tcb0_gclk: tcb0_gclk {
-+						#clock-cells = <0>;
-+						reg = <35>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					tcb1_gclk: tcb1_gclk {
-+						#clock-cells = <0>;
-+						reg = <36>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+
-+					pwm_gclk: pwm_gclk {
-+						#clock-cells = <0>;
-+						reg = <38>;
-+						atmel,clk-output-range = <0 83000000>;
-+					};
-+				};
-+			};
-+
-+			sha@f0028000 {
-+				compatible = "atmel,at91sam9g46-sha";
-+				reg = <0xf0028000 0x100>;
-+				interrupts = <12 IRQ_TYPE_LEVEL_HIGH 0>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(31))>;
-+				dma-names = "tx";
-+				clocks = <&sha_clk>;
-+				clock-names = "sha_clk";
-+				status = "disabled";
-+			};
-+
-+			aes@f002c000 {
-+				compatible = "atmel,at91sam9g46-aes";
-+				reg = <0xf002c000 0x100>;
-+				interrupts = <9 IRQ_TYPE_LEVEL_HIGH 0>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(27))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(28))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&aes_clk>;
-+				clock-names = "aes_clk";
-+				status = "disabled";
-+			};
-+
-+			spi0: spi@f8000000 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0xf8000000 0x100>;
-+				interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(6))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(7))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&spi0_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <16>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			macb0: ethernet@f8008000 {
-+				compatible = "atmel,sama5d2-gem";
-+				reg = <0xf8008000 0x1000>;
-+				interrupts = <5  IRQ_TYPE_LEVEL_HIGH 3		/* Queue 0 */
-+					      66 IRQ_TYPE_LEVEL_HIGH 3          /* Queue 1 */
-+					      67 IRQ_TYPE_LEVEL_HIGH 3>;        /* Queue 2 */
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				clocks = <&macb0_clk>, <&macb0_clk>;
-+				clock-names = "hclk", "pclk";
-+				status = "disabled";
-+			};
-+
-+			tcb0: timer@f800c000 {
-+				compatible = "atmel,at91sam9x5-tcb";
-+				reg = <0xf800c000 0x100>;
-+				interrupts = <35 IRQ_TYPE_LEVEL_HIGH 0>;
-+				clocks = <&tcb0_clk>;
-+				clock-names = "t0_clk";
-+			};
-+
-+			tcb1: timer@f8010000 {
-+				compatible = "atmel,at91sam9x5-tcb";
-+				reg = <0xf8010000 0x100>;
-+				interrupts = <36 IRQ_TYPE_LEVEL_HIGH 0>;
-+				clocks = <&tcb1_clk>;
-+				clock-names = "t0_clk";
-+			};
-+
-+			uart0: serial@f801c000 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0xf801c000 0x100>;
-+				interrupts = <24 IRQ_TYPE_LEVEL_HIGH 7>;
-+				clocks = <&uart0_clk>;
-+				clock-names = "usart";
-+				status = "disabled";
-+			};
-+
-+			uart1: serial@f8020000 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0xf8020000 0x100>;
-+				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 7>;
-+				clocks = <&uart1_clk>;
-+				clock-names = "usart";
-+				status = "disabled";
-+			};
-+
-+			uart2: serial@f8024000 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0xf8024000 0x100>;
-+				interrupts = <26 IRQ_TYPE_LEVEL_HIGH 7>;
-+				clocks = <&uart2_clk>;
-+				clock-names = "usart";
-+				status = "disabled";
-+			};
-+
-+			i2c0: i2c@f8028000 {
-+				compatible = "atmel,sama5d2-i2c";
-+				reg = <0xf8028000 0x100>;
-+				interrupts = <29 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(0))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(1))>;
-+				dma-names = "tx", "rx";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				clocks = <&twi0_clk>;
-+				status = "disabled";
-+			};
-+
-+			flx0: flexcom@f8034000 {
-+				compatible = "atmel,sama5d2-flexcom";
-+				reg = <0xf8034000 0x200>;
-+				clocks = <&flx0_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0xf8034000 0x800>;
-+				status = "disabled";
-+			};
-+
-+			flx1: flexcom@f8038000 {
-+				compatible = "atmel,sama5d2-flexcom";
-+				reg = <0xf8038000 0x200>;
-+				clocks = <&flx1_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0xf8038000 0x800>;
-+				status = "disabled";
-+			};
-+
-+			rstc@f8048000 {
-+				compatible = "atmel,sama5d3-rstc";
-+				reg = <0xf8048000 0x10>;
-+			};
-+
-+			shdwc@f8048010 {
-+				compatible = "atmel,sama5d2-shdwc";
-+				reg = <0xf8048010 0x10>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				atmel,wakeup-rtc-timer;
-+			};
-+
-+			pit: timer@f8048030 {
-+				compatible = "atmel,at91sam9260-pit";
-+				reg = <0xf8048030 0x10>;
-+				interrupts = <3 IRQ_TYPE_LEVEL_HIGH 5>;
-+				clocks = <&h32ck>;
-+			};
-+
-+			watchdog@f8048040 {
-+				compatible = "atmel,at91sam9260-wdt";
-+				reg = <0xf8048040 0x10>;
-+				interrupts = <4 IRQ_TYPE_LEVEL_HIGH 7>;
-+				status = "disabled";
-+			};
-+
-+			sckc@f8048050 {
-+				compatible = "atmel,at91sam9x5-sckc";
-+				reg = <0xf8048050 0x4>;
-+
-+				slow_rc_osc: slow_rc_osc {
-+					compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
-+					#clock-cells = <0>;
-+					clock-frequency = <32768>;
-+					clock-accuracy = <250000000>;
-+					atmel,startup-time-usec = <75>;
-+				};
-+
-+				slow_osc: slow_osc {
-+					compatible = "atmel,at91sam9x5-clk-slow-osc";
-+					#clock-cells = <0>;
-+					clocks = <&slow_xtal>;
-+					atmel,startup-time-usec = <1200000>;
-+				};
-+
-+				clk32k: slowck {
-+					compatible = "atmel,at91sam9x5-clk-slow";
-+					#clock-cells = <0>;
-+					clocks = <&slow_rc_osc &slow_osc>;
-+				};
-+			};
-+
-+			rtc@f80480b0 {
-+				compatible = "atmel,at91rm9200-rtc";
-+				reg = <0xf80480b0 0x30>;
-+				interrupts = <74 IRQ_TYPE_LEVEL_HIGH 7>;
-+			};
-+
-+			spi1: spi@fc000000 {
-+				compatible = "atmel,at91rm9200-spi";
-+				reg = <0xfc000000 0x100>;
-+				interrupts = <34 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(8))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(9))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&spi1_clk>;
-+				clock-names = "spi_clk";
-+				atmel,fifo-size = <16>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				status = "disabled";
-+			};
-+
-+			uart3: serial@fc008000 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0xfc008000 0x100>;
-+				interrupts = <27 IRQ_TYPE_LEVEL_HIGH 7>;
-+				clocks = <&uart3_clk>;
-+				clock-names = "usart";
-+				status = "disabled";
-+			};
-+
-+			uart4: serial@fc00c000 {
-+				compatible = "atmel,at91sam9260-usart";
-+				reg = <0xfc00c000 0x100>;
-+				interrupts = <28 IRQ_TYPE_LEVEL_HIGH 7>;
-+				clocks = <&uart4_clk>;
-+				clock-names = "usart";
-+				status = "disabled";
-+			};
-+
-+			flx2: flexcom@fc010000 {
-+				compatible = "atmel,sama5d2-flexcom";
-+				reg = <0xfc010000 0x200>;
-+				clocks = <&flx2_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0xfc010000 0x800>;
-+				status = "disabled";
-+			};
-+
-+			flx3: flexcom@fc014000 {
-+				compatible = "atmel,sama5d2-flexcom";
-+				reg = <0xfc014000 0x200>;
-+				clocks = <&flx3_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0xfc014000 0x800>;
-+				status = "disabled";
-+			};
-+
-+			flx4: flexcom@fc018000 {
-+				compatible = "atmel,sama5d2-flexcom";
-+				reg = <0xfc018000 0x200>;
-+				clocks = <&flx4_clk>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0xfc018000 0x800>;
-+				status = "disabled";
-+			};
-+
-+			aic: interrupt-controller@fc020000 {
-+				#interrupt-cells = <3>;
-+				compatible = "atmel,sama5d4-aic";
-+				interrupt-controller;
-+				reg = <0xfc020000 0x200>;
-+				atmel,external-irqs = <49>;
-+			};
-+
-+			i2c1: i2c@fc028000 {
-+				compatible = "atmel,sama5d2-i2c";
-+				reg = <0xfc028000 0x100>;
-+				interrupts = <30 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(2))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(3))>;
-+				dma-names = "tx", "rx";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				clocks = <&twi1_clk>;
-+				status = "disabled";
-+			};
-+
-+			pioA: pinctrl@fc038000 {
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				compatible = "atmel,sama5d2-pinctrl", "simple-bus";
-+				reg = <0xfc038000 0x600>;
-+				interrupts = <18 IRQ_TYPE_LEVEL_HIGH 7>,
-+					     <68 IRQ_TYPE_LEVEL_HIGH 7>,
-+					     <69 IRQ_TYPE_LEVEL_HIGH 7>,
-+					     <70 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#gpio-cells = <2>;
-+				gpio-controller;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				clocks = <&pioA_clk>;
-+			};
-+		};
-+	};
-+};
--- 
-2.5.0
+Right, the MCG driver will only know the rates of the clocks that it
+outputs, namely:
+
+MCGIRCLK
+MCGFFCLK
+MCGOUTCLK
+MCGFLLCLK
+MCGPLL0CLK
+MCGPLL1CLK
+
+The naming scheme in the TRM is a bit unfortunate; it looks like some of
+the clock outputs coming out of SIM also retain the MCG* names.
+
+> that's what we wanted to avoid. Looks like it's the mcgoutclk that we want 
+> to expose not core, bus and the others:
+
+Right again. SIM is both a clock provider and a consumer. It will
+consume MCGOUTCLK (as well as some of the other clocks I mentioned above
+I think) and output the OUTDIVn dividers and gates (Core, Bus, FlexBus,
+Flash).
+
+> 
+>         soc {
+>                 mcg: clock-controller@40064000 {
+>                         compatible = "fsl,kinetis-mcg";
+>                         clock-cells = <0>;
+
+Why is clock-cells zero? I think the MCG block outputs all of the clocks
+that I listed above? As such they should be addressable as <&mcg N> by
+any downstream users.
+
+>                         reg = <0x40064000 0x14>;
+>                         clocks = <&osc0>, <&osc1>, <&rtc>;
+>                         clock-names = "osc0", "osc1", "rtc";
+
+Are the oscN and rtc clocks modeled as fixed-rate clocks in DT?
+
+>                 };
+>                 sim: clock-controller@40047000 {
+>                         compatible = "fsl,kinetis-sim";
+>                         clock-cells = <1>;
+>                         reg = <0x40047000 0x1100>;
+>                         clocks = <&mcg>,
+>                                  <&osc0>;
+
+It looks like the SIM block should also consume:
+
+MCGFLLCLK
+MCGIRCLK
+MCGFFCLK
+MCGPLL0CLK
+MCGPLL1CLK
+OSC0ERCLK
+OSC1ERCLK
+OSC032KCLK
+RTCCLK (I made that name up)
+
+The mcg clocks should come out of the mcg node. It looks like you
+already modeled oscN and rtc clocks, which is great. There are some
+gates after these clocks (e.g. OSC0ERCLK). I wonder if those gates are
+actually in the osc IP block or if they actually live in SIM. More on
+that below...
+
+>                         clock-names = "mcgoutclk", "enet";
+>                 };
+> 
+>                 uart0: serial@4006a000 {
+>                         compatible = "fsl,kinetis-lpuart";
+>                         reg = <0x4006a000 0x1000>;
+>                         interrupts = <45>, <46>;
+>                         interrupt-names = "uart-stat", "uart-err";
+>                         clocks = <&sim SIM_SCGC4_UART0_CLK>;
+>                         clock-names = "ipg";
+>                         dmas = <&edma 0 2>;
+>                         dma-names = "rx";
+>                         status = "disabled";
+>                 };
+>         };
+> 
+> Now fsl,kinetis-sim device will be responsible for clock gating and it 
+> will know about core, bus, flexbus and flash clocks only internally - 
+> none of them are exposed.
+
+Well they certainly can be exposed if you need them to be. If a device
+driver wants to get the core clock and set it's rate then it should be
+able to with something like <&sim CORE_CLK>.
+
+> 
+> Also note that fec (ethernet device) driver is connected directly to osc0 
+> (though clock gate, you can see this CG attached to osc0 on the diagram 
+> too) - to control this gate I need to access SIM device registers, so it 
+> should be covered by the same fsl,kinetis-sim driver.
+
+Do you mean the SIM_SOPT2 register? It looks like the connection is not
+"direct", as the osc0 signal feeds into the SIM block and the gate there
+controls it.  Perhaps the diagram is incorrect by placing the CG block
+inside osc0? It looks like you correctly modeled this relationship in
+the sim node.
+
+Besides my annoying questions above this binding is starting to shape up
+very well. Thanks for your patience!
+
+Regards,
+Mike
+
+> 
+> On Wed, 29 Jul 2015, Michael Turquette wrote:
+> 
+> > Quoting Paul Osmialowski (2015-07-28 13:30:17)
+> > > Hi Mike,
+> > > 
+> > > My trouble is that now I'm dealing with two conradictory opinions on how 
+> > > this driver should be written. The one you presented in your previous post 
+> > > assumes that there will be a header file with defines shared between the 
+> > > clock driver and DTS, also with clock gating details hidden behind some 
+> > > additional level of indirection, e.g.:
+> > > 
+> > > clocks = <&sim SIM_SCGC4_UART1_CLK>;
+> > > 
+> > > Note that I've been through this at the very beginning, though the names 
+> > > I used have been bit different, e.g.:
+> > > 
+> > > #define KINETIS_CG_UART1       KINETIS_MKCG(3, 11)     /* SIM_SCGC4[11] */
+> > > 
+> > > This was rejected with a comment by Arnd:
+> > > 
+> > > Instead of using a triple indirection here, just put the tuples
+> > > in the DT directly using #clock-cells=<2>, and get rid of both this
+> > > header file and the dt-bindings/clock/kinetis-mcg.h file.
+> > 
+> > Arnd, are you OK with my type of binding description now that I
+> > explained it with some examples?
+> > 
+> > > 
+> > > So I dropped all of these includes and started to use magic numbers (as 
+> > > you put it). Now I need to go one way or another or even go the third way: 
+> > > extend #clock-cells to <3> and address it like: <&sim parent_clock_id 
+> > > scgc_register_number bit_index_number>.
+> > 
+> > Paul,
+> > 
+> > >From my understanding the DT folks do not like register-level or
+> > bit-level details going into DT. It is better to handle the clock
+> > signals as abstract resources and link a provider and consumer with a
+> > simple phandle plus an index representing that abstract resource (i.e.
+> > the clock output signal).
+> > 
+> > > 
+> > > Reading your previous post I'm starting to feel that it would bring me 
+> > > closer to final acceptance if I stick to what you proposed in that post 
+> > > (I'm really grateful to you for writting so huge chunk of DTS for me!), so 
+> > > I'll probably adopt that.
+> > > 
+> > > You're right about my "get things up and running" attitude - currently I 
+> > > want to develop things extensively (cover as much subsystems as 
+> > > possible) and then at some stage switch to intensive approach. This board 
+> > > is a somewhat huge monster (for a Cortex-M4 SoC) and there will be a lot 
+> > > of coding opportunity in this field in the future.
+> > 
+> > I'm happy to take clock drivers and add my Reviewed-by to .dts files
+> > that make use of fixed-rate and fixed-factor clocks as an interim
+> > solution.  Of course it will be best to get The Real Thing merged
+> > upstream asap, but this is something I've done before to help get new
+> > platform upstream before and I'm fine to do it again.
+> > 
+> > With that said, Devicetree bindings are allegedly a stable ABI that
+> > cannot be broken. So let's make sure that any Kinetis clock binding
+> > description is in good shape before merging it. The rest can follow on
+> > later if it needs to.
+> > 
+> > Regards,
+> > Mike
+> > 
+> > > 
+> > > Thanks,
+> > > Paul
+> > > 
+> > > On Tue, 28 Jul 2015, Michael Turquette wrote:
+> > > 
+> > > > Quoting Paul Osmialowski (2015-07-26 13:24:08)
+> > > > > Hi Mike,
+> > > > > 
+> > > > > Thank you for spending time on this and pointing me into the right 
+> > > > > direction. I'm wondering about going even further with it. Assuming that I 
+> > > > 
+> > > > Hi Paul,
+> > > > 
+> > > > No problem! And thanks for the quick turnaround on your patches so far.
+> > > > 
+> > > > > know everything about my board, I can skip run-time discovery phase (note 
+> > > > > that the original driver was designed for other Kinetis-based boards too) 
+> > > > > and move everything into DTS, somewhat like this:
+> > > > > 
+> > > > > / {
+> > > > >         osc0: clock {
+> > > > >                 compatible = "fixed-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clock-frequency = <50000000>;
+> > > > >         };
+> > > > > 
+> > > > >         osc1: clock {
+> > > > >                 compatible = "fixed-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clock-frequency = <12000000>;
+> > > > >         };
+> > > > > 
+> > > > >         rtc: clock {
+> > > > >                 compatible = "fixed-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clock-frequency = <32768>;
+> > > > >         };
+> > > > > 
+> > > > >         mcgout: clock {
+> > > > >                 compatible = "fixed-factor-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clocks = <&osc0>;
+> > > > >                 clock-mult = <12>;
+> > > > >                 clock-div = <5>;
+> > > > >         };
+> > > > 
+> > > > I think this is a step backwards.
+> > > > 
+> > > > Did you look at the qcom clock binding and read the email where I
+> > > > detailed how that binding works?
+> > > > 
+> > > > The point of that type of binding is to not shove per-clock data into
+> > > > DT, but instead to declare every clock controller IP block (e.g. the
+> > > > device) as well as every board-level clock (e.g. as osc that feeds into
+> > > > your mcu). Once these "clock providers" are enumerated in DT, then we
+> > > > create linkage between the clock providers and the clock consumers by
+> > > > using phandles + an index. Linux device drivers tap into this by using
+> > > > clk_get() and using the "clock-names" property from DT.
+> > > > 
+> > > > Put another way: we mostly use DT to model "devices". That is open to
+> > > > interpretation for but for clock-related stuff we typically interpret
+> > > > the clock controller as the device, not the individual clock outputs
+> > > > coming out of the controller.
+> > > > 
+> > > > Note that a clock controller IP block may be both a provider and a
+> > > > consumer.  I/O controllers are a very common type of consumer (e.g. USB
+> > > > host controller, MMC controller, GPU, etc).
+> > > > 
+> > > > Additionally, from my reading of the reference manual, mcgout is defined
+> > > > as:
+> > > > 
+> > > > """
+> > > > MCG output of either IRC, MCGFLLCLK MCGPLL0CLK,
+> > > > MCGPLL1CLK, or MCG's external reference clock that
+> > > > sources the core, system, bus, FlexBus, and flash clock. It is
+> > > > also an option for the debug trace clock.
+> > > > """
+> > > > 
+> > > > So why is it listed here as a fixed-factor clock? Is it not a
+> > > > multiplexer? Also, why is it listed here at all? Please take another
+> > > > look at the qcom binding example I linked to in my previous mail.
+> > > > 
+> > > > > 
+> > > > >         core: clock {
+> > > > >                 compatible = "fixed-factor-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clocks = <&mcgout>;
+> > > > >                 clock-mult = <1>;
+> > > > >                 clock-div = <1>;
+> > > > >         };
+> > > > > 
+> > > > >         bus: clock {
+> > > > >                 compatible = "fixed-factor-clock";
+> > > > >                 #clock-cells = <0>;
+> > > > >                 clocks = <&mcgout>;
+> > > > >                 clock-mult = <1>;
+> > > > >                 clock-div = <2>;
+> > > > 
+> > > > These are actually not fixed dividers but programmable dividers. You can
+> > > > probably use drivers/clk/clk-divider.c for these. I'm fine with using
+> > > > fixed-dividers for the initial merge just to get things up and running
+> > > > if that is your strategy, but you'll need to revisit them later on when
+> > > > you need more flexible support for other boards.
+> > > > 
+> > > > Again, I'm not sure why these clocks are enumerated in DT. Why not just
+> > > > enumerate your mcg clock controller and your sim clock controller? If
+> > > > you want to be a perfectionist then it appears that there is an osc
+> > > > clock controller upstream from the mcg controller as well ;-)
+> > > > 
+> > > > It occurs to me that maybe you are trying to use fixed-factor clocks so
+> > > > that you can program a sane default rate? We use the
+> > > > assigned-clock-rates property for that. Note that this value is a
+> > > > property of some device which *consumes* the clock, not the clock
+> > > > controller or the clock output itself.
+> > > > 
+> > > > >         };
+> > > > > 
+> > > > >         soc {
+> > > > >                 cmu@0x40047000 {
+> > > > >                         compatible = "fsl,kinetis-gate-clock";
+> > > > >                         reg = <0x40047000 0x1100>;
+> > > > > 
+> > > > >                         mcg_core_gate: clock-gate {
+> > > > >                                 clocks = <&core>;
+> > > > >                                 #clock-cells = <2>;
+> > > > >                         };
+> > > > > 
+> > > > >                         mcg_bus_gate: clock-gate {
+> > > > >                                 clocks = <&bus>;
+> > > > >                                 #clock-cells = <2>;
+> > > > >                         };
+> > > > > 
+> > > > >                         osc0_erclk_gate: clock-gate {
+> > > > >                                 clocks = <&osc0>;
+> > > > >                                 #clock-cells = <2>;
+> > > > >                         };
+> > > > >                 };
+> > > > > 
+> > > > >                 uart0: serial@4006a000 {
+> > > > >                         compatible = "fsl,kinetis-lpuart";
+> > > > >                         reg = <0x4006a000 0x1000>;
+> > > > >                         interrupts = <45>, <46>;
+> > > > >                         interrupt-names = "uart-stat", "uart-err";
+> > > > >                         clocks = <&mcg_core_gate 3 10>;
+> > > > 
+> > > > Magic numbers are not good. dtc has been able to use preprocessor macros
+> > > > for a while now which means we can use constants instead of magic
+> > > > numbers. Please look at the shared header in the qcom binding for an
+> > > > example.
+> > > > 
+> > > > >                         clock-names = "ipg";
+> > > > >                         dmas = <&edma 0 2>;
+> > > > >                         dma-names = "rx";
+> > > > >                         status = "disabled";
+> > > > >                 };
+> > > > >         };
+> > > > > };
+> > > > > 
+> > > > > As you can see, mcg part is not required anymore.
+> > > > 
+> > > > I think the mcg should be required. The mcg is a real IP block on your
+> > > > SoC, according to my reading of your technical reference manual. Just
+> > > > because you can model a few of its output clocks in dts does not mean
+> > > > that you should.
+> > > > 
+> > > > I did a quick grep and didn't find "cmu" anywhere in the reference
+> > > > manual.
+> > > > 
+> > > > > 
+> > > > > I guess that the approach above would require split into soc-specific and 
+> > > > > board-specific part (as I said, dividers arrangement is something board 
+> > > > > specific), but I wonder what you thing about this proposal.
+> > > > 
+> > > > Splitting is good. Chip-specific stuff can go into the chip-specific
+> > > > dtsi file. The board-level (osc) stuff can go into the individual board
+> > > > files. The ultimate goal is to make it trivial to add new boards.
+> > > > 
+> > > > Regards,
+> > > > Mike
+> > > > 
+> > > > > 
+> > > > > Thanks,
+> > > > > Paul
+> > > > > 
+> > > > > On Thu, 23 Jul 2015, Michael Turquette wrote:
+> > > > > 
+> > > > > > Quoting Paul Osmialowski (2015-07-04 14:50:03)
+> > > > > > > Hi Arnd,
+> > > > > > > 
+> > > > > > > I'm attaching excerpt from Kinetis reference manual that may make 
+> > > > > > > situation clearer.
+> > > > > > 
+> > > > > > Hi Paul,
+> > > > > > 
+> > > > > > Can you please post the patch in the body of the email instead of an
+> > > > > > attachment? It makes it easier to review. Another small nitpick is that
+> > > > > > the $SUBJECT for this patch might be better off as something like:
+> > > > > > 
+> > > > > > clk: mcg and sim clock drivers for twr-k70f120m Kinetis SoC
+> > > > > > 
+> > > > > > At least it helps me find the patch I care about when skimming the
+> > > > > > series ;-)
+> > > > > > 
+> > > > > > > 
+> > > > > > > These MCG and SIM registers are used only to determine configuration 
+> > > > > > > (clock fixed rates and clock signal origins) at run time.
+> > > > > > > 
+> > > > > > > Namely, the real MCGOUTCLK source (in the middle) which is the parent for 
+> > > > > > > core clock (CCLK) and peripheral clock (PCLK) is determined at run time by 
+> > > > > > > reading MCG registers, let me quote commit message from Emcraft git repo:
+> > > > > > > 
+> > > > > > >       * Determine in run-time what oscillator module (OSC0 or OSC1) is used
+> > > > > > >      as clock source for the main PLL.
+> > > > > > 
+> > > > > > According to [0] there are three options: a 32k RTC osc clock and osc0
+> > > > > > both feed into a mux. You should model this 32k clock with the
+> > > > > > fixed-rate binding.
+> > > > > > 
+> > > > > > >       * When OSC1 is selected, assume its frequency to be 12 MHz on all
+> > > > > > >      boards (there is a 12 MHz oscillator on XTAL1/EXTAL1 on K70-SOM and
+> > > > > > >      TWR-K70F120M boards).
+> > > > > > > 
+> > > > > > > In my .dts I'm trying to possibly follow real clock hierarchy, but to go 
+> > > > > > > anywhere behind MCGOUTCLK would require ability to rewrite .dtb e.g. by 
+> > > > > > > U-boot. But that's too demanding for any potential users of this BSP. So 
+> > > > > > > let's asume that MCGOUTCLK is the root clock and a parent for CCLK and 
+> > > > > > > PCLK.
+> > > > > > 
+> > > > > > I'm confused. The point of device tree is to solve problems like this;
+> > > > > > i.e. board-specific differences such as different oscillator
+> > > > > > frequencies.
+> > > > > > 
+> > > > > > OSC0 and OSC1 should each be a fixed-rate clock in your board-specific
+> > > > > > TWR-K70F120M DTS (not a chip-specific file). They do not belong in the
+> > > > > > cmu node, and they should use the "fixed-clock" binding. The 32k RTC osc
+> > > > > > can probably go in your chip-specific .dtsi as a fixed-rate clock since
+> > > > > > it appears to mandated in the reference manual[0].
+> > > > > > 
+> > > > > > These three fixed-rate clocks are your root clock nodes. Customers only
+> > > > > > need to worry about this if they spin a board, and then they will need
+> > > > > > to populate the frequencies of OSC0 and OSC1 in their board-specific
+> > > > > > .dts.
+> > > > > > 
+> > > > > > Please break clk-kinetis.c into two files:
+> > > > > > drivers/clk/kinetis/clk-mcg.c
+> > > > > > drivers/clk/kinetis/clk-sim.c
+> > > > > > 
+> > > > > > Below is what your binding/dts should look like:
+> > > > > > 
+> > > > > > {
+> > > > > >       osc0: clock {
+> > > > > >               compatible = "fixed-clock";
+> > > > > >               #clock-cells = <0>;
+> > > > > >               clock-frequency = <50000000>;
+> > > > > >       };
+> > > > > > 
+> > > > > >       osc1: clock {
+> > > > > >               compatible = "fixed-clock";
+> > > > > >               #clock-cells = <0>;
+> > > > > >               clock-frequency = <12000000>;
+> > > > > >       };
+> > > > > > 
+> > > > > >       rtc: clock {
+> > > > > >               compatible = "fixed-clock";
+> > > > > >               #clock-cells = <0>;
+> > > > > >               clock-frequency = <32768>;
+> > > > > >       };
+> > > > > > 
+> > > > > >       soc: soc {
+> > > > > >               mcg: clock-controller@40064000 {
+> > > > > >                       compatible = "fsl,kinetis-mcg";
+> > > > > >                       clock-cells = <1>;
+> > > > > >                       reg = <0x40064000 0x14>;
+> > > > > >                       clocks = <&osc0>, <&osc1>, <&rtc>;
+> > > > > >                       clock-names = "osc0", "osc1", "rtc";
+> > > > > >               };
+> > > > > > 
+> > > > > >               sim: clock-controller@40047000 {
+> > > > > >                       compatible = "fsl,kinetis-sim";
+> > > > > >                       clock-cells = <1>;
+> > > > > >                       reg = <0x40047000 0x1100>;
+> > > > > >                       clocks = <&mcg MCG_MCGOUTCLK_DIV1>, <&mcg MCG_MCGOUTCLK_DIV2>, <&mcg MCG_MCGOUTCLK_DIV3> <&mcg MCG_MCGOUTCLK_DIV4>;
+> > > > > >                       clock-names = "core", "bus", "flexbus", "flash";
+> > > > > >               };
+> > > > > >       };
+> > > > > > 
+> > > > > >       uart0: serial@4006a000 {
+> > > > > >               compatible = "fsl,kinetis-lpuart";
+> > > > > >               reg = <0x4006a000 0x1000>;
+> > > > > >               clocks = <&sim SIM_SCGC4_UART1_CLK>;
+> > > > > >               clock-names = "gate";
+> > > > > >       };
+> > > > > > 
+> > > > > > I removed the interrupts and dma stuff from the uart0 node for clarity.
+> > > > > > The above is the only style of binding that I have been accepting for
+> > > > > > some time; first declare the clock controller and establish its register
+> > > > > > space, and then consumers can consume clocks by providing the phandle to
+> > > > > > the controller plus an offset corresponding to a unique clock. The
+> > > > > > clock-names property makes it really easy to use with the clkdev stuff
+> > > > > > (e.g. clk_get()).
+> > > > > > 
+> > > > > > I've covered this before on the mailing list so here is a link
+> > > > > > describing how the qcom bindings do it in detail:
+> > > > > > 
+> > > > > > http://lkml.kernel.org/r/<20150416192014.19585.9663@quantum>
+> > > > > > 
+> > > > > > Technically you could encode the same bits as sub-nodes of the mcg and
+> > > > > > sim nodes, but the shared header is how the magic happens with the
+> > > > > > driver so it's best to keep the clock controller binding small and
+> > > > > > light.
+> > > > > > 
+> > > > > > I think this means you can also get rid of kinetis_of_clk_get_name and
+> > > > > > kinetis_clk_gate_get but my brain is tired so I'll leave that as an
+> > > > > > exercise to the reader.
+> > > > > > 
+> > > > > > [0] http://cache.freescale.com/files/microcontrollers/doc/ref_manual/K70P256M150SF3RM.pdf
+> > > > > > 
+> > > > > > Regards,
+> > > > > > Mike
+> > > > > > 
+> > > > > > > 
+> > > > > > > In my most recent version I added OSC0ERCLK explicitly as one more root 
+> > > > > > > clock, since it is also used directly (through CG reg. 1 bit 0) by 
+> > > > > > > Freescale fec network device whose in-tree driver I'm trying to make 
+> > > > > > > usable for Kinetis.
+> > > > > > > 
+> > > > > > > On Sat, 4 Jul 2015, Arnd Bergmann wrote:
+> > > > > > > 
+> > > > > > > > On Friday 03 July 2015 00:08:27 Thomas Gleixner wrote:
+> > > > > > > >> On Thu, 2 Jul 2015, Paul Osmialowski wrote:
+> > > > > > > >>> On Thu, 2 Jul 2015, Arnd Bergmann wrote:
+> > > > > > > >>>
+> > > > > > > >>>> I wonder if you could move out the fixed rate clocks into their own
+> > > > > > > >>>> nodes. Are they actually controlled by the same block? If they are
+> > > > > > > >>>> just fixed, you can use the normal binding for fixed rate clocks
+> > > > > > > >>>> and only describe the clocks that are related to the driver.
+> > > > > > > >>>
+> > > > > > > >>> In my view having these clocks grouped together looks more convincing. After
+> > > > > > > >>> all, they all share the same I/O regs in order to read configuration.
+> > > > > > > >>
+> > > > > > > >> The fact that they share a register is not making them a group. That's
+> > > > > > > >> just a HW design decision and you need to deal with that by protecting
+> > > > > > > >> the register access, but not by trying to group them artificially at
+> > > > > > > >> the functional level.
+> > > > > > > >
+> > > > > > > > I'd disagree with that: The clock controller is the device that owns the
+> > > > > > > > registers and that should be one node in DT, as Paul's first version does.
+> > > > > > > >
+> > > > > > > > The part I'm still struggling with is understanding how the fixed-rate
+> > > > > > > > clocks are controlled through those registers. If they are indeed configured
+> > > > > > > > through the registers, the name is probably wrong and should be changed
+> > > > > > > > to whatever kind of non-fixed clock this is.
+> > > > > > > >
+> > > > > > > >       Arnd
+> > > > > > > >
+> > > > > > > 
+> > > > > > > _______________________________________________
+> > > > > > > linux-arm-kernel mailing list
+> > > > > > > linux-arm-kernel@lists.infradead.org
+> > > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > > > > > 
+> > > > > --
+> > > > > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > > > > the body of a message to majordomo@vger.kernel.org
+> > > > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > > > Please read the FAQ at  http://www.tux.org/lkml/
+> > > > 
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > > the body of a message to majordomo@vger.kernel.org
+> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > Please read the FAQ at  http://www.tux.org/lkml/
+> > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
