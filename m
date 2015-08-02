@@ -1,14 +1,21 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 02/11] input: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Sun,  2 Aug 2015 11:09:48 +0200
-Message-ID: <1438506588-31545-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v2 07/11] staging: fbtft: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Sun,  2 Aug 2015 11:09:52 +0200
+Message-ID: <1438506592-31759-1-git-send-email-geert@linux-m68k.org>
 References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
-Return-path: <linux-input-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:43474 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752191AbbHBJJw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 2 Aug 2015 05:09:52 -0400
 In-Reply-To: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc: devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
 not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
@@ -23,137 +30,22 @@ Acked-by: Linus Walleij <linus.walleij@linaro.org>
 v2:
   - Add Acked-by.
 ---
- drivers/input/keyboard/Kconfig    |  4 ++--
- drivers/input/misc/Kconfig        | 11 ++++++-----
- drivers/input/mouse/Kconfig       |  2 +-
- drivers/input/touchscreen/Kconfig |  8 ++++----
- 4 files changed, 13 insertions(+), 12 deletions(-)
+ drivers/staging/fbtft/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 82a8fb50afacb253..da53ae6a93346c90 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -187,7 +187,7 @@ config KEYBOARD_EP93XX
- 
- config KEYBOARD_GPIO
- 	tristate "GPIO Buttons"
--	depends on GPIOLIB
+diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
+index f7e68fdd99047927..d473010fa4748409 100644
+--- a/drivers/staging/fbtft/Kconfig
++++ b/drivers/staging/fbtft/Kconfig
+@@ -1,6 +1,7 @@
+ menuconfig FB_TFT
+ 	tristate "Support for small TFT LCD display modules"
+-	depends on FB && SPI && GPIOLIB
++	depends on FB && SPI
 +	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  This driver implements support for buttons connected
- 	  to GPIO pins of various CPUs (and some other chips).
-@@ -253,7 +253,7 @@ config KEYBOARD_TCA8418
- 
- config KEYBOARD_MATRIX
- 	tristate "GPIO driven matrix keypad support"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	select INPUT_MATRIXKMAP
- 	help
- 	  Enable support for GPIO driven matrix keypad.
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index d4f0a817e858262b..dade381c7da80eb9 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -259,7 +259,7 @@ config INPUT_APANEL
- config INPUT_GP2A
- 	tristate "Sharp GP2AP002A00F I2C Proximity/Opto sensor driver"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have a Sharp GP2AP002A00F proximity/als combo-chip
- 	  hooked to an I2C bus.
-@@ -269,7 +269,7 @@ config INPUT_GP2A
- 
- config INPUT_GPIO_BEEPER
- 	tristate "Generic GPIO Beeper support"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have a beeper connected to a GPIO pin.
- 
-@@ -278,7 +278,7 @@ config INPUT_GPIO_BEEPER
- 
- config INPUT_GPIO_TILT_POLLED
- 	tristate "Polled GPIO tilt switch"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	select INPUT_POLLDEV
- 	help
- 	  This driver implements support for tilt switches connected
-@@ -569,7 +569,7 @@ config INPUT_PWM_BEEPER
- 
- config INPUT_GPIO_ROTARY_ENCODER
- 	tristate "Rotary encoders connected to GPIO pins"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here to add support for rotary encoders connected to GPIO lines.
- 	  Check file:Documentation/input/rotary-encoder.txt for more
-@@ -776,7 +776,8 @@ config INPUT_SOC_BUTTON_ARRAY
- 
- config INPUT_DRV260X_HAPTICS
- 	tristate "TI DRV260X haptics support"
--	depends on INPUT && I2C && GPIOLIB
-+	depends on INPUT && I2C
-+	depends on GPIOLIB || COMPILE_TEST
- 	select INPUT_FF_MEMLESS
- 	select REGMAP_I2C
- 	help
-diff --git a/drivers/input/mouse/Kconfig b/drivers/input/mouse/Kconfig
-index d7820d1152d2ef2d..17f97e5e11e7cd2e 100644
---- a/drivers/input/mouse/Kconfig
-+++ b/drivers/input/mouse/Kconfig
-@@ -341,7 +341,7 @@ config MOUSE_VSXXXAA
- 
- config MOUSE_GPIO
- 	tristate "GPIO mouse"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	select INPUT_POLLDEV
- 	help
- 	  This driver simulates a mouse on GPIO lines of various CPUs (and some
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 860d426c480e2088..059edeb7f04a0d40 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -118,7 +118,7 @@ config TOUCHSCREEN_ATMEL_MXT
- config TOUCHSCREEN_AUO_PIXCIR
- 	tristate "AUO in-cell touchscreen using Pixcir ICs"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have a AUO display with in-cell touchscreen
- 	  using Pixcir ICs.
-@@ -142,7 +142,7 @@ config TOUCHSCREEN_BU21013
- 
- config TOUCHSCREEN_CHIPONE_ICN8318
- 	tristate "chipone icn8318 touchscreen controller"
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	depends on I2C
- 	depends on OF
- 	help
-@@ -156,7 +156,7 @@ config TOUCHSCREEN_CHIPONE_ICN8318
- config TOUCHSCREEN_CY8CTMG110
- 	tristate "cy8ctmg110 touchscreen"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have a cy8ctmg110 capacitive touchscreen on
- 	  an AAVA device.
-@@ -1030,7 +1030,7 @@ config TOUCHSCREEN_TPS6507X
- config TOUCHSCREEN_ZFORCE
- 	tristate "Neonode zForce infrared touchscreens"
- 	depends on I2C
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	help
- 	  Say Y here if you have a touchscreen using the zforce
- 	  infraread technology from Neonode.
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
+ 	select FB_SYS_IMAGEBLIT
 -- 
 1.9.1
 
