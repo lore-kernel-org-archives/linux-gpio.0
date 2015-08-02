@@ -1,21 +1,14 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 07/11] staging: fbtft: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Sun,  2 Aug 2015 11:09:52 +0200
-Message-ID: <1438506592-31759-1-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v2 11/11] net: rfkill: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Sun,  2 Aug 2015 11:09:54 +0200
+Message-ID: <1438506594-31931-1-git-send-email-geert@linux-m68k.org>
 References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:43474 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752191AbbHBJJw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 2 Aug 2015 05:09:52 -0400
+Return-path: <netdev-owner@vger.kernel.org>
 In-Reply-To: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: netdev-owner@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
-Cc: devel@driverdev.osuosl.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 
 The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
 not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
@@ -30,22 +23,22 @@ Acked-by: Linus Walleij <linus.walleij@linaro.org>
 v2:
   - Add Acked-by.
 ---
- drivers/staging/fbtft/Kconfig | 3 ++-
+ net/rfkill/Kconfig | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
-index f7e68fdd99047927..d473010fa4748409 100644
---- a/drivers/staging/fbtft/Kconfig
-+++ b/drivers/staging/fbtft/Kconfig
-@@ -1,6 +1,7 @@
- menuconfig FB_TFT
- 	tristate "Support for small TFT LCD display modules"
--	depends on FB && SPI && GPIOLIB
-+	depends on FB && SPI
+diff --git a/net/rfkill/Kconfig b/net/rfkill/Kconfig
+index 4c10e7e6c9f6ae53..598d374f6a35f714 100644
+--- a/net/rfkill/Kconfig
++++ b/net/rfkill/Kconfig
+@@ -36,7 +36,8 @@ config RFKILL_REGULATOR
+ 
+ config RFKILL_GPIO
+ 	tristate "GPIO RFKILL driver"
+-	depends on RFKILL && GPIOLIB
++	depends on RFKILL
 +	depends on GPIOLIB || COMPILE_TEST
- 	select FB_SYS_FILLRECT
- 	select FB_SYS_COPYAREA
- 	select FB_SYS_IMAGEBLIT
+ 	default n
+ 	help
+ 	  If you say yes here you get support of a generic gpio RFKILL
 -- 
 1.9.1
-
