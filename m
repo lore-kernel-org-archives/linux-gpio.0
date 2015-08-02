@@ -1,48 +1,34 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 09/11] fbdev: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Sun,  2 Aug 2015 11:09:53 +0200
-Message-ID: <1438506593-31845-1-git-send-email-geert@linux-m68k.org>
-References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Subject: Re: [PATCH v2 10/11] w1: Allow compile test of GPIO consumers if !GPIOLIB
+Date: Sun, 02 Aug 2015 12:25:07 +0300
+Message-ID: <1214241438507507@web3j.yandex.ru>
+References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org> <1438506594-31888-1-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:42128 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752202AbbHBJJx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 2 Aug 2015 05:09:53 -0400
-In-Reply-To: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
+Received: from forward15j.cmail.yandex.net ([5.255.227.179]:47804 "EHLO
+	forward15j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751815AbbHBJdI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 2 Aug 2015 05:33:08 -0400
+In-Reply-To: <1438506594-31888-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-fbdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-functionality only, can still be compiled if GPIOLIB is not enabled.
+Hi Geert
 
-Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-appropriate.
+02.08.2015, 12:09, "Geert Uytterhoeven" <geert@linux-m68k.org>:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>
+> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+> appropriate.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-v2:
-  - Add Acked-by.
----
- drivers/video/fbdev/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> - depends on GPIOLIB
+> + depends on GPIOLIB || COMPILE_TEST
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 2d98de535e0f7374..569803f533d1a600 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -2464,7 +2464,7 @@ config FB_SSD1307
- 	tristate "Solomon SSD1307 framebuffer support"
- 	depends on FB && I2C
- 	depends on OF
--	depends on GPIOLIB
-+	depends on GPIOLIB || COMPILE_TEST
- 	select FB_SYS_FOPS
- 	select FB_SYS_FILLRECT
- 	select FB_SYS_COPYAREA
--- 
-1.9.1
-
+Does that mean GPIO subsystem is always available and no additional dependency needed
+when COMPILE_TEST is enabled?
