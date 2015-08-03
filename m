@@ -1,75 +1,33 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] pinctrl: cherryview: Serialize all register access
-Date: Mon,  3 Aug 2015 12:46:38 +0300
-Message-ID: <1438595198-44230-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:57843 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752089AbbHCJql (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 3 Aug 2015 05:46:41 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] MIPS: Remove all the uses of custom gpio.h
+Date: Mon, 3 Aug 2015 13:25:36 +0200
+Message-ID: <CACRpkdYk13TQXYVfG0cOvmz9RTZ717rFWax+fij7oPbaUoqpOA@mail.gmail.com>
+References: <1438277338-7246-1-git-send-email-albeu@free.fr>
+	<CACRpkdbUhYysC+mGuJY6Y8kd18LQLoWu+av81+ZD4UZo2nM-Yw@mail.gmail.com>
+	<20150803072332.GC16650@linux-mips.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20150803072332.GC16650@linux-mips.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Alban Bedel <albeu@free.fr>, Linux MIPS <linux-mips@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Manuel Lauss <manuel.lauss@gmail.com>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Bjorn Helgaas <bhelgaas@google.com>, Wolfram Sang <wsa@the-dreams.de>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Varka Bhadram <varkabhadram@gmail.com>, Masanari
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org
 
-There is a hardware issue in Intel Braswell/Cherryview where concurrent
-GPIO register access might results reads of 0xffffffff and writes might get
-dropped.
+On Mon, Aug 3, 2015 at 9:23 AM, Ralf Baechle <ralf@linux-mips.org> wrote:
+> On Mon, Aug 03, 2015 at 09:13:27AM +0200, Linus Walleij wrote:
+>
+>> Very good job being done here.
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> I guess this better go in through the MIPS tree.
+>> Given all the OpenWRT ports using MIPS this is excellent
+>> progress for a large hobbyist community.
+>
+> Alban has posted a v2 [1] already but I take it that your Reviewed-by: applies
+> to the v2 patch as well?
 
-Prevent this from happening by taking the serializing lock for all places
-where it is possible that more than one thread might be accessing the
-hardware concurrently.
+Sure thing. Green light for this.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 3f737daa3fd2..65cfd4c0024f 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1169,9 +1169,12 @@ static int chv_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct chv_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
- 	int pin = chv_gpio_offset_to_pin(pctrl, offset);
-+	unsigned long flags;
- 	u32 ctrl0, cfg;
- 
-+	spin_lock_irqsave(&pctrl->lock, flags);
- 	ctrl0 = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
- 
- 	cfg = ctrl0 & CHV_PADCTRL0_GPIOCFG_MASK;
- 	cfg >>= CHV_PADCTRL0_GPIOCFG_SHIFT;
-@@ -1209,8 +1212,11 @@ static int chv_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	struct chv_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
- 	unsigned pin = chv_gpio_offset_to_pin(pctrl, offset);
- 	u32 ctrl0, direction;
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(&pctrl->lock, flags);
- 	ctrl0 = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
- 
- 	direction = ctrl0 & CHV_PADCTRL0_GPIOCFG_MASK;
- 	direction >>= CHV_PADCTRL0_GPIOCFG_SHIFT;
-@@ -1313,6 +1319,7 @@ static unsigned chv_gpio_irq_startup(struct irq_data *d)
- 		unsigned long flags;
- 		u32 intsel, value;
- 
-+		spin_lock_irqsave(&pctrl->lock, flags);
- 		intsel = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
- 		intsel &= CHV_PADCTRL0_INTSEL_MASK;
- 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
-@@ -1323,7 +1330,6 @@ static unsigned chv_gpio_irq_startup(struct irq_data *d)
- 		else
- 			handler = handle_edge_irq;
- 
--		spin_lock_irqsave(&pctrl->lock, flags);
- 		if (!pctrl->intr_lines[intsel]) {
- 			__irq_set_handler_locked(d->irq, handler);
- 			pctrl->intr_lines[intsel] = offset;
--- 
-2.4.6
-
+Yours,
+Linus Walleij
