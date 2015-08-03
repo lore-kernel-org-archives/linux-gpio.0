@@ -1,60 +1,56 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v4 0/4] GPIO support for BRCMSTB
-Date: Mon, 03 Aug 2015 10:33:06 -0700
-Message-ID: <55BFA5D2.1090305@gmail.com>
-References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl/mediatek: fix spelling mistake in dev_err error
+ message
+Date: Mon, 3 Aug 2015 12:08:26 -0700
+Message-ID: <1438628906.32493.1.camel@mussux00.eus.mediatek.inc>
+References: <1438557045-3590-1-git-send-email-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list@broadcom.com, Brian Norris <computersforpeace@gmail.com>, devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1438557045-3590-1-git-send-email-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 31/07/15 18:17, Gregory Fong wrote:
-> Adds interrupt support for the GPIO controller (UPG GIO) used on Broadcom's
-> various BRCMSTB SoCs (BCM7XXX and others).  For all existing hardware, this
-> block hooks up to the BCM7120 L2 IRQ controller and so will require
-> CONFIG_BCM7120_L2_IRQ=y.
-
-For this entire series:
-
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-
-Thanks!
-
+On Mon, 2015-08-03 at 00:10 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 > 
-> New in v4:
-> - add nodes for the BRCMSTB GPIO controller to the BCM7445 dts file
-> - a few improvements suggested by Linus Walleij on v3
-> - remove unused 'irq' argument to brcmstb_gpio_irq_bank_handler()
+> Trivial change, fix spelling mistake 'invaild' -> 'invalid' in
+> dev_err message.
 > 
-> The following are not included in this patchset:
-> - Initial device tree bindings (merged from v1 to GPIO tree)
-> - Initial GPIO support w/o interrupts (merged from v2 to GPIO tree)
-> - ARM Kconfig changes (merged from v2 to arm-soc tree)
-> - fix for null ptr deref in driver remove (merged from v3)
+> Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Previous versions:
-> v1: https://lkml.org/lkml/2015/5/6/199
-> v2: https://lkml.org/lkml/2015/5/28/853
-> v3: https://lkml.org/lkml/2015/6/17/960
-> 
-> Gregory Fong (4):
->   dt-bindings: brcmstb-gpio: document properties for wakeup
->   gpio: brcmstb: Add interrupt and wakeup source support
->   gpio: brcmstb: support wakeup from S5 cold boot
->   ARM: dts: brcmstb: add BCM7445 GPIO nodes
-> 
->  .../devicetree/bindings/gpio/brcm,brcmstb-gpio.txt |  35 ++-
->  arch/arm/boot/dts/bcm7445.dtsi                     |  50 ++++
->  drivers/gpio/Kconfig                               |   1 +
->  drivers/gpio/gpio-brcmstb.c                        | 306 ++++++++++++++++++++-
->  4 files changed, 379 insertions(+), 13 deletions(-)
-> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index ad1ea16..5af5441 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -702,7 +702,7 @@ static int mtk_pmx_set_mux(struct pinctrl_dev *pctldev,
+>  
+>  	ret = mtk_pctrl_is_function_valid(pctl, g->pin, function);
+>  	if (!ret) {
+> -		dev_err(pctl->dev, "invaild function %d on group %d .\n",
+> +		dev_err(pctl->dev, "invalid function %d on group %d .\n",
+>  				function, group);
+>  		return -EINVAL;
+>  	}
 
+Hi Colin,
 
--- 
-Florian
+Thank you very much.
+
+Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+
+Hongzhou
