@@ -1,43 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESENT] powerpc: dts: don't fall back to fsl,pq3-gpio for
- fsl,mpc8572-gpio devices
-Date: Mon, 3 Aug 2015 10:22:40 +0200
-Message-ID: <CACRpkdbL14+oP6wb4C7C1KndmeJHNNGytu9xvx4Wxns=zXUDKg@mail.gmail.com>
-References: <1438334166-12579-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 1/2] gpio: don't override irq_*_resources() callbacks
+Date: Mon, 3 Aug 2015 10:53:49 +0200
+Message-ID: <CACRpkdaORy4W8qC-Et-2GPMQheojbBq_R9NWyatc2H7LoJPbSQ@mail.gmail.com>
+References: <1438346937-9020-1-git-send-email-rabin@rab.in>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:33586 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751674AbbHCIWl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2015 04:22:41 -0400
-Received: by obdeg2 with SMTP id eg2so93739817obd.0
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2015 01:22:40 -0700 (PDT)
-In-Reply-To: <1438334166-12579-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:33701 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751904AbbHCIxu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2015 04:53:50 -0400
+Received: by obdeg2 with SMTP id eg2so94187556obd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2015 01:53:49 -0700 (PDT)
+In-Reply-To: <1438346937-9020-1-git-send-email-rabin@rab.in>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Rabin Vincent <rabin@rab.in>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jul 31, 2015 at 11:16 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Fri, Jul 31, 2015 at 2:48 PM, Rabin Vincent <rabin@rab.in> wrote:
 
-> While the handling of fsl,pq3-gpio and fsl,mpc8572-gpio is done in th=
-e
-> same driver and the two hardly differ, the latter controller needs a
-> workaround for an erratum in the gpio_get callback. To make this
-> difference more explicit remove fsl,pq3-gpio from the list of
-> compatibles for mpc8572 machines.
+> If the driver has specified its own irq_{request/release}_resources()
+> functions, don't override them.  The gpio-etraxfs driver will use this.
 >
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Rabin Vincent <rabin@rab.in>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Perfectly reasonable given the usecase in patch 2/2. Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
