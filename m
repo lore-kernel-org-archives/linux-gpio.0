@@ -1,67 +1,75 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: etraxfs: add interrupt support
-Date: Mon, 3 Aug 2015 11:34:23 +0200
-Message-ID: <CACRpkdZOztPHykq99bC0P9t0jQkAdYqrrbC2shwWa9d2O5DQXw@mail.gmail.com>
-References: <1438346937-9020-1-git-send-email-rabin@rab.in>
-	<1438346937-9020-2-git-send-email-rabin@rab.in>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: cherryview: Serialize all register access
+Date: Mon,  3 Aug 2015 12:46:38 +0300
+Message-ID: <1438595198-44230-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35333 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752100AbbHCJeX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2015 05:34:23 -0400
-Received: by obbop1 with SMTP id op1so95044692obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2015 02:34:23 -0700 (PDT)
-In-Reply-To: <1438346937-9020-2-git-send-email-rabin@rab.in>
+Received: from mga11.intel.com ([192.55.52.93]:57843 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752089AbbHCJql (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 3 Aug 2015 05:46:41 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rabin Vincent <rabin@rab.in>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org
 
-On Fri, Jul 31, 2015 at 2:48 PM, Rabin Vincent <rabin@rab.in> wrote:
+There is a hardware issue in Intel Braswell/Cherryview where concurrent
+GPIO register access might results reads of 0xffffffff and writes might get
+dropped.
 
-> On ETRAX FS, all pins on the first port (and only the first port) have
-> interrupt support.
->
-> On ARTPEC-3, all pins on all ports have interrupt support.  However,
-> there are only eight interrupts.  Each of the interrupts is associated
-> with a group of pins and for each interrupt the one pin from the group
-> which will trigger it can be selected.
->
-> Signed-off-by: Rabin Vincent <rabin@rab.in>
+Prevent this from happening by taking the serializing lock for all places
+where it is possible that more than one thread might be accessing the
+hardware concurrently.
 
-Hm wait now I get confused ... probably tripping over my own shoelaces
-as usual but help me here:
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> +static void etraxfs_gpio_irq_ack(struct irq_data *d)
-> +{
-> +       struct etraxfs_gpio_chip *chip = irq_data_get_irq_chip_data(d);
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 3f737daa3fd2..65cfd4c0024f 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1169,9 +1169,12 @@ static int chv_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct chv_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
+ 	int pin = chv_gpio_offset_to_pin(pctrl, offset);
++	unsigned long flags;
+ 	u32 ctrl0, cfg;
+ 
++	spin_lock_irqsave(&pctrl->lock, flags);
+ 	ctrl0 = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
++	spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
+ 	cfg = ctrl0 & CHV_PADCTRL0_GPIOCFG_MASK;
+ 	cfg >>= CHV_PADCTRL0_GPIOCFG_SHIFT;
+@@ -1209,8 +1212,11 @@ static int chv_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 	struct chv_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
+ 	unsigned pin = chv_gpio_offset_to_pin(pctrl, offset);
+ 	u32 ctrl0, direction;
++	unsigned long flags;
+ 
++	spin_lock_irqsave(&pctrl->lock, flags);
+ 	ctrl0 = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
++	spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
+ 	direction = ctrl0 & CHV_PADCTRL0_GPIOCFG_MASK;
+ 	direction >>= CHV_PADCTRL0_GPIOCFG_SHIFT;
+@@ -1313,6 +1319,7 @@ static unsigned chv_gpio_irq_startup(struct irq_data *d)
+ 		unsigned long flags;
+ 		u32 intsel, value;
+ 
++		spin_lock_irqsave(&pctrl->lock, flags);
+ 		intsel = readl(chv_padreg(pctrl, pin, CHV_PADCTRL0));
+ 		intsel &= CHV_PADCTRL0_INTSEL_MASK;
+ 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
+@@ -1323,7 +1330,6 @@ static unsigned chv_gpio_irq_startup(struct irq_data *d)
+ 		else
+ 			handler = handle_edge_irq;
+ 
+-		spin_lock_irqsave(&pctrl->lock, flags);
+ 		if (!pctrl->intr_lines[intsel]) {
+ 			__irq_set_handler_locked(d->irq, handler);
+ 			pctrl->intr_lines[intsel] = offset;
+-- 
+2.4.6
 
-I don't see how this works in the irqchip functions.
-
-Usually the chip data is the struct gpio_chip when using the
-GPIOLIB_IRQCHIP, then we use some container_of to boil
-out the containing struct, like:
-
-static inline struct extraxfs_gpio_chip *to_etraxfs(struct gpio_chip *chip)
-{
-        return container_of(chip, struct etraxfs_gpio_chip, bgc.gc);
-}
-
-So it would be:
-
-struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-struct etraxfs_gpio_chip *chip = to_etraxfs(gc);
-
-so how did you manage to replace that pointer with a pointer
-to your struct etraxfs_gpio_chip?
-
-> +               ret = gpiochip_irqchip_add(&bgc->gc, &etraxfs_gpio_irq_chip, 0,
-> +                                          handle_level_irq, IRQ_TYPE_NONE);
-
-Because this sets the irqdomain host_data to gc, then the
-irqdomain .map function sets the chip data to the same.
-
-Yours,
-Linus Walleij
