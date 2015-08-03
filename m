@@ -1,56 +1,68 @@
-From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH] pinctrl/mediatek: fix spelling mistake in dev_err error
- message
-Date: Mon, 3 Aug 2015 12:08:26 -0700
-Message-ID: <1438628906.32493.1.camel@mussux00.eus.mediatek.inc>
-References: <1438557045-3590-1-git-send-email-colin.king@canonical.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v1 2/2] pinctrl: rockchip: only enable gpio clock when it setting
+Date: Mon, 3 Aug 2015 13:21:27 -0700
+Message-ID: <CAD=FV=WCGtBgzy6=dWqZ5ZKLhxUsxLom56UfWwXNp+ospR4JRA@mail.gmail.com>
+References: <1438574211-4887-1-git-send-email-hl@rock-chips.com>
+	<1438574211-4887-2-git-send-email-hl@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1438557045-3590-1-git-send-email-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f178.google.com ([209.85.160.178]:36407 "EHLO
+	mail-yk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755458AbbHCUV2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2015 16:21:28 -0400
+Received: by ykeo23 with SMTP id o23so23605414yke.3
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2015 13:21:27 -0700 (PDT)
+In-Reply-To: <1438574211-4887-2-git-send-email-hl@rock-chips.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: huang lin <hl@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2015-08-03 at 00:10 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-> 
-> Trivial change, fix spelling mistake 'invaild' -> 'invalid' in
-> dev_err message.
-> 
-> Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+hl
+
+On Sun, Aug 2, 2015 at 8:56 PM, huang lin <hl@rock-chips.com> wrote:
+> gpio can keep state even the clock disable, for save power
+> consumption, only enable gpio clock when it setting
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: huang lin <hl@rock-chips.com>
+>
+> Signed-off-by: huang lin <hl@rock-chips.com>
+
+Your "Signed-off-by"s are a little wonky here...  Can you fix up?
+
 > ---
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index ad1ea16..5af5441 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -702,7 +702,7 @@ static int mtk_pmx_set_mux(struct pinctrl_dev *pctldev,
->  
->  	ret = mtk_pctrl_is_function_valid(pctl, g->pin, function);
->  	if (!ret) {
-> -		dev_err(pctl->dev, "invaild function %d on group %d .\n",
-> +		dev_err(pctl->dev, "invalid function %d on group %d .\n",
->  				function, group);
->  		return -EINVAL;
->  	}
+>  drivers/pinctrl/pinctrl-rockchip.c | 60 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 54 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index cc2843a..445829f 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -945,17 +945,20 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
+>         if (ret < 0)
+>                 return ret;
+>
+> +       clk_enable(bank->clk);
+>         spin_lock_irqsave(&bank->slock, flags);
+>
+> -       data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+> +       data = readl(bank->reg_base + GPIO_SWPORT_DDR);
 
-Hi Colin,
+I am a little curious why you need to change the readl_relaxed() to a
+read().  Are you trying to ensure that the clock was on before the
+read happened?  If so, I think this won't help.  I see:
 
-Thank you very much.
+#define readl(c) ({ u32 __v = readl_relaxed(c); __iormb(); __v; })
 
-Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+...so that means that the iormb() is _after_ the readl.
 
-Hongzhou
+...but I would believe that the clk_enable() call itself would be
+guaranteeing that the clock was enabled in time.  ...and if not then
+grabbing the spinlock is another barrier, right?  I think you do this
+in a few places...
+
+Other than that this patch looks good to me....
+
+-Doug
