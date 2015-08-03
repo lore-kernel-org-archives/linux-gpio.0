@@ -1,31 +1,58 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH] MIPS: Remove all the uses of custom gpio.h
-Date: Mon, 3 Aug 2015 09:23:32 +0200
-Message-ID: <20150803072332.GC16650@linux-mips.org>
-References: <1438277338-7246-1-git-send-email-albeu@free.fr>
- <CACRpkdbUhYysC+mGuJY6Y8kd18LQLoWu+av81+ZD4UZo2nM-Yw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] drivers/gpio: Port gpio driver to ls1021a-qds platform
+Date: Mon, 3 Aug 2015 10:07:06 +0200
+Message-ID: <CACRpkdZKhjB_LkJeztnhNSmVevy3SxGSPh06fngs_sLxR-Gu7w@mail.gmail.com>
+References: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbUhYysC+mGuJY6Y8kd18LQLoWu+av81+ZD4UZo2nM-Yw@mail.gmail.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alban Bedel <albeu@free.fr>, Linux MIPS <linux-mips@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Manuel Lauss <manuel.lauss@gmail.com>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Bjorn Helgaas <bhelgaas@google.com>, Wolfram Sang <wsa@the-dreams.de>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Varka Bhadram <varkabhadram@gmail.com>, Masanari
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:34479 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770AbbHCIHH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Aug 2015 04:07:07 -0400
+Received: by obre1 with SMTP id e1so93652222obr.1
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2015 01:07:06 -0700 (PDT)
+In-Reply-To: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shaveta Leekha <shaveta@freescale.com>, Alexander Stein <alexander.stein@systec-electronic.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, r64188@freescale.com, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, Aug 03, 2015 at 09:13:27AM +0200, Linus Walleij wrote:
+Alexander Stein and Uwe Kleine-K=C3=B6nig are working on this
+driver for this kernel cycle so requesting their help in
+reviewing these three patches.
 
-> Very good job being done here.
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I guess this better go in through the MIPS tree.
-> Given all the OpenWRT ports using MIPS this is excellent
-> progress for a large hobbyist community.
+Alexander/Uwe: can you see the patches, or will Shaveta
+need to resend them?
 
-Alban has posted a v2 [1] already but I take it that your Reviewed-by: applies
-to the v2 patch as well?
+On Thu, Jul 30, 2015 at 9:27 AM, Shaveta Leekha <shaveta@freescale.com>=
+ wrote:
 
-  Ralf
+> LS1021a-qds has the same ip block/controller as
+> GPIO on powerpc platform(MPC8XXX).
+>
+> So use portable i/o accessors, as in_be32/out_be32
+> accessors are Power architecture specific whereas
+> ioread/writebe32 are available in other architectures.
+>
+> GPIO controller's registers are big endian, the
+> accessors ioread32be/iowrite32be matches this one
+> and portable on powerpc as well on ARM.
+>
+> Signed-off-by: Shaveta Leekha <shaveta@freescale.com>
+> ---
+> Tested on Freescale SDK 1.8, as LS1021aQDS support is not yet complet=
+e in upstream
 
-[1] https://patchwork.linux-mips.org/patch/10828/
+Do you mean that Freescale has synthesized this GPIO
+controller on ARM LE too? In that case that is very useful
+information that should go into the commit message.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
