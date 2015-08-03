@@ -1,33 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MIPS: Remove all the uses of custom gpio.h
-Date: Mon, 3 Aug 2015 13:25:36 +0200
-Message-ID: <CACRpkdYk13TQXYVfG0cOvmz9RTZ717rFWax+fij7oPbaUoqpOA@mail.gmail.com>
-References: <1438277338-7246-1-git-send-email-albeu@free.fr>
-	<CACRpkdbUhYysC+mGuJY6Y8kd18LQLoWu+av81+ZD4UZo2nM-Yw@mail.gmail.com>
-	<20150803072332.GC16650@linux-mips.org>
+From: Rabin Vincent <rabin@rab.in>
+Subject: Re: [PATCH 2/2] gpio: etraxfs: add interrupt support
+Date: Mon, 3 Aug 2015 19:30:40 +0200
+Message-ID: <20150803173005.GA28817@debian>
+References: <1438346937-9020-1-git-send-email-rabin@rab.in>
+ <1438346937-9020-2-git-send-email-rabin@rab.in>
+ <CACRpkdZOztPHykq99bC0P9t0jQkAdYqrrbC2shwWa9d2O5DQXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20150803072332.GC16650@linux-mips.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: Alban Bedel <albeu@free.fr>, Linux MIPS <linux-mips@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Manuel Lauss <manuel.lauss@gmail.com>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, Andrew Bresticker <abrestic@chromium.org>, James Hartley <james.hartley@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Bjorn Helgaas <bhelgaas@google.com>, Wolfram Sang <wsa@the-dreams.de>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Varka Bhadram <varkabhadram@gmail.com>, Masanari
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZOztPHykq99bC0P9t0jQkAdYqrrbC2shwWa9d2O5DQXw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 3, 2015 at 9:23 AM, Ralf Baechle <ralf@linux-mips.org> wrote:
-> On Mon, Aug 03, 2015 at 09:13:27AM +0200, Linus Walleij wrote:
->
->> Very good job being done here.
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> I guess this better go in through the MIPS tree.
->> Given all the OpenWRT ports using MIPS this is excellent
->> progress for a large hobbyist community.
->
-> Alban has posted a v2 [1] already but I take it that your Reviewed-by: applies
-> to the v2 patch as well?
+On Mon, Aug 03, 2015 at 11:34:23AM +0200, Linus Walleij wrote:
+> On Fri, Jul 31, 2015 at 2:48 PM, Rabin Vincent <rabin@rab.in> wrote:
+> > +static void etraxfs_gpio_irq_ack(struct irq_data *d)
+> > +{
+> > +       struct etraxfs_gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> 
+> I don't see how this works in the irqchip functions.
 
-Sure thing. Green light for this.
-
-Yours,
-Linus Walleij
+The offset of the gpio_chip embedded in etraxfs_gpio_chip is zero.
+There are a couple of other gpio drivers doing it the same way, but
+container_of() would certainly be more robust.
