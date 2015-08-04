@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/6] pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
-Date: Tue,  4 Aug 2015 15:55:17 +0200
-Message-ID: <1438696519-13727-5-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 5/6] pinctrl: sh-pfc: Remove empty gpio_function_free()
+Date: Tue,  4 Aug 2015 15:55:18 +0200
+Message-ID: <1438696519-13727-6-git-send-email-geert+renesas@glider.be>
 References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
@@ -10,72 +10,42 @@ To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On platforms where the PFC/GPIO controller is instantiated from DT, the
-mapping between GPIOs and pins is set up using the "gpio-ranges"
-property in DT.
-
-Hence stop setting up the mapping from C code on DT platforms.
-This code is still used for SH or ARM-legacy platforms.
+gpio_chip.free() is optional, and can just be left unimplemented.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+Untested due to lack of hardware (used on sh only).
+
 v2:
-  - Add Acked-by,
-  - Add check for CONFIG_OF and pfc->dev->of_node.
+  - Add Acked-by.
 ---
- drivers/pinctrl/sh-pfc/gpio.c | 37 ++++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+ drivers/pinctrl/sh-pfc/gpio.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-index ba353735ecf2be9a..b380e3f17b121bbb 100644
+index b380e3f17b121bbb..e46439030914ad13 100644
 --- a/drivers/pinctrl/sh-pfc/gpio.c
 +++ b/drivers/pinctrl/sh-pfc/gpio.c
-@@ -379,22 +379,29 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+@@ -286,17 +286,12 @@ static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+ 	return ret;
+ }
  
- 	pfc->gpio = chip;
- 
--	/* Register the GPIO to pin mappings. As pins with GPIO ports must come
--	 * first in the ranges, skip the pins without GPIO ports by stopping at
--	 * the first range that contains such a pin.
--	 */
--	for (i = 0; i < pfc->nr_ranges; ++i) {
--		const struct sh_pfc_pin_range *range = &pfc->ranges[i];
+-static void gpio_function_free(struct gpio_chip *gc, unsigned offset)
+-{
+-}
 -
--		if (range->start >= pfc->nr_gpio_pins)
--			break;
-+	if (IS_ENABLED(CONFIG_OF) && pfc->dev->of_node)
-+		return 0;
+ static int gpio_function_setup(struct sh_pfc_chip *chip)
+ {
+ 	struct sh_pfc *pfc = chip->pfc;
+ 	struct gpio_chip *gc = &chip->gpio_chip;
  
--		ret = gpiochip_add_pin_range(&chip->gpio_chip,
--					     dev_name(pfc->dev),
--					     range->start, range->start,
--					     range->end - range->start + 1);
--		if (ret < 0)
--			return ret;
-+	if (IS_ENABLED(CONFIG_SUPERH) ||
-+	    IS_ENABLED(CONFIG_ARCH_SHMOBILE_LEGACY)) {
-+		/*
-+		 * Register the GPIO to pin mappings. As pins with GPIO ports
-+		 * must come first in the ranges, skip the pins without GPIO
-+		 * ports by stopping at the first range that contains such a
-+		 * pin.
-+		 */
-+		for (i = 0; i < pfc->nr_ranges; ++i) {
-+			const struct sh_pfc_pin_range *range = &pfc->ranges[i];
-+
-+			if (range->start >= pfc->nr_gpio_pins)
-+				break;
-+
-+			ret = gpiochip_add_pin_range(&chip->gpio_chip,
-+				dev_name(pfc->dev), range->start, range->start,
-+				range->end - range->start + 1);
-+			if (ret < 0)
-+				return ret;
-+		}
- 	}
+ 	gc->request = gpio_function_request;
+-	gc->free = gpio_function_free;
  
- 	/* Register the function GPIOs chip. */
+ 	gc->label = pfc->info->name;
+ 	gc->owner = THIS_MODULE;
 -- 
 1.9.1
 
