@@ -1,47 +1,90 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: [PATCH v2] gpio: Allow hogged gpios to be requested
-Date: Tue,  4 Aug 2015 11:27:04 +0200
-Message-ID: <1438680424-698-1-git-send-email-mpa@pengutronix.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:46057 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932395AbbHDJ1M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 05:27:12 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/2] pinctrl: baytrail: Serialize all register access
+Date: Tue,  4 Aug 2015 15:03:14 +0300
+Message-ID: <1438689794-14355-2-git-send-email-mika.westerberg@linux.intel.com>
+References: <1438689794-14355-1-git-send-email-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1438689794-14355-1-git-send-email-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-It can be useful to claim hogged gpios later, for example from
-userspace. This allows to set defaults for GPIOs using the hogging
-mechanism and override the setup later from userspace or a kernel driver.
+There is a hardware issue in Intel Baytrail where concurrent GPIO register
+access might result reads of 0xffffffff and writes might get dropped
+completely.
 
-This patch adds a check for hogged gpios to allow requesting them. If
-the gpio is not hogged but marked as requested, it still fails with
--EBUSY.
+Prevent this from happening by taking the serializing lock in all places
+where it is possible that more than one thread might be accessing the
+hardware concurrently.
 
-Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-Only change is, that it is separated from the other series now.
-
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 926a1507431f..0f1d1f5faf5d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -830,7 +830,8 @@ static int __gpiod_request(struct gpio_desc *desc, const char *label)
- 	 * before IRQs are enabled, for non-sleeping (SOC) GPIOs.
- 	 */
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 4b82381c9a57..f80a1bee6981 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -196,6 +196,9 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	struct byt_gpio *vg = to_byt_gpio(chip);
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_CONF0_REG);
+ 	u32 value, gpio_mux;
++	unsigned long flags;
++
++	spin_lock_irqsave(&vg->lock, flags);
  
--	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0) {
-+	if (test_and_set_bit(FLAG_REQUESTED, &desc->flags) == 0 ||
-+	    test_and_clear_bit(FLAG_IS_HOGGED, &desc->flags) == 1) {
- 		desc_set_label(desc, label ? : "?");
- 		status = 0;
- 	} else {
+ 	/*
+ 	 * In most cases, func pin mux 000 means GPIO function.
+@@ -209,18 +212,16 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	value = readl(reg) & BYT_PIN_MUX;
+ 	gpio_mux = byt_get_gpio_mux(vg, offset);
+ 	if (WARN_ON(gpio_mux != value)) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(&vg->lock, flags);
+ 		value = readl(reg) & ~BYT_PIN_MUX;
+ 		value |= gpio_mux;
+ 		writel(value, reg);
+-		spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 		dev_warn(&vg->pdev->dev,
+ 			 "pin %u forcibly re-configured as GPIO\n", offset);
+ 	}
+ 
++	spin_unlock_irqrestore(&vg->lock, flags);
++
+ 	pm_runtime_get(&vg->pdev->dev);
+ 
+ 	return 0;
+@@ -272,7 +273,15 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
+-	return readl(reg) & BYT_LEVEL;
++	struct byt_gpio *vg = to_byt_gpio(chip);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&vg->lock, flags);
++	val = readl(reg);
++	spin_unlock_irqrestore(&vg->lock, flags);
++
++	return val & BYT_LEVEL;
+ }
+ 
+ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+@@ -445,8 +454,10 @@ static void byt_irq_ack(struct irq_data *d)
+ 	unsigned offset = irqd_to_hwirq(d);
+ 	void __iomem *reg;
+ 
++	spin_lock(&vg->lock);
+ 	reg = byt_gpio_reg(&vg->chip, offset, BYT_INT_STAT_REG);
+ 	writel(BIT(offset % 32), reg);
++	spin_unlock(&vg->lock);
+ }
+ 
+ static void byt_irq_unmask(struct irq_data *d)
 -- 
-2.1.4
-
+2.4.6
