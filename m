@@ -1,16 +1,14 @@
 From: Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v2 2/2] pinctrl: rockchip: only enable gpio clock when it setting
-Date: Tue,  4 Aug 2015 09:03:42 +0800
-Message-ID: <1438650222-14357-2-git-send-email-hl@rock-chips.com>
-References: <1438650222-14357-1-git-send-email-hl@rock-chips.com>
+Subject: [PATCH v3 2/2] pinctrl: rockchip: only enable gpio clock when it setting
+Date: Tue,  4 Aug 2015 14:41:27 +0800
+Message-ID: <1438670487-27598-2-git-send-email-hl@rock-chips.com>
+References: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438650222-14357-1-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1438670487-27598-1-git-send-email-hl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: heiko@sntech.de, dianders@chromium.org
-Cc: linux-rockchip@lists.infradead.org, huang lin <hl@rock-chips.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org, Lin Huang <hl@rock-chips.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
-From: huang lin <hl@rock-chips.com>
 
 gpio can keep state even the clock disable, for save power
 consumption, only enable gpio clock when it setting
@@ -18,10 +16,8 @@ consumption, only enable gpio clock when it setting
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Lin Huang <hl@rock-chips.com>
 ---
-Changes in v2:
-Advices by Douglas Anderson
--use readl_relaxed() instead readl()
--fix commit message format error
+Changes in v3:
+-match author and Signed-off-by name
 
  drivers/pinctrl/pinctrl-rockchip.c | 57 +++++++++++++++++++++++++++++++++++---
  1 file changed, 53 insertions(+), 4 deletions(-)
