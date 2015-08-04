@@ -1,72 +1,83 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/6] ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
-Date: Tue,  4 Aug 2015 15:55:16 +0200
-Message-ID: <1438696519-13727-4-git-send-email-geert+renesas@glider.be>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
+Subject: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Tue,  4 Aug 2015 15:55:13 +0200
+Message-ID: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:53624 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965020AbbHDNz2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 09:55:28 -0400
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-gpio@vger.kernel.org
 
-If a GPIO driver uses gpiochip_add_pin_range() (which is usually the
-case for GPIO/PFC combos), the GPIO hogging mechanism configured from DT
-doesn't work:
+	Hi Simon, Magnus,
 
-    requesting hog GPIO led1-high (chip sh73a0_pfc, offset 20) failed
+This patch series moves the setup of the GPIO-PFC pin mapping for
+Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
+The move to DT is needed to make the GPIO hogging mechanism work, cfr.
+the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
+hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
 
-The actual error code is -517 == -EPROBE_DEFER.
+The series consists of 3 parts:
+  a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
+     files for all affected SoCs,
+  b. Patch 4 disables the C code to set up the mapping on DT platforms
+     (it's still needed on SH or ARM-legacy),
+  c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
 
-The problem is that PFC+GPIO registration is handled in multiple steps:
-  1. pinctrl_register(),
-  2. gpiochip_add(),
-  3. gpiochip_add_pin_range().
-
-Configuration of the hogs is handled in gpiochip_add():
-
-    gpiochip_add
-        of_gpiochip_add
-            of_gpiochip_scan_hogs
-                gpiod_hog
-                    gpiochip_request_own_desc
-                        __gpiod_request
-                            chip->request
-                                pinctrl_request_gpio
-                                    pinctrl_get_device_gpio_range
-
-However, at this point the GPIO controller hasn't been added to
-pinctrldev_list yet, so the range can't be found, and the operation fails
-with -EPROBE_DEFER.
-
-To fix this, add a "gpio-ranges" property to the gpio device node, so
-the ranges are added by of_gpiochip_add_pin_range(), which is called by
-of_gpiochip_add() before the call to of_gpiochip_scan_hogs().
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-v2:
+Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
+from C code to DT",
+http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
+  - Add check for CONFIG_OF and pfc->dev->of_node,
+  - #ifdef out the code instead of introducing helper and dummy
+    functions,
+  - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
+    longer needed due to the #ifdefs,
   - Add Acked-by.
----
- arch/arm/boot/dts/sh73a0.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index 11e17c5f26e2cae2..ff7c8f298f30a58d 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -392,6 +392,9 @@
- 		      <0xe605801c 0x1c>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges =
-+			<&pfc 0 0 119>, <&pfc 128 128 37>, <&pfc 192 192 91>,
-+			<&pfc 288 288 22>;
- 		interrupts-extended =
- 			<&irqpin0 0 0>, <&irqpin0 1 0>, <&irqpin0 2 0>, <&irqpin0 3 0>,
- 			<&irqpin0 4 0>, <&irqpin0 5 0>, <&irqpin0 6 0>, <&irqpin0 7 0>,
+Dependencies:
+  - This series applies against renesas-devel-20150803-v4.2-rc5,
+  - Part a must go in first, to avoid regressions,
+  - While I didn't notice any bad behavior by having part a only, part b
+    should go in immediately after part a. Hence I think it's best if
+    Simon can take this one, too.
+  - Part c is independent (it doesn't touch the same code), so it can go
+    in before or after the other parts, or in parallel.
+
+Given this fixes the LCD on r8a7740/armadillo, which is a regression
+introduced by the removal of armadillo-legacy support, I think at least
+patch 2 should be queued for v4.3.
+
+Thanks for applying!
+
+Geert Uytterhoeven (6):
+  ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
+  ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
+  ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
+  pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+  pinctrl: sh-pfc: Remove empty gpio_function_free()
+  pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+
+ arch/arm/boot/dts/r8a73a4.dtsi  |  7 ++++++
+ arch/arm/boot/dts/r8a7740.dtsi  |  1 +
+ arch/arm/boot/dts/sh73a0.dtsi   |  3 +++
+ drivers/pinctrl/sh-pfc/core.h   |  2 ++
+ drivers/pinctrl/sh-pfc/gpio.c   | 49 +++++++++++++++++++++++------------------
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  2 ++
+ 6 files changed, 43 insertions(+), 21 deletions(-)
+
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
