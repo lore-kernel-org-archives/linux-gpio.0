@@ -1,83 +1,133 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Tue,  4 Aug 2015 15:55:13 +0200
-Message-ID: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 6/6] pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+Date: Tue, 04 Aug 2015 17:19:57 +0300
+Message-ID: <2553252.oFXfDSh3t2@avalon>
+References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be> <1438696519-13727-7-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53624 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965020AbbHDNz2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 09:55:28 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:34393 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756008AbbHDOTN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 10:19:13 -0400
+In-Reply-To: <1438696519-13727-7-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-	Hi Simon, Magnus,
+Hi Geert,
 
-This patch series moves the setup of the GPIO-PFC pin mapping for
-Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
-The move to DT is needed to make the GPIO hogging mechanism work, cfr.
-the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
-hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
+Thank you for the patch.
 
-The series consists of 3 parts:
-  a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
-     files for all affected SoCs,
-  b. Patch 4 disables the C code to set up the mapping on DT platforms
-     (it's still needed on SH or ARM-legacy),
-  c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
+On Tuesday 04 August 2015 15:55:19 Geert Uytterhoeven wrote:
+> Legacy function GPIOs are no longer used on ARM since commit
+> a27c5cd1a08cc95c ("sh-pfc: sh73a0: Remove function GPIOs").
+> Extract its setup code into a separate function, and make all function
+> GPIO related code and data depend on CONFIG_SUPERH.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
-from C code to DT",
-http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
-  - Add check for CONFIG_OF and pfc->dev->of_node,
-  - #ifdef out the code instead of introducing helper and dummy
-    functions,
-  - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
-    longer needed due to the #ifdefs,
-  - Add Acked-by.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Dependencies:
-  - This series applies against renesas-devel-20150803-v4.2-rc5,
-  - Part a must go in first, to avoid regressions,
-  - While I didn't notice any bad behavior by having part a only, part b
-    should go in immediately after part a. Hence I think it's best if
-    Simon can take this one, too.
-  - Part c is independent (it doesn't touch the same code), so it can go
-    in before or after the other parts, or in parallel.
+We now need a volunteer to port SH to proper pinctrl to remove the function 
+GPIOs completely :-)
 
-Given this fixes the LCD on r8a7740/armadillo, which is a regression
-introduced by the removal of armadillo-legacy support, I think at least
-patch 2 should be queued for v4.3.
-
-Thanks for applying!
-
-Geert Uytterhoeven (6):
-  ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
-  ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
-  ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
-  pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
-  pinctrl: sh-pfc: Remove empty gpio_function_free()
-  pinctrl: sh-pfc: Confine legacy function GPIOs to SH
-
- arch/arm/boot/dts/r8a73a4.dtsi  |  7 ++++++
- arch/arm/boot/dts/r8a7740.dtsi  |  1 +
- arch/arm/boot/dts/sh73a0.dtsi   |  3 +++
- drivers/pinctrl/sh-pfc/core.h   |  2 ++
- drivers/pinctrl/sh-pfc/gpio.c   | 49 +++++++++++++++++++++++------------------
- drivers/pinctrl/sh-pfc/sh_pfc.h |  2 ++
- 6 files changed, 43 insertions(+), 21 deletions(-)
+> ---
+> Compile-tested on sh using se7724_defconfig.
+> 
+> v2:
+>   - Add Acked-by,
+>   - #ifdef out the code instead of introducing helper and dummy
+>     functions.
+> ---
+>  drivers/pinctrl/sh-pfc/core.h   | 2 ++
+>  drivers/pinctrl/sh-pfc/gpio.c   | 7 ++++++-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 2 ++
+>  3 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
+> index 4c3c37bf7161804d..c38ace46d7111b0d 100644
+> --- a/drivers/pinctrl/sh-pfc/core.h
+> +++ b/drivers/pinctrl/sh-pfc/core.h
+> @@ -46,7 +46,9 @@ struct sh_pfc {
+>  	unsigned int nr_gpio_pins;
+> 
+>  	struct sh_pfc_chip *gpio;
+> +#ifdef CONFIG_SUPERH
+>  	struct sh_pfc_chip *func;
+> +#endif
+> 
+>  	struct sh_pfc_pinctrl *pinctrl;
+>  };
+> diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+> index e46439030914ad13..685b3c24627daf03 100644
+> --- a/drivers/pinctrl/sh-pfc/gpio.c
+> +++ b/drivers/pinctrl/sh-pfc/gpio.c
+> @@ -261,6 +261,7 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
+>   * Function GPIOs
+>   */
+> 
+> +#ifdef CONFIG_SUPERH
+>  static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+>  {
+>  	static bool __print_once;
+> @@ -300,6 +301,7 @@ static int gpio_function_setup(struct sh_pfc_chip *chip)
+> 
+>  	return 0;
+>  }
+> +#endif
+> 
+>  /*
+> ---------------------------------------------------------------------------
+> -- * Register/unregister
+> @@ -399,6 +401,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+>  		}
+>  	}
+> 
+> +#ifdef CONFIG_SUPERH
+>  	/* Register the function GPIOs chip. */
+>  	if (pfc->info->nr_func_gpios == 0)
+>  		return 0;
+> @@ -408,6 +411,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+>  		return PTR_ERR(chip);
+> 
+>  	pfc->func = chip;
+> +#endif /* CONFIG_SUPERH */
+> 
+>  	return 0;
+>  }
+> @@ -415,7 +419,8 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+>  int sh_pfc_unregister_gpiochip(struct sh_pfc *pfc)
+>  {
+>  	gpiochip_remove(&pfc->gpio->gpio_chip);
+> +#ifdef CONFIG_SUPERH
+>  	gpiochip_remove(&pfc->func->gpio_chip);
+> -
+> +#endif
+>  	return 0;
+>  }
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 0874cfee6889afa1..1f43bae56065e659
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -138,8 +138,10 @@ struct sh_pfc_soc_info {
+>  	const struct sh_pfc_function *functions;
+>  	unsigned int nr_functions;
+> 
+> +#ifdef CONFIG_SUPERH
+>  	const struct pinmux_func *func_gpios;
+>  	unsigned int nr_func_gpios;
+> +#endif
+> 
+>  	const struct pinmux_cfg_reg *cfg_regs;
+>  	const struct pinmux_data_reg *data_regs;
 
 -- 
-1.9.1
+Regards,
 
-Gr{oetje,eeting}s,
+Laurent Pinchart
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
