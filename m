@@ -1,121 +1,139 @@
 From: Markus Pargmann <mpa@pengutronix.de>
-Subject: [PATCH 2/6] gpio: Introduce gpio descriptor 'name'
-Date: Tue,  4 Aug 2015 11:23:19 +0200
-Message-ID: <1438680203-13432-3-git-send-email-mpa@pengutronix.de>
+Subject: Re: [PATCH 0/6 v2] gpiolib: Add GPIO name support
+Date: Tue, 4 Aug 2015 11:25:19 +0200
+Message-ID: <20150804092519.GG19600@pengutronix.de>
 References: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FwyhczKCDPOVeYh6"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:54008 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:44284 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932441AbbHDJYK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 05:24:10 -0400
+	with ESMTP id S1754833AbbHDJZX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 05:25:23 -0400
+Content-Disposition: inline
 In-Reply-To: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
 
-The latest gpio hogging mechanism assigns each gpio a 'line-name' in the
-devicetree. The 'name' field is different from the 'label' field.
-'label' is only used for requested GPIOs to describe its current use by
-driver or userspace.
 
-The 'name' field describes the GPIO itself, not the use. This is most
-likely identical to the label in the schematic on the GPIO line and
-should help to find this particular GPIO.
+--FwyhczKCDPOVeYh6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds a helper function to find gpio descriptors by name
-instead of gpio number.
+On Tue, Aug 04, 2015 at 11:23:17AM +0200, Markus Pargmann wrote:
+> Hi,
+>=20
+> Changes in v2:
 
-Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
----
- drivers/gpio/gpiolib.c        | 32 ++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.h        |  3 +++
- include/linux/gpio/consumer.h |  7 +++++++
- 3 files changed, 42 insertions(+)
+Sorry, forgot to add v2 into the subject.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d120c3..edfeb0485112 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -90,6 +90,38 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
- EXPORT_SYMBOL_GPL(gpio_to_desc);
- 
- /**
-+ * Convert a GPIO name to its descriptor
-+ */
-+struct gpio_desc *gpio_name_to_desc(const char *name)
-+{
-+	struct gpio_chip *chip;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gpio_lock, flags);
-+
-+	list_for_each_entry(chip, &gpio_chips, list) {
-+		int i;
-+
-+		for (i = 0; i != chip->ngpio; ++i) {
-+			struct gpio_desc *gpio = &chip->desc[i];
-+
-+			if (!gpio->name)
-+				continue;
-+
-+			if (!strcmp(gpio->name, name)) {
-+				spin_unlock_irqrestore(&gpio_lock, flags);
-+				return gpio;
-+			}
-+		}
-+	}
-+
-+	spin_unlock_irqrestore(&gpio_lock, flags);
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(gpio_name_to_desc);
-+
-+/**
-  * Get the GPIO descriptor corresponding to the given hw number for this chip.
-  */
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index bf343004b008..78e634d1c719 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -89,7 +89,10 @@ struct gpio_desc {
- #define FLAG_USED_AS_IRQ 9	/* GPIO is connected to an IRQ */
- #define FLAG_IS_HOGGED	11	/* GPIO is hogged */
- 
-+	/* Connection label */
- 	const char		*label;
-+	/* Name of the GPIO */
-+	const char		*name;
- };
- 
- int gpiod_request(struct gpio_desc *desc, const char *label);
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index adac255aee86..a873b8b47ab3 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -130,6 +130,7 @@ int gpiod_to_irq(const struct gpio_desc *desc);
- /* Convert between the old gpio_ and new gpiod_ interfaces */
- struct gpio_desc *gpio_to_desc(unsigned gpio);
- int desc_to_gpio(const struct gpio_desc *desc);
-+struct gpio_desc *gpio_name_to_desc(const char *name);
- 
- /* Child properties interface */
- struct fwnode_handle;
-@@ -400,6 +401,12 @@ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
- {
- 	return ERR_PTR(-EINVAL);
- }
-+
-+static inline struct gpio_desc *gpio_name_to_desc(const char *name)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
- static inline int desc_to_gpio(const struct gpio_desc *desc)
- {
- 	/* GPIO can never have been requested */
--- 
-2.1.4
+Best regards,
 
+Markus
+
+>  - Removed patch 'gpiolib: Fix possible use of wrong name'
+>  - Removed discussed patch 'gpio: Allow hogged gpios to be requested' fro=
+m this
+>    series
+>  - Fixed show gpio name patch (locks, (null) printing, and getting the de=
+scriptor)
+>  - Merged gpio name patch into gpio_name_to_desc() patch
+>=20
+> Description from v1:
+>=20
+> This is a proposal to add GPIO names to the kernel based on devicetree
+> descriptions.
+>=20
+> This series adds GPIO name support. Until now it is only possible to use =
+names
+> for already requested GPIOs (for example what they are used for). It is n=
+ot
+> possible to identify GPIOs by a name although most of them have a name for
+> example in the schematics of the board. This makes it difficult to identi=
+fy
+> a specific GPIO from userspace.
+>=20
+> As the GPIO name information is a hardware description this series uses t=
+he
+> devicetree bindings introduced by the GPIO hogging mechanism, specifically
+> 'line-name', to identify GPIOs. The sysfs 'export' file is changed to acc=
+ept
+> names as fallback. The gpio numbers still have a higher priority to ensure
+> backwards compatibility.
+>=20
+> Exported GPIOs are still using their number as directory name (gpio<ID>).=
+ But the
+> directories now contain a 'name' file which is '' for non-existent names =
+and
+> the name otherwise.
+>=20
+> This series can be used to have an easy name mapping for udev with a quite
+> simple rule similar to this:
+> 	SUBSYSTEM=3D=3D"gpio", KERNEL=3D=3D"gpio*", ATTR{name}!=3D"(null)", ACTI=
+ON=3D=3D"add", \
+> 	PROGRAM+=3D"/bin/sh -c 'mkdir -p /dev/gpios; rm -f /dev/gpios/$attr{name=
+}; ln -s /sys%p/ /dev/gpios/$attr{name}"
+> With this rule udev adds a link for each exported GPIO with a name into
+> /dev/gpios/. This way it is not necessary to know the number of a GPIO to=
+ use
+> it.
+>=20
+> Best Regards,
+>=20
+> Markus
+>=20
+>=20
+> Markus Pargmann (6):
+>   gpiolib-of: Rename gpio_hog functions to be generic
+>   gpio: Introduce gpio descriptor 'name'
+>   gpiolib-of: Reuse 'line-name' from DT as gpio descriptor name
+>   gpiolib-sysfs: Add gpio name parsing for sysfs export
+>   gpiolib-sysfs: Show gpio-name in /sys/class/gpio/gpio*/name
+>   gpiolib: Add gpio name information to /sys/kernel/debug/gpio
+>=20
+>  drivers/gpio/gpiolib-of.c     | 41 ++++++++++++++++++------------
+>  drivers/gpio/gpiolib-sysfs.c  | 59 +++++++++++++++++++++++++++++++++----=
+------
+>  drivers/gpio/gpiolib.c        | 43 ++++++++++++++++++++++++++++---
+>  drivers/gpio/gpiolib.h        |  3 +++
+>  include/linux/gpio/consumer.h |  7 +++++
+>  5 files changed, 121 insertions(+), 32 deletions(-)
+>=20
+> --=20
+> 2.1.4
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--FwyhczKCDPOVeYh6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVwIT/AAoJEEpcgKtcEGQQtIMQAKJDshc2kmGxNCN0JO0H/O1F
+T+/0OBXJR0CAXZNeDdlxCSWLs2k2/IXD9WD+NrAUFwP3bH2mDU9Hag3/yV3BoPSx
+7MFJxtVc69TdQeOGmyHvpCm2TTM34VUpjEvR75H2mdAO0KrVH/1vVCbOpLyjHtlq
+mLsIUTIhF2zENLr2Mh8KxKj5RkPKaEFbWn3W+WAgqzExxaBIh49B/XWn48ajDueV
+KiGNOUumus7MdbRbfXJU244HPf9INzlo6cMALiO+5VyRfkAE1HDMDsNoW0GhwuQ9
+WpMuB6Jva1iK1XO5w6qpsiglHrrlPlBFUw5LCgGUkYV5IUG/EvsBJZ98N00G0rZs
+2/aJfJnE/NRRLIxMDbO5LuFF03I8SUTxWBX/f4ksZBpXc9JuYwcLo7TNMVK351Vf
+CDk12Ly4JWXX9NmhDpt9jCCwRG+AL0lnWjiAVaGuqTGdyWARclhx4OSQifTNFsg7
+Y28I6gcts5uiYxyIPfkJ/iH6sEXsapdPUu9678qODEpkYsFX4jK6orda486CltZn
+n64d3yfghRdCdPwydPgvJKrKdapwArDJtpJr96BXTwWdL8le1JGHr3xh19gFTG9u
+D9LF5xeOjP5/qGQIvnP1V0Q2V03jibTD8Yb7Bp1jg7UwfYTtdf/i0iPoeQlaJCHE
+9aG4CRyc50NqeSX9PH67
+=q087
+-----END PGP SIGNATURE-----
+
+--FwyhczKCDPOVeYh6--
