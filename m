@@ -1,81 +1,320 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Wed, 5 Aug 2015 09:55:41 +0900
-Message-ID: <20150805005540.GB20726@verge.net.au>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Barry Song <21cnbao@gmail.com>
+Subject: [PATCH] pinctrl: atlas7: clear ugly branch statements for pull and drivestrength
+Date: Wed,  5 Aug 2015 03:22:14 +0000
+Message-ID: <1438744934-15395-1-git-send-email-21cnbao@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43844 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751264AbbHEAzo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 20:55:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:35840 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751937AbbHEDPt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 23:15:49 -0400
+Received: by pacgq8 with SMTP id gq8so23698790pac.3
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2015 20:15:48 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, workgroup.linux@csr.com, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-Hi Geert,
+From: Wei Chen <Wei.Chen@csr.com>
 
-On Tue, Aug 04, 2015 at 03:55:13PM +0200, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> This patch series moves the setup of the GPIO-PFC pin mapping for
-> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
-> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
-> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
-> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
-> 
-> The series consists of 3 parts:
->   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
->      files for all affected SoCs,
->   b. Patch 4 disables the C code to set up the mapping on DT platforms
->      (it's still needed on SH or ARM-legacy),
->   c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
-> 
-> Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
-> from C code to DT",
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
->   - Add check for CONFIG_OF and pfc->dev->of_node,
->   - #ifdef out the code instead of introducing helper and dummy
->     functions,
->   - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
->     longer needed due to the #ifdefs,
->   - Add Acked-by.
-> 
-> Dependencies:
->   - This series applies against renesas-devel-20150803-v4.2-rc5,
->   - Part a must go in first, to avoid regressions,
->   - While I didn't notice any bad behavior by having part a only, part b
->     should go in immediately after part a. Hence I think it's best if
->     Simon can take this one, too.
->   - Part c is independent (it doesn't touch the same code), so it can go
->     in before or after the other parts, or in parallel.
-> 
-> Given this fixes the LCD on r8a7740/armadillo, which is a regression
-> introduced by the removal of armadillo-legacy support, I think at least
-> patch 2 should be queued for v4.3.
-> 
-> Thanks for applying!
-> 
-> Geert Uytterhoeven (6):
->   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
->   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
->   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
->   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
->   pinctrl: sh-pfc: Remove empty gpio_function_free()
->   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+To set/get atlas7 pull & drive strength, we use lots of if/else
+to check pad type. But except mask value or immediate value, all
+actions in these conditional branches are the same.
+So we use predefined pull info table and drive strength table
+to reduce these redundancy code.
 
-Where possible I prefer not to apply non-DTS/DTSI patches on top of
-DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
-maintainers like things handled.  With this in mind I have done the following:
+Signed-off-by: Wei Chen <Wei.Chen@csr.com>
+Signed-off-by: Barry Song <Baohua.Song@csr.com>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 193 +++++++++++++++++-----------------
+ 1 file changed, 94 insertions(+), 99 deletions(-)
 
-1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
-   I intend for this to turn up in next soon.
-2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
-   I intend for these to be present in the renesas devel branch but
-   not in next until after the release of v4.3-rc1. I would also be
-   happy to drop them and let Linus Walleij take these patches for v4.4,
-   assuming patches 1 - 3 are accepted for v4.3.
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index d16e629..9df0c5f 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -3510,11 +3510,19 @@ struct atlas7_pinctrl_data atlas7_ioc_data = {
+ 	.confs_cnt = ARRAY_SIZE(atlas7_ioc_pad_confs),
+ };
+ 
++/* Simple map data structure */
+ struct map_data {
+ 	u8 idx;
+ 	u8 data;
+ };
+ 
++/**
++ * struct atlas7_pull_info - Atlas7 Pad pull info
++ * @type:The type of this Pad.
++ * @mask:The mas value of this pin's pull bits.
++ * @v2s: The map of pull register value to pull status.
++ * @s2v: The map of pull status to pull register value.
++ */
+ struct atlas7_pull_info {
+ 	u8 pad_type;
+ 	u8 mask;
+@@ -3597,6 +3605,65 @@ static const struct atlas7_pull_info atlas7_pull_map[] = {
+ 	{ PAD_T_AD, PANGD_PULL_MASK, pangd_pull_v2s, pangd_pull_s2v },
+ };
+ 
++/**
++ * struct atlas7_ds_ma_info - Atlas7 Pad DriveStrength & currents info
++ * @ma:		The Drive Strength in current value .
++ * @ds_16st:	The correspond raw value of 16st pad.
++ * @ds_4we:	The correspond raw value of 4we pad.
++ * @ds_0204m31:	The correspond raw value of 0204m31 pad.
++ * @ds_0610m31:	The correspond raw value of 0610m31 pad.
++ */
++struct atlas7_ds_ma_info {
++	u32 ma;
++	u32 ds_16st;
++	u32 ds_4we;
++	u32 ds_0204m31;
++	u32 ds_0610m31;
++};
++
++static const struct atlas7_ds_ma_info atlas7_ma2ds_map[] = {
++	{ 2, DS_16ST_0, DS_4WE_0, DS_M31_0, DS_NULL },
++	{ 4, DS_16ST_1, DS_NULL, DS_M31_1, DS_NULL },
++	{ 6, DS_16ST_2, DS_NULL, DS_NULL, DS_M31_0 },
++	{ 8, DS_16ST_3, DS_4WE_1, DS_NULL, DS_NULL },
++	{ 10, DS_16ST_4, DS_NULL, DS_NULL, DS_M31_1 },
++	{ 12, DS_16ST_5, DS_NULL, DS_NULL, DS_NULL },
++	{ 14, DS_16ST_6, DS_NULL, DS_NULL, DS_NULL },
++	{ 16, DS_16ST_7, DS_4WE_2, DS_NULL, DS_NULL },
++	{ 18, DS_16ST_8, DS_NULL, DS_NULL, DS_NULL },
++	{ 20, DS_16ST_9, DS_NULL, DS_NULL, DS_NULL },
++	{ 22, DS_16ST_10, DS_NULL, DS_NULL, DS_NULL },
++	{ 24, DS_16ST_11, DS_NULL, DS_NULL, DS_NULL },
++	{ 26, DS_16ST_12, DS_NULL, DS_NULL, DS_NULL },
++	{ 28, DS_16ST_13, DS_4WE_3, DS_NULL, DS_NULL },
++	{ 30, DS_16ST_14, DS_NULL, DS_NULL, DS_NULL },
++	{ 32, DS_16ST_15, DS_NULL, DS_NULL, DS_NULL },
++};
++
++/**
++ * struct atlas7_ds_info - Atlas7 Pad DriveStrength info
++ * @type:		The type of this Pad.
++ * @mask:		The mask value of this pin's pull bits.
++ * @imval:		The immediate value of drives trength register.
++ */
++struct atlas7_ds_info {
++	u8 type;
++	u8 mask;
++	u8 imval;
++	u8 reserved;
++};
++
++static const struct atlas7_ds_info atlas7_ds_map[] = {
++	{ PAD_T_4WE_PD, DS_2BIT_MASK, DS_2BIT_IM_VAL },
++	{ PAD_T_4WE_PU, DS_2BIT_MASK, DS_2BIT_IM_VAL },
++	{ PAD_T_16ST, DS_4BIT_MASK, DS_4BIT_IM_VAL },
++	{ PAD_T_M31_0204_PD, DS_1BIT_MASK, DS_1BIT_IM_VAL },
++	{ PAD_T_M31_0204_PU, DS_1BIT_MASK, DS_1BIT_IM_VAL },
++	{ PAD_T_M31_0610_PD, DS_1BIT_MASK, DS_1BIT_IM_VAL },
++	{ PAD_T_M31_0610_PU, DS_1BIT_MASK, DS_1BIT_IM_VAL },
++	{ PAD_T_AD, DS_NULL, DS_NULL },
++};
++
+ static inline u32 atlas7_pin_to_bank(u32 pin)
+ {
+ 	return (pin >= ATLAS7_PINCTRL_BANK_0_PINS) ? 1 : 0;
+@@ -3799,70 +3866,27 @@ static int atlas7_pmx_set_mux(struct pinctrl_dev *pctldev,
+ 	return 0;
+ }
+ 
+-struct atlas7_ds_info {
+-	u32 ma;
+-	u32 ds_16st;
+-	u32 ds_4we;
+-	u32 ds_0204m31;
+-	u32 ds_0610m31;
+-};
+-
+-const struct atlas7_ds_info atlas7_ds_map[] = {
+-	{ 2, DS_16ST_0, DS_4WE_0, DS_M31_0, DS_NULL},
+-	{ 4, DS_16ST_1, DS_NULL, DS_M31_1, DS_NULL},
+-	{ 6, DS_16ST_2, DS_NULL, DS_NULL, DS_M31_0},
+-	{ 8, DS_16ST_3, DS_4WE_1, DS_NULL, DS_NULL},
+-	{ 10, DS_16ST_4, DS_NULL, DS_NULL, DS_M31_1},
+-	{ 12, DS_16ST_5, DS_NULL, DS_NULL, DS_NULL},
+-	{ 14, DS_16ST_6, DS_NULL, DS_NULL, DS_NULL},
+-	{ 16, DS_16ST_7, DS_4WE_2, DS_NULL, DS_NULL},
+-	{ 18, DS_16ST_8, DS_NULL, DS_NULL, DS_NULL},
+-	{ 20, DS_16ST_9, DS_NULL, DS_NULL, DS_NULL},
+-	{ 22, DS_16ST_10, DS_NULL, DS_NULL, DS_NULL},
+-	{ 24, DS_16ST_11, DS_NULL, DS_NULL, DS_NULL},
+-	{ 26, DS_16ST_12, DS_NULL, DS_NULL, DS_NULL},
+-	{ 28, DS_16ST_13, DS_4WE_3, DS_NULL, DS_NULL},
+-	{ 30, DS_16ST_14, DS_NULL, DS_NULL, DS_NULL},
+-	{ 32, DS_16ST_15, DS_NULL, DS_NULL, DS_NULL},
+-};
+-
+ static u32 convert_current_to_drive_strength(u32 type, u32 ma)
+ {
+ 	int idx;
+ 
+-	for (idx = 0; idx < ARRAY_SIZE(atlas7_ds_map); idx++) {
+-		if (atlas7_ds_map[idx].ma != ma)
++	for (idx = 0; idx < ARRAY_SIZE(atlas7_ma2ds_map); idx++) {
++		if (atlas7_ma2ds_map[idx].ma != ma)
+ 			continue;
+ 
+ 		if (type == PAD_T_4WE_PD || type == PAD_T_4WE_PU)
+-			return atlas7_ds_map[idx].ds_4we;
++			return atlas7_ma2ds_map[idx].ds_4we;
+ 		else if (type == PAD_T_16ST)
+-			return atlas7_ds_map[idx].ds_16st;
++			return atlas7_ma2ds_map[idx].ds_16st;
+ 		else if (type == PAD_T_M31_0204_PD || type == PAD_T_M31_0204_PU)
+-			return atlas7_ds_map[idx].ds_0204m31;
++			return atlas7_ma2ds_map[idx].ds_0204m31;
+ 		else if (type == PAD_T_M31_0610_PD || type == PAD_T_M31_0610_PU)
+-			return atlas7_ds_map[idx].ds_0610m31;
++			return atlas7_ma2ds_map[idx].ds_0610m31;
+ 	}
+ 
+ 	return DS_NULL;
+ }
+ 
+-static u32 altas7_pinctrl_get_pull_sel(struct atlas7_pmx *pmx, u32 pin)
+-{
+-	struct atlas7_pad_config *conf = &pmx->pctl_data->confs[pin];
+-	const struct atlas7_pull_info *pull_info;
+-	int bank;
+-	unsigned long regv;
+-
+-	bank = atlas7_pin_to_bank(pin);
+-	pull_info = &atlas7_pull_map[conf->type];
+-
+-	regv = readl(pmx->regs[bank] + conf->pupd_reg);
+-	regv = (regv >> conf->pupd_bit) & pull_info->mask;
+-
+-	return pull_info->v2s[regv].data;
+-}
+-
+ static int altas7_pinctrl_set_pull_sel(struct pinctrl_dev *pctldev,
+ 					u32 pin, u32 sel)
+ {
+@@ -3871,19 +3895,17 @@ static int altas7_pinctrl_set_pull_sel(struct pinctrl_dev *pctldev,
+ 	const struct atlas7_pull_info *pull_info;
+ 	u32 bank;
+ 	unsigned long regv;
+-	void __iomem *pull_sel_reg, *pull_clr_reg;
++	void __iomem *pull_sel_reg;
+ 
+ 	bank = atlas7_pin_to_bank(pin);
+ 	pull_info = &atlas7_pull_map[conf->type];
+-
+ 	pull_sel_reg = pmx->regs[bank] + conf->pupd_reg;
+-	pull_clr_reg = CLR_REG(pull_sel_reg);
+ 
+ 	/* Retrieve correspond register value from table by sel */
+ 	regv = pull_info->s2v[sel].data & pull_info->mask;
+ 
+ 	/* Clear & Set new value to pull register */
+-	writel(pull_info->mask << conf->pupd_bit, pull_clr_reg);
++	writel(pull_info->mask << conf->pupd_bit, CLR_REG(pull_sel_reg));
+ 	writel(regv << conf->pupd_bit, pull_sel_reg);
+ 
+ 	pr_debug("PIN_CFG ### SET PIN#%d PULL SELECTOR:%d == OK ####\n",
+@@ -3896,43 +3918,25 @@ static int __altas7_pinctrl_set_drive_strength_sel(struct pinctrl_dev *pctldev,
+ {
+ 	struct atlas7_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+ 	struct atlas7_pad_config *conf = &pmx->pctl_data->confs[pin];
+-	u32 type = conf->type;
+-	u32 shift = conf->drvstr_bit;
+-	u32 bank = atlas7_pin_to_bank(pin);
+-	void __iomem *ds_sel_reg, *ds_clr_reg;
+-
+-	ds_sel_reg = pmx->regs[bank] + conf->drvstr_reg;
+-	ds_clr_reg = CLR_REG(ds_sel_reg);
+-	if (type == PAD_T_4WE_PD || type == PAD_T_4WE_PU) {
+-		if (sel & (~DS_2BIT_MASK))
+-			goto unsupport;
+-
+-		writel(DS_2BIT_IM_VAL << shift, ds_clr_reg);
+-		writel(sel << shift, ds_sel_reg);
+-
+-		return 0;
+-	} else if (type == PAD_T_16ST) {
+-		if (sel & (~DS_4BIT_MASK))
+-			goto unsupport;
++	const struct atlas7_ds_info *ds_info;
++	u32 bank;
++	void __iomem *ds_sel_reg;
+ 
+-		writel(DS_4BIT_IM_VAL << shift, ds_clr_reg);
+-		writel(sel << shift, ds_sel_reg);
++	ds_info = &atlas7_ds_map[conf->type];
++	if (sel & (~(ds_info->mask)))
++		goto unsupport;
+ 
+-		return 0;
+-	} else if (type == PAD_T_M31_0204_PD ||	type == PAD_T_M31_0204_PU ||
+-		type == PAD_T_M31_0610_PD || type == PAD_T_M31_0610_PU) {
+-		if (sel & (~DS_1BIT_MASK))
+-			goto unsupport;
++	bank = atlas7_pin_to_bank(pin);
++	ds_sel_reg = pmx->regs[bank] + conf->drvstr_reg;
+ 
+-		writel(DS_1BIT_IM_VAL << shift, ds_clr_reg);
+-		writel(sel << shift, ds_sel_reg);
++	writel(ds_info->imval << conf->drvstr_bit, CLR_REG(ds_sel_reg));
++	writel(sel << conf->drvstr_bit, ds_sel_reg);
+ 
+-		return 0;
+-	}
++	return 0;
+ 
+ unsupport:
+ 	pr_err("Pad#%d type[%d] doesn't support ds code[%d]!\n",
+-		pin, type, sel);
++		pin, conf->type, sel);
+ 	return -ENOTSUPP;
+ }
+ 
+@@ -4185,6 +4189,8 @@ static int atlas7_pinmux_suspend_noirq(struct device *dev)
+ 	struct atlas7_pmx *pmx = dev_get_drvdata(dev);
+ 	struct atlas7_pad_status *status;
+ 	struct atlas7_pad_config *conf;
++	const struct atlas7_ds_info *ds_info;
++	const struct atlas7_pull_info *pull_info;
+ 	int idx;
+ 	u32 bank;
+ 	unsigned long regv;
+@@ -4212,27 +4218,16 @@ save_ds_sel:
+ 			goto save_pull_sel;
+ 
+ 		/* Save Drive Strength selector */
++		ds_info = &atlas7_ds_map[conf->type];
+ 		regv = readl(pmx->regs[bank] + conf->drvstr_reg);
+-		if (PAD_T_4WE_PD == conf->type || PAD_T_4WE_PU == conf->type)
+-			status->dstr = (regv >> conf->drvstr_bit) &
+-					DS_2BIT_MASK;
+-		else if (PAD_T_16ST == conf->type)
+-			status->dstr = (regv >> conf->drvstr_bit) &
+-					DS_4BIT_MASK;
+-		else if (PAD_T_M31_0204_PD == conf->type ||
+-			PAD_T_M31_0204_PU == conf->type ||
+-			PAD_T_M31_0610_PD == conf->type ||
+-			PAD_T_M31_0610_PU == conf->type)
+-			status->dstr = (regv >> conf->drvstr_bit) &
+-					DS_1BIT_MASK;
++		status->dstr = (regv >> conf->drvstr_bit) & ds_info->mask;
+ 
+ save_pull_sel:
+ 		/* Save Pull selector */
++		pull_info = &atlas7_pull_map[conf->type];
+ 		regv = readl(pmx->regs[bank] + conf->pupd_reg);
+-		status->pull = altas7_pinctrl_get_pull_sel(pmx, idx);
+-		pr_debug("idx %d %p %x: %x %x %x\n", idx,
+-				pmx->regs[bank], conf->mux_reg,
+-				status->func, status->pull, status->dstr);
++		regv = (regv >> conf->pupd_bit) & pull_info->mask;
++		status->pull = pull_info->v2s[regv].data;
+ 	}
+ 
+ 	/*
+-- 
+2.3.5
+
