@@ -1,320 +1,65 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: [PATCH] pinctrl: atlas7: clear ugly branch statements for pull and drivestrength
-Date: Wed,  5 Aug 2015 03:22:14 +0000
-Message-ID: <1438744934-15395-1-git-send-email-21cnbao@gmail.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH v2 05/11] power: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Wed, 5 Aug 2015 05:49:52 +0200
+Message-ID: <20150805034952.GC16139@earth>
+References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
+ <1438506590-31673-1-git-send-email-geert@linux-m68k.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:35840 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751937AbbHEDPt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 23:15:49 -0400
-Received: by pacgq8 with SMTP id gq8so23698790pac.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2015 20:15:48 -0700 (PDT)
+Received: from mail.kernel.org ([198.145.29.136]:44879 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750884AbbHEDt4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 4 Aug 2015 23:49:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1438506590-31673-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, workgroup.linux@csr.com, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-From: Wei Chen <Wei.Chen@csr.com>
 
-To set/get atlas7 pull & drive strength, we use lots of if/else
-to check pad type. But except mask value or immediate value, all
-actions in these conditional branches are the same.
-So we use predefined pull info table and drive strength table
-to reduce these redundancy code.
+--TiqCXmo5T1hvSQQg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wei Chen <Wei.Chen@csr.com>
-Signed-off-by: Barry Song <Baohua.Song@csr.com>
----
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 193 +++++++++++++++++-----------------
- 1 file changed, 94 insertions(+), 99 deletions(-)
+Hi,
 
-diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index d16e629..9df0c5f 100644
---- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
-+++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -3510,11 +3510,19 @@ struct atlas7_pinctrl_data atlas7_ioc_data = {
- 	.confs_cnt = ARRAY_SIZE(atlas7_ioc_pad_confs),
- };
- 
-+/* Simple map data structure */
- struct map_data {
- 	u8 idx;
- 	u8 data;
- };
- 
-+/**
-+ * struct atlas7_pull_info - Atlas7 Pad pull info
-+ * @type:The type of this Pad.
-+ * @mask:The mas value of this pin's pull bits.
-+ * @v2s: The map of pull register value to pull status.
-+ * @s2v: The map of pull status to pull register value.
-+ */
- struct atlas7_pull_info {
- 	u8 pad_type;
- 	u8 mask;
-@@ -3597,6 +3605,65 @@ static const struct atlas7_pull_info atlas7_pull_map[] = {
- 	{ PAD_T_AD, PANGD_PULL_MASK, pangd_pull_v2s, pangd_pull_s2v },
- };
- 
-+/**
-+ * struct atlas7_ds_ma_info - Atlas7 Pad DriveStrength & currents info
-+ * @ma:		The Drive Strength in current value .
-+ * @ds_16st:	The correspond raw value of 16st pad.
-+ * @ds_4we:	The correspond raw value of 4we pad.
-+ * @ds_0204m31:	The correspond raw value of 0204m31 pad.
-+ * @ds_0610m31:	The correspond raw value of 0610m31 pad.
-+ */
-+struct atlas7_ds_ma_info {
-+	u32 ma;
-+	u32 ds_16st;
-+	u32 ds_4we;
-+	u32 ds_0204m31;
-+	u32 ds_0610m31;
-+};
-+
-+static const struct atlas7_ds_ma_info atlas7_ma2ds_map[] = {
-+	{ 2, DS_16ST_0, DS_4WE_0, DS_M31_0, DS_NULL },
-+	{ 4, DS_16ST_1, DS_NULL, DS_M31_1, DS_NULL },
-+	{ 6, DS_16ST_2, DS_NULL, DS_NULL, DS_M31_0 },
-+	{ 8, DS_16ST_3, DS_4WE_1, DS_NULL, DS_NULL },
-+	{ 10, DS_16ST_4, DS_NULL, DS_NULL, DS_M31_1 },
-+	{ 12, DS_16ST_5, DS_NULL, DS_NULL, DS_NULL },
-+	{ 14, DS_16ST_6, DS_NULL, DS_NULL, DS_NULL },
-+	{ 16, DS_16ST_7, DS_4WE_2, DS_NULL, DS_NULL },
-+	{ 18, DS_16ST_8, DS_NULL, DS_NULL, DS_NULL },
-+	{ 20, DS_16ST_9, DS_NULL, DS_NULL, DS_NULL },
-+	{ 22, DS_16ST_10, DS_NULL, DS_NULL, DS_NULL },
-+	{ 24, DS_16ST_11, DS_NULL, DS_NULL, DS_NULL },
-+	{ 26, DS_16ST_12, DS_NULL, DS_NULL, DS_NULL },
-+	{ 28, DS_16ST_13, DS_4WE_3, DS_NULL, DS_NULL },
-+	{ 30, DS_16ST_14, DS_NULL, DS_NULL, DS_NULL },
-+	{ 32, DS_16ST_15, DS_NULL, DS_NULL, DS_NULL },
-+};
-+
-+/**
-+ * struct atlas7_ds_info - Atlas7 Pad DriveStrength info
-+ * @type:		The type of this Pad.
-+ * @mask:		The mask value of this pin's pull bits.
-+ * @imval:		The immediate value of drives trength register.
-+ */
-+struct atlas7_ds_info {
-+	u8 type;
-+	u8 mask;
-+	u8 imval;
-+	u8 reserved;
-+};
-+
-+static const struct atlas7_ds_info atlas7_ds_map[] = {
-+	{ PAD_T_4WE_PD, DS_2BIT_MASK, DS_2BIT_IM_VAL },
-+	{ PAD_T_4WE_PU, DS_2BIT_MASK, DS_2BIT_IM_VAL },
-+	{ PAD_T_16ST, DS_4BIT_MASK, DS_4BIT_IM_VAL },
-+	{ PAD_T_M31_0204_PD, DS_1BIT_MASK, DS_1BIT_IM_VAL },
-+	{ PAD_T_M31_0204_PU, DS_1BIT_MASK, DS_1BIT_IM_VAL },
-+	{ PAD_T_M31_0610_PD, DS_1BIT_MASK, DS_1BIT_IM_VAL },
-+	{ PAD_T_M31_0610_PU, DS_1BIT_MASK, DS_1BIT_IM_VAL },
-+	{ PAD_T_AD, DS_NULL, DS_NULL },
-+};
-+
- static inline u32 atlas7_pin_to_bank(u32 pin)
- {
- 	return (pin >= ATLAS7_PINCTRL_BANK_0_PINS) ? 1 : 0;
-@@ -3799,70 +3866,27 @@ static int atlas7_pmx_set_mux(struct pinctrl_dev *pctldev,
- 	return 0;
- }
- 
--struct atlas7_ds_info {
--	u32 ma;
--	u32 ds_16st;
--	u32 ds_4we;
--	u32 ds_0204m31;
--	u32 ds_0610m31;
--};
--
--const struct atlas7_ds_info atlas7_ds_map[] = {
--	{ 2, DS_16ST_0, DS_4WE_0, DS_M31_0, DS_NULL},
--	{ 4, DS_16ST_1, DS_NULL, DS_M31_1, DS_NULL},
--	{ 6, DS_16ST_2, DS_NULL, DS_NULL, DS_M31_0},
--	{ 8, DS_16ST_3, DS_4WE_1, DS_NULL, DS_NULL},
--	{ 10, DS_16ST_4, DS_NULL, DS_NULL, DS_M31_1},
--	{ 12, DS_16ST_5, DS_NULL, DS_NULL, DS_NULL},
--	{ 14, DS_16ST_6, DS_NULL, DS_NULL, DS_NULL},
--	{ 16, DS_16ST_7, DS_4WE_2, DS_NULL, DS_NULL},
--	{ 18, DS_16ST_8, DS_NULL, DS_NULL, DS_NULL},
--	{ 20, DS_16ST_9, DS_NULL, DS_NULL, DS_NULL},
--	{ 22, DS_16ST_10, DS_NULL, DS_NULL, DS_NULL},
--	{ 24, DS_16ST_11, DS_NULL, DS_NULL, DS_NULL},
--	{ 26, DS_16ST_12, DS_NULL, DS_NULL, DS_NULL},
--	{ 28, DS_16ST_13, DS_4WE_3, DS_NULL, DS_NULL},
--	{ 30, DS_16ST_14, DS_NULL, DS_NULL, DS_NULL},
--	{ 32, DS_16ST_15, DS_NULL, DS_NULL, DS_NULL},
--};
--
- static u32 convert_current_to_drive_strength(u32 type, u32 ma)
- {
- 	int idx;
- 
--	for (idx = 0; idx < ARRAY_SIZE(atlas7_ds_map); idx++) {
--		if (atlas7_ds_map[idx].ma != ma)
-+	for (idx = 0; idx < ARRAY_SIZE(atlas7_ma2ds_map); idx++) {
-+		if (atlas7_ma2ds_map[idx].ma != ma)
- 			continue;
- 
- 		if (type == PAD_T_4WE_PD || type == PAD_T_4WE_PU)
--			return atlas7_ds_map[idx].ds_4we;
-+			return atlas7_ma2ds_map[idx].ds_4we;
- 		else if (type == PAD_T_16ST)
--			return atlas7_ds_map[idx].ds_16st;
-+			return atlas7_ma2ds_map[idx].ds_16st;
- 		else if (type == PAD_T_M31_0204_PD || type == PAD_T_M31_0204_PU)
--			return atlas7_ds_map[idx].ds_0204m31;
-+			return atlas7_ma2ds_map[idx].ds_0204m31;
- 		else if (type == PAD_T_M31_0610_PD || type == PAD_T_M31_0610_PU)
--			return atlas7_ds_map[idx].ds_0610m31;
-+			return atlas7_ma2ds_map[idx].ds_0610m31;
- 	}
- 
- 	return DS_NULL;
- }
- 
--static u32 altas7_pinctrl_get_pull_sel(struct atlas7_pmx *pmx, u32 pin)
--{
--	struct atlas7_pad_config *conf = &pmx->pctl_data->confs[pin];
--	const struct atlas7_pull_info *pull_info;
--	int bank;
--	unsigned long regv;
--
--	bank = atlas7_pin_to_bank(pin);
--	pull_info = &atlas7_pull_map[conf->type];
--
--	regv = readl(pmx->regs[bank] + conf->pupd_reg);
--	regv = (regv >> conf->pupd_bit) & pull_info->mask;
--
--	return pull_info->v2s[regv].data;
--}
--
- static int altas7_pinctrl_set_pull_sel(struct pinctrl_dev *pctldev,
- 					u32 pin, u32 sel)
- {
-@@ -3871,19 +3895,17 @@ static int altas7_pinctrl_set_pull_sel(struct pinctrl_dev *pctldev,
- 	const struct atlas7_pull_info *pull_info;
- 	u32 bank;
- 	unsigned long regv;
--	void __iomem *pull_sel_reg, *pull_clr_reg;
-+	void __iomem *pull_sel_reg;
- 
- 	bank = atlas7_pin_to_bank(pin);
- 	pull_info = &atlas7_pull_map[conf->type];
--
- 	pull_sel_reg = pmx->regs[bank] + conf->pupd_reg;
--	pull_clr_reg = CLR_REG(pull_sel_reg);
- 
- 	/* Retrieve correspond register value from table by sel */
- 	regv = pull_info->s2v[sel].data & pull_info->mask;
- 
- 	/* Clear & Set new value to pull register */
--	writel(pull_info->mask << conf->pupd_bit, pull_clr_reg);
-+	writel(pull_info->mask << conf->pupd_bit, CLR_REG(pull_sel_reg));
- 	writel(regv << conf->pupd_bit, pull_sel_reg);
- 
- 	pr_debug("PIN_CFG ### SET PIN#%d PULL SELECTOR:%d == OK ####\n",
-@@ -3896,43 +3918,25 @@ static int __altas7_pinctrl_set_drive_strength_sel(struct pinctrl_dev *pctldev,
- {
- 	struct atlas7_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
- 	struct atlas7_pad_config *conf = &pmx->pctl_data->confs[pin];
--	u32 type = conf->type;
--	u32 shift = conf->drvstr_bit;
--	u32 bank = atlas7_pin_to_bank(pin);
--	void __iomem *ds_sel_reg, *ds_clr_reg;
--
--	ds_sel_reg = pmx->regs[bank] + conf->drvstr_reg;
--	ds_clr_reg = CLR_REG(ds_sel_reg);
--	if (type == PAD_T_4WE_PD || type == PAD_T_4WE_PU) {
--		if (sel & (~DS_2BIT_MASK))
--			goto unsupport;
--
--		writel(DS_2BIT_IM_VAL << shift, ds_clr_reg);
--		writel(sel << shift, ds_sel_reg);
--
--		return 0;
--	} else if (type == PAD_T_16ST) {
--		if (sel & (~DS_4BIT_MASK))
--			goto unsupport;
-+	const struct atlas7_ds_info *ds_info;
-+	u32 bank;
-+	void __iomem *ds_sel_reg;
- 
--		writel(DS_4BIT_IM_VAL << shift, ds_clr_reg);
--		writel(sel << shift, ds_sel_reg);
-+	ds_info = &atlas7_ds_map[conf->type];
-+	if (sel & (~(ds_info->mask)))
-+		goto unsupport;
- 
--		return 0;
--	} else if (type == PAD_T_M31_0204_PD ||	type == PAD_T_M31_0204_PU ||
--		type == PAD_T_M31_0610_PD || type == PAD_T_M31_0610_PU) {
--		if (sel & (~DS_1BIT_MASK))
--			goto unsupport;
-+	bank = atlas7_pin_to_bank(pin);
-+	ds_sel_reg = pmx->regs[bank] + conf->drvstr_reg;
- 
--		writel(DS_1BIT_IM_VAL << shift, ds_clr_reg);
--		writel(sel << shift, ds_sel_reg);
-+	writel(ds_info->imval << conf->drvstr_bit, CLR_REG(ds_sel_reg));
-+	writel(sel << conf->drvstr_bit, ds_sel_reg);
- 
--		return 0;
--	}
-+	return 0;
- 
- unsupport:
- 	pr_err("Pad#%d type[%d] doesn't support ds code[%d]!\n",
--		pin, type, sel);
-+		pin, conf->type, sel);
- 	return -ENOTSUPP;
- }
- 
-@@ -4185,6 +4189,8 @@ static int atlas7_pinmux_suspend_noirq(struct device *dev)
- 	struct atlas7_pmx *pmx = dev_get_drvdata(dev);
- 	struct atlas7_pad_status *status;
- 	struct atlas7_pad_config *conf;
-+	const struct atlas7_ds_info *ds_info;
-+	const struct atlas7_pull_info *pull_info;
- 	int idx;
- 	u32 bank;
- 	unsigned long regv;
-@@ -4212,27 +4218,16 @@ save_ds_sel:
- 			goto save_pull_sel;
- 
- 		/* Save Drive Strength selector */
-+		ds_info = &atlas7_ds_map[conf->type];
- 		regv = readl(pmx->regs[bank] + conf->drvstr_reg);
--		if (PAD_T_4WE_PD == conf->type || PAD_T_4WE_PU == conf->type)
--			status->dstr = (regv >> conf->drvstr_bit) &
--					DS_2BIT_MASK;
--		else if (PAD_T_16ST == conf->type)
--			status->dstr = (regv >> conf->drvstr_bit) &
--					DS_4BIT_MASK;
--		else if (PAD_T_M31_0204_PD == conf->type ||
--			PAD_T_M31_0204_PU == conf->type ||
--			PAD_T_M31_0610_PD == conf->type ||
--			PAD_T_M31_0610_PU == conf->type)
--			status->dstr = (regv >> conf->drvstr_bit) &
--					DS_1BIT_MASK;
-+		status->dstr = (regv >> conf->drvstr_bit) & ds_info->mask;
- 
- save_pull_sel:
- 		/* Save Pull selector */
-+		pull_info = &atlas7_pull_map[conf->type];
- 		regv = readl(pmx->regs[bank] + conf->pupd_reg);
--		status->pull = altas7_pinctrl_get_pull_sel(pmx, idx);
--		pr_debug("idx %d %p %x: %x %x %x\n", idx,
--				pmx->regs[bank], conf->mux_reg,
--				status->func, status->pull, status->dstr);
-+		regv = (regv >> conf->pupd_bit) & pull_info->mask;
-+		status->pull = pull_info->v2s[regv].data;
- 	}
- 
- 	/*
--- 
-2.3.5
+On Sun, Aug 02, 2015 at 11:09:50AM +0200, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>=20
+> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+> appropriate.
 
+Thanks, queued.
+
+-- Sebastian
+
+--TiqCXmo5T1hvSQQg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJVwYfgAAoJENju1/PIO/qaAawQAJEh+5CfBeTR7IhCrcM71GBL
+Xy47FFgzSe/VdHBCSgQKWuSpyYwpZU/3DLCM+FPhr08YCw8I5jvWAutKhvKVYHWH
+IrpBJPEI1cOY+jZpFpwJWT/N0FeC9sdrkmU7ZEJ1WiFbd/W3VJwx4pjNidsspZ9F
+UrEkhVgGAKIEJVVGL0Ofc2osXv1ay3rUn318HQrRPSfITndEU5gDIa5erQfpN9Dy
+YPAgCnCa+ZybcyF7n31oK9hP8OXAupoAhJdmGia076HX1u0H1Blm6+pynicKHIIY
+BuoinxBDf3t0ONRwAbzoMiKl9OtfAbPaD9p39SAKVpamD4biYXDj8AZorMoiJlEF
++enPobRvMvyLMFNG8EbD2MjO2gF8xlouPS76X6fXspY5I2jgAfKrP0pqBt+8Uby3
+CjosLjqW9t2uzQrK7ld3WVaLg3HTs+qABIcNaDwxwjInmX51ttU9+sb01oInXsyn
+zgAvGKKbWD8cdOGiDAoPB3RlqJdcreypx4OZ98hyQclP5OkBHnffBxSEC9DGFYB7
+oJKC11zenonOM8nHv1e49KL/pJTWqxHjeNX5OsixvN/FLgxQJh2BUDZgj7Bt9fty
+VaotPRjPhOuJ9b5HVGy5ZpTnvrJHvOOI/rNsftZAxEgD2u4iyLgS6E1ZKflCZT8M
+X/LyGm1uUDYV21pAxkaa
+=rKHn
+-----END PGP SIGNATURE-----
+
+--TiqCXmo5T1hvSQQg--
