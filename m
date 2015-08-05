@@ -1,175 +1,81 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 02/11] input: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Tue, 4 Aug 2015 11:44:08 -0700
-Message-ID: <20150804184408.GD37185@dtor-ws>
-References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
- <1438506588-31545-1-git-send-email-geert@linux-m68k.org>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Wed, 5 Aug 2015 09:55:41 +0900
+Message-ID: <20150805005540.GB20726@verge.net.au>
+References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:33104 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752290AbbHDSoM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 14:44:12 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:43844 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751264AbbHEAzo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Aug 2015 20:55:44 -0400
 Content-Disposition: inline
-In-Reply-To: <1438506588-31545-1-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-input@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Sun, Aug 02, 2015 at 11:09:48AM +0200, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
+Hi Geert,
+
+On Tue, Aug 04, 2015 at 03:55:13PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
 > 
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
+> This patch series moves the setup of the GPIO-PFC pin mapping for
+> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
+> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
+> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
+> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Applied, thank you.
-
-> ---
-> v2:
+> The series consists of 3 parts:
+>   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
+>      files for all affected SoCs,
+>   b. Patch 4 disables the C code to set up the mapping on DT platforms
+>      (it's still needed on SH or ARM-legacy),
+>   c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
+> 
+> Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
+> from C code to DT",
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
+>   - Add check for CONFIG_OF and pfc->dev->of_node,
+>   - #ifdef out the code instead of introducing helper and dummy
+>     functions,
+>   - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
+>     longer needed due to the #ifdefs,
 >   - Add Acked-by.
-> ---
->  drivers/input/keyboard/Kconfig    |  4 ++--
->  drivers/input/misc/Kconfig        | 11 ++++++-----
->  drivers/input/mouse/Kconfig       |  2 +-
->  drivers/input/touchscreen/Kconfig |  8 ++++----
->  4 files changed, 13 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-> index 82a8fb50afacb253..da53ae6a93346c90 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -187,7 +187,7 @@ config KEYBOARD_EP93XX
->  
->  config KEYBOARD_GPIO
->  	tristate "GPIO Buttons"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  This driver implements support for buttons connected
->  	  to GPIO pins of various CPUs (and some other chips).
-> @@ -253,7 +253,7 @@ config KEYBOARD_TCA8418
->  
->  config KEYBOARD_MATRIX
->  	tristate "GPIO driven matrix keypad support"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select INPUT_MATRIXKMAP
->  	help
->  	  Enable support for GPIO driven matrix keypad.
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index d4f0a817e858262b..dade381c7da80eb9 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -259,7 +259,7 @@ config INPUT_APANEL
->  config INPUT_GP2A
->  	tristate "Sharp GP2AP002A00F I2C Proximity/Opto sensor driver"
->  	depends on I2C
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a Sharp GP2AP002A00F proximity/als combo-chip
->  	  hooked to an I2C bus.
-> @@ -269,7 +269,7 @@ config INPUT_GP2A
->  
->  config INPUT_GPIO_BEEPER
->  	tristate "Generic GPIO Beeper support"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a beeper connected to a GPIO pin.
->  
-> @@ -278,7 +278,7 @@ config INPUT_GPIO_BEEPER
->  
->  config INPUT_GPIO_TILT_POLLED
->  	tristate "Polled GPIO tilt switch"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select INPUT_POLLDEV
->  	help
->  	  This driver implements support for tilt switches connected
-> @@ -569,7 +569,7 @@ config INPUT_PWM_BEEPER
->  
->  config INPUT_GPIO_ROTARY_ENCODER
->  	tristate "Rotary encoders connected to GPIO pins"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here to add support for rotary encoders connected to GPIO lines.
->  	  Check file:Documentation/input/rotary-encoder.txt for more
-> @@ -776,7 +776,8 @@ config INPUT_SOC_BUTTON_ARRAY
->  
->  config INPUT_DRV260X_HAPTICS
->  	tristate "TI DRV260X haptics support"
-> -	depends on INPUT && I2C && GPIOLIB
-> +	depends on INPUT && I2C
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select INPUT_FF_MEMLESS
->  	select REGMAP_I2C
->  	help
-> diff --git a/drivers/input/mouse/Kconfig b/drivers/input/mouse/Kconfig
-> index d7820d1152d2ef2d..17f97e5e11e7cd2e 100644
-> --- a/drivers/input/mouse/Kconfig
-> +++ b/drivers/input/mouse/Kconfig
-> @@ -341,7 +341,7 @@ config MOUSE_VSXXXAA
->  
->  config MOUSE_GPIO
->  	tristate "GPIO mouse"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	select INPUT_POLLDEV
->  	help
->  	  This driver simulates a mouse on GPIO lines of various CPUs (and some
-> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-> index 860d426c480e2088..059edeb7f04a0d40 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -118,7 +118,7 @@ config TOUCHSCREEN_ATMEL_MXT
->  config TOUCHSCREEN_AUO_PIXCIR
->  	tristate "AUO in-cell touchscreen using Pixcir ICs"
->  	depends on I2C
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a AUO display with in-cell touchscreen
->  	  using Pixcir ICs.
-> @@ -142,7 +142,7 @@ config TOUCHSCREEN_BU21013
->  
->  config TOUCHSCREEN_CHIPONE_ICN8318
->  	tristate "chipone icn8318 touchscreen controller"
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	depends on I2C
->  	depends on OF
->  	help
-> @@ -156,7 +156,7 @@ config TOUCHSCREEN_CHIPONE_ICN8318
->  config TOUCHSCREEN_CY8CTMG110
->  	tristate "cy8ctmg110 touchscreen"
->  	depends on I2C
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a cy8ctmg110 capacitive touchscreen on
->  	  an AAVA device.
-> @@ -1030,7 +1030,7 @@ config TOUCHSCREEN_TPS6507X
->  config TOUCHSCREEN_ZFORCE
->  	tristate "Neonode zForce infrared touchscreens"
->  	depends on I2C
-> -	depends on GPIOLIB
-> +	depends on GPIOLIB || COMPILE_TEST
->  	help
->  	  Say Y here if you have a touchscreen using the zforce
->  	  infraread technology from Neonode.
-> -- 
-> 1.9.1
+> Dependencies:
+>   - This series applies against renesas-devel-20150803-v4.2-rc5,
+>   - Part a must go in first, to avoid regressions,
+>   - While I didn't notice any bad behavior by having part a only, part b
+>     should go in immediately after part a. Hence I think it's best if
+>     Simon can take this one, too.
+>   - Part c is independent (it doesn't touch the same code), so it can go
+>     in before or after the other parts, or in parallel.
 > 
+> Given this fixes the LCD on r8a7740/armadillo, which is a regression
+> introduced by the removal of armadillo-legacy support, I think at least
+> patch 2 should be queued for v4.3.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (6):
+>   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
+>   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
+>   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
+>   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+>   pinctrl: sh-pfc: Remove empty gpio_function_free()
+>   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
 
--- 
-Dmitry
+Where possible I prefer not to apply non-DTS/DTSI patches on top of
+DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+maintainers like things handled.  With this in mind I have done the following:
+
+1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
+   I intend for this to turn up in next soon.
+2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
+   I intend for these to be present in the renesas devel branch but
+   not in next until after the release of v4.3-rc1. I would also be
+   happy to drop them and let Linus Walleij take these patches for v4.4,
+   assuming patches 1 - 3 are accepted for v4.3.
