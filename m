@@ -1,97 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Wed, 5 Aug 2015 08:51:56 +0200
-Message-ID: <CAMuHMdW5mAdmCVh91QwwwBxRD_Bd+wgiE7ijXH43=JqKe6aM=g@mail.gmail.com>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-	<20150805005540.GB20726@verge.net.au>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [RFC PATCH 0/3] New Atmel PIO4 pinctrl/gpio driver
+Date: Wed, 5 Aug 2015 09:31:17 +0200
+Message-ID: <20150805073117.GP5161@pengutronix.de>
+References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34574 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751183AbbHEGv5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2015 02:51:57 -0400
-In-Reply-To: <20150805005540.GB20726@verge.net.au>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:42034 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752051AbbHEHbU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2015 03:31:20 -0400
+Content-Disposition: inline
+In-Reply-To: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Ludovic Desroches <ludovic.desroches@atmel.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
 
-Hi Simon,
+On Fri, Jul 31, 2015 at 05:08:07PM +0200, Ludovic Desroches wrote:
+> Hi,
+> 
+> Following our discussion, I send an RFC version of my driver. RFC because it is
+> not totally achieved, some cleanup and feature addition is needed.
+> 
+> At least, we could discuss about the 'core' part. I have used the pinmux
+> property as Mediatek driver. Patch 3 is the internal dt files we are using.
 
-On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Aug 04, 2015 at 03:55:13PM +0200, Geert Uytterhoeven wrote:
->> This patch series moves the setup of the GPIO-PFC pin mapping for
->> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
->> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
->> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
->> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
->>
->> The series consists of 3 parts:
->>   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
->>      files for all affected SoCs,
->>   b. Patch 4 disables the C code to set up the mapping on DT platforms
->>      (it's still needed on SH or ARM-legacy),
->>   c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
->>
->> Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
->> from C code to DT",
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
->>   - Add check for CONFIG_OF and pfc->dev->of_node,
->>   - #ifdef out the code instead of introducing helper and dummy
->>     functions,
->>   - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
->>     longer needed due to the #ifdefs,
->>   - Add Acked-by.
->>
->> Dependencies:
->>   - This series applies against renesas-devel-20150803-v4.2-rc5,
->>   - Part a must go in first, to avoid regressions,
->>   - While I didn't notice any bad behavior by having part a only, part b
->>     should go in immediately after part a. Hence I think it's best if
->>     Simon can take this one, too.
->>   - Part c is independent (it doesn't touch the same code), so it can go
->>     in before or after the other parts, or in parallel.
->>
->> Given this fixes the LCD on r8a7740/armadillo, which is a regression
->> introduced by the removal of armadillo-legacy support, I think at least
->> patch 2 should be queued for v4.3.
->>
->> Thanks for applying!
->>
->> Geert Uytterhoeven (6):
->>   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
->>   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
->>   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
->>   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
->>   pinctrl: sh-pfc: Remove empty gpio_function_free()
->>   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
->
-> Where possible I prefer not to apply non-DTS/DTSI patches on top of
-> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+As you can imagine I am fine with the binding, so I can add my acked-by
+once you send a non-RFC version.
 
-Ugh, that means I have to put a few more DT patches in my queue on the
-fast track...
+The only thing I never understood is what's so special about GPIOs that
+they have to bypass the pinctrl framework and instead a gpio_request
+magically translates a gpio into a pin. Wouldn't it make sense to at
+least add the pins in their GPIO mode to
+arch/arm/boot/dts/sama5d2-pinfunc.h?
 
-> maintainers like things handled.  With this in mind I have done the following:
->
-> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
->    I intend for this to turn up in next soon.
-> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
->    I intend for these to be present in the renesas devel branch but
->    not in next until after the release of v4.3-rc1. I would also be
->    happy to drop them and let Linus Walleij take these patches for v4.4,
->    assuming patches 1 - 3 are accepted for v4.3.
+Sascha
 
-Thanks, that sounds fine to me!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
