@@ -1,65 +1,97 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH v2 05/11] power: Allow compile test of GPIO consumers if
- !GPIOLIB
-Date: Wed, 5 Aug 2015 05:49:52 +0200
-Message-ID: <20150805034952.GC16139@earth>
-References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
- <1438506590-31673-1-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Wed, 5 Aug 2015 08:51:56 +0200
+Message-ID: <CAMuHMdW5mAdmCVh91QwwwBxRD_Bd+wgiE7ijXH43=JqKe6aM=g@mail.gmail.com>
+References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+	<20150805005540.GB20726@verge.net.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:44879 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750884AbbHEDt4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 4 Aug 2015 23:49:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1438506590-31673-1-git-send-email-geert@linux-m68k.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:34574 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751183AbbHEGv5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Aug 2015 02:51:57 -0400
+In-Reply-To: <20150805005540.GB20726@verge.net.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+Hi Simon,
 
---TiqCXmo5T1hvSQQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Tue, Aug 04, 2015 at 03:55:13PM +0200, Geert Uytterhoeven wrote:
+>> This patch series moves the setup of the GPIO-PFC pin mapping for
+>> Renesas PFC/GPIO combos from C code to DT, and does some cleanups.
+>> The move to DT is needed to make the GPIO hogging mechanism work, cfr.
+>> the discussion following "[PATCH] [RFC] gpio: Retry deferred GPIO
+>> hogging on pin range change" (https://lkml.org/lkml/2015/6/16/455).
+>>
+>> The series consists of 3 parts:
+>>   a. Patches 1-3 add the missing "gpio-ranges" properties to the dtsi
+>>      files for all affected SoCs,
+>>   b. Patch 4 disables the C code to set up the mapping on DT platforms
+>>      (it's still needed on SH or ARM-legacy),
+>>   c. Patches 5-6 do a few more cleanups in the sh-pfc gpio code.
+>>
+>> Changes compared to v1 ("[PATCH 0/7] ARM: shmobile: Move gpio ranges
+>> from C code to DT",
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-June/353124.html):
+>>   - Add check for CONFIG_OF and pfc->dev->of_node,
+>>   - #ifdef out the code instead of introducing helper and dummy
+>>     functions,
+>>   - Drop "pinctrl: sh-pfc: Move sh_pfc_add_gpiochip() up", as it's no
+>>     longer needed due to the #ifdefs,
+>>   - Add Acked-by.
+>>
+>> Dependencies:
+>>   - This series applies against renesas-devel-20150803-v4.2-rc5,
+>>   - Part a must go in first, to avoid regressions,
+>>   - While I didn't notice any bad behavior by having part a only, part b
+>>     should go in immediately after part a. Hence I think it's best if
+>>     Simon can take this one, too.
+>>   - Part c is independent (it doesn't touch the same code), so it can go
+>>     in before or after the other parts, or in parallel.
+>>
+>> Given this fixes the LCD on r8a7740/armadillo, which is a regression
+>> introduced by the removal of armadillo-legacy support, I think at least
+>> patch 2 should be queued for v4.3.
+>>
+>> Thanks for applying!
+>>
+>> Geert Uytterhoeven (6):
+>>   ARM: shmobile: r8a73a4 dtsi: Add missing "gpio-ranges" to gpio node
+>>   ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges" to gpio node
+>>   ARM: shmobile: sh73a0 dtsi: Add missing "gpio-ranges" to gpio node
+>>   pinctrl: sh-pfc: Stop calling gpiochip_add_pin_range() on DT platforms
+>>   pinctrl: sh-pfc: Remove empty gpio_function_free()
+>>   pinctrl: sh-pfc: Confine legacy function GPIOs to SH
+>
+> Where possible I prefer not to apply non-DTS/DTSI patches on top of
+> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
 
-Hi,
+Ugh, that means I have to put a few more DT patches in my queue on the
+fast track...
 
-On Sun, Aug 02, 2015 at 11:09:50AM +0200, Geert Uytterhoeven wrote:
-> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
-> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
-> functionality only, can still be compiled if GPIOLIB is not enabled.
->=20
-> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
-> appropriate.
+> maintainers like things handled.  With this in mind I have done the following:
+>
+> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
+>    I intend for this to turn up in next soon.
+> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
+>    I intend for these to be present in the renesas devel branch but
+>    not in next until after the release of v4.3-rc1. I would also be
+>    happy to drop them and let Linus Walleij take these patches for v4.4,
+>    assuming patches 1 - 3 are accepted for v4.3.
 
-Thanks, queued.
+Thanks, that sounds fine to me!
 
--- Sebastian
+Gr{oetje,eeting}s,
 
---TiqCXmo5T1hvSQQg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+                        Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQIcBAEBCgAGBQJVwYfgAAoJENju1/PIO/qaAawQAJEh+5CfBeTR7IhCrcM71GBL
-Xy47FFgzSe/VdHBCSgQKWuSpyYwpZU/3DLCM+FPhr08YCw8I5jvWAutKhvKVYHWH
-IrpBJPEI1cOY+jZpFpwJWT/N0FeC9sdrkmU7ZEJ1WiFbd/W3VJwx4pjNidsspZ9F
-UrEkhVgGAKIEJVVGL0Ofc2osXv1ay3rUn318HQrRPSfITndEU5gDIa5erQfpN9Dy
-YPAgCnCa+ZybcyF7n31oK9hP8OXAupoAhJdmGia076HX1u0H1Blm6+pynicKHIIY
-BuoinxBDf3t0ONRwAbzoMiKl9OtfAbPaD9p39SAKVpamD4biYXDj8AZorMoiJlEF
-+enPobRvMvyLMFNG8EbD2MjO2gF8xlouPS76X6fXspY5I2jgAfKrP0pqBt+8Uby3
-CjosLjqW9t2uzQrK7ld3WVaLg3HTs+qABIcNaDwxwjInmX51ttU9+sb01oInXsyn
-zgAvGKKbWD8cdOGiDAoPB3RlqJdcreypx4OZ98hyQclP5OkBHnffBxSEC9DGFYB7
-oJKC11zenonOM8nHv1e49KL/pJTWqxHjeNX5OsixvN/FLgxQJh2BUDZgj7Bt9fty
-VaotPRjPhOuJ9b5HVGy5ZpTnvrJHvOOI/rNsftZAxEgD2u4iyLgS6E1ZKflCZT8M
-X/LyGm1uUDYV21pAxkaa
-=rKHn
------END PGP SIGNATURE-----
-
---TiqCXmo5T1hvSQQg--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
