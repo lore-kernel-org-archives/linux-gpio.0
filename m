@@ -1,206 +1,178 @@
-From: Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v4 2/2] pinctrl: rockchip: only enable gpio clock when it setting
-Date: Fri,  7 Aug 2015 17:31:12 +0800
-Message-ID: <1438939872-2116-2-git-send-email-hl@rock-chips.com>
-References: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: heiko@sntech.de, dianders@chromium.org
-Cc: linux-rockchip@lists.infradead.org, Lin Huang <hl@rock-chips.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: <maoguang.meng@mediatek.com>
+Subject: [PATCH v2] pinctrl: mediatek: Implement wake handler and suspend resume
+Date: Fri, 7 Aug 2015 18:14:39 +0800
+Message-ID: <1438942479-24478-1-git-send-email-maoguang.meng@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34038 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750699AbbHGKOs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Aug 2015 06:14:48 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, henryc.chen@mediatek.com, Maoguang Meng <maoguang.meng@mediatek.com>
 
-gpio can keep state even the clock disable, for save power
-consumption, only enable gpio clock when it setting
+From: Maoguang Meng <maoguang.meng@mediatek.com>
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This patch implement irq_set_wake and add suspend resume feature.
+
+Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
 ---
-Changes in v4:
--delete some unrelated new blank line
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c     |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 78 +++++++++++++++++++++++++--
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  4 ++
+ 3 files changed, 80 insertions(+), 3 deletions(-)
 
- drivers/pinctrl/pinctrl-rockchip.c | 55 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index cc2843a..c5246c0 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -945,6 +945,7 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
- 	if (ret < 0)
- 		return ret;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+index d0c811d..ad27184 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+@@ -385,6 +385,7 @@ static struct platform_driver mtk_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "mediatek-mt8173-pinctrl",
+ 		.of_match_table = mt8173_pctrl_match,
++		.pm = &mtk_eint_pm_ops,
+ 	},
+ };
  
-+	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->slock, flags);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index a3d137e..af2d33a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -35,6 +35,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
++#include <linux/pm.h>
+ #include <dt-bindings/pinctrl/mt65xx.h>
  
- 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-@@ -956,6 +957,7 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
- 	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
+ #include "../core.h"
+@@ -1066,14 +1067,74 @@ static int mtk_eint_set_type(struct irq_data *d,
  
- 	spin_unlock_irqrestore(&bank->slock, flags);
-+	clk_disable(bank->clk);
- 
- 	return 0;
- }
-@@ -1389,6 +1391,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- 	unsigned long flags;
- 	u32 data;
- 
-+	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl(reg);
-@@ -1398,6 +1401,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- 	writel(data, reg);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
-+	clk_disable(bank->clk);
- }
- 
- /*
-@@ -1409,7 +1413,9 @@ static int rockchip_gpio_get(struct gpio_chip *gc, unsigned offset)
- 	struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
- 	u32 data;
- 
-+	clk_enable(bank->clk);
- 	data = readl(bank->reg_base + GPIO_EXT_PORT);
-+	clk_disable(bank->clk);
- 	data >>= offset;
- 	data &= 1;
- 	return data;
-@@ -1546,6 +1552,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 	if (ret < 0)
- 		return ret;
- 
-+	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-@@ -1603,6 +1610,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 	default:
- 		irq_gc_unlock(gc);
- 		spin_unlock_irqrestore(&bank->slock, flags);
-+		clk_disable(bank->clk);
- 		return -EINVAL;
- 	}
- 
-@@ -1611,6 +1619,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	irq_gc_unlock(gc);
- 	spin_unlock_irqrestore(&bank->slock, flags);
-+	clk_disable(bank->clk);
- 
- 	return 0;
- }
-@@ -1620,8 +1629,10 @@ static void rockchip_irq_suspend(struct irq_data *d)
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
- 	struct rockchip_pin_bank *bank = gc->private;
- 
-+	clk_enable(bank->clk);
- 	bank->saved_masks = irq_reg_readl(gc, GPIO_INTMASK);
- 	irq_reg_writel(gc, ~gc->wake_active, GPIO_INTMASK);
-+	clk_disable(bank->clk);
- }
- 
- static void rockchip_irq_resume(struct irq_data *d)
-@@ -1629,7 +1640,27 @@ static void rockchip_irq_resume(struct irq_data *d)
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
- 	struct rockchip_pin_bank *bank = gc->private;
- 
-+	clk_enable(bank->clk);
- 	irq_reg_writel(gc, bank->saved_masks, GPIO_INTMASK);
-+	clk_disable(bank->clk);
+ static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
+ {
++	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
++
+ 	if (on)
+-		d->chip->flags |= IRQF_NO_SUSPEND;
++		set_bit(d->hwirq, (unsigned long *)pctl->wake_mask);
+ 	else
+-		d->chip->flags &= ~IRQF_NO_SUSPEND;
++		clear_bit(d->hwirq, (unsigned long *)pctl->wake_mask);
++
++	return 0;
 +}
 +
-+static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
++static void mtk_eint_chip_write_mask(const struct mtk_eint_offsets *chip,
++	void __iomem *eint_reg_base, u32 *buf)
 +{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
++	int port;
++	void __iomem *reg;
 +
-+	clk_enable(bank->clk);
-+	irq_gc_mask_clr_bit(d);
++	for (port = 0; port < chip->ports; port++) {
++		reg = eint_reg_base + (port << 2);
++		writel_relaxed(~buf[port], reg + chip->mask_set);
++		writel_relaxed(buf[port], reg + chip->mask_clr);
++	}
 +}
 +
-+void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
++static void mtk_eint_chip_read_mask(const struct mtk_eint_offsets *chip,
++	void __iomem *eint_reg_base, u32 *buf)
 +{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
++	int port;
++	void __iomem *reg;
 +
-+	irq_gc_mask_set_bit(d);
-+	clk_disable(bank->clk);
- }
- 
- static int rockchip_interrupts_register(struct platform_device *pdev,
-@@ -1640,7 +1671,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
- 	struct irq_chip_generic *gc;
- 	int ret;
--	int i;
-+	int i, j;
- 
- 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
- 		if (!bank->valid) {
-@@ -1649,11 +1680,19 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 			continue;
- 		}
- 
-+		ret = clk_enable(bank->clk);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to enable clock for bank %s\n",
-+				bank->name);
-+			continue;
-+		}
++	for (port = 0; port < chip->ports; port++) {
++		reg = eint_reg_base + chip->mask + (port << 2);
++		buf[port] = ~readl_relaxed(reg);
++	}
++}
 +
- 		bank->domain = irq_domain_add_linear(bank->of_node, 32,
- 						&irq_generic_chip_ops, NULL);
- 		if (!bank->domain) {
- 			dev_warn(&pdev->dev, "could not initialize irq domain for bank %s\n",
- 				 bank->name);
-+			clk_disable(bank->clk);
- 			continue;
- 		}
- 
-@@ -1664,6 +1703,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 			dev_err(&pdev->dev, "could not alloc generic chips for bank %s\n",
- 				bank->name);
- 			irq_domain_remove(bank->domain);
-+			clk_disable(bank->clk);
- 			continue;
- 		}
- 
-@@ -1681,8 +1721,9 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].regs.mask = GPIO_INTMASK;
- 		gc->chip_types[0].regs.ack = GPIO_PORTS_EOI;
- 		gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
--		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
--		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
-+		gc->chip_types[0].chip.irq_mask = rockchip_irq_gc_mask_set_bit;
-+		gc->chip_types[0].chip.irq_unmask =
-+						  rockchip_irq_gc_mask_clr_bit;
- 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
- 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
- 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
-@@ -1691,6 +1732,12 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 
- 		irq_set_chained_handler_and_data(bank->irq,
- 						 rockchip_irq_demux, bank);
++static int mtk_eint_suspend(struct device *device)
++{
++	void __iomem *reg;
++	struct platform_device *pdev = to_platform_device(device);
++	struct mtk_pinctrl *pctl = platform_get_drvdata(pdev);
++	const struct mtk_eint_offsets *eint_offsets =
++		&pctl->devdata->eint_offsets;
 +
-+		/* map the gpio irqs here, when the clock is still running */
-+		for (j = 0 ; j < 32 ; j++)
-+			irq_create_mapping(bank->domain, j);
++	reg = pctl->eint_reg_base;
++	mtk_eint_chip_read_mask(eint_offsets, reg, pctl->cur_mask);
++	mtk_eint_chip_write_mask(eint_offsets, reg, pctl->wake_mask);
 +
-+		clk_disable(bank->clk);
- 	}
++	return 0;
++}
++
++static int mtk_eint_resume(struct device *device)
++{
++	struct platform_device *pdev = to_platform_device(device);
++	struct mtk_pinctrl *pctl = platform_get_drvdata(pdev);
++	const struct mtk_eint_offsets *eint_offsets =
++		&pctl->devdata->eint_offsets;
++
++	mtk_eint_chip_write_mask(eint_offsets,
++		pctl->eint_reg_base, pctl->cur_mask);
  
  	return 0;
-@@ -1808,7 +1855,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
- 	if (IS_ERR(bank->clk))
- 		return PTR_ERR(bank->clk);
- 
--	return clk_prepare_enable(bank->clk);
-+	return clk_prepare(bank->clk);
  }
  
- static const struct of_device_id rockchip_pinctrl_dt_match[];
++const struct dev_pm_ops mtk_eint_pm_ops = {
++	.suspend = mtk_eint_suspend,
++	.resume = mtk_eint_resume,
++};
++
+ static void mtk_eint_ack(struct irq_data *d)
+ {
+ 	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+@@ -1231,7 +1292,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	struct device_node *np = pdev->dev.of_node, *node;
+ 	struct property *prop;
+ 	struct resource *res;
+-	int i, ret, irq;
++	int i, ret, irq, ports_buf;
+ 
+ 	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
+ 	if (!pctl)
+@@ -1333,6 +1394,17 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 		goto chip_error;
+ 	}
+ 
++	ports_buf = ALIGN(pctl->devdata->eint_offsets.ports,
++			sizeof(long)/sizeof(u32));
++	pctl->wake_mask = devm_kcalloc(&pdev->dev, ports_buf * 2,
++					sizeof(*pctl->wake_mask), GFP_KERNEL);
++	if (!pctl->wake_mask) {
++		ret = -ENOMEM;
++		goto chip_error;
++	}
++
++	pctl->cur_mask = pctl->wake_mask + ports_buf;
++
+ 	pctl->eint_dual_edges = devm_kcalloc(&pdev->dev, pctl->devdata->ap_num,
+ 					     sizeof(int), GFP_KERNEL);
+ 	if (!pctl->eint_dual_edges) {
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 30213e5..f1be8e8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -266,6 +266,8 @@ struct mtk_pinctrl {
+ 	void __iomem		*eint_reg_base;
+ 	struct irq_domain	*domain;
+ 	int			*eint_dual_edges;
++	u32 *wake_mask;
++	u32 *cur_mask;
+ };
+ 
+ int mtk_pctrl_init(struct platform_device *pdev,
+@@ -281,4 +283,6 @@ int mtk_pconf_spec_set_ies_smt_range(struct regmap *regmap,
+ 		const struct mtk_pin_ies_smt_set *ies_smt_infos, unsigned int info_num,
+ 		unsigned int pin, unsigned char align, int value);
+ 
++extern const struct dev_pm_ops mtk_eint_pm_ops;
++
+ #endif /* __PINCTRL_MTK_COMMON_H */
 -- 
-1.9.1
+1.8.1.1.dirty
+
