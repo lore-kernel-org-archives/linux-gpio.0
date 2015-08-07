@@ -1,83 +1,106 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Only set the gpio range if needed
-Date: Thu, 6 Aug 2015 15:40:32 +0200
-Message-ID: <CAAObsKBk54ZAhGVmpONeBtX1AJv0woq7sp3cCGZ1FeDtTst_DA@mail.gmail.com>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [4.2-rc1][PATCH] gpio: omap: add missed spin_unlock_irqrestore
+ in omap_gpio_irq_type
+Date: Thu, 6 Aug 2015 20:36:42 -0700
+Message-ID: <20150807033642.GI4215@atomide.com>
+References: <1435157657-17843-1-git-send-email-grygorii.strashko@ti.com>
+ <CACRpkdZeBYrff4ZwVyzSKk9Gcy_57WK-3FcfwbzbD8DY06Adng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:42180 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751003AbbHGDgs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 6 Aug 2015 23:36:48 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZeBYrff4ZwVyzSKk9Gcy_57WK-3FcfwbzbD8DY06Adng@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> If the gpio DT node has the gpio-ranges property, the range will be
-> added by the gpio core and doesn't need to be added by the pinctrl
-> driver.
->
-> By having the gpio-ranges property, we have an explicit dependency from
-> the gpio node to the pinctrl node and we can stop using the deprecated
-> pinctrl_add_gpio_range() function.
->
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+* Linus Walleij <linus.walleij@linaro.org> [150716 01:38]:
+> On Wed, Jun 24, 2015 at 4:54 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+>=20
+> > From: Grygorii Strashko <grygorii.strashko@linaro.org>
+> >
+> > Add missed spin_unlock_irqrestore in omap_gpio_irq_type when
+> > omap_set_gpio_triggering() is failed.
+> >
+> > It fixes static checker warning:
+> >
+> >         drivers/gpio/gpio-omap.c:523 omap_gpio_irq_type()
+> >         warn: inconsistent returns 'spin_lock:&bank->lock'.
+> >
+> > This fixes commit:
+> > 1562e4618ded ('gpio: omap: fix error handling in omap_gpio_irq_type=
+')
+> >
+> > Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+> > Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
+>=20
+> Patch applied for fixes.
 
-Hi Linus,
+Linus, looks like we now have a new build warning in Linux next
+with the fixes and raw_spinlock_t change, so a merge or a commit
+is needed. If you prefer a patch, here's one below.
 
-do you mind if this goes through the Tegra tree? It would be best if
-it went together with 3/3 ("ARM: tegra: Add gpio-ranges property"), to
-avoid duplicated GPIO ranges.
+Regards,
 
-Thanks,
+Tony
 
-Tomeu
+8< ---------------
+=46rom: Tony Lindgren <tony@atomide.com>
+Date: Thu, 6 Aug 2015 20:32:24 -0700
+Subject: [PATCH] gpio: omap: Fix build warning for raw_spinlock_t conve=
+rsion
+ and unlock fix
+MIME-Version: 1.0
+Content-Type: text/plain; charset=3DUTF-8
+Content-Transfer-Encoding: 8bit
 
-> ---
->
-> Changes in v2: None
->
->  drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-> index 0f982b829be1..0fd7fd2b0f72 100644
-> --- a/drivers/pinctrl/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/pinctrl-tegra.c
-> @@ -624,6 +624,22 @@ static struct pinctrl_desc tegra_pinctrl_desc = {
->         .owner = THIS_MODULE,
->  };
->
-> +static bool gpio_node_has_range(void)
-> +{
-> +       struct device_node *np;
-> +       bool has_prop = false;
-> +
-> +       np = of_find_compatible_node(NULL, NULL, "nvidia,tegra30-gpio");
-> +       if (!np)
-> +               return has_prop;
-> +
-> +       has_prop = of_find_property(np, "gpio-ranges", NULL);
-> +
-> +       of_node_put(np);
-> +
-> +       return has_prop;
-> +}
-> +
->  int tegra_pinctrl_probe(struct platform_device *pdev,
->                         const struct tegra_pinctrl_soc_data *soc_data)
->  {
-> @@ -708,7 +724,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
->                 return PTR_ERR(pmx->pctl);
->         }
->
-> -       pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
-> +       if (!gpio_node_has_range())
-> +               pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
->
->         platform_set_drvdata(pdev, pmx);
->
-> --
-> 2.4.3
->
+Looks like we now have a new build warning in Linux next with fix
+977bd8a94c40 ("gpio: omap: add missed spin_unlock_irqrestore in
+omap_gpio_irq_type") and raw_spinlock changes done in commit
+4dbada2be460 ("gpio: omap: use raw locks for locking"):
+
+drivers/gpio/gpio-omap.c: In function =E2=80=98omap_gpio_irq_type=E2=80=
+=99:
+drivers/gpio/gpio-omap.c:504:26: warning: passing argument 1 of
+=E2=80=98spin_unlock_irqrestore=E2=80=99 from incompatible pointer type
+[-Wincompatible-pointer-types]
+   spin_unlock_irqrestore(&bank->lock, flags);
+                          ^
+In file included from include/linux/seqlock.h:35:0,
+                 from include/linux/time.h:5,
+                 from include/linux/stat.h:18,
+                 from include/linux/module.h:10,
+                 from drivers/gpio/gpio-omap.c:16:
+include/linux/spinlock.h:370:122: note: expected
+=E2=80=98spinlock_t * {aka struct spinlock *}=E2=80=99 but argument is =
+of type
+=E2=80=98raw_spinlock_t * {aka struct raw_spinlock *}=E2=80=99
+
+=46ix the issue with using raw_spinlock_t instead.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -501,7 +501,7 @@ static int omap_gpio_irq_type(struct irq_data *d, u=
+nsigned type)
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	retval =3D omap_set_gpio_triggering(bank, offset, type);
+ 	if (retval) {
+-		spin_unlock_irqrestore(&bank->lock, flags);
++		raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 		goto error;
+ 	}
+ 	omap_gpio_init_irq(bank, offset);
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
