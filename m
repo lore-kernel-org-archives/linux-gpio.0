@@ -1,115 +1,206 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [4.2-rc1][PATCH] gpio: omap: add missed spin_unlock_irqrestore
- in omap_gpio_irq_type
-Date: Fri, 7 Aug 2015 10:34:44 +0300
-Message-ID: <55C45F94.50000@ti.com>
-References: <1435157657-17843-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdZeBYrff4ZwVyzSKk9Gcy_57WK-3FcfwbzbD8DY06Adng@mail.gmail.com> <20150807033642.GI4215@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v4 2/2] pinctrl: rockchip: only enable gpio clock when it setting
+Date: Fri,  7 Aug 2015 17:31:12 +0800
+Message-ID: <1438939872-2116-2-git-send-email-hl@rock-chips.com>
+References: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150807033642.GI4215@atomide.com>
+In-Reply-To: <1438939872-2116-1-git-send-email-hl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Sekhar Nori <nsekhar@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: heiko@sntech.de, dianders@chromium.org
+Cc: linux-rockchip@lists.infradead.org, Lin Huang <hl@rock-chips.com>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Tony,
-On 08/07/2015 06:36 AM, Tony Lindgren wrote:
-> * Linus Walleij <linus.walleij@linaro.org> [150716 01:38]:
->> On Wed, Jun 24, 2015 at 4:54 PM, Grygorii Strashko
->> <grygorii.strashko@ti.com> wrote:
->>
->>> From: Grygorii Strashko <grygorii.strashko@linaro.org>
->>>
->>> Add missed spin_unlock_irqrestore in omap_gpio_irq_type when
->>> omap_set_gpio_triggering() is failed.
->>>
->>> It fixes static checker warning:
->>>
->>>          drivers/gpio/gpio-omap.c:523 omap_gpio_irq_type()
->>>          warn: inconsistent returns 'spin_lock:&bank->lock'.
->>>
->>> This fixes commit:
->>> 1562e4618ded ('gpio: omap: fix error handling in omap_gpio_irq_type=
-')
->>>
->>> Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
->>> Signed-off-by: Grygorii Strashko <grygorii.strashko@linaro.org>
->>
->> Patch applied for fixes.
->
-> Linus, looks like we now have a new build warning in Linux next
-> with the fixes and raw_spinlock_t change, so a merge or a commit
-> is needed. If you prefer a patch, here's one below.
+gpio can keep state even the clock disable, for save power
+consumption, only enable gpio clock when it setting
 
-Yes. It seems merge/rebase issue between fixes & next:
-- this patch went through fixes and RAW spinlock conversation
-patch through -next, and without merge conflicts.
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+Changes in v4:
+-delete some unrelated new blank line
 
-and patch has been posted already by Axel Lin:
-http://www.spinics.net/lists/linux-omap/msg121031.html
+ drivers/pinctrl/pinctrl-rockchip.c | 55 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 51 insertions(+), 4 deletions(-)
 
-
->
-> 8< ---------------
-> From: Tony Lindgren <tony@atomide.com>
-> Date: Thu, 6 Aug 2015 20:32:24 -0700
-> Subject: [PATCH] gpio: omap: Fix build warning for raw_spinlock_t con=
-version
->   and unlock fix
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->
-> Looks like we now have a new build warning in Linux next with fix
-> 977bd8a94c40 ("gpio: omap: add missed spin_unlock_irqrestore in
-> omap_gpio_irq_type") and raw_spinlock changes done in commit
-> 4dbada2be460 ("gpio: omap: use raw locks for locking"):
->
-> drivers/gpio/gpio-omap.c: In function =E2=80=98omap_gpio_irq_type=E2=80=
-=99:
-> drivers/gpio/gpio-omap.c:504:26: warning: passing argument 1 of
-> =E2=80=98spin_unlock_irqrestore=E2=80=99 from incompatible pointer ty=
-pe
-> [-Wincompatible-pointer-types]
->     spin_unlock_irqrestore(&bank->lock, flags);
->                            ^
-> In file included from include/linux/seqlock.h:35:0,
->                   from include/linux/time.h:5,
->                   from include/linux/stat.h:18,
->                   from include/linux/module.h:10,
->                   from drivers/gpio/gpio-omap.c:16:
-> include/linux/spinlock.h:370:122: note: expected
-> =E2=80=98spinlock_t * {aka struct spinlock *}=E2=80=99 but argument i=
-s of type
-> =E2=80=98raw_spinlock_t * {aka struct raw_spinlock *}=E2=80=99
->
-> Fix the issue with using raw_spinlock_t instead.
->
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
->
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -501,7 +501,7 @@ static int omap_gpio_irq_type(struct irq_data *d,=
- unsigned type)
->   	raw_spin_lock_irqsave(&bank->lock, flags);
->   	retval =3D omap_set_gpio_triggering(bank, offset, type);
->   	if (retval) {
-> -		spin_unlock_irqrestore(&bank->lock, flags);
-> +		raw_spin_unlock_irqrestore(&bank->lock, flags);
->   		goto error;
->   	}
->   	omap_gpio_init_irq(bank, offset);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
-
---=20
-regards,
--grygorii
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index cc2843a..c5246c0 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -945,6 +945,7 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	clk_enable(bank->clk);
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+@@ -956,6 +957,7 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
+ 	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
+ 
+ 	spin_unlock_irqrestore(&bank->slock, flags);
++	clk_disable(bank->clk);
+ 
+ 	return 0;
+ }
+@@ -1389,6 +1391,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+ 	unsigned long flags;
+ 	u32 data;
+ 
++	clk_enable(bank->clk);
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	data = readl(reg);
+@@ -1398,6 +1401,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+ 	writel(data, reg);
+ 
+ 	spin_unlock_irqrestore(&bank->slock, flags);
++	clk_disable(bank->clk);
+ }
+ 
+ /*
+@@ -1409,7 +1413,9 @@ static int rockchip_gpio_get(struct gpio_chip *gc, unsigned offset)
+ 	struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
+ 	u32 data;
+ 
++	clk_enable(bank->clk);
+ 	data = readl(bank->reg_base + GPIO_EXT_PORT);
++	clk_disable(bank->clk);
+ 	data >>= offset;
+ 	data &= 1;
+ 	return data;
+@@ -1546,6 +1552,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	clk_enable(bank->clk);
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+@@ -1603,6 +1610,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 	default:
+ 		irq_gc_unlock(gc);
+ 		spin_unlock_irqrestore(&bank->slock, flags);
++		clk_disable(bank->clk);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1611,6 +1619,7 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 
+ 	irq_gc_unlock(gc);
+ 	spin_unlock_irqrestore(&bank->slock, flags);
++	clk_disable(bank->clk);
+ 
+ 	return 0;
+ }
+@@ -1620,8 +1629,10 @@ static void rockchip_irq_suspend(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+ 
++	clk_enable(bank->clk);
+ 	bank->saved_masks = irq_reg_readl(gc, GPIO_INTMASK);
+ 	irq_reg_writel(gc, ~gc->wake_active, GPIO_INTMASK);
++	clk_disable(bank->clk);
+ }
+ 
+ static void rockchip_irq_resume(struct irq_data *d)
+@@ -1629,7 +1640,27 @@ static void rockchip_irq_resume(struct irq_data *d)
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+ 
++	clk_enable(bank->clk);
+ 	irq_reg_writel(gc, bank->saved_masks, GPIO_INTMASK);
++	clk_disable(bank->clk);
++}
++
++static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct rockchip_pin_bank *bank = gc->private;
++
++	clk_enable(bank->clk);
++	irq_gc_mask_clr_bit(d);
++}
++
++void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct rockchip_pin_bank *bank = gc->private;
++
++	irq_gc_mask_set_bit(d);
++	clk_disable(bank->clk);
+ }
+ 
+ static int rockchip_interrupts_register(struct platform_device *pdev,
+@@ -1640,7 +1671,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
+ 	struct irq_chip_generic *gc;
+ 	int ret;
+-	int i;
++	int i, j;
+ 
+ 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
+ 		if (!bank->valid) {
+@@ -1649,11 +1680,19 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 			continue;
+ 		}
+ 
++		ret = clk_enable(bank->clk);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to enable clock for bank %s\n",
++				bank->name);
++			continue;
++		}
++
+ 		bank->domain = irq_domain_add_linear(bank->of_node, 32,
+ 						&irq_generic_chip_ops, NULL);
+ 		if (!bank->domain) {
+ 			dev_warn(&pdev->dev, "could not initialize irq domain for bank %s\n",
+ 				 bank->name);
++			clk_disable(bank->clk);
+ 			continue;
+ 		}
+ 
+@@ -1664,6 +1703,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 			dev_err(&pdev->dev, "could not alloc generic chips for bank %s\n",
+ 				bank->name);
+ 			irq_domain_remove(bank->domain);
++			clk_disable(bank->clk);
+ 			continue;
+ 		}
+ 
+@@ -1681,8 +1721,9 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 		gc->chip_types[0].regs.mask = GPIO_INTMASK;
+ 		gc->chip_types[0].regs.ack = GPIO_PORTS_EOI;
+ 		gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
+-		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
+-		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
++		gc->chip_types[0].chip.irq_mask = rockchip_irq_gc_mask_set_bit;
++		gc->chip_types[0].chip.irq_unmask =
++						  rockchip_irq_gc_mask_clr_bit;
+ 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
+ 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
+ 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
+@@ -1691,6 +1732,12 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 
+ 		irq_set_chained_handler_and_data(bank->irq,
+ 						 rockchip_irq_demux, bank);
++
++		/* map the gpio irqs here, when the clock is still running */
++		for (j = 0 ; j < 32 ; j++)
++			irq_create_mapping(bank->domain, j);
++
++		clk_disable(bank->clk);
+ 	}
+ 
+ 	return 0;
+@@ -1808,7 +1855,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+ 	if (IS_ERR(bank->clk))
+ 		return PTR_ERR(bank->clk);
+ 
+-	return clk_prepare_enable(bank->clk);
++	return clk_prepare(bank->clk);
+ }
+ 
+ static const struct of_device_id rockchip_pinctrl_dt_match[];
+-- 
+1.9.1
