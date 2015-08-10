@@ -1,32 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Implement pictrl irq wake handler
-Date: Mon, 10 Aug 2015 14:43:13 +0200
-Message-ID: <CACRpkdZ1RjjSh5J=K724CpbXDXwdHJSdXOTLS8fSOO-34zn=9A@mail.gmail.com>
-References: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH v2 00/11] gpio: Allow compile test of GPIO consumers if
+ !GPIOLIB
+Date: Mon, 10 Aug 2015 18:01:52 +0200
+Message-ID: <1439222512.2605.12.camel@sipsolutions.net>
+References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:35048 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751310AbbHJMnO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 08:43:14 -0400
-Received: by obbop1 with SMTP id op1so122807320obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 05:43:13 -0700 (PDT)
-In-Reply-To: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
+Received: from s3.sipsolutions.net ([5.9.151.49]:60191 "EHLO sipsolutions.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751346AbbHJQCY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 10 Aug 2015 12:02:24 -0400
+In-Reply-To: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: maoguang meng <maoguang.meng@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Evgeniy Polyakov <zbr@ioremap.net>, Florian Fainelli <f.fainelli@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Marcel Selhorst <tpmdd@selhorst.net>, Noralf =?ISO-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>, Peter Huewe <peterhuewe@gmx.de>, Sebastian Reichel <sre@kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 29, 2015 at 11:36 AM,  <maoguang.meng@mediatek.com> wrote:
+On Sun, 2015-08-02 at 11:07 +0200, Geert Uytterhoeven wrote:
+> 
+> Thanks for applying!
+> 
 
-> From: Maoguang Meng <maoguang.meng@mediatek.com>
->
-> This patch implement irq_set_wake for suspend resume.
->
-> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+Did you expect the series to get applied somewhere (GPIO tree, if
+there's such a thing?), or the single patches to go through the
+relevant other trees?
 
-Hongzhou/Yingjoe: are you OK with this patch? Can I have your ACKs?
+Fine with me either way, but it'd be good to know so we don't have the
+patches twice :)
 
-Yours,
-Linus Walleij
+johannes
