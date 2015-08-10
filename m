@@ -1,54 +1,56 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [RFC PATCH 0/3] New Atmel PIO4 pinctrl/gpio driver
-Date: Mon, 10 Aug 2015 08:53:34 +0200
-Message-ID: <20150810065334.GC2635@odux.rfo.atmel.com>
-References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
- <20150805073117.GP5161@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/9] gpio: Allow hogged gpios to be requested
+Date: Mon, 10 Aug 2015 11:20:00 +0200
+Message-ID: <CACRpkdbHwCNttDCEUyYq_5REh1PDuR__XDeLD0mR6NqfO6h_HA@mail.gmail.com>
+References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
+	<1437125570-28623-4-git-send-email-mpa@pengutronix.de>
+	<20150717202702.GK7013@pengutronix.de>
+	<20150719140142.GV26287@pengutronix.de>
+	<20150728091753.GJ28535@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:35614 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752613AbbHJGxy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 02:53:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20150805073117.GP5161@pengutronix.de>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34910 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753548AbbHJJUB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 05:20:01 -0400
+Received: by obbop1 with SMTP id op1so119651018obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 02:20:00 -0700 (PDT)
+In-Reply-To: <20150728091753.GJ28535@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
+To: Johan Hovold <johan@kernel.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Sascha,
+On Tue, Jul 28, 2015 at 11:17 AM, Johan Hovold <johan@kernel.org> wrote:
+> On Sun, Jul 19, 2015 at 04:01:42PM +0200, Markus Pargmann wrote:
 
-On Wed, Aug 05, 2015 at 09:31:17AM +0200, Sascha Hauer wrote:
-> On Fri, Jul 31, 2015 at 05:08:07PM +0200, Ludovic Desroches wrote:
-> > Hi,
-> > 
-> > Following our discussion, I send an RFC version of my driver. RFC because it is
-> > not totally achieved, some cleanup and feature addition is needed.
-> > 
-> > At least, we could discuss about the 'core' part. I have used the pinmux
-> > property as Mediatek driver. Patch 3 is the internal dt files we are using.
-> 
-> As you can imagine I am fine with the binding, so I can add my acked-by
-> once you send a non-RFC version.
+>> > I don't like this patch. IMHO hogging is a "use" of a GPIO that should
+>> > prevent it being requested.
+>>
+>> I disagree with you here. The original patch stated in its description
+>> that it was designed to initialize GPIOs. In my understanding this does
+>> not necessarily mean that a hogged GPIO has to be blocked forever.
 >
+> IIRC, this use case was discussed but was rejected by Linus when hogs
+> were added:
+>
+>         https://lkml.kernel.org/r/CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF9pdWa5g@mail.gmail.com
+>
+> Linus?
 
-Great, I'm glad to hear that.
- 
-> The only thing I never understood is what's so special about GPIOs that
-> they have to bypass the pinctrl framework and instead a gpio_request
-> magically translates a gpio into a pin.
+Yeah that is true. But maybe I softened up a bit.
 
-Not sure to really understand your concern here... Do you mean I could
-get rid of gpio_request_enable()?
+Basically I want to avoid having two very similar mechanisms.
 
-> Wouldn't it make sense to at
-> least add the pins in their GPIO mode to
-> arch/arm/boot/dts/sama5d2-pinfunc.h?
+But that is maybe more of a question of how the code is
+arranged and named than what it is called. It would be nicer
+if this was referring to initial values rather than hogging,
+the mechanism inside the kernel could be the same.
 
-It is done, PIN_PA0 could be used for this purpose.
+But then there is the path where something that is initially
+a hog is turned into a userspace GPIO. Then it is essentially
+not a hog anymore, so this property is not static.
 
-Regards
-
-Ludovic
+Yours,
+Linus Walleij
