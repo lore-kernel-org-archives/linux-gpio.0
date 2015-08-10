@@ -1,56 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/9] gpio: Allow hogged gpios to be requested
-Date: Mon, 10 Aug 2015 11:20:00 +0200
-Message-ID: <CACRpkdbHwCNttDCEUyYq_5REh1PDuR__XDeLD0mR6NqfO6h_HA@mail.gmail.com>
-References: <1437125570-28623-1-git-send-email-mpa@pengutronix.de>
-	<1437125570-28623-4-git-send-email-mpa@pengutronix.de>
-	<20150717202702.GK7013@pengutronix.de>
-	<20150719140142.GV26287@pengutronix.de>
-	<20150728091753.GJ28535@localhost>
+Subject: Re: [PATCH v2] gpio: Allow hogged gpios to be requested
+Date: Mon, 10 Aug 2015 11:26:49 +0200
+Message-ID: <CACRpkdZAjWf3Echvz6Z2hTOF8Bqs=OqLKUTYc04r9vzFo727jg@mail.gmail.com>
+References: <1438680424-698-1-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34910 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753548AbbHJJUB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 05:20:01 -0400
-Received: by obbop1 with SMTP id op1so119651018obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 02:20:00 -0700 (PDT)
-In-Reply-To: <20150728091753.GJ28535@localhost>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34932 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753812AbbHJJ0u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 05:26:50 -0400
+Received: by obbop1 with SMTP id op1so119750477obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 02:26:49 -0700 (PDT)
+In-Reply-To: <1438680424-698-1-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, Jul 28, 2015 at 11:17 AM, Johan Hovold <johan@kernel.org> wrote:
-> On Sun, Jul 19, 2015 at 04:01:42PM +0200, Markus Pargmann wrote:
+On Tue, Aug 4, 2015 at 11:27 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
 
->> > I don't like this patch. IMHO hogging is a "use" of a GPIO that should
->> > prevent it being requested.
->>
->> I disagree with you here. The original patch stated in its description
->> that it was designed to initialize GPIOs. In my understanding this does
->> not necessarily mean that a hogged GPIO has to be blocked forever.
+> It can be useful to claim hogged gpios later, for example from
+> userspace. This allows to set defaults for GPIOs using the hogging
+> mechanism and override the setup later from userspace or a kernel driver.
 >
-> IIRC, this use case was discussed but was rejected by Linus when hogs
-> were added:
+> This patch adds a check for hogged gpios to allow requesting them. If
+> the gpio is not hogged but marked as requested, it still fails with
+> -EBUSY.
 >
->         https://lkml.kernel.org/r/CACRpkdZcNcPBYQM438CZJx1gYst9BFBSTj-3Qv2aPGF9pdWa5g@mail.gmail.com
->
-> Linus?
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
 
-Yeah that is true. But maybe I softened up a bit.
+To me it feels like a new DT property "gpio-inital-value" or so
+need to be defined in addition to the hogging bindings, and that
+one just sets the GPIO up without setting the FLAG_IS_HOGGED.
 
-Basically I want to avoid having two very similar mechanisms.
+The mechanism needs to be available to non-DT as well
+of course, but it could be a first usecase.
 
-But that is maybe more of a question of how the code is
-arranged and named than what it is called. It would be nicer
-if this was referring to initial values rather than hogging,
-the mechanism inside the kernel could be the same.
+So instead of:
 
-But then there is the path where something that is initially
-a hog is turned into a userspace GPIO. Then it is essentially
-not a hog anymore, so this property is not static.
+line_b {
+           gpio-initval;
+           gpios = <6 0>;
+           output-low;
+};
+
+Note: no line-name. And it shouldn't be allowed: we don't
+know who will use this in the end.
 
 Yours,
 Linus Walleij
