@@ -1,34 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] gpiolib: Add gpio name information to /sys/kernel/debug/gpio
-Date: Mon, 10 Aug 2015 12:02:13 +0200
-Message-ID: <CACRpkdajd5B6qUa6mi_0m53eMtLenoAWUCnmq-mOC+EhXfzpTA@mail.gmail.com>
-References: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
-	<1438680203-13432-7-git-send-email-mpa@pengutronix.de>
+Subject: Re: [PATCH] pinctrl: mediatek: Implement pictrl irq wake handler
+Date: Mon, 10 Aug 2015 14:43:13 +0200
+Message-ID: <CACRpkdZ1RjjSh5J=K724CpbXDXwdHJSdXOTLS8fSOO-34zn=9A@mail.gmail.com>
+References: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33809 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932560AbbHJKCO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 06:02:14 -0400
-Received: by oip136 with SMTP id 136so83082330oip.1
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 03:02:13 -0700 (PDT)
-In-Reply-To: <1438680203-13432-7-git-send-email-mpa@pengutronix.de>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35048 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751310AbbHJMnO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 08:43:14 -0400
+Received: by obbop1 with SMTP id op1so122807320obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2015 05:43:13 -0700 (PDT)
+In-Reply-To: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: maoguang meng <maoguang.meng@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 4, 2015 at 11:23 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+On Wed, Jul 29, 2015 at 11:36 AM,  <maoguang.meng@mediatek.com> wrote:
 
-> Add some information about gpio names to the debugfs gpio file. name and
-> label of a GPIO are then displayed next to each other. This way it is
-> easy to see what the real name of GPIO is and what the driver requested
-> it for.
+> From: Maoguang Meng <maoguang.meng@mediatek.com>
 >
-> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> This patch implement irq_set_wake for suspend resume.
+>
+> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
 
-This patch looks correct in the context.
+Hongzhou/Yingjoe: are you OK with this patch? Can I have your ACKs?
 
 Yours,
 Linus Walleij
