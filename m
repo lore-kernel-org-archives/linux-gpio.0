@@ -1,48 +1,49 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: [PATCH] gpio: mxc: fix section mismatch warning
-Date: Tue, 11 Aug 2015 15:51:59 +0300
-Message-ID: <1439297519-6099-1-git-send-email-vladimir_zapolskiy@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: nomadik: reflect current input value
+Date: Tue, 11 Aug 2015 17:12:21 +0200
+Message-ID: <1439305941-29948-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:43874 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934106AbbHKMxs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 08:53:48 -0400
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:34715 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965117AbbHKPM3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 11:12:29 -0400
+Received: by lbbtg9 with SMTP id tg9so8237193lbb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2015 08:12:27 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-From: Dirk Behme <dirk.behme@de.bosch.com>
+Let us see the current value on the input line in debugfs.
 
-Fix the section mismatch warning
-
-WARNING: vmlinux.o(.text+0x2b2788): Section mismatch in reference from the function mxc_gpio_probe() to the function .init.text:mxc_gpio_init_gc()
-The function mxc_gpio_probe() references
-the function __init mxc_gpio_init_gc().
-This is often because mxc_gpio_probe lacks a __init
-annotation or the annotation of mxc_gpio_init_gc is wrong.
-
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mxc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 0f74027..e877d82 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -339,7 +339,7 @@ static int gpio_set_wake_irq(struct irq_data *d, u32 enable)
- 	return 0;
- }
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index 809d88445db5..ad43ea8fd67e 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -1012,6 +1012,7 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 		int irq = gpio_to_irq(gpio);
+ 		struct irq_desc	*desc = irq_to_desc(irq);
+ 		int pullidx = 0;
++		int val;
  
--static void __init mxc_gpio_init_gc(struct mxc_gpio_port *port, int irq_base)
-+static void mxc_gpio_init_gc(struct mxc_gpio_port *port, int irq_base)
- {
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
+ 		if (pull)
+ 			pullidx = data_out ? 1 : 2;
+@@ -1021,6 +1022,10 @@ static void nmk_gpio_dbg_show_one(struct seq_file *s,
+ 			   label ?: "(none)",
+ 			   pulls[pullidx],
+ 			   (mode < 0) ? "unknown" : modes[mode]);
++
++		val = nmk_gpio_get_input(chip, offset);
++		seq_printf(s, " VAL %d", val);
++
+ 		/*
+ 		 * This races with request_irq(), set_irq_type(),
+ 		 * and set_irq_wake() ... but those are "rare".
 -- 
-2.1.4
+2.4.3
 
