@@ -1,57 +1,39 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 09/11] fbdev: Allow compile test of GPIO consumers if !GPIOLIB
-Date: Tue, 11 Aug 2015 09:28:09 +0200
-Message-ID: <CAMuHMdUjDkH0qqKkp9rC__uWzi8bx+ubd62-AOP5mRE8TokyCw@mail.gmail.com>
-References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org>
-	<1438506593-31845-1-git-send-email-geert@linux-m68k.org>
-	<55C9A2C3.1060001@ti.com>
+From: "Alfred Cheuk Chow" <agrotecnico@bib.unne.edu.ar>
+Subject: (unknown)
+Date: Tue, 11 Aug 2015 03:04:17 -0300
+Message-ID: <adf7c9c6f36c259297635520e06f19bb.squirrel@bib.unne.edu.ar>
+Reply-To: alfred.chow101@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:35180 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754981AbbHKH2K (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 03:28:10 -0400
-In-Reply-To: <55C9A2C3.1060001@ti.com>
+Received: from bib.unne.edu.ar ([200.45.54.12]:42966 "EHLO bib.unne.edu.ar"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753261AbbHKHcD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 11 Aug 2015 03:32:03 -0400
+Subject: 
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Tomi,
 
-On Tue, Aug 11, 2015 at 9:22 AM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> On 02/08/15 12:09, Geert Uytterhoeven wrote:
->> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
->> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
->> functionality only, can still be compiled if GPIOLIB is not enabled.
->>
->> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
->> appropriate.
->>
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Applied to 4.3 fbdev.
 
-Thanks!
+-- 
+Good Day,
 
-> I do wonder why this is needed, though... I understand COMPILE_TEST if
-> the dependency in question is difficult/impossible to enable with your
-> kernel config (say, enabling OMAP SoC support with x86 config), but
-> isn't GPIOLIB something that can be trivially enabled in any kernel config?
+I am Mr. Alfred Cheuk Yu Chow, the Director for Credit & Marketing Chong
+Hing Bank, Hong Kong, Chong Hing Bank Centre, 24 Des Voeux Road Central,
+Hong Kong. I have a business proposal of $38,980,369.00 (Thirty Eight
+Million, Nine Hundred and Eighty Thousand, Three Hundred and Sixty Nine
+USD) only for you to transact with me from my bank to your country.
 
-While there are a few mfd and pinctrl drivers that select GPIOLIB, the
-presence of GPIOLIB is mostly a platform feature. Not all architectures support
-GPIOLIB yet.
+All confirmable documents to back up the claims will be made available to
+you prior to your acceptance and as soon as I receive your return mail Via
+my email address: alfred.chow101@gmail.com and I will let you know what is
+required of you.
 
-Gr{oetje,eeting}s,
+Your earliest response to this letter will be appreciated.
 
-                        Geert
+Best Regards,
+Alfred Chow
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
