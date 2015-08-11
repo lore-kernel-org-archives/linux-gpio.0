@@ -1,56 +1,43 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Implement pictrl irq wake handler
-Date: Tue, 11 Aug 2015 15:50:47 +0800
-Message-ID: <CAGS+omA+yhcSSMPq_Pvc+v9UjwLz8wJNKr9ezcuxnYHAUwNXfQ@mail.gmail.com>
-References: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
- <CACRpkdZ1RjjSh5J=K724CpbXDXwdHJSdXOTLS8fSOO-34zn=9A@mail.gmail.com> <1439257910.38706.1.camel@mussux00.eus.mediatek.inc>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [PATCH 0/5] New Atmel PIO4 pinctrl/gpio driver
+Date: Tue, 11 Aug 2015 10:28:00 +0200
+Message-ID: <1439281685-3020-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439257910.38706.1.camel@mussux00.eus.mediatek.inc>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, maoguang meng <maoguang.meng@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:49683 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753539AbbHKI2Y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 04:28:24 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: s.hauer@pengutronix.de, linus.walleij@linaro.org, nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-On Tue, Aug 11, 2015 at 9:51 AM, Hongzhou Yang
-<hongzhou.yang@mediatek.com> wrote:
-> On Mon, 2015-08-10 at 14:43 +0200, Linus Walleij wrote:
->> On Wed, Jul 29, 2015 at 11:36 AM,  <maoguang.meng@mediatek.com> wrote:
->>
->> > From: Maoguang Meng <maoguang.meng@mediatek.com>
->> >
->> > This patch implement irq_set_wake for suspend resume.
->> >
->> > Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
->>
->> Hongzhou/Yingjoe: are you OK with this patch? Can I have your ACKs?
->>
->> Yours,
->> Linus Walleij
->
-> Hi Linus,
->
-> Yes, you can. Thank you.
->
-> Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Hi,
 
-NAK.
+The Atmel PIO4 controller has been introduced with SAMA5D2 chip family. This
+drivers manages both pinmux/pinconf and gpio stuff. It is inspired by Mediatek
+pinctrl driver.
 
-maoguang removes almost all of this patch in what I think is v2 of
-this same patch:
-https://patchwork.kernel.org/patch/6967441/
+Ludovic Desroches (5):
+  pinctrl: introduce driver for Atmel PIO4 controller
+  pinctrl: dt-binding: Add DT binding documentation for Atmel PIO4
+  MAINTAINERS: Add an entry for pinctrl-at91-pio4
+  ARM: at91/dt: sama5d2: add pio controller node
+  ARM: at91/defconfig: sama5: add PIO4 controller support
 
-maoguang, please squash the two version of this patch together, and
-upload a separate, correct patch.
+ .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   |   90 ++
+ MAINTAINERS                                        |    7 +
+ arch/arm/boot/dts/sama5d2.dtsi                     |   14 +
+ arch/arm/mach-at91/Kconfig                         |    1 +
+ drivers/pinctrl/Kconfig                            |   13 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-at91-pio4.c                | 1063 ++++++++++++++++++++
+ 7 files changed, 1189 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-at91-pio4.c
 
--Dan
+-- 
+2.5.0
 
->
-> Hongzhou
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
