@@ -1,90 +1,96 @@
-From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: Fix multiple registeration issue.
-Date: Mon, 10 Aug 2015 21:49:31 -0700
-Message-ID: <1439268571-10895-1-git-send-email-hongzhou.yang@mediatek.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v2 09/11] fbdev: Allow compile test of GPIO consumers
+ if !GPIOLIB
+Date: Tue, 11 Aug 2015 10:22:43 +0300
+Message-ID: <55C9A2C3.1060001@ti.com>
+References: <1438506475-31012-1-git-send-email-geert@linux-m68k.org> <1438506593-31845-1-git-send-email-geert@linux-m68k.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="Td6xgp8lmISjJ7wdrEbp3LetmkO5VJI8B"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41369 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750872AbbHKEtp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 00:49:45 -0400
+Received: from devils.ext.ti.com ([198.47.26.153]:46294 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbbHKHWy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Aug 2015 03:22:54 -0400
+In-Reply-To: <1438506593-31845-1-git-send-email-geert@linux-m68k.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com, dandan.he@mediatek.com, eddie.huang@mediatek.com
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: linux-fbdev@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Use dynamic allocation to fix multiple registeration issue.
+--Td6xgp8lmISjJ7wdrEbp3LetmkO5VJI8B
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
---------------8<--------------------
-Since our common driver need support main chip and PMU
-at the same time, that means it will register two
-pinctrl device, and the pinctrl_desc structure should
-be used two times.
 
-But pinctrl_desc use global static definition, then
-the latest registered pinctrl device will overwrite
-the old one's, all members in pinctrl_desc will set to
-the new one's, such as name, pins and pins numbers, etc.
-This is a bug. Changing to use devm_kzalloc to fix it.
 
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   27 +++++++++++++++----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+On 02/08/15 12:09, Geert Uytterhoeven wrote:
+> The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is=
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index ad1ea16..2bba504 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1202,17 +1202,12 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct pinctrl_desc mtk_pctrl_desc = {
--	.confops	= &mtk_pconf_ops,
--	.pctlops	= &mtk_pctrl_ops,
--	.pmxops		= &mtk_pmx_ops,
--};
--
- int mtk_pctrl_init(struct platform_device *pdev,
- 		const struct mtk_pinctrl_devdata *data,
- 		struct regmap *regmap)
- {
- 	struct pinctrl_pin_desc *pins;
-+	struct pinctrl_desc *mtk_pctrl_desc;
- 	struct mtk_pinctrl *pctl;
- 	struct device_node *np = pdev->dev.of_node, *node;
- 	struct property *prop;
-@@ -1265,12 +1260,22 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 
- 	for (i = 0; i < pctl->devdata->npins; i++)
- 		pins[i] = pctl->devdata->pins[i].pin;
--	mtk_pctrl_desc.name = dev_name(&pdev->dev);
--	mtk_pctrl_desc.owner = THIS_MODULE;
--	mtk_pctrl_desc.pins = pins;
--	mtk_pctrl_desc.npins = pctl->devdata->npins;
-+
-+	mtk_pctrl_desc = devm_kzalloc(&pdev->dev, sizeof(*mtk_pctrl_desc),
-+				GFP_KERNEL);
-+	if (!mtk_pctrl_desc)
-+		return -ENOMEM;
-+
-+	mtk_pctrl_desc->name = dev_name(&pdev->dev);
-+	mtk_pctrl_desc->owner = THIS_MODULE;
-+	mtk_pctrl_desc->pins = pins;
-+	mtk_pctrl_desc->npins = pctl->devdata->npins;
-+	mtk_pctrl_desc->confops = &mtk_pconf_ops;
-+	mtk_pctrl_desc->pctlops = &mtk_pctrl_ops;
-+	mtk_pctrl_desc->pmxops = &mtk_pmx_ops;
- 	pctl->dev = &pdev->dev;
--	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
-+
-+	pctl->pctl_dev = pinctrl_register(mtk_pctrl_desc, &pdev->dev, pctl);
- 	if (IS_ERR(pctl->pctl_dev)) {
- 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
- 		return PTR_ERR(pctl->pctl_dev);
--- 
-1.7.9.5
+> not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consume=
+r
+> functionality only, can still be compiled if GPIOLIB is not enabled.
+>=20
+> Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+> appropriate.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> v2:
+>   - Add Acked-by.
+> ---
+>  drivers/video/fbdev/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+> index 2d98de535e0f7374..569803f533d1a600 100644
+> --- a/drivers/video/fbdev/Kconfig
+> +++ b/drivers/video/fbdev/Kconfig
+> @@ -2464,7 +2464,7 @@ config FB_SSD1307
+>  	tristate "Solomon SSD1307 framebuffer support"
+>  	depends on FB && I2C
+>  	depends on OF
+> -	depends on GPIOLIB
+> +	depends on GPIOLIB || COMPILE_TEST
+>  	select FB_SYS_FOPS
+>  	select FB_SYS_FILLRECT
+>  	select FB_SYS_COPYAREA
+>=20
 
+Applied to 4.3 fbdev.
+
+I do wonder why this is needed, though... I understand COMPILE_TEST if
+the dependency in question is difficult/impossible to enable with your
+kernel config (say, enabling OMAP SoC support with x86 config), but
+isn't GPIOLIB something that can be trivially enabled in any kernel confi=
+g?
+
+ Tomi
+
+
+--Td6xgp8lmISjJ7wdrEbp3LetmkO5VJI8B
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJVyaLDAAoJEPo9qoy8lh71lb8P/ROFNdTB6oY+en6/V0idJxJa
+FMv8Me7JwTrUGCqpj1VXFCO9z3Il3csj46uthQjCjzM12gbjiboUZ0jAbdLPCd+W
+RrwJ3vEDQm8DqatRfVxC16UAr8k5ij/Jrh8KfQheRjMCkJ6XcO5fULuksaZhtaKT
+SO3lsrwgWC8NlVxMpZ3qbhutZP+ifrj7A9AM8Y8vlFIXWSAwKk89orZIwL1oXap2
+n6L82XJs8S7vWVGstbPSrKjzTNKqMJ2ysv1/tZQ8YolXlJTww4X88NxLOordzfWP
+GLvHxiPajkFkVdfmdSvz8jLSentdEzWIBuiD0ZfrL0yGz4p+NZlOybI29Fc6sIN1
+j/UfxZZqSB+HVyeUfd0oKXHU5IWowPlkS3pc6cJeG0pgWqA3qFUcIVSP0RJFN2/5
+X/SqAvfjuFkUw6KZ+mocAATS2EljNbx/IiCHntba3X8zKaDZLSYUz9SQQ66sY0t+
+OUmenpdS5urCXt5lD8r5mIm92fzSLUzVLXDoODtrqPQ5ivrPF4hybcWfScsJKv96
+KjQ+0YaH07bBbdj/pUAxcmxUD6RHy+NrYAXrm7vB/znr1/Ef00l9UByBFEYz1Vj5
+Gkb4Jeeft0tVx5IGAHP9Eo0xsek1DXB2kYxYSES6N+Vf5tD+C3czhpxjDUn7y52Q
+f93Vm4aH+OCH8ZH6AsBT
+=kqiJ
+-----END PGP SIGNATURE-----
+
+--Td6xgp8lmISjJ7wdrEbp3LetmkO5VJI8B--
