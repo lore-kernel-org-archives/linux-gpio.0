@@ -1,90 +1,42 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] input: gpio_keys: Don't report events on gpio failure
-Date: Mon, 10 Aug 2015 15:41:09 -0700
-Message-ID: <20150810224109.GN6519@usrtlx11787.corpusers.net>
-References: <1438048204-632-1-git-send-email-bjorn.andersson@sonymobile.com>
- <20150728210040.GE19610@dtor-ws>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: Implement pictrl irq wake handler
+Date: Mon, 10 Aug 2015 18:51:50 -0700
+Message-ID: <1439257910.38706.1.camel@mussux00.eus.mediatek.inc>
+References: <1438162601-448-1-git-send-email-maoguang.meng@mediatek.com>
+	 <CACRpkdZ1RjjSh5J=K724CpbXDXwdHJSdXOTLS8fSOO-34zn=9A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:2757 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752341AbbHJWlP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 10 Aug 2015 18:41:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20150728210040.GE19610@dtor-ws>
+Received: from mailgw02.mediatek.com ([69.46.227.142]:43897 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932864AbbHKBw0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Aug 2015 21:52:26 -0400
+In-Reply-To: <CACRpkdZ1RjjSh5J=K724CpbXDXwdHJSdXOTLS8fSOO-34zn=9A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: maoguang meng <maoguang.meng@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue 28 Jul 14:00 PDT 2015, Dmitry Torokhov wrote:
-
-> Hi Bjorn,
+On Mon, 2015-08-10 at 14:43 +0200, Linus Walleij wrote:
+> On Wed, Jul 29, 2015 at 11:36 AM,  <maoguang.meng@mediatek.com> wrote:
 > 
-> On Mon, Jul 27, 2015 at 06:50:04PM -0700, Bjorn Andersson wrote:
-> > In the cases where the gpio chip fails to acquire the current state an
-> > error is reported back to gpio_keys. This is currently interpreted as if
-> > the line went high, which just confuses the developer.
-> > 
-> > This patch introduces an error print in this case and skipps the
-> > reporting of a input event; to aid in debugging this issue.
-> > 
-> > Reported-by: John Stultz <john.stultz@linaro.org>
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> > ---
-> >  drivers/input/keyboard/gpio_keys.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-> > index ddf4045de084..3ce3298ac09e 100644
-> > --- a/drivers/input/keyboard/gpio_keys.c
-> > +++ b/drivers/input/keyboard/gpio_keys.c
-> > @@ -336,8 +336,14 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
-> >  	const struct gpio_keys_button *button = bdata->button;
-> >  	struct input_dev *input = bdata->input;
-> >  	unsigned int type = button->type ?: EV_KEY;
-> > -	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
-> > +	int state = gpio_get_value_cansleep(button->gpio);
-> >  
-> > +	if (state < 0) {
-> > +		dev_err(input->dev.parent, "failed to get gpio state\n");
+> > From: Maoguang Meng <maoguang.meng@mediatek.com>
+> >
+> > This patch implement irq_set_wake for suspend resume.
+> >
+> > Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
 > 
-> As far as I can see:
+> Hongzhou/Yingjoe: are you OK with this patch? Can I have your ACKs?
 > 
-> static inline int gpio_get_value_cansleep(unsigned gpio)
-> {
-> 	return gpiod_get_raw_value_cansleep(gpio_to_desc(gpio));
-> }
-> 
-> int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
-> {
-> 	might_sleep_if(extra_checks);
-> 	if (!desc)
-> 		return 0;
-> 	return _gpiod_get_raw_value(desc);
-> }
-> 
-> static bool _gpiod_get_raw_value(const struct gpio_desc *desc)
-> {
-> ...
-> }
-> 
-> So how exactly do we get negative here?
+> Yours,
+> Linus Walleij
 
-I'm sorry, I obviously didn't pay enough attention when running through
-that callstack...
+Hi Linus,
 
-But then the question first goes to Linus & co.
+Yes, you can. Thank you.
 
-gpio_chip->get() can return a negative value to indicate errors (and did
-so in this case), all parts of the API seems indicates that we can get
-an error (int vs bool).
+Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-Should we change _gpiod_get_raw_value() to propagate this error?  Or
-should we just ignore this issue and propagate an error as GPIO high
-reading?
+Hongzhou
 
-Regards,
-Bjorn
