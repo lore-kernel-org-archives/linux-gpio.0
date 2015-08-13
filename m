@@ -1,37 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: Fix missing raw locks conversion
-Date: Thu, 13 Aug 2015 14:44:56 +0200
-Message-ID: <CACRpkdZOTE2gY20N9SzVxPYxRroaARHYeJJnPtLFZ+r0hg78Zw@mail.gmail.com>
-References: <1438785461.9624.1.camel@ingics.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Thu, 13 Aug 2015 14:45:55 +0200
+Message-ID: <CAMuHMdW0T6MW6s4Gg_rqvtt+MRPtp_MpuiKtamfFrx-Tcm6WmQ@mail.gmail.com>
+References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+	<20150805005540.GB20726@verge.net.au>
+	<CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33206 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751862AbbHMMo5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 08:44:57 -0400
-Received: by oio137 with SMTP id 137so25794720oio.0
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 05:44:56 -0700 (PDT)
-In-Reply-To: <1438785461.9624.1.camel@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Aug 5, 2015 at 4:37 PM, Axel Lin <axel.lin@ingics.com> wrote:
+Hi Linus,
 
-> Fix below build warning:
->   CC      drivers/gpio/gpio-omap.o
-> drivers/gpio/gpio-omap.c: In function 'omap_gpio_irq_type':
-> drivers/gpio/gpio-omap.c:504:3: warning: passing argument 1 of 'spin_unlock_irqrestore' from incompatible pointer type [enabled by default]
-> include/linux/spinlock.h:360:29: note: expected 'struct spinlock_t *' but argument is of type 'struct raw_spinlock_t *'
+On Thu, Aug 13, 2015 at 2:29 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
+>> Where possible I prefer not to apply non-DTS/DTSI patches on top of
+>> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+>> maintainers like things handled.  With this in mind I have done the following:
+>>
+>> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
+>>    I intend for this to turn up in next soon.
+>> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
+>>    I intend for these to be present in the renesas devel branch but
+>>    not in next until after the release of v4.3-rc1. I would also be
+>>    happy to drop them and let Linus Walleij take these patches for v4.4,
+>>    assuming patches 1 - 3 are accepted for v4.3.
 >
-> Fixes: commit 4dbada2be460 ("gpio: omap: use raw locks for locking")
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> OK.
+>
+> Will the world explode if I try to queue the pinctrl patches 4-6 in my
+> tree now for v4.3? Then I prefer to defer to v4.4. Else I can merge
+> it in parallel?
 
-Fixed by merging in -rc4 and applying this patch for next.
+There won't be a mapping between gpio and pins in any branch having the
+pinctrl changes but not the dtsi changes.
 
-Thanks!
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
