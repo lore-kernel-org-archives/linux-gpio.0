@@ -1,38 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: atlas7: clear ugly branch statements for pull
- and drivestrength
-Date: Thu, 13 Aug 2015 14:37:54 +0200
-Message-ID: <CACRpkdYtFSps1R-YgMFoekkW8osDVf+ujrnGLP47YBCcq2ZBzg@mail.gmail.com>
-References: <1438744934-15395-1-git-send-email-21cnbao@gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Serialize all register access
+Date: Thu, 13 Aug 2015 15:43:46 +0300
+Message-ID: <20150813124346.GC1541@lahna.fi.intel.com>
+References: <1438595198-44230-1-git-send-email-mika.westerberg@linux.intel.com>
+ <CACRpkdYj_gBQpRqPP4S3c-cPhzRGnGUahh+1L8G5qUxwG=cx0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34141 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752583AbbHMMhz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 08:37:55 -0400
-Received: by oip136 with SMTP id 136so25532725oip.1
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 05:37:54 -0700 (PDT)
-In-Reply-To: <1438744934-15395-1-git-send-email-21cnbao@gmail.com>
+Received: from mga02.intel.com ([134.134.136.20]:54432 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752346AbbHMMnt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 13 Aug 2015 08:43:49 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYj_gBQpRqPP4S3c-cPhzRGnGUahh+1L8G5qUxwG=cx0g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Barry Song <21cnbao@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 5, 2015 at 5:22 AM, Barry Song <21cnbao@gmail.com> wrote:
+On Thu, Aug 13, 2015 at 01:24:13PM +0200, Linus Walleij wrote:
+> On Mon, Aug 3, 2015 at 11:46 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > There is a hardware issue in Intel Braswell/Cherryview where concurrent
+> > GPIO register access might results reads of 0xffffffff and writes might get
+> > dropped.
+> >
+> > Prevent this from happening by taking the serializing lock for all places
+> > where it is possible that more than one thread might be accessing the
+> > hardware concurrently.
+> >
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Patch applied.
 
-> From: Wei Chen <Wei.Chen@csr.com>
->
-> To set/get atlas7 pull & drive strength, we use lots of if/else
-> to check pad type. But except mask value or immediate value, all
-> actions in these conditional branches are the same.
-> So we use predefined pull info table and drive strength table
-> to reduce these redundancy code.
->
-> Signed-off-by: Wei Chen <Wei.Chen@csr.com>
-> Signed-off-by: Barry Song <Baohua.Song@csr.com>
+Thanks!
 
-Patch applied.
+> When we are on the topic of this spinlock, I noticed that you
+> take it in some IRQ functions:
+> 
+> static void chv_gpio_irq_ack(struct irq_data *d)
+> {
+>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>         struct chv_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
+>         int pin = chv_gpio_offset_to_pin(pctrl, irqd_to_hwirq(d));
+>         u32 intr_line;
+> 
+>         spin_lock(&pctrl->lock);
+> (...)
+> 
+> The Realtime tree have recently started to push raw spinlocks
+> into GPIO drivers that handle IRQs. Can you look into this
+> for the Intel drivers, I think maybe this needs to be a raw
+> spinlock to play nicely with realtime.
+> 
+> Cf:
+> http://marc.info/?l=linux-gpio&m=143749603401220&w=2
 
-Yours,
-Linus Walleij
+Sure, I'll look into that.
