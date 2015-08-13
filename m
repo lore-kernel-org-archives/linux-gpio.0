@@ -1,37 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Thu, 13 Aug 2015 14:29:47 +0200
-Message-ID: <CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-	<20150805005540.GB20726@verge.net.au>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v5 2/2] pinctrl: rockchip: only enable gpio clock when it setting
+Date: Thu, 13 Aug 2015 14:37:36 +0200
+Message-ID: <2167165.ooWgarx4Ov@diego>
+References: <1439287924-6988-1-git-send-email-hl@rock-chips.com> <1439287924-6988-2-git-send-email-hl@rock-chips.com> <CACRpkda0FXz1dpdS-wLRNmkt1KBESMyCWKMMa0ArH9Z-L=i_sw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20150805005540.GB20726@verge.net.au>
-Sender: linux-sh-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:52279 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752265AbbHMMht (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 13 Aug 2015 08:37:49 -0400
+In-Reply-To: <CACRpkda0FXz1dpdS-wLRNmkt1KBESMyCWKMMa0ArH9Z-L=i_sw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lin Huang <hl@rock-chips.com>, Doug Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
+Hi Linus,
 
-> Where possible I prefer not to apply non-DTS/DTSI patches on top of
-> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
-> maintainers like things handled.  With this in mind I have done the following:
->
-> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
->    I intend for this to turn up in next soon.
-> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
->    I intend for these to be present in the renesas devel branch but
->    not in next until after the release of v4.3-rc1. I would also be
->    happy to drop them and let Linus Walleij take these patches for v4.4,
->    assuming patches 1 - 3 are accepted for v4.3.
+Am Donnerstag, 13. August 2015, 14:24:28 schrieb Linus Walleij:
+> On Tue, Aug 11, 2015 at 12:12 PM, Lin Huang <hl@rock-chips.com> wrote:
+> > gpio can keep state even the clock disable, for save power
+> > consumption, only enable gpio clock when it setting
+> > 
+> > Signed-off-by: Lin Huang <hl@rock-chips.com>
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> > Changes in v5:
+> > -rebase patch
+> 
+> Patch applied with Doug's test tags etc.
 
-OK.
+did you  also take the first patch?
 
-Will the world explode if I try to queue the pinctrl patches 4-6 in my
-tree now for v4.3? Then I prefer to defer to v4.4. Else I can merge
-it in parallel?
+Aka bot should probably stay together (hence Stephen's Ack for the clock 
+change), as the dynamically controlling the gpio clocks exposes the 
+pclk_pd_pmu.
 
-Yours,
-Linus Walleij
+
+Heiko
