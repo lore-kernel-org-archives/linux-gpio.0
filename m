@@ -1,44 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio/mxc: mask gpio interrupts in suspend
-Date: Thu, 13 Aug 2015 14:47:54 +0200
-Message-ID: <CACRpkdavXPrFpGmva1Fp9KqDbGzsGd9r8qg2MyLnTBAy24KRZQ@mail.gmail.com>
-References: <1438795388-22743-1-git-send-email-edubezval@gmail.com>
-	<1438795388-22743-2-git-send-email-edubezval@gmail.com>
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Only set the gpio range if needed
+Date: Thu, 13 Aug 2015 14:55:37 +0200
+Message-ID: <CACRpkdYLos-10EjuHJnWdVh2eUzfaCYxPe9-5qdh3yzvcE=a_g@mail.gmail.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
+	<CAAObsKBk54ZAhGVmpONeBtX1AJv0woq7sp3cCGZ1FeDtTst_DA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438795388-22743-2-git-send-email-edubezval@gmail.com>
+In-Reply-To: <CAAObsKBk54ZAhGVmpONeBtX1AJv0woq7sp3cCGZ1FeDtTst_DA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, ubrindis56@gmail.com, Fabio Estevam <fabio.estevam@freescale.com>, Fabio Estevam <festevam@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 5, 2015 at 7:23 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
+On Thu, Aug 6, 2015 at 3:40 PM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+>> If the gpio DT node has the gpio-ranges property, the range will be
+>> added by the gpio core and doesn't need to be added by the pinctrl
+>> driver.
+>>
+>> By having the gpio-ranges property, we have an explicit dependency from
+>> the gpio node to the pinctrl node and we can stop using the deprecated
+>> pinctrl_add_gpio_range() function.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> Acked-by: Stephen Warren <swarren@nvidia.com>
+>
+> Hi Linus,
+>
+> do you mind if this goes through the Tegra tree? It would be best if
+> it went together with 3/3 ("ARM: tegra: Add gpio-ranges property"), to
+> avoid duplicated GPIO ranges.
 
-> From: Ulises Brindis <ubrindis56@gmail.com>
->
-> Currently in the FSL platform all GPIO interrupts in a bank are muxed
-> into two GPIO lines to the GPC interrupt controller. In each GPIO bank
-> GPIOs 0-15 are OR'ed into one GPC interrupt controller interrupt and 16-31
-> are OR'ed into another. With the current code, if any of the 0-15 or
-> 16-31 interrupts are marked as wakeup capable, all interrupts belonging
-> to that sub-bank (either 0-15 or 16-31) will wake up the device. This is
-> because interrupts are only being masked at the interrupt controller
-> and not at the GPIO controller.
->
-> This patch allows masking of GPIO interrupts at the GPIO controller during
-> suspend if they have not been labeled wakeup capable. This patch uses
-> preexisting IRQCHIP_MASK_ON_SUSPEND flag while initializing the GPIO
-> interrupts to get the desired behavior.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-> Signed-off-by: Ulises Brindis <ubrindis56@gmail.com>
-
-Patch applied.
+It's cool, go ahead:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
