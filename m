@@ -1,36 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 2/2] pinctrl: rockchip: only enable gpio clock when it setting
-Date: Thu, 13 Aug 2015 14:24:28 +0200
-Message-ID: <CACRpkda0FXz1dpdS-wLRNmkt1KBESMyCWKMMa0ArH9Z-L=i_sw@mail.gmail.com>
-References: <1439287924-6988-1-git-send-email-hl@rock-chips.com>
-	<1439287924-6988-2-git-send-email-hl@rock-chips.com>
+Subject: Re: [PATCH 1/2] pinctrl: baytrail: Drop FSF mailing address
+Date: Thu, 13 Aug 2015 14:25:50 +0200
+Message-ID: <CACRpkdaLu2DGAAFyqDXXA8za0GH780u89Q0jjU994xx=ESRsiQ@mail.gmail.com>
+References: <1438689794-14355-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:36032 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752286AbbHMMY3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 08:24:29 -0400
-Received: by obnw1 with SMTP id w1so35307598obn.3
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 05:24:28 -0700 (PDT)
-In-Reply-To: <1439287924-6988-2-git-send-email-hl@rock-chips.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:33436 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752680AbbHMMZu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 08:25:50 -0400
+Received: by oio137 with SMTP id 137so25536611oio.0
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 05:25:50 -0700 (PDT)
+In-Reply-To: <1438689794-14355-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lin Huang <hl@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Doug Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 11, 2015 at 12:12 PM, Lin Huang <hl@rock-chips.com> wrote:
+On Tue, Aug 4, 2015 at 2:03 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> gpio can keep state even the clock disable, for save power
-> consumption, only enable gpio clock when it setting
+> The FSF address is already mentioned in the COPYING file. No need to
+> duplicate that information to individual files.
 >
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> Changes in v5:
-> -rebase patch
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Patch applied with Doug's test tags etc.
+Patch applied.
 
 Yours,
 Linus Walleij
