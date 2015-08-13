@@ -1,47 +1,81 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: brcmstb-gpio: document properties for wakeup
-Date: Thu, 13 Aug 2015 11:04:13 +0200
-Message-ID: <CACRpkdaZj=vt_nPOxh+PCH6n1i8MkzcoicYwUGAMFyP_MPg_yg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/4] gpio: brcmstb: Add interrupt and wakeup source support
+Date: Thu, 13 Aug 2015 13:11:01 +0200
+Message-ID: <CACRpkdaz3k_N1qS5M_jmprPz8fHXeLtTke_YT8i2gaehmme+OQ@mail.gmail.com>
 References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-	<1438391865-7862-2-git-send-email-gregory.0xf0@gmail.com>
+	<1438391865-7862-3-git-send-email-gregory.0xf0@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438391865-7862-2-git-send-email-gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:36796 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752054AbbHMLLD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 07:11:03 -0400
+Received: by oiev193 with SMTP id v193so24313627oie.3
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 04:11:02 -0700 (PDT)
+In-Reply-To: <1438391865-7862-3-git-send-email-gregory.0xf0@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On Sat, Aug 1, 2015 at 3:17 AM, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Sat, Aug 1, 2015 at 3:17 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
 
-> Some brcmstb GPIO controllers can be used to wake from suspend, so use
-> the de facto standard property 'wakeup-source' to mark the nodes of
-> controllers with that capability.
+> Uses the gpiolib irqchip helpers.  For this to work, the irq setup
+> function is called once per bank instead of once per device.  Note
+> that all known uses of this block have a BCM7120 L2 interrupt
+> controller as a parent.  Supports interrupts for all GPIOs.
 >
-> Also document interrupts-extended, which will be used for wakeup
-> handling because the interrupt parent for the wake IRQ is different
-> from the regular IRQ.
+> In the IRQ handler, we check for raised IRQs for invalid GPIOs and
+> warn (ratelimited) if they're encountered.
 >
-> While we're at it, a few more fixes: We don't actually use the
-> "interrupt-names" property, so remove it from the listed optional
-> properties and from the examples.  And since we're modifying the
-> examples, also follow Brian's suggestions to:
-> - change #gpio-cells, #interrupt-cells, and brcm,gpio-bank-widths from
->   hex to dec
-> - use phandles
+> Also, several drivers (e.g. gpio-keys) allow for GPIOs to be
+> configured as wakeup sources, and this GPIO controller supports that
+> through a separate interrupt path.
 >
-> Reviewed-by: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> The de-facto standard DT property "wakeup-source" is checked, since
+> that indicates whether the GPIO controller hardware can wake.  Uses
+> the IRQCHIP_MASK_ON_SUSPEND irq_chip flag because UPG GIO doesn't have
+> any of its own wakeup source configuration.
+>
+> Aside regarding gpiolib irqchip helpers: It wasn't obvious (to me)
+> that you can have multiple chained irqchips and associated IRQ domains
+> for a single parent IRQ, and as long as the xlate function is written
+> correctly, a GPIO IRQ request end up checking the correct domain and
+> will get associated with the correct IRQ.  What helps make this clear
+> is to read
+>   drivers/gpio/gpiolib-of.c:
+>    - of_gpiochip_find_and_xlate()
+>    - of_get_named_gpiod_flags()
+>   drivers/gpio/gpiolib.c:
+>    - gpiochip_find()
+>
+> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
 > ---
-> v4: no changes from v3
+> v4:
+> - when checking parent_irq, use <= 0 or > 0 since 0 is NO_IRQ.
 
-I've already applied this, no action.
+Patch applied, but:
+
+
+> +       if (of_property_read_bool(np, "interrupt-controller")) {
+> +               priv->parent_irq = platform_get_irq(pdev, 0);
+> +               if (priv->parent_irq <= 0) {
+> +                       dev_err(dev, "Couldn't get IRQ");
+> +                       return -ENOENT;
+> +               }
+> +       } else {
+> +               priv->parent_irq = -ENOENT;
+> +       }
+> +
+>         if (brcmstb_gpio_sanity_check_banks(dev, np, res))
+>                 return -EINVAL;
+
+This patch does not apply cleanly because the version in my
+tree has INIT_LIST_HEAD(&priv->bank_list);
+before the sanity check.
+
+I applied it manually, but check that things are working right.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
