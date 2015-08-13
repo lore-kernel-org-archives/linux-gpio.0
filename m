@@ -1,235 +1,248 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpiolib: irqchip: use different lockdep class for each gpio irqchip
-Date: Thu, 13 Aug 2015 17:58:39 +0300
-Message-ID: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH] pinctrl: mediatek: Implement wake handler and suspend resume
+Date: Fri, 14 Aug 2015 00:16:16 +0800
+Message-ID: <CAGS+omAVFUXg3WRyDrPsaWGmpTVwY5r5PZW8azT442+FLqMM8A@mail.gmail.com>
+References: <1439453936-8315-1-git-send-email-maoguang.meng@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439453936-8315-1-git-send-email-maoguang.meng@mediatek.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+To: maoguang meng <maoguang.meng@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Since IRQ chip helpers were introduced drivers lose ability to
-register separate lockdep classes for each registered GPIO IRQ
-chip and the gpiolib now is using shared lockdep class for
-all GPIO IRQ chips (gpiochip_irq_lock_class).
-As result, lockdep will produce warning when there are min two
-stacked GPIO chips and all of them are interrupt controllers.
+Hi Maoguang,
 
-HW configuration which generates lockdep warning (TI dra7-evm):
+This patch looks pretty good now.  Just some small nitpicks below...
 
-[SOC GPIO bankA.gpioX]
-  <- irq - [pcf875x.gpioY]
-            <- irq - DevZ.enable_irq_wake(pcf_gpioY_irq);
-The issue was reported in [1] and discussed [2].
+On Thu, Aug 13, 2015 at 4:18 PM,  <maoguang.meng@mediatek.com> wrote:
+> From: Maoguang Meng <maoguang.meng@mediatek.com>
+>
+> This patch implement irq_set_wake to get who is wakeup source and
+> setup on suspend resume.
+>
+> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+>
+> ---
+> changes since v2:
+> -modify irq_wake to handle irq wakeup source.
+> -allocate two buffers separately.
+> -fix some codestyle.
+>
+> Changes since v1:
+> -implement irq_wake handler.
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt8173.c     |  1 +
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 94 ++++++++++++++++++++++++++-
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  4 ++
+>  3 files changed, 97 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> index d0c811d..ad27184 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> @@ -385,6 +385,7 @@ static struct platform_driver mtk_pinctrl_driver = {
+>         .driver = {
+>                 .name = "mediatek-mt8173-pinctrl",
+>                 .of_match_table = mt8173_pctrl_match,
+> +               .pm = &mtk_eint_pm_ops,
+>         },
+>  };
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index ad1ea16..7d4ba926 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/pm.h>
+>  #include <dt-bindings/pinctrl/mt65xx.h>
+>
+>  #include "../core.h"
+> @@ -1062,11 +1063,82 @@ static int mtk_eint_set_type(struct irq_data *d,
+>         return 0;
+>  }
+>
+> +static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
+> +{
+> +       struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+> +       int shift = d->hwirq & 0x1f;
+> +       int reg = d->hwirq >> 5;
+> +
+> +       if (on)
+> +               pctl->wake_mask[reg] |= BIT(shift);
+> +       else
+> +               pctl->wake_mask[reg] &= ~BIT(shift);
+> +
+> +       return 0;
+> +}
+> +
+> +static void mtk_eint_chip_write_mask(const struct mtk_eint_offsets *chip,
+> +               void __iomem *eint_reg_base, u32 *buf)
+> +{
+> +       int port;
+> +       void __iomem *reg;
+> +
+> +       for (port = 0; port < chip->ports; port++) {
+> +               reg = eint_reg_base + (port << 2);
+> +               writel_relaxed(~buf[port], reg + chip->mask_set);
+> +               writel_relaxed(buf[port], reg + chip->mask_clr);
+> +       }
+> +}
+> +
+> +static void mtk_eint_chip_read_mask(const struct mtk_eint_offsets *chip,
+> +               void __iomem *eint_reg_base, u32 *buf)
+> +{
+> +       int port;
+> +       void __iomem *reg;
+> +
+> +       for (port = 0; port < chip->ports; port++) {
+> +               reg = eint_reg_base + chip->mask + (port << 2);
+> +               buf[port] = ~readl_relaxed(reg);
 
-=============================================
-[ INFO: possible recursive locking detected ]
-4.2.0-rc6-00013-g5d050ed-dirty #55 Not tainted
----------------------------------------------
-sh/63 is trying to acquire lock:
- (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
+You are storing the registers inverted.
+This is a bit counter-intuititve, so please add a comment....
 
-but task is already holding lock:
- (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
+Better yet, perhaps just do the inversion when modifying wake_mask[]
+in mtk_eint_irq_set_wake() (and add the comment there):
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+  /* Mask is 0 when irq is enabled, and 1 when disabled. */
 
-       CPU0
-       ----
-  lock(class);
-  lock(class);
+> +       }
+> +}
+> +
+> +static int mtk_eint_suspend(struct device *device)
+> +{
+> +       void __iomem *reg;
+> +       struct mtk_pinctrl *pctl = dev_get_drvdata(device);
+> +       const struct mtk_eint_offsets *eint_offsets =
+> +                       &pctl->devdata->eint_offsets;
+> +
+> +       reg = pctl->eint_reg_base;
+> +       mtk_eint_chip_read_mask(eint_offsets, reg, pctl->cur_mask);
+> +       mtk_eint_chip_write_mask(eint_offsets, reg, pctl->wake_mask);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mtk_eint_resume(struct device *device)
+> +{
+> +       struct platform_device *pdev = to_platform_device(device);
+> +       struct mtk_pinctrl *pctl = platform_get_drvdata(pdev);
 
- *** DEADLOCK ***
+Aren't these two lines just:
+  struct mtk_pinctrl *pctl = dev_get_drvdata(device);
 
- May be due to missing lock nesting notation
+> +       const struct mtk_eint_offsets *eint_offsets =
+> +                       &pctl->devdata->eint_offsets;
+> +
+> +       mtk_eint_chip_write_mask(eint_offsets,
+> +                       pctl->eint_reg_base, pctl->cur_mask);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct dev_pm_ops mtk_eint_pm_ops = {
+> +       .suspend = mtk_eint_suspend,
+> +       .resume = mtk_eint_resume,
+> +};
+> +
+>  static void mtk_eint_ack(struct irq_data *d)
+>  {
+>         struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+>         const struct mtk_eint_offsets *eint_offsets =
+> -               &pctl->devdata->eint_offsets;
+> +                       &pctl->devdata->eint_offsets;
 
-7 locks held by sh/63:
- #0:  (sb_writers#4){.+.+.+}, at: [<c016bbb8>] vfs_write+0x13c/0x164
- #1:  (&of->mutex){+.+.+.}, at: [<c01debf4>] kernfs_fop_write+0x4c/0x1a0
- #2:  (s_active#36){.+.+.+}, at: [<c01debfc>] kernfs_fop_write+0x54/0x1a0
- #3:  (pm_mutex){+.+.+.}, at: [<c009758c>] pm_suspend+0xec/0x4c4
- #4:  (&dev->mutex){......}, at: [<c03f77f8>] __device_suspend+0xd4/0x398
- #5:  (&gpio->lock){+.+.+.}, at: [<c009b940>] __irq_get_desc_lock+0x74/0x94
- #6:  (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
+Unrelated change; it is often preferred to fix something like this in
+a separate patch.
 
-stack backtrace:
-CPU: 0 PID: 63 Comm: sh Not tainted 4.2.0-rc6-00013-g5d050ed-dirty #55
-Hardware name: Generic DRA74X (Flattened Device Tree)
-[<c0016e24>] (unwind_backtrace) from [<c0013338>] (show_stack+0x10/0x14)
-[<c0013338>] (show_stack) from [<c05f6b24>] (dump_stack+0x84/0x9c)
-[<c05f6b24>] (dump_stack) from [<c00903f4>] (__lock_acquire+0x19c0/0x1e20)
-[<c00903f4>] (__lock_acquire) from [<c0091098>] (lock_acquire+0xa8/0x128)
-[<c0091098>] (lock_acquire) from [<c05fd61c>] (_raw_spin_lock_irqsave+0x38/0x4c)
-[<c05fd61c>] (_raw_spin_lock_irqsave) from [<c009b91c>] (__irq_get_desc_lock+0x50/0x94)
-[<c009b91c>] (__irq_get_desc_lock) from [<c009c4f4>] (irq_set_irq_wake+0x20/0xfc)
-[<c009c4f4>] (irq_set_irq_wake) from [<c0393ac4>] (pcf857x_irq_set_wake+0x24/0x54)
-[<c0393ac4>] (pcf857x_irq_set_wake) from [<c009c560>] (irq_set_irq_wake+0x8c/0xfc)
-[<c009c560>] (irq_set_irq_wake) from [<c04a02ac>] (gpio_keys_suspend+0x70/0xd4)
-[<c04a02ac>] (gpio_keys_suspend) from [<c03f6a00>] (dpm_run_callback+0x50/0x124)
-[<c03f6a00>] (dpm_run_callback) from [<c03f7830>] (__device_suspend+0x10c/0x398)
-[<c03f7830>] (__device_suspend) from [<c03f90f0>] (dpm_suspend+0x134/0x2f4)
-[<c03f90f0>] (dpm_suspend) from [<c0096e20>] (suspend_devices_and_enter+0xa8/0x728)
-[<c0096e20>] (suspend_devices_and_enter) from [<c00977cc>] (pm_suspend+0x32c/0x4c4)
-[<c00977cc>] (pm_suspend) from [<c0096060>] (state_store+0x64/0xb8)
-[<c0096060>] (state_store) from [<c01dec64>] (kernfs_fop_write+0xbc/0x1a0)
-[<c01dec64>] (kernfs_fop_write) from [<c016b280>] (__vfs_write+0x20/0xd8)
-[<c016b280>] (__vfs_write) from [<c016bb0c>] (vfs_write+0x90/0x164)
-[<c016bb0c>] (vfs_write) from [<c016c330>] (SyS_write+0x44/0x9c)
-[<c016c330>] (SyS_write) from [<c000f500>] (ret_fast_syscall+0x0/0x54)
+>         u32 mask = BIT(d->hwirq & 0x1f);
+>         void __iomem *reg = mtk_eint_get_offset(pctl, d->hwirq,
+>                         eint_offsets->ack);
+> @@ -1076,10 +1148,12 @@ static void mtk_eint_ack(struct irq_data *d)
+>
+>  static struct irq_chip mtk_pinctrl_irq_chip = {
+>         .name = "mt-eint",
+> +       .irq_disable = mtk_eint_mask,
+>         .irq_mask = mtk_eint_mask,
+>         .irq_unmask = mtk_eint_unmask,
+>         .irq_ack = mtk_eint_ack,
+>         .irq_set_type = mtk_eint_set_type,
+> +       .irq_set_wake = mtk_eint_irq_set_wake,
+>         .irq_request_resources = mtk_pinctrl_irq_request_resources,
+>         .irq_release_resources = mtk_pinctrl_irq_release_resources,
+>  };
+> @@ -1217,7 +1291,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>         struct device_node *np = pdev->dev.of_node, *node;
+>         struct property *prop;
+>         struct resource *res;
+> -       int i, ret, irq;
+> +       int i, ret, irq, ports_buf;
+>
+>         pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
+>         if (!pctl)
+> @@ -1319,6 +1393,22 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>                 goto chip_error;
+>         }
+>
+> +       ports_buf = ALIGN(pctl->devdata->eint_offsets.ports,
+> +                       sizeof(long)/sizeof(u32));
 
-Lets fix it by using separate lockdep class for each registered GPIO
-IRQ Chip. This is done by wrapping gpiochip_irqchip_add call into macros.
+Why this ALIGN?
+Shouldn't we allocate eint_offsets.ports * sizeof(u32), like this:
 
-The implementation of this patch inspired by solution done by Nicolas
-Boichat for regmap [3]
+  pctl->wake_mask = devm_kcalloc(&pdev->dev, pctl->devdata->eint_offsets.ports,
+                  sizeof(*pctl->wake_mask), GFP_KERNEL);
 
-[1] http://www.spinics.net/lists/linux-gpio/msg05844.html
-[2] http://www.spinics.net/lists/linux-gpio/msg06021.html
-[3] http://www.spinics.net/lists/arm-kernel/msg429834.html
+Thanks,
+-Dan
 
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Roger Quadros <rogerq@ti.com>
-Reported-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpiolib.c      | 27 ++++++++++++++-------------
- include/linux/gpio/driver.h | 27 ++++++++++++++++++++++-----
- 2 files changed, 36 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d..75dddc1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -456,12 +456,6 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- }
- EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
- 
--/*
-- * This lock class tells lockdep that GPIO irqs are in a different
-- * category than their parents, so it won't report false recursion.
-- */
--static struct lock_class_key gpiochip_irq_lock_class;
--
- /**
-  * gpiochip_irq_map() - maps an IRQ into a GPIO irqchip
-  * @d: the irqdomain used by this irqchip
-@@ -478,7 +472,11 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 	struct gpio_chip *chip = d->host_data;
- 
- 	irq_set_chip_data(irq, chip);
--	irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
-+	/*
-+	 * This lock class tells lockdep that GPIO irqs are in a different
-+	 * category than their parents, so it won't report false recursion.
-+	 */
-+	irq_set_lockdep_class(irq, chip->lock_key);
- 	irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
- 	/* Chips that can sleep need nested thread handlers */
- 	if (chip->can_sleep && !chip->irq_not_threaded)
-@@ -584,6 +582,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
-  * @handler: the irq handler to use (often a predefined irq core function)
-  * @type: the default type for IRQs on this irqchip, pass IRQ_TYPE_NONE
-  * to have the core avoid setting up any default type in the hardware.
-+ * @lock_key: lockdep class
-  *
-  * This function closely associates a certain irqchip with a certain
-  * gpiochip, providing an irq domain to translate the local IRQs to
-@@ -599,11 +598,12 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
-  * the pins on the gpiochip can generate a unique IRQ. Everything else
-  * need to be open coded.
-  */
--int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
--			 struct irq_chip *irqchip,
--			 unsigned int first_irq,
--			 irq_flow_handler_t handler,
--			 unsigned int type)
-+int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+			  struct irq_chip *irqchip,
-+			  unsigned int first_irq,
-+			  irq_flow_handler_t handler,
-+			  unsigned int type,
-+			  struct lock_class_key *lock_key)
- {
- 	struct device_node *of_node;
- 	unsigned int offset;
-@@ -629,6 +629,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	gpiochip->irq_handler = handler;
- 	gpiochip->irq_default_type = type;
- 	gpiochip->to_irq = gpiochip_to_irq;
-+	gpiochip->lock_key = lock_key;
- 	gpiochip->irqdomain = irq_domain_add_simple(of_node,
- 					gpiochip->ngpio, first_irq,
- 					&gpiochip_domain_ops, gpiochip);
-@@ -658,7 +659,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(gpiochip_irqchip_add);
-+EXPORT_SYMBOL_GPL(_gpiochip_irqchip_add);
- 
- #else /* CONFIG_GPIOLIB_IRQCHIP */
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c8393cd..dd1dfbb 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -6,6 +6,7 @@
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/lockdep.h>
- #include <linux/pinctrl/pinctrl.h>
- 
- struct device;
-@@ -62,6 +63,7 @@ struct seq_file;
-  *	implies that if the chip supports IRQs, these IRQs need to be threaded
-  *	as the chip access may sleep when e.g. reading out the IRQ status
-  *	registers.
-+ * @exported: flags if the gpiochip is exported for use from sysfs. Private.
-  * @irq_not_threaded: flag must be set if @can_sleep is set but the
-  *	IRQs don't need to be threaded
-  *
-@@ -126,6 +128,7 @@ struct gpio_chip {
- 	irq_flow_handler_t	irq_handler;
- 	unsigned int		irq_default_type;
- 	int			irq_parent;
-+	struct lock_class_key	*lock_key;
- #endif
- 
- #if defined(CONFIG_OF_GPIO)
-@@ -171,11 +174,25 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 		int parent_irq,
- 		irq_flow_handler_t parent_handler);
- 
--int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
--		struct irq_chip *irqchip,
--		unsigned int first_irq,
--		irq_flow_handler_t handler,
--		unsigned int type);
-+int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+			  struct irq_chip *irqchip,
-+			  unsigned int first_irq,
-+			  irq_flow_handler_t handler,
-+			  unsigned int type,
-+			  struct lock_class_key *lock_key);
-+
-+#ifdef CONFIG_LOCKDEP
-+#define gpiochip_irqchip_add(...)				\
-+(								\
-+	({							\
-+		static struct lock_class_key _key;		\
-+		_gpiochip_irqchip_add(__VA_ARGS__, &_key);	\
-+	})							\
-+)
-+#else
-+#define gpiochip_irqchip_add(...)				\
-+	_gpiochip_irqchip_add(__VA_ARGS__, NULL)
-+#endif
- 
- #endif /* CONFIG_GPIOLIB_IRQCHIP */
- 
--- 
-2.5.0
+> +       pctl->wake_mask = devm_kcalloc(&pdev->dev, ports_buf,
+> +                                       sizeof(*pctl->wake_mask), GFP_KERNEL);
+> +       if (!pctl->wake_mask) {
+> +               ret = -ENOMEM;
+> +               goto chip_error;
+> +       }
+> +
+> +       pctl->cur_mask = devm_kcalloc(&pdev->dev, ports_buf,
+> +                                       sizeof(*pctl->cur_mask), GFP_KERNEL);
+> +       if (!pctl->cur_mask) {
+> +               ret = -ENOMEM;
+> +               goto chip_error;
+> +       }
+> +
+>         pctl->eint_dual_edges = devm_kcalloc(&pdev->dev, pctl->devdata->ap_num,
+>                                              sizeof(int), GFP_KERNEL);
+>         if (!pctl->eint_dual_edges) {
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> index 30213e5..f1be8e8 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> @@ -266,6 +266,8 @@ struct mtk_pinctrl {
+>         void __iomem            *eint_reg_base;
+>         struct irq_domain       *domain;
+>         int                     *eint_dual_edges;
+> +       u32 *wake_mask;
+> +       u32 *cur_mask;
+>  };
+>
+>  int mtk_pctrl_init(struct platform_device *pdev,
+> @@ -281,4 +283,6 @@ int mtk_pconf_spec_set_ies_smt_range(struct regmap *regmap,
+>                 const struct mtk_pin_ies_smt_set *ies_smt_infos, unsigned int info_num,
+>                 unsigned int pin, unsigned char align, int value);
+>
+> +extern const struct dev_pm_ops mtk_eint_pm_ops;
+> +
+>  #endif /* __PINCTRL_MTK_COMMON_H */
+> --
+> 1.8.1.1.dirty
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
