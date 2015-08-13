@@ -1,47 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 3/4] gpio: brcmstb: support wakeup from S5 cold boot
-Date: Thu, 13 Aug 2015 13:12:31 +0200
-Message-ID: <CACRpkdaTwLHC528+p6ytPhR7POonECfU3_-EEz--nrs353UTXg@mail.gmail.com>
-References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-	<1438391865-7862-4-git-send-email-gregory.0xf0@gmail.com>
+Subject: Re: [PATCH] pinctrl: UniPhier: PH1-Pro5: add I2C ch6 pin-mux setting
+Date: Thu, 13 Aug 2015 13:15:35 +0200
+Message-ID: <CACRpkdYR-tzShzN=p7YnY-EAfOkJJbcK4ydpZMP9KXFA7+ZOvw@mail.gmail.com>
+References: <1438400332-2933-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:36415 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751938AbbHMLMc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 07:12:32 -0400
-Received: by oiev193 with SMTP id v193so24330411oie.3
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 04:12:31 -0700 (PDT)
-In-Reply-To: <1438391865-7862-4-git-send-email-gregory.0xf0@gmail.com>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:34877 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751692AbbHMLPg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Aug 2015 07:15:36 -0400
+Received: by obbop1 with SMTP id op1so34484087obb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2015 04:15:35 -0700 (PDT)
+In-Reply-To: <1438400332-2933-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Aug 1, 2015 at 3:17 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+On Sat, Aug 1, 2015 at 5:38 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> For wake from S5, we need to:
-> - register a reboot handler
-> - set wakeup capability before requesting IRQ so wakeup count is
->   incremented
-> - mask all GPIO IRQs and clear any pending interrupts during driver
->   probe to since no driver will yet be registered to handle any IRQs
->   carried over from boot at that time, and it's possible that the
->   booted kernel does not request the same IRQ anyway.
+> The initial version of this driver missed to add I2C ch6 pin-muxing.
 >
-> This means that /sys/.../power/wakeup_count is valid at boot time, and
-> we can properly account for S5 wakeup stats. e.g.:
->
->   ### After waking from S5 from a GPIO key
->   # cat /sys/bus/platform/drivers/brcmstb-gpio/f04172c0.gpio/power/wakeup
->   enabled
->   # cat /sys/bus/platform/drivers/brcmstb-gpio/f04172c0.gpio/power/wakeup_count
->   1
->
-> Signed-off-by: Gregory Fong <gregory.0xf0@gmail.com>
-> ---
-> v4: rename __brcmstb_gpio_irq_set_wake() to brcmstb_gpio_priv_set_wake().
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Patch applied.
 
