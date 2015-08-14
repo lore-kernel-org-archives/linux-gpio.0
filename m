@@ -1,99 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
- gpio irqchip
-Date: Fri, 14 Aug 2015 14:34:00 +0200
-Message-ID: <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
-References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH v4 2/4] gpio: brcmstb: Add interrupt and wakeup source support
+Date: Fri, 14 Aug 2015 14:36:53 +0200
+Message-ID: <CACRpkdaTES0EtbTBUGJLfFC4-fg91Fef1CBLh5tor9SpMCo1og@mail.gmail.com>
+References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
+	<1438391865-7862-3-git-send-email-gregory.0xf0@gmail.com>
+	<CACRpkdaz3k_N1qS5M_jmprPz8fHXeLtTke_YT8i2gaehmme+OQ@mail.gmail.com>
+	<CADtm3G7NQqDKwGujZUA9CUJ15+e8fLg0Kupbn2CMc0MeK9DbMw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:34448 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754637AbbHNMeA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 08:34:00 -0400
-Received: by obbfr1 with SMTP id fr1so60028338obb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2015 05:34:00 -0700 (PDT)
-In-Reply-To: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:34412 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751867AbbHNMgx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 08:36:53 -0400
+Received: by obbfr1 with SMTP id fr1so60081644obb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2015 05:36:53 -0700 (PDT)
+In-Reply-To: <CADtm3G7NQqDKwGujZUA9CUJ15+e8fLg0Kupbn2CMc0MeK9DbMw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+To: Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On Thu, Aug 13, 2015 at 4:58 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Fri, Aug 14, 2015 at 1:49 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+> On Thu, Aug 13, 2015 at 4:11 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Sat, Aug 1, 2015 at 3:17 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
 
-> Since IRQ chip helpers were introduced drivers lose ability to
-> register separate lockdep classes for each registered GPIO IRQ
-> chip and the gpiolib now is using shared lockdep class for
-> all GPIO IRQ chips (gpiochip_irq_lock_class).
-> As result, lockdep will produce warning when there are min two
-> stacked GPIO chips and all of them are interrupt controllers.
+>> This patch does not apply cleanly because the version in my
+>> tree has INIT_LIST_HEAD(&priv->bank_list);
+>> before the sanity check.
+>>
+>> I applied it manually, but check that things are working right.
 >
-> HW configuration which generates lockdep warning (TI dra7-evm):
-(...)
+> Your tree seems to be missing
 >
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Roger Quadros <rogerq@ti.com>
-> Reported-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> commit 2252607d327d5219a6331b50e6ec266d56402be0
+> Author: Gregory Fong <gregory.0xf0@gmail.com>
+> Date:   Wed Jun 17 18:00:40 2015 -0700
+>
+>     gpio: brcmstb: fix null ptr dereference in driver remove
+>
+> which you had pulled in and sent for 4.2-rc1.  It should apply cleanly
+> on top of that.
 
-Ah, I see...
+Yes sorry, my bad.
 
-
->  *     implies that if the chip supports IRQs, these IRQs need to be threaded
->  *     as the chip access may sleep when e.g. reading out the IRQ status
->   *     registers.
-> + * @exported: flags if the gpiochip is exported for use from sysfs. Private.
->   * @irq_not_threaded: flag must be set if @can_sleep is set but the
->   *     IRQs don't need to be threaded
->   *
-> @@ -126,6 +128,7 @@ struct gpio_chip {
->         irq_flow_handler_t      irq_handler;
->         unsigned int            irq_default_type;
->         int                     irq_parent;
-> +       struct lock_class_key   *lock_key;
-
-There is something weird with the kerneldoc. It is documenting something
-else but not documenting the new member.
-
-Anyway, so here:
-
-> +int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-> +                         struct irq_chip *irqchip,
-> +                         unsigned int first_irq,
-> +                         irq_flow_handler_t handler,
-> +                         unsigned int type,
-> +                         struct lock_class_key *lock_key);
-> +
-> +#ifdef CONFIG_LOCKDEP
-> +#define gpiochip_irqchip_add(...)                              \
-> +(                                                              \
-> +       ({                                                      \
-> +               static struct lock_class_key _key;              \
-> +               _gpiochip_irqchip_add(__VA_ARGS__, &_key);      \
-> +       })                                                      \
-> +)
-> +#else
-> +#define gpiochip_irqchip_add(...)                              \
-> +       _gpiochip_irqchip_add(__VA_ARGS__, NULL)
-> +#endif
-
-Every chip will get their own lock class on the heap.
-
-But I think it is a bit kludgy.
-
-Is it not possible to have  the lock key in struct gpio_chip
-be a real member instead of a pointer and get a per-chip
-lock that way?
-
-(...)
-struct lock_class_key lock_key;
-
-instead of:
-
-struct lock_class_key  *lock_key;
-
--> problem solved, without kludgy header defines?
+I merged in v4.2-rc4 and now it looks better.
 
 Yours,
 Linus Walleij
