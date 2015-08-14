@@ -1,49 +1,46 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/9] pinctrl: tegra: Changes for v4.3-rc1
-Date: Fri, 14 Aug 2015 16:48:33 +0200
-Message-ID: <1439563720-13189-3-git-send-email-thierry.reding@gmail.com>
-References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH] gpio: max732x: Add missing dev reference to gpiochip
+Date: Fri, 14 Aug 2015 23:10:58 +0200
+Message-ID: <201508142310.58606.marex@denx.de>
+References: <1435687458-4671-1-git-send-email-marex@denx.de> <CACRpkdZ_MWwfjExjvW59+dQ=E2rv4c9_MsSsjNwO5M8yM+j9fg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:36847 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755161AbbHNOtq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 10:49:46 -0400
-In-Reply-To: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
+Received: from mail-out.m-online.net ([212.18.0.9]:38707 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751590AbbHNVLD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 17:11:03 -0400
+In-Reply-To: <CACRpkdZ_MWwfjExjvW59+dQ=E2rv4c9_MsSsjNwO5M8yM+j9fg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mans Rullgard <mans@mansr.com>, Olaf Mandel <o.mandel@menlosystems.com>, Semen Protsenko <semen.protsenko@globallogic.com>
 
-Hi Linus,
+On Thursday, July 16, 2015 at 01:43:13 PM, Linus Walleij wrote:
+> On Tue, Jun 30, 2015 at 8:04 PM, Marek Vasut <marex@denx.de> wrote:
+> > In case the gpiochip doesn't have the .dev field set, as is the case
+> > in here, it is not possible to reference this device in DT as a GPIO
+> > controller. A good example of this problem is that gpio-leds can not
+> > be used when connected to this chip, the gpio-leds driver bails out
+> > with -EPROBE_DEFER.
+> > 
+> > Fix this problem by setting the .dev field of the gpio_chip to the
+> > parent i2c device.
+> > 
+> > Signed-off-by: Marek Vasut <marex@denx.de>
+> > Cc: Alexandre Courbot <gnurou@gmail.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Mans Rullgard <mans@mansr.com>
+> > Cc: Olaf Mandel <o.mandel@menlosystems.com>
+> > Cc: Semen Protsenko <semen.protsenko@globallogic.com>
+> 
+> Patch applied for fixes.
 
-The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+Hi,
 
-  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+I don't see this one in -next , did it get lost or something please ?
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-pinctrl
-
-for you to fetch changes up to 9462510ce31e2b91156bdcc33e4c737e6768e5f8:
-
-  pinctrl: tegra: Only set the gpio range if needed (2015-08-13 16:24:33 +0200)
-
-As mentioned before I've created this branch with Tomeu's change and
-based the for-4.3/dt branch onto that. Feel free to pull this into your
-tree if necessary. It will also go in through the ARM SoC tree via the
-device tree updates that depend upon it.
-
-Thierry
-
-----------------------------------------------------------------
-pinctrl: tegra: Changes for v4.3-rc1
-
-Contains a single patch from Tomeu to avoid setting up a duplicate GPIO
-range.
-
-----------------------------------------------------------------
-Tomeu Vizoso (1):
-      pinctrl: tegra: Only set the gpio range if needed
-
- drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Best regards,
+Marek Vasut
