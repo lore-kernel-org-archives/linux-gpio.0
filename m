@@ -1,50 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 2/4] gpio: brcmstb: Add interrupt and wakeup source support
-Date: Fri, 14 Aug 2015 14:36:53 +0200
-Message-ID: <CACRpkdaTES0EtbTBUGJLfFC4-fg91Fef1CBLh5tor9SpMCo1og@mail.gmail.com>
-References: <1438391865-7862-1-git-send-email-gregory.0xf0@gmail.com>
-	<1438391865-7862-3-git-send-email-gregory.0xf0@gmail.com>
-	<CACRpkdaz3k_N1qS5M_jmprPz8fHXeLtTke_YT8i2gaehmme+OQ@mail.gmail.com>
-	<CADtm3G7NQqDKwGujZUA9CUJ15+e8fLg0Kupbn2CMc0MeK9DbMw@mail.gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
+ gpio irqchip
+Date: Fri, 14 Aug 2015 14:40:27 +0200
+Message-ID: <55CDE1BB.1060708@metafoo.de>
+References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:34412 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751867AbbHNMgx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 08:36:53 -0400
-Received: by obbfr1 with SMTP id fr1so60081644obb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2015 05:36:53 -0700 (PDT)
-In-Reply-To: <CADtm3G7NQqDKwGujZUA9CUJ15+e8fLg0Kupbn2CMc0MeK9DbMw@mail.gmail.com>
+Received: from smtp-out-208.synserver.de ([212.40.185.208]:1045 "EHLO
+	smtp-out-208.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752753AbbHNMkc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 08:40:32 -0400
+In-Reply-To: <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Brian Norris <computersforpeace@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>
+To: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
 
-On Fri, Aug 14, 2015 at 1:49 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
-> On Thu, Aug 13, 2015 at 4:11 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Sat, Aug 1, 2015 at 3:17 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
+On 08/14/2015 02:34 PM, Linus Walleij wrote:
+[...]
+> Every chip will get their own lock class on the heap.
+> 
+> But I think it is a bit kludgy.
+> 
+> Is it not possible to have  the lock key in struct gpio_chip
+> be a real member instead of a pointer and get a per-chip
+> lock that way?
+> 
+> (...)
+> struct lock_class_key lock_key;
+> 
+> instead of:
+> 
+> struct lock_class_key  *lock_key;
+> 
+> -> problem solved, without kludgy header defines?
 
->> This patch does not apply cleanly because the version in my
->> tree has INIT_LIST_HEAD(&priv->bank_list);
->> before the sanity check.
->>
->> I applied it manually, but check that things are working right.
->
-> Your tree seems to be missing
->
-> commit 2252607d327d5219a6331b50e6ec266d56402be0
-> Author: Gregory Fong <gregory.0xf0@gmail.com>
-> Date:   Wed Jun 17 18:00:40 2015 -0700
->
->     gpio: brcmstb: fix null ptr dereference in driver remove
->
-> which you had pulled in and sent for 4.2-rc1.  It should apply cleanly
-> on top of that.
 
-Yes sorry, my bad.
+Lock keys need to be in persistent memory since they have a unlimited life
+time. Once registered it is expected to exist until the system is reset.
 
-I merged in v4.2-rc4 and now it looks better.
+We recently fixed the same issue of nested locks in regmap. For reference
+the discussion with had a look at different ways to solve this can be found
+here[1] and the final patch series that went in here[2].
 
-Yours,
-Linus Walleij
+- Lars
+
+[1] https://lkml.org/lkml/2015/6/25/144
+[2] https://lkml.org/lkml/2015/7/8/43
+
