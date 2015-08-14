@@ -1,55 +1,42 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
- gpio irqchip
-Date: Fri, 14 Aug 2015 16:05:52 +0300
-Message-ID: <55CDE7B0.5040108@ti.com>
-References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com> <55CDE1BB.1060708@metafoo.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55CDE1BB.1060708@metafoo.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: [PATCH v3 9/9] gpiolib-of: Use dev_warn instead of pr_warn
+Date: Fri, 14 Aug 2015 16:11:06 +0200
+Message-ID: <1439561466-14350-10-git-send-email-mpa@pengutronix.de>
+References: <1439561466-14350-1-git-send-email-mpa@pengutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:55700 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754651AbbHNOLm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 10:11:42 -0400
+In-Reply-To: <1439561466-14350-1-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
 
-On 08/14/2015 03:40 PM, Lars-Peter Clausen wrote:
-> On 08/14/2015 02:34 PM, Linus Walleij wrote:
-> [...]
->> Every chip will get their own lock class on the heap.
->>
->> But I think it is a bit kludgy.
->>
->> Is it not possible to have  the lock key in struct gpio_chip
->> be a real member instead of a pointer and get a per-chip
->> lock that way?
->>
->> (...)
->> struct lock_class_key lock_key;
->>
->> instead of:
->>
->> struct lock_class_key  *lock_key;
->>
->> -> problem solved, without kludgy header defines?
-> 
-> 
-> Lock keys need to be in persistent memory since they have a unlimited life
-> time. Once registered it is expected to exist until the system is reset.
-> 
-> We recently fixed the same issue of nested locks in regmap. For reference
-> the discussion with had a look at different ways to solve this can be found
-> here[1] and the final patch series that went in here[2].
-> 
-> - Lars
-> 
-> [1] https://lkml.org/lkml/2015/6/25/144
-> [2] https://lkml.org/lkml/2015/7/8/43
+chip->dev should be initialized at this point so we can use dev_* here
+instead of pr_warn.
 
-I've actually followed [2], but without deep digging in Lock keys anatomy :)
-(as mentioned in commit message)
+Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+---
+ drivers/gpio/gpiolib-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 1911b692f735..48a7579dd62d 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -227,8 +227,8 @@ static void of_gpiochip_scan_gpios(struct gpio_chip *chip)
+ 
+ 		if (of_property_read_bool(np, "gpio-hog")) {
+ 			if (!dflags) {
+-				pr_warn("GPIO line %d (%s): no hogging state specified, bailing out\n",
+-					desc_to_gpio(desc), np->name);
++				dev_warn(chip->dev, "GPIO line %d (%s): no hogging state specified, bailing out\n",
++					 desc_to_gpio(desc), np->name);
+ 				continue;
+ 			}
+ 
 -- 
-regards,
--grygorii
+2.4.6
+
