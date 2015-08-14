@@ -1,62 +1,99 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Fri, 14 Aug 2015 12:34:33 +0200
-Message-ID: <CACRpkdYe5z9vG+Aekdq1wcKdhUUN5bpxQ52RgNt17+bhJbjVEQ@mail.gmail.com>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
-	<20150805005540.GB20726@verge.net.au>
-	<CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
-	<CAMuHMdW0T6MW6s4Gg_rqvtt+MRPtp_MpuiKtamfFrx-Tcm6WmQ@mail.gmail.com>
-	<20150814003023.GC12589@verge.net.au>
-	<CAMuHMdU0XoZ-comYSAau6e3kAY9VUbNgyeRcS_LzmV1gm31ZKA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
+ gpio irqchip
+Date: Fri, 14 Aug 2015 14:34:00 +0200
+Message-ID: <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
+References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU0XoZ-comYSAau6e3kAY9VUbNgyeRcS_LzmV1gm31ZKA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34448 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754637AbbHNMeA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Aug 2015 08:34:00 -0400
+Received: by obbfr1 with SMTP id fr1so60028338obb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2015 05:34:00 -0700 (PDT)
+In-Reply-To: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
 
-On Fri, Aug 14, 2015 at 9:46 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Aug 14, 2015 at 2:30 AM, Simon Horman <horms@verge.net.au> wrote:
->> On Thu, Aug 13, 2015 at 02:45:55PM +0200, Geert Uytterhoeven wrote:
->>> On Thu, Aug 13, 2015 at 2:29 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> > On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
->>> >> Where possible I prefer not to apply non-DTS/DTSI patches on top of
->>> >> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
->>> >> maintainers like things handled.  With this in mind I have done the following:
->>> >>
->>> >> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
->>> >>    I intend for this to turn up in next soon.
->>> >> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
->>> >>    I intend for these to be present in the renesas devel branch but
->>> >>    not in next until after the release of v4.3-rc1. I would also be
->>> >>    happy to drop them and let Linus Walleij take these patches for v4.4,
->>> >>    assuming patches 1 - 3 are accepted for v4.3.
->>> >
->>> > OK.
->>> >
->>> > Will the world explode if I try to queue the pinctrl patches 4-6 in my
->>> > tree now for v4.3? Then I prefer to defer to v4.4. Else I can merge
->>> > it in parallel?
->>>
->>> There won't be a mapping between gpio and pins in any branch having the
->>> pinctrl changes but not the dtsi changes.
->>
->> It sounds to me that Linus should take his option 2; defer to v4.4.
->> In which case I should drop the changes from my tree (they are not in next
->> anyway). Please let me know if thats the way we will move this forwards.
+On Thu, Aug 13, 2015 at 4:58 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+
+> Since IRQ chip helpers were introduced drivers lose ability to
+> register separate lockdep classes for each registered GPIO IRQ
+> chip and the gpiolib now is using shared lockdep class for
+> all GPIO IRQ chips (gpiochip_irq_lock_class).
+> As result, lockdep will produce warning when there are min two
+> stacked GPIO chips and all of them are interrupt controllers.
 >
-> Sounds fine to me.
+> HW configuration which generates lockdep warning (TI dra7-evm):
+(...)
 >
-> And in the unlikely event we discover regressions in v4.3-rc1 due to having
-> the dtsi changes without the pinctrl changes, we can still fast-track them
-> into v4.3-rc2.
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Roger Quadros <rogerq@ti.com>
+> Reported-by: Roger Quadros <rogerq@ti.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Sounds like a plan.
+Ah, I see...
 
-Hit me on the head about this once v4.3-rc1 is out!
+
+>  *     implies that if the chip supports IRQs, these IRQs need to be threaded
+>  *     as the chip access may sleep when e.g. reading out the IRQ status
+>   *     registers.
+> + * @exported: flags if the gpiochip is exported for use from sysfs. Private.
+>   * @irq_not_threaded: flag must be set if @can_sleep is set but the
+>   *     IRQs don't need to be threaded
+>   *
+> @@ -126,6 +128,7 @@ struct gpio_chip {
+>         irq_flow_handler_t      irq_handler;
+>         unsigned int            irq_default_type;
+>         int                     irq_parent;
+> +       struct lock_class_key   *lock_key;
+
+There is something weird with the kerneldoc. It is documenting something
+else but not documenting the new member.
+
+Anyway, so here:
+
+> +int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+> +                         struct irq_chip *irqchip,
+> +                         unsigned int first_irq,
+> +                         irq_flow_handler_t handler,
+> +                         unsigned int type,
+> +                         struct lock_class_key *lock_key);
+> +
+> +#ifdef CONFIG_LOCKDEP
+> +#define gpiochip_irqchip_add(...)                              \
+> +(                                                              \
+> +       ({                                                      \
+> +               static struct lock_class_key _key;              \
+> +               _gpiochip_irqchip_add(__VA_ARGS__, &_key);      \
+> +       })                                                      \
+> +)
+> +#else
+> +#define gpiochip_irqchip_add(...)                              \
+> +       _gpiochip_irqchip_add(__VA_ARGS__, NULL)
+> +#endif
+
+Every chip will get their own lock class on the heap.
+
+But I think it is a bit kludgy.
+
+Is it not possible to have  the lock key in struct gpio_chip
+be a real member instead of a pointer and get a per-chip
+lock that way?
+
+(...)
+struct lock_class_key lock_key;
+
+instead of:
+
+struct lock_class_key  *lock_key;
+
+-> problem solved, without kludgy header defines?
 
 Yours,
 Linus Walleij
