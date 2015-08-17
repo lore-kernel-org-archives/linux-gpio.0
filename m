@@ -1,135 +1,67 @@
-From: Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and suspend
- resume
-Date: Mon, 17 Aug 2015 17:09:32 +0800
-Message-ID: <CAGS+omCQN65pCP7mYFCj8sDOihLNc15GgELw1u7fTXuq=KBXnw@mail.gmail.com>
-References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
- <1439797974.22004.2.camel@mtksdaap41>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
+ gpio irqchip
+Date: Mon, 17 Aug 2015 12:40:08 +0300
+Message-ID: <55D1ABF8.1070809@ti.com>
+References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com> <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1439797974.22004.2.camel@mtksdaap41>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: maoguang meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:49952 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751331AbbHQJkT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 17 Aug 2015 05:40:19 -0400
+In-Reply-To: <CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
 
-On Mon, Aug 17, 2015 at 3:52 PM, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-> On Fri, 2015-08-14 at 16:38 +0800, maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org wrote:
->> From: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+On 08/14/2015 03:34 PM, Linus Walleij wrote:
+> On Thu, Aug 13, 2015 at 4:58 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> Since IRQ chip helpers were introduced drivers lose ability to
+>> register separate lockdep classes for each registered GPIO IRQ
+>> chip and the gpiolib now is using shared lockdep class for
+>> all GPIO IRQ chips (gpiochip_irq_lock_class).
+>> As result, lockdep will produce warning when there are min two
+>> stacked GPIO chips and all of them are interrupt controllers.
 >>
->> This patch implement irq_set_wake to get who is wakeup source and
->> setup on suspend resume.
+>> HW configuration which generates lockdep warning (TI dra7-evm):
+> (...)
 >>
->> Signed-off-by: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
->>
->> ---
->> changes since v3:
->> -add a comment in mtk_eint_chip_read_mask.
->> -delete ALIGN when allocate eint_offsets.ports.
->> -fix unrelated change.
->>
->> changes since v2:
->> -modify irq_wake to handle irq wakeup source.
->> -allocate two buffers separately.
->> -fix some codestyle.
->>
->> Changes since v1:
->> -implement irq_wake handler.
->> ---
->>
->>  drivers/pinctrl/mediatek/pinctrl-mt8173.c     |  1 +
->>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 91 ++++++++++++++++++++++++++-
->>  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  4 ++
->>  3 files changed, 95 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
->> index d0c811d..ad27184 100644
->> --- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
->> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
->> @@ -385,6 +385,7 @@ static struct platform_driver mtk_pinctrl_driver = {
->>       .driver = {
->>               .name = "mediatek-mt8173-pinctrl",
->>               .of_match_table = mt8173_pctrl_match,
->> +             .pm = &mtk_eint_pm_ops,
->>       },
->>  };
->>
->> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> index ad1ea16..fe34ce9 100644
->> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> @@ -33,6 +33,7 @@
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/delay.h>
->>  #include <linux/interrupt.h>
->> +#include <linux/pm.h>
->>  #include <dt-bindings/pinctrl/mt65xx.h>
->>
->>  #include "../core.h"
->> @@ -1062,6 +1063,77 @@ static int mtk_eint_set_type(struct irq_data *d,
->>       return 0;
->>  }
->>
->> +static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
->> +{
->> +     struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
->> +     int shift = d->hwirq & 0x1f;
->> +     int reg = d->hwirq >> 5;
->> +
->> +     if (on)
->> +             pctl->wake_mask[reg] |= BIT(shift);
->> +     else
->> +             pctl->wake_mask[reg] &= ~BIT(shift);
->> +
->> +     return 0;
->> +}
->
-> Hi Maoguang,
->
-> You changed from set_bit/clear_bit to this, but didn't add any locking.
-> Since this is basic read/modify/write, is it OK to do it without
-> locking?
+>> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Cc: Roger Quadros <rogerq@ti.com>
+>> Reported-by: Roger Quadros <rogerq@ti.com>
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> 
+> Ah, I see...
+> 
+> 
+>>   *     implies that if the chip supports IRQs, these IRQs need to be threaded
+>>   *     as the chip access may sleep when e.g. reading out the IRQ status
+>>    *     registers.
+>> + * @exported: flags if the gpiochip is exported for use from sysfs. Private.
+>>    * @irq_not_threaded: flag must be set if @can_sleep is set but the
+>>    *     IRQs don't need to be threaded
+>>    *
+>> @@ -126,6 +128,7 @@ struct gpio_chip {
+>>          irq_flow_handler_t      irq_handler;
+>>          unsigned int            irq_default_type;
+>>          int                     irq_parent;
+>> +       struct lock_class_key   *lock_key;
+> 
+> There is something weird with the kerneldoc. It is documenting something
+> else but not documenting the new member.
+> 
 
-I believe calling .irq_set_wake() concurrently with itself is
-protected by irq_get_desc_buslock():
+Sorry, for that.
 
- int irq_set_irq_wake(unsigned int irq, unsigned int on)
- {
-         unsigned long flags;
-         struct irq_desc *desc = irq_get_desc_buslock(irq, &flags,
-IRQ_GET_DESC_CHECK_GLOBAL);
-         int ret = 0;
-...
-                         ret = set_irq_wake_real(irq, on);
-...
-         irq_put_desc_busunlock(desc, flags);
-         return ret;
- }
+There are no kerneldocs for any of GPIO IRQ chip's specific fields,
+Do you prefer me to add doc for "lock_key" or all of them?
 
-
-I'm not 100% sure about the .suspend/.resume paths, but I don't think
-they can occur during .irq_set_wake(), either.
-Nor were they protected by the set_bit/clear_bit implementation.
-
--Dan
-
-
->
-> Joe.C
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+-- 
+regards,
+-grygorii
