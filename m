@@ -1,37 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] drivers/gpio: Port gpio driver to ls1021a-qds platform
-Date: Mon, 17 Aug 2015 15:44:52 +0200
-Message-ID: <CACRpkdZ-UtO0BWecQxYT=uEg6V_1nK8FToyZGWNyFT1J2=38rQ@mail.gmail.com>
-References: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
-	<CACRpkdZKhjB_LkJeztnhNSmVevy3SxGSPh06fngs_sLxR-Gu7w@mail.gmail.com>
-	<1873143.FAXHolhE6Z@ws-stein>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
+Date: Mon, 17 Aug 2015 08:56:29 -0700
+Message-ID: <20150817155629.GA8401@verge.net.au>
+References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
+ <20150805005540.GB20726@verge.net.au>
+ <CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
+ <CAMuHMdW0T6MW6s4Gg_rqvtt+MRPtp_MpuiKtamfFrx-Tcm6WmQ@mail.gmail.com>
+ <20150814003023.GC12589@verge.net.au>
+ <CAMuHMdU0XoZ-comYSAau6e3kAY9VUbNgyeRcS_LzmV1gm31ZKA@mail.gmail.com>
+ <CACRpkdYe5z9vG+Aekdq1wcKdhUUN5bpxQ52RgNt17+bhJbjVEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1873143.FAXHolhE6Z@ws-stein>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Shaveta Leekha <shaveta@freescale.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, r64188@freescale.com, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYe5z9vG+Aekdq1wcKdhUUN5bpxQ52RgNt17+bhJbjVEQ@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 13, 2015 at 9:46 AM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
-> On Monday 03 August 2015 10:07:06, Linus Walleij wrote:
->> Alexander Stein and Uwe Kleine-K=C3=B6nig are working on this
->> driver for this kernel cycle so requesting their help in
->> reviewing these three patches.
->>
->> Alexander/Uwe: can you see the patches, or will Shaveta
->> need to resend them?
->
-> Yep, I received them on linux-gpio. You can add for this series
->
-> Tested-By: Alexander Stein <alexander.stein@systec-electronic.com>
+On Fri, Aug 14, 2015 at 12:34:33PM +0200, Linus Walleij wrote:
+> On Fri, Aug 14, 2015 at 9:46 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Fri, Aug 14, 2015 at 2:30 AM, Simon Horman <horms@verge.net.au> wrote:
+> >> On Thu, Aug 13, 2015 at 02:45:55PM +0200, Geert Uytterhoeven wrote:
+> >>> On Thu, Aug 13, 2015 at 2:29 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >>> > On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
+> >>> >> Where possible I prefer not to apply non-DTS/DTSI patches on top of
+> >>> >> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
+> >>> >> maintainers like things handled.  With this in mind I have done the following:
+> >>> >>
+> >>> >> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
+> >>> >>    I intend for this to turn up in next soon.
+> >>> >> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
+> >>> >>    I intend for these to be present in the renesas devel branch but
+> >>> >>    not in next until after the release of v4.3-rc1. I would also be
+> >>> >>    happy to drop them and let Linus Walleij take these patches for v4.4,
+> >>> >>    assuming patches 1 - 3 are accepted for v4.3.
+> >>> >
+> >>> > OK.
+> >>> >
+> >>> > Will the world explode if I try to queue the pinctrl patches 4-6 in my
+> >>> > tree now for v4.3? Then I prefer to defer to v4.4. Else I can merge
+> >>> > it in parallel?
+> >>>
+> >>> There won't be a mapping between gpio and pins in any branch having the
+> >>> pinctrl changes but not the dtsi changes.
+> >>
+> >> It sounds to me that Linus should take his option 2; defer to v4.4.
+> >> In which case I should drop the changes from my tree (they are not in next
+> >> anyway). Please let me know if thats the way we will move this forwards.
+> >
+> > Sounds fine to me.
+> >
+> > And in the unlikely event we discover regressions in v4.3-rc1 due to having
+> > the dtsi changes without the pinctrl changes, we can still fast-track them
+> > into v4.3-rc2.
+> 
+> Sounds like a plan.
+> 
+> Hit me on the head about this once v4.3-rc1 is out!
 
-Thanks, I'm still waiting for device tree bindings to be added
-to this patch so expect a new version from Shaveta, with
-your test-tag on it.
-
-Yours,
-Linus Walleij
+Thanks, I will drop the patches from my tree.
