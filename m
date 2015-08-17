@@ -1,111 +1,50 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH v2] Documentation: gpio: consumer: describe active low
- property
-Date: Sun, 16 Aug 2015 22:18:38 -0500
-Message-ID: <20150817031837.GA31195@deathstar>
-References: <1437199327-4410-1-git-send-email-dirk.behme@gmail.com>
- <55CED248.101@gmail.com>
- <55D14E76.5050804@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio:Fix build warning about void to integer cast in the
+ function mmio_74xx_gpio_probe
+Date: Mon, 17 Aug 2015 12:42:49 +0900
+Message-ID: <CAAVeFuLK-+u0awxjZ18+HCcZtuH+8U-_xaXn6Ec22UsqP=TUXg@mail.gmail.com>
+References: <1436042072-7496-1-git-send-email-xerofoify@gmail.com>
+ <CACRpkdbj61+XoTCambLEGG=PNdkunvqnmRpV1VKi5pX1ouPzGw@mail.gmail.com> <55CCD7CA.7040803@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:33824 "EHLO
-	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753719AbbHQDSq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Aug 2015 23:18:46 -0400
-Received: by iodb91 with SMTP id b91so136854768iod.1
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2015 20:18:46 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <55D14E76.5050804@nvidia.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:33532 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751650AbbHQDnJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Aug 2015 23:43:09 -0400
+In-Reply-To: <55CCD7CA.7040803@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: nick <xerofoify@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 17, 2015 at 12:01:10PM +0900, Alexandre Courbot wrote:
-> On 08/15/2015 02:46 PM, Dirk Behme wrote:
-> >On 18.07.2015 08:02, Dirk Behme wrote:
-> >>I've been searching for any documentation of 'the active-low property
-> >>of a GPIO'
-> >>already mentioned in this documenation. But couldn't find any. Add it.
-> >>
-> >>Sigend-off-by: Dirk Behme <dirk.behme@gmail.com>
-> >>Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> >>---
-> >>Changes in v2: Incorporate the review comments from Alexandre.
-> >>
-> >>  Documentation/gpio/consumer.txt | 33 +++++++++++++++++++++++++++++++++
-> >>  1 file changed, 33 insertions(+)
-> >>
-> >>diff --git a/Documentation/gpio/consumer.txt
-> >>b/Documentation/gpio/consumer.txt
-> >>index 75542b9..df7c51a 100644
-> >>--- a/Documentation/gpio/consumer.txt
-> >>+++ b/Documentation/gpio/consumer.txt
-> >>@@ -237,6 +237,39 @@ Note that these functions should only be used
-> >>with great moderation ; a driver
-> >>  should not have to care about the physical line level.
-> >>
-> >>
-> >>+The active-low property
-> >>+-----------------------
-> >>+
-> >>+As a driver should not have to care about the physical line level,
-> >>all of the
-> >>+gpiod_set_value_xxx() or gpiod_set_array_value_xxx() functions
-> >>operate with
-> >>+the *logical* value. With this they take the active-low property into
-> >>account.
-> >>+This does mean that they check whether the GPIO is configured to be
-> >>active-low.
-> >>+And if so, they manipulate the passed value before the physical line
-> >>level is
-> >>+driven.
-> >>+
-> >>+With this, all the gpiod_set_(array)_value_xxx() functions interpret
-> >>the parameter
-> >>+"value" as "active" ("1") or "inactive" ("0"). The physical line
-> >>level will be
-> >>+driven accordingly.
-> >>+
+On Fri, Aug 14, 2015 at 2:45 AM, nick <xerofoify@gmail.com> wrote:
+>
+>
+> On 2015-07-16 08:00 AM, Linus Walleij wrote:
+>> On Sat, Jul 4, 2015 at 10:34 PM, Nicholas Krause <xerofoify@gmail.com> wrote:
+>>
+>>> This fixes the build warning , warning: cast from pointer to integer
+>>> of different size when building this file on a x86 allmodconfig
+>>> configuration. In order for me to fix this build warning I changed
+>>> the cast in the function mmio_74xx_gpio_probe from casting the
+>>> variable data of the stucture pointer of_id to uintptr_t rather
+>>> then unsigned when assigning to the variable flag of the structure
+>>> pointer priv of the structure type mmio_74xx_gpio_priv.
+>>>
+>>>
+>>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+>>
+>> Patch applied with some tweaks to the long subject line.
+>>
+>> Yours,
+>> Linus Walleij
+>>
+>
+> Linus,
+> After searching through your git tree for gpio subsystem I haven't found this patch merged
+> yet. Is there any reason for that or should I just resend.
 
-Property is misspelled here. poperty
-
-> >>+As an example, if the active-low poperty for a dedicated GPIO is set,
-> >>and the
-> >>+gpiod_set_(array)_value_xxx() passes "active" ("1"), the physical
-> >>line level will be
-> >>+driven low.
-> >>+
-> >>+To summarize:
-> >>+
-
-Property is also spelled wrong here too. proporty
-
-> >>+Function (example)               active-low proporty  physical line
-> >>+gpiod_set_raw_value(desc, 0);        don't care           low
-> >>+gpiod_set_raw_value(desc, 1);        don't care           high
-> >>+gpiod_set_value(desc, 0);       default (active-high)     low
-> >>+gpiod_set_value(desc, 1);       default (active-high)     high
-> >>+gpiod_set_value(desc, 0);             active-low          high
-> >>+gpiod_set_value(desc, 1);             active-low          low
-> >>+
-> >>+Please note again that the set_raw/get_raw functions should be
-> >>avoided as much
-> >>+as possible, especially by drivers which should not care about the
-> >>actual physical
-> >>+line level and worry about the logical value instead.
-> >>+
-> >>+
-> >>  Set multiple GPIO outputs with a single function call
-> >>  -----------------------------------------------------
-> >>  The following functions set the output values of an array of GPIOs:
-> >
-> >
-> >Any further comments on this? Could this be applied?
-> 
-> I am ok with it - Linus?
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I can see this patch in both Linus' for-next branch
+(git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+for-next), and linux-next. Always check linux-next first.
