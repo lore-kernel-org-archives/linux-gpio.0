@@ -1,40 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] gpiolib: irqchip: use different lockdep class for
- each gpio irqchip
-Date: Mon, 17 Aug 2015 15:33:04 +0200
-Message-ID: <CACRpkdbB7YY6pBhyG6_Rq9BY1Xk-tikk2_88D5YHibaGDm+5DQ@mail.gmail.com>
-References: <1439814924-11881-1-git-send-email-grygorii.strashko@ti.com>
+Subject: Re: [PATCH 1/3] drivers/gpio: Port gpio driver to ls1021a-qds platform
+Date: Mon, 17 Aug 2015 15:44:52 +0200
+Message-ID: <CACRpkdZ-UtO0BWecQxYT=uEg6V_1nK8FToyZGWNyFT1J2=38rQ@mail.gmail.com>
+References: <1438241239-15178-1-git-send-email-shaveta@freescale.com>
+	<CACRpkdZKhjB_LkJeztnhNSmVevy3SxGSPh06fngs_sLxR-Gu7w@mail.gmail.com>
+	<1873143.FAXHolhE6Z@ws-stein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439814924-11881-1-git-send-email-grygorii.strashko@ti.com>
+In-Reply-To: <1873143.FAXHolhE6Z@ws-stein>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Shaveta Leekha <shaveta@freescale.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, r64188@freescale.com, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 17, 2015 at 2:35 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-
-> Since IRQ chip helpers were introduced drivers lose ability to
-> register separate lockdep classes for each registered GPIO IRQ
-> chip and the gpiolib now is using shared lockdep class for
-> all GPIO IRQ chips (gpiochip_irq_lock_class).
-> As result, lockdep will produce warning when there are min two
-> stacked GPIO chips and all of them are interrupt controllers.
+On Thu, Aug 13, 2015 at 9:46 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
+> On Monday 03 August 2015 10:07:06, Linus Walleij wrote:
+>> Alexander Stein and Uwe Kleine-K=C3=B6nig are working on this
+>> driver for this kernel cycle so requesting their help in
+>> reviewing these three patches.
+>>
+>> Alexander/Uwe: can you see the patches, or will Shaveta
+>> need to resend them?
 >
-> HW configuration which generates lockdep warning (TI dra7-evm):
-(...)
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Roger Quadros <rogerq@ti.com>
-> Reported-by: Roger Quadros <rogerq@ti.com>
-> Tested-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> ---
-> Changes in v2:
-> - removed accidental change in gpio chip structure description.
+> Yep, I received them on linux-gpio. You can add for this series
+>
+> Tested-By: Alexander Stein <alexander.stein@systec-electronic.com>
 
-This v2 patch applied. I see no better alternative.
+Thanks, I'm still waiting for device tree bindings to be added
+to this patch so expect a new version from Shaveta, with
+your test-tag on it.
 
 Yours,
 Linus Walleij
