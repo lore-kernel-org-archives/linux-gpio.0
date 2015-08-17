@@ -1,236 +1,255 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH v2 1/2] gpiolib: irqchip: use different lockdep class for each gpio irqchip
-Date: Mon, 17 Aug 2015 15:35:23 +0300
-Message-ID: <1439814924-11881-1-git-send-email-grygorii.strashko@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: baytrail: Use raw_spinlock for locking
+Date: Mon, 17 Aug 2015 16:03:17 +0300
+Message-ID: <1439816597-60259-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:60917 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755044AbbHQMfh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 08:35:37 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23164 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751427AbbHQND0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 17 Aug 2015 09:03:26 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, lars@metafoo.de, Grygorii Strashko <grygorii.strashko@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Since IRQ chip helpers were introduced drivers lose ability to
-register separate lockdep classes for each registered GPIO IRQ
-chip and the gpiolib now is using shared lockdep class for
-all GPIO IRQ chips (gpiochip_irq_lock_class).
-As result, lockdep will produce warning when there are min two
-stacked GPIO chips and all of them are interrupt controllers.
+The Intel Baytrail pinctrl driver implements irqchip callbacks which are
+called with desc->lock raw_spinlock held. In mainline this is fine because
+spinlock resolves to raw_spinlock. However, running the same code in -rt we
+get:
 
-HW configuration which generates lockdep warning (TI dra7-evm):
+ BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:917
+ in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/0
+ Preemption disabled at:[<ffffffff81092e9f>] cpu_startup_entry+0x17f/0x480
 
-[SOC GPIO bankA.gpioX]
-  <- irq - [pcf875x.gpioY]
-            <- irq - DevZ.enable_irq_wake(pcf_gpioY_irq);
-The issue was reported in [1] and discussed [2].
+ CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.1.5-rt5 #13
+  ...
+ Call Trace:
+  <IRQ>  [<ffffffff816283c6>] dump_stack+0x4a/0x61
+  [<ffffffff81077e17>] ___might_sleep+0xe7/0x170
+  [<ffffffff8162d6cf>] rt_spin_lock+0x1f/0x50
+  [<ffffffff812e3b88>] byt_gpio_clear_triggering+0x38/0x60
+  [<ffffffff812e3bc1>] byt_irq_mask+0x11/0x20
+  [<ffffffff810a7013>] handle_level_irq+0x83/0x150
+  [<ffffffff810a3457>] generic_handle_irq+0x27/0x40
+  [<ffffffff812e3a5f>] byt_gpio_irq_handler+0x7f/0xc0
+  [<ffffffff810050aa>] handle_irq+0xaa/0x190
+  ...
 
-=============================================
-[ INFO: possible recursive locking detected ]
-4.2.0-rc6-00013-g5d050ed-dirty #55 Not tainted
----------------------------------------------
-sh/63 is trying to acquire lock:
- (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
+This is because in -rt spinlocks are preemptible so taking the driver
+private spinlock in irqchip callbacks causes might_sleep() to trigger.
 
-but task is already holding lock:
- (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
+In order to keep -rt happy but at the same time make sure that register
+accesses get serialized, convert the driver to use raw_spinlock instead.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+Also shorten the critical section a bit in few places.
 
-       CPU0
-       ----
-  lock(class);
-  lock(class);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-7 locks held by sh/63:
- #0:  (sb_writers#4){.+.+.+}, at: [<c016bbb8>] vfs_write+0x13c/0x164
- #1:  (&of->mutex){+.+.+.}, at: [<c01debf4>] kernfs_fop_write+0x4c/0x1a0
- #2:  (s_active#36){.+.+.+}, at: [<c01debfc>] kernfs_fop_write+0x54/0x1a0
- #3:  (pm_mutex){+.+.+.}, at: [<c009758c>] pm_suspend+0xec/0x4c4
- #4:  (&dev->mutex){......}, at: [<c03f77f8>] __device_suspend+0xd4/0x398
- #5:  (&gpio->lock){+.+.+.}, at: [<c009b940>] __irq_get_desc_lock+0x74/0x94
- #6:  (class){......}, at: [<c009b91c>] __irq_get_desc_lock+0x50/0x94
-
-stack backtrace:
-CPU: 0 PID: 63 Comm: sh Not tainted 4.2.0-rc6-00013-g5d050ed-dirty #55
-Hardware name: Generic DRA74X (Flattened Device Tree)
-[<c0016e24>] (unwind_backtrace) from [<c0013338>] (show_stack+0x10/0x14)
-[<c0013338>] (show_stack) from [<c05f6b24>] (dump_stack+0x84/0x9c)
-[<c05f6b24>] (dump_stack) from [<c00903f4>] (__lock_acquire+0x19c0/0x1e20)
-[<c00903f4>] (__lock_acquire) from [<c0091098>] (lock_acquire+0xa8/0x128)
-[<c0091098>] (lock_acquire) from [<c05fd61c>] (_raw_spin_lock_irqsave+0x38/0x4c)
-[<c05fd61c>] (_raw_spin_lock_irqsave) from [<c009b91c>] (__irq_get_desc_lock+0x50/0x94)
-[<c009b91c>] (__irq_get_desc_lock) from [<c009c4f4>] (irq_set_irq_wake+0x20/0xfc)
-[<c009c4f4>] (irq_set_irq_wake) from [<c0393ac4>] (pcf857x_irq_set_wake+0x24/0x54)
-[<c0393ac4>] (pcf857x_irq_set_wake) from [<c009c560>] (irq_set_irq_wake+0x8c/0xfc)
-[<c009c560>] (irq_set_irq_wake) from [<c04a02ac>] (gpio_keys_suspend+0x70/0xd4)
-[<c04a02ac>] (gpio_keys_suspend) from [<c03f6a00>] (dpm_run_callback+0x50/0x124)
-[<c03f6a00>] (dpm_run_callback) from [<c03f7830>] (__device_suspend+0x10c/0x398)
-[<c03f7830>] (__device_suspend) from [<c03f90f0>] (dpm_suspend+0x134/0x2f4)
-[<c03f90f0>] (dpm_suspend) from [<c0096e20>] (suspend_devices_and_enter+0xa8/0x728)
-[<c0096e20>] (suspend_devices_and_enter) from [<c00977cc>] (pm_suspend+0x32c/0x4c4)
-[<c00977cc>] (pm_suspend) from [<c0096060>] (state_store+0x64/0xb8)
-[<c0096060>] (state_store) from [<c01dec64>] (kernfs_fop_write+0xbc/0x1a0)
-[<c01dec64>] (kernfs_fop_write) from [<c016b280>] (__vfs_write+0x20/0xd8)
-[<c016b280>] (__vfs_write) from [<c016bb0c>] (vfs_write+0x90/0x164)
-[<c016bb0c>] (vfs_write) from [<c016c330>] (SyS_write+0x44/0x9c)
-[<c016c330>] (SyS_write) from [<c000f500>] (ret_fast_syscall+0x0/0x54)
-
-Lets fix it by using separate lockdep class for each registered GPIO
-IRQ Chip. This is done by wrapping gpiochip_irqchip_add call into macros.
-
-The implementation of this patch inspired by solution done by Nicolas
-Boichat for regmap [3]
-
-[1] http://www.spinics.net/lists/linux-gpio/msg05844.html
-[2] http://www.spinics.net/lists/linux-gpio/msg06021.html
-[3] http://www.spinics.net/lists/arm-kernel/msg429834.html
-
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Roger Quadros <rogerq@ti.com>
-Reported-by: Roger Quadros <rogerq@ti.com>
-Tested-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Suggested-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
-Changes in v2:
-- removed accidental change in gpio chip structure description.
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 50 ++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
- drivers/gpio/gpiolib.c      | 27 ++++++++++++++-------------
- include/linux/gpio/driver.h | 26 +++++++++++++++++++++-----
- 2 files changed, 35 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 34f95fb..b562dd3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -462,12 +462,6 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index f80a1bee6981..3e012bb22231 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -141,7 +141,7 @@ struct byt_gpio_pin_context {
+ struct byt_gpio {
+ 	struct gpio_chip		chip;
+ 	struct platform_device		*pdev;
+-	spinlock_t			lock;
++	raw_spinlock_t			lock;
+ 	void __iomem			*reg_base;
+ 	struct pinctrl_gpio_range	*range;
+ 	struct byt_gpio_pin_context	*saved_context;
+@@ -169,11 +169,11 @@ static void byt_gpio_clear_triggering(struct byt_gpio *vg, unsigned offset)
+ 	unsigned long flags;
+ 	u32 value;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	value = readl(reg);
+ 	value &= ~(BYT_TRIG_POS | BYT_TRIG_NEG | BYT_TRIG_LVL);
+ 	writel(value, reg);
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
  }
- EXPORT_SYMBOL_GPL(gpiochip_set_chained_irqchip);
  
--/*
-- * This lock class tells lockdep that GPIO irqs are in a different
-- * category than their parents, so it won't report false recursion.
-- */
--static struct lock_class_key gpiochip_irq_lock_class;
--
- /**
-  * gpiochip_irq_map() - maps an IRQ into a GPIO irqchip
-  * @d: the irqdomain used by this irqchip
-@@ -484,7 +478,11 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 	struct gpio_chip *chip = d->host_data;
+ static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned offset)
+@@ -198,7 +198,7 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	u32 value, gpio_mux;
+ 	unsigned long flags;
  
- 	irq_set_chip_data(irq, chip);
--	irq_set_lockdep_class(irq, &gpiochip_irq_lock_class);
-+	/*
-+	 * This lock class tells lockdep that GPIO irqs are in a different
-+	 * category than their parents, so it won't report false recursion.
-+	 */
-+	irq_set_lockdep_class(irq, chip->lock_key);
- 	irq_set_chip_and_handler(irq, chip->irqchip, chip->irq_handler);
- 	/* Chips that can sleep need nested thread handlers */
- 	if (chip->can_sleep && !chip->irq_not_threaded)
-@@ -589,6 +587,7 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
-  * @handler: the irq handler to use (often a predefined irq core function)
-  * @type: the default type for IRQs on this irqchip, pass IRQ_TYPE_NONE
-  * to have the core avoid setting up any default type in the hardware.
-+ * @lock_key: lockdep class
-  *
-  * This function closely associates a certain irqchip with a certain
-  * gpiochip, providing an irq domain to translate the local IRQs to
-@@ -604,11 +603,12 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
-  * the pins on the gpiochip can generate a unique IRQ. Everything else
-  * need to be open coded.
-  */
--int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
--			 struct irq_chip *irqchip,
--			 unsigned int first_irq,
--			 irq_flow_handler_t handler,
--			 unsigned int type)
-+int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+			  struct irq_chip *irqchip,
-+			  unsigned int first_irq,
-+			  irq_flow_handler_t handler,
-+			  unsigned int type,
-+			  struct lock_class_key *lock_key)
- {
- 	struct device_node *of_node;
- 	unsigned int offset;
-@@ -634,6 +634,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
- 	gpiochip->irq_handler = handler;
- 	gpiochip->irq_default_type = type;
- 	gpiochip->to_irq = gpiochip_to_irq;
-+	gpiochip->lock_key = lock_key;
- 	gpiochip->irqdomain = irq_domain_add_simple(of_node,
- 					gpiochip->ngpio, first_irq,
- 					&gpiochip_domain_ops, gpiochip);
-@@ -671,7 +672,7 @@ int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 
+ 	/*
+ 	 * In most cases, func pin mux 000 means GPIO function.
+@@ -220,7 +220,7 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 			 "pin %u forcibly re-configured as GPIO\n", offset);
+ 	}
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 	pm_runtime_get(&vg->pdev->dev);
+ 
+@@ -246,7 +246,7 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ 	if (offset >= vg->chip.ngpio)
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	value = readl(reg);
+ 
+ 	WARN(value & BYT_DIRECT_IRQ_EN,
+@@ -265,7 +265,7 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ 	else if (type & IRQ_TYPE_LEVEL_MASK)
+ 		__irq_set_handler_locked(d->irq, handle_level_irq);
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
  
  	return 0;
  }
--EXPORT_SYMBOL_GPL(gpiochip_irqchip_add);
-+EXPORT_SYMBOL_GPL(_gpiochip_irqchip_add);
+@@ -277,9 +277,9 @@ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	unsigned long flags;
+ 	u32 val;
  
- #else /* CONFIG_GPIOLIB_IRQCHIP */
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	val = readl(reg);
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
  
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c8393cd..0c7004d 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -6,6 +6,7 @@
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/lockdep.h>
- #include <linux/pinctrl/pinctrl.h>
+ 	return val & BYT_LEVEL;
+ }
+@@ -291,7 +291,7 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	unsigned long flags;
+ 	u32 old_val;
  
- struct device;
-@@ -126,6 +127,7 @@ struct gpio_chip {
- 	irq_flow_handler_t	irq_handler;
- 	unsigned int		irq_default_type;
- 	int			irq_parent;
-+	struct lock_class_key	*lock_key;
- #endif
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
  
- #if defined(CONFIG_OF_GPIO)
-@@ -171,11 +173,25 @@ void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
- 		int parent_irq,
- 		irq_flow_handler_t parent_handler);
+ 	old_val = readl(reg);
  
--int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
--		struct irq_chip *irqchip,
--		unsigned int first_irq,
--		irq_flow_handler_t handler,
--		unsigned int type);
-+int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-+			  struct irq_chip *irqchip,
-+			  unsigned int first_irq,
-+			  irq_flow_handler_t handler,
-+			  unsigned int type,
-+			  struct lock_class_key *lock_key);
+@@ -300,7 +300,7 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	else
+ 		writel(old_val & ~BYT_LEVEL, reg);
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ }
+ 
+ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+@@ -310,13 +310,13 @@ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	unsigned long flags;
+ 	u32 value;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 
+ 	value = readl(reg) | BYT_DIR_MASK;
+ 	value &= ~BYT_INPUT_EN;		/* active low */
+ 	writel(value, reg);
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -330,7 +330,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 	unsigned long flags;
+ 	u32 reg_val;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 
+ 	/*
+ 	 * Before making any direction modifications, do a check if gpio
+@@ -349,7 +349,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 	else
+ 		writel(reg_val & ~BYT_LEVEL, reg);
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -358,18 +358,19 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	struct byt_gpio *vg = to_byt_gpio(chip);
+ 	int i;
+-	unsigned long flags;
+ 	u32 conf0, val, offs;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
+-
+ 	for (i = 0; i < vg->chip.ngpio; i++) {
+ 		const char *pull_str = NULL;
+ 		const char *pull = NULL;
++		unsigned long flags;
+ 		const char *label;
+ 		offs = vg->range->pins[i] * 16;
 +
-+#ifdef CONFIG_LOCKDEP
-+#define gpiochip_irqchip_add(...)				\
-+(								\
-+	({							\
-+		static struct lock_class_key _key;		\
-+		_gpiochip_irqchip_add(__VA_ARGS__, &_key);	\
-+	})							\
-+)
-+#else
-+#define gpiochip_irqchip_add(...)				\
-+	_gpiochip_irqchip_add(__VA_ARGS__, NULL)
-+#endif
++		raw_spin_lock_irqsave(&vg->lock, flags);
+ 		conf0 = readl(vg->reg_base + offs + BYT_CONF0_REG);
+ 		val = readl(vg->reg_base + offs + BYT_VAL_REG);
++		raw_spin_unlock_irqrestore(&vg->lock, flags);
  
- #endif /* CONFIG_GPIOLIB_IRQCHIP */
+ 		label = gpiochip_is_requested(chip, i);
+ 		if (!label)
+@@ -422,7 +423,6 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
  
+ 		seq_puts(s, "\n");
+ 	}
+-	spin_unlock_irqrestore(&vg->lock, flags);
+ }
+ 
+ static void byt_gpio_irq_handler(unsigned irq, struct irq_desc *desc)
+@@ -454,10 +454,10 @@ static void byt_irq_ack(struct irq_data *d)
+ 	unsigned offset = irqd_to_hwirq(d);
+ 	void __iomem *reg;
+ 
+-	spin_lock(&vg->lock);
++	raw_spin_lock(&vg->lock);
+ 	reg = byt_gpio_reg(&vg->chip, offset, BYT_INT_STAT_REG);
+ 	writel(BIT(offset % 32), reg);
+-	spin_unlock(&vg->lock);
++	raw_spin_unlock(&vg->lock);
+ }
+ 
+ static void byt_irq_unmask(struct irq_data *d)
+@@ -469,9 +469,9 @@ static void byt_irq_unmask(struct irq_data *d)
+ 	void __iomem *reg;
+ 	u32 value;
+ 
+-	spin_lock_irqsave(&vg->lock, flags);
+-
+ 	reg = byt_gpio_reg(&vg->chip, offset, BYT_CONF0_REG);
++
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	value = readl(reg);
+ 
+ 	switch (irqd_get_trigger_type(d)) {
+@@ -492,7 +492,7 @@ static void byt_irq_unmask(struct irq_data *d)
+ 
+ 	writel(value, reg);
+ 
+-	spin_unlock_irqrestore(&vg->lock, flags);
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ }
+ 
+ static void byt_irq_mask(struct irq_data *d)
+@@ -584,7 +584,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(vg->reg_base))
+ 		return PTR_ERR(vg->reg_base);
+ 
+-	spin_lock_init(&vg->lock);
++	raw_spin_lock_init(&vg->lock);
+ 
+ 	gc = &vg->chip;
+ 	gc->label = dev_name(&pdev->dev);
 -- 
 2.5.0
 
