@@ -1,99 +1,96 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and
- suspend resume
-Date: Mon, 17 Aug 2015 15:52:54 +0800
-Message-ID: <1439797974.22004.2.camel@mtksdaap41>
-References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] gpio/grgpio: fix deadlock in grgpio_irq_unmap()
+Date: Mon, 17 Aug 2015 17:23:52 +0900
+Message-ID: <1439799832-13402-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:60957 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750942AbbHQHw6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 03:52:58 -0400
-In-Reply-To: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3205 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbbHQIYI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 04:24:08 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: maoguang.meng@mediatek.com
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Andreas Larsson <andreas@gaisler.com>
 
-On Fri, 2015-08-14 at 16:38 +0800, maoguang.meng@mediatek.com wrote:
-> From: Maoguang Meng <maoguang.meng@mediatek.com>
-> 
-> This patch implement irq_set_wake to get who is wakeup source and
-> setup on suspend resume.
-> 
-> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
-> 
-> ---
-> changes since v3:
-> -add a comment in mtk_eint_chip_read_mask.
-> -delete ALIGN when allocate eint_offsets.ports.
-> -fix unrelated change.
-> 
-> changes since v2:
-> -modify irq_wake to handle irq wakeup source.
-> -allocate two buffers separately.
-> -fix some codestyle.
-> 
-> Changes since v1:
-> -implement irq_wake handler.
-> ---
-> 
->  drivers/pinctrl/mediatek/pinctrl-mt8173.c     |  1 +
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 91 ++++++++++++++++++++++++++-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  4 ++
->  3 files changed, 95 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-> index d0c811d..ad27184 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-> @@ -385,6 +385,7 @@ static struct platform_driver mtk_pinctrl_driver = {
->  	.driver = {
->  		.name = "mediatek-mt8173-pinctrl",
->  		.of_match_table = mt8173_pctrl_match,
-> +		.pm = &mtk_eint_pm_ops,
->  	},
->  };
->  
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index ad1ea16..fe34ce9 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -33,6 +33,7 @@
->  #include <linux/mfd/syscon.h>
->  #include <linux/delay.h>
->  #include <linux/interrupt.h>
-> +#include <linux/pm.h>
->  #include <dt-bindings/pinctrl/mt65xx.h>
->  
->  #include "../core.h"
-> @@ -1062,6 +1063,77 @@ static int mtk_eint_set_type(struct irq_data *d,
->  	return 0;
->  }
->  
-> +static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
-> +	int shift = d->hwirq & 0x1f;
-> +	int reg = d->hwirq >> 5;
-> +
-> +	if (on)
-> +		pctl->wake_mask[reg] |= BIT(shift);
-> +	else
-> +		pctl->wake_mask[reg] &= ~BIT(shift);
-> +
-> +	return 0;
-> +}
+As reported by Alexey Khoroshilov:
 
-Hi Maoguang,
+    grgpio_irq_unmap() code looks quite suspicious regarding usage of
+    priv->bgc.lock spinlock.
 
-You changed from set_bit/clear_bit to this, but didn't add any locking.
-Since this is basic read/modify/write, is it OK to do it without
-locking?
+    It locks the spinlock in line 310:
 
-Joe.C
+	spin_lock_irqsave(&priv->bgc.lock, flags);
 
+    and then it can call grgpio_set_imask() in line 317:
+
+	grgpio_set_imask(priv, i, 0);
+
+    But grgpio_set_imask() unconditionally locks the spinlock by itself.
+
+Fix this by moving the spinlock acquisition outside of
+grgpio_set_imask().
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+CC: Alexey Khoroshilov <khoroshilov@ispras.ru>
+CC: Andreas Larsson <andreas@gaisler.com>
+---
+ drivers/gpio/gpio-grgpio.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 77053d61466e..801423fe8143 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -104,17 +104,12 @@ static void grgpio_set_imask(struct grgpio_priv *priv, unsigned int offset,
+ {
+ 	struct bgpio_chip *bgc = &priv->bgc;
+ 	unsigned long mask = bgc->pin2mask(bgc, offset);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&bgc->lock, flags);
+ 
+ 	if (val)
+ 		priv->imask |= mask;
+ 	else
+ 		priv->imask &= ~mask;
+ 	bgc->write_reg(priv->regs + GRGPIO_IMASK, priv->imask);
+-
+-	spin_unlock_irqrestore(&bgc->lock, flags);
+ }
+ 
+ static int grgpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -180,16 +175,26 @@ static void grgpio_irq_mask(struct irq_data *d)
+ {
+ 	struct grgpio_priv *priv = irq_data_get_irq_chip_data(d);
+ 	int offset = d->hwirq;
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->bgc.lock, flags);
+ 
+ 	grgpio_set_imask(priv, offset, 0);
++
++	spin_unlock_irqrestore(&priv->bgc.lock, flags);
+ }
+ 
+ static void grgpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct grgpio_priv *priv = irq_data_get_irq_chip_data(d);
+ 	int offset = d->hwirq;
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->bgc.lock, flags);
+ 
+ 	grgpio_set_imask(priv, offset, 1);
++
++	spin_unlock_irqrestore(&priv->bgc.lock, flags);
+ }
+ 
+ static struct irq_chip grgpio_irq_chip = {
+-- 
+2.5.0
 
