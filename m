@@ -1,50 +1,64 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio:Fix build warning about void to integer cast in the
- function mmio_74xx_gpio_probe
-Date: Mon, 17 Aug 2015 12:42:49 +0900
-Message-ID: <CAAVeFuLK-+u0awxjZ18+HCcZtuH+8U-_xaXn6Ec22UsqP=TUXg@mail.gmail.com>
-References: <1436042072-7496-1-git-send-email-xerofoify@gmail.com>
- <CACRpkdbj61+XoTCambLEGG=PNdkunvqnmRpV1VKi5pX1ouPzGw@mail.gmail.com> <55CCD7CA.7040803@gmail.com>
+Subject: Re: [PATCH] input: gpio_keys: Don't report events on gpio failure
+Date: Mon, 17 Aug 2015 15:59:59 +0900
+Message-ID: <CAAVeFuK6TwYrbb8DJWa8NgL269p03vmDVDVaSuEvCWuOuN4GzA@mail.gmail.com>
+References: <1438048204-632-1-git-send-email-bjorn.andersson@sonymobile.com>
+ <20150728210040.GE19610@dtor-ws> <20150810224109.GN6519@usrtlx11787.corpusers.net>
+ <CACRpkdY8KqKa3GpfNo5JQAO5+Z3UG0J99VCg_OjsRTa5MJAaYg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33532 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751650AbbHQDnJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 16 Aug 2015 23:43:09 -0400
-In-Reply-To: <55CCD7CA.7040803@gmail.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:35004 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbbHQHAU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 03:00:20 -0400
+In-Reply-To: <CACRpkdY8KqKa3GpfNo5JQAO5+Z3UG0J99VCg_OjsRTa5MJAaYg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: nick <xerofoify@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Aug 14, 2015 at 2:45 AM, nick <xerofoify@gmail.com> wrote:
+On Thu, Aug 13, 2015 at 10:06 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Tue, Aug 11, 2015 at 12:41 AM, Bjorn Andersson
+> <bjorn.andersson@sonymobile.com> wrote:
 >
+>> But then the question first goes to Linus & co.
+>>
+>> gpio_chip->get() can return a negative value to indicate errors (and did
+>> so in this case), all parts of the API seems indicates that we can get
+>> an error (int vs bool).
 >
-> On 2015-07-16 08:00 AM, Linus Walleij wrote:
->> On Sat, Jul 4, 2015 at 10:34 PM, Nicholas Krause <xerofoify@gmail.com> wrote:
->>
->>> This fixes the build warning , warning: cast from pointer to integer
->>> of different size when building this file on a x86 allmodconfig
->>> configuration. In order for me to fix this build warning I changed
->>> the cast in the function mmio_74xx_gpio_probe from casting the
->>> variable data of the stucture pointer of_id to uintptr_t rather
->>> then unsigned when assigning to the variable flag of the structure
->>> pointer priv of the structure type mmio_74xx_gpio_priv.
->>>
->>>
->>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
->>
->> Patch applied with some tweaks to the long subject line.
->>
->> Yours,
->> Linus Walleij
->>
+> Ooops.
 >
-> Linus,
-> After searching through your git tree for gpio subsystem I haven't found this patch merged
-> yet. Is there any reason for that or should I just resend.
+>> Should we change _gpiod_get_raw_value() to propagate this error?
+>
+> Yes for now. Can you patch it? :)
+>
+>>  Or
+>> should we just ignore this issue and propagate an error as GPIO high
+>> reading?
+>
+> I don't know about the future. In some sense GPIOs are so smallish
+> resources that errorhandling every call to read/write them seem to
+> be a royal PITA. That is why I wanted to switch them to bool and get
+> rid of the problem, but now I also see that maybe that was not such a
+> smart idea, if errors do occur on the set/get_value path.
 
-I can see this patch in both Linus' for-next branch
-(git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-for-next), and linux-next. Always check linux-next first.
+Nowadays GPIOs may reside at the other end of an i2c bus, which means
+that even the simplest operation like reading a GPIO value can
+potentially fail. And it will probably not get better - wait until we
+implement GPIO-over-IP! :)
+
+So I'd say it makes sense to propagate errors returned by the driver's
+get() hook. This might contradict some of our earlier statements about
+simplifying the GPIO API, but is preferrable to having to make a
+decision as to which valid value to return if the driver fails...
+
+It should then be made very clear in the documentation that the only
+positive values ever returned by the GPIO API will be 0 and 1 (we
+already have a clamping mechanism for that IIRC), and that negative
+values are propagated as-is.
+
+Linus, does that seem reasonable to you? Does anyone has the intention
+to address that one or should I add it to my short-term TODO list?
