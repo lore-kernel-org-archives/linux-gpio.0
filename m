@@ -1,64 +1,89 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 0/6] ARM: shmobile: Move gpio ranges from C code to DT
-Date: Mon, 17 Aug 2015 08:56:29 -0700
-Message-ID: <20150817155629.GA8401@verge.net.au>
-References: <1438696519-13727-1-git-send-email-geert+renesas@glider.be>
- <20150805005540.GB20726@verge.net.au>
- <CACRpkdY7P86+SxMr5-HnhrN5fC-N1U135jiGAJGTV=xx47VW5g@mail.gmail.com>
- <CAMuHMdW0T6MW6s4Gg_rqvtt+MRPtp_MpuiKtamfFrx-Tcm6WmQ@mail.gmail.com>
- <20150814003023.GC12589@verge.net.au>
- <CAMuHMdU0XoZ-comYSAau6e3kAY9VUbNgyeRcS_LzmV1gm31ZKA@mail.gmail.com>
- <CACRpkdYe5z9vG+Aekdq1wcKdhUUN5bpxQ52RgNt17+bhJbjVEQ@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] input: gpio_keys: Don't report events on gpio failure
+Date: Mon, 17 Aug 2015 12:34:47 -0700
+Message-ID: <20150817193447.GS13472@usrtlx11787.corpusers.net>
+References: <1438048204-632-1-git-send-email-bjorn.andersson@sonymobile.com>
+ <20150728210040.GE19610@dtor-ws>
+ <20150810224109.GN6519@usrtlx11787.corpusers.net>
+ <CACRpkdY8KqKa3GpfNo5JQAO5+Z3UG0J99VCg_OjsRTa5MJAaYg@mail.gmail.com>
+ <CAAVeFuK6TwYrbb8DJWa8NgL269p03vmDVDVaSuEvCWuOuN4GzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldrel01.sonyericsson.com ([37.139.156.2]:11092 "EHLO
+	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750762AbbHQTew (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 17 Aug 2015 15:34:52 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYe5z9vG+Aekdq1wcKdhUUN5bpxQ52RgNt17+bhJbjVEQ@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Benoit Parrot <bparrot@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <CAAVeFuK6TwYrbb8DJWa8NgL269p03vmDVDVaSuEvCWuOuN4GzA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Aug 14, 2015 at 12:34:33PM +0200, Linus Walleij wrote:
-> On Fri, Aug 14, 2015 at 9:46 AM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Fri, Aug 14, 2015 at 2:30 AM, Simon Horman <horms@verge.net.au> wrote:
-> >> On Thu, Aug 13, 2015 at 02:45:55PM +0200, Geert Uytterhoeven wrote:
-> >>> On Thu, Aug 13, 2015 at 2:29 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >>> > On Wed, Aug 5, 2015 at 2:55 AM, Simon Horman <horms@verge.net.au> wrote:
-> >>> >> Where possible I prefer not to apply non-DTS/DTSI patches on top of
-> >>> >> DTS/DTSI patches, I believe this is in keeping with how the ARM SoC
-> >>> >> maintainers like things handled.  With this in mind I have done the following:
-> >>> >>
-> >>> >> 1. Queued up the DTSI patches (patches 1 - 3) for v4.3 in my dt branch.
-> >>> >>    I intend for this to turn up in next soon.
-> >>> >> 2. Queued up for pinctrl patches (patches 4 - 6) for v4.4 in a pinctrl patch.
-> >>> >>    I intend for these to be present in the renesas devel branch but
-> >>> >>    not in next until after the release of v4.3-rc1. I would also be
-> >>> >>    happy to drop them and let Linus Walleij take these patches for v4.4,
-> >>> >>    assuming patches 1 - 3 are accepted for v4.3.
-> >>> >
-> >>> > OK.
-> >>> >
-> >>> > Will the world explode if I try to queue the pinctrl patches 4-6 in my
-> >>> > tree now for v4.3? Then I prefer to defer to v4.4. Else I can merge
-> >>> > it in parallel?
-> >>>
-> >>> There won't be a mapping between gpio and pins in any branch having the
-> >>> pinctrl changes but not the dtsi changes.
+On Sun 16 Aug 23:59 PDT 2015, Alexandre Courbot wrote:
+
+> On Thu, Aug 13, 2015 at 10:06 PM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+> > On Tue, Aug 11, 2015 at 12:41 AM, Bjorn Andersson
+> > <bjorn.andersson@sonymobile.com> wrote:
+> >
+> >> But then the question first goes to Linus & co.
 > >>
-> >> It sounds to me that Linus should take his option 2; defer to v4.4.
-> >> In which case I should drop the changes from my tree (they are not in next
-> >> anyway). Please let me know if thats the way we will move this forwards.
+> >> gpio_chip->get() can return a negative value to indicate errors (and did
+> >> so in this case), all parts of the API seems indicates that we can get
+> >> an error (int vs bool).
 > >
-> > Sounds fine to me.
+> > Ooops.
 > >
-> > And in the unlikely event we discover regressions in v4.3-rc1 due to having
-> > the dtsi changes without the pinctrl changes, we can still fast-track them
-> > into v4.3-rc2.
+> >> Should we change _gpiod_get_raw_value() to propagate this error?
+> >
+> > Yes for now. Can you patch it? :)
+> >
+> >>  Or
+> >> should we just ignore this issue and propagate an error as GPIO high
+> >> reading?
+> >
+> > I don't know about the future. In some sense GPIOs are so smallish
+> > resources that errorhandling every call to read/write them seem to
+> > be a royal PITA. That is why I wanted to switch them to bool and get
+> > rid of the problem, but now I also see that maybe that was not such a
+> > smart idea, if errors do occur on the set/get_value path.
 > 
-> Sounds like a plan.
+> Nowadays GPIOs may reside at the other end of an i2c bus, which means
+> that even the simplest operation like reading a GPIO value can
+> potentially fail. And it will probably not get better - wait until we
+> implement GPIO-over-IP! :)
 > 
-> Hit me on the head about this once v4.3-rc1 is out!
 
-Thanks, I will drop the patches from my tree.
+Now that's progress! I can't wait ;)
+
+> So I'd say it makes sense to propagate errors returned by the driver's
+> get() hook. This might contradict some of our earlier statements about
+> simplifying the GPIO API, but is preferrable to having to make a
+> decision as to which valid value to return if the driver fails...
+> 
+
+Sounds good.
+
+As we're patching up _gpiod_get_raw_value(), is the lack of a get()
+implementation the same as a LOW or is that -ENOTSUPP?
+
+> It should then be made very clear in the documentation that the only
+> positive values ever returned by the GPIO API will be 0 and 1 (we
+> already have a clamping mechanism for that IIRC), and that negative
+> values are propagated as-is.
+> 
+
+That makes sense. I'm however not able to find such clamping
+macro/mechanism and it would be very beneficial here...
+
+> Linus, does that seem reasonable to you? Does anyone has the intention
+> to address that one or should I add it to my short-term TODO list?
+
+If you have some input on above (is lack of get() an error) I can hack
+up the patch.
+
+Regards,
+Bjorn
