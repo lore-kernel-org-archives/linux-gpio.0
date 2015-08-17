@@ -1,89 +1,132 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] input: gpio_keys: Don't report events on gpio failure
-Date: Mon, 17 Aug 2015 12:34:47 -0700
-Message-ID: <20150817193447.GS13472@usrtlx11787.corpusers.net>
-References: <1438048204-632-1-git-send-email-bjorn.andersson@sonymobile.com>
- <20150728210040.GE19610@dtor-ws>
- <20150810224109.GN6519@usrtlx11787.corpusers.net>
- <CACRpkdY8KqKa3GpfNo5JQAO5+Z3UG0J99VCg_OjsRTa5MJAaYg@mail.gmail.com>
- <CAAVeFuK6TwYrbb8DJWa8NgL269p03vmDVDVaSuEvCWuOuN4GzA@mail.gmail.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and
+ suspend resume
+Date: Mon, 17 Aug 2015 14:45:49 -0700
+Message-ID: <1439847949.12863.0.camel@mussux00.eus.mediatek.inc>
+References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
+	 <1439797974.22004.2.camel@mtksdaap41>
+	 <CAGS+omCQN65pCP7mYFCj8sDOihLNc15GgELw1u7fTXuq=KBXnw@mail.gmail.com>
+	 <1439817953.3414.4.camel@mtksdaap41>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:11092 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750762AbbHQTew (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 17 Aug 2015 15:34:52 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAVeFuK6TwYrbb8DJWa8NgL269p03vmDVDVaSuEvCWuOuN4GzA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439817953.3414.4.camel@mtksdaap41>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: Daniel Kurtz <djkurtz@chromium.org>, maoguang meng <maoguang.meng@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Stultz <john.stultz@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sun 16 Aug 23:59 PDT 2015, Alexandre Courbot wrote:
-
-> On Thu, Aug 13, 2015 at 10:06 PM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
-> > On Tue, Aug 11, 2015 at 12:41 AM, Bjorn Andersson
-> > <bjorn.andersson@sonymobile.com> wrote:
-> >
-> >> But then the question first goes to Linus & co.
-> >>
-> >> gpio_chip->get() can return a negative value to indicate errors (and did
-> >> so in this case), all parts of the API seems indicates that we can get
-> >> an error (int vs bool).
-> >
-> > Ooops.
-> >
-> >> Should we change _gpiod_get_raw_value() to propagate this error?
-> >
-> > Yes for now. Can you patch it? :)
-> >
-> >>  Or
-> >> should we just ignore this issue and propagate an error as GPIO high
-> >> reading?
-> >
-> > I don't know about the future. In some sense GPIOs are so smallish
-> > resources that errorhandling every call to read/write them seem to
-> > be a royal PITA. That is why I wanted to switch them to bool and get
-> > rid of the problem, but now I also see that maybe that was not such a
-> > smart idea, if errors do occur on the set/get_value path.
+On Mon, 2015-08-17 at 21:25 +0800, Yingjoe Chen wrote:
+> On Mon, 2015-08-17 at 17:09 +0800, Daniel Kurtz wrote:
+> > On Mon, Aug 17, 2015 at 3:52 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+> > > On Fri, 2015-08-14 at 16:38 +0800, maoguang.meng@mediatek.com wrote:
+> > >> From: Maoguang Meng <maoguang.meng@mediatek.com>
+> > >>
+> > >> This patch implement irq_set_wake to get who is wakeup source and
+> > >> setup on suspend resume.
+> > >>
+> > >> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+> > >>
+> > >> ---
+> > >> changes since v3:
+> > >> -add a comment in mtk_eint_chip_read_mask.
+> > >> -delete ALIGN when allocate eint_offsets.ports.
+> > >> -fix unrelated change.
+> > >>
+> > >> changes since v2:
+> > >> -modify irq_wake to handle irq wakeup source.
+> > >> -allocate two buffers separately.
+> > >> -fix some codestyle.
+> > >>
+> > >> Changes since v1:
+> > >> -implement irq_wake handler.
+> > >> ---
+> > >>
+> > >>  drivers/pinctrl/mediatek/pinctrl-mt8173.c     |  1 +
+> > >>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 91 ++++++++++++++++++++++++++-
+> > >>  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  4 ++
+> > >>  3 files changed, 95 insertions(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> > >> index d0c811d..ad27184 100644
+> > >> --- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> > >> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> > >> @@ -385,6 +385,7 @@ static struct platform_driver mtk_pinctrl_driver = {
+> > >>       .driver = {
+> > >>               .name = "mediatek-mt8173-pinctrl",
+> > >>               .of_match_table = mt8173_pctrl_match,
+> > >> +             .pm = &mtk_eint_pm_ops,
+> > >>       },
+> > >>  };
+> > >>
+> > >> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > >> index ad1ea16..fe34ce9 100644
+> > >> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > >> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> > >> @@ -33,6 +33,7 @@
+> > >>  #include <linux/mfd/syscon.h>
+> > >>  #include <linux/delay.h>
+> > >>  #include <linux/interrupt.h>
+> > >> +#include <linux/pm.h>
+> > >>  #include <dt-bindings/pinctrl/mt65xx.h>
+> > >>
+> > >>  #include "../core.h"
+> > >> @@ -1062,6 +1063,77 @@ static int mtk_eint_set_type(struct irq_data *d,
+> > >>       return 0;
+> > >>  }
+> > >>
+> > >> +static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
+> > >> +{
+> > >> +     struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+> > >> +     int shift = d->hwirq & 0x1f;
+> > >> +     int reg = d->hwirq >> 5;
+> > >> +
+> > >> +     if (on)
+> > >> +             pctl->wake_mask[reg] |= BIT(shift);
+> > >> +     else
+> > >> +             pctl->wake_mask[reg] &= ~BIT(shift);
+> > >> +
+> > >> +     return 0;
+> > >> +}
+> > >
+> > > Hi Maoguang,
+> > >
+> > > You changed from set_bit/clear_bit to this, but didn't add any locking.
+> > > Since this is basic read/modify/write, is it OK to do it without
+> > > locking?
+> > 
+> > I believe calling .irq_set_wake() concurrently with itself is
+> > protected by irq_get_desc_buslock():
+> > 
+> >  int irq_set_irq_wake(unsigned int irq, unsigned int on)
+> >  {
+> >          unsigned long flags;
+> >          struct irq_desc *desc = irq_get_desc_buslock(irq, &flags,
+> > IRQ_GET_DESC_CHECK_GLOBAL);
+> >          int ret = 0;
+> > ...
+> >                          ret = set_irq_wake_real(irq, on);
+> > ...
+> >          irq_put_desc_busunlock(desc, flags);
+> >          return ret;
+> >  }
 > 
-> Nowadays GPIOs may reside at the other end of an i2c bus, which means
-> that even the simplest operation like reading a GPIO value can
-> potentially fail. And it will probably not get better - wait until we
-> implement GPIO-over-IP! :)
+> Hi Dan,
+> 
+> You are right, irq_get_desc_buslock will acquire desc lock even when
+> irq_chip didn't provide irq_bus_lock callback. So this should be OK.
+> Sorry for the noise.
+> 
+> For this patch:
+> 
+> Acked-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> 
+> Joe.C
 > 
 
-Now that's progress! I can't wait ;)
 
-> So I'd say it makes sense to propagate errors returned by the driver's
-> get() hook. This might contradict some of our earlier statements about
-> simplifying the GPIO API, but is preferrable to having to make a
-> decision as to which valid value to return if the driver fails...
-> 
+Acked-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-Sounds good.
-
-As we're patching up _gpiod_get_raw_value(), is the lack of a get()
-implementation the same as a LOW or is that -ENOTSUPP?
-
-> It should then be made very clear in the documentation that the only
-> positive values ever returned by the GPIO API will be 0 and 1 (we
-> already have a clamping mechanism for that IIRC), and that negative
-> values are propagated as-is.
-> 
-
-That makes sense. I'm however not able to find such clamping
-macro/mechanism and it would be very beneficial here...
-
-> Linus, does that seem reasonable to you? Does anyone has the intention
-> to address that one or should I add it to my short-term TODO list?
-
-If you have some input on above (is lack of get() an error) I can hack
-up the patch.
-
-Regards,
-Bjorn
+Thanks.
+Hongzhou
