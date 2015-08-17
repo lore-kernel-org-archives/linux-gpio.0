@@ -1,51 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio/grgpio: fix deadlock in grgpio_irq_unmap()
-Date: Mon, 17 Aug 2015 10:56:18 +0200
-Message-ID: <CACRpkdbWd70EM0azZhhmi9nyi6D1QHAWXqHkh5r-PRsmvzKXKQ@mail.gmail.com>
-References: <1439799832-13402-1-git-send-email-acourbot@nvidia.com>
+Subject: Re: [PATCH] gpiolib: irqchip: use different lockdep class for each
+ gpio irqchip
+Date: Mon, 17 Aug 2015 11:06:07 +0200
+Message-ID: <CACRpkdbsuxyD1p2miA+Zgern9Fr2pS5PzsUeikViGbfMiP6TgQ@mail.gmail.com>
+References: <1439477919-24356-1-git-send-email-grygorii.strashko@ti.com>
+	<CACRpkdYtUWc7X5d8mGbZK9dTgKmi1vqYZKK3Ho6mdH5MTE8K8g@mail.gmail.com>
+	<55CDE1BB.1060708@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:34026 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbbHQI4T (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 04:56:19 -0400
-Received: by obbfr1 with SMTP id fr1so106568520obb.1
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2015 01:56:18 -0700 (PDT)
-In-Reply-To: <1439799832-13402-1-git-send-email-acourbot@nvidia.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33499 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752156AbbHQJGI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Aug 2015 05:06:08 -0400
+Received: by oio137 with SMTP id 137so76860987oio.0
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2015 02:06:07 -0700 (PDT)
+In-Reply-To: <55CDE1BB.1060708@metafoo.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ldv-project@linuxtesting.org, Alexandre Courbot <gnurou@gmail.com>, Alexey Khoroshilov <khoroshilov@ispras.ru>, Andreas Larsson <andreas@gaisler.com>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Roger Quadros <rogerq@ti.com>
 
-On Mon, Aug 17, 2015 at 10:23 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On Fri, Aug 14, 2015 at 2:40 PM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 08/14/2015 02:34 PM, Linus Walleij wrote:
+> [...]
+>> Every chip will get their own lock class on the heap.
+>>
+>> But I think it is a bit kludgy.
+>>
+>> Is it not possible to have  the lock key in struct gpio_chip
+>> be a real member instead of a pointer and get a per-chip
+>> lock that way?
+>>
+>> (...)
+>> struct lock_class_key lock_key;
+>>
+>> instead of:
+>>
+>> struct lock_class_key  *lock_key;
+>>
+>> -> problem solved, without kludgy header defines?
+>
+>
+> Lock keys need to be in persistent memory since they have a unlimited life
+> time. Once registered it is expected to exist until the system is reset.
 
-> As reported by Alexey Khoroshilov:
->
->     grgpio_irq_unmap() code looks quite suspicious regarding usage of
->     priv->bgc.lock spinlock.
->
->     It locks the spinlock in line 310:
->
->         spin_lock_irqsave(&priv->bgc.lock, flags);
->
->     and then it can call grgpio_set_imask() in line 317:
->
->         grgpio_set_imask(priv, i, 0);
->
->     But grgpio_set_imask() unconditionally locks the spinlock by itself.
->
-> Fix this by moving the spinlock acquisition outside of
-> grgpio_set_imask().
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> CC: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> CC: Andreas Larsson <andreas@gaisler.com>
+Aha I see.
 
-Patch applied.
+OK if we fix the documentation comment I guess we can go with this,
+even if it makes the header file somewhat hard to read.
 
-Yours,
-Linus Walleij
+I have a bit of problem with it, because lockdep instrumentation is
+supposed to make development easier, not harder, now it helps
+in one end with lock validation and screws up in another end by creating
+API headers that are hopeless to read :(
+
+Linus
