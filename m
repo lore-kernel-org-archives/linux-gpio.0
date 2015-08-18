@@ -1,34 +1,130 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio:Fix error handling in the function max732x_irq_bus_sync_unlock
-Date: Tue, 18 Aug 2015 16:37:45 +0900
-Message-ID: <CAAVeFuLutUgFfTZYRce3GKofnvw94mzvaZSER9WmorNRXuzW-Q@mail.gmail.com>
-References: <1439836657-8684-1-git-send-email-xerofoify@gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 5/7] gpio: omap: fix clk_prepare/unprepare usage
+Date: Tue, 18 Aug 2015 14:10:56 +0300
+Message-ID: <1439896258-26449-6-git-send-email-grygorii.strashko@ti.com>
+References: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:35360 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751079AbbHRHiG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Aug 2015 03:38:06 -0400
-In-Reply-To: <1439836657-8684-1-git-send-email-xerofoify@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Aug 18, 2015 at 3:37 AM, Nicholas Krause <xerofoify@gmail.com> wrote:
-> This fixes error handling in the function max732x_irq_bus_sync_unlock
-> by checking if the internal call in this function's while loop to the
-> function max732x_gpio_direction_input failed by returning a error code
-> and if so break out of this while immediately as we cannot continue
-> after a failed call to this function before finally unlocking the
-> locked mutex and returning to the caller of the function,
-> max732x_irq_bus_sync_unlock.
+As per CCF documentation (clk.txt) the clk_prepare/unprepare APIs
+are not allowed in atomic context. But now OMAP GPIO driver
+uses them while applying debounce settings and as part
+of PM runtime irqsafe operations:
 
-Again a overlenghty one-line commit message.
+- omap_gpio_debounce() is holding the lock with IRQs off.
+  + omap2_set_gpio_debounce()
+   + clk_prepare_enable()
+    + clk_prepare() this one might sleep.
 
-The intent is also debattable. max732x_irq_bus_sync_unlock() returns
-void, so we have to way to inform the caller that some failure
-happened. In that case, isn't it better to keep doing the job as much
-as we can? max732x_gpio_direction_input() already signals errors, so
-all that we can do here is done already.
+- pm_runtime_get_sync() is holding the lock with IRQs off
+  + omap_gpio_runtime_suspend()
+    + raw_spin_lock_irqsave()
+    + omap_gpio_dbck_disable()
+      + clk_disable_unprepare()
+
+Hence, fix it by moeving dbclk prepare/unprepare in OMAP GPIO
+omap_gpio_probe/omap_gpio_remove. Also, while here, ensure that
+debounce functionality is disabled if clk_get() failed,
+because otherwise kernel will carsh in omap2_set_gpio_debounce().
+
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 1f02acd..2ae0d47 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -176,7 +176,7 @@ static inline void omap_gpio_rmw(void __iomem *base, u32 reg, u32 mask, bool set
+ static inline void omap_gpio_dbck_enable(struct gpio_bank *bank)
+ {
+ 	if (bank->dbck_enable_mask && !bank->dbck_enabled) {
+-		clk_prepare_enable(bank->dbck);
++		clk_enable(bank->dbck);
+ 		bank->dbck_enabled = true;
+ 
+ 		writel_relaxed(bank->dbck_enable_mask,
+@@ -194,7 +194,7 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+ 		 */
+ 		writel_relaxed(0, bank->base + bank->regs->debounce_en);
+ 
+-		clk_disable_unprepare(bank->dbck);
++		clk_disable(bank->dbck);
+ 		bank->dbck_enabled = false;
+ 	}
+ }
+@@ -227,7 +227,7 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 
+ 	l = BIT(offset);
+ 
+-	clk_prepare_enable(bank->dbck);
++	clk_enable(bank->dbck);
+ 	reg = bank->base + bank->regs->debounce;
+ 	writel_relaxed(debounce, reg);
+ 
+@@ -241,7 +241,7 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 	bank->dbck_enable_mask = val;
+ 
+ 	writel_relaxed(val, reg);
+-	clk_disable_unprepare(bank->dbck);
++	clk_disable(bank->dbck);
+ 	/*
+ 	 * Enable debounce clock per module.
+ 	 * This call is mandatory because in omap_gpio_request() when
+@@ -286,7 +286,7 @@ static void omap_clear_gpio_debounce(struct gpio_bank *bank, unsigned offset)
+ 		bank->context.debounce = 0;
+ 		writel_relaxed(bank->context.debounce, bank->base +
+ 			     bank->regs->debounce);
+-		clk_disable_unprepare(bank->dbck);
++		clk_disable(bank->dbck);
+ 		bank->dbck_enabled = false;
+ 	}
+ }
+@@ -1070,10 +1070,6 @@ static void omap_gpio_mod_init(struct gpio_bank *bank)
+ 	 /* Initialize interface clk ungated, module enabled */
+ 	if (bank->regs->ctrl)
+ 		writel_relaxed(0, base + bank->regs->ctrl);
+-
+-	bank->dbck = clk_get(bank->dev, "dbclk");
+-	if (IS_ERR(bank->dbck))
+-		dev_err(bank->dev, "Could not get gpio dbck\n");
+ }
+ 
+ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+@@ -1234,6 +1230,17 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(bank->base);
+ 	}
+ 
++	if (bank->dbck_flag) {
++		bank->dbck = devm_clk_get(bank->dev, "dbclk");
++		if (IS_ERR(bank->dbck)) {
++			dev_err(bank->dev,
++				"Could not get gpio dbck. Disable debounce\n");
++			bank->dbck_flag = false;
++		} else {
++			clk_prepare(bank->dbck);
++		}
++	}
++
+ 	platform_set_drvdata(pdev, bank);
+ 
+ 	pm_runtime_enable(bank->dev);
+@@ -1265,6 +1272,8 @@ static int omap_gpio_remove(struct platform_device *pdev)
+ 	list_del(&bank->node);
+ 	gpiochip_remove(&bank->chip);
+ 	pm_runtime_disable(bank->dev);
++	if (bank->dbck_flag)
++		clk_unprepare(bank->dbck);
+ 
+ 	return 0;
+ }
+-- 
+2.5.0
