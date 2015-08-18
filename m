@@ -1,55 +1,58 @@
-From: Dirk Behme <dirk.behme@gmail.com>
-Subject: [PATCH] gpiolib: don't compare an unsigned for >= 0
-Date: Tue, 18 Aug 2015 18:02:32 +0200
-Message-ID: <1439913752-26634-1-git-send-email-dirk.behme@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:36073 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752438AbbHRQCi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Aug 2015 12:02:38 -0400
-Received: by wicja10 with SMTP id ja10so98748849wic.1
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2015 09:02:37 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: santosh shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH 0/7] gpio: omap: fixes and improvements
+Date: Tue, 18 Aug 2015 09:12:57 -0700
+Message-ID: <55D35989.9030508@oracle.com>
+References: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, tony@atomide.com
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Dirk Behme <dirk.behme@gmail.com>
 
-The parameter offset is an unsigned, so it makes no sense to compare
-it for >= 0. Fix the compiler warning regarding this by removing this
-comparison.
+On 8/18/2015 4:10 AM, Grygorii Strashko wrote:
+> Hi,
+>
+> This patch series contains set of trivial fixes and improvements, and also
+> patches which fixes wrong APIs usage in atomic context as for -RT as for
+> non-RT kernel. The final goal of this series is to make TI OMAP GPIO
+> driver compatible with -RT kernel as much as possible.
+>
+> Patch 1-4: trivial fixes and improvements
+> Patch 5: fixes wrong CLK clk_prepare/unprepare APIs usage in atomic contexet
+> Patch 6(rfc): required to be compatible with -RT kernel, because PM runtime
+>   can't be used in atimic context on -RT.
+> Patch 7(rfc): This patch converts TI OMAP GPIO driver to use generic irq
+>   handler instead of chained IRQ handler. This way OMAP GPIO driver will be
+>   compatible with RT kernel where it will be forced thread IRQ handler
+>   while in non-RT kernel it still will be executed in HW IRQ context.
+>
+> Based on
+> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+> branch: devel
+> commit: 929550b gpio: mxc: fix section mismatch warning
+>
+> Boot, basic gpio functionality tested on:
+>   dra7-evm, BeagleBone(white), am43xx-gpevm, am437x-sk
+> Manually tested on dra7-evm including suspend/resume and wakeup.
+>
+> Grygorii Strashko (7):
+>    gpio: omap: remove wrong irq_domain_remove usage in probe
+>    gpio: omap: switch to use platform_get_irq
+>    gpio: omap: fix omap2_set_gpio_debounce
+>    gpio: omap: protect regs access in omap_gpio_irq_handler
+>    gpio: omap: fix clk_prepare/unprepare usage
+>    gpio: omap: move pm runtime in irq_chip.irq_bus_lock/sync_unlock
+>    gpio: omap: convert to use generic irq handler
+>
+>   drivers/gpio/gpio-omap.c | 146 +++++++++++++++++++++++++++--------------------
+>   1 file changed, 85 insertions(+), 61 deletions(-)
+>
+Patch 1 to 5 looks fine to me. You can have that one as a series.
+Am not convinced about 6 and 7. Will look at it again in detail.
 
-As the macro GPIO_OFFSET_VALID is only used at this single place, simplify
-the code by dropping the macro completely and dropping the invert, too.
-
-No functional change.
-
-Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
----
- drivers/gpio/gpiolib.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d..9841b05 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -47,8 +47,6 @@
-  */
- DEFINE_SPINLOCK(gpio_lock);
- 
--#define GPIO_OFFSET_VALID(chip, offset) (offset >= 0 && offset < chip->ngpio)
--
- static DEFINE_MUTEX(gpio_lookup_lock);
- static LIST_HEAD(gpio_lookup_list);
- LIST_HEAD(gpio_chips);
-@@ -914,7 +912,7 @@ const char *gpiochip_is_requested(struct gpio_chip *chip, unsigned offset)
- {
- 	struct gpio_desc *desc;
- 
--	if (!GPIO_OFFSET_VALID(chip, offset))
-+	if (offset >= chip->ngpio)
- 		return NULL;
- 
- 	desc = &chip->desc[offset];
--- 
-2.5.0
-
+For 1 to 5,
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
