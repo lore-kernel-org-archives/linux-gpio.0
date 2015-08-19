@@ -1,314 +1,136 @@
 From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [PATCH 1/8] ARM: imx: imx7d-pinfunc: add gpio1 pad iomux settings
-Date: Wed, 19 Aug 2015 08:18:38 +0200
-Message-ID: <20150819061838.GI11161@pengutronix.de>
+Subject: Re: [PATCH 5/8] pinctrl: freescale: imx: add shared input select reg
+ support
+Date: Wed, 19 Aug 2015 08:26:30 +0200
+Message-ID: <20150819062630.GJ11161@pengutronix.de>
 References: <1439912939-17535-1-git-send-email-aalonso@freescale.com>
+ <1439912939-17535-5-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="J2uG6jHjFLimDtBY"
+	protocol="application/pgp-signature"; boundary="YQEH9CATo+4lan7A"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:53270 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:37503 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752297AbbHSGSn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Aug 2015 02:18:43 -0400
+	with ESMTP id S1752690AbbHSG0g (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Aug 2015 02:26:36 -0400
 Content-Disposition: inline
-In-Reply-To: <1439912939-17535-1-git-send-email-aalonso@freescale.com>
+In-Reply-To: <1439912939-17535-5-git-send-email-aalonso@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Adrian Alonso <aalonso@freescale.com>
 Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
 
---J2uG6jHjFLimDtBY
+--YQEH9CATo+4lan7A
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 18, 2015 at 10:48:52AM -0500, Adrian Alonso wrote:
-> - Add imx7 SoC GPIO1 pad iomuxc settings
->   <mux_reg conf_reg input_reg mux_mode input_val>
-> - Fix UART input select daisy chain setting values
+On Tue, Aug 18, 2015 at 10:48:56AM -0500, Adrian Alonso wrote:
+> - Add shared input select register support
+> - imx7d has two iomux controllers iomuxc and iomuxc-lpsr
+>   which share select_input register for daisy chain settings
 >=20
 > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 > ---
->  arch/arm/boot/dts/imx7d-pinfunc.h | 122 ++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 119 insertions(+), 3 deletions(-)
+>  drivers/pinctrl/freescale/pinctrl-imx.c | 28 +++++++++++++++++++++++++++-
+>  drivers/pinctrl/freescale/pinctrl-imx.h |  1 +
+>  2 files changed, 28 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/arch/arm/boot/dts/imx7d-pinfunc.h b/arch/arm/boot/dts/imx7d-=
-pinfunc.h
-> index a8d8149..22f849c 100644
-> --- a/arch/arm/boot/dts/imx7d-pinfunc.h
-> +++ b/arch/arm/boot/dts/imx7d-pinfunc.h
-> @@ -15,6 +15,122 @@
->   * <mux_reg conf_reg input_reg mux_mode input_val>
->   */
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/fr=
+eescale/pinctrl-imx.c
+> index 0440b0b..1009b52 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_address.h>
+>  #include <linux/pinctrl/machine.h>
+>  #include <linux/pinctrl/pinconf.h>
+>  #include <linux/pinctrl/pinctrl.h>
+> @@ -39,6 +40,7 @@ struct imx_pinctrl {
+>  	struct device *dev;
+>  	struct pinctrl_dev *pctl;
+>  	void __iomem *base;
+> +	void __iomem *input_sel_base;
+>  	const struct imx_pinctrl_soc_info *info;
+>  };
 > =20
-> +#define MX7D_PAD_GPIO1_IO00__GPIO1_IO0				  0x0000 0x0030 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO00__PWM4_OUT				  0x0000 0x0030 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG_ANY			  0x0000 0x0030 0x0000 0x2=
- 0x0
-> +#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG_B			  0x0000 0x0030 0x0000 0x3 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO00__WDOD1_WDOG__RST_B_DEB		  0x0000 0x0030 0x00=
-00 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO01__GPIO1_IO1				  0x0004 0x0034 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO01__PWM1_OUT				  0x0004 0x0034 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO01__CCM_ENET_REF_CLK3			  0x0004 0x0034 0x0000 =
-0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO01__SAI1_MCLK				  0x0004 0x0034 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO01__ANATOP_24M_OUT			  0x0004 0x0034 0x0000 0x4=
- 0x0
-> +#define MX7D_PAD_GPIO1_IO01__OBSERVE0_OUT			  0x0004 0x0034 0x0000 0x6 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO02__GPIO1_IO2				  0x0008 0x0038 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO02__PWM2_OUT				  0x0008 0x0038 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO02__CCM_ENET_REF_CLK1			  0x0008 0x0038 0x0564 =
-0x2 0x3
-> +#define MX7D_PAD_GPIO1_IO02__SAI2_MCLK				  0x0008 0x0038 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO02__CCM_CLKO1				  0x0008 0x0038 0x0000 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO02__OBSERVE1_OUT			  0x0008 0x0038 0x0000 0x6 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO02__USB_OTG1_ID			  0x0008 0x0038 0x0734 0x7 0x3
-> +#define MX7D_PAD_GPIO1_IO03__GPIO1_IO3				  0x000C 0x003C 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO03__PWM3_OUT				  0x000C 0x003C 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO03__CCM_ENET_REF_CLK2			  0x000C 0x003C 0x0570 =
-0x2 0x3
-> +#define MX7D_PAD_GPIO1_IO03__SAI3_MCLK				  0x000C 0x003C 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO03__CCM_CLKO2				  0x000C 0x003C 0x0000 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO03__OBSERVE2_OUT			  0x000C 0x003C 0x0000 0x6 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO03__USB_OTG2_ID			  0x000C 0x003C 0x0730 0x7 0x3
-> +#define MX7D_PAD_GPIO1_IO04__GPIO1_IO4				  0x0010 0x0040 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO04__USB_OTG1_OC			  0x0010 0x0040 0x072C 0x1 0x1
-> +#define MX7D_PAD_GPIO1_IO04__FLEXTIMER1_CH4			  0x0010 0x0040 0x0594 0x2=
- 0x1
-> +#define MX7D_PAD_GPIO1_IO04__UART5_CTS_B			  0x0010 0x0040 0x0710 0x3 0x4
-> +#define MX7D_PAD_GPIO1_IO04__I2C1_SCL				  0x0010 0x0040 0x05D4 0x4 0x2
-> +#define MX7D_PAD_GPIO1_IO04__OBSERVE3_OUT			  0x0010 0x0040 0x0000 0x6 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO05__GPIO1_IO5				  0x0014 0x0044 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO05__USB_OTG1_PWR			  0x0014 0x0044 0x0000 0x1 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO05__FLEXTIMER1_CH5			  0x0014 0x0044 0x0598 0x2=
- 0x1
-> +#define MX7D_PAD_GPIO1_IO05__UART5_RTS_B			  0x0014 0x0044 0x0710 0x3 0x5
-> +#define MX7D_PAD_GPIO1_IO05__I2C1_SDA				  0x0014 0x0044 0x05D8 0x4 0x2
-> +#define MX7D_PAD_GPIO1_IO05__OBSERVE4_OUT			  0x0014 0x0044 0x0000 0x6 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO06__GPIO1_IO6				  0x0018 0x0048 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO06__USB_OTG2_OC			  0x0018 0x0048 0x0728 0x1 0x1
-> +#define MX7D_PAD_GPIO1_IO06__FLEXTIMER1_CH6			  0x0018 0x0048 0x059C 0x2=
- 0x1
-> +#define MX7D_PAD_GPIO1_IO06__UART5_RX_DATA			  0x0018 0x0048 0x0714 0x3 =
-0x4
-> +#define MX7D_PAD_GPIO1_IO06__I2C2_SCL				  0x0018 0x0048 0x05DC 0x4 0x2
-> +#define MX7D_PAD_GPIO1_IO06__CCM_WAIT				  0x0018 0x0048 0x0000 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO06__KPP_ROW4				  0x0018 0x0048 0x0624 0x6 0x1
-> +#define MX7D_PAD_GPIO1_IO07__GPIO1_IO7				  0x001C 0x004C 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO07__USB_OTG2_PWR			  0x001C 0x004C 0x0000 0x1 0=
-x0
-> +#define MX7D_PAD_GPIO1_IO07__FLEXTIMER1_CH7			  0x001C 0x004C 0x05A0 0x2=
- 0x1
-> +#define MX7D_PAD_GPIO1_IO07__UART5_TX_DATA			  0x001C 0x004C 0x0714 0x3 =
-0x5
-> +#define MX7D_PAD_GPIO1_IO07__I2C2_SDA				  0x001C 0x004C 0x05E0 0x4 0x2
-> +#define MX7D_PAD_GPIO1_IO07__CCM_STOP				  0x001C 0x004C 0x0000 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO07__KPP_COL4				  0x001C 0x004C 0x0604 0x6 0x1
-> +#define MX7D_PAD_GPIO1_IO08__GPIO1_IO8                            0x0014=
- 0x026C 0x0000 0x0 0x0
+> @@ -254,7 +256,12 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, =
+unsigned selector,
+>  			 * Regular select input register can never be at offset
+>  			 * 0, and we only print register value for regular case.
+>  			 */
+> -			writel(pin->input_val, ipctl->base + pin->input_reg);
+> +			if (info->flags & SHARE_INPUT_SELECT_REG)
+> +				writel(pin->input_val, ipctl->input_sel_base +
+> +						pin->input_reg);
+> +			else
+> +				writel(pin->input_val, ipctl->base +
+> +						pin->input_reg);
+>  			dev_dbg(ipctl->dev,
+>  				"=3D=3D>select_input: offset 0x%x val 0x%x\n",
+>  				pin->input_reg, pin->input_val);
+> @@ -691,6 +698,8 @@ static int imx_pinctrl_probe_dt(struct platform_devic=
+e *pdev,
+>  int imx_pinctrl_probe(struct platform_device *pdev,
+>  		      struct imx_pinctrl_soc_info *info)
+>  {
+> +	struct device_node *dev_np =3D pdev->dev.of_node;
+> +	struct device_node *np;
+>  	struct imx_pinctrl *ipctl;
+>  	struct resource *res;
+>  	int ret;
+> @@ -716,6 +725,23 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+>  	if (IS_ERR(ipctl->base))
+>  		return PTR_ERR(ipctl->base);
+> =20
+> +	if (info->flags & SHARE_INPUT_SELECT_REG) {
+> +		np =3D of_get_child_by_name(dev_np->parent, "iomuxc");
 
-You are going from tab+space indention to space indention here.
+Isn't there a better way to get this node than searching through the
+childs of the parent which may magically have the right 'iomuxc' node
+there and using the register range of that node?
+
+Does the other iomuxc node uses its register space as well?
 
 Regards,
 
 Markus
 
-> +#define MX7D_PAD_GPIO1_IO08__SD1_VSELECT                          0x0014=
- 0x026C 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO08__WDOG1_WDOG_B                         0x0014=
- 0x026C 0x0000 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO08__UART3_DCE_RX                         0x0014=
- 0x026C 0x0704 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO08__UART3_DTE_TX                         0x0014=
- 0x026C 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO08__I2C3_SCL                             0x0014=
- 0x026C 0x05E4 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO08__KPP_COL5                             0x0014=
- 0x026C 0x0608 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO08__PWM1_OUT                             0x0014=
- 0x026C 0x0000 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO09__GPIO1_IO9                            0x0018=
- 0x0270 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO09__SD1_LCTL                             0x0018=
- 0x0270 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO09__CCM_ENET_REF_CLK3                    0x0018=
- 0x0270 0x0000 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO09__UART3_DCE_TX                         0x0018=
- 0x0270 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO09__UART3_DTE_RX                         0x0018=
- 0x0270 0x0704 0x3 0x1
-> +#define MX7D_PAD_GPIO1_IO09__I2C3_SDA                             0x0018=
- 0x0270 0x05E8 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO09__CCM_PMIC_READY                       0x0018=
- 0x0270 0x04F4 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO09__KPP_ROW5                             0x0018=
- 0x0270 0x0628 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO09__PWM2_OUT                             0x0018=
- 0x0270 0x0000 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO10__GPIO1_IO10                           0x001C=
- 0x0274 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO10__SD2_LCTL                             0x001C=
- 0x0274 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO10__ENET1_MDIO                           0x001C=
- 0x0274 0x0568 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO10__UART3_DCE_RTS                        0x001C=
- 0x0274 0x0700 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO10__UART3_DTE_CTS                        0x001C=
- 0x0274 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO10__I2C4_SCL                             0x001C=
- 0x0274 0x05EC 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO10__FLEXTIMER1_PHA                       0x001C=
- 0x0274 0x05A4 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO10__KPP_COL6                             0x001C=
- 0x0274 0x060C 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO10__PWM3_OUT                             0x001C=
- 0x0274 0x0000 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO11__GPIO1_IO11                           0x0020=
- 0x0278 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO11__SD3_LCTL                             0x0020=
- 0x0278 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO11__ENET1_MDC                            0x0020=
- 0x0278 0x0000 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO11__UART3_DCE_CTS                        0x0020=
- 0x0278 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO11__UART3_DTE_RTS                        0x0020=
- 0x0278 0x0700 0x3 0x1
-> +#define MX7D_PAD_GPIO1_IO11__I2C4_SDA                             0x0020=
- 0x0278 0x05F0 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO11__FLEXTIMER1_PHB                       0x0020=
- 0x0278 0x05A8 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO11__KPP_ROW6                             0x0020=
- 0x0278 0x062C 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO11__PWM4_OUT                             0x0020=
- 0x0278 0x0000 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO12__GPIO1_IO12                           0x0024=
- 0x027C 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO12__SD2_VSELECT                          0x0024=
- 0x027C 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO12__CCM_ENET_REF_CLK1                    0x0024=
- 0x027C 0x0564 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO12__FLEXCAN1_RX                          0x0024=
- 0x027C 0x04DC 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO12__CM4_NMI                              0x0024=
- 0x027C 0x0000 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO12__CCM_EXT_CLK1                         0x0024=
- 0x027C 0x04E4 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO12__SNVS_VIO_5                           0x0024=
- 0x027C 0x0000 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO12__USB_OTG1_ID                          0x0024=
- 0x027C 0x0734 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO13__GPIO1_IO13                           0x0028=
- 0x0280 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO13__SD3_VSELECT                          0x0028=
- 0x0280 0x0000 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO13__CCM_ENET_REF_CLK2                    0x0028=
- 0x0280 0x0570 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO13__FLEXCAN1_TX                          0x0028=
- 0x0280 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO13__CCM_PMIC_READY                       0x0028=
- 0x0280 0x04F4 0x4 0x1
-> +#define MX7D_PAD_GPIO1_IO13__CCM_EXT_CLK2                         0x0028=
- 0x0280 0x04E8 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO13__SNVS_VIO_5_CTL                       0x0028=
- 0x0280 0x0000 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO13__USB_OTG2_ID                          0x0028=
- 0x0280 0x0730 0x7 0x0
-> +#define MX7D_PAD_GPIO1_IO14__GPIO1_IO14                           0x002C=
- 0x0284 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO14__SD3_CD_B                             0x002C=
- 0x0284 0x0738 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO14__ENET2_MDIO                           0x002C=
- 0x0284 0x0574 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO14__FLEXCAN2_RX                          0x002C=
- 0x0284 0x04E0 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO14__WDOG3_WDOG_B                         0x002C=
- 0x0284 0x0000 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO14__CCM_EXT_CLK3                         0x002C=
- 0x0284 0x04EC 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO14__SDMA_EXT_EVENT0                      0x002C=
- 0x0284 0x06D8 0x6 0x0
-> +#define MX7D_PAD_GPIO1_IO15__GPIO1_IO15                           0x0030=
- 0x0288 0x0000 0x0 0x0
-> +#define MX7D_PAD_GPIO1_IO15__SD3_WP                               0x0030=
- 0x0288 0x073C 0x1 0x0
-> +#define MX7D_PAD_GPIO1_IO15__ENET2_MDC                            0x0030=
- 0x0288 0x0000 0x2 0x0
-> +#define MX7D_PAD_GPIO1_IO15__FLEXCAN2_TX                          0x0030=
- 0x0288 0x0000 0x3 0x0
-> +#define MX7D_PAD_GPIO1_IO15__WDOG4_WDOG_B                         0x0030=
- 0x0288 0x0000 0x4 0x0
-> +#define MX7D_PAD_GPIO1_IO15__CCM_EXT_CLK4                         0x0030=
- 0x0288 0x04F0 0x5 0x0
-> +#define MX7D_PAD_GPIO1_IO15__SDMA_EXT_EVENT1                      0x0030=
- 0x0288 0x06DC 0x6 0x0
->  #define MX7D_PAD_EPDC_DATA00__EPDC_DATA0                          0x0034=
- 0x02A4 0x0000 0x0 0x0
->  #define MX7D_PAD_EPDC_DATA00__SIM1_PORT2_TRXD                     0x0034=
- 0x02A4 0x0000 0x1 0x0
->  #define MX7D_PAD_EPDC_DATA00__QSPI_A_DATA0                        0x0034=
- 0x02A4 0x0000 0x2 0x0
-> @@ -453,7 +569,7 @@
->  #define MX7D_PAD_LCD_DATA23__EIM_ADDR26                           0x0124=
- 0x0394 0x0000 0x4 0x0
->  #define MX7D_PAD_LCD_DATA23__GPIO3_IO28                           0x0124=
- 0x0394 0x0000 0x5 0x0
->  #define MX7D_PAD_LCD_DATA23__I2C4_SDA                             0x0124=
- 0x0394 0x05F0 0x6 0x1
-> -#define MX7D_PAD_UART1_RX_DATA__UART1_DCE_RX                      0x0128=
- 0x0398 0x0000 0x0 0x0
-> +#define MX7D_PAD_UART1_RX_DATA__UART1_DCE_RX                      0x0128=
- 0x0398 0x06F4 0x0 0x0
->  #define MX7D_PAD_UART1_RX_DATA__UART1_DTE_TX                      0x0128=
- 0x0398 0x0000 0x0 0x0
->  #define MX7D_PAD_UART1_RX_DATA__I2C1_SCL                          0x0128=
- 0x0398 0x05D4 0x1 0x0
->  #define MX7D_PAD_UART1_RX_DATA__CCM_PMIC_READY                    0x0128=
- 0x0398 0x0000 0x2 0x0
-> @@ -469,7 +585,7 @@
->  #define MX7D_PAD_UART1_TX_DATA__ENET2_1588_EVENT0_OUT             0x012C=
- 0x039C 0x0000 0x4 0x0
->  #define MX7D_PAD_UART1_TX_DATA__GPIO4_IO1                         0x012C=
- 0x039C 0x0000 0x5 0x0
->  #define MX7D_PAD_UART1_TX_DATA__ENET1_MDC                         0x012C=
- 0x039C 0x0000 0x6 0x0
-> -#define MX7D_PAD_UART2_RX_DATA__UART2_DCE_RX                      0x0130=
- 0x03A0 0x0000 0x0 0x0
-> +#define MX7D_PAD_UART2_RX_DATA__UART2_DCE_RX                      0x0130=
- 0x03A0 0x06FC 0x0 0x2
->  #define MX7D_PAD_UART2_RX_DATA__UART2_DTE_TX                      0x0130=
- 0x03A0 0x0000 0x0 0x0
->  #define MX7D_PAD_UART2_RX_DATA__I2C2_SCL                          0x0130=
- 0x03A0 0x05DC 0x1 0x0
->  #define MX7D_PAD_UART2_RX_DATA__SAI3_RX_BCLK                      0x0130=
- 0x03A0 0x0000 0x2 0x0
-> @@ -501,7 +617,7 @@
->  #define MX7D_PAD_UART3_TX_DATA__ENET1_1588_EVENT0_OUT             0x013C=
- 0x03AC 0x0000 0x4 0x0
->  #define MX7D_PAD_UART3_TX_DATA__GPIO4_IO5                         0x013C=
- 0x03AC 0x0000 0x5 0x0
->  #define MX7D_PAD_UART3_TX_DATA__SD2_LCTL                          0x013C=
- 0x03AC 0x0000 0x6 0x0
-> -#define MX7D_PAD_UART3_RTS_B__UART3_DCE_RTS                       0x0140=
- 0x03B0 0x0000 0x0 0x0
-> +#define MX7D_PAD_UART3_RTS_B__UART3_DCE_RTS                       0x0140=
- 0x03B0 0x0700 0x0 0x2
->  #define MX7D_PAD_UART3_RTS_B__UART3_DTE_CTS                       0x0140=
- 0x03B0 0x0000 0x0 0x0
->  #define MX7D_PAD_UART3_RTS_B__USB_OTG2_OC                         0x0140=
- 0x03B0 0x0728 0x1 0x0
->  #define MX7D_PAD_UART3_RTS_B__SAI3_TX_DATA0                       0x0140=
- 0x03B0 0x0000 0x2 0x0
+> +		if (np) {
+> +			ipctl->input_sel_base =3D of_iomap(np, 0);
+> +			if (IS_ERR(ipctl->input_sel_base)) {
+> +				of_node_put(np);
+> +				dev_err(&pdev->dev,
+> +				       "iomuxc base address not found\n");
+> +				return PTR_ERR(ipctl->input_sel_base);
+> +			}
+> +		} else {
+> +			dev_err(&pdev->dev, "iomuxc device node not foud\n");
+> +			return -EINVAL;
+> +		}
+> +		of_node_put(np);
+> +	}
+> +
+>  	imx_pinctrl_desc.name =3D dev_name(&pdev->dev);
+>  	imx_pinctrl_desc.pins =3D info->pins;
+>  	imx_pinctrl_desc.npins =3D info->npins;
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/fr=
+eescale/pinctrl-imx.h
+> index d22b8f6..85c701b 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+> @@ -85,6 +85,7 @@ struct imx_pinctrl_soc_info {
+> =20
+>  #define SHARE_MUX_CONF_REG	0x1
+>  #define ZERO_OFFSET_VALID	0x2
+> +#define SHARE_INPUT_SELECT_REG	0x4
+> =20
+>  #define NO_MUX		0x0
+>  #define NO_PAD		0x0
 > --=20
 > 2.1.4
 >=20
@@ -324,26 +146,26 @@ Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
---J2uG6jHjFLimDtBY
+--YQEH9CATo+4lan7A
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJV1B++AAoJEEpcgKtcEGQQGMoP/iUGXDRICkXqzHIDrHR3hsoJ
-nTzsp5cqzHDmz9MF0v1AJHTOJMdwD0IeHWSA3uPsNUcBcZQPfOO4NH9gA1yZwix7
-CXqRHTqP+ybp4LSKmSLyiocW+wZjKx0nUAV1XgcCzZtcFIdoYpsm41UQe3MqaGBr
-6pTB58mSaAXGmbwo+SXzlZrcmTXzR3uUp6bhH5045TppzqXT4FWHzobv/Knb5q/D
-EwNuco9wFKX3+JDY4x1cghlg94abAPQ6HISgVEnALZMGJ+W4R2DS7OwX5H7rRQym
-kmAab4vtIFfvS1Atv1YKjxVp3JceOGD55e/8NvJtI8AwTmFBrj9PzPn40vF7hA1U
-B81NacU1IrPXHPjajr3t4T5uOtRof/juQpijcWT82yS2MQlUGj6gfYLvi5O/IDrV
-fcrSyQYvo84B+FWCLau428inojy+U9omG0HQlYVnQSP7XsKgek1kmeglETy8n97/
-VKh5kOzojf8bNdqbiS3mBMmwKJqnqOh38WCZ3Is7GXlVcbw6yA71hN2HxVJRxvJN
-V2ucVnn2Rya4ZSfzT8ibejhSx/Yuzi4vvYDtyptu2ZcZWmrTBC6Z2pquRJvMlEku
-n4MX4drT8fwLYIgo5GtvxvmvopwKmUVlTY9eXU4q/Qqd/aXwz+l53gEQrgpvS09f
-wUvkGV7aVoEoZ+6k/GU3
-=3SdE
+iQIcBAEBAgAGBQJV1CGWAAoJEEpcgKtcEGQQcEsP/2caME7NakoMMk3MTMGMxuGl
+BfoKn4h9VDqjxeFyzgApXY89B3cMHGeJGIZqHOYYxPL/9Eg0ErAMRPfjWYGa+jMu
+7EHC0XpKkgCjlKXJgXYDWOpohCha9vi45HMQ6QeueNIj2DsJD9rw7D8xoMCwKq+8
+pcbkaRT5REspHd7GcwRvQW+LzAHNGaaaCh3dotqgiwFY24rA+vjDFAMw6jljiALX
+AqjpvLHuWUENjjCOePR3SSWaKKP+JD3a18L4iKWrXdpxmH+KSuSeDKhmHZruNbEf
+vZOtSwh9y/OQGqVGJS/cZH00iOaS7OHSDUMuRlCqAPqwHoiSHwurigjy6gR8GWrz
+e1z4BNMWjlm0qnIPgq/8SPoxsULW7EZ3QTgAph/OwZOdfL+td/vVMbexYi7fzEP5
+8AneCxgdyPe5UDWASNEArOHHJ9U4oMxN73DFuLUl5N2IAADGxFPNXxqHrmhn//G4
+pLPEataskYlEU0peu4CHTMi8ng70Xm36IrMZDlpqje4RHs4IZOY9IbiSRukamNu0
+HRi5An0hfmZWWFi0uu5hYigfoN6bSAABDUPvYwH8nvswi25RfHcpIfEgjjxIFWOK
+YPDcMHZSmjaIPRghn1QhYiGKPHmTT0aXVsCEzrnjdUkfKilYfWBGkJN/oqt46TEw
+V4zqEFCMH7ydJQ4PB6/9
+=UIWo
 -----END PGP SIGNATURE-----
 
---J2uG6jHjFLimDtBY--
+--YQEH9CATo+4lan7A--
