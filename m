@@ -1,99 +1,69 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH v2] pinctrl: mediatek: Fix multiple registration issue.
-Date: Thu, 20 Aug 2015 11:49:35 +0800
-Message-ID: <CAFRkauDE4QRnZP4q61JyX+t8rn3zOtokiESJTV4uak71zM0kTg@mail.gmail.com>
-References: <1440041931-38278-1-git-send-email-hongzhou.yang@mediatek.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [RFC PATCH 0/3] New Atmel PIO4 pinctrl/gpio driver
+Date: Thu, 20 Aug 2015 09:05:07 +0200
+Message-ID: <20150820070507.GS5161@pengutronix.de>
+References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
+ <20150805073117.GP5161@pengutronix.de>
+ <20150810065334.GC2635@odux.rfo.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:36385 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867AbbHTDth (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Aug 2015 23:49:37 -0400
-Received: by lagz9 with SMTP id z9so14816505lag.3
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2015 20:49:36 -0700 (PDT)
-In-Reply-To: <1440041931-38278-1-git-send-email-hongzhou.yang@mediatek.com>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:40181 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751090AbbHTHFK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 03:05:10 -0400
+Content-Disposition: inline
+In-Reply-To: <20150810065334.GC2635@odux.rfo.atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Daniel Kurtz <djkurtz@chromium.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, biao.huang@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, srv_heupstream@mediatek.com
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
 
-2015-08-20 11:38 GMT+08:00 Hongzhou Yang <hongzhou.yang@mediatek.com>:
-> Since our common driver need support main chip and PMU
-> at the same time, that means it will register two
-> pinctrl device, and the pinctrl_desc structure should
-> be used two times.
->
-> But pinctrl_desc use global static definition, then
-> the latest registered pinctrl device will overwrite
-> the old one's, all members in pinctrl_desc will set to
-> the new one's, such as name, pins and pins numbers, etc.
-> This is a bug. Changing to use devm_kzalloc to fix it.
->
-> Cc: stable@vger.kernel.org # v4.1+
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> ---
->  Use dynamic allocation to fix multiple registration issue.
->
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   26 ++++++++++++++-----------
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
->  2 files changed, 16 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index ad1ea16..911c736 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
->         return 0;
->  }
->
-> -static struct pinctrl_desc mtk_pctrl_desc = {
-> -       .confops        = &mtk_pconf_ops,
-> -       .pctlops        = &mtk_pctrl_ops,
-> -       .pmxops         = &mtk_pmx_ops,
-> -};
-> -
->  int mtk_pctrl_init(struct platform_device *pdev,
->                 const struct mtk_pinctrl_devdata *data,
->                 struct regmap *regmap)
-> @@ -1265,12 +1259,22 @@ int mtk_pctrl_init(struct platform_device *pdev,
->
->         for (i = 0; i < pctl->devdata->npins; i++)
->                 pins[i] = pctl->devdata->pins[i].pin;
-> -       mtk_pctrl_desc.name = dev_name(&pdev->dev);
-> -       mtk_pctrl_desc.owner = THIS_MODULE;
-> -       mtk_pctrl_desc.pins = pins;
-> -       mtk_pctrl_desc.npins = pctl->devdata->npins;
-> +
-> +       pctl->pctl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctl->pctl_desc),
-> +                               GFP_KERNEL);
-> +       if (!pctl->pctl_desc)
-> +               return -ENOMEM;
-> +
-> +       pctl->pctl_desc->name = dev_name(&pdev->dev);
-> +       pctl->pctl_desc->owner = THIS_MODULE;
-> +       pctl->pctl_desc->pins = pins;
-> +       pctl->pctl_desc->npins = pctl->devdata->npins;
-> +       pctl->pctl_desc->confops = &mtk_pconf_ops;
-> +       pctl->pctl_desc->pctlops = &mtk_pctrl_ops;
-> +       pctl->pctl_desc->pmxops = &mtk_pmx_ops;
->         pctl->dev = &pdev->dev;
-> -       pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
-> +
-> +       pctl->pctl_dev = pinctrl_register(pctl->pctl_desc, &pdev->dev, pctl);
->         if (IS_ERR(pctl->pctl_dev)) {
->                 dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
->                 return PTR_ERR(pctl->pctl_dev);
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> index 30213e5..93d6f5b 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> @@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
->  struct mtk_pinctrl {
->         struct regmap   *regmap1;
->         struct regmap   *regmap2;
-> +       struct pinctrl_desc *pctl_desc;
-Use
-struct pinctrl_desc pctl_desc;
+On Mon, Aug 10, 2015 at 08:53:34AM +0200, Ludovic Desroches wrote:
+> Hi Sascha,
+> 
+> On Wed, Aug 05, 2015 at 09:31:17AM +0200, Sascha Hauer wrote:
+> > On Fri, Jul 31, 2015 at 05:08:07PM +0200, Ludovic Desroches wrote:
+> > > Hi,
+> > > 
+> > > Following our discussion, I send an RFC version of my driver. RFC because it is
+> > > not totally achieved, some cleanup and feature addition is needed.
+> > > 
+> > > At least, we could discuss about the 'core' part. I have used the pinmux
+> > > property as Mediatek driver. Patch 3 is the internal dt files we are using.
+> > 
+> > As you can imagine I am fine with the binding, so I can add my acked-by
+> > once you send a non-RFC version.
+> >
+> 
+> Great, I'm glad to hear that.
+>  
+> > The only thing I never understood is what's so special about GPIOs that
+> > they have to bypass the pinctrl framework and instead a gpio_request
+> > magically translates a gpio into a pin.
+> 
+> Not sure to really understand your concern here... Do you mean I could
+> get rid of gpio_request_enable()?
 
-Then you can remove the devm_kzalloc.
+I would expect a gpio to be a pin like every other pin, hence configured
+via the pinctrl framework and not implicitly via gpio_request().
+
+> 
+> > Wouldn't it make sense to at
+> > least add the pins in their GPIO mode to
+> > arch/arm/boot/dts/sama5d2-pinfunc.h?
+> 
+> It is done, PIN_PA0 could be used for this purpose.
+
+I would expect a define like:
+
+#define PIN_PA3__GPIO                   PINMUX_PIN(PIN_PA3, 0, 2)
+
+PIN_PAx only contains the pin number, but not the function.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
