@@ -1,69 +1,40 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [RFC PATCH 0/3] New Atmel PIO4 pinctrl/gpio driver
-Date: Thu, 20 Aug 2015 14:44:49 +0200
-Message-ID: <20150820124449.GB23434@odux.rfo.atmel.com>
-References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
- <20150805073117.GP5161@pengutronix.de>
- <20150810065334.GC2635@odux.rfo.atmel.com>
- <20150820070507.GS5161@pengutronix.de>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: add USB pin groups
+Date: Thu, 20 Aug 2015 15:59:46 +0300
+Message-ID: <55D5CF42.9080802@cogentembedded.com>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+ <6436990.f6AZfhkFnG@wasted.cogentembedded.com> <3312528.qhxUnkrByY@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150820070507.GS5161@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <3312528.qhxUnkrByY@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 20, 2015 at 09:05:07AM +0200, Sascha Hauer wrote:
-> On Mon, Aug 10, 2015 at 08:53:34AM +0200, Ludovic Desroches wrote:
-> > Hi Sascha,
-> > 
-> > On Wed, Aug 05, 2015 at 09:31:17AM +0200, Sascha Hauer wrote:
-> > > On Fri, Jul 31, 2015 at 05:08:07PM +0200, Ludovic Desroches wrote:
-> > > > Hi,
-> > > > 
-> > > > Following our discussion, I send an RFC version of my driver. RFC because it is
-> > > > not totally achieved, some cleanup and feature addition is needed.
-> > > > 
-> > > > At least, we could discuss about the 'core' part. I have used the pinmux
-> > > > property as Mediatek driver. Patch 3 is the internal dt files we are using.
-> > > 
-> > > As you can imagine I am fine with the binding, so I can add my acked-by
-> > > once you send a non-RFC version.
-> > >
-> > 
-> > Great, I'm glad to hear that.
-> >  
-> > > The only thing I never understood is what's so special about GPIOs that
-> > > they have to bypass the pinctrl framework and instead a gpio_request
-> > > magically translates a gpio into a pin.
-> > 
-> > Not sure to really understand your concern here... Do you mean I could
-> > get rid of gpio_request_enable()?
-> 
-> I would expect a gpio to be a pin like every other pin, hence configured
-> via the pinctrl framework and not implicitly via gpio_request().
-> 
+Hello.
 
-It is not an issue to get rid of gpio_request_*(). I was thinking it was
-a bonus to provide it.
+On 8/20/2015 12:14 AM, Laurent Pinchart wrote:
 
-> > 
-> > > Wouldn't it make sense to at
-> > > least add the pins in their GPIO mode to
-> > > arch/arm/boot/dts/sama5d2-pinfunc.h?
-> > 
-> > It is done, PIN_PA0 could be used for this purpose.
-> 
-> I would expect a define like:
-> 
-> #define PIN_PA3__GPIO                   PINMUX_PIN(PIN_PA3, 0, 2)
-> 
-> PIN_PAx only contains the pin number, but not the function.
+> Thank you for the patch.
 
-Ok I can do this change for v2.
+    My pleasure. :-)
 
+> On Wednesday 19 August 2015 01:26:55 Sergei Shtylyov wrote:
+>> From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+>>
+>> Add USB0/1 pin groups to R8A7794 PFC driver.
+>>
+>> Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+>> [Sergei: rebased, renamed, added changelog.]
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Ludovic
+    Thank you!
+    How about the VIN patch? :-)
+
+MBR, Sergei
+
