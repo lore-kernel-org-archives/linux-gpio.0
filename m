@@ -1,25 +1,69 @@
-From: Alfred Cheuk Chow <gloria.davilapulido@cinvestav.edu.mx>
-Subject: (unknown)
-Date: Thu, 20 Aug 2015 06:14:36 -0500 (CDT)
-Message-ID: <1162598683.17279.1440069276418.JavaMail.root__13499.3893946104$1440070225$gmane$org@mail>
-Reply-To: Alfred Cheuk Chow <alfred.chow101@gmail.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [RFC PATCH 0/3] New Atmel PIO4 pinctrl/gpio driver
+Date: Thu, 20 Aug 2015 14:44:49 +0200
+Message-ID: <20150820124449.GB23434@odux.rfo.atmel.com>
+References: <1438355290-28255-1-git-send-email-ludovic.desroches@atmel.com>
+ <20150805073117.GP5161@pengutronix.de>
+ <20150810065334.GC2635@odux.rfo.atmel.com>
+ <20150820070507.GS5161@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.saltillo.cinvestav.mx ([148.247.22.17]:34405 "EHLO
-	mail.cinvestav.edu.mx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751435AbbHTLaQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 07:30:16 -0400
-Subject: 
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150820070507.GS5161@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, nicolas.ferre@atmel.com
 List-Id: linux-gpio@vger.kernel.org
 
+On Thu, Aug 20, 2015 at 09:05:07AM +0200, Sascha Hauer wrote:
+> On Mon, Aug 10, 2015 at 08:53:34AM +0200, Ludovic Desroches wrote:
+> > Hi Sascha,
+> > 
+> > On Wed, Aug 05, 2015 at 09:31:17AM +0200, Sascha Hauer wrote:
+> > > On Fri, Jul 31, 2015 at 05:08:07PM +0200, Ludovic Desroches wrote:
+> > > > Hi,
+> > > > 
+> > > > Following our discussion, I send an RFC version of my driver. RFC because it is
+> > > > not totally achieved, some cleanup and feature addition is needed.
+> > > > 
+> > > > At least, we could discuss about the 'core' part. I have used the pinmux
+> > > > property as Mediatek driver. Patch 3 is the internal dt files we are using.
+> > > 
+> > > As you can imagine I am fine with the binding, so I can add my acked-by
+> > > once you send a non-RFC version.
+> > >
+> > 
+> > Great, I'm glad to hear that.
+> >  
+> > > The only thing I never understood is what's so special about GPIOs that
+> > > they have to bypass the pinctrl framework and instead a gpio_request
+> > > magically translates a gpio into a pin.
+> > 
+> > Not sure to really understand your concern here... Do you mean I could
+> > get rid of gpio_request_enable()?
+> 
+> I would expect a gpio to be a pin like every other pin, hence configured
+> via the pinctrl framework and not implicitly via gpio_request().
+> 
+
+It is not an issue to get rid of gpio_request_*(). I was thinking it was
+a bonus to provide it.
+
+> > 
+> > > Wouldn't it make sense to at
+> > > least add the pins in their GPIO mode to
+> > > arch/arm/boot/dts/sama5d2-pinfunc.h?
+> > 
+> > It is done, PIN_PA0 could be used for this purpose.
+> 
+> I would expect a define like:
+> 
+> #define PIN_PA3__GPIO                   PINMUX_PIN(PIN_PA3, 0, 2)
+> 
+> PIN_PAx only contains the pin number, but not the function.
+
+Ok I can do this change for v2.
 
 
--- 
-I am Mr. Alfred Cheuk Yu Chow, the Director for Credit & Marketing Chong Hing Bank, Hong Kong, Chong Hing Bank Centre, 24 Des Voeux Road Central, Hong Kong. I have a business proposal of $38,980,369.00All conformable documents to back up the claims will be made available to you prior to your acceptance and as soon as I receive your return mail and I will let you know what is required of you.
-
-Best Regards,
-Alfred Chow
-Tel: +85258032828
+Ludovic
