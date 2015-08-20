@@ -1,45 +1,326 @@
 From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: [2/4] gpio: gpio-f7188x: GPIO bank 0 bit 0 is not available on f71869a
-Date: Thu, 20 Aug 2015 20:03:27 +0200
-Message-ID: <5ee31a07812e4bb3af791300416fec848f175cc7.1440093298.git.plr.vincent@gmail.com>
+Subject: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
+Date: Thu, 20 Aug 2015 20:03:26 +0200
+Message-ID: <7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
 References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:34066 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031AbbHTSDr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 14:03:47 -0400
-Received: by wicne3 with SMTP id ne3so103623wic.1
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:37000 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042AbbHTSDq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 14:03:46 -0400
+Received: by widdq5 with SMTP id dq5so13036072wid.0
         for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2015 11:03:45 -0700 (PDT)
 In-Reply-To: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
-In-Reply-To: <7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
-References: <7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Simon Guinot <simon.guinot@sequanux.org>
 
-In version 0.19P (2011/10) of the datasheet, GPIO00 is marked as available
-on the global register map (page 52), but marked as reserved in detailed
-register map (page 112).
+For some (unclear to me) reason, superio_enter/superio_exit, although
+calling request_muxed_region/release_region (respectively), are not
+sufficient on an multi-processor system to guarantee serialised access,
+leading to the following errors:
+[ 1210.586990] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1211.227414] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1211.867890] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1212.508299] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1213.148734] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1213.789172] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+[ 1214.429607] Trying to free nonexistent resource <000000000000002e-000000000000002f>
+
+Disabling all but one core make the error disappear, and re-enabling it
+make it reappear.
+
+Loaded modules for this SuperIO chip on this system are:
+  8250_fintek (not actively used)
+  fintek_cir (not actively used)
+  f71882fg (polled every 2 seconds from userland)
+  gpio_f7188x
+
+Loaded modules using GPIO functionality:
+  gpio_keys_polled (20ms polling period)
+  leds_gpio (usb-host and 500ms timer triggers)
+
+This change replaces frequent superio_enter/superio_exit and accesses via the
+common GPIO IO region (0x2e..0x2f or 0x4e..0x4f) with mutex locking and
+accesses via GPIO-dedicated IO region (pre-configured on chip).
+
+Code inspired from hwmon/f71882fg .
 
 Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
 ---
- drivers/gpio/gpio-f7188x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-f7188x.c | 126 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 80 insertions(+), 46 deletions(-)
 
 diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 2915f8d..9a56afe 100644
+index dbda843..2915f8d 100644
 --- a/drivers/gpio/gpio-f7188x.c
 +++ b/drivers/gpio/gpio-f7188x.c
-@@ -186,7 +186,7 @@ static struct f7188x_gpio_bank f71869_gpio_bank[] = {
+@@ -16,6 +16,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
++#include <linux/mutex.h>
++#include <linux/acpi.h>
+ 
+ #define DRVNAME "gpio-f7188x"
+ 
+@@ -26,11 +28,17 @@
+ #define SIO_DEVID		0x20	/* Device ID (2 bytes) */
+ #define SIO_DEVREV		0x22	/* Device revision */
+ #define SIO_MANID		0x23	/* Fintek ID (2 bytes) */
++#define SIO_ENABLE		0x30	/* Logical device enable */
++#define SIO_ADDR		0x60	/* Logical device address (2 bytes) */
+ 
+ #define SIO_LD_GPIO		0x06	/* GPIO logical device */
+ #define SIO_UNLOCK_KEY		0x87	/* Key to enable Super-I/O */
+ #define SIO_LOCK_KEY		0xAA	/* Key to disable Super-I/O */
+ 
++#define REGION_LENGTH		8
++#define ADDR_REG_OFFSET		5
++#define DATA_REG_OFFSET		6
++
+ #define SIO_FINTEK_ID		0x1934	/* Manufacturer ID */
+ #define SIO_F71869_ID		0x0814	/* F71869 chipset ID */
+ #define SIO_F71869A_ID		0x1007	/* F71869A chipset ID */
+@@ -47,8 +55,9 @@ static const char * const f7188x_names[] = {
  };
  
- static struct f7188x_gpio_bank f71869a_gpio_bank[] = {
--	F7188X_GPIO_BANK(0, 6, 0xF0),
-+	F7188X_GPIO_BANK(1, 5, 0xF0),
- 	F7188X_GPIO_BANK(10, 8, 0xE0),
- 	F7188X_GPIO_BANK(20, 8, 0xD0),
- 	F7188X_GPIO_BANK(30, 8, 0xC0),
+ struct f7188x_sio {
+-	int addr;
++	u16 addr;
+ 	enum chips type;
++	struct mutex lock;
+ };
+ 
+ struct f7188x_gpio_bank {
+@@ -118,6 +127,22 @@ static inline void superio_exit(int base)
+ 	release_region(base, 2);
+ }
+ 
++static u8 f7188x_read8(struct f7188x_sio *data, u8 reg)
++{
++	u8 val;
++
++	outb(reg, data->addr + ADDR_REG_OFFSET);
++	val = inb(data->addr + DATA_REG_OFFSET);
++
++	return val;
++}
++
++static void f7188x_write8(struct f7188x_sio *data, u8 reg, u8 val)
++{
++	outb(reg, data->addr + ADDR_REG_OFFSET);
++	outb(val, data->addr + DATA_REG_OFFSET);
++}
++
+ /*
+  * GPIO chip.
+  */
+@@ -192,47 +217,35 @@ static struct f7188x_gpio_bank f71889_gpio_bank[] = {
+ 
+ static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+ {
+-	int err;
+ 	struct f7188x_gpio_bank *bank =
+ 		container_of(chip, struct f7188x_gpio_bank, chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir;
+ 
+-	err = superio_enter(sio->addr);
+-	if (err)
+-		return err;
+-	superio_select(sio->addr, SIO_LD_GPIO);
+-
+-	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
++	mutex_lock(&sio->lock);
++	dir = f7188x_read8(sio, gpio_dir(bank->regbase));
+ 	dir &= ~(1 << offset);
+-	superio_outb(sio->addr, gpio_dir(bank->regbase), dir);
+-
+-	superio_exit(sio->addr);
++	f7188x_write8(sio, gpio_dir(bank->regbase), dir);
++	mutex_unlock(&sio->lock);
+ 
+ 	return 0;
+ }
+ 
+ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+-	int err;
+ 	struct f7188x_gpio_bank *bank =
+ 		container_of(chip, struct f7188x_gpio_bank, chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir, data;
+ 
+-	err = superio_enter(sio->addr);
+-	if (err)
+-		return err;
+-	superio_select(sio->addr, SIO_LD_GPIO);
+-
+-	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
++	mutex_lock(&sio->lock);
++	dir = f7188x_read8(sio, gpio_dir(bank->regbase));
+ 	dir = !!(dir & (1 << offset));
+ 	if (dir)
+-		data = superio_inb(sio->addr, gpio_data_out(bank->regbase));
++		data = f7188x_read8(sio, gpio_data_out(bank->regbase));
+ 	else
+-		data = superio_inb(sio->addr, gpio_data_in(bank->regbase));
+-
+-	superio_exit(sio->addr);
++		data = f7188x_read8(sio, gpio_data_in(bank->regbase));
++	mutex_unlock(&sio->lock);
+ 
+ 	return !!(data & 1 << offset);
+ }
+@@ -240,54 +253,42 @@ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int f7188x_gpio_direction_out(struct gpio_chip *chip,
+ 				     unsigned offset, int value)
+ {
+-	int err;
+ 	struct f7188x_gpio_bank *bank =
+ 		container_of(chip, struct f7188x_gpio_bank, chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir, data_out;
+ 
+-	err = superio_enter(sio->addr);
+-	if (err)
+-		return err;
+-	superio_select(sio->addr, SIO_LD_GPIO);
+-
+-	data_out = superio_inb(sio->addr, gpio_data_out(bank->regbase));
++	mutex_lock(&sio->lock);
++	data_out = f7188x_read8(sio, gpio_data_out(bank->regbase));
+ 	if (value)
+ 		data_out |= (1 << offset);
+ 	else
+ 		data_out &= ~(1 << offset);
+-	superio_outb(sio->addr, gpio_data_out(bank->regbase), data_out);
++	f7188x_write8(sio, gpio_data_out(bank->regbase), data_out);
+ 
+-	dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
++	dir = f7188x_read8(sio, gpio_dir(bank->regbase));
+ 	dir |= (1 << offset);
+-	superio_outb(sio->addr, gpio_dir(bank->regbase), dir);
+-
+-	superio_exit(sio->addr);
++	f7188x_write8(sio, gpio_dir(bank->regbase), dir);
++	mutex_unlock(&sio->lock);
+ 
+ 	return 0;
+ }
+ 
+ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+-	int err;
+ 	struct f7188x_gpio_bank *bank =
+ 		container_of(chip, struct f7188x_gpio_bank, chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 data_out;
+ 
+-	err = superio_enter(sio->addr);
+-	if (err)
+-		return;
+-	superio_select(sio->addr, SIO_LD_GPIO);
+-
+-	data_out = superio_inb(sio->addr, gpio_data_out(bank->regbase));
++	mutex_lock(&sio->lock);
++	data_out = f7188x_read8(sio, gpio_data_out(bank->regbase));
+ 	if (value)
+ 		data_out |= (1 << offset);
+ 	else
+ 		data_out &= ~(1 << offset);
+-	superio_outb(sio->addr, gpio_data_out(bank->regbase), data_out);
+-
+-	superio_exit(sio->addr);
++	f7188x_write8(sio, gpio_data_out(bank->regbase), data_out);
++	mutex_unlock(&sio->lock);
+ }
+ 
+ /*
+@@ -326,6 +327,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 	data->sio = sio;
++	mutex_init(&sio->lock);
+ 
+ 	platform_set_drvdata(pdev, data);
+ 
+@@ -372,6 +374,7 @@ static int f7188x_gpio_remove(struct platform_device *pdev)
+ static int __init f7188x_find(int addr, struct f7188x_sio *sio)
+ {
+ 	int err;
++	u16 logical_device_address;
+ 	u16 devid;
+ 
+ 	err = superio_enter(addr);
+@@ -403,12 +406,25 @@ static int __init f7188x_find(int addr, struct f7188x_sio *sio)
+ 		pr_info(DRVNAME ": Unsupported Fintek device 0x%04x\n", devid);
+ 		goto err;
+ 	}
+-	sio->addr = addr;
++	superio_select(addr, SIO_LD_GPIO);
++
++	if (!(superio_inb(addr, SIO_ENABLE) & 0x01)) {
++		pr_warn("Device not activated\n");
++		goto err;
++	}
++
++	logical_device_address = superio_inw(addr, SIO_ADDR);
++	if (logical_device_address == 0) {
++		pr_warn("Base address not set\n");
++		goto err;
++	}
++	logical_device_address &= ~(REGION_LENGTH - 1);	/* Ignore 3 LSB */
++	sio->addr = logical_device_address;
+ 	err = 0;
+ 
+ 	pr_info(DRVNAME ": Found %s at %#x, revision %d\n",
+ 		f7188x_names[sio->type],
+-		(unsigned int) addr,
++		(unsigned int) logical_device_address,
+ 		(int) superio_inb(addr, SIO_DEVREV));
+ 
+ err:
+@@ -421,12 +437,28 @@ static struct platform_device *f7188x_gpio_pdev;
+ static int __init
+ f7188x_gpio_device_add(const struct f7188x_sio *sio)
+ {
++	struct resource res = {
++		.start	= sio->addr,
++		.end	= sio->addr + REGION_LENGTH - 1,
++		.flags	= IORESOURCE_IO,
++	};
+ 	int err;
+ 
+ 	f7188x_gpio_pdev = platform_device_alloc(DRVNAME, -1);
+ 	if (!f7188x_gpio_pdev)
+ 		return -ENOMEM;
+ 
++	res.name = f7188x_gpio_pdev->name;
++	err = acpi_check_resource_conflict(&res);
++	if (err)
++		goto err;
++
++	err = platform_device_add_resources(f7188x_gpio_pdev, &res, 1);
++	if (err) {
++		pr_err("Device resource addition failed\n");
++		goto err;
++	}
++
+ 	err = platform_device_add_data(f7188x_gpio_pdev,
+ 				       sio, sizeof(*sio));
+ 	if (err) {
+@@ -467,6 +499,8 @@ static int __init f7188x_gpio_init(void)
+ 	int err;
+ 	struct f7188x_sio sio;
+ 
++	memset(&sio, 0, sizeof(sio));
++
+ 	if (f7188x_find(0x2e, &sio) &&
+ 	    f7188x_find(0x4e, &sio))
+ 		return -ENODEV;
 -- 
 2.5.0
 
