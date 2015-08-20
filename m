@@ -1,104 +1,91 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: add USB pin groups
-Date: Thu, 20 Aug 2015 00:14:40 +0300
-Message-ID: <3312528.qhxUnkrByY@avalon>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com> <6436990.f6AZfhkFnG@wasted.cogentembedded.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH v2] pinctrl: mediatek: Fix multiple registration issue.
+Date: Wed, 19 Aug 2015 20:38:51 -0700
+Message-ID: <1440041931-38278-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <6436990.f6AZfhkFnG@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Daniel Kurtz <djkurtz@chromium.org>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, biao.huang@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, srv_heupstream@mediatek.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Sergei,
+Since our common driver need support main chip and PMU
+at the same time, that means it will register two
+pinctrl device, and the pinctrl_desc structure should
+be used two times.
 
-Thank you for the patch.
+But pinctrl_desc use global static definition, then
+the latest registered pinctrl device will overwrite
+the old one's, all members in pinctrl_desc will set to
+the new one's, such as name, pins and pins numbers, etc.
+This is a bug. Changing to use devm_kzalloc to fix it.
 
-On Wednesday 19 August 2015 01:26:55 Sergei Shtylyov wrote:
-> From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
-> 
-> Add USB0/1 pin groups to R8A7794 PFC driver.
-> 
-> Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
-> [Sergei: rebased, renamed, added changelog.]
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+---
+ Use dynamic allocation to fix multiple registration issue.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   26 ++++++++++++++-----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> Index: renesas/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> ===================================================================
-> --- renesas.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> +++ renesas/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> @@ -2770,6 +2770,24 @@ static const unsigned int sdhi2_wp_pins[
->  static const unsigned int sdhi2_wp_mux[] = {
->  	SD2_WP_MARK,
->  };
-> +/* - USB0
-> ------------------------------------------------------------------- */
-> +static const unsigned int usb0_pins[] = {
-> +	RCAR_GP_PIN(5, 24), /* PWEN */
-> +	RCAR_GP_PIN(5, 25), /* OVC */
-> +};
-> +static const unsigned int usb0_mux[] = {
-> +	USB0_PWEN_MARK,
-> +	USB0_OVC_MARK,
-> +};
-> +/* - USB1
-> ------------------------------------------------------------------- */
-> +static const unsigned int usb1_pins[] = {
-> +	RCAR_GP_PIN(5, 26), /* PWEN */
-> +	RCAR_GP_PIN(5, 27), /* OVC */
-> +};
-> +static const unsigned int usb1_mux[] = {
-> +	USB1_PWEN_MARK,
-> +	USB1_OVC_MARK,
-> +};
-> 
->  static const struct sh_pfc_pin_group pinmux_groups[] = {
->  	SH_PFC_PIN_GROUP(eth_link),
-> @@ -2945,6 +2963,8 @@ static const struct sh_pfc_pin_group pin
->  	SH_PFC_PIN_GROUP(sdhi2_ctrl),
->  	SH_PFC_PIN_GROUP(sdhi2_cd),
->  	SH_PFC_PIN_GROUP(sdhi2_wp),
-> +	SH_PFC_PIN_GROUP(usb0),
-> +	SH_PFC_PIN_GROUP(usb1),
->  };
-> 
->  static const char * const eth_groups[] = {
-> @@ -3219,6 +3239,14 @@ static const char * const sdhi2_groups[]
->  	"sdhi2_wp",
->  };
-> 
-> +static const char * const usb0_groups[] = {
-> +	"usb0",
-> +};
-> +
-> +static const char * const usb1_groups[] = {
-> +	"usb1",
-> +};
-> +
->  static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(eth),
->  	SH_PFC_FUNCTION(hscif0),
-> @@ -3253,6 +3281,8 @@ static const struct sh_pfc_function pinm
->  	SH_PFC_FUNCTION(sdhi0),
->  	SH_PFC_FUNCTION(sdhi1),
->  	SH_PFC_FUNCTION(sdhi2),
-> +	SH_PFC_FUNCTION(usb0),
-> +	SH_PFC_FUNCTION(usb1),
->  };
-> 
->  static const struct pinmux_cfg_reg pinmux_config_regs[] = {
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ad1ea16..911c736 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct pinctrl_desc mtk_pctrl_desc = {
+-	.confops	= &mtk_pconf_ops,
+-	.pctlops	= &mtk_pctrl_ops,
+-	.pmxops		= &mtk_pmx_ops,
+-};
+-
+ int mtk_pctrl_init(struct platform_device *pdev,
+ 		const struct mtk_pinctrl_devdata *data,
+ 		struct regmap *regmap)
+@@ -1265,12 +1259,22 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctl->devdata->npins; i++)
+ 		pins[i] = pctl->devdata->pins[i].pin;
+-	mtk_pctrl_desc.name = dev_name(&pdev->dev);
+-	mtk_pctrl_desc.owner = THIS_MODULE;
+-	mtk_pctrl_desc.pins = pins;
+-	mtk_pctrl_desc.npins = pctl->devdata->npins;
++
++	pctl->pctl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctl->pctl_desc),
++				GFP_KERNEL);
++	if (!pctl->pctl_desc)
++		return -ENOMEM;
++
++	pctl->pctl_desc->name = dev_name(&pdev->dev);
++	pctl->pctl_desc->owner = THIS_MODULE;
++	pctl->pctl_desc->pins = pins;
++	pctl->pctl_desc->npins = pctl->devdata->npins;
++	pctl->pctl_desc->confops = &mtk_pconf_ops;
++	pctl->pctl_desc->pctlops = &mtk_pctrl_ops;
++	pctl->pctl_desc->pmxops = &mtk_pmx_ops;
+ 	pctl->dev = &pdev->dev;
+-	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
++
++	pctl->pctl_dev = pinctrl_register(pctl->pctl_desc, &pdev->dev, pctl);
+ 	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctl_dev);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 30213e5..93d6f5b 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
+ struct mtk_pinctrl {
+ 	struct regmap	*regmap1;
+ 	struct regmap	*regmap2;
++	struct pinctrl_desc *pctl_desc;
+ 	struct device           *dev;
+ 	struct gpio_chip	*chip;
+ 	struct mtk_pinctrl_group	*groups;
 -- 
-Regards,
-
-Laurent Pinchart
-
+1.7.9.5
