@@ -1,40 +1,45 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: gpio-f7188x: Fix concurrent GPIO accesses (and minor improvements)
-Date: Thu, 20 Aug 2015 20:03:25 +0200
-Message-ID: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:36989 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031AbbHTSDp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 14:03:45 -0400
-Received: by widdq5 with SMTP id dq5so13035670wid.0
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2015 11:03:44 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: add USB pin groups
+Date: Thu, 20 Aug 2015 22:44:13 +0300
+Message-ID: <1984971.qNkUb8XJq2@avalon>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com> <3312528.qhxUnkrByY@avalon> <55D5CF42.9080802@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <55D5CF42.9080802@cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: linus.walleij@linaro.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Simon Guinot <simon.guinot@sequanux.org>
 
-Hello,
+Hi Sergei,
 
-Making intensive use of the GPIOs on this SuperIO chip, I triggered a race
-condition causing apparently the wrong GPIO pins to be modified (and likely
-read) randomly.
-For some reason (unclear to me, I'm not used at all to kernel API),
-request_muxed_region/release_region as it is used in this driver is not
-sufficient to serialize accesses.
-Also, reading other drivers for the same chip, I see a different pattern:
-rather than accessing GPIO registers through the common IO region, this
-region is only used for device discovery. From there, per-function base
-address is retrieved, and that IO region gets requested once.
+On Thursday 20 August 2015 15:59:46 Sergei Shtylyov wrote:
+> On 8/20/2015 12:14 AM, Laurent Pinchart wrote:
+> > Thank you for the patch.
+> 
+> My pleasure. :-)
+> 
+> > On Wednesday 19 August 2015 01:26:55 Sergei Shtylyov wrote:
+> >> From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+> >> 
+> >> Add USB0/1 pin groups to R8A7794 PFC driver.
+> >> 
+> >> Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+> >> [Sergei: rebased, renamed, added changelog.]
+> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > 
+> > Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> Thank you!
+> How about the VIN patch? :-)
 
-So I fixed the concurrent access by:
-- using the same access pattern as in other drivers
-- adding mutexes around IO region accesses
+I was hoping someone else would review that one :-) Geert, would you have a 
+bit of bandwidth to spare ?
 
-Once this was done and I got a bit more comfortable with this driver, chip and
-gpiolib, I continued and fixed 3 minor issues/lacks.
-
+-- 
 Regards,
---
-Vincent Pelletier
+
+Laurent Pinchart
 
