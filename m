@@ -1,91 +1,124 @@
-From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3] nand: Add NAND driver for Mikrotik RB4xx series boards
-Date: Thu, 20 Aug 2015 15:31:05 -0700
-Message-ID: <20150820223105.GB81844@google.com>
-References: <1431689631-7217-1-git-send-email-bert@biot.com>
- <20150721202904.GK24125@google.com>
- <55C1DF18.4090800@biot.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 2/2] Documentation: gpio: board: describe the con_id parameter
+Date: Fri, 21 Aug 2015 12:01:48 +0900
+Message-ID: <CAAVeFuLpzXCURTHO+EvgA1NB5f1fEy666dmPWGiY9B3o7Vj8_A@mail.gmail.com>
+References: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
+ <1437808318-4453-2-git-send-email-dirk.behme@gmail.com> <55D60E53.60607@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55C1DF18.4090800-Nh2F35Ii2RQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bert Vermeulen <bert-Nh2F35Ii2RQ@public.gmane.org>
-Cc: dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, fransklaver-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35491 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751337AbbHUDCI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 23:02:08 -0400
+Received: by oiew67 with SMTP id w67so34601937oie.2
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2015 20:02:07 -0700 (PDT)
+In-Reply-To: <55D60E53.60607@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Aug 05, 2015 at 12:02:00PM +0200, Bert Vermeulen wrote:
-> On 07/21/2015 10:29 PM, Brian Norris wrote:
-> 
-> >> +static struct spi_driver rb4xx_cpld_driver = {
-> >> +	.probe = rb4xx_cpld_probe,
-> >> +	.remove = rb4xx_cpld_remove,
-> >> +	.driver = {
-> >> +		.name = "rb4xx-cpld",
-> >> +		.owner = THIS_MODULE,
-> >> +	},
-> >> +};
-> > 
-> > I feel some deja vu here (did I make this comment before?); why do you
-> > need to embed both a SPI and a platform driver here? It appears that the
-> > NAND controller actually sits on the SPI bus, so this really is not a
-> > platform driver; it's a SPI driver. Can you just kill off all the
-> > platform_driver stuff and merge the probe functions?
-> > 
-> > Or if I'm missing something big, please do enlighten.
-> 
-> This driver was specifically refused by the SPI subsystem maintainer:
-> 
->   http://www.linux-mips.org/archives/linux-mips/2015-03/msg00422.html
+On Fri, Aug 21, 2015 at 2:28 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
+> On 25.07.2015 09:11, Dirk Behme wrote:
+>>
+>> The con_id parameter has to match the GPIO description and is
+>> automatically
+>> extended by the GPIO suffix if not NULL. I had to look into the code to
+>> understand this and properly find the GPIO I've been looking for, so
+>> document
+>> this.
+>>
+>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+>> ---
+>>   Documentation/gpio/board.txt    | 36
+>> ++++++++++++++++++++++++++++++++++++
+>>   Documentation/gpio/consumer.txt |  3 +++
+>>   2 files changed, 39 insertions(+)
+>>
+>> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+>> index 7605773..eac78fc 100644
+>> --- a/Documentation/gpio/board.txt
+>> +++ b/Documentation/gpio/board.txt
+>> @@ -48,6 +48,42 @@ This property will make GPIOs 15, 16 and 17 available
+>> to the driver under the
+>>   The led GPIOs will be active-high, while the power GPIO will be
+>> active-low (i.e.
+>>   gpiod_is_active_low(power) will be true).
+>>
+>> +If in the consumer device's node the property doesn't have a <function>-
+>> prefix,
+>> +the second parameter (con_id) of the gpiod_get*() functions has to be
+>> NULL:
+>> +
+>> +E.g. if in the above device tree example the GPIO array is just called
+>> 'gpios'
+>> +
+>> +       foo_device {
+>> +               compatible = "acme,foo";
+>> +               ...
+>> +               gpios = <&gpio 15 GPIO_ACTIVE_HIGH>, /* red */
+>> +                       <&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
+>> +                       <&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
+>> +       };
+>> +
+>> +the gpiod_get*() calls will be:
+>> +
+>> +       struct gpio_desc *red, *green, *blue, *power;
+>> +
+>> +       red = gpiod_get_index(dev, NULL, 0, GPIOD_OUT_HIGH);
+>> +       green = gpiod_get_index(dev, NULL, 1, GPIOD_OUT_HIGH);
+>> +       blue = gpiod_get_index(dev, NULL, 2, GPIOD_OUT_HIGH);
+>> +
+>> +To summarize:
+>> +
+>> +The con_id string parameter has to be either NULL or the
+>> <function>-prefix
+>> +of the GPIO suffixes ("gpios" or "gpio", automatically looked up by the
+>> +gpiod functions internally):
+>> +
+>> +* If the GPIO description is just named with one of the GPIO suffixes
+>> +  ("gpios" or "gpio"), use NULL.
+>> +* If the GPIO description is prefixed with anything, e.g. "led-gpios",
+>> use the
+>> +  prefix without the "-" as con_id parameter (in this example "led").
+>> +
+>> +In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
+>> +("gpios" or "gpio") with the string passed in con_id to get the resulting
+>> string
+>> +(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
+>> +
+>>   ACPI
+>>   ----
+>>   ACPI also supports function names for GPIOs in a similar fashion to DT.
+>> diff --git a/Documentation/gpio/consumer.txt
+>> b/Documentation/gpio/consumer.txt
+>> index 75542b9..47ce4fd 100644
+>> --- a/Documentation/gpio/consumer.txt
+>> +++ b/Documentation/gpio/consumer.txt
+>> @@ -39,6 +39,9 @@ device that displays digits), an additional index
+>> argument can be specified:
+>>                                           const char *con_id, unsigned int
+>> idx,
+>>                                           enum gpiod_flags flags)
+>>
+>> +For a more detailed description of the con_id parameter in the DeviceTree
+>> case
+>> +see Documentation/gpio/board.txt
+>> +
+>>   The flags parameter is used to optionally specify a direction and
+>> initial value
+>>   for the GPIO. Values can be:
+>
+>
+>
+> Any further comments on this? Or could this be applied?
 
-We're speaking past each other here a bit: I was recommending a SPI
-*device* driver, not a host controller driver [1]. (This device is
-definitely not a SPI controller!)
+Using the "gpios" property is considered deprecated, so I am not sure
+that is a good idea to mention this too extensively in the boards file
+(people might be tempted to use that option while we clearly don't
+want them to).
 
-> He suggested the MFD subsystem, where it was also refused:
-> 
->   http://lkml.iu.edu/hypermail/linux/kernel/1504.0/03162.html
-
-I honestly can't straighten out what the definition of an MFD is, so I
-can't blame you for getting that one "wrong."
-
-> Andy Shevchenko suggested drivers/misc, so I mailed Arnd Bergmann and asked
-> if he would accept it there.
-> 
-> Arnd took a good look at the driver and suggested the MTD/NAND subsystem.
-> This is after all a driver for a NAND chip controller. The controller just
-> happens to reside in a CPLD with custom firmware, which is controlled via
-> SPI and has some GPIO controller functionality thrown in.
-
-I think Arnd was right, from the looks of it. I don't mind the GPIO
-controller functionality thrown in, as long as someone from linux-gpio
-can review that part. I just minded the structure of the driver itself,
-in which you register both a platfrom and a spi driver
-(spi_register_driver() and module_platform_driver()).
-
-AFAICT, the driver structure and your above comment suggest that the
-entire device essentially sits on the SPI bus (not the platform bus), so
-it seems like it can all be initialized behind module_spi_driver().
-
-> I realize it's an odd hardware setup, and I can't fix that, but this really
-> does seem to be the best place for it.
-> 
-> I can deal with your other comments on the patch, but I'd really like some
-> agreement on where this driver will be accepted first. I've come full circle
-> with getting referred back to the SPI subsystem.
-
-Sorry again for the confusion. To be clear, I'm *not* suggesting sending
-this back to the SPI subsystem.
-
-Brian
-
-[1] I guess the SPI documentation (Documentation/spi/spi-summary) calls
-    these "controller" vs. "protocol" drivers; your driver is a
-    "protocol" driver and can find a home wherever that protocol makes
-    sense. In this case, you're mostly doing NAND flash, therefore it
-    goes in drivers/mtd/.
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+A precise description of the lookup method is clearly missing though.
+I don't know what the right place would be for it. consumer.txt?
+board.txt in a more concise (and with a big "DEPRECATED") way?
