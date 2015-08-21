@@ -1,42 +1,60 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: Re: [PATCH v3] pinctrl: mediatek: Fix multiple registration issue.
-Date: Fri, 21 Aug 2015 13:08:24 +0800
-Message-ID: <CAFRkauDR_XuMrihptQu1=Oq4nzOqcmne89LwsOHPzQrWCQQgMA@mail.gmail.com>
-References: <1440132404-27749-1-git-send-email-hongzhou.yang@mediatek.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 0/7] gpio: omap: fixes and improvements
+Date: Fri, 21 Aug 2015 01:13:43 -0700
+Message-ID: <20150821081342.GL4215@atomide.com>
+References: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
+ <20150819063851.GI4215@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:36485 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737AbbHUFIZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Aug 2015 01:08:25 -0400
-Received: by lagz9 with SMTP id z9so34716142lag.3
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2015 22:08:24 -0700 (PDT)
-In-Reply-To: <1440132404-27749-1-git-send-email-hongzhou.yang@mediatek.com>
+Received: from muru.com ([72.249.23.125]:45574 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751769AbbHUINr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 21 Aug 2015 04:13:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20150819063851.GI4215@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-2015-08-21 12:46 GMT+08:00 Hongzhou Yang <hongzhou.yang@mediatek.com>:
-> Since our common driver need support main chip and PMU
-> at the same time, that means it will register two
-> pinctrl device, and the pinctrl_desc structure should
-> be used two times.
->
-> But pinctrl_desc use global static definition, then
-> the latest registered pinctrl device will overwrite
-> the old one's, all members in pinctrl_desc will set to
-> the new one's, such as name, pins and pins numbers, etc.
-> This is a bug. Changing to use devm_kzalloc to fix it.
->
-> Cc: stable@vger.kernel.org # v4.1+
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> ---
->  Use dynamic allocation to fix multiple registration issue.
+* Tony Lindgren <tony@atomide.com> [150818 23:42]:
+> Hi,
+> 
+> * Grygorii Strashko <grygorii.strashko@ti.com> [150818 04:14]:
+> > Hi,
+> > 
+> > This patch series contains set of trivial fixes and improvements, and also
+> > patches which fixes wrong APIs usage in atomic context as for -RT as for
+> > non-RT kernel. The final goal of this series is to make TI OMAP GPIO
+> > driver compatible with -RT kernel as much as possible.
+> > 
+> > Patch 1-4: trivial fixes and improvements
+> > Patch 5: fixes wrong CLK clk_prepare/unprepare APIs usage in atomic contexet
+> > Patch 6(rfc): required to be compatible with -RT kernel, because PM runtime
+> >  can't be used in atimic context on -RT.
+> > Patch 7(rfc): This patch converts TI OMAP GPIO driver to use generic irq
+> >  handler instead of chained IRQ handler. This way OMAP GPIO driver will be
+> >  compatible with RT kernel where it will be forced thread IRQ handler
+> >  while in non-RT kernel it still will be executed in HW IRQ context.
+> 
+> Based on quick testing this series breaks at least core off idle for omap3.
+> You probably should add a beagle xm to your test devices so you can
+> properly test PM features.
 
-The code looks good to me but the commit log needs fix.
-You don't use devm_kzalloc now.
-Just embedded struct pinctrl_desc pctl_desc to struct mtk_pinctrl.
+Sorry I take that back, after trying to figure out which patch breaks PM
+I noticed I had some other patches applied also. Looks like PM works just
+fine with this series for me, so please feel free to add:
 
-Reviewed-by: Axel Lin <axel.lin@ingics.com>
+Tested-by: Tony Lindgren <tony@atomide.com>
+
+Note that I have not been able to test this with gpio button as my
+boards are in a rack. You may want to do some gpio button tests to
+make sure things wake up properly from off idle if you can get hold
+of a beagle xm. I posted some instructions how to test earlier today
+for Kishon in the "[PATCH v2 00/16] omap_hsmmc: regulator usage
+cleanup and fixes" thread.
+
+Regards,
+
+Tony
