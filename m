@@ -1,124 +1,91 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 2/2] Documentation: gpio: board: describe the con_id parameter
-Date: Fri, 21 Aug 2015 12:01:48 +0900
-Message-ID: <CAAVeFuLpzXCURTHO+EvgA1NB5f1fEy666dmPWGiY9B3o7Vj8_A@mail.gmail.com>
-References: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
- <1437808318-4453-2-git-send-email-dirk.behme@gmail.com> <55D60E53.60607@gmail.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH v3] pinctrl: mediatek: Fix multiple registration issue.
+Date: Thu, 20 Aug 2015 21:46:44 -0700
+Message-ID: <1440132404-27749-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:35491 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337AbbHUDCI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Aug 2015 23:02:08 -0400
-Received: by oiew67 with SMTP id w67so34601937oie.2
-        for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2015 20:02:07 -0700 (PDT)
-In-Reply-To: <55D60E53.60607@gmail.com>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59799 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751163AbbHUErD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Aug 2015 00:47:03 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Axel Lin <axel.lin@ingics.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
 
-On Fri, Aug 21, 2015 at 2:28 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
-> On 25.07.2015 09:11, Dirk Behme wrote:
->>
->> The con_id parameter has to match the GPIO description and is
->> automatically
->> extended by the GPIO suffix if not NULL. I had to look into the code to
->> understand this and properly find the GPIO I've been looking for, so
->> document
->> this.
->>
->> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->> ---
->>   Documentation/gpio/board.txt    | 36
->> ++++++++++++++++++++++++++++++++++++
->>   Documentation/gpio/consumer.txt |  3 +++
->>   2 files changed, 39 insertions(+)
->>
->> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
->> index 7605773..eac78fc 100644
->> --- a/Documentation/gpio/board.txt
->> +++ b/Documentation/gpio/board.txt
->> @@ -48,6 +48,42 @@ This property will make GPIOs 15, 16 and 17 available
->> to the driver under the
->>   The led GPIOs will be active-high, while the power GPIO will be
->> active-low (i.e.
->>   gpiod_is_active_low(power) will be true).
->>
->> +If in the consumer device's node the property doesn't have a <function>-
->> prefix,
->> +the second parameter (con_id) of the gpiod_get*() functions has to be
->> NULL:
->> +
->> +E.g. if in the above device tree example the GPIO array is just called
->> 'gpios'
->> +
->> +       foo_device {
->> +               compatible = "acme,foo";
->> +               ...
->> +               gpios = <&gpio 15 GPIO_ACTIVE_HIGH>, /* red */
->> +                       <&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
->> +                       <&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
->> +       };
->> +
->> +the gpiod_get*() calls will be:
->> +
->> +       struct gpio_desc *red, *green, *blue, *power;
->> +
->> +       red = gpiod_get_index(dev, NULL, 0, GPIOD_OUT_HIGH);
->> +       green = gpiod_get_index(dev, NULL, 1, GPIOD_OUT_HIGH);
->> +       blue = gpiod_get_index(dev, NULL, 2, GPIOD_OUT_HIGH);
->> +
->> +To summarize:
->> +
->> +The con_id string parameter has to be either NULL or the
->> <function>-prefix
->> +of the GPIO suffixes ("gpios" or "gpio", automatically looked up by the
->> +gpiod functions internally):
->> +
->> +* If the GPIO description is just named with one of the GPIO suffixes
->> +  ("gpios" or "gpio"), use NULL.
->> +* If the GPIO description is prefixed with anything, e.g. "led-gpios",
->> use the
->> +  prefix without the "-" as con_id parameter (in this example "led").
->> +
->> +In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
->> +("gpios" or "gpio") with the string passed in con_id to get the resulting
->> string
->> +(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
->> +
->>   ACPI
->>   ----
->>   ACPI also supports function names for GPIOs in a similar fashion to DT.
->> diff --git a/Documentation/gpio/consumer.txt
->> b/Documentation/gpio/consumer.txt
->> index 75542b9..47ce4fd 100644
->> --- a/Documentation/gpio/consumer.txt
->> +++ b/Documentation/gpio/consumer.txt
->> @@ -39,6 +39,9 @@ device that displays digits), an additional index
->> argument can be specified:
->>                                           const char *con_id, unsigned int
->> idx,
->>                                           enum gpiod_flags flags)
->>
->> +For a more detailed description of the con_id parameter in the DeviceTree
->> case
->> +see Documentation/gpio/board.txt
->> +
->>   The flags parameter is used to optionally specify a direction and
->> initial value
->>   for the GPIO. Values can be:
->
->
->
-> Any further comments on this? Or could this be applied?
+Since our common driver need support main chip and PMU
+at the same time, that means it will register two
+pinctrl device, and the pinctrl_desc structure should
+be used two times.
 
-Using the "gpios" property is considered deprecated, so I am not sure
-that is a good idea to mention this too extensively in the boards file
-(people might be tempted to use that option while we clearly don't
-want them to).
+But pinctrl_desc use global static definition, then
+the latest registered pinctrl device will overwrite
+the old one's, all members in pinctrl_desc will set to
+the new one's, such as name, pins and pins numbers, etc.
+This is a bug. Changing to use devm_kzalloc to fix it.
 
-A precise description of the lookup method is clearly missing though.
-I don't know what the right place would be for it. consumer.txt?
-board.txt in a more concise (and with a big "DEPRECATED") way?
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+---
+ Use dynamic allocation to fix multiple registration issue.
+
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   21 ++++++++++-----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ad1ea16..4a52072 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct pinctrl_desc mtk_pctrl_desc = {
+-	.confops	= &mtk_pconf_ops,
+-	.pctlops	= &mtk_pctrl_ops,
+-	.pmxops		= &mtk_pmx_ops,
+-};
+-
+ int mtk_pctrl_init(struct platform_device *pdev,
+ 		const struct mtk_pinctrl_devdata *data,
+ 		struct regmap *regmap)
+@@ -1265,12 +1259,17 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctl->devdata->npins; i++)
+ 		pins[i] = pctl->devdata->pins[i].pin;
+-	mtk_pctrl_desc.name = dev_name(&pdev->dev);
+-	mtk_pctrl_desc.owner = THIS_MODULE;
+-	mtk_pctrl_desc.pins = pins;
+-	mtk_pctrl_desc.npins = pctl->devdata->npins;
++
++	pctl->pctl_desc.name = dev_name(&pdev->dev);
++	pctl->pctl_desc.owner = THIS_MODULE;
++	pctl->pctl_desc.pins = pins;
++	pctl->pctl_desc.npins = pctl->devdata->npins;
++	pctl->pctl_desc.confops = &mtk_pconf_ops;
++	pctl->pctl_desc.pctlops = &mtk_pctrl_ops;
++	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
+ 	pctl->dev = &pdev->dev;
+-	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
++
++	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+ 	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctl_dev);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 30213e5..c532c23 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
+ struct mtk_pinctrl {
+ 	struct regmap	*regmap1;
+ 	struct regmap	*regmap2;
++	struct pinctrl_desc pctl_desc;
+ 	struct device           *dev;
+ 	struct gpio_chip	*chip;
+ 	struct mtk_pinctrl_group	*groups;
+-- 
+1.7.9.5
+
