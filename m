@@ -1,34 +1,62 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
-Date: Sat, 22 Aug 2015 19:04:43 +0200
-Message-ID: <20150822190443.284fd243@x2>
-References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
-	<7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
-	<20150821175216.GE1729@kw.sim.vm.gnt>
-	<20150821224824.3406caa0@x2>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 11/11] gpio: xlp: fix error return code
+Date: Sun, 23 Aug 2015 02:11:22 +0200
+Message-ID: <1440288682-12732-12-git-send-email-Julia.Lawall@lip6.fr>
+References: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:33489 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753092AbbHVREp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 22 Aug 2015 13:04:45 -0400
-Received: by wijp15 with SMTP id p15so42728518wij.0
-        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2015 10:04:44 -0700 (PDT)
-In-Reply-To: <20150821224824.3406caa0@x2>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22187 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752302AbbHWAVZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 22 Aug 2015 20:21:25 -0400
+In-Reply-To: <1440288682-12732-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: linux-gpio@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 21 Aug 2015 22:48:24 +0200, Vincent Pelletier
-<plr.vincent@gmail.com> wrote:
-> With just two such loops poking at (out) GPIOs, it does not happen.
+Return a negative error code on failure.
 
-Re-reading my mail, I realise this was not clear: this is without
-input-gpio-polled but just two shell loops switching a GPIO each.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Regards,
--- 
-Vincent Pelletier
+// <smpl>
+@@
+identifier ret; expression e1,e2;
+@@
+(
+if (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret = 0
+)
+... when != ret = e1
+    when != &ret
+*if(...)
+{
+  ... when != ret = e2
+      when forall
+ return ret;
+}
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/gpio/gpio-xlp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
+index 9bdab72..e02499a 100644
+--- a/drivers/gpio/gpio-xlp.c
++++ b/drivers/gpio/gpio-xlp.c
+@@ -387,7 +387,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
+ 	irq_base = irq_alloc_descs(-1, XLP_GPIO_IRQ_BASE, gc->ngpio, 0);
+ 	if (irq_base < 0) {
+ 		dev_err(&pdev->dev, "Failed to allocate IRQ numbers\n");
+-		return err;
++		return -ENODEV;
+ 	}
+ 
+ 	err = gpiochip_add(gc);
+
