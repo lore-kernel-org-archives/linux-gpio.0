@@ -1,78 +1,75 @@
-From: Peng Fan <van.freenix@gmail.com>
-Subject: [PATCH 2/2] gpio: mxs: need to check return value of irq_alloc_generic_chip
-Date: Sun, 23 Aug 2015 21:11:53 +0800
-Message-ID: <1440335513-14703-2-git-send-email-van.freenix@gmail.com>
-References: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, van.freenix@gmail.com
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
+Date: Sun, 23 Aug 2015 01:52:53 -0700
+Message-ID: <20150823085253.D9178C40941@trevor.secretlab.ca>
+References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
+	<20150620234957.25729.qmail@stuge.se>
+	<a35f48994dedc061b54ca9ea255fdd4e@agner.ch>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a35f48994dedc061b54ca9ea255fdd4e-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org, hachti-c1YPqJpaggmzQB+pC5nmwQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Need to check return value of irq_alloc_generic_chip, because
-it may return NULL.
-1. Change mxs_gpio_init_gc return type from void to int.
-2. Add a new lable out_irqdomain_remove to remove the irq domain
-   when mxc_gpio_init_gc fail.
+On Sun, 21 Jun 2015 21:44:30 +0200
+, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+ wrote:
+> On 2015-06-21 01:49, Peter Stuge wrote:
+> > Stefan Agner wrote:
+> >> libftdi requires to detach the kernel driver to get access to the device
+> > 
+> > Control transfers ought to be possible without a detach.
+> 
+> Good to know, thanks for this input. The detach is probably a default
+> behavior of libftdi... Will have a look at that.
 
-Signed-off-by: Peng Fan <van.freenix@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
+libftdi is built on libusb. libusb detaches the device from ftdi_sio and
+binds it to a special driver for userspace access. There may indeed be
+another way to do it, but libusb doesn't know how to do it AFAIKS.
+
+We can't avoid the detach on current libftdi, but I do have a patch to
+libftdi that will at least reconnect the ftdi_sio driver after userspace
+has finished. I'll be posting it to the libftdi list in the next week,
+but I've attached it below for anyone who wants to play.
+
+> Having kernel level gpiolib would still have advantages: It would make
+> the matching of the GPIO's and tty device easier, since with this patch
+> the gpiolib device is a sub-node of the usb-serial device in sysfs and
+> the user would have to use kernel interfaces only (no libftdi)...
+
+NAK on the sysfs interface. Don't add a new ABI. gpiolib is the right
+way to expose these pins.
+
+g.
+
 ---
- drivers/gpio/gpio-mxs.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Subject: [PATCH] Automatically reattach kernel driver on close
 
-diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-index 84cbda6..f7c3550 100644
---- a/drivers/gpio/gpio-mxs.c
-+++ b/drivers/gpio/gpio-mxs.c
-@@ -196,13 +196,16 @@ static int mxs_gpio_set_wake_irq(struct irq_data *d, unsigned int enable)
- 	return 0;
- }
+The built-in libusb auto detach feature supports automatically
+reattaching the kernel driver when the device is closed. Switch libftdi
+to use the libusb auto-detach code so that we can get the Linux ftdi_sio
+driver reattached automatically when finished with the device.
+---
+ src/ftdi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/ftdi.c b/src/ftdi.c
+index 68489ea096be..0d043690aeca 100644
+--- a/src/ftdi.c
++++ b/src/ftdi.c
+@@ -548,7 +548,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
+     // Likely scenario is a static ftdi_sio kernel module.
+     if (ftdi->module_detach_mode == AUTO_DETACH_SIO_MODULE)
+     {
+-        if (libusb_detach_kernel_driver(ftdi->usb_dev, ftdi->interface) !=0)
++        if (libusb_set_auto_detach_kernel_driver(ftdi->usb_dev, 1))
+             detach_errno = errno;
+     }
  
--static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
-+static int __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
- {
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
- 
- 	gc = irq_alloc_generic_chip("gpio-mxs", 1, irq_base,
- 				    port->base, handle_level_irq);
-+	if (!gc)
-+		return -ENOMEM;
-+
- 	gc->private = port;
- 
- 	ct = gc->chip_types;
-@@ -216,6 +219,8 @@ static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
- 
- 	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
- 			       IRQ_NOREQUEST, 0);
-+
-+	return 0;
- }
- 
- static int mxs_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
-@@ -317,7 +322,9 @@ static int mxs_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	/* gpio-mxs can be a generic irq chip */
--	mxs_gpio_init_gc(port, irq_base);
-+	err = mxs_gpio_init_gc(port, irq_base);
-+	if (err < 0)
-+		goto out_irqdomain_remove;
- 
- 	/* setup one handler for each entry */
- 	irq_set_chained_handler(port->irq, mxs_gpio_irq_handler);
-@@ -343,6 +350,8 @@ static int mxs_gpio_probe(struct platform_device *pdev)
- 
- out_bgpio_remove:
- 	bgpio_remove(&port->bgc);
-+out_irqdomain_remove:
-+	irq_domain_remove(port->domain);
- out_irqdesc_free:
- 	irq_free_descs(irq_base, 32);
- 	return err;
 -- 
-1.8.4.5
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
