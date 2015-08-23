@@ -1,8 +1,10 @@
 From: Peng Fan <van.freenix@gmail.com>
-Subject: [PATCH 1/2] gpio: mxc: need to check return value of irq_alloc_generic_chip
-Date: Sun, 23 Aug 2015 21:11:52 +0800
-Message-ID: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
+Subject: [PATCH 2/2] gpio: mxs: need to check return value of irq_alloc_generic_chip
+Date: Sun, 23 Aug 2015 21:11:53 +0800
+Message-ID: <1440335513-14703-2-git-send-email-van.freenix@gmail.com>
+References: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, shawn.guo@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, van.freenix@gmail.com
@@ -10,7 +12,7 @@ List-Id: linux-gpio@vger.kernel.org
 
 Need to check return value of irq_alloc_generic_chip, because
 it may return NULL.
-1. Change mxc_gpio_init_gc return type from void to int.
+1. Change mxs_gpio_init_gc return type from void to int.
 2. Add a new lable out_irqdomain_remove to remove the irq domain
    when mxc_gpio_init_gc fail.
 
@@ -18,24 +20,24 @@ Signed-off-by: Peng Fan <van.freenix@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>
 ---
- drivers/gpio/gpio-mxc.c | 13 +++++++++++--
+ drivers/gpio/gpio-mxs.c | 13 +++++++++++--
  1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 9f7446a..45bbe729 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -339,13 +339,16 @@ static int gpio_set_wake_irq(struct irq_data *d, u32 enable)
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 84cbda6..f7c3550 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -196,13 +196,16 @@ static int mxs_gpio_set_wake_irq(struct irq_data *d, unsigned int enable)
  	return 0;
  }
  
--static void __init mxc_gpio_init_gc(struct mxc_gpio_port *port, int irq_base)
-+static int __init mxc_gpio_init_gc(struct mxc_gpio_port *port, int irq_base)
+-static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
++static int __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
  {
  	struct irq_chip_generic *gc;
  	struct irq_chip_type *ct;
  
- 	gc = irq_alloc_generic_chip("gpio-mxc", 1, irq_base,
+ 	gc = irq_alloc_generic_chip("gpio-mxs", 1, irq_base,
  				    port->base, handle_level_irq);
 +	if (!gc)
 +		return -ENOMEM;
@@ -43,7 +45,7 @@ index 9f7446a..45bbe729 100644
  	gc->private = port;
  
  	ct = gc->chip_types;
-@@ -359,6 +362,8 @@ static void __init mxc_gpio_init_gc(struct mxc_gpio_port *port, int irq_base)
+@@ -216,6 +219,8 @@ static void __init mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
  
  	irq_setup_generic_chip(gc, IRQ_MSK(32), IRQ_GC_INIT_NESTED_LOCK,
  			       IRQ_NOREQUEST, 0);
@@ -51,24 +53,26 @@ index 9f7446a..45bbe729 100644
 +	return 0;
  }
  
- static void mxc_gpio_get_hw(struct platform_device *pdev)
-@@ -476,12 +481,16 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ static int mxs_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -317,7 +322,9 @@ static int mxs_gpio_probe(struct platform_device *pdev)
  	}
  
- 	/* gpio-mxc can be a generic irq chip */
--	mxc_gpio_init_gc(port, irq_base);
-+	err = mxc_gpio_init_gc(port, irq_base);
+ 	/* gpio-mxs can be a generic irq chip */
+-	mxs_gpio_init_gc(port, irq_base);
++	err = mxs_gpio_init_gc(port, irq_base);
 +	if (err < 0)
 +		goto out_irqdomain_remove;
  
- 	list_add_tail(&port->node, &mxc_gpio_ports);
+ 	/* setup one handler for each entry */
+ 	irq_set_chained_handler(port->irq, mxs_gpio_irq_handler);
+@@ -343,6 +350,8 @@ static int mxs_gpio_probe(struct platform_device *pdev)
  
- 	return 0;
- 
+ out_bgpio_remove:
+ 	bgpio_remove(&port->bgc);
 +out_irqdomain_remove:
 +	irq_domain_remove(port->domain);
  out_irqdesc_free:
  	irq_free_descs(irq_base, 32);
- out_gpiochip_remove:
+ 	return err;
 -- 
 1.8.4.5
