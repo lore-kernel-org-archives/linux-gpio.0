@@ -1,39 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 1/8] pinctrl: sh-pfc: Implement pinconf power-source
- param for voltage switching
-Date: Mon, 24 Aug 2015 10:45:49 +0200
-Message-ID: <CACRpkdamQEhxGVC0r94yM=PNTSonB9NcyUgBQPTLyRm0egct+Q@mail.gmail.com>
-References: <1435683177.23818.60.camel@codethink.co.uk>
-	<1435683239.23818.61.camel@codethink.co.uk>
+From: Mika Westerberg <mika.westerberg@intel.com>
+Subject: Re: [PATCH] pwm: lpss: add PM support for LPSS PWM
+Date: Mon, 24 Aug 2015 13:20:20 +0300
+Message-ID: <20150824102020.GQ30005@lahna.fi.intel.com>
+References: <1440434317-51406-1-git-send-email-qipeng.zha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:35810 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751980AbbHXIpt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2015 04:45:49 -0400
-Received: by obbwr7 with SMTP id wr7so107274352obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2015 01:45:49 -0700 (PDT)
-In-Reply-To: <1435683239.23818.61.camel@codethink.co.uk>
+Received: from mga09.intel.com ([134.134.136.24]:14388 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754119AbbHXKUY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 24 Aug 2015 06:20:24 -0400
+Content-Disposition: inline
+In-Reply-To: <1440434317-51406-1-git-send-email-qipeng.zha@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Qipeng Zha <qipeng.zha@intel.com>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, Huiquan Zhong <huiquan.zhong@intel.com>
 
-On Tue, Jun 30, 2015 at 6:53 PM, Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
+On Tue, Aug 25, 2015 at 12:38:37AM +0800, Qipeng Zha wrote:
+> Without this PM support, PWM controller can't enter into
+> D3 state, and then kernel will fail to enter S3.
 
-> The pfc in the R8A7790 (and probably others in the R-Car gen 2 family)
-> supports switching SDHI signals between 3.3V and 1.8V nominal voltage,
-> and the SD driver should do that when switching to and from UHS modes.
->
-> Add a flag for pins that have configurable I/O voltage and SoC
-> operations to get and set the nominal voltage.  Implement the pinconf
-> power-source parameter using these operations.
->
-> Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+You should Cc the PWM subsystem maintainer as well. Please check what 
 
-Patch applied with Laurent's ACK.
+	% scripts/get_maintainer.pl 0001-your-patch.patch
 
-Yours,
-Linus Walleij
+outputs.
+
+Also it would be good idea to include bit more analysis to the
+changelog. For example why it prevents system S3?
+
+Does this happen on Baytrail, Braswell?
