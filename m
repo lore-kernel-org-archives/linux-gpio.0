@@ -1,77 +1,77 @@
-From: Dirk Behme <dirk.behme@gmail.com>
-Subject: Re: [PATCH 1/2] Documentation: gpio: board: add flags parameter to
- gpiod_get*() functions
-Date: Mon, 24 Aug 2015 18:47:00 +0200
-Message-ID: <55DB4A84.3040501@gmail.com>
-References: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:36256 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753944AbbHXQrD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Aug 2015 12:47:03 -0400
-Received: by wicja10 with SMTP id ja10so77469265wic.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2015 09:47:02 -0700 (PDT)
-In-Reply-To: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 1/2] pinctrl: qcom: ssbi: convert null test to IS_ERR test
+Date: Mon, 24 Aug 2015 23:12:26 +0200
+Message-ID: <1440450747-10080-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>
 
-On 25.07.2015 09:11, Dirk Behme wrote:
-> With commit 39b2bbe3d715 ("gpio: add flags argument to gpiod_get*()
-> functions") the gpiod_get*() functions got a 'flags' parameter. Reflect
-> this in the documentation, too.
->
-> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
-> ---
->   Documentation/gpio/board.txt | 17 ++++++++---------
->   1 file changed, 8 insertions(+), 9 deletions(-)
->
-> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
-> index b80606d..7605773 100644
-> --- a/Documentation/gpio/board.txt
-> +++ b/Documentation/gpio/board.txt
-> @@ -39,11 +39,11 @@ This property will make GPIOs 15, 16 and 17 available to the driver under the
->
->   	struct gpio_desc *red, *green, *blue, *power;
->
-> -	red = gpiod_get_index(dev, "led", 0);
-> -	green = gpiod_get_index(dev, "led", 1);
-> -	blue = gpiod_get_index(dev, "led", 2);
-> +	red = gpiod_get_index(dev, "led", 0, GPIOD_OUT_HIGH);
-> +	green = gpiod_get_index(dev, "led", 1, GPIOD_OUT_HIGH);
-> +	blue = gpiod_get_index(dev, "led", 2, GPIOD_OUT_HIGH);
->
-> -	power = gpiod_get(dev, "power");
-> +	power = gpiod_get(dev, "power", GPIOD_OUT_HIGH);
->
->   The led GPIOs will be active-high, while the power GPIO will be active-low (i.e.
->   gpiod_is_active_low(power) will be true).
-> @@ -142,12 +142,11 @@ The driver controlling "foo.0" will then be able to obtain its GPIOs as follows:
->
->   	struct gpio_desc *red, *green, *blue, *power;
->
-> -	red = gpiod_get_index(dev, "led", 0);
-> -	green = gpiod_get_index(dev, "led", 1);
-> -	blue = gpiod_get_index(dev, "led", 2);
-> +	red = gpiod_get_index(dev, "led", 0, GPIOD_OUT_HIGH);
-> +	green = gpiod_get_index(dev, "led", 1, GPIOD_OUT_HIGH);
-> +	blue = gpiod_get_index(dev, "led", 2, GPIOD_OUT_HIGH);
->
-> -	power = gpiod_get(dev, "power");
-> -	gpiod_direction_output(power, 1);
-> +	power = gpiod_get(dev, "power", GPIOD_OUT_HIGH);
->
->   Since the "power" GPIO is mapped as active-low, its actual signal will be 0
->   after this code. Contrary to the legacy integer GPIO interface, the active-low
+Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
+error code"), pinctrl_register returns an error code rather than NULL on
+failure.  Update some drivers that were introduced more recently.
 
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-Any further comments on this? Or could this be applied?
+// <smpl>
+@@
+expression e,e1,e2;
+@@
 
+e = pinctrl_register(...)
+... when != e = e1
+if (
+-   e == NULL
++   IS_ERR(e)
+   ) {
+     ...
+     return
+-      e2
++      PTR_ERR(e)
+     ;
+     }
+// </smpl>
 
-Best regards
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Dirk
+---
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |    4 ++--
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c  |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index c978b31..e1a3721 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -723,9 +723,9 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ #endif
+ 
+ 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
+-	if (!pctrl->pctrl) {
++	if (IS_ERR(pctrl->pctrl)) {
+ 		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
+-		return -ENODEV;
++		return PTR_ERR(pctrl->pctrl);
+ 	}
+ 
+ 	pctrl->chip = pm8xxx_gpio_template;
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+index 2d1b69f..6652b8d 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+@@ -814,9 +814,9 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
+ #endif
+ 
+ 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
+-	if (!pctrl->pctrl) {
++	if (IS_ERR(pctrl->pctrl)) {
+ 		dev_err(&pdev->dev, "couldn't register pm8xxx mpp driver\n");
+-		return -ENODEV;
++		return PTR_ERR(pctrl->pctrl);
+ 	}
+ 
+ 	pctrl->chip = pm8xxx_mpp_template;
