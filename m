@@ -1,18 +1,18 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 1/2] pinctrl: qcom: ssbi: convert null test to IS_ERR test
-Date: Mon, 24 Aug 2015 23:12:26 +0200
-Message-ID: <1440450747-10080-2-git-send-email-Julia.Lawall@lip6.fr>
+Subject: [PATCH 2/2] pinctrl: digicolor: convert null test to IS_ERR test
+Date: Mon, 24 Aug 2015 23:12:27 +0200
+Message-ID: <1440450747-10080-3-git-send-email-Julia.Lawall@lip6.fr>
 References: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1440450747-10080-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 Since commit 323de9efdf3e ("pinctrl: make pinctrl_register() return proper
 error code"), pinctrl_register returns an error code rather than NULL on
-failure.  Update some drivers that were introduced more recently.
+failure.  Update a driver that was introduced more recently.
 
 The semantic patch that makes this change is as follows:
 (http://coccinelle.lip6.fr/)
@@ -39,39 +39,22 @@ if (
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |    4 ++--
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c  |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-digicolor.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index c978b31..e1a3721 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -723,9 +723,9 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- #endif
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index 461fffc..11f8b83 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -337,9 +337,9 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
+ 	pmap->dev = &pdev->dev;
  
- 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
--	if (!pctrl->pctrl) {
-+	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "couldn't register pm8xxx gpio driver\n");
--		return -ENODEV;
-+		return PTR_ERR(pctrl->pctrl);
+ 	pmap->pctl = pinctrl_register(pctl_desc, &pdev->dev, pmap);
+-	if (!pmap->pctl) {
++	if (IS_ERR(pmap->pctl)) {
+ 		dev_err(&pdev->dev, "pinctrl driver registration failed\n");
+-		return -EINVAL;
++		return PTR_ERR(pmap->pctl);
  	}
  
- 	pctrl->chip = pm8xxx_gpio_template;
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-index 2d1b69f..6652b8d 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-@@ -814,9 +814,9 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
- #endif
- 
- 	pctrl->pctrl = pinctrl_register(&pctrl->desc, &pdev->dev, pctrl);
--	if (!pctrl->pctrl) {
-+	if (IS_ERR(pctrl->pctrl)) {
- 		dev_err(&pdev->dev, "couldn't register pm8xxx mpp driver\n");
--		return -ENODEV;
-+		return PTR_ERR(pctrl->pctrl);
- 	}
- 
- 	pctrl->chip = pm8xxx_mpp_template;
+ 	ret = dc_gpiochip_add(pmap, pdev->dev.of_node);
