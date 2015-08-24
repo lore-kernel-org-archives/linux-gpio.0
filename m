@@ -1,12 +1,12 @@
 From: Qipeng Zha <qipeng.zha@intel.com>
 Subject: [PATCH] pwm: lpss: add PM support for LPSS PWM
-Date: Mon, 24 Aug 2015 23:18:18 +0800
-Message-ID: <1440429498-92957-1-git-send-email-qipeng.zha@intel.com>
+Date: Tue, 25 Aug 2015 00:38:37 +0800
+Message-ID: <1440434317-51406-1-git-send-email-qipeng.zha@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:60768 "EHLO mga01.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:51663 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753953AbbHXHOf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 24 Aug 2015 03:14:35 -0400
+	id S1752475AbbHXIew (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 24 Aug 2015 04:34:52 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
