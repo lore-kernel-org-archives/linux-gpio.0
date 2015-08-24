@@ -1,75 +1,218 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 0/2] FTDI CBUS GPIO support
-Date: Sun, 23 Aug 2015 01:52:53 -0700
-Message-ID: <20150823085253.D9178C40941@trevor.secretlab.ca>
-References: <1434838377-8042-1-git-send-email-stefan@agner.ch>
-	<20150620234957.25729.qmail@stuge.se>
-	<a35f48994dedc061b54ca9ea255fdd4e@agner.ch>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a35f48994dedc061b54ca9ea255fdd4e-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, x-linux-XAdK+dDVA0n/cwiKa4OQEw@public.gmane.org, hachti-c1YPqJpaggmzQB+pC5nmwQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Qipeng Zha <qipeng.zha@intel.com>
+Subject: [PATCH] pwm: lpss: add PM support for LPSS PWM
+Date: Mon, 24 Aug 2015 23:18:18 +0800
+Message-ID: <1440429498-92957-1-git-send-email-qipeng.zha@intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:60768 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753953AbbHXHOf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 24 Aug 2015 03:14:35 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, Huiquan Zhong <huiquan.zhong@intel.com>
 
-On Sun, 21 Jun 2015 21:44:30 +0200
-, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
- wrote:
-> On 2015-06-21 01:49, Peter Stuge wrote:
-> > Stefan Agner wrote:
-> >> libftdi requires to detach the kernel driver to get access to the device
-> > 
-> > Control transfers ought to be possible without a detach.
-> 
-> Good to know, thanks for this input. The detach is probably a default
-> behavior of libftdi... Will have a look at that.
+Without this PM support, PWM controller can't enter into
+D3 state, and then kernel will fail to enter S3.
 
-libftdi is built on libusb. libusb detaches the device from ftdi_sio and
-binds it to a special driver for userspace access. There may indeed be
-another way to do it, but libusb doesn't know how to do it AFAIKS.
-
-We can't avoid the detach on current libftdi, but I do have a patch to
-libftdi that will at least reconnect the ftdi_sio driver after userspace
-has finished. I'll be posting it to the libftdi list in the next week,
-but I've attached it below for anyone who wants to play.
-
-> Having kernel level gpiolib would still have advantages: It would make
-> the matching of the GPIO's and tty device easier, since with this patch
-> the gpiolib device is a sub-node of the usb-serial device in sysfs and
-> the user would have to use kernel interfaces only (no libftdi)...
-
-NAK on the sysfs interface. Don't add a new ABI. gpiolib is the right
-way to expose these pins.
-
-g.
-
+Signed-off-by: Huiquan Zhong <huiquan.zhong@intel.com>
+Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
 ---
-Subject: [PATCH] Automatically reattach kernel driver on close
+ drivers/pwm/pwm-lpss-pci.c      | 11 +++++++++++
+ drivers/pwm/pwm-lpss-platform.c | 11 +++++++++++
+ drivers/pwm/pwm-lpss.c          | 41 +++++++++++++++++++++++++++++++++++++++++
+ drivers/pwm/pwm-lpss.h          |  1 +
+ 4 files changed, 64 insertions(+)
 
-The built-in libusb auto detach feature supports automatically
-reattaching the kernel driver when the device is closed. Switch libftdi
-to use the libusb auto-detach code so that we can get the Linux ftdi_sio
-driver reattached automatically when finished with the device.
----
- src/ftdi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/src/ftdi.c b/src/ftdi.c
-index 68489ea096be..0d043690aeca 100644
---- a/src/ftdi.c
-+++ b/src/ftdi.c
-@@ -548,7 +548,7 @@ int ftdi_usb_open_dev(struct ftdi_context *ftdi, libusb_device *dev)
-     // Likely scenario is a static ftdi_sio kernel module.
-     if (ftdi->module_detach_mode == AUTO_DETACH_SIO_MODULE)
-     {
--        if (libusb_detach_kernel_driver(ftdi->usb_dev, ftdi->interface) !=0)
-+        if (libusb_set_auto_detach_kernel_driver(ftdi->usb_dev, 1))
-             detach_errno = errno;
-     }
+diff --git a/drivers/pwm/pwm-lpss-pci.c b/drivers/pwm/pwm-lpss-pci.c
+index 45042c1..e8c31d6 100644
+--- a/drivers/pwm/pwm-lpss-pci.c
++++ b/drivers/pwm/pwm-lpss-pci.c
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
++#include <linux/pm_runtime.h>
  
+ #include "pwm-lpss.h"
+ 
+@@ -33,6 +34,12 @@ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
+ 		return PTR_ERR(lpwm);
+ 
+ 	pci_set_drvdata(pdev, lpwm);
++
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 5);
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_allow(&pdev->dev);
++
+ 	return 0;
+ }
+ 
+@@ -40,6 +47,7 @@ static void pwm_lpss_remove_pci(struct pci_dev *pdev)
+ {
+ 	struct pwm_lpss_chip *lpwm = pci_get_drvdata(pdev);
+ 
++	pm_runtime_forbid(&pdev->dev);
+ 	pwm_lpss_remove(lpwm);
+ }
+ 
+@@ -59,6 +67,9 @@ static struct pci_driver pwm_lpss_driver_pci = {
+ 	.id_table = pwm_lpss_pci_ids,
+ 	.probe = pwm_lpss_probe_pci,
+ 	.remove = pwm_lpss_remove_pci,
++	.driver = {
++		.pm = &pwm_lpss_pm,
++	},
+ };
+ module_pci_driver(pwm_lpss_driver_pci);
+ 
+diff --git a/drivers/pwm/pwm-lpss-platform.c b/drivers/pwm/pwm-lpss-platform.c
+index 18a9c88..09a7d99 100644
+--- a/drivers/pwm/pwm-lpss-platform.c
++++ b/drivers/pwm/pwm-lpss-platform.c
+@@ -14,6 +14,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ 
+ #include "pwm-lpss.h"
+ 
+@@ -36,6 +37,12 @@ static int pwm_lpss_probe_platform(struct platform_device *pdev)
+ 		return PTR_ERR(lpwm);
+ 
+ 	platform_set_drvdata(pdev, lpwm);
++
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 5);
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_runtime_put_noidle(&pdev->dev);
++	pm_runtime_allow(&pdev->dev);
++
+ 	return 0;
+ }
+ 
+@@ -43,6 +50,7 @@ static int pwm_lpss_remove_platform(struct platform_device *pdev)
+ {
+ 	struct pwm_lpss_chip *lpwm = platform_get_drvdata(pdev);
+ 
++	pm_runtime_forbid(&pdev->dev);
+ 	return pwm_lpss_remove(lpwm);
+ }
+ 
+@@ -60,6 +68,9 @@ static struct platform_driver pwm_lpss_driver_platform = {
+ 	},
+ 	.probe = pwm_lpss_probe_platform,
+ 	.remove = pwm_lpss_remove_platform,
++	.driver = {
++		.pm = &pwm_lpss_pm,
++	},
+ };
+ module_platform_driver(pwm_lpss_driver_platform);
+ 
+diff --git a/drivers/pwm/pwm-lpss.c b/drivers/pwm/pwm-lpss.c
+index e979825..fed95cc 100644
+--- a/drivers/pwm/pwm-lpss.c
++++ b/drivers/pwm/pwm-lpss.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
+ 
+ #include "pwm-lpss.h"
+ 
+@@ -75,6 +76,8 @@ static int pwm_lpss_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	if (base_unit > PWM_LIMIT)
+ 		return -EINVAL;
+ 
++	pm_runtime_get_sync(lpwm->chip.dev);
++
+ 	if (duty_ns <= 0)
+ 		duty_ns = 1;
+ 	on_time_div = 255 - (255 * duty_ns / period_ns);
+@@ -87,6 +90,9 @@ static int pwm_lpss_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	ctrl |= PWM_SW_UPDATE;
+ 	writel(ctrl, lpwm->regs + PWM);
+ 
++	pm_runtime_mark_last_busy(lpwm->chip.dev);
++	pm_runtime_put_autosuspend(lpwm->chip.dev);
++
+ 	return 0;
+ }
+ 
+@@ -95,9 +101,14 @@ static int pwm_lpss_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	struct pwm_lpss_chip *lpwm = to_lpwm(chip);
+ 	u32 ctrl;
+ 
++	pm_runtime_get_sync(lpwm->chip.dev);
++
+ 	ctrl = readl(lpwm->regs + PWM);
+ 	writel(ctrl | PWM_ENABLE, lpwm->regs + PWM);
+ 
++	pm_runtime_mark_last_busy(lpwm->chip.dev);
++	pm_runtime_put_autosuspend(lpwm->chip.dev);
++
+ 	return 0;
+ }
+ 
+@@ -106,8 +117,13 @@ static void pwm_lpss_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	struct pwm_lpss_chip *lpwm = to_lpwm(chip);
+ 	u32 ctrl;
+ 
++	pm_runtime_get_sync(lpwm->chip.dev);
++
+ 	ctrl = readl(lpwm->regs + PWM);
+ 	writel(ctrl & ~PWM_ENABLE, lpwm->regs + PWM);
++
++	pm_runtime_mark_last_busy(lpwm->chip.dev);
++	pm_runtime_put_autosuspend(lpwm->chip.dev);
+ }
+ 
+ static const struct pwm_ops pwm_lpss_ops = {
+@@ -158,6 +174,31 @@ int pwm_lpss_remove(struct pwm_lpss_chip *lpwm)
+ }
+ EXPORT_SYMBOL_GPL(pwm_lpss_remove);
+ 
++static int pwm_lpss_suspend(struct device *dev)
++{
++	struct pwm_lpss_chip *lpwm = dev_get_drvdata(dev);
++	u32 ctrl;
++	int ret;
++
++	ctrl = readl(lpwm->regs + PWM);
++	ret = (ctrl & PWM_ENABLE) ? -EAGAIN : 0;
++
++	return ret;
++}
++
++static int pwm_lpss_resume(struct device *dev)
++{
++	return 0;
++}
++
++const struct dev_pm_ops pwm_lpss_pm = {
++	.suspend_late = pwm_lpss_suspend,
++	.resume_early = pwm_lpss_resume,
++	SET_RUNTIME_PM_OPS(pwm_lpss_suspend,
++			pwm_lpss_resume, NULL)
++};
++EXPORT_SYMBOL(pwm_lpss_pm);
++
+ MODULE_DESCRIPTION("PWM driver for Intel LPSS");
+ MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/pwm/pwm-lpss.h b/drivers/pwm/pwm-lpss.h
+index aa041bb..0b42983 100644
+--- a/drivers/pwm/pwm-lpss.h
++++ b/drivers/pwm/pwm-lpss.h
+@@ -28,5 +28,6 @@ extern const struct pwm_lpss_boardinfo pwm_lpss_bsw_info;
+ struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, struct resource *r,
+ 				     const struct pwm_lpss_boardinfo *info);
+ int pwm_lpss_remove(struct pwm_lpss_chip *lpwm);
++extern const struct dev_pm_ops pwm_lpss_pm;
+ 
+ #endif	/* __PWM_LPSS_H */
 -- 
-2.1.4
+1.8.3.2
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
