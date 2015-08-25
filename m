@@ -1,82 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7794: add VIN pin groups
-Date: Tue, 25 Aug 2015 14:30:44 +0200
-Message-ID: <CAMuHMdV_Dq044iwEUsHs3uc+tV_cWtZmAL2eX14nKys1aFB91Q@mail.gmail.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-	<1507074.oEdHYS5Faz@wasted.cogentembedded.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl-zynq.c: Fix typos in smc0_nand_grp and smc0_nor_grp
+Date: Tue, 25 Aug 2015 16:22:50 +0200
+Message-ID: <CACRpkdbv63vTZEDncPc4BPK09xNiWRd=+1xtvRVZr7kN4ncZ=w@mail.gmail.com>
+References: <1439389332-9373-1-git-send-email-mike.looijmans@topic.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1507074.oEdHYS5Faz@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:36168 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750755AbbHYOWu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 10:22:50 -0400
+Received: by oiev193 with SMTP id v193so101453688oie.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2015 07:22:50 -0700 (PDT)
+In-Reply-To: <1439389332-9373-1-git-send-email-mike.looijmans@topic.nl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
 
-Hi (Tovaritsj?) Sergei, Matsuoka-san,
+On Wed, Aug 12, 2015 at 4:22 PM, Mike Looijmans <mike.looijmans@topic.n=
+l> wrote:
 
-On Wed, Aug 19, 2015 at 12:29 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> Group names should be smc0_nand_grp and smc0_nor_grp, otherwise you'l=
+l
+> get errors like this if you try to pinmux them via the devicetree:
+> zynq-pinctrl 700.pinctrl: invalid group "smc0_nand_grp" for function =
+"smc0_nand"
 >
-> Add VIN0/1 pin groups to R8A7794 PFC driver.
+> Probably a typo while creating these tables.
 >
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> [Sergei: rebased, renamed, added changelog.]
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
 
-Thanks for your patch!
+Patch applied with Moritz' ACK.
 
-> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> @@ -2789,6 +2789,167 @@ static const unsigned int usb1_mux[] = {
->         USB1_OVC_MARK,
->  };
->
-> +union vin_data {
-> +       unsigned int data24[24];
-> +       unsigned int data20[20];
-> +       unsigned int data16[16];
-> +       unsigned int data12[12];
-> +       unsigned int data10[10];
-> +       unsigned int data8[8];
-> +};
-> +
-> +#define VIN_DATA_PIN_GROUP(n, s)                               \
-> +       {                                                       \
-> +               .name = #n#s,                                   \
-> +               .pins = n##_pins.data##s,                       \
-> +               .mux = n##_mux.data##s,                         \
-> +               .nr_pins = ARRAY_SIZE(n##_pins.data##s),        \
-> +       }
-
-As this is the third occurrence of these 2 definitions, perhaps they
-should be moved to sh_pfc.h?
-
-> +/* - VIN1 ----------------------------------------------------------------- */
-
-> +static const unsigned int vin1_g_b_pins[] = {
-> +       /* G */
-> +       RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 11),
-> +       RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-> +};
-> +static const unsigned int vin1_g_b_mux[] = {
-> +       /* G */
-> +       VI1_DATA8_MARK, VI1_DATA9_MARK,
-> +       VI1_DATA10_MARK, VI1_DATA11_MARK,
-> +};
-
-This is the green channel, to augment red and blue in vin_data8*?
-If yes, would it make sense to have a separate vin1_data12* section,
-combining them?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Yours,
+Linus Walleij
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
