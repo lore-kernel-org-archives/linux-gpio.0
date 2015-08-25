@@ -1,37 +1,72 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: rcar: GPIO_RCAR doesn't relate to ARM
-Date: Tue, 25 Aug 2015 11:15:18 +0200
-Message-ID: <CAMuHMdXxg+YPHxPdPobNS1C4+khOx6-Ve3nU2UqddTdtdUsCEg@mail.gmail.com>
-References: <871ter7n17.wl%kuninori.morimoto.gx@renesas.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 0/7] gpio: omap: fixes and improvements
+Date: Tue, 25 Aug 2015 14:41:01 +0300
+Message-ID: <55DC544D.9000304@ti.com>
+References: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com> <20150819063851.GI4215@atomide.com> <20150821081342.GL4215@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <871ter7n17.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Magnus <magnus.damm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:59395 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753858AbbHYLlL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 07:41:11 -0400
+In-Reply-To: <20150821081342.GL4215@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 25, 2015 at 11:12 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> 8cd1470("gpio: rcar: Add r8a7795 (R-Car H3) support") added
-> GPIO support for r8a7795. r8a7795 based on CONFIG_ARM64.
-> OTOH, GPIO_RCAR driver can be compiled fine on non-ARM.
-> This patch removed ARM dependency for it.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On 08/21/2015 11:13 AM, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [150818 23:42]:
+>> Hi,
+>>
+>> * Grygorii Strashko <grygorii.strashko@ti.com> [150818 04:14]:
+>>> Hi,
+>>>
+>>> This patch series contains set of trivial fixes and improvements, and also
+>>> patches which fixes wrong APIs usage in atomic context as for -RT as for
+>>> non-RT kernel. The final goal of this series is to make TI OMAP GPIO
+>>> driver compatible with -RT kernel as much as possible.
+>>>
+>>> Patch 1-4: trivial fixes and improvements
+>>> Patch 5: fixes wrong CLK clk_prepare/unprepare APIs usage in atomic contexet
+>>> Patch 6(rfc): required to be compatible with -RT kernel, because PM runtime
+>>>   can't be used in atimic context on -RT.
+>>> Patch 7(rfc): This patch converts TI OMAP GPIO driver to use generic irq
+>>>   handler instead of chained IRQ handler. This way OMAP GPIO driver will be
+>>>   compatible with RT kernel where it will be forced thread IRQ handler
+>>>   while in non-RT kernel it still will be executed in HW IRQ context.
+>>
+>> Based on quick testing this series breaks at least core off idle for omap3.
+>> You probably should add a beagle xm to your test devices so you can
+>> properly test PM features.
+> 
+> Sorry I take that back, after trying to figure out which patch breaks PM
+> I noticed I had some other patches applied also. Looks like PM works just
+> fine with this series for me, so please feel free to add:
+> 
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Uh... :) Thanks Tony a lot and sorry for delayed reply (was ooo).
+You've restored my heartbeat :)
 
-Gr{oetje,eeting}s,
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> 
+> Note that I have not been able to test this with gpio button as my
+> boards are in a rack. You may want to do some gpio button tests to
+> make sure things wake up properly from off idle if you can get hold
+> of a beagle xm. I posted some instructions how to test earlier today
+> for Kishon in the "[PATCH v2 00/16] omap_hsmmc: regulator usage
+> cleanup and fixes" thread.
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I've tested it actually using GPIO buttons and UART console wake-up
+(Results - https://lkml.org/lkml/2015/8/14/194 :)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+And I'd try to retest it on beagle xm also, but not sure if i'd be able
+to test button's wake-up - have shared access only now to beagle xm
+which is rack also.
+
+-- 
+regards,
+-grygorii
