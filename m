@@ -1,36 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: imx6ul: Remove .owner field
-Date: Tue, 25 Aug 2015 16:29:32 +0200
-Message-ID: <CACRpkdZ2UK8C5mshMHKNRLfVHJFx+oJmVsXWx42DPjEE7bg3yA@mail.gmail.com>
-References: <1439497221-29913-1-git-send-email-festevam@gmail.com>
+Subject: Re: [PATCH v3] MIPS: Remove all the uses of custom gpio.h
+Date: Tue, 25 Aug 2015 16:32:09 +0200
+Message-ID: <CACRpkdYB7dJM8LNBqSt6sLm4xLdoVPvWEQ+Rix6=ihfoz2q_2g@mail.gmail.com>
+References: <1438678305-25524-1-git-send-email-albeu@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33996 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755745AbbHYO3d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 10:29:33 -0400
-Received: by obbfr1 with SMTP id fr1so143097303obb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2015 07:29:32 -0700 (PDT)
-In-Reply-To: <1439497221-29913-1-git-send-email-festevam@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1438678305-25524-1-git-send-email-albeu@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alban Bedel <albeu@free.fr>
+Cc: Linux MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Florian Fainelli <florian@openwrt.org>, Manuel Lauss <manuel.lauss@gmail.com>, Joe Perches <joe@perches.com>, Daniel Walter <dwalter@google.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>, Huacai Chen <chenhc@lemote.com>, James Hartley <james.hartley@imgtec.com>, Andrew Bresticker <abrestic@chromium.org>, Paul Burton <paul.burton@imgtec.com>, Lars-Peter Clausen <lars@metafoo.de>, Brian Norris <computersforpeace@gmail.com>, Varka Bhadram <varkabhadram@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Randy Dunlap <rdunlap@infradead.org>, Simon
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Frank Li <Frank.Li@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On Thu, Aug 13, 2015 at 10:20 PM, Fabio Estevam <festevam@gmail.com> wrote:
+On Tue, Aug 4, 2015 at 10:50 AM, Alban Bedel <albeu@free.fr> wrote:
 
-> From: Fabio Estevam <fabio.estevam@freescale.com>
+> Currently CONFIG_ARCH_HAVE_CUSTOM_GPIO_H is defined for all MIPS
+> machines, and each machine type provides its own gpio.h. However
+> only a handful really implement the GPIO API, most just forward
+> everythings to gpiolib.
 >
-> platform_driver does not need to set an owner as it will be
-> populated by the driver core.
+> The Alchemy machine is notable as it provides a system to allow
+> implementing the GPIO API at the board level. But it is not used by
+> any board currently supported, so it can also be removed.
 >
-> The semantic patch that makes this change is available
-> in scripts/coccinelle/api/platform_no_drv_owner.cocci.
+> For most machine types we can just remove the custom gpio.h, as well
+> as the custom wrappers if some exists. Some of the code found in
+> the wrappers must be moved to the respective GPIO driver.
 >
-> Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+> A few more fixes are need in some drivers as they rely on linux/gpio.h
+> to provides some machine specific definitions, or used asm/gpio.h
+> instead of linux/gpio.h for the gpio API.
+>
+> Signed-off-by: Alban Bedel <albeu@free.fr>
 
-Patch applied.
+I bet I already ACKed this but anyways:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
