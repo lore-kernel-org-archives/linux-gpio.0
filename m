@@ -1,28 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio:Fix error handling in the function max732x_probe
-Date: Wed, 26 Aug 2015 13:35:56 +0200
-Message-ID: <CACRpkdaiz-Q+-=AnkyspM9Q2YEbk+cX9_OdCvmWFVUUfFp271Q@mail.gmail.com>
-References: <1439906144-11904-1-git-send-email-xerofoify@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7794: add USB pin groups
+Date: Wed, 26 Aug 2015 13:41:21 +0200
+Message-ID: <CACRpkdaHn2u8QaDp0SC8FPXaWVfPP_NJ4gG-QaLAJK53p1eZ9Q@mail.gmail.com>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+	<6436990.f6AZfhkFnG@wasted.cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439906144-11904-1-git-send-email-xerofoify@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <6436990.f6AZfhkFnG@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 18, 2015 at 3:55 PM, Nicholas Krause <xerofoify@gmail.com> wrote:
+On Wed, Aug 19, 2015 at 12:26 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
 
-> This fixes error handling in the function max732x_probe by checking
-> if the calls to the function max732x_readb fail by returning a error
-> code. If so we must immediately return to the caller of the function
-> max732x_probe with the error code to signal a non recoverable has
-> occurred when calling this function and the caller must handle it.
+> From: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
 >
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> Add USB0/1 pin groups to R8A7794 PFC driver.
+>
+> Signed-off-by: Shinobu Uehara <shinobu.uehara.xc@renesas.com>
+> [Sergei: rebased, renamed, added changelog.]
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Stripped and rewrote the commit message a bit and applied.
+Patch applied with Laurent's ACK.
 
 Yours,
 Linus Walleij
