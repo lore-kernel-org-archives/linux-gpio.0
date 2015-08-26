@@ -1,35 +1,101 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpiolib: Add GPIO initialization
-Date: Wed, 26 Aug 2015 14:08:31 +0200
-Message-ID: <CACRpkdZV0_QgT9eAPC7cQ4JFYb5npNobn40M13mhYruU0O0vdw@mail.gmail.com>
-References: <1439979512-3894-1-git-send-email-mpa@pengutronix.de>
-	<1439979512-3894-4-git-send-email-mpa@pengutronix.de>
+Subject: Re: [PATCH v2] pinctrl: mediatek: Fix multiple registration issue.
+Date: Wed, 26 Aug 2015 14:11:28 +0200
+Message-ID: <CACRpkdY-W+=Eq2nsabqULcFZCi1bLd3eyBDY8yQmyCLwEz1RSA@mail.gmail.com>
+References: <1440041931-38278-1-git-send-email-hongzhou.yang@mediatek.com>
+	<CAFRkauDE4QRnZP4q61JyX+t8rn3zOtokiESJTV4uak71zM0kTg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:36145 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752748AbbHZMIb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 08:08:31 -0400
-Received: by oiev193 with SMTP id v193so119890339oie.3
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2015 05:08:31 -0700 (PDT)
-In-Reply-To: <1439979512-3894-4-git-send-email-mpa@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFRkauDE4QRnZP4q61JyX+t8rn3zOtokiESJTV4uak71zM0kTg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, Daniel Kurtz <djkurtz@chromium.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, biao.huang@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, srv_heupstream@mediatek.com
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Markus Pargmann <mpa@devmp.org>
 
-On Wed, Aug 19, 2015 at 12:18 PM, Markus Pargmann <mpa@pengutronix.de> wrote:
-
-> From: Markus Pargmann <mpa@devmp.org>
+On Thu, Aug 20, 2015 at 5:49 AM, Axel Lin <axel.lin@ingics.com> wrote:
+> 2015-08-20 11:38 GMT+08:00 Hongzhou Yang <hongzhou.yang@mediatek.com>:
+>> Since our common driver need support main chip and PMU
+>> at the same time, that means it will register two
+>> pinctrl device, and the pinctrl_desc structure should
+>> be used two times.
+>>
+>> But pinctrl_desc use global static definition, then
+>> the latest registered pinctrl device will overwrite
+>> the old one's, all members in pinctrl_desc will set to
+>> the new one's, such as name, pins and pins numbers, etc.
+>> This is a bug. Changing to use devm_kzalloc to fix it.
+>>
+>> Cc: stable@vger.kernel.org # v4.1+
+>> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+>> ---
+>>  Use dynamic allocation to fix multiple registration issue.
+>>
+>>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   26 ++++++++++++++-----------
+>>  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
+>>  2 files changed, 16 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+>> index ad1ea16..911c736 100644
+>> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+>> @@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+>>         return 0;
+>>  }
+>>
+>> -static struct pinctrl_desc mtk_pctrl_desc = {
+>> -       .confops        = &mtk_pconf_ops,
+>> -       .pctlops        = &mtk_pctrl_ops,
+>> -       .pmxops         = &mtk_pmx_ops,
+>> -};
+>> -
+>>  int mtk_pctrl_init(struct platform_device *pdev,
+>>                 const struct mtk_pinctrl_devdata *data,
+>>                 struct regmap *regmap)
+>> @@ -1265,12 +1259,22 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>>
+>>         for (i = 0; i < pctl->devdata->npins; i++)
+>>                 pins[i] = pctl->devdata->pins[i].pin;
+>> -       mtk_pctrl_desc.name = dev_name(&pdev->dev);
+>> -       mtk_pctrl_desc.owner = THIS_MODULE;
+>> -       mtk_pctrl_desc.pins = pins;
+>> -       mtk_pctrl_desc.npins = pctl->devdata->npins;
+>> +
+>> +       pctl->pctl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctl->pctl_desc),
+>> +                               GFP_KERNEL);
+>> +       if (!pctl->pctl_desc)
+>> +               return -ENOMEM;
+>> +
+>> +       pctl->pctl_desc->name = dev_name(&pdev->dev);
+>> +       pctl->pctl_desc->owner = THIS_MODULE;
+>> +       pctl->pctl_desc->pins = pins;
+>> +       pctl->pctl_desc->npins = pctl->devdata->npins;
+>> +       pctl->pctl_desc->confops = &mtk_pconf_ops;
+>> +       pctl->pctl_desc->pctlops = &mtk_pctrl_ops;
+>> +       pctl->pctl_desc->pmxops = &mtk_pmx_ops;
+>>         pctl->dev = &pdev->dev;
+>> -       pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
+>> +
+>> +       pctl->pctl_dev = pinctrl_register(pctl->pctl_desc, &pdev->dev, pctl);
+>>         if (IS_ERR(pctl->pctl_dev)) {
+>>                 dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+>>                 return PTR_ERR(pctl->pctl_dev);
+>> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+>> index 30213e5..93d6f5b 100644
+>> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+>> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+>> @@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
+>>  struct mtk_pinctrl {
+>>         struct regmap   *regmap1;
+>>         struct regmap   *regmap2;
+>> +       struct pinctrl_desc *pctl_desc;
+> Use
+> struct pinctrl_desc pctl_desc;
 >
-> This functions adds a way to initialize a GPIO without hogging it.
->
-> Signed-off-by: Markus Pargmann <mpa@devmp.org>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 29 +++++++------
+> Then you can remove the devm_kzalloc.
 
-This needs to go to devicetree@vger.kernel.org for review.
+I agree with Axel, use a true member instead of a pointer
+and you get something simpler.
 
 Yours,
 Linus Walleij
