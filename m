@@ -1,59 +1,79 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH] gpio: vf610: handle level IRQ's properly
-Date: Wed, 26 Aug 2015 10:11:25 -0700
-Message-ID: <99db8c092e8b54d485e88887630d51c0@agner.ch>
-References: <1440197802-29720-1-git-send-email-stefan@agner.ch>
- <CACRpkdYqU_yvZE4WS2jBDOhemPy7dcHeOoj_dG61hCL8ugTMYg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7794: Remove bogus SCIF0 SCK pin data
+Date: Wed, 26 Aug 2015 19:53:58 +0200
+Message-ID: <1440611638-16256-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:48808 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756765AbbHZRLn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 13:11:43 -0400
-In-Reply-To: <CACRpkdYqU_yvZE4WS2jBDOhemPy7dcHeOoj_dG61hCL8ugTMYg@mail.gmail.com>
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51707 "EHLO
+	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752307AbbHZRyA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 13:54:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 2015-08-26 05:47, Linus Walleij wrote:
-> On Sat, Aug 22, 2015 at 12:56 AM, Stefan Agner <stefan@agner.ch> wrote:
-> 
->> The GPIO IRQ controller is able to generate level triggered
->> interrupts, however, these were handled by handle_simple_irq so far
->> which did not take care of IRQ masking. This lead to "nobody cared
->> (try booting with the "irqpoll" option)" stack traces.
->>
->> Use the generic interrupt handlers depending on the IRQ type.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> 
-> Patch applied.
+SCIF0 on R-Car E2 does not have an SCK pin.
 
-Thx
+"SCIF_CLK" is the (H)SCIF baud rate generation clock pin, which is not
+yet supported.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index bfdcac4b3bc4a4a0..2f169d5bc230bdcc 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -2197,13 +2197,6 @@ static const unsigned int scif0_data_pins[] = {
+ static const unsigned int scif0_data_mux[] = {
+ 	SCIF0_RXD_MARK, SCIF0_TXD_MARK,
+ };
+-static const unsigned int scif0_clk_pins[] = {
+-	/* SCK */
+-	RCAR_GP_PIN(1, 23),
+-};
+-static const unsigned int scif0_clk_mux[] = {
+-	SCIF_CLK_MARK,
+-};
+ static const unsigned int scif0_data_b_pins[] = {
+ 	/* RX, TX */
+ 	RCAR_GP_PIN(3, 11), RCAR_GP_PIN(3, 12),
+@@ -2211,13 +2204,6 @@ static const unsigned int scif0_data_b_pins[] = {
+ static const unsigned int scif0_data_b_mux[] = {
+ 	SCIF0_RXD_B_MARK, SCIF0_TXD_B_MARK,
+ };
+-static const unsigned int scif0_clk_b_pins[] = {
+-	/* SCK */
+-	RCAR_GP_PIN(3, 29),
+-};
+-static const unsigned int scif0_clk_b_mux[] = {
+-	SCIF_CLK_B_MARK,
+-};
+ static const unsigned int scif0_data_c_pins[] = {
+ 	/* RX, TX */
+ 	RCAR_GP_PIN(3, 30), RCAR_GP_PIN(3, 31),
+@@ -2866,9 +2852,7 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(qspi_data2),
+ 	SH_PFC_PIN_GROUP(qspi_data4),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+-	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_data_b),
+-	SH_PFC_PIN_GROUP(scif0_clk_b),
+ 	SH_PFC_PIN_GROUP(scif0_data_c),
+ 	SH_PFC_PIN_GROUP(scif0_data_d),
+ 	SH_PFC_PIN_GROUP(scif1_data),
+@@ -3087,9 +3071,7 @@ static const char * const qspi_groups[] = {
  
-> Hm, this looks like a problem that could exist in a few more
-> GPIO drivers. Can you look around and see if there is something
-> immediately suspicious in drivers/gpio?
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+-	"scif0_clk",
+ 	"scif0_data_b",
+-	"scif0_clk_b",
+ 	"scif0_data_c",
+ 	"scif0_data_d",
+ };
+-- 
+1.9.1
 
-Just looked a bit around. There are some which use handle_simple_irq but
-also run their handler in threaded/one-shot handler. I guess in that
-case it is fine to use the simple_irq handler.
-
-However, those GPIO drivers look suspicious:
-
-gpio-altera.c: Uses handle_simple_irq, supports edge and level
-gpio-bcm-kona.c: Uses handle_simple_irq, supports only edge
-gpio-grgpio.c: Uses handle_simple_irq, supports edge and level
-gpio-intel-mid.c: Uses handle_simple_irq, supports only edge
-gpio-lynxpoint.c: Uses handle_simple_irq, supports edge and level
-gpio-ml-ioh.c: Uses handle_simple_irq, supports edge and level
-gpio-pl061.c: Uses handle_simple_irq, supports edge and level
-gpio-rcar.c: Uses handle_level_irq, supports edge and level
-gpio-timberdale.c: Uses handle_simple_irq, supports edge and level
-
---
-Stefan
