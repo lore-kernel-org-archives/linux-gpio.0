@@ -1,80 +1,59 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 0/7] gpio: omap: fixes and improvements
-Date: Wed, 26 Aug 2015 09:06:22 -0700
-Message-ID: <20150826160622.GO4215@atomide.com>
-References: <1439896258-26449-1-git-send-email-grygorii.strashko@ti.com>
- <20150819063851.GI4215@atomide.com>
- <20150821081342.GL4215@atomide.com>
- <55DC544D.9000304@ti.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH] gpio: vf610: handle level IRQ's properly
+Date: Wed, 26 Aug 2015 10:11:25 -0700
+Message-ID: <99db8c092e8b54d485e88887630d51c0@agner.ch>
+References: <1440197802-29720-1-git-send-email-stefan@agner.ch>
+ <CACRpkdYqU_yvZE4WS2jBDOhemPy7dcHeOoj_dG61hCL8ugTMYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55DC544D.9000304@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:48808 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756765AbbHZRLn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 13:11:43 -0400
+In-Reply-To: <CACRpkdYqU_yvZE4WS2jBDOhemPy7dcHeOoj_dG61hCL8ugTMYg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [150825 04:44]:
-> On 08/21/2015 11:13 AM, Tony Lindgren wrote:
-> > * Tony Lindgren <tony@atomide.com> [150818 23:42]:
-> >> Hi,
-> >>
-> >> * Grygorii Strashko <grygorii.strashko@ti.com> [150818 04:14]:
-> >>> Hi,
-> >>>
-> >>> This patch series contains set of trivial fixes and improvements, and also
-> >>> patches which fixes wrong APIs usage in atomic context as for -RT as for
-> >>> non-RT kernel. The final goal of this series is to make TI OMAP GPIO
-> >>> driver compatible with -RT kernel as much as possible.
-> >>>
-> >>> Patch 1-4: trivial fixes and improvements
-> >>> Patch 5: fixes wrong CLK clk_prepare/unprepare APIs usage in atomic contexet
-> >>> Patch 6(rfc): required to be compatible with -RT kernel, because PM runtime
-> >>>   can't be used in atimic context on -RT.
-> >>> Patch 7(rfc): This patch converts TI OMAP GPIO driver to use generic irq
-> >>>   handler instead of chained IRQ handler. This way OMAP GPIO driver will be
-> >>>   compatible with RT kernel where it will be forced thread IRQ handler
-> >>>   while in non-RT kernel it still will be executed in HW IRQ context.
-> >>
-> >> Based on quick testing this series breaks at least core off idle for omap3.
-> >> You probably should add a beagle xm to your test devices so you can
-> >> properly test PM features.
-> > 
-> > Sorry I take that back, after trying to figure out which patch breaks PM
-> > I noticed I had some other patches applied also. Looks like PM works just
-> > fine with this series for me, so please feel free to add:
-> > 
+On 2015-08-26 05:47, Linus Walleij wrote:
+> On Sat, Aug 22, 2015 at 12:56 AM, Stefan Agner <stefan@agner.ch> wrote:
 > 
-> Uh... :) Thanks Tony a lot and sorry for delayed reply (was ooo).
-> You've restored my heartbeat :)
+>> The GPIO IRQ controller is able to generate level triggered
+>> interrupts, however, these were handled by handle_simple_irq so far
+>> which did not take care of IRQ masking. This lead to "nobody cared
+>> (try booting with the "irqpoll" option)" stack traces.
+>>
+>> Use the generic interrupt handlers depending on the IRQ type.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > 
-> > Tested-by: Tony Lindgren <tony@atomide.com>
-> > 
-> > Note that I have not been able to test this with gpio button as my
-> > boards are in a rack. You may want to do some gpio button tests to
-> > make sure things wake up properly from off idle if you can get hold
-> > of a beagle xm. I posted some instructions how to test earlier today
-> > for Kishon in the "[PATCH v2 00/16] omap_hsmmc: regulator usage
-> > cleanup and fixes" thread.
-> 
-> 
-> I've tested it actually using GPIO buttons and UART console wake-up
-> (Results - https://lkml.org/lkml/2015/8/14/194 :)
+> Patch applied.
 
-OK great good to hear :)
+Thx
+
  
-> And I'd try to retest it on beagle xm also, but not sure if i'd be able
-> to test button's wake-up - have shared access only now to beagle xm
-> which is rack also.
+> Hm, this looks like a problem that could exist in a few more
+> GPIO drivers. Can you look around and see if there is something
+> immediately suspicious in drivers/gpio?
 
-OK. FYI, we're still missing a clean solution to omap3 errata 1.158
-that requires remuxing GPIO pins to safe mode with pull for off idle
-to avoid glitches:
+Just looked a bit around. There are some which use handle_simple_irq but
+also run their handler in threaded/one-shot handler. I guess in that
+case it is fine to use the simple_irq handler.
 
-http://www.spinics.net/lists/linux-omap/msg11669.html
+However, those GPIO drivers look suspicious:
 
-Regards,
+gpio-altera.c: Uses handle_simple_irq, supports edge and level
+gpio-bcm-kona.c: Uses handle_simple_irq, supports only edge
+gpio-grgpio.c: Uses handle_simple_irq, supports edge and level
+gpio-intel-mid.c: Uses handle_simple_irq, supports only edge
+gpio-lynxpoint.c: Uses handle_simple_irq, supports edge and level
+gpio-ml-ioh.c: Uses handle_simple_irq, supports edge and level
+gpio-pl061.c: Uses handle_simple_irq, supports edge and level
+gpio-rcar.c: Uses handle_level_irq, supports edge and level
+gpio-timberdale.c: Uses handle_simple_irq, supports edge and level
 
-Tony
+--
+Stefan
