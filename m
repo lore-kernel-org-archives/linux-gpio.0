@@ -1,47 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] gpiolib: Add gpio name information to /sys/kernel/debug/gpio
-Date: Tue, 25 Aug 2015 16:34:38 +0200
-Message-ID: <CACRpkdaMw=3JXF4n-u+=x7aSWKnn5rQQ4Xy4afkTL30Q6RHWTg@mail.gmail.com>
-References: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
-	<1438680203-13432-7-git-send-email-mpa@pengutronix.de>
-	<CACRpkdajd5B6qUa6mi_0m53eMtLenoAWUCnmq-mOC+EhXfzpTA@mail.gmail.com>
-	<CAAVeFuKSQP2DYWdhYy-k+cr9F0jc46Q-xuoWXSTguQYaf3SY+w@mail.gmail.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH v4] pinctrl: mediatek: Fix multiple registration issue.
+Date: Tue, 25 Aug 2015 17:16:10 -0700
+Message-ID: <1440548170-10174-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:35972 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751564AbbHYOej (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 10:34:39 -0400
-Received: by obkg7 with SMTP id g7so143345372obk.3
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2015 07:34:39 -0700 (PDT)
-In-Reply-To: <CAAVeFuKSQP2DYWdhYy-k+cr9F0jc46Q-xuoWXSTguQYaf3SY+w@mail.gmail.com>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:39561 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756040AbbHZAQZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 20:16:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Axel Lin <axel.lin@ingics.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, Aug 17, 2015 at 9:29 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> On Mon, Aug 10, 2015 at 7:02 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Aug 4, 2015 at 11:23 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
->>
->>> Add some information about gpio names to the debugfs gpio file. name and
->>> label of a GPIO are then displayed next to each other. This way it is
->>> easy to see what the real name of GPIO is and what the driver requested
->>> it for.
->>>
->>> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
->>
->> This patch looks correct in the context.
->
-> Looks correct indeed, but on a related note one might question the
-> need to have both a "name" and a "label" for a GPIO?
+Since our common driver need support main chip and PMU
+at the same time, that means it will register two
+pinctrl device, and the pinctrl_desc structure should
+be used two times.
 
-The way I see it a certain GPIO controller has names for the
-GPIO lines, like gpio0,1,2...n, while the label is for the actual
-use of the GPIO line. It's a bit like the regulator name, rail name
-and consumer endpoints guess. Just we only have two names,
-not three :P
+But pinctrl_desc use global static definition, then
+the latest registered pinctrl device will overwrite
+the old one's, all members in pinctrl_desc will set to
+the new one's, such as name, pins and pins numbers, etc.
+This is a bug. Changing to use devm_kzalloc to fix it.
 
-Yours,
-Linus Walleij
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+---
+ Adding pinctrl_desc into mtk_pinctrl, assign new value for each 
+ pinctrl device.
+
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   21 ++++++++++-----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ad1ea16..4a52072 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct pinctrl_desc mtk_pctrl_desc = {
+-	.confops	= &mtk_pconf_ops,
+-	.pctlops	= &mtk_pctrl_ops,
+-	.pmxops		= &mtk_pmx_ops,
+-};
+-
+ int mtk_pctrl_init(struct platform_device *pdev,
+ 		const struct mtk_pinctrl_devdata *data,
+ 		struct regmap *regmap)
+@@ -1265,12 +1259,17 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctl->devdata->npins; i++)
+ 		pins[i] = pctl->devdata->pins[i].pin;
+-	mtk_pctrl_desc.name = dev_name(&pdev->dev);
+-	mtk_pctrl_desc.owner = THIS_MODULE;
+-	mtk_pctrl_desc.pins = pins;
+-	mtk_pctrl_desc.npins = pctl->devdata->npins;
++
++	pctl->pctl_desc.name = dev_name(&pdev->dev);
++	pctl->pctl_desc.owner = THIS_MODULE;
++	pctl->pctl_desc.pins = pins;
++	pctl->pctl_desc.npins = pctl->devdata->npins;
++	pctl->pctl_desc.confops = &mtk_pconf_ops;
++	pctl->pctl_desc.pctlops = &mtk_pctrl_ops;
++	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
+ 	pctl->dev = &pdev->dev;
+-	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
++
++	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+ 	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctl_dev);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 30213e5..c532c23 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
+ struct mtk_pinctrl {
+ 	struct regmap	*regmap1;
+ 	struct regmap	*regmap2;
++	struct pinctrl_desc pctl_desc;
+ 	struct device           *dev;
+ 	struct gpio_chip	*chip;
+ 	struct mtk_pinctrl_group	*groups;
+-- 
+1.7.9.5
+
