@@ -1,101 +1,92 @@
 From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: Re: [PATCH v4] pinctrl: mediatek: Fix multiple registration issue.
-Date: Tue, 25 Aug 2015 17:28:14 -0700
-Message-ID: <1440548894.14000.1.camel@mussux00.eus.mediatek.inc>
-References: <1440548170-10174-1-git-send-email-hongzhou.yang@mediatek.com>
+Subject: [PATCH v4] pinctrl: mediatek: Fix multiple registration issue.
+Date: Tue, 25 Aug 2015 17:32:45 -0700
+Message-ID: <1440549165-35637-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([66.228.70.112]:49024 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932904AbbHZA2U (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Aug 2015 20:28:20 -0400
-In-Reply-To: <1440548170-10174-1-git-send-email-hongzhou.yang@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Axel Lin <axel.lin@ingics.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Axel Lin <axel.lin@ingics.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Chaotian Jing <chaotian.jing@mediatek.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, 2015-08-25 at 17:16 -0700, Hongzhou Yang wrote:
-> Since our common driver need support main chip and PMU
-> at the same time, that means it will register two
-> pinctrl device, and the pinctrl_desc structure should
-> be used two times.
-> 
-> But pinctrl_desc use global static definition, then
-> the latest registered pinctrl device will overwrite
-> the old one's, all members in pinctrl_desc will set to
-> the new one's, such as name, pins and pins numbers, etc.
-> This is a bug. Changing to use devm_kzalloc to fix it.
-> 
-> Cc: stable@vger.kernel.org # v4.1+
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Reviewed-by: Axel Lin <axel.lin@ingics.com>
-> ---
->  Adding pinctrl_desc into mtk_pinctrl, assign new value for each 
->  pinctrl device.
-> 
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   21 ++++++++++-----------
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
->  2 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index ad1ea16..4a52072 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static struct pinctrl_desc mtk_pctrl_desc = {
-> -	.confops	= &mtk_pconf_ops,
-> -	.pctlops	= &mtk_pctrl_ops,
-> -	.pmxops		= &mtk_pmx_ops,
-> -};
-> -
->  int mtk_pctrl_init(struct platform_device *pdev,
->  		const struct mtk_pinctrl_devdata *data,
->  		struct regmap *regmap)
-> @@ -1265,12 +1259,17 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  
->  	for (i = 0; i < pctl->devdata->npins; i++)
->  		pins[i] = pctl->devdata->pins[i].pin;
-> -	mtk_pctrl_desc.name = dev_name(&pdev->dev);
-> -	mtk_pctrl_desc.owner = THIS_MODULE;
-> -	mtk_pctrl_desc.pins = pins;
-> -	mtk_pctrl_desc.npins = pctl->devdata->npins;
-> +
-> +	pctl->pctl_desc.name = dev_name(&pdev->dev);
-> +	pctl->pctl_desc.owner = THIS_MODULE;
-> +	pctl->pctl_desc.pins = pins;
-> +	pctl->pctl_desc.npins = pctl->devdata->npins;
-> +	pctl->pctl_desc.confops = &mtk_pconf_ops;
-> +	pctl->pctl_desc.pctlops = &mtk_pctrl_ops;
-> +	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
->  	pctl->dev = &pdev->dev;
-> -	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
-> +
-> +	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
->  	if (IS_ERR(pctl->pctl_dev)) {
->  		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
->  		return PTR_ERR(pctl->pctl_dev);
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> index 30213e5..c532c23 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-> @@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
->  struct mtk_pinctrl {
->  	struct regmap	*regmap1;
->  	struct regmap	*regmap2;
-> +	struct pinctrl_desc pctl_desc;
->  	struct device           *dev;
->  	struct gpio_chip	*chip;
->  	struct mtk_pinctrl_group	*groups;
+Since our common driver need support main chip and PMU
+at the same time, that means it will register two
+pinctrl device, and the pinctrl_desc structure should
+be used two times.
 
-Please ignore this patch, I will send another one.
-Sorry about this.
+But pinctrl_desc use global static definition, then
+the latest registered pinctrl device will overwrite
+the old one's, all members in pinctrl_desc will set to
+the new one's, such as name, pins and pins numbers, etc.
+This is a bug.
 
-Yours,
-Hongzhou
+Move pinctrl_desc into mtk_pinctrl, assign new value for
+each pinctrl device to fix it.
 
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Reviewed-by: Axel Lin <axel.lin@ingics.com>
+---
+ In order to fix multiple registration issue, move 
+ pinctrl_desc into mtk_pinctrl, assign new value for
+ each pinctrl device.
+
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   21 ++++++++++-----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |    1 +
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index ad1ea16..4a52072 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1202,12 +1202,6 @@ static int mtk_pctrl_build_state(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct pinctrl_desc mtk_pctrl_desc = {
+-	.confops	= &mtk_pconf_ops,
+-	.pctlops	= &mtk_pctrl_ops,
+-	.pmxops		= &mtk_pmx_ops,
+-};
+-
+ int mtk_pctrl_init(struct platform_device *pdev,
+ 		const struct mtk_pinctrl_devdata *data,
+ 		struct regmap *regmap)
+@@ -1265,12 +1259,17 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctl->devdata->npins; i++)
+ 		pins[i] = pctl->devdata->pins[i].pin;
+-	mtk_pctrl_desc.name = dev_name(&pdev->dev);
+-	mtk_pctrl_desc.owner = THIS_MODULE;
+-	mtk_pctrl_desc.pins = pins;
+-	mtk_pctrl_desc.npins = pctl->devdata->npins;
++
++	pctl->pctl_desc.name = dev_name(&pdev->dev);
++	pctl->pctl_desc.owner = THIS_MODULE;
++	pctl->pctl_desc.pins = pins;
++	pctl->pctl_desc.npins = pctl->devdata->npins;
++	pctl->pctl_desc.confops = &mtk_pconf_ops;
++	pctl->pctl_desc.pctlops = &mtk_pctrl_ops;
++	pctl->pctl_desc.pmxops = &mtk_pmx_ops;
+ 	pctl->dev = &pdev->dev;
+-	pctl->pctl_dev = pinctrl_register(&mtk_pctrl_desc, &pdev->dev, pctl);
++
++	pctl->pctl_dev = pinctrl_register(&pctl->pctl_desc, &pdev->dev, pctl);
+ 	if (IS_ERR(pctl->pctl_dev)) {
+ 		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+ 		return PTR_ERR(pctl->pctl_dev);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+index 30213e5..c532c23 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+@@ -256,6 +256,7 @@ struct mtk_pinctrl_devdata {
+ struct mtk_pinctrl {
+ 	struct regmap	*regmap1;
+ 	struct regmap	*regmap2;
++	struct pinctrl_desc pctl_desc;
+ 	struct device           *dev;
+ 	struct gpio_chip	*chip;
+ 	struct mtk_pinctrl_group	*groups;
+-- 
+1.7.9.5
