@@ -1,61 +1,58 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: baytrail: Use raw_spinlock for locking
-Date: Wed, 26 Aug 2015 09:26:31 +0200
-Message-ID: <CACRpkdZwhSuOo-2OVfqW6qBJNWkgg1Wf8Ji_4ML+GXqZnu7LwA@mail.gmail.com>
-References: <1439816597-60259-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Use raw_spinlock for locking
+Date: Wed, 26 Aug 2015 09:28:48 +0200
+Message-ID: <CACRpkdbfPpe1gR1SBzp9PxznB9NCcMRU7DU7EE9mHsJE2pb2=g@mail.gmail.com>
+References: <1439817210-38828-1-git-send-email-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:34743 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756248AbbHZH0b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 03:26:31 -0400
-Received: by obbfr1 with SMTP id fr1so163745644obb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2015 00:26:31 -0700 (PDT)
-In-Reply-To: <1439816597-60259-1-git-send-email-mika.westerberg@linux.intel.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36669 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756336AbbHZH2t (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 03:28:49 -0400
+Received: by obkg7 with SMTP id g7so163901702obk.3
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2015 00:28:48 -0700 (PDT)
+In-Reply-To: <1439817210-38828-1-git-send-email-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 17, 2015 at 3:03 PM, Mika Westerberg
+On Mon, Aug 17, 2015 at 3:13 PM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
 
-> The Intel Baytrail pinctrl driver implements irqchip callbacks which are
-> called with desc->lock raw_spinlock held. In mainline this is fine because
-> spinlock resolves to raw_spinlock. However, running the same code in -rt we
-> get:
+> When running -rt kernel and an interrupt happens on a GPIO line controlled by
+> Intel Cherryview/Braswell pinctrl driver we get:
 >
 >  BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:917
 >  in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/0
 >  Preemption disabled at:[<ffffffff81092e9f>] cpu_startup_entry+0x17f/0x480
 >
->  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.1.5-rt5 #13
+>  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.1.5-rt5 #16
 >   ...
 >  Call Trace:
 >   <IRQ>  [<ffffffff816283c6>] dump_stack+0x4a/0x61
 >   [<ffffffff81077e17>] ___might_sleep+0xe7/0x170
 >   [<ffffffff8162d6cf>] rt_spin_lock+0x1f/0x50
->   [<ffffffff812e3b88>] byt_gpio_clear_triggering+0x38/0x60
->   [<ffffffff812e3bc1>] byt_irq_mask+0x11/0x20
->   [<ffffffff810a7013>] handle_level_irq+0x83/0x150
+>   [<ffffffff812e52ed>] chv_gpio_irq_ack+0x3d/0xa0
+>   [<ffffffff810a72f5>] handle_edge_irq+0x75/0x180
 >   [<ffffffff810a3457>] generic_handle_irq+0x27/0x40
->   [<ffffffff812e3a5f>] byt_gpio_irq_handler+0x7f/0xc0
+>   [<ffffffff812e57de>] chv_gpio_irq_handler+0x7e/0x110
 >   [<ffffffff810050aa>] handle_irq+0xaa/0x190
 >   ...
 >
-> This is because in -rt spinlocks are preemptible so taking the driver
-> private spinlock in irqchip callbacks causes might_sleep() to trigger.
+> This is because desc->lock is raw_spinlock and is held when chv_gpio_irq_ack()
+> is called by the genirq core. chv_gpio_irq_ack() in turn takes pctrl->lock
+> which in -rt is an rt-mutex causing might_sleep() rightfully to complain about
+> sleeping function called from invalid context.
 >
 > In order to keep -rt happy but at the same time make sure that register
 > accesses get serialized, convert the driver to use raw_spinlock instead.
 >
-> Also shorten the critical section a bit in few places.
->
 > Suggested-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Awesome job Mika, patch applied.
+Patch applied. Again splendid job here.
 
 Yours,
 Linus Walleij
