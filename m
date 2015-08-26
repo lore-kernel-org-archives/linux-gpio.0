@@ -1,48 +1,35 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] pinctrl: sh-pfc: r8a7795: (H)SCIF Updates
-Date: Wed, 26 Aug 2015 20:02:19 +0200
-Message-ID: <1440612144-16877-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:46229 "EHLO
-	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753812AbbHZSC2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Aug 2015 14:02:28 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 3/5] pinctrl: sh-pfc: r8a7795: Fix SCIF5 pin data
+Date: Wed, 26 Aug 2015 20:02:22 +0200
+Message-ID: <1440612144-16877-4-git-send-email-geert+renesas@glider.be>
+References: <1440612144-16877-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1440612144-16877-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
 Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-	Hi,
+Correct SCIF5 data pin numbers.
 
-This series contains (H)SCIF-related updates for the R-Car H3 (r8a7795)
-pin function controller driver:
-  - Fixes and updates for SCIF pindata (incl. a DTS update),
-  - Addition of HSCIF support.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is against "[PATCH] pinctrl: sh-pfc: Add R8A7795 PFC support" and
-the current state (sic) of the Salvator-X DTS.
-
-Geert Uytterhoeven (5):
-  pinctrl: sh-pfc: r8a7795: Fix and extend SCIF0 pin data
-  pinctrl: sh-pfc: r8a7795: Extend SCIF2 pin data
-  pinctrl: sh-pfc: r8a7795: Fix SCIF5 pin data
-  pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
-  arm64: renesas: salvator-x: Update SCIF2 pin group
-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |   2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 296 ++++++++++++++++++++-
- 2 files changed, 285 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 83cce48da9f928b7..52faa7faccdc5488 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -2405,7 +2405,7 @@ static const unsigned int scif4_ctrl_c_mux[] = {
+ /* - SCIF5 ------------------------------------------------------------------ */
+ static const unsigned int scif5_data_pins[] = {
+ 	/* RX, TX */
+-	RCAR_GP_PIN(2, 19), RCAR_GP_PIN(2, 21),
++	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 21),
+ };
+ static const unsigned int scif5_data_mux[] = {
+ 	RX5_MARK, TX5_MARK,
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
