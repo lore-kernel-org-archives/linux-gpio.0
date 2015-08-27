@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Get rid of CONFIG_SHMOBILE_LEGACY
-Date: Thu, 27 Aug 2015 22:03:32 +0200
-Message-ID: <1440705812-2960-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: Get rid of CONFIG_ARCH_SHMOBILE_LEGACY
+Date: Thu, 27 Aug 2015 22:07:23 +0200
+Message-ID: <1440706043-3406-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:45711 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbbH0UDf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Aug 2015 16:03:35 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:55637 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051AbbH0UHX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Aug 2015 16:07:23 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>
@@ -22,7 +22,7 @@ Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
   - Against renesas-devel-20150826-v4.2-rc8,
   - This must not be applied to a branch that still has
-    CONFIG_SHMOBILE_LEGACY.
+    CONFIG_ARCH_SHMOBILE_LEGACY.
 
  drivers/pinctrl/sh-pfc/gpio.c | 41 +++++++++++++++++++----------------------
  1 file changed, 19 insertions(+), 22 deletions(-)
