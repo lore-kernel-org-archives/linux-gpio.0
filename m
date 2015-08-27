@@ -1,38 +1,58 @@
-From: Rabin Vincent <rabin@rab.in>
-Subject: Re: [PATCH 1/5] gpio: etraxfs: use container_of() to get state
- container
-Date: Thu, 27 Aug 2015 19:27:45 +0200
-Message-ID: <20150827172745.GB5251@debian>
-References: <1440687258-16977-1-git-send-email-linus.walleij@linaro.org>
+From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+Subject: [PATCH 0/4] Qualcomm Shared Memory State Machines
+Date: Thu, 27 Aug 2015 10:37:54 -0700
+Message-ID: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:35694 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750967AbbH0R1t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Aug 2015 13:27:49 -0400
-Received: by lbcbn3 with SMTP id bn3so15778961lbc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2015 10:27:48 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1440687258-16977-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 
-On Thu, Aug 27, 2015 at 04:54:18PM +0200, Linus Walleij wrote:
-> The state container of the etraxfs GPIO driver is extracted from
-> the gpio_chip exploiting the fact that offsetof() the
-> struct gpio_chip inside the struct bgpio_chip are both 0, so
-> the container_of() is in practice a noop. However if a member
-> is added to struct etraxfs_gpio_chip in front of
-> struct bgpio_chip, things will break. Using proper container_of()
-> avoids this problem.
-> 
-> Semantically this is a noop, the compiler will optimize it away,
-> but syntactically it makes me happier.
-> 
-> Cc: Rabin Vincent <rabin@rab.in>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This series implements the two different mechanisms for propagating single bit
+state information, used on the various Qualcomm platforms.
 
-Acked-by: Rabin Vincent <rabin@rab.in>
+The system was traditionally used by the modem and application processor to
+convey information about boot progress, power states, error handling and so on.
+This was implemented as SMSM, with status bits representing a single local
+state.
+
+As the complexity of the SoC grew the state bits array grew and the need for
+targeting specific state information at specific remote processors appeared.
+SMP2P solves this by having separate shared memory regions per processor-pair.
+
+This state information is e.g. used to convey progress and status of remote
+firmware loading. Individual bits maps to various stages of the boot and error
+states.
+
+As some of these states on some platforms are passed as physical signals
+instead, the two drivers are modelled as gpio- and interrupt-controllers -
+providing a nice abstraction both in device tree sense and Linux implementation
+sense.
+
+Bjorn Andersson (4):
+  dt-binding: gpio: Add Qualcomm SMSM device tree documentation
+  gpio: qcom-smsm: Add driver for Qualcomm SMSM
+  dt-binding: gpio: Introduce qcom,smp2p binding documentation
+  gpio: qcom-smp2p: Qualcomm Shared Memory Point to Point
+
+ .../devicetree/bindings/gpio/qcom,smp2p.txt        | 112 ++++
+ .../devicetree/bindings/gpio/qcom,smsm.txt         | 114 ++++
+ drivers/gpio/Kconfig                               |  15 +
+ drivers/gpio/Makefile                              |   2 +
+ drivers/gpio/gpio-qcom-smp2p.c                     | 601 ++++++++++++++++++++
+ drivers/gpio/gpio-qcom-smsm.c                      | 631 +++++++++++++++++++++
+ 6 files changed, 1475 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/qcom,smp2p.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/qcom,smsm.txt
+ create mode 100644 drivers/gpio/gpio-qcom-smp2p.c
+ create mode 100644 drivers/gpio/gpio-qcom-smsm.c
+
+-- 
+1.8.2.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
