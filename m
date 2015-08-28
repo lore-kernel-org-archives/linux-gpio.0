@@ -1,38 +1,169 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: fix various asm-generic abuses
-Date: Fri, 28 Aug 2015 21:16:51 +0200
-Message-ID: <22516156.tfGZvl13aG@wuerfel>
-References: <1440746842-19029-1-git-send-email-hch@lst.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 1/2][RFC] pinctrl: sh-pfc: Initial R8A7795 PFC support
+Date: Fri, 28 Aug 2015 22:23:08 +0300
+Message-ID: <15835467.TaO4P3MKAU@avalon>
+References: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com> <87bndrdan7.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <1440746842-19029-1-git-send-email-hch@lst.de>
-Sender: linux-arch-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:36166 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752657AbbH1TXI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 15:23:08 -0400
+In-Reply-To: <87bndrdan7.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Friday 28 August 2015 09:27:13 Christoph Hellwig wrote:
-> This fixes two trivial classes of asm-generic abuse.  First two headers
-> that are intended for drivers are moved to include/linux, and second
-> various drivers that incorrectly use asm-generic headers directly are
-> switched over to use the proper public headers.  There are a few more
-> asm-generic abuse, but they aren't quite as trivial so they will take
-> a little more effort to fix.
+Hello Morimoto-san,
 
-Thanks a lot, these all look really useful. My normal way of dealing
-with asm-generic patches is to have changes go through the tree of
-whichever maintainer needs the changes for their own work with my
-Ack, but I guess in this case you don't actually have other patches
-depending on them, right?
+Thank you for the patch.
 
-If driver maintainers want to pick individual patches from this series,
-please add my
+On Friday 28 August 2015 09:32:53 Kuninori Morimoto wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> Add PFC base support for the R8A7795 SoC.
+> It is including IPSRx / MOD_SELx only
+> 
+> Original patch was created by Takeshi Kihara, and
+> Kuninori Morimoto updated it.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/pinctrl/sh-pfc/Kconfig       |    5 +
+>  drivers/pinctrl/sh-pfc/Makefile      |    1 +
+>  drivers/pinctrl/sh-pfc/core.c        |    6 +
+>  drivers/pinctrl/sh-pfc/core.h        |    1 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 1499 +++++++++++++++++++++++++++++++
+>  5 files changed, 1512 insertions(+)
+>  create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+[snip]
 
-otherwise let me know if I should put them into my asm-generic git
-tree (which is currently empty, but part of linux-next).
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c new file mode 100644
+> index 0000000..23f2c4e
+> --- /dev/null
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -0,0 +1,1499 @@
+> +/*
+> + * R-Car Gen3 processor support - PFC hardware block.
+> + *
+> + * Copyright (C) 2015  Renesas Electronics Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; version 2 of the License.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/platform_data/gpio-rcar.h>
+> +
+> +#include "core.h"
+> +#include "sh_pfc.h"
+> +
+> +#define CPU_ALL_PORT(fn, sfx)						\
+> +	PORT_GP_32(0, fn, sfx),						\
+> +	PORT_GP_32(1, fn, sfx),						\
+> +	PORT_GP_32(2, fn, sfx),						\
+> +	PORT_GP_32(3, fn, sfx),						\
+> +	PORT_GP_32(4, fn, sfx),						\
+> +	PORT_GP_32(5, fn, sfx),						\
+> +	PORT_GP_32(6, fn, sfx),						\
+> +	PORT_GP_32(7, fn, sfx)
 
-	Arnd
+Not all GPIO banks include 32 pins. From a quick look at the datasheet the 
+following GPIO pins are available.
+
+GP0       0-15
+GP1       0-27
+GP2       0-14
+GP3       0-15
+GP4       0-17
+GP5       0-25
+GP6       0-31
+GP7       0-3
+
+[snip]
+
+> +static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+
+[snip]
+
+> +	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
+> +			     2, 3, 1, 2, 3, 1, 1, 2, 1,
+> +			     2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1) {
+> +		/* SEL_TSIF1 [2] */
+> +		FN_SEL_TSIF1_0,		FN_SEL_TSIF1_1,
+> +		FN_SEL_TSIF1_2,		FN_SEL_TSIF1_3,
+> +		/* SEL_TSIF0 [3] */
+> +		FN_SEL_TSIF0_0,		FN_SEL_TSIF0_1,
+> +		FN_SEL_TSIF0_2,		FN_SEL_TSIF0_3,
+> +		FN_SEL_TSIF0_4,		FN_SEL_TSIF0_5,
+> +		FN_SEL_TSIF0_6,		FN_SEL_TSIF0_7,
+> +		/* SEL_TIMER_TM	 [1] */
+> +		FN_SEL_TIMER_TMU_0,	FN_SEL_TIMER_TMU_1,
+> +		/* SEL_SSP1_1 [2] */
+> +		FN_SEL_SSP1_1_0,	FN_SEL_SSP1_1_1,
+> +		FN_SEL_SSP1_1_2,	FN_SEL_SSP1_1_3,
+> +		/* SEL_SSP1_0 [3] */
+> +		FN_SEL_SSP1_0_0,	FN_SEL_SSP1_0_1,
+> +		FN_SEL_SSP1_0_2,	FN_SEL_SSP1_0_3,
+> +		FN_SEL_SSP1_0_4,	FN_SEL_SSP1_0_5,
+> +		FN_SEL_SSP1_0_6,	FN_SEL_SSP1_0_7,
+> +		/* SEL_SSI [1] */
+> +		FN_SEL_SSI_0,		FN_SEL_SSI_1,
+> +		/* SEL_SPEED_PULSE [1] */
+> +		FN_SEL_SPEED_PULSE_0,	FN_SEL_SPEED_PULSE_1,
+> +		/* SEL_SIMCARD [2] */
+> +		FN_SEL_SIMCARD_0,	FN_SEL_SIMCARD_1,
+> +		FN_SEL_SIMCARD_2,	FN_SEL_SIMCARD_3,
+> +		/* SEL_SDHI2 [1] */
+> +		FN_SEL_SDHI2_0,		FN_SEL_SDHI2_1,
+> +		/* SEL_SCIF4 [2] */
+> +		FN_SEL_SCIF4_0,		FN_SEL_SCIF4_1,
+> +		FN_SEL_SCIF4_2,		FN_SEL_SCIF4_3,
+> +		/* SEL_SCIF3 [1] */
+> +		FN_SEL_SCIF3_0,		FN_SEL_SCIF3_1,
+> +		/* SEL_SCIF2 [1] */
+> +		FN_SEL_SCIF2_0,		FN_SEL_SCIF2_1,
+> +		/* SEL_SCIF1 [1] */
+> +		FN_SEL_SCIF1_0,		FN_SEL_SCIF1_1,
+> +		/* SEL_SCIF [1] */
+> +		FN_SEL_SCIF_0,		FN_SEL_SCIF_1,
+> +		/* SEL_REMOCON [1] */
+> +		FN_SEL_REMOCON_0,	FN_SEL_REMOCON_1,
+> +		/* RESERVED [2] */
+> +		0, 0, 0, 0,
+
+According to the datasheet those two bits are supposed to control the RDS 
+clock and data pins (whatever they are).
+
+> +		/* SEL_RCAN0 [1] */
+> +		FN_SEL_RCAN0_0,		FN_SEL_RCAN0_1,
+> +		/* SEL_PWM6 [1] */
+> +		FN_SEL_PWM6_0,		FN_SEL_PWM6_1,
+> +		/* SEL_PWM5 [1] */
+> +		FN_SEL_PWM5_0,		FN_SEL_PWM5_1,
+> +		/* SEL_PWM4 [1] */
+> +		FN_SEL_PWM4_0,		FN_SEL_PWM4_1,
+> +		/* SEL_PWM3 [1] */
+> +		FN_SEL_PWM3_0,		FN_SEL_PWM3_1,
+> +		/* SEL_PWM2 [1] */
+> +		FN_SEL_PWM2_0,		FN_SEL_PWM2_1,
+> +		/* SEL_PWM1 [1] */
+> +		FN_SEL_PWM1_0,		FN_SEL_PWM1_1, }
+> +	},
+
+[snip]
+
+The rest looks good to me.
+
+-- 
+Regards,
+
+Laurent Pinchart
+
