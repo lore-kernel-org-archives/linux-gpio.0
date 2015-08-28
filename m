@@ -1,48 +1,59 @@
 From: Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH v1 0/3] Port and support rk3036 SoC platform
-Date: Fri, 28 Aug 2015 13:46:45 +0800
-Message-ID: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.3]:55153 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbbH1Frb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 01:47:31 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v1 2/3] pinctrl: rockchip: add support for the rk3036
+Date: Fri, 28 Aug 2015 13:46:47 +0800
+Message-ID: <1440740808-15004-3-git-send-email-zhengxing@rock-chips.com>
+References: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org, Xing Zheng <zhengxing@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org, Xing Zheng <zhengxing@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
+Many parts of pinctrl rk3036 are similar to rk2928's.
 
-Hi,
-We need to support rk3036 soc platform via upstream, there are
-3 parts for the initial release of minimum system: dts, pinctrl,
-and clock tree for rk3036, startup and run to init processs.
-
-Thanks.
-
-
-Changes in v1:
 Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-Xing Zheng (3):
-  ARM: dts: rockchip: add core rk3036 dts
-  pinctrl: rockchip: add support for the rk3036
-  clk: rockchip: add clock controller for rk3036
+Changes in v1: None
 
- arch/arm/boot/dts/Makefile             |    1 +
- arch/arm/boot/dts/rk3036-sdk.dts       |  362 +++++++++++++++++++++
- drivers/clk/rockchip/Makefile          |    1 +
- drivers/clk/rockchip/clk-pll.c         |  247 ++++++++++++++-
- drivers/clk/rockchip/clk-rk3036.c      |  539 ++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h             |   30 ++
- drivers/pinctrl/pinctrl-rockchip.c     |   17 +
- include/dt-bindings/clock/rk3036-cru.h |  247 +++++++++++++++
- 8 files changed, 1443 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/rk3036-sdk.dts
- create mode 100644 drivers/clk/rockchip/clk-rk3036.c
- create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+ drivers/pinctrl/pinctrl-rockchip.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index cc2843a..d06631d 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2042,6 +2042,21 @@ static struct rockchip_pin_ctrl rk2928_pin_ctrl = {
+ 		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
+ };
+ 
++static struct rockchip_pin_bank rk3036_pin_banks[] = {
++	PIN_BANK(0, 32, "gpio0"),
++	PIN_BANK(1, 32, "gpio1"),
++	PIN_BANK(2, 32, "gpio2"),
++};
++
++static struct rockchip_pin_ctrl rk3036_pin_ctrl = {
++		.pin_banks		= rk3036_pin_banks,
++		.nr_banks		= ARRAY_SIZE(rk3036_pin_banks),
++		.label			= "RK3036-GPIO",
++		.type			= RK2928,
++		.grf_mux_offset		= 0xa8,
++		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk3066a_pin_banks[] = {
+ 	PIN_BANK(0, 32, "gpio0"),
+ 	PIN_BANK(1, 32, "gpio1"),
+@@ -2160,6 +2175,8 @@ static struct rockchip_pin_ctrl rk3368_pin_ctrl = {
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = (void *)&rk2928_pin_ctrl },
++	{ .compatible = "rockchip,rk3036-pinctrl",
++		.data = (void *)&rk3036_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066a-pinctrl",
+ 		.data = (void *)&rk3066a_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066b-pinctrl",
 -- 
 1.7.9.5
-
-
