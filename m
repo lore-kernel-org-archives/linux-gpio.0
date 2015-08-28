@@ -1,267 +1,551 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] pinctrl: sh-pfc: r8a7794: add VIN pin groups
-Date: Fri, 28 Aug 2015 23:46:46 +0300
-Message-ID: <2918225.gAfMYgxlCz@wasted.cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:33531 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752396AbbH1Uqv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 16:46:51 -0400
-Received: by lbbsx3 with SMTP id sx3so36642505lbb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2015 13:46:49 -0700 (PDT)
-In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] gpio: msm: Remove unused driver
+Date: Fri, 28 Aug 2015 14:48:56 -0700
+Message-ID: <1440798536-8337-1-git-send-email-sboyd@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Andy Gross <agross@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Remove this driver now that Bjorn has introduced a pinctrl driver
+for msm8660 and the dts files have been updated with the pinctrl
+compatibles.
 
-Add VIN0/1 pin groups to R8A7794 PFC driver.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-[Sergei: rebased, renamed, added changelog, gathered 12 VIN1 data pins into a
-single pin group.]
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: Andy Gross <agross@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
-The patch  is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
-It depends on the patch I've just posted in order to build.
+ .../devicetree/bindings/gpio/gpio-msm.txt          |  26 --
+ drivers/gpio/Kconfig                               |   8 -
+ drivers/gpio/Makefile                              |   1 -
+ drivers/gpio/gpio-msm-v2.c                         | 453 ---------------------
+ 4 files changed, 488 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-msm.txt
+ delete mode 100644 drivers/gpio/gpio-msm-v2.c
 
-Changes in version 2:
-- relied on the 'struct vin_data' and #define VIN_DATA_PIN_GROUP() moved to the
-  common header file;
-- added to the VI1_DATA8/9/10/11 pin group VI1_DATA[0-7] pins and renamed/moved
-  this pin group.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  192 +++++++++++++++++++++++++++++++++++
- 1 file changed, 192 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -2789,6 +2789,156 @@ static const unsigned int usb1_mux[] = {
- 	USB1_OVC_MARK,
- };
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-msm.txt b/Documentation/devicetree/bindings/gpio/gpio-msm.txt
+deleted file mode 100644
+index ac20e68a004e..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-msm.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-MSM GPIO controller bindings
+-
+-Required properties:
+-- compatible:
+-  - "qcom,msm-gpio" for MSM controllers
+-- #gpio-cells : Should be two.
+-  - first cell is the pin number
+-  - second cell is used to specify optional parameters (unused)
+-- gpio-controller : Marks the device node as a GPIO controller.
+-- #interrupt-cells : Should be 2.
+-- interrupt-controller: Mark the device node as an interrupt controller
+-- interrupts : Specify the TLMM summary interrupt number
+-- ngpio : Specify the number of MSM GPIOs
+-
+-Example:
+-
+-	msmgpio: gpio@fd510000 {
+-		compatible = "qcom,msm-gpio";
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-		reg = <0xfd510000 0x4000>;
+-		interrupts = <0 208 0>;
+-		ngpio = <150>;
+-	};
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b4fc9e4d24c6..3ddf881e0c34 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -297,14 +297,6 @@ config GPIO_MPC8XXX
+ 	  Say Y here if you're going to use hardware that connects to the
+ 	  MPC512x/831x/834x/837x/8572/8610 GPIOs.
  
-+/* - VIN0 ------------------------------------------------------------------- */
-+static const union vin_data vin0_data_pins = {
-+	.data24 = {
-+		/* B */
-+		RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 2),
-+		RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+		RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6),
-+		RCAR_GP_PIN(3, 7), RCAR_GP_PIN(3, 8),
-+		/* G */
-+		RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 14),
-+		RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+		RCAR_GP_PIN(3, 17), RCAR_GP_PIN(3, 18),
-+		RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20),
-+		/* R */
-+		RCAR_GP_PIN(3, 21), RCAR_GP_PIN(3, 22),
-+		RCAR_GP_PIN(3, 23), RCAR_GP_PIN(3, 24),
-+		RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+		RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28),
-+	},
-+};
-+static const union vin_data vin0_data_mux = {
-+	.data24 = {
-+		/* B */
-+		VI0_DATA0_VI0_B0_MARK, VI0_DATA1_VI0_B1_MARK,
-+		VI0_DATA2_VI0_B2_MARK, VI0_DATA3_VI0_B3_MARK,
-+		VI0_DATA4_VI0_B4_MARK, VI0_DATA5_VI0_B5_MARK,
-+		VI0_DATA6_VI0_B6_MARK, VI0_DATA7_VI0_B7_MARK,
-+		/* G */
-+		VI0_G0_MARK, VI0_G1_MARK,
-+		VI0_G2_MARK, VI0_G3_MARK,
-+		VI0_G4_MARK, VI0_G5_MARK,
-+		VI0_G6_MARK, VI0_G7_MARK,
-+		/* R */
-+		VI0_R0_MARK, VI0_R1_MARK,
-+		VI0_R2_MARK, VI0_R3_MARK,
-+		VI0_R4_MARK, VI0_R5_MARK,
-+		VI0_R6_MARK, VI0_R7_MARK,
-+	},
-+};
-+static const unsigned int vin0_data18_pins[] = {
-+	/* B */
-+	RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+	RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6),
-+	RCAR_GP_PIN(3, 7), RCAR_GP_PIN(3, 8),
-+	/* G */
-+	RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+	RCAR_GP_PIN(3, 17), RCAR_GP_PIN(3, 18),
-+	RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20),
-+	/* R */
-+	RCAR_GP_PIN(3, 23), RCAR_GP_PIN(3, 24),
-+	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+	RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28),
-+};
-+static const unsigned int vin0_data18_mux[] = {
-+	/* B */
-+	VI0_DATA2_VI0_B2_MARK, VI0_DATA3_VI0_B3_MARK,
-+	VI0_DATA4_VI0_B4_MARK, VI0_DATA5_VI0_B5_MARK,
-+	VI0_DATA6_VI0_B6_MARK, VI0_DATA7_VI0_B7_MARK,
-+	/* G */
-+	VI0_G2_MARK, VI0_G3_MARK,
-+	VI0_G4_MARK, VI0_G5_MARK,
-+	VI0_G6_MARK, VI0_G7_MARK,
-+	/* R */
-+	VI0_R2_MARK, VI0_R3_MARK,
-+	VI0_R4_MARK, VI0_R5_MARK,
-+	VI0_R6_MARK, VI0_R7_MARK,
-+};
-+static const unsigned int vin0_sync_pins[] = {
-+	RCAR_GP_PIN(3, 11), /* HSYNC */
-+	RCAR_GP_PIN(3, 12), /* VSYNC */
-+};
-+static const unsigned int vin0_sync_mux[] = {
-+	VI0_HSYNC_N_MARK,
-+	VI0_VSYNC_N_MARK,
-+};
-+static const unsigned int vin0_field_pins[] = {
-+	RCAR_GP_PIN(3, 10),
-+};
-+static const unsigned int vin0_field_mux[] = {
-+	VI0_FIELD_MARK,
-+};
-+static const unsigned int vin0_clkenb_pins[] = {
-+	RCAR_GP_PIN(3, 9),
-+};
-+static const unsigned int vin0_clkenb_mux[] = {
-+	VI0_CLKENB_MARK,
-+};
-+static const unsigned int vin0_clk_pins[] = {
-+	RCAR_GP_PIN(3, 0),
-+};
-+static const unsigned int vin0_clk_mux[] = {
-+	VI0_CLK_MARK,
-+};
-+
-+/* - VIN1 ----------------------------------------------------------------- */
-+static const unsigned int vin1_data8_pins[] = {
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+	RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 17),
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int vin1_data8_mux[] = {
-+	VI1_DATA0_MARK, VI1_DATA1_MARK,
-+	VI1_DATA2_MARK, VI1_DATA3_MARK,
-+	VI1_DATA4_MARK, VI1_DATA5_MARK,
-+	VI1_DATA6_MARK, VI1_DATA7_MARK,
-+};
-+static const unsigned int vin1_data12_pins[] = {
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+	RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 17),
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
-+	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 11),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+};
-+static const unsigned int vin1_data12_mux[] = {
-+	VI1_DATA0_MARK, VI1_DATA1_MARK,
-+	VI1_DATA2_MARK, VI1_DATA3_MARK,
-+	VI1_DATA4_MARK, VI1_DATA5_MARK,
-+	VI1_DATA6_MARK, VI1_DATA7_MARK,
-+	VI1_DATA8_MARK, VI1_DATA9_MARK,
-+	VI1_DATA10_MARK, VI1_DATA11_MARK,
-+};
-+static const unsigned int vin1_sync_pins[] = {
-+	RCAR_GP_PIN(5, 22), /* HSYNC */
-+	RCAR_GP_PIN(5, 23), /* VSYNC */
-+};
-+static const unsigned int vin1_sync_mux[] = {
-+	VI1_HSYNC_N_MARK,
-+	VI1_VSYNC_N_MARK,
-+};
-+static const unsigned int vin1_field_pins[] = {
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int vin1_field_mux[] = {
-+	VI1_FIELD_MARK,
-+};
-+static const unsigned int vin1_clkenb_pins[] = {
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int vin1_clkenb_mux[] = {
-+	VI1_CLKENB_MARK,
-+};
-+static const unsigned int vin1_clk_pins[] = {
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int vin1_clk_mux[] = {
-+	VI1_CLK_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(eth_link),
- 	SH_PFC_PIN_GROUP(eth_magic),
-@@ -2965,6 +3115,23 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(sdhi2_wp),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
-+	VIN_DATA_PIN_GROUP(vin0_data, 24),
-+	VIN_DATA_PIN_GROUP(vin0_data, 20),
-+	SH_PFC_PIN_GROUP(vin0_data18),
-+	VIN_DATA_PIN_GROUP(vin0_data, 16),
-+	VIN_DATA_PIN_GROUP(vin0_data, 12),
-+	VIN_DATA_PIN_GROUP(vin0_data, 10),
-+	VIN_DATA_PIN_GROUP(vin0_data, 8),
-+	SH_PFC_PIN_GROUP(vin0_sync),
-+	SH_PFC_PIN_GROUP(vin0_field),
-+	SH_PFC_PIN_GROUP(vin0_clkenb),
-+	SH_PFC_PIN_GROUP(vin0_clk),
-+	SH_PFC_PIN_GROUP(vin1_data8),
-+	SH_PFC_PIN_GROUP(vin1_data12),
-+	SH_PFC_PIN_GROUP(vin1_sync),
-+	SH_PFC_PIN_GROUP(vin1_field),
-+	SH_PFC_PIN_GROUP(vin1_clkenb),
-+	SH_PFC_PIN_GROUP(vin1_clk),
- };
- 
- static const char * const eth_groups[] = {
-@@ -3247,6 +3414,29 @@ static const char * const usb1_groups[]
- 	"usb1",
- };
- 
-+static const char * const vin0_groups[] = {
-+	"vin0_data24",
-+	"vin0_data20",
-+	"vin0_data18",
-+	"vin0_data16",
-+	"vin0_data12",
-+	"vin0_data10",
-+	"vin0_data8",
-+	"vin0_sync",
-+	"vin0_field",
-+	"vin0_clkenb",
-+	"vin0_clk",
-+};
-+
-+static const char * const vin1_groups[] = {
-+	"vin1_data8",
-+	"vin1_data12",
-+	"vin1_sync",
-+	"vin1_field",
-+	"vin1_clkenb",
-+	"vin1_clk",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(eth),
- 	SH_PFC_FUNCTION(hscif0),
-@@ -3283,6 +3473,8 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(vin0),
-+	SH_PFC_FUNCTION(vin1),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
-
+-config GPIO_MSM_V2
+-	tristate "Qualcomm MSM GPIO v2"
+-	depends on GPIOLIB && OF && ARCH_QCOM
+-	help
+-	  Say yes here to support the GPIO interface on ARM v7 based
+-	  Qualcomm MSM chips.  Most of the pins on the MSM can be
+-	  selected for GPIO, and are controlled by this driver.
+-
+ config GPIO_MVEBU
+ 	def_bool y
+ 	depends on PLAT_ORION
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index f79a7c482a99..0d30b645965b 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -64,7 +64,6 @@ obj-$(CONFIG_GPIO_MOXART)	+= gpio-moxart.o
+ obj-$(CONFIG_GPIO_MPC5200)	+= gpio-mpc5200.o
+ obj-$(CONFIG_GPIO_MPC8XXX)	+= gpio-mpc8xxx.o
+ obj-$(CONFIG_GPIO_MSIC)		+= gpio-msic.o
+-obj-$(CONFIG_GPIO_MSM_V2)	+= gpio-msm-v2.o
+ obj-$(CONFIG_GPIO_MVEBU)        += gpio-mvebu.o
+ obj-$(CONFIG_GPIO_MXC)		+= gpio-mxc.o
+ obj-$(CONFIG_GPIO_MXS)		+= gpio-mxs.o
+diff --git a/drivers/gpio/gpio-msm-v2.c b/drivers/gpio/gpio-msm-v2.c
+deleted file mode 100644
+index d2012cfb5571..000000000000
+--- a/drivers/gpio/gpio-msm-v2.c
++++ /dev/null
+@@ -1,453 +0,0 @@
+-/* Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+- * 02110-1301, USA.
+- *
+- */
+-#define pr_fmt(fmt) "%s: " fmt, __func__
+-
+-#include <linux/bitmap.h>
+-#include <linux/bitops.h>
+-#include <linux/err.h>
+-#include <linux/gpio.h>
+-#include <linux/init.h>
+-#include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/irqchip/chained_irq.h>
+-#include <linux/irq.h>
+-#include <linux/irqdomain.h>
+-#include <linux/module.h>
+-#include <linux/of_address.h>
+-#include <linux/platform_device.h>
+-#include <linux/spinlock.h>
+-#include <linux/slab.h>
+-
+-#define MAX_NR_GPIO 300
+-
+-/* Bits of interest in the GPIO_IN_OUT register.
+- */
+-enum {
+-	GPIO_IN  = 0,
+-	GPIO_OUT = 1
+-};
+-
+-/* Bits of interest in the GPIO_INTR_STATUS register.
+- */
+-enum {
+-	INTR_STATUS = 0,
+-};
+-
+-/* Bits of interest in the GPIO_CFG register.
+- */
+-enum {
+-	GPIO_OE = 9,
+-};
+-
+-/* Bits of interest in the GPIO_INTR_CFG register.
+- * When a GPIO triggers, two separate decisions are made, controlled
+- * by two separate flags.
+- *
+- * - First, INTR_RAW_STATUS_EN controls whether or not the GPIO_INTR_STATUS
+- * register for that GPIO will be updated to reflect the triggering of that
+- * gpio.  If this bit is 0, this register will not be updated.
+- * - Second, INTR_ENABLE controls whether an interrupt is triggered.
+- *
+- * If INTR_ENABLE is set and INTR_RAW_STATUS_EN is NOT set, an interrupt
+- * can be triggered but the status register will not reflect it.
+- */
+-enum {
+-	INTR_ENABLE        = 0,
+-	INTR_POL_CTL       = 1,
+-	INTR_DECT_CTL      = 2,
+-	INTR_RAW_STATUS_EN = 3,
+-};
+-
+-/* Codes of interest in GPIO_INTR_CFG_SU.
+- */
+-enum {
+-	TARGET_PROC_SCORPION = 4,
+-	TARGET_PROC_NONE     = 7,
+-};
+-
+-/**
+- * struct msm_gpio_dev: the MSM8660 SoC GPIO device structure
+- *
+- * @enabled_irqs: a bitmap used to optimize the summary-irq handler.  By
+- * keeping track of which gpios are unmasked as irq sources, we avoid
+- * having to do readl calls on hundreds of iomapped registers each time
+- * the summary interrupt fires in order to locate the active interrupts.
+- *
+- * @wake_irqs: a bitmap for tracking which interrupt lines are enabled
+- * as wakeup sources.  When the device is suspended, interrupts which are
+- * not wakeup sources are disabled.
+- *
+- * @dual_edge_irqs: a bitmap used to track which irqs are configured
+- * as dual-edge, as this is not supported by the hardware and requires
+- * some special handling in the driver.
+- */
+-struct msm_gpio_dev {
+-	struct gpio_chip gpio_chip;
+-	DECLARE_BITMAP(enabled_irqs, MAX_NR_GPIO);
+-	DECLARE_BITMAP(wake_irqs, MAX_NR_GPIO);
+-	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
+-	struct irq_domain *domain;
+-	int summary_irq;
+-	void __iomem *msm_tlmm_base;
+-};
+-
+-static struct msm_gpio_dev msm_gpio;
+-
+-#define GPIO_INTR_CFG_SU(gpio)    (msm_gpio.msm_tlmm_base + 0x0400 + \
+-								(0x04 * (gpio)))
+-#define GPIO_CONFIG(gpio)         (msm_gpio.msm_tlmm_base + 0x1000 + \
+-								(0x10 * (gpio)))
+-#define GPIO_IN_OUT(gpio)         (msm_gpio.msm_tlmm_base + 0x1004 + \
+-								(0x10 * (gpio)))
+-#define GPIO_INTR_CFG(gpio)       (msm_gpio.msm_tlmm_base + 0x1008 + \
+-								(0x10 * (gpio)))
+-#define GPIO_INTR_STATUS(gpio)    (msm_gpio.msm_tlmm_base + 0x100c + \
+-								(0x10 * (gpio)))
+-
+-static DEFINE_SPINLOCK(tlmm_lock);
+-
+-static inline struct msm_gpio_dev *to_msm_gpio_dev(struct gpio_chip *chip)
+-{
+-	return container_of(chip, struct msm_gpio_dev, gpio_chip);
+-}
+-
+-static inline void set_gpio_bits(unsigned n, void __iomem *reg)
+-{
+-	writel(readl(reg) | n, reg);
+-}
+-
+-static inline void clear_gpio_bits(unsigned n, void __iomem *reg)
+-{
+-	writel(readl(reg) & ~n, reg);
+-}
+-
+-static int msm_gpio_get(struct gpio_chip *chip, unsigned offset)
+-{
+-	return readl(GPIO_IN_OUT(offset)) & BIT(GPIO_IN);
+-}
+-
+-static void msm_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+-{
+-	writel(val ? BIT(GPIO_OUT) : 0, GPIO_IN_OUT(offset));
+-}
+-
+-static int msm_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+-{
+-	unsigned long irq_flags;
+-
+-	spin_lock_irqsave(&tlmm_lock, irq_flags);
+-	clear_gpio_bits(BIT(GPIO_OE), GPIO_CONFIG(offset));
+-	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+-	return 0;
+-}
+-
+-static int msm_gpio_direction_output(struct gpio_chip *chip,
+-				unsigned offset,
+-				int val)
+-{
+-	unsigned long irq_flags;
+-
+-	spin_lock_irqsave(&tlmm_lock, irq_flags);
+-	msm_gpio_set(chip, offset, val);
+-	set_gpio_bits(BIT(GPIO_OE), GPIO_CONFIG(offset));
+-	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+-	return 0;
+-}
+-
+-static int msm_gpio_request(struct gpio_chip *chip, unsigned offset)
+-{
+-	return 0;
+-}
+-
+-static void msm_gpio_free(struct gpio_chip *chip, unsigned offset)
+-{
+-	return;
+-}
+-
+-static int msm_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+-{
+-	struct msm_gpio_dev *g_dev = to_msm_gpio_dev(chip);
+-	struct irq_domain *domain = g_dev->domain;
+-
+-	return irq_create_mapping(domain, offset);
+-}
+-
+-/* For dual-edge interrupts in software, since the hardware has no
+- * such support:
+- *
+- * At appropriate moments, this function may be called to flip the polarity
+- * settings of both-edge irq lines to try and catch the next edge.
+- *
+- * The attempt is considered successful if:
+- * - the status bit goes high, indicating that an edge was caught, or
+- * - the input value of the gpio doesn't change during the attempt.
+- * If the value changes twice during the process, that would cause the first
+- * test to fail but would force the second, as two opposite
+- * transitions would cause a detection no matter the polarity setting.
+- *
+- * The do-loop tries to sledge-hammer closed the timing hole between
+- * the initial value-read and the polarity-write - if the line value changes
+- * during that window, an interrupt is lost, the new polarity setting is
+- * incorrect, and the first success test will fail, causing a retry.
+- *
+- * Algorithm comes from Google's msmgpio driver, see mach-msm/gpio.c.
+- */
+-static void msm_gpio_update_dual_edge_pos(unsigned gpio)
+-{
+-	int loop_limit = 100;
+-	unsigned val, val2, intstat;
+-
+-	do {
+-		val = readl(GPIO_IN_OUT(gpio)) & BIT(GPIO_IN);
+-		if (val)
+-			clear_gpio_bits(BIT(INTR_POL_CTL), GPIO_INTR_CFG(gpio));
+-		else
+-			set_gpio_bits(BIT(INTR_POL_CTL), GPIO_INTR_CFG(gpio));
+-		val2 = readl(GPIO_IN_OUT(gpio)) & BIT(GPIO_IN);
+-		intstat = readl(GPIO_INTR_STATUS(gpio)) & BIT(INTR_STATUS);
+-		if (intstat || val == val2)
+-			return;
+-	} while (loop_limit-- > 0);
+-	pr_err("%s: dual-edge irq failed to stabilize, "
+-	       "interrupts dropped. %#08x != %#08x\n",
+-	       __func__, val, val2);
+-}
+-
+-static void msm_gpio_irq_ack(struct irq_data *d)
+-{
+-	int gpio = d->hwirq;
+-
+-	writel(BIT(INTR_STATUS), GPIO_INTR_STATUS(gpio));
+-	if (test_bit(gpio, msm_gpio.dual_edge_irqs))
+-		msm_gpio_update_dual_edge_pos(gpio);
+-}
+-
+-static void msm_gpio_irq_mask(struct irq_data *d)
+-{
+-	unsigned long irq_flags;
+-	int gpio = d->hwirq;
+-
+-	spin_lock_irqsave(&tlmm_lock, irq_flags);
+-	writel(TARGET_PROC_NONE, GPIO_INTR_CFG_SU(gpio));
+-	clear_gpio_bits(BIT(INTR_RAW_STATUS_EN) | BIT(INTR_ENABLE), GPIO_INTR_CFG(gpio));
+-	__clear_bit(gpio, msm_gpio.enabled_irqs);
+-	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+-}
+-
+-static void msm_gpio_irq_unmask(struct irq_data *d)
+-{
+-	unsigned long irq_flags;
+-	int gpio = d->hwirq;
+-
+-	spin_lock_irqsave(&tlmm_lock, irq_flags);
+-	__set_bit(gpio, msm_gpio.enabled_irqs);
+-	set_gpio_bits(BIT(INTR_RAW_STATUS_EN) | BIT(INTR_ENABLE), GPIO_INTR_CFG(gpio));
+-	writel(TARGET_PROC_SCORPION, GPIO_INTR_CFG_SU(gpio));
+-	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+-}
+-
+-static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int flow_type)
+-{
+-	unsigned long irq_flags;
+-	int gpio = d->hwirq;
+-	uint32_t bits;
+-
+-	spin_lock_irqsave(&tlmm_lock, irq_flags);
+-
+-	bits = readl(GPIO_INTR_CFG(gpio));
+-
+-	if (flow_type & IRQ_TYPE_EDGE_BOTH) {
+-		bits |= BIT(INTR_DECT_CTL);
+-		irq_set_handler_locked(d, handle_edge_irq);
+-		if ((flow_type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
+-			__set_bit(gpio, msm_gpio.dual_edge_irqs);
+-		else
+-			__clear_bit(gpio, msm_gpio.dual_edge_irqs);
+-	} else {
+-		bits &= ~BIT(INTR_DECT_CTL);
+-		irq_set_handler_locked(d, handle_level_irq);
+-		__clear_bit(gpio, msm_gpio.dual_edge_irqs);
+-	}
+-
+-	if (flow_type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_LEVEL_HIGH))
+-		bits |= BIT(INTR_POL_CTL);
+-	else
+-		bits &= ~BIT(INTR_POL_CTL);
+-
+-	writel(bits, GPIO_INTR_CFG(gpio));
+-
+-	if ((flow_type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
+-		msm_gpio_update_dual_edge_pos(gpio);
+-
+-	spin_unlock_irqrestore(&tlmm_lock, irq_flags);
+-
+-	return 0;
+-}
+-
+-/*
+- * When the summary IRQ is raised, any number of GPIO lines may be high.
+- * It is the job of the summary handler to find all those GPIO lines
+- * which have been set as summary IRQ lines and which are triggered,
+- * and to call their interrupt handlers.
+- */
+-static void msm_summary_irq_handler(unsigned int irq, struct irq_desc *desc)
+-{
+-	unsigned long i;
+-	struct irq_chip *chip = irq_desc_get_chip(desc);
+-
+-	chained_irq_enter(chip, desc);
+-
+-	for_each_set_bit(i, msm_gpio.enabled_irqs, MAX_NR_GPIO) {
+-		if (readl(GPIO_INTR_STATUS(i)) & BIT(INTR_STATUS))
+-			generic_handle_irq(irq_find_mapping(msm_gpio.domain,
+-								i));
+-	}
+-
+-	chained_irq_exit(chip, desc);
+-}
+-
+-static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+-{
+-	int gpio = d->hwirq;
+-
+-	if (on) {
+-		if (bitmap_empty(msm_gpio.wake_irqs, MAX_NR_GPIO))
+-			irq_set_irq_wake(msm_gpio.summary_irq, 1);
+-		set_bit(gpio, msm_gpio.wake_irqs);
+-	} else {
+-		clear_bit(gpio, msm_gpio.wake_irqs);
+-		if (bitmap_empty(msm_gpio.wake_irqs, MAX_NR_GPIO))
+-			irq_set_irq_wake(msm_gpio.summary_irq, 0);
+-	}
+-
+-	return 0;
+-}
+-
+-static struct irq_chip msm_gpio_irq_chip = {
+-	.name		= "msmgpio",
+-	.irq_mask	= msm_gpio_irq_mask,
+-	.irq_unmask	= msm_gpio_irq_unmask,
+-	.irq_ack	= msm_gpio_irq_ack,
+-	.irq_set_type	= msm_gpio_irq_set_type,
+-	.irq_set_wake	= msm_gpio_irq_set_wake,
+-};
+-
+-static struct lock_class_key msm_gpio_lock_class;
+-
+-static int msm_gpio_irq_domain_map(struct irq_domain *d, unsigned int irq,
+-				   irq_hw_number_t hwirq)
+-{
+-	irq_set_lockdep_class(irq, &msm_gpio_lock_class);
+-	irq_set_chip_and_handler(irq, &msm_gpio_irq_chip,
+-			handle_level_irq);
+-
+-	return 0;
+-}
+-
+-static const struct irq_domain_ops msm_gpio_irq_domain_ops = {
+-	.xlate = irq_domain_xlate_twocell,
+-	.map = msm_gpio_irq_domain_map,
+-};
+-
+-static int msm_gpio_probe(struct platform_device *pdev)
+-{
+-	int ret, ngpio;
+-	struct resource *res;
+-
+-	if (of_property_read_u32(pdev->dev.of_node, "ngpio", &ngpio)) {
+-		dev_err(&pdev->dev, "%s: ngpio property missing\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (ngpio > MAX_NR_GPIO)
+-		WARN(1, "ngpio exceeds the MAX_NR_GPIO. Increase MAX_NR_GPIO\n");
+-
+-	bitmap_zero(msm_gpio.enabled_irqs, MAX_NR_GPIO);
+-	bitmap_zero(msm_gpio.wake_irqs, MAX_NR_GPIO);
+-	bitmap_zero(msm_gpio.dual_edge_irqs, MAX_NR_GPIO);
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	msm_gpio.msm_tlmm_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(msm_gpio.msm_tlmm_base))
+-		return PTR_ERR(msm_gpio.msm_tlmm_base);
+-
+-	msm_gpio.gpio_chip.ngpio = ngpio;
+-	msm_gpio.gpio_chip.label = pdev->name;
+-	msm_gpio.gpio_chip.dev = &pdev->dev;
+-	msm_gpio.gpio_chip.base = 0;
+-	msm_gpio.gpio_chip.direction_input = msm_gpio_direction_input;
+-	msm_gpio.gpio_chip.direction_output = msm_gpio_direction_output;
+-	msm_gpio.gpio_chip.get = msm_gpio_get;
+-	msm_gpio.gpio_chip.set = msm_gpio_set;
+-	msm_gpio.gpio_chip.to_irq = msm_gpio_to_irq;
+-	msm_gpio.gpio_chip.request = msm_gpio_request;
+-	msm_gpio.gpio_chip.free = msm_gpio_free;
+-
+-	ret = gpiochip_add(&msm_gpio.gpio_chip);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "gpiochip_add failed with error %d\n", ret);
+-		return ret;
+-	}
+-
+-	msm_gpio.summary_irq = platform_get_irq(pdev, 0);
+-	if (msm_gpio.summary_irq < 0) {
+-		dev_err(&pdev->dev, "No Summary irq defined for msmgpio\n");
+-		return msm_gpio.summary_irq;
+-	}
+-
+-	msm_gpio.domain = irq_domain_add_linear(pdev->dev.of_node, ngpio,
+-						&msm_gpio_irq_domain_ops,
+-						&msm_gpio);
+-	if (!msm_gpio.domain)
+-		return -ENODEV;
+-
+-	irq_set_chained_handler(msm_gpio.summary_irq, msm_summary_irq_handler);
+-
+-	return 0;
+-}
+-
+-static const struct of_device_id msm_gpio_of_match[] = {
+-	{ .compatible = "qcom,msm-gpio", },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(of, msm_gpio_of_match);
+-
+-static int msm_gpio_remove(struct platform_device *dev)
+-{
+-	gpiochip_remove(&msm_gpio.gpio_chip);
+-
+-	irq_set_handler(msm_gpio.summary_irq, NULL);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver msm_gpio_driver = {
+-	.probe = msm_gpio_probe,
+-	.remove = msm_gpio_remove,
+-	.driver = {
+-		.name = "msmgpio",
+-		.of_match_table = msm_gpio_of_match,
+-	},
+-};
+-
+-module_platform_driver(msm_gpio_driver)
+-
+-MODULE_AUTHOR("Gregory Bean <gbean@codeaurora.org>");
+-MODULE_DESCRIPTION("Driver for Qualcomm MSM TLMMv2 SoC GPIOs");
+-MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("platform:msmgpio");
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
