@@ -1,53 +1,38 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred probe
-Date: Fri, 28 Aug 2015 11:44:49 -0700
-Message-ID: <1440787489-15992-1-git-send-email-tony@atomide.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pmta2.delivery5.ore.mailhop.org ([54.186.218.12]:15774 "EHLO
-	pmta2.delivery5.ore.mailhop.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751725AbbH1SpE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 28 Aug 2015 14:45:04 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: fix various asm-generic abuses
+Date: Fri, 28 Aug 2015 21:16:51 +0200
+Message-ID: <22516156.tfGZvl13aG@wuerfel>
+References: <1440746842-19029-1-git-send-email-hch@lst.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <1440746842-19029-1-git-send-email-hch@lst.de>
+Sender: linux-arch-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
+On Friday 28 August 2015 09:27:13 Christoph Hellwig wrote:
+> This fixes two trivial classes of asm-generic abuse.  First two headers
+> that are intended for drivers are moved to include/linux, and second
+> various drivers that incorrectly use asm-generic headers directly are
+> switched over to use the proper public headers.  There are a few more
+> asm-generic abuse, but they aren't quite as trivial so they will take
+> a little more effort to fix.
 
-[    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
-[    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
-...
-[    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
+Thanks a lot, these all look really useful. My normal way of dealing
+with asm-generic patches is to have changes go through the tree of
+whichever maintainer needs the changes for their own work with my
+Ack, but I guess in this case you don't actually have other patches
+depending on them, right?
 
-Let's fix the issue by adding the missing pm_runtime_put() on error.
+If driver maintainers want to pick individual patches from this series,
+please add my
 
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/gpio/gpio-omap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index b0c57d5..f09bf0b 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1232,8 +1232,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	omap_gpio_mod_init(bank);
- 
- 	ret = omap_gpio_chip_init(bank, irqc);
--	if (ret)
-+	if (ret) {
-+		pm_runtime_put_sync(bank->dev);
-+		pm_runtime_disable(bank->dev);
- 		return ret;
-+	}
- 
- 	omap_gpio_show_rev(bank);
- 
--- 
-2.1.4
+otherwise let me know if I should put them into my asm-generic git
+tree (which is currently empty, but part of linux-next).
 
+	Arnd
