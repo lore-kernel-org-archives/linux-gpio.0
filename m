@@ -1,34 +1,41 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] gpio: msm: Remove unused driver
-Date: Fri, 28 Aug 2015 15:24:03 -0700
-Message-ID: <20150828222403.GV13472@usrtlx11787.corpusers.net>
-References: <1440798536-8337-1-git-send-email-sboyd@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] pinctrl: mediatek: Consistently use the BIT() macro
+Date: Sat, 29 Aug 2015 01:25:01 +0200
+Message-ID: <1440804302-6903-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:18514 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752645AbbH1WwT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 28 Aug 2015 18:52:19 -0400
-Content-Disposition: inline
-In-Reply-To: <1440798536-8337-1-git-send-email-sboyd@codeaurora.org>
+Received: from lists.s-osg.org ([54.187.51.154]:60948 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752892AbbH1XZc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 28 Aug 2015 19:25:32 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Andy Gross <agross@codeaurora.org>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maoguang Meng <maoguang.meng@mediatek.com>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yingjoe Chen <yingjoe.chen@mediatek.com>, Colin Ian King <colin.king@canonical.com>, Matthias Brugger <matthias.bgg@gmail.com>
 
-On Fri 28 Aug 14:48 PDT 2015, Stephen Boyd wrote:
+The mediatek pinctrl driver uses the BIT() macro instead of open
+coding 1 << n in all but one place. Replace this occurrence with
+the BIT() macro for consistency.
 
-> Remove this driver now that Bjorn has introduced a pinctrl driver
-> for msm8660 and the dts files have been updated with the pinctrl
-> compatibles.
-> 
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Cc: Andy Gross <agross@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+---
 
-Regards,
-Bjorn
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 23f2de07f598..497b9125342a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -898,7 +898,7 @@ static int mtk_eint_flip_edge(struct mtk_pinctrl *pctl, int hwirq)
+ 	int start_level, curr_level;
+ 	unsigned int reg_offset;
+ 	const struct mtk_eint_offsets *eint_offsets = &(pctl->devdata->eint_offsets);
+-	u32 mask = 1 << (hwirq & 0x1f);
++	u32 mask = BIT(hwirq & 0x1f);
+ 	u32 port = (hwirq >> 5) & eint_offsets->port_mask;
+ 	void __iomem *reg = pctl->eint_reg_base + (port << 2);
+ 	const struct mtk_desc_pin *pin;
+-- 
+2.4.3
+
