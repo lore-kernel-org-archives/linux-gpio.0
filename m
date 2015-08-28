@@ -1,47 +1,48 @@
-From: Harini Katakam <harinikatakamlinux@gmail.com>
-Subject: Re: [PATCH 5/5] gpio: zynq: use container_of() to get state container
-Date: Fri, 28 Aug 2015 11:12:34 +0530
-Message-ID: <CAFcVECJVt2rVLXPRoCtpZjaDuZaw1ZPqKHYVdBQN6wWrxn2adA@mail.gmail.com>
-References: <1440687417-17227-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH v1 0/3] Port and support rk3036 SoC platform
+Date: Fri, 28 Aug 2015 13:46:45 +0800
+Message-ID: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:33716 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751005AbbH1Fmg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 01:42:36 -0400
-Received: by lbbsx3 with SMTP id sx3so23997095lbb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2015 22:42:34 -0700 (PDT)
-In-Reply-To: <1440687417-17227-1-git-send-email-linus.walleij@linaro.org>
+Received: from regular2.263xmail.com ([211.157.152.3]:55153 "EHLO
+	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751505AbbH1Frb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 01:47:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Harini Katakam <harini.katakam@xilinx.com>, Lars-Peter Clausen <lars@metafoo.de>, Ezra Savard <ezra.savard@xilinx.com>, Michal Simek <michal.simek@xilinx.com>, Alexandre Courbot <acourbot@nvidia.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, Xing Zheng <zhengxing@rock-chips.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 27, 2015 at 8:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The state container of the Zynq GPIO driver is sometimes
-> extracted from the gpio_chip exploiting the fact that offsetof()
-> the struct gpio_chip inside the struct zynq_gpio is 0, so
-> the container_of() is in practice a noop. However if a member
-> is added to struct zynq_gpio in front of struct gpio_chip,
-> things will break. Using proper container_of() avoids this
-> problem.
->
-> Semantically this is a noop, the compiler will optimize it away,
-> but syntactically it makes me happier.
->
-> Also replace some explicit container_of() calls with the helper
-> function.
->
-> Cc: Harini Katakam <harini.katakam@xilinx.com>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Ezra Savard <ezra.savard@xilinx.com>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Acked-by: Harini Katakam <harinik@xilinx.com>
+Hi,
+We need to support rk3036 soc platform via upstream, there are
+3 parts for the initial release of minimum system: dts, pinctrl,
+and clock tree for rk3036, startup and run to init processs.
 
-Thanks!
+Thanks.
 
-Regards,
-Harini
+
+Changes in v1:
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+
+Xing Zheng (3):
+  ARM: dts: rockchip: add core rk3036 dts
+  pinctrl: rockchip: add support for the rk3036
+  clk: rockchip: add clock controller for rk3036
+
+ arch/arm/boot/dts/Makefile             |    1 +
+ arch/arm/boot/dts/rk3036-sdk.dts       |  362 +++++++++++++++++++++
+ drivers/clk/rockchip/Makefile          |    1 +
+ drivers/clk/rockchip/clk-pll.c         |  247 ++++++++++++++-
+ drivers/clk/rockchip/clk-rk3036.c      |  539 ++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h             |   30 ++
+ drivers/pinctrl/pinctrl-rockchip.c     |   17 +
+ include/dt-bindings/clock/rk3036-cru.h |  247 +++++++++++++++
+ 8 files changed, 1443 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/rk3036-sdk.dts
+ create mode 100644 drivers/clk/rockchip/clk-rk3036.c
+ create mode 100644 include/dt-bindings/clock/rk3036-cru.h
+
+-- 
+1.7.9.5
+
+
