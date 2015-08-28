@@ -1,39 +1,53 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH 1/9] move io-64-nonatomic*.h out of asm-generic
-Date: Fri, 28 Aug 2015 11:19:28 -0700
-Message-ID: <20150828181928.GD33809@vmdeb7>
-References: <1440746842-19029-1-git-send-email-hch@lst.de>
- <1440746842-19029-2-git-send-email-hch@lst.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred probe
+Date: Fri, 28 Aug 2015 11:44:49 -0700
+Message-ID: <1440787489-15992-1-git-send-email-tony@atomide.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:40565 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752430AbbH1STm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Aug 2015 14:19:42 -0400
-Content-Disposition: inline
-In-Reply-To: <1440746842-19029-2-git-send-email-hch@lst.de>
+Received: from pmta2.delivery5.ore.mailhop.org ([54.186.218.12]:15774 "EHLO
+	pmta2.delivery5.ore.mailhop.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751725AbbH1SpE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 28 Aug 2015 14:45:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: arnd@arndb.de, mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-On Fri, Aug 28, 2015 at 09:27:14AM +0200, Christoph Hellwig wrote:
-> These are not implementations of default architecture code but helpers
-> for drivers. Move them to the place they belong to.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
 
+[    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
+[    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
 ...
+[    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
 
->  drivers/platform/x86/ibm_rtl.c                 |  2 +-
->  drivers/platform/x86/intel_ips.c               |  2 +-
+Let's fix the issue by adding the missing pm_runtime_put() on error.
 
-No objection for platform/drivers/x86
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/gpio/gpio-omap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Acked-by: Darren Hart <dvhart@linux.intel.com>
-
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index b0c57d5..f09bf0b 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1232,8 +1232,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 	omap_gpio_mod_init(bank);
+ 
+ 	ret = omap_gpio_chip_init(bank, irqc);
+-	if (ret)
++	if (ret) {
++		pm_runtime_put_sync(bank->dev);
++		pm_runtime_disable(bank->dev);
+ 		return ret;
++	}
+ 
+ 	omap_gpio_show_rev(bank);
+ 
 -- 
-Darren Hart
-Intel Open Source Technology Center
+2.1.4
+
