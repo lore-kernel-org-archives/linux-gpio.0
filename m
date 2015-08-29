@@ -1,41 +1,40 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] pinctrl: mediatek: Consistently use the BIT() macro
-Date: Sat, 29 Aug 2015 01:25:01 +0200
-Message-ID: <1440804302-6903-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:60948 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752892AbbH1XZc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 28 Aug 2015 19:25:32 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/2][RFC] pinctrl: sh-pfc: r8a7795: add SCIFx support
+Date: Sat, 29 Aug 2015 14:13:52 +0900
+Message-ID: <CANqRtoQsH_6mTr774_sT4hD=9rd2rUPWMTY52Ezwox3ZiTb0gQ@mail.gmail.com>
+References: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com>
+	<87a8tbdamb.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <87a8tbdamb.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maoguang Meng <maoguang.meng@mediatek.com>, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Yingjoe Chen <yingjoe.chen@mediatek.com>, Colin Ian King <colin.king@canonical.com>, Matthias Brugger <matthias.bgg@gmail.com>
 
-The mediatek pinctrl driver uses the BIT() macro instead of open
-coding 1 << n in all but one place. Replace this occurrence with
-the BIT() macro for consistency.
+Hi Morimoto-san,
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+On Fri, Aug 28, 2015 at 6:33 PM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> This patch adds SCIF0/1/2/3/4/5
+>
+> This patch is including Geert's SCIF support patch
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 446 +++++++++++++++++++++++++++++++----
+>  1 file changed, 405 insertions(+), 41 deletions(-)
 
----
+Thanks a lot for your efforts breaking out this!
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just to double check, are all SCIF patches from this series rolled
+into this patch?
+[PATCH 0/5] pinctrl: sh-pfc: r8a7795: (H)SCIF Updates
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 23f2de07f598..497b9125342a 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -898,7 +898,7 @@ static int mtk_eint_flip_edge(struct mtk_pinctrl *pctl, int hwirq)
- 	int start_level, curr_level;
- 	unsigned int reg_offset;
- 	const struct mtk_eint_offsets *eint_offsets = &(pctl->devdata->eint_offsets);
--	u32 mask = 1 << (hwirq & 0x1f);
-+	u32 mask = BIT(hwirq & 0x1f);
- 	u32 port = (hwirq >> 5) & eint_offsets->port_mask;
- 	void __iomem *reg = pctl->eint_reg_base + (port << 2);
- 	const struct mtk_desc_pin *pin;
--- 
-2.4.3
+Best,
 
+/ magnus
