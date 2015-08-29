@@ -1,40 +1,84 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 2/2][RFC] pinctrl: sh-pfc: r8a7795: add SCIFx support
-Date: Sat, 29 Aug 2015 14:13:52 +0900
-Message-ID: <CANqRtoQsH_6mTr774_sT4hD=9rd2rUPWMTY52Ezwox3ZiTb0gQ@mail.gmail.com>
-References: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com>
-	<87a8tbdamb.wl%kuninori.morimoto.gx@renesas.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH][RFC] sh-pfc: add new PINMUX_IPSR_MODS() macro
+Date: Sat, 29 Aug 2015 11:39:09 +0300
+Message-ID: <38944168.Lsx7EbeIaO@avalon>
+References: <87h9nkc7km.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87a8tbdamb.wl%kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87h9nkc7km.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-sh-owner@vger.kernel.org
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Morimoto-san,
 
-On Fri, Aug 28, 2015 at 6:33 PM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+On Friday 28 August 2015 14:20:41 Kuninori Morimoto wrote:
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> This patch adds SCIF0/1/2/3/4/5
->
-> This patch is including Geert's SCIF support patch
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Actually, PINMUX_IPSR_MODS() macro is same as PINMUX_IPSR_MODSEL_DATA().
+> Current PFC driver is very difficult to read, because macro names are
+> using different lenth. Especially PINMUX_IPSR_MODSEL_DATA() is well
+> used macro
+> 
+> 	PINMUX_IPSR_NOGP(ispr, ...)
+> 	PINMUX_IPSR_DATA(ipsr, ...)
+> 	PINMUX_IPSR_NOGM(ispr, ...)
+> 	PINMUX_IPSR_NOFN(ipsr, ...)
+> 	PINMUX_IPSR_MSEL(ipsr, ...)
+> 	PINMUX_IPSR_MODSEL_DATA(ipsr, ...)
+> 
+> These are readable
+> 
+> 	PINMUX_IPSR_NOGP(ispr, ...)
+> 	PINMUX_IPSR_DATA(ipsr, ...)
+> 	PINMUX_IPSR_NOGM(ispr, ...)
+> 	PINMUX_IPSR_NOFN(ipsr, ...)
+> 	PINMUX_IPSR_MSEL(ipsr, ...)
+> 	PINMUX_IPSR_MODS(ipsr, ...)
+> 
+> We can replace all PINMUX_IPSR_MODSEL_DATA() to PINMUX_IPSR_MODS(),
+> and remove PINMUX_IPSR_MODSEL_DATA() from header.
+
+I agree that the PINMUX_IPSR_MODSEL_DATA() name makes code harder to read. 
+However, PINMUX_IPSR_MODS() isn't very descriptive, I think it would make the 
+code confusing (not that it isn't already...).
+
+The only difference between  PINMUX_IPSR_MSEL and PINMUX_IPSR_MODSEL_DATA is 
+the order in which the MODSEL, GSPR and IPSR registers are written. I wonder 
+if that's actually important, or if we could merge both macros into a single 
+one. What do you think ?
+
+
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 446 +++++++++++++++++++++++++++++++----
->  1 file changed, 405 insertions(+), 41 deletions(-)
+> 
+> > LinusW, Laurent
+> 
+> As I mentioned above, if this patch was accepted, I can replace all
+> PINMUX_IPSR_MODSEL_DATA() to PINMUX_IPSR_MODS(). But I didn't it since it
+> is [RFC] now
+> 
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 0874cfe..40447d54 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -173,6 +173,8 @@ struct sh_pfc_soc_info {
+>  	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
+>  #define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
+>  	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr, FN_##ms)
+> +#define PINMUX_IPSR_MODS(ipsr, fn, ms)			\
+> +	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
+>  #define PINMUX_IPSR_MODSEL_DATA(ipsr, fn, ms)				\
+>  	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
 
-Thanks a lot for your efforts breaking out this!
+-- 
+Regards,
 
-Just to double check, are all SCIF patches from this series rolled
-into this patch?
-[PATCH 0/5] pinctrl: sh-pfc: r8a7795: (H)SCIF Updates
+Laurent Pinchart
 
-Best,
-
-/ magnus
