@@ -1,46 +1,36 @@
-From: mrs robert <mrsrroserrobert@gmail.com>
-Subject: Urgent Please
-Date: Sun, 30 Aug 2015 14:54:13 +0200
-Message-ID: <CAAj6UiN3zmy7LJD+JfCgyNoFcBzSgWxxesU9fVOYSUgf5A+RXA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] gpio: sx150x: Remove unnecessary MODULE_ALIAS()
+Date: Sun, 30 Aug 2015 23:58:44 +0200
+Message-ID: <1440971924-15571-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f196.google.com ([209.85.212.196]:33132 "EHLO
-	mail-wi0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753358AbbH3MyP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2015 08:54:15 -0400
-Received: by wiae7 with SMTP id e7so1217045wia.0
-        for <linux-gpio@vger.kernel.org>; Sun, 30 Aug 2015 05:54:13 -0700 (PDT)
+Received: from lists.s-osg.org ([54.187.51.154]:32952 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751794AbbH3V65 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 30 Aug 2015 17:58:57 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Urgent Please
+The driver has a I2C device id table that is used to create the module
+aliases and also "sx150x" isn't a supported I2C id, so it's never used.
 
-My name is Mrs. Rose Robert, I have been suffering from ovarian cancer
-disease and the doctor says that i have just few days to leave. I am
-from Belgium, but based in Burkina Faso, Africa since ten years ago as
-a business woman dealing with cocoa exportation, now that i am about
-to end the race like this, without any family members and no child. I
-have $1 Million US DOLLARS in Eco-Bank here in Burkina Faso which i
-instructed the bank to give African union leaders to help sick people
-around Africa. But my mind is not at rest because of that i am writing
-this letter now through the help of my Doctor beside me here in my
-hospital room. I also have $4.5 Million US Dollars in Bank Of Africa
-Burkina Faso,
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
+---
 
-which i want you to claim from the bank and use it to help less
-privilege people in your country, but you must assure me that you will
-take only 40% of the total money and give the rest 60% to the
-orphanage home in your country, For my heart to rest. Upon the receipt
-of your email that you are Willing and capable to execute my plan, i
-will instruct the bank Management to make an immediate transfer into
-your account. Further More as soon as you receive the message if you
-want to reply me i will Want you to reply me with your personal
-information and you will also Send me a copy id to forward to them
-that you are the person I am Willing my wealth;
+ drivers/gpio/gpio-sx150x.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-waiting to give you  more details concerning the fund,
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index 458d9d7952b8..9c6b96707c9f 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -706,4 +706,3 @@ module_exit(sx150x_exit);
+ MODULE_AUTHOR("Gregory Bean <gbean@codeaurora.org>");
+ MODULE_DESCRIPTION("Driver for Semtech SX150X I2C GPIO Expanders");
+ MODULE_LICENSE("GPL v2");
+-MODULE_ALIAS("i2c:sx150x");
+-- 
+2.4.3
 
-Sincerely,
-Mrs. Rose Robert,
