@@ -1,64 +1,46 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Subject: Re: [PATCH 3/9] amdkfd: use <linux/mman.h> instead of <uapi/asm-generic/mman-common.h>
-Date: Sun, 30 Aug 2015 12:43:19 +0300
-Message-ID: <CAFCwf13VzCeJsKtf5aOj0QTT6ciV=7PvPpeezyUjje3rOKQKfg@mail.gmail.com>
-References: <1440746842-19029-1-git-send-email-hch@lst.de> <1440746842-19029-4-git-send-email-hch@lst.de>
+From: mrs robert <mrsrroserrobert@gmail.com>
+Subject: Urgent Please
+Date: Sun, 30 Aug 2015 14:54:13 +0200
+Message-ID: <CAAj6UiN3zmy7LJD+JfCgyNoFcBzSgWxxesU9fVOYSUgf5A+RXA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1440746842-19029-4-git-send-email-hch@lst.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: arnd@arndb.de, mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f196.google.com ([209.85.212.196]:33132 "EHLO
+	mail-wi0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753358AbbH3MyP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2015 08:54:15 -0400
+Received: by wiae7 with SMTP id e7so1217045wia.0
+        for <linux-gpio@vger.kernel.org>; Sun, 30 Aug 2015 05:54:13 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Aug 28, 2015 at 10:27 AM, Christoph Hellwig <hch@lst.de> wrote:
->
-> The latter is a default version of <asm/mman.h> and not for driver use.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/gpu/drm/amd/amdkfd/kfd_chardev.c     | 2 +-
->  drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> index c991973..c6a1b4c 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-> @@ -31,7 +31,7 @@
->  #include <uapi/linux/kfd_ioctl.h>
->  #include <linux/time.h>
->  #include <linux/mm.h>
-> -#include <uapi/asm-generic/mman-common.h>
-> +#include <linux/mman.h>
->  #include <asm/processor.h>
->  #include "kfd_priv.h"
->  #include "kfd_device_queue_manager.h"
-> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c b/drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c
-> index 35b9875..2b65510 100644
-> --- a/drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c
-> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_flat_memory.c
-> @@ -33,7 +33,7 @@
->  #include <linux/time.h>
->  #include "kfd_priv.h"
->  #include <linux/mm.h>
-> -#include <uapi/asm-generic/mman-common.h>
-> +#include <linux/mman.h>
->  #include <asm/processor.h>
->
->  /*
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Urgent Please
+
+My name is Mrs. Rose Robert, I have been suffering from ovarian cancer
+disease and the doctor says that i have just few days to leave. I am
+from Belgium, but based in Burkina Faso, Africa since ten years ago as
+a business woman dealing with cocoa exportation, now that i am about
+to end the race like this, without any family members and no child. I
+have $1 Million US DOLLARS in Eco-Bank here in Burkina Faso which i
+instructed the bank to give African union leaders to help sick people
+around Africa. But my mind is not at rest because of that i am writing
+this letter now through the help of my Doctor beside me here in my
+hospital room. I also have $4.5 Million US Dollars in Bank Of Africa
+Burkina Faso,
 
 
-Thanks,
-Applied to my -next-fixes tree
+which i want you to claim from the bank and use it to help less
+privilege people in your country, but you must assure me that you will
+take only 40% of the total money and give the rest 60% to the
+orphanage home in your country, For my heart to rest. Upon the receipt
+of your email that you are Willing and capable to execute my plan, i
+will instruct the bank Management to make an immediate transfer into
+your account. Further More as soon as you receive the message if you
+want to reply me i will Want you to reply me with your personal
+information and you will also Send me a copy id to forward to them
+that you are the person I am Willing my wealth;
 
-     Oded
+waiting to give you  more details concerning the fund,
+
+Sincerely,
+Mrs. Rose Robert,
