@@ -1,142 +1,65 @@
 From: Dirk Behme <dirk.behme@gmail.com>
-Subject: Re: [PATCH 2/2] Documentation: gpio: board: describe the con_id
- parameter
-Date: Sun, 30 Aug 2015 11:14:27 +0200
-Message-ID: <55E2C973.5060804@gmail.com>
-References: <1437808318-4453-1-git-send-email-dirk.behme@gmail.com>
- <1437808318-4453-2-git-send-email-dirk.behme@gmail.com>
- <55D60E53.60607@gmail.com>
- <CAAVeFuLpzXCURTHO+EvgA1NB5f1fEy666dmPWGiY9B3o7Vj8_A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2 v2] Documentation: gpio: board: add flags parameter to gpiod_get*() functions
+Date: Sun, 30 Aug 2015 11:15:54 +0200
+Message-ID: <1440926155-7183-1-git-send-email-dirk.behme@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:37397 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753440AbbH3JOb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2015 05:14:31 -0400
-Received: by wicfv10 with SMTP id fv10so45486617wic.0
-        for <linux-gpio@vger.kernel.org>; Sun, 30 Aug 2015 02:14:29 -0700 (PDT)
-In-Reply-To: <CAAVeFuLpzXCURTHO+EvgA1NB5f1fEy666dmPWGiY9B3o7Vj8_A@mail.gmail.com>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:38789 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752088AbbH3JQA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Aug 2015 05:16:00 -0400
+Received: by wicpl12 with SMTP id pl12so3180861wic.1
+        for <linux-gpio@vger.kernel.org>; Sun, 30 Aug 2015 02:15:59 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Dirk Behme <dirk.behme@gmail.com>
 
-On 21.08.2015 05:01, Alexandre Courbot wrote:
-> On Fri, Aug 21, 2015 at 2:28 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
->> On 25.07.2015 09:11, Dirk Behme wrote:
->>>
->>> The con_id parameter has to match the GPIO description and is
->>> automatically
->>> extended by the GPIO suffix if not NULL. I had to look into the code to
->>> understand this and properly find the GPIO I've been looking for, so
->>> document
->>> this.
->>>
->>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
->>> ---
->>>    Documentation/gpio/board.txt    | 36
->>> ++++++++++++++++++++++++++++++++++++
->>>    Documentation/gpio/consumer.txt |  3 +++
->>>    2 files changed, 39 insertions(+)
->>>
->>> diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
->>> index 7605773..eac78fc 100644
->>> --- a/Documentation/gpio/board.txt
->>> +++ b/Documentation/gpio/board.txt
->>> @@ -48,6 +48,42 @@ This property will make GPIOs 15, 16 and 17 available
->>> to the driver under the
->>>    The led GPIOs will be active-high, while the power GPIO will be
->>> active-low (i.e.
->>>    gpiod_is_active_low(power) will be true).
->>>
->>> +If in the consumer device's node the property doesn't have a <function>-
->>> prefix,
->>> +the second parameter (con_id) of the gpiod_get*() functions has to be
->>> NULL:
->>> +
->>> +E.g. if in the above device tree example the GPIO array is just called
->>> 'gpios'
->>> +
->>> +       foo_device {
->>> +               compatible = "acme,foo";
->>> +               ...
->>> +               gpios = <&gpio 15 GPIO_ACTIVE_HIGH>, /* red */
->>> +                       <&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
->>> +                       <&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
->>> +       };
->>> +
->>> +the gpiod_get*() calls will be:
->>> +
->>> +       struct gpio_desc *red, *green, *blue, *power;
->>> +
->>> +       red = gpiod_get_index(dev, NULL, 0, GPIOD_OUT_HIGH);
->>> +       green = gpiod_get_index(dev, NULL, 1, GPIOD_OUT_HIGH);
->>> +       blue = gpiod_get_index(dev, NULL, 2, GPIOD_OUT_HIGH);
->>> +
->>> +To summarize:
->>> +
->>> +The con_id string parameter has to be either NULL or the
->>> <function>-prefix
->>> +of the GPIO suffixes ("gpios" or "gpio", automatically looked up by the
->>> +gpiod functions internally):
->>> +
->>> +* If the GPIO description is just named with one of the GPIO suffixes
->>> +  ("gpios" or "gpio"), use NULL.
->>> +* If the GPIO description is prefixed with anything, e.g. "led-gpios",
->>> use the
->>> +  prefix without the "-" as con_id parameter (in this example "led").
->>> +
->>> +In case con_id is not NULL, the GPIO subsystem prefixes the GPIO suffix
->>> +("gpios" or "gpio") with the string passed in con_id to get the resulting
->>> string
->>> +(snprintf(... "%s-%s", con_id, gpio_suffixes[]).
->>> +
->>>    ACPI
->>>    ----
->>>    ACPI also supports function names for GPIOs in a similar fashion to DT.
->>> diff --git a/Documentation/gpio/consumer.txt
->>> b/Documentation/gpio/consumer.txt
->>> index 75542b9..47ce4fd 100644
->>> --- a/Documentation/gpio/consumer.txt
->>> +++ b/Documentation/gpio/consumer.txt
->>> @@ -39,6 +39,9 @@ device that displays digits), an additional index
->>> argument can be specified:
->>>                                            const char *con_id, unsigned int
->>> idx,
->>>                                            enum gpiod_flags flags)
->>>
->>> +For a more detailed description of the con_id parameter in the DeviceTree
->>> case
->>> +see Documentation/gpio/board.txt
->>> +
->>>    The flags parameter is used to optionally specify a direction and
->>> initial value
->>>    for the GPIO. Values can be:
->>
->>
->>
->> Any further comments on this? Or could this be applied?
->
-> Using the "gpios" property is considered deprecated, so I am not sure
-> that is a good idea to mention this too extensively in the boards file
-> (people might be tempted to use that option while we clearly don't
-> want them to).
->
-> A precise description of the lookup method is clearly missing though.
-> I don't know what the right place would be for it. consumer.txt?
-> board.txt in a more concise (and with a big "DEPRECATED") way?
+With commit 39b2bbe3d715 ("gpio: add flags argument to gpiod_get*()
+functions") the gpiod_get*() functions got a 'flags' parameter. Reflect
+this in the documentation, too.
 
-Ok, thanks!
+Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+---
+ Documentation/gpio/board.txt | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-In a previous comment there was the proposal to put it into board.txt, 
-as this applies only to the device tree case and board.txt has a 
-device tree section.
-
-I'll drop the description of the deprecated part and send an update.
-
-Best regards
-
-Dirk
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+index b80606d..7605773 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -39,11 +39,11 @@ This property will make GPIOs 15, 16 and 17 available to the driver under the
+ 
+ 	struct gpio_desc *red, *green, *blue, *power;
+ 
+-	red = gpiod_get_index(dev, "led", 0);
+-	green = gpiod_get_index(dev, "led", 1);
+-	blue = gpiod_get_index(dev, "led", 2);
++	red = gpiod_get_index(dev, "led", 0, GPIOD_OUT_HIGH);
++	green = gpiod_get_index(dev, "led", 1, GPIOD_OUT_HIGH);
++	blue = gpiod_get_index(dev, "led", 2, GPIOD_OUT_HIGH);
+ 
+-	power = gpiod_get(dev, "power");
++	power = gpiod_get(dev, "power", GPIOD_OUT_HIGH);
+ 
+ The led GPIOs will be active-high, while the power GPIO will be active-low (i.e.
+ gpiod_is_active_low(power) will be true).
+@@ -142,12 +142,11 @@ The driver controlling "foo.0" will then be able to obtain its GPIOs as follows:
+ 
+ 	struct gpio_desc *red, *green, *blue, *power;
+ 
+-	red = gpiod_get_index(dev, "led", 0);
+-	green = gpiod_get_index(dev, "led", 1);
+-	blue = gpiod_get_index(dev, "led", 2);
++	red = gpiod_get_index(dev, "led", 0, GPIOD_OUT_HIGH);
++	green = gpiod_get_index(dev, "led", 1, GPIOD_OUT_HIGH);
++	blue = gpiod_get_index(dev, "led", 2, GPIOD_OUT_HIGH);
+ 
+-	power = gpiod_get(dev, "power");
+-	gpiod_direction_output(power, 1);
++	power = gpiod_get(dev, "power", GPIOD_OUT_HIGH);
+ 
+ Since the "power" GPIO is mapped as active-low, its actual signal will be 0
+ after this code. Contrary to the legacy integer GPIO interface, the active-low
+-- 
+2.5.1
 
