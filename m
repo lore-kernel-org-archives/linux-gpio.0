@@ -1,67 +1,45 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/2][RFC] pinctrl: sh-pfc: Initial R8A7795 PFC support
-Date: Mon, 31 Aug 2015 13:00:53 +0300
-Message-ID: <18242717.vkv89r6G4C@avalon>
-References: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com> <15835467.TaO4P3MKAU@avalon> <87y4gs2bqy.wl%kuninori.morimoto.gx@renesas.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred
+ probe
+Date: Mon, 31 Aug 2015 07:11:34 -0700
+Message-ID: <20150831141134.GA4215@atomide.com>
+References: <1440787489-15992-1-git-send-email-tony@atomide.com>
+ <55E4186E.7090605@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87y4gs2bqy.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47719 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752942AbbHaOLi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 31 Aug 2015 10:11:38 -0400
+Content-Disposition: inline
+In-Reply-To: <55E4186E.7090605@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-Hello Morimoto-san,
+* Grygorii Strashko <grygorii.strashko@ti.com> [150831 02:07]:
+> Hi Tony,
+> 
+> On 08/28/2015 09:44 PM, Tony Lindgren wrote:
+> >Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
+> >
+> >[    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
+> >[    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
+> >...
+> >[    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
+> 
+> I have no objection to the patch itself.
+> 
+> But I curious, How have you got this error output? Was it simulated?
 
-On Monday 31 August 2015 06:53:36 Kuninori Morimoto wrote:
-> Hi Laurent
-> 
-> >> +#define CPU_ALL_PORT(fn, sfx)						\
-> >> +	PORT_GP_32(0, fn, sfx),						\
-> >> +	PORT_GP_32(1, fn, sfx),						\
-> >> +	PORT_GP_32(2, fn, sfx),						\
-> >> +	PORT_GP_32(3, fn, sfx),						\
-> >> +	PORT_GP_32(4, fn, sfx),						\
-> >> +	PORT_GP_32(5, fn, sfx),						\
-> >> +	PORT_GP_32(6, fn, sfx),						\
-> >> +	PORT_GP_32(7, fn, sfx)
-> > 
-> > Not all GPIO banks include 32 pins. From a quick look at the datasheet the
-> > following GPIO pins are available.
-> 
-> Thanks. will fix in next version
-> 
-> >> +	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
-> >> +			     2, 3, 1, 2, 3, 1, 1, 2, 1,
-> >> +			     2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1) {
-> 
-> (snip)
-> 
-> >> +		/* SEL_SCIF3 [1] */
-> >> +		FN_SEL_SCIF3_0,		FN_SEL_SCIF3_1,
-> >> +		/* SEL_SCIF2 [1] */
-> >> +		FN_SEL_SCIF2_0,		FN_SEL_SCIF2_1,
-> >> +		/* SEL_SCIF1 [1] */
-> >> +		FN_SEL_SCIF1_0,		FN_SEL_SCIF1_1,
-> >> +		/* SEL_SCIF [1] */
-> >> +		FN_SEL_SCIF_0,		FN_SEL_SCIF_1,
-> >> +		/* SEL_REMOCON [1] */
-> >> +		FN_SEL_REMOCON_0,	FN_SEL_REMOCON_1,
-> >> +		/* RESERVED [2] */
-> >> +		0, 0, 0, 0,
-> > 
-> > According to the datasheet those two bits are supposed to control the RDS
-> > clock and data pins (whatever they are).
-> 
-> Thank you, but sorry.
-> Latest version indicates these are reserved bit.
+I ran into it when trying to get rid of all the custom initcalls
+for various drivers. And especially if adding dts mappings for
+gpio-ranges to try to find some solution for the 1.158 issue that
+keeps me from having a mainline GPIO PM regresion test with
+pinging wl12xx during off idle :)
 
-My bad, I had checked an older version of the datasheet.
-
--- 
 Regards,
 
-Laurent Pinchart
-
+Tony
