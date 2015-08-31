@@ -1,55 +1,60 @@
 From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 2/2][RFC] pinctrl: sh-pfc: r8a7795: add SCIFx support
-Date: Mon, 31 Aug 2015 13:46:06 +0900
-Message-ID: <CANqRtoQmrMjh3FAxu34azSfXSZmPS+Y+EU6wL+4MGH9mSki+uA@mail.gmail.com>
+Subject: Re: [PATCH 0/2][RFC] pinctrl: sh-pfc: r8a7795 support
+Date: Mon, 31 Aug 2015 13:50:38 +0900
+Message-ID: <CANqRtoS9wrU4u=HL4j=u0aqU=Uwraa0+PFuTFJLVUNNjc6nMAQ@mail.gmail.com>
 References: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com>
-	<87a8tbdamb.wl%kuninori.morimoto.gx@renesas.com>
-	<CANqRtoQsH_6mTr774_sT4hD=9rd2rUPWMTY52Ezwox3ZiTb0gQ@mail.gmail.com>
-	<87egik493d.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:36040 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750912AbbHaEqH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2015 00:46:07 -0400
-In-Reply-To: <87egik493d.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <87d1y7daou.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 Hi Morimoto-san,
 
-On Mon, Aug 31, 2015 at 9:04 AM, Kuninori Morimoto
+On Fri, Aug 28, 2015 at 6:31 PM, Kuninori Morimoto
 <kuninori.morimoto.gx@renesas.com> wrote:
 >
-> Hi Magnus
+> Hi LinusW, Laurent
 >
->> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> >
->> > This patch adds SCIF0/1/2/3/4/5
->> >
->> > This patch is including Geert's SCIF support patch
->> >
->> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> > ---
->> >  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 446 +++++++++++++++++++++++++++++++----
->> >  1 file changed, 405 insertions(+), 41 deletions(-)
->>
->> Thanks a lot for your efforts breaking out this!
->>
->> Just to double check, are all SCIF patches from this series rolled
->> into this patch?
->> [PATCH 0/5] pinctrl: sh-pfc: r8a7795: (H)SCIF Updates
+> These are remake of r8a7795 PFC support
+> Previous version included many PFC settings, and it was over 5000 line !
+> but some of them are not used. So it was super difficult for reviewing.
 >
-> Not all. this includes SCIF part only. "H"SCIF can be next patch.
-> But all SCIF part are inlcuded I believe
+> This time, 1) patch is very basic PFC frame only.
+> 2) adds SCIF support
+> I can post HSCIF support next week if these are accepted.
+>
+> I know this is not good things, but these patches are based on
+> below patch which I posted. The code will be more readable
+> if we can use it. Thus these patches are also [RFC]
+>
+>         Subject: [PATCH][RFC] sh-pfc: add new PINMUX_IPSR_MODS() macro
+>         Date: Fri, 28 Aug 2015 14:20:41 +0900
+>
+> Kuninori Morimoto (2):
+>       1) pinctrl: sh-pfc: Initial R8A7795 PFC support
+>       2) pinctrl: sh-pfc: r8a7795: add SCIFx support
+>
+>  drivers/pinctrl/sh-pfc/Kconfig       |    5 +
+>  drivers/pinctrl/sh-pfc/Makefile      |    1 +
+>  drivers/pinctrl/sh-pfc/core.c        |    6 +
+>  drivers/pinctrl/sh-pfc/core.h        |    1 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 1863 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 1876 insertions(+)
 
-Ok, thanks for clarifying. In next version of the patch series please
-consider including a list of which patches you folded in.
+Thanks a lot for your efforts. Breaking out the code like this should
+make it much easier to review.
 
-Cheers,
+One thing - above in the diffstat I cannot seem to find
+"Documentation/devicetree/bindings/"... When I try to use the PFC I
+also get complaints from checkpatch about missing compatible strings.
+
+In the next version of this PFC series can you please add a patch that
+extends "renesas,pfc-pinctrl.txt" with r8a7795 information?
+
+Thanks,
 
 / magnus
