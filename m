@@ -1,45 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
 Subject: Re: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred
  probe
-Date: Mon, 31 Aug 2015 07:11:34 -0700
-Message-ID: <20150831141134.GA4215@atomide.com>
+Date: Mon, 31 Aug 2015 17:37:22 +0300
+Message-ID: <55E466A2.9080900@ti.com>
 References: <1440787489-15992-1-git-send-email-tony@atomide.com>
- <55E4186E.7090605@ti.com>
+ <55E4186E.7090605@ti.com> <20150831141134.GA4215@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47719 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752942AbbHaOLi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 31 Aug 2015 10:11:38 -0400
-Content-Disposition: inline
-In-Reply-To: <55E4186E.7090605@ti.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:60628 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751445AbbHaOh4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Aug 2015 10:37:56 -0400
+In-Reply-To: <20150831141134.GA4215@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
+To: Tony Lindgren <tony@atomide.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [150831 02:07]:
-> Hi Tony,
+On 08/31/2015 05:11 PM, Tony Lindgren wrote:
+> * Grygorii Strashko <grygorii.strashko@ti.com> [150831 02:07]:
+>> Hi Tony,
+>>
+>> On 08/28/2015 09:44 PM, Tony Lindgren wrote:
+>>> Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
+>>>
+>>> [    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
+>>> [    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
+>>> ...
+>>> [    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
+>>
+>> I have no objection to the patch itself.
+>>
+>> But I curious, How have you got this error output? Was it simulated?
 > 
-> On 08/28/2015 09:44 PM, Tony Lindgren wrote:
-> >Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
-> >
-> >[    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
-> >[    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
-> >...
-> >[    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
+> I ran into it when trying to get rid of all the custom initcalls
+> for various drivers. And especially if adding dts mappings for
+> gpio-ranges to try to find some solution for the 1.158 issue that
+> keeps me from having a mainline GPIO PM regresion test with
+> pinging wl12xx during off idle :)
 > 
-> I have no objection to the patch itself.
-> 
-> But I curious, How have you got this error output? Was it simulated?
 
-I ran into it when trying to get rid of all the custom initcalls
-for various drivers. And especially if adding dts mappings for
-gpio-ranges to try to find some solution for the 1.158 issue that
-keeps me from having a mainline GPIO PM regresion test with
-pinging wl12xx during off idle :)
+Ah. So, -EPROBE_DEFER was returned by of_gpiochip_add_pin_range(),
+I was not able to find a place where gpiochip_add() can return -EPROBE_DEFER ;)
 
-Regards,
+Thanks for clarification.
 
-Tony
+
+-- 
+regards,
+-grygorii
