@@ -1,40 +1,45 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Single gpio shared by LED and switch?
-Date: Tue, 1 Sep 2015 19:00:54 +0200
-Message-ID: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Subject: Question about patch "pinctrl: cherryview: Do not mask all interrupts
+ on probe"
+Date: Tue, 1 Sep 2015 16:09:12 -0400
+Message-ID: <CA+A7VXVOpLCvk3YLWq9=ESKGRUg3E+rBOV65eEEkw-TOTaCavQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-Sender: linux-leds-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f175.google.com ([209.85.160.175]:36807 "EHLO
+	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751151AbbIAUJw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Sep 2015 16:09:52 -0400
+Received: by ykcf206 with SMTP id f206so1933555ykc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2015 13:09:51 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: mika.westerberg@linux.intel.com
+Cc: linux-gpio@vger.kernel.org
 
-Hi,
+Hello Mika,
 
-I'm wondering if there already exists a driver for a gpio that's connected
-to both an LED and an input switch.
+About a month ago I've sent a message [1] to linux-gpio querying about
+the state of the patch mentioned on the subject, which you had sent
+and later resigned. It seems I've failed to address my message while
+trying to send it through gmane as a reply to the original message, as
+it did not get to your attention.
 
-I'd expect such a hardware configuration to be fairly common, as gpios can be
-a limited resource.
-Most of the time the gpio would be in output mode, driving the LED, but at
-regular intervals the mode would be changed for a very short moment to input,
-to monitor the state of the switch.
+[1] https://www.mail-archive.com/linux-gpio%40vger.kernel.org/msg09093.=
+html
 
-I had a quick look at various drivers (and of course at
-Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
+I'm working on a ASUS E202SA laptop, in which the brightness keys
+depend on this patch to work. Are any plans to have it integrated, in
+the original form or in any other?
 
-Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
-
-Thanks in advance!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks,
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jo=C3=A3o Paulo Rechi Vita
+http://about.me/jprvita
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
