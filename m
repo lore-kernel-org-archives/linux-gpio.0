@@ -1,66 +1,56 @@
-From: Stanimir Varbanov <svarbanov@mm-sol.com>
-Subject: Re: [PATCH 1/4] dt-binding: gpio: Add Qualcomm SMSM device tree documentation
-Date: Tue, 01 Sep 2015 11:18:56 +0300
-Message-ID: <55E55F70.5050703@mm-sol.com>
-References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com> <1440697078-4106-2-git-send-email-bjorn.andersson@sonymobile.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1440697078-4106-2-git-send-email-bjorn.andersson@sonymobile.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Alexandre Courbot <gnurou@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH] Documentation: gpio: Explain that <function>-gpio is also supported
+Date: Tue,  1 Sep 2015 10:46:15 +0200
+Message-ID: <1441097175-10341-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:33263 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754659AbbIAIrO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 1 Sep 2015 04:47:14 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-On 08/27/2015 08:37 PM, Bjorn Andersson wrote:
-> This documents a device tree binding for exposing the Qualcomm Shared
-> Memory State Machine as a set of gpio- and interrupt-controllers.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> ---
->  .../devicetree/bindings/gpio/qcom,smsm.txt         | 114 +++++++++++++++++++++
+The GPIO documentation mentions that GPIOs are mapped by defining a
+<function>-gpios property in the consumer device's node but a -gpio
+sufix is also supported after commit:
 
-<snip>
+dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
 
-> += EXAMPLE
-> +The following example shows the SMEM setup for controlling properties of the
-> +wireless processor, defined from the 8974 apps processor's point-of-view. It
-> +encompasses one outbound entry and the outgoing interrupt for the wireless
-> +processor.
-> +
-> +smsm {
-> +	compatible = "qcom,smsm";
-> +
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	qcom,ipc-3 = <&apcs 8 19>;
+Update the documentation to match the implementation.
 
-Can we use something more descriptive here, for example
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-qcom,ipc-rpm = <&apcs 8 19>;
+---
 
-and replace these magic numbers with defines?
+ Documentation/gpio/board.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> +
-> +	apps_smsm: apps@0 {
-> +		reg = <0>;
-> +
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
-> +	wcnss_smsm: wcnss@7 {
-> +		reg = <7>;
-> +		interrupts = <0 144 1>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +};
-
-
+diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
+index b80606de545a..cdb87b665235 100644
+--- a/Documentation/gpio/board.txt
++++ b/Documentation/gpio/board.txt
+@@ -21,8 +21,8 @@ exact way to do it depends on the GPIO controller providing the GPIOs, see the
+ device tree bindings for your controller.
+ 
+ GPIOs mappings are defined in the consumer device's node, in a property named
+-<function>-gpios, where <function> is the function the driver will request
+-through gpiod_get(). For example:
++either <function>-gpios or <function>-gpio, where <function> is the function
++the driver will request through gpiod_get(). For example:
+ 
+ 	foo_device {
+ 		compatible = "acme,foo";
+@@ -31,7 +31,7 @@ through gpiod_get(). For example:
+ 			    <&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
+ 			    <&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
+ 
+-		power-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++		power-gpio = <&gpio 1 GPIO_ACTIVE_LOW>;
+ 	};
+ 
+ This property will make GPIOs 15, 16 and 17 available to the driver under the
 -- 
-regards,
-Stan
+2.4.3
+
