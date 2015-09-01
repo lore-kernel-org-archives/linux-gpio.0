@@ -1,45 +1,82 @@
-From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
-Subject: Question about patch "pinctrl: cherryview: Do not mask all interrupts
- on probe"
-Date: Tue, 1 Sep 2015 16:09:12 -0400
-Message-ID: <CA+A7VXVOpLCvk3YLWq9=ESKGRUg3E+rBOV65eEEkw-TOTaCavQ@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+Subject: Re: [PATCH 1/4] dt-binding: gpio: Add Qualcomm SMSM device tree
+ documentation
+Date: Tue, 1 Sep 2015 14:50:29 -0700
+Message-ID: <20150901215029.GK13472@usrtlx11787.corpusers.net>
+References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
+ <1440697078-4106-2-git-send-email-bjorn.andersson@sonymobile.com>
+ <55E55F70.5050703@mm-sol.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f175.google.com ([209.85.160.175]:36807 "EHLO
-	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151AbbIAUJw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Sep 2015 16:09:52 -0400
-Received: by ykcf206 with SMTP id f206so1933555ykc.3
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2015 13:09:51 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <55E55F70.5050703-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stanimir Varbanov <svarbanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com
-Cc: linux-gpio@vger.kernel.org
 
-Hello Mika,
+On Tue 01 Sep 01:18 PDT 2015, Stanimir Varbanov wrote:
 
-About a month ago I've sent a message [1] to linux-gpio querying about
-the state of the patch mentioned on the subject, which you had sent
-and later resigned. It seems I've failed to address my message while
-trying to send it through gmane as a reply to the original message, as
-it did not get to your attention.
+> On 08/27/2015 08:37 PM, Bjorn Andersson wrote:
+> > This documents a device tree binding for exposing the Qualcomm Shared
+> > Memory State Machine as a set of gpio- and interrupt-controllers.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
+> > ---
+> >  .../devicetree/bindings/gpio/qcom,smsm.txt         | 114 +++++++++++++++++++++
+> 
+> <snip>
+> 
+> > += EXAMPLE
+> > +The following example shows the SMEM setup for controlling properties of the
+> > +wireless processor, defined from the 8974 apps processor's point-of-view. It
+> > +encompasses one outbound entry and the outgoing interrupt for the wireless
+> > +processor.
+> > +
+> > +smsm {
+> > +	compatible = "qcom,smsm";
+> > +
+> > +	#address-cells = <1>;
+> > +	#size-cells = <0>;
+> > +
+> > +	qcom,ipc-3 = <&apcs 8 19>;
+> 
+> Can we use something more descriptive here, for example
+> 
+> qcom,ipc-rpm = <&apcs 8 19>;
 
-[1] https://www.mail-archive.com/linux-gpio%40vger.kernel.org/msg09093.=
-html
+Not really, because in the view of smsm we don't now which host the rpm
+would represent. But most likely 3 would mean WCNSS, per the enum in
+caf.
 
-I'm working on a ASUS E202SA laptop, in which the brightness keys
-depend on this patch to work. Are any plans to have it integrated, in
-the original form or in any other?
+> 
+> and replace these magic numbers with defines?
+> 
 
-Thanks,
+I don't know what those defines would be named, what you have here is
+bit 19 in the 8th byte - straight from the register documentation.
 
+> > +
+> > +	apps_smsm: apps@0 {
+> > +		reg = <0>;
+> > +
+> > +		gpio-controller;
+> > +		#gpio-cells = <2>;
+> > +	};
+> > +
+> > +	wcnss_smsm: wcnss@7 {
+> > +		reg = <7>;
+> > +		interrupts = <0 144 1>;
+> > +
+> > +		interrupt-controller;
+> > +		#interrupt-cells = <2>;
+> > +	};
+> > +};
+
+Regards,
+Bjorn
 --
-Jo=C3=A3o Paulo Rechi Vita
-http://about.me/jprvita
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
