@@ -1,82 +1,96 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: Re: [PATCH 1/4] dt-binding: gpio: Add Qualcomm SMSM device tree
- documentation
-Date: Tue, 1 Sep 2015 14:50:29 -0700
-Message-ID: <20150901215029.GK13472@usrtlx11787.corpusers.net>
-References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
- <1440697078-4106-2-git-send-email-bjorn.andersson@sonymobile.com>
- <55E55F70.5050703@mm-sol.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH v2 1/8] pinctrl: freescale: imx: fix system crash if enable two pinctl instances
+Date: Tue, 1 Sep 2015 17:49:06 -0500
+Message-ID: <1441147753-13239-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55E55F70.5050703-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stanimir Varbanov <svarbanov-NEYub+7Iv8PQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0113.outbound.protection.outlook.com ([65.55.169.113]:7680
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754597AbbIAWux (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 1 Sep 2015 18:50:53 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Tue 01 Sep 01:18 PDT 2015, Stanimir Varbanov wrote:
+From: Robin Gong <b38343@freescale.com>
 
-> On 08/27/2015 08:37 PM, Bjorn Andersson wrote:
-> > This documents a device tree binding for exposing the Qualcomm Shared
-> > Memory State Machine as a set of gpio- and interrupt-controllers.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/gpio/qcom,smsm.txt         | 114 +++++++++++++++++++++
-> 
-> <snip>
-> 
-> > += EXAMPLE
-> > +The following example shows the SMEM setup for controlling properties of the
-> > +wireless processor, defined from the 8974 apps processor's point-of-view. It
-> > +encompasses one outbound entry and the outgoing interrupt for the wireless
-> > +processor.
-> > +
-> > +smsm {
-> > +	compatible = "qcom,smsm";
-> > +
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +
-> > +	qcom,ipc-3 = <&apcs 8 19>;
-> 
-> Can we use something more descriptive here, for example
-> 
-> qcom,ipc-rpm = <&apcs 8 19>;
+Fix system chrash caused by groups whose number is smaller than the number
+of groups of the last pinctl instance which is not initialized.
 
-Not really, because in the view of smsm we don't now which host the rpm
-would represent. But most likely 3 would mean WCNSS, per the enum in
-caf.
+iMX7D supports two iomux controllers (iomuxc-lpsr and iomuxc) on probing
+the second instance (iomuxc) the chrash below occurs.
 
-> 
-> and replace these magic numbers with defines?
-> 
+Uncompressing Linux... done, booting the kernel.
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 4.2.0-next-20150901-00006-gebfa43c (aalonso@bluefly)
+[    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7)
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasin instruction cache
+[    0.000000] Machine model: Freescale i.MX7 SabreSD Board
+[    0.661012] [<802a6cb0>] (strcmp) from [<802cc80c>] (imx_dt_node_to_map+0x58/0x208)
+[    0.668879] [<802cc80c>] (imx_dt_node_to_map) from [<802cbe24>] (pinctrl_dt_to_map+0x174/0x2b0)
+[    0.677654] [<802cbe24>] (pinctrl_dt_to_map) from [<802c8f18>] (pinctrl_get+0x100/0x424)
+[    0.685878] [<802c8f18>] (pinctrl_get) from [<802c9510>] (pinctrl_register+0x26c/0x480)
+[    0.694104] [<802c9510>] (pinctrl_register) from [<802ccf3c>] (imx_pinctrl_probe+0x580/0x6e8)
+[    0.702706] [<802ccf3c>] (imx_pinctrl_probe) from [<80351b58>] (platform_drv_probe+0x44/0xa4)
+[    0.711455] [<80351b58>] (platform_drv_probe) from [<803503ec>] (driver_probe_device+0x174/0x2b4)
+[    0.720405] [<803503ec>] (driver_probe_device) from [<803505fc>] (__driver_attach+0x8c/0x90)
+[    0.728982] [<803505fc>] (__driver_attach) from [<8034e930>] (bus_for_each_dev+0x6c/0xa0)
+[    0.737381] [<8034e930>] (bus_for_each_dev) from [<8034fb88>] (bus_add_driver+0x148/0x1f0)
+[    0.745804] [<8034fb88>] (bus_add_driver) from [<80350c00>] (driver_register+0x78/0xf8)
+[    0.753880] [<80350c00>] (driver_register) from [<800097d0>] (do_one_initcall+0x8c/0x1d4)
+[    0.762282] [<800097d0>] (do_one_initcall) from [<80987dac>] (kernel_init_freeable+0x144/0x1e4)
+[    0.771061] [<80987dac>] (kernel_init_freeable) from [<806d9c7c>] (kernel_init+0x8/0xe8)
+[    0.779285] [<806d9c7c>] (kernel_init) from [<8000f628>] (ret_from_fork+0x14/0x2c)
+[    0.786981] Code: e3520000 e5e32001 1afffffb e12fff1e (e4d03001)
 
-I don't know what those defines would be named, what you have here is
-bit 19 in the 8th byte - straight from the register documentation.
+Signed-off-by: Robin Gong <b38343@freescale.com>
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+Chages for V2:
+- Reorder patch series
+- Add platform boot up information on kernel error
+- Move gpr_index to imx_pinctrl_soc_info
 
-> > +
-> > +	apps_smsm: apps@0 {
-> > +		reg = <0>;
-> > +
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +	};
-> > +
-> > +	wcnss_smsm: wcnss@7 {
-> > +		reg = <7>;
-> > +		interrupts = <0 144 1>;
-> > +
-> > +		interrupt-controller;
-> > +		#interrupt-cells = <2>;
-> > +	};
-> > +};
+ drivers/pinctrl/freescale/pinctrl-imx.c | 3 +--
+ drivers/pinctrl/freescale/pinctrl-imx.h | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index d7b98ba..95db9e8 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -580,7 +580,6 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 	struct device_node *child;
+ 	struct imx_pmx_func *func;
+ 	struct imx_pin_group *grp;
+-	static u32 grp_index;
+ 	u32 i = 0;
+ 
+ 	dev_dbg(info->dev, "parse function(%d): %s\n", index, np->name);
+@@ -599,7 +598,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 
+ 	for_each_child_of_node(np, child) {
+ 		func->groups[i] = child->name;
+-		grp = &info->groups[grp_index++];
++		grp = &info->groups[info->grp_index++];
+ 		imx_pinctrl_parse_groups(child, grp, info, i++);
+ 	}
+ 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 49e55d3..26f8f1c 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -81,6 +81,7 @@ struct imx_pinctrl_soc_info {
+ 	struct imx_pmx_func *functions;
+ 	unsigned int nfunctions;
+ 	unsigned int flags;
++	u32 grp_index;
+ };
+ 
+ #define SHARE_MUX_CONF_REG	0x1
+-- 
+2.1.4
+
