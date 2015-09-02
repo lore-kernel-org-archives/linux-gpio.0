@@ -1,97 +1,52 @@
-From: Adrian Alonso <aalonso@freescale.com>
-Subject: [PATCH v2 7/8] pinctrl: freescale: imx7d: support iomux lpsr
- controller
-Date: Tue, 1 Sep 2015 17:49:12 -0500
-Message-ID: <1441147753-13239-7-git-send-email-aalonso@freescale.com>
-References: <1441147753-13239-1-git-send-email-aalonso@freescale.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and suspend resume
+Date: Wed, 2 Sep 2015 14:02:44 +0800
+Message-ID: <CAGS+omBnoitju07KQ1Y7JHTbce6+DO4WqWHTaKz5D+T157zEJA@mail.gmail.com>
+References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com> <55DB4609.5040904@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1441147753-13239-1-git-send-email-aalonso@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
-Cc: devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, yibin.gong@freescale.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55DB4609.5040904@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "maoguang.meng@mediatek.com" <maoguang.meng@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-iMX7D has two iomuxc controllers, iomuxc controller similar as
-previous iMX SoC generation and iomuxc-lpsr which provides low
-power state rentetion capabilities on gpios that are part of
-iomuxc-lpsr
+Hi maoguang,
 
-- Add iomuxc-lpsr gpio group id's
-- Use flag ZERO_OFFSET_VALID and SHARE_INPUT_SELECT_REG to
-  properly set pads from iomuxc-lpsr domain
+On Tue, Aug 25, 2015 at 12:27 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 14/08/15 09:38, maoguang.meng@mediatek.com wrote:
+>>
+>> From: Maoguang Meng <maoguang.meng@mediatek.com>
+>>
+>> This patch implement irq_set_wake to get who is wakeup source and
+>> setup on suspend resume.
+>>
+>> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+>>
+[snip]
 
-Signed-off-by: Adrian Alonso <aalonso@freescale.com>
----
-Changes for V2: Add imx7d_lpsr_pads enums
+Can you please respond to Sudeep's questions:
 
- drivers/pinctrl/freescale/pinctrl-imx7d.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> Does this pinmux controller:
+>
+> 1. Support wake-up configuration ? If not, you need to use
+>    IRQCHIP_SKIP_SET_WAKE. I don't see any value in writing the
+>    mask_{set,clear} if the same registers are used for {en,dis}able
+>
+> 2. Is in always on domain ? If not, you need save/restore only to
+>    resume back the functionality. Generally we can set
+>    IRQCHIP_MASK_ON_SUSPEND to ensure non-wake-up interrupts are
+>    disabled during suspend and re-enabled in resume path. You just
+>    save/restore raw values without tracking the wake-up source.
+>
+> Also I see that no care is taken to set the port irq as wake enable
+> source. It may work with current mainline, but won't with -next. Please
+> ensure the port irq to the parent interrupt controller remains
+> enabled(i.e set as wake).
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx7d.c b/drivers/pinctrl/freescale/pinctrl-imx7d.c
-index 1fa7530..b4d77e4 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx7d.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx7d.c
-@@ -174,6 +174,17 @@ enum imx7d_pads {
- 	MX7D_PAD_ENET1_COL = 154,
- };
- 
-+enum imx7d_lpsr_pads {
-+	MX7D_PAD_GPIO1_IO00 = 0,
-+	MX7D_PAD_GPIO1_IO01 = 1,
-+	MX7D_PAD_GPIO1_IO02 = 2,
-+	MX7D_PAD_GPIO1_IO03 = 3,
-+	MX7D_PAD_GPIO1_IO04 = 4,
-+	MX7D_PAD_GPIO1_IO05 = 5,
-+	MX7D_PAD_GPIO1_IO06 = 6,
-+	MX7D_PAD_GPIO1_IO07 = 7,
-+};
-+
- /* Pad names for the pinmux subsystem */
- static const struct pinctrl_pin_desc imx7d_pinctrl_pads[] = {
- 	IMX_PINCTRL_PIN(MX7D_PAD_RESERVE0),
-@@ -333,13 +344,32 @@ static const struct pinctrl_pin_desc imx7d_pinctrl_pads[] = {
- 	IMX_PINCTRL_PIN(MX7D_PAD_ENET1_COL),
- };
- 
-+/* Pad names for the pinmux subsystem */
-+static const struct pinctrl_pin_desc imx7d_lpsr_pinctrl_pads[] = {
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO00),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO01),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO02),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO03),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO04),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO05),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO06),
-+	IMX_PINCTRL_PIN(MX7D_PAD_GPIO1_IO07),
-+};
-+
- static struct imx_pinctrl_soc_info imx7d_pinctrl_info = {
- 	.pins = imx7d_pinctrl_pads,
- 	.npins = ARRAY_SIZE(imx7d_pinctrl_pads),
- };
- 
-+static struct imx_pinctrl_soc_info imx7d_lpsr_pinctrl_info = {
-+	.pins = imx7d_lpsr_pinctrl_pads,
-+	.npins = ARRAY_SIZE(imx7d_lpsr_pinctrl_pads),
-+	.flags = SHARE_INPUT_SELECT_REG | ZERO_OFFSET_VALID,
-+};
-+
- static struct of_device_id imx7d_pinctrl_of_match[] = {
- 	{ .compatible = "fsl,imx7d-iomuxc", .data = &imx7d_pinctrl_info, },
-+	{ .compatible = "fsl,imx7d-iomuxc-lpsr", .data = &imx7d_lpsr_pinctrl_info },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.1.4
+>
+> Regards,
+> Sudeep
