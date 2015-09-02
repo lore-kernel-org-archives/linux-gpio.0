@@ -1,71 +1,62 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 1/9] sh-pfc: modify PINMUX_IPSR_MSEL() macro order
-Date: Wed, 2 Sep 2015 17:05:36 +0900
-Message-ID: <20150902080534.GA31130@verge.net.au>
-References: <87wpw9jn3i.wl%kuninori.morimoto.gx@renesas.com>
- <87io7tjmk6.wl%kuninori.morimoto.gx@renesas.com>
+From: "Chen, Yu C" <yu.c.chen@intel.com>
+Subject: RE: Question about patch "pinctrl: cherryview: Do not mask all
+ interrupts on probe"
+Date: Wed, 2 Sep 2015 08:06:57 +0000
+Message-ID: <36DF59CE26D8EE47B0655C516E9CE6401CB03CF9@SHSMSX101.ccr.corp.intel.com>
+References: <CA+A7VXVOpLCvk3YLWq9=ESKGRUg3E+rBOV65eEEkw-TOTaCavQ@mail.gmail.com>
+ <20150902073633.GD1609@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49930 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751841AbbIBIFh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Sep 2015 04:05:37 -0400
-Content-Disposition: inline
-In-Reply-To: <87io7tjmk6.wl%kuninori.morimoto.gx@renesas.com>
+Received: from mga09.intel.com ([134.134.136.24]:39426 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751184AbbIBIHC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Sep 2015 04:07:02 -0400
+In-Reply-To: <20150902073633.GD1609@lahna.fi.intel.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, =?iso-8859-1?Q?Jo=E3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Zheng, Lv" <lv.zheng@intel.com>
 
-On Wed, Sep 02, 2015 at 07:44:55AM +0000, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> The difference between PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA()
-> are FN_xxx order, and PINMUX_IPSR_MSEL() is used only from r8a7778.
-> Now it r8a7778 works correctly with PINMUX_IPSR_MODSEL_DATA() order.
-> This means we can merge PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA().
-> 
-> Current PFC driver is very difficult to read, because macro names are
-> using different lenth. Especially PINMUX_IPSR_MODSEL_DATA() is well
-> used macro
-> 
-> 	PINMUX_IPSR_NOGP(ispr, ...)
-> 	PINMUX_IPSR_DATA(ipsr, ...)
-> 	PINMUX_IPSR_NOGM(ispr, ...)
-> 	PINMUX_IPSR_NOFN(ipsr, ...)
-> 	PINMUX_IPSR_MSEL(ipsr, ...)
-> 	PINMUX_IPSR_MODSEL_DATA(ipsr, ...)
-> 
-> It can be readable if we can merge PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA()
-> 
-> 	PINMUX_IPSR_NOGP(ispr, ...)
-> 	PINMUX_IPSR_DATA(ipsr, ...)
-> 	PINMUX_IPSR_NOGM(ispr, ...)
-> 	PINMUX_IPSR_NOFN(ipsr, ...)
-> 	PINMUX_IPSR_MSEL(ipsr, ...)
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+> -----Original Message-----
+> From: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]
+> Sent: Wednesday, September 02, 2015 3:37 PM
+> To: Jo=E3o Paulo Rechi Vita
+> Cc: linux-gpio@vger.kernel.org; Chen, Yu C
+> Subject: Re: Question about patch "pinctrl: cherryview: Do not mask a=
+ll
+> interrupts on probe"
+>=20
+> On Tue, Sep 01, 2015 at 04:09:12PM -0400, Jo=E3o Paulo Rechi Vita wro=
+te:
+> >
+> > I'm working on a ASUS E202SA laptop, in which the brightness keys
+> > depend on this patch to work. Are any plans to have it integrated, =
+in
+> > the original form or in any other?
+>=20
+> Adding Yu to the loop.
+>=20
+> Yu was investigating alternative ways to fix this. Did you come to so=
+me
+> conclusion?
 
-> ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> index 7cb1ed6..c8c1d49 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -179,7 +179,7 @@ struct sh_pfc_soc_info {
->  #define PINMUX_IPSR_NOFN(ipsr, fn, ms)					\
->  	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
->  #define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
-> -	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr, FN_##ms)
-> +	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
->  #define PINMUX_IPSR_MODSEL_DATA(ipsr, fn, ms)				\
->  	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
->  
-> -- 
-> 1.9.1
-> 
+Once I wrote a quirk patch to re-enable gpio irq in Embedded Controller=
+ driver, and since=20
+ec driver is loaded before pinctrl driver , I need to modify the patch =
+to add a delay 'request_irq'=20
+in ec driver, maybe a workqueue mechanism. Then I switched to some othe=
+r bugs..
+Yes, I'll continue this work recently, please stay tuned.
+Thanks
+Best Regards,
+Yu
+=20
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
