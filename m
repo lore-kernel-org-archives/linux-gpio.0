@@ -1,59 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/9 v2] sh-pfc: modify PINMUX_IPSR_MSEL() and r8a7795 support
-Date: Thu, 3 Sep 2015 09:23:07 +0200
-Message-ID: <CAMuHMdWC65qrYxdvxn2UBy5GTG+ECV0L6oxE5BmzHgjDa5m7zw@mail.gmail.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 9/9 v2] sh-pfc: r8a7795: add SCIFx support
+Date: Thu, 3 Sep 2015 17:11:03 +0900
+Message-ID: <CANqRtoSg_DcAQ2Z9e-Fd=LxH1qwsyYBx4hDGrkeLDuEKqZfFaw@mail.gmail.com>
 References: <87oahkql0v.wl%kuninori.morimoto.gx@renesas.com>
+	<87bndkqkuu.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:36630 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751021AbbICHXI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Sep 2015 03:23:08 -0400
-In-Reply-To: <87oahkql0v.wl%kuninori.morimoto.gx@renesas.com>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:35523 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185AbbICILG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Sep 2015 04:11:06 -0400
+In-Reply-To: <87bndkqkuu.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
 Hi Morimoto-san,
 
-On Thu, Sep 3, 2015 at 4:48 AM, Kuninori Morimoto
+On Thu, Sep 3, 2015 at 11:52 AM, Kuninori Morimoto
 <kuninori.morimoto.gx@renesas.com> wrote:
-> These are v2 of r8a7795 PFC support.
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 >
-> r8a7795 needs 1) 8) 9)
-> 2) - 7) are cleanup patches, but not related to r8a7795
+> This patch adds SCIF0/1/2/3/4/5
 >
-> This time r8a7795 PFC driver is using many macros.
-> I took precedence "readable code" more than "80 character".
-> These macro are same as "datasheet" style. So, I believe review is easy.
+> Original patch was created by Geert,
+> and Kuninori Morimoto updated it
 >
-> Kuninori Morimoto (9):
->       1) sh-pfc: modify PINMUX_IPSR_MSEL() macro order
->       2) sh-pfc: pfc-sh7734: use PINMUX_IPSR_MSEL()
->       3) sh-pfc: pfc-r8a7794: use PINMUX_IPSR_MSEL()
->       4) sh-pfc: pfc-r8a7791: use PINMUX_IPSR_MSEL()
->       5) sh-pfc: pfc-r8a7790: use PINMUX_IPSR_MSEL()
->       6) sh-pfc: pfc-r8a7779: use PINMUX_IPSR_MSEL()
->       7) sh-pfc: remove unused PINMUX_IPSR_MODSEL_DATA()
->       8) sh-pfc: Initial R8A7795 PFC support
->       9) sh-pfc: r8a7795: add SCIFx support
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v1 -> v2
+>
+>  - Add Laurent Acked-by
 
-Thank you.
+Thanks for your update, Morimoto-san!
 
-Imported as renesas-drivers#topic/r8a7795-pfc-v2.
+One quick question from my side: Is it intentional that you have the
+"From: Kuninori Morimoto.." line at the top?
 
-P.S. Renamed topic/r8a7795-pfc-v1 to topic/r8a7795-pfc-rfc,
-             topic/r8a7795-pfc-v2 to topic/r8a7795-pfc-v1.
+It looks a bit strange to me. Since Geert wrote the patch according to
+your commit message and his Signed-off-by is at the top, shouldn't the
+top line also be "From: Geert Uytterhoeven..."?
 
-Gr{oetje,eeting}s,
+Thanks,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+/ magnus
