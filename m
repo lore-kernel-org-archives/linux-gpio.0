@@ -1,69 +1,64 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
-Date: Fri, 4 Sep 2015 09:39:38 +0200
-Message-ID: <20150904073938.GX30993@kw.sim.vm.gnt>
-References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
- <7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
- <20150821175216.GE1729@kw.sim.vm.gnt>
- <20150821224824.3406caa0@x2>
- <20150903200540.399a96b8@x2>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: omap: Fix GPIO numbering for deferred probe
+Date: Fri, 4 Sep 2015 13:00:38 +0300
+Message-ID: <55E96BC6.1040003@ti.com>
+References: <1441301487-6238-1-git-send-email-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Hy4a9G0dOYssRJVI"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:44939 "EHLO vm1.sequanux.org"
+Received: from comal.ext.ti.com ([198.47.26.152]:46097 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752810AbbIDHef (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 4 Sep 2015 03:34:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20150903200540.399a96b8@x2>
+	id S1758417AbbIDKBQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 4 Sep 2015 06:01:16 -0400
+In-Reply-To: <1441301487-6238-1-git-send-email-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vincent Pelletier <plr.vincent@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
+On 09/03/2015 08:31 PM, Tony Lindgren wrote:
+> If gpio-omap probe fails with -EPROBE_DEFER, the GPIO numbering
+> keeps increasing. Only increase the gpio count if gpiochip_add()
+> was successful as otherwise the numbers will increase for each
+> probe attempt.
+>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Kevin Hilman <khilman@deeprootsystems.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>   drivers/gpio/gpio-omap.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1095,7 +1095,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   	} else {
+>   		bank->chip.label = "gpio";
+>   		bank->chip.base = gpio;
+> -		gpio += bank->width;
+>   	}
+>   	bank->chip.ngpio = bank->width;
+>
+> @@ -1105,6 +1104,9 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>   		return ret;
+>   	}
+>
+> +	if (!bank->is_mpuio)
+> +		gpio += bank->width;
+> +
+>   #ifdef CONFIG_ARCH_OMAP1
+>   	/*
+>   	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
+>
 
---Hy4a9G0dOYssRJVI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Thu, Sep 03, 2015 at 08:05:40PM +0200, Vincent Pelletier wrote:
-> Hi,
->=20
-> On Fri, 21 Aug 2015 22:48:24 +0200, Vincent Pelletier
-> <plr.vincent@gmail.com> wrote:
-> > On Fri, 21 Aug 2015 19:52:16 +0200, Simon Guinot
-> > <simon.guinot@sequanux.org> wrote:
-> > > Please, could you describe a setup (as simple as possible) allowing to
-> > > reproduce the issue ? I'll try it on my side.
-> > [...]
-> > > Please try to make the module list needed to reproduce the issue as
-> > > short as possible. Ideally only gpio_f7188x would be needed.
-> >=20
-> > The simplest I could find so far needs gpio-input-polled with 20ms
-> > polling period (I didn't try to change polling period), and a shell loop
-> > writing to gpioXX/value.
->=20
-> Have you had a chance to reproduce this issue ?
-> Can I do something to help ?
+With hope that only GPIO0 will be deferred, otherwise
+there will be total mess in gpios enumeration ;)
 
-Still not but it is on my todo list.
-
-Regards,
-
-Simon
-
---Hy4a9G0dOYssRJVI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlXpSroACgkQgtp0PDeOcDps2wCffr8Hdo+mx6UIrM8i64SfO8qv
-qUcAnib74sIxivGKbPu+qyGtzxMbH4T/
-=Wy7Q
------END PGP SIGNATURE-----
-
---Hy4a9G0dOYssRJVI--
+-- 
+regards,
+-grygorii
