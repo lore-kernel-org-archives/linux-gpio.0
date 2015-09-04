@@ -1,367 +1,131 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] bulk of pin control changes for v4.3
-Date: Fri, 4 Sep 2015 14:51:32 +0200
-Message-ID: <CACRpkdbEJQPMzQJ8=spC6+5R9GibVdSgeApDCcXR1O335V4RvA@mail.gmail.com>
+From: Vincent Donnefort <vdonnefort@gmail.com>
+Subject: Re: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
+Date: Fri, 4 Sep 2015 15:48:54 +0200
+Message-ID: <20150904134853.GA24722@ns3274321.ip-5-39-88.eu>
+References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
+ <7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
+ <20150821175216.GE1729@kw.sim.vm.gnt>
+ <20150821224824.3406caa0@x2>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36212 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754940AbbIDMvd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Sep 2015 08:51:33 -0400
-Received: by oibi136 with SMTP id i136so11146967oib.3
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2015 05:51:33 -0700 (PDT)
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:35980 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933296AbbIDNs5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Sep 2015 09:48:57 -0400
+Received: by wibz8 with SMTP id z8so18389074wib.1
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2015 06:48:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20150821224824.3406caa0@x2>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-
-Hi Linus,
-
-this is the bulk changes for the v4.3 that have been stacking up in
-my tree. Like with GPIO it's a lot of stuff. If my subsystems are any
-sign of the overall tempo of the kernel v4.3 will be a gigantic diff.
-
-One dependency patch is for the clk subsystem, this has been acked
-by the maintainer to go this route.
-
-The patch from the kbuild robot is coming from Fengguang's mail
-address but I guess unless he signed it off personally it's actually an
-AI coding the kernel.
-
-Please pull it in!
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit bc0195aad0daa2ad5b0d76cce22b167bc3435590:
-
-  Linux 4.2-rc2 (2015-07-12 15:10:30 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.3-1
-
-for you to fetch changes up to 1ab36387ea4face01aac3560b396b1e2ce07c4ff:
-
-  pinctrl: at91: fix null pointer dereference (2015-08-30 21:58:53 +0200)
-
-----------------------------------------------------------------
-This is the bulk of pin control changes for the v4.3 development
-cycle
-
-Core changes:
-
-- It is possible configure groups in debugfs.
-
-- Consolidation of chained IRQ handler install/remove replacing
-  all call sites where irq_set_handler_data() and
-  irq_set_chained_handler() were done in succession with a
-  combined call to irq_set_chained_handler_and_data(). This
-  series was created by Thomas Gleixner after the problem was
-  observed by Russell King.
-
-- Tglx also made another series of patches switching
-  __irq_set_handler_locked() for irq_set_handler_locked() which
-  is way cleaner.
-
-- Tglx also wrote a good bunch of patches to make use of
-  irq_desc_get_xxx() accessors and avoid looking up irq_descs
-  from IRQ numbers. The goal is to get rid of the irq number
-  from the handlers in the IRQ flow which is nice.
-
-Driver feature enhancements:
-
-- Power management support for the SiRF SoC Atlas 7.
-
-- Power down support for the Qualcomm driver.
-
-- Intel Cherryview and Baytrail: switch drivers to use raw
-  spinlocks in IRQ handlers to play nice with the realtime
-  patch set.
-
-- Rework and new modes handling for Qualcomm SPMI-MPP.
-
-- Pinconf power source config for SH PFC.
-
-New drivers and subdrivers:
-
-- A new driver for Conexant Digicolor CX92755.
-
-- A new driver for UniPhier PH1-LD4, PH1-Pro4, PH1-sLD8,
-  PH1-Pro5, ProXtream2 and PH1-LD6b SoC pin control support.
-
-- Reverse-egineered the S/PDIF settings for the Allwinner
-  sun4i driver.
-
-- Support for Qualcomm Technologies QDF2xxx ARM64 SoCs
-
-- A new Freescale i.mx6ul subdriver.
-
-Cleanup:
-
-- Remove platform data support in a number of SH PFC
-  subdrivers.
-
-----------------------------------------------------------------
-Baruch Siach (2):
-      pinctrl: dt-binding: document Conexant CX92755 SoC
-      pinctrl: driver for Conexant Digicolor CX92755 pin mapping
-
-Ben Hutchings (1):
-      pinctrl: sh-pfc: Implement pinconf power-source param for
-voltage switching
-
-Bjorn Andersson (7):
-      pinctrl: qcom: spmi-mpp: Transition to generic dt binding parser
-      pinctrl: qcom: spmi-mpp: Fixes related to enable handling
-      pinctrl: qcom: spmi-mpp: Introduce defines for MODE_CTL
-      pinctrl: qcom: spmi-mpp: Implement support for sink mode
-      pinctrl: qcom: spmi-mpp: Add support for setting analog output level
-      pinctrl: qcom: spmi-mpp: Transpose pinmux function
-      pinctrl: qcom: ssbi: Family A gpio & mpp drivers
-
-Colin Ian King (1):
-      pinctrl/mediatek: fix spelling mistake in dev_err error message
-
-Dan Carpenter (2):
-      pinctrl: samsung: don't truncate the last char
-      pinctrl: samsung: remove "out of memory" messages
-
-David Dueck (1):
-      pinctrl: at91: fix null pointer dereference
-
-Fabio Estevam (1):
-      pinctrl: imx6ul: Remove .owner field
-
-Frank Li (1):
-      pinctrl: imx: add i.mx6ul subdriver
-
-Geert Uytterhoeven (6):
-      pinctrl: sh-pfc: Convert to platform_get_*()
-      pinctrl: sh-pfc: sh73a0: Remove obsolete multi-platform check
-      pinctrl: sh-pfc: Remove obsolete sh73a0 platform_device_id entry
-      pinctrl: sh-pfc: r8a7740: Remove obsolete multi-platform check
-      pinctrl: sh-pfc: Remove obsolete r8a7740 platform_device_id entry
-      pinctrl: at91: Use generic irq_{request,release}_resources()
-
-Grygorii Strashko (1):
-      pinctrl: single: dra7: remove PCS_QUIRK_SHARED_IRQ
-
-Heiko Stuebner (1):
-      clk: rockchip: add pclk_pd_pmu to the list of rk3288 critical clocks
-
-Hongzhou Yang (1):
-      pinctrl: mediatek: Fix multiple registration issue.
-
-Jiang Liu (1):
-      pinctrl: Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc
-
-Joachim Eastwood (1):
-      pinctrl: lpc18xx: add support for usb1 pinconf
-
-Jon Hunter (2):
-      pinctrl: pinconf: Allow groups to be configured via debugfs
-      pinctrl: pinconf: Fix display of configs
-
-Krzysztof Kozlowski (2):
-      pinctrl: sirf: Drop owner assignment from platform_driver
-      MAINTAINERS: pinctrl: Move Thomas Abraham to CREDITS
-
-Laurent Pinchart (3):
-      sh-pfc: r8a7790: remove non-existing GPIO pins
-      sh-pfc: r8a7791: remove non-existing GPIO pins
-      pinctrl: sh-pfc: Accept standard function, pins and groups properties
-
-Lin Huang (1):
-      pinctrl: rockchip: only enable gpio clock when it setting
-
-Linus Walleij (7):
-      pinctrl: nomadik: break out state container allocator
-      pinctrl: nomadik: find chip from local array
-      pinctrl: nomadik: assure GPIO chips are populated
-      pinctrl/ARM: move GPIO and pinctrl deps to device tree
-      pinctrl: nomadik: depromote GPIO to subsystem_init()
-      pinctrl: nomadik: split stn8815 UART0 pin groups
-      pinctrl: nomadik: reflect current input value
-
-Maoguang Meng (1):
-      pinctrl: mediatek: Implement wake handler and suspend resume
-
-Marcus Cooper (1):
-      pinctrl: sun4i: add spdif to pin description.
-
-Mario Bambagini (1):
-      added tabs instead of spaces
-
-Masahiro Yamada (13):
-      pinctrl: simplify of_pinctrl_get()
-      pinctrl: UniPhier: add UniPhier pinctrl core support
-      pinctrl: UniPhier: add UniPhier PH1-LD4 pinctrl driver
-      pinctrl: UniPhier: add UniPhier PH1-Pro4 pinctrl driver
-      pinctrl: UniPhier: add UniPhier PH1-sLD8 pinctrl driver
-      pinctrl: UniPhier: add UniPhier PH1-Pro5 pinctrl driver
-      pinctrl: UniPhier: add UniPhier ProXstream2 pinctrl driver
-      pinctrl: UniPhier: add UniPhier PH1-LD6b pinctrl driver
-      pinctrl: move CONFIG_PINCTRL to drivers/Makefile
-      pinctrl: use dev_err() to show message in pinctrl_register_one_pin()
-      pinctrl: use dev_err() to show message in pinmux_func_name_to_selector()
-      pinctrl: join dev_dbg strings into a single line
-      pinctrl: UniPhier: PH1-Pro5: add I2C ch6 pin-mux setting
-
-Maxime Ripard (3):
-      pinctrl: sunxi: Use common functions to change irq_chip and handler
-      pinctrl: sunxi: Add irq_chip name
-      pinctrl: sunxi: Add custom irq_domain_ops
-
-Mika Westerberg (5):
-      pinctrl: cherryview: Serialize all register access
-      pinctrl: baytrail: Drop FSF mailing address
-      pinctrl: baytrail: Serialize all register access
-      pinctrl: baytrail: Use raw_spinlock for locking
-      pinctrl: cherryview: Use raw_spinlock for locking
-
-Mike Looijmans (1):
-      pinctrl: zynq: Fix typos in smc0_nand_grp and smc0_nor_grp
-
-Rob Herring (1):
-      pinctrl: kill off set_irq_flags usage
-
-Shinobu Uehara (1):
-      pinctrl: sh-pfc: r8a7794: add USB pin groups
-
-Stephen Boyd (1):
-      pinctrl: qcom: Hook pm_power_down for shutdown support
-
-Thomas Gleixner (21):
-      pinctrl/rockchip: Consolidate chained IRQ handler install/remove
-      pinctrl: Consolidate chained IRQ handler install/remove
-      pinctrl/exynos: Consolidate chained IRQ handler install/remove
-      pinctrl/bcm2835: Use irq_set_handler_locked()
-      pinctrl/baytrail: Use irq_set_handler_locked()
-      pinctrl/cherryview: Use irq_set_handler_locked()
-      pinctrl/intel: Use irq_set_handler_locked()
-      pinctrl/adi2: Use irq_set_handler_locked()
-      pinctrl/amd: Use irq_set_handler_locked()
-      pinctrl/at91: Use irq_set_handler_locked()
-      pinctrl/rockchip: Use irq_set_handler_locked()
-      pinctrl/qcom: Use irq_set_handler_locked()
-      pinctrl/exynos: Use irq_set_handler_locked()
-      pinctrl/samsung: Use irq_set_handler_locked()
-      pinctrl/amd: Prepare amd_gpio_irq_handler for irq argument removal
-      pinctrl/coh901: Prepare u300_gpio_irq_handler for irq argument removal
-      pinctrl/pistachio: Prepare pistachio_gpio_irq_handler for irq
-argument removal
-      pinctrl/rockchip: Prepare rockchip_irq_demux for irq argument removal
-      pinctrl/qcom/msm: Prepare msm_gpio_irq_handler for irq argument removal
-      pinctrl/sirf: Prepare xxx_gpio-handle_irq for irq argument removal
-      pinctrl/sunxi: Prepare sunxi_pinctrl_irq_handler for irq argument removal
-
-Timur Tabi (1):
-      pinctrl: add support for Qualcomm Technologies QDF2xxx ARM64 SoCs
-
-Wei Chen (2):
-      pinctrl: sirf: add power management support for atlas7
-      pinctrl: atlas7: clear ugly branch statements for pull and drivestrength
-
-kbuild test robot (1):
-      pinctrl: pinconf: pinconf_show_config() can be static
-
- CREDITS                                            |    4 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   37 +-
- .../bindings/pinctrl/cnxt,cx92755-pinctrl.txt      |   86 ++
- .../devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  |   36 +-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   24 +-
- .../devicetree/bindings/pinctrl/ste,nomadik.txt    |    7 +-
- MAINTAINERS                                        |    1 -
- arch/arm/boot/dts/ste-dbx5x0.dtsi                  |   23 +-
- arch/arm/boot/dts/ste-nomadik-stn8815.dtsi         |    8 +-
- drivers/Makefile                                   |    2 +-
- drivers/clk/rockchip/clk-rk3288.c                  |    1 +
- drivers/pinctrl/Kconfig                            |    7 +
- drivers/pinctrl/Makefile                           |    8 +-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              |    5 +-
- drivers/pinctrl/core.c                             |    3 +-
- drivers/pinctrl/devicetree.c                       |    8 +-
- drivers/pinctrl/freescale/Kconfig                  |    7 +
- drivers/pinctrl/freescale/Makefile                 |    1 +
- drivers/pinctrl/freescale/pinctrl-imx6ul.c         |  322 ++++
- drivers/pinctrl/intel/pinctrl-baytrail.c           |   68 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c         |   76 +-
- drivers/pinctrl/intel/pinctrl-intel.c              |    6 +-
- drivers/pinctrl/mediatek/pinctrl-mt8173.c          |    1 +
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  120 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.h      |    5 +
- drivers/pinctrl/nomadik/pinctrl-nomadik-db8500.c   |   21 -
- drivers/pinctrl/nomadik/pinctrl-nomadik-db8540.c   |   24 -
- drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c  |   30 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  241 +--
- drivers/pinctrl/nomadik/pinctrl-nomadik.h          |    4 -
- drivers/pinctrl/pinconf.c                          |   88 +-
- drivers/pinctrl/pinctrl-adi2-bf60x.c               |    8 +-
- drivers/pinctrl/pinctrl-adi2.c                     |    4 +-
- drivers/pinctrl/pinctrl-amd.c                      |   15 +-
- drivers/pinctrl/pinctrl-at91.c                     |   51 +-
- drivers/pinctrl/pinctrl-coh901.c                   |    7 +-
- drivers/pinctrl/pinctrl-digicolor.c                |  378 +++++
- drivers/pinctrl/pinctrl-lpc18xx.c                  |   54 +-
- drivers/pinctrl/pinctrl-pistachio.c                |    6 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |   71 +-
- drivers/pinctrl/pinctrl-single.c                   |   14 +-
- drivers/pinctrl/pinctrl-st.c                       |    6 +-
- drivers/pinctrl/pinctrl-zynq.c                     |    4 +-
- drivers/pinctrl/pinmux.c                           |    3 +-
- drivers/pinctrl/qcom/Kconfig                       |   20 +
- drivers/pinctrl/qcom/Makefile                      |    3 +
- drivers/pinctrl/qcom/pinctrl-msm.c                 |   19 +-
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c             |  122 ++
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            |  376 +++--
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c           |  791 ++++++++++
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c            |  882 +++++++++++
- drivers/pinctrl/samsung/pinctrl-exynos.c           |   18 +-
- drivers/pinctrl/samsung/pinctrl-exynos5440.c       |   90 +-
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c          |   28 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c          |   34 +-
- drivers/pinctrl/sh-pfc/core.c                      |   52 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c               |    4 -
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c               |   21 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   19 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c               |   30 +
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c                |    4 -
- drivers/pinctrl/sh-pfc/pinctrl.c                   |   86 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    5 +
- drivers/pinctrl/sirf/pinctrl-atlas7.c              |  525 +++++--
- drivers/pinctrl/sirf/pinctrl-sirf.c                |    5 +-
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |   17 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   62 +-
- drivers/pinctrl/uniphier/Kconfig                   |   32 +
- drivers/pinctrl/uniphier/Makefile                  |    8 +
- drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c         |  886 +++++++++++
- drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c        | 1274 ++++++++++++++++
- drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c        | 1554 ++++++++++++++++++++
- drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c        | 1351 +++++++++++++++++
- drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c        |  794 ++++++++++
- drivers/pinctrl/uniphier/pinctrl-proxstream2.c     | 1269 ++++++++++++++++
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c   |  684 +++++++++
- drivers/pinctrl/uniphier/pinctrl-uniphier.h        |  217 +++
- include/dt-bindings/pinctrl/qcom,pmic-mpp.h        |   51 +
- 78 files changed, 12274 insertions(+), 954 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/cnxt,cx92755-pinctrl.txt
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx6ul.c
- create mode 100644 drivers/pinctrl/pinctrl-digicolor.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
- create mode 100644 drivers/pinctrl/uniphier/Kconfig
- create mode 100644 drivers/pinctrl/uniphier/Makefile
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-proxstream2.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
- create mode 100644 drivers/pinctrl/uniphier/pinctrl-uniphier.h
+To: Vincent Pelletier <plr.vincent@gmail.com>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, linux-gpio@vger.kernel.org, Yoann Sculo <yoann@sculo.fr>
+
+Hi Vincent.
+
+I'm working with Simon and I'm trying to reproduce the error you
+encountered with the f7188x driver.
+
+On Fri, Aug 21, 2015 at 10:48:24PM +0200, Vincent Pelletier wrote:
+> Hello Simon,
+> 
+> Thanks for reviewing my patch.
+> 
+> On Fri, 21 Aug 2015 19:52:16 +0200, Simon Guinot
+> <simon.guinot@sequanux.org> wrote:
+> > IMHO, understand *clearly* the issue could be a good start in order to
+> > fix it efficiently.
+> 
+> I totally agree, but have no idea how to debug further.
+> Could you suggest any mechanism to debug *_resource ?
+> 
+> > Please, could you describe a setup (as simple as possible) allowing to
+> > reproduce the issue ? I'll try it on my side.
+> [...]
+> > Please try to make the module list needed to reproduce the issue as
+> > short as possible. Ideally only gpio_f7188x would be needed.
+> 
+> The simplest I could find so far needs gpio-input-polled with 20ms
+> polling period (I didn't try to change polling period), and a shell loop
+> writing to gpioXX/value.
+> 
+> I'm using the following platform driver to declare a single
+> gpio-input-polled key:
+>   https://github.com/vpelletier/linux/blob/free_nonexistent_resource/drivers/platform/x86/qnap-tsx51.c
+> Full version of this driver:
+>   https://github.com/vpelletier/linux/blob/ts651/drivers/platform/x86/qnap-tsx51.c
+>   (ignore code surrounded with '#if QNAP_TSX51_GPIOD', it is
+>   still broken).
+> 
+> It should be easy to create a variant fitting another board, as long
+> as you can recycle two GPIOs.
+> 
+> Once I've unloaded all other listed drivers for this chip and loaded
+> the stripped-down qnap-tsx51 version:
+> Terminal 0:
+>   echo 0 > /sys/devices/system/cpu/cpu1/online
+> Terminal 1:
+>   cd /sys/class/gpio/
+>   echo 62 > export
+>   cd gpio62
+>   echo "out" > direction
+>   while :; echo 0 > value; echo 1 > value; done
+> No error so far.
+> Terminal 1:
+>   echo 1 > /sys/devices/cpu/cpu1/online
+> After a few (10 to 30) seconds, tty is flooded with the error I
+> reported.
+> 
+> Stopping the loop stop the error.
+> I have seen rare cases where a few extra messages could occur within
+> the next minute or so, but this was before I stripped most out of the
+> platform driver.
+> 
+
+I didn't manage to see the error you were talking about. To
+make sure I understood correctly your previous e-mail and since I saw
+some problems with commands you gave, here's what I tested on a
+4.2-rc7:
+
+$ echo 62 > /sys/class/gpio/export
+$ cd /sys/class/gpio/gpio62
+$ while true;do echo 0 > value; echo 1 > value; done
+
+... I let the loop running during several minutes without having any error.
+Let me know if these commands are enough for you to reproduce the issue.
+
+I also tried as you, to remove/add CPUs but it didn't triggered
+anything more.
+
+$ for i in $(seq 1 3); do echo 0 > /sys/devices/system/cpu/cpu$i/online; done
+$ echo 1 > /sys/devices/system/cpu/cpu1/online
+
+The last thing I tested is to perform SuperI/O access through the
+hmon driver while running the gpio loop. But once again no problem
+appeared.
+
+> With just two such loops poking at (out) GPIOs, it does not happen.
+> 
+> I'm testing this on v4.1.4 with the following patch applied (the error
+> happened before and after that patch, so it likely does not matter):
+>   https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=7e08117de6ee17ae6c8f2983999a98cb95eb9bc2
+> 
+> CPU is an intel celeron J1800, dual-core at 2.41GHz.
+> Exact board is this machine's motherboard:
+>   https://www.qnap.com/i/fr/product/model.php?II=144
+> 
+> > Unfortunately the f71882fg and f71889f Super-I/Os don't provide an
+> > I/O region dedicated to GPIOs. If it was the case, I would have used
+> > this way. But for this Super-I/O models, the GPIOs have to be configured
+> > through the global registers. That's why your patch breaks support with
+> > this models.
+> 
+> Wow, I didn't expect such difference between models otherwise handled
+> the same way in hwmon/f71882fg.c . I guess the GPIO function works
+> differently from hwmon function in these models (hwmon still having
+> dedicated IO range, not GPIO).
+> 
+> Regards,
+> -- 
+> Vincent Pelletier
