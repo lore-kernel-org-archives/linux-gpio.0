@@ -1,59 +1,66 @@
-From: Peng Fan <van.freenix@gmail.com>
-Subject: Re: [PATCH] gpio: gpiolib: use devm_* API to simplify driver code
-Date: Sat, 5 Sep 2015 21:32:52 +0800
-Message-ID: <20150905133251.GA17774@linux-4gyl.site>
-References: <1440417930-15876-1-git-send-email-van.freenix@gmail.com>
- <55DC2997.9030705@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH] gpio-pca953x driver and PCA9536 chip
+Date: Sat, 5 Sep 2015 23:15:05 +0200
+Message-ID: <CACRpkdZcju7tpoi9+R4Bb98FEJNSfmYaRyLp7YF2ZT+hjkAMVA@mail.gmail.com>
+References: <55E4641D.7050603@elpromaelectronics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:34332 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431AbbIENcV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Sep 2015 09:32:21 -0400
-Content-Disposition: inline
-In-Reply-To: <55DC2997.9030705@ti.com>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:36732 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752211AbbIEVPH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Sep 2015 17:15:07 -0400
+Received: by obqa2 with SMTP id a2so39709535obq.3
+        for <linux-gpio@vger.kernel.org>; Sat, 05 Sep 2015 14:15:05 -0700 (PDT)
+In-Reply-To: <55E4641D.7050603@elpromaelectronics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Janusz_U=C5=BCycki?= <j.uzycki@elpromaelectronics.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Joshua Scott <joshua.scott@alliedtelesis.co.nz>, Toby Smith <toby@tismith.id.au>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Borgulski <k.borgulski@elproma.com.pl>
 
-On Tue, Aug 25, 2015 at 11:38:47AM +0300, Grygorii Strashko wrote:
-> On 08/24/2015 03:05 PM, Peng Fan wrote:
-> >Use devm_* API to simplify driver code.
-> >
-> >Signed-off-by: Peng Fan <van.freenix@gmail.com>
-> >Cc: Linus Walleij <linus.walleij@linaro.org>
-> >Cc: Alexandre Courbot <gnurou@gmail.com>
->  ---
-> >  drivers/gpio/gpiolib.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> >
-> >diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> >index 6bc612b..f9470b0 100644
-> >--- a/drivers/gpio/gpiolib.c
-> >+++ b/drivers/gpio/gpiolib.c
-> >@@ -243,7 +243,8 @@ int gpiochip_add(struct gpio_chip *chip)
-> >  	int		base = chip->base;
-> >  	struct gpio_desc *descs;
-> >
-> >-	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
-> >+	descs = devm_kcalloc(chip->dev, chip->ngpio, sizeof(descs[0]),
-> >+			     GFP_KERNEL);
-> 
-> ^ above will not work for every one as NOT all GPIO drivers
-> implemented using dev/drv model, so chip->dev could be not set
-> (at least it was true when I've checked it last time).
-> 
+Adding linux-gpio and some people that have been patching
+this driver to TO-line.
 
-Thanks for correcting me!
+Grygorii et al, does this look correct? Anyone who can test and
+send a patch for mainline?
 
-Regards,
-Peng.
+Yours,
+Linus Walleij
 
-> 
-> 
-> 
-> -- 
-> regards,
-> -grygorii
+On Mon, Aug 31, 2015 at 4:26 PM, Janusz U=C5=BCycki
+<j.uzycki@elpromaelectronics.com> wrote:
+> Hi,
+>
+> The driver sets register #02 (inversion) to 0x01 instead of 0x00 on m=
+y
+> board.
+> Reason: device_pca953x_init() does not initialize val buffer because =
+NBANK()
+> returns
+> for PCA9536 ngpio=3D4 value 0 instead of 1.
+>
+> My proposed code-patch for 3.14.17 is below.
+> Because I don't work on stable/next I can't deliver complete/ready pa=
+tch.
+> Please for comments.
+>
+> best regards
+> Janusz
+>
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -75,7 +75,7 @@ MODULE_DEVICE_TABLE(i2c, pca953x_id);
+>  #define MAX_BANK 5
+>  #define BANK_SZ 8
+>
+> -#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
+> +#define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
+>
+>  struct pca953x_chip {
+>         unsigned gpio_start;
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
