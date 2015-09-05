@@ -1,70 +1,38 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] gpio: omap: Fix GPIO numbering for deferred probe
-Date: Fri, 4 Sep 2015 16:52:35 -0700
-Message-ID: <20150904235235.GB4215@atomide.com>
-References: <1441301487-6238-1-git-send-email-tony@atomide.com>
- <55E96BC6.1040003@ti.com>
+From: Vincent Pelletier <plr.vincent@gmail.com>
+Subject: Re: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
+Date: Sat, 5 Sep 2015 09:43:56 +0200
+Message-ID: <20150905094356.6e6588ef@x2>
+References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
+	<7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
+	<20150821175216.GE1729@kw.sim.vm.gnt>
+	<20150821224824.3406caa0@x2>
+	<20150904134853.GA24722@ns3274321.ip-5-39-88.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:48715 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760787AbbIDXwn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 4 Sep 2015 19:52:43 -0400
-Content-Disposition: inline
-In-Reply-To: <55E96BC6.1040003@ti.com>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:38743 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750712AbbIEHmc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Sep 2015 03:42:32 -0400
+Received: by wiclk2 with SMTP id lk2so37105720wic.1
+        for <linux-gpio@vger.kernel.org>; Sat, 05 Sep 2015 00:42:31 -0700 (PDT)
+In-Reply-To: <20150904134853.GA24722@ns3274321.ip-5-39-88.eu>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
+To: Vincent Donnefort <vdonnefort@gmail.com>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, linux-gpio@vger.kernel.org, Yoann Sculo <yoann@sculo.fr>
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [150904 03:04]:
-> On 09/03/2015 08:31 PM, Tony Lindgren wrote:
-> >If gpio-omap probe fails with -EPROBE_DEFER, the GPIO numbering
-> >keeps increasing. Only increase the gpio count if gpiochip_add()
-> >was successful as otherwise the numbers will increase for each
-> >probe attempt.
-> >
-> >Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> >Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> >Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> >Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> >Signed-off-by: Tony Lindgren <tony@atomide.com>
-> >---
-> >  drivers/gpio/gpio-omap.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> >--- a/drivers/gpio/gpio-omap.c
-> >+++ b/drivers/gpio/gpio-omap.c
-> >@@ -1095,7 +1095,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
-> >  	} else {
-> >  		bank->chip.label = "gpio";
-> >  		bank->chip.base = gpio;
-> >-		gpio += bank->width;
-> >  	}
-> >  	bank->chip.ngpio = bank->width;
-> >
-> >@@ -1105,6 +1104,9 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
-> >  		return ret;
-> >  	}
-> >
-> >+	if (!bank->is_mpuio)
-> >+		gpio += bank->width;
-> >+
-> >  #ifdef CONFIG_ARCH_OMAP1
-> >  	/*
-> >  	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
-> >
-> 
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> With hope that only GPIO0 will be deferred, otherwise
-> there will be total mess in gpios enumeration ;)
+Hi Vincent,
 
-Heh nope :) If pinctrl currently ever causes deferred probe
-things will get totally messed up.. Works fine after $subject
-patch.
+On Fri, 4 Sep 2015 15:48:54 +0200, Vincent Donnefort
+<vdonnefort@gmail.com> wrote:
+> ... I let the loop running during several minutes without having any error.
+> Let me know if these commands are enough for you to reproduce the issue.
+
+Did you also have gpio-input-polled active on another pin on the same
+chip ?
 
 Regards,
-
-Tony
+-- 
+Vincent Pelletier
