@@ -1,44 +1,58 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Single gpio shared by LED and switch?
-Date: Mon, 07 Sep 2015 15:03:50 +0200
-Message-ID: <55ED8B36.60108@samsung.com>
-References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH 0/5] New Atmel PIO4 pinctrl/gpio driver
+Date: Mon, 7 Sep 2015 15:12:10 +0200
+Message-ID: <20150907131210.GC32379@odux.rfo.atmel.com>
+References: <1439281685-3020-1-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:14682 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751252AbbIGNDy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2015 09:03:54 -0400
-In-reply-to: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:22577 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750885AbbIGNPQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2015 09:15:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1439281685-3020-1-git-send-email-ludovic.desroches@atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: s.hauer@pengutronix.de, linus.walleij@linaro.org, nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-Hi Geert,
+Hi Sascha,
 
-On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
+Any comments about this version? Maybe you missed it since you answered
+me on the RFC version. Of course I'll do the changes you requested for
+the next version (remove gpio_request_*() stuff and add macros for gpio
+muxing case).
+
+Thanks
+
+Ludovic
+
+On Tue, Aug 11, 2015 at 10:28:00AM +0200, Ludovic Desroches wrote:
 > Hi,
->
-> I'm wondering if there already exists a driver for a gpio that's connected
-> to both an LED and an input switch.
->
-> I'd expect such a hardware configuration to be fairly common, as gpios can be
-> a limited resource.
-> Most of the time the gpio would be in output mode, driving the LED, but at
-> regular intervals the mode would be changed for a very short moment to input,
-> to monitor the state of the switch.
->
-> I had a quick look at various drivers (and of course at
-> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
->
-> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
-
-Can you share an example of such a circuit? Would it be possible to
-construct it without additional GPIO driven transistor?
-
--- 
-Best Regards,
-Jacek Anaszewski
+> 
+> The Atmel PIO4 controller has been introduced with SAMA5D2 chip family. This
+> drivers manages both pinmux/pinconf and gpio stuff. It is inspired by Mediatek
+> pinctrl driver.
+> 
+> Ludovic Desroches (5):
+>   pinctrl: introduce driver for Atmel PIO4 controller
+>   pinctrl: dt-binding: Add DT binding documentation for Atmel PIO4
+>   MAINTAINERS: Add an entry for pinctrl-at91-pio4
+>   ARM: at91/dt: sama5d2: add pio controller node
+>   ARM: at91/defconfig: sama5: add PIO4 controller support
+> 
+>  .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt   |   90 ++
+>  MAINTAINERS                                        |    7 +
+>  arch/arm/boot/dts/sama5d2.dtsi                     |   14 +
+>  arch/arm/mach-at91/Kconfig                         |    1 +
+>  drivers/pinctrl/Kconfig                            |   13 +
+>  drivers/pinctrl/Makefile                           |    1 +
+>  drivers/pinctrl/pinctrl-at91-pio4.c                | 1063 ++++++++++++++++++++
+>  7 files changed, 1189 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/pinctrl-at91-pio4.c
+> 
+> -- 
+> 2.5.0
+> 
