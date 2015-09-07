@@ -1,80 +1,44 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFC PATCH] gpio-pca953x driver and PCA9536 chip
-Date: Mon, 7 Sep 2015 15:36:10 +0300
-Message-ID: <55ED84BA.9090202@ti.com>
-References: <55E4641D.7050603@elpromaelectronics.com>
- <CACRpkdZcju7tpoi9+R4Bb98FEJNSfmYaRyLp7YF2ZT+hjkAMVA@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: Single gpio shared by LED and switch?
+Date: Mon, 07 Sep 2015 15:03:50 +0200
+Message-ID: <55ED8B36.60108@samsung.com>
+References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:46867 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751234AbbIGMgm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 7 Sep 2015 08:36:42 -0400
-In-Reply-To: <CACRpkdZcju7tpoi9+R4Bb98FEJNSfmYaRyLp7YF2ZT+hjkAMVA@mail.gmail.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:14682 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751252AbbIGNDy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Sep 2015 09:03:54 -0400
+In-reply-to: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Janusz_U=c5=bcycki?= <j.uzycki@elpromaelectronics.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Joshua Scott <joshua.scott@alliedtelesis.co.nz>, Toby Smith <toby@tismith.id.au>, Gregory Clement <gregory.clement@free-electrons.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Borgulski <k.borgulski@elproma.com.pl>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-On 09/06/2015 12:15 AM, Linus Walleij wrote:
-> Adding linux-gpio and some people that have been patching
-> this driver to TO-line.
->=20
-> Grygorii et al, does this look correct? Anyone who can test and
-> send a patch for mainline?
->=20
-> Yours,
-> Linus Walleij
->=20
-> On Mon, Aug 31, 2015 at 4:26 PM, Janusz U=C5=BCycki
-> <j.uzycki@elpromaelectronics.com> wrote:
->> Hi,
->>
->> The driver sets register #02 (inversion) to 0x01 instead of 0x00 on =
-my
->> board.
->> Reason: device_pca953x_init() does not initialize val buffer because=
- NBANK()
->> returns
->> for PCA9536 ngpio=3D4 value 0 instead of 1.
->>
->> My proposed code-patch for 3.14.17 is below.
->> Because I don't work on stable/next I can't deliver complete/ready p=
-atch.
->> Please for comments.
->>
->> best regards
->> Janusz
->>
->> --- a/drivers/gpio/gpio-pca953x.c
->> +++ b/drivers/gpio/gpio-pca953x.c
->> @@ -75,7 +75,7 @@ MODULE_DEVICE_TABLE(i2c, pca953x_id);
->>   #define MAX_BANK 5
->>   #define BANK_SZ 8
->>
->> -#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
->> +#define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
->>
->>   struct pca953x_chip {
->>          unsigned gpio_start;
+Hi Geert,
 
-Seems yes, but I can't test it - have no such HW now.
-As per code, NBANK(chip) expected to return number of 8-bit banks, but =
-now
-it returns NBANK-1.
+On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
+> Hi,
+>
+> I'm wondering if there already exists a driver for a gpio that's connected
+> to both an LED and an input switch.
+>
+> I'd expect such a hardware configuration to be fairly common, as gpios can be
+> a limited resource.
+> Most of the time the gpio would be in output mode, driving the LED, but at
+> regular intervals the mode would be changed for a very short moment to input,
+> to monitor the state of the switch.
+>
+> I had a quick look at various drivers (and of course at
+> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
+>
+> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
 
-Additional info:
-- Corresponding code was changed by  Gregory CLEMENT
-  commit: f5f0b7aa897ebf6b0d077356a787526212460dd7
+Can you share an example of such a circuit? Would it be possible to
+construct it without additional GPIO driven transistor?
 
-
---=20
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best Regards,
+Jacek Anaszewski
