@@ -1,57 +1,80 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v4 16/22] pinctrl: Probe pinctrl devices on demand
-Date: Mon,  7 Sep 2015 14:23:41 +0200
-Message-ID: <1441628627-5143-17-git-send-email-tomeu.vizoso@collabora.com>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1441628627-5143-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [RFC PATCH] gpio-pca953x driver and PCA9536 chip
+Date: Mon, 7 Sep 2015 15:36:10 +0300
+Message-ID: <55ED84BA.9090202@ti.com>
+References: <55E4641D.7050603@elpromaelectronics.com>
+ <CACRpkdZcju7tpoi9+R4Bb98FEJNSfmYaRyLp7YF2ZT+hjkAMVA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:46867 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751234AbbIGMgm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 7 Sep 2015 08:36:42 -0400
+In-Reply-To: <CACRpkdZcju7tpoi9+R4Bb98FEJNSfmYaRyLp7YF2ZT+hjkAMVA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Janusz_U=c5=bcycki?= <j.uzycki@elpromaelectronics.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Joshua Scott <joshua.scott@alliedtelesis.co.nz>, Toby Smith <toby@tismith.id.au>, Gregory Clement <gregory.clement@free-electrons.com>
+Cc: Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Krzysztof Borgulski <k.borgulski@elproma.com.pl>
 
-When looking up a pin controller through its OF node, probe it if it
-hasn't already.
+On 09/06/2015 12:15 AM, Linus Walleij wrote:
+> Adding linux-gpio and some people that have been patching
+> this driver to TO-line.
+>=20
+> Grygorii et al, does this look correct? Anyone who can test and
+> send a patch for mainline?
+>=20
+> Yours,
+> Linus Walleij
+>=20
+> On Mon, Aug 31, 2015 at 4:26 PM, Janusz U=C5=BCycki
+> <j.uzycki@elpromaelectronics.com> wrote:
+>> Hi,
+>>
+>> The driver sets register #02 (inversion) to 0x01 instead of 0x00 on =
+my
+>> board.
+>> Reason: device_pca953x_init() does not initialize val buffer because=
+ NBANK()
+>> returns
+>> for PCA9536 ngpio=3D4 value 0 instead of 1.
+>>
+>> My proposed code-patch for 3.14.17 is below.
+>> Because I don't work on stable/next I can't deliver complete/ready p=
+atch.
+>> Please for comments.
+>>
+>> best regards
+>> Janusz
+>>
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -75,7 +75,7 @@ MODULE_DEVICE_TABLE(i2c, pca953x_id);
+>>   #define MAX_BANK 5
+>>   #define BANK_SZ 8
+>>
+>> -#define NBANK(chip) (chip->gpio_chip.ngpio / BANK_SZ)
+>> +#define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
+>>
+>>   struct pca953x_chip {
+>>          unsigned gpio_start;
 
-The goal is to reduce deferred probes to a minimum, as it makes it very
-cumbersome to find out why a device failed to probe, and can introduce
-very big delays in when a critical device is probed.
+Seems yes, but I can't test it - have no such HW now.
+As per code, NBANK(chip) expected to return number of 8-bit banks, but =
+now
+it returns NBANK-1.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
----
+Additional info:
+- Corresponding code was changed by  Gregory CLEMENT
+  commit: f5f0b7aa897ebf6b0d077356a787526212460dd7
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
 
- drivers/pinctrl/devicetree.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index fe04e748dfe4..f5340b8e1dbe 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -18,6 +18,7 @@
- 
- #include <linux/device.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/slab.h>
- 
-@@ -110,6 +111,8 @@ static int dt_to_map_one_config(struct pinctrl *p, const char *statename,
- 	struct pinctrl_map *map;
- 	unsigned num_maps;
- 
-+	of_device_probe(np_config);
-+
- 	/* Find the pin controller containing np_config */
- 	np_pctldev = of_node_get(np_config);
- 	for (;;) {
--- 
-2.4.3
-
+--=20
+regards,
+-grygorii
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
