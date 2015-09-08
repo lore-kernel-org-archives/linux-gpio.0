@@ -1,69 +1,36 @@
-From: Paul Osmialowski <pawelo@king.net.pl>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-Date: Tue, 8 Sep 2015 10:04:19 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
- <1435094387-20146-8-git-send-email-pawelo@king.net.pl>
- <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: mxc: need to check return value of irq_alloc_generic_chip
+Date: Tue, 8 Sep 2015 10:32:01 +0200
+Message-ID: <CACRpkdZV-8XOn-NyF+z8KQfaYjrZGq3Rqa7smekciBEhypFDzg@mail.gmail.com>
+References: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Stefan Agner <stefan@agner.ch>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jiri Slaby <jslaby@suse.cz>, linux-clk@vger.kernel.org, Kees Cook <keescook@chromium.org>, Russell King <linux@arm.linux.org.uk>, Nicolas Pitre <nico@linaro.org>, Magnus Damm <damm+renesas@opensource.se>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>, Dave Martin <Dave.Martin@arm.com>, Guenter Roeck <linux@roeck-us.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Paul Osmialowski <pawelo@king.net.pl>, Sascha Hauer <kernel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Hao
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:35184 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752866AbbIHIcC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 04:32:02 -0400
+Received: by obuk4 with SMTP id k4so77690724obu.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 01:32:01 -0700 (PDT)
+In-Reply-To: <1440335513-14703-1-git-send-email-van.freenix@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peng Fan <van.freenix@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Sun, Aug 23, 2015 at 3:11 PM, Peng Fan <van.freenix@gmail.com> wrote:
 
-On Tue, 14 Jul 2015, Linus Walleij wrote:
+> Need to check return value of irq_alloc_generic_chip, because
+> it may return NULL.
+> 1. Change mxc_gpio_init_gc return type from void to int.
+> 2. Add a new lable out_irqdomain_remove to remove the irq domain
+>    when mxc_gpio_init_gc fail.
+>
+> Signed-off-by: Peng Fan <van.freenix@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
 
-> OK...
-> 
-> I want Shawn and Sascha to look at this as they worked with
-> other Freescale pin controllers. Especially I want to know if this
-> is a sibling to the other Freescale controllers or a separate hardware.
-> 
-> If it is *not* a sibling I will *insist* that it use more generic pin
-> control bindings and move away from the older Freescale-specific
-> stuff.
+I manually rebased this and applied to fixes.
 
-No one answered me about that. However, I looked at other Freescale 
-pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is 
-similar to what I need to do for Kinetis, also positions of configuration 
-bits differ significantly.
-
-> 
-> There exist generic pin config bindings, see
-> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> 
-> I suggest to to function+group paring and then use generic pin config
-> with this driver unless it is a very close sibling to the existing Freescale
-> pin controllers.
-> 
-> Hint: if it is a sibling, it should share code with them.
-> 
-> There are several drivers doing generic pin control/pin config in the kernel
-> tree.
-> 
-
-I tried to analyze few of the drivers (e.g. zynq family) and can't find 
-how can I assing clock gate (clock device) to each port (PORTA, PORTB, 
-PORTC,...) which is required for Kinetis. Is generic pin control capable 
-to express that requirement or is it a time to desing my own pinctrl 
-driver (maybe somewhat improved than the one I presented so far)?
-
-This pinctrl component is somwehat critical part of BSP. Until it is not 
-sorted, I don't see a point in releasing what was developed so far.
-
-Best regards,
-Paul
+Yours,
+Linus Walleij
