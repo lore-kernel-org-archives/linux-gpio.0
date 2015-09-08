@@ -1,193 +1,36 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and suspend
- resume
-Date: Tue, 8 Sep 2015 17:50:46 +0100
-Message-ID: <55EF11E6.7030307@arm.com>
-References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
- <55DB4609.5040904@arm.com>
- <CAGS+omBnoitju07KQ1Y7JHTbce6+DO4WqWHTaKz5D+T157zEJA@mail.gmail.com>
- <1441535972.22230.5.camel@mhfsdcap03> <55EEAA24.6080706@arm.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 5/6] ACPI / gpio: Split acpi_get_gpiod_by_index()
+Date: Wed, 09 Sep 2015 00:28:56 +0200
+Message-ID: <1757645.CZ0PiXAgmU@vostro.rjw.lan>
+References: <1596179.pGEt0Ullqu@vostro.rjw.lan> <8402685.WoxEi8zV68@vostro.rjw.lan> <CACRpkda7x45R+10aXGrafHMWPbr=6_Cxjpvcga5aK1Mn-fzZ1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:55493 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754521AbbIHQuu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Sep 2015 12:50:50 -0400
-In-Reply-To: <55EEAA24.6080706@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda7x45R+10aXGrafHMWPbr=6_Cxjpvcga5aK1Mn-fzZ1g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Hart <darren.hart@intel.com>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd.bergmann@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Dustin Byford <dustin@cumulusnetworks.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: maoguang meng <maoguang.meng@mediatek.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, Sudeep Holla <Sudeep.Holla@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On Tuesday, September 08, 2015 11:20:51 AM Linus Walleij wrote:
+> On Thu, Aug 27, 2015 at 4:41 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> 
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Split acpi_get_gpiod_by_index() into three smaller routines to
+> > allow the subsequent change of the generic firmware node properties
+> > code to be more strarightforward.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Feel free to merge this through the ACPI tree if it's a dependency.
 
+It is, so I'll do that.
 
-On 08/09/15 10:28, Sudeep Holla wrote:
->
->
-> On 06/09/15 11:39, maoguang meng wrote:
->> On Wed, 2015-09-02 at 14:02 +0800, Daniel Kurtz wrote:
->>> Hi maoguang,
->>>
->>> On Tue, Aug 25, 2015 at 12:27 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>>
->>>>
->>>> On 14/08/15 09:38, maoguang.meng@mediatek.com wrote:
->>>>>
->>>>> From: Maoguang Meng <maoguang.meng@mediatek.com>
->>>>>
->>>>> This patch implement irq_set_wake to get who is wakeup source and
->>>>> setup on suspend resume.
->>>>>
->>>>> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
->>>>>
->>> [snip]
->>>
->>> Can you please respond to Sudeep's questions:
->>>
->>>> Does this pinmux controller:
->>>>
->>>> 1. Support wake-up configuration ? If not, you need to use
->>>>      IRQCHIP_SKIP_SET_WAKE. I don't see any value in writing the
->>>>      mask_{set,clear} if the same registers are used for {en,dis}able
->>
->>     YES.
->>     we can call enable_irq_wake(irq) to config this irq as a wake-up
->> source.
->>
->
-> No that doesn't answer my question. Yes you can always call
-> enable_irq_wake(irq) as along as you have irq_set_wake implemented.
-> But my question was does this pinmux controller support wake-up
-> configuration.
->
-> IMHO, by looking at the implementation I can confirm *NO*, it doesn't.
-> So please stop copy-pasting the implementation from other drivers.
-> The reason is you operate on the same mask_{set,clear} which you use
-> to {en,dis}able the interrupts which means you don't have to do anything
-> to configure an interrupt as a wakeup source other than just keeping
-> them enabled. Hopefully this clarifies.
->
->>>>
->>>> 2. Is in always on domain ? If not, you need save/restore only to
->>>>      resume back the functionality. Generally we can set
->>>>      IRQCHIP_MASK_ON_SUSPEND to ensure non-wake-up interrupts are
->>>>      disabled during suspend and re-enabled in resume path. You just
->>>>      save/restore raw values without tracking the wake-up source.
->>
->>     YES.
->>
->
-> Again *YES* for what part of my question. If it's always-on, then you
-> don't need this suspend/resume callbacks at all, so I assume the answer
-> is *NO*.
->
+Thanks for the ACKs!
 
-IIUC this pinmux controller, something like below should work.
-
-
----->8
-
- From 7c26992bce047efb66a6ba8d2ffec2b272499df7 Mon Sep 17 00:00:00 2001
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 8 Sep 2015 17:35:38 +0100
-Subject: [PATCH] pinctrl: mediatek: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
-
-The mediatek pinmux controller doesn't provides any facility to configure
-the wakeup sources. So instead of providing redundant irq_set_wake
-functionality, SKIP_SET_WAKE could be set to it. Also there's no need to
-maintain 2 sets of masks.
-
-This patch enables IRQCHIP_SKIP_SET_WAKE and IRQCHIP_MASK_ON_SUSPEND and
-also removes wake_mask.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Maoguang Meng <maoguang.meng@mediatek.com>
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
-  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 24 
-+-----------------------
-  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  1 -
-  2 files changed, 1 insertion(+), 24 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c 
-b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 7726c6caaf83..d8e194a5bb31 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -1063,20 +1063,6 @@ static int mtk_eint_set_type(struct irq_data *d,
-  	return 0;
-  }
-
--static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
--{
--	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
--	int shift = d->hwirq & 0x1f;
--	int reg = d->hwirq >> 5;
--
--	if (on)
--		pctl->wake_mask[reg] |= BIT(shift);
--	else
--		pctl->wake_mask[reg] &= ~BIT(shift);
--
--	return 0;
--}
--
-  static void mtk_eint_chip_write_mask(const struct mtk_eint_offsets *chip,
-  		void __iomem *eint_reg_base, u32 *buf)
-  {
-@@ -1112,7 +1098,6 @@ static int mtk_eint_suspend(struct device *device)
-
-  	reg = pctl->eint_reg_base;
-  	mtk_eint_chip_read_mask(eint_offsets, reg, pctl->cur_mask);
--	mtk_eint_chip_write_mask(eint_offsets, reg, pctl->wake_mask);
-
-  	return 0;
-  }
-@@ -1153,9 +1138,9 @@ static struct irq_chip mtk_pinctrl_irq_chip = {
-  	.irq_unmask = mtk_eint_unmask,
-  	.irq_ack = mtk_eint_ack,
-  	.irq_set_type = mtk_eint_set_type,
--	.irq_set_wake = mtk_eint_irq_set_wake,
-  	.irq_request_resources = mtk_pinctrl_irq_request_resources,
-  	.irq_release_resources = mtk_pinctrl_irq_release_resources,
-+	.flags = IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND,
-  };
-
-  static unsigned int mtk_eint_init(struct mtk_pinctrl *pctl)
-@@ -1393,13 +1378,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
-  	}
-
-  	ports_buf = pctl->devdata->eint_offsets.ports;
--	pctl->wake_mask = devm_kcalloc(&pdev->dev, ports_buf,
--					sizeof(*pctl->wake_mask), GFP_KERNEL);
--	if (!pctl->wake_mask) {
--		ret = -ENOMEM;
--		goto chip_error;
--	}
--
-  	pctl->cur_mask = devm_kcalloc(&pdev->dev, ports_buf,
-  					sizeof(*pctl->cur_mask), GFP_KERNEL);
-  	if (!pctl->cur_mask) {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h 
-b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-index 55a534338931..acd804a945d8 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
-@@ -267,7 +267,6 @@ struct mtk_pinctrl {
-  	void __iomem		*eint_reg_base;
-  	struct irq_domain	*domain;
-  	int			*eint_dual_edges;
--	u32 *wake_mask;
-  	u32 *cur_mask;
-  };
-
--- 
-1.9.1
+Rafael
