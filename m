@@ -1,37 +1,73 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: Fix GPIO numbering for deferred probe
-Date: Tue, 8 Sep 2015 16:14:30 +0200
-Message-ID: <CACRpkdZFyt5KvfYu2GwdmMJmQtG1MiNXVkqHLRD=nZauK2ww3A@mail.gmail.com>
-References: <1441301487-6238-1-git-send-email-tony@atomide.com>
+Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
+Date: Tue, 8 Sep 2015 16:28:57 +0200
+Message-ID: <CACRpkdZ_6eXWO+3NUz-9ai5nBaKa_HyAmwYHGU46qrmfmEwyEw@mail.gmail.com>
+References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
+	<1435094387-20146-8-git-send-email-pawelo@king.net.pl>
+	<CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
+	<alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:32943 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755167AbbIHOOb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:14:31 -0400
-Received: by oixx17 with SMTP id x17so59473693oix.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:14:30 -0700 (PDT)
-In-Reply-To: <1441301487-6238-1-git-send-email-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
+Sender: linux-clk-owner@vger.kernel.org
+To: Paul Osmialowski <pawelo@king.net.pl>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>, Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Simon
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-On Thu, Sep 3, 2015 at 7:31 PM, Tony Lindgren <tony@atomide.com> wrote:
-
-> If gpio-omap probe fails with -EPROBE_DEFER, the GPIO numbering
-> keeps increasing. Only increase the gpio count if gpiochip_add()
-> was successful as otherwise the numbers will increase for each
-> probe attempt.
+On Tue, Sep 8, 2015 at 10:04 AM, Paul Osmialowski <pawelo@king.net.pl> wrote:
+> On Tue, 14 Jul 2015, Linus Walleij wrote:
 >
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+>> I want Shawn and Sascha to look at this as they worked with
+>> other Freescale pin controllers. Especially I want to know if this
+>> is a sibling to the other Freescale controllers or a separate hardware.
+>>
+>> If it is *not* a sibling I will *insist* that it use more generic pin
+>> control bindings and move away from the older Freescale-specific
+>> stuff.
+>
+> No one answered me about that. However, I looked at other Freescale
+> pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is
+> similar to what I need to do for Kinetis, also positions of configuration
+> bits differ significantly.
 
-Patch applied with Grygorii's review tag.
+OK I insist on using the generic bindings then.
+
+>> There exist generic pin config bindings, see
+>> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>>
+>> I suggest to to function+group paring and then use generic pin config
+>> with this driver unless it is a very close sibling to the existing Freescale
+>> pin controllers.
+>>
+>> Hint: if it is a sibling, it should share code with them.
+>>
+>> There are several drivers doing generic pin control/pin config in the kernel
+>> tree.
+>
+> I tried to analyze few of the drivers (e.g. zynq family) and can't find
+> how can I assing clock gate (clock device) to each port (PORTA, PORTB,
+> PORTC,...) which is required for Kinetis. Is generic pin control capable
+> to express that requirement or is it a time to desing my own pinctrl
+> driver (maybe somewhat improved than the one I presented so far)?
+
+That has nothing to do with whether you use generic pinconf or not.
+I imagine if a pinctrl unit contains several blocks with individual
+clocks you can either:
+
+- Let each block/bank be a device node (this is common) and assign
+  each a clocks = <&clock>;
+
+- Keep one node and assign an array of clocks, affected block indicated
+  by the index.
+  clocks = <&clk1>, <&clk2>, <&clk3>, ... <clkN>;
+  This property is in pluralis for this reason I guess.
+
+> This pinctrl component is somwehat critical part of BSP. Until it is not
+> sorted, I don't see a point in releasing what was developed so far.
+
+True that, you need infrastructure first. The more important that it is
+as good as possible.
 
 Yours,
 Linus Walleij
