@@ -1,73 +1,71 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 7/9] arm: twr-k70f120m: IOMUX driver for Kinetis SoC
-Date: Tue, 8 Sep 2015 16:28:57 +0200
-Message-ID: <CACRpkdZ_6eXWO+3NUz-9ai5nBaKa_HyAmwYHGU46qrmfmEwyEw@mail.gmail.com>
-References: <1435094387-20146-1-git-send-email-pawelo@king.net.pl>
-	<1435094387-20146-8-git-send-email-pawelo@king.net.pl>
-	<CACRpkdYHBt7YJWM3Bg8ENfw7uL4fuENqW+g8YaO+P6UPBCX4HQ@mail.gmail.com>
-	<alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
+Subject: Re: Single gpio shared by LED and switch?
+Date: Tue, 8 Sep 2015 16:37:54 +0200
+Message-ID: <CACRpkdZ+W8ZBdtjYUUYAy6t+bRvRx9MG7YP0EKno2Cr5C-kzoQ@mail.gmail.com>
+References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+	<55ED8B36.60108@samsung.com>
+	<CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
+	<55EEBDBC.8040408@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <alpine.LNX.2.00.1509080953390.31192@localhost.localdomain>
-Sender: linux-clk-owner@vger.kernel.org
-To: Paul Osmialowski <pawelo@king.net.pl>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingchang Lu <jingchang.lu@freescale.com>, Jiri Slaby <jslaby@suse.cz>, Kees Cook <keescook@chromium.org>, Kumar Gala <galak@codeaurora.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Magnus Damm <damm+renesas@opensource.se>, Michael Turquette <mturquette@baylibre.com>, Nathan Lynch <nathan_lynch@mentor.com>, Nicolas Pitre <nico@linaro.org>, Maxime Coquelin stm32 <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Paul Bolle <pebolle@tiscali.nl>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Simon
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <55EEBDBC.8040408@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 8, 2015 at 10:04 AM, Paul Osmialowski <pawelo@king.net.pl> wrote:
-> On Tue, 14 Jul 2015, Linus Walleij wrote:
+On Tue, Sep 8, 2015 at 12:51 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
+> On 09/07/2015 03:22 PM, Geert Uytterhoeven wrote:
+
+>> Something like this?
+>>
+>>                       VCC         VCC
+>>                        |           |
+>>                        R           R
+>>                        |           |
+>>                __|__   |           |
+>>            +---o   o---+          _|_
+>>            |           |          \ /
+>>            |           |          ---
+>>           GND          R           |
+>>                        |           |
+>>                        |         |-+
+>>                        |         |<+
+>> GPIO -----------------+---------|-|
+>>                                    |
+>>                                    |
+>>                                   GND
 >
->> I want Shawn and Sascha to look at this as they worked with
->> other Freescale pin controllers. Especially I want to know if this
->> is a sibling to the other Freescale controllers or a separate hardware.
->>
->> If it is *not* a sibling I will *insist* that it use more generic pin
->> control bindings and move away from the older Freescale-specific
->> stuff.
 >
-> No one answered me about that. However, I looked at other Freescale
-> pinctrl drivers and realised that no one of them (IMX, IMX1, MXS) is
-> similar to what I need to do for Kinetis, also positions of configuration
-> bits differ significantly.
+> You would need also resistor to avoid short-circuit
+> when the switch is on.
 
-OK I insist on using the generic bindings then.
+There is a resistor AFAICT.
 
->> There exist generic pin config bindings, see
->> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->>
->> I suggest to to function+group paring and then use generic pin config
->> with this driver unless it is a very close sibling to the existing Freescale
->> pin controllers.
->>
->> Hint: if it is a sibling, it should share code with them.
->>
->> There are several drivers doing generic pin control/pin config in the kernel
->> tree.
->
-> I tried to analyze few of the drivers (e.g. zynq family) and can't find
-> how can I assing clock gate (clock device) to each port (PORTA, PORTB,
-> PORTC,...) which is required for Kinetis. Is generic pin control capable
-> to express that requirement or is it a time to desing my own pinctrl
-> driver (maybe somewhat improved than the one I presented so far)?
+But consider the GPIO side which is opaque
+here. When used as input it is often high impedance
+but when used to drive it is not.
 
-That has nothing to do with whether you use generic pinconf or not.
-I imagine if a pinctrl unit contains several blocks with individual
-clocks you can either:
+Doesn't this mean the output actually has to be
+open collector (open drain)?
 
-- Let each block/bank be a device node (this is common) and assign
-  each a clocks = <&clock>;
+In that case we should enforce that in the software
+framework too so we protect people from shooting
+themselves in the foot.
 
-- Keep one node and assign an array of clocks, affected block indicated
-  by the index.
-  clocks = <&clk1>, <&clk2>, <&clk3>, ... <clkN>;
-  This property is in pluralis for this reason I guess.
+> We'd have to ask Linus if he welcomes drivers for this type
+> of home-made circuits in mainline. If yes, then probably someone would
+> have to build the circuit, develop and test the driver on it, and
+> finally come up with a detailed documentation.
+> Are you the volunteer? :)
 
-> This pinctrl component is somwehat critical part of BSP. Until it is not
-> sorted, I don't see a point in releasing what was developed so far.
+Of course he's considering it or he wouldn't write :)
 
-True that, you need infrastructure first. The more important that it is
-as good as possible.
+I'm curious about what comes out of this, this is exactly
+the type of problems that the GPIO subsystem is about
+to help with.
 
 Yours,
 Linus Walleij
