@@ -1,31 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Documentation: gpio: Explain that <function>-gpio is also supported
-Date: Tue, 8 Sep 2015 16:01:21 +0200
-Message-ID: <CACRpkdZW5f5KZ7vAhDH4_UL5Gd7hE6x9geeXggSJNhYV7KJysQ@mail.gmail.com>
-References: <1441097175-10341-1-git-send-email-javier@osg.samsung.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [patch 15/22] pinctrl: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Tue, 8 Sep 2015 16:10:28 +0200 (CEST)
+Message-ID: <alpine.DEB.2.11.1509081603360.3854@nanos>
+References: <20150713072703.919712512@linutronix.de> <20150713072815.548358316@linutronix.de> <CAP=VYLrx3rJSvCEgZz47Ka1fye5EK6yetQKna=7fMGn3kOwiLg@mail.gmail.com> <CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1441097175-10341-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from www.linutronix.de ([62.245.132.108]:42313 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754346AbbIHOLH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:11:07 -0400
+In-Reply-To: <CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiang Liu <jiang.liu@linux.intel.com>
 
-On Tue, Sep 1, 2015 at 10:46 AM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
+On Tue, 8 Sep 2015, Linus Walleij wrote:
+> On Mon, Aug 31, 2015 at 11:28 PM, Paul Gortmaker
+> <paul.gortmaker@windriver.com> wrote:
+> > On Mon, Jul 13, 2015 at 4:47 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >> From: Jiang Liu <jiang.liu@linux.intel.com>
+> >>
+> >> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+> >> already have a pointer to corresponding irq_desc.
+> >
+> > Hi Linus,
+> >
+> > It seems that linux-next has this copy of the patch as 5663bb27dec1, which
+> > has a stray irq_desc_get_irq_chip in s3c24xx ; (2nd instance of "irq" is
+> > bogus looking.)   I first assumed it was from tglx since it did not have any
+> > additional SOB lines, but on further investigation I traced it back to sfr's
+> > merge of pinctrl/for-next.
+> 
+> Hm, saw this a bit late I guess.
+> 
+> Torvalds has merged my trees, is there a problem in mainline
+> that need to be addressed or did this fix itself?
 
-> The GPIO documentation mentions that GPIOs are mapped by defining a
-> <function>-gpios property in the consumer device's node but a -gpio
-> sufix is also supported after commit:
->
-> dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
->
-> Update the documentation to match the implementation.
->
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+No, it's buggered in Linus tree as well.
 
-Patch applied.
-
-Yours,
-Linus Walleij
