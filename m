@@ -1,50 +1,33 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: Request for submaintainer moderation: PFC pinctrl patches
-Date: Tue, 08 Sep 2015 12:18:43 +0300
-Message-ID: <1530496.s22K61kEaC@avalon>
-References: <CACRpkdaMPST2ptDfPNH4e=hQBO1HjmsbcMXQRNRf905Rbi24Lw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 5/6] ACPI / gpio: Split acpi_get_gpiod_by_index()
+Date: Tue, 8 Sep 2015 11:20:51 +0200
+Message-ID: <CACRpkda7x45R+10aXGrafHMWPbr=6_Cxjpvcga5aK1Mn-fzZ1g@mail.gmail.com>
+References: <1596179.pGEt0Ullqu@vostro.rjw.lan>
+	<8402685.WoxEi8zV68@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47179 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754076AbbIHJSa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 05:18:30 -0400
-In-Reply-To: <CACRpkdaMPST2ptDfPNH4e=hQBO1HjmsbcMXQRNRf905Rbi24Lw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <8402685.WoxEi8zV68@vostro.rjw.lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Hart <darren.hart@intel.com>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd.bergmann@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Dustin Byford <dustin@cumulusnetworks.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>
 
-Hi Linus,
+On Thu, Aug 27, 2015 at 4:41 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
 
-On Tuesday 08 September 2015 11:09:49 Linus Walleij wrote:
-> Hi Renesas PFC folks,
-> 
-> I am faced with a patchs storm for PFC stuf from Geert, Kununori and
-> Sergei at the same time.
-> 
-> I need help to review, prioritize and handle this. Also I have zero Renesas
-> boards and no way to test if these collide at runtime, and for SH whether
-> they collide even at compiletime.
-> 
-> I want you to agree on one person to stack up and accumulate PFC patches
-> for both fixes and devel and send me a pull request.
-> 
-> Last time Laurent did this, I don not know if he's up for it again or
-> if you need to appoint a new submaintainer.
-> 
-> Anyways: suggestions?
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Split acpi_get_gpiod_by_index() into three smaller routines to
+> allow the subsequent change of the generic firmware node properties
+> code to be more strarightforward.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-I don't have time to handle this now, but I agree someone must shield you from 
-the storm. We're working on pinctrl support for the new R-Car H3 (R8A7795) 
-SoC, hence the amount of patches submitted for review. I believe they should 
-have been submitted to the linux-sh mailing list only until they reach enough 
-maturation for broader review.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-Regards,
+Feel free to merge this through the ACPI tree if it's a dependency.
+If it's not, tell me so I can merge it into the GPIO tree.
 
-Laurent Pinchart
-
+Yours,
+Linus Walleij
