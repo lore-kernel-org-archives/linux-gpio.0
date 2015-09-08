@@ -1,54 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch 15/22] pinctrl: Use irq_desc_get_xxx() to avoid redundant
- lookup of irq_desc
-Date: Tue, 8 Sep 2015 16:50:30 +0200
-Message-ID: <CACRpkdaWv6EKcP9COMFKZAyk4FOYTvDTC1RtTG7xjk9TSm_qhQ@mail.gmail.com>
-References: <20150713072703.919712512@linutronix.de>
-	<20150713072815.548358316@linutronix.de>
-	<CAP=VYLrx3rJSvCEgZz47Ka1fye5EK6yetQKna=7fMGn3kOwiLg@mail.gmail.com>
-	<CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
-	<alpine.DEB.2.11.1509081603360.3854@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: samsung: s3c24xx: fix syntax error
+Date: Tue,  8 Sep 2015 16:55:20 +0200
+Message-ID: <1441724120-24870-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33438 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754868AbbIHOub (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:50:31 -0400
-Received: by obbbh8 with SMTP id bh8so85266632obb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:50:30 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.11.1509081603360.3854@nanos>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:36370 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754966AbbIHOzZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:55:25 -0400
+Received: by lbcao8 with SMTP id ao8so54734295lbc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:55:23 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiang Liu <jiang.liu@linux.intel.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Sep 8, 2015 at 4:10 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 8 Sep 2015, Linus Walleij wrote:
->> On Mon, Aug 31, 2015 at 11:28 PM, Paul Gortmaker
->> <paul.gortmaker@windriver.com> wrote:
->> > On Mon, Jul 13, 2015 at 4:47 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> >> From: Jiang Liu <jiang.liu@linux.intel.com>
->> >>
->> >> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
->> >> already have a pointer to corresponding irq_desc.
->> >
->> > Hi Linus,
->> >
->> > It seems that linux-next has this copy of the patch as 5663bb27dec1, which
->> > has a stray irq_desc_get_irq_chip in s3c24xx ; (2nd instance of "irq" is
->> > bogus looking.)   I first assumed it was from tglx since it did not have any
->> > additional SOB lines, but on further investigation I traced it back to sfr's
->> > merge of pinctrl/for-next.
->>
->> Hm, saw this a bit late I guess.
->>
->> Torvalds has merged my trees, is there a problem in mainline
->> that need to be addressed or did this fix itself?
->
-> No, it's buggered in Linus tree as well.
+?SYNTAX ERROR
 
-OK fixing it.
+irq_desc_get_irq_chip() does not exist. It should
+be irq_desc_get_chip(). Tested by compiling
+s3c2410_defconfig.
 
-Yours,
-Linus Walleij
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index 019844d479bb..d168b39dd7fd 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -361,7 +361,7 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+ 				      u32 offset, u32 range)
+ {
+ 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+-	struct irq_chip *chip = irq_desc_get_irq_chip(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct samsung_pinctrl_drv_data *d = data->drvdata;
+ 	unsigned int pend, mask;
+ 
+-- 
+2.4.3
+
