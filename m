@@ -1,32 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: sx150x: Remove unnecessary MODULE_ALIAS()
-Date: Tue, 8 Sep 2015 15:48:31 +0200
-Message-ID: <CACRpkdZnWnf7Jzwhrjp6g2kxQjyVQO6w3dHk1NaSnBOkLupPeQ@mail.gmail.com>
-References: <1440971924-15571-1-git-send-email-javier@osg.samsung.com>
+Subject: Re: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred probe
+Date: Tue, 8 Sep 2015 15:57:39 +0200
+Message-ID: <CACRpkdZdTM5Sgtcn8PoP2X-haqzHZTgjEsvPJzZNLP=0A7XYYg@mail.gmail.com>
+References: <1440787489-15992-1-git-send-email-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36693 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753193AbbIHNsc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 09:48:32 -0400
-Received: by oibi136 with SMTP id i136so58991124oib.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 06:48:32 -0700 (PDT)
-In-Reply-To: <1440971924-15571-1-git-send-email-javier@osg.samsung.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:36529 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754146AbbIHN5k (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 09:57:40 -0400
+Received: by oibi136 with SMTP id i136so59165718oib.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 06:57:39 -0700 (PDT)
+In-Reply-To: <1440787489-15992-1-git-send-email-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-On Sun, Aug 30, 2015 at 11:58 PM, Javier Martinez Canillas
-<javier@osg.samsung.com> wrote:
+On Fri, Aug 28, 2015 at 8:44 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-> The driver has a I2C device id table that is used to create the module
-> aliases and also "sx150x" isn't a supported I2C id, so it's never used.
+> Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
 >
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> [    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
+> [    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
+> ...
+> [    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
+>
+> Let's fix the issue by adding the missing pm_runtime_put() on error.
+>
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Kevin Hilman <khilman@deeprootsystems.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/gpio/gpio-omap.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index b0c57d5..f09bf0b 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1232,8 +1232,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
+>         omap_gpio_mod_init(bank);
+>
+>         ret = omap_gpio_chip_init(bank, irqc);
+> -       if (ret)
+> +       if (ret) {
+> +               pm_runtime_put_sync(bank->dev);
+> +               pm_runtime_disable(bank->dev);
+>                 return ret;
+> +       }
+>
+>         omap_gpio_show_rev(bank);
 
-Patch applied.
+Patch applied for fixes with Santosh's ACK.
 
 Yours,
 Linus Walleij
