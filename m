@@ -1,28 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: GPIO_RCAR doesn't relate to ARM
-Date: Tue, 8 Sep 2015 11:01:24 +0200
-Message-ID: <CACRpkdbB6PnRV8mY6NmW9KCUa+TWSEW16hHSQCVWuRAEDkFUPw@mail.gmail.com>
-References: <871ter7n17.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH] pinctrl: join lines that can be a single line within 80 columns
+Date: Tue, 8 Sep 2015 11:03:26 +0200
+Message-ID: <CACRpkdb4M-MnZAVffe=253MXVLzzm-KfUyEgbMWrUgTLUNheEw@mail.gmail.com>
+References: <1438402958-7744-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <871ter7n17.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Magnus <magnus.damm@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33822 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752071AbbIHJD1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 05:03:27 -0400
+Received: by oiev17 with SMTP id v17so54914477oie.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 02:03:26 -0700 (PDT)
+In-Reply-To: <1438402958-7744-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Aug 25, 2015 at 11:12 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+On Sat, Aug 1, 2015 at 6:22 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> There is no reason to break a line shorter than 80 columns.
 >
-> 8cd1470("gpio: rcar: Add r8a7795 (R-Car H3) support") added
-> GPIO support for r8a7795. r8a7795 based on CONFIG_ARM64.
-> OTOH, GPIO_RCAR driver can be compiled fine on non-ARM.
-> This patch removed ARM dependency for it.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Patch applied for fixes.
 
