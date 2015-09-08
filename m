@@ -1,61 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: Fix gpiochip_add() handling for deferred probe
-Date: Tue, 8 Sep 2015 15:57:39 +0200
-Message-ID: <CACRpkdZdTM5Sgtcn8PoP2X-haqzHZTgjEsvPJzZNLP=0A7XYYg@mail.gmail.com>
-References: <1440787489-15992-1-git-send-email-tony@atomide.com>
+Subject: Re: [patch 15/22] pinctrl: Use irq_desc_get_xxx() to avoid redundant
+ lookup of irq_desc
+Date: Tue, 8 Sep 2015 16:00:10 +0200
+Message-ID: <CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
+References: <20150713072703.919712512@linutronix.de>
+	<20150713072815.548358316@linutronix.de>
+	<CAP=VYLrx3rJSvCEgZz47Ka1fye5EK6yetQKna=7fMGn3kOwiLg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36529 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754146AbbIHN5k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 09:57:40 -0400
-Received: by oibi136 with SMTP id i136so59165718oib.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 06:57:39 -0700 (PDT)
-In-Reply-To: <1440787489-15992-1-git-send-email-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAP=VYLrx3rJSvCEgZz47Ka1fye5EK6yetQKna=7fMGn3kOwiLg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiang Liu <jiang.liu@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-On Fri, Aug 28, 2015 at 8:44 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Mon, Aug 31, 2015 at 11:28 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> On Mon, Jul 13, 2015 at 4:47 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> From: Jiang Liu <jiang.liu@linux.intel.com>
+>>
+>> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+>> already have a pointer to corresponding irq_desc.
+>
+> Hi Linus,
+>
+> It seems that linux-next has this copy of the patch as 5663bb27dec1, which
+> has a stray irq_desc_get_irq_chip in s3c24xx ; (2nd instance of "irq" is
+> bogus looking.)   I first assumed it was from tglx since it did not have any
+> additional SOB lines, but on further investigation I traced it back to sfr's
+> merge of pinctrl/for-next.
 
-> Currently we gpio-omap breaks if gpiochip_add() returns -EPROBE_DEFER:
->
-> [    0.570000] gpiochip_add: GPIOs 0..31 (gpio) failed to register
-> [    0.570000] omap_gpio 48310000.gpio: Could not register gpio chip -517
-> ...
-> [    3.670000] omap_gpio 48310000.gpio: Unbalanced pm_runtime_enable!
->
-> Let's fix the issue by adding the missing pm_runtime_put() on error.
->
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Javier Martinez Canillas <javier@dowhile0.org>
-> Cc: Kevin Hilman <khilman@deeprootsystems.com>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/gpio/gpio-omap.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index b0c57d5..f09bf0b 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1232,8 +1232,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
->         omap_gpio_mod_init(bank);
->
->         ret = omap_gpio_chip_init(bank, irqc);
-> -       if (ret)
-> +       if (ret) {
-> +               pm_runtime_put_sync(bank->dev);
-> +               pm_runtime_disable(bank->dev);
->                 return ret;
-> +       }
->
->         omap_gpio_show_rev(bank);
+Hm, saw this a bit late I guess.
 
-Patch applied for fixes with Santosh's ACK.
+Torvalds has merged my trees, is there a problem in mainline
+that need to be addressed or did this fix itself?
 
 Yours,
 Linus Walleij
