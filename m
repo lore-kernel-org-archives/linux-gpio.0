@@ -1,33 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: core: Warn about NULL gpio_chip in pinctrl_ready_for_gpio_range()
-Date: Tue, 8 Sep 2015 16:11:42 +0200
-Message-ID: <CACRpkdbQBt_p74ke3TV94gZ5wa=87th+f5jOLNSZFFhFbn3NEw@mail.gmail.com>
-References: <1441301670-6498-1-git-send-email-tony@atomide.com>
+Subject: Re: [PATCH] gpio: omap: Fix GPIO numbering for deferred probe
+Date: Tue, 8 Sep 2015 16:14:30 +0200
+Message-ID: <CACRpkdZFyt5KvfYu2GwdmMJmQtG1MiNXVkqHLRD=nZauK2ww3A@mail.gmail.com>
+References: <1441301487-6238-1-git-send-email-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:33763 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755038AbbIHOLn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:11:43 -0400
-Received: by oixx17 with SMTP id x17so59416292oix.0
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:11:42 -0700 (PDT)
-In-Reply-To: <1441301670-6498-1-git-send-email-tony@atomide.com>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:32943 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755167AbbIHOOb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:14:31 -0400
+Received: by oixx17 with SMTP id x17so59473693oix.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:14:30 -0700 (PDT)
+In-Reply-To: <1441301487-6238-1-git-send-email-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Tony Lindgren <tony@atomide.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kevin Hilman <khilman@deeprootsystems.com>, Santosh Shilimkar <ssantosh@kernel.org>
 
-On Thu, Sep 3, 2015 at 7:34 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Sep 3, 2015 at 7:31 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-> If the gpio driver is confused about the numbers for gpio-ranges,
-> pinctrl_ready_for_gpio_range() may get called with invalid GPIO
-> causing a NULL pointer exception. Let's instead provide a warning
-> that allows fixing the problem and return with error.
+> If gpio-omap probe fails with -EPROBE_DEFER, the GPIO numbering
+> keeps increasing. Only increase the gpio count if gpiochip_add()
+> was successful as otherwise the numbers will increase for each
+> probe attempt.
 >
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: Javier Martinez Canillas <javier@dowhile0.org>
+> Cc: Kevin Hilman <khilman@deeprootsystems.com>
+> Cc: Santosh Shilimkar <ssantosh@kernel.org>
 > Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-Patch applied for fixes.
+Patch applied with Grygorii's review tag.
 
 Yours,
 Linus Walleij
