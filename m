@@ -1,31 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: join lines that can be a single line within 80 columns
-Date: Tue, 8 Sep 2015 11:03:26 +0200
-Message-ID: <CACRpkdb4M-MnZAVffe=253MXVLzzm-KfUyEgbMWrUgTLUNheEw@mail.gmail.com>
-References: <1438402958-7744-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Request for submaintainer moderation: PFC pinctrl patches
+Date: Tue, 8 Sep 2015 11:09:49 +0200
+Message-ID: <CACRpkdaMPST2ptDfPNH4e=hQBO1HjmsbcMXQRNRf905Rbi24Lw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33822 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752071AbbIHJD1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 05:03:27 -0400
-Received: by oiev17 with SMTP id v17so54914477oie.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 02:03:26 -0700 (PDT)
-In-Reply-To: <1438402958-7744-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Aug 1, 2015 at 6:22 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+Hi Renesas PFC folks,
 
-> There is no reason to break a line shorter than 80 columns.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+I am faced with a patchs storm for PFC stuf from Geert, Kununori and
+Sergei at the same time.
 
-Patch applied for fixes.
+I need help to review, prioritize and handle this. Also I have zero Renesas
+boards and no way to test if these collide at runtime, and for SH whether
+they collide even at compiletime.
+
+I want you to agree on one person to stack up and accumulate PFC patches
+for both fixes and devel and send me a pull request.
+
+Last time Laurent did this, I don not know if he's up for it again or
+if you need
+to appoint a new submaintainer.
+
+Anyways: suggestions?
 
 Yours,
 Linus Walleij
