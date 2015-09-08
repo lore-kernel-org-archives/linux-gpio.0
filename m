@@ -1,64 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/4] Qualcomm Shared Memory State Machines
-Date: Tue, 8 Sep 2015 14:32:40 +0100
-Message-ID: <20150908133240.GE9751@sirena.org.uk>
-References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
- <CACRpkdb-624MauE4sS0mqxarXRRaS3sEB2aMzeRNZw945xhMnA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2 v3] Documentation: gpio: board: add flags parameter to
+ gpiod_get*() functions
+Date: Tue, 8 Sep 2015 15:45:49 +0200
+Message-ID: <CACRpkdZTPstRkWYvotyC3MJzaCp2A+w=v5+5xvf=DEG0TGs_jg@mail.gmail.com>
+References: <1441217230-4530-1-git-send-email-dirk.behme@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a+b56+3nqLzpiR9O"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb-624MauE4sS0mqxarXRRaS3sEB2aMzeRNZw945xhMnA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Alexandre Courbot <gnurou@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:35511 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754175AbbIHNpt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 09:45:49 -0400
+Received: by obuk4 with SMTP id k4so83680876obu.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 06:45:49 -0700 (PDT)
+In-Reply-To: <1441217230-4530-1-git-send-email-dirk.behme@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Wed, Sep 2, 2015 at 8:07 PM, Dirk Behme <dirk.behme@gmail.com> wrote:
 
---a+b56+3nqLzpiR9O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> With commit 39b2bbe3d715 ("gpio: add flags argument to gpiod_get*()
+> functions") the gpiod_get*() functions got a 'flags' parameter. Reflect
+> this in the documentation, too.
+>
+> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+> ---
+> Changes in v3: Add a short note to mention the fact that the example will
+>                switch the LEDs on, similarly to the existing explanation
+>                for the "power" GPIO.
 
-On Tue, Sep 08, 2015 at 02:20:14PM +0200, Linus Walleij wrote:
-> On Thu, Aug 27, 2015 at 7:37 PM, Bjorn Andersson
-> <bjorn.andersson@sonymobile.com> wrote:
+Patch applied.
 
-> Let's discuss this a bit, looping in Mark Brown.
+Thanks for helping out keeping docs in sync!
 
-Please don't send upstream discussions ot my work address.
-
-> While sparsely documented: what about regmap (maybe in the
-> form of syscon) and drivers/base/regmap/regmap-irq.c for the
-> interrupt handling?
-
-> I cannot claim to understand regmap-irq.c, but I just intuitively
-> think it deserves consideration, such that drivers who need one
-> of these misc registers can read/write their bits with regmap
-> accessors and also get IRQs by way of regmap-irq.
-
-Well, all it's doing is exporting a simple register based interrupt
-controller based on regmap.  There's not a lot to document.  If you're
-using it with a system controller you'd probably want to implement
-support for handling interrupts directly in the primary handler rather
-than using a threaded handler.  Alternatively if there's no cache or no
-overlap between interrupt registers and other registers then just using
-the genirq MMIO code should do the trick.
-
---a+b56+3nqLzpiR9O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJV7uN4AAoJECTWi3JdVIfQraIH/1Qb2LpNGPv3mQzYqd+w44pr
-apmdAHxP49zNPIXm+GbK/4glJW9pUml4qW0qzRKMoig6C4svUXJf+SdnvtxgnBLN
-bO6hiICwTNVPm/hDLvZl6trAfaKkPnevCPo/iJFfXCkbI+Hynx0D5hD4jftdFJpP
-PMwBSntKXbO/fWIieFcWgprpSV8QX/D9ZcizkVMgrgMioyNHcUmyKIKXNPfjS40W
-pbbGr6Bi5MMIMIVgDBDAbg+xEUIwRq8x3VufcrIFeJ9sbwG04/4TUMgYmZagi6Ry
-MXFck1WwCaYUpwb17ETUxUr7jO3ONgtxwonWSfEmoZ26q51yPifHWrLgjhVGxVc=
-=J1NQ
------END PGP SIGNATURE-----
-
---a+b56+3nqLzpiR9O--
+Yours,
+Linus Walleij
