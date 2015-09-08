@@ -1,43 +1,33 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [patch 15/22] pinctrl: Use irq_desc_get_xxx() to avoid redundant
- lookup of irq_desc
-Date: Tue, 8 Sep 2015 16:10:28 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1509081603360.3854@nanos>
-References: <20150713072703.919712512@linutronix.de> <20150713072815.548358316@linutronix.de> <CAP=VYLrx3rJSvCEgZz47Ka1fye5EK6yetQKna=7fMGn3kOwiLg@mail.gmail.com> <CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: core: Warn about NULL gpio_chip in pinctrl_ready_for_gpio_range()
+Date: Tue, 8 Sep 2015 16:11:42 +0200
+Message-ID: <CACRpkdbQBt_p74ke3TV94gZ5wa=87th+f5jOLNSZFFhFbn3NEw@mail.gmail.com>
+References: <1441301670-6498-1-git-send-email-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:42313 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754346AbbIHOLH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:11:07 -0400
-In-Reply-To: <CACRpkdb+Pi11u7dwHn0JPvbBERm5qKPuw=iVVUSg6ZL+E6zz4Q@mail.gmail.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33763 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755038AbbIHOLn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 10:11:43 -0400
+Received: by oixx17 with SMTP id x17so59416292oix.0
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2015 07:11:42 -0700 (PDT)
+In-Reply-To: <1441301670-6498-1-git-send-email-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiang Liu <jiang.liu@linux.intel.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, 8 Sep 2015, Linus Walleij wrote:
-> On Mon, Aug 31, 2015 at 11:28 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > On Mon, Jul 13, 2015 at 4:47 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> From: Jiang Liu <jiang.liu@linux.intel.com>
-> >>
-> >> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
-> >> already have a pointer to corresponding irq_desc.
-> >
-> > Hi Linus,
-> >
-> > It seems that linux-next has this copy of the patch as 5663bb27dec1, which
-> > has a stray irq_desc_get_irq_chip in s3c24xx ; (2nd instance of "irq" is
-> > bogus looking.)   I first assumed it was from tglx since it did not have any
-> > additional SOB lines, but on further investigation I traced it back to sfr's
-> > merge of pinctrl/for-next.
-> 
-> Hm, saw this a bit late I guess.
-> 
-> Torvalds has merged my trees, is there a problem in mainline
-> that need to be addressed or did this fix itself?
+On Thu, Sep 3, 2015 at 7:34 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-No, it's buggered in Linus tree as well.
+> If the gpio driver is confused about the numbers for gpio-ranges,
+> pinctrl_ready_for_gpio_range() may get called with invalid GPIO
+> causing a NULL pointer exception. Let's instead provide a warning
+> that allows fixing the problem and return with error.
+>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
