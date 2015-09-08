@@ -1,106 +1,62 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: Single gpio shared by LED and switch?
-Date: Tue, 08 Sep 2015 12:51:40 +0200
-Message-ID: <55EEBDBC.8040408@samsung.com>
-References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
- <55ED8B36.60108@samsung.com>
- <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/4] Qualcomm Shared Memory State Machines
+Date: Tue, 8 Sep 2015 14:20:14 +0200
+Message-ID: <CACRpkdb-624MauE4sS0mqxarXRRaS3sEB2aMzeRNZw945xhMnA@mail.gmail.com>
+References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55164 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754120AbbIHKvo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Sep 2015 06:51:44 -0400
-In-reply-to: <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>, Mark Brown <broonie@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-Hi Geert,
+On Thu, Aug 27, 2015 at 7:37 PM, Bjorn Andersson
+<bjorn.andersson@sonymobile.com> wrote:
 
-Thanks for sharing this.
+Let's discuss this a bit, looping in Mark Brown.
 
-On 09/07/2015 03:22 PM, Geert Uytterhoeven wrote:
-> Hi Jacek,
->
-> On Mon, Sep 7, 2015 at 3:03 PM, Jacek Anaszewski
-> <j.anaszewski@samsung.com> wrote:
->> On 09/01/2015 07:00 PM, Geert Uytterhoeven wrote:
->>> I'm wondering if there already exists a driver for a gpio that's connected
->>> to both an LED and an input switch.
->>>
->>> I'd expect such a hardware configuration to be fairly common, as gpios can
->>> be
->>> a limited resource.
->>> Most of the time the gpio would be in output mode, driving the LED, but at
->>> regular intervals the mode would be changed for a very short moment to
->>> input,
->>> to monitor the state of the switch.
->>>
->>> I had a quick look at various drivers (and of course at
->>> Documentation/gpio/drivers-on-gpio.txt), but couldn't find any.
->>>
->>> Does such a hybrid of "leds-gpio" and "gpio-keys(-polled)" already exists?
->>
->> Can you share an example of such a circuit? Would it be possible to
->
-> Something like this?
->
->                       VCC         VCC
->                        |           |
->                        R           R
->                        |           |
->                __|__   |           |
->            +---o   o---+          _|_
->            |           |          \ /
->            |           |          ---
->           GND          R           |
->                        |           |
->                        |         |-+
->                        |         |<+
-> GPIO -----------------+---------|-|
->                                    |
->                                    |
->                                   GND
+> As some of these states on some platforms are passed as physical signals
+> instead, the two drivers are modelled as gpio- and interrupt-controllers -
+> providing a nice abstraction both in device tree sense and Linux implementation
+> sense.
 
-You would need also resistor to avoid short-circuit
-when the switch is on.
+I have unfortunately repeatedly encountered an argument of the type
+"GPIO has nice infrastructure so let's call X 'a kind of GPIO' so
+we can use that nice infrastructure".
 
->
->> construct it without additional GPIO driven transistor?
->
-> Perhaps just like this?
->
->                       VCC
->                        |
->                        R
->                        |
->                        |
->                       _|_
->                       \ /
->                       ---
->                        |
->                        |
-> GPIO -----R-----------+
->                        |
->                        |
->                      | o
->                     -|
->                      | o
->                        |
->                        |
->                       GND
->
+I'm not pleased with something that is not really general purpose
+input/output being called GPIO. It fits badly with the GPIO subsystem
+when we support things like open drain and cross-mappings to
+the pin control subsystem that will never be applicable to these
+new users. It's more like "special purpose input/output" or
+something.
 
-We'd have to ask Linus if he welcomes drivers for this type
-of home-made circuits in mainline. If yes, then probably someone would
-have to build the circuit, develop and test the driver on it, and
-finally come up with a detailed documentation.
-Are you the volunteer? :)
+This happened with syscon LEDs for example, and was the reason
+I implemented syscon-leds. The original proposal was to say the LEDs
+register was "a kind of GPIO" on top of regmap and then use gpio-leds
+on top of that. Instead I insisted it was a syscon/regmap and the
+LEDs go directly to that, bypassing one layer of abstraction.
 
--- 
-Best Regards,
-Jacek Anaszewski
+I also imagine creating syscon-keys.c for input from arbitrary keys
+in a syscon register actually. Just didn't get around to that yet.
+
+I also see some of the stuff GPIO does out-of-the-box being useful,
+for example in MFD: some of these are interrupt controllers and
+basically duplicate the kind of code I have in gpiolib for
+GPIOLIB_IRQCHIP.
+
+So we need to figure out what is really needed.
+
+While sparsely documented: what about regmap (maybe in the
+form of syscon) and drivers/base/regmap/regmap-irq.c for the
+interrupt handling?
+
+I cannot claim to understand regmap-irq.c, but I just intuitively
+think it deserves consideration, such that drivers who need one
+of these misc registers can read/write their bits with regmap
+accessors and also get IRQs by way of regmap-irq.
+
+Yours,
+Linus Walleij
