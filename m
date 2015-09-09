@@ -1,124 +1,104 @@
-From: Oleksij Rempel <linux@rempel-privat.de>
-Subject: Re: [PATCH v4 1/2] pinctrl: Add driver for Alphascale asm9260 pinctrl
-Date: Wed, 09 Sep 2015 07:55:24 +0200
-Message-ID: <55EFC9CC.3010008@rempel-privat.de>
-References: <1428306169.634.51.camel@x220>	<1428311043-12012-1-git-send-email-linux@rempel-privat.de>	<1428311043-12012-2-git-send-email-linux@rempel-privat.de>	<CACRpkdakXbHL6ydeZrs4XZ9Z1odHL5bWRxiHtT_Jbg-ygTudgw@mail.gmail.com>	<55522993.6090104@rempel-privat.de> <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: Single gpio shared by LED and switch?
+Date: Wed, 09 Sep 2015 09:25:27 +0200
+Message-ID: <55EFDEE7.20201@samsung.com>
+References: <CAMuHMdVPvLgKfHh+d1Gx0W2FzqkJkqG8E93QuAHOS=SAJBZ-xA@mail.gmail.com>
+ <55ED8B36.60108@samsung.com>
+ <CAMuHMdUrhrJv_3UX32AMC2Z_f4xp+LABgDCjgWdcJFa6=k9n_g@mail.gmail.com>
+ <55EEBDBC.8040408@samsung.com>
+ <CACRpkdZ+W8ZBdtjYUUYAy6t+bRvRx9MG7YP0EKno2Cr5C-kzoQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:60211 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751342AbbIIFza (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Sep 2015 01:55:30 -0400
-In-Reply-To: <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31395 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbbIIHZb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Sep 2015 03:25:31 -0400
+In-reply-to: <CACRpkdZ+W8ZBdtjYUUYAy6t+bRvRx9MG7YP0EKno2Cr5C-kzoQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi, finally i'm able to continue to work on it.
-
-Am 13.05.2015 um 13:00 schrieb Linus Walleij:
-> On Tue, May 12, 2015 at 6:25 PM, Oleksij Rempel <linux@rempel-privat.de=
-> wrote:
->> Am 05.05.2015 um 17:12 schrieb Linus Walleij:
->=20
->>> Just reference the statically defined array by a pointer instead,
->>> this just takes up a lot o memory for no reason.
->>
->> This two arrays have different types this is why i convert it.
->> priv->pin_desc[i].name - here i copy pointer any ways, and
->> priv->pin_desc[i].number can be smaller then pointer.
->=20
-> I probably do not understand what you're trying to do, sorry :(
->=20
-> Why is it necessary for the driver to copy one description of
-> the pin into another?
-
-If i understand it correctly, pinctrl_pin_desc is essential part of
-pinmux framework. Theoretically i should define just statical array of
-this struct, but by this number of pins and functions it hard to keep it
-readable and error free. So i decided to create asm9260_mux_table which
-contains every thing i need. The side effect is higher memory usage
-since i need to create pinctrl_pin_desc on fly.
-
-May be i miss some thing?
-
->>> Mory copying. I don't see why this is necessary at all.
->>
->> I hadn't seen the point to define groups statically, especially becaus=
-e
->> they are used only  to make curious user happy. So, memory will be use=
-d
->> only if you request the list over sysfs. Or miss some thing?
->=20
-> pinctrl does not even use sysfs.
-
-please read debugfs.
-
-> The group names are usually there for matching with a function,
-> it is part of the core functionality. The group name + function name
-> matching is even more obvious in the dt case.
->=20
-> They also make things easier to read in debugfs yes, but
-> the core of the crux is to make it easy to config function+groups
-> states with e.g. DT or board files.
->=20
->>>> +static struct pinmux_ops asm9260_pinmux_ops =3D {
->>>> +       .get_functions_count    =3D asm9260_pinctrl_get_funcs_count,=
-
->>>> +       .get_function_name      =3D asm9260_pinctrl_get_func_name,
->>>> +       .get_function_groups    =3D asm9260_pinctrl_get_func_groups,=
-
->>>> +       .set_mux                =3D asm9260_pinctrl_set_mux,
->>>> +       /* TODO: should we care about gpios here? gpio_request_enabl=
-e? */
+On 09/08/2015 04:37 PM, Linus Walleij wrote:
+> On Tue, Sep 8, 2015 at 12:51 PM, Jacek Anaszewski
+> <j.anaszewski@samsung.com> wrote:
+>> On 09/07/2015 03:22 PM, Geert Uytterhoeven wrote:
+>
+>>> Something like this?
 >>>
->>> I think you should, if you also have a matching GPIO driver.
+>>>                        VCC         VCC
+>>>                         |           |
+>>>                         R           R
+>>>                         |           |
+>>>                 __|__   |           |
+>>>             +---o   o---+          _|_
+>>>             |           |          \ /
+>>>             |           |          ---
+>>>            GND          R           |
+>>>                         |           |
+>>>                         |         |-+
+>>>                         |         |<+
+>>> GPIO -----------------+---------|-|
+>>>                                     |
+>>>                                     |
+>>>                                    GND
 >>
->> I fear it would cause unpredictable bugs. GPIO mode is just one of mux=
+>>
+>> You would need also resistor to avoid short-circuit
+>> when the switch is on.
+>
+> There is a resistor AFAICT.
 
->> modes. If some one will request gpio some busy or dangerous line it
->> would do more harm then use. So, i assume limiting this only to device=
+Indeed. For some reason my mind filtered out these 'R'
+characters.
 
->> tree would be better.
->=20
-> Device tree or not doesn't matter, .gpio_request_enable() is used
-> as a shortcut to mux in GPIO pins.
->=20
-> If the simultaneous use of a pin for a device and GPIO bothers
-> you there is nowadays (linux-next or my devel branch) a .strict
-> option in pinmux_ops that you can set to disallow simultaneous
-> use by devices and GPIO of the same pin.
->=20
-> Yours,
-> Linus Walleij
->=20
+> But consider the GPIO side which is opaque
+> here. When used as input it is often high impedance
+> but when used to drive it is not.
+>
+> Doesn't this mean the output actually has to be
+> open collector (open drain)?
 
+I think that GPIO control register would have to be
+altered to switch between particular modes.
 
---=20
-Regards,
-Oleksij
+Let's analyze possible modes, assuming that the transistor
+is a bipolar PNP:
 
+LED_OFF: GPIO in output mode, state 1.
+LED_ON: GPIO in pull down mode (or output 0?) The drawback here
+         is that additional current flow will occur from VCC to GPIO,
+read SW state: GPIO in input mode, high impedance
+                (the LED would be off for this period)
 
---gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Correct me if I'm wrong, I haven't played with electronics
+for a long time.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> In that case we should enforce that in the software
+> framework too so we protect people from shooting
+> themselves in the foot.
 
-iF4EAREIAAYFAlXvyc0ACgkQHwImuRkmbWk/yAD/X3a4gDh+YfwauOx97B+O9Um+
-63mz2khNmGQkq3yGol4BAINMZVD9vJKdvYRkM+WCQAwwlSnIe1o9c985mYDhLmNy
-=BKDK
------END PGP SIGNATURE-----
+We would have to use pinctrl for this, I presume.
 
---gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S--
+>> We'd have to ask Linus if he welcomes drivers for this type
+>> of home-made circuits in mainline. If yes, then probably someone would
+>> have to build the circuit, develop and test the driver on it, and
+>> finally come up with a detailed documentation.
+>> Are you the volunteer? :)
+>
+> Of course he's considering it or he wouldn't write :)
+>
+> I'm curious about what comes out of this, this is exactly
+> the type of problems that the GPIO subsystem is about
+> to help with.
+
+That's great. It seems that the potential driver would
+best fit for GPIO subsystem, and we could think about creating
+some wrapper in the LED subsystem, to make it compatible
+with led-triggers.
+
+-- 
+Best Regards,
+Jacek Anaszewski
