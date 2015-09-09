@@ -1,114 +1,148 @@
-From: Bjorn Andersson <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: Re: [PATCH 0/4] Qualcomm Shared Memory State Machines
-Date: Tue, 8 Sep 2015 15:22:27 -0700
-Message-ID: <20150908222227.GY13472@usrtlx11787.corpusers.net>
-References: <1440697078-4106-1-git-send-email-bjorn.andersson@sonymobile.com>
- <CACRpkdb-624MauE4sS0mqxarXRRaS3sEB2aMzeRNZw945xhMnA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 0/22] On-demand device probing
+Date: Tue, 8 Sep 2015 20:33:25 -0500
+Message-ID: <55EF8C65.4030706@kernel.org>
+References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+ <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb-624MauE4sS0mqxarXRRaS3sEB2aMzeRNZw945xhMnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jingo
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue 08 Sep 05:20 PDT 2015, Linus Walleij wrote:
+On 09/08/2015 02:30 AM, Tomeu Vizoso wrote:
+> On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wro=
+te:
+>> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora=
+=2Ecom> wrote:
+>>> Hello,
+>>>
+>>> I have a problem with the panel on my Tegra Chromebook taking longe=
+r
+>>> than expected to be ready during boot (St=C3=A9phane Marchesin repo=
+rted what
+>>> is basically the same issue in [0]), and have looked into ordered
+>>> probing as a better way of solving this than moving nodes around in=
+ the
+>>> DT or playing with initcall levels and linking order.
+>>>
+>>> While reading the thread [1] that Alexander Holler started with his
+>>> series to make probing order deterministic, it occurred to me that =
+it
+>>> should be possible to achieve the same by probing devices as they a=
+re
+>>> referenced by other devices.
+>>>
+>>> This basically reuses the information that is already implicit in t=
+he
+>>> probe() implementations, saving us from refactoring existing driver=
+s or
+>>> adding information to DTBs.
+>>>
+>>> During review of v1 of this series Linus Walleij suggested that it
+>>> should be the device driver core to make sure that dependencies are
+>>> ready before probing a device. I gave this idea a try [2] but Mark =
+Brown
+>>> pointed out to the logic duplication between the resource acquisiti=
+on
+>>> and dependency discovery code paths (though I think it's fairly min=
+or).
+>>>
+>>> To address that code duplication I experimented with Arnd's devm_pr=
+obe
+>>> [3] concept of having drivers declare their dependencies instead of
+>>> acquiring them during probe, and while it worked [4], I don't think=
+ we
+>>> end up winning anything when compared to just probing devices on-de=
+mand
+>>> from resource getters.
+>>>
+>>> One remaining objection is to the "sprinkling" of calls to
+>>> of_device_probe() in the resource getters of each subsystem, but I =
+think
+>>> it's the right thing to do given that the storage of resources is
+>>> currently subsystem-specific.
+>>>
+>>> We could avoid the above by moving resource storage into the core, =
+but I
+>>> don't think there's a compelling case for that.
+>>>
+>>> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip an=
+d
+>>> OMAP SoCs, and these patches were enough to eliminate all the defer=
+red
+>>> probes (except one in PandaBoard because omap_dma_system doesn't ha=
+ve a
+>>> firmware node as of yet).
+>>>
+>>> Have submitted a branch [5] with only these patches on top of thurs=
+day's
+>>> linux-next to kernelci.org and I don't see any issues that could be
+>>> caused by them. For some reason it currently has more passes than t=
+he
+>>> version of -next it's based on!
+>>>
+>>> With this series I get the kernel to output to the panel in 0.5s,
+>>> instead of 2.8s.
+>>>
+>>> Regards,
+>>>
+>>> Tomeu
+>>>
+>>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066=
+527.html
+>>>
+>>> [1] https://lkml.org/lkml/2014/5/12/452
+>>>
+>>> [2] https://lkml.org/lkml/2015/6/17/305
+>>>
+>>> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
+>>>
+>>> [4] https://lkml.org/lkml/2015/7/21/441a
+>>>
+>>> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=3Don=
+-demand-probes-v6
+>>>
+>>> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g2=
+5d80c927f8b/
+>>>
+>>> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
+>>>
+>>> Changes in v4:
+>>> - Added bus.pre_probe callback so the probes of Primecell devices c=
+an be
+>>>   deferred if their device IDs cannot be yet read because of the cl=
+ock
+>>>   driver not having probed when they are registered. Maybe this goe=
+s
+>>>   overboard and the matching information should be in the DT if the=
+re is
+>>>   one.
+>>
+>> Seems overboard to me or at least a separate problem.
+>=20
+> It's a separate problem but this was preventing the series from
+> working on a few boards.
 
-> On Thu, Aug 27, 2015 at 7:37 PM, Bjorn Andersson
-> <bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org> wrote:
-> 
-> Let's discuss this a bit, looping in Mark Brown.
-> 
-> > As some of these states on some platforms are passed as physical signals
-> > instead, the two drivers are modelled as gpio- and interrupt-controllers -
-> > providing a nice abstraction both in device tree sense and Linux implementation
-> > sense.
-> 
-> I have unfortunately repeatedly encountered an argument of the type
-> "GPIO has nice infrastructure so let's call X 'a kind of GPIO' so
-> we can use that nice infrastructure".
-> 
+What is the failure? Not booting? Fixing not working would certainly no=
+t
+be overboard.
 
-I guess that's what you get for maintaining a subsystem with "general
-purpose" in the name ;)
+>=20
+>> Most clocks have
+>> to be setup before the driver model simply because timers depend on
+>> clocks usually.
+>=20
+> Yes, but in this case the apb clocks for the primecell devices are
+> implemented in a normal platform driver (vexpress_osc_driver), instea=
+d
+> of using CLK_OF_DECLARE.
 
-Sorry for adding one more item to your list.
+Okay.
 
-> I'm not pleased with something that is not really general purpose
-> input/output being called GPIO. It fits badly with the GPIO subsystem
-> when we support things like open drain and cross-mappings to
-> the pin control subsystem that will never be applicable to these
-> new users. It's more like "special purpose input/output" or
-> something.
-> 
-
-Right, this doesn't match at all with the electrical properties.
-
-What it does give is the nice symmetry with the irq bits and existing
-apis for poking and peeking.
-
-> This happened with syscon LEDs for example, and was the reason
-> I implemented syscon-leds. The original proposal was to say the LEDs
-> register was "a kind of GPIO" on top of regmap and then use gpio-leds
-> on top of that. Instead I insisted it was a syscon/regmap and the
-> LEDs go directly to that, bypassing one layer of abstraction.
-> 
-> I also imagine creating syscon-keys.c for input from arbitrary keys
-> in a syscon register actually. Just didn't get around to that yet.
-> 
-
-The difference with those two cases is that the pieces didn't fit
-together, so we tried to use the gpio framework as an adaptor to make it
-work.
-
-I picked the gpio framework because:
-* the DT nicely represent the structure of the memory and relationship
-  between the individual components.
-
-* the implementation needs to be able to set and clear individual bits,
-  as well as register handlers for state changes.
-
-* I'm told the SMP2P entries are on some platform (I've never seen)
-  actual gpio lines.
-
-> I also see some of the stuff GPIO does out-of-the-box being useful,
-> for example in MFD: some of these are interrupt controllers and
-> basically duplicate the kind of code I have in gpiolib for
-> GPIOLIB_IRQCHIP.
-> 
-
-I do learn about new helper functions every time I touch these things.
-
-> So we need to figure out what is really needed.
-> 
-> While sparsely documented: what about regmap (maybe in the
-> form of syscon) and drivers/base/regmap/regmap-irq.c for the
-> interrupt handling?
-> 
-
-regmap-irq looks good and reasonable.
-
-The problem is that for SMSM I need custom masking operations and on
-SMP2P I have multiple regmaps sharing one incoming IRQ. So it doesn't
-look applicable for my use cases.
-
-> I cannot claim to understand regmap-irq.c, but I just intuitively
-> think it deserves consideration, such that drivers who need one
-> of these misc registers can read/write their bits with regmap
-> accessors and also get IRQs by way of regmap-irq.
-> 
-
-I was expecting some push back from you, but as it was the cleanest
-abstraction I would come up with I gave it a shot :)
-
-I'll rewrite the outgoing part based on regmaps instead. Thanks for
-reviewing.
-
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rob
