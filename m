@@ -1,148 +1,124 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 0/22] On-demand device probing
-Date: Tue, 8 Sep 2015 20:33:25 -0500
-Message-ID: <55EF8C65.4030706@kernel.org>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
- <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
+From: Oleksij Rempel <linux@rempel-privat.de>
+Subject: Re: [PATCH v4 1/2] pinctrl: Add driver for Alphascale asm9260 pinctrl
+Date: Wed, 09 Sep 2015 07:55:24 +0200
+Message-ID: <55EFC9CC.3010008@rempel-privat.de>
+References: <1428306169.634.51.camel@x220>	<1428311043-12012-1-git-send-email-linux@rempel-privat.de>	<1428311043-12012-2-git-send-email-linux@rempel-privat.de>	<CACRpkdakXbHL6ydeZrs4XZ9Z1odHL5bWRxiHtT_Jbg-ygTudgw@mail.gmail.com>	<55522993.6090104@rempel-privat.de> <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jingo
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.17.20]:60211 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751342AbbIIFza (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Sep 2015 01:55:30 -0400
+In-Reply-To: <CACRpkdZn+bkDKzAD6gpnysezGZ6fzizD2o4zdBfEamFgUbzcvg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 09/08/2015 02:30 AM, Tomeu Vizoso wrote:
-> On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wro=
-te:
->> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora=
-=2Ecom> wrote:
->>> Hello,
->>>
->>> I have a problem with the panel on my Tegra Chromebook taking longe=
-r
->>> than expected to be ready during boot (St=C3=A9phane Marchesin repo=
-rted what
->>> is basically the same issue in [0]), and have looked into ordered
->>> probing as a better way of solving this than moving nodes around in=
- the
->>> DT or playing with initcall levels and linking order.
->>>
->>> While reading the thread [1] that Alexander Holler started with his
->>> series to make probing order deterministic, it occurred to me that =
-it
->>> should be possible to achieve the same by probing devices as they a=
-re
->>> referenced by other devices.
->>>
->>> This basically reuses the information that is already implicit in t=
-he
->>> probe() implementations, saving us from refactoring existing driver=
-s or
->>> adding information to DTBs.
->>>
->>> During review of v1 of this series Linus Walleij suggested that it
->>> should be the device driver core to make sure that dependencies are
->>> ready before probing a device. I gave this idea a try [2] but Mark =
-Brown
->>> pointed out to the logic duplication between the resource acquisiti=
-on
->>> and dependency discovery code paths (though I think it's fairly min=
-or).
->>>
->>> To address that code duplication I experimented with Arnd's devm_pr=
-obe
->>> [3] concept of having drivers declare their dependencies instead of
->>> acquiring them during probe, and while it worked [4], I don't think=
- we
->>> end up winning anything when compared to just probing devices on-de=
-mand
->>> from resource getters.
->>>
->>> One remaining objection is to the "sprinkling" of calls to
->>> of_device_probe() in the resource getters of each subsystem, but I =
-think
->>> it's the right thing to do given that the storage of resources is
->>> currently subsystem-specific.
->>>
->>> We could avoid the above by moving resource storage into the core, =
-but I
->>> don't think there's a compelling case for that.
->>>
->>> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip an=
-d
->>> OMAP SoCs, and these patches were enough to eliminate all the defer=
-red
->>> probes (except one in PandaBoard because omap_dma_system doesn't ha=
-ve a
->>> firmware node as of yet).
->>>
->>> Have submitted a branch [5] with only these patches on top of thurs=
-day's
->>> linux-next to kernelci.org and I don't see any issues that could be
->>> caused by them. For some reason it currently has more passes than t=
-he
->>> version of -next it's based on!
->>>
->>> With this series I get the kernel to output to the panel in 0.5s,
->>> instead of 2.8s.
->>>
->>> Regards,
->>>
->>> Tomeu
->>>
->>> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/066=
-527.html
->>>
->>> [1] https://lkml.org/lkml/2014/5/12/452
->>>
->>> [2] https://lkml.org/lkml/2015/6/17/305
->>>
->>> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
->>>
->>> [4] https://lkml.org/lkml/2015/7/21/441a
->>>
->>> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=3Don=
--demand-probes-v6
->>>
->>> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g2=
-5d80c927f8b/
->>>
->>> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
->>>
->>> Changes in v4:
->>> - Added bus.pre_probe callback so the probes of Primecell devices c=
-an be
->>>   deferred if their device IDs cannot be yet read because of the cl=
-ock
->>>   driver not having probed when they are registered. Maybe this goe=
-s
->>>   overboard and the matching information should be in the DT if the=
-re is
->>>   one.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi, finally i'm able to continue to work on it.
+
+Am 13.05.2015 um 13:00 schrieb Linus Walleij:
+> On Tue, May 12, 2015 at 6:25 PM, Oleksij Rempel <linux@rempel-privat.de=
+> wrote:
+>> Am 05.05.2015 um 17:12 schrieb Linus Walleij:
+>=20
+>>> Just reference the statically defined array by a pointer instead,
+>>> this just takes up a lot o memory for no reason.
 >>
->> Seems overboard to me or at least a separate problem.
+>> This two arrays have different types this is why i convert it.
+>> priv->pin_desc[i].name - here i copy pointer any ways, and
+>> priv->pin_desc[i].number can be smaller then pointer.
 >=20
-> It's a separate problem but this was preventing the series from
-> working on a few boards.
+> I probably do not understand what you're trying to do, sorry :(
+>=20
+> Why is it necessary for the driver to copy one description of
+> the pin into another?
 
-What is the failure? Not booting? Fixing not working would certainly no=
-t
-be overboard.
+If i understand it correctly, pinctrl_pin_desc is essential part of
+pinmux framework. Theoretically i should define just statical array of
+this struct, but by this number of pins and functions it hard to keep it
+readable and error free. So i decided to create asm9260_mux_table which
+contains every thing i need. The side effect is higher memory usage
+since i need to create pinctrl_pin_desc on fly.
 
->=20
->> Most clocks have
->> to be setup before the driver model simply because timers depend on
->> clocks usually.
->=20
-> Yes, but in this case the apb clocks for the primecell devices are
-> implemented in a normal platform driver (vexpress_osc_driver), instea=
+May be i miss some thing?
+
+>>> Mory copying. I don't see why this is necessary at all.
+>>
+>> I hadn't seen the point to define groups statically, especially becaus=
+e
+>> they are used only  to make curious user happy. So, memory will be use=
 d
-> of using CLK_OF_DECLARE.
+>> only if you request the list over sysfs. Or miss some thing?
+>=20
+> pinctrl does not even use sysfs.
 
-Okay.
+please read debugfs.
 
-Rob
+> The group names are usually there for matching with a function,
+> it is part of the core functionality. The group name + function name
+> matching is even more obvious in the dt case.
+>=20
+> They also make things easier to read in debugfs yes, but
+> the core of the crux is to make it easy to config function+groups
+> states with e.g. DT or board files.
+>=20
+>>>> +static struct pinmux_ops asm9260_pinmux_ops =3D {
+>>>> +       .get_functions_count    =3D asm9260_pinctrl_get_funcs_count,=
+
+>>>> +       .get_function_name      =3D asm9260_pinctrl_get_func_name,
+>>>> +       .get_function_groups    =3D asm9260_pinctrl_get_func_groups,=
+
+>>>> +       .set_mux                =3D asm9260_pinctrl_set_mux,
+>>>> +       /* TODO: should we care about gpios here? gpio_request_enabl=
+e? */
+>>>
+>>> I think you should, if you also have a matching GPIO driver.
+>>
+>> I fear it would cause unpredictable bugs. GPIO mode is just one of mux=
+
+>> modes. If some one will request gpio some busy or dangerous line it
+>> would do more harm then use. So, i assume limiting this only to device=
+
+>> tree would be better.
+>=20
+> Device tree or not doesn't matter, .gpio_request_enable() is used
+> as a shortcut to mux in GPIO pins.
+>=20
+> If the simultaneous use of a pin for a device and GPIO bothers
+> you there is nowadays (linux-next or my devel branch) a .strict
+> option in pinmux_ops that you can set to disallow simultaneous
+> use by devices and GPIO of the same pin.
+>=20
+> Yours,
+> Linus Walleij
+>=20
+
+
+--=20
+Regards,
+Oleksij
+
+
+--gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iF4EAREIAAYFAlXvyc0ACgkQHwImuRkmbWk/yAD/X3a4gDh+YfwauOx97B+O9Um+
+63mz2khNmGQkq3yGol4BAINMZVD9vJKdvYRkM+WCQAwwlSnIe1o9c985mYDhLmNy
+=BKDK
+-----END PGP SIGNATURE-----
+
+--gxA4EMrg3dE83uHXlWEqs74ofg7mr1R4S--
