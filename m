@@ -1,50 +1,51 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791/r8a7793: Correct SCIFB1_B SCK MOD_SEL value
-Date: Thu, 10 Sep 2015 14:17:03 +0200
-Message-ID: <1441887423-18743-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:48074 "EHLO
-	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752893AbbIJMRC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Sep 2015 08:17:02 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Peng Fan <van.freenix@gmail.com>
+Subject: [PATCH] pinctrl: core: handle pinctrl_get failure
+Date: Thu, 10 Sep 2015 21:38:06 +0800
+Message-ID: <1441892286-18989-1-git-send-email-van.freenix@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, van.freenix@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-When using serial port SCIFB1_B, transmit works, but nothing is
-received.
+Need to do error handling path when pinctrl_get fails. Also when
+pinctrl_get success, insert 'pctldev->node' to pinctrldev_list.
 
-Receive fails because the SCIFB1_SCK_B settings configure the wrong
-value for the sel_scifb1 field in the Module Select Register (MOD_SEL),
-due to an ambiguity in the R-Car M2-W and M2-N datasheets.
-
-Tested on r8a7791/koelsch using pins 53 (TXD) and 72 (RXD) on EXIO
-Connector A.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Peng Fan <van.freenix@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
-Against next-20150910.
+ drivers/pinctrl/core.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-s/PINMUX_IPSR_MODSEL_DATA/PINMUX_IPSR_MSEL/ to apply on
-renesas-drivers-2015-09-08-v4.2.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index ee41eb10ef3636d7..622841954f4b9ab4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -889,7 +889,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_DATA(IP2_2_0, DACK1),
- 	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFA1_TXD_C, SEL_SCIFA1_2),
- 	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_TXD_C, SEL_SCIFB1_2),
--	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_SCK_B, SEL_SCIFB1_0),
-+	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_SCK_B, SEL_SCIFB1_1),
- 	PINMUX_IPSR_DATA(IP2_2_0, A20),
- 	PINMUX_IPSR_MODSEL_DATA(IP2_4_3, SPCLK, SEL_QSP_0),
- 	PINMUX_IPSR_DATA(IP2_6_5, A21),
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 69723e0..ae6f9b6 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1753,10 +1753,6 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 		goto out_err;
+ 	}
+ 
+-	mutex_lock(&pinctrldev_list_mutex);
+-	list_add_tail(&pctldev->node, &pinctrldev_list);
+-	mutex_unlock(&pinctrldev_list_mutex);
+-
+ 	pctldev->p = pinctrl_get(pctldev->dev);
+ 
+ 	if (!IS_ERR(pctldev->p)) {
+@@ -1776,8 +1772,14 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 						    PINCTRL_STATE_SLEEP);
+ 		if (IS_ERR(pctldev->hog_sleep))
+ 			dev_dbg(dev, "failed to lookup the sleep state\n");
++	} else {
++		goto out_err;
+ 	}
+ 
++	mutex_lock(&pinctrldev_list_mutex);
++	list_add_tail(&pctldev->node, &pinctrldev_list);
++	mutex_unlock(&pinctrldev_list_mutex);
++
+ 	pinctrl_init_device_debugfs(pctldev);
+ 
+ 	return pctldev;
 -- 
-1.9.1
-
+1.8.4
