@@ -1,59 +1,50 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: [PATCH] kernel/resource.c: fix muxed resource handling in __request_region()
-Date: Thu, 10 Sep 2015 00:15:18 +0200
-Message-ID: <1441836918-24159-1-git-send-email-simon.guinot@sequanux.org>
-References: <20150909220140.GD9892@kw.sim.vm.gnt>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791/r8a7793: Correct SCIFB1_B SCK MOD_SEL value
+Date: Thu, 10 Sep 2015 14:17:03 +0200
+Message-ID: <1441887423-18743-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:41861 "EHLO vm1.sequanux.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751055AbbIIWP0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Sep 2015 18:15:26 -0400
-In-Reply-To: <20150909220140.GD9892@kw.sim.vm.gnt>
+Received: from michel.telenet-ops.be ([195.130.137.88]:48074 "EHLO
+	michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752893AbbIJMRC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Sep 2015 08:17:02 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alan Cox <alan@linux.intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Giel van Schijndel <me@mortis.eu>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-In __request_region, if a conflict with a BUSY and MUXED resource is
-detected, then the caller goes to sleep and waits for the resource to
-be released. A pointer on the conflicting resource is kept. At wake-up
-this pointer is used as a parent to retry to request the region. A first
-problem is that this pointer might well be invalid (if for example the
-conflicting resource have already been freed). An another problem is
-that the next call to __request_region() fails to detect a remaining
-conflict. The previously conflicting resource is passed as a parameter
-and __request_region() will look for a conflict among the children of
-this resource and not at the resource itself. It is likely to succeed
-anyway, even if there is still a conflict. Instead, the parent of the
-conflicting resource should be passed to __request_region().
+When using serial port SCIFB1_B, transmit works, but nothing is
+received.
 
-As a fix attempt, this patch don't update the parent resource pointer in
-the case we have to wait for a muxed region right after.
+Receive fails because the SCIFB1_SCK_B settings configure the wrong
+value for the sel_scifb1 field in the Module Select Register (MOD_SEL),
+due to an ambiguity in the R-Car M2-W and M2-N datasheets.
 
-Reported-by: Vincent Pelletier <plr.vincent@gmail.com>
-Signed-off-by: Simon Guinot <simon.guinot@sequanux.org>
-Tested-by: Vincent Donnefort <vdonnefort@gmail.com>
+Tested on r8a7791/koelsch using pins 53 (TXD) and 72 (RXD) on EXIO
+Connector A.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- kernel/resource.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Against next-20150910.
 
-diff --git a/kernel/resource.c b/kernel/resource.c
-index fed052a1bc9f..b8c84804db6a 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -1072,9 +1072,10 @@ struct resource * __request_region(struct resource *parent,
- 		if (!conflict)
- 			break;
- 		if (conflict != parent) {
--			parent = conflict;
--			if (!(conflict->flags & IORESOURCE_BUSY))
-+			if (!(conflict->flags & IORESOURCE_BUSY)) {
-+				parent = conflict;
- 				continue;
-+			}
- 		}
- 		if (conflict->flags & flags & IORESOURCE_MUXED) {
- 			add_wait_queue(&muxed_resource_wait, &wait);
+s/PINMUX_IPSR_MODSEL_DATA/PINMUX_IPSR_MSEL/ to apply on
+renesas-drivers-2015-09-08-v4.2.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index ee41eb10ef3636d7..622841954f4b9ab4 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -889,7 +889,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_DATA(IP2_2_0, DACK1),
+ 	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFA1_TXD_C, SEL_SCIFA1_2),
+ 	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_TXD_C, SEL_SCIFB1_2),
+-	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_SCK_B, SEL_SCIFB1_0),
++	PINMUX_IPSR_MODSEL_DATA(IP2_2_0, SCIFB1_SCK_B, SEL_SCIFB1_1),
+ 	PINMUX_IPSR_DATA(IP2_2_0, A20),
+ 	PINMUX_IPSR_MODSEL_DATA(IP2_4_3, SPCLK, SEL_QSP_0),
+ 	PINMUX_IPSR_DATA(IP2_6_5, A21),
 -- 
-2.1.4
+1.9.1
 
