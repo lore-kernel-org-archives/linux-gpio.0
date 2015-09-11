@@ -1,98 +1,32 @@
-From: Y Vo <yvo@apm.com>
-Subject: [PATCH 1/2] gpio: xgene: add support to configure GPIO line as input, output or external IRQ pin
-Date: Fri, 11 Sep 2015 16:22:11 +0700
-Message-ID: <1441963332-13329-2-git-send-email-yvo@apm.com>
-References: <1441963332-13329-1-git-send-email-yvo@apm.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:36234 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751266AbbIKJWc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Sep 2015 05:22:32 -0400
-Received: by padhk3 with SMTP id hk3so70063815pad.3
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2015 02:22:32 -0700 (PDT)
-In-Reply-To: <1441963332-13329-1-git-send-email-yvo@apm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 0/2] pinctrl: uniphier: one fix, one addition
+Date: Fri, 11 Sep 2015 18:22:19 +0900
+Message-ID: <1441963341-1764-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
 
-Add support to configure GPIO line as input, output or external IRQ pin.
 
-Signed-off-by: Y Vo <yvo@apm.com>
----
- drivers/gpio/gpio-xgene-sb.c |   33 ++++++++++++++++++++++++++-------
- 1 files changed, 26 insertions(+), 7 deletions(-)
+1/2 is a bug fix, but it is not very critical.
+I can wait until 4.4-rc1 if it is a hassle.
 
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index d57068b..76b15e0 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -32,6 +32,8 @@
- 
- #define XGENE_MAX_GPIO_DS		22
- #define XGENE_MAX_GPIO_DS_IRQ		6
-+#define XGENE_GPIO8_HWIRQ		0x48
-+#define XGENE_GPIO8_IDX			8
- 
- #define GPIO_MASK(x)			(1U << ((x) % 32))
- 
-@@ -82,11 +84,19 @@ static int apm_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
- 	return -ENXIO;
- }
- 
-+static int xgene_irq_to_line(u32 irq)
-+{
-+	u32 offset = irq_get_irq_data(irq)->hwirq - XGENE_GPIO8_HWIRQ;
-+
-+	return (offset < XGENE_MAX_GPIO_DS_IRQ) ?
-+			(offset + XGENE_GPIO8_IDX) : -EINVAL;
-+}
-+
- static int xgene_gpio_sb_probe(struct platform_device *pdev)
- {
- 	struct xgene_gpio_sb *priv;
- 	u32 ret, i;
--	u32 default_lines[] = {0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D};
-+	int virq, line;
- 	struct resource *res;
- 	void __iomem *regs;
- 
-@@ -109,20 +119,29 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
- 	priv->bgc.gc.to_irq = apm_gpio_sb_to_irq;
- 	priv->bgc.gc.ngpio = XGENE_MAX_GPIO_DS;
- 
--	priv->nirq = XGENE_MAX_GPIO_DS_IRQ;
--
- 	priv->irq = devm_kzalloc(&pdev->dev, sizeof(u32) * XGENE_MAX_GPIO_DS,
- 				   GFP_KERNEL);
- 	if (!priv->irq)
- 		return -ENOMEM;
- 
--	for (i = 0; i < priv->nirq; i++) {
--		priv->irq[default_lines[i]] = platform_get_irq(pdev, i);
-+	for (i = 0; i < XGENE_MAX_GPIO_DS_IRQ; i++) {
-+		virq = platform_get_irq(pdev, i);
-+		if (virq < 0)
-+			break;
-+		line = xgene_irq_to_line(virq);
-+		if (line < XGENE_GPIO8_IDX)
-+			break;
-+		priv->irq[line] = virq;
- 		xgene_gpio_set_bit(&priv->bgc, regs + MPA_GPIO_SEL_LO,
--                                   default_lines[i] * 2, 1);
--		xgene_gpio_set_bit(&priv->bgc, regs + MPA_GPIO_INT_LVL, i, 1);
-+						line * 2, 1);
-+		xgene_gpio_set_bit(&priv->bgc, regs + MPA_GPIO_INT_LVL,
-+						(line - XGENE_GPIO8_IDX), 1);
-+		dev_dbg(&pdev->dev,
-+			"gpio line %d mapped as external irq pin\n", line);
- 	}
- 
-+	priv->nirq = i;
-+
- 	platform_set_drvdata(pdev, priv);
- 
- 	ret = gpiochip_add(&priv->bgc.gc);
+2/2 provides some more pin-mux settings.
+
+
+
+Masahiro Yamada (2):
+  pinctrl: uniphier: fix input enable settings for PH1-sLD8
+  pinctrl: uniphier: add SD card pinmux settings
+
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c     |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c    |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c    |  11 ++
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c    |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c    | 230 +++++++++++++------------
+ drivers/pinctrl/uniphier/pinctrl-proxstream2.c |   5 +
+ 6 files changed, 148 insertions(+), 113 deletions(-)
+
 -- 
-1.7.1
-
+1.9.1
