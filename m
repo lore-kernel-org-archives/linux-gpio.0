@@ -1,58 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] Documentation: gpio: Update description for X-Gene standby GPIO controller DTS binding
-Date: Fri, 11 Sep 2015 14:46:49 +0200
-Message-ID: <14280808.2Weay6QlT1@wuerfel>
-References: <1441963332-13329-1-git-send-email-yvo@apm.com> <11539535.sS04eUgSdg@wuerfel> <CAL4ahLepjn-VG9WCLEovzjwc=8fpncP6xTS68gRO2VtVaEDc1g@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Request for submaintainer moderation: PFC pinctrl patches
+Date: Fri, 11 Sep 2015 14:49:04 +0200
+Message-ID: <CACRpkdZpaTsGQQWWJekLUZgAN6=ruq5-yZAjYe1ePNi4Tq1RRg@mail.gmail.com>
+References: <CACRpkdaMPST2ptDfPNH4e=hQBO1HjmsbcMXQRNRf905Rbi24Lw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57069 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752339AbbIKMq4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Sep 2015 08:46:56 -0400
-In-Reply-To: <CAL4ahLepjn-VG9WCLEovzjwc=8fpncP6xTS68gRO2VtVaEDc1g@mail.gmail.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:35863 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752130AbbIKMtG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Sep 2015 08:49:06 -0400
+Received: by obqa2 with SMTP id a2so59411450obq.3
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2015 05:49:04 -0700 (PDT)
+In-Reply-To: <CACRpkdaMPST2ptDfPNH4e=hQBO1HjmsbcMXQRNRf905Rbi24Lw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Y Vo <yvo@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Magnus Damm <damm+renesas@opensource.se>, Magnus Damm <magnus.damm@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Friday 11 September 2015 18:24:47 Y Vo wrote:
-> On Fri, Sep 11, 2015 at 4:35 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Friday 11 September 2015 16:22:12 Y Vo wrote:
-> >>  There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
-> >> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
-> >> +only GPIO_DS8..GPIO_DS13 support external interrupts. The IRQ mapping
-> >>  is currently 1-to-1 on interrupts 0x28 thru 0x2d.
-> >> +GPIO pins from GPIO_DS8 to GPIO_DS13 are configured as external interrupt
-> >> +by default. If one wish not to use any of these pins as external interrupts,
-> >> +the corresponding interrupt resource for those pins should be removed.
-> >
-> > According to this description, I fail to see how one would specify
-> > a missing interrupt for one of the pins that is not the last one in
-> > the list.
-> >
-> All GPIO_DS8..GPIO_DS13 are configured as external IRQ by default. So
-> if anyone want to use one of them as gpio mode, they can drop add the
-> sbgpio node to their DTB board-specific, and remove that GPIO from
-> interrupts property. As example below I want to leave GPIO_DS8 as gpio
-> mode, so I remove it as below:
-> 
-> /* Board-specific: exclude GPIO_DS8 to leave it as GPIO */
-> &sbgpio {
->        interrupts =    <0x0 0x29 0x1>,         /* GPIO_DS9 */
->                        <0x0 0x2a 0x1>,         /* GPIO_DS10 */
->                        <0x0 0x2b 0x1>,         /* GPIO_DS11 */
->                        <0x0 0x2c 0x1>,         /* GPIO_DS12 */
->                        <0x0 0x2d 0x1>;         /* GPIO_DS13 */
-> }
+Magnus can you help out?
 
-This would be a very unusual binding, because that requires the driver
-to know the contents of the properties in advance and the driver
-cannot derive the function of an irq from the position in the array.
+Kind of running out of options...
 
-Please come up with another approach that is more like other drivers
-do this and that makes it possible to reuse the driver if the
-interrupt numbers change.
+If noone helps out, expect this development cycle to be bumpy for
+SH PFC.
 
-	Arnd
+Yours
+Linus Walleij
+
+On Tue, Sep 8, 2015 at 11:09 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Hi Renesas PFC folks,
+>
+> I am faced with a patchs storm for PFC stuf from Geert, Kununori and
+> Sergei at the same time.
+>
+> I need help to review, prioritize and handle this. Also I have zero Renesas
+> boards and no way to test if these collide at runtime, and for SH whether
+> they collide even at compiletime.
+>
+> I want you to agree on one person to stack up and accumulate PFC patches
+> for both fixes and devel and send me a pull request.
+>
+> Last time Laurent did this, I don not know if he's up for it again or
+> if you need
+> to appoint a new submaintainer.
+>
+> Anyways: suggestions?
+>
+> Yours,
+> Linus Walleij
