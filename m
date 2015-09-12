@@ -1,92 +1,238 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH 2/2] Documentation: gpio: Update description for X-Gene
- standby GPIO controller DTS binding
-Date: Sat, 12 Sep 2015 12:55:55 +0700
-Message-ID: <CAL4ahLeuPX7viZ5=RaC92=n+jT82=Fa3tF7oH8Q=kE=PKVBSwQ@mail.gmail.com>
-References: <1441963332-13329-1-git-send-email-yvo@apm.com>
-	<3318725.Seeb48hirI@wuerfel>
-	<CAL4ahLeoeT79ct-M-Bd-O08K0Dmysas3HFmTfXUFGtHKJBRzsg@mail.gmail.com>
-	<2311005.jUde56dLfB@wuerfel>
+From: maoguang meng <maoguang.meng@mediatek.com>
+Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and
+ suspend resume
+Date: Sat, 12 Sep 2015 17:50:54 +0800
+Message-ID: <1442051454.5661.12.camel@mhfsdcap03>
+References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
+	 <55DB4609.5040904@arm.com>
+	 <CAGS+omBnoitju07KQ1Y7JHTbce6+DO4WqWHTaKz5D+T157zEJA@mail.gmail.com>
+	 <1441535972.22230.5.camel@mhfsdcap03> <55EEAA24.6080706@arm.com>
+	 <55EF11E6.7030307@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f53.google.com ([209.85.215.53]:36653 "EHLO
-	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750981AbbILFz5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Sep 2015 01:55:57 -0400
-Received: by lanb10 with SMTP id b10so59335028lan.3
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2015 22:55:55 -0700 (PDT)
-In-Reply-To: <2311005.jUde56dLfB@wuerfel>
+Received: from mailgw01.mediatek.com ([218.249.47.110]:54944 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753936AbbILJvH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Sep 2015 05:51:07 -0400
+In-Reply-To: <55EF11E6.7030307@arm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen =?iso-2022-jp?Q?=28=1B=24BDD1Q=3D=27=1B=28B=29?= <Yingjoe.Chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Sep 11, 2015 at 11:45 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Friday 11 September 2015 22:06:58 Y Vo wrote:
->> On Fri, Sep 11, 2015 at 9:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Friday 11 September 2015 21:23:31 Y Vo wrote:
->> >> Is that possible if we change to this approach:
->> >> - Keep all GPIO as GPIO mode by default.
->> >> - If anyone want to use them as interrupt, they must add the interrupt
->> >> node to DT specific-board below:
->> >>
->> >> Example to configure GPIO_DS11, 12, 13 as external irq:
->> >>
->> >> &sbgpio {
->> >>         interrupts = <0x0 0x2b 0x1>,         /* GPIO_DS11 */
->> >>                         <0x0 0x2c 0x1>,         /* GPIO_DS12 */
->> >>                         <0x0 0x2d 0x1>;         /* GPIO_DS13 */
->> >
->> > That is exactly the same as you have in your patch. You should
->> > always list all interrupts that the gpio controller is wired
->> > to, whether they are used or not.
->> >
->> > Ideally, the driver just decides at runtime how to wire that
->> > mux, based on how the gpio is configured by the client driver.
->> > If the client asks for an interrupt (with gpio_to_irq) and is
->> > it is configured as an input, then you connect it to the GIC,
->> > otherwise you leave it to be handled by the gpio chip itself.
->> > Any reason you can't do that?
->> >
->> As I just explained, the GPIO Standby doesn't support the interrupt.
->> Both interrupts are came from GIC, so if the client asks for an
->> interrupt, it will go to the GIC driver (not GPIO Standby driver), so
->> that's my trouble. We can not implement the code to configured the
->> GPIO standby at GIC driver.
->
-> So you are saying we merged a binding that is incapable of describing
-> the hardware? If that is the case, we may have to go back to
-> the drawing board and come up with a working binding.
->
-> One part that I don't understand yet is how the driver handles
-> irqs to start with, as it does not register a nested irq domain
-> or irqchip, so I'm guessing that client drivers cannot actually
-> use the IRQ functionality. Is that right?
-For our case the irq_domain is in irq-gic driver, the GPIO driver only
-is responsible to wire 2 the external irq of GIC to GPIO pin.
+hi Sudeep:
 
-Example for configure GPIO_DS13 as interrupt and use as button with
-the current gpio driver:
-        gpio-keys {
-                compatible = "gpio-keys";
-                button@1 {
-                        label = "POWER";
-                        linux,code = <116>;
-                        linux,input-type = <0x1>;
-                        interrupts = <0x0 0x2d 0x1>;
-                };
-        };
+I test flowlling your blow suggestions,but the system can not be woken.
 
->
-> It also seems to me that the binding cannot distinguish between a
-> line configured as an input and one that is configured as an
-> interrupt, which are for other gpio chips the same thing, but
-> not on this one.  Could this be rectified by using another bit
-> of the second gpio cell? The low bit is used for active-high/active-low,
-> so you could use the second bit for irq/input.
->
-Do you mean #gpio-cells property and using the high bit of the second
-bit for irq/input  ?
+beacuse,mtk_eint_suspend will mask it.As we know if eint wakeup system
+it must be unmasked before enter suspend flow.
 
->         Arnd
+e.x
+
+static int __maybe_unused elan_suspend(struct device *dev)
+{
+	struct i2c_client *client = to_i2c_client(dev);
+	struct elan_tp_data *data = i2c_get_clientdata(client);
+	int ret;
+
+	/*
+	 * We are taking the mutex to make sure sysfs operations are
+	 * complete before we attempt to bring the device into low[er]
+	 * power mode.
+	 */
+	ret = mutex_lock_interruptible(&data->sysfs_mutex);
+	if (ret)
+		return ret;
+
+	disable_irq(client->irq);
+
+	if (device_may_wakeup(dev)) {
+		ret = elan_sleep(data);
+		/* Enable wake from IRQ */
+		data->irq_wake = (enable_irq_wake(client->irq) == 0);
+	} else {
+		ret = elan_disable_power(data);
+	}
+
+	mutex_unlock(&data->sysfs_mutex);
+	return ret;
+}
+
+thanks
+
+Best Regards,
+
+Maoguang
+
+On Wed, 2015-09-09 at 00:50 +0800, Sudeep Holla wrote:
+> 
+> On 08/09/15 10:28, Sudeep Holla wrote:
+> >
+> >
+> > On 06/09/15 11:39, maoguang meng wrote:
+> >> On Wed, 2015-09-02 at 14:02 +0800, Daniel Kurtz wrote:
+> >>> Hi maoguang,
+> >>>
+> >>> On Tue, Aug 25, 2015 at 12:27 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >>>>
+> >>>>
+> >>>> On 14/08/15 09:38, maoguang.meng@mediatek.com wrote:
+> >>>>>
+> >>>>> From: Maoguang Meng <maoguang.meng@mediatek.com>
+> >>>>>
+> >>>>> This patch implement irq_set_wake to get who is wakeup source and
+> >>>>> setup on suspend resume.
+> >>>>>
+> >>>>> Signed-off-by: Maoguang Meng <maoguang.meng@mediatek.com>
+> >>>>>
+> >>> [snip]
+> >>>
+> >>> Can you please respond to Sudeep's questions:
+> >>>
+> >>>> Does this pinmux controller:
+> >>>>
+> >>>> 1. Support wake-up configuration ? If not, you need to use
+> >>>>      IRQCHIP_SKIP_SET_WAKE. I don't see any value in writing the
+> >>>>      mask_{set,clear} if the same registers are used for {en,dis}able
+> >>
+> >>     YES.
+> >>     we can call enable_irq_wake(irq) to config this irq as a wake-up
+> >> source.
+> >>
+> >
+> > No that doesn't answer my question. Yes you can always call
+> > enable_irq_wake(irq) as along as you have irq_set_wake implemented.
+> > But my question was does this pinmux controller support wake-up
+> > configuration.
+> >
+> > IMHO, by looking at the implementation I can confirm *NO*, it doesn't.
+> > So please stop copy-pasting the implementation from other drivers.
+> > The reason is you operate on the same mask_{set,clear} which you use
+> > to {en,dis}able the interrupts which means you don't have to do anything
+> > to configure an interrupt as a wakeup source other than just keeping
+> > them enabled. Hopefully this clarifies.
+> >
+> >>>>
+> >>>> 2. Is in always on domain ? If not, you need save/restore only to
+> >>>>      resume back the functionality. Generally we can set
+> >>>>      IRQCHIP_MASK_ON_SUSPEND to ensure non-wake-up interrupts are
+> >>>>      disabled during suspend and re-enabled in resume path. You just
+> >>>>      save/restore raw values without tracking the wake-up source.
+> >>
+> >>     YES.
+> >>
+> >
+> > Again *YES* for what part of my question. If it's always-on, then you
+> > don't need this suspend/resume callbacks at all, so I assume the answer
+> > is *NO*.
+> >
+> 
+> IIUC this pinmux controller, something like below should work.
+> 
+> 
+> ---->8
+> 
+>  From 7c26992bce047efb66a6ba8d2ffec2b272499df7 Mon Sep 17 00:00:00 2001
+> From: Sudeep Holla <sudeep.holla@arm.com>
+> Date: Tue, 8 Sep 2015 17:35:38 +0100
+> Subject: [PATCH] pinctrl: mediatek: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
+> 
+> The mediatek pinmux controller doesn't provides any facility to configure
+> the wakeup sources. So instead of providing redundant irq_set_wake
+> functionality, SKIP_SET_WAKE could be set to it. Also there's no need to
+> maintain 2 sets of masks.
+> 
+> This patch enables IRQCHIP_SKIP_SET_WAKE and IRQCHIP_MASK_ON_SUSPEND and
+> also removes wake_mask.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> Cc: Maoguang Meng <maoguang.meng@mediatek.com>
+> Cc: Chaotian Jing <chaotian.jing@mediatek.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 24 
+> +-----------------------
+>   drivers/pinctrl/mediatek/pinctrl-mtk-common.h |  1 -
+>   2 files changed, 1 insertion(+), 24 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c 
+> b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 7726c6caaf83..d8e194a5bb31 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1063,20 +1063,6 @@ static int mtk_eint_set_type(struct irq_data *d,
+>   	return 0;
+>   }
+> 
+> -static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
+> -{
+> -	struct mtk_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+> -	int shift = d->hwirq & 0x1f;
+> -	int reg = d->hwirq >> 5;
+> -
+> -	if (on)
+> -		pctl->wake_mask[reg] |= BIT(shift);
+> -	else
+> -		pctl->wake_mask[reg] &= ~BIT(shift);
+> -
+> -	return 0;
+> -}
+> -
+>   static void mtk_eint_chip_write_mask(const struct mtk_eint_offsets *chip,
+>   		void __iomem *eint_reg_base, u32 *buf)
+>   {
+> @@ -1112,7 +1098,6 @@ static int mtk_eint_suspend(struct device *device)
+> 
+>   	reg = pctl->eint_reg_base;
+>   	mtk_eint_chip_read_mask(eint_offsets, reg, pctl->cur_mask);
+> -	mtk_eint_chip_write_mask(eint_offsets, reg, pctl->wake_mask);
+> 
+>   	return 0;
+>   }
+> @@ -1153,9 +1138,9 @@ static struct irq_chip mtk_pinctrl_irq_chip = {
+>   	.irq_unmask = mtk_eint_unmask,
+>   	.irq_ack = mtk_eint_ack,
+>   	.irq_set_type = mtk_eint_set_type,
+> -	.irq_set_wake = mtk_eint_irq_set_wake,
+>   	.irq_request_resources = mtk_pinctrl_irq_request_resources,
+>   	.irq_release_resources = mtk_pinctrl_irq_release_resources,
+> +	.flags = IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND,
+>   };
+> 
+>   static unsigned int mtk_eint_init(struct mtk_pinctrl *pctl)
+> @@ -1393,13 +1378,6 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>   	}
+> 
+>   	ports_buf = pctl->devdata->eint_offsets.ports;
+> -	pctl->wake_mask = devm_kcalloc(&pdev->dev, ports_buf,
+> -					sizeof(*pctl->wake_mask), GFP_KERNEL);
+> -	if (!pctl->wake_mask) {
+> -		ret = -ENOMEM;
+> -		goto chip_error;
+> -	}
+> -
+>   	pctl->cur_mask = devm_kcalloc(&pdev->dev, ports_buf,
+>   					sizeof(*pctl->cur_mask), GFP_KERNEL);
+>   	if (!pctl->cur_mask) {
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h 
+> b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> index 55a534338931..acd804a945d8 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.h
+> @@ -267,7 +267,6 @@ struct mtk_pinctrl {
+>   	void __iomem		*eint_reg_base;
+>   	struct irq_domain	*domain;
+>   	int			*eint_dual_edges;
+> -	u32 *wake_mask;
+>   	u32 *cur_mask;
+>   };
+> 
+
+
