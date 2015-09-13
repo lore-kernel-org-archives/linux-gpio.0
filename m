@@ -1,57 +1,96 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: [1/4] gpio: gpio-f7188x: Use mutex for access serialisation.
-Date: Sat, 12 Sep 2015 15:26:43 +0200
-Message-ID: <20150912152643.4e5bb384@x2>
-References: <1440093809-18234-1-git-send-email-plr.vincent@gmail.com>
-	<7d1a2156ddabe0b72964e88734adba307a472067.1440093298.git.plr.vincent@gmail.com>
-	<20150821175216.GE1729@kw.sim.vm.gnt>
-	<20150821224824.3406caa0@x2>
-	<20150903200540.399a96b8@x2>
-	<20150909220140.GD9892@kw.sim.vm.gnt>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Jonas Gorski <jogo@openwrt.org>
+Subject: [PATCH RFT 0/5] gpiochip: add and use generic request/free
+Date: Sun, 13 Sep 2015 15:21:33 +0200
+Message-ID: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:35864 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754720AbbILN0r (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Sep 2015 09:26:47 -0400
-In-Reply-To: <20150909220140.GD9892@kw.sim.vm.gnt>
+Received: from arrakis.dune.hu ([78.24.191.176]:54482 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751949AbbIMNWE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 13 Sep 2015 09:22:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Vincent Donnefort <vdonnefort@gmail.com>, Yoann Sculo <yoann@sculo.fr>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@tkos.co.il>, Andrew
 
-Hello Simon,
+A lot of pinctrl aware gpio chip drivers use the following pattern:
 
-On Thu, 10 Sep 2015 00:01:40 +0200, Simon Guinot
-<simon.guinot@sequanux.org> wrote:
-> Vincent (Donnefort) finally succeeds to reproduce the issue. The setup
-> is quite simple. You only have to flood the gpio-f7188x driver via the
-> sysfs GPIO interface. Nothing more is needed.
-> 
-> After some debugging we discovered that the problem comes from the
-> __request_region function which don't handle very well concurrent
-> requests on a muxed region.
-> 
-> I will send a patch as a reply to this email. Please, can you test it ?
+int foo_request_gpio(struct gpio_chip *gc, unsigned gpio)
+{
+	return pinctrl_request_gpio(gc->base + gpio);
+}
 
-I reverted my mutex-adding commit, applied given patch, and could not
-reproduce the error after a few minutes with my test-case, so I think
-this solves the issue.
+void foo_request_gpio(struct gpio_chip *gc, unsigned gpio)
+{
+	pinctrl_free_gpio(gc->base + gpio);
+}
 
-Tested-by: Vincent Pelletier <plr.vincent@gmail.com>
+static struct gpio_chip foo_chip {
+	...
+	.request = foo_request_gpio;
+	.free = foo_request_gpio;
+	...
+};
+
+To prevent this from spreading any further, add and export generic
+versions that gpio chip drivers can just use.
+
+* Patch 1 adds the trivial implementations.
+* Patch 2 replaces all identical (+/- debug output/comments) versions
+  in gpio/
+* Patch 3/4 modifies drivers that use a boolean for conditional calling
+  request/free by just not populating the callbacks if the boolean is
+  false (which is only set at probe)
+* Patch 5 replaces all identical version in pinctrl/
+
+Build tested as far as possible (which isn't much when only using
+COMPILE_TEST, even when forcing PINCTRL to y).
+
+I don't expect this to break anything, and I triple checked that I did
+not introduce any typos, but I can't actually test most of the changed
+drivers lacking hardware, therefore RFT.
+
+Patches apply cleanly to 4.3-rc1 as well as linux-gpio/for-next.
 
 
-I rebased my others gpio patches, unrelated to this issue:
+Jonas Gorski (5):
+  gpiolib: provide generic request/free implementations
+  gpio: replace trivial implementations of request/free with generic one
+  gpio: gpio-xz: use the generic request/free implementations
+  gpio: gpio-pl061: use the generic request/free implementations
+  pinctrl: replace trivial implementations of gpio_chip request/free
 
-gpio: gpio-f7188x: Implement get_direction.
-gpio: gpio-f7188x: "get" should retrieve sensed level when available.
-gpio: gpio-f7188x: GPIO bank 0 bit 0 is not available on f71869a
+ drivers/gpio/gpio-lpc18xx.c                   | 14 ++----------
+ drivers/gpio/gpio-moxart.c                    | 14 ++----------
+ drivers/gpio/gpio-mvebu.c                     | 14 ++----------
+ drivers/gpio/gpio-pl061.c                     | 32 ++++-----------------------
+ drivers/gpio/gpio-tb10x.c                     | 14 ++----------
+ drivers/gpio/gpio-tz1090-pdc.c                | 14 ++----------
+ drivers/gpio/gpio-vf610.c                     | 14 ++----------
+ drivers/gpio/gpio-zx.c                        | 28 ++++-------------------
+ drivers/gpio/gpiolib.c                        | 23 +++++++++++++++++++
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 14 ++----------
+ drivers/pinctrl/intel/pinctrl-cherryview.c    | 14 ++----------
+ drivers/pinctrl/intel/pinctrl-intel.c         | 14 ++----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++----------
+ drivers/pinctrl/nomadik/pinctrl-abx500.c      | 18 ++-------------
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c     | 22 ++----------------
+ drivers/pinctrl/pinctrl-adi2.c                | 14 ++----------
+ drivers/pinctrl/pinctrl-as3722.c              | 14 ++----------
+ drivers/pinctrl/pinctrl-at91.c                | 26 ++--------------------
+ drivers/pinctrl/pinctrl-coh901.c              | 22 ++----------------
+ drivers/pinctrl/pinctrl-digicolor.c           | 14 ++----------
+ drivers/pinctrl/pinctrl-pistachio.c           | 14 ++----------
+ drivers/pinctrl/pinctrl-rockchip.c            | 14 ++----------
+ drivers/pinctrl/pinctrl-st.c                  | 14 ++----------
+ drivers/pinctrl/pinctrl-xway.c                | 18 ++-------------
+ drivers/pinctrl/qcom/pinctrl-msm.c            | 16 ++------------
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      | 14 ++----------
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c       | 14 ++----------
+ drivers/pinctrl/samsung/pinctrl-samsung.c     | 14 ++----------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 14 ++----------
+ drivers/pinctrl/vt8500/pinctrl-wmt.c          | 14 ++----------
+ include/linux/gpio/driver.h                   |  3 +++
+ 31 files changed, 88 insertions(+), 414 deletions(-)
 
-Should I resend ?
-I have not checked other model's datasheets, FWIW.
-
-Regards,
 -- 
-Vincent Pelletier
+2.1.4
