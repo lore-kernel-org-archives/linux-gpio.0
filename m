@@ -1,96 +1,83 @@
 From: Jonas Gorski <jogo@openwrt.org>
-Subject: [PATCH RFT 0/5] gpiochip: add and use generic request/free
-Date: Sun, 13 Sep 2015 15:21:33 +0200
-Message-ID: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
+Subject: [PATCH RFT 1/5] gpiolib: provide generic request/free implementations
+Date: Sun, 13 Sep 2015 15:21:34 +0200
+Message-ID: <1442150498-31116-2-git-send-email-jogo@openwrt.org>
+References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:54482 "EHLO arrakis.dune.hu"
+Received: from arrakis.dune.hu ([78.24.191.176]:54516 "EHLO arrakis.dune.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751949AbbIMNWE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 13 Sep 2015 09:22:04 -0400
+	id S1751949AbbIMNWJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 13 Sep 2015 09:22:09 -0400
+In-Reply-To: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@tkos.co.il>, Andrew
 
-A lot of pinctrl aware gpio chip drivers use the following pattern:
+Provide generic request/free implementations that pinctrl aware gpio
+drivers can use instead of open coding if they use a 1:1 pin to gpio
+signal mapping.
 
-int foo_request_gpio(struct gpio_chip *gc, unsigned gpio)
-{
-	return pinctrl_request_gpio(gc->base + gpio);
-}
+Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+---
+ drivers/gpio/gpiolib.c      | 23 +++++++++++++++++++++++
+ include/linux/gpio/driver.h |  3 +++
+ 2 files changed, 26 insertions(+)
 
-void foo_request_gpio(struct gpio_chip *gc, unsigned gpio)
-{
-	pinctrl_free_gpio(gc->base + gpio);
-}
-
-static struct gpio_chip foo_chip {
-	...
-	.request = foo_request_gpio;
-	.free = foo_request_gpio;
-	...
-};
-
-To prevent this from spreading any further, add and export generic
-versions that gpio chip drivers can just use.
-
-* Patch 1 adds the trivial implementations.
-* Patch 2 replaces all identical (+/- debug output/comments) versions
-  in gpio/
-* Patch 3/4 modifies drivers that use a boolean for conditional calling
-  request/free by just not populating the callbacks if the boolean is
-  false (which is only set at probe)
-* Patch 5 replaces all identical version in pinctrl/
-
-Build tested as far as possible (which isn't much when only using
-COMPILE_TEST, even when forcing PINCTRL to y).
-
-I don't expect this to break anything, and I triple checked that I did
-not introduce any typos, but I can't actually test most of the changed
-drivers lacking hardware, therefore RFT.
-
-Patches apply cleanly to 4.3-rc1 as well as linux-gpio/for-next.
-
-
-Jonas Gorski (5):
-  gpiolib: provide generic request/free implementations
-  gpio: replace trivial implementations of request/free with generic one
-  gpio: gpio-xz: use the generic request/free implementations
-  gpio: gpio-pl061: use the generic request/free implementations
-  pinctrl: replace trivial implementations of gpio_chip request/free
-
- drivers/gpio/gpio-lpc18xx.c                   | 14 ++----------
- drivers/gpio/gpio-moxart.c                    | 14 ++----------
- drivers/gpio/gpio-mvebu.c                     | 14 ++----------
- drivers/gpio/gpio-pl061.c                     | 32 ++++-----------------------
- drivers/gpio/gpio-tb10x.c                     | 14 ++----------
- drivers/gpio/gpio-tz1090-pdc.c                | 14 ++----------
- drivers/gpio/gpio-vf610.c                     | 14 ++----------
- drivers/gpio/gpio-zx.c                        | 28 ++++-------------------
- drivers/gpio/gpiolib.c                        | 23 +++++++++++++++++++
- drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 14 ++----------
- drivers/pinctrl/intel/pinctrl-cherryview.c    | 14 ++----------
- drivers/pinctrl/intel/pinctrl-intel.c         | 14 ++----------
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++----------
- drivers/pinctrl/nomadik/pinctrl-abx500.c      | 18 ++-------------
- drivers/pinctrl/nomadik/pinctrl-nomadik.c     | 22 ++----------------
- drivers/pinctrl/pinctrl-adi2.c                | 14 ++----------
- drivers/pinctrl/pinctrl-as3722.c              | 14 ++----------
- drivers/pinctrl/pinctrl-at91.c                | 26 ++--------------------
- drivers/pinctrl/pinctrl-coh901.c              | 22 ++----------------
- drivers/pinctrl/pinctrl-digicolor.c           | 14 ++----------
- drivers/pinctrl/pinctrl-pistachio.c           | 14 ++----------
- drivers/pinctrl/pinctrl-rockchip.c            | 14 ++----------
- drivers/pinctrl/pinctrl-st.c                  | 14 ++----------
- drivers/pinctrl/pinctrl-xway.c                | 18 ++-------------
- drivers/pinctrl/qcom/pinctrl-msm.c            | 16 ++------------
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      | 14 ++----------
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c       | 14 ++----------
- drivers/pinctrl/samsung/pinctrl-samsung.c     | 14 ++----------
- drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 14 ++----------
- drivers/pinctrl/vt8500/pinctrl-wmt.c          | 14 ++----------
- include/linux/gpio/driver.h                   |  3 +++
- 31 files changed, 88 insertions(+), 414 deletions(-)
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5db3445..e0853fb 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -15,6 +15,7 @@
+ #include <linux/acpi.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/gpio/machine.h>
++#include <linux/pinctrl/consumer.h>
+ 
+ #include "gpiolib.h"
+ 
+@@ -680,6 +681,28 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip) {}
+ 
+ #endif /* CONFIG_GPIOLIB_IRQCHIP */
+ 
++/**
++ * gpiochip_generic_request() - request the gpio function for a pin
++ * @chip: the gpiochip owning the GPIO
++ * @gpio: the GPIO signal to request for GPIO function
++ */
++int gpiochip_generic_request(struct gpio_chip *chip, unsigned gpio)
++{
++	return pinctrl_request_gpio(chip->base + gpio);
++}
++EXPORT_SYMBOL_GPL(gpiochip_generic_request);
++
++/**
++ * gpiochip_generic_free() - free the gpio function from a pin
++ * @chip: the gpiochip to request the gpio function for
++ * @gpio: the GPIO signal to free from GPIO
++ */
++void gpiochip_generic_free(struct gpio_chip *chip, unsigned gpio)
++{
++	pinctrl_free_gpio(chip->base + gpio);
++}
++EXPORT_SYMBOL_GPL(gpiochip_generic_free);
++
+ #ifdef CONFIG_PINCTRL
+ 
+ /**
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 1aed31c..0857c28 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -206,6 +206,9 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ 
+ #endif /* CONFIG_GPIOLIB_IRQCHIP */
+ 
++int gpiochip_generic_request(struct gpio_chip *chip, unsigned gpio);
++void gpiochip_generic_free(struct gpio_chip *chip, unsigned gpio);
++
+ #ifdef CONFIG_PINCTRL
+ 
+ /**
 -- 
 2.1.4
