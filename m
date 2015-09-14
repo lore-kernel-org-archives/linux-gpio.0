@@ -1,29 +1,127 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH RFT 5/5] pinctrl: replace trivial implementations of
- gpio_chip request/free
-Date: Mon, 14 Sep 2015 17:41:38 +0300
-Message-ID: <20150914144138.GC1525@lahna.fi.intel.com>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
- <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] Documentation: gpio: Update description for X-Gene standby GPIO controller DTS binding
+Date: Mon, 14 Sep 2015 16:47 +0200
+Message-ID: <2516438.vcQPNoorc9@wuerfel>
+References: <1441963332-13329-1-git-send-email-yvo@apm.com> <2971356.lYN9OVO6Id@wuerfel> <CAL4ahLfRdfC=nReqqic=1vahgtD3-E_ncqnNhHsGw04P_HjvVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:11148 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751496AbbINOls (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 14 Sep 2015 10:41:48 -0400
-Content-Disposition: inline
-In-Reply-To: <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+Received: from mout.kundenserver.de ([212.227.17.13]:52576 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751708AbbINOrH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2015 10:47:07 -0400
+In-Reply-To: <CAL4ahLfRdfC=nReqqic=1vahgtD3-E_ncqnNhHsGw04P_HjvVA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@chromium.o>
+To: Y Vo <yvo@apm.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-On Sun, Sep 13, 2015 at 03:21:38PM +0200, Jonas Gorski wrote:
-[..]
->  drivers/pinctrl/intel/pinctrl-cherryview.c    | 14 ++------------
->  drivers/pinctrl/intel/pinctrl-intel.c         | 14 ++------------
+On Monday 14 September 2015 16:39:43 Y Vo wrote:
+> On Mon, Sep 14, 2015 at 4:11 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Saturday 12 September 2015 12:55:55 Y Vo wrote:
+> >> On Fri, Sep 11, 2015 at 11:45 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >> > On Friday 11 September 2015 22:06:58 Y Vo wrote:
+> >>
+> >> Example for configure GPIO_DS13 as interrupt and use as button with
+> >> the current gpio driver:
+> >>         gpio-keys {
+> >>                 compatible = "gpio-keys";
+> >>                 button@1 {
+> >>                         label = "POWER";
+> >>                         linux,code = <116>;
+> >>                         linux,input-type = <0x1>;
+> >>                         interrupts = <0x0 0x2d 0x1>;
+> >>                 };
+> >>         };
+> >
+> > Wait, this looks wrong: the gpio driver doesn't actually see
+> > the connection here and won't be able to configure the interrupt
+> > correctly. The interrupt is already owned by the gpio driver, so
+> > you cannot use it in the button node.
+> 
+> In summary:
+> - Our GPIO doesn't support interrupt controller.
+> - There are 6 pins which used the external interrupt from GIC, so all
+> setup for those irqs are from gic driver. The GPIO driver only
+> configure to wire those lines.
+> 
+> For your concern:
+> - That's correct: if we use that defined, the gpio driver never saw
+> the connection here (That's why it already is configued at the
+> beginning).
+> - At the first time, we tried to use the define: <&sbgpio 13 1>, it
+> means using the GPIO_DS13, it will go into the GPIO driver to setup,
+> but there is another problem which I have sent out to all of you:
+> + It will go into gpio_keys_setup_key (gpio_keys.c driver) function,
+> then set the irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+> but the gic only support IRQ_TYPE_LEVEL_HIGH && IRQF_TRIGGER_RISING,
+> so it always returns failed at gpio_keys_setup_key function. Please
+> see the gic_set_type at gic driver.
 
-For the above two:
+Hmm, I see now how the event handling in the gpio-keys driver differs
+between irq mode and gpio mode, where gpio mode relies on getting
+a separate event for the release. This is certainly something that
+could be changed in the gpio-keys driver as an extension, but that
+seems to be what Laxman Dewangan did when he introduced the irq-mode.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> static int gic_set_type(struct irq_data *d, unsigned int type)
+> {
+>         void __iomem *base = gic_dist_base(d);
+>         unsigned int gicirq = gic_irq(d);
+> 
+>         /* Interrupt configuration for SGIs can't be changed */
+>         if (gicirq < 16)
+>                 return -EINVAL;
+> 
+>         /* SPIs have restrictions on the supported types */
+>         if (gicirq >= 32 && type != IRQ_TYPE_LEVEL_HIGH &&
+>                             type != IRQ_TYPE_EDGE_RISING)
+>                 return -EINVAL;
+> 
+>         return gic_configure_irq(gicirq, type, base, NULL);
+> }
+> + Another issue: in order gpio_key works it needs the status of GPIO.
+> For our chip, when the GPIO is configued as interrupt, we need to
+> access to GIC register to read the real status, it is not acceptable
+> to implement accessing GIC registers at gpio driver. The function
+> irq_get_irqchip_state(..) also doesn't work in our chip too. Because
+> it needs to access different offset.
+
+I thought we had solved that problem long ago when you first
+submitted the driver.
+
+Did 1b7047edfcfb25 ("genirq: Allow the irqchip state of an IRQ to be
+save/restored") not address the problem for you? You were on
+Cc to that patch and should have spoken up when the code that was
+merged was not sufficient.
+
+> >> > It also seems to me that the binding cannot distinguish between a
+> >> > line configured as an input and one that is configured as an
+> >> > interrupt, which are for other gpio chips the same thing, but
+> >> > not on this one.  Could this be rectified by using another bit
+> >> > of the second gpio cell? The low bit is used for active-high/active-low,
+> >> > so you could use the second bit for irq/input.
+> >> >
+> >> Do you mean #gpio-cells property and using the high bit of the second
+> >> bit for irq/input  ?
+> >
+> > Yes, that would be an option.
+> I will look into it.
+> 
+> Is there possible if:
+> - Keep GPIO8..GPIO as interrupt by default.
+> - Anyone want to use these GPIO pins as GPIO, we will re-configure
+> them to GPIO mode ?
+
+That's not perfect but better than the patch you sent here.
+The main disadvantage is that you end up with two references
+to the same IRQ. It can still work, but only as long as nothing
+tries to walk the entire DT to parse all the interrupts properties.
+
+It would be ok for gpio-keys, as that does not need both the state
+and the event together, but for other gpio users, you still need a
+working driver that supports reading the state and getting an
+interrupt.
+
+	Arnd
