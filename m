@@ -1,58 +1,95 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH RFT 5/5] pinctrl: replace trivial implementations of gpio_chip request/free
-Date: Sun, 13 Sep 2015 21:20:53 +0200
-Message-ID: <5410791.Yv1bkX123z@diego>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org> <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] Documentation: gpio: Update description for X-Gene standby GPIO controller DTS binding
+Date: Mon, 14 Sep 2015 11:11:05 +0200
+Message-ID: <2971356.lYN9OVO6Id@wuerfel>
+References: <1441963332-13329-1-git-send-email-yvo@apm.com> <2311005.jUde56dLfB@wuerfel> <CAL4ahLeuPX7viZ5=RaC92=n+jT82=Fa3tF7oH8Q=kE=PKVBSwQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:59450 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753550AbbIMTVE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 13 Sep 2015 15:21:04 -0400
-In-Reply-To: <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:52083 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752588AbbINJLc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2015 05:11:32 -0400
+In-Reply-To: <CAL4ahLeuPX7viZ5=RaC92=n+jT82=Fa3tF7oH8Q=kE=PKVBSwQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@>
+To: Y Vo <yvo@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-Hi Jonas,
+On Saturday 12 September 2015 12:55:55 Y Vo wrote:
+> On Fri, Sep 11, 2015 at 11:45 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Friday 11 September 2015 22:06:58 Y Vo wrote:
+> >> On Fri, Sep 11, 2015 at 9:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >> > On Friday 11 September 2015 21:23:31 Y Vo wrote:
+> >> >> Is that possible if we change to this approach:
+> >> >> - Keep all GPIO as GPIO mode by default.
+> >> >> - If anyone want to use them as interrupt, they must add the interrupt
+> >> >> node to DT specific-board below:
+> >> >>
+> >> >> Example to configure GPIO_DS11, 12, 13 as external irq:
+> >> >>
+> >> >> &sbgpio {
+> >> >>         interrupts = <0x0 0x2b 0x1>,         /* GPIO_DS11 */
+> >> >>                         <0x0 0x2c 0x1>,         /* GPIO_DS12 */
+> >> >>                         <0x0 0x2d 0x1>;         /* GPIO_DS13 */
+> >> >
+> >> > That is exactly the same as you have in your patch. You should
+> >> > always list all interrupts that the gpio controller is wired
+> >> > to, whether they are used or not.
+> >> >
+> >> > Ideally, the driver just decides at runtime how to wire that
+> >> > mux, based on how the gpio is configured by the client driver.
+> >> > If the client asks for an interrupt (with gpio_to_irq) and is
+> >> > it is configured as an input, then you connect it to the GIC,
+> >> > otherwise you leave it to be handled by the gpio chip itself.
+> >> > Any reason you can't do that?
+> >> >
+> >> As I just explained, the GPIO Standby doesn't support the interrupt.
+> >> Both interrupts are came from GIC, so if the client asks for an
+> >> interrupt, it will go to the GIC driver (not GPIO Standby driver), so
+> >> that's my trouble. We can not implement the code to configured the
+> >> GPIO standby at GIC driver.
+> >
+> > So you are saying we merged a binding that is incapable of describing
+> > the hardware? If that is the case, we may have to go back to
+> > the drawing board and come up with a working binding.
+> >
+> > One part that I don't understand yet is how the driver handles
+> > irqs to start with, as it does not register a nested irq domain
+> > or irqchip, so I'm guessing that client drivers cannot actually
+> > use the IRQ functionality. Is that right?
+> For our case the irq_domain is in irq-gic driver, the GPIO driver only
+> is responsible to wire 2 the external irq of GIC to GPIO pin.
+> 
+> Example for configure GPIO_DS13 as interrupt and use as button with
+> the current gpio driver:
+>         gpio-keys {
+>                 compatible = "gpio-keys";
+>                 button@1 {
+>                         label = "POWER";
+>                         linux,code = <116>;
+>                         linux,input-type = <0x1>;
+>                         interrupts = <0x0 0x2d 0x1>;
+>                 };
+>         };
 
-Am Sonntag, 13. September 2015, 15:21:38 schrieb Jonas Gorski:
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index c5246c0..89a6ad8e 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -1374,16 +1374,6 @@ static int rockchip_pinctrl_register(struct
-> platform_device *pdev, * GPIO handling
->   */
->  
-> -static int rockchip_gpio_request(struct gpio_chip *chip, unsigned offset)
-> -{
-> -       return pinctrl_request_gpio(chip->base + offset);
-> -}
-> -
-> -static void rockchip_gpio_free(struct gpio_chip *chip, unsigned offset)
-> -{
-> -       pinctrl_free_gpio(chip->base + offset);
-> -}
-> -
->  static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int
-> value) {
->         struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
-> @@ -1461,8 +1451,8 @@ static int rockchip_gpio_to_irq(struct gpio_chip *gc,
-> unsigned offset) }
->  
->  static const struct gpio_chip rockchip_gpiolib_chip = {
-> -       .request = rockchip_gpio_request,
-> -       .free = rockchip_gpio_free,
-> +       .request = gpiochip_generic_request,
-> +       .free = gpiochip_generic_free,
->         .set = rockchip_gpio_set,
->         .get = rockchip_gpio_get,
->         .direction_input = rockchip_gpio_direction_input,
+Wait, this looks wrong: the gpio driver doesn't actually see
+the connection here and won't be able to configure the interrupt
+correctly. The interrupt is already owned by the gpio driver, so
+you cannot use it in the button node.
 
-for the Rockchip part
+> >
+> > It also seems to me that the binding cannot distinguish between a
+> > line configured as an input and one that is configured as an
+> > interrupt, which are for other gpio chips the same thing, but
+> > not on this one.  Could this be rectified by using another bit
+> > of the second gpio cell? The low bit is used for active-high/active-low,
+> > so you could use the second bit for irq/input.
+> >
+> Do you mean #gpio-cells property and using the high bit of the second
+> bit for irq/input  ?
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Yes, that would be an option.
+
+	Arnd
