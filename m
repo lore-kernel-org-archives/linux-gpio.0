@@ -1,152 +1,86 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH 2/2] Documentation: gpio: Update description for X-Gene
- standby GPIO controller DTS binding
-Date: Mon, 14 Sep 2015 16:39:43 +0700
-Message-ID: <CAL4ahLfRdfC=nReqqic=1vahgtD3-E_ncqnNhHsGw04P_HjvVA@mail.gmail.com>
-References: <1441963332-13329-1-git-send-email-yvo@apm.com>
-	<2311005.jUde56dLfB@wuerfel>
-	<CAL4ahLeuPX7viZ5=RaC92=n+jT82=Fa3tF7oH8Q=kE=PKVBSwQ@mail.gmail.com>
-	<2971356.lYN9OVO6Id@wuerfel>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and suspend
+ resume
+Date: Mon, 14 Sep 2015 12:16:23 +0100
+Message-ID: <55F6AC87.4040301@arm.com>
+References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
+ <55DB4609.5040904@arm.com>
+ <CAGS+omBnoitju07KQ1Y7JHTbce6+DO4WqWHTaKz5D+T157zEJA@mail.gmail.com>
+ <1441535972.22230.5.camel@mhfsdcap03> <55EEAA24.6080706@arm.com>
+ <55EF11E6.7030307@arm.com> <1442051454.5661.12.camel@mhfsdcap03>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:33410 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755375AbbINJjp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2015 05:39:45 -0400
-Received: by lamp12 with SMTP id p12so82001497lam.0
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2015 02:39:43 -0700 (PDT)
-In-Reply-To: <2971356.lYN9OVO6Id@wuerfel>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1442051454.5661.12.camel@mhfsdcap03>
+Sender: linux-kernel-owner@vger.kernel.org
+To: maoguang meng <maoguang.meng@mediatek.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Daniel Kurtz <djkurtz@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= <Yingjoe.Chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
-
-On Mon, Sep 14, 2015 at 4:11 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 12 September 2015 12:55:55 Y Vo wrote:
->> On Fri, Sep 11, 2015 at 11:45 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Friday 11 September 2015 22:06:58 Y Vo wrote:
->> >> On Fri, Sep 11, 2015 at 9:47 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> >> > On Friday 11 September 2015 21:23:31 Y Vo wrote:
->> >> >> Is that possible if we change to this approach:
->> >> >> - Keep all GPIO as GPIO mode by default.
->> >> >> - If anyone want to use them as interrupt, they must add the interrupt
->> >> >> node to DT specific-board below:
->> >> >>
->> >> >> Example to configure GPIO_DS11, 12, 13 as external irq:
->> >> >>
->> >> >> &sbgpio {
->> >> >>         interrupts = <0x0 0x2b 0x1>,         /* GPIO_DS11 */
->> >> >>                         <0x0 0x2c 0x1>,         /* GPIO_DS12 */
->> >> >>                         <0x0 0x2d 0x1>;         /* GPIO_DS13 */
->> >> >
->> >> > That is exactly the same as you have in your patch. You should
->> >> > always list all interrupts that the gpio controller is wired
->> >> > to, whether they are used or not.
->> >> >
->> >> > Ideally, the driver just decides at runtime how to wire that
->> >> > mux, based on how the gpio is configured by the client driver.
->> >> > If the client asks for an interrupt (with gpio_to_irq) and is
->> >> > it is configured as an input, then you connect it to the GIC,
->> >> > otherwise you leave it to be handled by the gpio chip itself.
->> >> > Any reason you can't do that?
->> >> >
->> >> As I just explained, the GPIO Standby doesn't support the interrupt.
->> >> Both interrupts are came from GIC, so if the client asks for an
->> >> interrupt, it will go to the GIC driver (not GPIO Standby driver), so
->> >> that's my trouble. We can not implement the code to configured the
->> >> GPIO standby at GIC driver.
->> >
->> > So you are saying we merged a binding that is incapable of describing
->> > the hardware? If that is the case, we may have to go back to
->> > the drawing board and come up with a working binding.
->> >
->> > One part that I don't understand yet is how the driver handles
->> > irqs to start with, as it does not register a nested irq domain
->> > or irqchip, so I'm guessing that client drivers cannot actually
->> > use the IRQ functionality. Is that right?
->> For our case the irq_domain is in irq-gic driver, the GPIO driver only
->> is responsible to wire 2 the external irq of GIC to GPIO pin.
->>
->> Example for configure GPIO_DS13 as interrupt and use as button with
->> the current gpio driver:
->>         gpio-keys {
->>                 compatible = "gpio-keys";
->>                 button@1 {
->>                         label = "POWER";
->>                         linux,code = <116>;
->>                         linux,input-type = <0x1>;
->>                         interrupts = <0x0 0x2d 0x1>;
->>                 };
->>         };
->
-> Wait, this looks wrong: the gpio driver doesn't actually see
-> the connection here and won't be able to configure the interrupt
-> correctly. The interrupt is already owned by the gpio driver, so
-> you cannot use it in the button node.
-
-In summary:
-- Our GPIO doesn't support interrupt controller.
-- There are 6 pins which used the external interrupt from GIC, so all
-setup for those irqs are from gic driver. The GPIO driver only
-configure to wire those lines.
-
-For your concern:
-- That's correct: if we use that defined, the gpio driver never saw
-the connection here (That's why it already is configued at the
-beginning).
-- At the first time, we tried to use the define: <&sbgpio 13 1>, it
-means using the GPIO_DS13, it will go into the GPIO driver to setup,
-but there is another problem which I have sent out to all of you:
-+ It will go into gpio_keys_setup_key (gpio_keys.c driver) function,
-then set the irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
-but the gic only support IRQ_TYPE_LEVEL_HIGH && IRQF_TRIGGER_RISING,
-so it always returns failed at gpio_keys_setup_key function. Please
-see the gic_set_type at gic driver.
-
-static int gic_set_type(struct irq_data *d, unsigned int type)
-{
-        void __iomem *base = gic_dist_base(d);
-        unsigned int gicirq = gic_irq(d);
-
-        /* Interrupt configuration for SGIs can't be changed */
-        if (gicirq < 16)
-                return -EINVAL;
-
-        /* SPIs have restrictions on the supported types */
-        if (gicirq >= 32 && type != IRQ_TYPE_LEVEL_HIGH &&
-                            type != IRQ_TYPE_EDGE_RISING)
-                return -EINVAL;
-
-        return gic_configure_irq(gicirq, type, base, NULL);
-}
-+ Another issue: in order gpio_key works it needs the status of GPIO.
-For our chip, when the GPIO is configued as interrupt, we need to
-access to GIC register to read the real status, it is not acceptable
-to implement accessing GIC registers at gpio driver. The function
-irq_get_irqchip_state(..) also doesn't work in our chip too. Because
-it needs to access different offset.
-
->
->> >
->> > It also seems to me that the binding cannot distinguish between a
->> > line configured as an input and one that is configured as an
->> > interrupt, which are for other gpio chips the same thing, but
->> > not on this one.  Could this be rectified by using another bit
->> > of the second gpio cell? The low bit is used for active-high/active-low,
->> > so you could use the second bit for irq/input.
->> >
->> Do you mean #gpio-cells property and using the high bit of the second
->> bit for irq/input  ?
->
-> Yes, that would be an option.
-I will look into it.
-
-Is there possible if:
-- Keep GPIO8..GPIO as interrupt by default.
-- Anyone want to use these GPIO pins as GPIO, we will re-configure
-them to GPIO mode ?
 
 
->
->         Arnd
+
+On 12/09/15 10:50, maoguang meng wrote:
+> hi Sudeep:
+> 
+> I test flowlling your blow suggestions,but the system can not be woken.
+> 
+> beacuse,mtk_eint_suspend will mask it.As we know if eint wakeup system
+> it must be unmasked before enter suspend flow.
+> 
+> e.x
+> 
+> static int __maybe_unused elan_suspend(struct device *dev)
+> {
+> 	struct i2c_client *client = to_i2c_client(dev);
+> 	struct elan_tp_data *data = i2c_get_clientdata(client);
+> 	int ret;
+> 
+> 	/*
+> 	 * We are taking the mutex to make sure sysfs operations are
+> 	 * complete before we attempt to bring the device into low[er]
+> 	 * power mode.
+> 	 */
+> 	ret = mutex_lock_interruptible(&data->sysfs_mutex);
+> 	if (ret)
+> 		return ret;
+> 
+> 	disable_irq(client->irq);
+> 
+> 	if (device_may_wakeup(dev)) {
+> 		ret = elan_sleep(data);
+> 		/* Enable wake from IRQ */
+> 		data->irq_wake = (enable_irq_wake(client->irq) == 0);
+
+This is wrong assumption in the driver. enable_irq_wake doesn't
+implicitly enable the IRQ. So the disable_irq should be moved to else.
+And the resume patch also needs to be fixed accordingly, otherwise you
+may get unbalanced irq. But this should not be the reason for fixing the
+pinctrl suspend/resume.
+
+Regards,
+Sudeep
+
+--->8
+
+diff --git a/drivers/input/mouse/elan_i2c_core.c
+b/drivers/input/mouse/elan_i2c_core.c
+index fa945304b9a5..7de26b04f45c 100644
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1117,13 +1117,13 @@ static int __maybe_unused elan_suspend(struct
+device *dev)
+        if (ret)
+                return ret;
+
+-       disable_irq(client->irq);
+-
+        if (device_may_wakeup(dev)) {
+                ret = elan_sleep(data);
+                /* Enable wake from IRQ */
+                data->irq_wake = (enable_irq_wake(client->irq) == 0);
+        } else {
++               disable_irq(client->irq);
++
+                ret = elan_disable_power(data);
+        }
