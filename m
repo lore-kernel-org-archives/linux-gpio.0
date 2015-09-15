@@ -1,67 +1,57 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v4] pinctrl: mediatek: Implement wake handler and suspend
- resume
-Date: Tue, 15 Sep 2015 18:48:07 +0100
-Message-ID: <55F859D7.1000803@arm.com>
-References: <1439541486-22203-1-git-send-email-maoguang.meng@mediatek.com>
- <55DB4609.5040904@arm.com>
- <CAGS+omBnoitju07KQ1Y7JHTbce6+DO4WqWHTaKz5D+T157zEJA@mail.gmail.com>
- <1441535972.22230.5.camel@mhfsdcap03> <55EEAA24.6080706@arm.com>
- <55EF11E6.7030307@arm.com> <1442051454.5661.12.camel@mhfsdcap03>
- <55F6AC87.4040301@arm.com>
- <CAKdAkRSFE2KJOzbUarxAQMNwHOkkyGHXmRLGhn55VTvG-SJ4Kg@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH 0/3] mfd: tps65912: Driver rewrite with DT support
+Date: Tue, 15 Sep 2015 12:57:38 -0500
+Message-ID: <1442339861-30300-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:52090 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751634AbbIORsN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 15 Sep 2015 13:48:13 -0400
-In-Reply-To: <CAKdAkRSFE2KJOzbUarxAQMNwHOkkyGHXmRLGhn55VTvG-SJ4Kg@mail.gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:60265 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751070AbbIOR6Y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Sep 2015 13:58:24 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, maoguang meng <maoguang.meng@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= <Yingjoe.Chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
+In an effort to cleanup this driver and add Device Tree support
+the driver has been rewritten based on new driver styles and
+modern kernel driver helpers. This has nearly halved the lines
+of code while keeping all previous functionality.
 
+Platform file based initialization has been dropped as there is
+no examples of this use in the kernel.
 
-On 15/09/15 03:52, Dmitry Torokhov wrote:
-> On Mon, Sep 14, 2015 at 4:16 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+Andrew F. Davis (3):
+  Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
+  mfd: tps65912: Rewrite driver adding DT support and using regmap
+  tps65912: Cleanup TPS65912 subdevice configuration dependencies
 
-[...]
+ .../devicetree/bindings/gpio/gpio-tps65912.txt     |  17 +
+ Documentation/devicetree/bindings/mfd/tps65912.txt |  43 ++
+ .../bindings/regulator/tps65912-regulator.txt      |  32 +
+ drivers/gpio/Kconfig                               |   2 +-
+ drivers/gpio/gpio-tps65912.c                       | 291 ++++----
+ drivers/mfd/Kconfig                                |  20 +-
+ drivers/mfd/Makefile                               |   3 +-
+ drivers/mfd/tps65912-core.c                        | 288 +++-----
+ drivers/mfd/tps65912-i2c.c                         | 233 +++---
+ drivers/mfd/tps65912-irq.c                         | 217 ------
+ drivers/mfd/tps65912-spi.c                         | 236 +++----
+ drivers/regulator/Kconfig                          |   2 +-
+ drivers/regulator/tps65912-regulator.c             | 783 +++++++--------------
+ include/linux/mfd/tps65912.h                       | 256 ++++---
+ 14 files changed, 948 insertions(+), 1475 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+ rewrite drivers/gpio/gpio-tps65912.c (68%)
+ rewrite drivers/mfd/tps65912-core.c (96%)
+ rewrite drivers/mfd/tps65912-i2c.c (92%)
+ delete mode 100644 drivers/mfd/tps65912-irq.c
+ rewrite drivers/mfd/tps65912-spi.c (91%)
+ rewrite drivers/regulator/tps65912-regulator.c (94%)
 
->>
->> This is wrong assumption in the driver. enable_irq_wake doesn't
->> implicitly enable the IRQ. So the disable_irq should be moved to else.
->> And the resume patch also needs to be fixed accordingly, otherwise you
->> may get unbalanced irq. But this should not be the reason for fixing the
->> pinctrl suspend/resume.
->>
->
-> Elan driver does not want to enable servicing IRQs, it just wants to
-> configure them as wakeup sources. Hence the current elan_suspend() is
-> fine. When system wakes up and the device is resumed and the driver is
-> ready to service interrupts it will enable IRQ again.
->
+-- 
+1.9.1
 
-Fair enough. But I am struggling to understand how this fits into
-existing IRQ infrastructure. Few controllers that don't have wakeup
-source configuration facility can set IRQCHIP_SKIP_SET_WAKE and just
-leave the interrupts enabled in suspend path to wake it up. So IMO,
-the above strategy might not work on such controllers.
-
-> IOW enable_irq_wake() and enable_irq() are 2 completely different
-> calls and it is perfectly fine to disable IRQ and then ebale it as a
-> wakeup source.
-
-I agree that they are entirely different APIs, I am not sure if we can
-support different interrupt controller with such strategy.
-
-Since the irq/pm core handle disabling device IRQs and section "System
-Wakeup Interrupts, enable_irq_wake() and disable_irq_wake()" in
-Documentation/power/suspend-and-interrupts.txt gives me different
-understanding, we can check with tglx on how to handle this.
-
-Regards,
-Sudeep
