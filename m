@@ -1,73 +1,79 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH RFT 2/5] gpio: replace trivial implementations of
- request/free with generic one
-Date: Mon, 14 Sep 2015 20:32:15 -0700
-Message-ID: <8c58ff686349d7c027b8d82db3ca440a@agner.ch>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
- <1442150498-31116-3-git-send-email-jogo@openwrt.org>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH 2/3] gpiolib: gpiod_hog remove separate name argument
+Date: Tue, 15 Sep 2015 10:50:05 +0200
+Message-ID: <20150915085005.GC1537@pengutronix.de>
+References: <1439979512-3894-1-git-send-email-mpa@pengutronix.de>
+ <1439979512-3894-3-git-send-email-mpa@pengutronix.de>
+ <20150907080818.GQ9999@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:43504 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751532AbbIODcs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Sep 2015 23:32:48 -0400
-In-Reply-To: <1442150498-31116-3-git-send-email-jogo@openwrt.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:48271 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751518AbbIOIuP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Sep 2015 04:50:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20150907080818.GQ9999@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@tkos.co.il>, Andrew
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, Markus Pargmann <mpa@devmp.org>
 
-On 2015-09-13 06:21, Jonas Gorski wrote:
-> Replace all trivial request/free callbacks that do nothing but call into
-> pinctrl code with the generic versions.
-> 
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
->  drivers/gpio/gpio-lpc18xx.c    | 14 ++------------
->  drivers/gpio/gpio-moxart.c     | 14 ++------------
->  drivers/gpio/gpio-mvebu.c      | 14 ++------------
->  drivers/gpio/gpio-tb10x.c      | 14 ++------------
->  drivers/gpio/gpio-tz1090-pdc.c | 14 ++------------
->  drivers/gpio/gpio-vf610.c      | 14 ++------------
->  6 files changed, 12 insertions(+), 72 deletions(-)
-<snip>
-> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-> index 3d5714d..cf39fb2 100644
-> --- a/drivers/gpio/gpio-vf610.c
-> +++ b/drivers/gpio/gpio-vf610.c
-> @@ -77,16 +77,6 @@ static inline u32 vf610_gpio_readl(void __iomem *reg)
->  	return readl_relaxed(reg);
->  }
->  
-> -static int vf610_gpio_request(struct gpio_chip *chip, unsigned offset)
-> -{
-> -	return pinctrl_request_gpio(chip->base + offset);
-> -}
-> -
-> -static void vf610_gpio_free(struct gpio_chip *chip, unsigned offset)
-> -{
-> -	pinctrl_free_gpio(chip->base + offset);
-> -}
-> -
->  static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
->  {
->  	struct vf610_gpio_port *port =
-> @@ -255,8 +245,8 @@ static int vf610_gpio_probe(struct platform_device *pdev)
->  	gc->ngpio = VF610_GPIO_PER_PORT;
->  	gc->base = of_alias_get_id(np, "gpio") * VF610_GPIO_PER_PORT;
->  
-> -	gc->request = vf610_gpio_request;
-> -	gc->free = vf610_gpio_free;
-> +	gc->request = gpiochip_generic_request;
-> +	gc->free = gpiochip_generic_free;
->  	gc->direction_input = vf610_gpio_direction_input;
->  	gc->get = vf610_gpio_get;
->  	gc->direction_output = vf610_gpio_direction_output;
 
-For the vf610 changes,
-Acked-by: Stefan Agner <stefan@agner.ch>
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Stefan
+Hi,
+
+On Mon, Sep 07, 2015 at 10:08:18AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> On Wed, Aug 19, 2015 at 12:18:31PM +0200, Markus Pargmann wrote:
+> > From: Markus Pargmann <mpa@devmp.org>
+> >=20
+> > The gpio name is now stored in the gpio descriptor, so we can simply use
+>=20
+> What is now? Does this introduce a dependency; maybe better reference a
+> commit here?
+
+Thanks. Yes this was refering to patch 3 of series
+"gpiolib: Add GPIO name support",
+patch "gpiolib: Use GPIO name from names array for gpio descriptor".
+
+However I can only reference by name here. Will add it to the commit
+message.
+
+Best Regards,
+
+Markus
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJV99u9AAoJEEpcgKtcEGQQZcIQAKPKq2DDhWrkf4Db7OSpvGbV
+Nusaz7dYnwAR5DhPW3yZvEbTJnlWkd/UBIszz7QMmzA87TZTCP+FdWNzX05T/Ol0
+Xssc/TeNoqfCQ6JZYgkT1+2hIi39j0xFQPJwHwMw/SJedHXmg4LHoWP3uDKXo1k9
+JMNgGTfnSSnbrabDgbWhl3OuntwPslAMK47fAnawa+VMczEmAPOuHqdD9y6mZKUV
+pn8Bs5ekyO3k4wCBzR7i4PfjFNluRA7wRV/ACokIPYUnNwgdA7gc1vMu0bc5ZCu9
+CvM2c3C2W50XklPYo7mSVskBlMNut5bJpkVCRgfnyv3tz1vqRTkYKPzmpbPP1W2X
+XYD0ctpnTkaKcA4Lwo0GBg0bYBt6w7xbbLw8Z/pnhYx+Co5QGyYp4tLEb/MfUvxv
+j53Ihm4rMiYbE1O9srFMChHTIR8TijR9US9SwWehNcRNfqbEKDNmmcmnG8HMkxnh
+UGfUaPGGFUanLBoDuL9NbMv957PPtw94CZe9pUCjb39bDl1inJASkUapUT6/DVCD
+frtACBNMU2UK7k37FV21i1Q4gM90eTgN9pyyz532nvNIQwgml+fXk98ieNwoOr9r
+8n8qw3sjBqBiESJhQRPTeS1+SCIzflFzms38PaUY3S4YHRbiKS3KIQVHL+wwjkNE
+r/4fy1N5rScA/om3FNcw
+=yL7m
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
