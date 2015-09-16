@@ -1,44 +1,36 @@
 From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 1/6] pinctrl: tz1090: Remove unneded semicolons
-Date: Wed, 16 Sep 2015 10:28:26 +0200
-Message-ID: <1442392111-8448-2-git-send-email-javier@osg.samsung.com>
+Subject: [PATCH 6/6] pinctrl: samsung: Remove unneded semicolon
+Date: Wed, 16 Sep 2015 10:28:31 +0200
+Message-ID: <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
 References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-They aren't needed and are just creating null statements so remove it.
+It's not needed an is just creating a null statement, so remove it.
 
 Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+
 ---
 
- drivers/pinctrl/pinctrl-tz1090.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-tz1090.c b/drivers/pinctrl/pinctrl-tz1090.c
-index 6d07a2f64d97..5425299d759d 100644
---- a/drivers/pinctrl/pinctrl-tz1090.c
-+++ b/drivers/pinctrl/pinctrl-tz1090.c
-@@ -1661,7 +1661,7 @@ static int tz1090_pinconf_reg(struct pinctrl_dev *pctldev,
- 		break;
- 	default:
- 		return -ENOTSUPP;
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos5440.c b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+index 9ce0b8619d4c..82dc109f7ed4 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos5440.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos5440.c
+@@ -284,7 +284,7 @@ static void exynos5440_dt_free_map(struct pinctrl_dev *pctldev,
+ 			if (!idx)
+ 				kfree(map[idx].data.configs.group_or_pin);
+ 		}
 -	};
 +	}
  
- 	/* Only input bias parameters supported */
- 	pu = &tz1090_pinconf_pullup[pin];
-@@ -1790,7 +1790,7 @@ static int tz1090_pinconf_group_reg(struct pinctrl_dev *pctldev,
- 		break;
- 	default:
- 		return -ENOTSUPP;
--	};
-+	}
- 
- 	/* Calculate field information */
- 	*shift = g->slw_bit * *width;
+ 	kfree(map);
+ }
 -- 
 2.4.3
