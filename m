@@ -1,44 +1,35 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 2/6] pinctrl: tz1090-pdc: Remove unneded semicolons
-Date: Wed, 16 Sep 2015 10:28:27 +0200
-Message-ID: <1442392111-8448-3-git-send-email-javier@osg.samsung.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 3/6] pinctrl: mxs: Remove unneded semicolon
+Date: Wed, 16 Sep 2015 10:31:28 +0200
+Message-ID: <20150916083128.GE5327@pengutronix.de>
 References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+ <1442392111-8448-4-git-send-email-javier@osg.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+Content-Disposition: inline
+In-Reply-To: <1442392111-8448-4-git-send-email-javier@osg.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: linux-kernel@vger.kernel.org, Hongzhou Yang <hongzhou.yang@mediatek.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <treding@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Wei Chen <Wei.Chen@csr.com>
 List-Id: linux-gpio@vger.kernel.org
 
-They aren't needed and are just creating null statements so remove it.
+Hello,
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
----
+On Wed, Sep 16, 2015 at 10:28:28AM +0200, Javier Martinez Canillas wrot=
+e:
+> It's not needed an is just creating a null statement, so remove it.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
- drivers/pinctrl/pinctrl-tz1090-pdc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks
+Uwe
 
-diff --git a/drivers/pinctrl/pinctrl-tz1090-pdc.c b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-index c349911708ef..b89ad3c0c731 100644
---- a/drivers/pinctrl/pinctrl-tz1090-pdc.c
-+++ b/drivers/pinctrl/pinctrl-tz1090-pdc.c
-@@ -668,7 +668,7 @@ static int tz1090_pdc_pinconf_reg(struct pinctrl_dev *pctldev,
- 		break;
- 	default:
- 		return -ENOTSUPP;
--	};
-+	}
- 
- 	/* Only input bias parameters supported */
- 	*reg = REG_GPIO_CONTROL2;
-@@ -801,7 +801,7 @@ static int tz1090_pdc_pinconf_group_reg(struct pinctrl_dev *pctldev,
- 		break;
- 	default:
- 		return -ENOTSUPP;
--	};
-+	}
- 
- 	/* Calculate field information */
- 	*mask = (BIT(*width) - 1) << *shift;
--- 
-2.4.3
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
