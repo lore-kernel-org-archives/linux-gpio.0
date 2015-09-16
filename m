@@ -1,45 +1,79 @@
-From: Baruch Siach <baruch@tkos.co.il>
-Subject: Re: [PATCH RFT 5/5] pinctrl: replace trivial implementations of
- gpio_chip request/free
-Date: Wed, 16 Sep 2015 14:07:13 +0300
-Message-ID: <20150916110713.GL11632@tarshish>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
- <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.3, take one
+Date: Wed, 16 Sep 2015 15:17:11 +0200
+Message-ID: <CACRpkdaBU3t2ruikC5He6_AAZXO_Y7GuahZB+6TPFmR+zcc5hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from guitar.tcltek.co.il ([192.115.133.116]:51866 "EHLO
-	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753754AbbIPLHU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 16 Sep 2015 07:07:20 -0400
-Content-Disposition: inline
-In-Reply-To: <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:36475 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752347AbbIPNRM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Sep 2015 09:17:12 -0400
+Received: by oibi136 with SMTP id i136so126031615oib.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2015 06:17:11 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>Andrew Bresticker <ab>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Jonas,
+Hi Linus,
 
-On Sun, Sep 13, 2015 at 03:21:38PM +0200, Jonas Gorski wrote:
-> Replace all trivial request/free callbacks that do nothing but call into
-> pinctrl code with the generic versions.
-> 
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
+here is a smallish set of pin control fixes for the v4.3 series.
 
-[...]
+Nothing special to say, business as usual, details in the
+signed tag.
 
->  drivers/pinctrl/pinctrl-digicolor.c           | 14 ++------------
+Please pull them in!
 
-For Digicolor:
+Yours,
+Linus Walleij
 
-Acked-by: Baruch Siach <baruch@tkos.co.il>
 
-Thanks,
-baruch
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.3-2
+
+for you to fetch changes up to fa84b52cb681b27e6b5e003457562e25a239b9c4:
+
+  pinctrl: samsung: s3c24xx: fix syntax error (2015-09-14 09:13:43 +0200)
+
+----------------------------------------------------------------
+This is a first set of pin control fixes for the v4.3 series:
+
+- Some IS_ERR() fixes from Julia Lawall. I always wanted the compiler
+  to catch these but error pointers by nailing them as an err pointer
+  intrinsic type or something seem to be a "no can do". In any
+  case, cocinelle is obviously up to the task, better than bugs
+  staying around.
+
+- Better error handling for NULL GPIO chips.
+
+- Fix a compile error from the big irq desc refactoring. I'm
+  surprised the fallout wasn't bigger than this.
+
+----------------------------------------------------------------
+Julia Lawall (2):
+      pinctrl: qcom: ssbi: convert null test to IS_ERR test
+      pinctrl: digicolor: convert null test to IS_ERR test
+
+Linus Walleij (1):
+      pinctrl: samsung: s3c24xx: fix syntax error
+
+Masahiro Yamada (1):
+      pinctrl: join lines that can be a single line within 80 columns
+
+Tony Lindgren (1):
+      pinctrl: core: Warn about NULL gpio_chip in pinctrl_ready_for_gpio_range()
+
+ drivers/pinctrl/core.c                    | 3 +++
+ drivers/pinctrl/pinctrl-digicolor.c       | 4 ++--
+ drivers/pinctrl/pinmux.c                  | 3 +--
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c  | 4 ++--
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c   | 4 ++--
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 2 +-
+ 6 files changed, 11 insertions(+), 9 deletions(-)
