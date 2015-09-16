@@ -1,65 +1,45 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 4/6] pinctrl: sunxi: Remove unneeded semicolon
-Date: Wed, 16 Sep 2015 10:41:52 +0200
-Message-ID: <20150916084152.GR4684@lukather>
-References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
- <1442392111-8448-5-git-send-email-javier@osg.samsung.com>
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH RFT 5/5] pinctrl: replace trivial implementations of
+ gpio_chip request/free
+Date: Wed, 16 Sep 2015 14:07:13 +0300
+Message-ID: <20150916110713.GL11632@tarshish>
+References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
+ <1442150498-31116-6-git-send-email-jogo@openwrt.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8+OS07CeIgZ706fH"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:36025 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752370AbbIPIne (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Sep 2015 04:43:34 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:51866 "EHLO
+	mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753754AbbIPLHU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 16 Sep 2015 07:07:20 -0400
 Content-Disposition: inline
-In-Reply-To: <1442392111-8448-5-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1442150498-31116-6-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+To: Jonas Gorski <jogo@openwrt.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>Andrew Bresticker <ab>
 
+Hi Jonas,
 
---8+OS07CeIgZ706fH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Sep 13, 2015 at 03:21:38PM +0200, Jonas Gorski wrote:
+> Replace all trivial request/free callbacks that do nothing but call into
+> pinctrl code with the generic versions.
+> 
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
 
-On Wed, Sep 16, 2015 at 10:28:29AM +0200, Javier Martinez Canillas wrote:
-> It's not needed an is just creating a null statement, so remove it.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+[...]
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>  drivers/pinctrl/pinctrl-digicolor.c           | 14 ++------------
 
-Thanks!
-Maxime
+For Digicolor:
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Acked-by: Baruch Siach <baruch@tkos.co.il>
 
---8+OS07CeIgZ706fH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks,
+baruch
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV+StQAAoJEBx+YmzsjxAgQ7gP+QGqa1MEW02J0JkZFeTsiLSR
-QvGysXs1WYC8IHvXPhar9bXA7csiWg31iGE8l6B6mgsdcY9d43y6yK57Gf8fnOE6
-ath90vIt2HP6nb3QzNCg7y/HGFS85qJB1eGSEz7bWowYhDaO5hb5Df8Lk0Jaxrrc
-sO/KKvQCUsB/srqtNo0ecCGjMc5Q9Vf8wGx98gi9MOxrAIPGDVNsqxv0vrg3yzhq
-o2nspCQ2fpeCFqSUn9igy/F7+C75Q63ENdbLjIdw6SpuDt1PYHNq1emCu611vbtV
-RrqjAp0mbdxuHTyHpXiED/isq44b1i3/RbHQLarbejZGRK6r6fA1O0HVTpWAiHhk
-J7/kWQ/lpnWhW/YP0Tg769lZLS9rn3gY68PvYz4irzDo9w8vtj82/qMuCoSme3Wi
-GRAkvPYlZcVw9JMlO9v7ZKEGL7gZv0CX3A0r/HQQoc7tXdHTXGHxtiTIbSYG27fH
-XUGNnMJ2qjV6B3NcANG9Yjz+oW48tDZfkRgySNkXt29uNXCRlaoJ7URMelHhSnSS
-Ep2YfWWwAiSQZgs2rY+5Kn1I043Rd8rseq+FaYLhTu57HgrkYTNv8q8/FyRbqAdy
-1Ciy30cUBs+booQosqN1y536/27QyGxtSx+Lcq3dXZg5KUXrpKR0ZMCH88KRGUGT
-+Eqs+nlVvM9Fi+ohFxfi
-=cq0K
------END PGP SIGNATURE-----
-
---8+OS07CeIgZ706fH--
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
