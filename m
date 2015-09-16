@@ -1,135 +1,52 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [PATCH v2 7/7] ARM: at91/dt: sama5d2 Xplained: add device pin muxing
-Date: Wed, 16 Sep 2015 17:37:03 +0200
-Message-ID: <1442417823-15850-8-git-send-email-ludovic.desroches@atmel.com>
-References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
+From: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 5/6] pinctrl: mediatek: Remove unneded semicolon
+Date: Wed, 16 Sep 2015 11:36:07 -0700
+Message-ID: <1442428567.39832.1.camel@mussux00.eus.mediatek.inc>
+References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+ <1442392111-8448-6-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: s.hauer@pengutronix.de, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, Ludovic Desroches <ludovic.desroches@atmel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1442392111-8448-6-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add device pin muxing for the sama5d2 Xplained board.
+On Wed, 2015-09-16 at 10:28 +0200, Javier Martinez Canillas wrote:
+> It's not needed an is just creating a null statement, so remove it.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+> ---
+> 
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> index 7726c6caaf83..652ec125adb3 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+> @@ -1436,7 +1436,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
+>  		irq_set_chip_and_handler(virq, &mtk_pinctrl_irq_chip,
+>  			handle_level_irq);
+>  		irq_set_chip_data(virq, pctl);
+> -	};
+> +	}
+>  
+>  	irq_set_chained_handler_and_data(irq, mtk_eint_irq_handler, pctl);
+>  	return 0;
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
----
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 61 +++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index e8d63afd..dc23979 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -44,6 +44,7 @@
-  */
- /dts-v1/;
- #include "sama5d2.dtsi"
-+#include "sama5d2-pinfunc.h"
- 
- / {
- 	model = "Atmel SAMA5D2 Xplained";
-@@ -92,6 +93,8 @@
- 
- 		apb {
- 			spi0: spi@f8000000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_spi0_default>;
- 				status = "okay";
- 
- 				m25p80@0 {
-@@ -102,25 +105,35 @@
- 			};
- 
- 			macb0: ethernet@f8008000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_macb0_default>;
- 				phy-mode = "rmii";
- 				status = "okay";
- 			};
- 
- 			uart1: serial@f8020000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_uart1_default>;
- 				status = "okay";
- 			};
- 
- 			i2c0: i2c@f8028000 {
- 				dmas = <0>, <0>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2c0_default>;
- 				status = "okay";
- 			};
- 
- 			uart3: serial@fc008000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_uart3_default>;
- 				status = "okay";
- 			};
- 
- 			i2c1: i2c@fc028000 {
- 				dmas = <0>, <0>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2c1_default>;
- 				status = "okay";
- 
- 				at24@54 {
-@@ -129,6 +142,54 @@
- 					pagesize = <16>;
- 				};
- 			};
-+
-+			pinctrl@fc038000 {
-+				pinctrl_i2c0_default: i2c0_default {
-+					pinmux = <PIN_PD21__TWD0>,
-+						 <PIN_PD22__TWCK0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2c1_default: i2c1_default {
-+					pinmux = <PIN_PD4__TWD1>,
-+						 <PIN_PD5__TWCK1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_macb0_default: macb0_default {
-+					pinmux = <PIN_PB14__GTXCK>,
-+						 <PIN_PB15__GTXEN>,
-+						 <PIN_PB16__GRXDV>,
-+						 <PIN_PB17__GRXER>,
-+						 <PIN_PB18__GRX0>,
-+						 <PIN_PB19__GRX1>,
-+						 <PIN_PB20__GTX0>,
-+						 <PIN_PB21__GTX1>,
-+						 <PIN_PB22__GMDC>,
-+						 <PIN_PB23__GMDIO>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_spi0_default: spi0_default {
-+					pinmux = <PIN_PA14__SPI0_SPCK>,
-+						 <PIN_PA15__SPI0_MOSI>,
-+						 <PIN_PA16__SPI0_MISO>,
-+						 <PIN_PA17__SPI0_NPCS0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_uart1_default: uart1_default {
-+					pinmux = <PIN_PD2__URXD1>,
-+						 <PIN_PD3__UTXD1>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_uart3_default: uart3_default {
-+					pinmux = <PIN_PB11__URXD3>,
-+						 <PIN_PB12__UTXD3>;
-+					bias-disable;
-+				};
-+			};
- 		};
- 	};
- };
--- 
-2.5.0
+Acked-by: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+
+Thanks
+Hongzhou
