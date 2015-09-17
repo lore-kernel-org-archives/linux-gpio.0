@@ -1,57 +1,33 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/3] pinctrl: sh-pfc: r8a7795: add Audio SSI pin support
-Date: Thu, 17 Sep 2015 10:15:29 +0200
-Message-ID: <CAMuHMdXyrf1QADoV9kwUK4cLaL0925kP4YetXH2bXPJi0D=BwA@mail.gmail.com>
-References: <87mvx4qkzo.wl%kuninori.morimoto.gx@renesas.com>
-	<87wpvp7kq5.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH] sh-pfc: r8a7795: add EtherAVB support
+Date: Thu, 17 Sep 2015 10:18:58 +0200
+Message-ID: <CAMuHMdXXKr7qFuBKVdTJSjGaFBpKEJsDkMU8VhZHHewcjvwoiA@mail.gmail.com>
+References: <1442471136-31894-1-git-send-email-horms+renesas@verge.net.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87wpvp7kq5.wl%kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <1442471136-31894-1-git-send-email-horms+renesas@verge.net.au>
 Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Laurent <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Morimoto-san,
-
-On Thu, Sep 17, 2015 at 6:10 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> @@ -1775,6 +1775,183 @@ static const unsigned int scif5_clk_mux[] = {
->         SCK5_MARK,
->  };
+On Thu, Sep 17, 2015 at 8:25 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> +/* - SSI -------------------------------------------------------------------- */
-> +static const unsigned int ssi0_data_pins[] = {
-> +       /* SDATA */
-> +       RCAR_GP_PIN(6, 2),
-> +};
-> +static const unsigned int ssi0_data_mux[] = {
-> +       SSI_SDATA0_MARK,
-> +};
-> +static const unsigned int ssi01239_ctrl_pins[] = {
-> +       /* SCK, WS */
-> +       RCAR_GP_PIN(6, 0), RCAR_GP_PIN(6, 1),
-> +};
-> +static const unsigned int ssi01239_ctrl_mux[] = {
-> +       SSI_SCK0129_MARK, SSI_WS0129_MARK,
-> +};
-> +static const unsigned int ssi1_a_data_pins[] = {
+> This patch adds EthernetAVB
+>
+> Based on a much lager patch by Takeshi Kihara which was
+> originally posted by Kuninori Morimoto.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> [horms: extracted from a larger patch;
+>         corrected swapped {MATCH,CAPTURE_A} pins]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Shouldn't this be "ssi1_data_a_pins" for consistency with other devices?
-Likewise for the other added entries.
-
-The rest looks OK, so if you fix these, you can add my
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> +       /* SDATA */
-> +       RCAR_GP_PIN(6, 3),
-> +};
-> +static const unsigned int ssi1_a_data_mux[] = {
-> +       SSI_SDATA1_A_MARK,
-> +};
 
 Gr{oetje,eeting}s,
 
