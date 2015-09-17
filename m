@@ -1,37 +1,33 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: add I2C pin support
-Date: Thu, 17 Sep 2015 09:51:07 +0200
-Message-ID: <CAMuHMdUxfP8vsHc_fHb6todaHdPssxM8fSKDw1+rsja=pjH1=A@mail.gmail.com>
-References: <87mvx4qkzo.wl%kuninori.morimoto.gx@renesas.com>
-	<87zj0l7kr8.wl%kuninori.morimoto.gx@renesas.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 6/6] pinctrl: samsung: Remove unneded semicolon
+Date: Thu, 17 Sep 2015 16:55:21 +0900
+Message-ID: <55FA71E9.4010402@samsung.com>
+References: <1442392111-8448-1-git-send-email-javier@osg.samsung.com>
+ <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35407 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753839AbbIQHvI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2015 03:51:08 -0400
-In-Reply-To: <87zj0l7kr8.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1442392111-8448-7-git-send-email-javier@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Laurent <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>
 
-On Thu, Sep 17, 2015 at 6:10 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On 16.09.2015 17:28, Javier Martinez Canillas wrote:
+> It's not needed an is just creating a null statement, so remove it.
+> 
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> 
+> ---
+> 
+>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Quite obvious and pointed out by coccicheck, so:
 
-Gr{oetje,eeting}s,
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
