@@ -1,79 +1,105 @@
-From: Xing Zheng <zhengxing@rock-chips.com>
-Subject: [PATCH v2 6/9] pinctrl: rockchip: add support for the rk3036
-Date: Thu, 17 Sep 2015 18:34:20 +0800
-Message-ID: <1442486060-1770-1-git-send-email-zhengxing@rock-chips.com>
-References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: pl061: detail IRQ trigger handling
+Date: Thu, 17 Sep 2015 14:21:25 +0200
+Message-ID: <1442492485-5879-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.130]:32890 "EHLO
-	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751630AbbIQKeq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2015 06:34:46 -0400
-In-Reply-To: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:35174 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751681AbbIQMVb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2015 08:21:31 -0400
+Received: by lbpo4 with SMTP id o4so8224044lbp.2
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2015 05:21:30 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, zhengxing@rock-chips.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Add new type for rk3036 and many parts of pinctrl rk3036 are similar
-with rk2928's.
+I couldn't follow this code flow. Make it dirt simple to figure
+out what is going on and get proper debug prints. Warn if we
+set up an IRQ without any trigger. Should make no semantic
+difference.
 
-Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+ drivers/gpio/gpio-pl061.c | 55 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 47 insertions(+), 8 deletions(-)
 
-Changes in v2: None
-
- .../bindings/pinctrl/rockchip,pinctrl.txt          |    1 +
- drivers/pinctrl/pinctrl-rockchip.c                 |   17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index 391ef4b..c73f2bb 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -22,6 +22,7 @@ Required properties for iomux controller:
-   - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
- 		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
- 		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
-+		       "rockchip,rk3036-pinctrl"
-   - rockchip,grf: phandle referencing a syscon providing the
- 	 "general register files"
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 04756130437f..3868d5b32156 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -158,24 +158,63 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 	gpiois = readb(chip->base + GPIOIS);
+ 	gpioibe = readb(chip->base + GPIOIBE);
  
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index c5246c0..9c49510 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2089,6 +2089,21 @@ static struct rockchip_pin_ctrl rk2928_pin_ctrl = {
- 		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
- };
++	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
++	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
++	{
++		dev_err(gc->dev,
++			"trying to configure line %d for both level and edge "
++			"detection, choose one!\n",
++			offset);
++		return -EINVAL;
++	}
++
+ 	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
++		bool polarity = trigger & IRQ_TYPE_LEVEL_HIGH;
++
++		/* Disable edge detection */
++		gpioibe &= ~bit;
++		/* Enable level detection */
+ 		gpiois |= bit;
+-		if (trigger & IRQ_TYPE_LEVEL_HIGH)
++		/* Select polarity */
++		if (polarity)
+ 			gpioiev |= bit;
+ 		else
+ 			gpioiev &= ~bit;
+-	} else
+-		gpiois &= ~bit;
  
-+static struct rockchip_pin_bank rk3036_pin_banks[] = {
-+	PIN_BANK(0, 32, "gpio0"),
-+	PIN_BANK(1, 32, "gpio1"),
-+	PIN_BANK(2, 32, "gpio2"),
-+};
+-	if ((trigger & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
+-		/* Setting this makes GPIOEV be ignored */
++		dev_dbg(gc->dev, "line %d: IRQ on %s level\n",
++			offset,
++			polarity ? "HIGH" : "LOW");
++	} else if ((trigger & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH) {
++		/* Disable level detection */
++		gpiois &= ~bit;
++		/* Select both edges, setting this makes GPIOEV be ignored */
+ 		gpioibe |= bit;
+-	else {
 +
-+static struct rockchip_pin_ctrl rk3036_pin_ctrl = {
-+		.pin_banks		= rk3036_pin_banks,
-+		.nr_banks		= ARRAY_SIZE(rk3036_pin_banks),
-+		.label			= "RK3036-GPIO",
-+		.type			= RK2928,
-+		.grf_mux_offset		= 0xa8,
-+		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
-+};
++		dev_dbg(gc->dev, "line %d: IRQ on both edges\n", offset);
++	} else if ((trigger & IRQ_TYPE_EDGE_RISING) ||
++		   (trigger & IRQ_TYPE_EDGE_FALLING)) {
++		bool rising = trigger & IRQ_TYPE_EDGE_RISING;
 +
- static struct rockchip_pin_bank rk3066a_pin_banks[] = {
- 	PIN_BANK(0, 32, "gpio0"),
- 	PIN_BANK(1, 32, "gpio1"),
-@@ -2207,6 +2222,8 @@ static struct rockchip_pin_ctrl rk3368_pin_ctrl = {
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
- 	{ .compatible = "rockchip,rk2928-pinctrl",
- 		.data = (void *)&rk2928_pin_ctrl },
-+	{ .compatible = "rockchip,rk3036-pinctrl",
-+		.data = (void *)&rk3036_pin_ctrl },
- 	{ .compatible = "rockchip,rk3066a-pinctrl",
- 		.data = (void *)&rk3066a_pin_ctrl },
- 	{ .compatible = "rockchip,rk3066b-pinctrl",
++		/* Disable level detection */
++		gpiois &= ~bit;
++		/* Clear detection on both edges */
+ 		gpioibe &= ~bit;
+-		if (trigger & IRQ_TYPE_EDGE_RISING)
++		/* Select edge */
++		if (rising)
+ 			gpioiev |= bit;
+-		else if (trigger & IRQ_TYPE_EDGE_FALLING)
++		else
+ 			gpioiev &= ~bit;
++
++		dev_dbg(gc->dev, "line %d: IRQ on %s edge\n",
++			offset,
++			rising ? "RISING" : "FALLING");
++	} else {
++		/* No trigger: disable everything */
++		gpiois &= ~bit;
++		gpioibe &= ~bit;
++		gpioiev &= ~bit;
++		dev_warn(gc->dev, "no trigger selected for line %d\n",
++			 offset);
+ 	}
+ 
+ 	writeb(gpiois, chip->base + GPIOIS);
 -- 
-1.7.9.5
-
+2.4.3
 
