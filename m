@@ -1,152 +1,37 @@
-From: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] sh-pfc: r8a7795: add EtherAVB support
-Date: Thu, 17 Sep 2015 15:25:36 +0900
-Message-ID: <1442471136-31894-1-git-send-email-horms+renesas@verge.net.au>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7795: add I2C pin support
+Date: Thu, 17 Sep 2015 09:51:07 +0200
+Message-ID: <CAMuHMdUxfP8vsHc_fHb6todaHdPssxM8fSKDw1+rsja=pjH1=A@mail.gmail.com>
+References: <87mvx4qkzo.wl%kuninori.morimoto.gx@renesas.com>
+	<87zj0l7kr8.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35407 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753839AbbIQHvI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2015 03:51:08 -0400
+In-Reply-To: <87zj0l7kr8.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Simon <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Laurent <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Sep 17, 2015 at 6:10 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This patch adds EthernetAVB
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on a much lager patch by Takeshi Kihara which was
-originally posted by Kuninori Morimoto.
+Gr{oetje,eeting}s,
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-[horms: extracted from a larger patch;
-        corrected swapped {MATCH,CAPTURE_A} pins]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 86 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+                        Geert
 
-* Compile tested only
-* Based on
-  [PATCH 0/9 v2] sh-pfc: modify PINMUX_IPSR_MSEL() and r8a7795 support
-  aka the topic/r8a7795-pfc-v2 branch of Geert's renesas-drivers tree.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index aff3895d9955..fcb9fed77d9e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1426,6 +1426,70 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 12),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC_ */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdc_pins[] = {
-+	/* AVB_MDC */
-+	RCAR_GP_PIN(2, 9),
-+};
-+static const unsigned int avb_mdc_mux[] = {
-+	AVB_MDC_MARK,
-+};
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	/*  AVB_AVTP_MATCH_B */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	/* AVB_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
-+};
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1610,6 +1674,15 @@ static const unsigned int scif5_clk_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1637,6 +1710,18 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk),
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdc",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+	"avb_avtp_match_b",
-+	"avb_avtp_capture_b",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1681,6 +1766,7 @@ static const char * const scif5_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
--- 
-2.1.4
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
