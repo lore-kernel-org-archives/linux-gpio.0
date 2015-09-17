@@ -1,101 +1,79 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 0/9] Build and support rk3036 SoC platform
-Date: Thu, 17 Sep 2015 11:59:28 +0200
-Message-ID: <5090899.2Tj4WpOV4G@diego>
+From: Xing Zheng <zhengxing@rock-chips.com>
+Subject: [PATCH v2 6/9] pinctrl: rockchip: add support for the rk3036
+Date: Thu, 17 Sep 2015 18:34:20 +0800
+Message-ID: <1442486060-1770-1-git-send-email-zhengxing@rock-chips.com>
 References: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.130]:32890 "EHLO
+	regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751630AbbIQKeq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Sep 2015 06:34:46 -0400
 In-Reply-To: <1442478540-15068-1-git-send-email-zhengxing@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Alessandro Zummo <a.zummo@towertech.it>, devicetree@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, rtc-linux@googlegroups.com, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: heiko@sntech.de
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, zhengxing@rock-chips.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 
-Hi,
+Add new type for rk3036 and many parts of pinctrl rk3036 are similar
+with rk2928's.
 
-Am Donnerstag, 17. September 2015, 16:28:51 schrieb Xing Zheng:
-> we need to support rk3036 soc platform via upstream, there are
-> 3 primary parts for the initial release of minimum system: dts,
-> pinctrl, and clock tree for rk3036, and additional, add a rtc
-> hym8563 patch to fix initial invaild, we can use these startup
-> and run to init processs.
-> 
-> Thanks.
-> 
-> changed in v2:
-> - based on v1, add clock controller documentation
-> - enable timer5 startup
-> - add smp for cpu1
-> - initial set time for rtc-hym8563
-> 
-> changes since v1:
-> - add dts, pinctrl and clock tree for rk3036 soc platform
-> 
-> The patchset (9):
-> 9) rtc: hym8563: make sure hym8563 can be normal work
-> 8) ARM: rockchip: add support smp for rk3036
-> 7) rockchip: make sure timer5 is enabled on rk3036 platforms
-> 6) pinctrl: rockchip: add support for the rk3036
-> 5) dt-bindings: add documentation of rk3036 clock controller
-> 4) clk: rockchip: add new clock type and controller for rk3036
-> 3) clk: rockchip: add clock controller for rk3036
-> 2) clk: rockchip: add dt-binding header for rk3036
-> 1) ARM: dts: rockchip: add core rk3036 dts
-> 
-> 
-> Changes in v2:
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
-> 
-> Xing Zheng (9):
->   ARM: dts: rockchip: add core rk3036 dts
->   clk: rockchip: add dt-binding header for rk3036
->   clk: rockchip: add clock controller for rk3036
->   clk: rockchip: add new clock type and controller for rk3036
->   dt-bindings: add documentation of rk3036 clock controller
->   pinctrl: rockchip: add support for the rk3036
->   rockchip: make sure timer5 is enabled on rk3036 platforms
->   ARM: rockchip: add support smp for rk3036
->   rtc: hym8563: make sure hym8563 can be normal work
+Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+---
 
-am I missing some patches? I only got patches 1-4.
+Changes in v2: None
 
-Anyway, you should reorder a bit
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |    1 +
+ drivers/pinctrl/pinctrl-rockchip.c                 |   17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-- whatever other patches are necessary before
-- dt-bindings: add documentation of rk3036 clock controller
-- clk: rockchip: add dt-binding header for rk3036
-- clk: rockchip: add new pll type for rk3036
--  clk: rockchip: add clock controller for rk3036
-- ARM: dts: rockchip: add core rk3036 dts
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+index 391ef4b..c73f2bb 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+@@ -22,6 +22,7 @@ Required properties for iomux controller:
+   - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
+ 		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
+ 		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
++		       "rockchip,rk3036-pinctrl"
+   - rockchip,grf: phandle referencing a syscon providing the
+ 	 "general register files"
+ 
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index c5246c0..9c49510 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2089,6 +2089,21 @@ static struct rockchip_pin_ctrl rk2928_pin_ctrl = {
+ 		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
+ };
+ 
++static struct rockchip_pin_bank rk3036_pin_banks[] = {
++	PIN_BANK(0, 32, "gpio0"),
++	PIN_BANK(1, 32, "gpio1"),
++	PIN_BANK(2, 32, "gpio2"),
++};
++
++static struct rockchip_pin_ctrl rk3036_pin_ctrl = {
++		.pin_banks		= rk3036_pin_banks,
++		.nr_banks		= ARRAY_SIZE(rk3036_pin_banks),
++		.label			= "RK3036-GPIO",
++		.type			= RK2928,
++		.grf_mux_offset		= 0xa8,
++		.pull_calc_reg		= rk2928_calc_pull_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk3066a_pin_banks[] = {
+ 	PIN_BANK(0, 32, "gpio0"),
+ 	PIN_BANK(1, 32, "gpio1"),
+@@ -2207,6 +2222,8 @@ static struct rockchip_pin_ctrl rk3368_pin_ctrl = {
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+ 		.data = (void *)&rk2928_pin_ctrl },
++	{ .compatible = "rockchip,rk3036-pinctrl",
++		.data = (void *)&rk3036_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066a-pinctrl",
+ 		.data = (void *)&rk3066a_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066b-pinctrl",
+-- 
+1.7.9.5
 
-The dts patch for example depends on the clock-header, so it really should 
-come after its addition.
 
-
-Heiko
-
-> 
->  .../bindings/clock/rockchip,rk3036-cru.txt         |   60 +++
->  .../bindings/pinctrl/rockchip,pinctrl.txt          |    1 +
->  arch/arm/boot/dts/Makefile                         |    1 +
->  arch/arm/boot/dts/rk3036-sdk.dts                   |   62 +++
->  arch/arm/boot/dts/rk3036.dtsi                      |  381 +++++++++++++++
->  arch/arm/mach-rockchip/platsmp.c                   |  121 +++++
->  arch/arm/mach-rockchip/rockchip.c                  |   22 +
->  drivers/clk/rockchip/Makefile                      |    1 +
->  drivers/clk/rockchip/clk-pll.c                     |  262 +++++++++-
->  drivers/clk/rockchip/clk-rk3036.c                  |  504
-> ++++++++++++++++++++ drivers/clk/rockchip/clk.h                         |  
-> 30 ++
->  drivers/pinctrl/pinctrl-rockchip.c                 |   17 +
->  drivers/rtc/rtc-hym8563.c                          |   93 ++++
->  include/dt-bindings/clock/rk3036-cru.h             |  198 ++++++++
->  14 files changed, 1752 insertions(+), 1 deletion(-)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt create mode
-> 100644 arch/arm/boot/dts/rk3036-sdk.dts
->  create mode 100644 arch/arm/boot/dts/rk3036.dtsi
->  create mode 100644 drivers/clk/rockchip/clk-rk3036.c
->  create mode 100644 include/dt-bindings/clock/rk3036-cru.h
