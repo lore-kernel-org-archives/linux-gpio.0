@@ -1,115 +1,80 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 5/8] pinctrl: freescale: imx: add ZERO_OFFSET_VALID
- flag
-Date: Fri, 18 Sep 2015 21:52:48 +0800
-Message-ID: <20150918135248.GB3770@tiger>
-References: <1441147753-13239-1-git-send-email-aalonso@freescale.com>
- <1441147753-13239-5-git-send-email-aalonso@freescale.com>
- <20150907012831.GE30746@tiger>
- <BN3PR03MB1509E4893244D963FDA21707A8530@BN3PR03MB1509.namprd03.prod.outlook.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] gpio: mention in DT binding doc that <name>-gpio is also supported
+Date: Sat, 19 Sep 2015 00:44:11 +0900
+Message-ID: <CAAVeFuK-doCwGB=EwN2F933G8_ubSRR2xz9xEnWLAhReTupvSA@mail.gmail.com>
+References: <1442453638-14246-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:49276 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753662AbbIRNw5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 18 Sep 2015 09:52:57 -0400
-Content-Disposition: inline
-In-Reply-To: <BN3PR03MB1509E4893244D963FDA21707A8530@BN3PR03MB1509.namprd03.prod.outlook.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34995 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753607AbbIRPoc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Sep 2015 11:44:32 -0400
+In-Reply-To: <1442453638-14246-1-git-send-email-javier@osg.samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alonso Adrian <aalonso@freescale.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Yibin Gong <yibin.gong@freescale.com>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Sep 08, 2015 at 04:05:32PM +0000, Alonso Adrian wrote:
-> Hi Shawn,
-> 
-> See comments below
+On Thu, Sep 17, 2015 at 10:33 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> The GPIO DT binding doc mentions that GPIO are mapped by defining
+> a <name>-gpios property in the consumer device's node but a -gpio
+> sufix is also supported after commit:
+>
+> dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
+>
+> Update the DT binding documentation to match the implementation.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>
+> ---
+> Hello,
+>
+> The GPIO documentation was updated to mention that the -gpio sufix
+> is also supported in patch https://lkml.org/lkml/2015/9/1/117 that
+> already landed in Torvalds tree.
+>
+> I now noticed that the DT binding also only mentions -gpios so I'm
+> posting this patch that adds -gpio to the DT binding documentation.
 
-Please use bottom posting, not top posting.
+I think I remember that -gpio is considered obsolete and its use
+should thus not be encouraged, which is the reason why the
+documentation does not mention it. We could mention it and add a note
+saying that it should not be used for new bindings, but all in all
+isn't it better to keep the documentation clear of such use cases that
+will not be accepted for new patches anyway?
 
-...
-
-> > @@ -536,21 +536,29 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
-> >               return -ENOMEM;
-> >
-> >       for (i = 0; i < grp->npins; i++) {
-> > -             u32 mux_reg = be32_to_cpu(*list++);
-> > +             u32 mux_reg;
-> >               u32 conf_reg;
-> >               unsigned int pin_id;
-> >               struct imx_pin_reg *pin_reg;
-> >               struct imx_pin *pin = &grp->pins[i];
-> >
-> > +             mux_reg = be32_to_cpu(*list++);
-> > +             if (!(info->flags & ZERO_OFFSET_VALID) && !mux_reg)
-> > +                     mux_reg = -1;
-> > +
-> >               if (info->flags & SHARE_MUX_CONF_REG) {
-> >                       conf_reg = mux_reg;
-> >               } else {
-> >                       conf_reg = be32_to_cpu(*list++);
-> > -                     if (!conf_reg)
-> > +                     if (!(info->flags & ZERO_OFFSET_VALID) && !conf_reg)
-> >                               conf_reg = -1;
-> >               }
-> >
-> [Adrian] The below assignment is the important thing that this patch does,
-> it allows the pad_id to be zero and match the pad id's according to the mux_reg offset.
-> > -             pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
-> > +             if (info->flags & ZERO_OFFSET_VALID)
-> > +                     pin_id = mux_reg / 4;
-> > +             else
-> > +                     pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
-> > +
-
-Ah, yes.  So the only code change we need is just the line below, right?
-
-	pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
-
-Shawn
-
-> >               pin_reg = &info->pin_regs[pin_id];
-> >               pin->pin = pin_id;
-> >               grp->pin_ids[i] = pin_id;
-> > @@ -684,7 +692,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
-> >  {
-> >       struct imx_pinctrl *ipctl;
-> >       struct resource *res;
-> > -     int ret, i;
-> > +     int ret;
-> >
-> >       if (!info || !info->pins || !info->npins) {
-> >               dev_err(&pdev->dev, "wrong pinctrl info\n");
-> > @@ -702,11 +710,6 @@ int imx_pinctrl_probe(struct platform_device *pdev,
-> >       if (!info->pin_regs)
-> >               return -ENOMEM;
-> >
-> > -     for (i = 0; i < info->npins; i++) {
-> > -             info->pin_regs[i].mux_reg = -1;
-> > -             info->pin_regs[i].conf_reg = -1;
-> > -     }
-> > -
-> >       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >       ipctl->base = devm_ioremap_resource(&pdev->dev, res);
-> >       if (IS_ERR(ipctl->base))
-> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
-> > index 26f8f1c..67c07c2 100644
-> > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
-> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-> > @@ -85,6 +85,7 @@ struct imx_pinctrl_soc_info {
-> >  };
-> >
-> >  #define SHARE_MUX_CONF_REG   0x1
-> > +#define ZERO_OFFSET_VALID    0x2
-> >
-> >  #define NO_MUX               0x0
-> >  #define NO_PAD               0x0
-> > --
-> > 2.1.4
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> Best regards,
+> Javier
+>
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 5788d5cf1252..8db8c7bb96c1 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -13,10 +13,10 @@ properties, each containing a 'gpio-list':
+>         gpio-specifier : Array of #gpio-cells specifying specific gpio
+>                          (controller specific)
+>
+> -GPIO properties should be named "[<name>-]gpios", with <name> being the purpose
+> -of this GPIO for the device. While a non-existent <name> is considered valid
+> -for compatibility reasons (resolving to the "gpios" property), it is not allowed
+> -for new bindings.
+> +GPIO properties should be named "[<name>-]gpios" or "[<name>-]gpio" with <name>
+> +being the purpose of this GPIO for the device. While a non-existent <name> is
+> +considered valid for compatibility reasons (resolving to the "gpios" property),
+> +it is not allowed for new bindings.
+>
+>  GPIO properties can contain one or more GPIO phandles, but only in exceptional
+>  cases should they contain more than one. If your device uses several GPIOs with
+> --
+> 2.4.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
