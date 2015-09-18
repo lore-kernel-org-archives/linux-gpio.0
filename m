@@ -1,38 +1,115 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 3/3 v2] pinctrl: sh-pfc: r8a7795: add Audio SSI pin support
-Date: Fri, 18 Sep 2015 09:43:29 +0200
-Message-ID: <CAMuHMdXbwzd80RbZ0KW0KaH1UFkxuTgr8zsgYDecK0kHYKeJMQ@mail.gmail.com>
-References: <87twqs1osz.wl%kuninori.morimoto.gx@renesas.com>
-	<87si6c1org.wl%kuninori.morimoto.gx@renesas.com>
-	<87oah01ooe.wl%kuninori.morimoto.gx@renesas.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 5/8] pinctrl: freescale: imx: add ZERO_OFFSET_VALID
+ flag
+Date: Fri, 18 Sep 2015 21:52:48 +0800
+Message-ID: <20150918135248.GB3770@tiger>
+References: <1441147753-13239-1-git-send-email-aalonso@freescale.com>
+ <1441147753-13239-5-git-send-email-aalonso@freescale.com>
+ <20150907012831.GE30746@tiger>
+ <BN3PR03MB1509E4893244D963FDA21707A8530@BN3PR03MB1509.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87oah01ooe.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon <horms@verge.net.au>, Linus Walleij <linus.walleij@linaro.org>, Laurent <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:49276 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753662AbbIRNw5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 18 Sep 2015 09:52:57 -0400
+Content-Disposition: inline
+In-Reply-To: <BN3PR03MB1509E4893244D963FDA21707A8530@BN3PR03MB1509.namprd03.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alonso Adrian <aalonso@freescale.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Yibin Gong <yibin.gong@freescale.com>
 
-On Fri, Sep 18, 2015 at 3:54 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
-> v1 -> v2
->
->  - tidyup naming format
+On Tue, Sep 08, 2015 at 04:05:32PM +0000, Alonso Adrian wrote:
+> Hi Shawn,
+> 
+> See comments below
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Please use bottom posting, not top posting.
 
-Gr{oetje,eeting}s,
+...
 
-                        Geert
+> > @@ -536,21 +536,29 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+> >               return -ENOMEM;
+> >
+> >       for (i = 0; i < grp->npins; i++) {
+> > -             u32 mux_reg = be32_to_cpu(*list++);
+> > +             u32 mux_reg;
+> >               u32 conf_reg;
+> >               unsigned int pin_id;
+> >               struct imx_pin_reg *pin_reg;
+> >               struct imx_pin *pin = &grp->pins[i];
+> >
+> > +             mux_reg = be32_to_cpu(*list++);
+> > +             if (!(info->flags & ZERO_OFFSET_VALID) && !mux_reg)
+> > +                     mux_reg = -1;
+> > +
+> >               if (info->flags & SHARE_MUX_CONF_REG) {
+> >                       conf_reg = mux_reg;
+> >               } else {
+> >                       conf_reg = be32_to_cpu(*list++);
+> > -                     if (!conf_reg)
+> > +                     if (!(info->flags & ZERO_OFFSET_VALID) && !conf_reg)
+> >                               conf_reg = -1;
+> >               }
+> >
+> [Adrian] The below assignment is the important thing that this patch does,
+> it allows the pad_id to be zero and match the pad id's according to the mux_reg offset.
+> > -             pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
+> > +             if (info->flags & ZERO_OFFSET_VALID)
+> > +                     pin_id = mux_reg / 4;
+> > +             else
+> > +                     pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
+> > +
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Ah, yes.  So the only code change we need is just the line below, right?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
+
+Shawn
+
+> >               pin_reg = &info->pin_regs[pin_id];
+> >               pin->pin = pin_id;
+> >               grp->pin_ids[i] = pin_id;
+> > @@ -684,7 +692,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+> >  {
+> >       struct imx_pinctrl *ipctl;
+> >       struct resource *res;
+> > -     int ret, i;
+> > +     int ret;
+> >
+> >       if (!info || !info->pins || !info->npins) {
+> >               dev_err(&pdev->dev, "wrong pinctrl info\n");
+> > @@ -702,11 +710,6 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+> >       if (!info->pin_regs)
+> >               return -ENOMEM;
+> >
+> > -     for (i = 0; i < info->npins; i++) {
+> > -             info->pin_regs[i].mux_reg = -1;
+> > -             info->pin_regs[i].conf_reg = -1;
+> > -     }
+> > -
+> >       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >       ipctl->base = devm_ioremap_resource(&pdev->dev, res);
+> >       if (IS_ERR(ipctl->base))
+> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > index 26f8f1c..67c07c2 100644
+> > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > @@ -85,6 +85,7 @@ struct imx_pinctrl_soc_info {
+> >  };
+> >
+> >  #define SHARE_MUX_CONF_REG   0x1
+> > +#define ZERO_OFFSET_VALID    0x2
+> >
+> >  #define NO_MUX               0x0
+> >  #define NO_PAD               0x0
+> > --
+> > 2.1.4
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
