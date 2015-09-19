@@ -1,66 +1,43 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpio: mention in DT binding doc that <name>-gpio is also supported
-Date: Sat, 19 Sep 2015 03:05:08 +0900
-Message-ID: <CAAVeFu+Np=V+7Z69ZQXwgv5vTqT7paf5mL_aiCvi2JKigBYi1A@mail.gmail.com>
-References: <1442453638-14246-1-git-send-email-javier@osg.samsung.com>
- <CAAVeFuK-doCwGB=EwN2F933G8_ubSRR2xz9xEnWLAhReTupvSA@mail.gmail.com> <55FC4714.1010804@osg.samsung.com>
+From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 4/5] pinctrl: dt-binding: document berlin4ct SoC
+Date: Sat, 19 Sep 2015 18:02:35 +0800
+Message-ID: <1442656956-5740-5-git-send-email-jszhang@marvell.com>
+References: <1442656956-5740-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55FC4714.1010804-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+In-Reply-To: <1442656956-5740-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 19, 2015 at 2:17 AM, Javier Martinez Canillas
-<javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org> wrote:
-> Hello Alexandre,
->
-> On 09/18/2015 05:44 PM, Alexandre Courbot wrote:
->> On Thu, Sep 17, 2015 at 10:33 AM, Javier Martinez Canillas
->> <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org> wrote:
->>> The GPIO DT binding doc mentions that GPIO are mapped by defining
->>> a <name>-gpios property in the consumer device's node but a -gpio
->>> sufix is also supported after commit:
->>>
->>> dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
->>>
->>> Update the DT binding documentation to match the implementation.
->>>
->>> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
->>>
->>> ---
->>> Hello,
->>>
->>> The GPIO documentation was updated to mention that the -gpio sufix
->>> is also supported in patch https://lkml.org/lkml/2015/9/1/117 that
->>> already landed in Torvalds tree.
->>>
->>> I now noticed that the DT binding also only mentions -gpios so I'm
->>> posting this patch that adds -gpio to the DT binding documentation.
->>
->> I think I remember that -gpio is considered obsolete and its use
->> should thus not be encouraged, which is the reason why the
->> documentation does not mention it. We could mention it and add a note
->> saying that it should not be used for new bindings, but all in all
->> isn't it better to keep the documentation clear of such use cases that
->> will not be accepted for new patches anyway?
->>
->
-> I agree that if that's the case then it should be documented. Currently
-> by reading the docs there is no way to tell if -gpio was only added to
-> support old DT bindings and should not be used or if is that the docs
-> were not updated when <function>-gpio parsing was added to gpiolib.
->
-> I can re-spin the patch making it clear that even when the -gpio suffix
-> is supported, it's only there for compatibility reasons and should not
-> be used for newer bindings.
->
-> And also Documentation/gpio/board.txt has to be updated now since now it
-> mentions <function>-gpio but does not say that should not be used.
+Add berlin4ct to existing berlin pinctrl device tree binding.
 
-Sounds good. Thanks for taking care of this!
+Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+---
+ Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
+index a8bb5e2..0580860 100644
+--- a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
+@@ -20,7 +20,10 @@ Required properties:
+ 	"marvell,berlin2cd-soc-pinctrl",
+ 	"marvell,berlin2cd-system-pinctrl",
+ 	"marvell,berlin2q-soc-pinctrl",
+-	"marvell,berlin2q-system-pinctrl"
++	"marvell,berlin2q-system-pinctrl",
++	"marvell,berlin4ct-avio-pinctrl",
++	"marvell,berlin4ct-sm-pinctrl",
++	"marvell,berlin4ct-soc-pinctrl"
+ 
+ Required subnode-properties:
+ - groups: a list of strings describing the group names.
+-- 
+2.5.1
+
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
