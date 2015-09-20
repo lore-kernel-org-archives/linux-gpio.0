@@ -1,69 +1,187 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
- using regmap
-Date: Sat, 19 Sep 2015 11:40:21 -0700
-Message-ID: <20150919184021.GQ30445@sirena.org.uk>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/3] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Sun, 20 Sep 2015 05:16:30 +0100
+Message-ID: <20150920041630.GE3039@x1>
 References: <1442339861-30300-1-git-send-email-afd@ti.com>
- <1442339861-30300-3-git-send-email-afd@ti.com>
+ <1442339861-30300-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MXxcbiX/Q4+iy5U7"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42893 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751866AbbITAbo (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Sep 2015 20:31:44 -0400
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1442339861-30300-3-git-send-email-afd@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <1442339861-30300-2-git-send-email-afd@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
+On Tue, 15 Sep 2015, Andrew F. Davis wrote:
 
---MXxcbiX/Q4+iy5U7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 15, 2015 at 12:57:40PM -0500, Andrew F. Davis wrote:
-> The old driver does not support DT. Rewrite the driver adding DT support
-> and use modern kernel features such as regmap and related helpers.
+> The TPS65912 PMIC contains several regulators and a GPIO controller.
+> Add bindings for the TPS65912 PMIC.
 >=20
 > Signed-off-by: Andrew F. Davis <afd@ti.com>
 > ---
->  drivers/gpio/gpio-tps65912.c           | 291 ++++++------
->  drivers/mfd/Kconfig                    |  20 +-
->  drivers/mfd/Makefile                   |   3 +-
->  drivers/mfd/tps65912-core.c            | 288 +++++-------
->  drivers/mfd/tps65912-i2c.c             | 233 ++++------
->  drivers/mfd/tps65912-irq.c             | 217 ---------
->  drivers/mfd/tps65912-spi.c             | 236 ++++------
->  drivers/regulator/tps65912-regulator.c | 783 ++++++++++-----------------=
-------
->  include/linux/mfd/tps65912.h           | 256 +++++++----
->  9 files changed, 854 insertions(+), 1473 deletions(-)
+>  .../devicetree/bindings/gpio/gpio-tps65912.txt     | 17 +++++++++
+>  Documentation/devicetree/bindings/mfd/tps65912.txt | 43 ++++++++++++=
+++++++++++
+>  .../bindings/regulator/tps65912-regulator.txt      | 32 ++++++++++++=
+++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65=
+912.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.tx=
+t
+>  create mode 100644 Documentation/devicetree/bindings/regulator/tps65=
+912-regulator.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt=
+ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+> new file mode 100644
+> index 0000000..f65370b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+> @@ -0,0 +1,17 @@
+> +* TPS65912 GPIO controller bindings
 
-It's not OK to have a single commit that rewrites multiple drivers over
-many subsystems, that's really not something that can be sensibly
-reviewed.  You should split this into a patch series which makes one
-specific change at a time as covered in SubmittingPatches.  That will
-allow the changes to be reviewed much more sensibly.
+Suggest s/controller/Controller/
 
---MXxcbiX/Q4+iy5U7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +Required properties:
+> + - compatible : Should be "ti,tps65912-gpio".
+> + - gpio-controller : Marks the device node as a gpio controller.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+s/gpio/GPIO/
 
-iQEcBAEBCAAGBQJV/awRAAoJECTWi3JdVIfQK6sH/0JQ+2xQbDCQxl8ai+3Ko7Cf
-myB2BRCtn20b4PzAkwp/HU24NWZxm3wH1lKSrJ6UqokSQeVS8xIJvfIqPlYGlsKo
-grGCkSsBwpzgYERn6IoJfFyz9/ZuSqDQ5J5qm0J+xA/5RqlMArHFLU9p0KRMrktn
-PZQsBkIqlU5zj3o5v2F1RCy3Nj1pgSjs0zCn6KblDMNTRYzM2qngbMV0+Z9zpEZn
-oO5i6SEgoZJYZ8bTWLgCO3OOiCbVFdqLhyPNKZuan8+P5l0PMxKSEjGV6CTObn6x
-TQ7QX7OsCQkxfeWf0K5Am1wjF0mxs8d45rBuGVSX0qy4auEpK1FKqFmBFpGQ6kE=
-=G+ij
------END PGP SIGNATURE-----
+As above for controller.
 
---MXxcbiX/Q4+iy5U7--
+> + - #gpio-cells : Should be two.  The first cell is the pin number an=
+d
+> +     the second cell is used to specify the gpio polarity:
+> +       0 =3D active high
+> +       1 =3D active low
+
+Best to use the #defines in include/dt-bindings/gpio.
+
+> +Example:
+> +
+> +	gpio4: tps65912_gpio {
+> +		compatible =3D "ti,tps65912-gpio";
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +	};
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Doc=
+umentation/devicetree/bindings/mfd/tps65912.txt
+> new file mode 100644
+> index 0000000..081af66
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+> @@ -0,0 +1,43 @@
+> +* TPS65912 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible : Should be "ti,tps65912".
+> + - reg : Slave address or chip select number (I2C / SPI).
+> + - interrupt-parent : The parent interrupt controller.
+> + - interrupts : The interrupt line the device is connected to.
+> + - interrupt-controller : Marks the device node as an interrupt cont=
+roller.
+> + - #interrupt-cells: the number of cells to describe an IRQ, this sh=
+ould be 2.
+
+s/the/The/
+
+> +     The first cell is the IRQ number.
+> +     The second cell is the flags, encoded as the trigger masks from
+> +     Documentation/devicetree/bindings/interrupts.txt
+
+No such file.
+
+> +Optional nodes:
+> + - Regulators: Documentation/devicetree/bindings/regulator/tps65912-=
+regulator.txt
+> + - GPIO: Documentation/devicetree/bindings/gpio/gpio-tps65912.txt.
+
+Better to use ../gpio, ../regulator, etc.
+
+"Regulators" and "GPIO" aren't valid node names.
+
+Please be more specific.
+
+> +Example:
+> +
+> +	pmic: tps65912@2d {
+> +		compatible =3D "ti,tps65912";
+> +		reg =3D <0x2d>;
+> +		interrupt-parent =3D <&gpio1>;
+> +		interrupts =3D <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <2>;
+> +
+> +		dcdc1: regulator-dcdc1 {
+> +			compatible =3D "ti,tps65912-dcdc1";
+> +			regulator-name =3D "vdd_core";
+> +			regulator-min-microvolt =3D <912000>;
+> +			regulator-max-microvolt =3D <1144000>;
+> +			regulator-boot-on;
+> +			regulator-always-on;
+> +		};
+> +		...
+
+No need for this.
+
+> +		gpio4: tps65912_gpio {
+> +			compatible =3D "ti,tps65912-gpio";
+> +			gpio-controller;
+> +			#gpio-cells =3D <2>;
+> +		};
+> +	};
+> diff --git a/Documentation/devicetree/bindings/regulator/tps65912-reg=
+ulator.txt b/Documentation/devicetree/bindings/regulator/tps65912-regul=
+ator.txt
+> new file mode 100644
+> index 0000000..a417ff7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/tps65912-regulator.=
+txt
+> @@ -0,0 +1,32 @@
+> +* TPS65912 regulator bindings
+> +
+> +Required properties:
+> + - compatible: Should be:
+> +   - "ti,tps65912-dcdc1" for DCDC1
+> +   - "ti,tps65912-dcdc2" for DCDC2
+> +   - "ti,tps65912-dcdc3" for DCDC3
+> +   - "ti,tps65912-dcdc4" for DCDC4
+> +   - "ti,tps65912-ldo1" for LDO1
+> +   - "ti,tps65912-ldo2" for LDO2
+> +   - "ti,tps65912-ldo3" for LDO3
+> +   - "ti,tps65912-ldo4" for LDO4
+> +   - "ti,tps65912-ldo5" for LDO5
+> +   - "ti,tps65912-ldo6" for LDO6
+> +   - "ti,tps65912-ldo7" for LDO7
+> +   - "ti,tps65912-ldo8" for LDO8
+> +   - "ti,tps65912-ldo9" for LDO9
+> +   - "ti,tps65912-ldo10" for LDO10
+> +
+> +Optional properties:
+> + - Any optional property defined in bindings/regulator/regulator.txt
+
+=2E./regulator/...
+
+> +Example:
+> +
+> +	xyz: regulator@0 {
+> +		compatible =3D "ti,tps65912-dcdc1";
+> +		regulator-name =3D "vdd_core";
+> +		regulator-min-microvolt =3D <912000>;
+> +		regulator-max-microvolt =3D <1144000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
