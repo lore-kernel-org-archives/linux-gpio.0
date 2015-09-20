@@ -1,32 +1,43 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH RFT 5/5] pinctrl: replace trivial implementations of gpio_chip request/free
-Date: Sun, 20 Sep 2015 15:40:19 +0200
-Message-ID: <2032053.ZmUYfKDm7S@ubix>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org> <1442150498-31116-6-git-send-email-jogo@openwrt.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: sort dt_params array in the same order as pin_config_param
+Date: Mon, 21 Sep 2015 01:26:59 +0900
+Message-ID: <1442766419-3983-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:34634 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751851AbbITNkX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Sep 2015 09:40:23 -0400
-Received: by wicfx3 with SMTP id fx3so114325435wic.1
-        for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2015 06:40:22 -0700 (PDT)
-In-Reply-To: <1442150498-31116-6-git-send-email-jogo@openwrt.org>
+Received: from conuserg011.nifty.com ([202.248.44.37]:30317 "EHLO
+	conuserg011-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753198AbbITQ1N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Sep 2015 12:27:13 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jonas Aaberg <jonas.aberg@stericsson.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@ch>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-On Sunday, September 13, 2015 03:21:38 PM Jonas Gorski wrote:
-> Replace all trivial request/free callbacks that do nothing but call into
-> pinctrl code with the generic versions.
-> 
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
-[...]
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++------------
+Sort this array in the same order as enum pin_config_param and
+conf_items array for consistency.
 
-For the Mediatek part:
-Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/pinctrl/pinconf-generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index e63ad9f..f0bc8bb 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -166,11 +166,11 @@ static const struct pinconf_generic_params dt_params[] = {
+ 	{ "input-schmitt-disable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 0 },
+ 	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
+ 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
++	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
+ 	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
+ 	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
+ 	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
+ 	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
+-	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0},
+ };
+ 
+ /**
+-- 
+1.9.1
+
