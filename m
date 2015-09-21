@@ -1,48 +1,200 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: gpio: omap: switch to use platform_get_irq
-Date: Mon, 21 Sep 2015 19:26:45 +0300
-Message-ID: <20150921162645.GF5648@mwanda>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH 1/3] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Mon, 21 Sep 2015 11:32:01 -0500
+Message-ID: <56003101.50107@ti.com>
+References: <1442339861-30300-1-git-send-email-afd@ti.com>
+ <1442339861-30300-2-git-send-email-afd@ti.com> <20150920041630.GE3039@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:28157 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756939AbbIUQ0z (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 12:26:55 -0400
-Content-Disposition: inline
+Received: from arroyo.ext.ti.com ([192.94.94.40]:41606 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752148AbbIUQdu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Sep 2015 12:33:50 -0400
+In-Reply-To: <20150920041630.GE3039@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: grygorii.strashko@ti.com
-Cc: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Grygorii Strashko,
+On 09/19/2015 11:16 PM, Lee Jones wrote:
+> On Tue, 15 Sep 2015, Andrew F. Davis wrote:
+>
+>> The TPS65912 PMIC contains several regulators and a GPIO controller.
+>> Add bindings for the TPS65912 PMIC.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 17 +++++++++
+>>   Documentation/devicetree/bindings/mfd/tps65912.txt | 43 ++++++++++++++++++++++
+>>   .../bindings/regulator/tps65912-regulator.txt      | 32 ++++++++++++++++
+>>   3 files changed, 92 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
+>>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>> new file mode 100644
+>> index 0000000..f65370b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>> @@ -0,0 +1,17 @@
+>> +* TPS65912 GPIO controller bindings
+>
+> Suggest s/controller/Controller/
+>
 
-The patch 89d18e3af8b9: "gpio: omap: switch to use platform_get_irq"
-from Aug 18, 2015, leads to the following static checker warning:
+ACK
 
-	drivers/gpio/gpio-omap.c:1191 omap_gpio_probe()
-	warn: assigning (-6) to unsigned variable 'bank->irq'
+>> +Required properties:
+>> + - compatible : Should be "ti,tps65912-gpio".
+>> + - gpio-controller : Marks the device node as a gpio controller.
+>
+> s/gpio/GPIO/
+>
+> As above for controller.
+>
 
-drivers/gpio/gpio-omap.c
-  1188          bank->irq = platform_get_irq(pdev, 0);
-  1189          if (bank->irq <= 0) {
+ACK
 
-bank->irq is u16.
+>> + - #gpio-cells : Should be two.  The first cell is the pin number and
+>> +     the second cell is used to specify the gpio polarity:
+>> +       0 = active high
+>> +       1 = active low
+>
+> Best to use the #defines in include/dt-bindings/gpio.
+>
 
-  1190                  if (!bank->irq)
-  1191                          bank->irq = -ENXIO;
+ACK
 
-Does not work.
+>> +Example:
+>> +
+>> +	gpio4: tps65912_gpio {
+>> +		compatible = "ti,tps65912-gpio";
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +	};
+>> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
+>> new file mode 100644
+>> index 0000000..081af66
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+>> @@ -0,0 +1,43 @@
+>> +* TPS65912 Power Management Integrated Circuit bindings
+>> +
+>> +Required properties:
+>> + - compatible : Should be "ti,tps65912".
+>> + - reg : Slave address or chip select number (I2C / SPI).
+>> + - interrupt-parent : The parent interrupt controller.
+>> + - interrupts : The interrupt line the device is connected to.
+>> + - interrupt-controller : Marks the device node as an interrupt controller.
+>> + - #interrupt-cells: the number of cells to describe an IRQ, this should be 2.
+>
+> s/the/The/
+>
 
-  1192                  if (bank->irq != -EPROBE_DEFER)
+ACK
 
-Does not work.
+>> +     The first cell is the IRQ number.
+>> +     The second cell is the flags, encoded as the trigger masks from
+>> +     Documentation/devicetree/bindings/interrupts.txt
+>
+> No such file.
+>
 
-  1193                          dev_err(dev,
-  1194                                  "can't get irq resource ret=%d\n", bank->irq);
-  1195                  return bank->irq;
-  1196          }
+Yeah, this is an unchecked copy/paste on my part, other bindings did it this also, so
+I just submitted a patch to fix them too.
 
+>> +Optional nodes:
+>> + - Regulators: Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+>> + - GPIO: Documentation/devicetree/bindings/gpio/gpio-tps65912.txt.
+>
+> Better to use ../gpio, ../regulator, etc.
+>
+> "Regulators" and "GPIO" aren't valid node names.
+>
+> Please be more specific.
+>
 
-regards,
-dan carpenter
+OK, I'll see if I can clear this up.
+
+>> +Example:
+>> +
+>> +	pmic: tps65912@2d {
+>> +		compatible = "ti,tps65912";
+>> +		reg = <0x2d>;
+>> +		interrupt-parent = <&gpio1>;
+>> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +
+>> +		dcdc1: regulator-dcdc1 {
+>> +			compatible = "ti,tps65912-dcdc1";
+>> +			regulator-name = "vdd_core";
+>> +			regulator-min-microvolt = <912000>;
+>> +			regulator-max-microvolt = <1144000>;
+>> +			regulator-boot-on;
+>> +			regulator-always-on;
+>> +		};
+>> +		...
+>
+> No need for this.
+>
+
+ACK
+
+>> +		gpio4: tps65912_gpio {
+>> +			compatible = "ti,tps65912-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +		};
+>> +	};
+>> diff --git a/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+>> new file mode 100644
+>> index 0000000..a417ff7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+>> @@ -0,0 +1,32 @@
+>> +* TPS65912 regulator bindings
+>> +
+>> +Required properties:
+>> + - compatible: Should be:
+>> +   - "ti,tps65912-dcdc1" for DCDC1
+>> +   - "ti,tps65912-dcdc2" for DCDC2
+>> +   - "ti,tps65912-dcdc3" for DCDC3
+>> +   - "ti,tps65912-dcdc4" for DCDC4
+>> +   - "ti,tps65912-ldo1" for LDO1
+>> +   - "ti,tps65912-ldo2" for LDO2
+>> +   - "ti,tps65912-ldo3" for LDO3
+>> +   - "ti,tps65912-ldo4" for LDO4
+>> +   - "ti,tps65912-ldo5" for LDO5
+>> +   - "ti,tps65912-ldo6" for LDO6
+>> +   - "ti,tps65912-ldo7" for LDO7
+>> +   - "ti,tps65912-ldo8" for LDO8
+>> +   - "ti,tps65912-ldo9" for LDO9
+>> +   - "ti,tps65912-ldo10" for LDO10
+>> +
+>> +Optional properties:
+>> + - Any optional property defined in bindings/regulator/regulator.txt
+>
+> ../regulator/...
+>
+
+Not really sure what you mean here?
+
+Thanks,
+Andrew
+
+>> +Example:
+>> +
+>> +	xyz: regulator@0 {
+>> +		compatible = "ti,tps65912-dcdc1";
+>> +		regulator-name = "vdd_core";
+>> +		regulator-min-microvolt = <912000>;
+>> +		regulator-max-microvolt = <1144000>;
+>> +		regulator-boot-on;
+>> +		regulator-always-on;
+>> +	};
+>
