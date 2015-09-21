@@ -1,65 +1,60 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH] Documentation: gpio: mention that <function>-gpio has been deprecated
-Date: Mon, 21 Sep 2015 15:14:46 +0200
-Message-ID: <1442841286-8586-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lists.s-osg.org ([54.187.51.154]:38334 "EHLO lists.s-osg.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756716AbbIUNOz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 21 Sep 2015 09:14:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 16/17] pinctrl: single: remove misuse of IRQF_NO_SUSPEND flag
+Date: Mon, 21 Sep 2015 16:47:12 +0100
+Message-ID: <1442850433-5903-17-git-send-email-sudeep.holla@arm.com>
+References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-The gpiolib supports parsing DT properties of the form <function>-gpio
-but it was only added for compatibility with older DT bindings that got
-it wrong and should not be used in newer bindings.
+The IRQF_NO_SUSPEND flag is used to identify the interrupts that should
+be left enabled so as to allow them to work as expected during the
+suspend-resume cycle, but doesn't guarantee that it will wake the system
+from a suspended state, enable_irq_wake is recommended to be used for
+the wakeup.
 
-The commit that added support for this was:
+This patch removes the use of IRQF_NO_SUSPEND flags replacing it with
+irq_set_irq_wake instead.
 
-dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
-
-but didn't update the documentation to explain this so it's been a source
-of confusion. So let's make clear this in the GPIO documentation.
-
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
+ drivers/pinctrl/pinctrl-single.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
- Documentation/gpio/board.txt | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/gpio/board.txt b/Documentation/gpio/board.txt
-index f59c43b6411b..3092178628c4 100644
---- a/Documentation/gpio/board.txt
-+++ b/Documentation/gpio/board.txt
-@@ -21,8 +21,8 @@ exact way to do it depends on the GPIO controller providing the GPIOs, see the
- device tree bindings for your controller.
- 
- GPIOs mappings are defined in the consumer device's node, in a property named
--either <function>-gpios or <function>-gpio, where <function> is the function
--the driver will request through gpiod_get(). For example:
-+<function>-gpios, where <function> is the function the driver will request
-+through gpiod_get(). For example:
- 
- 	foo_device {
- 		compatible = "acme,foo";
-@@ -31,9 +31,13 @@ the driver will request through gpiod_get(). For example:
- 			    <&gpio 16 GPIO_ACTIVE_HIGH>, /* green */
- 			    <&gpio 17 GPIO_ACTIVE_HIGH>; /* blue */
- 
--		power-gpio = <&gpio 1 GPIO_ACTIVE_LOW>;
-+		power-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
- 	};
- 
-+Properties named <function>-gpio are also considered valid and old bindings use
-+it but are only supported for compatibility reasons and should not be used for
-+newer bindings since it has been deprecated.
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index ef04b962c3d5..a5d0f0e52de1 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1615,12 +1615,14 @@ static void pcs_irq_unmask(struct irq_data *d)
+  */
+ static int pcs_irq_set_wake(struct irq_data *d, unsigned int state)
+ {
++	struct pcs_soc_data *pcs_soc = irq_data_get_irq_chip_data(d);
 +
- This property will make GPIOs 15, 16 and 17 available to the driver under the
- "led" function, and GPIO 1 as the "power" GPIO:
+ 	if (state)
+ 		pcs_irq_unmask(d);
+ 	else
+ 		pcs_irq_mask(d);
  
+-	return 0;
++	return irq_set_irq_wake(pcs_soc->irq, state);
+ }
+ 
+ /**
+@@ -1755,8 +1757,7 @@ static int pcs_irq_init_chained_handler(struct pcs_device *pcs,
+ 		int res;
+ 
+ 		res = request_irq(pcs_soc->irq, pcs_irq_handler,
+-				  IRQF_SHARED | IRQF_NO_SUSPEND |
+-				  IRQF_NO_THREAD,
++				  IRQF_SHARED | IRQF_NO_THREAD,
+ 				  name, pcs_soc);
+ 		if (res) {
+ 			pcs_soc->irq = -1;
 -- 
-2.4.3
-
+1.9.1
