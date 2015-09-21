@@ -1,45 +1,33 @@
-From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
- using regmap
-Date: Mon, 21 Sep 2015 14:59:59 -0500
-Message-ID: <560061BF.3040903@ti.com>
-References: <1442339861-30300-1-git-send-email-afd@ti.com>
- <1442339861-30300-3-git-send-email-afd@ti.com>
- <20150919184021.GQ30445@sirena.org.uk> <56003365.8030803@ti.com>
- <20150921192645.GA30445@sirena.org.uk> <56005EAA.3000208@ti.com>
- <20150921195457.GD30445@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/3] gpio: Use __gpiod_request directly
+Date: Mon, 21 Sep 2015 14:41:37 -0700
+Message-ID: <CACRpkdbSMZxBafCnZ5VYd+k=_4gVob6Xu1kOdvhuO0GyV1M+dw@mail.gmail.com>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+	<1440920686-6892-2-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150921195457.GD30445-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:35375 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752845AbbIUVlh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 17:41:37 -0400
+Received: by obbzf10 with SMTP id zf10so93117633obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2015 14:41:37 -0700 (PDT)
+In-Reply-To: <1440920686-6892-2-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, chrisrfq@gmail.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On 09/21/2015 02:54 PM, Mark Brown wrote:
-> On Mon, Sep 21, 2015 at 02:46:50PM -0500, Andrew F. Davis wrote:
->> On 09/21/2015 02:26 PM, Mark Brown wrote:
->
->>> So split that interface change between the MFD and the function drivers
->>> out into a separate change - you've got way more than just an interface
->>> change in here (and you've not enumerated the various things that are
->>> being changed in the changelog).
->
->> I'm not really "changing" anything, this is a ground-up re-write. This
->> fundamentally changes the way the MFD core and the function drivers interact,
->> I would consider this a whole new driver that just happens to replace an older
->> driver, not a bunch of incremental changes although I kept the same filenames.
->
-> So split out the deletion then add the new driver like you'd add any
-> other new driver.  If there were in tree users even that would be really
-> problematic but it does seem like we don't have any so perhaps people
-> will be OK with this.
->
+On Sun, Aug 30, 2015 at 12:44 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
 
-OK, I'll split that in v2.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> There is no reason to find out chip and hwnum to use to request a gpio
+> and get another gpio descriptor. We already have the descriptor we want
+> to use so we can directly use it.
+>
+> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+
+Patch applied with Uwe's ACK.
+
+Yours,
+Linus Walleij
