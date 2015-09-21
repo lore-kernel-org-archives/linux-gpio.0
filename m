@@ -1,43 +1,54 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: Re: [PATCH 2/5] pinctrl: berlin: add the berlin4ct pinctrl driver
-Date: Mon, 21 Sep 2015 20:06:11 +0800
-Message-ID: <20150921200611.5e55e9d5@xhacker>
-References: <1442656956-5740-1-git-send-email-jszhang@marvell.com>
-	<1442656956-5740-3-git-send-email-jszhang@marvell.com>
-	<55FF09D5.6090707@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55FF09D5.6090707@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linus.walleij@linaro.org, antoine.tenart@free-electrons.com, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH v2] gpio: mention in DT binding doc that <name>-gpio is deprecated
+Date: Mon, 21 Sep 2015 14:57:25 +0200
+Message-ID: <1442840245-7982-1-git-send-email-javier@osg.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:38326 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752966AbbIUM5f (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Sep 2015 08:57:35 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, devicetree@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Benoit Parrot <bparrot@ti.com>, Kumar Gala <galak@codeaurora.org>, Masahiro Yamada <yamada.m@jp.panasonic.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>
 
-Dear Sebastian,
+The gpiolib supports parsing DT properties of the form <name>-gpio but it
+was only added for compatibility with older DT bindings that got it wrong
+and should not be used in newer bindings.
 
-On Sun, 20 Sep 2015 21:32:37 +0200
-Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com> wrote:
+The commit that added support for this was:
 
-> > +	BERLIN_PINCTRL_GROUP("SM_TDO", 0x0, 0x3, 0x12,
-> > +			BERLIN_PINCTRL_FUNCTION(0x0, "sm_tdo"),
-> > +			BERLIN_PINCTRL_FUNCTION(0x1, "sm_gpio2")),
-> > +	BERLIN_PINCTRL_GROUP("SM_URT0_TXD", 0x0, 0x3, 0x15,
-> > +			BERLIN_PINCTRL_FUNCTION(0x0, "sm_urt0_txd"),  
-> 
-> Please avoid abbreviating acronyms even more, we can afford the
-> few extra bytes.
+dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
 
-In the 2nd version, I kept using HW names, for example:
+but didn't update the documentation to explain this so it's been a source
+of confusion. So let's make this clear in the GPIO DT binding doc.
 
-1. "urt0" as the function name,
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-2. "SM_URT0_TXD" as the pin name (group name)
+---
 
-to keep sync with HW, especially the pin names are the same as HW's, because
-that's what HW doc, sch, etc. call them. IMHO, using a different name with HW
-is not a good idea, what do you think?
+Changes in v2:
+- Explain that <name>-gpio is deprecated instead of saying that is
+  supported. Suggested by Alexandre Courbot.
 
-Thanks,
-Jisheng
+ Documentation/devicetree/bindings/gpio/gpio.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 5788d5cf1252..82d40e2505f6 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -16,7 +16,9 @@ properties, each containing a 'gpio-list':
+ GPIO properties should be named "[<name>-]gpios", with <name> being the purpose
+ of this GPIO for the device. While a non-existent <name> is considered valid
+ for compatibility reasons (resolving to the "gpios" property), it is not allowed
+-for new bindings.
++for new bindings. Also, GPIO properties named "[<name>-]gpio" are valid and old
++bindings use it, but are only supported for compatibility reasons and should not
++be used for newer bindings since it has been deprecated.
+ 
+ GPIO properties can contain one or more GPIO phandles, but only in exceptional
+ cases should they contain more than one. If your device uses several GPIOs with
+-- 
+2.4.3
+
