@@ -1,47 +1,33 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
- using regmap
-Date: Mon, 21 Sep 2015 11:42:13 -0500
-Message-ID: <56003365.8030803@ti.com>
-References: <1442339861-30300-1-git-send-email-afd@ti.com>
- <1442339861-30300-3-git-send-email-afd@ti.com>
- <20150919184021.GQ30445@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/7] pinctrl: introduce driver for Atmel PIO4 controller
+Date: Mon, 21 Sep 2015 11:22:39 -0700
+Message-ID: <CACRpkdYHJMu-fa4fcOVpSWYXfYA8fmzM7fvOGh_274mw6GM=bA@mail.gmail.com>
+References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
+	<1442417823-15850-2-git-send-email-ludovic.desroches@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150919184021.GQ30445@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34482 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757110AbbIUSWk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 14:22:40 -0400
+Received: by oiev17 with SMTP id v17so62952117oie.1
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2015 11:22:39 -0700 (PDT)
+In-Reply-To: <1442417823-15850-2-git-send-email-ludovic.desroches@atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-On 09/19/2015 01:40 PM, Mark Brown wrote:
-> On Tue, Sep 15, 2015 at 12:57:40PM -0500, Andrew F. Davis wrote:
->> The old driver does not support DT. Rewrite the driver adding DT support
->> and use modern kernel features such as regmap and related helpers.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>   drivers/gpio/gpio-tps65912.c           | 291 ++++++------
->>   drivers/mfd/Kconfig                    |  20 +-
->>   drivers/mfd/Makefile                   |   3 +-
->>   drivers/mfd/tps65912-core.c            | 288 +++++-------
->>   drivers/mfd/tps65912-i2c.c             | 233 ++++------
->>   drivers/mfd/tps65912-irq.c             | 217 ---------
->>   drivers/mfd/tps65912-spi.c             | 236 ++++------
->>   drivers/regulator/tps65912-regulator.c | 783 ++++++++++-----------------------
->>   include/linux/mfd/tps65912.h           | 256 +++++++----
->>   9 files changed, 854 insertions(+), 1473 deletions(-)
->
-> It's not OK to have a single commit that rewrites multiple drivers over
-> many subsystems, that's really not something that can be sensibly
-> reviewed.  You should split this into a patch series which makes one
-> specific change at a time as covered in SubmittingPatches.  That will
-> allow the changes to be reviewed much more sensibly.
->
+On Wed, Sep 16, 2015 at 8:36 AM, Ludovic Desroches
+<ludovic.desroches@atmel.com> wrote:
 
-I know this is hard to review, and so I would like to apologize in advance, but
-the regulator and GPIO changes depend on the new driver core, as do the i2c/spi
-components. I really don't know how to split this up without leaving some part
-in a non-working state in-between patches (which I've heard is also not OK).
+> Add a pinctrl/gpio driver for Atmel PIO4 controller available on SAMA5D2
+> chip family.
+>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+
+Patch applied.
+
+Yours,
+Linus Walleij
