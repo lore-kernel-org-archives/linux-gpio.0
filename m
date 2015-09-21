@@ -1,58 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
+From: "Andrew F. Davis" <afd@ti.com>
 Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
  using regmap
-Date: Mon, 21 Sep 2015 12:26:45 -0700
-Message-ID: <20150921192645.GA30445@sirena.org.uk>
+Date: Mon, 21 Sep 2015 14:46:50 -0500
+Message-ID: <56005EAA.3000208@ti.com>
 References: <1442339861-30300-1-git-send-email-afd@ti.com>
  <1442339861-30300-3-git-send-email-afd@ti.com>
- <20150919184021.GQ30445@sirena.org.uk>
- <56003365.8030803@ti.com>
+ <20150919184021.GQ30445@sirena.org.uk> <56003365.8030803@ti.com>
+ <20150921192645.GA30445@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BOr3uFpVABmJfvZe"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45016 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756717AbbIUT2E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 15:28:04 -0400
-Content-Disposition: inline
-In-Reply-To: <56003365.8030803@ti.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:54625 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756464AbbIUTrv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Sep 2015 15:47:51 -0400
+In-Reply-To: <20150921192645.GA30445@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On 09/21/2015 02:26 PM, Mark Brown wrote:
+> On Mon, Sep 21, 2015 at 11:42:13AM -0500, Andrew F. Davis wrote:
+>
+>> I know this is hard to review, and so I would like to apologize in advance, but
+>> the regulator and GPIO changes depend on the new driver core, as do the i2c/spi
+>> components. I really don't know how to split this up without leaving some part
+>> in a non-working state in-between patches (which I've heard is also not OK).
+>
+> So split that interface change between the MFD and the function drivers
+> out into a separate change - you've got way more than just an interface
+> change in here (and you've not enumerated the various things that are
+> being changed in the changelog).
+>
 
---BOr3uFpVABmJfvZe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Sep 21, 2015 at 11:42:13AM -0500, Andrew F. Davis wrote:
-
-> I know this is hard to review, and so I would like to apologize in advance, but
-> the regulator and GPIO changes depend on the new driver core, as do the i2c/spi
-> components. I really don't know how to split this up without leaving some part
-> in a non-working state in-between patches (which I've heard is also not OK).
-
-So split that interface change between the MFD and the function drivers
-out into a separate change - you've got way more than just an interface
-change in here (and you've not enumerated the various things that are
-being changed in the changelog).
-
---BOr3uFpVABmJfvZe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWAFn0AAoJECTWi3JdVIfQVDoH/1jPkK3K6UdC0y+2cWxZEUSn
-HAlj7dadTgId3bnTaizcAwVJX2vOgALNmYB3qQ9jRh2dkFy6gms1SwDYkUBslfq2
-QMnWaRn6W9LdaLvF61OtV82wvI7c17+LGMbpO5ZI7o8xOGRoDs0VIfHUkhZ6jMBg
-Ua3t2ZnKPLVHoq0vvenbbHL5UbClN5OR9GiXL527PrbTi4a7JcyhCtL0oTtIHMSK
-YhGD0tkOJHf/lhefVgO3Ka+l04J/QEHZRfiotQ2fMoomeO0tzkvaMRs3t/W7sgiY
-czeujHqoBVLniKLAbkOtfr9a51zGvugAIv0LlyUhKtfrfL3XkV7AS+82mE5AHOA=
-=L/xO
------END PGP SIGNATURE-----
-
---BOr3uFpVABmJfvZe--
+I'm not really "changing" anything, this is a ground-up re-write. This
+fundamentally changes the way the MFD core and the function drivers interact,
+I would consider this a whole new driver that just happens to replace an older
+driver, not a bunch of incremental changes although I kept the same filenames.
