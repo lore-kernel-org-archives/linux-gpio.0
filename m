@@ -1,60 +1,58 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 16/17] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
- flag
-Date: Mon, 21 Sep 2015 20:53:21 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1509212049500.5606@nanos>
-References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com> <1442850433-5903-17-git-send-email-sudeep.holla@arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
+ using regmap
+Date: Mon, 21 Sep 2015 12:26:45 -0700
+Message-ID: <20150921192645.GA30445@sirena.org.uk>
+References: <1442339861-30300-1-git-send-email-afd@ti.com>
+ <1442339861-30300-3-git-send-email-afd@ti.com>
+ <20150919184021.GQ30445@sirena.org.uk>
+ <56003365.8030803@ti.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BOr3uFpVABmJfvZe"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:37776 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756811AbbIUSx7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 14:53:59 -0400
-In-Reply-To: <1442850433-5903-17-git-send-email-sudeep.holla@arm.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45016 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756717AbbIUT2E (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Sep 2015 15:28:04 -0400
+Content-Disposition: inline
+In-Reply-To: <56003365.8030803@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 21 Sep 2015, Sudeep Holla wrote:
-> The IRQF_NO_SUSPEND flag is used to identify the interrupts that should
-> be left enabled so as to allow them to work as expected during the
-> suspend-resume cycle, but doesn't guarantee that it will wake the system
-> from a suspended state, enable_irq_wake is recommended to be used for
-> the wakeup.
-> 
-> This patch removes the use of IRQF_NO_SUSPEND flags replacing it with
-> irq_set_irq_wake instead.
-> 
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/pinctrl/pinctrl-single.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> index ef04b962c3d5..a5d0f0e52de1 100644
-> --- a/drivers/pinctrl/pinctrl-single.c
-> +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -1615,12 +1615,14 @@ static void pcs_irq_unmask(struct irq_data *d)
->   */
->  static int pcs_irq_set_wake(struct irq_data *d, unsigned int state)
->  {
-> +	struct pcs_soc_data *pcs_soc = irq_data_get_irq_chip_data(d);
-> +
->  	if (state)
->  		pcs_irq_unmask(d);
->  	else
->  		pcs_irq_mask(d);
->  
-> -	return 0;
-> +	return irq_set_irq_wake(pcs_soc->irq, state);
 
-That's going to create at least a lockdep splat due to nesting
-irq_desc->lock.
+--BOr3uFpVABmJfvZe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
+On Mon, Sep 21, 2015 at 11:42:13AM -0500, Andrew F. Davis wrote:
 
-	tglx
+> I know this is hard to review, and so I would like to apologize in advance, but
+> the regulator and GPIO changes depend on the new driver core, as do the i2c/spi
+> components. I really don't know how to split this up without leaving some part
+> in a non-working state in-between patches (which I've heard is also not OK).
+
+So split that interface change between the MFD and the function drivers
+out into a separate change - you've got way more than just an interface
+change in here (and you've not enumerated the various things that are
+being changed in the changelog).
+
+--BOr3uFpVABmJfvZe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWAFn0AAoJECTWi3JdVIfQVDoH/1jPkK3K6UdC0y+2cWxZEUSn
+HAlj7dadTgId3bnTaizcAwVJX2vOgALNmYB3qQ9jRh2dkFy6gms1SwDYkUBslfq2
+QMnWaRn6W9LdaLvF61OtV82wvI7c17+LGMbpO5ZI7o8xOGRoDs0VIfHUkhZ6jMBg
+Ua3t2ZnKPLVHoq0vvenbbHL5UbClN5OR9GiXL527PrbTi4a7JcyhCtL0oTtIHMSK
+YhGD0tkOJHf/lhefVgO3Ka+l04J/QEHZRfiotQ2fMoomeO0tzkvaMRs3t/W7sgiY
+czeujHqoBVLniKLAbkOtfr9a51zGvugAIv0LlyUhKtfrfL3XkV7AS+82mE5AHOA=
+=L/xO
+-----END PGP SIGNATURE-----
+
+--BOr3uFpVABmJfvZe--
