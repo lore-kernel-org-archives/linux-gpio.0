@@ -1,200 +1,47 @@
 From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 1/3] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Mon, 21 Sep 2015 11:32:01 -0500
-Message-ID: <56003101.50107@ti.com>
+Subject: Re: [PATCH 2/3] mfd: tps65912: Rewrite driver adding DT support and
+ using regmap
+Date: Mon, 21 Sep 2015 11:42:13 -0500
+Message-ID: <56003365.8030803@ti.com>
 References: <1442339861-30300-1-git-send-email-afd@ti.com>
- <1442339861-30300-2-git-send-email-afd@ti.com> <20150920041630.GE3039@x1>
+ <1442339861-30300-3-git-send-email-afd@ti.com>
+ <20150919184021.GQ30445@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:41606 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752148AbbIUQdu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 21 Sep 2015 12:33:50 -0400
-In-Reply-To: <20150920041630.GE3039@x1>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150919184021.GQ30445@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/19/2015 11:16 PM, Lee Jones wrote:
-> On Tue, 15 Sep 2015, Andrew F. Davis wrote:
->
->> The TPS65912 PMIC contains several regulators and a GPIO controller.
->> Add bindings for the TPS65912 PMIC.
+On 09/19/2015 01:40 PM, Mark Brown wrote:
+> On Tue, Sep 15, 2015 at 12:57:40PM -0500, Andrew F. Davis wrote:
+>> The old driver does not support DT. Rewrite the driver adding DT support
+>> and use modern kernel features such as regmap and related helpers.
 >>
 >> Signed-off-by: Andrew F. Davis <afd@ti.com>
 >> ---
->>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 17 +++++++++
->>   Documentation/devicetree/bindings/mfd/tps65912.txt | 43 ++++++++++++++++++++++
->>   .../bindings/regulator/tps65912-regulator.txt      | 32 ++++++++++++++++
->>   3 files changed, 92 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
->>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->> new file mode 100644
->> index 0000000..f65370b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->> @@ -0,0 +1,17 @@
->> +* TPS65912 GPIO controller bindings
+>>   drivers/gpio/gpio-tps65912.c           | 291 ++++++------
+>>   drivers/mfd/Kconfig                    |  20 +-
+>>   drivers/mfd/Makefile                   |   3 +-
+>>   drivers/mfd/tps65912-core.c            | 288 +++++-------
+>>   drivers/mfd/tps65912-i2c.c             | 233 ++++------
+>>   drivers/mfd/tps65912-irq.c             | 217 ---------
+>>   drivers/mfd/tps65912-spi.c             | 236 ++++------
+>>   drivers/regulator/tps65912-regulator.c | 783 ++++++++++-----------------------
+>>   include/linux/mfd/tps65912.h           | 256 +++++++----
+>>   9 files changed, 854 insertions(+), 1473 deletions(-)
 >
-> Suggest s/controller/Controller/
->
-
-ACK
-
->> +Required properties:
->> + - compatible : Should be "ti,tps65912-gpio".
->> + - gpio-controller : Marks the device node as a gpio controller.
->
-> s/gpio/GPIO/
->
-> As above for controller.
+> It's not OK to have a single commit that rewrites multiple drivers over
+> many subsystems, that's really not something that can be sensibly
+> reviewed.  You should split this into a patch series which makes one
+> specific change at a time as covered in SubmittingPatches.  That will
+> allow the changes to be reviewed much more sensibly.
 >
 
-ACK
-
->> + - #gpio-cells : Should be two.  The first cell is the pin number and
->> +     the second cell is used to specify the gpio polarity:
->> +       0 = active high
->> +       1 = active low
->
-> Best to use the #defines in include/dt-bindings/gpio.
->
-
-ACK
-
->> +Example:
->> +
->> +	gpio4: tps65912_gpio {
->> +		compatible = "ti,tps65912-gpio";
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +	};
->> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
->> new file mode 100644
->> index 0000000..081af66
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
->> @@ -0,0 +1,43 @@
->> +* TPS65912 Power Management Integrated Circuit bindings
->> +
->> +Required properties:
->> + - compatible : Should be "ti,tps65912".
->> + - reg : Slave address or chip select number (I2C / SPI).
->> + - interrupt-parent : The parent interrupt controller.
->> + - interrupts : The interrupt line the device is connected to.
->> + - interrupt-controller : Marks the device node as an interrupt controller.
->> + - #interrupt-cells: the number of cells to describe an IRQ, this should be 2.
->
-> s/the/The/
->
-
-ACK
-
->> +     The first cell is the IRQ number.
->> +     The second cell is the flags, encoded as the trigger masks from
->> +     Documentation/devicetree/bindings/interrupts.txt
->
-> No such file.
->
-
-Yeah, this is an unchecked copy/paste on my part, other bindings did it this also, so
-I just submitted a patch to fix them too.
-
->> +Optional nodes:
->> + - Regulators: Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->> + - GPIO: Documentation/devicetree/bindings/gpio/gpio-tps65912.txt.
->
-> Better to use ../gpio, ../regulator, etc.
->
-> "Regulators" and "GPIO" aren't valid node names.
->
-> Please be more specific.
->
-
-OK, I'll see if I can clear this up.
-
->> +Example:
->> +
->> +	pmic: tps65912@2d {
->> +		compatible = "ti,tps65912";
->> +		reg = <0x2d>;
->> +		interrupt-parent = <&gpio1>;
->> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
->> +		interrupt-controller;
->> +		#interrupt-cells = <2>;
->> +
->> +		dcdc1: regulator-dcdc1 {
->> +			compatible = "ti,tps65912-dcdc1";
->> +			regulator-name = "vdd_core";
->> +			regulator-min-microvolt = <912000>;
->> +			regulator-max-microvolt = <1144000>;
->> +			regulator-boot-on;
->> +			regulator-always-on;
->> +		};
->> +		...
->
-> No need for this.
->
-
-ACK
-
->> +		gpio4: tps65912_gpio {
->> +			compatible = "ti,tps65912-gpio";
->> +			gpio-controller;
->> +			#gpio-cells = <2>;
->> +		};
->> +	};
->> diff --git a/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->> new file mode 100644
->> index 0000000..a417ff7
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->> @@ -0,0 +1,32 @@
->> +* TPS65912 regulator bindings
->> +
->> +Required properties:
->> + - compatible: Should be:
->> +   - "ti,tps65912-dcdc1" for DCDC1
->> +   - "ti,tps65912-dcdc2" for DCDC2
->> +   - "ti,tps65912-dcdc3" for DCDC3
->> +   - "ti,tps65912-dcdc4" for DCDC4
->> +   - "ti,tps65912-ldo1" for LDO1
->> +   - "ti,tps65912-ldo2" for LDO2
->> +   - "ti,tps65912-ldo3" for LDO3
->> +   - "ti,tps65912-ldo4" for LDO4
->> +   - "ti,tps65912-ldo5" for LDO5
->> +   - "ti,tps65912-ldo6" for LDO6
->> +   - "ti,tps65912-ldo7" for LDO7
->> +   - "ti,tps65912-ldo8" for LDO8
->> +   - "ti,tps65912-ldo9" for LDO9
->> +   - "ti,tps65912-ldo10" for LDO10
->> +
->> +Optional properties:
->> + - Any optional property defined in bindings/regulator/regulator.txt
->
-> ../regulator/...
->
-
-Not really sure what you mean here?
-
-Thanks,
-Andrew
-
->> +Example:
->> +
->> +	xyz: regulator@0 {
->> +		compatible = "ti,tps65912-dcdc1";
->> +		regulator-name = "vdd_core";
->> +		regulator-min-microvolt = <912000>;
->> +		regulator-max-microvolt = <1144000>;
->> +		regulator-boot-on;
->> +		regulator-always-on;
->> +	};
->
+I know this is hard to review, and so I would like to apologize in advance, but
+the regulator and GPIO changes depend on the new driver core, as do the i2c/spi
+components. I really don't know how to split this up without leaving some part
+in a non-working state in-between patches (which I've heard is also not OK).
