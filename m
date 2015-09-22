@@ -1,71 +1,70 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 16/17] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
- flag
-Date: Tue, 22 Sep 2015 10:42:39 +0100
-Message-ID: <5601228F.5080403@arm.com>
-References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com>
- <1442850433-5903-17-git-send-email-sudeep.holla@arm.com>
- <alpine.DEB.2.11.1509212049500.5606@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:56943 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754207AbbIVJmp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 22 Sep 2015 05:42:45 -0400
-In-Reply-To: <alpine.DEB.2.11.1509212049500.5606@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/8] mfd: intel_quark_i2c_gpio: support devices behind i2c bus
+Date: Tue, 22 Sep 2015 13:10:15 +0300
+Message-ID: <1442916619-140607-5-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1442916619-140607-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1442916619-140607-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Intel Galileo Gen2 the GPIO expanders are connected to the i2c bus. For
+those devices the ACPI table has specific parameters that refer to an actual
+i2c host controller. Since MFD now copes with that specific configuration we
+have to provide a necessary information how to distinguish devices in ACPI
+namespace. Here the _ADR values are provided.
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/intel_quark_i2c_gpio.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On 21/09/15 19:53, Thomas Gleixner wrote:
-> On Mon, 21 Sep 2015, Sudeep Holla wrote:
->> The IRQF_NO_SUSPEND flag is used to identify the interrupts that should
->> be left enabled so as to allow them to work as expected during the
->> suspend-resume cycle, but doesn't guarantee that it will wake the system
->> from a suspended state, enable_irq_wake is recommended to be used for
->> the wakeup.
->>
->> This patch removes the use of IRQF_NO_SUSPEND flags replacing it with
->> irq_set_irq_wake instead.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: linux-gpio@vger.kernel.org
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
->>   drivers/pinctrl/pinctrl-single.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
->> index ef04b962c3d5..a5d0f0e52de1 100644
->> --- a/drivers/pinctrl/pinctrl-single.c
->> +++ b/drivers/pinctrl/pinctrl-single.c
->> @@ -1615,12 +1615,14 @@ static void pcs_irq_unmask(struct irq_data *d)
->>    */
->>   static int pcs_irq_set_wake(struct irq_data *d, unsigned int state)
->>   {
->> +	struct pcs_soc_data *pcs_soc = irq_data_get_irq_chip_data(d);
->> +
->>   	if (state)
->>   		pcs_irq_unmask(d);
->>   	else
->>   		pcs_irq_mask(d);
->>
->> -	return 0;
->> +	return irq_set_irq_wake(pcs_soc->irq, state);
->
-> That's going to create at least a lockdep splat due to nesting
-> irq_desc->lock.
->
-
-Ah right, I noted that I must fix it when you pointed out similar issue
-on the other thread[1]. I forgot later, sorry will look into that.
-
-Regards,
-Sudeep
-
-[1] https://lkml.org/lkml/2015/9/8/617
+diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+index 89bd4bf..e9fd33b 100644
+--- a/drivers/mfd/intel_quark_i2c_gpio.c
++++ b/drivers/mfd/intel_quark_i2c_gpio.c
+@@ -31,6 +31,10 @@
+ #define MFD_I2C_BAR		0
+ #define MFD_GPIO_BAR		1
+ 
++/* ACPI _ADR value to match the child node */
++#define MFD_ACPI_MATCH_GPIO	0ULL
++#define MFD_ACPI_MATCH_I2C	1ULL
++
+ /* The base GPIO number under GPIOLIB framework */
+ #define INTEL_QUARK_MFD_GPIO_BASE	8
+ 
+@@ -82,9 +86,14 @@ static struct resource intel_quark_i2c_res[] = {
+ 	},
+ };
+ 
++static struct mfd_cell_acpi_match intel_quark_acpi_match_i2c = {
++	.adr = MFD_ACPI_MATCH_I2C,
++};
++
+ static struct mfd_cell intel_quark_mfd_i2c_cell = {
+ 	.id = MFD_I2C_BAR,
+ 	.name = "i2c_designware",
++	.acpi_match = &intel_quark_acpi_match_i2c,
+ 	.num_resources = ARRAY_SIZE(intel_quark_i2c_res),
+ 	.resources = intel_quark_i2c_res,
+ 	.ignore_resource_conflicts = true,
+@@ -96,9 +105,14 @@ static struct resource intel_quark_gpio_res[] = {
+ 	},
+ };
+ 
++static struct mfd_cell_acpi_match intel_quark_acpi_match_gpio = {
++	.adr = MFD_ACPI_MATCH_GPIO,
++};
++
+ static struct mfd_cell intel_quark_mfd_gpio_cell = {
+ 	.id = MFD_GPIO_BAR,
+ 	.name = "gpio-dwapb",
++	.acpi_match = &intel_quark_acpi_match_gpio,
+ 	.num_resources = ARRAY_SIZE(intel_quark_gpio_res),
+ 	.resources = intel_quark_gpio_res,
+ 	.ignore_resource_conflicts = true,
+-- 
+2.5.1
