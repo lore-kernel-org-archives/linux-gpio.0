@@ -1,38 +1,135 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add VIN pin groups
-Date: Tue, 22 Sep 2015 09:32:46 +0200
-Message-ID: <CAMuHMdW_Rh7yk9hF8JjQAqq81w8se0CK4xH=dZX=mNjgJ87poQ@mail.gmail.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-	<1628224.IIIbAo3i3M@wasted.cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [POC/RFC] pinctrl: sh-pfc: Use u16 to store pinmux enums
+Date: Tue, 22 Sep 2015 11:12:49 +0200
+Message-ID: <1442913169-15557-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1628224.IIIbAo3i3M@wasted.cogentembedded.com>
 Sender: linux-sh-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 22, 2015 at 12:00 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
->
-> Add VIN0/1 pin groups to R8A7794 PFC driver.
->
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> [Sergei: rebased, renamed, added changelog, gathered 12 VIN1 data pins into a
-> single pin group, added "vin1_data10" pin group.]
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Use u16 instead of unsigned int to store pinmux enums, as they fit
+easily in 16 bits.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This decreases the size of a (32-bit) shmobile_defconfig kernel
+supporting 9 SoCs by 5780 bytes.
 
-Gr{oetje,eeting}s,
+FIXME This doesn't make any difference on arm64, as all individual
+      objects are always 8-byte aligned by the compiler.
 
-                        Geert
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is not the complete patch, as I don't want to spam you with a few
+thousand lines of uninteresting changes.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ drivers/pinctrl/sh-pfc/pfc-emev2.c   |  72 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  94 ++---
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 270 +++++++--------
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c |  24 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 300 ++++++++--------
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 552 ++++++++++++++---------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 653 ++++++++++++++++++-----------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 374 ++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 402 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 326 ++++++++---------
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |  14 +-
+ 11 files changed, 1546 insertions(+), 1535 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 156f88d6af979874..b4587e3c6ffdd1de 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -1701,7 +1701,7 @@ static const unsigned int audio_clk_a_pins[] = {
+ 	RCAR_GP_PIN(2, 28),
+ };
+ 
+-static const unsigned int audio_clk_a_mux[] = {
++static const u16 audio_clk_a_mux[] = {
+ 	AUDIO_CLKA_MARK,
+ };
+ 
+@@ -1710,7 +1710,7 @@ static const unsigned int audio_clk_b_pins[] = {
+ 	RCAR_GP_PIN(2, 29),
+ };
+ 
+-static const unsigned int audio_clk_b_mux[] = {
++static const u16 audio_clk_b_mux[] = {
+ 	AUDIO_CLKB_MARK,
+ };
+ 
+@@ -3982,12 +3982,13 @@ static const unsigned int usb1_pins[] = {
+ 	RCAR_GP_PIN(7, 25), /* PWEN */
+ 	RCAR_GP_PIN(6, 30), /* OVC */
+ };
+-static const unsigned int usb1_mux[] = {
++static const u16 usb1_mux[] = {
+ 	USB1_PWEN_MARK,
+ 	USB1_OVC_MARK,
+ };
++
+ /* - VIN0 ------------------------------------------------------------------- */
+-static const union vin_data vin0_data_pins = {
++static const union vin_data_pins vin0_data_pins = {
+ 	.data24 = {
+ 		/* B */
+ 		RCAR_GP_PIN(4, 5), RCAR_GP_PIN(4, 6),
+@@ -4006,7 +4007,7 @@ static const union vin_data vin0_data_pins = {
+ 		RCAR_GP_PIN(4, 27), RCAR_GP_PIN(4, 28),
+ 	},
+ };
+-static const union vin_data vin0_data_mux = {
++static const union vin_data_mux vin0_data_mux = {
+ 	.data24 = {
+ 		/* B */
+ 		VI0_DATA0_VI0_B0_MARK, VI0_DATA1_VI0_B1_MARK,
+@@ -4039,7 +4040,7 @@ static const unsigned int vin0_data18_pins[] = {
+ 	RCAR_GP_PIN(4, 25), RCAR_GP_PIN(4, 26),
+ 	RCAR_GP_PIN(4, 27), RCAR_GP_PIN(4, 28),
+ };
+-static const unsigned int vin0_data18_mux[] = {
++static const u16 vin0_data18_mux[] = {
+ 	/* B */
+ 	VI0_DATA2_VI0_B2_MARK, VI0_DATA3_VI0_B3_MARK,
+ 	VI0_DATA4_VI0_B4_MARK, VI0_DATA5_VI0_B5_MARK,
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index e18e306b4ac276c7..565ffc6568db9203 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -48,7 +48,7 @@ struct sh_pfc_pin {
+ struct sh_pfc_pin_group {
+ 	const char *name;
+ 	const unsigned int *pins;
+-	const unsigned int *mux;
++	const u16 *mux;
+ 	unsigned int nr_pins;
+ };
+ 
+@@ -60,7 +60,7 @@ struct sh_pfc_pin_group {
+ 		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+ 	}
+ 
+-union vin_data {
++union vin_data_pins {
+ 	unsigned int data24[24];
+ 	unsigned int data20[20];
+ 	unsigned int data16[16];
+@@ -70,6 +70,16 @@ union vin_data {
+ 	unsigned int data4[4];
+ };
+ 
++union vin_data_mux {
++	u16 data24[24];
++	u16 data20[20];
++	u16 data16[16];
++	u16 data12[12];
++	u16 data10[10];
++	u16 data8[8];
++	u16 data4[4];
++};
++
+ #define SH_PFC_FUNCTION(n)				\
+ 	{						\
+ 		.name = #n,				\
+-- 
+1.9.1
+
