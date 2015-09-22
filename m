@@ -1,65 +1,129 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 1/3] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Tue, 22 Sep 2015 14:58:44 -0500
-Message-ID: <5601B2F4.6090706@ti.com>
-References: <1442339861-30300-1-git-send-email-afd@ti.com>
- <1442339861-30300-2-git-send-email-afd@ti.com> <20150920041630.GE3039@x1>
- <56003101.50107@ti.com> <20150921230725.GB11284@x1>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v2] pinctrl: sh-pfc: r8a779[01]: move 'union vin_data' to shared header file
+Date: Wed, 23 Sep 2015 01:06:21 +0300
+Message-ID: <20048813.n6aqe5klWJ@wasted.cogentembedded.com>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150921230725.GB11284@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f53.google.com ([209.85.215.53]:35260 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934926AbbIVWGZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Sep 2015 18:06:25 -0400
+Received: by lagj9 with SMTP id j9so29990605lag.2
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2015 15:06:24 -0700 (PDT)
+In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-On 09/21/2015 06:07 PM, Lee Jones wrote:
-> On Mon, 21 Sep 2015, Andrew F. Davis wrote:
->> On 09/19/2015 11:16 PM, Lee Jones wrote:
->>> On Tue, 15 Sep 2015, Andrew F. Davis wrote:
->>>
->>>> The TPS65912 PMIC contains several regulators and a GPIO controller.
->>>> Add bindings for the TPS65912 PMIC.
->>>>
->>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>>> ---
->>>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 17 +++++++++
->>>>   Documentation/devicetree/bindings/mfd/tps65912.txt | 43 ++++++++++++++++++++++
->>>>   .../bindings/regulator/tps65912-regulator.txt      | 32 ++++++++++++++++
->>>>   3 files changed, 92 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->>>>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
->>>>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->
-> [...]
->
->>>> +Optional nodes:
->>>> + - Regulators: Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->>>> + - GPIO: Documentation/devicetree/bindings/gpio/gpio-tps65912.txt.
->>>
->>> Better to use ../gpio, ../regulator, etc.
->>>
->>> "Regulators" and "GPIO" aren't valid node names.
->>>
->>> Please be more specific.
->>>
->>
->> OK, I'll see if I can clear this up.
->
-> [...]
->
->>>> +Optional properties:
->>>> + - Any optional property defined in bindings/regulator/regulator.txt
->>>
->>> ../regulator/...
->>>
->>
->> Not really sure what you mean here?
->
-> Same as above.  Use "../regulator/regulator.txt" instead.
->
+R8A7790/1 PFC  drivers use almost identical  'union vin_data' and completely
+identical VIN_DATA_PIN_GROUP() macro; we thus can  move them into the shared
+header file...
 
-Oh, I see, fixed.
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+---
+The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
+
+Changed in version 2:
+- removed leftover empty line from the R8A7790 driver;
+- added Geert's ACK.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   19 -------------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   18 ------------------
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   18 ++++++++++++++++++
+ 3 files changed, 18 insertions(+), 37 deletions(-)
+
+Index: renesas/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+===================================================================
+--- renesas.orig/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ renesas/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -3624,25 +3624,6 @@ static const unsigned int usb2_pins[] =
+ static const unsigned int usb2_mux[] = {
+ 	USB2_PWEN_MARK, USB2_OVC_MARK,
+ };
+-
+-union vin_data {
+-	unsigned int data24[24];
+-	unsigned int data20[20];
+-	unsigned int data16[16];
+-	unsigned int data12[12];
+-	unsigned int data10[10];
+-	unsigned int data8[8];
+-	unsigned int data4[4];
+-};
+-
+-#define VIN_DATA_PIN_GROUP(n, s)				\
+-	{							\
+-		.name = #n#s,					\
+-		.pins = n##_pins.data##s,			\
+-		.mux = n##_mux.data##s,				\
+-		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+-	}
+-
+ /* - VIN0 ------------------------------------------------------------------- */
+ static const union vin_data vin0_data_pins = {
+ 	.data24 = {
+Index: renesas/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- renesas.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ renesas/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -3986,24 +3986,6 @@ static const unsigned int usb1_mux[] = {
+ 	USB1_PWEN_MARK,
+ 	USB1_OVC_MARK,
+ };
+-
+-union vin_data {
+-	unsigned int data24[24];
+-	unsigned int data20[20];
+-	unsigned int data16[16];
+-	unsigned int data12[12];
+-	unsigned int data10[10];
+-	unsigned int data8[8];
+-};
+-
+-#define VIN_DATA_PIN_GROUP(n, s)				\
+-	{							\
+-		.name = #n#s,					\
+-		.pins = n##_pins.data##s,			\
+-		.mux = n##_mux.data##s,				\
+-		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+-	}
+-
+ /* - VIN0 ------------------------------------------------------------------- */
+ static const union vin_data vin0_data_pins = {
+ 	.data24 = {
+Index: renesas/drivers/pinctrl/sh-pfc/sh_pfc.h
+===================================================================
+--- renesas.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ renesas/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -52,6 +52,24 @@ struct sh_pfc_pin_group {
+ 	unsigned int nr_pins;
+ };
+ 
++#define VIN_DATA_PIN_GROUP(n, s)				\
++	{							\
++		.name = #n#s,					\
++		.pins = n##_pins.data##s,			\
++		.mux = n##_mux.data##s,				\
++		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
++	}
++
++union vin_data {
++	unsigned int data24[24];
++	unsigned int data20[20];
++	unsigned int data16[16];
++	unsigned int data12[12];
++	unsigned int data10[10];
++	unsigned int data8[8];
++	unsigned int data4[4];
++};
++
+ #define SH_PFC_FUNCTION(n)				\
+ 	{						\
+ 		.name = #n,				\
+
