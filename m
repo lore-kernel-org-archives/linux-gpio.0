@@ -1,52 +1,93 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: dts: sun8i: Add Allwinner A83T dtsi
-Date: Tue, 22 Sep 2015 17:54:50 +0200
-Message-ID: <20150922155450.GL4684@lukather>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 4/4] ARM: dts: sun8i: Add A83T HomletV2 Board by Allwinner
+Date: Tue, 22 Sep 2015 18:00:53 +0200
+Message-ID: <20150922160053.GM4684@lukather>
 References: <1442936337-3104-1-git-send-email-vishnupatekar0510@gmail.com>
- <1442936337-3104-4-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+ <1442936337-3104-5-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tuMntWBhi9NC2Hav"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBTXUQWYAKGQE5MKVC7I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="LNf+Ih2NDvbuM/DA"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:52717 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751776AbbIVQEt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Sep 2015 12:04:49 -0400
 Content-Disposition: inline
-In-Reply-To: <1442936337-3104-4-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1442936337-3104-5-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, linus.walleij@linaro.org, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org
 
---tuMntWBhi9NC2Hav
-Content-Type: text/plain; charset=UTF-8
+
+--LNf+Ih2NDvbuM/DA
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 22, 2015 at 11:38:56PM +0800, Vishnu Patekar wrote:
-> Allwinner A83T is new octa-core cortex-a7 SOC.
-> This adds the basic dtsi, the clocks differs from
-> earlier sun8i SOCs.
-> 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Tue, Sep 22, 2015 at 11:38:57PM +0800, Vishnu Patekar wrote:
+> H8Homlet Proto v2.0 Board is A83T Dev Board by Allwinner.
+> It has UART, ethernet, USB, HDMI, etc ports on it.
+>=20
+> It's name is confusing, Its A83T board however,"H8_HOMLET_PROTO_V2"
+> printed on board.
+>=20
+> A83T patches are tested on this board.
+> It has UART, ethernet, USB, HDMI, etc ports on it.
+>=20
+> For FEL mode it needs USB A-A(Male) cable. I used uart0 which
+> is multiplexed to microsd pins PF2 and PF4.
+
+Is there no other UART on the device?
+
+>=20
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 > ---
->  arch/arm/boot/dts/sun8i-a83t.dtsi | 243 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 243 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun8i-a83t.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
+>  arch/arm/boot/dts/Makefile                         |  5 +-
+>  .../boot/dts/sun8i-a83t-allwinner-homlet-v20.dts   | 69 ++++++++++++++++=
+++++++
+>  2 files changed, 72 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/sun8i-a83t-allwinner-homlet-v20.dts
+>=20
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b276174..9585a58 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -634,7 +634,8 @@ dtb-$(CONFIG_MACH_SUN8I) +=3D \
+>  	sun8i-a33-ga10h-v1.1.dtb \
+>  	sun8i-a33-ippo-q8h-v1.2.dtb \
+>  	sun8i-a33-q8-tzx-723q4.dtb \
+> -	sun8i-a33-sinlinx-sina33.dtb
+> +	sun8i-a33-sinlinx-sina33.dtb \
+> +	sun8i-a83t-allwinner-homlet-v20.dtb
+
+we probably want to mention the h8 in here too, and the v2 is enough.
+
+>  dtb-$(CONFIG_MACH_SUN9I) +=3D \
+>  	sun9i-a80-optimus.dtb \
+>  	sun9i-a80-cubieboard4.dtb
+> @@ -679,7 +680,7 @@ dtb-$(CONFIG_ARCH_UNIPHIER) +=3D \
+>  	uniphier-ph1-ld6b-ref.dtb \
+>  	uniphier-ph1-pro4-ref.dtb \
+>  	uniphier-ph1-sld3-ref.dtb \
+> -	uniphier-ph1-sld8-ref.dtb=20
+> +	uniphier-ph1-sld8-ref.dtb
+
+Uh ?
+
+>  dtb-$(CONFIG_ARCH_VERSATILE) +=3D \
+>  	versatile-ab.dtb \
+>  	versatile-pb.dtb
+> diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-homlet-v20.dts b/arch=
+/arm/boot/dts/sun8i-a83t-allwinner-homlet-v20.dts
 > new file mode 100644
-> index 0000000..f6ddd9c
+> index 0000000..bbc2ab9
 > --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> @@ -0,0 +1,243 @@
+> +++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-homlet-v20.dts
+> @@ -0,0 +1,69 @@
 > +/*
 > + * Copyright 2015 Vishnu Patekar
-> + *
-> + * Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> + * Vishnu Patekar <vishnupatekar0510@gmail.com>
 > + *
 > + * This file is dual-licensed: you can use it either under the terms
 > + * of the GPL or the X11 license, at your option. Note that this dual
@@ -85,225 +126,76 @@ On Tue, Sep 22, 2015 at 11:38:56PM +0800, Vishnu Patekar wrote:
 > + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 > + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 > + *     OTHER DEALINGS IN THE SOFTWARE.
-> +
 > + */
 > +
-> +#include "skeleton.dtsi"
+> +/dts-v1/;
+> +#include "sun8i-a83t.dtsi"
 > +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
 > +#include <dt-bindings/pinctrl/sun4i-a10.h>
+
+Do you need those headers?
+
 > +
 > +/ {
-> +	interrupt-parent = <&gic>;
+> +	model =3D "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+> +	compatible =3D "allwinner,homletv2", "allwinner,sun8i-a83t";
+
+                                ^ Please add a dash here
+
+> +
+> +	aliases {
+> +		serial0 =3D &uart0;
+> +	};
 > +
 > +	chosen {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@0 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +		};
-> +
-> +		cpu@1 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <1>;
-> +		};
-> +
-> +		cpu@2 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <2>;
-> +		};
-> +
-> +		cpu@3 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <3>;
-> +		};
-> +		cpu@4 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <4>;
-> +		};
-> +
-> +		cpu@5 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <5>;
-> +		};
-> +		cpu@6 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <6>;
-> +		};
-> +
-> +		cpu@7 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <7>;
-> +		};
-> +	};
-> +
-> +	memory {
-> +		reg = <0x40000000 0x80000000>;
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv7-timer";
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +		clock-frequency = <24000000>;
-> +		arm,cpu-registers-not-fw-configured;
-> +	};
-> +
-> +	clocks {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		osc24M: osc24M_clk {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <24000000>;
-> +			clock-output-names = "osc24M";
-> +		};
-> +
-> +		osc32k: osc32k_clk {
-> +			#clock-cells = <0>;
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <32768>;
-> +			clock-output-names = "osc32k";
-> +		};
-> +	};
-> +
-> +	soc@01c00000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		pio: pinctrl@01c20800 {
-> +			compatible = "allwinner,sun8i-a83t-pinctrl";
-> +			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-> +			/* compatible gets set in SoC specific dtsi file */
+> +		stdout-path =3D "serial0:115200n8";
+> +		bootargs =3D "earlyprintk console=3DttyS0,115200";
 
-Which DTSI?
+console is useless here, and please remove earlyprintk. It will make
+your kernel crash if the image is configured for another SoC.
 
-> +			reg = <0x01c20800 0x400>;
-> +			/* interrupts get set in SoC specific dtsi file */
-
-Ditto
-
-> +			clocks = <&osc24M>;
-> +			gpio-controller;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			#gpio-cells = <3>;
-> +
-> +			uart0_pins_a: uart0@0 {
-> +				allwinner,pins = "PF2", "PF4";
-> +				allwinner,function = "uart0";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc0_pins_a: mmc0@0 {
-> +				allwinner,pins = "PF0", "PF1", "PF2",
-> +						 "PF3", "PF4", "PF5";
-> +				allwinner,function = "mmc0";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc1_pins_a: mmc1@0 {
-> +				allwinner,pins = "PG0", "PG1", "PG2",
-> +						 "PG3", "PG4", "PG5";
-> +				allwinner,function = "mmc1";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc2_8bit_pins: mmc2_8bit {
-> +				allwinner,pins = "PC5", "PC6", "PC8",
-> +						 "PC9", "PC10", "PC11",
-> +						 "PC12", "PC13", "PC14",
-> +						 "PC15";
-> +				allwinner,function = "mmc2";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			i2c0_pins_a: i2c0@0 {
-> +				allwinner,pins = "PH0", "PH1";
-> +				allwinner,function = "i2c0";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			i2c1_pins_a: i2c1@0 {
-> +				allwinner,pins = "PH2", "PH3";
-> +				allwinner,function = "i2c1";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			i2c2_pins_a: i2c2@0 {
-> +				allwinner,pins = "PH4", "PH5";
-> +				allwinner,function = "i2c2";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-
-Please order those by alphabetical order.
-
-> +		};
-> +
-> +		uart0: serial@01c28000 {
-> +			compatible = "snps,dw-apb-uart";
-> +			reg = <0x01c28000 0x400>;
-> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clocks = <&osc24M>;
-> +			status = "disabled";
-> +		};
-> +
-> +		gic: interrupt-controller@01c81000 {
-> +			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
-> +			reg = <0x01c81000 0x1000>,
-> +			      <0x01c82000 0x1000>,
-> +			      <0x01c84000 0x2000>,
-> +			      <0x01c86000 0x2000>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		};
-> +
 > +	};
 > +};
-> -- 
+> +
+> +&uart0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&uart0_pins_a>;
+> +	status =3D "okay";
+> +};
+> --=20
 > 1.9.1
-> 
+>=20
 
 Thanks!
 Maxime
 
--- 
+--=20
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
---tuMntWBhi9NC2Hav--
+
+--LNf+Ih2NDvbuM/DA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWAXs1AAoJEBx+YmzsjxAghVMP/1Nr1fu9PITdPgWSPXZn0hpo
+6RHfLIxeiONV6scTQWAgI3ZboM1dIvZBIhhhsoWTJAaxfRdMnHckBqymHWtMaZM6
+0XvL8fKz2zw7qqfqsvelLlqYCE2a7QNhcCtZr+53ob1iRUaSEUxltO1VuP9Zj5U2
+14OprNI2DvEvU+jBGaGWGYKek+UVuN3n5cW7/zftMOs/EeG266XmIYtt7Mu1mvWX
+oeGkhqJ1RmkShJxpophE68h+EH2pU81GmAS2oalTZF10tblSMYJDKDSjIIA+GFrA
+9isRT/UldgM8W/EaiFdSF1iymxKgFzKJD/fWAO9ZmwFY3jyxqINRYG0y1WYHWeD7
+U/fXzlt77s7V6dg5np6Qp4KW+GL3cVbOUUsa3PcmRU8Ze6MybzIbaRkouzaRboSG
+ymmPRd5NPQCfVbz9x9lEBcldsV0+fX5HSwCN06gymNik667KJk+nHg6UZrL+3+tC
+NFfwmXkwUJ1X7KUtd8ygDjR7Wq4DJz54PM4nGZ3eYMlKLMD6NQyD9pc6ezNUlPvK
++1Y03YFjtnKxOm8WHmfOocNEhabZ1ikYZ60XxI0WrHDqpMH6Xc8aZ7b+V4kblMjn
+PZUd5r8F1sBDmGDF7mmidayFp3Mczz/Ks2zwP0RjzFIORLzxwhrSztGZ1wTqQPBP
+U5LdCkjCkx67agh7EkVz
+=hq2K
+-----END PGP SIGNATURE-----
+
+--LNf+Ih2NDvbuM/DA--
