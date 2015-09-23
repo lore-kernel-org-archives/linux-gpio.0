@@ -1,47 +1,87 @@
 From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v3 3/9] gpiolib: Use GPIO name from names array for gpio
- descriptor
-Date: Wed, 23 Sep 2015 15:02:37 -0700
-Message-ID: <20150923220237.GC19608@localhost>
-References: <1439561466-14350-1-git-send-email-mpa@pengutronix.de>
- <1439561466-14350-4-git-send-email-mpa@pengutronix.de>
+Subject: Re: [PATCH 5/6] gpiolib-sysfs: Show gpio-name in
+ /sys/class/gpio/gpio*/name
+Date: Wed, 23 Sep 2015 15:20:51 -0700
+Message-ID: <20150923222051.GD19608@localhost>
+References: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
+ <1438680203-13432-6-git-send-email-mpa@pengutronix.de>
+ <CACRpkdZCSwWUuhbe2+nrEPTRnqNGvJrrbZLDwy8fkHeEJDujUg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34061 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753500AbbIWWBk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 18:01:40 -0400
-Received: by padhy16 with SMTP id hy16so51881551pad.1
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 15:01:39 -0700 (PDT)
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:36800 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754777AbbIWWTd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 18:19:33 -0400
+Received: by pacgz1 with SMTP id gz1so2480311pac.3
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 15:19:33 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1439561466-14350-4-git-send-email-mpa@pengutronix.de>
+In-Reply-To: <CACRpkdZCSwWUuhbe2+nrEPTRnqNGvJrrbZLDwy8fkHeEJDujUg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Fri, Aug 14, 2015 at 04:11:00PM +0200, Markus Pargmann wrote:
-> This patch adds GPIO names to the GPIO descriptors when initializing the
-> gpiochip. It also introduces a check whether any of the new names will
-> conflict with an existing GPIO name.
+On Mon, Aug 10, 2015 at 11:50:16AM +0200, Linus Walleij wrote:
+> On Tue, Aug 4, 2015 at 11:23 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+> 
+> > This patch adds a sysfs attribute 'name' to gpios that were exported. It
+> > exposes the newly added name property of gpio descriptors.
+> >
+> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+> 
+> This needs to also patch Documentation/ABI/testing/sysfs-gpio
+> if we should go with it. It says this:
+> 
+>     /sys/class/gpio
+>         /export ... asks the kernel to export a GPIO to userspace
+>         /unexport ... to return a GPIO to the kernel
+>         /gpioN ... for each exported GPIO #N
+>             /value ... always readable, writes fail for input GPIOs
+>             /direction ... r/w as: in, out (default low); write: high, low
+>             /edge ... r/w as: none, falling, rising, both
+> 
+> Anyways I don't know if this is right, and that ABI doc is also lying.
+> 
+> Look at this in gpiolib-sysfs.c:
+>
+>         if (chip->names && chip->names[offset])
+>                 ioname = chip->names[offset];
+> 
+>         dev = device_create_with_groups(&gpio_class, chip->dev,
+>                                         MKDEV(0, 0), data, gpio_groups,
+>                                         ioname ? ioname : "gpio%u",
+>                                         desc_to_gpio(desc));
+> 
+> I.e. what the ABI doc say about the dirs being named "gpioN" is
+> a plain lie, it can have a descriptive name as its directory  name
+> under /sys/class/gpio/foo-line or so.
+> 
+> Since this already exist and is a flat namespace ... we should
+> use that.
+> 
+> However it has the implication like I said before that two names
+> cannot be the same. I think Johan's comment that they could
+> be non-unique did not take into account the fact that two chips
+> could use the same .names array (and that would already fail,
+> by the way) so the .names in the struct gpio_chip *MUST* be
+> unique as compared to all other names.
 
-And this is why we should not do this. I've said it it before: we need
-to consider dynamic buses, not just static device trees.
+It's is unfortunate that we need to potentially maintain this forever,
+but it does not mean that we should not allow non-unique names in DT
+going forward.
 
-We have USB and Greybus that will soon be exposing gpiochips and their
-line-names can not be globally unique.
+> We *could* deprecate the old line naming mechanism (that create
+> dirs named after the pin), and from here on only use gpioN and
+> "name" in a separate file like this patch does. However that is
+> not really OK either: we want to move away from the GPIO numbers
+> and to descriptors and descriptive names, so I currently feel
+> we should name the directories after the line instead, and
+> require them to be unique.
 
-Before figuring out what a sane userspace interface should look like we
-should not make ABI changes that we need to support indefinitely. The
-legacy sysfs interface should instead be frozen.
+We have already moved away from the numbers through the introduction of
+descriptors. What remains to define is a sane userspace interface. Until
+then, let the sysfs-interface be as cumbersome to use as it always has
+rather than introducing more (intermediate) ABI to maintain.
 
-Exposing a name attribute for a not-necessarily globally unique name
-could perhaps be ok, but by enforcing uniqueness at this point we will
-then need to come up with another mechanism for naming gpios on dynamic
-buses (while maintaining this one indefinitely in parallel).
-
-Linus, please consider dropping these changes for now.
-
-Thanks,
 Johan
