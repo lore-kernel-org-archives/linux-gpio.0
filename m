@@ -1,76 +1,51 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: Use __gpiod_request directly
-Date: Wed, 23 Sep 2015 13:25:28 +0900
-Message-ID: <CAAVeFuJPzjJ6td9UZ993sbfOyEOo=7WVu-Y2KnFgXewyt_8knA@mail.gmail.com>
-References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de> <1440920686-6892-2-git-send-email-mpa@pengutronix.de>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] pinctrl: sort dt_params array in the same order as
+ pin_config_param
+Date: Tue, 22 Sep 2015 21:39:10 -0700
+Message-ID: <20150923043910.GB24668@usrtlx11787.corpusers.net>
+References: <1442766419-3983-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:36668 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716AbbIWEZs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 00:25:48 -0400
-In-Reply-To: <1440920686-6892-2-git-send-email-mpa@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1442766419-3983-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, Chris R <chrisrfq@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Sun, Aug 30, 2015 at 4:44 PM, Markus Pargmann <mpa@pengutronix.de> wrote:
-> There is no reason to find out chip and hwnum to use to request a gpio
-> and get another gpio descriptor. We already have the descriptor we want
-> to use so we can directly use it.
->
-> Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+On Sun 20 Sep 09:26 PDT 2015, Masahiro Yamada wrote:
+
+> Sort this array in the same order as enum pin_config_param and
+> conf_items array for consistency.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  drivers/gpio/gpiolib.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 79a0b41ce57b..872fdd3617c1 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2189,25 +2189,20 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
->  int gpiod_hog(struct gpio_desc *desc, const char *name,
->               unsigned long lflags, enum gpiod_flags dflags)
->  {
-> -       struct gpio_chip *chip;
-> -       struct gpio_desc *local_desc;
-> -       int hwnum;
->         int status;
->
-> -       chip = gpiod_to_chip(desc);
-> -       hwnum = gpio_chip_hwgpio(desc);
-> -
-> -       local_desc = gpiochip_request_own_desc(chip, hwnum, name);
-> -       if (IS_ERR(local_desc)) {
-> +       status = __gpiod_request(desc, name);
-> +       if (status) {
->                 pr_err("requesting hog GPIO %s (chip %s, offset %d) failed\n",
-> -                      name, chip->label, hwnum);
-> -               return PTR_ERR(local_desc);
-> +                      name, gpiod_to_chip(desc)->label,
-> +                      gpio_chip_hwgpio(desc));
-> +               return status;
->         }
->
->         status = gpiod_configure_flags(desc, name, lflags, dflags);
->         if (status < 0) {
->                 pr_err("setup of hog GPIO %s (chip %s, offset %d) failed\n",
-> -                      name, chip->label, hwnum);
-> +                      name, gpiod_to_chip(desc)->label, gpio_chip_hwgpio(desc));
->                 gpiochip_free_own_desc(desc);
+> 
+>  drivers/pinctrl/pinconf-generic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+> index e63ad9f..f0bc8bb 100644
+> --- a/drivers/pinctrl/pinconf-generic.c
+> +++ b/drivers/pinctrl/pinconf-generic.c
+> @@ -166,11 +166,11 @@ static const struct pinconf_generic_params dt_params[] = {
+>  	{ "input-schmitt-disable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 0 },
+>  	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
+>  	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
+> +	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
+>  	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
+>  	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
+>  	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
+>  	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
+> -	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0},
 
-Mmm I should have reviewed this patch earlier, but what bothers me a
-bit is that it breaks the symetry that we had by calling
-request_own_desc() and free_own_desc() in the failing case (as well as
-in gpiochip_free_hogs). And in the end you still need to call
-gpiod_to_chip() so I am not sure what the benefit is.
+I would like to see these alphabetically sorted instead and looking at
+most of the entries that's already the case.
 
-Sure, the code is less verbose, but at the same time it has become
-slightly harder to understand. Semantically speaking
-"request_own_desc()" is exactly the action we want to convey.
-__gpiod_request() is more ambiguous.
+The order of the lists in this file the order doesn't matter, so that's
+easy. There's some potential implications of renumbering the enum, but I
+think it's worth keeping them sorted as well.
 
-Note that this is not a reject, I just wanted to stress that "less
-code" is not necessarily the same as "easier to read".
+Regards,
+Bjorn
