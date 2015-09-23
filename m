@@ -1,403 +1,160 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: Rename .gpio_data[] to .pinmux_data[]
-Date: Wed, 23 Sep 2015 15:59:14 +0200
-Message-ID: <1443016754-24203-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] [RFC] pinctrl: sh-pfc: Improve pinmux macros documentation
+Date: Wed, 23 Sep 2015 16:14:33 +0200
+Message-ID: <1443017673-12311-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
 Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niso@kth.se>, Koji Matsuoka <koji.matsuoka.xm@rms.renesas.com>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The sh_pfc_soc_info.gpio_data[] array contains not only GPIO data, but
-also various other pinmux-related data (functions and marks).
-Every single driver already calls its local array pinmux_data[].
-Hence rename the sh_pfc_soc_info member to "pinmux_data".
-
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c        | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-emev2.c   | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c | 8 ++++----
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 8 ++++----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7203.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7264.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7269.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7720.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7722.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7723.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7724.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7734.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7757.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7785.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7786.c  | 4 ++--
- drivers/pinctrl/sh-pfc/pfc-shx3.c    | 4 ++--
- drivers/pinctrl/sh-pfc/sh_pfc.h      | 6 +++---
- 24 files changed, 53 insertions(+), 53 deletions(-)
+Please review and comment!
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index bcf3017318db3a74..e6a5174d3acb8e62 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -272,7 +272,7 @@ static int sh_pfc_get_config_reg(struct sh_pfc *pfc, u16 enum_id,
- static int sh_pfc_mark_to_enum(struct sh_pfc *pfc, u16 mark, int pos,
- 			      u16 *enum_idp)
- {
--	const u16 *data = pfc->info->gpio_data;
-+	const u16 *data = pfc->info->pinmux_data;
- 	unsigned int k;
- 
- 	if (pos) {
-@@ -280,7 +280,7 @@ static int sh_pfc_mark_to_enum(struct sh_pfc *pfc, u16 mark, int pos,
- 		return pos + 1;
- 	}
- 
--	for (k = 0; k < pfc->info->gpio_data_size; k++) {
-+	for (k = 0; k < pfc->info->pinmux_data_size; k++) {
- 		if (data[k] == mark) {
- 			*enum_idp = data[k + 1];
- 			return k + 1;
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 849c6943ed308ee0..02118ab336fcbd6c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1706,6 +1706,6 @@ const struct sh_pfc_soc_info emev2_pinmux_info = {
- 
- 	.cfg_regs	= pinmux_config_regs,
- 
--	.gpio_data	= pinmux_data,
--	.gpio_data_size	= ARRAY_SIZE(pinmux_data),
-+	.pinmux_data	= pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-index d51d5fd77bbdc659..d9d9228b15faf6f3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-@@ -2734,11 +2734,11 @@ const struct sh_pfc_soc_info r8a73a4_pinmux_info = {
- 	.functions = pinmux_functions,
- 	.nr_functions = ARRAY_SIZE(pinmux_functions),
- 
--	.cfg_regs	= pinmux_config_regs,
--	.data_regs	= pinmux_data_regs,
-+	.cfg_regs = pinmux_config_regs,
-+	.data_regs = pinmux_data_regs,
- 
--	.gpio_data	= pinmux_data,
--	.gpio_data_size	= ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- 
- 	.gpio_irq = pinmux_irqs,
- 	.gpio_irq_size = ARRAY_SIZE(pinmux_irqs),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index 44223b3df3529b55..279e9dd442e44729 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -3774,8 +3774,8 @@ const struct sh_pfc_soc_info r8a7740_pinmux_info = {
- 	.cfg_regs	= pinmux_config_regs,
- 	.data_regs	= pinmux_data_regs,
- 
--	.gpio_data	= pinmux_data,
--	.gpio_data_size	= ARRAY_SIZE(pinmux_data),
-+	.pinmux_data	= pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- 
- 	.gpio_irq	= pinmux_irqs,
- 	.gpio_irq_size	= ARRAY_SIZE(pinmux_irqs),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 581d3c44aa4a7c36..6bafdeef28d8a50a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -3140,6 +3140,6 @@ const struct sh_pfc_soc_info r8a7778_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index 4be082e6a02efa5c..71fb5e4cf8281129 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -3868,6 +3868,6 @@ const struct sh_pfc_soc_info r8a7779_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 47dfa9745d6056d9..5b9b6e1fae9e81ee 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -5701,6 +5701,6 @@ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index a58a0dec6994ad4a..156f88d6af979874 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -6319,8 +6319,8 @@ const struct sh_pfc_soc_info r8a7791_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
- #endif
- 
-@@ -6340,7 +6340,7 @@ const struct sh_pfc_soc_info r8a7793_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
- #endif
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index 185554e150997c73..241cf34e1b0341ef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -4422,6 +4422,6 @@ const struct sh_pfc_soc_info r8a7794_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index dce06ed0209090c9..4d3337c18657e700 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2812,6 +2812,6 @@ const struct sh_pfc_soc_info r8a7795_pinmux_info = {
- 
- 	.cfg_regs = pinmux_config_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7203.c b/drivers/pinctrl/sh-pfc/pfc-sh7203.c
-index 3bda7bafd0ab5a55..61b27ec48876ece8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7203.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7203.c
-@@ -1587,6 +1587,6 @@ const struct sh_pfc_soc_info sh7203_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-index e1cb6dc050285173..8070765311dbf7a4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
-@@ -2126,6 +2126,6 @@ const struct sh_pfc_soc_info sh7264_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-index 7a11320ad96d391a..a50d22bef1f44451 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-@@ -2830,6 +2830,6 @@ const struct sh_pfc_soc_info sh7269_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-index bec265245ad9d33f..6a69c8c5d9433d7e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-@@ -3865,8 +3865,8 @@ const struct sh_pfc_soc_info sh73a0_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- 
- 	.gpio_irq = pinmux_irqs,
- 	.gpio_irq_size = ARRAY_SIZE(pinmux_irqs),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7720.c b/drivers/pinctrl/sh-pfc/pfc-sh7720.c
-index 13d05f88bc01c78d..e07a82df42c83a8f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7720.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7720.c
-@@ -1201,6 +1201,6 @@ const struct sh_pfc_soc_info sh7720_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7722.c b/drivers/pinctrl/sh-pfc/pfc-sh7722.c
-index 914d872c37a40a21..29c69133b0ef88d0 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7722.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7722.c
-@@ -1741,6 +1741,6 @@ const struct sh_pfc_soc_info sh7722_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7723.c b/drivers/pinctrl/sh-pfc/pfc-sh7723.c
-index 4eb7eae2e6d04065..8ea18df034927948 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7723.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7723.c
-@@ -1893,6 +1893,6 @@ const struct sh_pfc_soc_info sh7723_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7724.c b/drivers/pinctrl/sh-pfc/pfc-sh7724.c
-index 74a1a7f1317c7ce0..7f6c36c1a8fa8db5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7724.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7724.c
-@@ -2175,6 +2175,6 @@ const struct sh_pfc_soc_info sh7724_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index 59158a75e45a9fb5..e7deb51de7dc4fd4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -2445,6 +2445,6 @@ const struct sh_pfc_soc_info sh7734_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7757.c b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-index 625661a88c527039..0555a1fe076ed353 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7757.c
-@@ -2238,6 +2238,6 @@ const struct sh_pfc_soc_info sh7757_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7785.c b/drivers/pinctrl/sh-pfc/pfc-sh7785.c
-index b38dd7e3e375806c..1934cbec39651cb7 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7785.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7785.c
-@@ -1269,6 +1269,6 @@ const struct sh_pfc_soc_info sh7785_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7786.c b/drivers/pinctrl/sh-pfc/pfc-sh7786.c
-index 6cb4e0aaf20b0217..c98585d80de8df4e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7786.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7786.c
-@@ -813,6 +813,6 @@ const struct sh_pfc_soc_info sh7786_pinmux_info = {
- 	.cfg_regs = pinmux_config_regs,
- 	.data_regs = pinmux_data_regs,
- 
--	.gpio_data = pinmux_data,
--	.gpio_data_size = ARRAY_SIZE(pinmux_data),
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-shx3.c b/drivers/pinctrl/sh-pfc/pfc-shx3.c
-index a3fcb2284d911174..3f60c900645eebd5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-shx3.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-shx3.c
-@@ -554,8 +554,8 @@ const struct sh_pfc_soc_info shx3_pinmux_info = {
- 	.nr_pins	= ARRAY_SIZE(pinmux_pins),
- 	.func_gpios	= pinmux_func_gpios,
- 	.nr_func_gpios	= ARRAY_SIZE(pinmux_func_gpios),
--	.gpio_data	= pinmux_data,
--	.gpio_data_size	= ARRAY_SIZE(pinmux_data),
-+	.pinmux_data	= pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- 	.cfg_regs	= pinmux_config_regs,
- 	.data_regs	= pinmux_data_regs,
- };
+  - I still have a hard time understanding the subtilties of the various
+    PINMUX_IPSR_*() macros,
+  - Which macro is most appropriate for describing single-function pins:
+    PINMUX_DATA() or PINMUX_IPSR_NOGP()?
+    (cfr. "[RFC] pinctrl: sh-pfc: r8a7795: Add pinmux data for
+     single-function pins",
+     http://www.spinics.net/lists/linux-sh/msg44823.html)
+
+Thanks!
+---
+ drivers/pinctrl/sh-pfc/sh_pfc.h | 77 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 76 insertions(+), 1 deletion(-)
+
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 12bfb706845e7047..e18e306b4ac276c7 100644
+index e18e306b4ac276c7..434209c8e22e72fc 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -163,8 +163,8 @@ struct sh_pfc_soc_info {
- 	const struct pinmux_cfg_reg *cfg_regs;
- 	const struct pinmux_data_reg *data_regs;
+@@ -95,10 +95,31 @@ struct pinmux_cfg_reg {
+ 	const u8 *var_field_width;
+ };
  
--	const u16 *gpio_data;
--	unsigned int gpio_data_size;
-+	const u16 *pinmux_data;
-+	unsigned int pinmux_data_size;
++/*
++ * Describe a config register consisting of multiple fixed-width fields
++ *   - name: Register name (unused, for documentation purposes only)
++ *   - r: Physical register address
++ *   - r_width: Width of the register (in bits)
++ *   - f_width: Width of the fixed-width register fields (in bits)
++ * This macro must be followed by initialization data: For each register field
++ * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be specified,
++ * one for each possible combination of the register field bit values.
++ */
+ #define PINMUX_CFG_REG(name, r, r_width, f_width) \
+ 	.reg = r, .reg_width = r_width, .field_width = f_width,		\
+ 	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
  
- 	const struct pinmux_irq *gpio_irq;
- 	unsigned int gpio_irq_size;
-@@ -177,7 +177,7 @@ struct sh_pfc_soc_info {
++/*
++ * Describe a config register consisting of multiple variable-width fields
++ *   - name: Register name (unused, for documentation purposes only)
++ *   - r: Physical register address
++ *   - r_width: Width of the register (in bits)
++ *   - var_fw0, var_fwn...: List of widths of the register fields (in bits),
++ *                          From left to right (i.e. MSB to LSB)
++ * This macro must be followed by initialization data: For each register field
++ * (from left to right, i.e. MSB to LSB), 2^var_fwi enum IDs must be specified,
++ * one for each possible combination of the register field bit values.
++ */
+ #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
+ 	.reg = r, .reg_width = r_width,	\
+ 	.var_field_width = (const u8 [r_width]) \
+@@ -111,6 +132,14 @@ struct pinmux_data_reg {
+ 	const u16 *enum_ids;
+ };
+ 
++/*
++ * Describe a data register
++ *   - name: Register name (unused, for documentation purposes only)
++ *   - r: Physical register address
++ *   - r_width: Width of the register (in bits)
++ * This macro must be followed by initialization data: For each register bit
++ * (from left to right, i.e. MSB to LSB), one enum ID must be specified.
++ */
+ #define PINMUX_DATA_REG(name, r, r_width) \
+ 	.reg = r, .reg_width = r_width,	\
+ 	.enum_ids = (const u16 [r_width]) \
+@@ -119,6 +148,10 @@ struct pinmux_irq {
+ 	const short *gpios;
+ };
+ 
++/*
++ * Describe the mapping from GPIOs to a single IRQ
++ *   - ids...: List of GPIOs that are mapped to the same IRQ
++ */
+ #define PINMUX_IRQ(ids...)			   \
+ 	{ .gpios = (const short []) { ids, -1 } }
+ 
+@@ -180,16 +213,58 @@ struct sh_pfc_soc_info {
+  * sh_pfc_soc_info pinmux_data array macros
   */
+ 
++/*
++ * Describe generic pinmux data
++ *   - data_or_mark: *_DATA or *_MARK enum ID
++ *   - ids...: List of enum IDs to associate with data_or_mark
++ */
+ #define PINMUX_DATA(data_or_mark, ids...)	data_or_mark, ids, 0
+ 
++/*
++ * Describe a pinmux configuration without GPIO function that needs
++ * configuration in a Peripheral Function Select Register (IPSR)
++ *   - ipsr: IPSR field (unused, for documentation purposes only)
++ *   - fn: Function name
++ */
+ #define PINMUX_IPSR_NOGP(ispr, fn)					\
+ 	PINMUX_DATA(fn##_MARK, FN_##fn)
++
++/*
++ * Describe a pinmux configuration with GPIO function that needs configuration
++ * in a Peripheral Function Select Register (IPSR)
++ *   - ipsr: IPSR field
++ *   - fn: Function name
++ */
+ #define PINMUX_IPSR_DATA(ipsr, fn)					\
+ 	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr)
++
++/*
++ * Describe a pinmux configuration where ???
++ *   - ipsr: IPSR field
++ *   - fn: Function name
++ *   - ms: Configuration register selector
++ */
+ #define PINMUX_IPSR_NOGM(ispr, fn, ms)					\
+ 	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ms)
++
++/*
++ * Describe a pinmux configuration where the pinmux function has no
++ * representation in the configuration registers but instead solely
++ * depends on a group selection.
++ *   - ipsr: IPSR field
++ *   - fn: Function name
++ *   - ms: Group selector
++ */
+ #define PINMUX_IPSR_NOFN(ipsr, fn, ms)					\
+ 	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
++
++/*
++ * Describe a pinmux configuration where the pinmux function has a
++ * representation in a configuration register.
++ *   - ipsr: IPSR field
++ *   - fn: Function name
++ *   - ms: Configuration register selector
++ */
+ #define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
+ 	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
+ 
+@@ -322,7 +397,7 @@ struct sh_pfc_soc_info {
+ 	PINMUX_GPIO_FN(GPIO_FN_##str, PINMUX_FN_BASE, str##_MARK)
  
  /*
-- * sh_pfc_soc_info gpio_data array macros
-+ * sh_pfc_soc_info pinmux_data array macros
+- * PORTnCR macro
++ * PORTnCR helper macro for SH-Mobile/R-Mobile
   */
- 
- #define PINMUX_DATA(data_or_mark, ids...)	data_or_mark, ids, 0
+ #define PORTCR(nr, reg)							\
+ 	{								\
 -- 
 1.9.1
 
