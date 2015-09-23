@@ -1,160 +1,84 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [RFC] pinctrl: sh-pfc: Improve pinmux macros documentation
-Date: Wed, 23 Sep 2015 16:14:33 +0200
-Message-ID: <1443017673-12311-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niso@kth.se>, Koji Matsuoka <koji.matsuoka.xm@rms.renesas.com>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] pinctrl: imx25: ensure that a pin with id i is at position i in the info array
+Date: Wed, 23 Sep 2015 16:29:44 +0200
+Message-ID: <1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:41860 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754633AbbIWO3s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 10:29:48 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, kernel@pengutronix.de, Fabio Estevam <fabio.estevam@freescale.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The code in pinctrl-imx.c only works correctly if in the
+imx_pinctrl_soc_info passed to imx_pinctrl_probe we have:
+
+	info->pins[i].number =3D i
+	conf_reg(info->pins[i]) =3D 4 * i + 4
+
+(which conf_reg(pin) being the offset of the pin's configuration
+register).
+
+When the imx25 specific part was introduced in b4a87c9b966f ("pinctrl:
+pinctrl-imx: add imx25 pinctrl driver") we had:
+
+	info->pins[i].number =3D i + 1
+	conf_reg(info->pins[i]) =3D 4 * i
+
+=2E Commit 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins") trie=
+d
+to fix that but made the situation:
+
+	info->pins[i-1].number =3D i
+	conf_reg(info->pins[i-1]) =3D 4 * i
+
+which is hardly better but fixed the error seen back then.
+
+So insert another reserved entry in the array to finally yield:
+
+	info->pins[i].number =3D i
+	conf_reg(info->pins[i]) =3D 4 * i
+
+=46ixes: 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins")
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 ---
-Please review and comment!
+ drivers/pinctrl/freescale/pinctrl-imx25.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-  - I still have a hard time understanding the subtilties of the various
-    PINMUX_IPSR_*() macros,
-  - Which macro is most appropriate for describing single-function pins:
-    PINMUX_DATA() or PINMUX_IPSR_NOGP()?
-    (cfr. "[RFC] pinctrl: sh-pfc: r8a7795: Add pinmux data for
-     single-function pins",
-     http://www.spinics.net/lists/linux-sh/msg44823.html)
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx25.c b/drivers/pinctr=
+l/freescale/pinctrl-imx25.c
+index faf635654312..293ed4381cc0 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx25.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx25.c
+@@ -26,7 +26,8 @@
+ #include "pinctrl-imx.h"
+=20
+ enum imx25_pads {
+-	MX25_PAD_RESERVE0 =3D 1,
++	MX25_PAD_RESERVE0 =3D 0,
++	MX25_PAD_RESERVE1 =3D 1,
+ 	MX25_PAD_A10 =3D 2,
+ 	MX25_PAD_A13 =3D 3,
+ 	MX25_PAD_A14 =3D 4,
+@@ -169,6 +170,7 @@ enum imx25_pads {
+ /* Pad names for the pinmux subsystem */
+ static const struct pinctrl_pin_desc imx25_pinctrl_pads[] =3D {
+ 	IMX_PINCTRL_PIN(MX25_PAD_RESERVE0),
++	IMX_PINCTRL_PIN(MX25_PAD_RESERVE1),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A10),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A13),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A14),
+--=20
+2.5.1
 
-Thanks!
----
- drivers/pinctrl/sh-pfc/sh_pfc.h | 77 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 76 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index e18e306b4ac276c7..434209c8e22e72fc 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -95,10 +95,31 @@ struct pinmux_cfg_reg {
- 	const u8 *var_field_width;
- };
- 
-+/*
-+ * Describe a config register consisting of multiple fixed-width fields
-+ *   - name: Register name (unused, for documentation purposes only)
-+ *   - r: Physical register address
-+ *   - r_width: Width of the register (in bits)
-+ *   - f_width: Width of the fixed-width register fields (in bits)
-+ * This macro must be followed by initialization data: For each register field
-+ * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be specified,
-+ * one for each possible combination of the register field bit values.
-+ */
- #define PINMUX_CFG_REG(name, r, r_width, f_width) \
- 	.reg = r, .reg_width = r_width, .field_width = f_width,		\
- 	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
- 
-+/*
-+ * Describe a config register consisting of multiple variable-width fields
-+ *   - name: Register name (unused, for documentation purposes only)
-+ *   - r: Physical register address
-+ *   - r_width: Width of the register (in bits)
-+ *   - var_fw0, var_fwn...: List of widths of the register fields (in bits),
-+ *                          From left to right (i.e. MSB to LSB)
-+ * This macro must be followed by initialization data: For each register field
-+ * (from left to right, i.e. MSB to LSB), 2^var_fwi enum IDs must be specified,
-+ * one for each possible combination of the register field bit values.
-+ */
- #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
- 	.reg = r, .reg_width = r_width,	\
- 	.var_field_width = (const u8 [r_width]) \
-@@ -111,6 +132,14 @@ struct pinmux_data_reg {
- 	const u16 *enum_ids;
- };
- 
-+/*
-+ * Describe a data register
-+ *   - name: Register name (unused, for documentation purposes only)
-+ *   - r: Physical register address
-+ *   - r_width: Width of the register (in bits)
-+ * This macro must be followed by initialization data: For each register bit
-+ * (from left to right, i.e. MSB to LSB), one enum ID must be specified.
-+ */
- #define PINMUX_DATA_REG(name, r, r_width) \
- 	.reg = r, .reg_width = r_width,	\
- 	.enum_ids = (const u16 [r_width]) \
-@@ -119,6 +148,10 @@ struct pinmux_irq {
- 	const short *gpios;
- };
- 
-+/*
-+ * Describe the mapping from GPIOs to a single IRQ
-+ *   - ids...: List of GPIOs that are mapped to the same IRQ
-+ */
- #define PINMUX_IRQ(ids...)			   \
- 	{ .gpios = (const short []) { ids, -1 } }
- 
-@@ -180,16 +213,58 @@ struct sh_pfc_soc_info {
-  * sh_pfc_soc_info pinmux_data array macros
-  */
- 
-+/*
-+ * Describe generic pinmux data
-+ *   - data_or_mark: *_DATA or *_MARK enum ID
-+ *   - ids...: List of enum IDs to associate with data_or_mark
-+ */
- #define PINMUX_DATA(data_or_mark, ids...)	data_or_mark, ids, 0
- 
-+/*
-+ * Describe a pinmux configuration without GPIO function that needs
-+ * configuration in a Peripheral Function Select Register (IPSR)
-+ *   - ipsr: IPSR field (unused, for documentation purposes only)
-+ *   - fn: Function name
-+ */
- #define PINMUX_IPSR_NOGP(ispr, fn)					\
- 	PINMUX_DATA(fn##_MARK, FN_##fn)
-+
-+/*
-+ * Describe a pinmux configuration with GPIO function that needs configuration
-+ * in a Peripheral Function Select Register (IPSR)
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name
-+ */
- #define PINMUX_IPSR_DATA(ipsr, fn)					\
- 	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr)
-+
-+/*
-+ * Describe a pinmux configuration where ???
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name
-+ *   - ms: Configuration register selector
-+ */
- #define PINMUX_IPSR_NOGM(ispr, fn, ms)					\
- 	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ms)
-+
-+/*
-+ * Describe a pinmux configuration where the pinmux function has no
-+ * representation in the configuration registers but instead solely
-+ * depends on a group selection.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name
-+ *   - ms: Group selector
-+ */
- #define PINMUX_IPSR_NOFN(ipsr, fn, ms)					\
- 	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
-+
-+/*
-+ * Describe a pinmux configuration where the pinmux function has a
-+ * representation in a configuration register.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name
-+ *   - ms: Configuration register selector
-+ */
- #define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
- 	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
- 
-@@ -322,7 +397,7 @@ struct sh_pfc_soc_info {
- 	PINMUX_GPIO_FN(GPIO_FN_##str, PINMUX_FN_BASE, str##_MARK)
- 
- /*
-- * PORTnCR macro
-+ * PORTnCR helper macro for SH-Mobile/R-Mobile
-  */
- #define PORTCR(nr, reg)							\
- 	{								\
--- 
-1.9.1
-
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
