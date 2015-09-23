@@ -1,16 +1,18 @@
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
 	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] pinctrl: imx25: ensure that a pin with id i is at position i in the info array
-Date: Wed, 23 Sep 2015 16:29:44 +0200
-Message-ID: <1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v2] pinctrl: imx25: ensure that a pin with id i is at position i in the info array
+Date: Wed, 23 Sep 2015 16:35:09 +0200
+Message-ID: <1443018909-20871-1-git-send-email-u.kleine-koenig@pengutronix.de>
+References: <1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:41860 "EHLO
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:45626 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754633AbbIWO3s (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 10:29:48 -0400
+	with ESMTP id S1754494AbbIWOfO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 10:35:14 -0400
+In-Reply-To: <1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
@@ -20,7 +22,7 @@ The code in pinctrl-imx.c only works correctly if in the
 imx_pinctrl_soc_info passed to imx_pinctrl_probe we have:
 
 	info->pins[i].number =3D i
-	conf_reg(info->pins[i]) =3D 4 * i + 4
+	conf_reg(info->pins[i]) =3D 4 * i
 
 (which conf_reg(pin) being the offset of the pin's configuration
 register).
@@ -48,6 +50,11 @@ So insert another reserved entry in the array to finally yield:
 =46ixes: 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins")
 Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 ---
+Changes since (implicit) v1 sent with Message-Id:
+1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de :
+
+ - fix a formula in the commit log
+
  drivers/pinctrl/freescale/pinctrl-imx25.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
