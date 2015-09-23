@@ -1,88 +1,81 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 8/8] pwm-pca9685: enable ACPI device found on Galileo
- Gen2
-Date: Wed, 23 Sep 2015 11:41:26 +0300
-Message-ID: <1442997686.8361.161.camel@linux.intel.com>
-References: <1442916619-140607-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1442916619-140607-9-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20150922143714.GA9235@ulmo.nvidia.com>
+From: Dirk Behme <dirk.behme@gmail.com>
+Subject: Re: [PATCH] gpiolib: don't compare an unsigned for >= 0
+Date: Wed, 23 Sep 2015 11:41:37 +0200
+Message-ID: <560273D1.4040307@gmail.com>
+References: <1439913752-26634-1-git-send-email-dirk.behme@gmail.com>
+ <55E29114.4050008@gmail.com>
+ <CAAVeFu+2sjZDAeHHy=RZgbW4L_+S9+6fypMoNNkMD-g=wutyRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150922143714.GA9235@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:34290 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752774AbbIWJlk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 05:41:40 -0400
+Received: by wicfx3 with SMTP id fx3so229557496wic.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 02:41:39 -0700 (PDT)
+In-Reply-To: <CAAVeFu+2sjZDAeHHy=RZgbW4L_+S9+6fypMoNNkMD-g=wutyRg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, 2015-09-22 at 16:37 +0200, Thierry Reding wrote:
-> On Tue, Sep 22, 2015 at 01:10:19PM +0300, Andy Shevchenko wrote:
+On 31.08.2015 06:44, Alexandre Courbot wrote:
+> On Sun, Aug 30, 2015 at 2:13 PM, Dirk Behme <dirk.behme@gmail.com> wrote:
+>> On 18.08.2015 18:02, Dirk Behme wrote:
+>>>
+>>> The parameter offset is an unsigned, so it makes no sense to compare
+>>> it for >= 0. Fix the compiler warning regarding this by removing this
+>>> comparison.
+>>>
+>>> As the macro GPIO_OFFSET_VALID is only used at this single place, simplify
+>>> the code by dropping the macro completely and dropping the invert, too.
+>>>
+>>> No functional change.
+>>>
+>>> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+>>> ---
+>>>    drivers/gpio/gpiolib.c | 4 +---
+>>>    1 file changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>> index bf4bd1d..9841b05 100644
+>>> --- a/drivers/gpio/gpiolib.c
+>>> +++ b/drivers/gpio/gpiolib.c
+>>> @@ -47,8 +47,6 @@
+>>>     */
+>>>    DEFINE_SPINLOCK(gpio_lock);
+>>>
+>>> -#define GPIO_OFFSET_VALID(chip, offset) (offset >= 0 && offset <
+>>> chip->ngpio)
+>>> -
+>>>    static DEFINE_MUTEX(gpio_lookup_lock);
+>>>    static LIST_HEAD(gpio_lookup_list);
+>>>    LIST_HEAD(gpio_chips);
+>>> @@ -914,7 +912,7 @@ const char *gpiochip_is_requested(struct gpio_chip
+>>> *chip, unsigned offset)
+>>>    {
+>>>          struct gpio_desc *desc;
+>>>
+>>> -       if (!GPIO_OFFSET_VALID(chip, offset))
+>>> +       if (offset >= chip->ngpio)
+>>>                  return NULL;
+>>>
+>>>          desc = &chip->desc[offset];
+>>
+>>
+>>
+>> What do you think about this? Could this be applied?
+>
+> Looks good to me.
+>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-> > --- a/drivers/pwm/pwm-pca9685.c
-> > +++ b/drivers/pwm/pwm-pca9685.c
-> > @@ -26,6 +26,8 @@
-> >  #include <linux/regmap.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/acpi.h>
-> > +#include <linux/property.h>
-> 
-> These should be kept sorted. I know that delay.h isn't properly 
-> ordered
-> either, I missed that during patch review. Please keep new ones 
-> ordered
-> alphabetically and I'll sort out the delay.h via a separate patch.
 
-Will do in next version.
+Ping, could this be applied, then?
 
-> @@ -363,6 +364,12 @@ static const struct i2c_device_id pca9685_id[]
-> > = {
-> >  };
-> >  MODULE_DEVICE_TABLE(i2c, pca9685_id);
-> >  
-> > +static const struct acpi_device_id pca9685_acpi_ids[] = {
-> > +	{ "INT3492", 0 },
-> > +	{ /* sentinel */ },
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, pca9685_acpi_ids);
-> > +
-> >  static const struct of_device_id pca9685_dt_ids[] = {
-> >  	{ .compatible = "nxp,pca9685-pwm", },
-> >  	{ /* sentinel */ }
-> > @@ -372,6 +379,7 @@ MODULE_DEVICE_TABLE(of, pca9685_dt_ids);
-> >  static struct i2c_driver pca9685_i2c_driver = {
-> >  	.driver = {
-> >  		.name = "pca9685-pwm",
-> > +		.acpi_match_table = ACPI_PTR(pca9685_acpi_ids),
-> 
-> I think you now need #ifdef protection for the ACPI ID table, 
-> otherwise
-> the compiler will warn that the table is unused for !ACPI.
+Best regards
 
-No, there is no warning, just checked a build with CONFIG_ACPI=n.
+Dirk
 
-Tried even with C=1 W=2, and driver compiled in and a module.
-In all variants no warning regarding the topic is issued.
-
-$ gcc --version
-gcc (Debian 5.2.1-17) 5.2.1 20150911
-
-Perhaps this would explain what is happening there.
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=28901
-
-So, I will add #ifdef in the code as well, though I'm not a big fan of
-conditional compilation.
-
-> 
-> >  		.of_match_table = pca9685_dt_ids,
-> 
-> Similarly to the above, this should use of_match_ptr(), which in turn
-> will require #ifdef protection for the table to avoid warnings.
-
-Hmm... my patch do not touches that part. Perhaps another patch for
-this?
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
