@@ -1,87 +1,157 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 5/6] gpiolib-sysfs: Show gpio-name in
- /sys/class/gpio/gpio*/name
-Date: Wed, 23 Sep 2015 15:20:51 -0700
-Message-ID: <20150923222051.GD19608@localhost>
-References: <1438680203-13432-1-git-send-email-mpa@pengutronix.de>
- <1438680203-13432-6-git-send-email-mpa@pengutronix.de>
- <CACRpkdZCSwWUuhbe2+nrEPTRnqNGvJrrbZLDwy8fkHeEJDujUg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: keep the GPIO line names internal
+Date: Wed, 23 Sep 2015 16:27:33 -0700
+Message-ID: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:36800 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754777AbbIWWTd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 18:19:33 -0400
-Received: by pacgz1 with SMTP id gz1so2480311pac.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 15:19:33 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZCSwWUuhbe2+nrEPTRnqNGvJrrbZLDwy8fkHeEJDujUg@mail.gmail.com>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:33651 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756172AbbIWX1i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 19:27:38 -0400
+Received: by pacex6 with SMTP id ex6so53599947pac.0
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 16:27:38 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
 
-On Mon, Aug 10, 2015 at 11:50:16AM +0200, Linus Walleij wrote:
-> On Tue, Aug 4, 2015 at 11:23 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
-> 
-> > This patch adds a sysfs attribute 'name' to gpios that were exported. It
-> > exposes the newly added name property of gpio descriptors.
-> >
-> > Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
-> 
-> This needs to also patch Documentation/ABI/testing/sysfs-gpio
-> if we should go with it. It says this:
-> 
->     /sys/class/gpio
->         /export ... asks the kernel to export a GPIO to userspace
->         /unexport ... to return a GPIO to the kernel
->         /gpioN ... for each exported GPIO #N
->             /value ... always readable, writes fail for input GPIOs
->             /direction ... r/w as: in, out (default low); write: high, low
->             /edge ... r/w as: none, falling, rising, both
-> 
-> Anyways I don't know if this is right, and that ABI doc is also lying.
-> 
-> Look at this in gpiolib-sysfs.c:
->
->         if (chip->names && chip->names[offset])
->                 ioname = chip->names[offset];
-> 
->         dev = device_create_with_groups(&gpio_class, chip->dev,
->                                         MKDEV(0, 0), data, gpio_groups,
->                                         ioname ? ioname : "gpio%u",
->                                         desc_to_gpio(desc));
-> 
-> I.e. what the ABI doc say about the dirs being named "gpioN" is
-> a plain lie, it can have a descriptive name as its directory  name
-> under /sys/class/gpio/foo-line or so.
-> 
-> Since this already exist and is a flat namespace ... we should
-> use that.
-> 
-> However it has the implication like I said before that two names
-> cannot be the same. I think Johan's comment that they could
-> be non-unique did not take into account the fact that two chips
-> could use the same .names array (and that would already fail,
-> by the way) so the .names in the struct gpio_chip *MUST* be
-> unique as compared to all other names.
+This refactors the changes to the GPIO line naming mechanism to
+not have so widespread effects, instead we conclude the patch series
+by having created a name attribute in the GPIO descriptor, that need
+not be globally unique, and it will be initialized from the old
+.names array in struct gpio_chip if it exists, then used in the legacy
+sysfs code like the array was used previously.
 
-It's is unfortunate that we need to potentially maintain this forever,
-but it does not mean that we should not allow non-unique names in DT
-going forward.
+The associated changes to name lines from the device tree are
+controversial and need to stand alone from this. Resulting changes:
 
-> We *could* deprecate the old line naming mechanism (that create
-> dirs named after the pin), and from here on only use gpioN and
-> "name" in a separate file like this patch does. However that is
-> not really OK either: we want to move away from the GPIO numbers
-> and to descriptors and descriptive names, so I currently feel
-> we should name the directories after the line instead, and
-> require them to be unique.
+1. Remove the export and the header for the gpio_name_to_desc() as so
+far the only use is inside gpiolib.c. Staticize gpio_name_to_desc()
+and move it above the only function using it.
 
-We have already moved away from the numbers through the introduction of
-descriptors. What remains to define is a sane userspace interface. Until
-then, let the sysfs-interface be as cumbersome to use as it always has
-rather than introducing more (intermediate) ABI to maintain.
+2. Only print a warning if there are two GPIO lines with the same name.
+The reason is to preserve current behaviour: before the previous
+changes to the naming mechanism this would not reject probing the
+driver, instead the error would occur when trying to export the line
+in sysfs, so restore this behaviour, but print a friendly warning
+if names collide.
 
-Johan
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib.c        | 72 +++++++++++++++++++++----------------------
+ include/linux/gpio/consumer.h |  1 -
+ 2 files changed, 35 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 764845c3a4b2..efe8a1072ed0 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -90,38 +90,6 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
+ EXPORT_SYMBOL_GPL(gpio_to_desc);
+ 
+ /**
+- * Convert a GPIO name to its descriptor
+- */
+-struct gpio_desc *gpio_name_to_desc(const char * const name)
+-{
+-	struct gpio_chip *chip;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&gpio_lock, flags);
+-
+-	list_for_each_entry(chip, &gpio_chips, list) {
+-		int i;
+-
+-		for (i = 0; i != chip->ngpio; ++i) {
+-			struct gpio_desc *gpio = &chip->desc[i];
+-
+-			if (!gpio->name)
+-				continue;
+-
+-			if (!strcmp(gpio->name, name)) {
+-				spin_unlock_irqrestore(&gpio_lock, flags);
+-				return gpio;
+-			}
+-		}
+-	}
+-
+-	spin_unlock_irqrestore(&gpio_lock, flags);
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(gpio_name_to_desc);
+-
+-/**
+  * Get the GPIO descriptor corresponding to the given hw number for this chip.
+  */
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
+@@ -250,6 +218,37 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ 	return err;
+ }
+ 
++/**
++ * Convert a GPIO name to its descriptor
++ */
++static struct gpio_desc *gpio_name_to_desc(const char * const name)
++{
++	struct gpio_chip *chip;
++	unsigned long flags;
++
++	spin_lock_irqsave(&gpio_lock, flags);
++
++	list_for_each_entry(chip, &gpio_chips, list) {
++		int i;
++
++		for (i = 0; i != chip->ngpio; ++i) {
++			struct gpio_desc *gpio = &chip->desc[i];
++
++			if (!gpio->name)
++				continue;
++
++			if (!strcmp(gpio->name, name)) {
++				spin_unlock_irqrestore(&gpio_lock, flags);
++				return gpio;
++			}
++		}
++	}
++
++	spin_unlock_irqrestore(&gpio_lock, flags);
++
++	return NULL;
++}
++
+ /*
+  * Takes the names from gc->names and checks if they are all unique. If they
+  * are, they are assigned to their gpio descriptors.
+@@ -268,11 +267,10 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ 		struct gpio_desc *gpio;
+ 
+ 		gpio = gpio_name_to_desc(gc->names[i]);
+-		if (gpio) {
+-			dev_err(gc->dev, "Detected name collision for GPIO name '%s'\n",
+-				gc->names[i]);
+-			return -EEXIST;
+-		}
++		if (gpio)
++			dev_warn(gc->dev, "Detected name collision for "
++				 "GPIO name '%s'\n",
++				 gc->names[i]);
+ 	}
+ 
+ 	/* Then add all names to the GPIO descriptors */
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 366a3fdbdbea..a879e3e62379 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -130,7 +130,6 @@ int gpiod_to_irq(const struct gpio_desc *desc);
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+ int desc_to_gpio(const struct gpio_desc *desc);
+-struct gpio_desc *gpio_name_to_desc(const char *name);
+ 
+ /* Child properties interface */
+ struct fwnode_handle;
+-- 
+2.4.3
+
