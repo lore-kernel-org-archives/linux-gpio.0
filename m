@@ -1,55 +1,47 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH v2 0/7] New Atmel PIO4 pinctrl/gpio driver
-Date: Wed, 23 Sep 2015 16:46:31 +0200
-Message-ID: <5602BB47.4040401@atmel.com>
-References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
- <CACRpkdYLbifY9VJK0FFf7xXdMJWstdGP=h5ApBMRyRXZHPDUaw@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v3 3/9] gpiolib: Use GPIO name from names array for gpio
+ descriptor
+Date: Wed, 23 Sep 2015 15:02:37 -0700
+Message-ID: <20150923220237.GC19608@localhost>
+References: <1439561466-14350-1-git-send-email-mpa@pengutronix.de>
+ <1439561466-14350-4-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:19133 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755085AbbIWOrU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 10:47:20 -0400
-In-Reply-To: <CACRpkdYLbifY9VJK0FFf7xXdMJWstdGP=h5ApBMRyRXZHPDUaw@mail.gmail.com>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:34061 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753500AbbIWWBk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 18:01:40 -0400
+Received: by padhy16 with SMTP id hy16so51881551pad.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 15:01:39 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1439561466-14350-4-git-send-email-mpa@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
 
-Le 21/09/2015 20:50, Linus Walleij a =C3=A9crit :
-> On Wed, Sep 16, 2015 at 8:36 AM, Ludovic Desroches
-> <ludovic.desroches@atmel.com> wrote:
->=20
->> The Atmel PIO4 controller has been introduced with SAMA5D2 chip fami=
-ly. This
->> drivers manages both pinmux/pinconf and gpio stuff. It is inspired b=
-y Mediatek
->> pinctrl driver.
->>
->> Changes from v1:
->> - remove some unneeded gpio specific ops (gpio_request, gpio_free,
->>   gpio_request_enable, gpio_disable_free and gpio_set_direction).
->> - code styling fixes.
->> - add sama5d2 pin description and device pin muxing.
->=20
-> Looks Good To Me, and has Sascha's ACKs, so merged patches
-> 1, 2, 3, 4 to the pinctrl tree. Please merge the AT91 DT things into
-> the AT91 tree.
+On Fri, Aug 14, 2015 at 04:11:00PM +0200, Markus Pargmann wrote:
+> This patch adds GPIO names to the GPIO descriptors when initializing the
+> gpiochip. It also introduces a check whether any of the new names will
+> conflict with an existing GPIO name.
 
-Great!
+And this is why we should not do this. I've said it it before: we need
+to consider dynamic buses, not just static device trees.
 
-So patch 5 is included in at91-4.4-defconfig branch.
-patches 6 and 7 queued in at91-4.4-dt branch.
-They are included in at91-next that is merged in linux-next and will
-both take the arm-soc path later in the cycle.
+We have USB and Greybus that will soon be exposing gpiochips and their
+line-names can not be globally unique.
 
-Thanks, bye,
---=20
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Before figuring out what a sane userspace interface should look like we
+should not make ABI changes that we need to support indefinitely. The
+legacy sysfs interface should instead be frozen.
+
+Exposing a name attribute for a not-necessarily globally unique name
+could perhaps be ok, but by enforcing uniqueness at this point we will
+then need to come up with another mechanism for naming gpios on dynamic
+buses (while maintaining this one indefinitely in parallel).
+
+Linus, please consider dropping these changes for now.
+
+Thanks,
+Johan
