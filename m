@@ -1,64 +1,160 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: keep the GPIO line names internal
-Date: Thu, 24 Sep 2015 09:47:07 -0700
-Message-ID: <CACRpkdaMnKQZ7+aZqwmQaWAvRJEQUPTwe_FTX1Jmj2g2_ZnYFA@mail.gmail.com>
-References: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
-	<20150924074051.GY32203@pengutronix.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v1 3/8] mfd: intel_quark_i2c_gpio: load gpio driver first
+Date: Thu, 24 Sep 2015 18:29:53 +0100
+Message-ID: <20150924172953.GD27197@x1>
+References: <1442916619-140607-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1442916619-140607-4-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35584 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752805AbbIXQrH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 12:47:07 -0400
-Received: by obbzf10 with SMTP id zf10so62527425obb.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 09:47:07 -0700 (PDT)
-In-Reply-To: <20150924074051.GY32203@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1442916619-140607-4-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>
 
-On Thu, Sep 24, 2015 at 12:40 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
-> On Wed, Sep 23, 2015 at 04:27:33PM -0700, Linus Walleij wrote:
->> This refactors the changes to the GPIO line naming mechanism to
->> not have so widespread effects, instead we conclude the patch series
->> by having created a name attribute in the GPIO descriptor, that need
->> not be globally unique, and it will be initialized from the old
->> .names array in struct gpio_chip if it exists, then used in the legacy
->> sysfs code like the array was used previously.
->>
->> The associated changes to name lines from the device tree are
->> controversial and need to stand alone from this. Resulting changes:
->>
->> 1. Remove the export and the header for the gpio_name_to_desc() as so
->> far the only use is inside gpiolib.c. Staticize gpio_name_to_desc()
->> and move it above the only function using it.
->
-> It is used in gpiolib-of.c as well. So I think it should be in
-> drivers/gpio/gpiolib.h.
+On Tue, 22 Sep 2015, Andy Shevchenko wrote:
 
-It's not, since I only merged patches 1,2,3,4.
+> On Intel Galileo boards the GPIO expander is connected to i2c bus. Mo=
+reover it
+> is able to generate interrupt, but interrupt line is connected to GPI=
+O. That's
+> why we have to have GPIO driver in place when we will probe i2c host =
+with
+> device connected to it.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel_quark_i2c_gpio.c | 48 +++++++++++++++++++++-------=
+----------
+>  1 file changed, 27 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_q=
+uark_i2c_gpio.c
+> index 1ce1603..89bd4bf 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -82,27 +82,26 @@ static struct resource intel_quark_i2c_res[] =3D =
+{
+>  	},
+>  };
+> =20
+> +static struct mfd_cell intel_quark_mfd_i2c_cell =3D {
+> +	.id =3D MFD_I2C_BAR,
+> +	.name =3D "i2c_designware",
+> +	.num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
+> +	.resources =3D intel_quark_i2c_res,
+> +	.ignore_resource_conflicts =3D true,
+> +};
+> +
+>  static struct resource intel_quark_gpio_res[] =3D {
+>  	[INTEL_QUARK_IORES_MEM] =3D {
+>  		.flags =3D IORESOURCE_MEM,
+>  	},
+>  };
+> =20
+> -static struct mfd_cell intel_quark_mfd_cells[] =3D {
+> -	{
+> -		.id =3D MFD_I2C_BAR,
+> -		.name =3D "i2c_designware",
+> -		.num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
+> -		.resources =3D intel_quark_i2c_res,
+> -		.ignore_resource_conflicts =3D true,
+> -	},
+> -	{
+> -		.id =3D MFD_GPIO_BAR,
+> -		.name =3D "gpio-dwapb",
+> -		.num_resources =3D ARRAY_SIZE(intel_quark_gpio_res),
+> -		.resources =3D intel_quark_gpio_res,
+> -		.ignore_resource_conflicts =3D true,
+> -	},
+> +static struct mfd_cell intel_quark_mfd_gpio_cell =3D {
+> +	.id =3D MFD_GPIO_BAR,
+> +	.name =3D "gpio-dwapb",
+> +	.num_resources =3D ARRAY_SIZE(intel_quark_gpio_res),
+> +	.resources =3D intel_quark_gpio_res,
+> +	.ignore_resource_conflicts =3D true,
+>  };
+> =20
+>  static const struct pci_device_id intel_quark_mfd_ids[] =3D {
+> @@ -248,18 +247,25 @@ static int intel_quark_mfd_probe(struct pci_dev=
+ *pdev,
+> =20
+>  	dev_set_drvdata(&pdev->dev, quark_mfd);
+> =20
+> -	ret =3D intel_quark_i2c_setup(pdev, &intel_quark_mfd_cells[MFD_I2C_=
+BAR]);
+> +	ret =3D intel_quark_i2c_setup(pdev, &intel_quark_mfd_i2c_cell);
+>  	if (ret)
+>  		return ret;
+> =20
+> -	ret =3D intel_quark_gpio_setup(pdev,
+> -				     &intel_quark_mfd_cells[MFD_GPIO_BAR]);
+> +	ret =3D intel_quark_gpio_setup(pdev, &intel_quark_mfd_gpio_cell);
+>  	if (ret)
+>  		return ret;
+> =20
+> -	return mfd_add_devices(&pdev->dev, 0, intel_quark_mfd_cells,
+> -			       ARRAY_SIZE(intel_quark_mfd_cells), NULL, 0,
+> -			       NULL);
+> +	ret =3D mfd_add_devices(&pdev->dev, 0, &intel_quark_mfd_gpio_cell, =
+1,
+> +			      NULL, 0, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D mfd_add_devices(&pdev->dev, 0, &intel_quark_mfd_i2c_cell, 1=
+,
+> +			      NULL, 0, NULL);
+> +	if (ret)
+> +		mfd_remove_devices(&pdev->dev);
+> +
+> +	return ret;
+>  }
+> =20
+>  static void intel_quark_mfd_remove(struct pci_dev *pdev)
 
-So far, all that has changed is that the descriptor has a name property
-and this is used by sysfs instead of the gc->names[] array.
+--- a/drivers/mfd/intel_quark_i2c_gpio.c
++++ b/drivers/mfd/intel_quark_i2c_gpio.c
+@@ -90,19 +90,19 @@ static struct resource intel_quark_gpio_res[] =3D {
+=20
+ static struct mfd_cell intel_quark_mfd_cells[] =3D {
+        {
+-               .id =3D MFD_I2C_BAR,
+-               .name =3D "i2c_designware",
+-               .num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
+-               .resources =3D intel_quark_i2c_res,
+-               .ignore_resource_conflicts =3D true,
+-       },
+-       {
+                .id =3D MFD_GPIO_BAR,
+                .name =3D "gpio-dwapb",
+                .num_resources =3D ARRAY_SIZE(intel_quark_gpio_res),
+                .resources =3D intel_quark_gpio_res,
+                .ignore_resource_conflicts =3D true,
+        },
++       {
++               .id =3D MFD_I2C_BAR,
++               .name =3D "i2c_designware",
++               .num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
++               .resources =3D intel_quark_i2c_res,
++               .ignore_resource_conflicts =3D true,
++       },
+ };
+=20
+ static const struct pci_device_id intel_quark_mfd_ids[] =3D {
 
-Now the addition of setting names from device tree is controversial
-and Johan is opposed to it, so we need to discuss more before
-applying the rest of the patches, and therefore this patch puts in
-a break after the refactorings (which are anyways very nice).
+?
 
->> 2. Only print a warning if there are two GPIO lines with the same name.
->> The reason is to preserve current behaviour: before the previous
->> changes to the naming mechanism this would not reject probing the
->> driver, instead the error would occur when trying to export the line
->> in sysfs, so restore this behaviour, but print a friendly warning
->> if names collide.
->
-> In gpiolib-of.c is the codepath that adds descriptor names from DT. That
-> uses a warning currently but does not assign the name.
-
-In later patches. But I do not apply them now. As per above.
-
-Yours,
-Linus Walleij
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
