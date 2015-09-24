@@ -1,97 +1,42 @@
-From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: sunxi: Introduce Allwinner for
- A83T support
-Date: Thu, 24 Sep 2015 18:55:03 +0800
-Message-ID: <CAEzqOZvz4AHmmaoh3qe_AMJg2ON-fzG_1XixM861rJPoap5CdQ@mail.gmail.com>
-References: <1442936337-3104-1-git-send-email-vishnupatekar0510@gmail.com>
- <1442936337-3104-2-git-send-email-vishnupatekar0510@gmail.com> <20150922155152.GJ4684@lukather>
-Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBD64TFVR3YIBBG5NR6YAKGQEZUIV4XQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <20150922155152.GJ4684@lukather>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v3 0/2] pinctrl: uniphier: one fix, one addition
+Date: Thu, 24 Sep 2015 21:26:45 +0900
+Message-ID: <1443097607-29011-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg012.nifty.com ([202.248.44.38]:17573 "EHLO
+	conuserg012-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754293AbbIXM1c (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 08:27:32 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello,
+1/2 is a bug fix, but it is not very critical.
+I can wait until 4.4-rc1 if it is a hassle.
 
-On Tue, Sep 22, 2015 at 11:51 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Hi,
->
-> On Tue, Sep 22, 2015 at 11:38:54PM +0800, Vishnu Patekar wrote:
->> Allwinner A83T is octa-core cortex-a7 based SoC.
->> It's clock control unit and prcm, pinmux are different from previous sun8i
->> series.
->> Its processor cores are arragned in two clusters 4 cores each,
->> similar to A80.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->>  arch/arm/mach-sunxi/sunxi.c                     | 1 +
->>  drivers/clk/sunxi/clk-sunxi.c                   | 6 ++++++
->>  3 files changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
->> index 67da205..cf5ed27 100644
->> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
->> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
->> @@ -11,4 +11,5 @@ using one of the following compatible strings:
->>    allwinner,sun8i-a23
->>    allwinner,sun8i-a33
->>    allwinner,sun8i-h3
->> +  allwinner,sun8i-a83t
->>    allwinner,sun9i-a80
->> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
->> index 65bab28..b04aefa 100644
->> --- a/arch/arm/mach-sunxi/sunxi.c
->> +++ b/arch/arm/mach-sunxi/sunxi.c
->> @@ -69,6 +69,7 @@ static const char * const sun8i_board_dt_compat[] = {
->>       "allwinner,sun8i-a23",
->>       "allwinner,sun8i-a33",
->>       "allwinner,sun8i-h3",
->> +     "allwinner,sun8i-a83t",
->>       NULL,
->>  };
->>
->> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
->> index 413070d..f216d5d 100644
->> --- a/drivers/clk/sunxi/clk-sunxi.c
->> +++ b/drivers/clk/sunxi/clk-sunxi.c
->> @@ -1212,6 +1212,12 @@ CLK_OF_DECLARE(sun6i_a31s_clk_init, "allwinner,sun6i-a31s", sun6i_init_clocks);
->>  CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
->>  CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
->>
->> +static void __init sun8ia83t_init_clocks(struct device_node *node)
->
-> Having an underscore between sun8i and a83t would be great :)
->
->> +{
->> +     sunxi_init_clocks(NULL, 0);
->> +}
->> +CLK_OF_DECLARE(sun9i_a83t_clk_init, "allwinner,sun8i-a83t", sun8ia83t_init_clocks);
->
->                   ^ Is this a sun9i or sun8i SoC ?
-It's sun8i, sorry.
->
-> Is the list of protected clocks always going to be empty, or will you
-> add some new clocks in that list in the future?
-Yes, I'll add new clocks as time permits.
->
-> Thanks!
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux, Kernel and Android engineering
-> http://free-electrons.com
-Thanks for review.
+2/2 provides some more pin-mux settings.
+
+
+Changes in v3:
+  - Sort pin groups alphabetically
+  - Add missing UNIPHIER_PINMUX_FUNCTION(sd) to ph1_sld8_functions
+
+Changes in v2:
+  - trivial.  Fix a typo in git-log  s/value/values/
+
+Masahiro Yamada (2):
+  pinctrl: uniphier: fix input enable settings for PH1-sLD8
+  pinctrl: uniphier: add SD card pinmux settings
+
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld4.c     |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-ld6b.c    |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro4.c    |  11 ++
+ drivers/pinctrl/uniphier/pinctrl-ph1-pro5.c    |   5 +
+ drivers/pinctrl/uniphier/pinctrl-ph1-sld8.c    | 231 +++++++++++++------------
+ drivers/pinctrl/uniphier/pinctrl-proxstream2.c |   5 +
+ 6 files changed, 149 insertions(+), 113 deletions(-)
+
+-- 
+1.9.1
+
