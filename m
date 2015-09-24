@@ -1,157 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: keep the GPIO line names internal
-Date: Wed, 23 Sep 2015 16:27:33 -0700
-Message-ID: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH RESEND] gpio:Fix error checking in the function device_pca957x_init
+Date: Thu, 24 Sep 2015 14:34:58 +0900
+Message-ID: <CAAVeFuJbi_gpNeWSjcw0_RpLcSOZ50D55_7somkuB4HEeVCgNA@mail.gmail.com>
+References: <1443062553-4903-1-git-send-email-xerofoify@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:33651 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756172AbbIWX1i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Sep 2015 19:27:38 -0400
-Received: by pacex6 with SMTP id ex6so53599947pac.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2015 16:27:38 -0700 (PDT)
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35668 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752511AbbIXFfS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 01:35:18 -0400
+In-Reply-To: <1443062553-4903-1-git-send-email-xerofoify@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-This refactors the changes to the GPIO line naming mechanism to
-not have so widespread effects, instead we conclude the patch series
-by having created a name attribute in the GPIO descriptor, that need
-not be globally unique, and it will be initialized from the old
-.names array in struct gpio_chip if it exists, then used in the legacy
-sysfs code like the array was used previously.
+On Thu, Sep 24, 2015 at 11:42 AM, Nicholas Krause <xerofoify@gmail.com> wrote:
+> This fixes error checking in the function device_pca957x_init
+> to properly check and return error code values from the calls
+> to the function pca953x_write_regs if they fail as to properly
+> signal callers when a error occurs due a failure when writing
+> registers for this gpio based device.
 
-The associated changes to name lines from the device tree are
-controversial and need to stand alone from this. Resulting changes:
+I gave a Reviewed-by to the previous iteration of this patch but you
+have not included it in this one.
 
-1. Remove the export and the header for the gpio_name_to_desc() as so
-far the only use is inside gpiolib.c. Staticize gpio_name_to_desc()
-and move it above the only function using it.
-
-2. Only print a warning if there are two GPIO lines with the same name.
-The reason is to preserve current behaviour: before the previous
-changes to the naming mechanism this would not reject probing the
-driver, instead the error would occur when trying to export the line
-in sysfs, so restore this behaviour, but print a friendly warning
-if names collide.
-
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpiolib.c        | 72 +++++++++++++++++++++----------------------
- include/linux/gpio/consumer.h |  1 -
- 2 files changed, 35 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 764845c3a4b2..efe8a1072ed0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -90,38 +90,6 @@ struct gpio_desc *gpio_to_desc(unsigned gpio)
- EXPORT_SYMBOL_GPL(gpio_to_desc);
- 
- /**
-- * Convert a GPIO name to its descriptor
-- */
--struct gpio_desc *gpio_name_to_desc(const char * const name)
--{
--	struct gpio_chip *chip;
--	unsigned long flags;
--
--	spin_lock_irqsave(&gpio_lock, flags);
--
--	list_for_each_entry(chip, &gpio_chips, list) {
--		int i;
--
--		for (i = 0; i != chip->ngpio; ++i) {
--			struct gpio_desc *gpio = &chip->desc[i];
--
--			if (!gpio->name)
--				continue;
--
--			if (!strcmp(gpio->name, name)) {
--				spin_unlock_irqrestore(&gpio_lock, flags);
--				return gpio;
--			}
--		}
--	}
--
--	spin_unlock_irqrestore(&gpio_lock, flags);
--
--	return NULL;
--}
--EXPORT_SYMBOL_GPL(gpio_name_to_desc);
--
--/**
-  * Get the GPIO descriptor corresponding to the given hw number for this chip.
-  */
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
-@@ -250,6 +218,37 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
- 	return err;
- }
- 
-+/**
-+ * Convert a GPIO name to its descriptor
-+ */
-+static struct gpio_desc *gpio_name_to_desc(const char * const name)
-+{
-+	struct gpio_chip *chip;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&gpio_lock, flags);
-+
-+	list_for_each_entry(chip, &gpio_chips, list) {
-+		int i;
-+
-+		for (i = 0; i != chip->ngpio; ++i) {
-+			struct gpio_desc *gpio = &chip->desc[i];
-+
-+			if (!gpio->name)
-+				continue;
-+
-+			if (!strcmp(gpio->name, name)) {
-+				spin_unlock_irqrestore(&gpio_lock, flags);
-+				return gpio;
-+			}
-+		}
-+	}
-+
-+	spin_unlock_irqrestore(&gpio_lock, flags);
-+
-+	return NULL;
-+}
-+
- /*
-  * Takes the names from gc->names and checks if they are all unique. If they
-  * are, they are assigned to their gpio descriptors.
-@@ -268,11 +267,10 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
- 		struct gpio_desc *gpio;
- 
- 		gpio = gpio_name_to_desc(gc->names[i]);
--		if (gpio) {
--			dev_err(gc->dev, "Detected name collision for GPIO name '%s'\n",
--				gc->names[i]);
--			return -EEXIST;
--		}
-+		if (gpio)
-+			dev_warn(gc->dev, "Detected name collision for "
-+				 "GPIO name '%s'\n",
-+				 gc->names[i]);
- 	}
- 
- 	/* Then add all names to the GPIO descriptors */
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 366a3fdbdbea..a879e3e62379 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -130,7 +130,6 @@ int gpiod_to_irq(const struct gpio_desc *desc);
- /* Convert between the old gpio_ and new gpiod_ interfaces */
- struct gpio_desc *gpio_to_desc(unsigned gpio);
- int desc_to_gpio(const struct gpio_desc *desc);
--struct gpio_desc *gpio_name_to_desc(const char *name);
- 
- /* Child properties interface */
- struct fwnode_handle;
--- 
-2.4.3
-
+Besides I also asked you to add a space after "gpio:" in your subject
+line, but you have ignored this as well.
