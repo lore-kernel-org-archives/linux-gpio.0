@@ -1,86 +1,44 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] gpio: Use __gpiod_request directly
-Date: Thu, 24 Sep 2015 10:49:57 -0700
-Message-ID: <CACRpkdaBxAhWKnJ3vsd+K6xMgaym7D9M0zTEMu_=fmiUNpxTEA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/3] gpiolib: gpiod_hog remove separate name argument
+Date: Thu, 24 Sep 2015 10:52:55 -0700
+Message-ID: <CACRpkdb4EoA_oBSF46eYAZ-fbTEqaf=Q+wsGyKyrQZ9KB2B7cQ@mail.gmail.com>
 References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
-	<1440920686-6892-2-git-send-email-mpa@pengutronix.de>
-	<CAAVeFuJPzjJ6td9UZ993sbfOyEOo=7WVu-Y2KnFgXewyt_8knA@mail.gmail.com>
+	<1440920686-6892-3-git-send-email-mpa@pengutronix.de>
+	<CACRpkdZrXEXtkPpgtrcjqP5jD+M0UOj5Wj69o4zYJQKihsY6Xg@mail.gmail.com>
+	<20150924063931.GS32203@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJPzjJ6td9UZ993sbfOyEOo=7WVu-Y2KnFgXewyt_8knA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Arun Bharadwaj <arun-EiDWdcs9+yZBDgjK7y7TUQ@public.gmane.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chris R <chrisrfq-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:35060 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755436AbbIXRw4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 13:52:56 -0400
+Received: by oiww128 with SMTP id w128so45576655oiw.2
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 10:52:55 -0700 (PDT)
+In-Reply-To: <20150924063931.GS32203@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Johan Hovold <johan@kernel.org>, Chris Read <chrisrfq@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, Sep 22, 2015 at 9:25 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Sun, Aug 30, 2015 at 4:44 PM, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
->> There is no reason to find out chip and hwnum to use to request a gpio
->> and get another gpio descriptor. We already have the descriptor we want
->> to use so we can directly use it.
->>
->> Signed-off-by: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
->> ---
->>  drivers/gpio/gpiolib.c | 17 ++++++-----------
->>  1 file changed, 6 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->> index 79a0b41ce57b..872fdd3617c1 100644
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
->> @@ -2189,25 +2189,20 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
->>  int gpiod_hog(struct gpio_desc *desc, const char *name,
->>               unsigned long lflags, enum gpiod_flags dflags)
->>  {
->> -       struct gpio_chip *chip;
->> -       struct gpio_desc *local_desc;
->> -       int hwnum;
->>         int status;
->>
->> -       chip = gpiod_to_chip(desc);
->> -       hwnum = gpio_chip_hwgpio(desc);
->> -
->> -       local_desc = gpiochip_request_own_desc(chip, hwnum, name);
->> -       if (IS_ERR(local_desc)) {
->> +       status = __gpiod_request(desc, name);
->> +       if (status) {
->>                 pr_err("requesting hog GPIO %s (chip %s, offset %d) failed\n",
->> -                      name, chip->label, hwnum);
->> -               return PTR_ERR(local_desc);
->> +                      name, gpiod_to_chip(desc)->label,
->> +                      gpio_chip_hwgpio(desc));
->> +               return status;
->>         }
->>
->>         status = gpiod_configure_flags(desc, name, lflags, dflags);
->>         if (status < 0) {
->>                 pr_err("setup of hog GPIO %s (chip %s, offset %d) failed\n",
->> -                      name, chip->label, hwnum);
->> +                      name, gpiod_to_chip(desc)->label, gpio_chip_hwgpio(desc));
->>                 gpiochip_free_own_desc(desc);
->
-> Mmm I should have reviewed this patch earlier, but what bothers me a
-> bit is that it breaks the symetry that we had by calling
-> request_own_desc() and free_own_desc() in the failing case (as well as
-> in gpiochip_free_hogs). And in the end you still need to call
-> gpiod_to_chip() so I am not sure what the benefit is.
->
-> Sure, the code is less verbose, but at the same time it has become
-> slightly harder to understand. Semantically speaking
-> "request_own_desc()" is exactly the action we want to convey.
-> __gpiod_request() is more ambiguous.
->
-> Note that this is not a reject, I just wanted to stress that "less
-> code" is not necessarily the same as "easier to read".
+On Wed, Sep 23, 2015 at 11:39 PM, Markus Pargmann <mpa@pengutronix.de> wrote:
 
-OK I dropped this patch for now.
+>> - Fixed that but noted that it just alters the call to gpiod_hog()
+>>   in of_gpiochip_scan_hogs(), there is a local const char *name that
+>>   should be removed too.
+>
+> The local const char *name is temporarily used in
+> of_gpiochip_scan_hogs() to get the name from DT and assign it to the
+> descriptor:
+>         desc = of_parse_own_gpio(np, &name, &lflags, &dflags);
+>         ...
+>         else
+>                 desc->name = name;
 
-Markus can you live without this patch for 2/3 and 3/3?
+OK the problem is that this series is dependent on the
+named GPIOs series. I want this series to stand alone,
+because this series is not as controversial, and I want to
+merge these initvals first.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
