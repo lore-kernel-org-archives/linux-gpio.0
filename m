@@ -1,72 +1,97 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 2/4] pinctrl: sunxi: add allwinner A83T PIO controller
- support
-Date: Thu, 24 Sep 2015 12:15:03 +0200
-Message-ID: <20150924101503.GQ4684@lukather>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH 1/4] ARM: sunxi: Introduce Allwinner for A83T support
+Date: Thu, 24 Sep 2015 18:52:37 +0800
+Message-ID: <CAEzqOZv_L3A7kpKqNQnHjL6Wb1Lzw6dSU4Qy52yJVf2h1QmcLA@mail.gmail.com>
 References: <1442936337-3104-1-git-send-email-vishnupatekar0510@gmail.com>
- <1442936337-3104-3-git-send-email-vishnupatekar0510@gmail.com>
- <CAGb2v66gd9qe-yPwENp8e6incjiN7OhXKk00=1gbkofvKrM9og@mail.gmail.com>
+ <1442936337-3104-2-git-send-email-vishnupatekar0510@gmail.com> <CAGb2v665FhnSoWYGJn+Tf79F7pZitYBrEOmAts4nVoUWb-uBqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="W+nSBPrhyZdnT2dj"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:57005 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753434AbbIXKPI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 06:15:08 -0400
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66gd9qe-yPwENp8e6incjiN7OhXKk00=1gbkofvKrM9og@mail.gmail.com>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:34616 "EHLO
+	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751073AbbIXKw6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 06:52:58 -0400
+In-Reply-To: <CAGb2v665FhnSoWYGJn+Tf79F7pZitYBrEOmAts4nVoUWb-uBqg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Chen-Yu Tsai <wens@csie.org>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Linus Walleij <linus.walleij@linaro.org>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Linus Walleij <linus.walleij@linaro.org>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+Hello,
 
---W+nSBPrhyZdnT2dj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 23, 2015 at 12:06:56AM +0800, Chen-Yu Tsai wrote:
-> > +static const struct sunxi_pinctrl_desc sun8i_a83t_pinctrl_data =3D {
-> > +       .pins =3D sun8i_a83t_pins,
-> > +       .npins =3D ARRAY_SIZE(sun8i_a83t_pins),
-> > +       .irq_banks =3D 3,
->=20
-> Do you know if there's a hole at where PA_EINT interrupt registers
-> should be? AFAIK we aren't handling that properly, but that is outside
-> the scope of this patch.
-
-Judging from the A83t datasheet, PB seems to be the first IRQ bank, so
-it should be fine.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---W+nSBPrhyZdnT2dj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWA80nAAoJEBx+YmzsjxAgc5oQAKHCw/z5KoIdQIvc6f0oDzXY
-5qUywmnPglcpOxHddCHA2CQU8hYts6YU3glsEPe6K803iCnvLWysMBiZBd9X3wKQ
-HS58q8J5XT76Q8Bmsklumjs+Ou4DlvZq79dm4VweefPo1CZoc/f4baPVtuW6IRjq
-izHGWxjB1aHgg80ebQEbAt4002LEOVINOL0IwRBanDlE192JZ9TuKdiunbc7sXz/
-sNT8wKdbNt6kZhmZTi/4YkvgBx5bgQXce+PGXJIRPyM7daIZdLh27z/8bzTLNjJl
-JMaWximN2/JxIU2N/0YAD8IIUWrtg3eoSkAa1rhpJzS1t0vl9yGbnDwGIrx7mAwj
-bBI/YKY1YjYV2IbLy30xM413u/XmtlEbUVRq0nIhr2M6sgBCCkKVhosCEvLMMCl2
-mZqbVl8WItCI4GCdCZEwoi4vnKi+oLsDnT9J9JP8slNbjRt08O7w7VC/diwzSBDA
-rU9+1p+/1ByEy0hliouyMi1gCsPB/e+uOBz5nZVaBcD5PuyYAjacySeco0mPAzZ1
-188wy3nWTDURuYbXesOUr8CiugnC5WDVSH+iXheYatZt51/+mAreaD1okLSp/FGc
-9ap5+kpL+CaTSa4UG4sbrjcHbcEa2Vdg/HFaj3QFjf2pP8N7chT+fBLxSXNHOwyF
-9Cu2G5rzNrBkQgJbn+/W
-=OZMX
------END PGP SIGNATURE-----
-
---W+nSBPrhyZdnT2dj--
+On Tue, Sep 22, 2015 at 11:47 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Tue, Sep 22, 2015 at 11:38 PM, Vishnu Patekar
+> <vishnupatekar0510@gmail.com> wrote:
+>> Allwinner A83T is octa-core cortex-a7 based SoC.
+>> It's clock control unit and prcm, pinmux are different from previous sun8i
+>> series.
+>> Its processor cores are arragned in two clusters 4 cores each,
+>> similar to A80.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+>>  arch/arm/mach-sunxi/sunxi.c                     | 1 +
+>>  drivers/clk/sunxi/clk-sunxi.c                   | 6 ++++++
+>>  3 files changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+>> index 67da205..cf5ed27 100644
+>> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+>> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+>> @@ -11,4 +11,5 @@ using one of the following compatible strings:
+>>    allwinner,sun8i-a23
+>>    allwinner,sun8i-a33
+>>    allwinner,sun8i-h3
+>> +  allwinner,sun8i-a83t
+>
+> Alphabetic order please.
+Okie, I'll correct.
+>
+>>    allwinner,sun9i-a80
+>> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+>> index 65bab28..b04aefa 100644
+>> --- a/arch/arm/mach-sunxi/sunxi.c
+>> +++ b/arch/arm/mach-sunxi/sunxi.c
+>> @@ -69,6 +69,7 @@ static const char * const sun8i_board_dt_compat[] = {
+>>         "allwinner,sun8i-a23",
+>>         "allwinner,sun8i-a33",
+>>         "allwinner,sun8i-h3",
+>> +       "allwinner,sun8i-a83t",
+>
+> Same here.
+>
+>>         NULL,
+>>  };
+>>
+>> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+>> index 413070d..f216d5d 100644
+>> --- a/drivers/clk/sunxi/clk-sunxi.c
+>> +++ b/drivers/clk/sunxi/clk-sunxi.c
+>> @@ -1212,6 +1212,12 @@ CLK_OF_DECLARE(sun6i_a31s_clk_init, "allwinner,sun6i-a31s", sun6i_init_clocks);
+>>  CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
+>>  CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
+>>
+>> +static void __init sun8ia83t_init_clocks(struct device_node *node)
+>> +{
+>> +       sunxi_init_clocks(NULL, 0);
+>> +}
+>> +CLK_OF_DECLARE(sun9i_a83t_clk_init, "allwinner,sun8i-a83t", sun8ia83t_init_clocks);
+>
+> sun8i? Missing underscore too.
+Sorry, yes, sun8i. will add _.
+>
+> I think you should add this once you actually have clock support.
+> Otherwise this call basically does nothing.
+>
+>> +
+>>  static void __init sun9i_init_clocks(struct device_node *node)
+>>  {
+>>         sunxi_init_clocks(NULL, 0);
+>
+> On the side, I will send patches to remove sun9i_init_clocks.
+>
+>
+> Regards
+> ChenYu
+Thanks for review.
