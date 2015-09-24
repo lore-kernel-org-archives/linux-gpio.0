@@ -1,48 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio:pca953x: add mechanism to simulate open drain outputs
-Date: Thu, 24 Sep 2015 15:11:19 -0700
-Message-ID: <CACRpkdYYGn71Z_pgtBpk5nwknDZ1VyRam9Fj=JDkNyt4KCWFmQ@mail.gmail.com>
-References: <cover.1443031678.git.hns@goldelico.com>
-	<1B9C7F91-0025-4C1D-95AD-FD5A4B0B4176@goldelico.com>
+Subject: Re: [PATCH] drivers: field for new GPIO driver
+Date: Thu, 24 Sep 2015 15:26:12 -0700
+Message-ID: <CACRpkdbARoWp57jx830qtpFQ2NNWNMeoRR2rAiwOfaV059iryw@mail.gmail.com>
+References: <006001d0f525$deaeff30$9c0cfd90$@asmedia.com.tw>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33000 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754504AbbIXWLT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 18:11:19 -0400
-Received: by oixx17 with SMTP id x17so49256521oix.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 15:11:19 -0700 (PDT)
-In-Reply-To: <1B9C7F91-0025-4C1D-95AD-FD5A4B0B4176@goldelico.com>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:35948 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754037AbbIXW0N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 18:26:13 -0400
+Received: by obbmp4 with SMTP id mp4so69551296obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 15:26:12 -0700 (PDT)
+In-Reply-To: <006001d0f525$deaeff30$9c0cfd90$@asmedia.com.tw>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "H. Nikolaus Schaller" <hns@goldelico.com>, Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, eric miao <eric.miao@marvell.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marek Belisko <marek@goldelico.com>, Grazvydas Ignotas <notaz@openpandora.org>
+To: yd_tseng@asmedia.com.tw, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>, Dirk Behme <dirk.behme@de.bosch.com>
 
-On Wed, Sep 23, 2015 at 11:13 AM, H. Nikolaus Schaller
-<hns@goldelico.com> wrote:
+On Tue, Sep 22, 2015 at 4:00 AM, yd_tseng <yd_tseng@asmedia.com.tw> wrote:
 
-> 1. add a DT property to specify the list of GPIO pins that are to become
->    "open drain"
-> 2. if a pin is configured as "open drain", set value by either outputting a
->    "0" (low level) or switching to input (high impedance)
->
-> Tested on OMAP5 uEVM with TCA6424 and some LEDs connected to 5V.
->
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Hi,
 
-I understand the approach, but this is the wrong way to do it.
-Instead of indicating that a pin on the pin controller should be
-open drain, the *consumer* specifying its gpios = <....> should
-do this.
+> This patch adds a new GPIO driver for AMD Promontory chip.  This GPIO
+> controller is enumerated by ACPI and the ACPI compliant hardware ID is
+> AMDF030.  And the patch file is also attached.
 
-I just sent a patch adding the bindings because Tony Lindgren
-and Grygorii Strashko approached me similar problems so let's
-begin with the bindings.
+This isn't really working:
+X-Mailer: Microsoft Outlook 14.0
 
-Implementing it in the kernel requires some elaboration and it's
-going to be more complicated than this local approach, but it
-will be more generic and reusable so that is what we need to do.
+Outlook is mangling the patches, please try to figure out how to send patches
+using git send-email at your company, also read:
+Documentation/SubmittingPatches
+Documentation/email-clients.txt
+
+Before posting.
+
+Then send the patch to me, Alexandre, and the linux-gpio@vger.kernel.org
+mailing list, as indicated in the MAINTAINERS file.
+
+In this case, also include Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+as he is the author of a previous AMD GPIO driver. Is this hardware really
+different or can the old driver be augmented to handle both?
+
+There are some issues with the driver, such as functions being named
+*pinctrl* though it seems to be a clean GPIO driver, so rename these
+functions. The rest of the review I save for the next posting.
 
 Yours,
 Linus Walleij
