@@ -1,141 +1,207 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v4 8/8] pinctrl: freescale: imx: imx7d iomuxc-lpsr
- devicetree bindings
-Date: Thu, 24 Sep 2015 05:57:03 -0700
-Message-ID: <20150924125703.GU3529@tiger>
-References: <1442593798-11501-1-git-send-email-aalonso@freescale.com>
- <1442593798-11501-8-git-send-email-aalonso@freescale.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v3 5/5] gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
+Date: Thu, 24 Sep 2015 09:52:54 -0500
+Message-ID: <1443106374-4126-6-git-send-email-afd@ti.com>
+References: <1443106374-4126-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60334 "EHLO mail.kernel.org"
+Received: from comal.ext.ti.com ([198.47.26.152]:33832 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753148AbbIXM5L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 24 Sep 2015 08:57:11 -0400
-Content-Disposition: inline
-In-Reply-To: <1442593798-11501-8-git-send-email-aalonso@freescale.com>
+	id S1754461AbbIXOxX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 24 Sep 2015 10:53:23 -0400
+In-Reply-To: <1443106374-4126-1-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Adrian Alonso <aalonso@freescale.com>
-Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
-On Fri, Sep 18, 2015 at 11:29:58AM -0500, Adrian Alonso wrote:
-> Add iomuxc-lpsr devicetree bindings documentation
-> Provide documentation context as well an example on
-> pheriperals that could use pad from either iomuxc controller
-> supported by iMX7D SoC
-> 
-> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
-> ---
-> Changes for V2: New patch on imx7d iomuxc-lpsr patch series
-> Changes for V3: Add shared input select register notes
-> Changes for V4: Resend
-> 
->  .../bindings/pinctrl/fsl,imx7d-pinctrl.txt         | 57 ++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> index 8bbf25d..19697bd 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> @@ -1,10 +1,33 @@
->  * Freescale i.MX7 Dual IOMUX Controller
->  
-> +iMX7D supports two iomuxc controllers, fsl,imx7d-iomuxc controller is similar
-> +as previous iMX SoC generation and fsl,imx7d-iomuxc-lpsr which provides low
-> +power state rentetion capabilities on gpios that are part of iomuxc-lpsr
+This patch adds support for the TPS65912 PMIC GPIOs.
 
-s/rentetion/retention
+TPS65912 has five configurable GPIOs that can be used for several
+purposes.
 
-> +(GPIO1_IO7..GPIO1_IO0). While iomuxc-lpsr provides its own set of registers for
-> +mux and pad control settings it shares the input select register from iomuxc
-> +for daisy chain settings, the input-sel phandle and SHARE_INPUT_SELECT_REG flag
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/gpio/Kconfig         |   6 ++
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-tps65912.c | 138 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 145 insertions(+)
+ create mode 100644 drivers/gpio/gpio-tps65912.c
 
-SHARE_INPUT_SELECT_REG is a Linux device driver implementation details,
-which shouldn't be in bindings doc.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index fb28483..82218fa 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -838,6 +838,12 @@ config GPIO_TPS65910
+ 	  Select this option to enable GPIO driver for the TPS65910
+ 	  chip family.
+ 
++config GPIO_TPS65912
++	tristate "TI TPS65912 GPIO"
++	depends on MFD_TPS65912
++	help
++	  This driver supports TPS65912 gpio chip
++
+ config GPIO_TWL4030
+ 	tristate "TWL4030, TWL5030, and TPS659x0 GPIOs"
+ 	depends on TWL4030_CORE
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 605bf89..f79a7c4 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -96,6 +96,7 @@ obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
+ obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
+ obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
+ obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
++obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
+ obj-$(CONFIG_GPIO_TS5500)	+= gpio-ts5500.o
+ obj-$(CONFIG_GPIO_TWL4030)	+= gpio-twl4030.o
+ obj-$(CONFIG_GPIO_TWL6040)	+= gpio-twl6040.o
+diff --git a/drivers/gpio/gpio-tps65912.c b/drivers/gpio/gpio-tps65912.c
+new file mode 100644
+index 0000000..4707e62
+--- /dev/null
++++ b/drivers/gpio/gpio-tps65912.c
+@@ -0,0 +1,138 @@
++/*
++ * TI TPS65912x GPIO Driver
++ *
++ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
++ *
++ * Author: Andrew F. Davis <afd@ti.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether expressed or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License version 2 for more details.
++ *
++ * Based on the Arizona GPIO driver and the previous TPS65912 driver by
++ * Margarita Olaya Cabrera <magi@slimlogic.co.uk>
++ */
++
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++
++#include <linux/mfd/tps65912.h>
++
++struct tps65912_gpio {
++	struct tps65912 *tps;
++	struct gpio_chip gpio_chip;
++};
++
++#define to_gpio(gc) container_of(gc, struct tps65912_gpio, gpio_chip)
++
++static int tps65912_gpio_get(struct gpio_chip *gc, unsigned offset)
++{
++	struct tps65912_gpio *gpio = to_gpio(gc);
++	int ret, val;
++
++	ret = regmap_read(gpio->tps->regmap, TPS65912_GPIO1 + offset, &val);
++	if (ret < 0)
++		return ret;
++
++	return val & GPIO_STS_MASK;
++}
++
++static void tps65912_gpio_set(struct gpio_chip *gc, unsigned offset,
++			      int value)
++{
++	struct tps65912_gpio *gpio = to_gpio(gc);
++
++	regmap_update_bits(gpio->tps->regmap, TPS65912_GPIO1 + offset,
++			   GPIO_SET_MASK, value ? GPIO_SET_MASK : 0);
++}
++
++static int tps65912_gpio_output(struct gpio_chip *gc, unsigned offset,
++				int value)
++{
++	struct tps65912_gpio *gpio = to_gpio(gc);
++
++	/* Set the initial value */
++	tps65912_gpio_set(gc, offset, value);
++
++	return regmap_update_bits(gpio->tps->regmap, TPS65912_GPIO1 + offset,
++				  GPIO_CFG_MASK, GPIO_CFG_MASK);
++}
++
++static int tps65912_gpio_input(struct gpio_chip *gc, unsigned offset)
++{
++	struct tps65912_gpio *gpio = to_gpio(gc);
++
++	return regmap_update_bits(gpio->tps->regmap, TPS65912_GPIO1 + offset,
++				  GPIO_CFG_MASK, 0);
++}
++
++static const struct of_device_id tps65912_gpio_of_match_table[] = {
++	{ .compatible = "ti,tps65912-gpio", },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, tps65912_gpio_of_match_table);
++
++static struct gpio_chip template_chip = {
++	.label			= "tps65912-gpio",
++	.owner			= THIS_MODULE,
++	.direction_input	= tps65912_gpio_input,
++	.direction_output	= tps65912_gpio_output,
++	.get			= tps65912_gpio_get,
++	.set			= tps65912_gpio_set,
++	.can_sleep		= true,
++	.ngpio			= 5,
++	.base			= -1,
++};
++
++static int tps65912_gpio_probe(struct platform_device *pdev)
++{
++	struct tps65912_gpio *gpio;
++	int ret;
++
++	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
++	if (!gpio)
++		return -ENOMEM;
++
++	gpio->tps = dev_get_drvdata(pdev->dev.parent);
++	gpio->gpio_chip = template_chip;
++	ret = gpiochip_add(&gpio->gpio_chip);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, gpio);
++
++	return 0;
++}
++
++static int tps65912_gpio_remove(struct platform_device *pdev)
++{
++	struct tps65912_gpio *gpio = platform_get_drvdata(pdev);
++
++	gpiochip_remove(&gpio->gpio_chip);
++
++	return 0;
++}
++
++static struct platform_driver tps65912_gpio_driver = {
++	.driver = {
++		.name = "tps65912-gpio",
++		.of_match_table = tps65912_gpio_of_match_table,
++	},
++	.probe = tps65912_gpio_probe,
++	.remove = tps65912_gpio_remove,
++};
++
++module_platform_driver(tps65912_gpio_driver);
++
++MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
++MODULE_DESCRIPTION("TPS65912 GPIO driver");
++MODULE_ALIAS("platform:tps65912-gpio");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
 
-> +extends fsl,imx-pinctrl driver to support iomuxc-lpsr controller.
-> +
-> +iomuxc_lpsr: iomuxc-lpsr@302c0000 {
-> +	compatible = "fsl,imx7d-iomuxc-lpsr";
-> +	reg = <0x302c0000 0x10000>;
-> +	input-sel = <&iomuxc>;
-> +};
-> +
-> +iomuxc: iomuxc@30330000 {
-> +	compatible = "fsl,imx7d-iomuxc";
-> +	reg = <0x30330000 0x10000>;
-> +};
-> +
-> +Pheriparials using pads from iomuxc-lpsr support low state retention power
-> +state, under LPSR mode GPIO's state of pads are retain.
-> +
->  Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
->  and usage.
->  
->  Required properties:
->  - compatible: "fsl,imx7d-iomuxc"
-> +- compatible: "fsl,imx7d-iomuxc-lpsr"
-
-This is a bit confusing, and should probably be reworded like:
-
-   - compatible: "fsl,imx7d-iomuxc" for main IOMUXC controller, or
-                 "fsl,imx7d-iomuxc-lpsr" for Low Power State Retention
-                 IOMUXC controller.
-
-And 'input-sel' should be documented in 'Required properties' list as
-well.  Also, as this is a vendor specific property, I suggest you name
-it 'fsl,input-sel'.
-
->  - fsl,pins: each entry consists of 6 integers and represents the mux and config
->    setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg mux_val
->    input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-> @@ -25,3 +48,37 @@ PAD_CTL_DSE_X1                  (0 << 0)
->  PAD_CTL_DSE_X2                  (1 << 0)
->  PAD_CTL_DSE_X3                  (2 << 0)
->  PAD_CTL_DSE_X4                  (3 << 0)
-> +
-> +Examples:
-> +While iomuxc-lpsr is intended to be used by dedicated peripherals to take
-> +advantages of LPSR power mode, is also possible that an IP to use pads from
-
-s/is/it's ?
-
-> +any of the iomux controllers. For example the I2C1 IP can use SCL pad from
-> +iomuxc-lpsr controller and SDA pad from iomuxc controller as:
-> +
-> +i2c1: i2c@30a20000 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c1_1 &pinctrl_i2c1_2>;
-> +	status = "okay";
-> +};
-> +
-> +iomuxc-lpsr@302c0000 {
-> +	compatible = "fsl,imx7d-iomuxc-lpsr";
-> +	reg = <0x302c0000 0x10000>;
-> +
-> +	pinctrl_i2c1_1: i2c1grp-1 {
-> +		fsl,pins = <
-> +			MX7D_PAD_GPIO1_IO04__I2C1_SCL 0x4000007f
-> +		>;
-> +	};
-> +};
-> +
-> +iomuxc@30330000 {
-> +	compatible = "fsl,imx7d-iomuxc";
-> +	reg = <0x30330000 0x10000>;
-> +
-> +	pinctrl_i2c1_2: i2c1grp-2 {
-> +		fsl,pins = <
-> +			MX7D_PAD_I2C1_SCL__I2C1_SCL 0x4000007f
-
-It's should be about 'SDA' pad than 'SCL', right?
-
-Shawn
-
-> +		>;
-> +	};
-> +};
-> -- 
-> 2.1.4
-> 
