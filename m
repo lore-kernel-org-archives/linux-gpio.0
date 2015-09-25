@@ -1,62 +1,38 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v5 3/7] ARM: dts: imx: imx7d-sbd add iomuxc-lpsr hoggrp-2
- pads
-Date: Fri, 25 Sep 2015 10:17:58 -0700
-Message-ID: <20150925171758.GW3529@tiger>
-References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
- <1443128043-21063-3-git-send-email-aalonso@freescale.com>
- <20150925104922.GK11805@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: core: handle pinctrl_get failure
+Date: Fri, 25 Sep 2015 10:23:57 -0700
+Message-ID: <CACRpkdZU44Bjo5t=yywcGDj5f9rv=V-X1xm1kgnVm2H3bgq-_w@mail.gmail.com>
+References: <1441892286-18989-1-git-send-email-van.freenix@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41748 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932474AbbIYRSL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Sep 2015 13:18:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20150925104922.GK11805@pengutronix.de>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:33043 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756528AbbIYRX5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 13:23:57 -0400
+Received: by obbbh8 with SMTP id bh8so87072908obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2015 10:23:57 -0700 (PDT)
+In-Reply-To: <1441892286-18989-1-git-send-email-van.freenix@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Adrian Alonso <aalonso@freescale.com>, linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@linaro.org, lznuaa@gmail.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, yibin.gong@freescale.com
+To: Peng Fan <van.freenix@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Sep 25, 2015 at 12:49:22PM +0200, Markus Pargmann wrote:
-> On Thu, Sep 24, 2015 at 03:53:59PM -0500, Adrian Alonso wrote:
-> > Add imx7d-sdb iomuxc-lpsr hoggrp-2 default pads settings
-> > 
-> > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
-> > ---
-> > Changes for V2: Resend
-> > Changes for V3: Resend
-> > Changes for V4: Resend
-> > Changes for V5: Resend
-> > 
-> >  arch/arm/boot/dts/imx7d-sdb.dts | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
-> > index 8059458..c8a178c 100644
-> > --- a/arch/arm/boot/dts/imx7d-sdb.dts
-> > +++ b/arch/arm/boot/dts/imx7d-sdb.dts
-> > @@ -419,3 +419,18 @@
-> >  
-> >  	};
-> >  };
-> > +
-> > +&iomuxc_lpsr {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&pinctrl_hog_2>;
-> > +
-> > +	imx7d-sdb {
-> > +		pinctrl_hog_2: hoggrp-2 {
-> > +			fsl,pins = <
-> > +				MX7D_PAD_GPIO1_IO05__GPIO1_IO5    0x14
-> > +				MX7D_PAD_GPIO1_IO07__GPIO1_IO7    0x59
-> > +				MX7D_PAD_GPIO1_IO00__WDOD1_WDOG_B 0x74
-> 
-> In my opinion this should still be in the pincontrol for the watchdog
-> instead of hogging. Also it is not obvious what the GPIOs are for.
+On Thu, Sep 10, 2015 at 6:38 AM, Peng Fan <van.freenix@gmail.com> wrote:
 
-+1
+> Need to do error handling path when pinctrl_get fails. Also when
+> pinctrl_get success, insert 'pctldev->node' to pinctrldev_list.
+>
+> Signed-off-by: Peng Fan <van.freenix@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Shawn
+I think this patch is totally wrong and you have probably not tested
+it using pinctrl hogs.
+
+pinctr_get() from self will *not work* unless the device is added to
+the list *first*.
+
+Dropping this.
+
+Yours,
+Linus Walleij
