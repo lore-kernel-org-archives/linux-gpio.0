@@ -1,64 +1,93 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] gpio: omap: fix static checker warning
-Date: Fri, 25 Sep 2015 12:06:02 -0700
-Message-ID: <1443207962-16982-1-git-send-email-grygorii.strashko@ti.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
+Date: Fri, 25 Sep 2015 12:07:25 -0700
+Message-ID: <20150925190725.GX3529@tiger>
+References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
+ <1443128043-21063-4-git-send-email-aalonso@freescale.com>
+ <20150925104726.GJ11805@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:59046 "EHLO bear.ext.ti.com"
+Received: from mail.kernel.org ([198.145.29.136]:47638 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932890AbbIYTGM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Sep 2015 15:06:12 -0400
+	id S932890AbbIYTHd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 15:07:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20150925104726.GJ11805@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, tony@atomide.com
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Adrian Alonso <aalonso@freescale.com>, linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@linaro.org, lznuaa@gmail.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, yibin.gong@freescale.com
 
-This patch fixes below static checker warning by changing
-type of irq field in struct gpio_bank from u16 to int.
+On Fri, Sep 25, 2015 at 12:47:26PM +0200, Markus Pargmann wrote:
+> On Thu, Sep 24, 2015 at 03:54:00PM -0500, Adrian Alonso wrote:
+> > Allow mux_reg offset zero to be a valid pin_id, on imx7d
+> > mux_conf reg offset is zero for iomuxc-lspr controller
+> > 
+> > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+> > ---
+> > Changes for V2: Resend
+> > Changes for V3: Resend
+> > Changes for V4: Simplify pin_id assigment when ZERO_OFFSET_VALID is set
+> > Changes for V5:
+> > - Drop patch pinctrl: freescale: imx: add ZERO_OFFSET_VALID flag
+> > - Allow mux_reg ZERO OFFSET as pin_id
+> > 
+> >  drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > index b9c6deb..23348d8 100644
+> > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > @@ -550,7 +550,7 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+> >  				conf_reg = -1;
+> >  		}
+> >  
+> > -		pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
+> > +		pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
+> 
+> This will break compatibility with imx35 and imx25 pinctrl drivers. They
+> have definitions where mux_reg can be 0x0. See imx35-pinfunc.h and
+> imx25-pinfunc.h:
+> 
+> 	git grep -E "0x0+ 0x.* 0x.* 0x.* 0x.*"
+> 
+> This mux_reg behaviour was not described in the DT binding
+> documentation. But it is used by some platforms. So even if you change
+> the pincfunc headers to use "-1", it would break devicetrees compiled
+> with earlier kernel versions.
 
-drivers/gpio/gpio-omap.c:1191 omap_gpio_probe()
-	warn: assigning (-6) to unsigned variable 'bank->irq'
+Ah, sorry, I'm screwed on the previous review.  So we still need the
+flag ZERO_OFFSET_VALID to convert invalid 0 mux_reg to -1.
 
-drivers/gpio/gpio-omap.c
-  1188          bank->irq = platform_get_irq(pdev, 0);
-  1189          if (bank->irq <= 0) {
+@Adrian,
 
-bank->irq is u16.
+Will the following change just work for you?
 
-  1190                  if (!bank->irq)
-  1191                          bank->irq = -ENXIO;
+Shawn
 
-Does not work.
-
-  1192                  if (bank->irq != -EPROBE_DEFER)
-
-Does not work.
-
-  1193                          dev_err(dev,
-  1194                                  "can't get irq resource ret=%d\n", bank->irq);
-  1195                  return bank->irq;
-  1196          }
-
-Fixes: commit 89d18e3af8b9: "gpio: omap: switch to use platform_get_irq"
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-omap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 376827f..56d2d02 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -51,7 +51,7 @@ struct gpio_regs {
- struct gpio_bank {
- 	struct list_head node;
- 	void __iomem *base;
--	u16 irq;
-+	int irq;
- 	u32 non_wakeup_gpios;
- 	u32 enabled_non_wakeup_gpios;
- 	struct gpio_regs context;
--- 
-2.5.1
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index d7b98ba36825..ae801ba7e226 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -542,6 +542,9 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+                struct imx_pin_reg *pin_reg;
+                struct imx_pin *pin = &grp->pins[i];
+ 
++               if (!(info->flags & ZERO_OFFSET_VALID) && !mux_reg)
++                       mux_reg = -1;
++
+                if (info->flags & SHARE_MUX_CONF_REG) {
+                        conf_reg = mux_reg;
+                } else {
+@@ -550,7 +553,7 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+                                conf_reg = -1;
+                }
+ 
+-               pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
++               pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
+                pin_reg = &info->pin_regs[pin_id];
+                pin->pin = pin_id;
+                grp->pin_ids[i] = pin_id;
 
