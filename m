@@ -1,65 +1,64 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: mention in DT binding doc that <name>-gpio is deprecated
-Date: Fri, 25 Sep 2015 13:32:32 -0500
-Message-ID: <CAL_JsqL9FCGAy-9o_4M+hhG7MVB6MX8i5JJyNBnM3fPezVrYdQ@mail.gmail.com>
-References: <1442840245-7982-1-git-send-email-javier@osg.samsung.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH] gpio: omap: fix static checker warning
+Date: Fri, 25 Sep 2015 12:06:02 -0700
+Message-ID: <1443207962-16982-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1442840245-7982-1-git-send-email-javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Benoit Parrot <bparrot-l0cyMroinI0@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Masahiro Yamada <yamada.m-NAum8xwdG0+S7A1Ibl2khg@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:59046 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932890AbbIYTGM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 15:06:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, tony@atomide.com
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Mon, Sep 21, 2015 at 7:57 AM, Javier Martinez Canillas
-<javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org> wrote:
-> The gpiolib supports parsing DT properties of the form <name>-gpio but it
-> was only added for compatibility with older DT bindings that got it wrong
-> and should not be used in newer bindings.
->
-> The commit that added support for this was:
->
-> dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
->
-> but didn't update the documentation to explain this so it's been a source
-> of confusion. So let's make this clear in the GPIO DT binding doc.
->
-> Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+This patch fixes below static checker warning by changing
+type of irq field in struct gpio_bank from u16 to int.
 
-Applied. Thanks.
+drivers/gpio/gpio-omap.c:1191 omap_gpio_probe()
+	warn: assigning (-6) to unsigned variable 'bank->irq'
 
-Rob
+drivers/gpio/gpio-omap.c
+  1188          bank->irq = platform_get_irq(pdev, 0);
+  1189          if (bank->irq <= 0) {
 
->
-> ---
->
-> Changes in v2:
-> - Explain that <name>-gpio is deprecated instead of saying that is
->   supported. Suggested by Alexandre Courbot.
->
->  Documentation/devicetree/bindings/gpio/gpio.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index 5788d5cf1252..82d40e2505f6 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -16,7 +16,9 @@ properties, each containing a 'gpio-list':
->  GPIO properties should be named "[<name>-]gpios", with <name> being the purpose
->  of this GPIO for the device. While a non-existent <name> is considered valid
->  for compatibility reasons (resolving to the "gpios" property), it is not allowed
-> -for new bindings.
-> +for new bindings. Also, GPIO properties named "[<name>-]gpio" are valid and old
-> +bindings use it, but are only supported for compatibility reasons and should not
-> +be used for newer bindings since it has been deprecated.
->
->  GPIO properties can contain one or more GPIO phandles, but only in exceptional
->  cases should they contain more than one. If your device uses several GPIOs with
-> --
-> 2.4.3
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+bank->irq is u16.
+
+  1190                  if (!bank->irq)
+  1191                          bank->irq = -ENXIO;
+
+Does not work.
+
+  1192                  if (bank->irq != -EPROBE_DEFER)
+
+Does not work.
+
+  1193                          dev_err(dev,
+  1194                                  "can't get irq resource ret=%d\n", bank->irq);
+  1195                  return bank->irq;
+  1196          }
+
+Fixes: commit 89d18e3af8b9: "gpio: omap: switch to use platform_get_irq"
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 376827f..56d2d02 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -51,7 +51,7 @@ struct gpio_regs {
+ struct gpio_bank {
+ 	struct list_head node;
+ 	void __iomem *base;
+-	u16 irq;
++	int irq;
+ 	u32 non_wakeup_gpios;
+ 	u32 enabled_non_wakeup_gpios;
+ 	struct gpio_regs context;
+-- 
+2.5.1
+
