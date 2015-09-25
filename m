@@ -1,92 +1,155 @@
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: Re: [PATCH] gpio:pca953x: add mechanism to simulate open drain outputs
-Date: Fri, 25 Sep 2015 08:49:51 +0200
-Message-ID: <FEB50554-2A45-4B3C-A896-EBF723AB3572@goldelico.com>
-References: <cover.1443031678.git.hns@goldelico.com> <1B9C7F91-0025-4C1D-95AD-FD5A4B0B4176@goldelico.com> <CACRpkdYYGn71Z_pgtBpk5nwknDZ1VyRam9Fj=JDkNyt4KCWFmQ@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: [PATCH] pinctrl: at91-pio4: add PM stuff
+Date: Fri, 25 Sep 2015 11:14:09 +0200
+Message-ID: <1443172449-19915-1-git-send-email-ludovic.desroches@atmel.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.221]:21966 "EHLO
-	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753080AbbIYGuG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 02:50:06 -0400
-In-Reply-To: <CACRpkdYYGn71Z_pgtBpk5nwknDZ1VyRam9Fj=JDkNyt4KCWFmQ@mail.gmail.com>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:23151 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754622AbbIYJN7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 05:13:59 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, eric miao <eric.miao@marvell.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marek Belisko <marek@goldelico.com>, Grazvydas Ignotas <notaz@openpandora.org>
+To: linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
+Allow GPIOs to be configured as wakeup sources. When going to suspend,
+disable all GPIO irqs excepting the one configured as wakeup sources.
 
-Am 25.09.2015 um 00:11 schrieb Linus Walleij <linus.walleij@linaro.org>=
-:
+Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 76 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-> On Wed, Sep 23, 2015 at 11:13 AM, H. Nikolaus Schaller
-> <hns@goldelico.com> wrote:
->=20
->> 1. add a DT property to specify the list of GPIO pins that are to be=
-come
->>   "open drain"
->> 2. if a pin is configured as "open drain", set value by either outpu=
-tting a
->>   "0" (low level) or switching to input (high impedance)
->>=20
->> Tested on OMAP5 uEVM with TCA6424 and some LEDs connected to 5V.
->>=20
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->=20
-> I understand the approach, but this is the wrong way to do it.
-> Instead of indicating that a pin on the pin controller should be
-> open drain, the *consumer* specifying its gpios =3D <....> should
-> do this.
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 6aff632..5e2189f 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -16,6 +16,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
++#include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -122,6 +123,8 @@ struct atmel_pioctrl {
+ 	struct gpio_chip	*gpio_chip;
+ 	struct irq_domain	*irq_domain;
+ 	int			*irqs;
++	unsigned		*pm_wakeup_sources;
++	unsigned		*pm_suspend_backup;
+ 	struct device		*dev;
+ 	struct device_node	*node;
+ };
+@@ -214,12 +217,35 @@ static void atmel_gpio_irq_unmask(struct irq_data *d)
+ 			 BIT(pin->line));
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++
++static int atmel_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++	struct atmel_pioctrl *atmel_pioctrl = irq_data_get_irq_chip_data(d);
++	int bank = ATMEL_PIO_BANK(d->hwirq);
++	int line = ATMEL_PIO_LINE(d->hwirq);
++
++	/* The gpio controller has one interrupt line per bank. */
++	irq_set_irq_wake(atmel_pioctrl->irqs[bank], on);
++
++	if (on)
++		atmel_pioctrl->pm_wakeup_sources[bank] |= BIT(line);
++	else
++		atmel_pioctrl->pm_wakeup_sources[bank] &= ~(BIT(line));
++
++	return 0;
++}
++#else
++#define atmel_gpio_irq_set_wake NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static struct irq_chip atmel_gpio_irq_chip = {
+ 	.name		= "GPIO",
+ 	.irq_ack	= atmel_gpio_irq_ack,
+ 	.irq_mask	= atmel_gpio_irq_mask,
+ 	.irq_unmask	= atmel_gpio_irq_unmask,
+ 	.irq_set_type	= atmel_gpio_irq_set_type,
++	.irq_set_wake	= atmel_gpio_irq_set_wake,
+ };
+ 
+ static void atmel_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+@@ -792,6 +818,43 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
+ 	.pmxops		= &atmel_pmxops,
+ };
+ 
++static int atmel_pctrl_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	int i;
++
++	/*
++	 * For each bank, save IMR to restore it later and disable all GPIO
++	 * interrupts excepting the ones marked as wakeup sources.
++	 */
++	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
++		atmel_pioctrl->pm_suspend_backup[i] =
++			atmel_gpio_read(atmel_pioctrl, i, ATMEL_PIO_IMR);
++		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IDR,
++				 ~atmel_pioctrl->pm_wakeup_sources[i]);
++	}
++
++	return 0;
++}
++
++static int atmel_pctrl_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
++	int i;
++
++	for (i = 0; i < atmel_pioctrl->nbanks; i++)
++		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IER,
++				 atmel_pioctrl->pm_suspend_backup[i]);
++
++	return 0;
++}
++
++static const struct dev_pm_ops atmel_pctrl_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(atmel_pctrl_suspend, atmel_pctrl_resume)
++};
++
+ /*
+  * The number of banks can be different from a SoC to another one.
+  * We can have up to 16 banks.
+@@ -908,6 +971,18 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+ 	atmel_pioctrl->gpio_chip->dev = dev;
+ 	atmel_pioctrl->gpio_chip->names = atmel_pioctrl->group_names;
+ 
++	atmel_pioctrl->pm_wakeup_sources = devm_kzalloc(dev,
++			sizeof(*atmel_pioctrl->pm_wakeup_sources)
++			* atmel_pioctrl->nbanks, GFP_KERNEL);
++	if (!atmel_pioctrl->pm_wakeup_sources)
++		return -ENOMEM;
++
++	atmel_pioctrl->pm_suspend_backup = devm_kzalloc(dev,
++			sizeof(*atmel_pioctrl->pm_suspend_backup)
++			* atmel_pioctrl->nbanks, GFP_KERNEL);
++	if (!atmel_pioctrl->pm_suspend_backup)
++		return -ENOMEM;
++
+ 	atmel_pioctrl->irqs = devm_kzalloc(dev, sizeof(*atmel_pioctrl->irqs)
+ 			* atmel_pioctrl->nbanks, GFP_KERNEL);
+ 	if (!atmel_pioctrl->irqs)
+@@ -1006,6 +1081,7 @@ static struct platform_driver atmel_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "pinctrl-at91-pio4",
+ 		.of_match_table = atmel_pctrl_of_match,
++		.pm = &atmel_pctrl_pm_ops,
+ 	},
+ 	.probe = atmel_pinctrl_probe,
+ 	.remove = atmel_pinctrl_remove,
+-- 
+2.5.0
 
-On a second thought I am no longer sure if that is the right approach.
-
-A gpio is for input and output of =930=94 and =931=94 values. And a gpi=
-o consumer
-can control if the output should be active or inactive and input.
-
-How the output is physically represented (totem-pole or single-ended,
-high power, low power etc.) is not a property of the gpio itself and
-there is IMHO no need for the consumer to be able to define (or change)
-it.
-
-On SoC with integrated gpio controllers it is very common to have
-pinmux definitions completely separated from the gpio controller
-properties. But the gpio consumer can connect to pinctrl settings
-to describe that the pin should have certain physical properties.
-
-There, it is common to be able to enable/disable pull-up/downs as
-well.
-
-So turning a totem-pole output (as it is available in the tca6424)
-into an open-drain output is sort of turning off the pull-up transistor=
-=2E
-I.e. comparable to a pinmux setting.
-
-So such controllers should get the option to define pinctrl.
-
-Some chips might have special control registers for doing that
-while others need the trick to switch between input and output
-mode but that is driver implementation detail.
-
-But I am not sure if this has other implications.
-
->=20
-> I just sent a patch adding the bindings because Tony Lindgren
-> and Grygorii Strashko approached me similar problems so let's
-> begin with the bindings.
->=20
-> Implementing it in the kernel requires some elaboration and it's
-> going to be more complicated than this local approach, but it
-> will be more generic and reusable so that is what we need to do.
->=20
-> Yours,
-> Linus Walleij
-
-BR,
-Nikolaus Schaller--
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
