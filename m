@@ -1,155 +1,109 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [PATCH] pinctrl: at91-pio4: add PM stuff
-Date: Fri, 25 Sep 2015 11:14:09 +0200
-Message-ID: <1443172449-19915-1-git-send-email-ludovic.desroches@atmel.com>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
+Date: Fri, 25 Sep 2015 12:47:26 +0200
+Message-ID: <20150925104726.GJ11805@pengutronix.de>
+References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
+ <1443128043-21063-4-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="va4/JQ6j8/8uipEp"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:23151 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754622AbbIYJN7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 05:13:59 -0400
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35380 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752945AbbIYKrc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 06:47:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1443128043-21063-4-git-send-email-aalonso@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, nicolas.ferre@atmel.com, alexandre.belloni@free-electrons.com, Ludovic Desroches <ludovic.desroches@atmel.com>
+To: Adrian Alonso <aalonso@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, yibin.gong@freescale.com
 
-Allow GPIOs to be configured as wakeup sources. When going to suspend,
-disable all GPIO irqs excepting the one configured as wakeup sources.
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 76 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+--va4/JQ6j8/8uipEp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 6aff632..5e2189f 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -16,6 +16,7 @@
- 
- #include <linux/clk.h>
- #include <linux/gpio.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -122,6 +123,8 @@ struct atmel_pioctrl {
- 	struct gpio_chip	*gpio_chip;
- 	struct irq_domain	*irq_domain;
- 	int			*irqs;
-+	unsigned		*pm_wakeup_sources;
-+	unsigned		*pm_suspend_backup;
- 	struct device		*dev;
- 	struct device_node	*node;
- };
-@@ -214,12 +217,35 @@ static void atmel_gpio_irq_unmask(struct irq_data *d)
- 			 BIT(pin->line));
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+
-+static int atmel_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
-+{
-+	struct atmel_pioctrl *atmel_pioctrl = irq_data_get_irq_chip_data(d);
-+	int bank = ATMEL_PIO_BANK(d->hwirq);
-+	int line = ATMEL_PIO_LINE(d->hwirq);
-+
-+	/* The gpio controller has one interrupt line per bank. */
-+	irq_set_irq_wake(atmel_pioctrl->irqs[bank], on);
-+
-+	if (on)
-+		atmel_pioctrl->pm_wakeup_sources[bank] |= BIT(line);
-+	else
-+		atmel_pioctrl->pm_wakeup_sources[bank] &= ~(BIT(line));
-+
-+	return 0;
-+}
-+#else
-+#define atmel_gpio_irq_set_wake NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct irq_chip atmel_gpio_irq_chip = {
- 	.name		= "GPIO",
- 	.irq_ack	= atmel_gpio_irq_ack,
- 	.irq_mask	= atmel_gpio_irq_mask,
- 	.irq_unmask	= atmel_gpio_irq_unmask,
- 	.irq_set_type	= atmel_gpio_irq_set_type,
-+	.irq_set_wake	= atmel_gpio_irq_set_wake,
- };
- 
- static void atmel_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-@@ -792,6 +818,43 @@ static struct pinctrl_desc atmel_pinctrl_desc = {
- 	.pmxops		= &atmel_pmxops,
- };
- 
-+static int atmel_pctrl_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	int i;
-+
-+	/*
-+	 * For each bank, save IMR to restore it later and disable all GPIO
-+	 * interrupts excepting the ones marked as wakeup sources.
-+	 */
-+	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
-+		atmel_pioctrl->pm_suspend_backup[i] =
-+			atmel_gpio_read(atmel_pioctrl, i, ATMEL_PIO_IMR);
-+		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IDR,
-+				 ~atmel_pioctrl->pm_wakeup_sources[i]);
-+	}
-+
-+	return 0;
-+}
-+
-+static int atmel_pctrl_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < atmel_pioctrl->nbanks; i++)
-+		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IER,
-+				 atmel_pioctrl->pm_suspend_backup[i]);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops atmel_pctrl_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(atmel_pctrl_suspend, atmel_pctrl_resume)
-+};
-+
- /*
-  * The number of banks can be different from a SoC to another one.
-  * We can have up to 16 banks.
-@@ -908,6 +971,18 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 	atmel_pioctrl->gpio_chip->dev = dev;
- 	atmel_pioctrl->gpio_chip->names = atmel_pioctrl->group_names;
- 
-+	atmel_pioctrl->pm_wakeup_sources = devm_kzalloc(dev,
-+			sizeof(*atmel_pioctrl->pm_wakeup_sources)
-+			* atmel_pioctrl->nbanks, GFP_KERNEL);
-+	if (!atmel_pioctrl->pm_wakeup_sources)
-+		return -ENOMEM;
-+
-+	atmel_pioctrl->pm_suspend_backup = devm_kzalloc(dev,
-+			sizeof(*atmel_pioctrl->pm_suspend_backup)
-+			* atmel_pioctrl->nbanks, GFP_KERNEL);
-+	if (!atmel_pioctrl->pm_suspend_backup)
-+		return -ENOMEM;
-+
- 	atmel_pioctrl->irqs = devm_kzalloc(dev, sizeof(*atmel_pioctrl->irqs)
- 			* atmel_pioctrl->nbanks, GFP_KERNEL);
- 	if (!atmel_pioctrl->irqs)
-@@ -1006,6 +1081,7 @@ static struct platform_driver atmel_pinctrl_driver = {
- 	.driver = {
- 		.name = "pinctrl-at91-pio4",
- 		.of_match_table = atmel_pctrl_of_match,
-+		.pm = &atmel_pctrl_pm_ops,
- 	},
- 	.probe = atmel_pinctrl_probe,
- 	.remove = atmel_pinctrl_remove,
--- 
-2.5.0
+On Thu, Sep 24, 2015 at 03:54:00PM -0500, Adrian Alonso wrote:
+> Allow mux_reg offset zero to be a valid pin_id, on imx7d
+> mux_conf reg offset is zero for iomuxc-lspr controller
+>=20
+> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+> ---
+> Changes for V2: Resend
+> Changes for V3: Resend
+> Changes for V4: Simplify pin_id assigment when ZERO_OFFSET_VALID is set
+> Changes for V5:
+> - Drop patch pinctrl: freescale: imx: add ZERO_OFFSET_VALID flag
+> - Allow mux_reg ZERO OFFSET as pin_id
+>=20
+>  drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/fr=
+eescale/pinctrl-imx.c
+> index b9c6deb..23348d8 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -550,7 +550,7 @@ static int imx_pinctrl_parse_groups(struct device_nod=
+e *np,
+>  				conf_reg =3D -1;
+>  		}
+> =20
+> -		pin_id =3D mux_reg ? mux_reg / 4 : conf_reg / 4;
+> +		pin_id =3D (mux_reg !=3D -1) ? mux_reg / 4 : conf_reg / 4;
 
+This will break compatibility with imx35 and imx25 pinctrl drivers. They
+have definitions where mux_reg can be 0x0. See imx35-pinfunc.h and
+imx25-pinfunc.h:
+
+	git grep -E "0x0+ 0x.* 0x.* 0x.* 0x.*"
+
+This mux_reg behaviour was not described in the DT binding
+documentation. But it is used by some platforms. So even if you change
+the pincfunc headers to use "-1", it would break devicetrees compiled
+with earlier kernel versions.
+
+Regards,
+
+Markus
+
+>  		pin_reg =3D &info->pin_regs[pin_id];
+>  		pin->pin =3D pin_id;
+>  		grp->pin_ids[i] =3D pin_id;
+> --=20
+> 2.1.4
+>=20
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--va4/JQ6j8/8uipEp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWBSY+AAoJEEpcgKtcEGQQi1oP/1xLdcApkQnCkQXArBj0fUn5
+1Ru/fAkS1rPoI425kHk6fBlOCi5cpjvFSXWPKr7lP4m3oFFdhu+WOTDD4rdCEVe8
+sHBsNw4LF6hF5LpvaQNxUecFlLxjIHruAHc9Id4ZTfqXdEv6zs0SueX/wBE3bdRb
+ZuHQCdA8+NEFaYgNyX+xO05aMg2ONSO0gsn14Z7VM7or7qi0UKrZvi28BMHiEsTC
+joMAvsb3CUF/4Du6YR2CyASu3O8EYrG6KnYwZh8+DCaDMXPJWDIQQzKurT1V3wQf
+lyKp/NFgEO0IAS9KffJiZc3Yj8mrU4GpfEC+9LyXcWI6u5urHA/qKcDcmeMD46Xt
+rAexs9YjGbVF5PQh5wQvAOq4Bd3zs6D9Y0BEyi05geJmkHBIKXze2YP8eMNyN/4O
+S3NVEKyxf0xVT7CNWTIjAWKZEd7rST3wmCDvcTQfhByr6QhBTUMkoxyfXiqq2dUU
+URG8GNg7hpIpHPdo+u0YOjBrxIrQ701JEfYTq27mDPam6pA3YLIX/LEpwBs165JV
+sAXdSakdMeN3VPvozhUoj+Ck2zu55Ga5Ds+fumap1nOZFZFsG3SEvB+DW/75iO5c
+pk8TNgk1QsbntncMn/r26/H7CU6Hw8Yc0IbNlE4d2DGROwCeP6sogblufXDpQkMH
+tLrEofsZABuCu8aVQfmz
+=fo/7
+-----END PGP SIGNATURE-----
+
+--va4/JQ6j8/8uipEp--
