@@ -1,71 +1,55 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] RFT: gpio: pl061: assign the apropriate handler for irqs
-Date: Thu, 24 Sep 2015 17:56:26 -0700
-Message-ID: <1443142586-14416-1-git-send-email-linus.walleij@linaro.org>
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH] gpio:pca953x: add mechanism to simulate open drain outputs
+Date: Fri, 25 Sep 2015 07:54:36 +0200
+Message-ID: <477D98CD-B014-41AE-9A78-22D632205D14@goldelico.com>
+References: <cover.1443031678.git.hns@goldelico.com> <1B9C7F91-0025-4C1D-95AD-FD5A4B0B4176@goldelico.com> <CACRpkdYYGn71Z_pgtBpk5nwknDZ1VyRam9Fj=JDkNyt4KCWFmQ@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:34798 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752294AbbIYA4f (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 20:56:35 -0400
-Received: by padhy16 with SMTP id hy16so88357564pad.1
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 17:56:34 -0700 (PDT)
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.160]:50096 "EHLO
+	mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237AbbIYFyz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 01:54:55 -0400
+In-Reply-To: <CACRpkdYYGn71Z_pgtBpk5nwknDZ1VyRam9Fj=JDkNyt4KCWFmQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Jonas Gorski <jogo@openwrt.org>, Stefan Agner <stefan@agner.ch>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, eric miao <eric.miao@marvell.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marek Belisko <marek@goldelico.com>, Grazvydas Ignotas <notaz@openpandora.org>
 
-The PL061 can handle level IRQs and edge IRQs, however it is
-just utilizing handle_simple_irq() for all IRQs. Inspired by
-Stefan Agners patch to vf610, this assigns the right handler
-depending on what type is set up, after this handle_simple_irq()
-is only used as default and if the type is not specified.
 
-Cc: Jonas Gorski <jogo@openwrt.org>
-Cc: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-pl061.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Am 25.09.2015 um 00:11 schrieb Linus Walleij <linus.walleij@linaro.org>:
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 5b1461f6aeed..7dba5545b084 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -180,7 +180,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 			gpioiev |= bit;
- 		else
- 			gpioiev &= ~bit;
--
-+		irq_set_handler_locked(d, handle_level_irq);
- 		dev_dbg(gc->dev, "line %d: IRQ on %s level\n",
- 			offset,
- 			polarity ? "HIGH" : "LOW");
-@@ -189,7 +189,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 		gpiois &= ~bit;
- 		/* Select both edges, setting this makes GPIOEV be ignored */
- 		gpioibe |= bit;
--
-+		irq_set_handler_locked(d, handle_edge_irq);
- 		dev_dbg(gc->dev, "line %d: IRQ on both edges\n", offset);
- 	} else if ((trigger & IRQ_TYPE_EDGE_RISING) ||
- 		   (trigger & IRQ_TYPE_EDGE_FALLING)) {
-@@ -204,7 +204,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 			gpioiev |= bit;
- 		else
- 			gpioiev &= ~bit;
--
-+		irq_set_handler_locked(d, handle_edge_irq);
- 		dev_dbg(gc->dev, "line %d: IRQ on %s edge\n",
- 			offset,
- 			rising ? "RISING" : "FALLING");
-@@ -213,6 +213,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 		gpiois &= ~bit;
- 		gpioibe &= ~bit;
- 		gpioiev &= ~bit;
-+		irq_set_handler_locked(d, handle_simple_irq);
- 		dev_warn(gc->dev, "no trigger selected for line %d\n",
- 			 offset);
- 	}
--- 
-2.4.3
+> On Wed, Sep 23, 2015 at 11:13 AM, H. Nikolaus Schaller
+> <hns@goldelico.com> wrote:
+> 
+>> 1. add a DT property to specify the list of GPIO pins that are to become
+>>   "open drain"
+>> 2. if a pin is configured as "open drain", set value by either outputting a
+>>   "0" (low level) or switching to input (high impedance)
+>> 
+>> Tested on OMAP5 uEVM with TCA6424 and some LEDs connected to 5V.
+>> 
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> 
+> I understand the approach, but this is the wrong way to do it.
+> Instead of indicating that a pin on the pin controller should be
+> open drain, the *consumer* specifying its gpios = <....> should
+> do this.
+> 
+> I just sent a patch adding the bindings because Tony Lindgren
+> and Grygorii Strashko approached me similar problems so let's
+> begin with the bindings.
+> 
+> Implementing it in the kernel requires some elaboration and it's
+> going to be more complicated than this local approach, but it
+> will be more generic and reusable so that is what we need to do.
+
+Ok, I understand.
+
+Should not be too difficult to modify the driver.
+
+BR,
+Nikolaus Schaller
+
 
