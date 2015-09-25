@@ -1,36 +1,52 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
-Date: Fri, 25 Sep 2015 13:59:02 -0700
-Message-ID: <20150925205902.GZ3529@tiger>
-References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
- <1443128043-21063-4-git-send-email-aalonso@freescale.com>
- <20150925104726.GJ11805@pengutronix.de>
- <20150925190725.GX3529@tiger>
- <BN3PR03MB150994443644800594BE9BA2A8420@BN3PR03MB1509.namprd03.prod.outlook.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH v6 1/6] ARM: dts: imx: imx7d add iomuxc lpsr device node
+Date: Fri, 25 Sep 2015 16:05:57 -0500
+Message-ID: <1443215162-13716-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53450 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933208AbbIYU7L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Sep 2015 16:59:11 -0400
-Content-Disposition: inline
-In-Reply-To: <BN3PR03MB150994443644800594BE9BA2A8420@BN3PR03MB1509.namprd03.prod.outlook.com>
+Received: from mail-bl2on0146.outbound.protection.outlook.com ([65.55.169.146]:31169
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S933210AbbIYVHz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 17:07:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Alonso Adrian <aalonso@freescale.com>
-Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Yibin Gong <yibin.gong@freescale.com>
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Fri, Sep 25, 2015 at 07:16:49PM +0000, Alonso Adrian wrote:
-> > Ah, sorry, I'm screwed on the previous review.  So we still need the flag
-> > ZERO_OFFSET_VALID to convert invalid 0 mux_reg to -1.
-> > 
-> > @Adrian,
-> > 
-> > Will the following change just work for you?
-> @Shawn, yes the change will work, do you want me to prepare a new patch series?
+Add device tree node to support iomuxc-lpsr controller, fsl,iput-sel
+phandle allows to get input select register base address which is
+shared from main iomuxc controller.
 
-Most of the patches in this series will go to Linus.  So that's his
-call, but I suggest you resend.
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+Changes for V2: Resend
+Changes for V3: Add phandle to get input select register base address
+Changes for V4: Resend
+Changes for V5: Rename property to fsl,input-sel
+Changes for V6: Resend
 
-Shawn
+ arch/arm/boot/dts/imx7d.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
+index 15c2193..92ef0a9 100644
+--- a/arch/arm/boot/dts/imx7d.dtsi
++++ b/arch/arm/boot/dts/imx7d.dtsi
+@@ -446,6 +446,12 @@
+ 				status = "disabled";
+ 			};
+ 
++			iomuxc_lpsr: iomuxc-lpsr@302c0000 {
++				compatible = "fsl,imx7d-iomuxc-lpsr";
++				reg = <0x302c0000 0x10000>;
++				fsl,input-sel = <&iomuxc>;
++			};
++
+ 			gpt1: gpt@302d0000 {
+ 				compatible = "fsl,imx7d-gpt", "fsl,imx6sx-gpt";
+ 				reg = <0x302d0000 0x10000>;
+-- 
+2.1.4
+
