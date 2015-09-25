@@ -1,59 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/9] sh-pfc: modify PINMUX_IPSR_MSEL() macro order
-Date: Fri, 25 Sep 2015 09:43:54 -0700
-Message-ID: <CACRpkdZo86njR0868ToH2hsjQswCHEjNz7Ff4bsq7aGONTKriQ@mail.gmail.com>
-References: <87wpw9jn3i.wl%kuninori.morimoto.gx@renesas.com>
-	<87io7tjmk6.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH v5 1/7] pinctrl: freescale: imx: fix system crash if
+ enable two pinctl instances
+Date: Fri, 25 Sep 2015 09:50:34 -0700
+Message-ID: <CACRpkdaW+_K=nsP+PFu7o0HZaR++xs2iQ+WcJwx23=_mon-AMw@mail.gmail.com>
+References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:36750 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756344AbbIYQnz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 12:43:55 -0400
-Received: by obbmp4 with SMTP id mp4so86357119obb.3
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2015 09:43:54 -0700 (PDT)
-In-Reply-To: <87io7tjmk6.wl%kuninori.morimoto.gx@renesas.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:33038 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932234AbbIYQuf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 12:50:35 -0400
+Received: by obbbh8 with SMTP id bh8so86376780obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2015 09:50:34 -0700 (PDT)
+In-Reply-To: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+To: Adrian Alonso <aalonso@freescale.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawnguo@kernel.org>, =?UTF-8?B?5p2O5pm6?= <lznuaa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "Anson.Huang@freescale.com" <Anson.Huang@freescale.com>, Frank Li <Frank.Li@freescale.com>, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Wed, Sep 2, 2015 at 12:44 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+On Thu, Sep 24, 2015 at 1:53 PM, Adrian Alonso <aalonso@freescale.com> wrote:
 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> From: Robin Gong <b38343@freescale.com>
 >
-> The difference between PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA()
-> are FN_xxx order, and PINMUX_IPSR_MSEL() is used only from r8a7778.
-> Now it r8a7778 works correctly with PINMUX_IPSR_MODSEL_DATA() order.
-> This means we can merge PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA().
+> Fix system chrash caused by groups whose number is smaller than the number
+> of groups of the last pinctl instance which is not initialized.
 >
-> Current PFC driver is very difficult to read, because macro names are
-> using different lenth. Especially PINMUX_IPSR_MODSEL_DATA() is well
-> used macro
->
->         PINMUX_IPSR_NOGP(ispr, ...)
->         PINMUX_IPSR_DATA(ipsr, ...)
->         PINMUX_IPSR_NOGM(ispr, ...)
->         PINMUX_IPSR_NOFN(ipsr, ...)
->         PINMUX_IPSR_MSEL(ipsr, ...)
->         PINMUX_IPSR_MODSEL_DATA(ipsr, ...)
->
-> It can be readable if we can merge PINMUX_IPSR_MSEL() and PINMUX_IPSR_MODSEL_DATA()
->
->         PINMUX_IPSR_NOGP(ispr, ...)
->         PINMUX_IPSR_DATA(ipsr, ...)
->         PINMUX_IPSR_NOGM(ispr, ...)
->         PINMUX_IPSR_NOFN(ipsr, ...)
->         PINMUX_IPSR_MSEL(ipsr, ...)
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> iMX7D supports two iomux controllers (iomuxc-lpsr and iomuxc) on probing
+> the second instance (iomuxc) the chrash below occurs.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Looks like this is not a regression so should not be applied separately
+for fixes?
 
-for the series, Geert will decide how to merge and send a
-pull request for the patches to me.
+I am waiting for one of the Freescale maintainers to review this, Markus
+is raising issues with the DT handling and so the SoC maintainers need
+to be involved in this: Shawn and/or Sascha.
 
 Yours,
 Linus Walleij
