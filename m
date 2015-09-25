@@ -1,62 +1,71 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: vf610: handle level IRQ's properly
-Date: Thu, 24 Sep 2015 16:03:28 -0700
-Message-ID: <CACRpkdYmaOQ-N4yGXo3_95dTVhF6FC0C9O2w+811=xLTO7gm0g@mail.gmail.com>
-References: <1440197802-29720-1-git-send-email-stefan@agner.ch>
-	<CACRpkdYqU_yvZE4WS2jBDOhemPy7dcHeOoj_dG61hCL8ugTMYg@mail.gmail.com>
-	<99db8c092e8b54d485e88887630d51c0@agner.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <99db8c092e8b54d485e88887630d51c0@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>, Tien Hock Loh <thloh@altera.com>, Markus Mayer <markus.mayer@linaro.org>, Markus Mayer <mmayer@broadcom.com>, Andreas Larsson <andreas@gaisler.com>, David Cohen <david.a.cohen@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Richard_R=C3=B6jfors?= <richard.rojfors@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] RFT: gpio: pl061: assign the apropriate handler for irqs
+Date: Thu, 24 Sep 2015 17:56:26 -0700
+Message-ID: <1443142586-14416-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:34798 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752294AbbIYA4f (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Sep 2015 20:56:35 -0400
+Received: by padhy16 with SMTP id hy16so88357564pad.1
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2015 17:56:34 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Jonas Gorski <jogo@openwrt.org>, Stefan Agner <stefan@agner.ch>
 
-On Wed, Aug 26, 2015 at 10:11 AM, Stefan Agner <stefan@agner.ch> wrote:
-> On 2015-08-26 05:47, Linus Walleij wrote:
->> On Sat, Aug 22, 2015 at 12:56 AM, Stefan Agner <stefan@agner.ch> wrote:
->>
->>> The GPIO IRQ controller is able to generate level triggered
->>> interrupts, however, these were handled by handle_simple_irq so far
->>> which did not take care of IRQ masking. This lead to "nobody cared
->>> (try booting with the "irqpoll" option)" stack traces.
->>>
->>> Use the generic interrupt handlers depending on the IRQ type.
->>>
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>
->> Patch applied.
->
-> Thx
->
->
->> Hm, this looks like a problem that could exist in a few more
->> GPIO drivers. Can you look around and see if there is something
->> immediately suspicious in drivers/gpio?
->
-> Just looked a bit around. There are some which use handle_simple_irq but
-> also run their handler in threaded/one-shot handler. I guess in that
-> case it is fine to use the simple_irq handler.
->
-> However, those GPIO drivers look suspicious:
->
-> gpio-altera.c: Uses handle_simple_irq, supports edge and level
-> gpio-bcm-kona.c: Uses handle_simple_irq, supports only edge
-> gpio-grgpio.c: Uses handle_simple_irq, supports edge and level
-> gpio-intel-mid.c: Uses handle_simple_irq, supports only edge
-> gpio-lynxpoint.c: Uses handle_simple_irq, supports edge and level
-> gpio-ml-ioh.c: Uses handle_simple_irq, supports edge and level
-> gpio-pl061.c: Uses handle_simple_irq, supports edge and level
-> gpio-rcar.c: Uses handle_level_irq, supports edge and level
-> gpio-timberdale.c: Uses handle_simple_irq, supports edge and level
+The PL061 can handle level IRQs and edge IRQs, however it is
+just utilizing handle_simple_irq() for all IRQs. Inspired by
+Stefan Agners patch to vf610, this assigns the right handler
+depending on what type is set up, after this handle_simple_irq()
+is only used as default and if the type is not specified.
 
-Thanks!
+Cc: Jonas Gorski <jogo@openwrt.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-pl061.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I'm gonna look at pl061 myself, for the rest I ping the maintainers,
-(To-line) I suspect a lot of them have never really been tested with
-level IRQs because most just use edge IRQs.
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 5b1461f6aeed..7dba5545b084 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -180,7 +180,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 			gpioiev |= bit;
+ 		else
+ 			gpioiev &= ~bit;
+-
++		irq_set_handler_locked(d, handle_level_irq);
+ 		dev_dbg(gc->dev, "line %d: IRQ on %s level\n",
+ 			offset,
+ 			polarity ? "HIGH" : "LOW");
+@@ -189,7 +189,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 		gpiois &= ~bit;
+ 		/* Select both edges, setting this makes GPIOEV be ignored */
+ 		gpioibe |= bit;
+-
++		irq_set_handler_locked(d, handle_edge_irq);
+ 		dev_dbg(gc->dev, "line %d: IRQ on both edges\n", offset);
+ 	} else if ((trigger & IRQ_TYPE_EDGE_RISING) ||
+ 		   (trigger & IRQ_TYPE_EDGE_FALLING)) {
+@@ -204,7 +204,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 			gpioiev |= bit;
+ 		else
+ 			gpioiev &= ~bit;
+-
++		irq_set_handler_locked(d, handle_edge_irq);
+ 		dev_dbg(gc->dev, "line %d: IRQ on %s edge\n",
+ 			offset,
+ 			rising ? "RISING" : "FALLING");
+@@ -213,6 +213,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 		gpiois &= ~bit;
+ 		gpioibe &= ~bit;
+ 		gpioiev &= ~bit;
++		irq_set_handler_locked(d, handle_simple_irq);
+ 		dev_warn(gc->dev, "no trigger selected for line %d\n",
+ 			 offset);
+ 	}
+-- 
+2.4.3
 
-Yours,
-Linus Walleij
