@@ -1,40 +1,36 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH 0/2] convert to use generic irq handler
-Date: Fri, 25 Sep 2015 13:36:21 -0700
-Message-ID: <5605B045.9080205@oracle.com>
-References: <1443209283-20781-1-git-send-email-grygorii.strashko@ti.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
+Date: Fri, 25 Sep 2015 13:59:02 -0700
+Message-ID: <20150925205902.GZ3529@tiger>
+References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
+ <1443128043-21063-4-git-send-email-aalonso@freescale.com>
+ <20150925104726.GJ11805@pengutronix.de>
+ <20150925190725.GX3529@tiger>
+ <BN3PR03MB150994443644800594BE9BA2A8420@BN3PR03MB1509.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1443209283-20781-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, tony@atomide.com
-Cc: linux-omap@vger.kernel.org, Austin Schuh <austin@peloton-tech.com>, philipp@peloton-tech.com, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:53450 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933208AbbIYU7L (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 16:59:11 -0400
+Content-Disposition: inline
+In-Reply-To: <BN3PR03MB150994443644800594BE9BA2A8420@BN3PR03MB1509.namprd03.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alonso Adrian <aalonso@freescale.com>
+Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Yibin Gong <yibin.gong@freescale.com>
 
-On 9/25/15 12:28 PM, Grygorii Strashko wrote:
-> This patch series contains patches which fixes wrong APIs usage in atomic
-> context on RT-kernel. The final goal is to make TI OMAP GPIO driver
-> compatible with -RT kernel as much as possible.
->
-> Patch 1: required to be compatible with -RT kernel, because PM runtime's
-> irq_safe mode is incompatible with -RT.
-> Patch 2: This patch converts TI OMAP GPIO driver to use generic irq
->   handler instead of chained IRQ handler. This way OMAP GPIO driver will be
->   compatible with RT-kernel where it will be forced thread IRQ handler
->   while in non-RT kernel it still will be executed in HW IRQ context.
->
-> Boot, basic gpio functionality tested on:
->   dra7-evm, BeagleBone(white), am43xx-gpevm, am437x-sk
-> Manually tested on dra7-evm including suspend/resume and wakeup.
->
-> Links on RFC:
->   https://lkml.org/lkml/2015/8/18/161
->   https://lkml.org/lkml/2015/8/18/162
->
-> Grygorii Strashko (2):
->    gpio: omap: move pm runtime in irq_chip.irq_bus_lock/sync_unlock
->    gpio: omap: convert to use generic irq handler
->
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+On Fri, Sep 25, 2015 at 07:16:49PM +0000, Alonso Adrian wrote:
+> > Ah, sorry, I'm screwed on the previous review.  So we still need the flag
+> > ZERO_OFFSET_VALID to convert invalid 0 mux_reg to -1.
+> > 
+> > @Adrian,
+> > 
+> > Will the following change just work for you?
+> @Shawn, yes the change will work, do you want me to prepare a new patch series?
+
+Most of the patches in this series will go to Linus.  So that's his
+call, but I suggest you resend.
+
+Shawn
