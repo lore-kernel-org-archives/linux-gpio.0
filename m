@@ -1,115 +1,45 @@
-From: Alonso Adrian <aalonso@freescale.com>
-Subject: RE: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
-Date: Fri, 25 Sep 2015 19:16:49 +0000
-Message-ID: <BN3PR03MB150994443644800594BE9BA2A8420@BN3PR03MB1509.namprd03.prod.outlook.com>
-References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
- <1443128043-21063-4-git-send-email-aalonso@freescale.com>
- <20150925104726.GJ11805@pengutronix.de> <20150925190725.GX3529@tiger>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [PATCH 0/2] convert to use generic irq handler
+Date: Fri, 25 Sep 2015 12:28:01 -0700
+Message-ID: <1443209283-20781-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0113.outbound.protection.outlook.com ([157.56.110.113]:15904
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932848AbbIYTQw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 15:16:52 -0400
-In-Reply-To: <20150925190725.GX3529@tiger>
-Content-Language: en-US
+Received: from arroyo.ext.ti.com ([192.94.94.40]:49191 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932918AbbIYT2N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 15:28:13 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Li Frank <Frank.Li@freescale.com>, Nitin Garg <nitin.garg@freescale.com>, Huang Anson <Anson.Huang@freescale.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Yibin Gong <yibin.gong@freescale.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ssantosh@kernel.org, tony@atomide.com
+Cc: linux-omap@vger.kernel.org, Austin Schuh <austin@peloton-tech.com>, philipp@peloton-tech.com, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Friday, September 25, 2015 2:07 PM
-> To: Markus Pargmann <mpa@pengutronix.de>
-> Cc: Alonso Lazcano Adrian-B38018 <aalonso@freescale.com>; linux-arm-
-> kernel@lists.infradead.org; shawn.guo@linaro.org; linus.walleij@linaro.org;
-> lznuaa@gmail.com; devicetree@vger.kernel.org; Li Frank-B20596
-> <Frank.Li@freescale.com>; Garg Nitin-B37173 <nitin.garg@freescale.com>;
-> Huang Yongcai-B20788 <Anson.Huang@freescale.com>; linux-
-> gpio@vger.kernel.org; robh+dt@kernel.org; kernel@pengutronix.de; Gong
-> Yibin-B38343 <yibin.gong@freescale.com>
-> Subject: Re: [PATCH v5 4/7] pinctrl: freescale: imx: allow mux_reg offset zero
-> 
-> On Fri, Sep 25, 2015 at 12:47:26PM +0200, Markus Pargmann wrote:
-> > On Thu, Sep 24, 2015 at 03:54:00PM -0500, Adrian Alonso wrote:
-> > > Allow mux_reg offset zero to be a valid pin_id, on imx7d mux_conf
-> > > reg offset is zero for iomuxc-lspr controller
-> > >
-> > > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
-> > > ---
-> > > Changes for V2: Resend
-> > > Changes for V3: Resend
-> > > Changes for V4: Simplify pin_id assigment when ZERO_OFFSET_VALID is
-> > > set Changes for V5:
-> > > - Drop patch pinctrl: freescale: imx: add ZERO_OFFSET_VALID flag
-> > > - Allow mux_reg ZERO OFFSET as pin_id
-> > >
-> > >  drivers/pinctrl/freescale/pinctrl-imx.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> > > b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > > index b9c6deb..23348d8 100644
-> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > > @@ -550,7 +550,7 @@ static int imx_pinctrl_parse_groups(struct
-> device_node *np,
-> > >  				conf_reg = -1;
-> > >  		}
-> > >
-> > > -		pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
-> > > +		pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
-> >
-> > This will break compatibility with imx35 and imx25 pinctrl drivers.
-> > They have definitions where mux_reg can be 0x0. See imx35-pinfunc.h
-> > and
-> > imx25-pinfunc.h:
-> >
-> > 	git grep -E "0x0+ 0x.* 0x.* 0x.* 0x.*"
-> >
-> > This mux_reg behaviour was not described in the DT binding
-> > documentation. But it is used by some platforms. So even if you change
-> > the pincfunc headers to use "-1", it would break devicetrees compiled
-> > with earlier kernel versions.
-> 
-> Ah, sorry, I'm screwed on the previous review.  So we still need the flag
-> ZERO_OFFSET_VALID to convert invalid 0 mux_reg to -1.
-> 
-> @Adrian,
-> 
-> Will the following change just work for you?
-@Shawn, yes the change will work, do you want me to prepare a new patch series?
-> 
-> Shawn
-> 
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index d7b98ba36825..ae801ba7e226 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -542,6 +542,9 @@ static int imx_pinctrl_parse_groups(struct device_node
-> *np,
->                 struct imx_pin_reg *pin_reg;
->                 struct imx_pin *pin = &grp->pins[i];
-> 
-> +               if (!(info->flags & ZERO_OFFSET_VALID) && !mux_reg)
-> +                       mux_reg = -1;
-> +
->                 if (info->flags & SHARE_MUX_CONF_REG) {
->                         conf_reg = mux_reg;
->                 } else {
-> @@ -550,7 +553,7 @@ static int imx_pinctrl_parse_groups(struct device_node
-> *np,
->                                 conf_reg = -1;
->                 }
-> 
-> -               pin_id = mux_reg ? mux_reg / 4 : conf_reg / 4;
-> +               pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
->                 pin_reg = &info->pin_regs[pin_id];
->                 pin->pin = pin_id;
->                 grp->pin_ids[i] = pin_id;
+This patch series contains patches which fixes wrong APIs usage in atomic
+context on RT-kernel. The final goal is to make TI OMAP GPIO driver
+compatible with -RT kernel as much as possible.
+
+Patch 1: required to be compatible with -RT kernel, because PM runtime's
+irq_safe mode is incompatible with -RT.
+Patch 2: This patch converts TI OMAP GPIO driver to use generic irq
+ handler instead of chained IRQ handler. This way OMAP GPIO driver will be
+ compatible with RT-kernel where it will be forced thread IRQ handler
+ while in non-RT kernel it still will be executed in HW IRQ context.
+
+Boot, basic gpio functionality tested on:
+ dra7-evm, BeagleBone(white), am43xx-gpevm, am437x-sk
+Manually tested on dra7-evm including suspend/resume and wakeup.
+
+Links on RFC:
+ https://lkml.org/lkml/2015/8/18/161
+ https://lkml.org/lkml/2015/8/18/162
+
+Grygorii Strashko (2):
+  gpio: omap: move pm runtime in irq_chip.irq_bus_lock/sync_unlock
+  gpio: omap: convert to use generic irq handler
+
+ drivers/gpio/gpio-omap.c | 80 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 42 insertions(+), 38 deletions(-)
+
+-- 
+2.5.1
 
