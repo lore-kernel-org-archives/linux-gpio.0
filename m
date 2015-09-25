@@ -1,32 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/3] pinctrl: rockchip: add support for the rk3036
-Date: Fri, 25 Sep 2015 09:25:52 -0700
-Message-ID: <CACRpkdaj0YMtJ_+KxiCmcVN4OZO1fkXHDrVOizMoysAiCV_HvA@mail.gmail.com>
-References: <1440740808-15004-1-git-send-email-zhengxing@rock-chips.com>
-	<1440740808-15004-3-git-send-email-zhengxing@rock-chips.com>
+Subject: Re: [PATCH] gpio: ath79: Convert to the state container design pattern
+Date: Fri, 25 Sep 2015 09:39:51 -0700
+Message-ID: <CACRpkdbX+cMmS-j85zqhPSa8XRQHtus6HXqZrLo9b++KAHDc5g@mail.gmail.com>
+References: <1441100282-13584-1-git-send-email-albeu@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:36621 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932487AbbIYQZx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 12:25:53 -0400
-Received: by obbmp4 with SMTP id mp4so85980274obb.3
-        for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2015 09:25:52 -0700 (PDT)
-In-Reply-To: <1440740808-15004-3-git-send-email-zhengxing@rock-chips.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:33538 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932234AbbIYQjv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Sep 2015 12:39:51 -0400
+Received: by obbbh8 with SMTP id bh8so86148308obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2015 09:39:51 -0700 (PDT)
+In-Reply-To: <1441100282-13584-1-git-send-email-albeu@free.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Xing Zheng <zhengxing@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alban Bedel <albeu@free.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Gabor Juhos <juhosg@openwrt.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Aug 27, 2015 at 10:46 PM, Xing Zheng <zhengxing@rock-chips.com> wrote:
+On Tue, Sep 1, 2015 at 2:38 AM, Alban Bedel <albeu@free.fr> wrote:
 
-> Many parts of pinctrl rk3036 are similar to rk2928's.
+> Turn the ath79 driver into a true driver supporting multiple
+> instances. While at it also removed unneed includes and make use of
+> the BIT() macro.
 >
-> Signed-off-by: Xing Zheng <zhengxing@rock-chips.com>
+> Signed-off-by: Alban Bedel <albeu@free.fr>
+> ---
+>
+> This patch apply on top of my previous MIPS GPIO patches that are pending
+> for 4.3, so it might be better to take it thru the MIPS tree.
 
-Patch applied with Heiko's ACK, and THANKS to Rockchip and
-Xing for working in the open community with this nowadays, way to go!
+Patch applied (for v4.4).
+
+Would you consider sending a patch adding yourself as maintainer
+for this file in MAINTAINERS?
 
 Yours,
 Linus Walleij
