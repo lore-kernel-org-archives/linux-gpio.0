@@ -1,15 +1,15 @@
 From: Shawn Guo <shawnguo@kernel.org>
 Subject: Re: [PATCH v6 1/6] ARM: dts: imx: imx7d add iomuxc lpsr device node
-Date: Fri, 25 Sep 2015 17:28:49 -0700
-Message-ID: <20150926002848.GA3529@tiger>
+Date: Fri, 25 Sep 2015 17:33:11 -0700
+Message-ID: <20150926003310.GB3529@tiger>
 References: <1443215162-13716-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33165 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:33263 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751037AbbIZA24 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Sep 2015 20:28:56 -0400
+	id S1751037AbbIZAdS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 20:33:18 -0400
 Content-Disposition: inline
 In-Reply-To: <1443215162-13716-1-git-send-email-aalonso@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -19,11 +19,14 @@ Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@li
 
 On Fri, Sep 25, 2015 at 04:05:57PM -0500, Adrian Alonso wrote:
 > Add device tree node to support iomuxc-lpsr controller, fsl,iput-sel
+
+s/fsl,iput-sel/fsl,input-sel
+
 > phandle allows to get input select register base address which is
 > shared from main iomuxc controller.
 > 
 > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 
-For the series,
+I fixed above typo and applied the patch.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Shawn
