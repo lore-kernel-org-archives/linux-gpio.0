@@ -1,93 +1,29 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
-Date: Fri, 25 Sep 2015 22:24:46 +0100
-Message-ID: <20150925212446.GL27197@x1>
-References: <1443106374-4126-1-git-send-email-afd@ti.com>
- <1443106374-4126-4-git-send-email-afd@ti.com>
- <20150925165059.GI27197@x1>
- <56059CDA.4020004@ti.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v6 1/6] ARM: dts: imx: imx7d add iomuxc lpsr device node
+Date: Fri, 25 Sep 2015 17:28:49 -0700
+Message-ID: <20150926002848.GA3529@tiger>
+References: <1443215162-13716-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:33165 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751037AbbIZA24 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 25 Sep 2015 20:28:56 -0400
 Content-Disposition: inline
-In-Reply-To: <56059CDA.4020004-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1443215162-13716-1-git-send-email-aalonso@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Adrian Alonso <aalonso@freescale.com>
+Cc: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, linus.walleij@linaro.org, lznuaa@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On Fri, 25 Sep 2015, Andrew F. Davis wrote:
+On Fri, Sep 25, 2015 at 04:05:57PM -0500, Adrian Alonso wrote:
+> Add device tree node to support iomuxc-lpsr controller, fsl,iput-sel
+> phandle allows to get input select register base address which is
+> shared from main iomuxc controller.
+> 
+> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 
-> On 09/25/2015 11:50 AM, Lee Jones wrote:
-> >On Thu, 24 Sep 2015, Andrew F. Davis wrote:
-> >
-> >>This patch adds support for TPS65912 mfd device. It provides
-> >>communication through the I2C and SPI interfaces. It contains
-> >>the following components:
-> >>
-> >>  - Regulators
-> >>  - GPIO controller
-> >>
-> >>Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
-> >>---
-> >>  drivers/mfd/Kconfig          |  24 +++
-> >>  drivers/mfd/Makefile         |   3 +
-> >>  drivers/mfd/tps65912-core.c  | 114 +++++++++++++
-> >>  drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
-> >>  drivers/mfd/tps65912-spi.c   |  85 ++++++++++
-> >>  include/linux/mfd/tps65912.h | 393 ++++++++++++++++++++++++++++++=
-+++++++++++++
-> >>  6 files changed, 705 insertions(+)
-> >>  create mode 100644 drivers/mfd/tps65912-core.c
-> >>  create mode 100644 drivers/mfd/tps65912-i2c.c
-> >>  create mode 100644 drivers/mfd/tps65912-spi.c
-> >>  create mode 100644 include/linux/mfd/tps65912.h
-> >
-> >[...]
-> >
-> >>+#define TPS65912_IRQ(_name, _reg, _offset)			\
-> >>+	[TPS65912_IRQ_ ## _name] =3D {				\
-> >>+		.mask =3D TPS65912_ ## _reg ## _ ## _name,	\
-> >>+		.reg_offset =3D _offset,				\
-> >>+	}
-> >
-> >I told you about this already.
-> >
-> >If you want this set to be merged for v4.3 then you'll need commit
-> >b4fe8ba ("regmap: Add generic macro to define regmap_irq") from my
-> >tree.
->=20
-> You asked me to submit this to Mark Brown, I didn't realize you also
-> wanted me to use the one in your tree. Using yours will make my lines
-> over 80 chars and so it kind of defeats the purpose but I'll do it
-> for v4.
+For the series,
 
-I asked two of you to upstream a generic incarnation of your
-implementation.  The other guy got there first.  Now I want everyone
-to use it instead of hand-rolling their own.
-
-> >[...]
-> >
-> >>+static struct i2c_driver tps65912_i2c_driver =3D {
-> >>+	.driver		=3D {
-> >>+		.name	=3D "tps65912",
-> >>+		.of_match_table =3D tps65912_i2c_of_match_table,
-> >
-> >of_match_ptr()
-> >
->=20
-> Why? tps65912_i2c_of_match_table is always compiled in.
-
-But it needn't be.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Shawn Guo <shawnguo@kernel.org>
