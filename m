@@ -1,175 +1,141 @@
-From: Thomas Hebb <tommyhebb@gmail.com>
-Subject: [PATCH] pinctrl: berlin: fix BG2CD field widths
-Date: Sat, 26 Sep 2015 21:03:21 -0400
-Message-ID: <56074059.10806@gmail.com>
+From: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] gpio: Use __gpiod_request directly
+Date: Sun, 27 Sep 2015 16:32:09 +0200
+Message-ID: <20150927143209.GE19121@pengutronix.de>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+ <1440920686-6892-2-git-send-email-mpa@pengutronix.de>
+ <CAAVeFuJPzjJ6td9UZ993sbfOyEOo=7WVu-Y2KnFgXewyt_8knA@mail.gmail.com>
+ <CACRpkdaBxAhWKnJ3vsd+K6xMgaym7D9M0zTEMu_=fmiUNpxTEA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f176.google.com ([209.85.220.176]:36836 "EHLO
-	mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754060AbbI0BDY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Sep 2015 21:03:24 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="84ND8YJRMFlzkrP4"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaBxAhWKnJ3vsd+K6xMgaym7D9M0zTEMu_=fmiUNpxTEA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arun Bharadwaj <arun-EiDWdcs9+yZBDgjK7y7TUQ@public.gmane.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chris R <chrisrfq-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
 
-The previous register layout was incorrect, many of the fields having
-fewer bits than were needed to represent all their modes. The new layout
-is taken from the bootloader source of a BG2CD device.
 
-Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
----
- drivers/pinctrl/berlin/berlin-bg2cd.c | 62
-++++++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 30 deletions(-)
+--84ND8YJRMFlzkrP4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c
-b/drivers/pinctrl/berlin/berlin-bg2cd.c
-index 0cb793a..af5e465 100644
---- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-@@ -19,24 +19,24 @@
+Hi,
 
- static const struct berlin_desc_group berlin2cd_soc_pinctrl_groups[] = {
- 	/* G */
--	BERLIN_PINCTRL_GROUP("G0", 0x00, 0x1, 0x00,
-+	BERLIN_PINCTRL_GROUP("G0", 0x00, 0x3, 0x00,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "jtag"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "led"),
- 		BERLIN_PINCTRL_FUNCTION(0x3, "pwm")),
--	BERLIN_PINCTRL_GROUP("G1", 0x00, 0x2, 0x01,
-+	BERLIN_PINCTRL_GROUP("G1", 0x00, 0x3, 0x03,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "sd0"),
- 		BERLIN_PINCTRL_FUNCTION(0x6, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x7, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G2", 0x00, 0x2, 0x02,
-+	BERLIN_PINCTRL_GROUP("G2", 0x00, 0x3, 0x06,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "sd0"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "fe"),
- 		BERLIN_PINCTRL_FUNCTION(0x3, "pll"),
- 		BERLIN_PINCTRL_FUNCTION(0x6, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x7, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G3", 0x00, 0x2, 0x04,
-+	BERLIN_PINCTRL_GROUP("G3", 0x00, 0x3, 0x09,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "sd0"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "twsi2"),
-@@ -44,7 +44,7 @@ static const struct berlin_desc_group
-berlin2cd_soc_pinctrl_groups[] = {
- 		BERLIN_PINCTRL_FUNCTION(0x4, "fe"),
- 		BERLIN_PINCTRL_FUNCTION(0x6, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x7, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G4", 0x00, 0x2, 0x06,
-+	BERLIN_PINCTRL_GROUP("G4", 0x00, 0x3, 0x0c,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "sd0"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "twsi3"),
-@@ -52,7 +52,7 @@ static const struct berlin_desc_group
-berlin2cd_soc_pinctrl_groups[] = {
- 		BERLIN_PINCTRL_FUNCTION(0x4, "pwm"),
- 		BERLIN_PINCTRL_FUNCTION(0x6, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x7, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G5", 0x00, 0x3, 0x08,
-+	BERLIN_PINCTRL_GROUP("G5", 0x00, 0x3, 0x0f,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "sd0"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "twsi3"),
-@@ -60,64 +60,66 @@ static const struct berlin_desc_group
-berlin2cd_soc_pinctrl_groups[] = {
- 		BERLIN_PINCTRL_FUNCTION(0x4, "pwm"),
- 		BERLIN_PINCTRL_FUNCTION(0x6, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x7, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G6", 0x00, 0x2, 0x0b,
-+	BERLIN_PINCTRL_GROUP("G6", 0x00, 0x3, 0x12,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "uart0"),	/* RX/TX */
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G7", 0x00, 0x3, 0x0d,
-+	BERLIN_PINCTRL_GROUP("G7", 0x00, 0x3, 0x15,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "eddc"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "twsi1"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "gpio")),
--	BERLIN_PINCTRL_GROUP("G8", 0x00, 0x3, 0x10,
-+	BERLIN_PINCTRL_GROUP("G8", 0x00, 0x3, 0x18,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "spi1"), /* SS0n */
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G9", 0x00, 0x3, 0x13,
-+	BERLIN_PINCTRL_GROUP("G9", 0x00, 0x3, 0x1b,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "gpio"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "spi1"), /* SS1n/SS2n */
--		BERLIN_PINCTRL_FUNCTION(0x2, "twsi0")),
--	BERLIN_PINCTRL_GROUP("G10", 0x00, 0x2, 0x16,
-+		BERLIN_PINCTRL_FUNCTION(0x3, "twsi0")),
-+	BERLIN_PINCTRL_GROUP("G10", 0x00, 0x2, 0x1e,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "spi1"), /* CLK */
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G11", 0x00, 0x2, 0x18,
-+	BERLIN_PINCTRL_GROUP("G11", 0x04, 0x2, 0x00,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "spi1"), /* SDI/SDO */
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G12", 0x00, 0x3, 0x1a,
-+	BERLIN_PINCTRL_GROUP("G12", 0x04, 0x3, 0x02,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "usb1"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G13", 0x04, 0x3, 0x00,
-+	BERLIN_PINCTRL_GROUP("G13", 0x04, 0x3, 0x05,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "nand"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "usb0_dbg"),
- 		BERLIN_PINCTRL_FUNCTION(0x2, "usb1_dbg")),
--	BERLIN_PINCTRL_GROUP("G14", 0x04, 0x1, 0x03,
-+	BERLIN_PINCTRL_GROUP("G14", 0x04, 0x1, 0x08,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "nand"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G15", 0x04, 0x2, 0x04,
-+	BERLIN_PINCTRL_GROUP("G15", 0x04, 0x3, 0x09,
- 		BERLIN_PINCTRL_FUNCTION(0x0, "jtag"),
- 		BERLIN_PINCTRL_FUNCTION(0x1, "gpio")),
--	BERLIN_PINCTRL_GROUP("G16", 0x04, 0x3, 0x06,
-+	BERLIN_PINCTRL_GROUP("G16", 0x04, 0x3, 0x0c,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G17", 0x04, 0x3, 0x09,
-+	BERLIN_PINCTRL_GROUP("G17", 0x04, 0x3, 0x0f,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G18", 0x04, 0x1, 0x0c,
-+	BERLIN_PINCTRL_GROUP("G18", 0x04, 0x2, 0x12,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G19", 0x04, 0x1, 0x0d,
-+	BERLIN_PINCTRL_GROUP("G19", 0x04, 0x2, 0x14,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G20", 0x04, 0x1, 0x0e,
-+	BERLIN_PINCTRL_GROUP("G20", 0x04, 0x2, 0x16,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G21", 0x04, 0x3, 0x0f,
-+	BERLIN_PINCTRL_GROUP("G21", 0x04, 0x3, 0x18,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G22", 0x04, 0x3, 0x12,
-+	BERLIN_PINCTRL_GROUP("G22", 0x04, 0x3, 0x1b,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G23", 0x04, 0x3, 0x15,
-+	BERLIN_PINCTRL_GROUP("G23", 0x08, 0x3, 0x00,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G24", 0x04, 0x2, 0x18,
-+	BERLIN_PINCTRL_GROUP("G24", 0x08, 0x2, 0x03,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G25", 0x04, 0x2, 0x1a,
-+	BERLIN_PINCTRL_GROUP("G25", 0x08, 0x2, 0x05,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G26", 0x04, 0x1, 0x1c,
-+	BERLIN_PINCTRL_GROUP("G26", 0x08, 0x1, 0x07,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G27", 0x04, 0x1, 0x1d,
-+	BERLIN_PINCTRL_GROUP("G27", 0x08, 0x2, 0x08,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
--	BERLIN_PINCTRL_GROUP("G28", 0x04, 0x2, 0x1e,
-+	BERLIN_PINCTRL_GROUP("G28", 0x08, 0x3, 0x0a,
-+		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
-+	BERLIN_PINCTRL_GROUP("G29", 0x08, 0x3, 0x0d,
- 		BERLIN_PINCTRL_FUNCTION_UNKNOWN),
- };
+On Thu, Sep 24, 2015 at 10:49:57AM -0700, Linus Walleij wrote:
+> On Tue, Sep 22, 2015 at 9:25 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wro=
+te:
+> > On Sun, Aug 30, 2015 at 4:44 PM, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> w=
+rote:
+> >> There is no reason to find out chip and hwnum to use to request a gpio
+> >> and get another gpio descriptor. We already have the descriptor we want
+> >> to use so we can directly use it.
+> >>
+> >> Signed-off-by: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+> >> ---
+> >>  drivers/gpio/gpiolib.c | 17 ++++++-----------
+> >>  1 file changed, 6 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> >> index 79a0b41ce57b..872fdd3617c1 100644
+> >> --- a/drivers/gpio/gpiolib.c
+> >> +++ b/drivers/gpio/gpiolib.c
+> >> @@ -2189,25 +2189,20 @@ EXPORT_SYMBOL_GPL(__gpiod_get_index_optional);
+> >>  int gpiod_hog(struct gpio_desc *desc, const char *name,
+> >>               unsigned long lflags, enum gpiod_flags dflags)
+> >>  {
+> >> -       struct gpio_chip *chip;
+> >> -       struct gpio_desc *local_desc;
+> >> -       int hwnum;
+> >>         int status;
+> >>
+> >> -       chip =3D gpiod_to_chip(desc);
+> >> -       hwnum =3D gpio_chip_hwgpio(desc);
+> >> -
+> >> -       local_desc =3D gpiochip_request_own_desc(chip, hwnum, name);
+> >> -       if (IS_ERR(local_desc)) {
+> >> +       status =3D __gpiod_request(desc, name);
+> >> +       if (status) {
+> >>                 pr_err("requesting hog GPIO %s (chip %s, offset %d) fa=
+iled\n",
+> >> -                      name, chip->label, hwnum);
+> >> -               return PTR_ERR(local_desc);
+> >> +                      name, gpiod_to_chip(desc)->label,
+> >> +                      gpio_chip_hwgpio(desc));
+> >> +               return status;
+> >>         }
+> >>
+> >>         status =3D gpiod_configure_flags(desc, name, lflags, dflags);
+> >>         if (status < 0) {
+> >>                 pr_err("setup of hog GPIO %s (chip %s, offset %d) fail=
+ed\n",
+> >> -                      name, chip->label, hwnum);
+> >> +                      name, gpiod_to_chip(desc)->label, gpio_chip_hwg=
+pio(desc));
+> >>                 gpiochip_free_own_desc(desc);
+> >
+> > Mmm I should have reviewed this patch earlier, but what bothers me a
+> > bit is that it breaks the symetry that we had by calling
+> > request_own_desc() and free_own_desc() in the failing case (as well as
+> > in gpiochip_free_hogs). And in the end you still need to call
+> > gpiod_to_chip() so I am not sure what the benefit is.
+> >
+> > Sure, the code is less verbose, but at the same time it has become
+> > slightly harder to understand. Semantically speaking
+> > "request_own_desc()" is exactly the action we want to convey.
+> > __gpiod_request() is more ambiguous.
+> >
+> > Note that this is not a reject, I just wanted to stress that "less
+> > code" is not necessarily the same as "easier to read".
+>=20
+> OK I dropped this patch for now.
+>=20
+> Markus can you live without this patch for 2/3 and 3/3?
 
--- 2.5.3
+Yes, that's fine. I will remove it and rebase the others.
 
+Best Regards,
+
+Markus
+
+>=20
+> Yours,
+> Linus Walleij
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--84ND8YJRMFlzkrP4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWB/3pAAoJEEpcgKtcEGQQnzUP/1Zp4x3/HjQ0YaAJaDPWaiYf
+DIBHBQVjZ6tHe8aXOIkCY0HgAwZ32C8Av7EA5AEW4RZY4y1N81n7tIeLCd2c6e3H
+D6Is/omqBztEx3dJGL0lU1n+8brWxHA9fTyMxW9rJZ4DlfaiN3KN4y3hkP1RC+Hm
+R03yWiUts3ztzxN/jG7XIoCVyCDrvUP6l1ruItGgQ/Nt5R5fTuhb0Uj623fKtvMN
+JT190ZcUQlJrykT2IAahNWsuBWeas5d1YTA38viPF5X9hUhd/eX2IYQ0h0QnSWRx
+z6DC1+IO+O6XBu3Mp6kIIVLr3uv8xWljq5l6I3IUMbsDBchMfd3FSU10AuP4fH/d
+cR/V91Idu8bKBdFzvwfx0EqaRaTCm/LskJG5c/VnIgIZ0ni3r6iTvqCTp41YG/1F
+3IibY+KYLlx7bjgeobWre75yuS6mEdLd5R5RRaz8Oev5sVP+dY7EsQ21pD1gu+gu
++g7bO4VVfm0037HS2D7MZilHGoWMQm6LS4yElNJGgbCs1DWa5qH/l0jGprcwAjZP
+yxuI+X8ZgY9PiM+WvnuAyL+KAf1UL44bbmPIaDeMezPYasEgkJ0U7jN3bG4Qqd5V
+t2IUrrwXxDqkBACA79mlbLBPLhyUuh7S0QAN+SrB1ZPAgTh6diJGk4L2k0Acg/as
+b9xqyZrGlexec8NEyyP1
+=8ZHp
+-----END PGP SIGNATURE-----
+
+--84ND8YJRMFlzkrP4--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
