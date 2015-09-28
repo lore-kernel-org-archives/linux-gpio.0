@@ -1,35 +1,95 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: gpios search behaviour for gpio from _DSD
-Date: Mon, 28 Sep 2015 10:30:46 +0300
-Message-ID: <20150928073046.GS1536@lahna.fi.intel.com>
-References: <5603A552.9020005@schinagl.nl>
- <20150924084324.GK1536@lahna.fi.intel.com>
- <5606F273.6030100@schinagl.nl>
+From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
+Date: Mon, 28 Sep 2015 10:43:12 -0500
+Message-ID: <56096010.5010202@ti.com>
+References: <1443106374-4126-1-git-send-email-afd@ti.com>
+ <1443106374-4126-4-git-send-email-afd@ti.com> <20150925165059.GI27197@x1>
+ <56059CDA.4020004@ti.com> <20150925212446.GL27197@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:29035 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754371AbbI1Hav (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 28 Sep 2015 03:30:51 -0400
-Content-Disposition: inline
-In-Reply-To: <5606F273.6030100@schinagl.nl>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150925212446.GL27197@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olliver Schinagl <oliver+list@schinagl.nl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Sep 26, 2015 at 09:30:59PM +0200, Olliver Schinagl wrote:
-> What i ment is, without strcmp, the loop would test for:
-> 
-> reset-gpio and then reset-gpios (and then gpio and gpios)
-> 
-> So why the strcmp at all, Why only reset-gpios? Will the _DSD or acpi break
-> and if we probe for reset-gpio (first, instead of reset-gpios)? I'm asking
-> because i'm trying some work on gpio lib and this section is getting
-> reworked too. While doing that I want to remove the strcmp. Hence, the
-> question if things break on the ACPI side (I'm mostly failiar with OF.
+On 09/25/2015 04:24 PM, Lee Jones wrote:
+> On Fri, 25 Sep 2015, Andrew F. Davis wrote:
+>
+>> On 09/25/2015 11:50 AM, Lee Jones wrote:
+>>> On Thu, 24 Sep 2015, Andrew F. Davis wrote:
+>>>
+>>>> This patch adds support for TPS65912 mfd device. It provides
+>>>> communication through the I2C and SPI interfaces. It contains
+>>>> the following components:
+>>>>
+>>>>   - Regulators
+>>>>   - GPIO controller
+>>>>
+>>>> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
+>>>> ---
+>>>>   drivers/mfd/Kconfig          |  24 +++
+>>>>   drivers/mfd/Makefile         |   3 +
+>>>>   drivers/mfd/tps65912-core.c  | 114 +++++++++++++
+>>>>   drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
+>>>>   drivers/mfd/tps65912-spi.c   |  85 ++++++++++
+>>>>   include/linux/mfd/tps65912.h | 393 +++++++++++++++++++++++++++++++++++++++++++
+>>>>   6 files changed, 705 insertions(+)
+>>>>   create mode 100644 drivers/mfd/tps65912-core.c
+>>>>   create mode 100644 drivers/mfd/tps65912-i2c.c
+>>>>   create mode 100644 drivers/mfd/tps65912-spi.c
+>>>>   create mode 100644 include/linux/mfd/tps65912.h
+>>>
+>>> [...]
+>>>
+>>>> +#define TPS65912_IRQ(_name, _reg, _offset)			\
+>>>> +	[TPS65912_IRQ_ ## _name] = {				\
+>>>> +		.mask = TPS65912_ ## _reg ## _ ## _name,	\
+>>>> +		.reg_offset = _offset,				\
+>>>> +	}
+>>>
+>>> I told you about this already.
+>>>
+>>> If you want this set to be merged for v4.3 then you'll need commit
+>>> b4fe8ba ("regmap: Add generic macro to define regmap_irq") from my
+>>> tree.
+>>
+>> You asked me to submit this to Mark Brown, I didn't realize you also
+>> wanted me to use the one in your tree. Using yours will make my lines
+>> over 80 chars and so it kind of defeats the purpose but I'll do it
+>> for v4.
+>
+> I asked two of you to upstream a generic incarnation of your
+> implementation.  The other guy got there first.  Now I want everyone
+> to use it instead of hand-rolling their own.
+>
 
-I think it is there because we really want to force "-gpios" format for
-named gpios (not "-gpio"). DT does not do it because they have lots of
-existing "-gpio" users whereas in ACPI there is no such burden.
+Got it.
+
+>>> [...]
+>>>
+>>>> +static struct i2c_driver tps65912_i2c_driver = {
+>>>> +	.driver		= {
+>>>> +		.name	= "tps65912",
+>>>> +		.of_match_table = tps65912_i2c_of_match_table,
+>>>
+>>> of_match_ptr()
+>>>
+>>
+>> Why? tps65912_i2c_of_match_table is always compiled in.
+>
+> But it needn't be.
+>
+
+This driver is DT only, would it make more sense to just add a dependency
+on CONFIG_OF in the Kconfig? I don't see many other drivers that are DT
+only doing this, the driver should compile just fine without OF enabled,
+it just wont have DT functionality, so is it really dependent on OF?
+The of_match_ptr(x) macro looks to be useful when the x is conditionally
+compiled in, but in my case the x (my of_device_id table) is always compiled.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
