@@ -1,113 +1,54 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
-Date: Mon, 28 Sep 2015 11:01:11 -0500
-Message-ID: <56096447.8020804@ti.com>
-References: <1443106374-4126-1-git-send-email-afd@ti.com>
- <1443106374-4126-4-git-send-email-afd@ti.com>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH v7 1/7] ARM: dts: imx: imx7d-sbd remove fixed can2-3v3 regulator
+Date: Mon, 28 Sep 2015 16:56:35 -0500
+Message-ID: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:38940 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754899AbbI1QB0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 28 Sep 2015 12:01:26 -0400
-In-Reply-To: <1443106374-4126-4-git-send-email-afd@ti.com>
+Received: from mail-bn1bon0132.outbound.protection.outlook.com ([157.56.111.132]:41799
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753496AbbI1V6e (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 28 Sep 2015 17:58:34 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, robh+dt@kernel.org, Anson.Huang@freescale.com, Frank.Li@freescale.com, yibin.gong@freescale.com, nitin.garg@freescale.com
 
-On 09/24/2015 09:52 AM, Andrew F. Davis wrote:
-> This patch adds support for TPS65912 mfd device. It provides
-> communication through the I2C and SPI interfaces. It contains
-> the following components:
-> 
->   - Regulators
->   - GPIO controller
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->   drivers/mfd/Kconfig          |  24 +++
->   drivers/mfd/Makefile         |   3 +
->   drivers/mfd/tps65912-core.c  | 114 +++++++++++++
->   drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
->   drivers/mfd/tps65912-spi.c   |  85 ++++++++++
->   include/linux/mfd/tps65912.h | 393 +++++++++++++++++++++++++++++++++++++++++++
->   6 files changed, 705 insertions(+)
->   create mode 100644 drivers/mfd/tps65912-core.c
->   create mode 100644 drivers/mfd/tps65912-i2c.c
->   create mode 100644 drivers/mfd/tps65912-spi.c
->   create mode 100644 include/linux/mfd/tps65912.h
-> 
+Remove incorrect can2-3v3 fixed regulator, imx7d-sdb doesn't
+have a dedicated can2 fixed regulator instead it shares PERI_3V3
+fixed regulator (RT8070ZS) which is enabled by default (hardwired)
+from pmic pfuze3000 NVCC_3V3 power rail.
 
-[...]
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+Changes for V7: New patch in series
 
-> +
-> +/*
-> + * struct tps_info - packages regulator constraints
-> + * @id: Id of the regulator
-> + * @name: Voltage regulator name
-> + * @min_uV: Minimum micro volts
-> + * @max_uV: Minimum micro volts
-> + *
-> + * This data is used to check the regulator voltage limits while setting.
-> + */
-> +struct tps_info {
-> +	int id;
-> +	const char *name;
-> +	int min_uV;
-> +	int max_uV;
-> +};
+ arch/arm/boot/dts/imx7d-sdb.dts | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-Could you move structure's definitions to the corresponding c-files
-if they are used only locally in this files, pls? 
-
-> +
-> +/*
-> + * struct tps65912 - state holder for the tps65912 driver
-> + *
-> + * Device data may be used to access the TPS65912 chip
-> + */
-> +struct tps65912 {
-> +	struct device *dev;
-> +	unsigned int id;
-> +
-> +	/* IRQ Data */
-> +	int irq;
-> +	struct regmap_irq_chip_data *irq_data;
-> +
-> +	struct regulator_desc desc[TPS65912_NUM_REGULATOR];
-> +	struct tps_info *info[TPS65912_NUM_REGULATOR];
-
-seems above two field are not used (and id?).
-
-> +	struct regmap *regmap;
-> +};
-> +
-> +static const struct regmap_range tps65912_yes_ranges[] = {
-> +	regmap_reg_range(TPS65912_INT_STS, TPS65912_GPIO5),
-> +};
-> +
-> +static const struct regmap_access_table tps65912_volatile_table = {
-> +	.yes_ranges = tps65912_yes_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(tps65912_yes_ranges),
-> +};
-> +
-> +static const struct regmap_config tps65912_regmap_co	nfig = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.cache_type = REGCACHE_RBTREE,
-> +	.volatile_table = &tps65912_volatile_table,
-> +};
-> +
-> +int tps65912_device_init(struct tps65912 *tps);
-> +int tps65912_device_exit(struct tps65912 *tps);
-> +
-> +#endif /*  __LINUX_MFD_TPS65912_H */
-> 
-
-
+diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
+index 8059458..83f0053 100644
+--- a/arch/arm/boot/dts/imx7d-sdb.dts
++++ b/arch/arm/boot/dts/imx7d-sdb.dts
+@@ -78,16 +78,7 @@
+ 			enable-active-high;
+ 		};
+ 
+-		reg_can2_3v3: regulator@2 {
+-			compatible = "regulator-fixed";
+-			reg = <2>;
+-			regulator-name = "can2-3v3";
+-			regulator-min-microvolt = <3300000>;
+-			regulator-max-microvolt = <3300000>;
+-			gpio = <&gpio1 7 GPIO_ACTIVE_LOW>;
+-		};
+-
+-		reg_vref_1v8: regulator@3 {
++		reg_vref_1v8: regulator@2 {
+ 			compatible = "regulator-fixed";
+ 			reg = <3>;
+ 			regulator-name = "vref-1v8";
 -- 
-regards,
--grygorii
+2.1.4
+
