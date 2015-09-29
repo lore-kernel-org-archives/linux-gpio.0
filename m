@@ -1,117 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
-Date: Tue, 29 Sep 2015 08:19:33 +0100
-Message-ID: <20150929071933.GV27197@x1>
-References: <1443106374-4126-1-git-send-email-afd@ti.com>
- <1443106374-4126-4-git-send-email-afd@ti.com>
- <20150925165059.GI27197@x1>
- <56059CDA.4020004@ti.com>
- <20150925212446.GL27197@x1>
- <56096010.5010202@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56096010.5010202@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2] gpio/pca953x: Add TI TCA9539 support
+Date: Tue, 29 Sep 2015 12:55:44 +0200
+Message-ID: <1443524144-14847-1-git-send-email-thierry.reding@gmail.com>
+References: <1441812202-1915-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:35677 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934243AbbI2Kzs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 06:55:48 -0400
+In-Reply-To: <1441812202-1915-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 28 Sep 2015, Andrew F. Davis wrote:
+From: Thierry Reding <treding@nvidia.com>
 
-> On 09/25/2015 04:24 PM, Lee Jones wrote:
-> >On Fri, 25 Sep 2015, Andrew F. Davis wrote:
-> >
-> >>On 09/25/2015 11:50 AM, Lee Jones wrote:
-> >>>On Thu, 24 Sep 2015, Andrew F. Davis wrote:
-> >>>
-> >>>>This patch adds support for TPS65912 mfd device. It provides
-> >>>>communication through the I2C and SPI interfaces. It contains
-> >>>>the following components:
-> >>>>
-> >>>>  - Regulators
-> >>>>  - GPIO controller
-> >>>>
-> >>>>Signed-off-by: Andrew F. Davis <afd@ti.com>
-> >>>>---
-> >>>>  drivers/mfd/Kconfig          |  24 +++
-> >>>>  drivers/mfd/Makefile         |   3 +
-> >>>>  drivers/mfd/tps65912-core.c  | 114 +++++++++++++
-> >>>>  drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
-> >>>>  drivers/mfd/tps65912-spi.c   |  85 ++++++++++
-> >>>>  include/linux/mfd/tps65912.h | 393 ++++++++++++++++++++++++++++=
-+++++++++++++++
-> >>>>  6 files changed, 705 insertions(+)
-> >>>>  create mode 100644 drivers/mfd/tps65912-core.c
-> >>>>  create mode 100644 drivers/mfd/tps65912-i2c.c
-> >>>>  create mode 100644 drivers/mfd/tps65912-spi.c
-> >>>>  create mode 100644 include/linux/mfd/tps65912.h
-> >>>
-> >>>[...]
-> >>>
-> >>>>+#define TPS65912_IRQ(_name, _reg, _offset)			\
-> >>>>+	[TPS65912_IRQ_ ## _name] =3D {				\
-> >>>>+		.mask =3D TPS65912_ ## _reg ## _ ## _name,	\
-> >>>>+		.reg_offset =3D _offset,				\
-> >>>>+	}
-> >>>
-> >>>I told you about this already.
-> >>>
-> >>>If you want this set to be merged for v4.3 then you'll need commit
-> >>>b4fe8ba ("regmap: Add generic macro to define regmap_irq") from my
-> >>>tree.
-> >>
-> >>You asked me to submit this to Mark Brown, I didn't realize you als=
-o
-> >>wanted me to use the one in your tree. Using yours will make my lin=
-es
-> >>over 80 chars and so it kind of defeats the purpose but I'll do it
-> >>for v4.
-> >
-> >I asked two of you to upstream a generic incarnation of your
-> >implementation.  The other guy got there first.  Now I want everyone
-> >to use it instead of hand-rolling their own.
-> >
->=20
-> Got it.
->=20
-> >>>[...]
-> >>>
-> >>>>+static struct i2c_driver tps65912_i2c_driver =3D {
-> >>>>+	.driver		=3D {
-> >>>>+		.name	=3D "tps65912",
-> >>>>+		.of_match_table =3D tps65912_i2c_of_match_table,
-> >>>
-> >>>of_match_ptr()
-> >>>
-> >>
-> >>Why? tps65912_i2c_of_match_table is always compiled in.
-> >
-> >But it needn't be.
-> >
->=20
-> This driver is DT only, would it make more sense to just add a depend=
-ency
-> on CONFIG_OF in the Kconfig?
+The TCA9539 is almost identical to the PCA9555 and software-compatible
+with this driver. It exposes 16 general purpose I/O pins in two 8-bit
+configurations.
 
-Yes, that is the alternitive.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v2:
+- update device tree binding documentation
 
-> I don't see many other drivers that are DT
-> only doing this, the driver should compile just fine without OF enabl=
-ed,
-> it just wont have DT functionality, so is it really dependent on OF?
+ Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+ drivers/gpio/gpio-pca953x.c                             | 2 ++
+ 2 files changed, 3 insertions(+)
 
-Then it should be "depends on OF || COMPILE_TEST"
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+index b9a42f294dd0..13df9933f4cd 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+@@ -24,6 +24,7 @@ Required properties:
+ 	ti,tca6408
+ 	ti,tca6416
+ 	ti,tca6424
++	ti,tca9539
+ 	exar,xra1202
+ 
+ Example:
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 50caeb1ee350..b28791279173 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -67,6 +67,7 @@ static const struct i2c_device_id pca953x_id[] = {
+ 	{ "tca6408", 8  | PCA953X_TYPE | PCA_INT, },
+ 	{ "tca6416", 16 | PCA953X_TYPE | PCA_INT, },
+ 	{ "tca6424", 24 | PCA953X_TYPE | PCA_INT, },
++	{ "tca9539", 16 | PCA953X_TYPE | PCA_INT, },
+ 	{ "xra1202", 8  | PCA953X_TYPE },
+ 	{ }
+ };
+@@ -754,6 +755,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
+ 	{ .compatible = "ti,tca6408", },
+ 	{ .compatible = "ti,tca6416", },
+ 	{ .compatible = "ti,tca6424", },
++	{ .compatible = "ti,tca9539", },
+ 
+ 	{ .compatible = "exar,xra1202", },
+ 	{ }
+-- 
+2.5.0
 
-> The of_match_ptr(x) macro looks to be useful when the x is conditiona=
-lly
-> compiled in, but in my case the x (my of_device_id table) is always c=
-ompiled.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
