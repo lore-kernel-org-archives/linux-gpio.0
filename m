@@ -1,79 +1,117 @@
-From: Adrian Alonso <aalonso@freescale.com>
-Subject: [PATCH v7 2/7] ARM: dts: imx: imx7d-sbd add iomuxc-lpsr hoggrp-2 pads
-Date: Mon, 28 Sep 2015 16:56:36 -0500
-Message-ID: <1443477401-17238-2-git-send-email-aalonso@freescale.com>
-References: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
+Date: Tue, 29 Sep 2015 08:19:33 +0100
+Message-ID: <20150929071933.GV27197@x1>
+References: <1443106374-4126-1-git-send-email-afd@ti.com>
+ <1443106374-4126-4-git-send-email-afd@ti.com>
+ <20150925165059.GI27197@x1>
+ <56059CDA.4020004@ti.com>
+ <20150925212446.GL27197@x1>
+ <56096010.5010202@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
-Cc: devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, yibin.gong@freescale.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56096010.5010202@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add imx7d-sdb iomuxc-lpsr hoggrp-2 default pads settings
-Add iomuxc-lpsr usb_otg1_vbus pinctrl settings
+On Mon, 28 Sep 2015, Andrew F. Davis wrote:
 
-Signed-off-by: Adrian Alonso <aalonso@freescale.com>
----
-Changes for V2: Resend
-Changes for V3: Resend
-Changes for V4: Resend
-Changes for V5: Resend
-Changes for V6:
-- Add wdog pinctrl group, add comments for hog2 group gpios
-Changes for V7:
-- Remove wdog pinctrl settings as they are not currently used
-- Add pinctrl_usb_otg1_vbus settings
+> On 09/25/2015 04:24 PM, Lee Jones wrote:
+> >On Fri, 25 Sep 2015, Andrew F. Davis wrote:
+> >
+> >>On 09/25/2015 11:50 AM, Lee Jones wrote:
+> >>>On Thu, 24 Sep 2015, Andrew F. Davis wrote:
+> >>>
+> >>>>This patch adds support for TPS65912 mfd device. It provides
+> >>>>communication through the I2C and SPI interfaces. It contains
+> >>>>the following components:
+> >>>>
+> >>>>  - Regulators
+> >>>>  - GPIO controller
+> >>>>
+> >>>>Signed-off-by: Andrew F. Davis <afd@ti.com>
+> >>>>---
+> >>>>  drivers/mfd/Kconfig          |  24 +++
+> >>>>  drivers/mfd/Makefile         |   3 +
+> >>>>  drivers/mfd/tps65912-core.c  | 114 +++++++++++++
+> >>>>  drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
+> >>>>  drivers/mfd/tps65912-spi.c   |  85 ++++++++++
+> >>>>  include/linux/mfd/tps65912.h | 393 ++++++++++++++++++++++++++++=
++++++++++++++++
+> >>>>  6 files changed, 705 insertions(+)
+> >>>>  create mode 100644 drivers/mfd/tps65912-core.c
+> >>>>  create mode 100644 drivers/mfd/tps65912-i2c.c
+> >>>>  create mode 100644 drivers/mfd/tps65912-spi.c
+> >>>>  create mode 100644 include/linux/mfd/tps65912.h
+> >>>
+> >>>[...]
+> >>>
+> >>>>+#define TPS65912_IRQ(_name, _reg, _offset)			\
+> >>>>+	[TPS65912_IRQ_ ## _name] =3D {				\
+> >>>>+		.mask =3D TPS65912_ ## _reg ## _ ## _name,	\
+> >>>>+		.reg_offset =3D _offset,				\
+> >>>>+	}
+> >>>
+> >>>I told you about this already.
+> >>>
+> >>>If you want this set to be merged for v4.3 then you'll need commit
+> >>>b4fe8ba ("regmap: Add generic macro to define regmap_irq") from my
+> >>>tree.
+> >>
+> >>You asked me to submit this to Mark Brown, I didn't realize you als=
+o
+> >>wanted me to use the one in your tree. Using yours will make my lin=
+es
+> >>over 80 chars and so it kind of defeats the purpose but I'll do it
+> >>for v4.
+> >
+> >I asked two of you to upstream a generic incarnation of your
+> >implementation.  The other guy got there first.  Now I want everyone
+> >to use it instead of hand-rolling their own.
+> >
+>=20
+> Got it.
+>=20
+> >>>[...]
+> >>>
+> >>>>+static struct i2c_driver tps65912_i2c_driver =3D {
+> >>>>+	.driver		=3D {
+> >>>>+		.name	=3D "tps65912",
+> >>>>+		.of_match_table =3D tps65912_i2c_of_match_table,
+> >>>
+> >>>of_match_ptr()
+> >>>
+> >>
+> >>Why? tps65912_i2c_of_match_table is always compiled in.
+> >
+> >But it needn't be.
+> >
+>=20
+> This driver is DT only, would it make more sense to just add a depend=
+ency
+> on CONFIG_OF in the Kconfig?
 
- arch/arm/boot/dts/imx7d-sdb.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Yes, that is the alternitive.
 
-diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
-index 83f0053..a5c7a44 100644
---- a/arch/arm/boot/dts/imx7d-sdb.dts
-+++ b/arch/arm/boot/dts/imx7d-sdb.dts
-@@ -65,6 +65,8 @@
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
- 			gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 =  <&pinctrl_usb_otg1_vbus>;
- 			enable-active-high;
- 		};
- 
-@@ -410,3 +412,22 @@
- 
- 	};
- };
-+
-+&iomuxc_lpsr {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog_2>;
-+
-+	imx7d-sdb {
-+		pinctrl_hog_2: hog2grp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO07__GPIO1_IO7    0x59  /* sensor_int_b */
-+			>;
-+		};
-+
-+		pinctrl_usb_otg1_vbus: usbotg1vbusgrp {
-+			fsl,pins = <
-+				MX7D_PAD_GPIO1_IO05__GPIO1_IO5    0x14 	/* usb_otg1_pwr */
-+			>;
-+		};
-+	};
-+};
--- 
-2.1.4
+> I don't see many other drivers that are DT
+> only doing this, the driver should compile just fine without OF enabl=
+ed,
+> it just wont have DT functionality, so is it really dependent on OF?
+
+Then it should be "depends on OF || COMPILE_TEST"
+
+> The of_match_ptr(x) macro looks to be useful when the x is conditiona=
+lly
+> compiled in, but in my case the x (my of_device_id table) is always c=
+ompiled.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
