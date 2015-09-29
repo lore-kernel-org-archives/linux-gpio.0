@@ -1,121 +1,79 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
-Date: Tue, 29 Sep 2015 13:16:36 -0500
-Message-ID: <560AD584.6000906@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 4/5] regulators: tps65912: Add regulator driver for
+ the TPS65912 PMIC
+Date: Tue, 29 Sep 2015 19:38:18 +0100
+Message-ID: <20150929183818.GA15635@sirena.org.uk>
 References: <1443106374-4126-1-git-send-email-afd@ti.com>
- <1443106374-4126-4-git-send-email-afd@ti.com> <56096447.8020804@ti.com>
+ <1443106374-4126-5-git-send-email-afd@ti.com>
+ <20150925180533.GN30445@sirena.org.uk>
+ <5605AA1C.3090905@ti.com>
+ <20150929151320.GT30445@sirena.org.uk>
+ <560AD3B2.1070102@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:48000 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935414AbbI2SQ6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 14:16:58 -0400
-In-Reply-To: <56096447.8020804@ti.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54563 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935252AbbI2Sil (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 14:38:41 -0400
+Content-Disposition: inline
+In-Reply-To: <560AD3B2.1070102@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/28/2015 11:01 AM, Grygorii Strashko wrote:
-> On 09/24/2015 09:52 AM, Andrew F. Davis wrote:
->> This patch adds support for TPS65912 mfd device. It provides
->> communication through the I2C and SPI interfaces. It contains
->> the following components:
->>
->>    - Regulators
->>    - GPIO controller
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>    drivers/mfd/Kconfig          |  24 +++
->>    drivers/mfd/Makefile         |   3 +
->>    drivers/mfd/tps65912-core.c  | 114 +++++++++++++
->>    drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
->>    drivers/mfd/tps65912-spi.c   |  85 ++++++++++
->>    include/linux/mfd/tps65912.h | 393 +++++++++++++++++++++++++++++++++++++++++++
->>    6 files changed, 705 insertions(+)
->>    create mode 100644 drivers/mfd/tps65912-core.c
->>    create mode 100644 drivers/mfd/tps65912-i2c.c
->>    create mode 100644 drivers/mfd/tps65912-spi.c
->>    create mode 100644 include/linux/mfd/tps65912.h
->>
->
-> [...]
->
->> +
->> +/*
->> + * struct tps_info - packages regulator constraints
->> + * @id: Id of the regulator
->> + * @name: Voltage regulator name
->> + * @min_uV: Minimum micro volts
->> + * @max_uV: Minimum micro volts
->> + *
->> + * This data is used to check the regulator voltage limits while setting.
->> + */
->> +struct tps_info {
->> +	int id;
->> +	const char *name;
->> +	int min_uV;
->> +	int max_uV;
->> +};
->
-> Could you move structure's definitions to the corresponding c-files
-> if they are used only locally in this files, pls?
->
 
-ACK
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> +
->> +/*
->> + * struct tps65912 - state holder for the tps65912 driver
->> + *
->> + * Device data may be used to access the TPS65912 chip
->> + */
->> +struct tps65912 {
->> +	struct device *dev;
->> +	unsigned int id;
->> +
->> +	/* IRQ Data */
->> +	int irq;
->> +	struct regmap_irq_chip_data *irq_data;
->> +
->> +	struct regulator_desc desc[TPS65912_NUM_REGULATOR];
->> +	struct tps_info *info[TPS65912_NUM_REGULATOR];
->
-> seems above two field are not used (and id?).
->
+On Tue, Sep 29, 2015 at 01:08:50PM -0500, Andrew F. Davis wrote:
+> On 09/29/2015 10:13 AM, Mark Brown wrote:
 
-The idea was for a someday use, but because I never did that I'll
-remove them for now.
+> >>sure that will save me anything as my probe function is called with a DT
+> >>match already, so no searching is needed.
 
-Thanks,
-Andrew
+> >You've not understood what that change is replacing, the code I'm
+> >quoting above is exactly that code.  Check out some of the existing
+> >drivers using this API.
 
->> +	struct regmap *regmap;
->> +};
->> +
->> +static const struct regmap_range tps65912_yes_ranges[] = {
->> +	regmap_reg_range(TPS65912_INT_STS, TPS65912_GPIO5),
->> +};
->> +
->> +static const struct regmap_access_table tps65912_volatile_table = {
->> +	.yes_ranges = tps65912_yes_ranges,
->> +	.n_yes_ranges = ARRAY_SIZE(tps65912_yes_ranges),
->> +};
->> +
->> +static const struct regmap_config tps65912_regmap_co	nfig = {
->> +	.reg_bits = 8,
->> +	.val_bits = 8,
->> +	.cache_type = REGCACHE_RBTREE,
->> +	.volatile_table = &tps65912_volatile_table,
->> +};
->> +
->> +int tps65912_device_init(struct tps65912 *tps);
->> +int tps65912_device_exit(struct tps65912 *tps);
->> +
->> +#endif /*  __LINUX_MFD_TPS65912_H */
->>
->
->
+> Looking at other drivers that use this API they all call regulator_register
+> in a loop in their probe, once for each possible regulator, in this case
+> letting the API do the DT node search makes sense. My probe on the other-hand
+> is only called when we already have a DT match, therefor searching is not
+> necessary and all I have to do is call of_get_regulator_init_data myself on
+> the already found DT node. No need to add node names to my regulator_desc
+> and make the API re-search for the node.
+
+Oh, ick.  The binding has a compatible string in the individual
+regulator bindings which is broken unless there really are lots of
+variants being configured via DT (which is just not the case here).
+It's not only more typing in the DT, it also means that we can't read
+back the configuration of the device unless the user goes and creates a
+DT which explicitly lists each regulator on the device which is
+unhelpful.  We should be able to read back the configurations of all the
+regulators by simply listing the device in DT.
+
+The fact that this is different to the bindings for other regulator
+drivers and requires more code ought to have been a big warning sign
+here :(
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWCtqZAAoJECTWi3JdVIfQtTIH/3T4chIy5DqUEBznGkQEHK4g
+iIdZ3drD8lRaXKA5mIHv5qo9fSP/x9kP3rQAgSSFJ7lsjPYKtcPMUIAFrFHtd2WT
+qhxxPTJsoSvQq8YNFj5V65T0ZWM5ujn1xClPvMmZ8hbjhHmHyqZ4Oj0o9wqn8D0Z
+4XVZOkbw9JHEEBne+v3m0RmbVJXYyuDjXpu6JenRDeR6+KwEVwrv/PZYd087FjVy
+hXShaW/EG+pBCUH2D4eTNLnoDGiEGwZx0jEuE3/qK3kk7r38LwFH3dpBzlBlfH6r
+ccW8zyvqTgLq6TmNkAWfCePbBxBkf07o64oDyWmujdQpHsVwqUEEvOK180llIJk=
+=26T7
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
