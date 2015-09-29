@@ -1,66 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2] gpio/pca953x: Add TI TCA9539 support
-Date: Tue, 29 Sep 2015 12:55:44 +0200
-Message-ID: <1443524144-14847-1-git-send-email-thierry.reding@gmail.com>
-References: <1441812202-1915-1-git-send-email-thierry.reding@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 4/5] regulators: tps65912: Add regulator driver for
+ the TPS65912 PMIC
+Date: Tue, 29 Sep 2015 16:13:20 +0100
+Message-ID: <20150929151320.GT30445@sirena.org.uk>
+References: <1443106374-4126-1-git-send-email-afd@ti.com>
+ <1443106374-4126-5-git-send-email-afd@ti.com>
+ <20150925180533.GN30445@sirena.org.uk>
+ <5605AA1C.3090905@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dBO7RQoQeylDOh0t"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:35677 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934243AbbI2Kzs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 06:55:48 -0400
-In-Reply-To: <1441812202-1915-1-git-send-email-thierry.reding@gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53907 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754915AbbI2PNm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 11:13:42 -0400
+Content-Disposition: inline
+In-Reply-To: <5605AA1C.3090905@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-The TCA9539 is almost identical to the PCA9555 and software-compatible
-with this driver. It exposes 16 general purpose I/O pins in two 8-bit
-configurations.
+--dBO7RQoQeylDOh0t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- update device tree binding documentation
+On Fri, Sep 25, 2015 at 03:10:04PM -0500, Andrew F. Davis wrote:
+> On 09/25/2015 01:05 PM, Mark Brown wrote:
+> >On Thu, Sep 24, 2015 at 09:52:53AM -0500, Andrew F. Davis wrote:
 
- Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
- drivers/gpio/gpio-pca953x.c                             | 2 ++
- 2 files changed, 3 insertions(+)
+> >>+	match = of_match_device(tps65912_regulator_of_match_table, &pdev->dev);
+> >>+	if (!match)
+> >>+		return -ENODEV;
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index b9a42f294dd0..13df9933f4cd 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -24,6 +24,7 @@ Required properties:
- 	ti,tca6408
- 	ti,tca6416
- 	ti,tca6424
-+	ti,tca9539
- 	exar,xra1202
- 
- Example:
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 50caeb1ee350..b28791279173 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -67,6 +67,7 @@ static const struct i2c_device_id pca953x_id[] = {
- 	{ "tca6408", 8  | PCA953X_TYPE | PCA_INT, },
- 	{ "tca6416", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "tca6424", 24 | PCA953X_TYPE | PCA_INT, },
-+	{ "tca9539", 16 | PCA953X_TYPE | PCA_INT, },
- 	{ "xra1202", 8  | PCA953X_TYPE },
- 	{ }
- };
-@@ -754,6 +755,7 @@ static const struct of_device_id pca953x_dt_ids[] = {
- 	{ .compatible = "ti,tca6408", },
- 	{ .compatible = "ti,tca6416", },
- 	{ .compatible = "ti,tca6424", },
-+	{ .compatible = "ti,tca9539", },
- 
- 	{ .compatible = "exar,xra1202", },
- 	{ }
--- 
-2.5.0
+> >>+	template = match->data;
+> >>+	id = template->id;
+> >>+	init_data = of_get_regulator_init_data(&pdev->dev, pdev->dev.of_node,
+> >>+					       &regulators[id]);
 
+> >Don't open code this stuff, use the core DT matching in the
+> >regulator_desc instead.
+
+> I assume you are referring to your additions in a0c7b164ad11? If so I'm not
+
+Please don't refer to commits by ID only, include a human readable
+description of the commit for the benefit of any humans who might read
+your mail.
+
+> sure that will save me anything as my probe function is called with a DT
+> match already, so no searching is needed.
+
+You've not understood what that change is replacing, the code I'm
+quoting above is exactly that code.  Check out some of the existing
+drivers using this API.
+
+> >Please also use subject lines mathcing the style for the subsystem.
+
+> I'm not sure I know what you mean? What is wrong with my subject line, it looks
+> like the others I've looked at?
+
+You are using "regulators:", the regulator API uses "regulator:" - this
+should be really clear if you do something like a git shortlog.
+
+--dBO7RQoQeylDOh0t
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWCqqPAAoJECTWi3JdVIfQXyYH/jsAgXlhyWqBDDO74YxEDUrs
+GMql3c0AkUuqzocdOlY3Q4GL5k7AxblNcTPWGD/iMG1SoCuAukOUOaqjRcQpGfRa
+4uz5E8NGa2i8m4L281hicghhT0Bhr7akuDJXh/IE/H6ua9tzi0Vcv7bCMyH+gc4G
+ypKSUAVllZTXE1EKBw7gZXz3JQJ6Zx/RxLy5HmupKbKJK2zqHp5gNQ7Wn5E6hHIT
+7OWiajHR1lfVfpmboP5nl/58WVGrTiNgJ9bjK8smBUNBj2njt/Q64cEyJ3Khcs+L
+YtCmIg8f8EHln3TCpguic17VTRqPaF4W+zlqPcmKKYkHc/psFAAjVqRktRR8gbQ=
+=7DKR
+-----END PGP SIGNATURE-----
+
+--dBO7RQoQeylDOh0t--
