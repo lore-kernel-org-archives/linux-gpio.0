@@ -1,83 +1,110 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 4/5] regulators: tps65912: Add regulator driver for
- the TPS65912 PMIC
-Date: Tue, 29 Sep 2015 16:13:20 +0100
-Message-ID: <20150929151320.GT30445@sirena.org.uk>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v3 3/5] mfd: tps65912: Add driver for the TPS65912 PMIC
+Date: Tue, 29 Sep 2015 10:50:21 -0500
+Message-ID: <560AB33D.1020201@ti.com>
 References: <1443106374-4126-1-git-send-email-afd@ti.com>
- <1443106374-4126-5-git-send-email-afd@ti.com>
- <20150925180533.GN30445@sirena.org.uk>
- <5605AA1C.3090905@ti.com>
+ <1443106374-4126-4-git-send-email-afd@ti.com> <20150925165059.GI27197@x1>
+ <56059CDA.4020004@ti.com> <20150925212446.GL27197@x1>
+ <56096010.5010202@ti.com> <20150929071933.GV27197@x1>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dBO7RQoQeylDOh0t"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53907 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754915AbbI2PNm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 29 Sep 2015 11:13:42 -0400
-Content-Disposition: inline
-In-Reply-To: <5605AA1C.3090905@ti.com>
+Received: from comal.ext.ti.com ([198.47.26.152]:58198 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932184AbbI2Puh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 29 Sep 2015 11:50:37 -0400
+In-Reply-To: <20150929071933.GV27197@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On 09/29/2015 02:19 AM, Lee Jones wrote:
+> On Mon, 28 Sep 2015, Andrew F. Davis wrote:
+>
+>> On 09/25/2015 04:24 PM, Lee Jones wrote:
+>>> On Fri, 25 Sep 2015, Andrew F. Davis wrote:
+>>>
+>>>> On 09/25/2015 11:50 AM, Lee Jones wrote:
+>>>>> On Thu, 24 Sep 2015, Andrew F. Davis wrote:
+>>>>>
+>>>>>> This patch adds support for TPS65912 mfd device. It provides
+>>>>>> communication through the I2C and SPI interfaces. It contains
+>>>>>> the following components:
+>>>>>>
+>>>>>>   - Regulators
+>>>>>>   - GPIO controller
+>>>>>>
+>>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>>>> ---
+>>>>>>   drivers/mfd/Kconfig          |  24 +++
+>>>>>>   drivers/mfd/Makefile         |   3 +
+>>>>>>   drivers/mfd/tps65912-core.c  | 114 +++++++++++++
+>>>>>>   drivers/mfd/tps65912-i2c.c   |  86 ++++++++++
+>>>>>>   drivers/mfd/tps65912-spi.c   |  85 ++++++++++
+>>>>>>   include/linux/mfd/tps65912.h | 393 +++++++++++++++++++++++++++++++++++++++++++
+>>>>>>   6 files changed, 705 insertions(+)
+>>>>>>   create mode 100644 drivers/mfd/tps65912-core.c
+>>>>>>   create mode 100644 drivers/mfd/tps65912-i2c.c
+>>>>>>   create mode 100644 drivers/mfd/tps65912-spi.c
+>>>>>>   create mode 100644 include/linux/mfd/tps65912.h
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> +#define TPS65912_IRQ(_name, _reg, _offset)			\
+>>>>>> +	[TPS65912_IRQ_ ## _name] = {				\
+>>>>>> +		.mask = TPS65912_ ## _reg ## _ ## _name,	\
+>>>>>> +		.reg_offset = _offset,				\
+>>>>>> +	}
+>>>>>
+>>>>> I told you about this already.
+>>>>>
+>>>>> If you want this set to be merged for v4.3 then you'll need commit
+>>>>> b4fe8ba ("regmap: Add generic macro to define regmap_irq") from my
+>>>>> tree.
+>>>>
+>>>> You asked me to submit this to Mark Brown, I didn't realize you also
+>>>> wanted me to use the one in your tree. Using yours will make my lines
+>>>> over 80 chars and so it kind of defeats the purpose but I'll do it
+>>>> for v4.
+>>>
+>>> I asked two of you to upstream a generic incarnation of your
+>>> implementation.  The other guy got there first.  Now I want everyone
+>>> to use it instead of hand-rolling their own.
+>>>
+>>
+>> Got it.
+>>
+>>>>> [...]
+>>>>>
+>>>>>> +static struct i2c_driver tps65912_i2c_driver = {
+>>>>>> +	.driver		= {
+>>>>>> +		.name	= "tps65912",
+>>>>>> +		.of_match_table = tps65912_i2c_of_match_table,
+>>>>>
+>>>>> of_match_ptr()
+>>>>>
+>>>>
+>>>> Why? tps65912_i2c_of_match_table is always compiled in.
+>>>
+>>> But it needn't be.
+>>>
+>>
+>> This driver is DT only, would it make more sense to just add a dependency
+>> on CONFIG_OF in the Kconfig?
+>
+> Yes, that is the alternitive.
+>
+>> I don't see many other drivers that are DT
+>> only doing this, the driver should compile just fine without OF enabled,
+>> it just wont have DT functionality, so is it really dependent on OF?
+>
+> Then it should be "depends on OF || COMPILE_TEST"
+>
 
---dBO7RQoQeylDOh0t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+OK, I'll add this.
 
-On Fri, Sep 25, 2015 at 03:10:04PM -0500, Andrew F. Davis wrote:
-> On 09/25/2015 01:05 PM, Mark Brown wrote:
-> >On Thu, Sep 24, 2015 at 09:52:53AM -0500, Andrew F. Davis wrote:
-
-> >>+	match = of_match_device(tps65912_regulator_of_match_table, &pdev->dev);
-> >>+	if (!match)
-> >>+		return -ENODEV;
-
-> >>+	template = match->data;
-> >>+	id = template->id;
-> >>+	init_data = of_get_regulator_init_data(&pdev->dev, pdev->dev.of_node,
-> >>+					       &regulators[id]);
-
-> >Don't open code this stuff, use the core DT matching in the
-> >regulator_desc instead.
-
-> I assume you are referring to your additions in a0c7b164ad11? If so I'm not
-
-Please don't refer to commits by ID only, include a human readable
-description of the commit for the benefit of any humans who might read
-your mail.
-
-> sure that will save me anything as my probe function is called with a DT
-> match already, so no searching is needed.
-
-You've not understood what that change is replacing, the code I'm
-quoting above is exactly that code.  Check out some of the existing
-drivers using this API.
-
-> >Please also use subject lines mathcing the style for the subsystem.
-
-> I'm not sure I know what you mean? What is wrong with my subject line, it looks
-> like the others I've looked at?
-
-You are using "regulators:", the regulator API uses "regulator:" - this
-should be really clear if you do something like a git shortlog.
-
---dBO7RQoQeylDOh0t
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWCqqPAAoJECTWi3JdVIfQXyYH/jsAgXlhyWqBDDO74YxEDUrs
-GMql3c0AkUuqzocdOlY3Q4GL5k7AxblNcTPWGD/iMG1SoCuAukOUOaqjRcQpGfRa
-4uz5E8NGa2i8m4L281hicghhT0Bhr7akuDJXh/IE/H6ua9tzi0Vcv7bCMyH+gc4G
-ypKSUAVllZTXE1EKBw7gZXz3JQJ6Zx/RxLy5HmupKbKJK2zqHp5gNQ7Wn5E6hHIT
-7OWiajHR1lfVfpmboP5nl/58WVGrTiNgJ9bjK8smBUNBj2njt/Q64cEyJ3Khcs+L
-YtCmIg8f8EHln3TCpguic17VTRqPaF4W+zlqPcmKKYkHc/psFAAjVqRktRR8gbQ=
-=7DKR
------END PGP SIGNATURE-----
-
---dBO7RQoQeylDOh0t--
+>> The of_match_ptr(x) macro looks to be useful when the x is conditionally
+>> compiled in, but in my case the x (my of_device_id table) is always compiled.
+>
