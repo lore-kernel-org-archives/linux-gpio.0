@@ -1,159 +1,80 @@
-From: Alonso Adrian <aalonso@freescale.com>
-Subject: RE: [PATCH v7 7/7] pinctrl: freescale: imx: imx7d iomuxc-lpsr
- devicetree bindings
-Date: Wed, 30 Sep 2015 16:14:45 +0000
-Message-ID: <BN3PR03MB150968E32E95154CFDE7BBF9A84D0@BN3PR03MB1509.namprd03.prod.outlook.com>
-References: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
- <1443477401-17238-7-git-send-email-aalonso@freescale.com>
- <20150930020347.GD15771@tiger>
+From: Adrian Alonso <aalonso@freescale.com>
+Subject: [PATCH v8 2/7] ARM: dts: imx: imx7d-sbd add iomuxc-lpsr hoggrp-2 pads
+Date: Wed, 30 Sep 2015 11:11:04 -0500
+Message-ID: <1443629469-12294-2-git-send-email-aalonso@freescale.com>
+References: <1443629469-12294-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0117.outbound.protection.outlook.com ([157.56.110.117]:31376
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754438AbbI3QOs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Sep 2015 12:14:48 -0400
-In-Reply-To: <20150930020347.GD15771@tiger>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1443629469-12294-1-git-send-email-aalonso@freescale.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, shawn.guo@linaro.org, shawnguo@kernel.org, linus.walleij@linaro.org, lznuaa@gmail.com
+Cc: Aisheng.Dong@freescale.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, robh+dt@kernel.org, kernel@pengutronix.de, yibin.gong@freescale.com
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "lznuaa@gmail.com" <lznuaa@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Huang Anson <Anson.Huang@freescale.com>, Li Frank <Frank.Li@freescale.com>, Yibin Gong <yibin.gong@freescale.com>, Nitin Garg <nitin.garg@freescale.com>
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Tuesday, September 29, 2015 9:04 PM
-> To: Alonso Lazcano Adrian-B38018 <aalonso@freescale.com>
-> Cc: linux-arm-kernel@lists.infradead.org; shawn.guo@linaro.org;
-> linus.walleij@linaro.org; lznuaa@gmail.com; linux-gpio@vger.kernel.org;
-> devicetree@vger.kernel.org; kernel@pengutronix.de; robh+dt@kernel.org;
-> Huang Yongcai-B20788 <Anson.Huang@freescale.com>; Li Frank-B20596
-> <Frank.Li@freescale.com>; Gong Yibin-B38343 <yibin.gong@freescale.com>;
-> Garg Nitin-B37173 <nitin.garg@freescale.com>
-> Subject: Re: [PATCH v7 7/7] pinctrl: freescale: imx: imx7d iomuxc-lpsr
-> devicetree bindings
-> 
-> On Mon, Sep 28, 2015 at 04:56:41PM -0500, Adrian Alonso wrote:
-> > Add iomuxc-lpsr devicetree bindings documentation Provide
-> > documentation context as well an example on pheriperals that could use
-> > pad from either iomuxc controller supported by iMX7D SoC
-> >
-> > Signed-off-by: Adrian Alonso <aalonso@freescale.com>
-> > ---
-> > Changes for V2: New patch on imx7d iomuxc-lpsr patch series Changes
-> > for V3: Add shared input select register notes Changes for V4: Resend
-> > Changes for V5:
-> > - Fix spell error
-> > - Remove references of SHARE_INPUT_SELECT_REG flag Changes for V6:
-> > Resend Changes for v7: Resend
-> >
-> >  .../bindings/pinctrl/fsl,imx7d-pinctrl.txt         | 63 +++++++++++++++++++++-
-> >  1 file changed, 62 insertions(+), 1 deletion(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> > b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> > index 8bbf25d..aae069f 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> > +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
-> > @@ -1,16 +1,42 @@
-> >  * Freescale i.MX7 Dual IOMUX Controller
-> >
-> > +iMX7D supports two iomuxc controllers, fsl,imx7d-iomuxc controller is
-> > +similar as previous iMX SoC generation and fsl,imx7d-iomuxc-lpsr
-> > +which provides low power state retention capabilities on gpios that
-> > +are part of iomuxc-lpsr (GPIO1_IO7..GPIO1_IO0). While iomuxc-lpsr
-> > +provides its own set of registers for mux and pad control settings,
-> > +it shares the input select register from main iomuxc controller for
-> > +daisy chain settings, the fsl,input-sel property extends fsl,imx-pinctrl driver
-> to support iomuxc-lpsr controller.
-> > +
-> > +iomuxc_lpsr: iomuxc-lpsr@302c0000 {
-> > +	compatible = "fsl,imx7d-iomuxc-lpsr";
-> > +	reg = <0x302c0000 0x10000>;
-> > +	fsl,input-sel = <&iomuxc>;
-> > +};
-> > +
-> > +iomuxc: iomuxc@30330000 {
-> > +	compatible = "fsl,imx7d-iomuxc";
-> > +	reg = <0x30330000 0x10000>;
-> > +};
-> > +
-> > +Pheriparials using pads from iomuxc-lpsr support low state retention
-> > +power state, under LPSR mode GPIO's state of pads are retain.
-> > +
-> >  Please refer to fsl,imx-pinctrl.txt in this directory for common
-> > binding part  and usage.
-> >
-> >  Required properties:
-> > -- compatible: "fsl,imx7d-iomuxc"
-> > +- compatible: "fsl,imx7d-iomuxc" for main IOMUXC controller, or
-> > +  "fsl,imx7d-iomuxc-lpsr" for Low Power State Retention IOMUXC controller.
-> >  - fsl,pins: each entry consists of 6 integers and represents the mux and config
-> >    setting for one pin.  The first 5 integers <mux_reg conf_reg input_reg
-> mux_val
-> >    input_val> are specified using a PIN_FUNC_ID macro, which can be found in
-> >    imx7d-pinfunc.h under device tree source folder.  The last integer CONFIG
-> is
-> >    the pad setting value like pull-up on this pin.  Please refer to i.MX7 Dual
-> >    Reference Manual for detailed CONFIG settings.
-> > +- fsl,input-sel: required property for iomuxc-lpsr controller, this
-> > +property is
-> > +  a phandle for main iomuxc controller which shares the input select
-> > +register for
-> > +  daisy chain settings.
-> >
-> >  CONFIG bits definition:
-> >  PAD_CTL_PUS_100K_DOWN           (0 << 5)
-> > @@ -25,3 +51,38 @@ PAD_CTL_DSE_X1                  (0 << 0)
-> >  PAD_CTL_DSE_X2                  (1 << 0)
-> >  PAD_CTL_DSE_X3                  (2 << 0)
-> >  PAD_CTL_DSE_X4                  (3 << 0)
-> > +
-> > +Examples:
-> > +While iomuxc-lpsr is intended to be used by dedicated peripherals to
-> > +take advantages of LPSR power mode, is also possible that an IP to
-> > +use pads from any of the iomux controllers. For example the I2C1 IP
-> > +can use SCL pad from iomuxc-lpsr controller and SDA pad from iomuxc
-> controller as:
-> > +
-> > +i2c1: i2c@30a20000 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&pinctrl_i2c1_1 &pinctrl_i2c1_2>;
-> > +	status = "okay";
-> > +};
-> > +
-> > +iomuxc-lpsr@302c0000 {
-> > +	compatible = "fsl,imx7d-iomuxc-lpsr";
-> > +	reg = <0x302c0000 0x10000>;
-> > +	fsl,input-sel = <&iomuxc>;
-> > +
-> > +	pinctrl_i2c1_1: i2c1grp-1 {
-> > +		fsl,pins = <
-> > +			MX7D_PAD_GPIO1_IO04__I2C1_SCL 0x4000007f
-> > +		>;
-> > +	};
-> > +};
-> > +
-> > +iomuxc@30330000 {
-> > +	compatible = "fsl,imx7d-iomuxc";
-> > +	reg = <0x30330000 0x10000>;
-> > +
-> > +	pinctrl_i2c1_2: i2c1grp-2 {
-> > +		fsl,pins = <
-> > +			MX7D_PAD_I2C1_SCL__I2C1_SCL 0x4000007f
-> 
-> I'm not sure how many times I should repeat: you should set up a I2C1_SDA
-> instead of two I2C1_SCL in this example.
-> 
-> Shawn
-[Adrian] Sorry about that, fixed in new patch series, thanks :)
-> 
-> > +		>;
-> > +	};
-> > +};
-> > --
-> > 2.1.4
-> >
+Add imx7d-sdb iomuxc-lpsr hoggrp-2 default pads settings
+Add iomuxc-lpsr usb_otg1_vbus pinctrl settings
+
+Signed-off-by: Adrian Alonso <aalonso@freescale.com>
+---
+Changes for V2: Resend
+Changes for V3: Resend
+Changes for V4: Resend
+Changes for V5: Resend
+Changes for V6:
+- Add wdog pinctrl group, add comments for hog2 group gpios
+Changes for V7:
+- Remove wdog pinctrl settings as they are not currently used
+- Add pinctrl_usb_otg1_vbus settings
+Changes for V8: Resend
+
+ arch/arm/boot/dts/imx7d-sdb.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
+index 88308f3..ca68a67 100644
+--- a/arch/arm/boot/dts/imx7d-sdb.dts
++++ b/arch/arm/boot/dts/imx7d-sdb.dts
+@@ -65,6 +65,8 @@
+ 			regulator-min-microvolt = <5000000>;
+ 			regulator-max-microvolt = <5000000>;
+ 			gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 =  <&pinctrl_usb_otg1_vbus>;
+ 			enable-active-high;
+ 		};
+ 
+@@ -495,3 +497,22 @@
+ 
+ 	};
+ };
++
++&iomuxc_lpsr {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog_2>;
++
++	imx7d-sdb {
++		pinctrl_hog_2: hog2grp {
++			fsl,pins = <
++				MX7D_PAD_GPIO1_IO07__GPIO1_IO7    0x59  /* sensor_int_b */
++			>;
++		};
++
++		pinctrl_usb_otg1_vbus: usbotg1vbusgrp {
++			fsl,pins = <
++				MX7D_PAD_GPIO1_IO05__GPIO1_IO5    0x14 	/* usb_otg1_pwr */
++			>;
++		};
++	};
++};
+-- 
+2.1.4
