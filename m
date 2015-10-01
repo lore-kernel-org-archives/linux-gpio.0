@@ -1,32 +1,40 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH] pinctrl: berlin: fix BG2CD field widths
-Date: Thu, 01 Oct 2015 21:30:02 +0200
-Message-ID: <560D89BA.1000203@gmail.com>
-References: <56074059.10806@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56074059.10806@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Hebb <tommyhebb@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, Wolfram Sang <wsa@the-dreams.de>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 2/8] mfd: core: redo ACPI matching of the children devices
+Date: Thu, 01 Oct 2015 23:59:07 +0200
+Message-ID: <3274512.nm3FJOJWnt@vostro.rjw.lan>
+References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com> <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com> <20151001145436.GD3214@x1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:49165 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750795AbbJAVap (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Oct 2015 17:30:45 -0400
+In-Reply-To: <20151001145436.GD3214@x1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
 
-On 27.09.2015 03:03, Thomas Hebb wrote:
-> The previous register layout was incorrect, many of the fields having
-> fewer bits than were needed to represent all their modes. The new layout
-> is taken from the bootloader source of a BG2CD device.
->
-> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
-> ---
->   drivers/pinctrl/berlin/berlin-bg2cd.c | 62
-> ++++++++++++++++++-----------------
->   1 file changed, 32 insertions(+), 30 deletions(-)
+On Thursday, October 01, 2015 03:54:36 PM Lee Jones wrote:
+> On Thu, 01 Oct 2015, Andy Shevchenko wrote:
+> 
+> > There is at least one board on the market, i.e. Intel Galileo Gen2, that uses
+> > _ADR to distinguish the devices under one actual device. Due to this we have to
+> > improve the quirk in the MFD core to handle that board.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  Documentation/acpi/enumeration.txt | 11 +++++---
+> >  drivers/mfd/mfd-core.c             | 52 ++++++++++++++++++++++++++------------
+> >  include/linux/mfd/core.h           | 10 ++++++--
+> >  3 files changed, 52 insertions(+), 21 deletions(-)
+> 
+> This whole patch still needs an ACPI Ack.
 
-Applied to berlin/fixes.
+I'll take care of it shortly.
 
-There seems to be something wrong with the patch.
-Please base your patches on the recent -rc1 kernel
-and use git send-email. I fixed this patch manually.
+Thanks,
+Rafael
 
-Sebastian
