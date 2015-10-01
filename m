@@ -1,233 +1,93 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] [RFC] pinctrl: sh-pfc: Improve pinmux macros documentation
-Date: Thu, 01 Oct 2015 17:21:37 +0300
-Message-ID: <2076556.DQZeNT6qkv@avalon>
-References: <1443017673-12311-1-git-send-email-geert+renesas@glider.be>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 3/8] mfd: intel_quark_i2c_gpio: load gpio driver first
+Date: Thu, 1 Oct 2015 15:54:01 +0100
+Message-ID: <20151001145401.GC3214@x1>
+References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com>
+ <1443698430-74415-4-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44287 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756504AbbJAObe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Oct 2015 10:31:34 -0400
-In-Reply-To: <1443017673-12311-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1443698430-74415-4-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Niklas =?ISO-8859-1?Q?S=F6derlund?= <niso@kth.se>, Koji Matsuoka <koji.matsuoka.xm@rms.renesas.com>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Geert,
+On Thu, 01 Oct 2015, Andy Shevchenko wrote:
 
-Thank you for the patch. This was much needed.
-
-On Wednesday 23 September 2015 16:14:33 Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Intel Galileo boards the GPIO expander is connected to i2c bus. Mo=
+reover it
+> is able to generate interrupt, but interrupt line is connected to GPI=
+O. That's
+> why we have to have GPIO driver in place when we will probe i2c host =
+with
+> device connected to it.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
-> Please review and comment!
-> 
->   - I still have a hard time understanding the subtilties of the various
->     PINMUX_IPSR_*() macros,
+>  drivers/mfd/intel_quark_i2c_gpio.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 
-So do we all :-)
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
->   - Which macro is most appropriate for describing single-function pins:
->     PINMUX_DATA() or PINMUX_IPSR_NOGP()?
->     (cfr. "[RFC] pinctrl: sh-pfc: r8a7795: Add pinmux data for
->      single-function pins",
->      http://www.spinics.net/lists/linux-sh/msg44823.html)
-> 
-> Thanks!
-> ---
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 77 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 76 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index e18e306b4ac276c7..434209c8e22e72fc
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -95,10 +95,31 @@ struct pinmux_cfg_reg {
->  	const u8 *var_field_width;
+Are there build dependancies in this set?  Or can all patches filter
+through their own subsystems?
+
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_q=
+uark_i2c_gpio.c
+> index 1ce1603..958c134 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -90,19 +90,19 @@ static struct resource intel_quark_gpio_res[] =3D=
+ {
+> =20
+>  static struct mfd_cell intel_quark_mfd_cells[] =3D {
+>  	{
+> -		.id =3D MFD_I2C_BAR,
+> -		.name =3D "i2c_designware",
+> -		.num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
+> -		.resources =3D intel_quark_i2c_res,
+> -		.ignore_resource_conflicts =3D true,
+> -	},
+> -	{
+>  		.id =3D MFD_GPIO_BAR,
+>  		.name =3D "gpio-dwapb",
+>  		.num_resources =3D ARRAY_SIZE(intel_quark_gpio_res),
+>  		.resources =3D intel_quark_gpio_res,
+>  		.ignore_resource_conflicts =3D true,
+>  	},
+> +	{
+> +		.id =3D MFD_I2C_BAR,
+> +		.name =3D "i2c_designware",
+> +		.num_resources =3D ARRAY_SIZE(intel_quark_i2c_res),
+> +		.resources =3D intel_quark_i2c_res,
+> +		.ignore_resource_conflicts =3D true,
+> +	},
 >  };
-> 
-> +/*
-> + * Describe a config register consisting of multiple fixed-width fields
+> =20
+>  static const struct pci_device_id intel_quark_mfd_ids[] =3D {
+> @@ -248,12 +248,11 @@ static int intel_quark_mfd_probe(struct pci_dev=
+ *pdev,
+> =20
+>  	dev_set_drvdata(&pdev->dev, quark_mfd);
+> =20
+> -	ret =3D intel_quark_i2c_setup(pdev, &intel_quark_mfd_cells[MFD_I2C_=
+BAR]);
+> +	ret =3D intel_quark_i2c_setup(pdev, &intel_quark_mfd_cells[1]);
+>  	if (ret)
+>  		return ret;
+> =20
+> -	ret =3D intel_quark_gpio_setup(pdev,
+> -				     &intel_quark_mfd_cells[MFD_GPIO_BAR]);
+> +	ret =3D intel_quark_gpio_setup(pdev, &intel_quark_mfd_cells[0]);
+>  	if (ret)
+>  		return ret;
+> =20
 
-Slightly nitpicking: instead of fixed-width I'd say
-
-"Describe a config register consisting of several fields of the same width"
-
-This is more important for the variable-width fields in the documentation of 
-the PINMUX_CFG_REG_VAR macro, as variable-width could be understood as fields 
-which length varies at runtime. For that register I would say
-
-"Describe a config register consisting of several fields of different widths"
-
-Feel free to ignore this comment if you think it's overkill.
-
-> + *   - name: Register name (unused, for documentation purposes only)
-> + *   - r: Physical register address
-> + *   - r_width: Width of the register (in bits)
-> + *   - f_width: Width of the fixed-width register fields (in bits)
-> + * This macro must be followed by initialization data: For each register
-> field
-> + * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be
-> specified,
-> + * one for each possible combination of the register field bit values.
-> + */
->  #define PINMUX_CFG_REG(name, r, r_width, f_width) \
->  	.reg = r, .reg_width = r_width, .field_width = f_width,		\
->  	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
-> 
-> +/*
-> + * Describe a config register consisting of multiple variable-width fields
-> + *   - name: Register name (unused, for documentation purposes only)
-> + *   - r: Physical register address
-> + *   - r_width: Width of the register (in bits)
-> + *   - var_fw0, var_fwn...: List of widths of the register fields (in
-> bits),
-> + *                          From left to right (i.e. MSB to LSB)
-> + * This macro must be followed by initialization data: For each register
-> field
-> + * (from left to right, i.e. MSB to LSB), 2^var_fwi enum IDs must be
-> specified,
-> + * one for each possible combination of the register field bit values.
-> + */
->  #define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
->  	.reg = r, .reg_width = r_width,	\
->  	.var_field_width = (const u8 [r_width]) \
-> @@ -111,6 +132,14 @@ struct pinmux_data_reg {
->  	const u16 *enum_ids;
->  };
-> 
-> +/*
-> + * Describe a data register
-> + *   - name: Register name (unused, for documentation purposes only)
-> + *   - r: Physical register address
-> + *   - r_width: Width of the register (in bits)
-> + * This macro must be followed by initialization data: For each register
-> bit
-> + * (from left to right, i.e. MSB to LSB), one enum ID must be specified.
-> + */
->  #define PINMUX_DATA_REG(name, r, r_width) \
->  	.reg = r, .reg_width = r_width,	\
->  	.enum_ids = (const u16 [r_width]) \
-> @@ -119,6 +148,10 @@ struct pinmux_irq {
->  	const short *gpios;
->  };
-> 
-> +/*
-> + * Describe the mapping from GPIOs to a single IRQ
-> + *   - ids...: List of GPIOs that are mapped to the same IRQ
-> + */
->  #define PINMUX_IRQ(ids...)			   \
->  	{ .gpios = (const short []) { ids, -1 } }
-> 
-> @@ -180,16 +213,58 @@ struct sh_pfc_soc_info {
->   * sh_pfc_soc_info pinmux_data array macros
->   */
-> 
-> +/*
-> + * Describe generic pinmux data
-> + *   - data_or_mark: *_DATA or *_MARK enum ID
-> + *   - ids...: List of enum IDs to associate with data_or_mark
-> + */
->  #define PINMUX_DATA(data_or_mark, ids...)	data_or_mark, ids, 0
-> 
-> +/*
-> + * Describe a pinmux configuration without GPIO function that needs
-> + * configuration in a Peripheral Function Select Register (IPSR)
-> + *   - ipsr: IPSR field (unused, for documentation purposes only)
-> + *   - fn: Function name
-> + */
->  #define PINMUX_IPSR_NOGP(ispr, fn)					\
-
-While you're at it, could you s/ispr/ipsr/ ?
-
->  	PINMUX_DATA(fn##_MARK, FN_##fn)
-> +
-> +/*
-> + * Describe a pinmux configuration with GPIO function that needs
-> configuration
-> + * in a Peripheral Function Select Register (IPSR)
-> + *   - ipsr: IPSR field
-> + *   - fn: Function name
-> + */
->  #define PINMUX_IPSR_DATA(ipsr, fn)					\
->  	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr)
-
-This one is confusing. While ipsr refers to the name of an IPSR field, that's 
-for documentation purpose only (the IPSR fields are not named in the code but 
-they're mentioned in comments in the IPSR register definitions). After 
-expansion FN_##ipsr refers to a field value of a GSPR register. For instance
-
-	PINMUX_IPSR_DATA(IP0_0, D0)
-
-will expand to
-
-	D0_MARK, FN_D0, FN_IP0_0
-
-When applying that configuration FN_D0 will set the IPSR bits to select the D0 
-function, while FN_IP0_0 will set the GSPR bits to set the pin mux to function 
-instead of GPIO.
-
-I wonder whether we should rename the macros to make their purpose clearer. 
-This one should really convey the above meaning explicitly using a name that 
-shows that both a GPIO/function mux and a function selector mux are used.
-
-> +
-> +/*
-> + * Describe a pinmux configuration where ???
-> + *   - ipsr: IPSR field
-> + *   - fn: Function name
-> + *   - ms: Configuration register selector
-> + */
->  #define PINMUX_IPSR_NOGM(ispr, fn, ms)					\
->  	PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ms)
-
-MSEL adds another muxing level that muxes modules as a whole instead of 
-individual pins. I'm not sure exactly how it's wired up at the hardware level. 
-It would be interesting to find out the exact hardware structure of the pin 
-muxes to hopefully better name (and possibly structure) the driver constructs.
-
-PINMUX_IPSR_NOGM really means PINMUX_IPSR_NOGP_MSEL, but that would be longer.
-
-> +/*
-> + * Describe a pinmux configuration where the pinmux function has no
-> + * representation in the configuration registers but instead solely
-> + * depends on a group selection.
-> + *   - ipsr: IPSR field
-> + *   - fn: Function name
-> + *   - ms: Group selector
-> + */
->  #define PINMUX_IPSR_NOFN(ipsr, fn, ms)					\
->  	PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
-
-That macro is used by EMEV2 only. Maybe we could move it there.
-
-> +/*
-> + * Describe a pinmux configuration where the pinmux function has a
-> + * representation in a configuration register.
-> + *   - ipsr: IPSR field
-> + *   - fn: Function name
-> + *   - ms: Configuration register selector
-> + */
->  #define PINMUX_IPSR_MSEL(ipsr, fn, ms)					\
->  	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
-> 
-> @@ -322,7 +397,7 @@ struct sh_pfc_soc_info {
->  	PINMUX_GPIO_FN(GPIO_FN_##str, PINMUX_FN_BASE, str##_MARK)
-> 
->  /*
-> - * PORTnCR macro
-> + * PORTnCR helper macro for SH-Mobile/R-Mobile
->   */
->  #define PORTCR(nr, reg)							\
->  	{								\
-
--- 
-Regards,
-
-Laurent Pinchart
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
