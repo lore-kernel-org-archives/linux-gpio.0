@@ -1,100 +1,154 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 4/5] regulators: tps65912: Add regulator driver for
- the TPS65912 PMIC
-Date: Thu, 1 Oct 2015 11:53:08 +0100
-Message-ID: <20151001105308.GF12635@sirena.org.uk>
-References: <20150925180533.GN30445@sirena.org.uk>
- <5605AA1C.3090905@ti.com>
- <20150929151320.GT30445@sirena.org.uk>
- <560AD3B2.1070102@ti.com>
- <20150929183818.GA15635@sirena.org.uk>
- <560ADF61.9030105@ti.com>
- <20150930172844.GF15635@sirena.org.uk>
- <560C462A.1000707@ti.com>
- <20150930222022.GC15635@sirena.org.uk>
- <560C70FE.6000909@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vA66WO2vHvL/CRSR"
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/8] mfd: core: redo ACPI matching of the children devices
+Date: Thu,  1 Oct 2015 14:20:24 +0300
+Message-ID: <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33999 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755852AbbJAKx2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Oct 2015 06:53:28 -0400
-Content-Disposition: inline
-In-Reply-To: <560C70FE.6000909@ti.com>
+Received: from mga11.intel.com ([192.55.52.93]:26769 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754560AbbJALUf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 1 Oct 2015 07:20:35 -0400
+In-Reply-To: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+There is at least one board on the market, i.e. Intel Galileo Gen2, that uses
+_ADR to distinguish the devices under one actual device. Due to this we have to
+improve the quirk in the MFD core to handle that board.
 
---vA66WO2vHvL/CRSR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ Documentation/acpi/enumeration.txt | 11 +++++---
+ drivers/mfd/mfd-core.c             | 52 ++++++++++++++++++++++++++------------
+ include/linux/mfd/core.h           | 10 ++++++--
+ 3 files changed, 52 insertions(+), 21 deletions(-)
 
-On Wed, Sep 30, 2015 at 06:32:14PM -0500, Andrew F. Davis wrote:
-> On 09/30/2015 05:20 PM, Mark Brown wrote:
+diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
+index b731b29..a91ec5a 100644
+--- a/Documentation/acpi/enumeration.txt
++++ b/Documentation/acpi/enumeration.txt
+@@ -347,13 +347,18 @@ For the first case, the MFD drivers do not need to do anything. The
+ resulting child platform device will have its ACPI_COMPANION() set to point
+ to the parent device.
+ 
+-If the ACPI namespace has a device that we can match using an ACPI id,
+-the id should be set like:
++If the ACPI namespace has a device that we can match using an ACPI id or ACPI
++adr, the cell should be set like:
++
++	static struct mfd_cell_acpi_match my_subdevice_cell_acpi_match = {
++		.pnpid = "XYZ0001",
++		.adr = 0,
++	};
+ 
+ 	static struct mfd_cell my_subdevice_cell = {
+ 		.name = "my_subdevice",
+ 		/* set the resources relative to the parent */
+-		.acpi_pnpid = "XYZ0001",
++		.acpi_match = &my_subdevice_cell_acpi_match,
+ 	};
+ 
+ The ACPI id "XYZ0001" is then used to lookup an ACPI device directly under
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index c17635d..60b60dc 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -82,29 +82,49 @@ static int mfd_platform_add_cell(struct platform_device *pdev,
+ static void mfd_acpi_add_device(const struct mfd_cell *cell,
+ 				struct platform_device *pdev)
+ {
+-	struct acpi_device *parent_adev;
++	const struct mfd_cell_acpi_match *match = cell->acpi_match;
++	struct acpi_device *parent, *child;
+ 	struct acpi_device *adev;
+ 
+-	parent_adev = ACPI_COMPANION(pdev->dev.parent);
+-	if (!parent_adev)
++	parent = ACPI_COMPANION(pdev->dev.parent);
++	if (!parent)
+ 		return;
+ 
+ 	/*
+-	 * MFD child device gets its ACPI handle either from the ACPI
+-	 * device directly under the parent that matches the acpi_pnpid or
+-	 * it will use the parent handle if is no acpi_pnpid is given.
++	 * MFD child device gets its ACPI handle either from the ACPI device
++	 * directly under the parent that matches the either _HID or _CID, or
++	 * _ADR or it will use the parent handle if is no ID is given.
++	 *
++	 * Note that use of _ADR is a grey area in the ACPI specification,
++	 * though Intel Galileo Gen2 is using it to distinguish the children
++	 * devices.
+ 	 */
+-	adev = parent_adev;
+-	if (cell->acpi_pnpid) {
+-		struct acpi_device_id ids[2] = {};
+-		struct acpi_device *child_adev;
+-
+-		strlcpy(ids[0].id, cell->acpi_pnpid, sizeof(ids[0].id));
+-		list_for_each_entry(child_adev, &parent_adev->children, node)
+-			if (acpi_match_device_ids(child_adev, ids)) {
+-				adev = child_adev;
+-				break;
++	adev = parent;
++	if (match) {
++		if (match->pnpid) {
++			struct acpi_device_id ids[2] = {};
++
++			strlcpy(ids[0].id, match->pnpid, sizeof(ids[0].id));
++			list_for_each_entry(child, &parent->children, node) {
++				if (acpi_match_device_ids(child, ids)) {
++					adev = child;
++					break;
++				}
++			}
++		} else {
++			unsigned long long adr;
++			acpi_status status;
++
++			list_for_each_entry(child, &parent->children, node) {
++				status = acpi_evaluate_integer(child->handle,
++							       "_ADR", NULL,
++							       &adr);
++				if (ACPI_SUCCESS(status) && match->adr == adr) {
++					adev = child;
++					break;
++				}
+ 			}
++		}
+ 	}
+ 
+ 	ACPI_COMPANION_SET(&pdev->dev, adev);
+diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
+index a76bc10..27dac3f 100644
+--- a/include/linux/mfd/core.h
++++ b/include/linux/mfd/core.h
+@@ -18,6 +18,12 @@
+ 
+ struct irq_domain;
+ 
++/* Matches ACPI PNP id, either _HID or _CID, or ACPI _ADR */
++struct mfd_cell_acpi_match {
++	const char			*pnpid;
++	const unsigned long long	adr;
++};
++
+ /*
+  * This struct describes the MFD part ("cell").
+  * After registration the copy of this structure will become the platform data
+@@ -44,8 +50,8 @@ struct mfd_cell {
+ 	 */
+ 	const char		*of_compatible;
+ 
+-	/* Matches ACPI PNP id, either _HID or _CID */
+-	const char		*acpi_pnpid;
++	/* Matches ACPI */
++	const struct mfd_cell_acpi_match	*acpi_match;
+ 
+ 	/*
+ 	 * These resources can be specified relative to the parent device.
+-- 
+2.5.1
 
-> >>This is already the case then, missing regulator nodes in old drivers will not
-> >>get instantiated ether. And old drivers don't always store any more info about
-> >>available regulators than mine does.
-
-> >No, well implemented older drivers will still unconditionally register
-> >everything.
-
-> Is this desired? If they are not in the DT could this be used to signal
-> we don't want to register this regulator?
-
-Yes, this is desired.  The point is that there is no situation in which
-we do not want to register all the regulators physically present on the
-device.
-
-> >You're talking about a trivial loop that takes perhaps a couple of lines
-> >to open and close the for loop and another line to declare an iterator
-> >variable.
-
-> Adding any extra code and complexity to use a helper that does something
-> that already works with less doesn't make much sense to me, but if that's
-> the API you want I'll use it.
-
-It would take a lot less effort to implement the requested changes
-rather than go on and on about this.  There is no meaningful complexity
-here, we're talking about removing code and moving some data tables from
-DT (where they are an ABI) to code (where they are not an ABI).
-
-> >Look, please stop arguing about this.  There appears to be nothing
-> >special about this device that makes it different to other devices.
-
-> I'm sorry if I sounded overly argumentative about this, I'm just trying to make
-> points in favor of me not having to re-write my driver.
-
-It's hardly a rewrite.
-
-> The new framework helpers do not help my driver as it does things differently.
-> You signed off on this different way of doing things just last year with the
-> TPS65218.
-
-> If you no longer want it done this way then I'll go and change my driver.
-
-It should already be apparent that this is not a desired configuration,
-old drivers are never a good reason not to do the right thing on new
-code.
-
---vA66WO2vHvL/CRSR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWDRCUAAoJECTWi3JdVIfQfUoH/1pOOLr4yHM7Icy185CDpB9L
-E2a5bMvbp87XNme8hH/xNMlWLDTESIc3d7mUILAnMGqc+MjZgSHzyFBPkNAlAh9l
-xXZ9xeOxFzmrpPU0zrcaShELdTYFQR7rsL2o0IrDU5ker2BUiT9xiXHZghnNahF4
-OZitdM62aj/zA7cC+xgAvLFX9JD8ceVC52xCb0GdK+blOQztMXDAysk8dPO9DP7U
-kBeFERAX4ingF2ahJsFcQVyfo0JUbEo/VHGamgqt2aC2ty1iWaUK9L/v+W7J5sBh
-aJ/ED0lsQPb31TcucUQOFxX9zUMAHKfc/bpaj7ckuFlRWVkb4sluNEjcBXS64cE=
-=vxq1
------END PGP SIGNATURE-----
-
---vA66WO2vHvL/CRSR--
