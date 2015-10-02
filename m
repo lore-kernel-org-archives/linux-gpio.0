@@ -1,78 +1,69 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: Re: [PATCH v2 6/6] arm64: dts: berlin4ct: add default pinmux for
- uart0
-Date: Fri, 2 Oct 2015 15:26:05 +0200
-Message-ID: <20151002132605.GF3162@kwain>
-References: <1442829860-4647-1-git-send-email-jszhang@marvell.com>
- <1442829860-4647-7-git-send-email-jszhang@marvell.com>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: [PATCH 1/2] pinctrl: at91-pio4: Use irq_set_handler_locked()
+Date: Fri, 2 Oct 2015 15:50:45 +0200
+Message-ID: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:55247 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753342AbbJBN0S (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 09:26:18 -0400
-Content-Disposition: inline
-In-Reply-To: <1442829860-4647-7-git-send-email-jszhang@marvell.com>
+Received: from eusmtp01.atmel.com ([212.144.249.242]:54307 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752496AbbJBNu1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 09:50:27 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, Nicolas Ferre <nicolas.ferre@atmel.com>
 
-Jisheng,
+Use irq_set_handler_locked() as it avoids a redundant lookup of the irq
+descriptor.
+This adaptation landed on the pinctrl-at91.c driver while this one was being
+developped: synchronize with this enhancement and avoid the following
+compilation error:
 
-Please s/urt/uart/ in this patch.
+../drivers/pinctrl/pinctrl-at91-pio4.c: In function 'atmel_gpio_irq_set_type':
+../drivers/pinctrl/pinctrl-at91-pio4.c:173:3: error: implicit declaration of
+function '__irq_set_handler_locked' [-Werror=implicit-function-declaration]
+   __irq_set_handler_locked(d->irq, handle_edge_irq);
+      ^
 
-Thanks!
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Antoine
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 5e2189f17fe1..1f1a64ef3559 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -170,23 +170,23 @@ static int atmel_gpio_irq_set_type(struct irq_data *d, unsigned type)
+ 
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+-		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		irq_set_handler_locked(d, handle_edge_irq);
+ 		reg |= ATMEL_PIO_CFGR_EVTSEL_RISING;
+ 		break;
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		irq_set_handler_locked(d, handle_edge_irq);
+ 		reg |= ATMEL_PIO_CFGR_EVTSEL_FALLING;
+ 		break;
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		__irq_set_handler_locked(d->irq, handle_edge_irq);
++		irq_set_handler_locked(d, handle_edge_irq);
+ 		reg |= ATMEL_PIO_CFGR_EVTSEL_BOTH;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_LOW:
+-		__irq_set_handler_locked(d->irq, handle_level_irq);
++		irq_set_handler_locked(d, handle_level_irq);
+ 		reg |= ATMEL_PIO_CFGR_EVTSEL_LOW;
+ 		break;
+ 	case IRQ_TYPE_LEVEL_HIGH:
+-		__irq_set_handler_locked(d->irq, handle_level_irq);
++		irq_set_handler_locked(d, handle_level_irq);
+ 		reg |= ATMEL_PIO_CFGR_EVTSEL_HIGH;
+ 		break;
+ 	case IRQ_TYPE_NONE:
+-- 
+2.1.3
 
-On Mon, Sep 21, 2015 at 06:04:20PM +0800, Jisheng Zhang wrote:
-> Add urt0 txd and rxd muxing setup in the dtsi because uart0 always us=
-es
-> them to work, no other possibilities.
->=20
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> ---
->  arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/=
-boot/dts/marvell/berlin4ct.dtsi
-> index c374f1d..e9409ec 100644
-> --- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-> @@ -288,12 +288,19 @@
->  				clocks =3D <&osc>;
->  				reg-shift =3D <2>;
->  				status =3D "disabled";
-> +				pinctrl-0 =3D <&urt0_pmux>;
-> +				pinctrl-names =3D "default";
->  			};
->  		};
-> =20
->  		sm_pinctrl: pinctrl@fe2200 {
->  			compatible =3D "marvell,berlin4ct-sm-pinctrl";
->  			reg =3D <0xfe2200 0xc>;
-> +
-> +			urt0_pmux: urt0-pmux {
-> +				groups =3D "SM_URT0_TXD", "SM_URT0_RXD";
-> +				function =3D "urt0";
-> +			};
->  		};
->  	};
->  };
-> --=20
-> 2.5.3
->=20
-
---=20
-Antoine T=E9nart, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
