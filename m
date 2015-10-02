@@ -1,37 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: don't compare an unsigned for >= 0
-Date: Fri, 2 Oct 2015 01:57:30 -0700
-Message-ID: <CACRpkda3szqYGDRPb+rc1j+XbM5UGXYUaYsnLVixXMXU8MLPtA@mail.gmail.com>
-References: <1439913752-26634-1-git-send-email-dirk.behme@gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.4
+Date: Fri, 2 Oct 2015 02:26:23 -0700
+Message-ID: <CACRpkdbDE8M=ri2NYjJc7s-MzHyv5ZHobNVk7izH2XYvWCVTeA@mail.gmail.com>
+References: <1443774347-383-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:36093 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750925AbbJBI5b (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 04:57:31 -0400
-Received: by obcgx8 with SMTP id gx8so77245899obc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 01:57:31 -0700 (PDT)
-In-Reply-To: <1439913752-26634-1-git-send-email-dirk.behme@gmail.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35887 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751938AbbJBJ0Y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 05:26:24 -0400
+Received: by obcgx8 with SMTP id gx8so77658813obc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 02:26:23 -0700 (PDT)
+In-Reply-To: <1443774347-383-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Aug 18, 2015 at 9:02 AM, Dirk Behme <dirk.behme@gmail.com> wrote:
+On Fri, Oct 2, 2015 at 1:25 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> The parameter offset is an unsigned, so it makes no sense to compare
-> it for >= 0. Fix the compiler warning regarding this by removing this
-> comparison.
+>         Hi Linus,
 >
-> As the macro GPIO_OFFSET_VALID is only used at this single place, simplify
-> the code by dropping the macro completely and dropping the invert, too.
+> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 >
-> No functional change.
+>   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
 >
-> Signed-off-by: Dirk Behme <dirk.behme@gmail.com>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.4
+>
+> for you to fetch changes up to 819fd4bfcc84805c48291de511c917596e911ffa:
+>
+>   pinctrl: sh-pfc: r8a7795: add EtherAVB support (2015-10-02 09:54:41 +0200)
+>
+> Summary:
+>   - Two fixes for incorrect pinmux data,
+>   - Initial r8a7795 (R-Car H3) support (incl. serial, I2C, audio,
+>     Ethernet),
+>   - Various cleanups.
+>
+> Most have been acked by Laurent and/or by you.
 
-Patch applied with Alexandre's ACK.
+Awesome, pulled into the pinctrl "devel" branch, will push to the kernel zeroday
+builder soon.
+
+If you have more stuff and fixes coming just send more pull requests
+based on this
+or my "devel" branch.
 
 Yours,
 Linus Walleij
