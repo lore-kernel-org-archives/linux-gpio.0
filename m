@@ -1,35 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] tps65912: Cleanup TPS65912 subdevice configuration dependencies
-Date: Fri, 2 Oct 2015 03:23:12 -0700
-Message-ID: <CACRpkdZ4f7g8AWpZgEGrV15Mtx1m_O8WwAXFhyJTPRCMQBps3A@mail.gmail.com>
-References: <1442339861-30300-1-git-send-email-afd@ti.com>
-	<1442339861-30300-4-git-send-email-afd@ti.com>
+Subject: Re: [PATCH 0/3] sh-pfc: r8a7795: add I2C/Audio pin support
+Date: Fri, 2 Oct 2015 03:24:09 -0700
+Message-ID: <CACRpkdaDsvPhM59yi5mvHbcu5_r=EcYus8KgZVc-ZsfLCcUGAQ@mail.gmail.com>
+References: <87mvx4qkzo.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:34800 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751975AbbJBKXN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 06:23:13 -0400
-Received: by oiev17 with SMTP id v17so55392541oie.1
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 03:23:13 -0700 (PDT)
-In-Reply-To: <1442339861-30300-4-git-send-email-afd@ti.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:34320 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751022AbbJBKYK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 06:24:10 -0400
+Received: by obbda8 with SMTP id da8so78695543obb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 03:24:09 -0700 (PDT)
+In-Reply-To: <87mvx4qkzo.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon <horms@verge.net.au>, Laurent <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Magnus <magnus.damm@gmail.com>, Linux-SH <linux-sh@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Tue, Sep 15, 2015 at 10:57 AM, Andrew F. Davis <afd@ti.com> wrote:
+On Wed, Sep 16, 2015 at 9:09 PM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
 
-> The TPS65912 subdevices depend on the mfd core and not any particular
-> interface. The core is only enabled by enabling an interface so this
-> is safe.
+> These are I2C / Audio pinchart support for Renesas r8a7795
 >
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Kuninori Morimoto (3):
+>       pinctrl: sh-pfc: r8a7795: add I2C pin support
+>       pinctrl: sh-pfc: r8a7795: add Audio clock pin support
+>       pinctrl: sh-pfc: r8a7795: add Audio SSI pin support
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-I assume Lee will merge this into the MFD tree.
+Geert will handle these.
 
 Yours,
 Linus Walleij
