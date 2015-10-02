@@ -1,34 +1,61 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH 1/2] pinctrl: at91-pio4: Use irq_set_handler_locked()
-Date: Fri, 2 Oct 2015 15:57:32 +0200
-Message-ID: <560E8D4C.1000400@atmel.com>
-References: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
+From: Y Vo <yvo@apm.com>
+Subject: Re: [PATCH 1/2] gpio: xgene: add support to configure GPIO line as
+ input, output or external IRQ pin
+Date: Fri, 2 Oct 2015 21:03:47 +0700
+Message-ID: <CAL4ahLfYO5nGvUbi6L5SUfhrj6o-O4-uvhFdrppojvH8Hwumjg@mail.gmail.com>
+References: <1441963332-13329-1-git-send-email-yvo@apm.com>
+	<1441963332-13329-2-git-send-email-yvo@apm.com>
+	<CACRpkdbos6r_S06r9gR9Mn7qu-ri61UJcQM332JK6S4gFwSN-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:20893 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751800AbbJBN6U (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 09:58:20 -0400
-In-Reply-To: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:33357 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752385AbbJBODs (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 10:03:48 -0400
+Received: by wiclk2 with SMTP id lk2so35439601wic.0
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 07:03:47 -0700 (PDT)
+In-Reply-To: <CACRpkdbos6r_S06r9gR9Mn7qu-ri61UJcQM332JK6S4gFwSN-A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, Thomas Gleixner <tglx@linutronix.de>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-Hi all,
+On Fri, Oct 2, 2015 at 4:51 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Sep 11, 2015 at 2:22 AM, Y Vo <yvo@apm.com> wrote:
+>
+>> Add support to configure GPIO line as input, output or external IRQ pin.
+>>
+>> Signed-off-by: Y Vo <yvo@apm.com>
+>
+> Mostly OK but...
+>
+>>  #define XGENE_MAX_GPIO_DS              22
+>>  #define XGENE_MAX_GPIO_DS_IRQ          6
+>> +#define XGENE_GPIO8_HWIRQ              0x48
+>> +#define XGENE_GPIO8_IDX                        8
+> (...)
+>> +static int xgene_irq_to_line(u32 irq)
+>> +{
+>> +       u32 offset = irq_get_irq_data(irq)->hwirq - XGENE_GPIO8_HWIRQ;
+>> +
+>> +       return (offset < XGENE_MAX_GPIO_DS_IRQ) ?
+>> +                       (offset + XGENE_GPIO8_IDX) : -EINVAL;
+>> +}
+>
+> What is this hardcoded IRQ 0x48 business?
 
-Well it seems my cover letter is missing. So, here it is:
+This is hardware irq number ~ GPIO_DS8. So we use it to get the gpio
+number from hwirq. But we are preparing another version which is
+better to configure the GPIO lines as interrupt or direction(in/out).
 
----8<----
-pinctrl: at91-pio4: fixes for current linux-next (irq)
-
-While testing the sama5d2 on today's linux-next I discovered that some
-adaptations were missing. So, I don't know if you were aware but here
-are my fixes in case you don't have them already.
-
-+Cc: Thomas and Stephen in case these errors happen while building
-linux-next...
-
-Bye,
+>
+> This patch needs kerneldoc for this xgene_irq_to_line() to explain
+> what exactly is going on, or noone will understand it enough to
+> debug or refactor the code.
+>
+> I hope this 0x48 is not some way of compensating for Linux internal
+> IRQ offsets, that is what irqdomain is for.
+>
+> Yours,
+> Linus Walleij
