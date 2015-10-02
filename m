@@ -1,71 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: imx25: ensure that a pin with id i is at
- position i in the info array
-Date: Fri, 2 Oct 2015 04:01:50 -0700
-Message-ID: <CACRpkdZZ9EndoSmBo33_6aMqHzppQRgL6-XtHj_E_XZb5-_KjA@mail.gmail.com>
-References: <1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de>
-	<1443018909-20871-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH RESEND] gpio: Fix error checking in the function device_pca957x_init
+Date: Fri, 2 Oct 2015 04:04:34 -0700
+Message-ID: <CACRpkdZ1CqKsQ=vAgRzWvkN8j-_9JPBSfXoyixfgB636OUx0JQ@mail.gmail.com>
+References: <1443085767-5299-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34275 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752083AbbJBLBv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 07:01:51 -0400
-Received: by oiev17 with SMTP id v17so55762498oie.1
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 04:01:50 -0700 (PDT)
-In-Reply-To: <1443018909-20871-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:34450 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425AbbJBLEf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 07:04:35 -0400
+Received: by obbda8 with SMTP id da8so79261004obb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 04:04:34 -0700 (PDT)
+In-Reply-To: <1443085767-5299-1-git-send-email-xerofoify@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 23, 2015 at 7:35 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Thu, Sep 24, 2015 at 2:09 AM, Nicholas Krause <xerofoify@gmail.com> wrote:
 
-> The code in pinctrl-imx.c only works correctly if in the
-> imx_pinctrl_soc_info passed to imx_pinctrl_probe we have:
+> This fixes error checking in the function device_pca957x_init
+> to properly check and return error code values from the calls
+> to the function pca953x_write_regs if they fail as to properly
+> signal callers when a error occurs due a failure when writing
+> registers for this gpio based device.
 >
->         info->pins[i].number =3D i
->         conf_reg(info->pins[i]) =3D 4 * i
->
-> (which conf_reg(pin) being the offset of the pin's configuration
-> register).
->
-> When the imx25 specific part was introduced in b4a87c9b966f ("pinctrl=
-:
-> pinctrl-imx: add imx25 pinctrl driver") we had:
->
->         info->pins[i].number =3D i + 1
->         conf_reg(info->pins[i]) =3D 4 * i
->
-> . Commit 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins") trie=
-d
-> to fix that but made the situation:
->
->         info->pins[i-1].number =3D i
->         conf_reg(info->pins[i-1]) =3D 4 * i
->
-> which is hardly better but fixed the error seen back then.
->
-> So insert another reserved entry in the array to finally yield:
->
->         info->pins[i].number =3D i
->         conf_reg(info->pins[i]) =3D 4 * i
->
-> Fixes: 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
-> Changes since (implicit) v1 sent with Message-Id:
-> 1443018584-12186-1-git-send-email-u.kleine-koenig@pengutronix.de :
+> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Patch applied for fixes.
+Already merged.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
