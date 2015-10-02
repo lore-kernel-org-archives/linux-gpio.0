@@ -1,83 +1,139 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 2/2] gpio: omap: convert to use generic irq handler
-Date: Fri, 2 Oct 2015 17:40:12 -0500
-Message-ID: <560F07CC.9050205@ti.com>
-References: <1443209283-20781-1-git-send-email-grygorii.strashko@ti.com>
- <1443209283-20781-3-git-send-email-grygorii.strashko@ti.com>
- <CACRpkdYDrcwa+h2Lxd65RBMc-1n9CCyVDz1qjc2U1MEU2GP7hA@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v3] pinctrl: sh-pfc: r8a779[01]: move 'union vin_data' to shared header file
+Date: Sat, 03 Oct 2015 02:21:15 +0300
+Message-ID: <5498069.3NrXYzuRL0@wasted.cogentembedded.com>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYDrcwa+h2Lxd65RBMc-1n9CCyVDz1qjc2U1MEU2GP7hA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Austin Schuh <austin@peloton-tech.com>, philipp@peloton-tech.com, linux-rt-users@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f180.google.com ([209.85.217.180]:36427 "EHLO
+	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859AbbJBXVT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 19:21:19 -0400
+Received: by lbcao8 with SMTP id ao8so33968523lbc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 16:21:17 -0700 (PDT)
+In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
 
-On 10/02/2015 03:17 PM, Linus Walleij wrote:
-> On Fri, Sep 25, 2015 at 12:28 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->
->> This patch converts TI OMAP GPIO driver to use generic irq handler
->> instead of chained IRQ handler. This way OMAP GPIO driver will be
->> compatible with RT kernel where it will be forced thread IRQ handler
->> while in non-RT kernel it still will be executed in HW IRQ context.
->> As part of this change the IRQ wakeup configuration is applied to
->> GPIO Bank IRQ as it now will be under control of IRQ PM Core during
->> suspend.
->>
->> There are also additional benefits:
->>   - on-RT kernel there will be no complains any more about PM runtime usage
->>     in atomic context  "BUG: sleeping function called from invalid context";
->>   - GPIO bank IRQs will appear in /proc/interrupts and its usage statistic
->>      will be  visible;
->>   - GPIO bank IRQs could be configured through IRQ proc_fs interface and,
->>     as result, could be a part of IRQ balancing process if needed;
->>   - GPIO bank IRQs will be under control of IRQ PM Core during
->>     suspend to RAM.
->>
->> Disadvantage:
->>   - additional runtime overhed as call chain till
->>     omap_gpio_irq_handler() will be longer now
->>   - necessity to use wa_lock in omap_gpio_irq_handler() to W/A warning
->>     in handle_irq_event_percpu()
->>     WARNING: CPU: 1 PID: 35 at kernel/irq/handle.c:149 handle_irq_event_percpu+0x51c/0x638()
->>
->> This patch doesn't fully follows recommendations provided by Sebastian
->> Andrzej Siewior [1], because It's required to go through and check all
->> GPIO IRQ pin states as fast as possible and pass control to handle_level_irq
->> or handle_edge_irq. handle_level_irq or handle_edge_irq will perform actions
->> specific for IRQ triggering type and wakeup corresponding registered
->> threaded IRQ handler (at least it's expected to be threaded).
->> IRQs can be lost if handle_nested_irq() will be used, because excecution
->> time of some pin specific GPIO IRQ handler can be very significant and
->> require accessing ext. devices (I2C).
->>
->> Idea of such kind reworking was also discussed in [2].
->>
->> [1] http://www.spinics.net/lists/linux-omap/msg120665.html
->> [2] http://www.spinics.net/lists/linux-omap/msg119516.html
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
->> Tested-by: Austin Schuh <austin@peloton-tech.com>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->
-> Patch applied.
->
+R8A7790/1 PFC  drivers use almost identical  'union vin_data' and completely
+identical VIN_DATA_PIN_GROUP() macro; we thus can  move them into the shared
+header file...
 
-Thanks.
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> I'm thinking that we need some recommendations on how to write
-> IRQ handlers in order to be RT-compatible. Can you help me lining
-> up the requirements in Documentation/gpio/driver.txt?
->
-> I will write an RFC patch and let you write some additional text
-> to it in response then we can iterate it a bit.
+---
+The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
 
-Sure. I'll try to help.
+Changes in version 3:
+- added a comment to the common header file;
+- added Laurent's ACK.
 
+Changes in version 2:
+- removed leftover empty line from the R8A7790 driver;
+- added Geert's ACK.
 
--- 
-regards,
--grygorii
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   19 -------------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   18 ------------------
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   23 +++++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 37 deletions(-)
+
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -3624,25 +3624,6 @@ static const unsigned int usb2_pins[] =
+ static const unsigned int usb2_mux[] = {
+ 	USB2_PWEN_MARK, USB2_OVC_MARK,
+ };
+-
+-union vin_data {
+-	unsigned int data24[24];
+-	unsigned int data20[20];
+-	unsigned int data16[16];
+-	unsigned int data12[12];
+-	unsigned int data10[10];
+-	unsigned int data8[8];
+-	unsigned int data4[4];
+-};
+-
+-#define VIN_DATA_PIN_GROUP(n, s)				\
+-	{							\
+-		.name = #n#s,					\
+-		.pins = n##_pins.data##s,			\
+-		.mux = n##_mux.data##s,				\
+-		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+-	}
+-
+ /* - VIN0 ------------------------------------------------------------------- */
+ static const union vin_data vin0_data_pins = {
+ 	.data24 = {
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -3986,24 +3986,6 @@ static const unsigned int usb1_mux[] = {
+ 	USB1_PWEN_MARK,
+ 	USB1_OVC_MARK,
+ };
+-
+-union vin_data {
+-	unsigned int data24[24];
+-	unsigned int data20[20];
+-	unsigned int data16[16];
+-	unsigned int data12[12];
+-	unsigned int data10[10];
+-	unsigned int data8[8];
+-};
+-
+-#define VIN_DATA_PIN_GROUP(n, s)				\
+-	{							\
+-		.name = #n#s,					\
+-		.pins = n##_pins.data##s,			\
+-		.mux = n##_mux.data##s,				\
+-		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
+-	}
+-
+ /* - VIN0 ------------------------------------------------------------------- */
+ static const union vin_data vin0_data_pins = {
+ 	.data24 = {
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -52,6 +52,29 @@ struct sh_pfc_pin_group {
+ 	unsigned int nr_pins;
+ };
+ 
++/*
++ * Using union vin_data saves memory occupied by the VIN data pins.
++ * VIN_DATA_PIN_GROUP() is  a macro  used  to describe the VIN pin groups
++ * in this case.
++ */
++#define VIN_DATA_PIN_GROUP(n, s)				\
++	{							\
++		.name = #n#s,					\
++		.pins = n##_pins.data##s,			\
++		.mux = n##_mux.data##s,				\
++		.nr_pins = ARRAY_SIZE(n##_pins.data##s),	\
++	}
++
++union vin_data {
++	unsigned int data24[24];
++	unsigned int data20[20];
++	unsigned int data16[16];
++	unsigned int data12[12];
++	unsigned int data10[10];
++	unsigned int data8[8];
++	unsigned int data4[4];
++};
++
+ #define SH_PFC_FUNCTION(n)				\
+ 	{						\
+ 		.name = #n,				\
+
