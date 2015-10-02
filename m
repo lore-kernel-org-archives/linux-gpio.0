@@ -1,63 +1,35 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7794: add VIN pin groups
-Date: Fri, 2 Oct 2015 14:12:42 +0300
-Message-ID: <560E66AA.4080901@cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
- <2918225.gAfMYgxlCz@wasted.cogentembedded.com>
- <CAMuHMdXkjdwbqOd9XHMsTdKD6qkUyEDeJ1L5HmwkADUDP2jXXw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Documentation: gpio: mention that <function>-gpio has
+ been deprecated
+Date: Fri, 2 Oct 2015 04:13:24 -0700
+Message-ID: <CACRpkdaAra_gHCGweUi-01_HAfb_8yYx9LagmOO1bP8T=DCYjQ@mail.gmail.com>
+References: <1442841286-8586-1-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXkjdwbqOd9XHMsTdKD6qkUyEDeJ1L5HmwkADUDP2jXXw@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1442841286-8586-1-git-send-email-javier@osg.samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello.
+On Mon, Sep 21, 2015 at 6:14 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
 
-On 10/2/2015 10:59 AM, Geert Uytterhoeven wrote:
-
->> +/* - VIN1 ----------------------------------------------------------------- */
->> +static const unsigned int vin1_data8_pins[] = {
->> +       RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
->> +       RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
->> +       RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 17),
->> +       RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
->> +};
->> +static const unsigned int vin1_data8_mux[] = {
->> +       VI1_DATA0_MARK, VI1_DATA1_MARK,
->> +       VI1_DATA2_MARK, VI1_DATA3_MARK,
->> +       VI1_DATA4_MARK, VI1_DATA5_MARK,
->> +       VI1_DATA6_MARK, VI1_DATA7_MARK,
->> +};
->> +static const unsigned int vin1_data12_pins[] = {
->> +       RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
->> +       RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
->> +       RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 17),
->> +       RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
->> +       RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 11),
->> +       RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
->> +};
->> +static const unsigned int vin1_data12_mux[] = {
->> +       VI1_DATA0_MARK, VI1_DATA1_MARK,
->> +       VI1_DATA2_MARK, VI1_DATA3_MARK,
->> +       VI1_DATA4_MARK, VI1_DATA5_MARK,
->> +       VI1_DATA6_MARK, VI1_DATA7_MARK,
->> +       VI1_DATA8_MARK, VI1_DATA9_MARK,
->> +       VI1_DATA10_MARK, VI1_DATA11_MARK,
->> +};
+> The gpiolib supports parsing DT properties of the form <function>-gpio
+> but it was only added for compatibility with older DT bindings that got
+> it wrong and should not be used in newer bindings.
 >
-> Given Laurent asked to slightly rework this series, perhaps
-> vin1_data*[] can use a union to decrease memory usage, too?
-
-    You're right -- using 'union vin_data' would save some memory now that we 
-have 3 pairs of arrays.
-
-> Gr{oetje,eeting}s,
+> The commit that added support for this was:
 >
->                          Geert
+> dd34c37aa3e8 ("gpio: of: Allow -gpio suffix for property names")
+>
+> but didn't update the documentation to explain this so it's been a source
+> of confusion. So let's make clear this in the GPIO documentation.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-MBR, Sergei
+Acked-by, saw that Jon took the patch, thx.
 
+Yours,
+Linus Walleij
