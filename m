@@ -1,42 +1,35 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 5/8] gpio: pca953x: store driver_data for future use
-Date: Fri, 02 Oct 2015 15:16:01 +0300
-Message-ID: <1443788161.8361.331.camel@linux.intel.com>
-References: <1442916619-140607-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <1442916619-140607-6-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <CACRpkdb88A4wP2_z_SsxOU_NoyGVVsA7TomgcKO6Qn+fguoJFA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 2/5] mfd: tps65912: Remove old driver in preparation
+ for new driver
+Date: Fri, 2 Oct 2015 05:16:14 -0700
+Message-ID: <CACRpkdaTVM9ojb3g5FqnXGtMRP3fhnyFSgTw7K45u+LUCc0x=Q@mail.gmail.com>
+References: <1443106374-4126-1-git-send-email-afd@ti.com>
+	<1443106374-4126-3-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb88A4wP2_z_SsxOU_NoyGVVsA7TomgcKO6Qn+fguoJFA@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Graeme Smecher <gsmecher@threespeedlogic.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:36154 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752356AbbJBMQP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 08:16:15 -0400
+Received: by obcgx8 with SMTP id gx8so80132695obc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 05:16:14 -0700 (PDT)
+In-Reply-To: <1443106374-4126-3-git-send-email-afd@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 2015-10-02 at 03:53 -0700, Linus Walleij wrote:
-> On Tue, Sep 22, 2015 at 3:10 AM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Instead of using id->driver_data directly we copied it to the 
-> > internal
-> > structure. This will help to adapt driver for ACPI use.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Gregory, Grygorii, Graeme: can I get some help in reviewing these
-> PCA patches for ACPI support?
+On Thu, Sep 24, 2015 at 7:52 AM, Andrew F. Davis <afd@ti.com> wrote:
 
-I would like to notice that there is v2 of the series (GPIO patches
-weren't changed AFAIR).
+> The old tps65912 driver is being replaced, delete old driver.
+>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-http://www.spinics.net/lists/kernel/msg2087827.html
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> 
-> Yours,
-> Linus Walleij
+The merge collisions are unpredictable. Will this be merged
+through the MFD tree?
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Yours,
+Linus Walleij
