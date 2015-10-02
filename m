@@ -1,61 +1,65 @@
-From: Y Vo <yvo@apm.com>
-Subject: Re: [PATCH 1/2] gpio: xgene: add support to configure GPIO line as
- input, output or external IRQ pin
-Date: Fri, 2 Oct 2015 21:03:47 +0700
-Message-ID: <CAL4ahLfYO5nGvUbi6L5SUfhrj6o-O4-uvhFdrppojvH8Hwumjg@mail.gmail.com>
-References: <1441963332-13329-1-git-send-email-yvo@apm.com>
-	<1441963332-13329-2-git-send-email-yvo@apm.com>
-	<CACRpkdbos6r_S06r9gR9Mn7qu-ri61UJcQM332JK6S4gFwSN-A@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: Rename .gpio_data[] to .pinmux_data[]
+Date: Fri, 02 Oct 2015 17:45:07 +0300
+Message-ID: <1993757.9LYjE81XZo@avalon>
+References: <1443016754-24203-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:33357 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752385AbbJBODs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 10:03:48 -0400
-Received: by wiclk2 with SMTP id lk2so35439601wic.0
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 07:03:47 -0700 (PDT)
-In-Reply-To: <CACRpkdbos6r_S06r9gR9Mn7qu-ri61UJcQM332JK6S4gFwSN-A@mail.gmail.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:45228 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752275AbbJBOpE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 10:45:04 -0400
+In-Reply-To: <1443016754-24203-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Oct 2, 2015 at 4:51 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Sep 11, 2015 at 2:22 AM, Y Vo <yvo@apm.com> wrote:
->
->> Add support to configure GPIO line as input, output or external IRQ pin.
->>
->> Signed-off-by: Y Vo <yvo@apm.com>
->
-> Mostly OK but...
->
->>  #define XGENE_MAX_GPIO_DS              22
->>  #define XGENE_MAX_GPIO_DS_IRQ          6
->> +#define XGENE_GPIO8_HWIRQ              0x48
->> +#define XGENE_GPIO8_IDX                        8
-> (...)
->> +static int xgene_irq_to_line(u32 irq)
->> +{
->> +       u32 offset = irq_get_irq_data(irq)->hwirq - XGENE_GPIO8_HWIRQ;
->> +
->> +       return (offset < XGENE_MAX_GPIO_DS_IRQ) ?
->> +                       (offset + XGENE_GPIO8_IDX) : -EINVAL;
->> +}
->
-> What is this hardcoded IRQ 0x48 business?
+Hi Geert,
 
-This is hardware irq number ~ GPIO_DS8. So we use it to get the gpio
-number from hwirq. But we are preparing another version which is
-better to configure the GPIO lines as interrupt or direction(in/out).
+On Wednesday 23 September 2015 15:59:14 Geert Uytterhoeven wrote:
+> The sh_pfc_soc_info.gpio_data[] array contains not only GPIO data, but
+> also various other pinmux-related data (functions and marks).
+> Every single driver already calls its local array pinmux_data[].
+> Hence rename the sh_pfc_soc_info member to "pinmux_data".
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->
-> This patch needs kerneldoc for this xgene_irq_to_line() to explain
-> what exactly is going on, or noone will understand it enough to
-> debug or refactor the code.
->
-> I hope this 0x48 is not some way of compensating for Linux internal
-> IRQ offsets, that is what irqdomain is for.
->
-> Yours,
-> Linus Walleij
+Everything that could make the pfc driver more readable is welcome :-)
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/pinctrl/sh-pfc/core.c        | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-emev2.c   | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a73a4.c | 8 ++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 8 ++++----
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7203.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7264.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7269.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7720.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7722.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7723.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7724.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7734.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7757.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7785.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-sh7786.c  | 4 ++--
+>  drivers/pinctrl/sh-pfc/pfc-shx3.c    | 4 ++--
+>  drivers/pinctrl/sh-pfc/sh_pfc.h      | 6 +++---
+>  24 files changed, 53 insertions(+), 53 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
+
