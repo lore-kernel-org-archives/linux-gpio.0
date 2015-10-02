@@ -1,33 +1,76 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 1/7] pinctrl: freescale: imx: fix system crash if
- enable two pinctl instances
-Date: Fri, 2 Oct 2015 05:19:41 -0700
-Message-ID: <CACRpkdauecXzxmveqEYRE=-iKf8JoJCj7q8kG+k0AGcDQqYGEA@mail.gmail.com>
-References: <1443128043-21063-1-git-send-email-aalonso@freescale.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: omap: move pm runtime in irq_chip.irq_bus_lock/sync_unlock
+Date: Fri, 2 Oct 2015 05:22:15 -0700
+Message-ID: <CACRpkdbHL=uBvPDqmxSGHbn=8nu7So87zEu2sCLBcfaytwk6tg@mail.gmail.com>
+References: <1443209283-20781-1-git-send-email-grygorii.strashko@ti.com>
+	<1443209283-20781-2-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1443128043-21063-1-git-send-email-aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Alonso <aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?5p2O5pm6?= <lznuaa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Anson.Huang-KZfg59tc24xl57MIdRCFDg@public.gmane.org" <Anson.Huang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Frank Li <Frank.Li-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, yibin.gong-KZfg59tc24xl57MIdRCFDg@public.gmane.org, nitin.garg-KZfg59tc24xl57MIdRCFDg@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1443209283-20781-2-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, Austin Schuh <austin@peloton-tech.com>, philipp@peloton-tech.com, linux-rt-users@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 24, 2015 at 1:53 PM, Adrian Alonso <aalonso-KZfg59tc24xl57MIdRCFDg@public.gmane.org> wrote:
+On Fri, Sep 25, 2015 at 12:28 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> From: Robin Gong <b38343-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+> The PM runtime API can't be used in atomic contex on -RT even if
+> it's configured as irqsafe. As result, below error report can
+> be seen when PM runtime API called from IRQ chip's callbacks
+> irq_startup/irq_shutdown/irq_set_type, because they are
+> protected by RAW spinlock:
 >
-> Fix system chrash caused by groups whose number is smaller than the number
-> of groups of the last pinctl instance which is not initialized.
+> BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:917
+> in_atomic(): 1, irqs_disabled(): 128, pid: 96, name: insmod
+> 3 locks held by insmod/96:
+>  #0:  (&dev->mutex){......}, at: [<c04752c8>] __driver_attach+0x54/0xa0
+>  #1:  (&dev->mutex){......}, at: [<c04752d4>] __driver_attach+0x60/0xa0
+>  #2:  (class){......}, at: [<c00a408c>] __irq_get_desc_lock+0x60/0xa4
+> irq event stamp: 1834
+> hardirqs last  enabled at (1833): [<c06ab2a4>] _raw_spin_unlock_irqrestore+0x88/0x90
+> hardirqs last disabled at (1834): [<c06ab068>] _raw_spin_lock_irqsave+0x2c/0x64
+> softirqs last  enabled at (0): [<c003d220>] copy_process.part.52+0x410/0x19d8
+> softirqs last disabled at (0): [<  (null)>]   (null)
+> Preemption disabled at:[<  (null)>]   (null)
 >
-> iMX7D supports two iomux controllers (iomuxc-lpsr and iomuxc) on probing
-> the second instance (iomuxc) the chrash below occurs.
+> CPU: 1 PID: 96 Comm: insmod Tainted: G        W  O    4.1.3-rt3-00618-g57e2387-dirty #184
+> Hardware name: Generic DRA74X (Flattened Device Tree)
+> [<c00190f4>] (unwind_backtrace) from [<c0014734>] (show_stack+0x20/0x24)
+> [<c0014734>] (show_stack) from [<c06a62ec>] (dump_stack+0x88/0xdc)
+> [<c06a62ec>] (dump_stack) from [<c006ca44>] (___might_sleep+0x198/0x2a8)
+> [<c006ca44>] (___might_sleep) from [<c06ab6d4>] (rt_spin_lock+0x30/0x70)
+> [<c06ab6d4>] (rt_spin_lock) from [<c04815ac>] (__pm_runtime_resume+0x68/0xa4)
+> [<c04815ac>] (__pm_runtime_resume) from [<c04123f4>] (omap_gpio_irq_type+0x188/0x1d8)
+> [<c04123f4>] (omap_gpio_irq_type) from [<c00a64e4>] (__irq_set_trigger+0x68/0x130)
+> [<c00a64e4>] (__irq_set_trigger) from [<c00a7bc4>] (irq_set_irq_type+0x44/0x6c)
+> [<c00a7bc4>] (irq_set_irq_type) from [<c00abbf8>] (irq_create_of_mapping+0x120/0x174)
+> [<c00abbf8>] (irq_create_of_mapping) from [<c0577b74>] (of_irq_get+0x48/0x58)
+> [<c0577b74>] (of_irq_get) from [<c0540a14>] (i2c_device_probe+0x54/0x15c)
+> [<c0540a14>] (i2c_device_probe) from [<c04750dc>] (driver_probe_device+0x184/0x2c8)
+> [<c04750dc>] (driver_probe_device) from [<c0475310>] (__driver_attach+0x9c/0xa0)
+> [<c0475310>] (__driver_attach) from [<c0473238>] (bus_for_each_dev+0x7c/0xb0)
+> [<c0473238>] (bus_for_each_dev) from [<c0474af4>] (driver_attach+0x28/0x30)
+> [<c0474af4>] (driver_attach) from [<c0474760>] (bus_add_driver+0x154/0x200)
+> [<c0474760>] (bus_add_driver) from [<c0476348>] (driver_register+0x88/0x108)
+> [<c0476348>] (driver_register) from [<c0541600>] (i2c_register_driver+0x3c/0x90)
+> [<c0541600>] (i2c_register_driver) from [<bf003018>] (pcf857x_init+0x18/0x24 [gpio_pcf857x])
+> [<bf003018>] (pcf857x_init [gpio_pcf857x]) from [<c000998c>] (do_one_initcall+0x128/0x1e8)
+> [<c000998c>] (do_one_initcall) from [<c06a4220>] (do_init_module+0x6c/0x1bc)
+> [<c06a4220>] (do_init_module) from [<c00dd0c8>] (load_module+0x18e8/0x21c4)
+> [<c00dd0c8>] (load_module) from [<c00ddaa0>] (SyS_init_module+0xfc/0x158)
+> [<c00ddaa0>] (SyS_init_module) from [<c000ff40>] (ret_fast_syscall+0x0/0x54)
+>
+> The IRQ chip interface defines only two callbacks which are executed in
+> non-atomic contex - irq_bus_lock/irq_bus_sync_unlock, so lets move
+> PM runtime calls there.
+>
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Tested-by: Austin Schuh <austin@peloton-tech.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-This 1/7 patch applied for next with Shawn's ACK.
+Patch applied with Santosh's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
