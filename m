@@ -1,33 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 0/2] pinctrl: uniphier: one fix, one addition
-Date: Fri, 2 Oct 2015 04:05:34 -0700
-Message-ID: <CACRpkdYUYXZHyzaPMPZyRMm6CKwL7GJHmEH600wsh_DXgGGhMw@mail.gmail.com>
-References: <1443097607-29011-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 2/4] pinctrl: sunxi: add allwinner A83T PIO controller support
+Date: Fri, 2 Oct 2015 04:10:49 -0700
+Message-ID: <CACRpkdb6tmfVSzuV7=u6pXU4trMbUBj8jF+aQgNiZsysgsL6qA@mail.gmail.com>
+References: <1442936337-3104-1-git-send-email-vishnupatekar0510@gmail.com>
+	<1442936337-3104-3-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1443097607-29011-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:35771 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730AbbJBLKu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 07:10:50 -0400
+Received: by oiww128 with SMTP id w128so55856410oiw.2
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 04:10:49 -0700 (PDT)
+In-Reply-To: <1442936337-3104-3-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Sep 24, 2015 at 5:26 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Sep 22, 2015 at 8:38 AM, Vishnu Patekar
+<vishnupatekar0510@gmail.com> wrote:
 
-> 1/2 is a bug fix, but it is not very critical.
-> I can wait until 4.4-rc1 if it is a hassle.
+> Allwinner A83T soc port controller has 8 ports.
+> It has 3 IRQ banks namely PB, PG, PH.
+> Pinmuxing are different for some pins as compared to
+> sun8i A23 and A33.
 >
-> 2/2 provides some more pin-mux settings.
->
->
-> Changes in v3:
->   - Sort pin groups alphabetically
->   - Add missing UNIPHIER_PINMUX_FUNCTION(sd) to ph1_sld8_functions
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 
-OK missed this v3 version was out, sorry.
-
-Pulling out the previos fix and replacing with this.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
