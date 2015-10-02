@@ -1,62 +1,34 @@
 From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: [PATCH 2/2] pinctrl: at91-pio4: Adapt to new irq flow handler prototype
-Date: Fri, 2 Oct 2015 15:50:46 +0200
-Message-ID: <37a4986f2752faa3d82f56d1235c619d09dec97f.1443793711.git.nicolas.ferre@atmel.com>
+Subject: Re: [PATCH 1/2] pinctrl: at91-pio4: Use irq_set_handler_locked()
+Date: Fri, 2 Oct 2015 15:57:32 +0200
+Message-ID: <560E8D4C.1000400@atmel.com>
 References: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:20893 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751800AbbJBN6U (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 09:58:20 -0400
 In-Reply-To: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, Nicolas Ferre <nicolas.ferre@atmel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, Thomas Gleixner <tglx@linutronix.de>
 
-Adapt atmel_gpio_irq_handler() function as the "irq" argument is now removed
-from the irq flow handlers prototype in commit
-bd0b9ac405e1794d72533c3d487aa65b6b955a0c (genirq: Remove irq argument from irq
-flow handlers).
+Hi all,
 
-This allows to remove this warning:
-../drivers/pinctrl/pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-../drivers/pinctrl/pinctrl-at91-pio4.c:1000:3: warning: passing argument 2 of
-'irq_set_chained_handler' from incompatible pointer type [enabled by default]
-   irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
-   ^
-In file included from ../include/linux/gpio/driver.h:6:0,
-                 from ../include/asm-generic/gpio.h:12,
-                 from ../arch/arm/include/asm/gpio.h:9,
-                 from ../include/linux/gpio.h:48,
-                 from ../drivers/pinctrl/pinctrl-at91-pio4.c:18:
-../include/linux/irq.h:548:1: note: expected 'irq_flow_handler_t' but argument
-is of type 'void (*)(unsigned int,  struct irq_desc *)'
- irq_set_chained_handler(unsigned int irq, irq_flow_handler_t handle)
+Well it seems my cover letter is missing. So, here it is:
 
-This change appeared while the driver was being reviewed and was being included
-in pinctrl tree.
+---8<----
+pinctrl: at91-pio4: fixes for current linux-next (irq)
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
----
- drivers/pinctrl/pinctrl-at91-pio4.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+While testing the sama5d2 on today's linux-next I discovered that some
+adaptations were missing. So, I don't know if you were aware but here
+are my fixes in case you don't have them already.
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 1f1a64ef3559..cae0748aca25 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -248,10 +248,11 @@ static struct irq_chip atmel_gpio_irq_chip = {
- 	.irq_set_wake	= atmel_gpio_irq_set_wake,
- };
- 
--static void atmel_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
-+static void atmel_gpio_irq_handler(struct irq_desc *desc)
- {
--	struct atmel_pioctrl *atmel_pioctrl = irq_get_handler_data(irq);
-+	struct atmel_pioctrl *atmel_pioctrl = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int irq = irq_desc_get_irq(desc);
- 	unsigned long isr;
- 	int n, bank = -1;
- 
--- 
-2.1.3
++Cc: Thomas and Stephen in case these errors happen while building
+linux-next...
+
+Bye,
