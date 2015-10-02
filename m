@@ -1,33 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/6] pinctrl: berlin: regmap as an extra argument of berlin_pinctrl_probe()
-Date: Fri, 2 Oct 2015 03:37:09 -0700
-Message-ID: <CACRpkdaJc_j1S=W2kropf52uRHfYmTXsZChPvMBLe=Cj67x5RQ@mail.gmail.com>
-References: <1442829860-4647-1-git-send-email-jszhang@marvell.com>
-	<1442829860-4647-2-git-send-email-jszhang@marvell.com>
+Subject: Re: [PATCH] gpio: add GPIO support for IT87xx, replacing gpio-it8761e
+Date: Fri, 2 Oct 2015 03:47:03 -0700
+Message-ID: <CACRpkdb-DYCxEZGhk1TEjpJRiar5oi=zjmBmmgQie-xr+X+sVg@mail.gmail.com>
+References: <1442852664-8948-1-git-send-email-vincent.donnefort@seagate.com>
+	<1442852664-8948-2-git-send-email-vincent.donnefort@seagate.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:35177 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850AbbJBKhK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 06:37:10 -0400
-Received: by obbzf10 with SMTP id zf10so78824244obb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 03:37:09 -0700 (PDT)
-In-Reply-To: <1442829860-4647-2-git-send-email-jszhang@marvell.com>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:35655 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbbJBKrE convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 06:47:04 -0400
+Received: by oiww128 with SMTP id w128so55618471oiw.2
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 03:47:04 -0700 (PDT)
+In-Reply-To: <1442852664-8948-2-git-send-email-vincent.donnefort@seagate.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>, Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vincent Donnefort <vdonnefort@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>
 
-On Mon, Sep 21, 2015 at 3:04 AM, Jisheng Zhang <jszhang@marvell.com> wrote:
+On Mon, Sep 21, 2015 at 9:24 AM, Vincent Donnefort <vdonnefort@gmail.co=
+m> wrote:
 
-> Let berlin_pinctrl_probe() accepts an extra argument: regmap, this is to
-> prepare for the next berlin4ct support, where we won't use simple-mfd
-> any more.
+> From: Diego Elio Petten=C3=B2 <flameeyes@flameeyes.eu>
 >
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> This patch adds support for the GPIOs found on the ITE super-I/O chip=
+s
+> IT87xx.
+>
+> Signed-off-by: Diego Elio Petten=C3=B2 <flameeyes@flameeyes.eu>
+> Signed-off-by: Christophe Vu-Brugier <cvubrugier@fastmail.fm>
 
-Waiting for Antoine's review of this patch before applying.
+No clue what you're doing really but it seems good, so patch applied.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
