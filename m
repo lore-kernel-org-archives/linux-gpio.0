@@ -1,33 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] pinctrl: uniphier: add SD card pinmux settings
-Date: Fri, 2 Oct 2015 02:55:18 -0700
-Message-ID: <CACRpkdYPo8wT1K2NLVTDmh+JNDGtez8o=pNtUsZjBwXnDLRpAA@mail.gmail.com>
-References: <1441964010-6885-1-git-send-email-yamada.masahiro@socionext.com>
-	<1441964010-6885-3-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] pinctrl: sirf: Fix module autoloading for OF
+Date: Fri, 2 Oct 2015 03:15:11 -0700
+Message-ID: <CACRpkdYi+ecByw=54D0FZjwy6h_EX7wVQpaeAsCdUkD1NvF=EA@mail.gmail.com>
+References: <1442389425-27846-1-git-send-email-javier@osg.samsung.com>
+	<55F91F7C.3080102@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36016 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751189AbbJBJzT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Oct 2015 05:55:19 -0400
-Received: by oibi136 with SMTP id i136so55304570oib.3
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2015 02:55:18 -0700 (PDT)
-In-Reply-To: <1441964010-6885-3-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <55F91F7C.3080102@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@freescale.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Barry Song <baohua@kernel.org>, Wei Chen <Wei.Chen@csr.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Sep 11, 2015 at 2:33 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-
-> Add SD card pinmux settings for PH1-LD4, PH1-Pro4, PH1-sLD8,
-> PH1-Pro5, ProXstream2, and PH1-LD6b SoCs.
+On Wed, Sep 16, 2015 at 12:51 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
+> On 09/16/2015 09:43 AM, Javier Martinez Canillas wrote:
+>> Drivers needs to export the OF id table and this be built into
+>> the module or udev won't have the necessary information to auto
+>> load the driver module when the device is registered by OF.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+>>
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Just found out that PINCTRL_SIRF is a boolean Kconfig symbol and not
+> a tristate one so it can't be built as a module. Sorry for the noise.
 
-Patch applied for devel (v4.4)
+OK dropping this.
 
 Yours,
 Linus Walleij
