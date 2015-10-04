@@ -1,55 +1,48 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] gpio: keep the GPIO line names internal
-Date: Sun, 4 Oct 2015 15:37:42 +0200
-Message-ID: <20151004133742.GO4284@localhost>
-References: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH 1/2] pinctrl: at91-pio4: Use irq_set_handler_locked()
+Date: Sun, 4 Oct 2015 23:31:06 +0200
+Message-ID: <56119A9A.3070507@atmel.com>
+References: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
+ <560E8D4C.1000400@atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:36800 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751562AbbJDQIR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2015 12:08:17 -0400
-Received: by wicgb1 with SMTP id gb1so89085178wic.1
-        for <linux-gpio@vger.kernel.org>; Sun, 04 Oct 2015 09:08:16 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:26378 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751809AbbJDVbw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2015 17:31:52 -0400
+In-Reply-To: <560E8D4C.1000400@atmel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>
+To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On Wed, Sep 23, 2015 at 04:27:33PM -0700, Linus Walleij wrote:
-> This refactors the changes to the GPIO line naming mechanism to
-> not have so widespread effects, instead we conclude the patch series
-> by having created a name attribute in the GPIO descriptor, that need
-> not be globally unique, and it will be initialized from the old
-> .names array in struct gpio_chip if it exists, then used in the legacy
-> sysfs code like the array was used previously.
-> 
-> The associated changes to name lines from the device tree are
-> controversial and need to stand alone from this. Resulting changes:
-> 
-> 1. Remove the export and the header for the gpio_name_to_desc() as so
-> far the only use is inside gpiolib.c. Staticize gpio_name_to_desc()
-> and move it above the only function using it.
-> 
-> 2. Only print a warning if there are two GPIO lines with the same name.
-> The reason is to preserve current behaviour: before the previous
-> changes to the naming mechanism this would not reject probing the
-> driver, instead the error would occur when trying to export the line
-> in sysfs, so restore this behaviour, but print a friendly warning
-> if names collide.
+Le 02/10/2015 15:57, Nicolas Ferre a =E9crit :
+> Hi all,
+>=20
+> Well it seems my cover letter is missing. So, here it is:
+>=20
+> ---8<----
+> pinctrl: at91-pio4: fixes for current linux-next (irq)
+>=20
+> While testing the sama5d2 on today's linux-next I discovered that som=
+e
+> adaptations were missing. So, I don't know if you were aware but here
+> are my fixes in case you don't have them already.
+>=20
+> +Cc: Thomas and Stephen in case these errors happen while building
+> linux-next...
 
-This looks good (apart from the checkpatch warning for the warning
-message string).
+After seeing that Linus applied 2 patches by Ludovic, I realized that a=
+s
+I had foreseen correctly: it was known and corrected.
 
-You also need to revert ddd5404007b8 ("gpio-sysfs: Use gpio descriptor
-name instead of gpiochip names array") however as this is an ABI change.  
-Otherwise pins with a name in DT will now be exported using the gpio name
-rather than number as they used to be. [ The current behaviour is
-maintained by exporting names from chip->names for hard coded names
-only. ]
-
-Thanks,
-Johan
+Sorry for the noise. Bye,
+--=20
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
