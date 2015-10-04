@@ -1,267 +1,241 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v4] pinctrl: sh-pfc: r8a7794: add VIN pin groups
-Date: Sat, 03 Oct 2015 02:21:49 +0300
-Message-ID: <2586493.2kct4DFDTJ@wasted.cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v2] gpio: Add GPIO support for the ACCES 104-IDIO-16
+Date: Sun, 4 Oct 2015 11:00:46 -0400
+Message-ID: <20151004150046.GA22499@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f173.google.com ([209.85.160.173]:33263 "EHLO
+	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751532AbbJDPAz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2015 11:00:55 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+The ACCES 104-IDIO-16 family of PC/104 utility boards feature 16
+optically isolated inputs and 16 optically isolated FET solid state
+outputs. This driver provides GPIO support for these 32 channels of
+digital I/O. Change-of-State detection interrupts are not supported.
 
-Add VIN0/1 pin groups to R8A7794 PFC driver.
+GPIO 0-15 correspond to digital outputs 0-15, while GPIO 16-31
+correspond to digital inputs 0-15.
 
-Sergei:  rebased, renamed, added changelog, gathered 12  VIN1 data pins into
-a single pin group, added "vin1_data10" pin group, used 'union vin_data' and
-VIN_DATA_PIN_GROUP() macro to describe VIN1 pins, reversed the order of  the
-VIN1 pin groups, removed unneeded empty lines, fixed  VIN1 separator comment.
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
-The patch  is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
-It depends on the patch moving 'union vin_data'  to shared header file in order
-to build.
+Changes in v2:
+  - Add X86 dependency for CONFIG_GPIO_104_IDIO_16
+  - Encapsulate container_of macro within static function
 
-Changes in version 4:
-- made use of the 'union vin_data' and VIN_DATA_PIN_GROUP() macro to describe
-  the VIN1 pins;
-- listed the VIN1 data pin groups in reverse order;
-- removed  empty lines before VIN0/1 pin data;
-- fixed the VIN1 separator comment.
+ drivers/gpio/Kconfig            |  15 ++++
+ drivers/gpio/Makefile           |   1 +
+ drivers/gpio/gpio-104-idio-16.c | 157 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 173 insertions(+)
+ create mode 100644 drivers/gpio/gpio-104-idio-16.c
 
-Changes in version 3:
-- added "vin1_data10" pin group.
-
-Changes in version 2:
-- relied on the 'struct vin_data' and #define VIN_DATA_PIN_GROUP() moved to the
-  common header file;
-- added to the VI1_DATA8/9/10/11 pin group VI1_DATA[0-7] pins and renamed/moved
-  this pin group.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  184 +++++++++++++++++++++++++++++++++++
- 1 file changed, 184 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -2774,6 +2774,146 @@ static const unsigned int usb1_mux[] = {
- 	USB1_PWEN_MARK,
- 	USB1_OVC_MARK,
- };
-+/* - VIN0 ------------------------------------------------------------------- */
-+static const union vin_data vin0_data_pins = {
-+	.data24 = {
-+		/* B */
-+		RCAR_GP_PIN(3, 1), RCAR_GP_PIN(3, 2),
-+		RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+		RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6),
-+		RCAR_GP_PIN(3, 7), RCAR_GP_PIN(3, 8),
-+		/* G */
-+		RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 14),
-+		RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+		RCAR_GP_PIN(3, 17), RCAR_GP_PIN(3, 18),
-+		RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20),
-+		/* R */
-+		RCAR_GP_PIN(3, 21), RCAR_GP_PIN(3, 22),
-+		RCAR_GP_PIN(3, 23), RCAR_GP_PIN(3, 24),
-+		RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+		RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28),
-+	},
-+};
-+static const union vin_data vin0_data_mux = {
-+	.data24 = {
-+		/* B */
-+		VI0_DATA0_VI0_B0_MARK, VI0_DATA1_VI0_B1_MARK,
-+		VI0_DATA2_VI0_B2_MARK, VI0_DATA3_VI0_B3_MARK,
-+		VI0_DATA4_VI0_B4_MARK, VI0_DATA5_VI0_B5_MARK,
-+		VI0_DATA6_VI0_B6_MARK, VI0_DATA7_VI0_B7_MARK,
-+		/* G */
-+		VI0_G0_MARK, VI0_G1_MARK,
-+		VI0_G2_MARK, VI0_G3_MARK,
-+		VI0_G4_MARK, VI0_G5_MARK,
-+		VI0_G6_MARK, VI0_G7_MARK,
-+		/* R */
-+		VI0_R0_MARK, VI0_R1_MARK,
-+		VI0_R2_MARK, VI0_R3_MARK,
-+		VI0_R4_MARK, VI0_R5_MARK,
-+		VI0_R6_MARK, VI0_R7_MARK,
-+	},
-+};
-+static const unsigned int vin0_data18_pins[] = {
-+	/* B */
-+	RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4),
-+	RCAR_GP_PIN(3, 5), RCAR_GP_PIN(3, 6),
-+	RCAR_GP_PIN(3, 7), RCAR_GP_PIN(3, 8),
-+	/* G */
-+	RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
-+	RCAR_GP_PIN(3, 17), RCAR_GP_PIN(3, 18),
-+	RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20),
-+	/* R */
-+	RCAR_GP_PIN(3, 23), RCAR_GP_PIN(3, 24),
-+	RCAR_GP_PIN(3, 25), RCAR_GP_PIN(3, 26),
-+	RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28),
-+};
-+static const unsigned int vin0_data18_mux[] = {
-+	/* B */
-+	VI0_DATA2_VI0_B2_MARK, VI0_DATA3_VI0_B3_MARK,
-+	VI0_DATA4_VI0_B4_MARK, VI0_DATA5_VI0_B5_MARK,
-+	VI0_DATA6_VI0_B6_MARK, VI0_DATA7_VI0_B7_MARK,
-+	/* G */
-+	VI0_G2_MARK, VI0_G3_MARK,
-+	VI0_G4_MARK, VI0_G5_MARK,
-+	VI0_G6_MARK, VI0_G7_MARK,
-+	/* R */
-+	VI0_R2_MARK, VI0_R3_MARK,
-+	VI0_R4_MARK, VI0_R5_MARK,
-+	VI0_R6_MARK, VI0_R7_MARK,
-+};
-+static const unsigned int vin0_sync_pins[] = {
-+	RCAR_GP_PIN(3, 11), /* HSYNC */
-+	RCAR_GP_PIN(3, 12), /* VSYNC */
-+};
-+static const unsigned int vin0_sync_mux[] = {
-+	VI0_HSYNC_N_MARK,
-+	VI0_VSYNC_N_MARK,
-+};
-+static const unsigned int vin0_field_pins[] = {
-+	RCAR_GP_PIN(3, 10),
-+};
-+static const unsigned int vin0_field_mux[] = {
-+	VI0_FIELD_MARK,
-+};
-+static const unsigned int vin0_clkenb_pins[] = {
-+	RCAR_GP_PIN(3, 9),
-+};
-+static const unsigned int vin0_clkenb_mux[] = {
-+	VI0_CLKENB_MARK,
-+};
-+static const unsigned int vin0_clk_pins[] = {
-+	RCAR_GP_PIN(3, 0),
-+};
-+static const unsigned int vin0_clk_mux[] = {
-+	VI0_CLK_MARK,
-+};
-+/* - VIN1 ------------------------------------------------------------------- */
-+static const union vin_data vin1_data_pins = {
-+	.data12 = {
-+		RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 13),
-+		RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 15),
-+		RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 17),
-+		RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
-+		RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 11),
-+		RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+	},
-+};
-+static const union vin_data vin1_data_mux = {
-+	.data12 = {
-+		VI1_DATA0_MARK, VI1_DATA1_MARK,
-+		VI1_DATA2_MARK, VI1_DATA3_MARK,
-+		VI1_DATA4_MARK, VI1_DATA5_MARK,
-+		VI1_DATA6_MARK, VI1_DATA7_MARK,
-+		VI1_DATA8_MARK, VI1_DATA9_MARK,
-+		VI1_DATA10_MARK, VI1_DATA11_MARK,
-+	},
-+};
-+static const unsigned int vin1_sync_pins[] = {
-+	RCAR_GP_PIN(5, 22), /* HSYNC */
-+	RCAR_GP_PIN(5, 23), /* VSYNC */
-+};
-+static const unsigned int vin1_sync_mux[] = {
-+	VI1_HSYNC_N_MARK,
-+	VI1_VSYNC_N_MARK,
-+};
-+static const unsigned int vin1_field_pins[] = {
-+	RCAR_GP_PIN(5, 21),
-+};
-+static const unsigned int vin1_field_mux[] = {
-+	VI1_FIELD_MARK,
-+};
-+static const unsigned int vin1_clkenb_pins[] = {
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int vin1_clkenb_mux[] = {
-+	VI1_CLKENB_MARK,
-+};
-+static const unsigned int vin1_clk_pins[] = {
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int vin1_clk_mux[] = {
-+	VI1_CLK_MARK,
-+};
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8949b3f..70b63f1 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -684,6 +684,21 @@ config GPIO_SX150X
  
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(eth_link),
-@@ -2949,6 +3089,24 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(sdhi2_wp),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
-+	VIN_DATA_PIN_GROUP(vin0_data, 24),
-+	VIN_DATA_PIN_GROUP(vin0_data, 20),
-+	SH_PFC_PIN_GROUP(vin0_data18),
-+	VIN_DATA_PIN_GROUP(vin0_data, 16),
-+	VIN_DATA_PIN_GROUP(vin0_data, 12),
-+	VIN_DATA_PIN_GROUP(vin0_data, 10),
-+	VIN_DATA_PIN_GROUP(vin0_data, 8),
-+	SH_PFC_PIN_GROUP(vin0_sync),
-+	SH_PFC_PIN_GROUP(vin0_field),
-+	SH_PFC_PIN_GROUP(vin0_clkenb),
-+	SH_PFC_PIN_GROUP(vin0_clk),
-+	VIN_DATA_PIN_GROUP(vin1_data, 12),
-+	VIN_DATA_PIN_GROUP(vin1_data, 10),
-+	VIN_DATA_PIN_GROUP(vin1_data, 8),
-+	SH_PFC_PIN_GROUP(vin1_sync),
-+	SH_PFC_PIN_GROUP(vin1_field),
-+	SH_PFC_PIN_GROUP(vin1_clkenb),
-+	SH_PFC_PIN_GROUP(vin1_clk),
- };
+ endmenu
  
- static const char * const eth_groups[] = {
-@@ -3229,6 +3387,30 @@ static const char * const usb1_groups[]
- 	"usb1",
- };
++menu "ISA GPIO expanders"
++
++menuconfig GPIO_104_IDIO_16
++	tristate "ACCES 104-IDIO-16 GPIO support"
++	depends on X86
++	help
++	  Enables GPIO support for the ACCES 104-IDIO-16 family.
++
++config 104_IDIO_16_BASE
++	hex "ACCES 104-IDIO-16 base address"
++	depends on GPIO_104_IDIO_16
++	default 0x000
++
++endmenu
++
+ menu "MFD GPIO expanders"
  
-+static const char * const vin0_groups[] = {
-+	"vin0_data24",
-+	"vin0_data20",
-+	"vin0_data18",
-+	"vin0_data16",
-+	"vin0_data12",
-+	"vin0_data10",
-+	"vin0_data8",
-+	"vin0_sync",
-+	"vin0_field",
-+	"vin0_clkenb",
-+	"vin0_clk",
+ config GPIO_ADP5520
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index f79a7c4..6f2fea5 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
+ # Device drivers. Generally keep list sorted alphabetically
+ obj-$(CONFIG_GPIO_GENERIC)	+= gpio-generic.o
+ 
++obj-$(CONFIG_GPIO_104_IDIO_16)	+= gpio-104-idio-16.o
+ obj-$(CONFIG_GPIO_74X164)	+= gpio-74x164.o
+ obj-$(CONFIG_GPIO_74XX_MMIO)	+= gpio-74xx-mmio.o
+ obj-$(CONFIG_GPIO_ADNP)		+= gpio-adnp.o
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+new file mode 100644
+index 0000000..be7179f
+--- /dev/null
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -0,0 +1,157 @@
++/*
++ * GPIO driver for the ACCES 104-IDIO-16 family
++ * Copyright (C) 2015 William Breathitt Gray
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++#include <linux/gpio.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/printk.h>
++#include <linux/spinlock.h>
++
++struct a_104_idio_16_gpio {
++	struct gpio_chip chip;
++	spinlock_t lock;
++	unsigned base;
++	unsigned data;
 +};
 +
-+static const char * const vin1_groups[] = {
-+	"vin1_data12",
-+	"vin1_data10",
-+	"vin1_data8",
-+	"vin1_sync",
-+	"vin1_field",
-+	"vin1_clkenb",
-+	"vin1_clk",
++static void __exit a_104_idio_16_exit(void);
++static int a_104_idio_16_gpio_direction_input(struct gpio_chip *chip,
++	unsigned offset);
++static int a_104_idio_16_gpio_direction_output(struct gpio_chip *chip,
++	unsigned offset, int value);
++static int a_104_idio_16_gpio_get(struct gpio_chip *chip, unsigned offset);
++static void a_104_idio_16_gpio_set(struct gpio_chip *chip, unsigned offset,
++	int value);
++static int __init a_104_idio_16_init(void);
++static struct a_104_idio_16_gpio *to_a104i16gp(struct gpio_chip *gc);
++
++static const unsigned A_104_IDIO_16_EXTENT = 8;
++
++static struct a_104_idio_16_gpio gp = {
++	.chip = {
++		.label = "104-IDIO-16 GPIO",
++		.owner = THIS_MODULE,
++		.base = -1,
++		.ngpio = 32,
++		.direction_input = a_104_idio_16_gpio_direction_input,
++		.direction_output = a_104_idio_16_gpio_direction_output,
++		.get = a_104_idio_16_gpio_get,
++		.set = a_104_idio_16_gpio_set
++	},
++	.base = CONFIG_104_IDIO_16_BASE
 +};
 +
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(eth),
- 	SH_PFC_FUNCTION(hscif0),
-@@ -3265,6 +3447,8 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(vin0),
-+	SH_PFC_FUNCTION(vin1),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
++static void __exit a_104_idio_16_exit(void)
++{
++	pr_info("104-idio-16: Exiting 104-idio-16 module\n");
++
++	gpiochip_remove(&gp.chip);
++	release_region(CONFIG_104_IDIO_16_BASE, A_104_IDIO_16_EXTENT);
++}
++
++static int a_104_idio_16_gpio_direction_input(struct gpio_chip *chip,
++	unsigned offset)
++{
++	return 0;
++}
++
++static int a_104_idio_16_gpio_direction_output(struct gpio_chip *chip,
++	unsigned offset, int value)
++{
++	chip->set(chip, offset, value);
++	return 0;
++}
++
++static int a_104_idio_16_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct a_104_idio_16_gpio *a104i16gp = to_a104i16gp(chip);
++	const unsigned BIT_MASK = 1U << (offset-16);
++
++	if (offset < 16)
++		return 0;
++
++	if (offset < 24)
++		return !!(inb(a104i16gp->base + 1) & BIT_MASK);
++
++	return !!(inb(a104i16gp->base + 5) & (BIT_MASK>>8));
++}
++
++static void a_104_idio_16_gpio_set(struct gpio_chip *chip, unsigned offset,
++	int value)
++{
++	struct a_104_idio_16_gpio *a104i16gp = to_a104i16gp(chip);
++	const unsigned BIT_MASK = 1U << offset;
++	unsigned long flags;
++
++	if (offset > 15)
++		return;
++
++	spin_lock_irqsave(&a104i16gp->lock, flags);
++
++	if (value)
++		a104i16gp->data |= BIT_MASK;
++	else
++		a104i16gp->data &= ~BIT_MASK;
++
++	if (offset > 7)
++		outb(~a104i16gp->data >> 8, a104i16gp->base + 4);
++	else
++		outb(~a104i16gp->data, a104i16gp->base);
++
++	spin_unlock_irqrestore(&a104i16gp->lock, flags);
++}
++
++static int __init a_104_idio_16_init(void)
++{
++	int err = 0;
++
++	pr_info("104-idio-16: Initializing 104-idio-16 module\n");
++
++	if (!request_region(CONFIG_104_IDIO_16_BASE, A_104_IDIO_16_EXTENT,
++		"104-idio-16")) {
++		pr_err("104-idio-16: Unable to lock 104-idio-16 port addresses (0x%X-0x%X)\n",
++			CONFIG_104_IDIO_16_BASE,
++			CONFIG_104_IDIO_16_BASE + A_104_IDIO_16_EXTENT);
++		err = -EBUSY;
++		goto out_lock_a_104_idio_16_port;
++	}
++
++	spin_lock_init(&gp.lock);
++
++	pr_info("104-idio-16: 104-IDIO-16 GPIO detected\n");
++	err = gpiochip_add(&gp.chip);
++	if (err) {
++		pr_err("104-idio-16: GPIO registering failed (%d)\n", err);
++		goto out_gpio_register;
++	}
++
++	return 0;
++
++out_gpio_register:
++	release_region(CONFIG_104_IDIO_16_BASE, A_104_IDIO_16_EXTENT);
++out_lock_a_104_idio_16_port:
++	return err;
++}
++
++static struct a_104_idio_16_gpio *to_a104i16gp(struct gpio_chip *gc){
++	return container_of(gc, struct a_104_idio_16_gpio, chip);
++}
++
++module_init(a_104_idio_16_init);
++module_exit(a_104_idio_16_exit);
++
++MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
++MODULE_DESCRIPTION("ACCES 104-IDIO-16 GPIO driver");
++MODULE_LICENSE("GPL");
+-- 
+2.4.9
 
