@@ -1,40 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: keep the GPIO line names internal
-Date: Mon, 5 Oct 2015 10:54:52 +0200
-Message-ID: <CACRpkdaB=Sne1Vq=apQE5r8FDvfvQ-4w0nths-dVnuJvBaGDOA@mail.gmail.com>
-References: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
-	<20151004133742.GO4284@localhost>
+Subject: Re: [PATCH v2 5/8] gpio: pca953x: store driver_data for future use
+Date: Mon, 5 Oct 2015 10:56:47 +0200
+Message-ID: <CACRpkdZouFU5Kfys4fuh5Gei=oVZC3AsobrzMCHFU5Pk-r-rPQ@mail.gmail.com>
+References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	<1443698430-74415-6-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:35790 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751973AbbJEIyx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2015 04:54:53 -0400
-Received: by obbzf10 with SMTP id zf10so123453074obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2015 01:54:53 -0700 (PDT)
-In-Reply-To: <20151004133742.GO4284@localhost>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1443698430-74415-6-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>
 
-On Sun, Oct 4, 2015 at 3:37 PM, Johan Hovold <johan@kernel.org> wrote:
+On Thu, Oct 1, 2015 at 1:20 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> This looks good (apart from the checkpatch warning for the warning
-> message string).
+> Instead of using id->driver_data directly we copied it to the internal
+> structure. This will help to adapt driver for ACPI use.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yeah the GPIO maintainer is liberal about that rule...
-
-> You also need to revert ddd5404007b8 ("gpio-sysfs: Use gpio descriptor
-> name instead of gpiochip names array") however as this is an ABI change.
-> Otherwise pins with a name in DT will now be exported using the gpio name
-> rather than number as they used to be. [ The current behaviour is
-> maintained by exporting names from chip->names for hard coded names
-> only. ]
-
-I think it is ABI-correct: it uses desc->name if that is set, and
-currently that is only set from chip->names[] so status quo.
+Patch applied.
 
 Yours,
 Linus Walleij
