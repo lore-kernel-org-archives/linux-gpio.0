@@ -1,158 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 2/8] mfd: core: redo ACPI matching of the children devices
-Date: Mon, 05 Oct 2015 16:02:05 +0200
-Message-ID: <22225717.sVrBxKhDNA@vostro.rjw.lan>
-References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com> <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] pinctrl: berlin: fix BG2CD field widths
+Date: Mon, 05 Oct 2015 20:07:45 +0200
+Message-ID: <5612BC71.1060807@gmail.com>
+References: <56074059.10806@gmail.com> <560D89BA.1000203@gmail.com> <CACRpkdZ9HJtmEs6KhFRwh4=i2kOqeKV_WPDoi5zppNBc2FUDFw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ9HJtmEs6KhFRwh4=i2kOqeKV_WPDoi5zppNBc2FUDFw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Hebb <tommyhebb@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, Wolfram Sang <wsa@the-dreams.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, October 01, 2015 02:20:24 PM Andy Shevchenko wrote:
-> There is at least one board on the market, i.e. Intel Galileo Gen2, that uses
-> _ADR to distinguish the devices under one actual device. Due to this we have to
-> improve the quirk in the MFD core to handle that board.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On 05.10.2015 09:24, Linus Walleij wrote:
+> On Thu, Oct 1, 2015 at 9:30 PM, Sebastian Hesselbarth
+> <sebastian.hesselbarth@gmail.com> wrote:
+>> On 27.09.2015 03:03, Thomas Hebb wrote:
+>>>
+>>> The previous register layout was incorrect, many of the fields having
+>>> fewer bits than were needed to represent all their modes. The new layout
+>>> is taken from the bootloader source of a BG2CD device.
+>>>
+>>> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+>>> ---
+>>>    drivers/pinctrl/berlin/berlin-bg2cd.c | 62
+>>> ++++++++++++++++++-----------------
+>>>    1 file changed, 32 insertions(+), 30 deletions(-)
+>>
+>>
+>> Applied to berlin/fixes.
+>>
+>> There seems to be something wrong with the patch.
+>> Please base your patches on the recent -rc1 kernel
+>> and use git send-email. I fixed this patch manually.
+>
+> I don't understand. Is this for the upstream kernel or not?
+>
+> I should take it into the pinctrl tree if you ACK it I think?
 
->From the ACPI angle:
+Linus,
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+sorry, of course it is up to you to take it. I haven't sent a
+PR for the branch I precipitately applied this patch to.
 
-> ---
->  Documentation/acpi/enumeration.txt | 11 +++++---
->  drivers/mfd/mfd-core.c             | 52 ++++++++++++++++++++++++++------------
->  include/linux/mfd/core.h           | 10 ++++++--
->  3 files changed, 52 insertions(+), 21 deletions(-)
-> 
-> diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
-> index b731b29..a91ec5a 100644
-> --- a/Documentation/acpi/enumeration.txt
-> +++ b/Documentation/acpi/enumeration.txt
-> @@ -347,13 +347,18 @@ For the first case, the MFD drivers do not need to do anything. The
->  resulting child platform device will have its ACPI_COMPANION() set to point
->  to the parent device.
->  
-> -If the ACPI namespace has a device that we can match using an ACPI id,
-> -the id should be set like:
-> +If the ACPI namespace has a device that we can match using an ACPI id or ACPI
-> +adr, the cell should be set like:
-> +
-> +	static struct mfd_cell_acpi_match my_subdevice_cell_acpi_match = {
-> +		.pnpid = "XYZ0001",
-> +		.adr = 0,
-> +	};
->  
->  	static struct mfd_cell my_subdevice_cell = {
->  		.name = "my_subdevice",
->  		/* set the resources relative to the parent */
-> -		.acpi_pnpid = "XYZ0001",
-> +		.acpi_match = &my_subdevice_cell_acpi_match,
->  	};
->  
->  The ACPI id "XYZ0001" is then used to lookup an ACPI device directly under
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index c17635d..60b60dc 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -82,29 +82,49 @@ static int mfd_platform_add_cell(struct platform_device *pdev,
->  static void mfd_acpi_add_device(const struct mfd_cell *cell,
->  				struct platform_device *pdev)
->  {
-> -	struct acpi_device *parent_adev;
-> +	const struct mfd_cell_acpi_match *match = cell->acpi_match;
-> +	struct acpi_device *parent, *child;
->  	struct acpi_device *adev;
->  
-> -	parent_adev = ACPI_COMPANION(pdev->dev.parent);
-> -	if (!parent_adev)
-> +	parent = ACPI_COMPANION(pdev->dev.parent);
-> +	if (!parent)
->  		return;
->  
->  	/*
-> -	 * MFD child device gets its ACPI handle either from the ACPI
-> -	 * device directly under the parent that matches the acpi_pnpid or
-> -	 * it will use the parent handle if is no acpi_pnpid is given.
-> +	 * MFD child device gets its ACPI handle either from the ACPI device
-> +	 * directly under the parent that matches the either _HID or _CID, or
-> +	 * _ADR or it will use the parent handle if is no ID is given.
-> +	 *
-> +	 * Note that use of _ADR is a grey area in the ACPI specification,
-> +	 * though Intel Galileo Gen2 is using it to distinguish the children
-> +	 * devices.
->  	 */
-> -	adev = parent_adev;
-> -	if (cell->acpi_pnpid) {
-> -		struct acpi_device_id ids[2] = {};
-> -		struct acpi_device *child_adev;
-> -
-> -		strlcpy(ids[0].id, cell->acpi_pnpid, sizeof(ids[0].id));
-> -		list_for_each_entry(child_adev, &parent_adev->children, node)
-> -			if (acpi_match_device_ids(child_adev, ids)) {
-> -				adev = child_adev;
-> -				break;
-> +	adev = parent;
-> +	if (match) {
-> +		if (match->pnpid) {
-> +			struct acpi_device_id ids[2] = {};
-> +
-> +			strlcpy(ids[0].id, match->pnpid, sizeof(ids[0].id));
-> +			list_for_each_entry(child, &parent->children, node) {
-> +				if (acpi_match_device_ids(child, ids)) {
-> +					adev = child;
-> +					break;
-> +				}
-> +			}
-> +		} else {
-> +			unsigned long long adr;
-> +			acpi_status status;
-> +
-> +			list_for_each_entry(child, &parent->children, node) {
-> +				status = acpi_evaluate_integer(child->handle,
-> +							       "_ADR", NULL,
-> +							       &adr);
-> +				if (ACPI_SUCCESS(status) && match->adr == adr) {
-> +					adev = child;
-> +					break;
-> +				}
->  			}
-> +		}
->  	}
->  
->  	ACPI_COMPANION_SET(&pdev->dev, adev);
-> diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-> index a76bc10..27dac3f 100644
-> --- a/include/linux/mfd/core.h
-> +++ b/include/linux/mfd/core.h
-> @@ -18,6 +18,12 @@
->  
->  struct irq_domain;
->  
-> +/* Matches ACPI PNP id, either _HID or _CID, or ACPI _ADR */
-> +struct mfd_cell_acpi_match {
-> +	const char			*pnpid;
-> +	const unsigned long long	adr;
-> +};
-> +
->  /*
->   * This struct describes the MFD part ("cell").
->   * After registration the copy of this structure will become the platform data
-> @@ -44,8 +50,8 @@ struct mfd_cell {
->  	 */
->  	const char		*of_compatible;
->  
-> -	/* Matches ACPI PNP id, either _HID or _CID */
-> -	const char		*acpi_pnpid;
-> +	/* Matches ACPI */
-> +	const struct mfd_cell_acpi_match	*acpi_match;
->  
->  	/*
->  	 * These resources can be specified relative to the parent device.
-> 
+As the patch has issues with latest -rc1 I can provide you
+a -rc1 compatible version of it. You can also pull it from
+my branch if you prefer.
 
+Please let me know you want the patch and sorry again for
+the confusion.
+
+Sebastian
