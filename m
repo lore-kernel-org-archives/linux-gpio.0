@@ -1,157 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] GPIO: Add GPIO support for the ACCES 104-IDIO-16
-Date: Mon, 5 Oct 2015 10:29:14 +0200
-Message-ID: <CACRpkdaimDeCZZXfma4sLRRRC=0YQCy7_7=V-qzubMRAY8HF6w@mail.gmail.com>
-References: <20151001015832.GA11317@sophia>
+Subject: Re: [PATCH] gpio: add GPIO support for IT87xx, replacing gpio-it8761e
+Date: Mon, 5 Oct 2015 10:31:27 +0200
+Message-ID: <CACRpkdbAPKYQtsbhpPHSPJoL_Jp-rkdfKAp0XgTQjyfkjYZRMw@mail.gmail.com>
+References: <1442852664-8948-1-git-send-email-vincent.donnefort@seagate.com>
+	<1442852664-8948-2-git-send-email-vincent.donnefort@seagate.com>
+	<CACRpkdb-DYCxEZGhk1TEjpJRiar5oi=zjmBmmgQie-xr+X+sVg@mail.gmail.com>
+	<20151002125455.GE7306@kw.sim.vm.gnt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151001015832.GA11317@sophia>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:34633 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462AbbJEIb2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2015 04:31:28 -0400
+Received: by oiev17 with SMTP id v17so86766300oie.1
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2015 01:31:27 -0700 (PDT)
+In-Reply-To: <20151002125455.GE7306@kw.sim.vm.gnt>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Vincent Donnefort <vdonnefort@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>
 
-On Thu, Oct 1, 2015 at 3:58 AM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Fri, Oct 2, 2015 at 2:54 PM, Simon Guinot <simon.guinot@sequanux.org=
+> wrote:
 
-> The ACCES 104-IDIO-16 family of PC/104 utility boards
-
-Sounds like a PC104 keyboard :D
-
-> feature 16
-> optically isolated inputs and 16 optically isolated FET solid state
-> outputs. This driver provides GPIO support for these 32 channels of
-> digital I/O. Change-of-State detection interrupts are not supported.
-
-So it has IRQ support but it's not supported yet I take it.
-
-> GPIO 0-15 correspond to digital outputs 0-15, while GPIO 16-31
-> correspond to digital inputs 0-15.
+> This super-I/O device is embedded in a LaCie NAS. The driver has been
+> originally written and submitted by Diego Elio Petten=C3=B2. But at t=
+he time
+> it has not been merged for some reasons. Since we (LaCie) need this
+> driver, we are simply taking over the mainline submission work. Some
+> fixing and cleaning have been done by Christophe. And now Vincent is
+> submitting the driver again. Vincent, Christophe and myself are all
+> working for LaCie/Seagate.
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> I hope this helps to clarify the situation :)
 
-> +menu "ISA GPIO expanders"
-
-Interesting submenu. I guess it is proper to have so OK.
-
-Add:
-depends on PCI
-
-As they all will need that, I guess?
-
-> +menuconfig GPIO_104_IDIO_16
-> +       tristate "ACCES 104-IDIO-16 GPIO support"
-> +       help
-> +         Enables GPIO support for the ACCES 104-IDIO-16 family.
-> +
-> +config 104_IDIO_16_BASE
-> +       hex "ACCES 104-IDIO-16 base address"
-> +       depends on GPIO_104_IDIO_16
-> +       default 0x000
-
-This can't be right. PCI devices have their config space for a reason
-I'm told. On other platforms we use device tree or ACPI to set this
-up but PCI is either hotplug or wrong I think.
-
-The driver is full of ISA style inb/outb stuff, I get all confused. Why
-is this not using the PCI infrastructure?
-
-Involving Bj=C3=B6rn Helg=C3=A5s for a comment on this.
-
-> +#include <linux/gpio.h>
-
-Only
-#include <linux/gpio/driver.h>
-
-> +#include <linux/io.h>
-> +#include <linux/ioport.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct a_104_idio_16_gpio {
-> +       struct gpio_chip chip;
-> +       spinlock_t lock;
-> +       unsigned base;
-
-Isn't this void __iomem *base?
-
-> +       unsigned data;
-> +};
-
-kerneldoc this.
-
-> +static void __exit a_104_idio_16_exit(void);
-> +static int a_104_idio_16_gpio_direction_input(struct gpio_chip *chip=
-,
-> +       unsigned offset);
-> +static int a_104_idio_16_gpio_direction_output(struct gpio_chip *chi=
-p,
-> +       unsigned offset, int value);
-> +static int a_104_idio_16_gpio_get(struct gpio_chip *chip, unsigned o=
-ffset);
-> +static void a_104_idio_16_gpio_set(struct gpio_chip *chip, unsigned =
-offset,
-> +       int value);
-> +static int __init a_104_idio_16_init(void);
-
-Re-arrange code to avoid forward declarations please.
-
-> +static const unsigned A_104_IDIO_16_EXTENT =3D 8;
-
-Looks like it could be a #define A_104_IDIO_16_EXTENT 8
-
-> +static struct a_104_idio_16_gpio gp =3D {
-> +       .chip =3D {
-> +               .label =3D "104-IDIO-16 GPIO",
-> +               .owner =3D THIS_MODULE,
-> +               .base =3D -1,
-> +               .ngpio =3D 32,
-> +               .direction_input =3D a_104_idio_16_gpio_direction_inp=
-ut,
-> +               .direction_output =3D a_104_idio_16_gpio_direction_ou=
-tput,
-> +               .get =3D a_104_idio_16_gpio_get,
-> +               .set =3D a_104_idio_16_gpio_set
-> +       },
-> +       .base =3D CONFIG_104_IDIO_16_BASE
-> +};
-
-So if you put this *below* the functions you need not forward-declare t=
-hem.
-
-> +static void __exit a_104_idio_16_exit(void)
-> +{
-> +       pr_info("104-idio-16: Exiting 104-idio-16 module\n");
-> +
-> +       gpiochip_remove(&gp.chip);
-
-Where is that &gp.chip? Not in this file. Nor should you use any global=
-s.
-
-Does this driver even compile?
-
-> +static int a_104_idio_16_gpio_get(struct gpio_chip *chip, unsigned o=
-ffset)
-> +{
-> +       struct a_104_idio_16_gpio *a104i16gp =3D to_a104i16gp(chip);
-> +       const unsigned BIT_MASK =3D 1U << (offset-16);
-> +
-> +       if (offset < 16)
-> +               return 0;
-
-Always return 0, why? Is that really correct?
-
-> +static int __init a_104_idio_16_init(void)
-> +       spin_lock_init(&gp.lock);
-> +       err =3D gpiochip_add(&gp.chip);
-
-This gp global again. Read
-Documentation/driver-model/design-patterns.txt
-Please.
+Yup, good work. Consider adding yourself to the MAINTAINERS file,
+patches accepted.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
