@@ -1,48 +1,30 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: [PATCH 1/2] pinctrl: at91-pio4: Use irq_set_handler_locked()
-Date: Sun, 4 Oct 2015 23:31:06 +0200
-Message-ID: <56119A9A.3070507@atmel.com>
-References: <abf74f93ec58e3b321dce23af3fa5af1ffa2e070.1443793711.git.nicolas.ferre@atmel.com>
- <560E8D4C.1000400@atmel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpio: generic: improve error handling in bgpio_map
+Date: Mon, 5 Oct 2015 09:14:03 +0200
+Message-ID: <CACRpkdYEi7ND=Rg6i+8nnT8CmNH2Mc5O67jtGd=4KdZj+cjXZg@mail.gmail.com>
+References: <560C591C.2030709@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:26378 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751809AbbJDVbw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Oct 2015 17:31:52 -0400
-In-Reply-To: <560E8D4C.1000400@atmel.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:33299 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751283AbbJEHOF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2015 03:14:05 -0400
+Received: by oixx17 with SMTP id x17so86026787oix.0
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2015 00:14:04 -0700 (PDT)
+In-Reply-To: <560C591C.2030709@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-gpio@vger.kernel.org, s.hauer@pengutronix.de, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Le 02/10/2015 15:57, Nicolas Ferre a =E9crit :
-> Hi all,
->=20
-> Well it seems my cover letter is missing. So, here it is:
->=20
-> ---8<----
-> pinctrl: at91-pio4: fixes for current linux-next (irq)
->=20
-> While testing the sama5d2 on today's linux-next I discovered that som=
-e
-> adaptations were missing. So, I don't know if you were aware but here
-> are my fixes in case you don't have them already.
->=20
-> +Cc: Thomas and Stephen in case these errors happen while building
-> linux-next...
+On Wed, Sep 30, 2015 at 11:50 PM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
 
-After seeing that Linus applied 2 patches by Ludovic, I realized that a=
-s
-I had foreseen correctly: it was known and corrected.
+> If bgpio_map returns NULL then err should always be set.
+>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 
-Sorry for the noise. Bye,
---=20
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Looks correct. Patch applied.
+
+Yours,
+Linus Walleij
