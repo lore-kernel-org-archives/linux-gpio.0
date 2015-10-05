@@ -1,95 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drivers: field for new GPIO driver
-Date: Mon, 5 Oct 2015 09:37:33 +0200
-Message-ID: <CACRpkdb=hnOUYbgCG2y9MpYR4ErPze+i-6RiV5XPx5sScX+9pg@mail.gmail.com>
-References: <1443755105-7708-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+Subject: Re: [PATCH] gpio: ath79: Convert to the state container design pattern
+Date: Mon, 5 Oct 2015 09:41:14 +0200
+Message-ID: <CACRpkdbyWyvLQyv8abZju4zA62JP2ARgXcsrXhX5gdWBRS+L2w@mail.gmail.com>
+References: <1441100282-13584-1-git-send-email-albeu@free.fr>
+	<CACRpkdbX+cMmS-j85zqhPSa8XRQHtus6HXqZrLo9b++KAHDc5g@mail.gmail.com>
+	<20151002085254.6a929c58@tock>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:35978 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751480AbbJEHhe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2015 03:37:34 -0400
-Received: by oibi136 with SMTP id i136so86553883oib.3
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2015 00:37:33 -0700 (PDT)
-In-Reply-To: <1443755105-7708-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:35956 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462AbbJEHlP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Oct 2015 03:41:15 -0400
+Received: by obcgx8 with SMTP id gx8so122177057obc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2015 00:41:14 -0700 (PDT)
+In-Reply-To: <20151002085254.6a929c58@tock>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: YD Tseng <ltyu101@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Yd_Tseng@asmedia.com.tw, =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>
+To: Alban <albeu@free.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>, Gabor Juhos <juhosg@openwrt.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Oct 2, 2015 at 5:05 AM, YD Tseng <ltyu101@gmail.com> wrote:
+On Fri, Oct 2, 2015 at 8:52 AM, Alban <albeu@free.fr> wrote:
 
->>> Is this hardware really different or can the old driver be augmented to handle both?
+>> Would you consider sending a patch adding yourself as maintainer
+>> for this file in MAINTAINERS?
+>
+> Yes, I'll send that soon.
 
-> This hardware is different.  We design a new silicon for AMD.
+Thanks!
 
-OK
+> However while looking at adding IRQ support I stumbled upon the bgpio
+> API from the generic gpio driver. I think it might make more sense
+> to simply move to this API instead of doing the above cleanup. I'll
+> send a patch for this in the next days.
 
-> +#include <linux/gpio.h>
-
-Should only #include <linux/gpio/driver.h>
-
-> +/* memory mapped register offsets */
-> +#define PT_DIRECTION_REG   0x00
-> +#define PT_INPUTDATA_REG   0x04
-> +#define PT_OUTPUTDATA_REG  0x08
-
-A very simple memory-mapped I/O GPIO, you should use
-select GPIO_GENERIC
-#include <linux/basic_mmio_gpio.h>
-
-And see for example drivers/gpio/gpio-74xx-mmio.c
-on how to use this generic MMIO library right.
-
-> +#define PT_DEBOUNCE_REG    0x0C
-
-So the driver should support the .set_debounce() method.
-
-> +#define PT_VENDER0_REG     0x28
-> +#define PT_VENDER1_REG     0x2C
-
-Is it not VENDOR, and what is in these registers really?
->From the code it seems it is pin control registers, and this
-driver should then be in drivers/pinctrl/*.
-
-See for example drivers/pinctrl/intel/* for how to do that
-right.
-
-> +static int pt_gpio_request(struct gpio_chip *gc, unsigned offset)
-> +{
-> +       struct pt_gpio_chip *pt_gpio = to_pt_gpio(gc);
-> +       struct platform_device *pdev;
-> +       void __iomem *v_reg = pt_gpio->reg_base + PT_VENDER0_REG;
-
-Too many local variables. Just used a->b->c directly.
-Well this will be using the MMIO library anyway so most stuff
-go away.
-
-> +       using_pins = readl(v_reg);
-> +       if (using_pins&(1<<offset))
-> +               dev_warn(&pdev->dev, "PT GPIO pin %x reconfigured\n", offset);
-> +       else
-> +               writel(using_pins|(1<<offset), v_reg);
-
-What is this? Pin multiplexing? Then implement this
-properly using pin control.
-
-> +       void __iomem *reg;
-(...)
-> +       /* initialize register setting */
-> +       reg = pt_gpio->reg_base + PT_VENDER0_REG;
-> +       writel(0, reg);
-> +       reg = pt_gpio->reg_base + PT_DEBOUNCE_REG;
-> +       writel(0, reg);
-
-Argh no, just writel(0, pt_gpio->reg_base + PT_VENDOR0_REG);
-Too many helper variables. The compiler will optimize it out, but
-this makes things hard to read (for me).
-
-But again, I do not believe the real name of that register is
-"VENDER0" and you should implement debounce properly
-and use GPIO_GENERIC
+Yeah maybe that is better. For IRQ support please use GPIOLIB_IRQCHIP
+if you can. I think I saw that OpenWRT has implemented IRQ support for
+ath79 with some outoftree patch right?
 
 Yours,
 Linus Walleij
