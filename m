@@ -1,186 +1,179 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Subject: Re: [PATCH RFT 4/5] gpio: gpio-pl061: use the generic request/free
- implementations
-Date: Mon, 5 Oct 2015 15:12:11 +0200
-Message-ID: <5612772B.8090706@openwrt.org>
-References: <1442150498-31116-1-git-send-email-jogo@openwrt.org>
- <1442150498-31116-5-git-send-email-jogo@openwrt.org>
- <CACRpkdbVQSTW3pEPLc-34m-zihWfw8fafQxWs_=wfU29GewkYA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2 1/8] i2c / ACPI: Rework I2C device scanning
+Date: Mon, 05 Oct 2015 15:47:26 +0200
+Message-ID: <3839884.FkOqQZPJsr@vostro.rjw.lan>
+References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com> <1443698430-74415-2-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:37202 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751189AbbJENMY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 5 Oct 2015 09:12:24 -0400
-In-Reply-To: <CACRpkdbVQSTW3pEPLc-34m-zihWfw8fafQxWs_=wfU29GewkYA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1443698430-74415-2-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@chromium.org>
 
-On 05.10.2015 11:19, Linus Walleij wrote:
-> On Sun, Sep 13, 2015 at 3:21 PM, Jonas Gorski <jogo@openwrt.org> wrote:
+On Thursday, October 01, 2015 02:20:23 PM Andy Shevchenko wrote:
+> From: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
->>         spin_lock_init(&chip->lock);
->> -       if (of_property_read_bool(dev->of_node, "gpio-ranges"))
->> -               chip->uses_pinctrl = true;
->> +       if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
->> +               chip->gc.request = gpiochip_generic_request;
->> +               chip->gc.free = gpiochip_generic_free;
->> +       }
+> The way we currently scan I2C devices behind an I2C host controller does not
+> work in cases where the I2C device in question is not declared directly below
+> the host controller ACPI node.
 > 
-> This is way better.
+> This is perfectly legal according the ACPI 6.0 specification and some existing
+> systems are doing this.
 > 
-> But now this code is starting to multiply in drivers.
+> To be able to enumerate all devices which are connected to a certain I2C host
+> controller we need to rework the current I2C scanning routine a bit. Instead of
+> scanning directly below the host controller we scan the whole ACPI namespace
+> for present devices with valid I2cSerialBus() connection pointing to the host
+> controller in question.
 > 
-> Can we think of a way to do this even more generic:
-> could gpiochip_generic_request() check if the range is
-> there instead?
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I thought about this, and AFAICT this would open a window in which gpio
-requests could bypass the pinctrl subsystem, as ranges are only registered
-after the gpio chip was registered.
-pinctrl_request_gpio() -> pinctrl_get_device_gpio_range() returns -EPROBEDEFER if
-it can't find a range for that reason.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-To solve this we could introduce a gpiochip_add_with_range(), then we can assign
-the generic _request/_free in gpiochip_add in case the callbacks aren't set yet
-(and keep the way _request/_free are implemented).
-
-If the gpio-ranges property is used, we could then check for its existence to
-assign the callbacks.
-
-So my idea is something like the following. The conversion would be then
-
-chip->request = foo_request;
-chip->free = foo_free;
-gpiochip_add(chip);
-gpiochip_add_pin_range(chip, "foo", 0, 0, npins);
-
-=>
-
-static const struct __initconst pinctrl_gpio_range foo_range = {
-	.base = 0,
-	.pinbase = 0,
-	.npins = npins,
-};
-
-gpiochip_add_with_ranges(chip, "foo", &foo_range, 1);
-
-which would be a bit more verbose, but for drivers like pinctrl-cygnus-gpio,
-which registers 51(!) pinranges for the same gpio chip, it would mean quite a
-bit of code reduction.
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index fa6e3c8..b4c6119 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -415,6 +415,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	return 0;
- }
- 
-+bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
-+{
-+	return !!of_find_property(chip->of_node, "gpio-ranges", NULL);
-+}
-+
- #else
- static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
- #endif
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e0853fb..33f79b0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -236,14 +236,23 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
-  * If chip->base is negative, this requests dynamic assignment of
-  * a range of valid GPIOs.
-  */
--int gpiochip_add(struct gpio_chip *chip)
-+int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
-+			     const struct pinctrl_gpio_range *ranges,
-+			     unsigned int nranges)
- {
- 	unsigned long	flags;
- 	int		status = 0;
--	unsigned	id;
-+	unsigned	id, i;
- 	int		base = chip->base;
- 	struct gpio_desc *descs;
- 
-+	if ((nranges > 0) || of_gpiochip_has_pin_range(chip)) {
-+		if (!chip->request)
-+			chip->request = gpiochip_generic_request;
-+		if (!chip->free)
-+			chip->free = gpiochip_generic_free;
-+	}
-+
- 	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
- 	if (!descs)
- 		return -ENOMEM;
-@@ -295,6 +304,16 @@ int gpiochip_add(struct gpio_chip *chip)
- 	if (status)
- 		goto err_remove_chip;
- 
-+	for (i = 0; i < nranges; i++) {
-+		const struct pinctrl_gpio_range *range = ranges[i];
-+
-+		status = gpiochip_add_pin_range(chip, pinctl_name,
-+						chip->base + range->base,
-+						range->pinbase, range->npins);
-+		if (status)
-+			goto err_remove_chip;
-+	}
-+
- 	acpi_gpiochip_add(chip);
- 
- 	status = gpiochip_sysfs_register(chip);
-@@ -309,6 +328,7 @@ int gpiochip_add(struct gpio_chip *chip)
- 
- err_remove_chip:
- 	acpi_gpiochip_remove(chip);
-+	gpiochip_remove_pin_ranges(chip);
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
- 	spin_lock_irqsave(&gpio_lock, flags);
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index bf34300..05a71da 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -72,6 +72,15 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
- 
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
- 
-+#if defined(CONFIG_OF_GPIO) && defined(CONFIG_PINCTRL)
-+bool of_gpiochip_has_pin_range(struct gpio_chip *chip);
-+#else
-+static inline bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
-+{
-+	return false;
-+}
-+#endif
-+
- extern struct spinlock gpio_lock;
- extern struct list_head gpio_chips;
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 0857c28..ea8a630 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -166,7 +166,14 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
- 			unsigned offset);
- 
- /* add/remove chips */
--extern int gpiochip_add(struct gpio_chip *chip);
-+static inline int gpiochip_add(struct gpio_chip *chip)
-+{
-+	return gpiochip_add_with_ranges(chip, NULL, NULL, 0);
-+}
-+
-+int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
-+			     const struct pinctrl_gpio_range *ranges,
-+			     unsigned int nranges);
- extern void gpiochip_remove(struct gpio_chip *chip);
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *chip, void *data));
+> ---
+>  drivers/i2c/i2c-core.c | 82 ++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 59 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index a732107..24e516e 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -99,27 +99,40 @@ struct gsb_buffer {
+>  	};
+>  } __packed;
+>  
+> -static int acpi_i2c_add_resource(struct acpi_resource *ares, void *data)
+> +struct acpi_i2c_lookup {
+> +	struct i2c_board_info *info;
+> +	acpi_handle adapter_handle;
+> +	acpi_handle device_handle;
+> +};
+> +
+> +static int acpi_i2c_find_address(struct acpi_resource *ares, void *data)
+>  {
+> -	struct i2c_board_info *info = data;
+> +	struct acpi_i2c_lookup *lookup = data;
+> +	struct i2c_board_info *info = lookup->info;
+> +	struct acpi_resource_i2c_serialbus *sb;
+> +	acpi_handle adapter_handle;
+> +	acpi_status status;
+>  
+> -	if (ares->type == ACPI_RESOURCE_TYPE_SERIAL_BUS) {
+> -		struct acpi_resource_i2c_serialbus *sb;
+> +	if (info->addr || ares->type != ACPI_RESOURCE_TYPE_SERIAL_BUS)
+> +		return 1;
+>  
+> -		sb = &ares->data.i2c_serial_bus;
+> -		if (!info->addr && sb->type == ACPI_RESOURCE_SERIAL_TYPE_I2C) {
+> -			info->addr = sb->slave_address;
+> -			if (sb->access_mode == ACPI_I2C_10BIT_MODE)
+> -				info->flags |= I2C_CLIENT_TEN;
+> -		}
+> -	} else if (!info->irq) {
+> -		struct resource r;
+> +	sb = &ares->data.i2c_serial_bus;
+> +	if (sb->type != ACPI_RESOURCE_SERIAL_TYPE_I2C)
+> +		return 1;
+>  
+> -		if (acpi_dev_resource_interrupt(ares, 0, &r))
+> -			info->irq = r.start;
+> +	/*
+> +	 * Extract the ResourceSource and make sure that the handle matches
+> +	 * with the I2C adapter handle.
+> +	 */
+> +	status = acpi_get_handle(lookup->device_handle,
+> +				 sb->resource_source.string_ptr,
+> +				 &adapter_handle);
+> +	if (ACPI_SUCCESS(status) && adapter_handle == lookup->adapter_handle) {
+> +		info->addr = sb->slave_address;
+> +		if (sb->access_mode == ACPI_I2C_10BIT_MODE)
+> +			info->flags |= I2C_CLIENT_TEN;
+>  	}
+>  
+> -	/* Tell the ACPI core to skip this resource */
+>  	return 1;
+>  }
+>  
+> @@ -128,6 +141,8 @@ static acpi_status acpi_i2c_add_device(acpi_handle handle, u32 level,
+>  {
+>  	struct i2c_adapter *adapter = data;
+>  	struct list_head resource_list;
+> +	struct acpi_i2c_lookup lookup;
+> +	struct resource_entry *entry;
+>  	struct i2c_board_info info;
+>  	struct acpi_device *adev;
+>  	int ret;
+> @@ -140,14 +155,37 @@ static acpi_status acpi_i2c_add_device(acpi_handle handle, u32 level,
+>  	memset(&info, 0, sizeof(info));
+>  	info.fwnode = acpi_fwnode_handle(adev);
+>  
+> +	memset(&lookup, 0, sizeof(lookup));
+> +	lookup.adapter_handle = ACPI_HANDLE(adapter->dev.parent);
+> +	lookup.device_handle = handle;
+> +	lookup.info = &info;
+> +
+> +	/*
+> +	 * Look up for I2cSerialBus resource with ResourceSource that
+> +	 * matches with this adapter.
+> +	 */
+>  	INIT_LIST_HEAD(&resource_list);
+>  	ret = acpi_dev_get_resources(adev, &resource_list,
+> -				     acpi_i2c_add_resource, &info);
+> +				     acpi_i2c_find_address, &lookup);
+>  	acpi_dev_free_resource_list(&resource_list);
+>  
+>  	if (ret < 0 || !info.addr)
+>  		return AE_OK;
+>  
+> +	/* Then fill IRQ number if any */
+> +	ret = acpi_dev_get_resources(adev, &resource_list, NULL, NULL);
+> +	if (ret < 0)
+> +		return AE_OK;
+> +
+> +	resource_list_for_each_entry(entry, &resource_list) {
+> +		if (resource_type(entry->res) == IORESOURCE_IRQ) {
+> +			info.irq = entry->res->start;
+> +			break;
+> +		}
+> +	}
+> +
+> +	acpi_dev_free_resource_list(&resource_list);
+> +
+>  	adev->power.flags.ignore_parent = true;
+>  	strlcpy(info.type, dev_name(&adev->dev), sizeof(info.type));
+>  	if (!i2c_new_device(adapter, &info)) {
+> @@ -160,6 +198,8 @@ static acpi_status acpi_i2c_add_device(acpi_handle handle, u32 level,
+>  	return AE_OK;
+>  }
+>  
+> +#define ACPI_I2C_MAX_SCAN_DEPTH 32
+> +
+>  /**
+>   * acpi_i2c_register_devices - enumerate I2C slave devices behind adapter
+>   * @adap: pointer to adapter
+> @@ -170,17 +210,13 @@ static acpi_status acpi_i2c_add_device(acpi_handle handle, u32 level,
+>   */
+>  static void acpi_i2c_register_devices(struct i2c_adapter *adap)
+>  {
+> -	acpi_handle handle;
+>  	acpi_status status;
+>  
+> -	if (!adap->dev.parent)
+> -		return;
+> -
+> -	handle = ACPI_HANDLE(adap->dev.parent);
+> -	if (!handle)
+> +	if (!adap->dev.parent || !has_acpi_companion(adap->dev.parent))
+>  		return;
+>  
+> -	status = acpi_walk_namespace(ACPI_TYPE_DEVICE, handle, 1,
+> +	status = acpi_walk_namespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
+> +				     ACPI_I2C_MAX_SCAN_DEPTH,
+>  				     acpi_i2c_add_device, NULL,
+>  				     adap, NULL);
+>  	if (ACPI_FAILURE(status))
+> 
