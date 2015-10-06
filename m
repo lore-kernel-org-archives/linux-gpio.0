@@ -1,36 +1,64 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: berlin: fix BG2CD field widths
-Date: Tue, 6 Oct 2015 09:28:56 +0200
-Message-ID: <CACRpkdaYGUkq-QqCtzph-aoYOzCfCgQ5JSAcNDjBeBLoZ0i_iA@mail.gmail.com>
-References: <56074059.10806@gmail.com>
-	<560D89BA.1000203@gmail.com>
-	<CACRpkdZ9HJtmEs6KhFRwh4=i2kOqeKV_WPDoi5zppNBc2FUDFw@mail.gmail.com>
-	<5612BC71.1060807@gmail.com>
+Subject: Re: [PATCH] gpio: Add driver for MEN 16Z127 GPIO controller
+Date: Tue, 6 Oct 2015 09:35:51 +0200
+Message-ID: <CACRpkdZhdf787xAH-AY=8fY3YXOuLriVXhJHAn554YFWtDYZ7g@mail.gmail.com>
+References: <1444068553-16899-1-git-send-email-andy@wernerandy.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:33617 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751704AbbJFH25 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Oct 2015 03:28:57 -0400
-Received: by obbbh8 with SMTP id bh8so147532688obb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2015 00:28:56 -0700 (PDT)
-In-Reply-To: <5612BC71.1060807@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444068553-16899-1-git-send-email-andy@wernerandy.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andreas Werner <andy@wernerandy.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johannes Thumshirn <morbidrsa@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Thomas Hebb <tommyhebb@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Antoine Tenart <antoine.tenart@free-electrons.com>, Wolfram Sang <wsa@the-dreams.de>
 
-On Mon, Oct 5, 2015 at 8:07 PM, Sebastian Hesselbarth
-<sebastian.hesselbarth@gmail.com> wrote:
+On Mon, Oct 5, 2015 at 8:09 PM, Andreas Werner <andy@wernerandy.de> wrote:
 
-> As the patch has issues with latest -rc1 I can provide you
-> a -rc1 compatible version of it. You can also pull it from
-> my branch if you prefer.
+> The 16Z127 is a GPIO controller on a MCB FPGA and has 32
+> configurable GPIOs.
+> The GPIOs can be configured as inputs and outputs
+>
+> Signed-off-by: Andreas Werner <andy@wernerandy.de>
 
-Just mail the rebased patch, single patches are better taken
-from the mail list.
+This driver looks like it can use the generic MMIO library.
 
-Thanks!
+select GPIO_GENERIC
+#include <linux/basic_mmio_gpio.h>
 
+Then look at example for how to do this, e.g.
+drivers/gpio/gpio-74xx-mmio.c
+
+> +config GPIO_MENZ127
+> +       tristate "MEN 16Z127 GPIO support"
+> +       depends on MCB
+
+Is this "MCB" symbol already upstream? It seems a bit short.
+
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/io.h>
+> +#include <linux/mcb.h>
+> +#include <linux/gpio.h>
+
+Just
+#include <linux/gpio/driver.h>
+
+> +#define MEN_Z127_CTRL  0x00
+> +#define MEN_Z127_PSR   0x04
+> +#define MEN_Z127_IRQR  0x08
+> +#define MEN_Z127_GPIODR        0x0c
+> +#define MEN_Z127_IER1  0x10
+> +#define MEN_Z127_IER2  0x14
+
+It looks like it has interrupt support?
+
+> +#define MEN_Z127_DBER  0x18
+
+Debounce? In that case, maybe implement .set_debounce from day 1?
+
+> +#define MEN_Z127_ODER  0x1C
+
+And Open Drain? Maybe you should support that from day 1?
+
+Yours,
 Linus Walleij
