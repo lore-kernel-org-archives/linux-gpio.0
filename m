@@ -1,31 +1,82 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: fix various asm-generic abuses
-Date: Tue, 6 Oct 2015 10:38:05 +0200
-Message-ID: <20151006083805.GA28030@lst.de>
-References: <1440746842-19029-1-git-send-email-hch@lst.de> <22516156.tfGZvl13aG@wuerfel>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH] gpio: keep the GPIO line names internal
+Date: Tue, 6 Oct 2015 11:13:16 +0200
+Message-ID: <20151006091316.GK19355@pengutronix.de>
+References: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
+ <20151004133742.GO4284@localhost>
+ <CACRpkdaB=Sne1Vq=apQE5r8FDvfvQ-4w0nths-dVnuJvBaGDOA@mail.gmail.com>
+ <20151005100147.GB25143@localhost>
+ <CACRpkdZBw7ayenkRTtpQH==G64TGNEXv6DgzdRAZxCCHJUZuRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FUFe+yI/t+r3nyH4"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:36729 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751653AbbJFJNT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Oct 2015 05:13:19 -0400
 Content-Disposition: inline
-In-Reply-To: <22516156.tfGZvl13aG@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@lst.de>, mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CACRpkdZBw7ayenkRTtpQH==G64TGNEXv6DgzdRAZxCCHJUZuRg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Fri, Aug 28, 2015 at 09:16:51PM +0200, Arnd Bergmann wrote:
-> with asm-generic patches is to have changes go through the tree of
-> whichever maintainer needs the changes for their own work with my
-> Ack, but I guess in this case you don't actually have other patches
-> depending on them, right?
-> 
-> If driver maintainers want to pick individual patches from this series,
-> please add my
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> otherwise let me know if I should put them into my asm-generic git
-> tree (which is currently empty, but part of linux-next).
 
-Seems like none of them made it into 4.3-rc - was that intentional or an
-oversight?
+--FUFe+yI/t+r3nyH4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 05, 2015 at 01:07:09PM +0200, Linus Walleij wrote:
+> On Mon, Oct 5, 2015 at 12:01 PM, Johan Hovold <johan@kernel.org> wrote:
+>=20
+> >> I think it is ABI-correct: it uses desc->name if that is set, and
+> >> currently that is only set from chip->names[] so status quo.
+> >
+> > Yes, but this work was aiming at generalising the hogs so that they
+> > could later be requested (and exported), right?
+>=20
+> Yeah something like so... thinking about it we should indeed
+> takes the names directly from chip->names[] for this, so we
+> can use the name field in the gpio descriptor for the "real"
+> chardev interface later.
+
+So what is this "real" chardev interface all about? What are the
+requirements and features for such an interface? How is it supposed to
+work? Was this already discussed somewhere?
+
+Any chance that you both are at the ELCE?
+
+Best Regards,
+
+Markus
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--FUFe+yI/t+r3nyH4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWE5CsAAoJEEpcgKtcEGQQxzgQAI4Lz6NIe0uwqSJs+cbxJmRJ
+T0Z/MwSQLQPqlGf8FMgmdlAZrj86t5UszGu0R4tk5TDfvdbDhx9j2ssESKd6O2L9
+wsys6o9xthvY1b6VDqXCq+TxCVeppr1510uyynvGBZ8DxwRUPm1aSssW8HoASwyN
+lQROC1myaKyX2/VcaCcinUIEgT8GwboV5axhBjgfBs+F9i5bRaqlX+VWyum9DoEb
+kenSLzpgbzau6UcmN5IK2dnBKbg8h7MmCq9MnafXcAmWKD7yhEfJB7Li93zTY2Pt
+rXnG1MaTV1NJpt0KeMVor8Gcg5DqF3DZ3MkJtTyngzDQ5RU11kG2cuRbX8UDjXHt
+ZnWtFi8Co/c7QFAfD75sIdTW2mAjGGekLymTKKJay9jtUIrjdJGbFvIKiQw0vBX2
+iTlg4MsMcFD27s3xH9QR2mQZ7VWQueIt3GYckeJ9PDaRkFSmSFSo6rOgUp4FkzeN
+hFieUdCRGahg4atvGNnica/b3VrPZnnnjkv1Zr/YlZnYJr5rGtLyfyjplJjzPe2+
+rfGCeEVJdQ+2N+Hry0bkioxfHiAN1SDwK54rZlWrM/rsfM3yR4rrUeoWARCftVrk
+cEUrzy6/wusw/bJ87ErH95o4X7N/hhHydlHl8bkrjhG76XhDcalV8ihZRZ+80BrS
+GJhLYyd5SkzrKvfRotPO
+=K+ko
+-----END PGP SIGNATURE-----
+
+--FUFe+yI/t+r3nyH4--
