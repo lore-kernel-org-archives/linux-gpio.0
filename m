@@ -1,52 +1,57 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] gpio: make GPIO_OMAP bool instead of tristate
-Date: Tue,  6 Oct 2015 17:31:11 +0530
-Message-ID: <1444132871-25798-1-git-send-email-sudipm.mukherjee@gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH] gpio: keep the GPIO line names internal
+Date: Tue, 6 Oct 2015 15:09:19 +0100
+Message-ID: <20151006140919.GF25143@localhost>
+References: <1443050853-24601-1-git-send-email-linus.walleij@linaro.org>
+ <20151004133742.GO4284@localhost>
+ <CACRpkdaB=Sne1Vq=apQE5r8FDvfvQ-4w0nths-dVnuJvBaGDOA@mail.gmail.com>
+ <20151005100147.GB25143@localhost>
+ <CACRpkdZBw7ayenkRTtpQH==G64TGNEXv6DgzdRAZxCCHJUZuRg@mail.gmail.com>
+ <20151006091316.GK19355@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f66.google.com ([209.85.220.66]:36117 "EHLO
-	mail-pa0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751204AbbJFMBV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Oct 2015 08:01:21 -0400
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35994 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751795AbbJFOIB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Oct 2015 10:08:01 -0400
+Received: by wicgb1 with SMTP id gb1so167278055wic.1
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2015 07:08:00 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20151006091316.GK19355@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Tony Lindgren <tony@atomide.com>, Austin Schuh <austin@peloton-tech.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-While building arm allmodconfig the build fails with the error:
-ERROR: "handle_bad_irq" [drivers/gpio/gpio-omap.ko] undefined!
+On Tue, Oct 06, 2015 at 11:13:16AM +0200, Markus Pargmann wrote:
+> On Mon, Oct 05, 2015 at 01:07:09PM +0200, Linus Walleij wrote:
+> > On Mon, Oct 5, 2015 at 12:01 PM, Johan Hovold <johan@kernel.org> wrote:
+> > 
+> > >> I think it is ABI-correct: it uses desc->name if that is set, and
+> > >> currently that is only set from chip->names[] so status quo.
+> > >
+> > > Yes, but this work was aiming at generalising the hogs so that they
+> > > could later be requested (and exported), right?
+> > 
+> > Yeah something like so... thinking about it we should indeed
+> > takes the names directly from chip->names[] for this, so we
+> > can use the name field in the gpio descriptor for the "real"
+> > chardev interface later.
+> 
+> So what is this "real" chardev interface all about? What are the
+> requirements and features for such an interface? How is it supposed to
+> work? Was this already discussed somewhere?
 
-The build breaks as handle_bad_irq is not exported for module use.
+It has been discussed in various threads, often when someone proposes to
+tweak the current sysfs interface to cater to their specific needs.
 
-Fixes: 450fa54cfd66 ("gpio: omap: convert to use generic irq handler")
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Austin Schuh <austin@peloton-tech.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
+Several people have expressed ideas, but no more formal proposal for a
+new userspace interface has been put forward yet. Since this will also
+become ABI we need to get it right (this time).
 
-Same problem for pinctrl was fixed by
-5ba341604a054294aeb812603349bba024d716ee
+> Any chance that you both are at the ELCE?
 
-And for your reference:
-https://lkml.org/lkml/2014/2/25/278
+I'm here, but not Linus. I'll see if I can spot you.
 
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 63000b1..d910fd1 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -330,7 +330,7 @@ config GPIO_OCTEON
- 	  family of SOCs.
- 
- config GPIO_OMAP
--	tristate "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_TEST
-+	bool "TI OMAP GPIO support" if ARCH_OMAP2PLUS || COMPILE_TEST
- 	default y if ARCH_OMAP
- 	depends on ARM
- 	select GENERIC_IRQ_CHIP
--- 
-1.9.1
-
+Johan
