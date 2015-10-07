@@ -1,65 +1,275 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: [PATCH 1/3] usb: renesas_usbhs: Remove unneeded #include
- <linux/platform_data/gpio-rcar.h>
-Date: Wed, 7 Oct 2015 10:33:00 +0000
-Message-ID: <SG2PR06MB09192CB02C88F3D53E3F75AFD8360@SG2PR06MB0919.apcprd06.prod.outlook.com>
-References: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
- <1444206225-25664-2-git-send-email-geert+renesas@glider.be>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v5] gpio: Add GPIO support for the ACCES 104-IDIO-16
+Date: Wed, 7 Oct 2015 06:50:41 -0400
+Message-ID: <20151007105041.GA21970@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:23249 "EHLO
-	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751417AbbJGKdF convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 7 Oct 2015 06:33:05 -0400
-In-Reply-To: <1444206225-25664-2-git-send-email-geert+renesas@glider.be>
-Content-Language: ja-JP
+Received: from mail-yk0-f171.google.com ([209.85.160.171]:34246 "EHLO
+	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751190AbbJGKuv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Oct 2015 06:50:51 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Geert-san,
+The ACCES 104-IDIO-16 family of PC/104 utility boards feature 16
+optically isolated inputs and 16 optically isolated FET solid state
+outputs. This driver provides GPIO support for these 32 channels of
+digital I/O. Change-of-State detection interrupts are not supported.
 
-> Sent: Wednesday, October 07, 2015 5:24 PM
-> 
-> This header file will be removed soon.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Please schedule for v4.3, or provide an Ack, so it can go in through the
-> GPIO tree. Thanks!
-> ---
+GPIO 0-15 correspond to digital outputs 0-15, while GPIO 16-31
+correspond to digital inputs 0-15. The base port address for the device
+may be set via the a_104_idio_16_base module parameter.
 
-I'm not sure my Acked-by is useful for it :)
-Anyway,
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+Changes in v5
+  - Remove owner field from a_104_idio_16_driver since core will set it
+  - Move initialization print statement after device is registered
 
-Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+ drivers/gpio/Kconfig            |  10 +++
+ drivers/gpio/Makefile           |   1 +
+ drivers/gpio/gpio-104-idio-16.c | 195 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 206 insertions(+)
+ create mode 100644 drivers/gpio/gpio-104-idio-16.c
 
-Best regards,
-Yoshihiro Shimoda
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8949b3f..dc843e0 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -684,6 +684,16 @@ config GPIO_SX150X
+ 
+ endmenu
+ 
++menu "ISA GPIO drivers"
++
++config GPIO_104_IDIO_16
++	tristate "ACCES 104-IDIO-16 GPIO support"
++	depends on X86
++	help
++	  Enables GPIO support for the ACCES 104-IDIO-16 family.
++
++endmenu
++
+ menu "MFD GPIO expanders"
+ 
+ config GPIO_ADP5520
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index f79a7c4..6f2fea5 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
+ # Device drivers. Generally keep list sorted alphabetically
+ obj-$(CONFIG_GPIO_GENERIC)	+= gpio-generic.o
+ 
++obj-$(CONFIG_GPIO_104_IDIO_16)	+= gpio-104-idio-16.o
+ obj-$(CONFIG_GPIO_74X164)	+= gpio-74x164.o
+ obj-$(CONFIG_GPIO_74XX_MMIO)	+= gpio-74xx-mmio.o
+ obj-$(CONFIG_GPIO_ADNP)		+= gpio-adnp.o
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+new file mode 100644
+index 0000000..d0c69d1
+--- /dev/null
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -0,0 +1,195 @@
++/*
++ * GPIO driver for the ACCES 104-IDIO-16 family
++ * Copyright (C) 2015 William Breathitt Gray
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++
++static unsigned a_104_idio_16_base;
++module_param(a_104_idio_16_base, uint, 0);
++MODULE_PARM_DESC(a_104_idio_16_base, "ACCES 104-IDIO-16 base address");
++
++/**
++ * struct a_104_idio_16_gpio - GPIO device private data structure
++ * @chip:	instance of the gpio_chip
++ * @lock:	synchronization lock to prevent gpio_set race conditions
++ * @base:	base port address of the GPIO device
++ * @extent:	extent of port address region of the GPIO device
++ * @out_state:	output bits state
++ */
++struct a_104_idio_16_gpio {
++	struct gpio_chip chip;
++	spinlock_t lock;
++	unsigned base;
++	unsigned extent;
++	unsigned out_state;
++};
++
++static int a_104_idio_16_gpio_direction_input(struct gpio_chip *chip,
++	unsigned offset)
++{
++	return 0;
++}
++
++static int a_104_idio_16_gpio_direction_output(struct gpio_chip *chip,
++	unsigned offset, int value)
++{
++	chip->set(chip, offset, value);
++	return 0;
++}
++
++static struct a_104_idio_16_gpio *to_a104idio16gp(struct gpio_chip *gc)
++{
++	return container_of(gc, struct a_104_idio_16_gpio, chip);
++}
++
++static int a_104_idio_16_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct a_104_idio_16_gpio *const a104idio16gp = to_a104idio16gp(chip);
++	const unsigned BIT_MASK = 1U << (offset-16);
++
++	if (offset < 16)
++		return -ENODEV;
++
++	if (offset < 24)
++		return !!(inb(a104idio16gp->base + 1) & BIT_MASK);
++
++	return !!(inb(a104idio16gp->base + 5) & (BIT_MASK>>8));
++}
++
++static void a_104_idio_16_gpio_set(struct gpio_chip *chip, unsigned offset,
++	int value)
++{
++	struct a_104_idio_16_gpio *const a104idio16gp = to_a104idio16gp(chip);
++	const unsigned BIT_MASK = 1U << offset;
++	unsigned long flags;
++
++	if (offset > 15)
++		return;
++
++	spin_lock_irqsave(&a104idio16gp->lock, flags);
++
++	if (value)
++		a104idio16gp->out_state |= BIT_MASK;
++	else
++		a104idio16gp->out_state &= ~BIT_MASK;
++
++	if (offset > 7)
++		outb(~a104idio16gp->out_state >> 8, a104idio16gp->base + 4);
++	else
++		outb(~a104idio16gp->out_state, a104idio16gp->base);
++
++	spin_unlock_irqrestore(&a104idio16gp->lock, flags);
++}
++
++static int a_104_idio_16_probe(struct platform_device *pdev)
++{
++	struct a_104_idio_16_gpio *const a104idio16gp = pdev->dev.platform_data;
++	struct device *dev = &pdev->dev;
++	int err;
++
++	const unsigned BASE = a104idio16gp->base;
++	const unsigned EXTENT = a104idio16gp->extent;
++
++	if (!request_region(BASE, EXTENT, "104-idio-16")) {
++		dev_err(dev, "Unable to lock 104-idio-16 port addresses (0x%X-0x%X)\n",
++			BASE, BASE + EXTENT);
++		err = -EBUSY;
++		goto out_lock_a_104_idio_16_port;
++	}
++
++	spin_lock_init(&a104idio16gp->lock);
++
++	dev_info(dev, "104-IDIO-16 GPIO detected\n");
++	err = gpiochip_add(&a104idio16gp->chip);
++	if (err) {
++		dev_err(dev, "GPIO registering failed (%d)\n", err);
++		goto out_gpio_register;
++	}
++
++	return 0;
++
++out_gpio_register:
++	release_region(BASE, EXTENT);
++out_lock_a_104_idio_16_port:
++	return err;
++}
++
++static int a_104_idio_16_remove(struct platform_device *pdev)
++{
++	struct a_104_idio_16_gpio *const a104idio16gp = pdev->dev.platform_data;
++
++	gpiochip_remove(&a104idio16gp->chip);
++	release_region(a104idio16gp->base, a104idio16gp->extent);
++
++	return 0;
++}
++
++static struct platform_device *a_104_idio_16_device;
++
++static struct platform_driver a_104_idio_16_driver = {
++	.driver = {
++		.name = "104-idio-16",
++	},
++	.remove = a_104_idio_16_remove
++};
++
++static void __exit a_104_idio_16_exit(void)
++{
++	dev_info(&a_104_idio_16_device->dev, "Exiting module\n");
++
++	platform_device_unregister(a_104_idio_16_device);
++	platform_driver_unregister(&a_104_idio_16_driver);
++}
++
++static int __init a_104_idio_16_init(void)
++{
++	struct a_104_idio_16_gpio a104idio16gp = {
++		.chip = {
++			.label = "104-IDIO-16 GPIO",
++			.owner = THIS_MODULE,
++			.base = -1,
++			.ngpio = 32,
++			.direction_input = a_104_idio_16_gpio_direction_input,
++			.direction_output = a_104_idio_16_gpio_direction_output,
++			.get = a_104_idio_16_gpio_get,
++			.set = a_104_idio_16_gpio_set
++		},
++		.base = a_104_idio_16_base,
++		.extent = 8
++	};
++
++	a_104_idio_16_device = platform_device_register_data(NULL,
++		"104-idio-16", -1, &a104idio16gp, sizeof(a104idio16gp));
++	if (IS_ERR(a_104_idio_16_device))
++		return PTR_ERR(a_104_idio_16_device);
++
++	dev_info(&a_104_idio_16_device->dev, "Initializing module\n");
++
++	return platform_driver_probe(&a_104_idio_16_driver, a_104_idio_16_probe);
++}
++
++module_init(a_104_idio_16_init);
++module_exit(a_104_idio_16_exit);
++
++MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
++MODULE_DESCRIPTION("ACCES 104-IDIO-16 GPIO driver");
++MODULE_LICENSE("GPL");
+-- 
+2.4.9
 
->  drivers/usb/renesas_usbhs/rcar2.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/usb/renesas_usbhs/rcar2.c b/drivers/usb/renesas_usbhs/rcar2.c
-> index 8fc15c0ba339..277160bc6f25 100644
-> --- a/drivers/usb/renesas_usbhs/rcar2.c
-> +++ b/drivers/usb/renesas_usbhs/rcar2.c
-> @@ -13,7 +13,6 @@
->  #include <linux/gpio.h>
->  #include <linux/of_gpio.h>
->  #include <linux/phy/phy.h>
-> -#include <linux/platform_data/gpio-rcar.h>
->  #include <linux/usb/phy.h>
->  #include "common.h"
->  #include "rcar2.h"
-> --
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
