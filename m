@@ -1,41 +1,117 @@
-From: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH 1/3] usb: renesas_usbhs: Remove unneeded #include <linux/platform_data/gpio-rcar.h>
-Date: Wed,  7 Oct 2015 10:23:43 +0200
-Message-ID: <1444206225-25664-2-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/3] pinctrl: sh-pfc: Stop including <linux/platform_data/gpio-rcar.h>
+Date: Wed,  7 Oct 2015 10:23:44 +0200
+Message-ID: <1444206225-25664-3-git-send-email-geert+renesas@glider.be>
 References: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444206225-25664-1-git-send-email-geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
 This header file will be removed soon.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
----
-Please schedule for v4.3, or provide an Ack, so it can go in through the
-GPIO tree. Thanks!
----
- drivers/usb/renesas_usbhs/rcar2.c | 1 -
- 1 file changed, 1 deletion(-)
+Copy the helper macro RCAR_GP_PIN(), which is used by the pinctrl
+drivers only, to sh_pfc.h, and drop the #include.
 
-diff --git a/drivers/usb/renesas_usbhs/rcar2.c b/drivers/usb/renesas_usbhs/rcar2.c
-index 8fc15c0ba339..277160bc6f25 100644
---- a/drivers/usb/renesas_usbhs/rcar2.c
-+++ b/drivers/usb/renesas_usbhs/rcar2.c
-@@ -13,7 +13,6 @@
- #include <linux/gpio.h>
- #include <linux/of_gpio.h>
- #include <linux/phy/phy.h>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 1 -
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 1 -
+ drivers/pinctrl/sh-pfc/sh_pfc.h      | 5 +++++
+ 7 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+index 581d3c44aa4a..ff0077d7869b 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -23,7 +23,6 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/pinctrl/pinconf-generic.h>
 -#include <linux/platform_data/gpio-rcar.h>
- #include <linux/usb/phy.h>
- #include "common.h"
- #include "rcar2.h"
+ #include "core.h"
+ #include "sh_pfc.h"
+ 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+index 4be082e6a02e..63e22303b934 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
+@@ -20,7 +20,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ 
+ #include "sh_pfc.h"
+ 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 8e45e30252bc..79b08ecc10be 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -22,7 +22,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index a58a0dec6994..e67f82a44b95 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -9,7 +9,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 185554e15099..bc570d72285e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -11,7 +11,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index dce06ed02090..446a37d900c8 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -9,7 +9,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ 
+ #include "core.h"
+ #include "sh_pfc.h"
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index 12bfb706845e..a6c9bf23371f 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -341,4 +341,9 @@ struct sh_pfc_soc_info {
+ 		}							\
+ 	}
+ 
++/*
++ * GPIO number helper macro for R-Car
++ */
++#define RCAR_GP_PIN(bank, pin)		(((bank) * 32) + (pin))
++
+ #endif /* __SH_PFC_H */
 -- 
 1.9.1
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
