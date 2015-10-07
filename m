@@ -1,46 +1,65 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: Remove obsolete r8a7778 platform_device_id entry
-Date: Wed,  7 Oct 2015 12:28:40 +0200
-Message-ID: <1444213720-26770-3-git-send-email-geert+renesas@glider.be>
-References: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: RE: [PATCH 1/3] usb: renesas_usbhs: Remove unneeded #include
+ <linux/platform_data/gpio-rcar.h>
+Date: Wed, 7 Oct 2015 10:33:00 +0000
+Message-ID: <SG2PR06MB09192CB02C88F3D53E3F75AFD8360@SG2PR06MB0919.apcprd06.prod.outlook.com>
+References: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
+ <1444206225-25664-2-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47925 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753537AbbJGK2u (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Oct 2015 06:28:50 -0400
-In-Reply-To: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
+Received: from relmlor4.renesas.com ([210.160.252.174]:23249 "EHLO
+	relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751417AbbJGKdF convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 7 Oct 2015 06:33:05 -0400
+In-Reply-To: <1444206225-25664-2-git-send-email-geert+renesas@glider.be>
+Content-Language: ja-JP
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Since the removal of the r8a7778 legacy SoC code in commit
-4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete setup code"),
-r8a7778 is only supported in generic DT-only ARM multi-platform builds.
-The driver doesn't need to match platform devices by name anymore, hence
-remove the corresponding platform_device_id entry.
+Hi Geert-san,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Commit 4baadb9e05c68962 is now in arm-soc/for-next.
----
- drivers/pinctrl/sh-pfc/core.c | 3 ---
- 1 file changed, 3 deletions(-)
+> Sent: Wednesday, October 07, 2015 5:24 PM
+> 
+> This header file will be removed soon.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Please schedule for v4.3, or provide an Ack, so it can go in through the
+> GPIO tree. Thanks!
+> ---
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index a0c5e9ef7433..722c8586ce28 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -593,9 +593,6 @@ static int sh_pfc_remove(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id sh_pfc_id_table[] = {
--#ifdef CONFIG_PINCTRL_PFC_R8A7778
--	{ "pfc-r8a7778", (kernel_ulong_t)&r8a7778_pinmux_info },
--#endif
- #ifdef CONFIG_PINCTRL_PFC_SH7203
- 	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
- #endif
--- 
-1.9.1
+I'm not sure my Acked-by is useful for it :)
+Anyway,
 
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
+
+>  drivers/usb/renesas_usbhs/rcar2.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/usb/renesas_usbhs/rcar2.c b/drivers/usb/renesas_usbhs/rcar2.c
+> index 8fc15c0ba339..277160bc6f25 100644
+> --- a/drivers/usb/renesas_usbhs/rcar2.c
+> +++ b/drivers/usb/renesas_usbhs/rcar2.c
+> @@ -13,7 +13,6 @@
+>  #include <linux/gpio.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+> -#include <linux/platform_data/gpio-rcar.h>
+>  #include <linux/usb/phy.h>
+>  #include "common.h"
+>  #include "rcar2.h"
+> --
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
