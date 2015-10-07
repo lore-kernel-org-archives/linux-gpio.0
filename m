@@ -1,39 +1,44 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] pinctrl: sh-pfc: Remove obsolete platform_device_id entries
-Date: Wed,  7 Oct 2015 12:28:38 +0200
-Message-ID: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
+Subject: [PATCH 1/2] pinctrl: sh-pfc: Remove obsolete r8a7779 platform_device_id entry
+Date: Wed,  7 Oct 2015 12:28:39 +0200
+Message-ID: <1444213720-26770-2-git-send-email-geert+renesas@glider.be>
+References: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:58433 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752543AbbJGK2u (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Oct 2015 06:28:50 -0400
+In-Reply-To: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-gpio@vger.kernel.org
 
-	Hi Linus, Laurent,
-
-Since the removal of the r8a7778 legacy SoC code in commit
-4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete setup code"),
-which is now in arm-soc/for-next, Renesas R-Car Gen1 SoCs are only
-supported in generic DT-only ARM multi-platform builds.
+Since the removal of the r8a7779 legacy SoC code in commit
+c99cd90d98a98aa1 ("ARM: shmobile: r8a7779: Remove legacy SoC code"),
+r8a7779 is only supported in generic DT-only ARM multi-platform builds.
 The driver doesn't need to match platform devices by name anymore, hence
-this series removes the corresponding platform_device_id entries.
+remove the corresponding platform_device_id entry.
 
-Geert Uytterhoeven (2):
-  pinctrl: sh-pfc: Remove obsolete r8a7779 platform_device_id entry
-  pinctrl: sh-pfc: Remove obsolete r8a7778 platform_device_id entry
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
- drivers/pinctrl/sh-pfc/core.c | 6 ------
- 1 file changed, 6 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index bcf3017318db..a0c5e9ef7433 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -596,9 +596,6 @@ static const struct platform_device_id sh_pfc_id_table[] = {
+ #ifdef CONFIG_PINCTRL_PFC_R8A7778
+ 	{ "pfc-r8a7778", (kernel_ulong_t)&r8a7778_pinmux_info },
+ #endif
+-#ifdef CONFIG_PINCTRL_PFC_R8A7779
+-	{ "pfc-r8a7779", (kernel_ulong_t)&r8a7779_pinmux_info },
+-#endif
+ #ifdef CONFIG_PINCTRL_PFC_SH7203
+ 	{ "pfc-sh7203", (kernel_ulong_t)&sh7203_pinmux_info },
+ #endif
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
