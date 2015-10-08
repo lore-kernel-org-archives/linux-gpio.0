@@ -1,54 +1,194 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpio: pl061: returning with lock held in pl061_irq_type()
-Date: Thu, 8 Oct 2015 10:12:01 +0300
-Message-ID: <20151008064001.GA25441@mwanda>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: Re: [PATCH v2 1/6] pinctrl: berlin: regmap as an extra argument of
+ berlin_pinctrl_probe()
+Date: Thu, 8 Oct 2015 18:32:42 +0800
+Message-ID: <20151008183242.7bcaff30@xhacker>
+References: <1442829860-4647-1-git-send-email-jszhang@marvell.com>
+	<1442829860-4647-2-git-send-email-jszhang@marvell.com>
+	<20151002130456.GC3162@kwain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:41288 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752986AbbJHHMO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 03:12:14 -0400
-Content-Disposition: inline
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:7515 "EHLO
+	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751987AbbJHKhJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 06:37:09 -0400
+In-Reply-To: <20151002130456.GC3162@kwain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We were returning with "chip->lock" held by mistake.  It's safe to
-move the return to before we take the spinlock.
+Hi Antoine,
 
-Fixes: 1dbf7f299f90 ('gpio: pl061: detail IRQ trigger handling')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, 2 Oct 2015 15:04:56 +0200
+Antoine Tenart <antoine.tenart@free-electrons.com> wrote:
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 5b1461f..1793397 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -152,12 +152,6 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 	if (offset < 0 || offset >= PL061_GPIO_NR)
- 		return -EINVAL;
- 
--	spin_lock_irqsave(&chip->lock, flags);
--
--	gpioiev = readb(chip->base + GPIOIEV);
--	gpiois = readb(chip->base + GPIOIS);
--	gpioibe = readb(chip->base + GPIOIBE);
--
- 	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
- 	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
- 	{
-@@ -168,6 +162,13 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 		return -EINVAL;
- 	}
- 
-+
-+	spin_lock_irqsave(&chip->lock, flags);
-+
-+	gpioiev = readb(chip->base + GPIOIEV);
-+	gpiois = readb(chip->base + GPIOIS);
-+	gpioibe = readb(chip->base + GPIOIBE);
-+
- 	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
- 		bool polarity = trigger & IRQ_TYPE_LEVEL_HIGH;
- 
+> Hi Jisheng,
+> 
+> Thanks for providing this!
+
+Just back from vocation. Thanks for the review feedbacks
+
+> 
+> On Mon, Sep 21, 2015 at 06:04:15PM +0800, Jisheng Zhang wrote:
+> > Let berlin_pinctrl_probe() accepts an extra argument: regmap, this is to
+> > prepare for the next berlin4ct support, where we won't use simple-mfd
+> > any more.
+> 
+> Just a question here: why don't we have instead one
+> berlin_pinctrl_probe() and one berlin_pinctrl_probe_regmap(), both
+> calling a static probe function in berlin.c, to avoid duplicating code?
+
+It's better! Will take this solution in v3
+
+> 
+> Antoine
+> 
+> > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> > ---
+> >  drivers/pinctrl/berlin/berlin-bg2.c   | 10 +++++++++-
+> >  drivers/pinctrl/berlin/berlin-bg2cd.c | 10 +++++++++-
+> >  drivers/pinctrl/berlin/berlin-bg2q.c  | 10 +++++++++-
+> >  drivers/pinctrl/berlin/berlin.c       |  9 +--------
+> >  drivers/pinctrl/berlin/berlin.h       |  1 +
+> >  5 files changed, 29 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
+> > index 274c553..4aede2e 100644
+> > --- a/drivers/pinctrl/berlin/berlin-bg2.c
+> > +++ b/drivers/pinctrl/berlin/berlin-bg2.c
+> > @@ -10,6 +10,7 @@
+> >   * warranty of any kind, whether express or implied.
+> >   */
+> >  
+> > +#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/platform_device.h>
+> > @@ -233,8 +234,15 @@ static int berlin2_pinctrl_probe(struct platform_device *pdev)
+> >  {
+> >  	const struct of_device_id *match =
+> >  		of_match_device(berlin2_pinctrl_match, &pdev->dev);
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *parent_np = of_get_parent(dev->of_node);
+> > +	struct regmap *regmap = syscon_node_to_regmap(parent_np);
+> >  
+> > -	return berlin_pinctrl_probe(pdev, match->data);
+> > +	of_node_put(parent_np);
+> > +	if (IS_ERR(regmap))
+> > +		return PTR_ERR(regmap);
+> > +
+> > +	return berlin_pinctrl_probe(pdev, regmap, match->data);
+> >  }
+> >  
+> >  static struct platform_driver berlin2_pinctrl_driver = {
+> > diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
+> > index 0cb793a..6378dd8 100644
+> > --- a/drivers/pinctrl/berlin/berlin-bg2cd.c
+> > +++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
+> > @@ -10,6 +10,7 @@
+> >   * warranty of any kind, whether express or implied.
+> >   */
+> >  
+> > +#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/platform_device.h>
+> > @@ -176,8 +177,15 @@ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
+> >  {
+> >  	const struct of_device_id *match =
+> >  		of_match_device(berlin2cd_pinctrl_match, &pdev->dev);
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *parent_np = of_get_parent(dev->of_node);
+> > +	struct regmap *regmap = syscon_node_to_regmap(parent_np);
+> >  
+> > -	return berlin_pinctrl_probe(pdev, match->data);
+> > +	of_node_put(parent_np);
+> > +	if (IS_ERR(regmap))
+> > +		return PTR_ERR(regmap);
+> > +
+> > +	return berlin_pinctrl_probe(pdev, regmap, match->data);
+> >  }
+> >  
+> >  static struct platform_driver berlin2cd_pinctrl_driver = {
+> > diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
+> > index a466054..907bdf0 100644
+> > --- a/drivers/pinctrl/berlin/berlin-bg2q.c
+> > +++ b/drivers/pinctrl/berlin/berlin-bg2q.c
+> > @@ -10,6 +10,7 @@
+> >   * warranty of any kind, whether express or implied.
+> >   */
+> >  
+> > +#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of_device.h>
+> >  #include <linux/platform_device.h>
+> > @@ -395,8 +396,15 @@ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
+> >  {
+> >  	const struct of_device_id *match =
+> >  		of_match_device(berlin2q_pinctrl_match, &pdev->dev);
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *parent_np = of_get_parent(dev->of_node);
+> > +	struct regmap *regmap = syscon_node_to_regmap(parent_np);
+> >  
+> > -	return berlin_pinctrl_probe(pdev, match->data);
+> > +	of_node_put(parent_np);
+> > +	if (IS_ERR(regmap))
+> > +		return PTR_ERR(regmap);
+> > +
+> > +	return berlin_pinctrl_probe(pdev, regmap, match->data);
+> >  }
+> >  
+> >  static struct platform_driver berlin2q_pinctrl_driver = {
+> > diff --git a/drivers/pinctrl/berlin/berlin.c b/drivers/pinctrl/berlin/berlin.c
+> > index f495806..0557bbe 100644
+> > --- a/drivers/pinctrl/berlin/berlin.c
+> > +++ b/drivers/pinctrl/berlin/berlin.c
+> > @@ -11,7 +11,6 @@
+> >   */
+> >  
+> >  #include <linux/io.h>
+> > -#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_address.h>
+> > @@ -293,19 +292,13 @@ static struct pinctrl_desc berlin_pctrl_desc = {
+> >  };
+> >  
+> >  int berlin_pinctrl_probe(struct platform_device *pdev,
+> > +			 struct regmap *regmap,
+> >  			 const struct berlin_pinctrl_desc *desc)
+> >  {
+> >  	struct device *dev = &pdev->dev;
+> > -	struct device_node *parent_np = of_get_parent(dev->of_node);
+> >  	struct berlin_pinctrl *pctrl;
+> > -	struct regmap *regmap;
+> >  	int ret;
+> >  
+> > -	regmap = syscon_node_to_regmap(parent_np);
+> > -	of_node_put(parent_np);
+> > -	if (IS_ERR(regmap))
+> > -		return PTR_ERR(regmap);
+> > -
+> >  	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
+> >  	if (!pctrl)
+> >  		return -ENOMEM;
+> > diff --git a/drivers/pinctrl/berlin/berlin.h b/drivers/pinctrl/berlin/berlin.h
+> > index e1aa841..bf5781a 100644
+> > --- a/drivers/pinctrl/berlin/berlin.h
+> > +++ b/drivers/pinctrl/berlin/berlin.h
+> > @@ -56,6 +56,7 @@ struct berlin_pinctrl_function {
+> >  #define BERLIN_PINCTRL_FUNCTION_UNKNOWN		{}
+> >  
+> >  int berlin_pinctrl_probe(struct platform_device *pdev,
+> > +			 struct regmap *regmap,
+> >  			 const struct berlin_pinctrl_desc *desc);
+> >  
+> >  #endif /* __PINCTRL_BERLIN_H */
+> > -- 
+> > 2.5.3
+> > 
+> 
+
