@@ -1,60 +1,54 @@
-From: Lloyds TSB Bank Plc <graziele.franco@faac.unesp.br>
-Subject: lening bieden 1,5%
-Date: Thu, 8 Oct 2015 08:59:14 -0300 (BRT)
-Message-ID: <1635076474.109870.1444305554517.JavaMail.zimbra@faac.unesp.br>
-Reply-To: "lloyds25tsb@gmail.com" <lloyds25tsb@gmail.com>
+From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
+Subject: [PROBLEM] gpio: hog: requesting hog failed
+Date: Thu, 8 Oct 2015 14:29:47 +0200
+Message-ID: <561661BB.70207@aksignal.cz>
+Reply-To: jiri.prchal@aksignal.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from zmx.bauru.unesp.br ([200.145.167.9]:57443 "EHLO
-	zmx.bauru.unesp.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932087AbbJHMGs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 08:06:48 -0400
+Received: from router.aksignal.cz ([188.175.113.102]:56933 "EHLO
+	router.aksignal.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751014AbbJHMhE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 08:37:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
+Cc: "plagnioj@jcrosoft.com >> Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>
 
-Goede dag,
+Hi everybody,
+I've just tried new gpio hog functionality, but maybe I misunderstand something
+or I'm doing something wrong?
+Can someone help me with it, please?
+Thanks, Jiri.
 
- Dit is Lloyds TSB Bank plc leningen aan te bieden.
+Here is dmesg:
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 4.3.0-rc4-next-20151006_cpm9g25+ (prchal@prchalpc) (gcc version 4.7.3 (Ubuntu/Linaro 
+4.7.3-12ubuntu1) ) #7 PREEMPT Thu Oct 8 09:08:21 CEST 2015
+[    0.000000] CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=0005317f
+...
+[    0.243333] requesting hog GPIO in18 (chip fffff400.gpio, offset 28) failed
+[    0.243333] requesting hog GPIO in19 (chip fffff400.gpio, offset 21) failed
+[    0.246666] gpio-at91 fffff400.gpio: at address c8856400
+...
 
-   Lloyds TSB biedt flexibele en betaalbare leningen voor welk doel u t=
-e helpen uw doelen te bereiken. we lening tegen lage rente van 1,5%. Hi=
-er zijn enkele belangrijke kenmerken van de persoonlijke lening aangebo=
-den door Lloyds TSB. Hier zijn de Lening Factoren we werken met de toon=
-aangevende Britse makelaars die toegang hebben tot de top kredietverstr=
-ekkers hebben en in staat zijn om de beste financi=C3=ABle oplossing vo=
-or een betaalbare price.Please vinden als je ge=C3=AFnteresseerd bent v=
-riendelijk contact met ons op via deze e-mail: lloyds25tsb@gmail.com
-
-
-Na de reactie, zal u een aanvraag voor een lening fill ontvangen. Geen =
-sociale zekerheid en geen credit check, 100% gegarandeerd.
-
-Het zal ons een eer zijn als u ons toelaten om u van dienst zijn.
-
-
-GEGEVENS NODIG
-
-Uw namen:
-Adres: ...........
-Telefoon: ...........
-Benodigd ........
-Duur: ...............
-Beroep: ...........
-Maandelijks inkomen Level: ........
-Geslacht: ...............
-Geboortedatum: ........
-Staat: ..................
-Land: ..........
-Doel: .........
-
-Voldoen aan uw financi=C3=ABle behoeften is onze trots.
-
-
-Dr. John Mahama.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+and here my part of dts:
+...
+	ahb {
+		apb {
+			pinctrl@fffff400 {
+				pioA: gpio@fffff400 {
+					in18 {
+						gpio-hog;
+						gpios = <28 0>;
+						input;
+						line-name = "in18";
+					};
+					in19 {
+						gpio-hog;
+						gpios = <21 GPIO_ACTIVE_LOW>;
+						input;
+					};
+				};
+...
