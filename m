@@ -1,54 +1,39 @@
-From: =?UTF-8?B?SmnFmcOtIFByY2hhbA==?= <jiri.prchal@aksignal.cz>
-Subject: [PROBLEM] gpio: hog: requesting hog failed
-Date: Thu, 8 Oct 2015 14:29:47 +0200
-Message-ID: <561661BB.70207@aksignal.cz>
-Reply-To: jiri.prchal@aksignal.cz
+From: Andreas Werner <andy@wernerandy.de>
+Subject: Re: [PATCH] gpio: Add driver for MEN 16Z127 GPIO controller
+Date: Thu, 8 Oct 2015 18:55:41 +0200
+Message-ID: <20151008165540.GA2850@linux-rrhd.site>
+References: <1444068553-16899-1-git-send-email-andy@wernerandy.de>
+ <CACRpkdZhdf787xAH-AY=8fY3YXOuLriVXhJHAn554YFWtDYZ7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from router.aksignal.cz ([188.175.113.102]:56933 "EHLO
-	router.aksignal.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751014AbbJHMhE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 08:37:04 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:49450 "EHLO
+	mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933722AbbJHQzy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Oct 2015 12:55:54 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZhdf787xAH-AY=8fY3YXOuLriVXhJHAn554YFWtDYZ7g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
-Cc: "plagnioj@jcrosoft.com >> Jean-Christophe Plagniol-Villard" <plagnioj@jcrosoft.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johannes Thumshirn <morbidrsa@gmail.com>
 
-Hi everybody,
-I've just tried new gpio hog functionality, but maybe I misunderstand something
-or I'm doing something wrong?
-Can someone help me with it, please?
-Thanks, Jiri.
+Hi,
+i have an additional question regarding the Open Drain setting.
 
-Here is dmesg:
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Linux version 4.3.0-rc4-next-20151006_cpm9g25+ (prchal@prchalpc) (gcc version 4.7.3 (Ubuntu/Linaro 
-4.7.3-12ubuntu1) ) #7 PREEMPT Thu Oct 8 09:08:21 CEST 2015
-[    0.000000] CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=0005317f
-...
-[    0.243333] requesting hog GPIO in18 (chip fffff400.gpio, offset 28) failed
-[    0.243333] requesting hog GPIO in19 (chip fffff400.gpio, offset 21) failed
-[    0.246666] gpio-at91 fffff400.gpio: at address c8856400
-...
+The register is currently impelemented as a read/write register
+which means the pin mode is configurable by software to
+Push Pull or Open Drain.
 
-and here my part of dts:
-...
-	ahb {
-		apb {
-			pinctrl@fffff400 {
-				pioA: gpio@fffff400 {
-					in18 {
-						gpio-hog;
-						gpios = <28 0>;
-						input;
-						line-name = "in18";
-					};
-					in19 {
-						gpio-hog;
-						gpios = <21 GPIO_ACTIVE_LOW>;
-						input;
-					};
-				};
-...
+There is also the possiblity (normal way) that the HW (FPGA) configures
+each pin to the correct mode.
+
+Is there actually a way to set an output mode from userland or by the gpio API?
+I did not find anything about that.
+
+
+If there is no way, i will implement it without software control. I just
+read out the mode configuration and handle the pins as PP or Open Drain.
+
+Regards
+Andy
