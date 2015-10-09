@@ -1,69 +1,85 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: Re: [PATCH v4 6/6] arm64: dts: berlin4ct: add default pinmux for
- uart0
-Date: Fri, 9 Oct 2015 11:07:28 +0200
-Message-ID: <20151009090728.GF2842@kwain>
+From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 2/6] pinctrl: berlin: add the berlin4ct pinctrl
+ driver
+Date: Fri, 9 Oct 2015 17:22:38 +0800
+Message-ID: <20151009172238.68fdd51c@xhacker>
 References: <1444378629-3057-1-git-send-email-jszhang@marvell.com>
- <1444378629-3057-7-git-send-email-jszhang@marvell.com>
+	<1444378629-3057-3-git-send-email-jszhang@marvell.com>
+	<20151009090353.GA2842@kwain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1444378629-3057-7-git-send-email-jszhang@marvell.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com, mark.rutland@arm.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151009090353.GA2842@kwain>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 09, 2015 at 04:17:09PM +0800, Jisheng Zhang wrote:
-> Add urt0 txd and rxd muxing setup in the dtsi because uart0 always us=
-es
-> them to work, no other possibilities.
->=20
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Hi Antoine,
 
-Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+On Fri, 9 Oct 2015 11:03:53 +0200
+Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-> ---
->  arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/=
-boot/dts/marvell/berlin4ct.dtsi
-> index 8e66355..a4a1876 100644
-> --- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-> @@ -288,12 +288,19 @@
->  				clocks =3D <&osc>;
->  				reg-shift =3D <2>;
->  				status =3D "disabled";
-> +				pinctrl-0 =3D <&uart0_pmux>;
-> +				pinctrl-names =3D "default";
->  			};
->  		};
-> =20
->  		system_pinctrl: pin-controller@fe2200 {
->  			compatible =3D "marvell,berlin4ct-system-pinctrl";
->  			reg =3D <0xfe2200 0xc>;
-> +
-> +			uart0_pmux: uart0-pmux {
-> +				groups =3D "SM_URT0_TXD", "SM_URT0_RXD";
-> +				function =3D "uart0";
-> +			};
->  		};
->  	};
->  };
-> --=20
-> 2.6.1
->=20
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Hi Jisheng,
+> 
+> On Fri, Oct 09, 2015 at 04:17:05PM +0800, Jisheng Zhang wrote:
+> > diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/Kconfig
+> > index b18322b..c13f6d2 100644
+> > --- a/drivers/pinctrl/berlin/Kconfig
+> > +++ b/drivers/pinctrl/berlin/Kconfig
+> > @@ -17,4 +17,9 @@ config PINCTRL_BERLIN_BG2Q
+> >  	bool
+> >  	select PINCTRL_BERLIN
+> >  
+> > +config PINCTRL_BERLIN_BG4CT
+> > +	depends on OF && (ARCH_BERLIN || COMPILE_TEST)
+> > +	bool "Marvell berlin4ct pin controller driver"
+> > +	select PINCTRL_BERLIN
+> > +
+> >  endif
+> 
+> This endif ends the following condition:
+> 
+> 	if ARCH_BERLIN
+> 	[...]
+> 
+> So the "depends on ARCH_BERLIN" here can be dropped. Also the
+> COMPILE_TEST can be moved as it isn't BG4CT specific and all other
+> Berlin pinctrl drivers would benefit from this.
+> 
+> So we would have something like:
+> 
+> 	if (ARCH_BERLIN || COMPILE_TEST)
 
---=20
-Antoine T=E9nart, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Oh yeah! This is better.
+
+> 	[...]
+> 	endif
+> 
+> Finally you can move the OF dependency to the PINCTRL_BERLIN config as
+> all Berlin pinctrl drivers depends on it.
+
+PINCTRL_BERLIN isn't user visible and it's selected by PINCTRL_BERLIN_BG4CT. So
+we may have the following random config case:
+
+CONFIG_OF=n
+CONFIG_PINCTRL_BERLIN_BG4CT=y
+
+In this case, there will be build errors for we missed OF. So we have to
+make PINCTRL_BERLIN_BG4CT depends on OF. What do you think? Or is there
+better solution?
+
+Thanks for kind review,
+Jisheng
+
+> 
+> Thanks!
+> 
+> Antoine
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
