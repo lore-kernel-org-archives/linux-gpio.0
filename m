@@ -1,57 +1,72 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH v4 6/6] arm64: dts: berlin4ct: add default pinmux for uart0
-Date: Fri, 9 Oct 2015 16:17:09 +0800
-Message-ID: <1444378629-3057-7-git-send-email-jszhang@marvell.com>
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+Subject: Re: [PATCH v4 2/6] pinctrl: berlin: add the berlin4ct pinctrl driver
+Date: Fri, 9 Oct 2015 11:03:53 +0200
+Message-ID: <20151009090353.GA2842@kwain>
 References: <1444378629-3057-1-git-send-email-jszhang@marvell.com>
+ <1444378629-3057-3-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1444378629-3057-1-git-send-email-jszhang@marvell.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, catalin.marinas@arm.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>, linux-gpio@vger.kernel.org, robh+dt@kernel.org, galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:53533 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751229AbbJIJEW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Oct 2015 05:04:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1444378629-3057-3-git-send-email-jszhang@marvell.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add urt0 txd and rxd muxing setup in the dtsi because uart0 always uses
-them to work, no other possibilities.
+Hi Jisheng,
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
----
- arch/arm64/boot/dts/marvell/berlin4ct.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Fri, Oct 09, 2015 at 04:17:05PM +0800, Jisheng Zhang wrote:
+> diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/=
+Kconfig
+> index b18322b..c13f6d2 100644
+> --- a/drivers/pinctrl/berlin/Kconfig
+> +++ b/drivers/pinctrl/berlin/Kconfig
+> @@ -17,4 +17,9 @@ config PINCTRL_BERLIN_BG2Q
+>  	bool
+>  	select PINCTRL_BERLIN
+> =20
+> +config PINCTRL_BERLIN_BG4CT
+> +	depends on OF && (ARCH_BERLIN || COMPILE_TEST)
+> +	bool "Marvell berlin4ct pin controller driver"
+> +	select PINCTRL_BERLIN
+> +
+>  endif
 
-diff --git a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-index 8e66355..a4a1876 100644
---- a/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-+++ b/arch/arm64/boot/dts/marvell/berlin4ct.dtsi
-@@ -288,12 +288,19 @@
- 				clocks = <&osc>;
- 				reg-shift = <2>;
- 				status = "disabled";
-+				pinctrl-0 = <&uart0_pmux>;
-+				pinctrl-names = "default";
- 			};
- 		};
- 
- 		system_pinctrl: pin-controller@fe2200 {
- 			compatible = "marvell,berlin4ct-system-pinctrl";
- 			reg = <0xfe2200 0xc>;
-+
-+			uart0_pmux: uart0-pmux {
-+				groups = "SM_URT0_TXD", "SM_URT0_RXD";
-+				function = "uart0";
-+			};
- 		};
- 	};
- };
--- 
-2.6.1
+This endif ends the following condition:
+
+	if ARCH_BERLIN
+	[...]
+
+So the "depends on ARCH_BERLIN" here can be dropped. Also the
+COMPILE_TEST can be moved as it isn't BG4CT specific and all other
+Berlin pinctrl drivers would benefit from this.
+
+So we would have something like:
+
+	if (ARCH_BERLIN || COMPILE_TEST)
+	[...]
+	endif
+
+=46inally you can move the OF dependency to the PINCTRL_BERLIN config a=
+s
+all Berlin pinctrl drivers depends on it.
+
+Thanks!
+
+Antoine
+
+--=20
+Antoine T=E9nart, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
