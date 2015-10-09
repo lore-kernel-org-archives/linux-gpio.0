@@ -1,83 +1,37 @@
 From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 2/6] pinctrl: berlin: add the berlin4ct pinctrl
- driver
-Date: Fri, 9 Oct 2015 17:22:38 +0800
-Message-ID: <20151009172238.68fdd51c@xhacker>
-References: <1444378629-3057-1-git-send-email-jszhang@marvell.com>
-	<1444378629-3057-3-git-send-email-jszhang@marvell.com>
-	<20151009090353.GA2842@kwain>
+Subject: [PATCH v5 2/7] pinctrl: berlin: Make berlin pinctrl driver visible if COMPILE_TEST=y
+Date: Fri, 9 Oct 2015 19:56:45 +0800
+Message-ID: <1444391810-5045-3-git-send-email-jszhang@marvell.com>
+References: <1444391810-5045-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151009090353.GA2842@kwain>
+In-Reply-To: <1444391810-5045-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Cc: catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Antoine,
+It is good to allow berlin pinctrl driver to build with COMPILE_TEST, so
+make the it menu visible when compile-testing.
 
-On Fri, 9 Oct 2015 11:03:53 +0200
-Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/pinctrl/berlin/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Hi Jisheng,
-> 
-> On Fri, Oct 09, 2015 at 04:17:05PM +0800, Jisheng Zhang wrote:
-> > diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/Kconfig
-> > index b18322b..c13f6d2 100644
-> > --- a/drivers/pinctrl/berlin/Kconfig
-> > +++ b/drivers/pinctrl/berlin/Kconfig
-> > @@ -17,4 +17,9 @@ config PINCTRL_BERLIN_BG2Q
-> >  	bool
-> >  	select PINCTRL_BERLIN
-> >  
-> > +config PINCTRL_BERLIN_BG4CT
-> > +	depends on OF && (ARCH_BERLIN || COMPILE_TEST)
-> > +	bool "Marvell berlin4ct pin controller driver"
-> > +	select PINCTRL_BERLIN
-> > +
-> >  endif
-> 
-> This endif ends the following condition:
-> 
-> 	if ARCH_BERLIN
-> 	[...]
-> 
-> So the "depends on ARCH_BERLIN" here can be dropped. Also the
-> COMPILE_TEST can be moved as it isn't BG4CT specific and all other
-> Berlin pinctrl drivers would benefit from this.
-> 
-> So we would have something like:
-> 
-> 	if (ARCH_BERLIN || COMPILE_TEST)
-
-Oh yeah! This is better.
-
-> 	[...]
-> 	endif
-> 
-> Finally you can move the OF dependency to the PINCTRL_BERLIN config as
-> all Berlin pinctrl drivers depends on it.
-
-PINCTRL_BERLIN isn't user visible and it's selected by PINCTRL_BERLIN_BG4CT. So
-we may have the following random config case:
-
-CONFIG_OF=n
-CONFIG_PINCTRL_BERLIN_BG4CT=y
-
-In this case, there will be build errors for we missed OF. So we have to
-make PINCTRL_BERLIN_BG4CT depends on OF. What do you think? Or is there
-better solution?
-
-Thanks for kind review,
-Jisheng
-
-> 
-> Thanks!
-> 
-> Antoine
-> 
+diff --git a/drivers/pinctrl/berlin/Kconfig b/drivers/pinctrl/berlin/Kconfig
+index b18322b..f7e45c8 100644
+--- a/drivers/pinctrl/berlin/Kconfig
++++ b/drivers/pinctrl/berlin/Kconfig
+@@ -1,4 +1,4 @@
+-if ARCH_BERLIN
++if (ARCH_BERLIN || COMPILE_TEST)
+ 
+ config PINCTRL_BERLIN
+ 	bool
+-- 
+2.6.1
 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
