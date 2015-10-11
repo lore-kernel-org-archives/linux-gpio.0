@@ -1,93 +1,100 @@
-From: Antoine Tenart <antoine.tenart@free-electrons.com>
-Subject: Re: [PATCH v5 0/7] arm64: berlin: add pinctrl support
-Date: Sun, 11 Oct 2015 00:40:08 +0200
-Message-ID: <20151010224008.GI2842@kwain>
-References: <1444391810-5045-1-git-send-email-jszhang@marvell.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jonas Gorski <jogo@openwrt.org>
+Subject: [PATCH V2 0/5] gpiochip: add and use generic request/free
+Date: Sun, 11 Oct 2015 17:34:14 +0200
+Message-ID: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:49656 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750964AbbJJWkR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Oct 2015 18:40:17 -0400
-Content-Disposition: inline
-In-Reply-To: <1444391810-5045-1-git-send-email-jszhang@marvell.com>
+Received: from arrakis.dune.hu ([78.24.191.176]:54568 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751456AbbJKPii (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 11 Oct 2015 11:38:38 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>
-Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@chromium.org>, Heiko
 
-Jisheng,
+A lot of pinctrl aware gpio chip drivers use the following pattern:
 
-On Fri, Oct 09, 2015 at 07:56:43PM +0800, Jisheng Zhang wrote:
-> This series adds support for Marvell berlin4ct pin-controller, allowi=
-ng
-> to configure the pin muxing from the device tree.
+int foo_request_gpio(struct gpio_chip *gc, unsigned offset)
+{
+        return pinctrl_request_gpio(gc->base + offset);
+}
 
-=46or the whole series,
+void foo_request_gpio(struct gpio_chip *gc, unsigned offset)
+{
+        pinctrl_free_gpio(gc->base + offset);
+}
 
-Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+static struct gpio_chip foo_chip {
+        ...
+        .request = foo_request_gpio;
+        .free = foo_request_gpio;
+        ...
+};
 
-Thanks!
+To prevent this from spreading any further, add and export generic
+versions that gpio chip drivers can just use.
 
-Antoine
+* Patch 1 adds the trivial implementations.
+* Patch 2 replaces all identical (+/- debug output/comments) versions
+  in gpio/
+* Patch 3/4 modifies drivers that use a boolean for conditional calling
+  request/free by just not populating the callbacks if the boolean is
+  false (which is only set at probe)
+* Patch 5 replaces all identical version in pinctrl/
 
->=20
-> Since v4:
->  - drop ARCH_BERLIN dependency for it has been met
->  - drop COMPILE_TEST dependency but make berlin pinctrl driver visibl=
-e
->    if COMPILE_TEST=3Dy, and let this change be a seperate commit.
->=20
-> Since v3:
->  - fix stupid build error: I missed local changes to berlin-bg4ct.c
->=20
-> Since v2:
->  - introduce new berlin_pinctrl_probe_regmap() to avoid duplicated co=
-de
->  - renaming such as s/urt/uart etc. but keep the group name as URT* t=
-o keep
->    consistent with HW/ASIC
->=20
-> Since v1:
->  - use generic name for pin functions
->  - a new commit to add pinmux for uart0
->  - correct pinctrl usage in dts
->=20
->=20
-> Jisheng Zhang (7):
->   pinctrl: berlin: introduce berlin_pinctrl_probe_regmap()
->   pinctrl: berlin: Make berlin pinctrl driver visible if COMPILE_TEST=
-=3Dy
->   pinctrl: berlin: add the berlin4ct pinctrl driver
->   arm64: berlin: add the pinctrl dependency for Marvell Berlin SoCs
->   pinctrl: dt-binding: document berlin4ct SoC pinctrl
->   arm64: dts: berlin4ct: add the pinctrl node
->   arm64: dts: berlin4ct: add default pinmux for uart0
->=20
->  .../devicetree/bindings/pinctrl/berlin,pinctrl.txt |   5 +-
->  arch/arm64/Kconfig.platforms                       |   1 +
->  arch/arm64/boot/dts/marvell/berlin4ct.dtsi         |  22 +
->  drivers/pinctrl/berlin/Kconfig                     |   7 +-
->  drivers/pinctrl/berlin/Makefile                    |   1 +
->  drivers/pinctrl/berlin/berlin-bg4ct.c              | 503 +++++++++++=
-++++++++++
->  drivers/pinctrl/berlin/berlin.c                    |  26 +-
->  drivers/pinctrl/berlin/berlin.h                    |   4 +
->  8 files changed, 558 insertions(+), 11 deletions(-)
->  create mode 100644 drivers/pinctrl/berlin/berlin-bg4ct.c
->=20
-> --=20
-> 2.6.1
->=20
+Build tested as far as possible (which isn't much when only using
+COMPILE_TEST, even when forcing PINCTRL to y).
 
---=20
-Antoine T=E9nart, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I don't expect this to break anything, and I triple checked that I did
+not introduce any typos, but I can't actually test most of the changed
+drivers lacking hardware.
+
+Patches apply cleanly to HEAD of linux-gpio/for-next.
+
+Changes RFT -> V2:
+ * rebased onto current HEAD
+ * renamed gpio argument of callbacks to offset and reworded the
+   description.
+
+Jonas Gorski (5):
+  gpiolib: provide generic request/free implementations
+  gpio: replace trivial implementations of request/free with generic one
+  gpio: gpio-xz: use the generic request/free implementations
+  gpio: gpio-pl061: use the generic request/free implementations
+  pinctrl: replace trivial implementations of gpio_chip request/free
+
+ drivers/gpio/gpio-lpc18xx.c                   | 14 ++----------
+ drivers/gpio/gpio-moxart.c                    | 14 ++----------
+ drivers/gpio/gpio-mvebu.c                     | 14 ++----------
+ drivers/gpio/gpio-pl061.c                     | 32 ++++-----------------------
+ drivers/gpio/gpio-tb10x.c                     | 14 ++----------
+ drivers/gpio/gpio-tz1090-pdc.c                | 14 ++----------
+ drivers/gpio/gpio-vf610.c                     | 14 ++----------
+ drivers/gpio/gpio-zx.c                        | 28 ++++-------------------
+ drivers/gpio/gpiolib.c                        | 23 +++++++++++++++++++
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 14 ++----------
+ drivers/pinctrl/intel/pinctrl-cherryview.c    | 14 ++----------
+ drivers/pinctrl/intel/pinctrl-intel.c         | 14 ++----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++----------
+ drivers/pinctrl/nomadik/pinctrl-abx500.c      | 18 ++-------------
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c     | 22 ++----------------
+ drivers/pinctrl/pinctrl-adi2.c                | 14 ++----------
+ drivers/pinctrl/pinctrl-as3722.c              | 14 ++----------
+ drivers/pinctrl/pinctrl-at91.c                | 26 ++--------------------
+ drivers/pinctrl/pinctrl-coh901.c              | 22 ++----------------
+ drivers/pinctrl/pinctrl-digicolor.c           | 14 ++----------
+ drivers/pinctrl/pinctrl-pistachio.c           | 14 ++----------
+ drivers/pinctrl/pinctrl-rockchip.c            | 14 ++----------
+ drivers/pinctrl/pinctrl-st.c                  | 14 ++----------
+ drivers/pinctrl/pinctrl-xway.c                | 18 ++-------------
+ drivers/pinctrl/qcom/pinctrl-msm.c            | 16 ++------------
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      | 14 ++----------
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c       | 14 ++----------
+ drivers/pinctrl/samsung/pinctrl-samsung.c     | 14 ++----------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 14 ++----------
+ drivers/pinctrl/vt8500/pinctrl-wmt.c          | 14 ++----------
+ include/linux/gpio/driver.h                   |  3 +++
+ 31 files changed, 88 insertions(+), 414 deletions(-)
+
+-- 
+2.1.4
