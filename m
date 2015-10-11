@@ -1,13 +1,13 @@
 From: Jonas Gorski <jogo@openwrt.org>
-Subject: [PATCH V2 4/5] gpio: gpio-pl061: use the generic request/free implementations
-Date: Sun, 11 Oct 2015 17:34:18 +0200
-Message-ID: <1444577659-17621-5-git-send-email-jogo@openwrt.org>
+Subject: [PATCH V2 3/5] gpio: gpio-xz: use the generic request/free implementations
+Date: Sun, 11 Oct 2015 17:34:17 +0200
+Message-ID: <1444577659-17621-4-git-send-email-jogo@openwrt.org>
 References: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:54649 "EHLO arrakis.dune.hu"
+Received: from arrakis.dune.hu ([78.24.191.176]:54605 "EHLO arrakis.dune.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751635AbbJKPi7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 11 Oct 2015 11:38:59 -0400
+	id S1751635AbbJKPit (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 11 Oct 2015 11:38:49 -0400
 In-Reply-To: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,31 +23,28 @@ implementations, thus we can just use them.
 
 Signed-off-by: Jonas Gorski <jogo@openwrt.org>
 ---
- drivers/gpio/gpio-pl061.c | 32 ++++----------------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
+ drivers/gpio/gpio-zx.c | 28 ++++------------------------
+ 1 file changed, 4 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 5b1461f..9d661d4 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -52,36 +52,12 @@ struct pl061_gpio {
+diff --git a/drivers/gpio/gpio-zx.c b/drivers/gpio/gpio-zx.c
+index 4b8a269..1dcf7a6 100644
+--- a/drivers/gpio/gpio-zx.c
++++ b/drivers/gpio/gpio-zx.c
+@@ -41,7 +41,6 @@ struct zx_gpio {
  
  	void __iomem		*base;
  	struct gpio_chip	gc;
 -	bool			uses_pinctrl;
- 
- #ifdef CONFIG_PM
- 	struct pl061_context_save_regs csave_regs;
- #endif
  };
  
--static int pl061_gpio_request(struct gpio_chip *gc, unsigned offset)
+ static inline struct zx_gpio *to_zx(struct gpio_chip *gc)
+@@ -49,25 +48,6 @@ static inline struct zx_gpio *to_zx(struct gpio_chip *gc)
+ 	return container_of(gc, struct zx_gpio, gc);
+ }
+ 
+-static int zx_gpio_request(struct gpio_chip *gc, unsigned offset)
 -{
--	/*
--	 * Map back to global GPIO space and request muxing, the direction
--	 * parameter does not matter for this controller.
--	 */
--	struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
+-	struct zx_gpio *chip = to_zx(gc);
 -	int gpio = gc->base + offset;
 -
 -	if (chip->uses_pinctrl)
@@ -55,19 +52,19 @@ index 5b1461f..9d661d4 100644
 -	return 0;
 -}
 -
--static void pl061_gpio_free(struct gpio_chip *gc, unsigned offset)
+-static void zx_gpio_free(struct gpio_chip *gc, unsigned offset)
 -{
--	struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
+-	struct zx_gpio *chip = to_zx(gc);
 -	int gpio = gc->base + offset;
 -
 -	if (chip->uses_pinctrl)
 -		pinctrl_free_gpio(gpio);
 -}
 -
- static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
+ static int zx_direction_input(struct gpio_chip *gc, unsigned offset)
  {
- 	struct pl061_gpio *chip = container_of(gc, struct pl061_gpio, gc);
-@@ -308,11 +284,11 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct zx_gpio *chip = to_zx(gc);
+@@ -252,12 +232,12 @@ static int zx_gpio_probe(struct platform_device *pdev)
  		return PTR_ERR(chip->base);
  
  	spin_lock_init(&chip->lock);
@@ -78,10 +75,11 @@ index 5b1461f..9d661d4 100644
 +		chip->gc.free = gpiochip_generic_free;
 +	}
  
--	chip->gc.request = pl061_gpio_request;
--	chip->gc.free = pl061_gpio_free;
- 	chip->gc.direction_input = pl061_direction_input;
- 	chip->gc.direction_output = pl061_direction_output;
- 	chip->gc.get = pl061_get_value;
+ 	id = of_alias_get_id(dev->of_node, "gpio");
+-	chip->gc.request = zx_gpio_request;
+-	chip->gc.free = zx_gpio_free;
+ 	chip->gc.direction_input = zx_direction_input;
+ 	chip->gc.direction_output = zx_direction_output;
+ 	chip->gc.get = zx_get_value;
 -- 
 2.1.4
