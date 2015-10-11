@@ -1,100 +1,182 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH V2 5/5] pinctrl: replace trivial implementations of
- gpio_chip request/free
-Date: Sun, 11 Oct 2015 16:43:25 +0100
-Message-ID: <20151011154325.GK2278@lukather>
-References: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
- <1444577659-17621-6-git-send-email-jogo@openwrt.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pWJxWxNlJUNgDlXi"
+From: Jonas Gorski <jogo@openwrt.org>
+Subject: [PATCH RFC/RFT 1/2] gpio: allow atomic registration of gpio chip with pin ranges
+Date: Sun, 11 Oct 2015 17:48:18 +0200
+Message-ID: <1444578499-17980-2-git-send-email-jogo@openwrt.org>
+References: <1444578499-17980-1-git-send-email-jogo@openwrt.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:53487 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751456AbbJKPna (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Oct 2015 11:43:30 -0400
-Content-Disposition: inline
-In-Reply-To: <1444577659-17621-6-git-send-email-jogo@openwrt.org>
+Received: from arrakis.dune.hu ([78.24.191.176]:54763 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752377AbbJKPsZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 11 Oct 2015 11:48:25 -0400
+In-Reply-To: <1444578499-17980-1-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@ch>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
 
+Allow registering gpio chip with ranges at the same time, so we know
+at registration time whether there is an associated pin controller.
 
---pWJxWxNlJUNgDlXi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows us to automatically populate the request/free callbacks,
+so that drivers are free to omit the assignment, if they do not need
+any special handling.
 
-On Sun, Oct 11, 2015 at 05:34:19PM +0200, Jonas Gorski wrote:
-> Replace all trivial request/free callbacks that do nothing but call into
-> pinctrl code with the generic versions.
->=20
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Eric Anholt <eric@anholt.net>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Andrew Bresticker <abrestic@chromium.org>
-> Acked-by: Baruch Siach <baruch@tkos.co.il>
-> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Acked-by: Lee Jones <lee@kernel.org>
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c         | 14 ++------------
->  drivers/pinctrl/intel/pinctrl-cherryview.c    | 14 ++------------
->  drivers/pinctrl/intel/pinctrl-intel.c         | 14 ++------------
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++------------
->  drivers/pinctrl/nomadik/pinctrl-abx500.c      | 18 ++----------------
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c     | 22 ++--------------------
->  drivers/pinctrl/pinctrl-adi2.c                | 14 ++------------
->  drivers/pinctrl/pinctrl-as3722.c              | 14 ++------------
->  drivers/pinctrl/pinctrl-at91.c                | 26 ++-------------------=
------
->  drivers/pinctrl/pinctrl-coh901.c              | 22 ++--------------------
->  drivers/pinctrl/pinctrl-digicolor.c           | 14 ++------------
->  drivers/pinctrl/pinctrl-pistachio.c           | 14 ++------------
->  drivers/pinctrl/pinctrl-rockchip.c            | 14 ++------------
->  drivers/pinctrl/pinctrl-st.c                  | 14 ++------------
->  drivers/pinctrl/pinctrl-xway.c                | 18 ++----------------
->  drivers/pinctrl/qcom/pinctrl-msm.c            | 16 ++--------------
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      | 14 ++------------
->  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c       | 14 ++------------
->  drivers/pinctrl/samsung/pinctrl-samsung.c     | 14 ++------------
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 14 ++------------
+Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+---
+ drivers/gpio/gpiolib-of.c   |  5 +++++
+ drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
+ drivers/gpio/gpiolib.h      |  9 +++++++++
+ include/linux/gpio/driver.h | 10 +++++++++-
+ 4 files changed, 58 insertions(+), 9 deletions(-)
 
-For sunxi,
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---pWJxWxNlJUNgDlXi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWGoOdAAoJEBx+YmzsjxAg44gP/j+xZ378Z/wwdpPlVIXZ33CJ
-O8K7xJXbzmDupiw3FaY0hU8+XZ3MxC20xmfiFx782e56hIO9EDx8GN4Tqkv/cdBP
-rFPBROrgmMy2h7Q5E7Q7D+d6jIiAl3mg7k7nbZHo++TSoZLTOcpyPFeOB5iZCHvA
-pbTb+v+K4gEeWqMKbKzGFTlxhqeHhVlsmJoIT3PF2F2tlRfjKOd7Dw65e3gzc07p
-tTdcWHNXOp3CBi022NUSpDLD2UdAUlaqHeqdXuiqvJyRZxsaV3nMfrO9rQqs+eC5
-1y5UZPcRiZwBRttDWBTWCRopWl2ytf8OFnXChQLpZRCJnDodWFCuRJ7T2RzGpAQY
-SJBbE+uLjdOCuFNoOTzb9LM2lxDYeAL1dP9EK7zlZ36HIU9/2O1WPEB5+Z8kg/H9
-RuOz5Bx8ag5YwtmBpSMiBMPD09NdDarXUhOSYQmlle8c6Zm3lCsg7kCR1EnkDJ/8
-1tw9kueuebnZIWvO26SuV8ZDjYR9B+KJZv05tesG6ytfPawIeO5Jr1p8msSx+wf9
-oP/3bnvaLnCAOSV3pMfjdljbzOtMybgUrptrvzerCKH2IPD+ZsH/DpNb9fkK2K6K
-u88kekiKVHSLhna7BKyvRdWcOHrLAXKPVT/55pBlTp328mQz7dWz4KQ5+H09Gpiu
-ZaiBRoNXgr76zK4ZwQdt
-=vCmB
------END PGP SIGNATURE-----
-
---pWJxWxNlJUNgDlXi--
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 5fe34a9..e05f0c2e 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -415,6 +415,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 	return 0;
+ }
+ 
++bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
++{
++	return !!of_find_property(chip->of_node, "gpio-ranges", NULL);
++}
++
+ #else
+ static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+ #endif
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8eba02d..09d87ae 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -280,30 +280,47 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ }
+ 
+ /**
+- * gpiochip_add() - register a gpio_chip
++ * gpiochip_add_with_ranges() - register a gpio_chip with pin ranges
+  * @chip: the chip to register, with chip->base initialized
++ * @pinctrl_name: the dev_name() of the pin controller to map to
++ * @ranges: the mappings of relative gpio offsets to pins
++ * @nranges: the number of ranges
+  * Context: potentially before irqs will work
+  *
+  * Returns a negative errno if the chip can't be registered, such as
+  * because the chip->base is invalid or already associated with a
+  * different chip.  Otherwise it returns zero as a success code.
+  *
+- * When gpiochip_add() is called very early during boot, so that GPIOs
+- * can be freely used, the chip->dev device must be registered before
+- * the gpio framework's arch_initcall().  Otherwise sysfs initialization
+- * for GPIOs will fail rudely.
++ * When gpiochip_add_with_ranges() is called very early during boot, so
++ * that GPIOs can be freely used, the chip->dev device must be
++ * registered before the gpio framework's arch_initcall().  Otherwise
++ * sysfs initialization for GPIOs will fail rudely.
+  *
+  * If chip->base is negative, this requests dynamic assignment of
+  * a range of valid GPIOs.
++ *
++ * If nranges is zero, pinctrl_name and ranges may be NULL.
++ * If nranges is not zero or chip->of_node is populated and has a
++ * "gpio-ranges" property, chip->request and chip->free will be populated
++ * with generic callbacks if not yet set.
+  */
+-int gpiochip_add(struct gpio_chip *chip)
++int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
++			     const struct pinctrl_gpio_range *ranges,
++			     unsigned int nranges)
+ {
+ 	unsigned long	flags;
+ 	int		status = 0;
+-	unsigned	id;
++	unsigned	id, i;
+ 	int		base = chip->base;
+ 	struct gpio_desc *descs;
+ 
++	if ((ranges > 0) || of_gpiochip_has_pin_range(chip)) {
++		if (!chip->request)
++			chip->request = gpiochip_generic_request;
++		if (!chip->free)
++			chip->free = gpiochip_generic_free;
++	}
++
+ 	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
+ 	if (!descs)
+ 		return -ENOMEM;
+@@ -359,6 +376,15 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	if (status)
+ 		goto err_remove_chip;
+ 
++	for (i = 0; i < nranges; i++) {
++		const struct pinctrl_gpio_range *range = &ranges[i];
++
++		status = gpiochip_add_pin_range(chip, pinctl_name, range->base,
++						range->pin_base, range->npins);
++		if (status)
++			goto err_remove_chip;
++	}
++
+ 	acpi_gpiochip_add(chip);
+ 
+ 	status = gpiochip_sysfs_register(chip);
+@@ -373,6 +399,7 @@ int gpiochip_add(struct gpio_chip *chip)
+ 
+ err_remove_chip:
+ 	acpi_gpiochip_remove(chip);
++	gpiochip_remove_pin_ranges(chip);
+ 	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
+ err_remove_from_list:
+@@ -389,7 +416,7 @@ err_free_descs:
+ 		chip->label ? : "generic");
+ 	return status;
+ }
+-EXPORT_SYMBOL_GPL(gpiochip_add);
++EXPORT_SYMBOL_GPL(gpiochip_add_with_ranges);
+ 
+ /**
+  * gpiochip_remove() - unregister a gpio_chip
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 78e634d..6f49e25 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -72,6 +72,15 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
+ 
+ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
+ 
++#if defined(CONFIG_OF_GPIO) && defined(CONFIG_PINCTRL)
++bool of_gpiochip_has_pin_range(struct gpio_chip *chip);
++#else
++static inline bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
++{
++	return false;
++}
++#endif
++
+ extern struct spinlock gpio_lock;
+ extern struct list_head gpio_chips;
+ 
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index d1baebf..727ae9e 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -166,7 +166,15 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
+ 			unsigned offset);
+ 
+ /* add/remove chips */
+-extern int gpiochip_add(struct gpio_chip *chip);
++int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
++			     const struct pinctrl_gpio_range *ranges,
++			     unsigned int nranges);
++
++static inline int gpiochip_add(struct gpio_chip *chip)
++{
++	return gpiochip_add_with_ranges(chip, NULL, NULL, 0);
++}
++
+ extern void gpiochip_remove(struct gpio_chip *chip);
+ extern struct gpio_chip *gpiochip_find(void *data,
+ 			      int (*match)(struct gpio_chip *chip, void *data));
+-- 
+2.1.4
