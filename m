@@ -1,33 +1,50 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: always include all subdirectories in build
-Date: Mon, 12 Oct 2015 13:55:09 +0300
-Message-ID: <20151012105509.GZ1506@lahna.fi.intel.com>
-References: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH V2 2/5] gpio: replace trivial implementations of request/free with generic one
+Date: Mon, 12 Oct 2015 15:08:04 +0200
+Message-ID: <87egh06xqj.fsf@free-electrons.com>
+References: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
+	<1444577659-17621-3-git-send-email-jogo@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:48215 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751346AbbJLKzR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 12 Oct 2015 06:55:17 -0400
-Content-Disposition: inline
-In-Reply-To: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+Received: from down.free-electrons.com ([37.187.137.238]:38107 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751426AbbJLNIG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2015 09:08:06 -0400
+In-Reply-To: <1444577659-17621-3-git-send-email-jogo@openwrt.org> (Jonas
+	Gorski's message of "Sun, 11 Oct 2015 17:34:16 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionex>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Sriniv
 
-On Sun, Oct 11, 2015 at 05:40:44PM +0200, Jonas Gorski wrote:
-> All pinctrl drivers in subdirectories are properly guarded by individual
-> configuration symbols, so there is no need to limit the directories to
-> the belonging machines.
-> 
-> This allows wider COMPILE_TEST coverage on "foreign" targets.
-> 
+Hi Jonas,
+ 
+ On dim., oct. 11 2015, Jonas Gorski <jogo@openwrt.org> wrote:
+
+> Replace all trivial request/free callbacks that do nothing but call into
+> pinctrl code with the generic versions.
+>
 > Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Acked-by: James Hogan <james.hogan@imgtec.com>
+> Acked-by: Stefan Agner <stefan@agner.ch>
+> Acked-by: Joachim Eastwood <manabian@gmail.com>
+> ---
+>  drivers/gpio/gpio-lpc18xx.c    | 14 ++------------
+>  drivers/gpio/gpio-moxart.c     | 14 ++------------
+>  drivers/gpio/gpio-mvebu.c      | 14 ++------------
 
-...
+For mvebu:
 
-> +obj-y				+= intel/
+Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Thanks,
+
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
