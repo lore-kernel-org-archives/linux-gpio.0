@@ -1,82 +1,86 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH] pinctrl: always include all subdirectories in build
-Date: Sun, 11 Oct 2015 22:15:30 +0300
-Message-ID: <3122270.FxkLHnE6Ih@avalon>
-References: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: Re: [PATCH v5 0/7] arm64: berlin: add pinctrl support
+Date: Mon, 12 Oct 2015 10:39:05 +0800
+Message-ID: <20151012103905.4ff69c90@xhacker>
+References: <1444391810-5045-1-git-send-email-jszhang@marvell.com>
+	<20151010223636.GH2842@kwain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54083 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752133AbbJKTPU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Oct 2015 15:15:20 -0400
-In-Reply-To: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:15276 "EHLO
+	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752815AbbJLCnM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 11 Oct 2015 22:43:12 -0400
+In-Reply-To: <20151010223636.GH2842@kwain>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jonas,
+On Sun, 11 Oct 2015 00:36:36 +0200
+Antoine Tenart <antoine.tenart@free-electrons.com> wrote:
 
-(Reducing the CC list a bit to avoid spamming people)
-
-Thank you for the patch.
-
-On Sunday 11 October 2015 17:40:44 Jonas Gorski wrote:
-> All pinctrl drivers in subdirectories are properly guarded by individual
-> configuration symbols, so there is no need to limit the directories to
-> the belonging machines.
+> Hi Jisheng,
 > 
-> This allows wider COMPILE_TEST coverage on "foreign" targets.
+> Please keep Acked-by tags when you submit a new version of a series.
+
+Got it. I dunno this before, will take care in the future.
+
+Thanks a lot for your review,
+Jisheng
+
 > 
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-
-For sh-pfc,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/pinctrl/Makefile | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+> Thanks,
 > 
-> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> index cad077c..2eb25a8 100644
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-> @@ -39,17 +39,17 @@ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
->  obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
->  obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
+> Antoine
 > 
-> -obj-$(CONFIG_ARCH_BCM)		+= bcm/
-> -obj-$(CONFIG_ARCH_BERLIN)	+= berlin/
-> +obj-y				+= bcm/
-> +obj-y				+= berlin/
->  obj-y				+= freescale/
-> -obj-$(CONFIG_X86)		+= intel/
-> -obj-$(CONFIG_PLAT_ORION)        += mvebu/
-> +obj-y				+= intel/
-> +obj-y				+= mvebu/
->  obj-y				+= nomadik/
-> -obj-$(CONFIG_ARCH_QCOM)		+= qcom/
-> -obj-$(CONFIG_PINCTRL_SAMSUNG)	+= samsung/
-> -obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc/
-> -obj-$(CONFIG_PLAT_SPEAR)	+= spear/
-> -obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
-> -obj-$(CONFIG_ARCH_UNIPHIER)	+= uniphier/
-> -obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
-> -obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
-> +obj-y				+= qcom/
-> +obj-y				+= samsung/
-> +obj-y				+= sh-pfc/
-> +obj-y				+= spear/
-> +obj-y				+= sunxi/
-> +obj-y				+= uniphier/
-> +obj-y				+= vt8500/
-> +obj-y				+= mediatek/
-
--- 
-Regards,
-
-Laurent Pinchart
+> On Fri, Oct 09, 2015 at 07:56:43PM +0800, Jisheng Zhang wrote:
+> > This series adds support for Marvell berlin4ct pin-controller, allowing
+> > to configure the pin muxing from the device tree.
+> > 
+> > Since v4:
+> >  - drop ARCH_BERLIN dependency for it has been met
+> >  - drop COMPILE_TEST dependency but make berlin pinctrl driver visible
+> >    if COMPILE_TEST=y, and let this change be a seperate commit.
+> > 
+> > Since v3:
+> >  - fix stupid build error: I missed local changes to berlin-bg4ct.c
+> > 
+> > Since v2:
+> >  - introduce new berlin_pinctrl_probe_regmap() to avoid duplicated code
+> >  - renaming such as s/urt/uart etc. but keep the group name as URT* to keep
+> >    consistent with HW/ASIC
+> > 
+> > Since v1:
+> >  - use generic name for pin functions
+> >  - a new commit to add pinmux for uart0
+> >  - correct pinctrl usage in dts
+> > 
+> > 
+> > Jisheng Zhang (7):
+> >   pinctrl: berlin: introduce berlin_pinctrl_probe_regmap()
+> >   pinctrl: berlin: Make berlin pinctrl driver visible if COMPILE_TEST=y
+> >   pinctrl: berlin: add the berlin4ct pinctrl driver
+> >   arm64: berlin: add the pinctrl dependency for Marvell Berlin SoCs
+> >   pinctrl: dt-binding: document berlin4ct SoC pinctrl
+> >   arm64: dts: berlin4ct: add the pinctrl node
+> >   arm64: dts: berlin4ct: add default pinmux for uart0
+> > 
+> >  .../devicetree/bindings/pinctrl/berlin,pinctrl.txt |   5 +-
+> >  arch/arm64/Kconfig.platforms                       |   1 +
+> >  arch/arm64/boot/dts/marvell/berlin4ct.dtsi         |  22 +
+> >  drivers/pinctrl/berlin/Kconfig                     |   7 +-
+> >  drivers/pinctrl/berlin/Makefile                    |   1 +
+> >  drivers/pinctrl/berlin/berlin-bg4ct.c              | 503 +++++++++++++++++++++
+> >  drivers/pinctrl/berlin/berlin.c                    |  26 +-
+> >  drivers/pinctrl/berlin/berlin.h                    |   4 +
+> >  8 files changed, 558 insertions(+), 11 deletions(-)
+> >  create mode 100644 drivers/pinctrl/berlin/berlin-bg4ct.c
+> > 
+> > -- 
+> > 2.6.1
+> > 
+> 
 
