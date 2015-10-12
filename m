@@ -1,49 +1,44 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH] pinctrl: qcom: ssbi: fix compilation with DEBUG_FS=n
-Date: Sun, 11 Oct 2015 21:14:55 -0700
-Message-ID: <CAJAp7Oid1Xogn0Ckx7NH6qjWg42jzU+b7q-iXJ6DxdvKM1jMoA@mail.gmail.com>
-References: <1444577971-17705-1-git-send-email-jogo@openwrt.org>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: always include all subdirectories in build
+Date: Mon, 12 Oct 2015 09:17:00 +0200
+Message-ID: <20151012091700.663c7d56@free-electrons.com>
+References: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:36568 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750748AbbJLEO5 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2015 00:14:57 -0400
-Received: by lbcao8 with SMTP id ao8so130738932lbc.3
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2015 21:14:56 -0700 (PDT)
-In-Reply-To: <1444577971-17705-1-git-send-email-jogo@openwrt.org>
+Received: from down.free-electrons.com ([37.187.137.238]:60400 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751684AbbJLHRE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Oct 2015 03:17:04 -0400
+In-Reply-To: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jonas Gorski <jogo@openwrt.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Sun, Oct 11, 2015 at 8:39 AM, Jonas Gorski <jogo@openwrt.org> wrote:
-> The DEBUG_FS=3Dn #defines for the dbg_show functions were missed when
-> renaming the driver from msm_ to pm8xxx_, causing it to break the bui=
-ld
-> when DEBUG_FS isn't enabled:
->
->   CC [M]  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.o
-> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:597:14: error: =E2=80=98pm8x=
-xx_gpio_dbg_show=E2=80=99 undeclared here (not in a function)
->   .dbg_show =3D pm8xxx_gpio_dbg_show,
->
-> Fix this by renaming them correctly.
->
-> Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp driver=
-s")
+Dear Jonas Gorski,
+
+On Sun, 11 Oct 2015 17:40:44 +0200, Jonas Gorski wrote:
+> All pinctrl drivers in subdirectories are properly guarded by individual
+> configuration symbols, so there is no need to limit the directories to
+> the belonging machines.
+> 
+> This allows wider COMPILE_TEST coverage on "foreign" targets.
+> 
 > Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+>  drivers/pinctrl/Makefile | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 
-My bad, thanks for fixing this.
+For mvebu:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Acked-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Regards,
-Bjorn
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
