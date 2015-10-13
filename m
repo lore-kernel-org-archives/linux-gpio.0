@@ -1,19 +1,19 @@
 From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH RFC/RFT 1/2] gpio: allow atomic registration of gpio chip
- with pin ranges
-Date: Tue, 13 Oct 2015 13:32:47 -0700
-Message-ID: <561D6A6F.2080009@broadcom.com>
+Subject: Re: [PATCH RFC/RFT 2/2] pinctrl-cygnus-gpio: convert to use
+ gpiochip_add_with_ranges
+Date: Tue, 13 Oct 2015 13:34:10 -0700
+Message-ID: <561D6AC2.4050007@broadcom.com>
 References: <1444578499-17980-1-git-send-email-jogo@openwrt.org>
- <1444578499-17980-2-git-send-email-jogo@openwrt.org>
+ <1444578499-17980-3-git-send-email-jogo@openwrt.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:27360 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751973AbbJMUdO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Oct 2015 16:33:14 -0400
-In-Reply-To: <1444578499-17980-2-git-send-email-jogo@openwrt.org>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:64879 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752515AbbJMUeR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Oct 2015 16:34:17 -0400
+In-Reply-To: <1444578499-17980-3-git-send-email-jogo@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jonas Gorski <jogo@openwrt.org>, linux-gpio@vger.kernel.org
@@ -21,169 +21,213 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 
 ++ Broadcom engineers working on Cygnus GPIO driver
 
+We will discuss this change on the other email thread, i.e., [PATCH
+RFC/RFT 0/2]...
+
 On 10/11/2015 8:48 AM, Jonas Gorski wrote:
-> Allow registering gpio chip with ranges at the same time, so we know
-> at registration time whether there is an associated pin controller.
-> 
-> This allows us to automatically populate the request/free callbacks,
-> so that drivers are free to omit the assignment, if they do not need
-> any special handling.
+> Convert the driver to make use of passing ranges to gpiochip_add, and
+> drop the custom implemtation of gpio_ranges.
+> Since gpiochip_add_with_ranges also supports conditional setting of
+> request/free based on the existence of ranges, and pinmux_is_supported
+> held the same information, we can drop the custom request/free calbacks
+> at the same time and just use the generic implementations if needed.
 > 
 > Signed-off-by: Jonas Gorski <jogo@openwrt.org>
 > ---
->  drivers/gpio/gpiolib-of.c   |  5 +++++
->  drivers/gpio/gpiolib.c      | 43 +++++++++++++++++++++++++++++++++++--------
->  drivers/gpio/gpiolib.h      |  9 +++++++++
->  include/linux/gpio/driver.h | 10 +++++++++-
->  4 files changed, 58 insertions(+), 9 deletions(-)
+>  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 126 +++++++-----------------------
+>  1 file changed, 27 insertions(+), 99 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 5fe34a9..e05f0c2e 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -415,6 +415,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
->  	return 0;
->  }
->  
-> +bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
-> +{
-> +	return !!of_find_property(chip->of_node, "gpio-ranges", NULL);
-> +}
-> +
->  #else
->  static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
->  #endif
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 8eba02d..09d87ae 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -280,30 +280,47 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
->  }
->  
->  /**
-> - * gpiochip_add() - register a gpio_chip
-> + * gpiochip_add_with_ranges() - register a gpio_chip with pin ranges
->   * @chip: the chip to register, with chip->base initialized
-> + * @pinctrl_name: the dev_name() of the pin controller to map to
-> + * @ranges: the mappings of relative gpio offsets to pins
-> + * @nranges: the number of ranges
->   * Context: potentially before irqs will work
->   *
->   * Returns a negative errno if the chip can't be registered, such as
->   * because the chip->base is invalid or already associated with a
->   * different chip.  Otherwise it returns zero as a success code.
->   *
-> - * When gpiochip_add() is called very early during boot, so that GPIOs
-> - * can be freely used, the chip->dev device must be registered before
-> - * the gpio framework's arch_initcall().  Otherwise sysfs initialization
-> - * for GPIOs will fail rudely.
-> + * When gpiochip_add_with_ranges() is called very early during boot, so
-> + * that GPIOs can be freely used, the chip->dev device must be
-> + * registered before the gpio framework's arch_initcall().  Otherwise
-> + * sysfs initialization for GPIOs will fail rudely.
->   *
->   * If chip->base is negative, this requests dynamic assignment of
->   * a range of valid GPIOs.
-> + *
-> + * If nranges is zero, pinctrl_name and ranges may be NULL.
-> + * If nranges is not zero or chip->of_node is populated and has a
-> + * "gpio-ranges" property, chip->request and chip->free will be populated
-> + * with generic callbacks if not yet set.
+> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> index 1ca7830..d24218f 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> @@ -75,8 +75,6 @@
+>   * @lock: lock to protect access to I/O registers
+>   * @gc: GPIO chip
+>   * @num_banks: number of GPIO banks, each bank supports up to 32 GPIOs
+> - * @pinmux_is_supported: flag to indicate this GPIO controller contains pins
+> - * that can be individually muxed to GPIO
+>   * @pctl: pointer to pinctrl_dev
+>   * @pctldesc: pinctrl descriptor
 >   */
-> -int gpiochip_add(struct gpio_chip *chip)
-> +int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
-> +			     const struct pinctrl_gpio_range *ranges,
-> +			     unsigned int nranges)
+> @@ -91,8 +89,6 @@ struct cygnus_gpio {
+>  	struct gpio_chip gc;
+>  	unsigned num_banks;
+>  
+> -	bool pinmux_is_supported;
+> -
+>  	struct pinctrl_dev *pctl;
+>  	struct pinctrl_desc pctldesc;
+>  };
+> @@ -289,28 +285,6 @@ static struct irq_chip cygnus_gpio_irq_chip = {
+>  /*
+>   * Request the Cygnus IOMUX pinmux controller to mux individual pins to GPIO
+>   */
+> -static int cygnus_gpio_request(struct gpio_chip *gc, unsigned offset)
+> -{
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> -	unsigned gpio = gc->base + offset;
+> -
+> -	/* not all Cygnus GPIO pins can be muxed individually */
+> -	if (!chip->pinmux_is_supported)
+> -		return 0;
+> -
+> -	return pinctrl_request_gpio(gpio);
+> -}
+> -
+> -static void cygnus_gpio_free(struct gpio_chip *gc, unsigned offset)
+> -{
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> -	unsigned gpio = gc->base + offset;
+> -
+> -	if (!chip->pinmux_is_supported)
+> -		return;
+> -
+> -	pinctrl_free_gpio(gpio);
+> -}
+>  
+>  static int cygnus_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
 >  {
->  	unsigned long	flags;
->  	int		status = 0;
-> -	unsigned	id;
-> +	unsigned	id, i;
->  	int		base = chip->base;
->  	struct gpio_desc *descs;
+> @@ -596,22 +570,12 @@ static const struct pinconf_ops cygnus_pconf_ops = {
+>  	.pin_config_set = cygnus_pin_config_set,
+>  };
 >  
-> +	if ((ranges > 0) || of_gpiochip_has_pin_range(chip)) {
-> +		if (!chip->request)
-> +			chip->request = gpiochip_generic_request;
-> +		if (!chip->free)
-> +			chip->free = gpiochip_generic_free;
+> -/*
+> - * Map a GPIO in the local gpio_chip pin space to a pin in the Cygnus IOMUX
+> - * pinctrl pin space
+> - */
+> -struct cygnus_gpio_pin_range {
+> -	unsigned offset;
+> -	unsigned pin_base;
+> -	unsigned num_pins;
+> -};
+> -
+> -#define CYGNUS_PINRANGE(o, p, n) { .offset = o, .pin_base = p, .num_pins = n }
+> +#define CYGNUS_PINRANGE(o, p, n) { .base = o, .pin_base = p, .npins = n }
+>  
+>  /*
+>   * Pin mapping table for mapping local GPIO pins to Cygnus IOMUX pinctrl pins
+>   */
+> -static const struct cygnus_gpio_pin_range cygnus_gpio_pintable[] = {
+> +static const struct pinctrl_gpio_range cygnus_gpio_pintable[] = {
+>  	CYGNUS_PINRANGE(0, 42, 1),
+>  	CYGNUS_PINRANGE(1, 44, 3),
+>  	CYGNUS_PINRANGE(4, 48, 1),
+> @@ -666,58 +630,6 @@ static const struct cygnus_gpio_pin_range cygnus_gpio_pintable[] = {
+>  };
+>  
+>  /*
+> - * The Cygnus IOMUX controller mainly supports group based mux configuration,
+> - * but certain pins can be muxed to GPIO individually. Only the ASIU GPIO
+> - * controller can support this, so it's an optional configuration
+> - *
+> - * Return -ENODEV means no support and that's fine
+> - */
+> -static int cygnus_gpio_pinmux_add_range(struct cygnus_gpio *chip)
+> -{
+> -	struct device_node *node = chip->dev->of_node;
+> -	struct device_node *pinmux_node;
+> -	struct platform_device *pinmux_pdev;
+> -	struct gpio_chip *gc = &chip->gc;
+> -	int i, ret = 0;
+> -
+> -	/* parse DT to find the phandle to the pinmux controller */
+> -	pinmux_node = of_parse_phandle(node, "pinmux", 0);
+> -	if (!pinmux_node)
+> -		return -ENODEV;
+> -
+> -	pinmux_pdev = of_find_device_by_node(pinmux_node);
+> -	/* no longer need the pinmux node */
+> -	of_node_put(pinmux_node);
+> -	if (!pinmux_pdev) {
+> -		dev_err(chip->dev, "failed to get pinmux device\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/* now need to create the mapping between local GPIO and PINMUX pins */
+> -	for (i = 0; i < ARRAY_SIZE(cygnus_gpio_pintable); i++) {
+> -		ret = gpiochip_add_pin_range(gc, dev_name(&pinmux_pdev->dev),
+> -					     cygnus_gpio_pintable[i].offset,
+> -					     cygnus_gpio_pintable[i].pin_base,
+> -					     cygnus_gpio_pintable[i].num_pins);
+> -		if (ret) {
+> -			dev_err(chip->dev, "unable to add GPIO pin range\n");
+> -			goto err_put_device;
+> -		}
+> -	}
+> -
+> -	chip->pinmux_is_supported = true;
+> -
+> -	/* no need for pinmux_pdev device reference anymore */
+> -	put_device(&pinmux_pdev->dev);
+> -	return 0;
+> -
+> -err_put_device:
+> -	put_device(&pinmux_pdev->dev);
+> -	gpiochip_remove_pin_ranges(gc);
+> -	return ret;
+> -}
+> -
+> -/*
+>   * Cygnus GPIO controller supports some PINCONF related configurations such as
+>   * pull up, pull down, and drive strength, when the pin is configured to GPIO
+>   *
+> @@ -805,6 +717,10 @@ static int cygnus_gpio_probe(struct platform_device *pdev)
+>  	int irq, ret;
+>  	const struct of_device_id *match;
+>  	const struct cygnus_gpio_data *gpio_data;
+> +	struct device_node *pinmux_node;
+> +	const char *pinctrl_name = NULL;
+> +	const struct pinctrl_gpio_range *ranges = NULL;
+> +	unsigned int nranges = 0;
+>  
+>  	match = of_match_device(cygnus_gpio_of_match, dev);
+>  	if (!match)
+> @@ -844,25 +760,37 @@ static int cygnus_gpio_probe(struct platform_device *pdev)
+>  	gc->label = dev_name(dev);
+>  	gc->dev = dev;
+>  	gc->of_node = dev->of_node;
+> -	gc->request = cygnus_gpio_request;
+> -	gc->free = cygnus_gpio_free;
+>  	gc->direction_input = cygnus_gpio_direction_input;
+>  	gc->direction_output = cygnus_gpio_direction_output;
+>  	gc->set = cygnus_gpio_set;
+>  	gc->get = cygnus_gpio_get;
+>  
+> -	ret = gpiochip_add(gc);
+> +	/* parse DT to find the phandle to the pinmux controller */
+> +	pinmux_node = of_parse_phandle(dev->of_node, "pinmux", 0);
+> +	if (pinmux_node) {
+> +		struct platform_device *pinmux_pdev;
+> +
+> +		pinmux_pdev = of_find_device_by_node(pinmux_node);
+> +		/* no longer need the pinmux node */
+> +		of_node_put(pinmux_node);
+> +		if (!pinmux_pdev) {
+> +			dev_err(chip->dev, "failed to get pinmux device\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		pinctrl_name = dev_name(&pinmux_pdev->dev);
+> +		ranges = cygnus_gpio_pintable;
+> +		nranges = ARRAY_SIZE(cygnus_gpio_pintable);
+> +
+> +		put_device(&pinmux_pdev->dev);
 > +	}
 > +
->  	descs = kcalloc(chip->ngpio, sizeof(descs[0]), GFP_KERNEL);
->  	if (!descs)
->  		return -ENOMEM;
-> @@ -359,6 +376,15 @@ int gpiochip_add(struct gpio_chip *chip)
->  	if (status)
->  		goto err_remove_chip;
+> +	ret = gpiochip_add_with_ranges(gc, pinctrl_name, ranges, nranges);
+>  	if (ret < 0) {
+>  		dev_err(dev, "unable to add GPIO chip\n");
+>  		return ret;
+>  	}
 >  
-> +	for (i = 0; i < nranges; i++) {
-> +		const struct pinctrl_gpio_range *range = &ranges[i];
-> +
-> +		status = gpiochip_add_pin_range(chip, pinctl_name, range->base,
-> +						range->pin_base, range->npins);
-> +		if (status)
-> +			goto err_remove_chip;
-> +	}
-> +
->  	acpi_gpiochip_add(chip);
->  
->  	status = gpiochip_sysfs_register(chip);
-> @@ -373,6 +399,7 @@ int gpiochip_add(struct gpio_chip *chip)
->  
->  err_remove_chip:
->  	acpi_gpiochip_remove(chip);
-> +	gpiochip_remove_pin_ranges(chip);
->  	gpiochip_free_hogs(chip);
->  	of_gpiochip_remove(chip);
->  err_remove_from_list:
-> @@ -389,7 +416,7 @@ err_free_descs:
->  		chip->label ? : "generic");
->  	return status;
->  }
-> -EXPORT_SYMBOL_GPL(gpiochip_add);
-> +EXPORT_SYMBOL_GPL(gpiochip_add_with_ranges);
->  
->  /**
->   * gpiochip_remove() - unregister a gpio_chip
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index 78e634d..6f49e25 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -72,6 +72,15 @@ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
->  
->  struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
->  
-> +#if defined(CONFIG_OF_GPIO) && defined(CONFIG_PINCTRL)
-> +bool of_gpiochip_has_pin_range(struct gpio_chip *chip);
-> +#else
-> +static inline bool of_gpiochip_has_pin_range(struct gpio_chip *chip)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  extern struct spinlock gpio_lock;
->  extern struct list_head gpio_chips;
->  
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index d1baebf..727ae9e 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -166,7 +166,15 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
->  			unsigned offset);
->  
->  /* add/remove chips */
-> -extern int gpiochip_add(struct gpio_chip *chip);
-> +int gpiochip_add_with_ranges(struct gpio_chip *chip, const char *pinctl_name,
-> +			     const struct pinctrl_gpio_range *ranges,
-> +			     unsigned int nranges);
-> +
-> +static inline int gpiochip_add(struct gpio_chip *chip)
-> +{
-> +	return gpiochip_add_with_ranges(chip, NULL, NULL, 0);
-> +}
-> +
->  extern void gpiochip_remove(struct gpio_chip *chip);
->  extern struct gpio_chip *gpiochip_find(void *data,
->  			      int (*match)(struct gpio_chip *chip, void *data));
+> -	ret = cygnus_gpio_pinmux_add_range(chip);
+> -	if (ret && ret != -ENODEV) {
+> -		dev_err(dev, "unable to add GPIO pin range\n");
+> -		goto err_rm_gpiochip;
+> -	}
+> -
+>  	ret = cygnus_gpio_register_pinconf(chip);
+>  	if (ret) {
+>  		dev_err(dev, "unable to register pinconf\n");
 > 
