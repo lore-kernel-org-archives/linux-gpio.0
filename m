@@ -1,178 +1,94 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 2/8] mfd: core: redo ACPI matching of the children
- devices
-Date: Tue, 13 Oct 2015 10:21:04 +0100
-Message-ID: <20151013092104.GK32409@x1>
-References: <1443698430-74415-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Subject: Re: [PATCH v7 1/7] ARM: dts: imx: imx7d-sbd remove fixed can2-3v3 regulator
+Date: Tue, 13 Oct 2015 20:04:26 +0800
+Message-ID: <CAA+hA=Tuj6xTvcPB7xFi6jghBJZAMNTkMheR8HBz8-bfBdRn8g@mail.gmail.com>
+References: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1443698430-74415-3-git-send-email-andriy.shevchenko@linux.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@intel.com>, "Puustinen, Ismo" <ismo.puustinen@intel.com>, "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:36437 "EHLO
+	mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751733AbbJMME1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 13 Oct 2015 08:04:27 -0400
+In-Reply-To: <1443477401-17238-1-git-send-email-aalonso@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Adrian Alonso <aalonso@freescale.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, shawnguo@kernel.org, Linus Walleij <linus.walleij@linaro.org>, lznuaa@gmail.com, devicetree@vger.kernel.org, Frank.Li@freescale.com, nitin.garg@freescale.com, Anson.Huang@freescale.com, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, yibin.gong@freescale.com
 
-On Thu, 01 Oct 2015, Andy Shevchenko wrote:
-
-> There is at least one board on the market, i.e. Intel Galileo Gen2, t=
-hat uses
-> _ADR to distinguish the devices under one actual device. Due to this =
-we have to
-> improve the quirk in the MFD core to handle that board.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Tue, Sep 29, 2015 at 5:56 AM, Adrian Alonso <aalonso@freescale.com> wrote:
+> Remove incorrect can2-3v3 fixed regulator, imx7d-sdb doesn't
+> have a dedicated can2 fixed regulator instead it shares PERI_3V3
+> fixed regulator (RT8070ZS) which is enabled by default (hardwired)
+> from pmic pfuze3000 NVCC_3V3 power rail.
+>
+> Signed-off-by: Adrian Alonso <aalonso@freescale.com>
 > ---
->  Documentation/acpi/enumeration.txt | 11 +++++---
->  drivers/mfd/mfd-core.c             | 52 ++++++++++++++++++++++++++--=
-----------
->  include/linux/mfd/core.h           | 10 ++++++--
->  3 files changed, 52 insertions(+), 21 deletions(-)
+> Changes for V7: New patch in series
+>
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+It is a correct regulator here, but i have to admit that it's a bit confusing.
+Here the regulator is an abstract regulator which is actually used to
+control CAN
+transceiver STBY signals, it is introduced by below patch:
+commit b7c4114b07bbacfe0aee1d04ad1ade9e42309620
+Author: Fabio Estevam <fabio.estevam@freescale.com>
+Date:   Mon Jun 10 23:12:57 2013 -0300
 
-> diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/=
-enumeration.txt
-> index b731b29..a91ec5a 100644
-> --- a/Documentation/acpi/enumeration.txt
-> +++ b/Documentation/acpi/enumeration.txt
-> @@ -347,13 +347,18 @@ For the first case, the MFD drivers do not need=
- to do anything. The
->  resulting child platform device will have its ACPI_COMPANION() set t=
-o point
->  to the parent device.
-> =20
-> -If the ACPI namespace has a device that we can match using an ACPI i=
-d,
-> -the id should be set like:
-> +If the ACPI namespace has a device that we can match using an ACPI i=
-d or ACPI
-> +adr, the cell should be set like:
-> +
-> +	static struct mfd_cell_acpi_match my_subdevice_cell_acpi_match =3D =
-{
-> +		.pnpid =3D "XYZ0001",
-> +		.adr =3D 0,
-> +	};
-> =20
->  	static struct mfd_cell my_subdevice_cell =3D {
->  		.name =3D "my_subdevice",
->  		/* set the resources relative to the parent */
-> -		.acpi_pnpid =3D "XYZ0001",
-> +		.acpi_match =3D &my_subdevice_cell_acpi_match,
->  	};
-> =20
->  The ACPI id "XYZ0001" is then used to lookup an ACPI device directly=
- under
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index c17635d..60b60dc 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -82,29 +82,49 @@ static int mfd_platform_add_cell(struct platform_=
-device *pdev,
->  static void mfd_acpi_add_device(const struct mfd_cell *cell,
->  				struct platform_device *pdev)
->  {
-> -	struct acpi_device *parent_adev;
-> +	const struct mfd_cell_acpi_match *match =3D cell->acpi_match;
-> +	struct acpi_device *parent, *child;
->  	struct acpi_device *adev;
-> =20
-> -	parent_adev =3D ACPI_COMPANION(pdev->dev.parent);
-> -	if (!parent_adev)
-> +	parent =3D ACPI_COMPANION(pdev->dev.parent);
-> +	if (!parent)
->  		return;
-> =20
->  	/*
-> -	 * MFD child device gets its ACPI handle either from the ACPI
-> -	 * device directly under the parent that matches the acpi_pnpid or
-> -	 * it will use the parent handle if is no acpi_pnpid is given.
-> +	 * MFD child device gets its ACPI handle either from the ACPI devic=
-e
-> +	 * directly under the parent that matches the either _HID or _CID, =
-or
-> +	 * _ADR or it will use the parent handle if is no ID is given.
-> +	 *
-> +	 * Note that use of _ADR is a grey area in the ACPI specification,
-> +	 * though Intel Galileo Gen2 is using it to distinguish the childre=
-n
-> +	 * devices.
->  	 */
-> -	adev =3D parent_adev;
-> -	if (cell->acpi_pnpid) {
-> -		struct acpi_device_id ids[2] =3D {};
-> -		struct acpi_device *child_adev;
+    can: flexcan: Use a regulator to control the CAN transceiver
+
+    Instead of using a GPIO to turn on/off the CAN transceiver, it is better to
+    use a regulator as some systems may use a PMIC to power the CAN transceiver.
+
+    Acked-by: Shawn Guo <shawn.guo@linaro.org>
+    Signed-off-by: Fabio Estevam <fabio.estevam@freescale.com>
+    Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+
+>From the commit messages, it should be likely to control the
+transceiver external suppy,
+not control signals, but it does do that unproper work currently.
+
+Besides the unproperly handling control signals, this solution also can't handle
+multiple CAN transceiver control signals ways.
+
+I was trying to write a common transceiver driver to handling this issue.
+But get interrupted by a few other FSL official works, will resume soon.
+
+I would suggest keep the regulator first until the new solution got in.
+
+Regards
+Dong Aisheng
+
+>  arch/arm/boot/dts/imx7d-sdb.dts | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sdb.dts
+> index 8059458..83f0053 100644
+> --- a/arch/arm/boot/dts/imx7d-sdb.dts
+> +++ b/arch/arm/boot/dts/imx7d-sdb.dts
+> @@ -78,16 +78,7 @@
+>                         enable-active-high;
+>                 };
+>
+> -               reg_can2_3v3: regulator@2 {
+> -                       compatible = "regulator-fixed";
+> -                       reg = <2>;
+> -                       regulator-name = "can2-3v3";
+> -                       regulator-min-microvolt = <3300000>;
+> -                       regulator-max-microvolt = <3300000>;
+> -                       gpio = <&gpio1 7 GPIO_ACTIVE_LOW>;
+> -               };
 > -
-> -		strlcpy(ids[0].id, cell->acpi_pnpid, sizeof(ids[0].id));
-> -		list_for_each_entry(child_adev, &parent_adev->children, node)
-> -			if (acpi_match_device_ids(child_adev, ids)) {
-> -				adev =3D child_adev;
-> -				break;
-> +	adev =3D parent;
-> +	if (match) {
-> +		if (match->pnpid) {
-> +			struct acpi_device_id ids[2] =3D {};
-> +
-> +			strlcpy(ids[0].id, match->pnpid, sizeof(ids[0].id));
-> +			list_for_each_entry(child, &parent->children, node) {
-> +				if (acpi_match_device_ids(child, ids)) {
-> +					adev =3D child;
-> +					break;
-> +				}
-> +			}
-> +		} else {
-> +			unsigned long long adr;
-> +			acpi_status status;
-> +
-> +			list_for_each_entry(child, &parent->children, node) {
-> +				status =3D acpi_evaluate_integer(child->handle,
-> +							       "_ADR", NULL,
-> +							       &adr);
-> +				if (ACPI_SUCCESS(status) && match->adr =3D=3D adr) {
-> +					adev =3D child;
-> +					break;
-> +				}
->  			}
-> +		}
->  	}
-> =20
->  	ACPI_COMPANION_SET(&pdev->dev, adev);
-> diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
-> index a76bc10..27dac3f 100644
-> --- a/include/linux/mfd/core.h
-> +++ b/include/linux/mfd/core.h
-> @@ -18,6 +18,12 @@
-> =20
->  struct irq_domain;
-> =20
-> +/* Matches ACPI PNP id, either _HID or _CID, or ACPI _ADR */
-> +struct mfd_cell_acpi_match {
-> +	const char			*pnpid;
-> +	const unsigned long long	adr;
-> +};
-> +
->  /*
->   * This struct describes the MFD part ("cell").
->   * After registration the copy of this structure will become the pla=
-tform data
-> @@ -44,8 +50,8 @@ struct mfd_cell {
->  	 */
->  	const char		*of_compatible;
-> =20
-> -	/* Matches ACPI PNP id, either _HID or _CID */
-> -	const char		*acpi_pnpid;
-> +	/* Matches ACPI */
-> +	const struct mfd_cell_acpi_match	*acpi_match;
-> =20
->  	/*
->  	 * These resources can be specified relative to the parent device.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> -               reg_vref_1v8: regulator@3 {
+> +               reg_vref_1v8: regulator@2 {
+>                         compatible = "regulator-fixed";
+>                         reg = <3>;
+>                         regulator-name = "vref-1v8";
+> --
+> 2.1.4
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
