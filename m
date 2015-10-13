@@ -1,65 +1,61 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 2/2] pinctrl: baytrail: Fix compilation warnings when !CONFIG_PM
-Date: Tue, 13 Oct 2015 17:51:26 +0300
-Message-ID: <1444747886-70568-2-git-send-email-mika.westerberg@linux.intel.com>
-References: <1444747886-70568-1-git-send-email-mika.westerberg@linux.intel.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 00/37] ARM: dts: Fix fixed regulators enable GPIO polarity
+Date: Tue, 13 Oct 2015 23:09:32 +0800
+Message-ID: <20151013150932.GD584@tiger>
+References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
+ <20151013140946.GB584@tiger>
+ <1561402.NmbcA6rYT5@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:27529 "EHLO mga09.intel.com"
+Received: from mail.kernel.org ([198.145.29.136]:40972 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932140AbbJMOvh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 13 Oct 2015 10:51:37 -0400
-In-Reply-To: <1444747886-70568-1-git-send-email-mika.westerberg@linux.intel.com>
+	id S1753205AbbJMPJv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 13 Oct 2015 11:09:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1561402.NmbcA6rYT5@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-When CONFIG_PM is not set we get following compilation warnings:
+On Tue, Oct 13, 2015 at 05:17:24PM +0300, Laurent Pinchart wrote:
+> Hi Shawn,
+> 
+> On Tuesday 13 October 2015 22:09:46 Shawn Guo wrote:
+> > On Tue, Oct 13, 2015 at 12:12:29AM +0300, Laurent Pinchart wrote:
+> > > Laurent Pinchart (37):
+> > ...
+> > 
+> > >   ARM: imx6sx-sdb: Fix typo in regulator enable GPIO property
+> > 
+> > ...
+> > 
+> > >   ARM: dts: imx6qdl-tx6: Fix regulator enable GPIO polarity
+> > 
+> > ...
+> > 
+> > >   ARM: dts: imx23-evk: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx23-stmp378x_devb: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx25-pdk: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-cfa10036: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-evk: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-m28cu3: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-m28evk: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-sps1: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx28-tx28: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx53-m53evk: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx53-mba53: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx53-tx53: Fix regulator enable GPIO polarity
+> > >   ARM: dts: imx6q-dmo-edmqmx6: Fix regulator enable GPIO polarity
+> > 
+> > Applied these 15 patches, thanks.
+> 
+> There's ongoing discussions regarding whether this is the right thing to do. 
+> Please see http://www.spinics.net/lists/arm-kernel/msg451724.html. It's thus a 
+> bit early to apply the patches at this point I'm afraid.
 
- warning: =E2=80=98byt_gpio_runtime_suspend=E2=80=99 defined but not us=
-ed [-Wunused-function]
- warning: =E2=80=98byt_gpio_runtime_resume=E2=80=99 defined but not use=
-d [-Wunused-function]
+Okay, dropped them except the first one which fixes a typo for
+imx6sx-sdb.
 
-=46ix this by guarding byt_gpio_runtime_suspend()/byt_gpio_runtime_resu=
-me()
-with #ifdef CONFIG_PM.
-
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl=
-/intel/pinctrl-baytrail.c
-index f79ea430f651..b59ce75b1947 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -696,6 +696,7 @@ static int byt_gpio_resume(struct device *dev)
- }
- #endif
-=20
-+#ifdef CONFIG_PM
- static int byt_gpio_runtime_suspend(struct device *dev)
- {
- 	return 0;
-@@ -705,6 +706,7 @@ static int byt_gpio_runtime_resume(struct device *d=
-ev)
- {
- 	return 0;
- }
-+#endif
-=20
- static const struct dev_pm_ops byt_gpio_pm_ops =3D {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(byt_gpio_suspend, byt_gpio_resume)
---=20
-2.5.3
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Shawn
