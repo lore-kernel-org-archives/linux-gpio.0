@@ -1,48 +1,45 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: fix various asm-generic abuses
-Date: Wed, 14 Oct 2015 16:41:49 +0200
-Message-ID: <5693903.Ud0gtefqqr@wuerfel>
-References: <1440746842-19029-1-git-send-email-hch@lst.de> <22516156.tfGZvl13aG@wuerfel> <20150829134937.GA13103@lst.de>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH 2/5] gpio/xilinx: enable for MIPS
+Date: Wed, 14 Oct 2015 08:18:13 -0700
+Message-ID: <20151014151813.GL15287@xsjsorenbubuntu>
+References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
+ <1444827117-10939-3-git-send-email-Zubair.Kakakhel@imgtec.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150829134937.GA13103@lst.de>
+Content-Disposition: inline
+In-Reply-To: <1444827117-10939-3-git-send-email-Zubair.Kakakhel@imgtec.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: mitake@dcl.info.waseda.ac.jp, dhowells@redhat.com, herbert@gondor.apana.org.au, oded.gabbay@amd.com, eli@mellanox.com, james_p_freyensee@linux.intel.com, linux-gpio@vger.kernel.org, drbd-dev@lists.linbit.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+Cc: ralf@linux-mips.org, robh+dt@kernel.org, linus.walleij@linaro.org, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Saturday 29 August 2015 15:49:37 Christoph Hellwig wrote:
-> On Fri, Aug 28, 2015 at 09:16:51PM +0200, Arnd Bergmann wrote:
-> > On Friday 28 August 2015 09:27:13 Christoph Hellwig wrote:
-> > > This fixes two trivial classes of asm-generic abuse.  First two headers
-> > > that are intended for drivers are moved to include/linux, and second
-> > > various drivers that incorrectly use asm-generic headers directly are
-> > > switched over to use the proper public headers.  There are a few more
-> > > asm-generic abuse, but they aren't quite as trivial so they will take
-> > > a little more effort to fix.
-> > 
-> > Thanks a lot, these all look really useful. My normal way of dealing
-> > with asm-generic patches is to have changes go through the tree of
-> > whichever maintainer needs the changes for their own work with my
-> > Ack, but I guess in this case you don't actually have other patches
-> > depending on them, right?
-> 
-> No, there's nothing depending on it.
-> 
-> > If driver maintainers want to pick individual patches from this series,
-> > please add my
-> > 
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > 
-> > otherwise let me know if I should put them into my asm-generic git
-> > tree (which is currently empty, but part of linux-next).
-> 
-> Note that the first two are something you should probably pick up either
-> way as they aren't really specific to a driver.
+On Wed, 2015-10-14 at 01:51PM +0100, Zubair Lutfullah Kakakhel wrote:
+> MIPSfpga uses the axi gpio controller. Enable the driver for MIPS.
+>=20
+> Signed-off-by: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> ---
+>  drivers/gpio/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 8949b3f..58e9afd 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -508,7 +508,7 @@ config GPIO_XGENE_SB
+> =20
+>  config GPIO_XILINX
+>  	tristate "Xilinx GPIO support"
+> -	depends on OF_GPIO && (PPC || MICROBLAZE || ARCH_ZYNQ || X86)
+> +	depends on OF_GPIO && (PPC || MICROBLAZE || ARCH_ZYNQ || X86 || MIP=
+S)
 
-I've applied the remaining patches to my asm-generic tree now, with
-the Acks from Herbert, Darren and Hitoshi.
+Hmm, in general, this driver is hopefully generic enough that it doesn'=
+t
+have any real architecture dependencies. And I suspect, we want to
+enable this driver for ARM64 for ZynqMP soon too. Should we probably
+drop these arch dependencies completely? It seems to become quite a lon=
+g list.
 
-	Arnd
+	S=C3=B6ren
