@@ -1,40 +1,40 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [PATCH 1/7] ARM: Kconfig: Introduce MACH_STM32F429 flag
-Date: Wed, 14 Oct 2015 22:07:21 +0200
-Message-ID: <1444853247-31114-2-git-send-email-mcoquelin.stm32@gmail.com>
-References: <1444853247-31114-1-git-send-email-mcoquelin.stm32@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444853247-31114-1-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH] pinctrl: always include all subdirectories in build
+Date: Wed, 14 Oct 2015 22:08:23 -0700
+Message-ID: <561F34C7.6030108@broadcom.com>
+References: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:44909 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751622AbbJOFI0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2015 01:08:26 -0400
+In-Reply-To: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jonas Gorski <jogo@openwrt.org>, linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.c>
 
-This patch introduces the MACH_STM32F429 to make possible to only select
-STM32F429 pinctrl driver.
 
-By default, all the MACH_STM32Fxxx flags will be set with STM32 defconfig.
 
-Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
----
- arch/arm/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+On 10/11/2015 8:40 AM, Jonas Gorski wrote:
+> All pinctrl drivers in subdirectories are properly guarded by individual
+> configuration symbols, so there is no need to limit the directories to
+> the belonging machines.
+> 
+> This allows wider COMPILE_TEST coverage on "foreign" targets.
+> 
+> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+> ---
+>  drivers/pinctrl/Makefile | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 72ad724..bf94e54 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -988,6 +988,11 @@ config ARCH_STM32
- 	help
- 	  Support for STMicroelectronics STM32 processors.
- 
-+config MACH_STM32F429
-+	bool "STMicrolectronics STM32F429"
-+	depends on ARCH_STM32
-+	default y
-+
- # Definitions to make life easier
- config ARCH_ACORN
- 	bool
--- 
-1.9.1
+For ARCH_BCM,
+
+Acked-by: Ray Jui <rjui@broadcom.com>
+
+Thanks,
+
+Ray
