@@ -1,83 +1,88 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [GIT PULL] On-demand device probing
-Date: Thu, 15 Oct 2015 13:42:08 +0200
-Message-ID: <1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
-References: <20151014092644.GO14956@sirena.org.uk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:38776 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752316AbbJOLm1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2015 07:42:27 -0400
-In-Reply-To: <20151014092644.GO14956@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/7] includes: dt-bindings: Add STM32F429 pinctrl DT
+ bindings
+Date: Thu, 15 Oct 2015 12:55:18 +0100
+Message-ID: <561F9426.4090808@linaro.org>
+References: <1444853247-31114-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1444853247-31114-3-git-send-email-mcoquelin.stm32@gmail.com>
+ <561F8AB3.9010103@linaro.org>
+ <CALszF6Aj3xBqVKWhyBc5ihqm_YVTq4M3bidB0W+1RvtMVZqaDw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALszF6Aj3xBqVKWhyBc5ihqm_YVTq4M3bidB0W+1RvtMVZqaDw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>
 
-Hi,
+On 15/10/15 12:29, Maxime Coquelin wrote:
+> 2015-10-15 13:14 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+>> On 14/10/15 21:07, Maxime Coquelin wrote:
+>>>
+>>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>>> ---
+>>>    include/dt-bindings/pinctrl/pinctrl-stm32.h     |   12 +
+>>>    include/dt-bindings/pinctrl/stm32f429-pinfunc.h | 1241
+>>> +++++++++++++++++++++++
+>>>    2 files changed, 1253 insertions(+)
+>>>    create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
+>>>    create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>>>
+>>> diff --git a/include/dt-bindings/pinctrl/pinctrl-stm32.h
+>>> b/include/dt-bindings/pinctrl/pinctrl-stm32.h
+>>> new file mode 100644
+>>> index 0000000..a2e7222
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/pinctrl/pinctrl-stm32.h
+>>> @@ -0,0 +1,12 @@
+>>> +#ifndef _DT_BINDINGS_PINCTRL_STM32_H
+>>> +#define _DT_BINDINGS_PINCTRL_STM32_H
+>>> +
+>>> +#define STM32_PIN_NO(x) ((x) << 8)
+>>> +#define STM32_GET_PIN_NO(x) ((x) >> 8)
+>>> +#define STM32_GET_PIN_FUNC(x) ((x) & 0xff)
+>>> +
+>>> +#define STM32_PIN_GPIO         0
+>>> +#define STM32_PIN_AF(x)                ((x) + 1)
+>>> +#define STM32_PIN_ANALOG       (STM32_PIN_AF(15) + 1)
+>>> +
+>>> +#endif /* _DT_BINDINGS_PINCTRL_STM32_H */
+>>> diff --git a/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>>> b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>>> new file mode 100644
+>>> index 0000000..979e4eb
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>>> @@ -0,0 +1,1241 @@
+>>> +#ifndef _DT_BINDINGS_STM32F429_PINFUNC_H
+>>> +#define _DT_BINDINGS_STM32F429_PINFUNC_H
+>>> +
+>>> +#include <dt-bindings/pinctrl/pinctrl-stm32.h>
+>>> +
+>>> +#define STM32F429_PA0_FUNC_GPIO (STM32_PIN_NO(0) | STM32_PIN_GPIO)
+>>> +#define STM32F429_PA0_FUNC_TIM2_CH1 TIM2_ETR (STM32_PIN_NO(0) |
+>>> STM32_PIN_AF(1))
+>>
+>>
+>> For the clock driver I was advised to get rid of this sort of "heroics" and
+>> expose raw numbers from the datasheet directly to DT bindings users.
+>>
+>> Should the same logic apply to this *huge* collection of macros?
+>
+> I'm open to change, I just took example on the Mediatek implementation.
+> Advantage is that checkpatch will be more silent, drawback is that it
+> will be a little harder to understand how these values are generated.
+> If we decide to change to raw values, then the DT Bindings
+> documentation will need to be more verbose on the way these values are
+> generated.
 
-this second pull request replaces the last references to device_initcall_sync with late_initcall, as noticed by Frank Rowand.
+To be honest I was thinking about moaning about that anyway. Its pretty 
+tough from the docs you have currently to figure out the encoding.
 
-Also fixes the url of the git repo and the wrapping, as suggested by Mark Brown.
+Does having header files really excuse us from documenting the bindings 
+properly? ;-)
 
-Thanks,
 
-Tomeu
-
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-
-  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-
-are available in the git repository at:
-
-  git://git.collabora.com/git/user/tomeu/linux.git on-demand-probes-for-next
-
-for you to fetch changes up to c074fef5d36e1c27dfdf7474e23c01a1b044ff98:
-
-  of/platform: Defer probes of registered devices (2015-10-15 13:25:47 +0200)
-
-----------------------------------------------------------------
-Tomeu Vizoso (20):
-      driver core: handle -EPROBE_DEFER from bus_type.match()
-      ARM: amba: Move reading of periphid to amba_match()
-      of/platform: Point to struct device from device node
-      of: add function to allow probing a device from a OF node
-      gpio: Probe GPIO drivers on demand
-      pinctrl: Probe pinctrl devices on demand
-      regulator: core: Probe regulators on demand
-      drm: Probe panels on demand
-      drm/tegra: Probe dpaux devices on demand
-      i2c: core: Probe i2c adapters and devices on demand
-      pwm: Probe PWM chip devices on demand
-      backlight: Probe backlight devices on demand
-      usb: phy: Probe phy devices on demand
-      clk: Probe clk providers on demand
-      pinctrl: Probe pinctrl devices on demand
-      phy: core: Probe phy providers on demand
-      dma: of: Probe DMA controllers on demand
-      power-supply: Probe power supplies on demand
-      driver core: Allow deferring probes until late init
-      of/platform: Defer probes of registered devices
-
- drivers/amba/bus.c                  | 88 +++++++++++++++++++------------------
- drivers/base/Kconfig                | 18 ++++++++
- drivers/base/dd.c                   | 30 ++++++++++++-
- drivers/clk/clk.c                   |  3 ++
- drivers/dma/of-dma.c                |  3 ++
- drivers/gpio/gpiolib-of.c           |  5 +++
- drivers/gpu/drm/drm_panel.c         |  3 ++
- drivers/gpu/drm/tegra/dpaux.c       |  3 ++
- drivers/i2c/i2c-core.c              |  4 ++
- drivers/of/device.c                 | 61 +++++++++++++++++++++++++
- drivers/of/platform.c               | 30 ++++++++-----
- drivers/phy/phy-core.c              |  3 ++
- drivers/pinctrl/devicetree.c        |  3 ++
- drivers/power/power_supply_core.c   |  3 ++
- drivers/pwm/core.c                  |  3 ++
- drivers/regulator/core.c            |  2 +
- drivers/usb/phy/phy.c               |  3 ++
- drivers/video/backlight/backlight.c |  3 ++
- include/linux/device.h              |  4 +-
- include/linux/of.h                  |  1 +
- include/linux/of_device.h           |  3 ++
- 21 files changed, 219 insertions(+), 57 deletions(-)
+Daniel.
