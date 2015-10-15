@@ -1,158 +1,62 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: [PATCH 5/5] MIPS: Add xilfpga defconfig
-Date: Thu, 15 Oct 2015 09:34:08 +0100
-Message-ID: <20151015083408.GF14475@jhogan-linux.le.imgtec.org>
-References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
- <1444827117-10939-6-git-send-email-Zubair.Kakakhel@imgtec.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: Re: [PATCH 2/7] includes: dt-bindings: Add STM32F429 pinctrl DT
+ bindings
+Date: Thu, 15 Oct 2015 12:14:59 +0100
+Message-ID: <561F8AB3.9010103@linaro.org>
+References: <1444853247-31114-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1444853247-31114-3-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="V4b9U9vrdWczvw78"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:26278 "EHLO
-	imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750732AbbJOIeL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2015 04:34:11 -0400
-Content-Disposition: inline
-In-Reply-To: <1444827117-10939-6-git-send-email-Zubair.Kakakhel@imgtec.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444853247-31114-3-git-send-email-mcoquelin.stm32@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, bruherrera@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc: ralf@linux-mips.org, robh+dt@kernel.org, linus.walleij@linaro.org, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
---V4b9U9vrdWczvw78
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 14, 2015 at 01:51:57PM +0100, Zubair Lutfullah Kakakhel wrote:
-> Signed-off-by: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+On 14/10/15 21:07, Maxime Coquelin wrote:
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 > ---
->  arch/mips/configs/xilfpga_defconfig | 59 +++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 arch/mips/configs/xilfpga_defconfig
->=20
-> diff --git a/arch/mips/configs/xilfpga_defconfig b/arch/mips/configs/xilf=
-pga_defconfig
+>   include/dt-bindings/pinctrl/pinctrl-stm32.h     |   12 +
+>   include/dt-bindings/pinctrl/stm32f429-pinfunc.h | 1241 +++++++++++++++++++++++
+>   2 files changed, 1253 insertions(+)
+>   create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
+>   create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>
+> diff --git a/include/dt-bindings/pinctrl/pinctrl-stm32.h b/include/dt-bindings/pinctrl/pinctrl-stm32.h
 > new file mode 100644
-> index 0000000..94bb9b8
+> index 0000000..a2e7222
 > --- /dev/null
-> +++ b/arch/mips/configs/xilfpga_defconfig
-> @@ -0,0 +1,59 @@
-> +CONFIG_MACH_XILFPGA=3Dy
-> +# CONFIG_COMPACTION is not set
-> +# CONFIG_LOCALVERSION_AUTO is not set
-> +# CONFIG_CROSS_MEMORY_ATTACH is not set
-> +# CONFIG_USELIB is not set
-> +# CONFIG_SHMEM is not set
-> +# CONFIG_AIO is not set
-> +# CONFIG_ADVISE_SYSCALLS is not set
+> +++ b/include/dt-bindings/pinctrl/pinctrl-stm32.h
+> @@ -0,0 +1,12 @@
+> +#ifndef _DT_BINDINGS_PINCTRL_STM32_H
+> +#define _DT_BINDINGS_PINCTRL_STM32_H
+> +
+> +#define STM32_PIN_NO(x) ((x) << 8)
+> +#define STM32_GET_PIN_NO(x) ((x) >> 8)
+> +#define STM32_GET_PIN_FUNC(x) ((x) & 0xff)
+> +
+> +#define STM32_PIN_GPIO		0
+> +#define STM32_PIN_AF(x)		((x) + 1)
+> +#define STM32_PIN_ANALOG	(STM32_PIN_AF(15) + 1)
+> +
+> +#endif /* _DT_BINDINGS_PINCTRL_STM32_H */
+> diff --git a/include/dt-bindings/pinctrl/stm32f429-pinfunc.h b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+> new file mode 100644
+> index 0000000..979e4eb
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+> @@ -0,0 +1,1241 @@
+> +#ifndef _DT_BINDINGS_STM32F429_PINFUNC_H
+> +#define _DT_BINDINGS_STM32F429_PINFUNC_H
+> +
+> +#include <dt-bindings/pinctrl/pinctrl-stm32.h>
+> +
+> +#define STM32F429_PA0_FUNC_GPIO (STM32_PIN_NO(0) | STM32_PIN_GPIO)
+> +#define STM32F429_PA0_FUNC_TIM2_CH1 TIM2_ETR (STM32_PIN_NO(0) | STM32_PIN_AF(1))
 
-Did you disable these intentionally? Its a kernel tinification option
-that is rarely used in defconfigs.
+For the clock driver I was advised to get rid of this sort of "heroics" 
+and expose raw numbers from the datasheet directly to DT bindings users.
 
-> +CONFIG_EMBEDDED=3Dy
-> +# CONFIG_VM_EVENT_COUNTERS is not set
-> +# CONFIG_COMPAT_BRK is not set
-> +CONFIG_SLAB=3Dy
-> +# CONFIG_BLOCK is not set
-> +# CONFIG_SUSPEND is not set
-> +# CONFIG_UEVENT_HELPER is not set
-> +CONFIG_DEVTMPFS=3Dy
-> +CONFIG_DEVTMPFS_MOUNT=3Dy
-> +# CONFIG_STANDALONE is not set
-> +# CONFIG_PREVENT_FIRMWARE_BUILD is not set
-> +# CONFIG_FW_LOADER is not set
-> +# CONFIG_ALLOW_DEV_COREDUMP is not set
-> +# CONFIG_INPUT_MOUSEDEV is not set
-> +# CONFIG_INPUT_KEYBOARD is not set
-> +# CONFIG_INPUT_MOUSE is not set
-> +# CONFIG_SERIO is not set
-> +CONFIG_VT_HW_CONSOLE_BINDING=3Dy
-> +# CONFIG_UNIX98_PTYS is not set
-> +# CONFIG_LEGACY_PTYS is not set
-> +# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-> +CONFIG_SERIAL_8250_NR_UARTS=3D1
-> +CONFIG_SERIAL_8250_RUNTIME_UARTS=3D1
-> +CONFIG_SERIAL_OF_PLATFORM=3Dy
-> +# CONFIG_HW_RANDOM is not set
-> +CONFIG_GPIO_SYSFS=3Dy
-> +CONFIG_GPIO_XILINX=3Dy
-> +# CONFIG_HWMON is not set
-> +# CONFIG_USB_SUPPORT is not set
-> +# CONFIG_MIPS_PLATFORM_DEVICES is not set
-> +# CONFIG_IOMMU_SUPPORT is not set
-> +# CONFIG_FILE_LOCKING is not set
-
-Likewise, intentional? Its another tinification option that isn't all
-that commonly used in defconfigs.
-
-> +# CONFIG_DNOTIFY is not set
-> +# CONFIG_INOTIFY_USER is not set
-
-Likewise, intentional? I don't think inotify is deprecated in favour of
-anything else yet (it appears to superscede dnotify).
-
-> +# CONFIG_PROC_SYSCTL is not set
-
-Likewise.
-
-> +# CONFIG_PROC_PAGE_MONITOR is not set
-> +# CONFIG_MISC_FILESYSTEMS is not set
-> +# CONFIG_ENABLE_WARN_DEPRECATED is not set
-> +# CONFIG_ENABLE_MUST_CHECK is not set
-
-Particular reason to disable these two compile time warnings?
-
-> +CONFIG_PANIC_ON_OOPS=3Dy
-> +# CONFIG_SCHED_DEBUG is not set
-> +CONFIG_DEBUG_LOCK_ALLOC=3Dy
-
-Did you mean to leave this turned on?
-
-> +# CONFIG_FTRACE is not set
-> +CONFIG_CMDLINE_BOOL=3Dy
-> +CONFIG_CMDLINE=3D"console=3DttyS0,115200 clk_ignore_unused earlyprintk=
-=3Dserial,ttyS0,115200"
-
-I believe you can specify an earlyprintk address on command line. Would
-it be preferable to do that rather than hard coding the address in the
-platform code?
-
-Cheers
-James
-
-> +CONFIG_CRYPTO_MD5=3Dy
-> +CONFIG_CRYPTO_SHA1=3Dy
-> +CONFIG_CRYPTO_DES=3Dy
-> +CONFIG_CRYPTO_DEFLATE=3Dy
-> +CONFIG_CRC16=3Dy
-> +CONFIG_LIBCRC32C=3Dy
-> --=20
-> 1.9.1
->=20
->=20
-
---V4b9U9vrdWczvw78
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJWH2UAAAoJEGwLaZPeOHZ6Mm8QALPdiC3bMvt/ayU2HdP6gFD+
-FGPxAgFpsP/4G/qxapJiidSiIIOL/yl4P8M+zUV3Wixnk7RQeldc1WKhOhgzAZ5P
-MCttTeZlLjGP1Wk0lJnqG6+I1R39SvGJpNgNuYCRHOSH/uOkY8IsW/UXBj6sE8FJ
-07XzpjhxnXD+ZrdL43FN/3Vg68zL2Bh6q60KNb7QbTz9QaLfbfDWtzEz6ZDKX6H4
-LiirUZTYRgG29BkmpChxBhTJgRt36SORpHVJo3YFOpNkXsRcde0EEMACnanRGdnE
-77OxDniflmlHhxTJwpYd2P+lfWK/BDEzXUoM3dF7oFi8y6EWpHyD67VeZ8C+qbzZ
-HR+DdKDt9g12O78B2uF+YOSUEalb7SbLYFlqBabrqS0MWuNpm9gS1OEQid9fYYJT
-PF3zlXcmZzlAwnfudoEyDNbgh7tTMdpRTTt/hIL2Wj6+aK6sLfG73cKfBzbclZVG
-Wt/HLOoAHpD78XHtPU8yoq58dxAO1T2NhPZSQKIJ5rpWUz9vbrAhdZafvtjZITyc
-4N92UFsGHoUgVkCC4xPfbZWq7pM83RUykqwkgu8Fb3O4DMLKAeJr6/VpVdLURFrw
-nGl1mApxoAocmjXlIfW2GhhtZexp/1fyr1IvaBo0pew/nagXIM0g3hNuBHfTvbpY
-jp5Nv5P3gX7J/+SlUkCx
-=nZH4
------END PGP SIGNATURE-----
-
---V4b9U9vrdWczvw78--
+Should the same logic apply to this *huge* collection of macros?
