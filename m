@@ -1,40 +1,66 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH] pinctrl: always include all subdirectories in build
-Date: Wed, 14 Oct 2015 22:08:23 -0700
-Message-ID: <561F34C7.6030108@broadcom.com>
+From: <yamada.masahiro@socionext.com>
+Subject: RE: [PATCH] pinctrl: always include all subdirectories in build
+Date: Thu, 15 Oct 2015 06:10:41 +0000
+Message-ID: <abfef1635ed54bec808aec6b6d6d38cf@SOC-EX02V.e01.socionext.com>
 References: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:44909 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751622AbbJOFI0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Oct 2015 01:08:26 -0400
+Received: from mx.socionext.com ([202.248.49.38]:28919 "EHLO mx.socionext.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753612AbbJOGU2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 15 Oct 2015 02:20:28 -0400
 In-Reply-To: <1444578044-17804-1-git-send-email-jogo@openwrt.org>
+Content-Language: ja-JP
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tony Prisk <linux@prisktech.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Masahiro Yamada <yamada.masahiro@socionext.c>
+To: jogo@openwrt.org, linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, thomas.petazzoni@free-electrons.com, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com, mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, matthias.bgg@gmail.com, maxime.coquelin@st.com, galak@codeaurora.org, agross@codeaurora.org, davidb@codeaurora.org, vireshk@kernel.org, tomasz.figa@gmail.com, linux@prisktech.co.nz, sebastian.hesselbarth@gmail.com, laurent.pinchart@ideasonboard.com
 
-
-
-On 10/11/2015 8:40 AM, Jonas Gorski wrote:
-> All pinctrl drivers in subdirectories are properly guarded by individual
-> configuration symbols, so there is no need to limit the directories to
-> the belonging machines.
-> 
-> This allows wider COMPILE_TEST coverage on "foreign" targets.
-> 
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> ---
->  drivers/pinctrl/Makefile | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-
-For ARCH_BCM,
-
-Acked-by: Ray Jui <rjui@broadcom.com>
-
-Thanks,
-
-Ray
+SGkuDQoNCg0KPiBGcm9tOiBsaW51eC1ncGlvLW93bmVyQHZnZXIua2VybmVsLm9yZw0KPiBbbWFp
+bHRvOmxpbnV4LWdwaW8tb3duZXJAdmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgSm9uYXMg
+R29yc2tpDQo+IFNlbnQ6IE1vbmRheSwgT2N0b2JlciAxMiwgMjAxNSAxMjo0MSBBTQ0KPiBUbzog
+bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IExpbnVzIFdhbGxlaWo7IEFsZXhhbmRy
+ZSBDb3VyYm90OyBUaG9tYXMgUGV0YXp6b25pOyBTdGVwaGVuIFdhcnJlbjsNCj4gTGVlIEpvbmVz
+OyBFcmljIEFuaG9sdDsgRmxvcmlhbiBGYWluZWxsaTsgUmF5IEp1aTsgU2NvdHQgQnJhbmRlbjsg
+TWlrYQ0KPiBXZXN0ZXJiZXJnOyBIZWlra2kgS3JvZ2VydXM7IE1hdHRoaWFzIEJydWdnZXI7IE1h
+eGltZSBDb3F1ZWxpbjsgS3VtYXIgR2FsYTsNCj4gQW5keSBHcm9zczsgRGF2aWQgQnJvd247IFZp
+cmVzaCBLdW1hcjsgVG9tYXN6IEZpZ2E7IFRvbnkgUHJpc2s7IFNlYmFzdGlhbg0KPiBIZXNzZWxi
+YXJ0aDsgTGF1cmVudCBQaW5jaGFydDsgWWFtYWRhLCBNYXNhaGlyby8bJEI7M0VEGyhCIBskQj8/
+OTAbKEINCj4gU3ViamVjdDogW1BBVENIXSBwaW5jdHJsOiBhbHdheXMgaW5jbHVkZSBhbGwgc3Vi
+ZGlyZWN0b3JpZXMgaW4gYnVpbGQNCj4gDQo+IEFsbCBwaW5jdHJsIGRyaXZlcnMgaW4gc3ViZGly
+ZWN0b3JpZXMgYXJlIHByb3Blcmx5IGd1YXJkZWQgYnkgaW5kaXZpZHVhbA0KPiBjb25maWd1cmF0
+aW9uIHN5bWJvbHMsIHNvIHRoZXJlIGlzIG5vIG5lZWQgdG8gbGltaXQgdGhlIGRpcmVjdG9yaWVz
+IHRvIHRoZQ0KPiBiZWxvbmdpbmcgbWFjaGluZXMuDQo+IA0KPiBUaGlzIGFsbG93cyB3aWRlciBD
+T01QSUxFX1RFU1QgY292ZXJhZ2Ugb24gImZvcmVpZ24iIHRhcmdldHMuDQo+IA0KPiBTaWduZWQt
+b2ZmLWJ5OiBKb25hcyBHb3Jza2kgPGpvZ29Ab3BlbndydC5vcmc+DQo+IC0tLQ0KPiAgZHJpdmVy
+cy9waW5jdHJsL01ha2VmaWxlIHwgMjQgKysrKysrKysrKysrLS0tLS0tLS0tLS0tDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL01ha2VmaWxlIGIvZHJpdmVycy9waW5jdHJsL01ha2Vm
+aWxlIGluZGV4DQo+IGNhZDA3N2MuLjJlYjI1YTggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcGlu
+Y3RybC9NYWtlZmlsZQ0KPiArKysgYi9kcml2ZXJzL3BpbmN0cmwvTWFrZWZpbGUNCj4gQEAgLTM5
+LDE3ICszOSwxNyBAQCBvYmotJChDT05GSUdfUElOQ1RSTF9UQjEwWCkJKz0gcGluY3RybC10YjEw
+eC5vDQo+ICBvYmotJChDT05GSUdfUElOQ1RSTF9TVCkgCSs9IHBpbmN0cmwtc3Qubw0KPiAgb2Jq
+LSQoQ09ORklHX1BJTkNUUkxfWllOUSkJKz0gcGluY3RybC16eW5xLm8NCj4gDQo+IC1vYmotJChD
+T05GSUdfQVJDSF9CQ00pCQkrPSBiY20vDQo+IC1vYmotJChDT05GSUdfQVJDSF9CRVJMSU4pCSs9
+IGJlcmxpbi8NCj4gK29iai15CQkJCSs9IGJjbS8NCj4gK29iai15CQkJCSs9IGJlcmxpbi8NCj4g
+IG9iai15CQkJCSs9IGZyZWVzY2FsZS8NCj4gLW9iai0kKENPTkZJR19YODYpCQkrPSBpbnRlbC8N
+Cj4gLW9iai0kKENPTkZJR19QTEFUX09SSU9OKSAgICAgICAgKz0gbXZlYnUvDQo+ICtvYmoteQkJ
+CQkrPSBpbnRlbC8NCj4gK29iai15CQkJCSs9IG12ZWJ1Lw0KPiAgb2JqLXkJCQkJKz0gbm9tYWRp
+ay8NCj4gLW9iai0kKENPTkZJR19BUkNIX1FDT00pCQkrPSBxY29tLw0KPiAtb2JqLSQoQ09ORklH
+X1BJTkNUUkxfU0FNU1VORykJKz0gc2Ftc3VuZy8NCj4gLW9iai0kKENPTkZJR19QSU5DVFJMX1NI
+X1BGQykJKz0gc2gtcGZjLw0KPiAtb2JqLSQoQ09ORklHX1BMQVRfU1BFQVIpCSs9IHNwZWFyLw0K
+PiAtb2JqLSQoQ09ORklHX0FSQ0hfU1VOWEkpCSs9IHN1bnhpLw0KPiAtb2JqLSQoQ09ORklHX0FS
+Q0hfVU5JUEhJRVIpCSs9IHVuaXBoaWVyLw0KPiAtb2JqLSQoQ09ORklHX0FSQ0hfVlQ4NTAwKQkr
+PSB2dDg1MDAvDQo+IC1vYmotJChDT05GSUdfQVJDSF9NRURJQVRFSykJKz0gbWVkaWF0ZWsvDQo+
+ICtvYmoteQkJCQkrPSBxY29tLw0KPiArb2JqLXkJCQkJKz0gc2Ftc3VuZy8NCj4gK29iai15CQkJ
+CSs9IHNoLXBmYy8NCj4gK29iai15CQkJCSs9IHNwZWFyLw0KPiArb2JqLXkJCQkJKz0gc3VueGkv
+DQo+ICtvYmoteQkJCQkrPSB1bmlwaGllci8NCj4gK29iai15CQkJCSs9IHZ0ODUwMC8NCj4gK29i
+ai15CQkJCSs9IG1lZGlhdGVrLw0KDQoNCkN1cnJlbnRseSwgSSBvbmx5IHNlZSBDT01QSUxFX1RF
+U1QgdW5kZXIgIGJjbS8sIG1lZGlhdGVrLywgYW5kIHFjb20vLg0KRm9yIHRoZSBvdGhlcnMsIEti
+dWlsZCB3b3VsZCBkZXNjZW5kIGludG8gdW5uZWVkZWQgc3ViZGlyZWN0b3JpZXMNCmp1c3QgZm9y
+IGNyZWF0aW5nIGVtcHR5IGJ1aWx0LWluLm8gb2JqZWN0cy4NCg0KTW9yZW92ZXIsIHNhbXN1bmcv
+IGFuZCBzaC1wZmMvIGFyZSBhbHJlYWR5IGVuYWJsZWQgYnkgQ09ORklHX1BJTkNUUkxfKi4NCk5v
+IG5lZWQgdG8gY2hhbmdlIHRoZXNlIHR3byBhdCBsZWFzdC4NCg0KQmVzdCBSZWdhcmRzDQpNYXNh
+aGlybyBZYW1hZGENCg0K
