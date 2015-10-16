@@ -1,44 +1,48 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 5/5] pinctrl: replace trivial implementations of
- gpio_chip request/free
-Date: Fri, 16 Oct 2015 22:20:04 +0200
-Message-ID: <CACRpkdZvFeb40CQdcXLZi3pEX3hRdadTtB=LaqU4Ws3LrLpaMA@mail.gmail.com>
-References: <1444577659-17621-1-git-send-email-jogo@openwrt.org>
-	<1444577659-17621-6-git-send-email-jogo@openwrt.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v6 4/7] arm64: berlin: add the pinctrl dependency for
+ Marvell Berlin SoCs
+Date: Fri, 16 Oct 2015 22:20:50 +0200
+Message-ID: <56215C22.4080705@gmail.com>
+References: <1444981032-4401-1-git-send-email-jszhang@marvell.com>
+ <1444981032-4401-5-git-send-email-jszhang@marvell.com>
+ <CACRpkdaKBZEN7j3rc9vzT_schNerqKorwckZeKuFEAugbzGBgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:33965 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753004AbbJPUUF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:20:05 -0400
-Received: by oies66 with SMTP id s66so30831446oie.1
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2015 13:20:04 -0700 (PDT)
-In-Reply-To: <1444577659-17621-6-git-send-email-jogo@openwrt.org>
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:38910 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751876AbbJPUUz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:20:55 -0400
+In-Reply-To: <CACRpkdaKBZEN7j3rc9vzT_schNerqKorwckZeKuFEAugbzGBgQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Joachim Eastwood <manabian@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, James Hogan <james.hogan@imgtec.com>, Stefan Agner <stefan@agner.ch>, Jun Nie <jun.nie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, Alessandro Rubini <rubini@unipv.it>, Sonic Zhang <sonic.zhang@analog.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Baruch Siach <baruch@tkos.co.il>, Andrew Bresticker <abrestic@chromium.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Jisheng Zhang <jszhang@marvell.com>
+Cc: =?UTF-8?Q?Antoine_T=c3=a9nart?= <antoine.tenart@free-electrons.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=c5=82_Moll?= <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>
 
-On Sun, Oct 11, 2015 at 5:34 PM, Jonas Gorski <jogo@openwrt.org> wrote:
-
-> Replace all trivial request/free callbacks that do nothing but call into
-> pinctrl code with the generic versions.
+On 16.10.2015 16:15, Linus Walleij wrote:
+> On Fri, Oct 16, 2015 at 9:37 AM, Jisheng Zhang <jszhang@marvell.com> wrote:
 >
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
-> Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Eric Anholt <eric@anholt.net>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Andrew Bresticker <abrestic@chromium.org>
-> Acked-by: Baruch Siach <baruch@tkos.co.il>
-> Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Acked-by: Lee Jones <lee@kernel.org>
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> This is to add the pinctrl dependency for Marvell Berlin SoCs.
+>>
+>> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+>> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+>> Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Please push this through the ARM SoC tree or wherever patches
+> to this file goes. It doesn't seem to be a hard dependency to the
+> pin control patches.
 
-Patch applied, also added Maxime's ACK.
+[Added arm-soc Maintainers]
 
-Now I hope this does not collide with pinctrl in linux-next.
+This patch is touching arch/arm64/Kconfig.platforms. The hunk is
+very small so that it may be ok that I apply and send it with
+the next PR.
 
-Yours,
-Linus Walleij
+If the arm-soc Maintainers want to pick it up, I can resend the
+original patch with all Acked-by to arm-soc maintainer e-mail
+directly.
+
+Sebastian
+
