@@ -1,70 +1,32 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Fri, 16 Oct 2015 10:24:01 +0100
-Message-ID: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 1/7] pinctrl: berlin: introduce berlin_pinctrl_probe_regmap()
+Date: Fri, 16 Oct 2015 16:11:24 +0200
+Message-ID: <CACRpkdZ5nZ4Qsxe=XKVZL01S107+ZrY-uXVQnUk0PoVYGHLPFg@mail.gmail.com>
+References: <1444981032-4401-1-git-send-email-jszhang@marvell.com>
+	<1444981032-4401-2-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6033 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753660AbbJPJYG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 05:24:06 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1444981032-4401-2-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Antoine_T=C3=A9nart?= <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
-documentation implies that all functions (pcie, usb3 and sata) can be
-muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
-been confirmed that this is not the case and the mux'ing options much more
-limited. Unfortunately, the public documentation has not been updated to
-reflect this and so detail the actual mux'ing options here by function:
+On Fri, Oct 16, 2015 at 9:37 AM, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org> wrote:
 
-Function:		Lanes:
-pcie1 x2:		pcie3, pcie4
-pcie1 x4:		pcie1, pcie2, pcie3, pcie4
-pcie2 x1 (option1):	pcie0
-pcie2 x1 (option2):	pcie2
-usb3 port 0:		pcie0
-usb3 port 1 (option 1):	pcie1
-usb3 port 1 (option 2):	sata0
-sata:			sata0
+> This is to prepare for the next berlin4ct support, where we won't use
+> simple-mfd any more.
+>
+> Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-by: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/pinctrl/pinctrl-tegra-xusb.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Patch applied.
 
-diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
-index 2651d04bd1be..84a43e612952 100644
---- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-@@ -760,24 +760,15 @@ static const char * const tegra124_pcie_groups[] = {
- 	"pcie-2",
- 	"pcie-3",
- 	"pcie-4",
--	"sata-0",
- };
- 
- static const char * const tegra124_usb3_groups[] = {
- 	"pcie-0",
- 	"pcie-1",
--	"pcie-2",
--	"pcie-3",
--	"pcie-4",
- 	"sata-0",
- };
- 
- static const char * const tegra124_sata_groups[] = {
--	"pcie-0",
--	"pcie-1",
--	"pcie-2",
--	"pcie-3",
--	"pcie-4",
- 	"sata-0",
- };
- 
--- 
-2.1.4
-
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
