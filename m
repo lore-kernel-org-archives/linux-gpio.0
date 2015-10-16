@@ -1,48 +1,57 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH v6 4/7] arm64: berlin: add the pinctrl dependency for
- Marvell Berlin SoCs
-Date: Fri, 16 Oct 2015 22:20:50 +0200
-Message-ID: <56215C22.4080705@gmail.com>
-References: <1444981032-4401-1-git-send-email-jszhang@marvell.com>
- <1444981032-4401-5-git-send-email-jszhang@marvell.com>
- <CACRpkdaKBZEN7j3rc9vzT_schNerqKorwckZeKuFEAugbzGBgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add tps65218 gpio driver
+Date: Fri, 16 Oct 2015 22:26:16 +0200
+Message-ID: <CACRpkdbmw4TKxs+nozBmONmrBNTW1ETnyX83WPRAUyOGHxy3Bg@mail.gmail.com>
+References: <1444581663-31066-1-git-send-email-nicolassaenzj@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:38910 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876AbbJPUUz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:20:55 -0400
-In-Reply-To: <CACRpkdaKBZEN7j3rc9vzT_schNerqKorwckZeKuFEAugbzGBgQ@mail.gmail.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35322 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753004AbbJPU0R (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:26:17 -0400
+Received: by obbzf10 with SMTP id zf10so99563643obb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2015 13:26:16 -0700 (PDT)
+In-Reply-To: <1444581663-31066-1-git-send-email-nicolassaenzj@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jisheng Zhang <jszhang@marvell.com>
-Cc: =?UTF-8?Q?Antoine_T=c3=a9nart?= <antoine.tenart@free-electrons.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=c5=82_Moll?= <pawel.moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>
+To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 16.10.2015 16:15, Linus Walleij wrote:
-> On Fri, Oct 16, 2015 at 9:37 AM, Jisheng Zhang <jszhang@marvell.com> wrote:
+On Sun, Oct 11, 2015 at 6:41 PM, Nicolas Saenz Julienne
+<nicolassaenzj@gmail.com> wrote:
+
+> Driver for the GPIO block found in ti's tps65218 pmics.
 >
->> This is to add the pinctrl dependency for Marvell Berlin SoCs.
->>
->> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
->> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->> Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+> The device has two GPIOs and one GPO pin which can be configured as follows:
+> GPIO1:
+>         -general-purpose, open-drain output controlled by GPO1 user bit and/or
+>          sequencer
+>         -DDR3 reset input signal from SOC. Signal is either latched or
+>          passed-trough to GPO2 pin. See below for details.
+> GPO2:
+>         -general-purpose output controlled by GPO2 user bit
+>         -DDR3 reset output signal. Signal is controlled by GPIO1 and PGOOD.
+>          See below for details.
+>         -Output buffer can be configured as open-drain or push-pull.
+> GPIO3:
+>         -general-purpose, open-drain output controlled by GPO3 user bit and/or
+>          sequencer
+>         -reset input-signal for DCDC1 and DCDC2.
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> The input configurations are not meant to be used by the user so the driver
+> only offers GPOs. Also GPO2 is set-up as open drain by default.
 >
-> Please push this through the ARM SoC tree or wherever patches
-> to this file goes. It doesn't seem to be a hard dependency to the
-> pin control patches.
+> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
 
-[Added arm-soc Maintainers]
+It seems we are currently seeing an influx of drivers that can selectively
+enable open drain on some pins. Can you please look at the
+patches submitted by Laurent Pinchart for this so we get a
+generic solution that works for everyone.
 
-This patch is touching arch/arm64/Kconfig.platforms. The hunk is
-very small so that it may be ok that I apply and send it with
-the next PR.
+It's important that consumers can request open drain from
+descriptor tables or device trees and that the driver says "no"
+if this can not be satisfied.
 
-If the arm-soc Maintainers want to pick it up, I can resend the
-original patch with all Acked-by to arm-soc maintainer e-mail
-directly.
-
-Sebastian
-
+Yours,
+Linus Walleij
