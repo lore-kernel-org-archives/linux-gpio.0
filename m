@@ -1,13 +1,12 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: sh-pfc: Stop including <linux/platform_data/gpio-rcar.h>
-Date: Fri, 16 Oct 2015 17:04:36 +0200
-Message-ID: <CACRpkdbPr6D9ZC2MbN4ybRWEUHGrf8QH8jQYUazNkZ6WNkh+yw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] gpio: rcar: Remove obsolete platform data support
+Date: Fri, 16 Oct 2015 17:05:37 +0200
+Message-ID: <CACRpkdZuTJCQF-P3m0DNqxv1QaN=j7+w6HRMi2mruOujqVtcQQ@mail.gmail.com>
 References: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
-	<1444206225-25664-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1444206225-25664-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-sh-owner@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
@@ -16,16 +15,20 @@ List-Id: linux-gpio@vger.kernel.org
 On Wed, Oct 7, 2015 at 10:23 AM, Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 
-> This header file will be removed soon.
+>         Hi Greg, Linus, Alexandre,
 >
-> Copy the helper macro RCAR_GP_PIN(), which is used by the pinctrl
-> drivers only, to sh_pfc.h, and drop the #include.
+> Since commit 4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete
+> setup code"), which is now in arm-soc/for-next, Renesas R-Car SoCs are
+> only supported in generic DT-only ARM multi-platform builds.  The driver
+> doesn't need to use platform data anymore, hence this driver removes
+> platform data configuration.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Unfortunately the platform data header file is used in a few other
+> places, so we have to fix these first to avoid breaking the build.
 
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Include this in your pull request to me.
+Include this in your pull request.
 
 Yours,
 Linus Walleij
