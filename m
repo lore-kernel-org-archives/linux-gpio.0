@@ -1,46 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] drivers: field for new GPIO driver
-Date: Fri, 16 Oct 2015 23:18:57 +0200
-Message-ID: <CACRpkdafQ6jUQ0SRkT-39Ev+GZPqOz+z0SrXaU_7vEYo6c=cwA@mail.gmail.com>
-References: <1444817801-2266-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Fri, 16 Oct 2015 14:23:06 -0700
+Message-ID: <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
+References: <20151014092644.GO14956@sirena.org.uk>
+	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:35585 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750984AbbJPVS6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 17:18:58 -0400
-Received: by oiev17 with SMTP id v17so23740009oie.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2015 14:18:57 -0700 (PDT)
-In-Reply-To: <1444817801-2266-1-git-send-email-Yd_Tseng@asmedia.com.tw>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1444909328-24761-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie@kernel.o>
 List-Id: linux-gpio@vger.kernel.org
-To: YD Tseng <ltyu101@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Yd_Tseng@asmedia.com.tw, =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>
 
-On Wed, Oct 14, 2015 at 12:16 PM, YD Tseng <ltyu101@gmail.com> wrote:
+Hi,
 
-> Dear all:
->
-> This patch adds a new GPIO driver for AMD Promontory chip.  This GPIO controller is enumerated by ACPI and the ACPI compliant hardware ID is AMDF030.
->
-> Signed-off-by: YD Tseng <Yd_Tseng@asmedia.com.tw>
+I've bisected boot failures in next-20151016 down to patches in this branch:
 
-Please fix subject line to
-"gpio: driver for AMD Promontory"
+On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
+<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> Tomeu Vizoso (20):
+>       driver core: handle -EPROBE_DEFER from bus_type.match()
 
-Put a line-wrapped concise description in the driver commit
-blurb.
+The machine it happened on was OMAP5UEVM:
 
-> +#define TOTAL_GPIO_PINS 8
+http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
 
-Call this PT_TOTAL_GPIO 8 or so.
+But I've also seen it on tegra2, that one bisected down to:
 
-> +config GPIO_AMDPT
-> +       tristate "AMD Promontory GPIO support"
-> +       depends on PCI && ACPI
+>      regulator: core: Probe regulators on demand
 
-Why does this depend on PCI when it's an ACPI platform device?
+http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
 
-Yours,
-Linus Walleij
+
+
+-Olof
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
