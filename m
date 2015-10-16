@@ -1,49 +1,53 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Fri, 16 Oct 2015 10:17:12 -0600
-Message-ID: <56212308.7050405@wwwdotorg.org>
-References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH 0/4] Add support for the TI TPS65086 PMIC.
+Date: Fri, 16 Oct 2015 11:59:09 -0500
+Message-ID: <1445014753-15450-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:43552 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753920AbbJPQ73 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 12:59:29 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
-On 10/16/2015 03:24 AM, Jon Hunter wrote:
-> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
-> documentation implies that all functions (pcie, usb3 and sata) can be
-> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
-> been confirmed that this is not the case and the mux'ing options much more
-> limited. Unfortunately, the public documentation has not been updated to
-> reflect this and so detail the actual mux'ing options here by function:
+This series adds support for the TPS65086 PMIC. It is a MFD with an I2C
+interface, several regulators and load switches, and a GPO controller.
 
-FWIW, there's better documentation of this in the Tegra210 TRM, although 
-the options have been expanded on that chip, so the docs don't entirely 
-apply to Tegra124.
+Based on v4.3-rc1 and needs b4fe8ba ("regmap: Add generic macro to define regmap_irq")
+from Lee Jones' tree to build.
 
-> Function:		Lanes:
-> pcie1 x2:		pcie3, pcie4
-> pcie1 x4:		pcie1, pcie2, pcie3, pcie4
-> pcie2 x1 (option1):	pcie0
-> pcie2 x1 (option2):	pcie2
-> usb3 port 0:		pcie0
-> usb3 port 1 (option 1):	pcie1
-> usb3 port 1 (option 2):	sata0
-> sata:			sata0
+Andrew F. Davis (4):
+  Documentation: tps65086: Add DT bindings for the TPS65086 PMIC
+  mfd: tps65086: Add driver for the TPS65086 PMIC
+  regulator: tps65086: Add regulator driver for the TPS65086 PMIC
+  gpio: tps65086: Add GPIO driver for the TPS65086 PMIC
 
-I think this change needs a DT binding change to go along with it. Can 
-you take a look at:
+ .../devicetree/bindings/gpio/gpio-tps65086.txt     |  17 ++
+ Documentation/devicetree/bindings/mfd/tps65086.txt |  46 ++++
+ .../bindings/regulator/tps65086-regulator.txt      |  36 +++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-tps65086.c                       | 114 +++++++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/tps65086.c                             | 145 ++++++++++++
+ drivers/regulator/Kconfig                          |   7 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/tps65086-regulator.c             | 263 +++++++++++++++++++++
+ include/linux/mfd/tps65086.h                       | 120 ++++++++++
+ 13 files changed, 770 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65086.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/tps65086-regulator.txt
+ create mode 100644 drivers/gpio/gpio-tps65086.c
+ create mode 100644 drivers/mfd/tps65086.c
+ create mode 100644 drivers/regulator/tps65086-regulator.c
+ create mode 100644 include/linux/mfd/tps65086.h
 
-http://www.spinics.net/lists/arm-kernel/msg449647.html
-[PATCH 1/2] dt: update Tegra XUSB padctl binding for Tegra210
+-- 
+1.9.1
 
-(Sorry, I didn't realize anyone other than Thierry and Andrew were 
-working on XUSB/padctl so didn't explicitly CC you on that.)
-
-... to see what would need to be changed there? Or from a binding 
-perspective should we simply assume that people will refer to the HW 
-docs (or other information sources) for the exact list of available options?
