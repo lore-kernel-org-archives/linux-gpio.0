@@ -1,57 +1,30 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH/RFC v2] sh-pfc: r8a7795: add EtherAVB support
-Date: Fri, 16 Oct 2015 17:06:08 +0200
-Message-ID: <CAMuHMdUYSvNdwNXDLVX-Q9F527mWpKtmj8O+-mCoTSFeXuF+xg@mail.gmail.com>
-References: <1442556001-7041-1-git-send-email-horms+renesas@verge.net.au>
-	<CACRpkdbAU10yAeZPgrXdxHQuyviXs55LWAsa54M9jDMmObM-5A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: Remove obsolete platform_device_id entries
+Date: Fri, 16 Oct 2015 17:06:27 +0200
+Message-ID: <CACRpkdYP_NODbDEweLRksiJ9wmVPMewewm7rGiEfRueKCN0KDQ@mail.gmail.com>
+References: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbAU10yAeZPgrXdxHQuyviXs55LWAsa54M9jDMmObM-5A@mail.gmail.com>
+In-Reply-To: <1444213720-26770-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Wed, Oct 7, 2015 at 12:28 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On Fri, Oct 16, 2015 at 4:34 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Sep 18, 2015 at 8:00 AM, Simon Horman
-> <horms+renesas@verge.net.au> wrote:
->
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->>
->> This patch adds EthernetAVB
->>
->> Based on a much lager patch by Takeshi Kihara which was
->> originally posted by Kuninori Morimoto.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> [horms: extracted from a larger patch;
->>         corrected swapped {MATCH,CAPTURE_A} pins]
->> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->> ---
->> v2
->> * Added Reviewed-by
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I assume Geert will send me this as a pull request.
+> Since the removal of the r8a7778 legacy SoC code in commit
+> 4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete setup code"),
+> which is now in arm-soc/for-next, Renesas R-Car Gen1 SoCs are only
+> supported in generic DT-only ARM multi-platform builds.
+> The driver doesn't need to match platform devices by name anymore, hence
+> this series removes the corresponding platform_device_id entries.
 
-This one (and the r8a7795 audio patches) is already in your tree,
-thanks to you taking my last
-pull request :-)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Gr{oetje,eeting}s,
+Add to your pull request...
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
