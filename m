@@ -1,94 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v9] gpio: Add GPIO support for the ACCES 104-IDIO-16
-Date: Fri, 16 Oct 2015 17:03:00 +0200
-Message-ID: <CACRpkdYPBrgeqHL-dAMupGscht2US2WAAO7jojoTfSiXP8hDEA@mail.gmail.com>
-References: <20151009225504.GA3050@sophia>
+Subject: Re: [PATCH 2/3] pinctrl: sh-pfc: Stop including <linux/platform_data/gpio-rcar.h>
+Date: Fri, 16 Oct 2015 17:04:36 +0200
+Message-ID: <CACRpkdbPr6D9ZC2MbN4ybRWEUHGrf8QH8jQYUazNkZ6WNkh+yw@mail.gmail.com>
+References: <1444206225-25664-1-git-send-email-geert+renesas@glider.be>
+	<1444206225-25664-3-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151009225504.GA3050@sophia>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1444206225-25664-3-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Oct 10, 2015 at 12:55 AM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Wed, Oct 7, 2015 at 10:23 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> The ACCES 104-IDIO-16 family of PC/104 utility boards feature 16
-> optically isolated inputs and 16 optically isolated FET solid state
-> outputs. This driver provides GPIO support for these 32 channels of
-> digital I/O. Change-of-State detection interrupts are not supported.
+> This header file will be removed soon.
 >
-> GPIO 0-15 correspond to digital outputs 0-15, while GPIO 16-31
-> correspond to digital inputs 0-15. The base port address for the device
-> may be set via the a_104_idio_16_base module parameter.
+> Copy the helper macro RCAR_GP_PIN(), which is used by the pinctrl
+> drivers only, to sh_pfc.h, and drop the #include.
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
-> Changes in v9:
->   - Initialize GPIO device private data structure to 0 to prevent
->     garbage data pollution
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Getting there...
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> +static unsigned a_104_idio_16_base;
-> +module_param(a_104_idio_16_base, uint, 0);
-> +MODULE_PARM_DESC(a_104_idio_16_base, "ACCES 104-IDIO-16 base address");
-
-This is nice!
-
-> +static int __init a_104_idio_16_probe(struct platform_device *pdev)
-> +{
-> +       struct a_104_idio_16_gpio *const a104idio16gp = pdev->dev.platform_data;
-
-No.
-
-Why not just allocate zeroed it here in probe() like this:
-
-struct a_104_idio_16_gpio *gp;
-
-gp = devm_kzalloc(&pdev->dev, sizeof(*gp), GFP_KERNEL);
-if (!gp)
-   return -ENOMEM;
-
-You may want to rename "a_104_idio_16_gpio" to something more everyday.
-This is hard to type.
-
-> +static int __init a_104_idio_16_init(void)
-> +{
-> +       int err;
-> +       const struct a_104_idio_16_gpio GP = { 0 };
-
-This just works by chance. The keyword you're looking for is not "const"
-but "static" if you want this to stay around. But do it as described above
-instead.
-
-> +       a_104_idio_16_device = platform_device_register_data(NULL,
-> +               a_104_idio_16_driver.driver.name, -1, &GP, sizeof(GP));
-> +       if (IS_ERR(a_104_idio_16_device)) {
-> +               err = PTR_ERR(a_104_idio_16_device);
-> +               goto out_platform_device;
-> +       }
-
-Skip all this. Use devm_kzalloc() in probe as described.
-
-> +
-> +       dev_info(&a_104_idio_16_device->dev, "Initializing module\n");
-> +
-> +       err = platform_driver_probe(&a_104_idio_16_driver, a_104_idio_16_probe);
-> +       if (err)
-> +               goto out_platform_driver;
-> +
-> +       return 0;
-> +
-> +out_platform_driver:
-> +       platform_device_unregister(a_104_idio_16_device);
-> +out_platform_device:
-> +       return err;
-> +}
-
-Then this can be just return platform_driver_probe(...);
+Include this in your pull request to me.
 
 Yours,
 Linus Walleij
