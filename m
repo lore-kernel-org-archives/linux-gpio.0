@@ -1,41 +1,70 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH v6 5/7] pinctrl: dt-binding: document berlin4ct SoC pinctrl
-Date: Fri, 16 Oct 2015 15:37:10 +0800
-Message-ID: <1444981032-4401-6-git-send-email-jszhang@marvell.com>
-References: <1444981032-4401-1-git-send-email-jszhang@marvell.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
+Date: Fri, 16 Oct 2015 10:24:01 +0100
+Message-ID: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444981032-4401-1-git-send-email-jszhang@marvell.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sebastian.hesselbarth@gmail.com, linus.walleij@linaro.org, antoine.tenart@free-electrons.com, catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6033 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753660AbbJPJYG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 05:24:06 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-Add berlin4ct to existing berlin pinctrl device tree binding.
+The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
+documentation implies that all functions (pcie, usb3 and sata) can be
+muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
+been confirmed that this is not the case and the mux'ing options much more
+limited. Unfortunately, the public documentation has not been updated to
+reflect this and so detail the actual mux'ing options here by function:
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Acked-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+Function:		Lanes:
+pcie1 x2:		pcie3, pcie4
+pcie1 x4:		pcie1, pcie2, pcie3, pcie4
+pcie2 x1 (option1):	pcie0
+pcie2 x1 (option2):	pcie2
+usb3 port 0:		pcie0
+usb3 port 1 (option 1):	pcie1
+usb3 port 1 (option 2):	sata0
+sata:			sata0
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-tegra-xusb.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-index a8bb5e2..f8fa28c 100644
---- a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-@@ -20,7 +20,10 @@ Required properties:
- 	"marvell,berlin2cd-soc-pinctrl",
- 	"marvell,berlin2cd-system-pinctrl",
- 	"marvell,berlin2q-soc-pinctrl",
--	"marvell,berlin2q-system-pinctrl"
-+	"marvell,berlin2q-system-pinctrl",
-+	"marvell,berlin4ct-avio-pinctrl",
-+	"marvell,berlin4ct-soc-pinctrl",
-+	"marvell,berlin4ct-system-pinctrl"
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index 2651d04bd1be..84a43e612952 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -760,24 +760,15 @@ static const char * const tegra124_pcie_groups[] = {
+ 	"pcie-2",
+ 	"pcie-3",
+ 	"pcie-4",
+-	"sata-0",
+ };
  
- Required subnode-properties:
- - groups: a list of strings describing the group names.
+ static const char * const tegra124_usb3_groups[] = {
+ 	"pcie-0",
+ 	"pcie-1",
+-	"pcie-2",
+-	"pcie-3",
+-	"pcie-4",
+ 	"sata-0",
+ };
+ 
+ static const char * const tegra124_sata_groups[] = {
+-	"pcie-0",
+-	"pcie-1",
+-	"pcie-2",
+-	"pcie-3",
+-	"pcie-4",
+ 	"sata-0",
+ };
+ 
 -- 
-2.6.1
+2.1.4
+
