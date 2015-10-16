@@ -1,48 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: ssbi: fix compilation with DEBUG_FS=n
-Date: Fri, 16 Oct 2015 22:36:52 +0200
-Message-ID: <CACRpkdYonJtzEYhbTNB6npNfWV7oBM_72+F9tQbCysODPOWyrA@mail.gmail.com>
-References: <1444577971-17705-1-git-send-email-jogo@openwrt.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: ssbi: fix function name typo
+Date: Fri, 16 Oct 2015 22:41:31 +0200
+Message-ID: <6327573.Mj84IgUkQi@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35229 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751904AbbJPUgw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:36:52 -0400
-Received: by oiev17 with SMTP id v17so23209346oie.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Oct 2015 13:36:52 -0700 (PDT)
-In-Reply-To: <1444577971-17705-1-git-send-email-jogo@openwrt.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:59300 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753150AbbJPUlf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Oct 2015 16:41:35 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 
-On Sun, Oct 11, 2015 at 5:39 PM, Jonas Gorski <jogo@openwrt.org> wrote:
+The two newly added qcom ssbi pinctrl drivers have the same bug
+from a function name that apparently got changed in one place
+but not another, resulting in a build error when CONFIG_DEBUG_FS
+is disabled:
 
-> The DEBUG_FS=3Dn #defines for the dbg_show functions were missed when
-> renaming the driver from msm_ to pm8xxx_, causing it to break the bui=
-ld
-> when DEBUG_FS isn't enabled:
->
->   CC [M]  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.o
-> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:597:14: error: =E2=80=98pm8x=
-xx_gpio_dbg_show=E2=80=99 undeclared here (not in a function)
->   .dbg_show =3D pm8xxx_gpio_dbg_show,
->
-> Fix this by renaming them correctly.
->
-> Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp driver=
-s")
-> Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:652:14: error: 'pm8xxx_mpp_dbg_show' undeclared here (not in a function)
 
-Patch applied with Bj=C3=B6rn's ACK.
+This fixes the two identifiers.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index e1a3721bc8e5..d809c9eaa323 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -584,7 +584,7 @@ static void pm8xxx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ }
+ 
+ #else
+-#define msm_gpio_dbg_show NULL
++#define pm8xxx_gpio_dbg_show NULL
+ #endif
+ 
+ static struct gpio_chip pm8xxx_gpio_template = {
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+index 6652b8d7f707..8982027de8e8 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+@@ -639,7 +639,7 @@ static void pm8xxx_mpp_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ }
+ 
+ #else
+-#define msm_mpp_dbg_show NULL
++#define pm8xxx_mpp_dbg_show NULL
+ #endif
+ 
+ static struct gpio_chip pm8xxx_mpp_template = {
+
