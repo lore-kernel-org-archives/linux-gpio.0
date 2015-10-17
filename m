@@ -1,33 +1,41 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [PATCH 5/9] Documentation: dt-bindings: Add IRQ related properties of STM32 pinctrl
-Date: Sat, 17 Oct 2015 19:23:54 +0200
-Message-ID: <1445102638-11575-6-git-send-email-mcoquelin.stm32@gmail.com>
-References: <1445102638-11575-1-git-send-email-mcoquelin.stm32@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1445102638-11575-1-git-send-email-mcoquelin.stm32@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Sat, 17 Oct 2015 13:54:43 -0400
+Message-ID: <CAF6AEGvbYYeZx=YVCv9r5K0xjtLf3gN69gX5DyQ3j0S1qT0Yog@mail.gmail.com>
+References: <561E1378.6000906@collabora.com>
+	<20151017065750.GA18607@kroah.com>
+	<CAL_Jsq+Due3CgV0Z_m4vYQsa+X30DSxgmqz_r=26OrBV7v+H2g@mail.gmail.com>
+	<20151017154709.GE4059@kroah.com>
+	<CAL_JsqJvtKt6FpZgnYcsEm_opr9gK_a013BVpZGvnB=51oSUXg@mail.gmail.com>
+	<20151017165617.GC25156@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20151017165617.GC25156@kroah.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>F
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
----
- Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 3 +++
- 1 file changed, 3 insertions(+)
+On Sat, Oct 17, 2015 at 12:56 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>> I'm guessing the time is a matter of probing and undoing the probes
+>> rather than slow h/w. We could maybe improve things by making sure
+>> drivers move what they defer on to the beginning of probe, but that
+>> seems like a horrible, fragile hack.
+>
+> How can calling probe and failing cause 2 seconds?  How many different
+> probe calls are failing here?  Again, a boot log graph would be great to
+> see as it will show the root cause, not just guessing at this.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-index 7b4800c..dd95bec 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-@@ -13,6 +13,9 @@ Required properies:
-  - #size-cells	: The value of this property must be 1
-  - ranges	: defines mapping between pin controller node (parent) to
-    gpio-bank node (children).
-+ - interrupt-parent: phandle of the interrupt parent to which the external
-+   GPIO interrupts are forwarded to.
-+ - st,syscfg: phandle of the syscfg node used for IRQ mux selection.
-  - pins-are-numbered: Specify the subnodes are using numbered pinmux to
-    specify pins.
- 
--- 
-1.9.1
+
+just fwiw, but when you have a driver that depends on several other
+drivers (which in turn depend on other drivers and so on), the amount
+of probe-defer we end up seeing is pretty comical.  Yeah, there
+probably is some room to optimize by juggling around order drivers do
+things in probe.  But that doesn't solve the fundamental problem with
+the current state, about probe order having no clue about
+dependencies..
+
+BR,
+-R
