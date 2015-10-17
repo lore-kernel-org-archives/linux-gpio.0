@@ -1,101 +1,92 @@
-From: Marcin Wojtas <mw@semihalf.com>
-Subject: [PATCH] pinctrl: mvebu: armada-38x: add suspend/resume support
-Date: Sat, 17 Oct 2015 23:28:48 +0200
-Message-ID: <1445117328-31678-1-git-send-email-mw@semihalf.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] pinctrl: mvebu: armada-38x: add suspend/resume support
+Date: Sat, 17 Oct 2015 23:29:27 +0100
+Message-ID: <20151017222927.GR32532@n2100.arm.linux.org.uk>
+References: <1445117328-31678-1-git-send-email-mw@semihalf.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:34153 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750714AbbJQVaI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Oct 2015 17:30:08 -0400
-Received: by lbbwb3 with SMTP id wb3so58633745lbb.1
-        for <linux-gpio@vger.kernel.org>; Sat, 17 Oct 2015 14:30:06 -0700 (PDT)
+Received: from pandora.arm.linux.org.uk ([78.32.30.218]:43770 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbbJQW3j (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 17 Oct 2015 18:29:39 -0400
+Content-Disposition: inline
+In-Reply-To: <1445117328-31678-1-git-send-email-mw@semihalf.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, sebastian.hesselbarth@gmail.com, andrew@lunn.ch, jason@lakedaemon.net, thomas.petazzoni@free-electrons.com, gregory.clement@free-electrons.com, nadavh@marvell.com, alior@marvell.com, tawfik@marvell.com, mw@semihalf.com, jaz@semihalf.com
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, thomas.petazzoni@free-electrons.com, andrew@lunn.ch, jason@lakedaemon.net, tawfik@marvell.com, jaz@semihalf.com, linus.walleij@linaro.org, nadavh@marvell.com, alior@marvell.com, gregory.clement@free-electrons.com, sebastian.hesselbarth@gmail.com
 
-This commit adds suspend/resume support by saving and restoring registers'
-state in a dedicated array.
+On Sat, Oct 17, 2015 at 11:28:48PM +0200, Marcin Wojtas wrote:
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
+> index 6ec82c6..094cb48 100644
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
+> @@ -23,6 +23,7 @@
+>  #include "pinctrl-mvebu.h"
+>  
+>  static void __iomem *mpp_base;
+> +static u32 *mpp_saved_regs;
 
-Signed-off-by: Marcin Wojtas <mw@semihalf.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-38x.c | 37 ++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+I'm not a fan of unnecessary global variables.  It adds to the bulk of
+the kernel when built-in (even though it's in .bss, it still has a cost)
+and these all add up when built-in.
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-index 6ec82c6..094cb48 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-@@ -23,6 +23,7 @@
- #include "pinctrl-mvebu.h"
- 
- static void __iomem *mpp_base;
-+static u32 *mpp_saved_regs;
- 
- static int armada_38x_mpp_ctrl_get(unsigned pid, unsigned long *config)
- {
-@@ -424,6 +425,7 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
- 	const struct of_device_id *match =
- 		of_match_device(armada_38x_pinctrl_of_match, &pdev->dev);
- 	struct resource *res;
-+	int nregs;
- 
- 	if (!match)
- 		return -ENODEV;
-@@ -441,11 +443,44 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
- 	soc->modes = armada_38x_mpp_modes;
- 	soc->nmodes = armada_38x_mpp_controls[0].npins;
- 
-+	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
-+
-+	mpp_saved_regs = devm_kcalloc(&pdev->dev, nregs, sizeof(u32),
-+				      GFP_KERNEL);
-+	if (!mpp_saved_regs)
-+		return -ENOMEM;
-+
- 	pdev->dev.platform_data = soc;
- 
- 	return mvebu_pinctrl_probe(pdev);
- }
- 
-+int armada_38x_pinctrl_suspend(struct platform_device *pdev, pm_message_t state)
-+{
-+	struct mvebu_pinctrl_soc_info *soc = platform_get_drvdata(pdev);
-+	int i, nregs;
-+
-+	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
-+
-+	for (i = 0; i < nregs; i++)
-+		mpp_saved_regs[i] = readl(mpp_base + i * 4);
-+
-+	return 0;
-+}
-+
-+int armada_38x_pinctrl_resume(struct platform_device *pdev)
-+{
-+	struct mvebu_pinctrl_soc_info *soc = platform_get_drvdata(pdev);
-+	int i, nregs;
-+
-+	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
-+
-+	for (i = 0; i < nregs; i++)
-+		writel(mpp_saved_regs[i], mpp_base + i * 4);
-+
-+	return 0;
-+}
-+
- static int armada_38x_pinctrl_remove(struct platform_device *pdev)
- {
- 	return mvebu_pinctrl_remove(pdev);
-@@ -458,6 +493,8 @@ static struct platform_driver armada_38x_pinctrl_driver = {
- 	},
- 	.probe = armada_38x_pinctrl_probe,
- 	.remove = armada_38x_pinctrl_remove,
-+	.suspend = armada_38x_pinctrl_suspend,
-+	.resume = armada_38x_pinctrl_resume,
- };
- 
- module_platform_driver(armada_38x_pinctrl_driver);
+Please make it part of the driver data allocated at probe time.
+
+>  static int armada_38x_mpp_ctrl_get(unsigned pid, unsigned long *config)
+>  {
+> @@ -424,6 +425,7 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
+>  	const struct of_device_id *match =
+>  		of_match_device(armada_38x_pinctrl_of_match, &pdev->dev);
+>  	struct resource *res;
+> +	int nregs;
+>  
+>  	if (!match)
+>  		return -ENODEV;
+> @@ -441,11 +443,44 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
+>  	soc->modes = armada_38x_mpp_modes;
+>  	soc->nmodes = armada_38x_mpp_controls[0].npins;
+>  
+> +	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
+> +
+> +	mpp_saved_regs = devm_kcalloc(&pdev->dev, nregs, sizeof(u32),
+> +				      GFP_KERNEL);
+> +	if (!mpp_saved_regs)
+> +		return -ENOMEM;
+> +
+>  	pdev->dev.platform_data = soc;
+
+The 'soc' is stored in platform data, not driver data, but...
+
+>  
+>  	return mvebu_pinctrl_probe(pdev);
+>  }
+>  
+> +int armada_38x_pinctrl_suspend(struct platform_device *pdev, pm_message_t state)
+> +{
+> +	struct mvebu_pinctrl_soc_info *soc = platform_get_drvdata(pdev);
+
+You access it through driver data.  Isn't the driver data here a
+struct mvebu_pinctrl pointer?  See platform_set_drvdata() in
+mvebu_pinctrl_probe().
+
+> +	int i, nregs;
+> +
+> +	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
+> +
+> +	for (i = 0; i < nregs; i++)
+> +		mpp_saved_regs[i] = readl(mpp_base + i * 4);
+> +
+> +	return 0;
+> +}
+> +
+> +int armada_38x_pinctrl_resume(struct platform_device *pdev)
+> +{
+> +	struct mvebu_pinctrl_soc_info *soc = platform_get_drvdata(pdev);
+
+Ditto.
+
 -- 
-1.8.3.1
-
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
