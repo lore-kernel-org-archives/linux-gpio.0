@@ -1,123 +1,80 @@
-From: Moritz Fischer <moritz.fischer@ettus.com>
-Subject: Re: [PATCH 1/5] dt-bindings: MIPS: Document xilfpga bindings and boot style
-Date: Sun, 18 Oct 2015 09:47:19 -0700
-Message-ID: <CAAtXAHdcUKmjtXZMV2xVyb5nvebSZgWbO_rW0aKoywLUmaU11w@mail.gmail.com>
-References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
-	<1444827117-10939-2-git-send-email-Zubair.Kakakhel@imgtec.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Sun, 18 Oct 2015 20:29:31 +0100
+Message-ID: <20151018192931.GY14956@sirena.org.uk>
+References: <561E1378.6000906@collabora.com>
+ <20151017065750.GA18607@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444827117-10939-2-git-send-email-Zubair.Kakakhel@imgtec.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc: ralf@linux-mips.org, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UNRiu6AvOPumrTuJ"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35573 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699AbbJRTat (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 18 Oct 2015 15:30:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20151017065750.GA18607@kroah.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jin
 
-Hi Zubair,
 
-On Wed, Oct 14, 2015 at 5:51 AM, Zubair Lutfullah Kakakhel
-<Zubair.Kakakhel@imgtec.com> wrote:
-> Xilfpga boots only with device-tree. Document the required properties
-> and the unique boot style
->
-> Signed-off-by: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-> ---
->  .../devicetree/bindings/mips/img/xilfpga.txt       | 76 ++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/img/xilfpga.txt
->
-> diff --git a/Documentation/devicetree/bindings/mips/img/xilfpga.txt b/Documentation/devicetree/bindings/mips/img/xilfpga.txt
-> new file mode 100644
-> index 0000000..1e7084c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/img/xilfpga.txt
-> @@ -0,0 +1,76 @@
-> +Imagination University Program MIPSFpga
-> +=======================================
-> +
-> +Under the Imagination University Program, a microAptiv UP core has been released for academic usage.
-> +
-> +As we are dealing with a mips core instantiated on an FPGA, specifications are fluid and can be varied in RTL.
-> +
-> +This binding document is provided as baseline guidance for the example project provided by IMG.
-> +
-> +The example project runs on the Nexys4DDR board by Digilent powered by the ARTIX-7 FPGA by Xilinx.
-> +
-> +Relevant details about the example project and the Nexys4DDR board:
-> +
-> +- microAptiv UP core m14Kc
-> +- 50MHz clock speed
-> +- 128Mbyte DDR RAM     at 0x0000_0000
-> +- 8Kbyte RAM           at 0x1000_0000
-> +- axi_intc             at 0x1020_0000
-> +- axi_uart16550                at 0x1040_0000
-> +- axi_gpio             at 0x1060_0000
-> +- axi_i2c              at 0x10A0_0000
-> +- custom_gpio          at 0x10C0_0000
-> +- axi_ethernetlite     at 0x10E0_0000
-> +- 8Kbyte BootRAM       at 0x1FC0_0000
-> +
-> +Required properties:
-> +--------------------
-> + - compatible: Must include "img,xilfpga".
-> +
-> +CPU nodes:
-> +----------
-> +A "cpus" node is required.  Required properties:
-> + - #address-cells: Must be 1.
-> + - #size-cells: Must be 0.
-> +A CPU sub-node is also required for at least CPU 0. Required properties:
-> + - device_type: Must be "cpu".
-> + - compatible: Must be "mips,m14Kc".
-> + - reg: Must be <0>.
-> + - clocks: Must include the CPU clock.  See ../../clock/clock-bindings.txt for
-> +   details on clock bindings.
-I think the reference to clock binding docs is not required.
+--UNRiu6AvOPumrTuJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> + - ext clock handle for fixed-clock received by MIPS core.
-> +Example:
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               cpu0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "mips,m14Kc";
-> +                       reg = <0>;
-> +                       clocks  = <&ext>;
-> +               };
-> +       };
-> +
-> +       ext: ext {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <50000000>;
-> +       };
-> +
-> +Boot protocol:
-> +--------------
-> +
-> +The BootRAM is a writeable "RAM" in FPGA at 0x1FC0_0000. This is for easy reprogrammibility via JTAG.
-> +
-> +The BootRAM inializes the cache and the axi_uart peripheral.
-> +
-> +DDR initialiation is already handled by a HW IP block.
-> +
-> +When the example project bitstream is loaded, the cpu_reset button needs to be pressed.
-> +
-> +The bootram initializes the cache and axi_uart. Then outputs MIPSFPGA\n\r on the serial port
-> +on the Nexys4DDR board.
-> +
-> +At this point, the board is ready to load the Linux kernel vmlinux file via JTAG.
-> +
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
 
-Cheers,
+> I can't see adding calls like this all over the tree just to solve a
+> bus-specific problem, you are adding of_* calls where they aren't
+> needed, or wanted, at all.
 
-Moritz
+This isn't bus specific, I'm not sure what makes you say that?
+
+> What is the root-problem of your delay in device probing?  I read your
+> last patch series and I can't seem to figure out what the issue is that
+> this is solving in any "better" way from the existing deferred probing.
+
+So, I don't actually have any platforms that are especially bothered by
+this (at least not for my use cases) so there's a bit of educated
+guessing going on here but there's two broad things I'm aware of. =20
+
+One is that regardless of the actual performance of the system when
+deferred probe goes off it splats errors all over the console which
+makes it look like something is going wrong even if everything is fine
+in the end.  If lots of deferred probing happens then the volume gets
+big too.  People find this distracting, noisy and ugly - it obscures
+actual issues and trains people to ignore errors.  I do think this is a
+reasonable concern and that it's worth trying to mitigate against
+deferral for this reason alone.  We don't want to just ignore the errors
+and not print anything either since if the resource doesn't appear the
+user needs to know what is preventing the driver from instantiating so
+they can try to fix it.
+
+The other is that if you're printing to a serial console then that's not
+an especially fast operation so if you're getting lots of messages being
+printed simply physically outputting them takes measurable time.  I'm
+not aware of any performance concerns outside of that, but like I say
+I'm not affected by this myself in any great way.  Obviously this can be
+configured but not having actual errors on the console isn't super
+awesome either for systems that make use of the logging there and we
+don't have a good way of telling what's from deferral and what's not.
+
+--UNRiu6AvOPumrTuJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWI/MaAAoJECTWi3JdVIfQmtEH/i0fhCiTHqE0Nz3IsEG38cvR
+kYDtb3pOGWST5b/UDQjf1OQqiV4KnXG4/yudegM8Dwl3nxqNEpusHjQU2oew9a1l
+VpkzeB9eHfcvCnoT+h6YgIfjIzIFcfEwbNcDC8PXOQTYoTaOTLH/0zVHvJRFN1Rs
+ufcwAI28sT1bHWRWBnzh3TStrN/z6ivL7Yg9qLVTyGBLTXbWUMFXmDW2WNK11Hn0
+HWJTqVAuodvvKj+FPWK/+dJSJyhwRklDN5IV5TQY3MH2BmraO/H/IqMOqPiNkp1H
+IIV2+WRRW+gxa4RYD0zzKfx+rr8ipcdD/3iqx9DWwz8yC3Gs64q9qwXI4ha7NPs=
+=jM4R
+-----END PGP SIGNATURE-----
+
+--UNRiu6AvOPumrTuJ--
