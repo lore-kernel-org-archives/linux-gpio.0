@@ -1,46 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/5] gpio/xilinx: enable for MIPS
-Date: Mon, 19 Oct 2015 08:55:09 +0200
-Message-ID: <CACRpkdb0joX35HdcSJ=afchMCNVo7i=an3HE4BnK0xA_Gb5YpA@mail.gmail.com>
-References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
-	<1444827117-10939-3-git-send-email-Zubair.Kakakhel@imgtec.com>
-	<20151014151813.GL15287@xsjsorenbubuntu>
-	<561E7B65.3090704@metafoo.de>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: mvebu: armada-38x: add suspend/resume support
+Date: Mon, 19 Oct 2015 09:23:20 +0200
+Message-ID: <20151019092320.33d48dba@free-electrons.com>
+References: <1445117328-31678-1-git-send-email-mw@semihalf.com>
+	<20151017222927.GR32532@n2100.arm.linux.org.uk>
+	<CAPv3WKed+Q3K0ky9b9AAYSymB-tE0O=57UdrgM+7Cx-X9PeVcA@mail.gmail.com>
+	<20151018160123.6694b4be@free-electrons.com>
+	<CAPv3WKdKea-85_0xUv218OVfhnfMvisYXh8qRNRjvmNkweSUJg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <561E7B65.3090704@metafoo.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:40560 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750759AbbJSHXY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 03:23:24 -0400
+In-Reply-To: <CAPv3WKdKea-85_0xUv218OVfhnfMvisYXh8qRNRjvmNkweSUJg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Marcin Wojtas <mw@semihalf.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Tawfik Bayouk <tawfik@marvell.com>, Grzegorz Jaszczyk <jaz@semihalf.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, nadavh@marvell.com, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Gregory =?UTF-8?B?Q2zDqW1lbnQ=?= <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Wed, Oct 14, 2015 at 5:57 PM, Lars-Peter Clausen <lars@metafoo.de> w=
-rote:
-> On 10/14/2015 05:18 PM, S=C3=B6ren Brinkmann wrote:
->> On Wed, 2015-10-14 at 01:51PM +0100, Zubair Lutfullah Kakakhel wrote=
-:
+Hello,
 
->> Hmm, in general, this driver is hopefully generic enough that it doe=
-sn't
->> have any real architecture dependencies. And I suspect, we want to
->> enable this driver for ARM64 for ZynqMP soon too. Should we probably
->> drop these arch dependencies completely? It seems to become quite a =
-long list.
+On Mon, 19 Oct 2015 08:04:49 +0200, Marcin Wojtas wrote:
+
+> > I don't like this. The mvebu_pinctrl_soc_info structure is meant to be
+> > a read-only structure that only describes static information giving
+> > SoC-specific details for pin-muxing. The idea is that in the event
+> > where you had multiple pinctrl in the same system, you would still have
+> > only one instance of mvebu_pinctrl_soc_info.
+> 
+> Ok, understood. What with current static globals, like mpp_base? This
+> is a problem when we consider hypothetical multi-pintrl system...
+
+The current driver is indeed not designed for multiple instances of the
+same pinctrl controller. But that's exactly what Russell is asking for.
+
+> In genereal, I think storing additional global data is not
+> starightforward, as dev->platform_data and dev->driver_data are
+> currently occupied by mvebu_pinctrl and mvebu_pinctrl_soc_info. I
+> propose the following:
 >
-> I've been thinking about this a while ago. This is certainly not the =
-only
-> driver affected by this problem. But the thing is people always compl=
-ain if
-> new symbols become visable in Kconfig that don't apply to their platf=
-orm.
+> 
+> 1. Create a new structure:
+> struct mvebu_pinctrl_pm_info {
 
-I don't think it's that important. If people go do down in the GPIO sub=
-menu
-they are looking at real weird stuff anyways. Please send a patch enabl=
-ing
-this for all rather than coming up with strange config symbols IMO.
+This definitely shouldn't be called "pm_info", because 'base' is not PM
+related. It should be mvebu_pinctrl_state or something like that.
 
-Yours,
-Linus Walleij
+>     void __iomem *base;
+>     static u32 *mpp_saved_regs;
+>     int nregs;
+> }
+> 
+> 2. Add new field to struct mvebu_pinctrl:
+> struct mvebu_pinctrl_pm_info *pm_info;
+
+Does not work because "mvebu_pinctrl_pm_info" cannot be a generic
+structure, it has to be a per-SoC driver structure, since the set of
+registers to save for PM reasons is different from one SoC to the
+other. Also, some SoC have only one "base" pointer, some others (like
+Dove) have multiple.
+
+So it should be the other way around: the SoC-specific driver create a
+structure, and this structure points back to the mvebu_pinctrl
+structure.
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
