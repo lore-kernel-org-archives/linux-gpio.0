@@ -1,48 +1,137 @@
-From: Caleb Crome <caleb@crome.org>
-Subject: Re: [alsa-devel] [PATCH v2 0/3] Add support for Cirrus Logic CS47L24
- and WM1831 codecs
-Date: Mon, 19 Oct 2015 08:10:47 -0700
-Message-ID: <CAG5mAdykN90YqBfuTY8d1U-EK7mXQfSdXEL8Vr4KuVwqRrLbTw@mail.gmail.com>
-References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <CAG5mAdxCPdPXbieWUTph0WeboQcRNX5hXwzQiGqouartK2M9SA@mail.gmail.com> <1445267073.3536.32.camel@rf-debian.wolfsonmicro.main>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH 1/4] Documentation: tps65086: Add DT bindings for the
+ TPS65086 PMIC
+Date: Mon, 19 Oct 2015 10:16:47 -0500
+Message-ID: <5625095F.5080204@ti.com>
+References: <1445014753-15450-1-git-send-email-afd@ti.com>
+ <1445014753-15450-2-git-send-email-afd@ti.com> <20151019091311.GH31804@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:35496 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753854AbbJSPLI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 11:11:08 -0400
-Received: by wicll6 with SMTP id ll6so10386945wic.0
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2015 08:11:06 -0700 (PDT)
-In-Reply-To: <1445267073.3536.32.camel@rf-debian.wolfsonmicro.main>
+Received: from bear.ext.ti.com ([192.94.94.41]:47227 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751401AbbJSPRH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 19 Oct 2015 11:17:07 -0400
+In-Reply-To: <20151019091311.GH31804@x1>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: devicetree@vger.kernel.org, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, lee.jones@linaro.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 19, 2015 at 8:04 AM, Richard Fitzgerald
-<rf@opensource.wolfsonmicro.com> wrote:
-> On Mon, 2015-10-19 at 07:52 -0700, Caleb Crome wrote:
->> (Accidentally sent HTML format last time, so re-sending...)
->>
->> Does anybody have support written for the CS53L30 4 channel ADC ?
->>
->>
->> Thanks,
->>  -Caleb
->>
+On 10/19/2015 04:13 AM, Lee Jones wrote:
+> On Fri, 16 Oct 2015, Andrew F. Davis wrote:
 >
-> You'd be more likely to get a reply to that if you started a new thread
-> that included in the email title the part number of the device you are
-> interested in. It not reasonable to assume that someone who knows about
-> the CS53L30 would expect to find a discussion of it under a thread about
-> a different device.
+>> The TPS65086 PMIC contains several regulators and a GPO controller.
+>> Add bindings for the TPS65086 PMIC.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>   .../devicetree/bindings/gpio/gpio-tps65086.txt     | 17 ++++++++
+>>   Documentation/devicetree/bindings/mfd/tps65086.txt | 46 ++++++++++++++++++++++
+>>   .../bindings/regulator/tps65086-regulator.txt      | 36 +++++++++++++++++
+>
+> Please split these up into separate patches.
+>
+> There is no functional reason to bundle them up.
 >
 
+ACK
 
-Ah, fair enough .  I figured that the group of folks paying attention
-to the CS47L24 might be the same people paying attention to the
-CS53L30.
+>>   3 files changed, 99 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65086.txt
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.txt
+>>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65086-regulator.txt
+>
+> [...]
+>
+>> diff --git a/Documentation/devicetree/bindings/mfd/tps65086.txt b/Documentation/devicetree/bindings/mfd/tps65086.txt
+>> new file mode 100644
+>> index 0000000..4b6aeb4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/tps65086.txt
+>> @@ -0,0 +1,46 @@
+>> +* TPS65086 Power Management Integrated Circuit bindings
+>> +
+>> +Required properties:
+>> + - compatible		: Should be "ti,tps65086".
+>
+> Any indication that it's a PMIC?
+>
 
-Thanks,
--caleb
+In the compatible string?
+
+>> + - reg			: Slave address.
+>
+> I2C/SPI?
+>
+
+ACK
+
+>> + - interrupt-parent	: The parent interrupt controller.
+>
+> Phandled to ...
+>
+
+ACK
+
+>> + - interrupts		: The interrupt line the device is connected to.
+>> + - interrupt-controller	: Marks the device node as an interrupt controller.
+>> + - #interrupt-cells	: The number of cells to describe an IRQ, this
+>> +			  should be 2. The first cell is the IRQ number.
+>> +			  The second cell is the flags, encoded as the trigger
+>> +			  masks from ../interrupt-controller/interrupts.txt.
+>
+> Masks?  What masks?
+>
+> Best to make a link to the header where the flags are defined here.
+>
+
+ACK
+
+>> +Additional nodes defined in:
+>> + - Regulators	: ../regulator/tps65086-regulator.txt.
+>> + - GPIO		: ../gpio/gpio-tps65086.txt.
+>
+> I'd suggest removing the full stops from all of the lines above.
+>
+> Just treat them as bullet points like we normally do.
+>
+
+ACK
+
+>> +Example:
+>> +
+>> +	pmic: tps65086@5e {
+>> +		compatible = "ti,tps65086";
+>> +		reg = <0x5e>;
+>> +		interrupt-parent = <&gpio1>;
+>> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +
+>> +		regulators {
+>> +			compatible = "ti,tps65086-regulator";
+>> +
+>> +			buck1 {
+>> +				regulator-name = "vcc1";
+>> +				regulator-min-microvolt = <1600000>;
+>> +				regulator-max-microvolt = <1600000>;
+>> +				regulator-boot-on;
+>> +				ti,regulator-decay;
+>> +				ti,regulator-step-size-25mv;
+>> +			};
+>> +		};
+>> +
+>> +		gpio4: tps65086_gpio {
+>> +			compatible = "ti,tps65086-gpio";
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +		};
+>> +	};
+>
+> [...]
+>
+
+-- 
+Andrew F. Davis
