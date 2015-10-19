@@ -1,76 +1,165 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 1/3] mfd: arizona: Support Cirrus Logic CS47L24 and WM1831
-Date: Mon, 19 Oct 2015 21:53:27 +0800
-Message-ID: <201510192134.3BJpW7bK%fengguang.wu@intel.com>
-References: <1445257885-16989-2-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 19 Oct 2015 16:10:56 +0200
+Message-ID: <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:52745 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750995AbbJSNyD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 19 Oct 2015 09:54:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1445257885-16989-2-git-send-email-rf@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151019131821.GA32532-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Jingo
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: kbuild-all@01.org, lee.jones@linaro.org, linus.walleij@linaro.org, broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hi Richard,
+On 19 October 2015 at 15:18, Russell King - ARM Linux
+<linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+> On Mon, Oct 19, 2015 at 02:34:22PM +0200, Tomeu Vizoso wrote:
+>> ... If a device is available and has
+>> a compatible driver, but it cannot be probed because a dependency
+>> isn't going to be available, that's an error and is going to cause
+>> real-world problems unless the device is redundant. Currently we say
+>> nothing because with deferred probe the probe callbacks are also part
+>> of the mechanism that determines the dependency order.
+>
+> So what if device X depends on device Y, and we have a driver for
+> device Y built-in to the kernel, but the driver for device X is a
+> module?
+>
+> I don't see this being solvable in the way you describe above - it's
+> going to identify X as being unable to be satisfied, and report it as
+> an error - but it's not an error at all.
 
-[auto build test WARNING on next-20151016 -- if it's inappropriate base, please suggest rules for selecting the more suitable base]
+It's going to probe Y at late_initcall, then probe X when its driver
+is registered. No deferred probes nor messages about it.
 
-url:    https://github.com/0day-ci/linux/commits/Richard-Fitzgerald/Add-support-for-Cirrus-Logic-CS47L24-and-WM1831-codecs/20151019-203503
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+But if you meant to write the opposite case (X built-in and Y in a
+module), then I have to ask you in what situation that would make
+sense.
 
+>> Having a specific switch for enabling deferred probe logging sounds
+>> good, but there's going to be hundreds of spurious messages about
+>> deferred probes that were just deferrals and only one of them is going
+>> to be the actual error in which a device failed to find a dependency.
+>
+> Why would there be?  Sounds like something's very wrong there.
 
-sparse warnings: (new ones prefixed by >>)
+Sorry about that, I have checked that only now and I "only" get 39
+deferred probe messages on exynos5250-snow.
 
->> drivers/mfd/cs47l24-tables.c:33:38: sparse: incorrect type in argument 2 (different base types)
-   drivers/mfd/cs47l24-tables.c:33:38:    expected struct reg_sequence const *regs
-   drivers/mfd/cs47l24-tables.c:33:38:    got struct reg_default static const [toplevel] *<noident>
-   drivers/mfd/cs47l24-tables.c: In function 'cs47l24_patch':
-   drivers/mfd/cs47l24-tables.c:33:10: warning: passing argument 2 of 'regmap_register_patch' from incompatible pointer type [-Wincompatible-pointer-types]
-             cs47l24_reva_patch,
-             ^
-   In file included from include/linux/mfd/arizona/core.h:17:0,
-                    from drivers/mfd/cs47l24-tables.c:15:
-   include/linux/regmap.h:726:5: note: expected 'const struct reg_sequence *' but argument is of type 'const struct reg_default *'
-    int regmap_register_patch(struct regmap *map, const struct reg_sequence *regs,
-        ^
+> You should only get deferred probes for devices which are declared to
+> be present, but their resources have not yet been satisfied.  It
+> doesn't change anything if you have a kernel with lots of device drivers
+> or just the device drivers you need - the device drivers you don't need
+> do not contribute to the deferred probing in any way.
 
-vim +33 drivers/mfd/cs47l24-tables.c
+I don't think that the number of registered drivers affects the number
+of probes that get deferred (but I'm not sure why you mention that).
 
-    17	#include <linux/device.h>
-    18	
-    19	#include "arizona.h"
-    20	
-    21	#define CS47L24_NUM_ISR 5
-    22	
-    23	static const struct reg_default cs47l24_reva_patch[] = {
-    24		{ 0x80,  0x3 },
-    25		{ 0x27C, 0x0010 },
-    26		{ 0x221, 0x0070 },
-    27		{ 0x80,  0x0 },
-    28	};
-    29	
-    30	int cs47l24_patch(struct arizona *arizona)
-    31	{
-    32		return regmap_register_patch(arizona->regmap,
-  > 33					     cs47l24_reva_patch,
-    34					     ARRAY_SIZE(cs47l24_reva_patch));
-    35	}
-    36	EXPORT_SYMBOL_GPL(cs47l24_patch);
-    37	
-    38	static const struct regmap_irq cs47l24_irqs[ARIZONA_NUM_IRQ] = {
-    39		[ARIZONA_IRQ_GP2] = { .reg_offset = 0, .mask = ARIZONA_GP2_EINT1 },
-    40		[ARIZONA_IRQ_GP1] = { .reg_offset = 0, .mask = ARIZONA_GP1_EINT1 },
-    41	
+> So, really, after boot and all appropriate modules have been loaded,
+> you should end up with no deferred probes.  Are you saying that you
+> still have "hundreds" at that point?  If you do, that sounds like
+> there's something very wrong.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I was talking about messages if we log each -EPROBE_DEFER, not devices
+that remain to be probed. The point being that right now we don't have
+a way to know if we are deferring because the dependency will be
+around later, or if we have a problem and the dependency isn't going
+to be there at all.
+
+If we had a way to enable printing the cause of each -EPROBE_DEFER,
+right now that would print 39 messages of this board that are only due
+to ordering. The actual issue would be printed in exactly the same way
+somewhere in the middle.
+
+>> 3) Regarding total boot time, I don't expect this series to make much
+>> of a difference because though we would save a lot of matching and
+>> querying for resources, that's little time compared with how long we
+>> wait for hardware to react during probing. Async probing is more
+>> likely to help with drivers that take a long time to probe.
+>
+> For me, on my fastest ARM board, though running serial console:
+>
+> [    2.293468] VFS: Mounted root (ext4 filesystem) on device 179:1.
+>
+> There's a couple of delays in there, but they're not down to deferred
+> probing.  The biggest one is serial console startup (due to the time
+> it takes to write out the initial kernel messages):
+>
+> [    0.289962] f1012000.serial: ttyS0 at MMIO 0xf1012000 (irq = 23, base_baud = 15625000) is a 16550A
+> [    0.944124] console [ttyS0] enabled
+>
+> and DSA switch initialisation:
+>
+> [    1.530655] libphy: dsa slave smi: probed
+> [    2.034426] dsa dsa@0 lan6 (uninitialized): attached PHY at address 0 [Generic PHY]
+>
+> I'm not sure what causes that, but at a guess it's having to talk to the
+> DSA switch over the MDIO bus via several layers of indirect accesses.
+> Of course, serial console adds to the boot time significantly anyway,
+> especially at the "standard" kernel logging level.
+
+Yes, I don't think it makes any sense to measure boot times with the
+serial console on, because it's not comparable to production and
+because printing an additional line during boot affects significantly
+the times.
+
+To be clear, I was saying that this series should NOT affect total
+boot times much.
+
+>> One more thing about the breakage we have seen so far is that it's
+>> generally caused by implicit dependencies and hunting those is
+>> probably the second biggest timesink of the linux embedded developer
+>> after failed probes.
+>
+> ... which is generally caused by the crappy code which the average
+> embedded Linux developer creates, particularly with the crappy error
+> messages they like creating.  For the most part, they _might_ as well
+> just print "Error!\n" and be done with it, for all the use they are.
+> When creating an error print, your average embedded Linux developer
+> fails to print the _reason_ why something failed, which makes debugging
+> it much harder.
+>
+> The first thing I do when I touch code that needs this kind of debugging
+> is to go through and add printing of the error code.  That normally lets
+> me quickly narrow down what's failed.
+>
+> If embedded Linux developers are struggling with this, they only have
+> themselves to blame.
+>
+> In the case of deferred probing, what _may_ help is if we got rid of the
+> core code printing that driver X requested deferred probing, instead
+> moving the responsibility to report this onto the driver or subsystem.
+> Resource claiming generally has the struct device, and can use dev_warn()
+> to report which device is being probed, along with which resource is
+> not yet available.
+
+Agreed, with the note from above on why it would be better to only
+print such a message only when the -EPROBE_DEFER is likely to be a
+problem.
+
+> This debug problem is solvable without needing to resort to complex
+> probing solutions.
+
+If you really think anything in this series is complex, you should
+look at the other ones that tried to accomplish the same!
+
+Thanks,
+
+Tomeu
+
+> --
+> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+> according to speedtest.net.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
