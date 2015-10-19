@@ -1,56 +1,114 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 19 Oct 2015 10:52:14 +0100
-Message-ID: <20151019095214.GW32532@n2100.arm.linux.org.uk>
-References: <561E1378.6000906@collabora.com>
- <20151017065750.GA18607@kroah.com>
- <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
+From: Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH] pinctrl: mvebu: armada-38x: add suspend/resume support
+Date: Mon, 19 Oct 2015 12:10:00 +0200
+Message-ID: <CAPv3WKdqb6D860Zr+Ed+0K34cym-EtP1E087TVaKbF+OmSYHkQ@mail.gmail.com>
+References: <1445117328-31678-1-git-send-email-mw@semihalf.com>
+	<20151017222927.GR32532@n2100.arm.linux.org.uk>
+	<CAPv3WKed+Q3K0ky9b9AAYSymB-tE0O=57UdrgM+7Cx-X9PeVcA@mail.gmail.com>
+	<20151018160123.6694b4be@free-electrons.com>
+	<CAPv3WKdKea-85_0xUv218OVfhnfMvisYXh8qRNRjvmNkweSUJg@mail.gmail.com>
+	<20151019092320.33d48dba@free-electrons.com>
+	<CAPv3WKfxmwKaPA7BUffwsn8rweSShCSVaCyH4nrQcUkNk7uB2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1445247881.53393.146.camel@infradead.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:36443 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750876AbbJSKKB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 06:10:01 -0400
+Received: by obcqt19 with SMTP id qt19so56495153obc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2015 03:10:00 -0700 (PDT)
+In-Reply-To: <CAPv3WKfxmwKaPA7BUffwsn8rweSShCSVaCyH4nrQcUkNk7uB2Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Tawfik Bayouk <tawfik@marvell.com>, Grzegorz Jaszczyk <jaz@semihalf.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, nadavh@marvell.com, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, =?UTF-8?Q?Gregory_Cl=C3=A9ment?= <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Mon, Oct 19, 2015 at 10:44:41AM +0100, David Woodhouse wrote:
-> On Sun, 2015-10-18 at 20:53 +0100, Mark Brown wrote:
-> > On Sun, Oct 18, 2015 at 12:37:57PM -0700, Greg Kroah-Hartman wrote:
-> > > On Sun, Oct 18, 2015 at 08:29:31PM +0100, Mark Brown wrote:
-> > > > On Fri, Oct 16, 2015 at 11:57:50PM -0700, Greg Kroah-Hartman wrote:
-> > 
-> > > > > I can't see adding calls like this all over the tree just to solve a
-> > > > > bus-specific problem, you are adding of_* calls where they aren't
-> > > > > needed, or wanted, at all.
-> > 
-> > > > This isn't bus specific, I'm not sure what makes you say that?
-> > 
-> > > You are making it bus-specific by putting these calls all over the tree
-> > > in different bus subsystems semi-randomly for all I can determine.
-> > 
-> > Do you mean firmware rather than bus here?  I think that's the confusion
-> > I have...
-> 
-> Certainly, if it literally is adding of_* calls then that would seem to
-> be gratuitously firmware-specific. Nothing should be using those these
-> days; any new code should be using the generic device property APIs
-> (except in special cases).
+Hi Thomas,
 
-I asked Linus Walleij about that with the fwnode_get_named_gpiod() stuff,
-and Linus didn't seem to know how this should be used.
+Found it - I think there is an easy way to get rid of all global
+variables in each pinctrl-<soc>. It's enough to:
+- extend struct mvebu_pinctrl with generic pointer
+- pass SoC specific structure to mvebu_pinctrl_probe via dev->driver_data
+- in mvebu_pinconf_group_set/get pass an additional argument to
+mpp_set/get: struct mvebu_pinctrl *pctl.
+- update mpp_set/get callbacks in each driver accordingly
+This way in SoC-specific pinctrl driver we determine what data we want
+to use and how. I can prepare a patchset with all described changes.
+I'm looking forward to your feedback.
 
-It doesn't help that dev->fwnode is not initialised, but dev->of_node
-is.  Are we supposed to grope around in dev->of_node for the embedded
-fwnode instead of using dev->fwnode?
+Best regards,
+Marcin
 
-At the moment, at least to me, fwnode looks like some kind of
-experimental half-baked thing rather than a real usable solution.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2015-10-19 11:25 GMT+02:00 Marcin Wojtas <mw@semihalf.com>:
+> Thomas,
+>
+> 2015-10-19 9:23 GMT+02:00 Thomas Petazzoni
+> <thomas.petazzoni@free-electrons.com>:
+>> Hello,
+>>
+>> On Mon, 19 Oct 2015 08:04:49 +0200, Marcin Wojtas wrote:
+>>
+>>> > I don't like this. The mvebu_pinctrl_soc_info structure is meant to be
+>>> > a read-only structure that only describes static information giving
+>>> > SoC-specific details for pin-muxing. The idea is that in the event
+>>> > where you had multiple pinctrl in the same system, you would still have
+>>> > only one instance of mvebu_pinctrl_soc_info.
+>>>
+>>> Ok, understood. What with current static globals, like mpp_base? This
+>>> is a problem when we consider hypothetical multi-pintrl system...
+>>
+>> The current driver is indeed not designed for multiple instances of the
+>> same pinctrl controller. But that's exactly what Russell is asking for.
+>>
+>
+> In each mvebu pinctl there are <soc>_mpp_ctrl_get/set force usage of
+> global mpp_base. In order not to use it this way the functions have to
+> be redesigned. IMO having an acces to pdev would be sufficient (please
+> see my proposal below), but yet I don't have a clear idea, how to do
+> it,
+>
+>>> In genereal, I think storing additional global data is not
+>>> starightforward, as dev->platform_data and dev->driver_data are
+>>> currently occupied by mvebu_pinctrl and mvebu_pinctrl_soc_info. I
+>>> propose the following:
+>>>
+>>>
+>>> 1. Create a new structure:
+>>> struct mvebu_pinctrl_pm_info {
+>>
+>> This definitely shouldn't be called "pm_info", because 'base' is not PM
+>> related. It should be mvebu_pinctrl_state or something like that.
+>>
+>>>     void __iomem *base;
+>>>     static u32 *mpp_saved_regs;
+>>>     int nregs;
+>>> }
+>>>
+>>> 2. Add new field to struct mvebu_pinctrl:
+>>> struct mvebu_pinctrl_pm_info *pm_info;
+>>
+>> Does not work because "mvebu_pinctrl_pm_info" cannot be a generic
+>> structure, it has to be a per-SoC driver structure, since the set of
+>> registers to save for PM reasons is different from one SoC to the
+>> other. Also, some SoC have only one "base" pointer, some others (like
+>> Dove) have multiple.
+>>
+>> So it should be the other way around: the SoC-specific driver create a
+>> structure, and this structure points back to the mvebu_pinctrl
+>> structure.
+>>
+>
+> How about a following compromise:
+> Instead of forcing pm_info, we can add a generic pointer to struct
+> mvebu_pinctrl, e.g. void *priv; and enable passing it in a way I
+> proposed before.
+>
+> This way each SoC-specific driver can attach whatever is needed for
+> its operation. For example in A38X/AXP it would be *base,
+> *mpp_saved_regs and nregs gathered in one structure, but it wouldn't
+> force anything specific for other machines. As a result in A38X/AXP in
+> suspend/resume routines, there would be no globals in use at all.
+>
+> Best regards,
+> Marcin
