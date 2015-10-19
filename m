@@ -1,76 +1,135 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: mvebu: armada-38x: add suspend/resume support
-Date: Mon, 19 Oct 2015 09:23:20 +0200
-Message-ID: <20151019092320.33d48dba@free-electrons.com>
-References: <1445117328-31678-1-git-send-email-mw@semihalf.com>
-	<20151017222927.GR32532@n2100.arm.linux.org.uk>
-	<CAPv3WKed+Q3K0ky9b9AAYSymB-tE0O=57UdrgM+7Cx-X9PeVcA@mail.gmail.com>
-	<20151018160123.6694b4be@free-electrons.com>
-	<CAPv3WKdKea-85_0xUv218OVfhnfMvisYXh8qRNRjvmNkweSUJg@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/4] Documentation: tps65086: Add DT bindings for the
+ TPS65086 PMIC
+Date: Mon, 19 Oct 2015 10:13:11 +0100
+Message-ID: <20151019091311.GH31804@x1>
+References: <1445014753-15450-1-git-send-email-afd@ti.com>
+ <1445014753-15450-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:40560 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750759AbbJSHXY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 03:23:24 -0400
-In-Reply-To: <CAPv3WKdKea-85_0xUv218OVfhnfMvisYXh8qRNRjvmNkweSUJg@mail.gmail.com>
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:34996 "EHLO
+	mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958AbbJSJNQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 05:13:16 -0400
+Received: by qkbl190 with SMTP id l190so18557291qkb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2015 02:13:15 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1445014753-15450-2-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marcin Wojtas <mw@semihalf.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Tawfik Bayouk <tawfik@marvell.com>, Grzegorz Jaszczyk <jaz@semihalf.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, nadavh@marvell.com, linux-gpio@vger.kernel.org, Lior Amsalem <alior@marvell.com>, Gregory =?UTF-8?B?Q2zDqW1lbnQ=?= <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 16 Oct 2015, Andrew F. Davis wrote:
 
-On Mon, 19 Oct 2015 08:04:49 +0200, Marcin Wojtas wrote:
+> The TPS65086 PMIC contains several regulators and a GPO controller.
+> Add bindings for the TPS65086 PMIC.
+>=20
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-tps65086.txt     | 17 ++++++++
+>  Documentation/devicetree/bindings/mfd/tps65086.txt | 46 ++++++++++++=
+++++++++++
+>  .../bindings/regulator/tps65086-regulator.txt      | 36 ++++++++++++=
++++++
 
-> > I don't like this. The mvebu_pinctrl_soc_info structure is meant to be
-> > a read-only structure that only describes static information giving
-> > SoC-specific details for pin-muxing. The idea is that in the event
-> > where you had multiple pinctrl in the same system, you would still have
-> > only one instance of mvebu_pinctrl_soc_info.
-> 
-> Ok, understood. What with current static globals, like mpp_base? This
-> is a problem when we consider hypothetical multi-pintrl system...
+Please split these up into separate patches.
 
-The current driver is indeed not designed for multiple instances of the
-same pinctrl controller. But that's exactly what Russell is asking for.
+There is no functional reason to bundle them up.
 
-> In genereal, I think storing additional global data is not
-> starightforward, as dev->platform_data and dev->driver_data are
-> currently occupied by mvebu_pinctrl and mvebu_pinctrl_soc_info. I
-> propose the following:
->
-> 
-> 1. Create a new structure:
-> struct mvebu_pinctrl_pm_info {
+>  3 files changed, 99 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65=
+086.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.tx=
+t
+>  create mode 100644 Documentation/devicetree/bindings/regulator/tps65=
+086-regulator.txt
 
-This definitely shouldn't be called "pm_info", because 'base' is not PM
-related. It should be mvebu_pinctrl_state or something like that.
+[...]
 
->     void __iomem *base;
->     static u32 *mpp_saved_regs;
->     int nregs;
-> }
-> 
-> 2. Add new field to struct mvebu_pinctrl:
-> struct mvebu_pinctrl_pm_info *pm_info;
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65086.txt b/Doc=
+umentation/devicetree/bindings/mfd/tps65086.txt
+> new file mode 100644
+> index 0000000..4b6aeb4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65086.txt
+> @@ -0,0 +1,46 @@
+> +* TPS65086 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "ti,tps65086".
 
-Does not work because "mvebu_pinctrl_pm_info" cannot be a generic
-structure, it has to be a per-SoC driver structure, since the set of
-registers to save for PM reasons is different from one SoC to the
-other. Also, some SoC have only one "base" pointer, some others (like
-Dove) have multiple.
+Any indication that it's a PMIC?
 
-So it should be the other way around: the SoC-specific driver create a
-structure, and this structure points back to the mvebu_pinctrl
-structure.
+> + - reg			: Slave address.
 
-Best regards,
+I2C/SPI?
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+> + - interrupt-parent	: The parent interrupt controller.
+
+Phandled to ...
+
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt cont=
+roller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, this
+> +			  should be 2. The first cell is the IRQ number.
+> +			  The second cell is the flags, encoded as the trigger
+> +			  masks from ../interrupt-controller/interrupts.txt.
+
+Masks?  What masks?
+
+Best to make a link to the header where the flags are defined here.
+
+> +Additional nodes defined in:
+> + - Regulators	: ../regulator/tps65086-regulator.txt.
+> + - GPIO		: ../gpio/gpio-tps65086.txt.
+
+I'd suggest removing the full stops from all of the lines above.
+
+Just treat them as bullet points like we normally do.
+
+> +Example:
+> +
+> +	pmic: tps65086@5e {
+> +		compatible =3D "ti,tps65086";
+> +		reg =3D <0x5e>;
+> +		interrupt-parent =3D <&gpio1>;
+> +		interrupts =3D <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <2>;
+> +
+> +		regulators {
+> +			compatible =3D "ti,tps65086-regulator";
+> +
+> +			buck1 {
+> +				regulator-name =3D "vcc1";
+> +				regulator-min-microvolt =3D <1600000>;
+> +				regulator-max-microvolt =3D <1600000>;
+> +				regulator-boot-on;
+> +				ti,regulator-decay;
+> +				ti,regulator-step-size-25mv;
+> +			};
+> +		};
+> +
+> +		gpio4: tps65086_gpio {
+> +			compatible =3D "ti,tps65086-gpio";
+> +			gpio-controller;
+> +			#gpio-cells =3D <2>;
+> +		};
+> +	};
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
