@@ -1,49 +1,46 @@
-From: Moritz Fischer <moritz.fischer@ettus.com>
-Subject: Re: [PATCH] gpio: xilinx: Drop architecture dependencies
-Date: Mon, 19 Oct 2015 10:52:02 -0700
-Message-ID: <CAAtXAHc1XsNU9SQBW0sUj6LmETQpKaLTJoUxLwmLts9NLp=x3w@mail.gmail.com>
-References: <1445276534-6948-1-git-send-email-soren.brinkmann@xilinx.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 19 Oct 2015 20:27:44 +0200
+Message-ID: <20151019182744.GD4931@pengutronix.de>
+References: <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+ <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
+ <20151019154324.GN32532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:36318 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751194AbbJSRwE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Oct 2015 13:52:04 -0400
-Received: by lffz202 with SMTP id z202so33642120lff.3
-        for <linux-gpio@vger.kernel.org>; Mon, 19 Oct 2015 10:52:02 -0700 (PDT)
-In-Reply-To: <1445276534-6948-1-git-send-email-soren.brinkmann@xilinx.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151019154324.GN32532@n2100.arm.linux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@g>
 List-Id: linux-gpio@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Lars-Peter Clausen <lars@metafoo.de>
 
-Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+Hello,
 
-On Mon, Oct 19, 2015 at 10:42 AM, Soren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
-> The driver does not have any real architecture dependencies. To avoid
-> listing each architecture that might use this driver on some
-> FPGA-enabled platform, drop these dependencies.
->
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-> ---
->  drivers/gpio/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 63000b1f9da8..45dfeef6018f 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -506,7 +506,7 @@ config GPIO_XGENE_SB
->
->  config GPIO_XILINX
->         tristate "Xilinx GPIO support"
-> -       depends on OF_GPIO && (PPC || MICROBLAZE || ARCH_ZYNQ || X86)
-> +       depends on OF_GPIO
->         help
->           Say yes here to support the Xilinx FPGA GPIO device
->
-> --
-> 2.6.2.3.ga463a5b
->
+On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrot=
+e:
+> It's a bit ironic that you've chosen GPIO as an example there.  The
+> "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+> gpio descriptor.  There's no of_* method.
+
+Without following all that fwnode discussion:
+gpiod_get et al. should work for you here, doesn't it? It just takes a
+struct device * and I'm happy with it.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
