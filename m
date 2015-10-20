@@ -1,60 +1,69 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
-Date: Tue, 20 Oct 2015 21:26:31 +0200
-Message-ID: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC 3/4] pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+Date: Tue, 20 Oct 2015 21:26:34 +0200
+Message-ID: <1445369195-25117-4-git-send-email-geert+renesas@glider.be>
+References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36371 "EHLO
+Received: from laurent.telenet-ops.be ([195.130.137.89]:36372 "EHLO
 	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751753AbbJTT0d (ORCPT
+	with ESMTP id S1752052AbbJTT0d (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Oct 2015 15:26:33 -0400
+In-Reply-To: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-	Hi,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-Currently single-function pins are described using the raw PINMUX_DATA()
-macro.
-
-Morimoto-san doesn't like that. He proposed to use the existing
-PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
-Add pinmux data for single-function pins",
-http://www.spinics.net/lists/linux-sh/msg44823.html).
-However, that macro is intended to describe a pinmux configuration
-without GPIO function, which feels wrong to me.
-
-This patch series proposes an alternative, introducing a new macro
-PINMUX_SINGLE() to describe a pinmux configuration for a single-function
-pin. It also converts the existing single-function pin descriptions.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  pinctrl: sh-pfc: Add PINMUX_SINGLE()
-  pinctrl: sh-pfc: r8a7790: Use PINMUX_SINGLE() instead of raw
-    PINMUX_DATA()
-  pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw
-    PINMUX_DATA()
-  pinctrl: sh-pfc: r8a7794: Use PINMUX_SINGLE() instead of raw
-    PINMUX_DATA()
-
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 18 +++++++--------
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 ++++++++++++++--------------
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 44 ++++++++++++++++++------------------
- drivers/pinctrl/sh-pfc/sh_pfc.h      |  7 ++++++
- 4 files changed, 55 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 87a4f44147c1d5bc..ebadd2816b7b5dcf 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -787,23 +787,23 @@ enum {
+ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
+ 
+-	PINMUX_DATA(EX_CS0_N_MARK, FN_EX_CS0_N),
+-	PINMUX_DATA(RD_N_MARK, FN_RD_N),
+-	PINMUX_DATA(AUDIO_CLKA_MARK, FN_AUDIO_CLKA),
+-	PINMUX_DATA(VI0_CLK_MARK, FN_VI0_CLK),
+-	PINMUX_DATA(VI0_DATA0_VI0_B0_MARK, FN_VI0_DATA0_VI0_B0),
+-	PINMUX_DATA(VI0_DATA1_VI0_B1_MARK, FN_VI0_DATA1_VI0_B1),
+-	PINMUX_DATA(VI0_DATA2_VI0_B2_MARK, FN_VI0_DATA2_VI0_B2),
+-	PINMUX_DATA(VI0_DATA4_VI0_B4_MARK, FN_VI0_DATA4_VI0_B4),
+-	PINMUX_DATA(VI0_DATA5_VI0_B5_MARK, FN_VI0_DATA5_VI0_B5),
+-	PINMUX_DATA(VI0_DATA6_VI0_B6_MARK, FN_VI0_DATA6_VI0_B6),
+-	PINMUX_DATA(VI0_DATA7_VI0_B7_MARK, FN_VI0_DATA7_VI0_B7),
+-	PINMUX_DATA(USB0_PWEN_MARK, FN_USB0_PWEN),
+-	PINMUX_DATA(USB0_OVC_MARK, FN_USB0_OVC),
+-	PINMUX_DATA(USB1_PWEN_MARK, FN_USB1_PWEN),
+-	PINMUX_DATA(USB1_OVC_MARK, FN_USB1_OVC),
+-	PINMUX_DATA(DU0_DOTCLKIN_MARK, FN_DU0_DOTCLKIN),
+-	PINMUX_DATA(SD1_CLK_MARK, FN_SD1_CLK),
++	PINMUX_SINGLE(EX_CS0_N),
++	PINMUX_SINGLE(RD_N),
++	PINMUX_SINGLE(AUDIO_CLKA),
++	PINMUX_SINGLE(VI0_CLK),
++	PINMUX_SINGLE(VI0_DATA0_VI0_B0),
++	PINMUX_SINGLE(VI0_DATA1_VI0_B1),
++	PINMUX_SINGLE(VI0_DATA2_VI0_B2),
++	PINMUX_SINGLE(VI0_DATA4_VI0_B4),
++	PINMUX_SINGLE(VI0_DATA5_VI0_B5),
++	PINMUX_SINGLE(VI0_DATA6_VI0_B6),
++	PINMUX_SINGLE(VI0_DATA7_VI0_B7),
++	PINMUX_SINGLE(USB0_PWEN),
++	PINMUX_SINGLE(USB0_OVC),
++	PINMUX_SINGLE(USB1_PWEN),
++	PINMUX_SINGLE(USB1_OVC),
++	PINMUX_SINGLE(DU0_DOTCLKIN),
++	PINMUX_SINGLE(SD1_CLK),
+ 
+ 	/* IPSR0 */
+ 	PINMUX_IPSR_DATA(IP0_0, D0),
 -- 
 1.9.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
