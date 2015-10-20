@@ -1,85 +1,90 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: set input-enable before pin-muxing
-Date: Tue, 20 Oct 2015 17:25:09 +0900
-Message-ID: <1445329509-6252-1-git-send-email-yamada.masahiro@socionext.com>
+From: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT
+ bindings
+Date: Tue, 20 Oct 2015 11:06:49 +0100
+Message-ID: <56261239.5030007@linaro.org>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445102604-11502-4-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-While IECTRL is disabled, input signals are pulled-down internally.
-If pin-muxing is set up first, glitch signals (Low to High transition)
-might be input to hardware blocks.
+On 17/10/15 18:23, Maxime Coquelin wrote:
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>   include/dt-bindings/pinctrl/pinctrl-stm32.h     |   12 +
+>   include/dt-bindings/pinctrl/stm32f429-pinfunc.h | 1241 +++++++++++++++++++++++
+>   2 files changed, 1253 insertions(+)
+>   create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
+>   create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+>
+> diff --git a/include/dt-bindings/pinctrl/pinctrl-stm32.h b/include/dt-bindings/pinctrl/pinctrl-stm32.h
+> new file mode 100644
+> index 0000000..a2e7222
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/pinctrl-stm32.h
+> @@ -0,0 +1,12 @@
+> +#ifndef _DT_BINDINGS_PINCTRL_STM32_H
+> +#define _DT_BINDINGS_PINCTRL_STM32_H
+> +
+> +#define STM32_PIN_NO(x) ((x) << 8)
+> +#define STM32_GET_PIN_NO(x) ((x) >> 8)
+> +#define STM32_GET_PIN_FUNC(x) ((x) & 0xff)
+> +
+> +#define STM32_PIN_GPIO		0
+> +#define STM32_PIN_AF(x)		((x) + 1)
+> +#define STM32_PIN_ANALOG	(STM32_PIN_AF(15) + 1)
+> +
+> +#endif /* _DT_BINDINGS_PINCTRL_STM32_H */
+> diff --git a/include/dt-bindings/pinctrl/stm32f429-pinfunc.h b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+> new file mode 100644
+> index 0000000..9dd5fd0
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+> @@ -0,0 +1,1241 @@
+> +#ifndef _DT_BINDINGS_STM32F429_PINFUNC_H
+> +#define _DT_BINDINGS_STM32F429_PINFUNC_H
+> +
+> +#include <dt-bindings/pinctrl/pinctrl-stm32.h>
+> +
+> +#define STM32F429_PA0_FUNC_GPIO 0x0
+> +#define STM32F429_PA0_FUNC_TIM2_CH1_TIM2_ETR 0x2
 
-Bad case scenario:
-[1] The hardware block is already running before pinctrl is handled.
-   (the reset is de-asserted by default or by a firmware, for example)
-[2] The pin-muxing is set up.  The input signals to hardware block
-    are pulled-down by the chip-internal biasing.
-[3] The pins are input-enabled.  The signals from the board reach the
-    hardware block.
+Did you expand these out after my feedback (instead of things like: 
+STM32_PIN_NO(0) | STM32_PIN_AF(1) )?
 
-Actually, one invalid character is input to the UART blocks for such
-SoCs as PH1-LD4, PH1-sLD8, where UART devices start to run at the
-power on reset.
+If so I must have been somewhat unclear.
 
-To avoid such problems, pins should be input-enabled before muxing.
+I suggesting that, like with the clock driver, there is no need to the 
+STM32F429_PAXX_FUNC_YYY macros at all.
 
-Fixes: 6e9088920258 ("pinctrl: UniPhier: add UniPhier pinctrl core support")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reported-by: Dai Okamura <okamura.dai@socionext.com>
----
+Given the way you can enumerate pin config options in stm32f429.dtsi 
+then I think stm32f429.dtsi is the only file that will ever include this 
+header? If so then why not just plug the values directly into the pinmux 
+fields. Its not duplicative and is easier to map back to data sheets.
 
-Hi Linus,
+~~~
+#define PIN_NO(x) ...
+#define PIN_AF(x) ...
 
-If it is not too late, please apply this fix for Linux 4.3.
+usart1_pins_a: usart1@0 {
+				pins1 {
+					pinmux = PIN_NO(9) | PIN_AF(7);
+					bias-disable;
+					drive-push-pull;
+					slew-rate = <0>;
+				};
+                                 ...
+			};
+~~~
 
-Thanks,
-Masahiro
-
-
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index 918f3b6..589872c 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -539,6 +539,12 @@ static int uniphier_pmx_set_one_mux(struct pinctrl_dev *pctldev, unsigned pin,
- 	unsigned reg, reg_end, shift, mask;
- 	int ret;
- 
-+	/* some pins need input-enabling */
-+	ret = uniphier_conf_pin_input_enable(pctldev,
-+					     &pctldev->desc->pins[pin], 1);
-+	if (ret)
-+		return ret;
-+
- 	reg = UNIPHIER_PINCTRL_PINMUX_BASE + pin * mux_bits / 32 * reg_stride;
- 	reg_end = reg + reg_stride;
- 	shift = pin * mux_bits % 32;
-@@ -563,9 +569,7 @@ static int uniphier_pmx_set_one_mux(struct pinctrl_dev *pctldev, unsigned pin,
- 			return ret;
- 	}
- 
--	/* some pins need input-enabling */
--	return uniphier_conf_pin_input_enable(pctldev,
--					      &pctldev->desc->pins[pin], 1);
-+	return 0;
- }
- 
- static int uniphier_pmx_set_mux(struct pinctrl_dev *pctldev,
--- 
-1.9.1
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
