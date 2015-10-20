@@ -1,90 +1,160 @@
-From: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT
- bindings
-Date: Tue, 20 Oct 2015 11:06:49 +0100
-Message-ID: <56261239.5030007@linaro.org>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
- <1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/4] mfd: tps65086: Add driver for the TPS65086 PMIC
+Date: Tue, 20 Oct 2015 11:02:14 +0100
+Message-ID: <20151020100214.GM31804@x1>
+References: <1445014753-15450-1-git-send-email-afd@ti.com>
+ <1445014753-15450-3-git-send-email-afd@ti.com>
+ <20151019092336.GI31804@x1>
+ <56251468.7030609@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445102604-11502-4-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:37620 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752913AbbJTKCX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Oct 2015 06:02:23 -0400
+Received: by wicfv8 with SMTP id fv8so20505029wic.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2015 03:02:22 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <56251468.7030609@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 17/10/15 18:23, Maxime Coquelin wrote:
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->   include/dt-bindings/pinctrl/pinctrl-stm32.h     |   12 +
->   include/dt-bindings/pinctrl/stm32f429-pinfunc.h | 1241 +++++++++++++++++++++++
->   2 files changed, 1253 insertions(+)
->   create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
->   create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->
-> diff --git a/include/dt-bindings/pinctrl/pinctrl-stm32.h b/include/dt-bindings/pinctrl/pinctrl-stm32.h
-> new file mode 100644
-> index 0000000..a2e7222
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/pinctrl-stm32.h
-> @@ -0,0 +1,12 @@
-> +#ifndef _DT_BINDINGS_PINCTRL_STM32_H
-> +#define _DT_BINDINGS_PINCTRL_STM32_H
-> +
-> +#define STM32_PIN_NO(x) ((x) << 8)
-> +#define STM32_GET_PIN_NO(x) ((x) >> 8)
-> +#define STM32_GET_PIN_FUNC(x) ((x) & 0xff)
-> +
-> +#define STM32_PIN_GPIO		0
-> +#define STM32_PIN_AF(x)		((x) + 1)
-> +#define STM32_PIN_ANALOG	(STM32_PIN_AF(15) + 1)
-> +
-> +#endif /* _DT_BINDINGS_PINCTRL_STM32_H */
-> diff --git a/include/dt-bindings/pinctrl/stm32f429-pinfunc.h b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
-> new file mode 100644
-> index 0000000..9dd5fd0
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
-> @@ -0,0 +1,1241 @@
-> +#ifndef _DT_BINDINGS_STM32F429_PINFUNC_H
-> +#define _DT_BINDINGS_STM32F429_PINFUNC_H
-> +
-> +#include <dt-bindings/pinctrl/pinctrl-stm32.h>
-> +
-> +#define STM32F429_PA0_FUNC_GPIO 0x0
-> +#define STM32F429_PA0_FUNC_TIM2_CH1_TIM2_ETR 0x2
+On Mon, 19 Oct 2015, Andrew F. Davis wrote:
+> On 10/19/2015 04:23 AM, Lee Jones wrote:
+> >On Fri, 16 Oct 2015, Andrew F. Davis wrote:
+> >
+> >>Add support for the TPS65912 device. It provides communication
+> >>through I2C and contains the following components:
+> >>
+> >>  - Regulators
+> >>  - Load switches
+> >>  - GPO controller
+> >
+> >What's a GPO controller?
+>=20
+> General Purpose Output, this controller only has output control, it's
+> listed in the data-sheet this way, and other drivers have used this t=
+erm.
 
-Did you expand these out after my feedback (instead of things like: 
-STM32_PIN_NO(0) | STM32_PIN_AF(1) )?
+Okay.
 
-If so I must have been somewhat unclear.
+> >>Signed-off-by: Andrew F. Davis <afd@ti.com>
+> >>---
+> >>  drivers/mfd/Kconfig          |  13 ++++
+> >>  drivers/mfd/Makefile         |   1 +
+> >>  drivers/mfd/tps65086.c       | 145 ++++++++++++++++++++++++++++++=
++++++++++++++
+> >>  include/linux/mfd/tps65086.h | 120 ++++++++++++++++++++++++++++++=
++++++
+> >>  4 files changed, 279 insertions(+)
+> >>  create mode 100644 drivers/mfd/tps65086.c
+> >>  create mode 100644 include/linux/mfd/tps65086.h
+> >>
+> >>diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> >>index 99d6367..ab3b392 100644
+> >>--- a/drivers/mfd/Kconfig
+> >>+++ b/drivers/mfd/Kconfig
+> >>@@ -1093,6 +1093,19 @@ config TPS6507X
+> >>  	  This driver can also be built as a module.  If so, the module
+> >>  	  will be called tps6507x.
+> >>
+> >>+config MFD_TPS65086
+> >>+	tristate "TI TPS65086x Power Management chips"
+> >
+> >Use the full name:
+> >
+> >   "TI TPS65086x Power Management Integrated Chips (PMICs)"
+> >
+> >>+	select REGMAP
+> >>+	select REGMAP_IRQ
+> >>+	select REGMAP_I2C
+> >>+	depends on I2C
+> >
+> >REGMAP_I2C already depends on I2C.
+> >
+>=20
+> So if I force REGMAP_I2C to =3Dy without depending on I2C then couldn=
+'t
+> REGMAP_I2C get selected without I2C enabled? Selecting doesn't force
+> the selected item's dependencies still right?
 
-I suggesting that, like with the clock driver, there is no need to the 
-STM32F429_PAXX_FUNC_YYY macros at all.
+Try it out. :)
 
-Given the way you can enumerate pin config options in stm32f429.dtsi 
-then I think stm32f429.dtsi is the only file that will ever include this 
-header? If so then why not just plug the values directly into the pinmux 
-fields. Its not duplicative and is easier to map back to data sheets.
+> >>+	depends on OF || COMPILE_TEST
+> >>+	help
+> >>+	  If you say yes here you get support for the TPS65086 series of
+> >>+	  Power Management chips.
+> >
+> >I'd remove the line break.
+> >
+> >>+	  These include voltage regulators, GPO and other features
+> >
+> >GPIO?
+> >
+> >>+	  that are often used in portable devices.
+> >
+> >This is meant to be a 'help', so instead of staying "and some other
+> >stuff", please list them.
+> >
+>=20
+> This seems to be what other devices do, I'll change it to something
+> else then.
 
-~~~
-#define PIN_NO(x) ...
-#define PIN_AF(x) ...
+If you know what the "other features" are, it's best to name them.
 
-usart1_pins_a: usart1@0 {
-				pins1 {
-					pinmux = PIN_NO(9) | PIN_AF(7);
-					bias-disable;
-					drive-push-pull;
-					slew-rate = <0>;
-				};
-                                 ...
-			};
-~~~
+> >>  config TPS65911_COMPARATOR
+> >>  	tristate
+> >>
+> >>diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> >>index a59e3fc..7adb902 100644
+> >>--- a/drivers/mfd/Makefile
+> >>+++ b/drivers/mfd/Makefile
+> >>@@ -66,6 +66,7 @@ obj-$(CONFIG_MFD_WM8994)	+=3D wm8994-core.o wm899=
+4-irq.o wm8994-regmap.o
+> >>  obj-$(CONFIG_TPS6105X)		+=3D tps6105x.o
+> >>  obj-$(CONFIG_TPS65010)		+=3D tps65010.o
+> >>  obj-$(CONFIG_TPS6507X)		+=3D tps6507x.o
+> >>+obj-$(CONFIG_MFD_TPS65086)	+=3D tps65086.o
+> >>  obj-$(CONFIG_MFD_TPS65217)	+=3D tps65217.o
+> >>  obj-$(CONFIG_MFD_TPS65218)	+=3D tps65218.o
+> >>  obj-$(CONFIG_MFD_TPS65910)	+=3D tps65910.o
+> >>diff --git a/drivers/mfd/tps65086.c b/drivers/mfd/tps65086.c
+> >>new file mode 100644
+> >>index 0000000..be6d678
+> >>--- /dev/null
+> >>+++ b/drivers/mfd/tps65086.c
+> >>@@ -0,0 +1,145 @@
+> >>+/*
+> >>+ * Driver for TI TPS65086x PMICs
+> >
+> >I'd suggest removing the driver part.  We know it's a driver.
+>=20
+> Again this is what almost every other driver does,
 
+Almost every other driver.  That's some statement.
+
+I count 42%. ;)
+
+> I'm not sure how
+> else to describe this file without using the word driver.
+
+Perhaps I'm getting picky in my old age, but I think I'd prefer to see:
+
+  TI TPS65086x PMIC support
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
