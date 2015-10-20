@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 3/4] pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
-Date: Tue, 20 Oct 2015 21:26:34 +0200
-Message-ID: <1445369195-25117-4-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH/RFC 2/4] pinctrl: sh-pfc: r8a7790: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+Date: Tue, 20 Oct 2015 21:26:33 +0200
+Message-ID: <1445369195-25117-3-git-send-email-geert+renesas@glider.be>
 References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36372 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752052AbbJTT0d (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:49650 "EHLO
+	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751654AbbJTT0d (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Oct 2015 15:26:33 -0400
 In-Reply-To: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -16,54 +16,38 @@ Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <ge
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 87a4f44147c1d5bc..ebadd2816b7b5dcf 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -787,23 +787,23 @@ enum {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index d9924b0d53b789c3..1acad99d646618cb 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -806,15 +806,15 @@ enum {
  static const u16 pinmux_data[] = {
  	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
  
--	PINMUX_DATA(EX_CS0_N_MARK, FN_EX_CS0_N),
--	PINMUX_DATA(RD_N_MARK, FN_RD_N),
--	PINMUX_DATA(AUDIO_CLKA_MARK, FN_AUDIO_CLKA),
--	PINMUX_DATA(VI0_CLK_MARK, FN_VI0_CLK),
--	PINMUX_DATA(VI0_DATA0_VI0_B0_MARK, FN_VI0_DATA0_VI0_B0),
--	PINMUX_DATA(VI0_DATA1_VI0_B1_MARK, FN_VI0_DATA1_VI0_B1),
--	PINMUX_DATA(VI0_DATA2_VI0_B2_MARK, FN_VI0_DATA2_VI0_B2),
--	PINMUX_DATA(VI0_DATA4_VI0_B4_MARK, FN_VI0_DATA4_VI0_B4),
--	PINMUX_DATA(VI0_DATA5_VI0_B5_MARK, FN_VI0_DATA5_VI0_B5),
--	PINMUX_DATA(VI0_DATA6_VI0_B6_MARK, FN_VI0_DATA6_VI0_B6),
--	PINMUX_DATA(VI0_DATA7_VI0_B7_MARK, FN_VI0_DATA7_VI0_B7),
+-	PINMUX_DATA(VI1_DATA7_VI1_B7_MARK, FN_VI1_DATA7_VI1_B7),
 -	PINMUX_DATA(USB0_PWEN_MARK, FN_USB0_PWEN),
--	PINMUX_DATA(USB0_OVC_MARK, FN_USB0_OVC),
--	PINMUX_DATA(USB1_PWEN_MARK, FN_USB1_PWEN),
--	PINMUX_DATA(USB1_OVC_MARK, FN_USB1_OVC),
--	PINMUX_DATA(DU0_DOTCLKIN_MARK, FN_DU0_DOTCLKIN),
--	PINMUX_DATA(SD1_CLK_MARK, FN_SD1_CLK),
-+	PINMUX_SINGLE(EX_CS0_N),
-+	PINMUX_SINGLE(RD_N),
-+	PINMUX_SINGLE(AUDIO_CLKA),
-+	PINMUX_SINGLE(VI0_CLK),
-+	PINMUX_SINGLE(VI0_DATA0_VI0_B0),
-+	PINMUX_SINGLE(VI0_DATA1_VI0_B1),
-+	PINMUX_SINGLE(VI0_DATA2_VI0_B2),
-+	PINMUX_SINGLE(VI0_DATA4_VI0_B4),
-+	PINMUX_SINGLE(VI0_DATA5_VI0_B5),
-+	PINMUX_SINGLE(VI0_DATA6_VI0_B6),
-+	PINMUX_SINGLE(VI0_DATA7_VI0_B7),
+-	PINMUX_DATA(USB0_OVC_VBUS_MARK, FN_USB0_OVC_VBUS),
+-	PINMUX_DATA(USB2_PWEN_MARK, FN_USB2_PWEN),
+-	PINMUX_DATA(USB2_OVC_MARK, FN_USB2_OVC),
+-	PINMUX_DATA(AVS1_MARK, FN_AVS1),
+-	PINMUX_DATA(AVS2_MARK, FN_AVS2),
+-	PINMUX_DATA(DU_DOTCLKIN0_MARK, FN_DU_DOTCLKIN0),
+-	PINMUX_DATA(DU_DOTCLKIN2_MARK, FN_DU_DOTCLKIN2),
++	PINMUX_SINGLE(VI1_DATA7_VI1_B7),
 +	PINMUX_SINGLE(USB0_PWEN),
-+	PINMUX_SINGLE(USB0_OVC),
-+	PINMUX_SINGLE(USB1_PWEN),
-+	PINMUX_SINGLE(USB1_OVC),
-+	PINMUX_SINGLE(DU0_DOTCLKIN),
-+	PINMUX_SINGLE(SD1_CLK),
++	PINMUX_SINGLE(USB0_OVC_VBUS),
++	PINMUX_SINGLE(USB2_PWEN),
++	PINMUX_SINGLE(USB2_OVC),
++	PINMUX_SINGLE(AVS1),
++	PINMUX_SINGLE(AVS2),
++	PINMUX_SINGLE(DU_DOTCLKIN0),
++	PINMUX_SINGLE(DU_DOTCLKIN2),
  
- 	/* IPSR0 */
- 	PINMUX_IPSR_DATA(IP0_0, D0),
+ 	PINMUX_IPSR_DATA(IP0_2_0, D0),
+ 	PINMUX_IPSR_MSEL(IP0_2_0, MSIOF3_SCK_B, SEL_SOF3_1),
 -- 
 1.9.1
 
