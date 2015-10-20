@@ -1,164 +1,61 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 2/4] mfd: tps65086: Add driver for the TPS65086 PMIC
-Date: Tue, 20 Oct 2015 09:58:51 -0500
-Message-ID: <562656AB.3060808@ti.com>
-References: <1445014753-15450-1-git-send-email-afd@ti.com>
- <1445014753-15450-3-git-send-email-afd@ti.com> <20151019092336.GI31804@x1>
- <56251468.7030609@ti.com> <20151020100214.GM31804@x1>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 16:36:12 +0100
+Message-ID: <20151020153612.GB32054@sirena.org.uk>
+References: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
+ <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151020100214.GM31804@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yda//aIZIMrd7mir"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39229 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752351AbbJTPh3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Oct 2015 11:37:29 -0400
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1510201036290.1855-100000@iolanthe.rowland.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbary>
 
-On 10/20/2015 05:02 AM, Lee Jones wrote:
-> On Mon, 19 Oct 2015, Andrew F. Davis wrote:
->> On 10/19/2015 04:23 AM, Lee Jones wrote:
->>> On Fri, 16 Oct 2015, Andrew F. Davis wrote:
->>>
->>>> Add support for the TPS65912 device. It provides communication
->>>> through I2C and contains the following components:
->>>>
->>>>   - Regulators
->>>>   - Load switches
->>>>   - GPO controller
->>>
->>> What's a GPO controller?
->>
->> General Purpose Output, this controller only has output control, it's
->> listed in the data-sheet this way, and other drivers have used this term.
->
-> Okay.
->
->>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>>> ---
->>>>   drivers/mfd/Kconfig          |  13 ++++
->>>>   drivers/mfd/Makefile         |   1 +
->>>>   drivers/mfd/tps65086.c       | 145 +++++++++++++++++++++++++++++++++++++++++++
->>>>   include/linux/mfd/tps65086.h | 120 +++++++++++++++++++++++++++++++++++
->>>>   4 files changed, 279 insertions(+)
->>>>   create mode 100644 drivers/mfd/tps65086.c
->>>>   create mode 100644 include/linux/mfd/tps65086.h
->>>>
->>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->>>> index 99d6367..ab3b392 100644
->>>> --- a/drivers/mfd/Kconfig
->>>> +++ b/drivers/mfd/Kconfig
->>>> @@ -1093,6 +1093,19 @@ config TPS6507X
->>>>   	  This driver can also be built as a module.  If so, the module
->>>>   	  will be called tps6507x.
->>>>
->>>> +config MFD_TPS65086
->>>> +	tristate "TI TPS65086x Power Management chips"
->>>
->>> Use the full name:
->>>
->>>    "TI TPS65086x Power Management Integrated Chips (PMICs)"
->>>
->>>> +	select REGMAP
->>>> +	select REGMAP_IRQ
->>>> +	select REGMAP_I2C
->>>> +	depends on I2C
->>>
->>> REGMAP_I2C already depends on I2C.
->>>
->>
->> So if I force REGMAP_I2C to =y without depending on I2C then couldn't
->> REGMAP_I2C get selected without I2C enabled? Selecting doesn't force
->> the selected item's dependencies still right?
->
-> Try it out. :)
->
 
-OK, I just tried a little test and it did as I expected, I was able to
-select a symbol and it did not enable its dependency, so this would
-break build. So, I'm still confused, why does REGMAP_I2C depending
-on I2C matter? What are you suggesting my Kconfig should look like?
+--yda//aIZIMrd7mir
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>> +	depends on OF || COMPILE_TEST
->>>> +	help
->>>> +	  If you say yes here you get support for the TPS65086 series of
->>>> +	  Power Management chips.
->>>
->>> I'd remove the line break.
->>>
->>>> +	  These include voltage regulators, GPO and other features
->>>
->>> GPIO?
->>>
->>>> +	  that are often used in portable devices.
->>>
->>> This is meant to be a 'help', so instead of staying "and some other
->>> stuff", please list them.
->>>
->>
->> This seems to be what other devices do, I'll change it to something
->> else then.
->
-> If you know what the "other features" are, it's best to name them.
->
+On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
 
-I was giving a generic description of a PMIC, I didn't really want to
-list all the features and start marketing the part in the Kconfig, unless
-you want, I'm sure TI won't mind the advertisement. :)
+> Furthermore, that applies only to devices that use synchronous suspend. =
+=20
+> Async suspend is becoming common, and there the only restrictions are=20
+> parent-child relations plus whatever explicit requirements that drivers=
+=20
+> impose by calling device_pm_wait_for_dev().
 
-I'm not sure why we write so much about these driver parts at all in the
-help, people who need them know what they are, it's not like some core
-kernel config option that people might be undecided on and need explained
-its function.
+Hrm, this is the first I'd noticed that feature though I see the initial
+commit dates from January.  It looks like most of the users are PCs at
+the minute but we should be using it more widely for embedded things,
+there's definitely some cases I'm aware of where it will allow us to
+remove some open coding.
 
->>>>   config TPS65911_COMPARATOR
->>>>   	tristate
->>>>
->>>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
->>>> index a59e3fc..7adb902 100644
->>>> --- a/drivers/mfd/Makefile
->>>> +++ b/drivers/mfd/Makefile
->>>> @@ -66,6 +66,7 @@ obj-$(CONFIG_MFD_WM8994)	+= wm8994-core.o wm8994-irq.o wm8994-regmap.o
->>>>   obj-$(CONFIG_TPS6105X)		+= tps6105x.o
->>>>   obj-$(CONFIG_TPS65010)		+= tps65010.o
->>>>   obj-$(CONFIG_TPS6507X)		+= tps6507x.o
->>>> +obj-$(CONFIG_MFD_TPS65086)	+= tps65086.o
->>>>   obj-$(CONFIG_MFD_TPS65217)	+= tps65217.o
->>>>   obj-$(CONFIG_MFD_TPS65218)	+= tps65218.o
->>>>   obj-$(CONFIG_MFD_TPS65910)	+= tps65910.o
->>>> diff --git a/drivers/mfd/tps65086.c b/drivers/mfd/tps65086.c
->>>> new file mode 100644
->>>> index 0000000..be6d678
->>>> --- /dev/null
->>>> +++ b/drivers/mfd/tps65086.c
->>>> @@ -0,0 +1,145 @@
->>>> +/*
->>>> + * Driver for TI TPS65086x PMICs
->>>
->>> I'd suggest removing the driver part.  We know it's a driver.
->>
->> Again this is what almost every other driver does,
->
-> Almost every other driver.  That's some statement.
->
-> I count 42%. ;)
->
+It does seem like we want to be feeding dependency information we
+discover for probing way into the suspend dependencies...
 
-I'm finding in drivers/mfd ~89% of drivers mention at some point that
-they are a driver. But I do admit my original statement was based on a
-quick monte carlo selection of a couple files. :)
+--yda//aIZIMrd7mir
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> I'm not sure how
->> else to describe this file without using the word driver.
->
-> Perhaps I'm getting picky in my old age, but I think I'd prefer to see:
->
->    TI TPS65086x PMIC support
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Still not sure this describes the file, maybe we could just drop that
-line completely from files with an obvious purpose? Doesn't really bother
-me ether way.
+iQEcBAEBCAAGBQJWJl9rAAoJECTWi3JdVIfQnkIH/2GzqyZNrVrsXXUVXs+4Shdt
+ktptYpVn9emNkSaj6aqYpyoVmHnvFpXnM5NLdQOURsDRCpkq5+b/yesGl7rqAqH/
+THvORSPwBV0dFdb9TpLYI6dfuOxDl8ufyiMUjxM5l17G636RfipKStJBK5UGHKBK
+8uGvTrUdX+9TpG5tNeC7BOjp/bGjrtKHaiyHbcBjrtUwO4kixDnVvD1qomuwIiIt
+RAHlPGdo4sO6IW0I5HurTI44EWxDxASqNYD4crMFdWgbo5J86QRgzkWJ7yh2d2wm
+P7eRo9qYZkqhKhMc2pKJdiZ7dTnM77cqd17uzOiNDfCRWsvCUP7+2QE2rcyDeZk=
+=XKiJ
+-----END PGP SIGNATURE-----
 
-> [...]
->
+--yda//aIZIMrd7mir--
