@@ -1,110 +1,53 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
-Date: Tue, 20 Oct 2015 18:32:36 +0200
-Message-ID: <CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
-	<56261239.5030007@linaro.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 13:14:46 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
+References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56261239.5030007-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.c>
 List-Id: linux-gpio@vger.kernel.org
 
-2015-10-20 12:06 GMT+02:00 Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On 17/10/15 18:23, Maxime Coquelin wrote:
->>
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>   include/dt-bindings/pinctrl/pinctrl-stm32.h     |   12 +
->>   include/dt-bindings/pinctrl/stm32f429-pinfunc.h | 1241
->> +++++++++++++++++++++++
->>   2 files changed, 1253 insertions(+)
->>   create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
->>   create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->>
->> diff --git a/include/dt-bindings/pinctrl/pinctrl-stm32.h
->> b/include/dt-bindings/pinctrl/pinctrl-stm32.h
->> new file mode 100644
->> index 0000000..a2e7222
->> --- /dev/null
->> +++ b/include/dt-bindings/pinctrl/pinctrl-stm32.h
->> @@ -0,0 +1,12 @@
->> +#ifndef _DT_BINDINGS_PINCTRL_STM32_H
->> +#define _DT_BINDINGS_PINCTRL_STM32_H
->> +
->> +#define STM32_PIN_NO(x) ((x) << 8)
->> +#define STM32_GET_PIN_NO(x) ((x) >> 8)
->> +#define STM32_GET_PIN_FUNC(x) ((x) & 0xff)
->> +
->> +#define STM32_PIN_GPIO         0
->> +#define STM32_PIN_AF(x)                ((x) + 1)
->> +#define STM32_PIN_ANALOG       (STM32_PIN_AF(15) + 1)
->> +
->> +#endif /* _DT_BINDINGS_PINCTRL_STM32_H */
->> diff --git a/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->> b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->> new file mode 100644
->> index 0000000..9dd5fd0
->> --- /dev/null
->> +++ b/include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->> @@ -0,0 +1,1241 @@
->> +#ifndef _DT_BINDINGS_STM32F429_PINFUNC_H
->> +#define _DT_BINDINGS_STM32F429_PINFUNC_H
->> +
->> +#include <dt-bindings/pinctrl/pinctrl-stm32.h>
->> +
->> +#define STM32F429_PA0_FUNC_GPIO 0x0
->> +#define STM32F429_PA0_FUNC_TIM2_CH1_TIM2_ETR 0x2
->
->
-> Did you expand these out after my feedback (instead of things like:
-> STM32_PIN_NO(0) | STM32_PIN_AF(1) )?
-Yes.
+On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
 
->
-> If so I must have been somewhat unclear.
-Most likely I didn't understood what you meant!
+> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > On Tue, 20 Oct 2015, Mark Brown wrote:
+> >
+> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> >>
+> >> > Furthermore, that applies only to devices that use synchronous suspend.
+> >> > Async suspend is becoming common, and there the only restrictions are
+> >> > parent-child relations plus whatever explicit requirements that drivers
+> >> > impose by calling device_pm_wait_for_dev().
+> >>
+> >> Hrm, this is the first I'd noticed that feature though I see the initial
+> >> commit dates from January.
+> >
+> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
+> > not 2015!
+> >
+> >>  It looks like most of the users are PCs at
+> >> the minute but we should be using it more widely for embedded things,
+> >> there's definitely some cases I'm aware of where it will allow us to
+> >> remove some open coding.
+> >>
+> >> It does seem like we want to be feeding dependency information we
+> >> discover for probing way into the suspend dependencies...
+> >
+> > Rafael has been thinking about a way to do this systematically.
+> > Nothing concrete has emerged yet.
+> 
+> This iteration of the series would make this quite easy, as
+> dependencies are calculated before probes are attempted:
+> 
+> https://lkml.org/lkml/2015/6/17/311
 
->
-> I suggesting that, like with the clock driver, there is no need to the
-> STM32F429_PAXX_FUNC_YYY macros at all.
->
-> Given the way you can enumerate pin config options in stm32f429.dtsi then I
-> think stm32f429.dtsi is the only file that will ever include this header? If
-> so then why not just plug the values directly into the pinmux fields. Its
-> not duplicative and is easier to map back to data sheets.
->
-> ~~~
-> #define PIN_NO(x) ...
-> #define PIN_AF(x) ...
->
-> usart1_pins_a: usart1@0 {
->                                 pins1 {
->                                         pinmux = PIN_NO(9) | PIN_AF(7);
->                                         bias-disable;
->                                         drive-push-pull;
->                                         slew-rate = <0>;
->                                 };
->                                 ...
->                         };
-> ~~~
+But what Rafael is proposing is quite general; it would apply to _all_
+dependencies as opposed to just those present in DT drivers or those 
+affecting platform_devices.
 
-The advantage with the defines is that you can see easily which pin we
-are talking about.
-Moreover, the defines are generated from the datasheet, so it is
-painless to generate them.
-And it will be consistent with Mediatek implementation, on which I
-heavily inspired.
-
-Linus, what is your view?
-
-Thanks,
-Maxime
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Alan Stern
