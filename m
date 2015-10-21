@@ -1,57 +1,150 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH -next] gpio: generic: Revert to old error handling in bgpio_map
-Date: Wed, 21 Oct 2015 00:12:00 -0700
-Message-ID: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:58188 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941AbbJUHML (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 03:12:11 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: Alternative approach to solve the deferred probe
+Date: Wed, 21 Oct 2015 09:18:47 +0100
+Message-ID: <20151021081847.GB32532@n2100.arm.linux.org.uk>
+References: <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+ <20151019153548.GM32532@n2100.arm.linux.org.uk>
+ <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
+ <20151020154656.GY32532@n2100.arm.linux.org.uk>
+ <56270D5B.5010902@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56270D5B.5010902@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwo>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Heiner Kallweit <hkallweit1@gmail.com>
 
-Returning an error instead of NULL in bgpio_map if
-platform_get_resource_byname does not find a resource was introduced with
-commit cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map").
-This results in several qemu runtime failures with default and non-default
-configurations, if attempts are made to boot from mmcblk0. Examples for
-failures with multi_v7_defconfig are
+On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
+> > On Mon, Oct 19, 2015 at 06:21:40PM +0200, Geert Uytterhoeven wrote:
+> >> Hi Russell,
+> >>
+> >> On Mon, Oct 19, 2015 at 5:35 PM, Russell King - ARM Linux
+> >> <linux@arm.linux.org.uk> wrote:
+> >>>>> What you can do is print those devices which have failed to probe at
+> >>>>> late_initcall() time - possibly augmenting that with reports from
+> >>>>> subsystems showing what resources are not available, but that's only
+> >>>>> a guide, because of the "it might or might not be in a kernel module"
+> >>>>> problem.
+> >>>>
+> >>>> Well, adding those reports would give you a changelog similar to the
+> >>>> one in this series...
+> >>>
+> >>> I'm not sure about that, because what I was thinking of is adding
+> >>> a flag which would be set at late_initcall() time prior to running
+> >>> a final round of deferred device probing.
+> >>
+> >> Which round is the final round?
+> >> That's the one which didn't manage to bind any new devices to drivers,
+> >> which is something you only know _after_ the round has been run.
+> >>
+> >> So I think we need one extra round to handle this.
+> >>
+> >>> This flag would then be used in a deferred_warn() printk function
+> >>> which would normally be silent, but when this flag is set, it would
+> >>> print the reason for the deferral - and this would replace (or be
+> >>> added) to the subsystems and drivers which return -EPROBE_DEFER.
+> >>>
+> >>> That has the effect of hiding all the deferrals up until just before
+> >>> launching into userspace, which should then acomplish two things -
+> >>> firstly, getting rid of the rather useless deferred messages up to
+> >>> that point, and secondly printing the reason why the remaining
+> >>> deferrals are happening.
+> >>>
+> >>> That should be a small number of new lines plus a one-line change
+> >>> in subsystems and drivers.
+> >>
+> >> Apart from the extra round we probably can't get rid of, that sounds OK to me.
+> > 
+> > Something like this.  I haven't put a lot of effort into it to change all
+> > the places which return an -EPROBE_DEFER, and it also looks like we need
+> > some helpers to report when we have only an device_node (or should that
+> > be fwnode?)  See the commented out of_warn_deferred() in
+> > drivers/gpio/gpiolib-of.c.  Adding this stuff in the subsystems searching
+> > for resources should make debugging why things are getting deferred easier.
+> > 
+> > We could make driver_deferred_probe_report something that can be
+> > deactivated again after the last deferred probe run, and provide the
+> > user with a knob that they can turn it back on again.
+> > 
+> > I've tried this out on two of my platforms, including forcing
+> > driver_deferred_probe_report to be enabled, and I get exactly one
+> > deferred probe, so not a particularly good test.
+> > 
+> > The patch won't apply as-is to mainline for all files; it's based on my
+> > tree which has some 360 additional patches (which seems to be about
+> > normal for my tree now.)
+> 
+> I like the concept (I have been thinking along similar lines lately).
+> But I think this might make the console messages more confusing than
+> they are now.
 
-Machine: vexpress-a9	dtb: vexpress-v2p-ca9
-Machine: vexpress-a15	dtb: vexpress-v2p-ca15-tc1
+If messages end up being given from the subsystem rather than the driver,
+surely they become more consistent?
 
-Crash:
+> The problem is that debug, warn, and error messages
+> come from a somewhat random set of locations at the moment.  Some
+> come from the driver probe routines and some come from the subsystems
+> that the probe routines call.  So the patch is suppressing some
+> messages, but not others.
 
-VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -6
-Please append a correct "root=" boot option; here are the available partitions:
-Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+The patch is not complete (read the description above).
 
-Looking into the code, always returning an error if bgpio_map fails
-does not appear to make much sense, since the code in bgpio_setup_io
-specifically supports some of the resources to be NULL.
+> > +void dev_warn_deferred(struct device *dev, const char *fmt, ...)
+> > +{
+> > +	if (driver_deferred_probe_report) {
+> > +		struct va_format vaf;
+> > +		va_list ap;
+> > +
+> > +		va_start(ap, fmt);
+> > +		vaf.fmt = fmt;
+> > +		vaf.va = &ap;
+> > +
+> > +		dev_warn(dev, "deferring probe: %pV", &vaf);
+> > +		va_end(ap);
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL_GPL(dev_warn_deferred);
+> 
+> The places where dev_warn_deferred() replaces dev_dbg(), we lose the
+> ability to turn on debugging and observe the driver reporting the
+> specific reason the deferral is occurring. So it would be useful to
+> add an "else dev_dbg()" in dev_warn_deferred() to retain that capability.
 
-Fixes: cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map")
-Cc: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/gpio/gpio-generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's a possibility.
 
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index d8b1700b9519..bd5193c67a9c 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -586,7 +586,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
- 
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
- 	if (!r)
--		return IOMEM_ERR_PTR(-EINVAL);
-+		return NULL;
- 
- 	sz = resource_size(r);
- 	if (sz != sane_sz)
+> 
+> > +
+> >  static bool driver_deferred_probe_enable = false;
+> > +
+> >  /**
+> >   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+> >   *
+> > @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+> >  	driver_deferred_probe_trigger();
+> 
+> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+> not add another round of probes.
+
+The idea is not to report anything for drivers that were deferred
+during the normal bootup.  The above is part of the normal bootup,
+and the deferred activity should not be warned about.
+
+If we have any devices still deferring after _this_ round, that must
+indicate that some resource they want is not available, and that
+should be warned about.
+
+Of course, modules can defer too - and I made some suggestions in my
+waffle above the patch about that.
+
 -- 
-2.1.4
-
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
