@@ -1,211 +1,51 @@
-From: Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH v3] drivers/pinctrl: Add the concept of an "init" state
-Date: Tue, 20 Oct 2015 21:15:06 -0700
-Message-ID: <1445400906-32284-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:36119 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbbJUEPk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 00:15:40 -0400
-Received: by pacfv9 with SMTP id fv9so43510563pac.3
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Oct 2015 21:15:39 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [REPOST PATCH v2] drivers/pinctrl: Add the concept of an "init" state
+Date: Tue, 20 Oct 2015 21:17:55 -0700
+Message-ID: <CAD=FV=WAexTOiuAV1Rs-eTVra657cGvc51xYcgEgqfKoRpJEnw@mail.gmail.com>
+References: <1445393316-10079-1-git-send-email-dianders@chromium.org>
+	<201510211015.LOfTtSa0%fengguang.wu@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201510211015.LOfTtSa0%fengguang.wu@intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kbuild test robot <lkp@intel.com>
+Cc: "kbuild-all@01.org" <kbuild-all@01.org>, Linus Walleij <linus.walleij@linaro.org>, Greg KH <gregkh@linuxfoundation.org>, Heiko Stuebner <heiko@sntech.de>, Caesar Wang <wxt@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Greg KH <gregkh@linuxfoundation.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Caesar Wang <wxt@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-For pinctrl the "default" state is applied to pins before the driver's
-probe function is called.  This is normally a sensible thing to do,
-but in some cases can cause problems.  That's because the pins will
-change state before the driver is given a chance to program how those
-pins should behave.
+Hi,
 
-As an example you might have a regulator that is controlled by a PWM
-(output high = high voltage, output low = low voltage).  The firmware
-might leave this pin as driven high.  If we allow the driver core to
-reconfigure this pin as a PWM pin before the PWM's probe function runs
-then you might end up running at too low of a voltage while we probe.
+On Tue, Oct 20, 2015 at 7:46 PM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Doug,
+>
+> [auto build test ERROR on pinctrl/for-next -- if it's inappropriate base, please suggest rules for selecting the more suitable base]
+>
+> url:    https://github.com/0day-ci/linux/commits/Douglas-Anderson/drivers-pinctrl-Add-the-concept-of-an-init-state/20151021-101131
+> config: i386-randconfig-x004-10191220 (attached as .config)
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/base/dd.c: In function 'really_probe':
+>>> drivers/base/dd.c:325:2: error: implicit declaration of function 'pinctrl_init_done' [-Werror=implicit-function-declaration]
+>      pinctrl_init_done(dev);
+>      ^
+>    cc1: some warnings being treated as errors
+>
+> vim +/pinctrl_init_done +325 drivers/base/dd.c
+>
+>    319          } else if (drv->probe) {
+>    320                  ret = drv->probe(dev);
+>    321                  if (ret)
+>    322                          goto probe_failed;
+>    323          }
+>    324
+>  > 325          pinctrl_init_done(dev);
+>    326
+>    327          if (dev->pm_domain && dev->pm_domain->sync)
+>    328                  dev->pm_domain->sync(dev);
 
-Let's introudce a new "init" state.  If this is defined we'll set
-pinctrl to this state before probe and then "default" after probe
-(unless the driver explicitly changed states already).
-
-An alternative idea that was thought of was to use the pre-existing
-"sleep" or "idle" states and add a boolean property that we should
-start in that mode.  This was not done because the "init" state is
-needed for correctness and those other states are only present (and
-only transitioned in to and out of) when (optional) power management
-is enabled.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Tested-by: Caesar Wang <wxt@rock-chips.com>
----
-Changes in v3:
-- Moved declarations to pinctrl/devinfo.h
-- Fixed author/SoB
-
-Changes in v2:
-- Added comment to pinctrl_init_done() as per Linus W.
-
-As mentioned in v2 repost, reposted after 1 year of no activity since
-Caesar Wang found a use for this.  See
-<https://patchwork.kernel.org/patch/7444161/>.  I hope it's OK that I
-left Greg KH's Ack...
-
- drivers/base/dd.c                     |  2 ++
- drivers/base/pinctrl.c                | 15 +++++++++++++--
- drivers/pinctrl/core.c                | 32 ++++++++++++++++++++++++++++++++
- include/linux/pinctrl/devinfo.h       | 10 ++++++++++
- include/linux/pinctrl/pinctrl-state.h |  8 ++++++++
- 5 files changed, 65 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index c4a3f298e..217eafc 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -322,6 +322,8 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 			goto probe_failed;
- 	}
- 
-+	pinctrl_init_done(dev);
-+
- 	if (dev->pm_domain && dev->pm_domain->sync)
- 		dev->pm_domain->sync(dev);
- 
-diff --git a/drivers/base/pinctrl.c b/drivers/base/pinctrl.c
-index 5fb74b4..0762975 100644
---- a/drivers/base/pinctrl.c
-+++ b/drivers/base/pinctrl.c
-@@ -42,9 +42,20 @@ int pinctrl_bind_pins(struct device *dev)
- 		goto cleanup_get;
- 	}
- 
--	ret = pinctrl_select_state(dev->pins->p, dev->pins->default_state);
-+	dev->pins->init_state = pinctrl_lookup_state(dev->pins->p,
-+					PINCTRL_STATE_INIT);
-+	if (IS_ERR(dev->pins->init_state)) {
-+		/* Not supplying this state is perfectly legal */
-+		dev_dbg(dev, "no init pinctrl state\n");
-+
-+		ret = pinctrl_select_state(dev->pins->p,
-+					   dev->pins->default_state);
-+	} else {
-+		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-+	}
-+
- 	if (ret) {
--		dev_dbg(dev, "failed to activate default pinctrl state\n");
-+		dev_dbg(dev, "failed to activate initial pinctrl state\n");
- 		goto cleanup_get;
- 	}
- 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 9638a00..2686a44 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1240,6 +1240,38 @@ int pinctrl_force_default(struct pinctrl_dev *pctldev)
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
- 
-+/**
-+ * pinctrl_init_done() - tell pinctrl probe is done
-+ *
-+ * We'll use this time to switch the pins from "init" to "default" unless the
-+ * driver selected some other state.
-+ *
-+ * @dev: device to that's done probing
-+ */
-+int pinctrl_init_done(struct device *dev)
-+{
-+	struct dev_pin_info *pins = dev->pins;
-+	int ret;
-+
-+	if (!pins)
-+		return 0;
-+
-+	if (IS_ERR(pins->init_state))
-+		return 0; /* No such state */
-+
-+	if (pins->p->state != pins->init_state)
-+		return 0; /* Not at init anyway */
-+
-+	if (IS_ERR(pins->default_state))
-+		return 0; /* No default state */
-+
-+	ret = pinctrl_select_state(pins->p, pins->default_state);
-+	if (ret)
-+		dev_err(dev, "failed to activate default pinctrl state\n");
-+
-+	return ret;
-+}
-+
- #ifdef CONFIG_PM
- 
- /**
-diff --git a/include/linux/pinctrl/devinfo.h b/include/linux/pinctrl/devinfo.h
-index 281cb91..05082e4 100644
---- a/include/linux/pinctrl/devinfo.h
-+++ b/include/linux/pinctrl/devinfo.h
-@@ -24,10 +24,14 @@
-  * struct dev_pin_info - pin state container for devices
-  * @p: pinctrl handle for the containing device
-  * @default_state: the default state for the handle, if found
-+ * @init_state: the state at probe time, if found
-+ * @sleep_state: the state at suspend time, if found
-+ * @idle_state: the state at idle (runtime suspend) time, if found
-  */
- struct dev_pin_info {
- 	struct pinctrl *p;
- 	struct pinctrl_state *default_state;
-+	struct pinctrl_state *init_state;
- #ifdef CONFIG_PM
- 	struct pinctrl_state *sleep_state;
- 	struct pinctrl_state *idle_state;
-@@ -35,6 +39,7 @@ struct dev_pin_info {
- };
- 
- extern int pinctrl_bind_pins(struct device *dev);
-+extern int pinctrl_init_done(struct device *dev);
- 
- #else
- 
-@@ -45,5 +50,10 @@ static inline int pinctrl_bind_pins(struct device *dev)
- 	return 0;
- }
- 
-+static inline int pinctrl_init_done(struct device *dev)
-+{
-+	return 0;
-+}
-+
- #endif /* CONFIG_PINCTRL */
- #endif /* PINCTRL_DEVINFO_H */
-diff --git a/include/linux/pinctrl/pinctrl-state.h b/include/linux/pinctrl/pinctrl-state.h
-index b5919f8..2307351 100644
---- a/include/linux/pinctrl/pinctrl-state.h
-+++ b/include/linux/pinctrl/pinctrl-state.h
-@@ -9,6 +9,13 @@
-  *	hogs to configure muxing and pins at boot, and also as a state
-  *	to go into when returning from sleep and idle in
-  *	.pm_runtime_resume() or ordinary .resume() for example.
-+ * @PINCTRL_STATE_INIT: normally the pinctrl will be set to "default"
-+ *	before the driver's probe() function is called.  There are some
-+ *	drivers where that is not appropriate becausing doing so would
-+ *	glitch the pins.  In those cases you can add an "init" pinctrl
-+ *	which is the state of the pins before drive probe.  After probe
-+ *	if the pins are still in "init" state they'll be moved to
-+ *	"default".
-  * @PINCTRL_STATE_IDLE: the state the pinctrl handle shall be put into
-  *	when the pins are idle. This is a state where the system is relaxed
-  *	but not fully sleeping - some power may be on but clocks gated for
-@@ -20,5 +27,6 @@
-  *	ordinary .suspend() function.
-  */
- #define PINCTRL_STATE_DEFAULT "default"
-+#define PINCTRL_STATE_INIT "init"
- #define PINCTRL_STATE_IDLE "idle"
- #define PINCTRL_STATE_SLEEP "sleep"
--- 
-2.6.0.rc2.230.g3dd15c0
-
+Yup, good catch Mr. Robot.  I think I've got it all fixed up in:
+https://patchwork.kernel.org/patch/7454311/
