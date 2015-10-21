@@ -1,31 +1,57 @@
-From: Jean-Francois Moine <moinejf@free.fr>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Wed, 21 Oct 2015 08:15:19 +0200
-Message-ID: <20151021081519.13fa548a@OPI2>
-References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
-	<Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
-	<20151020193528.GE32054@sirena.org.uk>
-	<23698237.227MziouDO@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <23698237.227MziouDO@vostro.rjw.lan>
-Sender: linux-pwm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mark Brown <broonie@kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Michael Turquette <mturquette@baylibre.com>, dri-devel <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Frank Rowand <frowand.list@gmail.com>, linux-clk@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Linux PWM List <linux-pwm@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@linaro.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Alexandre
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH -next] gpio: generic: Revert to old error handling in bgpio_map
+Date: Wed, 21 Oct 2015 00:12:00 -0700
+Message-ID: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:58188 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751941AbbJUHML (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 03:12:11 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Heiner Kallweit <hkallweit1@gmail.com>
 
-Sorry to enter this thread a bit late.
+Returning an error instead of NULL in bgpio_map if
+platform_get_resource_byname does not find a resource was introduced with
+commit cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map").
+This results in several qemu runtime failures with default and non-default
+configurations, if attempts are made to boot from mmcblk0. Examples for
+failures with multi_v7_defconfig are
 
-About the number of probe deferred messages, I proposed a simple patch =
-to
-reduce them:
+Machine: vexpress-a9	dtb: vexpress-v2p-ca9
+Machine: vexpress-a15	dtb: vexpress-v2p-ca15-tc1
 
-	https://lkml.org/lkml/2013/8/20/218
+Crash:
 
-I was wondering how many messages this patch could save...
+VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -6
+Please append a correct "root=" boot option; here are the available partitions:
+Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
 
---=20
-Ken ar c'henta=C3=B1	|	      ** Breizh ha Linux atav! **
-Jef		|		http://moinejf.free.fr/
+Looking into the code, always returning an error if bgpio_map fails
+does not appear to make much sense, since the code in bgpio_setup_io
+specifically supports some of the resources to be NULL.
+
+Fixes: cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map")
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/gpio/gpio-generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index d8b1700b9519..bd5193c67a9c 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -586,7 +586,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+ 
+ 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+ 	if (!r)
+-		return IOMEM_ERR_PTR(-EINVAL);
++		return NULL;
+ 
+ 	sz = resource_size(r);
+ 	if (sz != sane_sz)
+-- 
+2.1.4
+
