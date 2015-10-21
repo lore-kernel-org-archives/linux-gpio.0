@@ -1,144 +1,68 @@
-From: Alban <albeu@free.fr>
-Subject: Re: [PATCH 4/5] MIPS: xilfpga: Add mipsfpga platform code
-Date: Wed, 21 Oct 2015 16:35:02 +0200
-Message-ID: <20151021163502.44be785f@avionic-0020>
-References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
-	<1444827117-10939-5-git-send-email-Zubair.Kakakhel@imgtec.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/4] Documentation: tps65086: Add DT bindings for the
+ TPS65086 PMIC
+Date: Wed, 21 Oct 2015 16:26:59 +0100
+Message-ID: <20151021152659.GF3270@x1>
+References: <20151019091311.GH31804@x1>
+ <5625095F.5080204@ti.com>
+ <20151019152100.GK31804@x1>
+ <56250AF9.3030907@ti.com>
+ <20151020113128.GN31804@x1>
+ <56264990.8050501@ti.com>
+ <20151021084633.GB3270@x1>
+ <20151021102952.GJ32054@sirena.org.uk>
+ <20151021111832.GC3270@x1>
+ <20151021121409.GA8232@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444827117-10939-5-git-send-email-Zubair.Kakakhel@imgtec.com>
+Content-Disposition: inline
+In-Reply-To: <20151021121409.GA8232@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc: Alban <albeu@free.fr>, ralf@linux-mips.org, robh+dt@kernel.org, linus.walleij@linaro.org, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Am Wed, 14 Oct 2015 13:51:56 +0100
-schrieb Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>:
+On Wed, 21 Oct 2015, Mark Brown wrote:
 
-> The xilfpga platform will be DT only.
-> 
-> Add required platform code. DT files have already been added separately
->
-> [...]
->
-> diff --git a/arch/mips/include/asm/mach-xilfpga/gpio.h b/arch/mips/include/asm/mach-xilfpga/gpio.h
-> new file mode 100644
-> index 0000000..26778fc
-> --- /dev/null
-> +++ b/arch/mips/include/asm/mach-xilfpga/gpio.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * Copyright (C) 2015 Imagination Technologies
-> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef __ASM_MACH_XILFPGA_GPIO_H
-> +#define __ASM_MACH_XILFPGA_GPIO_H
-> +
-> +#include <asm-generic/gpio.h>
-> +
-> +#define gpio_get_value __gpio_get_value
-> +#define gpio_set_value __gpio_set_value
-> +
-> +#endif /* __ASM_MACH_XILFPGA_GPIO_H */
+> On Wed, Oct 21, 2015 at 12:18:32PM +0100, Lee Jones wrote:
+> > On Wed, 21 Oct 2015, Mark Brown wrote:
+> > > On Wed, Oct 21, 2015 at 09:46:33AM +0100, Lee Jones wrote:
+> > > > On Tue, 20 Oct 2015, Andrew F. Davis wrote:
+>=20
+> > > It is however the normal way we write compatible strings - the cl=
+ass
+> > > information would normaly go in the node name (ie, i2c@7000c000 o=
+r
+> > > whatever).
+>=20
+> > I didn't say it hasn't been done before, just that I didn't like it
+> > for the aforementioned reasons.  I can also find 1000's of compatib=
+le
+> > strings which do append "-<device_type>", so it's not exactly an
+> > unheard of practice.
+>=20
+> It's a pretty substantial change in the way we make compatible string=
+s
+> that we probably want to discuss more widely if we want to adopt it -
+> we've not been using that idiom and it's pretty surprising.  I'm not
+> really sure it help much and we do already have the pre-@ noise words
+> for this purpose (as well as comments in the DT).
 
-Custom gpio.h has been disabled, this file won't be used, it can just
-be dropped.
+I'm not *that* fussed about it to justify starting-up wider community
+discussions.
 
-> diff --git a/arch/mips/include/asm/mach-xilfpga/irq.h b/arch/mips/include/asm/mach-xilfpga/irq.h
-> new file mode 100644
-> index 0000000..0132a5b9
-> --- /dev/null
-> +++ b/arch/mips/include/asm/mach-xilfpga/irq.h
-> @@ -0,0 +1,18 @@
-> +/*
-> + * Copyright (C) 2015 Imagination Technologies
-> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms of the GNU General Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef __MIPS_ASM_MACH_XILFPGA_IRQ_H__
-> +#define __MIPS_ASM_MACH_XILFPGA_IRQ_H__
-> +
-> +#define NR_IRQS 32
-> +
-> +#include_next <irq.h>
-> +
-> +#endif /* __MIPS_ASM_MACH_XILFPGA_IRQ_H__ */
+My only point is that:
 
-Is this really needed? If not I would not add it to keep the maintenance
-burden down.
+  compatible =3D "<vendor>,udw9283";
 
-> [...]
->
-> diff --git a/arch/mips/xilfpga/time.c b/arch/mips/xilfpga/time.c
-> new file mode 100644
-> index 0000000..3f2e39e
-> --- /dev/null
-> +++ b/arch/mips/xilfpga/time.c
-> @@ -0,0 +1,41 @@
-> +/*
-> + * Xilfpga clocksource/timer setup
-> + *
-> + * Copyright (C) 2015 Imagination Technologies
-> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clocksource.h>
-> +#include <linux/of.h>
-> +
-> +#include <asm/time.h>
-> +
-> +void __init plat_time_init(void)
-> +{
-> +	struct device_node *np;
-> +	struct clk *clk = 0;
-> +
-> +	of_clk_init(NULL);
-> +	clocksource_of_init();
-> +
-> +	np = of_get_cpu_node(0, NULL);
-> +	if (!np) {
-> +		pr_err("Failed to get CPU node\n");
-> +		return;
-> +	}
-> +
-> +	clk = of_clk_get(np, 0);
-> +	if (IS_ERR(clk)) {
-> +		pr_err("Failed to get CPU clock: %ld\n", PTR_ERR(clk));
-> +		return;
-> +	}
-> +
-> +	mips_hpt_frequency = clk_get_rate(clk) / 2;
-> +	clk_put(clk);
-> +}
+=2E.. is meaningless gibberish and I think it'd be better to be more
+forthcoming which prevents having to dig around in DTS files for the
+node name/label for true device/type identification.
 
-I wanted to use something similar on ATH79 once all boards moved to DT.
-On the other hand I saw that BMIPS use a dedicated property on the CPU
-node to represent the HPT frequency. If possible it would make sense to
-use a common scheme for all MIPS platforms. However I personally don't
-know enough about MIPS in general to judge this.
-
-On the other hand I think it might make more sense to have a dedicated
-node in DT to represent the HPT timer instead of hacking on the CPU
-node. That would also fit better if the HPT code ever become is a real
-driver.
-
-Alban
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
