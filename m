@@ -1,71 +1,144 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/4] Documentation: tps65086: Add DT bindings for the
- TPS65086 PMIC
-Date: Wed, 21 Oct 2015 13:14:09 +0100
-Message-ID: <20151021121409.GA8232@sirena.org.uk>
-References: <1445014753-15450-2-git-send-email-afd@ti.com>
- <20151019091311.GH31804@x1>
- <5625095F.5080204@ti.com>
- <20151019152100.GK31804@x1>
- <56250AF9.3030907@ti.com>
- <20151020113128.GN31804@x1>
- <56264990.8050501@ti.com>
- <20151021084633.GB3270@x1>
- <20151021102952.GJ32054@sirena.org.uk>
- <20151021111832.GC3270@x1>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 4/5] MIPS: xilfpga: Add mipsfpga platform code
+Date: Wed, 21 Oct 2015 16:35:02 +0200
+Message-ID: <20151021163502.44be785f@avionic-0020>
+References: <1444827117-10939-1-git-send-email-Zubair.Kakakhel@imgtec.com>
+	<1444827117-10939-5-git-send-email-Zubair.Kakakhel@imgtec.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40610 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753822AbbJUMOY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 08:14:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20151021111832.GC3270@x1>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1444827117-10939-5-git-send-email-Zubair.Kakakhel@imgtec.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+Cc: Alban <albeu@free.fr>, ralf@linux-mips.org, robh+dt@kernel.org, linus.walleij@linaro.org, linux-mips@linux-mips.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Am Wed, 14 Oct 2015 13:51:56 +0100
+schrieb Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>:
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The xilfpga platform will be DT only.
+> 
+> Add required platform code. DT files have already been added separately
+>
+> [...]
+>
+> diff --git a/arch/mips/include/asm/mach-xilfpga/gpio.h b/arch/mips/include/asm/mach-xilfpga/gpio.h
+> new file mode 100644
+> index 0000000..26778fc
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-xilfpga/gpio.h
+> @@ -0,0 +1,19 @@
+> +/*
+> + * Copyright (C) 2015 Imagination Technologies
+> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + */
+> +
+> +#ifndef __ASM_MACH_XILFPGA_GPIO_H
+> +#define __ASM_MACH_XILFPGA_GPIO_H
+> +
+> +#include <asm-generic/gpio.h>
+> +
+> +#define gpio_get_value __gpio_get_value
+> +#define gpio_set_value __gpio_set_value
+> +
+> +#endif /* __ASM_MACH_XILFPGA_GPIO_H */
 
-On Wed, Oct 21, 2015 at 12:18:32PM +0100, Lee Jones wrote:
-> On Wed, 21 Oct 2015, Mark Brown wrote:
-> > On Wed, Oct 21, 2015 at 09:46:33AM +0100, Lee Jones wrote:
-> > > On Tue, 20 Oct 2015, Andrew F. Davis wrote:
+Custom gpio.h has been disabled, this file won't be used, it can just
+be dropped.
 
-> > It is however the normal way we write compatible strings - the class
-> > information would normaly go in the node name (ie, i2c@7000c000 or
-> > whatever).
+> diff --git a/arch/mips/include/asm/mach-xilfpga/irq.h b/arch/mips/include/asm/mach-xilfpga/irq.h
+> new file mode 100644
+> index 0000000..0132a5b9
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-xilfpga/irq.h
+> @@ -0,0 +1,18 @@
+> +/*
+> + * Copyright (C) 2015 Imagination Technologies
+> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + */
+> +
+> +#ifndef __MIPS_ASM_MACH_XILFPGA_IRQ_H__
+> +#define __MIPS_ASM_MACH_XILFPGA_IRQ_H__
+> +
+> +#define NR_IRQS 32
+> +
+> +#include_next <irq.h>
+> +
+> +#endif /* __MIPS_ASM_MACH_XILFPGA_IRQ_H__ */
 
-> I didn't say it hasn't been done before, just that I didn't like it
-> for the aforementioned reasons.  I can also find 1000's of compatible
-> strings which do append "-<device_type>", so it's not exactly an
-> unheard of practice.
+Is this really needed? If not I would not add it to keep the maintenance
+burden down.
 
-It's a pretty substantial change in the way we make compatible strings
-that we probably want to discuss more widely if we want to adopt it -
-we've not been using that idiom and it's pretty surprising.  I'm not
-really sure it help much and we do already have the pre-@ noise words
-for this purpose (as well as comments in the DT).
+> [...]
+>
+> diff --git a/arch/mips/xilfpga/time.c b/arch/mips/xilfpga/time.c
+> new file mode 100644
+> index 0000000..3f2e39e
+> --- /dev/null
+> +++ b/arch/mips/xilfpga/time.c
+> @@ -0,0 +1,41 @@
+> +/*
+> + * Xilfpga clocksource/timer setup
+> + *
+> + * Copyright (C) 2015 Imagination Technologies
+> + * Author: Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clocksource.h>
+> +#include <linux/of.h>
+> +
+> +#include <asm/time.h>
+> +
+> +void __init plat_time_init(void)
+> +{
+> +	struct device_node *np;
+> +	struct clk *clk = 0;
+> +
+> +	of_clk_init(NULL);
+> +	clocksource_of_init();
+> +
+> +	np = of_get_cpu_node(0, NULL);
+> +	if (!np) {
+> +		pr_err("Failed to get CPU node\n");
+> +		return;
+> +	}
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("Failed to get CPU clock: %ld\n", PTR_ERR(clk));
+> +		return;
+> +	}
+> +
+> +	mips_hpt_frequency = clk_get_rate(clk) / 2;
+> +	clk_put(clk);
+> +}
 
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
+I wanted to use something similar on ATH79 once all boards moved to DT.
+On the other hand I saw that BMIPS use a dedicated property on the CPU
+node to represent the HPT frequency. If possible it would make sense to
+use a common scheme for all MIPS platforms. However I personally don't
+know enough about MIPS in general to judge this.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+On the other hand I think it might make more sense to have a dedicated
+node in DT to represent the HPT timer instead of hacking on the CPU
+node. That would also fit better if the HPT code ever become is a real
+driver.
 
-iQEcBAEBCAAGBQJWJ4GLAAoJECTWi3JdVIfQz0AH/RiB/O4Izz9j0mLRswa2X/ZS
-L4mt3pbMxHGQiDpXB3TRXbPD4LJqWVuz35mNF+I62PVSCEKFF7OcfxGaAsUyJ/Fg
-MywZ1tKWRSs01PbHNdjTmb/ygVB8ty2SJz7RGPgG50MKCFGNy3Ahw+TSOPialIOf
-I1vWiCRdFKVflWcHWRSfwhqNaGYg7rSboKJCjWuo3kMGxB1VAo1ZLX9mWpNUzZPI
-xi3cSxV2ARp+ow1CXa1t2VppMxfVhMg7BfCATTI/ETNE3qwzvxkj/r7W5xQUPPt1
-hGUJWwseSMx0TtM53qbleO/wjJtq6d4Si2Pml08vTSZmaTYY/syUr7tN3tSZ0B8=
-=t1Uq
------END PGP SIGNATURE-----
-
---6TrnltStXW4iwmi0--
+Alban
