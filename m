@@ -1,63 +1,73 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Wed, 21 Oct 2015 10:55:14 +0200
-Message-ID: <CAMuHMdWoSdoT1p0e+Bc9ucrykxO7ESLKYHRzackpVjQAs_XaDg@mail.gmail.com>
-References: <561E1378.6000906@collabora.com>
-	<4025469.zmyipZqCsP@vostro.rjw.lan>
-	<CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
-	<4903022.NtioyRkmbB@vostro.rjw.lan>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH -next] gpio: generic: Revert to old error handling in bgpio_map
+Date: Wed, 21 Oct 2015 11:13:33 +0200
+Message-ID: <CAFSsGVuCZwk4PY9SCR_f=LiG920ZD3Hk-hxVNc9vHXMACtG7sA@mail.gmail.com>
+References: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f194.google.com ([209.85.214.194]:33731 "EHLO
-	mail-ob0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754132AbbJUIzQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 04:55:16 -0400
-In-Reply-To: <4903022.NtioyRkmbB@vostro.rjw.lan>
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:36740 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750895AbbJUJNf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Oct 2015 05:13:35 -0400
+In-Reply-To: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmai>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Rafael,
-
-On Wed, Oct 21, 2015 at 1:34 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Tuesday, October 20, 2015 09:15:01 AM Rob Herring wrote:
->> On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> > ACPI uses platform devices too.  In fact, ACPI device objects are enumerated as
->> > platform devices by default now.
->>
->> Okay, I should have grepped for that:
->> drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev, NULL);
->> drivers/base/platform.c:        len = acpi_device_modalias(dev, buf,
->> PAGE_SIZE -1);
->> drivers/base/platform.c:        rc = acpi_device_uevent_modalias(dev, env);
->> drivers/base/platform.c:        /* Then try ACPI style match */
->> drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv))
->>
->> These are all cases which have DT version as well, so we're not really
->> all that different here. There's a few more for DT, but that probably
->> means you have just not hit the problems we have yet. For example,
->> what happens if you have an interrupt line in which the controller is
->> probed after the device connected to the interrupt line? That required
->> resolving irqs in platform_get_irq rather than using static resources
->> to support deferred probe.
+On Wed, Oct 21, 2015 at 9:12 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> Returning an error instead of NULL in bgpio_map if
+> platform_get_resource_byname does not find a resource was introduced with
+> commit cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map").
+> This results in several qemu runtime failures with default and non-default
+> configurations, if attempts are made to boot from mmcblk0. Examples for
+> failures with multi_v7_defconfig are
 >
-> We don't have this particular problem, because the IRQ controllers are
-> enumerated in a special way.
+> Machine: vexpress-a9    dtb: vexpress-v2p-ca9
+> Machine: vexpress-a15   dtb: vexpress-v2p-ca15-tc1
+>
+> Crash:
+>
+> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -6
+> Please append a correct "root=" boot option; here are the available partitions:
+> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+>
+> Looking into the code, always returning an error if bgpio_map fails
+> does not appear to make much sense, since the code in bgpio_setup_io
+> specifically supports some of the resources to be NULL.
+>
+Indeed. Seems like "dat" is the only mandatory resource.
+Previously there was a double check that "dat" is set:
+in bgpio_dev_probe and in bgpio_setup_io
 
-What does "in a special way" mean? Can you please be more specific?
+With your proposed patch the check in bgpio_dev_probe is removed.
+Due to the (previously redundant) check in bgpio_setup_io it's ok however.
 
-Can you have interrupt controllers that depend on clocks, pin controllers,
-and PM domains?
+One could only discuss whether "dat" should be checked as early as possible
+(in bgpio_dev_probe instead of bgpio_setup_io).
+But that's something I'd consider to be more or less cosmetic.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Fixes: cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_map")
+> Cc: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/gpio/gpio-generic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+> index d8b1700b9519..bd5193c67a9c 100644
+> --- a/drivers/gpio/gpio-generic.c
+> +++ b/drivers/gpio/gpio-generic.c
+> @@ -586,7 +586,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+>
+>         r = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+>         if (!r)
+> -               return IOMEM_ERR_PTR(-EINVAL);
+> +               return NULL;
+>
+>         sz = resource_size(r);
+>         if (sz != sane_sz)
+> --
+> 2.1.4
+>
