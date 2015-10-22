@@ -1,68 +1,63 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 01/11] dt-bindings: pinctrl: Optional DT property to
- support pin mappings
-Date: Thu, 22 Oct 2015 13:45:03 -0500
-Message-ID: <CAL_JsqJaJO+ytBrZvwHkPjM9-Wr8MHMK-uTV93QLium3JL_A3Q@mail.gmail.com>
-References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com> <1445233398-27129-2-git-send-email-pramodku@broadcom.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 05/11] dt-binding: Add ngpios property to GPIO controller
+ node
+Date: Thu, 22 Oct 2015 11:52:02 -0700
+Message-ID: <56293052.80402@broadcom.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+ <1445233398-27129-6-git-send-email-pramodku@broadcom.com>
+ <CAL_Jsq+Xwf7==J1LLnUDtj-cgJWRizbKXcYtwfEe5iv8VS-Uwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:52281 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751990AbbJVSp0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 22 Oct 2015 14:45:26 -0400
-In-Reply-To: <1445233398-27129-2-git-send-email-pramodku@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_Jsq+Xwf7==J1LLnUDtj-cgJWRizbKXcYtwfEe5iv8VS-Uwg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, BCM Kernel Feedback <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Pramod Kumar <pramodku@broadcom.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 
-On Mon, Oct 19, 2015 at 12:43 AM, Pramod Kumar <pramodku@broadcom.com> wrote:
-> If GPIO controller's pins are muxed, pin-controller subsystem
-> need to be intimated by defining mapping between gpio and
-> pinmux controller. This patch adds required properties to
-> define this mapping via DT.
->
-> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
 
-> ---
->  .../devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt         | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+On 10/22/2015 11:43 AM, Rob Herring wrote:
+> On Mon, Oct 19, 2015 at 12:43 AM, Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+>> Add ngpios property to the gpio controller's DT node so that controller
+>> driver extracts total number of gpio lines present in controller
+>> from DT and removes dependency on driver.
+>>
+>> Signed-off-by: Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> Reviewed-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> Reviewed-by: Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>> ---
+>>   Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>> index f92b833..655a8d7 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>> @@ -10,6 +10,9 @@ Required properties:
+>>       Define the base and range of the I/O address space that contains the Cygnus
+>>   GPIO/PINCONF controller registers
+>>
+>> +- ngpios:
+>> +    Total number of GPIOs the controller provides
 >
-> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> index 6540ca5..25a5002 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> @@ -26,9 +26,13 @@ Optional properties:
->  - interrupt-controller:
->      Specifies that the node is an interrupt controller
+> This must be optional for compatibility and the driver needs to handle
+> it not present.
 >
-> -- pinmux:
-> -    Specifies the phandle to the IOMUX device, where pins can be individually
-> -muxed to GPIO
-> +- gpio-ranges:
-> +    Specifies the mapping between gpio controller and pin-controllers pins.
-> +    This requires 4 fields in cells defined as -
-> +    1. Phandle of pin-controller.
-> +    2. GPIO base pin offset.
-> +    3  Pin-control base pin offset.
-> +    4. number of gpio pins which are linearly mapped from pin base.
->
->  Supported generic PINCONF properties in child nodes:
->
-> @@ -78,6 +82,8 @@ Example:
->                 gpio-controller;
->                 interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
->                 interrupt-controller;
-> +               gpio-ranges = <&pinctrl 0 42 1>,
-> +                               <&pinctrl 1 44 3>;
->         };
->
->         /*
-> --
-> 1.9.1
->
+
+You meant to be compatible with existing Cygnus devices, correct?
+
+Just to clarify, here you suggest we still leave the existing hard coded 
+ngpios in the driver, in order to be compatible with all existing Cygnus 
+devices (while the Cygnus device tree changes to use ngpio is still 
+being merged and through different maintainer), and have all new iProc 
+SoCs switch to use ngpios from device tree, right?
+
+Thanks,
+
+Ray
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
