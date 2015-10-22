@@ -1,115 +1,72 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 6/6] gpio: ABI: mark the sysfs ABI as obsolete
-Date: Thu, 22 Oct 2015 10:32:30 +0200
-Message-ID: <1445502750-22672-7-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 5/6] gpio: add a userspace character device ABI
+Date: Thu, 22 Oct 2015 10:32:29 +0200
+Message-ID: <1445502750-22672-6-git-send-email-linus.walleij@linaro.org>
 References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:33674 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756712AbbJVIdL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 04:33:11 -0400
-Received: by lffv3 with SMTP id v3so39297207lff.0
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 01:33:09 -0700 (PDT)
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:34087 "EHLO
+	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756712AbbJVIdG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 04:33:06 -0400
+Received: by lfaz124 with SMTP id z124so39297449lfa.1
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 01:33:05 -0700 (PDT)
 In-Reply-To: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 Cc: Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
 
-This marks the (optional) sysfs GPIO ABI as obsolete and schedules
-it for removal in 2020.
+Put in some documentation for the new character device ABI
+so we can properly etch it in stone.
 
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Michael Welling <mwelling@ieee.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/ABI/obsolete/sysfs-gpio | 30 ++++++++++++++++++++++++++++++
- Documentation/ABI/testing/sysfs-gpio  | 28 ----------------------------
- MAINTAINERS                           |  1 +
- 3 files changed, 31 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/sysfs-gpio
- delete mode 100644 Documentation/ABI/testing/sysfs-gpio
+ Documentation/ABI/testing/gpio-cdev | 26 ++++++++++++++++++++++++++
+ MAINTAINERS                         |  1 +
+ 2 files changed, 27 insertions(+)
+ create mode 100644 Documentation/ABI/testing/gpio-cdev
 
-diff --git a/Documentation/ABI/obsolete/sysfs-gpio b/Documentation/ABI/obsolete/sysfs-gpio
+diff --git a/Documentation/ABI/testing/gpio-cdev b/Documentation/ABI/testing/gpio-cdev
 new file mode 100644
-index 000000000000..867c1fab20e2
+index 000000000000..7b265fbb47e3
 --- /dev/null
-+++ b/Documentation/ABI/obsolete/sysfs-gpio
-@@ -0,0 +1,30 @@
-+What:		/sys/class/gpio/
-+Date:		July 2008
-+KernelVersion:	2.6.27
-+Contact:	Linus Walleij <linusw@kernel.org>
++++ b/Documentation/ABI/testing/gpio-cdev
+@@ -0,0 +1,26 @@
++What:		/dev/gpiochip[0-9]+
++Date:		November 2015
++KernelVersion:	4.4
++Contact:	linux-gpio@vger.kernel.org
 +Description:
++		The character device files /dev/gpiochip* are the interface
++		between GPIO chips and userspace.
 +
-+  As a Kconfig option, individual GPIO signals may be accessed from
-+  userspace.  GPIOs are only made available to userspace by an explicit
-+  "export" operation.  If a given GPIO is not claimed for use by
-+  kernel code, it may be exported by userspace (and unexported later).
-+  Kernel code may export it for complete or partial access.
++		The ioctl(2)-based ABI is defined and documented in
++		[include/uapi]<linux/gpio.h>.
 +
-+  GPIOs are identified as they are inside the kernel, using integers in
-+  the range 0..INT_MAX.  See Documentation/gpio.txt for more information.
++		The following file operations are supported:
 +
-+    /sys/class/gpio
-+	/export ... asks the kernel to export a GPIO to userspace
-+	/unexport ... to return a GPIO to the kernel
-+	/gpioN ... for each exported GPIO #N OR
-+	/<LINE-NAME> ... for a properly named GPIO line
-+	    /value ... always readable, writes fail for input GPIOs
-+	    /direction ... r/w as: in, out (default low); write: high, low
-+	    /edge ... r/w as: none, falling, rising, both
-+	/gpiochipN ... for each gpiochip; #N is its first GPIO
-+	    /base ... (r/o) same as N
-+	    /label ... (r/o) descriptive, not necessarily unique
-+	    /ngpio ... (r/o) number of GPIOs; numbered N to N + (ngpio - 1)
++		open(2)
++		Currently the only useful flags are O_RDWR.
 +
-+  This ABI is deprecated and will be removed after 2020. It is
-+  replaced with the GPIO character device.
-diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI/testing/sysfs-gpio
-deleted file mode 100644
-index 55ffa2df1c10..000000000000
---- a/Documentation/ABI/testing/sysfs-gpio
-+++ /dev/null
-@@ -1,28 +0,0 @@
--What:		/sys/class/gpio/
--Date:		July 2008
--KernelVersion:	2.6.27
--Contact:	David Brownell <dbrownell@users.sourceforge.net>
--Description:
--
--  As a Kconfig option, individual GPIO signals may be accessed from
--  userspace.  GPIOs are only made available to userspace by an explicit
--  "export" operation.  If a given GPIO is not claimed for use by
--  kernel code, it may be exported by userspace (and unexported later).
--  Kernel code may export it for complete or partial access.
--
--  GPIOs are identified as they are inside the kernel, using integers in
--  the range 0..INT_MAX.  See Documentation/gpio.txt for more information.
--
--    /sys/class/gpio
--	/export ... asks the kernel to export a GPIO to userspace
--	/unexport ... to return a GPIO to the kernel
--	/gpioN ... for each exported GPIO #N OR
--	/<LINE-NAME> ... for a properly named GPIO line
--	    /value ... always readable, writes fail for input GPIOs
--	    /direction ... r/w as: in, out (default low); write: high, low
--	    /edge ... r/w as: none, falling, rising, both
--	/gpiochipN ... for each gpiochip; #N is its first GPIO
--	    /base ... (r/o) same as N
--	    /label ... (r/o) descriptive, not necessarily unique
--	    /ngpio ... (r/o) number of GPIOs; numbered N to N + (ngpio - 1)
--
++		ioctl(2)
++		Initiate various actions.
++		See the inline documentation in [include/uapi]<linux/gpio.h>
++		for descriptions of all ioctls.
++
++		close(2)
++		Stops and free up the I/O contexts that was associated
++		with the file descriptor.
++
++Users:		TBD
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 23cd966cb974..0efc993249a1 100644
+index 3bb1f52d54e0..23cd966cb974 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -4643,6 +4643,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+@@ -4642,6 +4642,7 @@ L:	linux-gpio@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
  S:	Maintained
  F:	Documentation/gpio/
- F:	Documentation/ABI/testing/gpio-cdev
-+F:	Documentation/ABI/obsolete/sysfs-gpio
++F:	Documentation/ABI/testing/gpio-cdev
  F:	drivers/gpio/
  F:	include/linux/gpio/
  F:	include/linux/gpio.h
