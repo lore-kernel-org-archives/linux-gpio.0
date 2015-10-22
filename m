@@ -1,67 +1,60 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Fri, 23 Oct 2015 08:33:10 +0900
-Message-ID: <20151022233310.GD29919@sirena.org.uk>
-References: <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com>
- <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com>
- <20151022150213.GT32532@n2100.arm.linux.org.uk>
+Subject: Re: [PATCH v2 3/3] ASoC: cs47l24: Add driver for Cirrus Logic
+ CS47L24 and WM1831 codecs
+Date: Thu, 22 Oct 2015 13:40:57 +0100
+Message-ID: <20151022124057.GG8232@sirena.org.uk>
+References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1445264027-7357-4-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="J5MfuwkIyy7RmF4Q"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="ahP6B03r4gLOj5uD"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20151022150213.GT32532@n2100.arm.linux.org.uk>
-Sender: linux-clk-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti>
+In-Reply-To: <1445264027-7357-4-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---J5MfuwkIyy7RmF4Q
+--ahP6B03r4gLOj5uD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Oct 22, 2015 at 04:02:13PM +0100, Russell King - ARM Linux wrote:
+On Mon, Oct 19, 2015 at 03:13:47PM +0100, Richard Fitzgerald wrote:
 
-> If it was such a problem, then in the _eight_ days that this has been
-> discussed so far, _someone_ would have sent some data showing the
-> problem.  I think the fact is, there is no data.
+> @@ -134,6 +134,7 @@ config SND_SOC_ALL_CODECS
+>  	select SND_SOC_WM5100 if I2C
+>  	select SND_SOC_WM5102 if MFD_WM5102
+>  	select SND_SOC_WM5110 if MFD_WM5110
+> +	select SND_SOC_CS47L24 if MFD_CS47L24
+>  	select SND_SOC_WM8350 if MFD_WM8350
+>  	select SND_SOC_WM8400 if MFD_WM8400
+>  	select SND_SOC_WM8510 if SND_SOC_I2C_AND_SPI
 
-> Someone prove me wrong.  Someone post the verifiable data showing that
-> there is a problem to be solved here.
+Please keep the Makefile and Kconfig sorted.
 
-> Someone show what the specific failure cases are that are hampering
-> vendors moving forwards.  Someone show the long boot times by way of
-> kernel message log.  Someone show some evidence of the problems that
-> have been alluded to.
+> +config SND_SOC_CS47L24
+> +	tristate "TEST cs47l24"
+> +
 
-> If no one can show some evidence, there isn't a problem here. :)
+This isn't a good help text for the symbol.
 
-Yeah, I'm not convinced the timing is *such* a big deal either - I do
-think that the log spam is a real problem but I think something much
-less invasive like the interface you proposed is good for addressing
-that.
+Otherwise the code looks good.
 
---J5MfuwkIyy7RmF4Q
+--ahP6B03r4gLOj5uD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWKXI1AAoJECTWi3JdVIfQz30H/RIVYugSpt5G4di2CHITc0BQ
-yoflpyMikyLfYkdFzjloKeyEodeVohF661x1e/XN7zhOOoZQD712sSW2D8yBDUT6
-yrEoEHZsxe6SlCqBTUpuev2KOXoQm11HOxNsYjop+0ZDBPfYrG6xIQfu2rRlQDXM
-bSYvTXMmgOb2rTVHhORTbtwgZMAXj3K9BdybHilOAyenxrbCx1uX28RgHYJQ+QDc
-bJvszKCOLJSBYYdn3QFCazwYtS3RtZ4PZtR+ZTfNmliT6dzi5rWcm14n+bIInG6+
-XROzzllUhwfN/h4TKFS5+6PJGCE5lu8AobnBVyoSzSqBHk4uMij6zH7YWdHyHOs=
-=HDzZ
+iQEcBAEBCAAGBQJWKNlYAAoJECTWi3JdVIfQ51wH/jRi5+mpiG8OZ8PLj37oVxd7
+U7XpNGssv/lOU18+dWhQcEwkW3NND+rwB9zOyYrropl5eaNtA0UQheoI9Qj9DyqW
+0hhvDoPcYYaaWtP8dQrMifm8y4xAsfWos/qmd7OlcycoOIEXmI0RkVUugckhKK13
+oYqD5wkTfIhBlyWu2+XzpR9ZTTafcVdMU9lDovhNxbaZwrke+Bvk1StlQgxB3ShJ
+WzKZFtYKk8jpRwMIGMtnKA2Yo/DEi+uCqOAP+cyfVL8m6Ne4ZAUC//zwNy71GiyU
+JP6zZIzi+w/eN8VJoEryi6cGYBMOD50aqNjRGnwiCBrHdvxZyMeycrt71MSLbeI=
+=vy8I
 -----END PGP SIGNATURE-----
 
---J5MfuwkIyy7RmF4Q--
+--ahP6B03r4gLOj5uD--
