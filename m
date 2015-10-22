@@ -1,95 +1,110 @@
-From: Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Thu, 22 Oct 2015 11:53:31 -0700
-Message-ID: <562930AB.1070203@gmail.com>
-References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com> <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com> <20151022144405.GC21861@kroah.com>
-Reply-To: frowand.list@gmail.com
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: [PATCH 0/6] GPIO character device skeleton
+Date: Thu, 22 Oct 2015 13:57:37 -0500
+Message-ID: <20151022185737.GA8584@deathstar>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20151022144405.GC21861@kroah.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:36851 "EHLO
+	mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965282AbbJVS5r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 14:57:47 -0400
+Received: by ioll68 with SMTP id l68so102144172iol.3
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 11:57:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
-> <oops, sent too early...>
+On Thu, Oct 22, 2015 at 10:32:24AM +0200, Linus Walleij wrote:
+> OK so this is it, I had no patience waiting for users to come up
+> with this new ABI, and the requests for a way for userspace to
+> use GPIOs properly is coming up again and again. So I created the
+> basics for it, so we can then build on top of this to get things
+> right. I want to get these very first things right before we go
+> wild with setting/getting pin values etc.
 > 
-> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
->> But that's moot currently because Greg believes that the time spent
->> probing devices at boot time could be reduced enough so that the order
->> in which devices are probed becomes irrelevant. IME that would have to
->> be under 200ms so that the user doesn't notice and that's unicorn-far
->> from any bootlog I have ever seen.
+> We add ONE ioctl() to get information on the gpiochip. Now we can
+> do this (example from ux500):
 > 
-> But as no one has actually produced a bootlog, how do you know that?
-> Where exactly is your time being spent?  What driver is causing long
-> delays?  Why is the long-delay-drivers not being done in their own
-> thread?  And most importantly, why are you ignoring the work that people
-> did back in 2008 to solve the issue on other hardware platforms?
+> root@Ux500:/ lsgpio
+> GPIO chip: a03fe000.gpio, 32 GPIO lines
+> GPIO chip: 8011e080.gpio, 32 GPIO lines
+> GPIO chip: 8011e000.gpio, 32 GPIO lines
+> GPIO chip: 8000e180.gpio, 32 GPIO lines
+> GPIO chip: 8000e100.gpio, 32 GPIO lines
+> GPIO chip: 8000e080.gpio, 32 GPIO lines
+> GPIO chip: 8000e000.gpio, 32 GPIO lines
+> GPIO chip: 8012e080.gpio, 32 GPIO lines
+> GPIO chip: 8012e000.gpio, 32 GPIO lines
+> GPIO chip: abx500-gpio, 42 GPIO lines
+> GPIO chip: tc3589x, 20 GPIO lines
+>
+
+Linus,
+
+I have compiled and tested this patch series on an iMX6 based target.
+
+root@som-imx6q:~# lsgpio
+GPIO chip: 209c000.gpio, 32 GPIO lines
+GPIO chip: 20a0000.gpio, 32 GPIO lines
+GPIO chip: 20a4000.gpio, 32 GPIO lines
+GPIO chip: 20a8000.gpio, 32 GPIO lines
+GPIO chip: 20ac000.gpio, 32 GPIO lines
+GPIO chip: 20b0000.gpio, 32 GPIO lines
+GPIO chip: 20b4000.gpio, 32 GPIO lines
+root@som-imx6q:~# uname -a
+Linux som-imx6q 4.3.0-rc6-next-20151022-dirty #1 SMP Thu Oct 22 09:55:12 CDT 2015 armv7l GNU/Linux
+
+Regards,
+Michael
+ 
+> Johan: I don't have a hot-pluggable GPIO controller :( can you
+> do me the favour of testing this and fixing my stupid refcounts
+> and race conditions? I only used my brain to try to get things
+> right with pluggable GPIO controllers in this patch set, and it
+> is bound to fail.
 > 
->> Given that downstreams are already carrying as many hacks as they
->> could think of to speed total boot up, I think this is effectively
->> telling them to go away.
+> How to identify and manipulate individual GPIO lines from this
+> ABI is a *LATER* *QUESTION*, this is the bare essentials for
+> getting there: basic operations on the gpiochip device level.
 > 
-> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
-> solve-the-random-issue-i'm-having type patch by putting random calls in
-> semi-random subsystems all over the kernel.
+> Linus Walleij (6):
+>   gpio: make the gpiochip a real device
+>   gpio: refer to gpio device in prints and debugfs
+>   gpio: add a userspace chardev ABI for GPIOs
+>   tools/gpio: create GPIO tools
+>   gpio: add a userspace character device ABI
+>   gpio: ABI: mark the sysfs ABI as obsolete
 > 
-> And when I ask for real data, you respond with the fact that you aren't
-> trying to speed up boot time here at all, so what am I supposed to think
-
-I also had the understanding that this patch series was about improving
-boot time.  But I was kindly corrected that the behavior change was
-getting the panel displaying stuff at an earlier point in the boot sequence,
-_not_ completing the entire boot faster. 
-
-The claim for the current series, in patch 0 in v7 is:
-
-   With this series I get the kernel to output to the panel in 0.5s,
-   instead of 2.8s.
-
-Just to get side-tracked, one other approach at ordering to reduce
-deferrals reported a modest boot time reduction for four boards and a
-very slight boot time increase for one other board.) The report of boot
-times with that approach was in:
-
-  http://article.gmane.org/gmane.linux.drivers.devicetree/133010
-
-from Alexander Holler.
-
-I have not searched further to see if there is more data of boot time
-reductions from any of the other attempts to change driver binding
-order to move dependencies before use of a resource.  But whether
-there is a performance improvement or not, there continues to be
-a stream of developers creatively impacting the binding order for
-their specific driver(s) or board.  So it seems that maybe there
-is an underlying problem, or we don't have adequate documentation
-explaining how to avoid a need to order bindings, or the
-documentation exists and is not being read.
-
-I have been defaulting to the position that has been asserted by
-the device tree maintainters, that probe deferrals work just fine
-for at least the majority of cases (and is the message I have been
-sharing in my conference presentations about device tree).  But I
-suspect that there is at least a small minority of cases that are not
-well served by probe deferral.  (Not to be read as an endorsement of
-this specific patch series, just a generic observation.)
-
--Frank
-
-> other than that you don't care enough to do the real work and are trying
-> to hack the driver core up instead.
+>  Documentation/ABI/obsolete/sysfs-gpio |  30 ++++++
+>  Documentation/ABI/testing/gpio-cdev   |  26 +++++
+>  Documentation/ABI/testing/sysfs-gpio  |  28 -----
+>  MAINTAINERS                           |   4 +
+>  drivers/gpio/gpiolib-sysfs.c          |   2 +-
+>  drivers/gpio/gpiolib.c                | 193 +++++++++++++++++++++++++++++++---
+>  drivers/gpio/gpiolib.h                |  12 +--
+>  include/linux/gpio/driver.h           |  11 +-
+>  include/uapi/linux/Kbuild             |   1 +
+>  include/uapi/linux/gpio.h             |  28 +++++
+>  tools/Makefile                        |   7 +-
+>  tools/gpio/Makefile                   |  12 +++
+>  tools/gpio/gpio-utils.c               |  11 ++
+>  tools/gpio/gpio-utils.h               |  25 +++++
+>  tools/gpio/lsgpio.c                   | 128 ++++++++++++++++++++++
+>  15 files changed, 462 insertions(+), 56 deletions(-)
+>  create mode 100644 Documentation/ABI/obsolete/sysfs-gpio
+>  create mode 100644 Documentation/ABI/testing/gpio-cdev
+>  delete mode 100644 Documentation/ABI/testing/sysfs-gpio
+>  create mode 100644 include/uapi/linux/gpio.h
+>  create mode 100644 tools/gpio/Makefile
+>  create mode 100644 tools/gpio/gpio-utils.c
+>  create mode 100644 tools/gpio/gpio-utils.h
+>  create mode 100644 tools/gpio/lsgpio.c
 > 
->> Sorry for the rant,
+> -- 
+> 2.4.3
 > 
-> No apologies needed, it's cathartic at times :)
-> 
-> thanks,
-> 
-> greg k-h
-> .
-> 
-
