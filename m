@@ -1,68 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
-Date: Thu, 22 Oct 2015 14:35:00 +0200
-Message-ID: <CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
-	<56261239.5030007@linaro.org>
-	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: xlp: Convert to use gpiolib irqchip helpers
+Date: Thu, 22 Oct 2015 14:39:56 +0200
+Message-ID: <CACRpkdZWmL7ZweZkR-7EnRfmh03xqYYvG0N9ExV9DppboAJ=3w@mail.gmail.com>
+References: <1444913612-14291-1-git-send-email-kamlakant.patel@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33469 "EHLO
-	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752552AbbJVMfA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 08:35:00 -0400
-Received: by oiad129 with SMTP id d129so46427277oia.0
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 05:35:00 -0700 (PDT)
-In-Reply-To: <CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:32889 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753405AbbJVMj5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 08:39:57 -0400
+Received: by obbwb3 with SMTP id wb3so66534756obb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 05:39:57 -0700 (PDT)
+In-Reply-To: <1444913612-14291-1-git-send-email-kamlakant.patel@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Sascha Hauer <kernel@pengutronix.de>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
+To: Kamlakant Patel <kamlakant.patel@broadcom.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jayachandran C <jchandra@broadcom.com>
 
-On Tue, Oct 20, 2015 at 6:32 PM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
-> 2015-10-20 12:06 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
->> On 17/10/15 18:23, Maxime Coquelin wrote:
+On Thu, Oct 15, 2015 at 2:53 PM,  <kamlakant.patel@broadcom.com> wrote:
 
->> I suggesting that, like with the clock driver, there is no need to the
->> STM32F429_PAXX_FUNC_YYY macros at all.
->>
->> Given the way you can enumerate pin config options in stm32f429.dtsi then I
->> think stm32f429.dtsi is the only file that will ever include this header? If
->> so then why not just plug the values directly into the pinmux fields. Its
->> not duplicative and is easier to map back to data sheets.
->>
->> ~~~
->> #define PIN_NO(x) ...
->> #define PIN_AF(x) ...
->>
->> usart1_pins_a: usart1@0 {
->>                                 pins1 {
->>                                         pinmux = PIN_NO(9) | PIN_AF(7);
->>                                         bias-disable;
->>                                         drive-push-pull;
->>                                         slew-rate = <0>;
->>                                 };
->>                                 ...
->>                         };
->> ~~~
+> From: Kamlakant Patel <kamlakant.patel@broadcom.com>
 >
-> The advantage with the defines is that you can see easily which pin we
-> are talking about.
-> Moreover, the defines are generated from the datasheet, so it is
-> painless to generate them.
-> And it will be consistent with Mediatek implementation, on which I
-> heavily inspired.
+> commit "325f0a (MIPS: Netlogic: Use chip_data for irq_chip methods)"
+> Updates "mips/netlogic/common/irq.c" to use chip_data to store interrupt
+> controller data pointer. Before this commit handler_data was used to
+> store interrupt controller data which caused errors while using
+> gpiochip_set_chained_irqchip.
 >
-> Linus, what is your view?
+> Update XLP GPIO driver to use the gpiolib irqchip helpers.
+> And add missing depends on OF_GPIO in Kconfig.
+>
+> Signed-off-by: Kamlakant Patel <kamlakant.patel@broadcom.com>
 
-I have no strong view of this at all.
-
-I would ask the opinion of other people doing numbered muxes
-to see what is generally best for everyone to use,
-Sascha Hauer specifically, or the Mediatek people.
+Patch applied.
 
 Yours,
 Linus Walleij
