@@ -1,80 +1,68 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Thu, 22 Oct 2015 11:14:49 +0200
-Message-ID: <CAAObsKAWS83xkptJY+2V6jYddG8S7KpM1PQoXWoEE=b7wCy7cg@mail.gmail.com>
-References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
- <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com> <1757126.NgBN1ISfc9@vostro.rjw.lan>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+Date: Thu, 22 Oct 2015 14:35:00 +0200
+Message-ID: <CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
+	<56261239.5030007@linaro.org>
+	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1757126.NgBN1ISfc9@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.co>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:33469 "EHLO
+	mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752552AbbJVMfA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 08:35:00 -0400
+Received: by oiad129 with SMTP id d129so46427277oia.0
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Oct 2015 05:35:00 -0700 (PDT)
+In-Reply-To: <CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Sascha Hauer <kernel@pengutronix.de>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On 22 October 2015 at 02:54, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Tuesday, October 20, 2015 06:21:55 PM Tomeu Vizoso wrote:
->> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
->> > On Tue, 20 Oct 2015, Mark Brown wrote:
->> >
->> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
->> >>
->> >> > Furthermore, that applies only to devices that use synchronous suspend.
->> >> > Async suspend is becoming common, and there the only restrictions are
->> >> > parent-child relations plus whatever explicit requirements that drivers
->> >> > impose by calling device_pm_wait_for_dev().
->> >>
->> >> Hrm, this is the first I'd noticed that feature though I see the initial
->> >> commit dates from January.
->> >
->> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
->> > not 2015!
->> >
->> >>  It looks like most of the users are PCs at
->> >> the minute but we should be using it more widely for embedded things,
->> >> there's definitely some cases I'm aware of where it will allow us to
->> >> remove some open coding.
->> >>
->> >> It does seem like we want to be feeding dependency information we
->> >> discover for probing way into the suspend dependencies...
->> >
->> > Rafael has been thinking about a way to do this systematically.
->> > Nothing concrete has emerged yet.
+On Tue, Oct 20, 2015 at 6:32 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
+> 2015-10-20 12:06 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+>> On 17/10/15 18:23, Maxime Coquelin wrote:
+
+>> I suggesting that, like with the clock driver, there is no need to the
+>> STM32F429_PAXX_FUNC_YYY macros at all.
 >>
->> This iteration of the series would make this quite easy, as
->> dependencies are calculated before probes are attempted:
+>> Given the way you can enumerate pin config options in stm32f429.dtsi then I
+>> think stm32f429.dtsi is the only file that will ever include this header? If
+>> so then why not just plug the values directly into the pinmux fields. Its
+>> not duplicative and is easier to map back to data sheets.
 >>
->> https://lkml.org/lkml/2015/6/17/311
+>> ~~~
+>> #define PIN_NO(x) ...
+>> #define PIN_AF(x) ...
+>>
+>> usart1_pins_a: usart1@0 {
+>>                                 pins1 {
+>>                                         pinmux = PIN_NO(9) | PIN_AF(7);
+>>                                         bias-disable;
+>>                                         drive-push-pull;
+>>                                         slew-rate = <0>;
+>>                                 };
+>>                                 ...
+>>                         };
+>> ~~~
 >
-> Well, if you know how to represent "links" between devices, the mechanism
-> introduced here doesn't really add much value, because in that case the
-> core knows what the dependencies are in the first place and can only
-> defer the probes that have to be deferred.
-
-By "here" you mean what you are proposing for ordering device
-suspends, or on-demand probing?
-
-If you meant that probing on-demand is unneeded if we already have
-dependency information, I agree with you and that's why I only pushed
-forward on-demand, as the approach linked above introduced some
-duplication when inferring the dependencies. Maybe that could be
-avoided without too much refactoring.
-
-In any case, Thierry mentioned the other day in #tegra that one could
-also collect dependency information as a follow up to the on-demand
-series by calling device_depend() or such instead of
-of_device_probe().
-
-Regards,
-
-Tomeu
-
-> Thanks,
-> Rafael
+> The advantage with the defines is that you can see easily which pin we
+> are talking about.
+> Moreover, the defines are generated from the datasheet, so it is
+> painless to generate them.
+> And it will be consistent with Mediatek implementation, on which I
+> heavily inspired.
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Linus, what is your view?
+
+I have no strong view of this at all.
+
+I would ask the opinion of other people doing numbered muxes
+to see what is generally best for everyone to use,
+Sascha Hauer specifically, or the Mediatek people.
+
+Yours,
+Linus Walleij
