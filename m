@@ -1,70 +1,66 @@
-From: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Subject: [PATCH] gpio: zynq: Implement irq_(request|release)_resources
-Date: Fri, 23 Oct 2015 06:36:21 -0700
-Message-ID: <1445607381-7794-1-git-send-email-soren.brinkmann@xilinx.com>
+From: =?UTF-8?Q?Daniel_Gl=c3=b6ckner?= <dg@emlix.com>
+Subject: acpi_find_gpio with absent GPIOs
+Date: Fri, 23 Oct 2015 16:56:54 +0200
+Message-ID: <562A4AB6.1010805@emlix.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, Soren Brinkmann <soren.brinkmann@xilinx.com>, John Linn <linnj@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx1.emlix.com ([88.198.252.230]:51216 "EHLO mx1.emlix.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751256AbbJWPEm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 23 Oct 2015 11:04:42 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 
-The driver uses runtime PM to leverage low power techniques. For
-use-cases using GPIO as interrupt the device needs to be in an
-appropriate state.
+Hi,
 
-Reported-by: John Linn <linnj@xilinx.com>
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Tested-by: John Linn <linnj@xilinx.com>
----
- drivers/gpio/gpio-zynq.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I'm currently trying to use rfkill-gpio with a device that has just a
+single GPIO assigned by ACPI. rfkill-gpio calls acpi_dev_add_driver_gpi=
+os
+to assign names to the ACPI GPIOs and then uses devm_gpiod_get_optional
+to request both of them. The problem is that on the second call to
+devm_gpiod_get_optional acpi_find_gpio falls back to using the GPIO ind=
+ex
+0 (from gpiod_get) in _CRS, which leads to the same GPIO being returned
+as in the first call. Probing the driver then fails with -EBUSY.
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 8abeacac5885..0d1669416112 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -471,6 +471,22 @@ static int zynq_gpio_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
- }
- 
-+int zynq_gpio_irq_request_resources(struct irq_data *data)
-+{
-+	struct zynq_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	struct device *dev = gpio->chip.dev;
-+
-+	return pm_runtime_get_sync(dev);
-+}
-+
-+void zynq_gpio_irq_release_resources(struct irq_data *data)
-+{
-+	struct zynq_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	struct device *dev = gpio->chip.dev;
-+
-+	pm_runtime_put(dev);
-+}
-+
- /* irq chip descriptor */
- static struct irq_chip zynq_gpio_level_irqchip = {
- 	.name		= DRIVER_NAME,
-@@ -480,6 +496,8 @@ static struct irq_chip zynq_gpio_level_irqchip = {
- 	.irq_unmask	= zynq_gpio_irq_unmask,
- 	.irq_set_type	= zynq_gpio_set_irq_type,
- 	.irq_set_wake	= zynq_gpio_set_wake,
-+	.irq_request_resources	= zynq_gpio_irq_request_resources,
-+	.irq_release_resources	= zynq_gpio_irq_release_resources,
- 	.flags		= IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
- 			  IRQCHIP_MASK_ON_SUSPEND,
- };
-@@ -492,6 +510,8 @@ static struct irq_chip zynq_gpio_edge_irqchip = {
- 	.irq_unmask	= zynq_gpio_irq_unmask,
- 	.irq_set_type	= zynq_gpio_set_irq_type,
- 	.irq_set_wake	= zynq_gpio_set_wake,
-+	.irq_request_resources	= zynq_gpio_irq_request_resources,
-+	.irq_release_resources	= zynq_gpio_irq_release_resources,
- 	.flags		= IRQCHIP_MASK_ON_SUSPEND,
- };
- 
--- 
-2.6.2.3.ga463a5b
+In my opinion it is a bad idea to fall back to indexing the _CRS if the
+con_id was found in the _DSD or the GPIOs added by
+acpi_dev_add_driver_gpios, but I don't know if there are drivers relyin=
+g
+on this behavior.
+
+Luckily acpi_get_gpiod_by_index returns -ENODATA if the name can't be
+found and -ENOENT if the GPIO is absent, so we can distinguish the two
+cases. -EPROBE_DEFER also should not make acpi_find_gpio try to use
+another GPIO from the _CRS.
+
+There is also the possibility that the GPIO index exceeds the size of
+the package found in _DSD or added with acpi_dev_add_driver_gpios.
+The former will return -EPROTO, the latter will forward the error
+from acpi_dev_get_property_reference (usually -ENODATA). of_find_gpio
+returns -ENOENT in this case.
+
+So, what of this should be fixed?
+
+Best regards,
+
+  Daniel
+
+--=20
+Dipl.-Math. Daniel Gl=C3=B6ckner, emlix GmbH, http://www.emlix.com
+=46on +49 551 30664-0, Fax +49 551 30664-11,
+Bertha-von-Suttner-Stra=C3=9Fe 9, 37085 G=C3=B6ttingen, Germany
+Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR B =
+3160
+Gesch=C3=A4ftsf=C3=BChrer: Dr. Uwe Kracke, Ust-IdNr.: DE 205 198 055
+
+emlix - your embedded linux partner
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
