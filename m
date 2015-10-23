@@ -1,120 +1,101 @@
-From: Tim Bird <tim.bird-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Fri, 23 Oct 2015 08:45:06 -0700
-Message-ID: <562A5602.7000208@sonymobile.com>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH 05/11] dt-binding: Add ngpios property to GPIO controller
+ node
+Date: Fri, 23 Oct 2015 09:08:21 -0700
+Message-ID: <562A5B75.7010804@broadcom.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+ <3735458.2h6HCQhAOs@avalon>
+ <CAL_Jsq+Va0ZnvNoqKWocFYE4_DD-A+2sQaLswy5_eO2ZHn+3Kw@mail.gmail.com>
+ <2123166.E4KEJx3AQ2@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <562930AB.1070203-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Jingoo
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:61121 "EHLO
+	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904AbbJWQI0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Oct 2015 12:08:26 -0400
+In-Reply-To: <2123166.E4KEJx3AQ2@avalon>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Pramod Kumar <pramodku@broadcom.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 
-On 10/22/2015 11:53 AM, Frank Rowand wrote:
-> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
->> <oops, sent too early...>
+
+
+On 10/23/2015 6:02 AM, Laurent Pinchart wrote:
+> Hi Rob,
+>
+> On Friday 23 October 2015 06:51:28 Rob Herring wrote:
+>> On Fri, Oct 23, 2015 at 4:08 AM, Laurent Pinchart wrote:
+>>> On Thursday 22 October 2015 18:41:05 Rob Herring wrote:
+>>>> On Thu, Oct 22, 2015 at 1:52 PM, Ray Jui wrote:
+>>>>> On 10/22/2015 11:43 AM, Rob Herring wrote:
+>>>>>> On Mon, Oct 19, 2015 at 12:43 AM, Pramod Kumar wrote:
+>>>>>>> Add ngpios property to the gpio controller's DT node so that
+>>>>>>> controller driver extracts total number of gpio lines present in
+>>>>>>> controller from DT and removes dependency on driver.
+>>>>>>>
+>>>>>>> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+>>>>>>> Reviewed-by: Ray Jui <rjui@broadcom.com>
+>>>>>>> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+>>>>>>> ---
+>>>>>>>
+>>>>>>>   Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt | 5
+>>>>>>>   +++
+>>>>>>>   1 file changed, 5 insertions(+)
+>>>>>>>
+>>>>>>> diff --git
+>>>>>>> a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>>>>>>> b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>>>>>>> index f92b833..655a8d7 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>>>>>>> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+>>>>>>>
+>>>>>>> @@ -10,6 +10,9 @@ Required properties:
+>>>>>>>        Define the base and range of the I/O address space that
+>>>>>>>        contains
+>>>>>>>
+>>>>>>> the Cygnus
+>>>>>>>
+>>>>>>>    GPIO/PINCONF controller registers
+>>>>>>>
+>>>>>>> +- ngpios:
+>>>>>> +    Total number of GPIOs the controller provides
+>>>>>>
+>>>>>> This must be optional for compatibility and the driver needs to handle
+>>>>>> it not present.
+>>>>>
+>>>>> You meant to be compatible with existing Cygnus devices, correct?
+>>>>>
+>>>>> Just to clarify, here you suggest we still leave the existing hard
+>>>>> coded ngpios in the driver, in order to be compatible with all existing
+>>>>> Cygnus devices (while the Cygnus device tree changes to use ngpio is
+>>>>> still being merged and through different maintainer), and have all new
+>>>>> iProc SoCs switch to use ngpios from device tree, right?
+>>>>
+>>>> Yes, an existing dtb should continue to work with a new kernel. You
+>>>> can add the DT property to the older devices too and then eventually
+>>>> remove the hard coded values some time in the future. That could be
+>>>> immediately (don't care about compatibility at all), a couple of
+>>>> kernel cycles, never... It all depends on users of the impacted
+>>>> platforms.
+>>>
+>>> But shouldn't the property still be documented as required to ensure that
+>>> new DTs always include it ?
 >>
->> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
->>> But that's moot currently because Greg believes that the time spent
->>> probing devices at boot time could be reduced enough so that the order
->>> in which devices are probed becomes irrelevant. IME that would have to
->>> be under 200ms so that the user doesn't notice and that's unicorn-far
->>> from any bootlog I have ever seen.
->>
->> But as no one has actually produced a bootlog, how do you know that?
->> Where exactly is your time being spent?  What driver is causing long
->> delays?  Why is the long-delay-drivers not being done in their own
->> thread?  And most importantly, why are you ignoring the work that people
->> did back in 2008 to solve the issue on other hardware platforms?
->>
->>> Given that downstreams are already carrying as many hacks as they
->>> could think of to speed total boot up, I think this is effectively
->>> telling them to go away.
->>
->> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
->> solve-the-random-issue-i'm-having type patch by putting random calls in
->> semi-random subsystems all over the kernel.
->>
->> And when I ask for real data, you respond with the fact that you aren't
->> trying to speed up boot time here at all, so what am I supposed to think
-> 
-> I also had the understanding that this patch series was about improving
-> boot time.  But I was kindly corrected that the behavior change was
-> getting the panel displaying stuff at an earlier point in the boot sequence,
-> _not_ completing the entire boot faster. 
-> 
-> The claim for the current series, in patch 0 in v7 is:
-> 
->    With this series I get the kernel to output to the panel in 0.5s,
->    instead of 2.8s.
+>> Good point. If the intent is to eventually remove it from the driver,
+>> then yes. We probably need "required for new designs" as a category or
+>> maybe "recommended"? The wording is not so important here, but I'm
+>> thinking about as we try to standardize the naming.
+>
+> Required for new designs sounds better than recommended. Or maybe something
+> like "Required (optional for backward compatibility)".
+>
 
-It's very common to want to get the display up before the
-rest of the system.  So wanting to accelerate one part of the boot
-at the expense to the rest of the system is a valid use case.
-Deferred initcalls, which is out of tree primarily because it requires
-the type of manual tweaking that Tomeu describes, specifically
-addressed this issue.
-> 
-> Just to get side-tracked, one other approach at ordering to reduce
-> deferrals reported a modest boot time reduction for four boards and a
-> very slight boot time increase for one other board.) The report of boot
-> times with that approach was in:
-> 
->   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
-> 
-> from Alexander Holler.
-> 
-> I have not searched further to see if there is more data of boot time
-> reductions from any of the other attempts to change driver binding
-> order to move dependencies before use of a resource.  But whether
-> there is a performance improvement or not, there continues to be
-> a stream of developers creatively impacting the binding order for
-> their specific driver(s) or board.  So it seems that maybe there
-> is an underlying problem, or we don't have adequate documentation
-> explaining how to avoid a need to order bindings, or the
-> documentation exists and is not being read.
+Yes, it should be phrased as "required for new designs" because all new 
+iProc SoCs using this GPIO driver need to have this in DT.
 
-Well, I have probe order problems unrelated to boot time, that
-I solved by resorting to putting stuff into modules and loading
-them post-boot.  So I'd be interested in easy solutions to managing
-boot order in mainline.
+Thanks,
 
-> 
-> I have been defaulting to the position that has been asserted by
-> the device tree maintainters, that probe deferrals work just fine
-> for at least the majority of cases (and is the message I have been
-> sharing in my conference presentations about device tree).  But I
-> suspect that there is at least a small minority of cases that are not
-> well served by probe deferral.  (Not to be read as an endorsement of
-> this specific patch series, just a generic observation.)
-
-I've been worried about DT overhead adding to boot time for a while.
-And IMHO probe deferral is just about the lamest way to solve boot
-order dependencies I can imagine, from a computer science perspective.
-(Well, there's a certain elegance to it, but it's a stupid "make
-everything re-doable, back up and start over, time-wasting" elegance.)
-
-However, when Android takes 35 seconds to boot, and most people almost never
-cold-boot your product, a few seconds of kernel time-wasting on
-cold-boot seem less important. Alas, when I started working on mobile
-phones I stopped caring much about boot time.
-
-Thus, I've never worried about the DT overhead enough to actually
-measure it, as requested by Greg.  So I'll just shut up now. :-)
- -- Tim
-  
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ray
