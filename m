@@ -1,34 +1,42 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 1/3] ARM: sunxi: Introduce Allwinner for A83T support
-Date: Fri, 23 Oct 2015 09:37:45 +0800
-Message-ID: <CAGb2v645Bwzdc1Uq0sR9SWqQH4htiO6qyPs28Hc5iOiJffXDHQ@mail.gmail.com>
-References: <1445557577-27383-1-git-send-email-vishnupatekar0510@gmail.com> <1445557577-27383-2-git-send-email-vishnupatekar0510@gmail.com>
+From: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Subject: [PATCH v2] gpio: xilinx: Drop architecture dependencies
+Date: Thu, 22 Oct 2015 21:51:18 -0700
+Message-ID: <1445575878-31215-1-git-send-email-soren.brinkmann@xilinx.com>
+References: <1445276534-6948-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:49885 "EHLO
-	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751234AbbJWBiJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Oct 2015 21:38:09 -0400
-In-Reply-To: <1445557577-27383-2-git-send-email-vishnupatekar0510@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445276534-6948-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Moritz Fischer <moritz.fischer@ettus.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Linus Walleij <linus.walleij@linaro.org>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 23, 2015 at 7:46 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> Allwinner A83T is octa-core cortex-a7 based SoC.
-> It's clock control unit and prcm, pinmux are different from previous sun8i
-> series.
-> Its processor cores are arragned in two clusters 4 cores each,
-> similar to A80.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+The driver does not have any real architecture dependencies. To avoid
+listing each architecture that might use this driver on some
+FPGA-enabled platform, drop these dependencies.
 
-Could you also update Documentation/arm/sunxi/README, so it says A83T
-is supported?
+Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+---
+v2:
+ - rebased
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Otherwise,
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 597b8d4ab74f..45dfeef6018f 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -506,7 +506,7 @@ config GPIO_XGENE_SB
+ 
+ config GPIO_XILINX
+ 	tristate "Xilinx GPIO support"
+-	depends on OF_GPIO && (PPC || MICROBLAZE || ARCH_ZYNQ || X86 || MIPS)
++	depends on OF_GPIO
+ 	help
+ 	  Say yes here to support the Xilinx FPGA GPIO device
+ 
+-- 
+2.6.2.3.ga463a5b
