@@ -1,302 +1,139 @@
-From: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Subject: [PATCH] gpio: add tps65218 gpio driver
-Date: Fri, 23 Oct 2015 17:33:43 +0100
-Message-ID: <1445618023-25380-1-git-send-email-nicolassaenzj@gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Fri, 23 Oct 2015 11:34:34 -0500
+Message-ID: <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
+ <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
+ <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
+ <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com> <562A5602.7000208@sonymobile.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:36132 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750827AbbJWQds (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Oct 2015 12:33:48 -0400
+Received: from mail.kernel.org ([198.145.29.136]:42124 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752738AbbJWQfB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 23 Oct 2015 12:35:01 -0400
+In-Reply-To: <562A5602.7000208@sonymobile.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+To: Tim Bird <tim.bird@sonymobile.com>
+Cc: "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam
 
-Driver for the GPIO block found in ti's tps65218 pmics.
+On Fri, Oct 23, 2015 at 10:45 AM, Tim Bird <tim.bird@sonymobile.com> wrote:
+> On 10/22/2015 11:53 AM, Frank Rowand wrote:
+>> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
+>>> <oops, sent too early...>
+>>>
+>>> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+>>>> But that's moot currently because Greg believes that the time spent
+>>>> probing devices at boot time could be reduced enough so that the order
+>>>> in which devices are probed becomes irrelevant. IME that would have to
+>>>> be under 200ms so that the user doesn't notice and that's unicorn-far
+>>>> from any bootlog I have ever seen.
+>>>
+>>> But as no one has actually produced a bootlog, how do you know that?
+>>> Where exactly is your time being spent?  What driver is causing long
+>>> delays?  Why is the long-delay-drivers not being done in their own
+>>> thread?  And most importantly, why are you ignoring the work that people
+>>> did back in 2008 to solve the issue on other hardware platforms?
+>>>
+>>>> Given that downstreams are already carrying as many hacks as they
+>>>> could think of to speed total boot up, I think this is effectively
+>>>> telling them to go away.
+>>>
+>>> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+>>> solve-the-random-issue-i'm-having type patch by putting random calls in
+>>> semi-random subsystems all over the kernel.
+>>>
+>>> And when I ask for real data, you respond with the fact that you aren't
+>>> trying to speed up boot time here at all, so what am I supposed to think
+>>
+>> I also had the understanding that this patch series was about improving
+>> boot time.  But I was kindly corrected that the behavior change was
+>> getting the panel displaying stuff at an earlier point in the boot sequence,
+>> _not_ completing the entire boot faster.
+>>
+>> The claim for the current series, in patch 0 in v7 is:
+>>
+>>    With this series I get the kernel to output to the panel in 0.5s,
+>>    instead of 2.8s.
+>
+> It's very common to want to get the display up before the
+> rest of the system.  So wanting to accelerate one part of the boot
+> at the expense to the rest of the system is a valid use case.
+> Deferred initcalls, which is out of tree primarily because it requires
+> the type of manual tweaking that Tomeu describes, specifically
+> addressed this issue.
 
-The device has two GPIOs and one GPO pin which can be configured as follows:
-GPIO1:
-	-general-purpose, open-drain output controlled by GPO1 user bit and/or
-	 sequencer
-	-DDR3 reset input signal from SOC. Signal is either latched or
-	 passed-trough to GPO2 pin. See below for details.
-GPO2:
-	-general-purpose output controlled by GPO2 user bit
-	-DDR3 reset output signal. Signal is controlled by GPIO1 and PGOOD.
-	 See below for details.
-	-Output buffer can be configured as open-drain or push-pull.
-GPIO3:
-	-general-purpose, open-drain output controlled by GPO3 user bit and/or
-	 sequencer
-	-reset input-signal for DCDC1 and DCDC2.
+Agreed and other folks will want other things up first. But it seems
+we are getting lucky with link order with the speed ups in this case.
+We need a way to specify priority of probing devices. If we have that
+piece, then all this plumbing can be used. A simple solution would be
+looking at stdout-path to get the console device to probe. That would
+be trivial to add on top of this. That may work for the display too,
+but you may not want the console on the display. That wouldn't work
+for CAN bus either, but then I'm not sure there is a generic solution
+for its requirements (respond within 50ms IIRC).
 
-The input configurations are not meant to be used by the user so the driver
-only offers GPOs.
+>> Just to get side-tracked, one other approach at ordering to reduce
+>> deferrals reported a modest boot time reduction for four boards and a
+>> very slight boot time increase for one other board.) The report of boot
+>> times with that approach was in:
+>>
+>>   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
+>>
+>> from Alexander Holler.
+>>
+>> I have not searched further to see if there is more data of boot time
+>> reductions from any of the other attempts to change driver binding
+>> order to move dependencies before use of a resource.  But whether
+>> there is a performance improvement or not, there continues to be
+>> a stream of developers creatively impacting the binding order for
+>> their specific driver(s) or board.  So it seems that maybe there
+>> is an underlying problem, or we don't have adequate documentation
+>> explaining how to avoid a need to order bindings, or the
+>> documentation exists and is not being read.
+>
+> Well, I have probe order problems unrelated to boot time, that
+> I solved by resorting to putting stuff into modules and loading
+> them post-boot.  So I'd be interested in easy solutions to managing
+> boot order in mainline.
 
-v2: Added request routine that evaluates the fw config flags and removed module
-    owner
+I take it that this series doesn't help those problems?
 
-Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
----
- drivers/gpio/Kconfig         |   7 ++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-tps65218.c | 217 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 225 insertions(+)
- create mode 100644 drivers/gpio/gpio-tps65218.c
+>> I have been defaulting to the position that has been asserted by
+>> the device tree maintainters, that probe deferrals work just fine
+>> for at least the majority of cases (and is the message I have been
+>> sharing in my conference presentations about device tree).  But I
+>> suspect that there is at least a small minority of cases that are not
+>> well served by probe deferral.  (Not to be read as an endorsement of
+>> this specific patch series, just a generic observation.)
+>
+> I've been worried about DT overhead adding to boot time for a while.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 597b8d4..70c6c79 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -822,6 +822,13 @@ config GPIO_TIMBERDALE
- 	---help---
- 	Add support for the GPIO IP in the timberdale FPGA.
- 
-+config GPIO_TPS65218
-+	tristate "TPS65218 GPIO"
-+	depends on MFD_TPS65218
-+	help
-+	  Select this option to enable GPIO driver for the TPS65218
-+	  chip family.
-+
- config GPIO_TPS6586X
- 	bool "TPS6586X GPIO"
- 	depends on MFD_TPS6586X
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 77a07e9..d4bd2f9 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -93,6 +93,7 @@ obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
- obj-$(CONFIG_ARCH_TEGRA)	+= gpio-tegra.o
- obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
- obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
-+obj-$(CONFIG_GPIO_TPS65218)	+= gpio-tps65218.o
- obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
- obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
- obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
-diff --git a/drivers/gpio/gpio-tps65218.c b/drivers/gpio/gpio-tps65218.c
-new file mode 100644
-index 0000000..f15a142
---- /dev/null
-+++ b/drivers/gpio/gpio-tps65218.c
-@@ -0,0 +1,217 @@
-+/*
-+ * Copyright 2015 Verifone Int.
-+ *
-+ * Author: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify i t
-+ * under  the terms of the GNU General  Public License as published by th e
-+ * Free Software Foundation;  either version 2 of the License, or (at you r
-+ * option) any later version.
-+ *
-+ * This driver is based on the gpio-tps65912 implementation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/errno.h>
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/tps65218.h>
-+#include "gpiolib.h"
-+
-+struct tps65218_gpio {
-+	struct tps65218 *tps65218;
-+	struct gpio_chip gpio_chip;
-+};
-+
-+#define to_tg(gc)	container_of(gc, struct tps65218_gpio, gpio_chip)
-+
-+static int tps65218_gpio_get(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct tps65218_gpio *tps65218_gpio = to_tg(gc);
-+	struct tps65218 *tps65218 = tps65218_gpio->tps65218;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = tps65218_reg_read(tps65218, TPS65218_REG_ENABLE2, &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & (TPS65218_ENABLE2_GPIO1 << offset);
-+}
-+
-+static void tps65218_gpio_set(struct gpio_chip *gc, unsigned offset,
-+			      int value)
-+{
-+	struct tps65218_gpio *tps65218_gpio = to_tg(gc);
-+	struct tps65218 *tps65218 = tps65218_gpio->tps65218;
-+
-+	if (value)
-+		tps65218_set_bits(tps65218, TPS65218_REG_ENABLE2,
-+				  TPS65218_ENABLE2_GPIO1 << offset,
-+				  TPS65218_ENABLE2_GPIO1 << offset,
-+				  TPS65218_PROTECT_L1);
-+	else
-+		tps65218_clear_bits(tps65218, TPS65218_REG_ENABLE2,
-+				    TPS65218_ENABLE2_GPIO1 << offset,
-+				    TPS65218_PROTECT_L1);
-+}
-+
-+static int tps65218_gpio_output(struct gpio_chip *gc, unsigned offset,
-+				int value)
-+{
-+	/* Only drives GPOs */
-+	return 0;
-+}
-+
-+static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct tps65218_gpio *tps65218_gpio = to_tg(gc);
-+	struct tps65218 *tps65218 = tps65218_gpio->tps65218;
-+	unsigned long flags = gc->desc->flags;
-+	int ret;
-+
-+	if (flags & FLAG_OPEN_SOURCE) {
-+		dev_err(gc->dev, "can't work as open source\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (offset) {
-+	case 0:
-+		if (!(flags & FLAG_OPEN_DRAIN)) {
-+			dev_err(gc->dev, "GPO1 works only as open drain\n");
-+			return -EINVAL;
-+		}
-+
-+		/* Disable sequencer for GPO1 */
-+		ret = tps65218_clear_bits(tps65218, TPS65218_REG_SEQ7,
-+					  TPS65218_SEQ7_GPO1_SEQ_MASK,
-+					  TPS65218_PROTECT_L1);
-+		if (ret)
-+			return ret;
-+
-+		/* Setup GPO1 */
-+		ret = tps65218_clear_bits(tps65218, TPS65218_REG_CONFIG1,
-+					  TPS65218_CONFIG1_IO1_SEL,
-+					  TPS65218_PROTECT_L1);
-+		if (ret)
-+			return ret;
-+
-+		break;
-+	case 1:
-+		/* GP02 is push-pull by default, can be set as open drain. */
-+		if (flags & FLAG_OPEN_DRAIN) {
-+			ret = tps65218_clear_bits(tps65218,
-+						  TPS65218_REG_CONFIG1,
-+						  TPS65218_CONFIG1_GPO2_BUF,
-+						  TPS65218_PROTECT_L1);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		/* Setup GPO2 */
-+		ret = tps65218_clear_bits(tps65218, TPS65218_REG_CONFIG1,
-+					  TPS65218_CONFIG1_IO1_SEL,
-+					  TPS65218_PROTECT_L1);
-+		if (ret)
-+			return ret;
-+
-+		break;
-+
-+	case 2:
-+		if (!(flags & FLAG_OPEN_DRAIN)) {
-+			dev_err(gc->dev, "GPO3 works only as open drain\n");
-+			return -EINVAL;
-+		}
-+
-+		/* Disable sequencer for GPO3 */
-+		ret = tps65218_clear_bits(tps65218, TPS65218_REG_SEQ7,
-+					  TPS65218_SEQ7_GPO3_SEQ_MASK,
-+					  TPS65218_PROTECT_L1);
-+		if (ret)
-+			return ret;
-+
-+		/* Setup GPO3 */
-+		ret = tps65218_clear_bits(tps65218, TPS65218_REG_CONFIG2,
-+					  TPS65218_CONFIG2_DC12_RST,
-+					  TPS65218_PROTECT_L1);
-+		if (ret)
-+			return ret;
-+
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct gpio_chip template_chip = {
-+	.label			= "gpio-tps65218",
-+	.owner			= THIS_MODULE,
-+	.request		= tps65218_gpio_request,
-+	.direction_output	= tps65218_gpio_output,
-+	.get			= tps65218_gpio_get,
-+	.set			= tps65218_gpio_set,
-+	.can_sleep		= true,
-+	.ngpio			= 3,
-+	.base			= -1,
-+};
-+
-+static int tps65218_gpio_probe(struct platform_device *pdev)
-+{
-+	struct tps65218 *tps65218 = dev_get_drvdata(pdev->dev.parent);
-+	struct tps65218_gpio *tps65218_gpio;
-+	int ret;
-+
-+	tps65218_gpio = devm_kzalloc(&pdev->dev, sizeof(*tps65218_gpio),
-+				     GFP_KERNEL);
-+	if (!tps65218_gpio)
-+		return -ENOMEM;
-+
-+	tps65218_gpio->tps65218 = tps65218;
-+	tps65218_gpio->gpio_chip = template_chip;
-+	tps65218_gpio->gpio_chip.dev = &pdev->dev;
-+	tps65218_gpio->gpio_chip.of_node = pdev->dev.of_node;
-+
-+	ret = gpiochip_add(&tps65218_gpio->gpio_chip);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register gpiochip, %d\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, tps65218_gpio);
-+
-+	return ret;
-+}
-+
-+static int tps65218_gpio_remove(struct platform_device *pdev)
-+{
-+	struct tps65218_gpio *tps65218_gpio = platform_get_drvdata(pdev);
-+
-+	gpiochip_remove(&tps65218_gpio->gpio_chip);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tps65218_dt_match[] = {
-+	{ .compatible = "ti,tps65218-gpio" },
-+	{  }
-+};
-+MODULE_DEVICE_TABLE(of, tps65218_dt_match);
-+
-+static struct platform_driver tps65218_gpio_driver = {
-+	.driver = {
-+		.name = "tps65218-gpio",
-+		.of_match_table = of_match_ptr(tps65218_dt_match)
-+	},
-+	.probe = tps65218_gpio_probe,
-+	.remove = tps65218_gpio_remove,
-+};
-+
-+module_platform_driver(tps65218_gpio_driver);
-+
-+MODULE_AUTHOR("Nicolas Saenz Julienne <nicolassaenzj@gmail.com>");
-+MODULE_DESCRIPTION("GPO interface for TPS65218 PMICs");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:tps65218-gpio");
--- 
-2.5.0
+Always beating up DT... ;) Yes, I'm sure there is some overhead, but
+looking at bootgraph there's much longer items not related to DT (USB,
+MMC and anything over I2C seem to be typical). With DT we lost most
+control of the order, and at the same time we added a load of new
+subsystems that are dependencies.
 
+> And IMHO probe deferral is just about the lamest way to solve boot
+> order dependencies I can imagine, from a computer science perspective.
+> (Well, there's a certain elegance to it, but it's a stupid "make
+> everything re-doable, back up and start over, time-wasting" elegance.)
+
+Exactly. That was a large part of my accepting it.
+
+> However, when Android takes 35 seconds to boot, and most people almost never
+> cold-boot your product, a few seconds of kernel time-wasting on
+> cold-boot seem less important. Alas, when I started working on mobile
+> phones I stopped caring much about boot time.
+>
+> Thus, I've never worried about the DT overhead enough to actually
+> measure it, as requested by Greg.  So I'll just shut up now. :-)
+
+That would be a challenge to measure since it is distributed.
+
+Rob
