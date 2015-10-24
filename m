@@ -1,73 +1,59 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 9/9] pinctrl: at91: add missing of_node_put
-Date: Sat, 24 Oct 2015 16:42:35 +0200
-Message-ID: <1445697755-26341-10-git-send-email-Julia.Lawall@lip6.fr>
-References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:1379 "EHLO
-	mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752497AbbJXOxz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 24 Oct 2015 10:53:55 -0400
-In-Reply-To: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH 0/9] add missing of_node_put
+Date: Sat, 24 Oct 2015 16:42:26 +0200
+Message-ID: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-tegra@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-a break out of the loop requires an of_node_put.
-
-A simplified version of the semantic patch that fixes this problem is as
-follows (http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-+  of_node_put(child);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/pinctrl/pinctrl-at91.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index ce6e589..0d2fc0c 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1122,8 +1122,10 @@ static int at91_pinctrl_parse_functions(struct device_node *np,
- 		func->groups[i] = child->name;
- 		grp = &info->groups[grp_index++];
- 		ret = at91_pinctrl_parse_groups(child, grp, info, i++);
--		if (ret)
-+		if (ret) {
-+			of_node_put(child);
- 			return ret;
-+		}
- 	}
- 
- 	return 0;
-@@ -1196,6 +1198,7 @@ static int at91_pinctrl_probe_dt(struct platform_device *pdev,
- 		ret = at91_pinctrl_parse_functions(child, info, i++);
- 		if (ret) {
- 			dev_err(&pdev->dev, "failed to parse function\n");
-+			of_node_put(child);
- 			return ret;
- 		}
- 	}
-
+VGhlIHZhcmlvdXMgZm9yX2VhY2ggZGV2aWNlX25vZGUgaXRlcmF0b3JzIHBlcmZvcm1zIGFuIG9m
+X25vZGVfZ2V0IG9uIGVhY2gKaXRlcmF0aW9uLCBzbyBhIGJyZWFrIG91dCBvZiB0aGUgbG9vcCBy
+ZXF1aXJlcyBhbiBvZl9ub2RlX3B1dC4KClRoZSBjb21wbGV0ZSBzZW1hbnRpYyBwYXRjaCB0aGF0
+IGZpeGVzIHRoaXMgcHJvYmxlbSBpcwooaHR0cDovL2NvY2NpbmVsbGUubGlwNi5mcik6CgovLyA8
+c21wbD4KQHJACmxvY2FsIGlkZXhwcmVzc2lvbiBuOwpleHByZXNzaW9uIGUxLGUyOwppdGVyYXRv
+ciBuYW1lIGZvcl9lYWNoX25vZGVfYnlfbmFtZSwgZm9yX2VhY2hfbm9kZV9ieV90eXBlLApmb3Jf
+ZWFjaF9jb21wYXRpYmxlX25vZGUsIGZvcl9lYWNoX21hdGNoaW5nX25vZGUsCmZvcl9lYWNoX21h
+dGNoaW5nX25vZGVfYW5kX21hdGNoLCBmb3JfZWFjaF9jaGlsZF9vZl9ub2RlLApmb3JfZWFjaF9h
+dmFpbGFibGVfY2hpbGRfb2Zfbm9kZSwgZm9yX2VhY2hfbm9kZV93aXRoX3Byb3BlcnR5OwppdGVy
+YXRvciBpOwpzdGF0ZW1lbnQgUzsKZXhwcmVzc2lvbiBsaXN0IFtuMV0gZXM7CkBACgooCigKZm9y
+X2VhY2hfbm9kZV9ieV9uYW1lKG4sZTEpIFMKfApmb3JfZWFjaF9ub2RlX2J5X3R5cGUobixlMSkg
+Uwp8CmZvcl9lYWNoX2NvbXBhdGlibGVfbm9kZShuLGUxLGUyKSBTCnwKZm9yX2VhY2hfbWF0Y2hp
+bmdfbm9kZShuLGUxKSBTCnwKZm9yX2VhY2hfbWF0Y2hpbmdfbm9kZV9hbmRfbWF0Y2gobixlMSxl
+MikgUwp8CmZvcl9lYWNoX2NoaWxkX29mX25vZGUoZTEsbikgUwp8CmZvcl9lYWNoX2F2YWlsYWJs
+ZV9jaGlsZF9vZl9ub2RlKGUxLG4pIFMKfApmb3JfZWFjaF9ub2RlX3dpdGhfcHJvcGVydHkobixl
+MSkgUwopCiYKaShlcyxuLC4uLikgUwopCgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwppdGVy
+YXRvciByLmk7CmV4cHJlc3Npb24gZTsKZXhwcmVzc2lvbiBsaXN0IFtyLm4xXSBlczsKQEAKCiBp
+KGVzLG4sLi4uKSB7CiAgIC4uLgooCiAgIG9mX25vZGVfcHV0KG4pOwp8CiAgIGUgPSBuCnwKICAg
+cmV0dXJuIG47CnwKKyAgb2Zfbm9kZV9wdXQobik7Cj8gIHJldHVybiAuLi47CikKICAgLi4uCiB9
+CgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwppdGVyYXRvciByLmk7CmV4cHJlc3Npb24gZTsK
+ZXhwcmVzc2lvbiBsaXN0IFtyLm4xXSBlczsKQEAKCiBpKGVzLG4sLi4uKSB7CiAgIC4uLgooCiAg
+IG9mX25vZGVfcHV0KG4pOwp8CiAgIGUgPSBuCnwKKyAgb2Zfbm9kZV9wdXQobik7Cj8gIGJyZWFr
+OwopCiAgIC4uLgogfQouLi4gd2hlbiAhPSBuCgpAQApsb2NhbCBpZGV4cHJlc3Npb24gci5uOwpp
+dGVyYXRvciByLmk7CmV4cHJlc3Npb24gZTsKaWRlbnRpZmllciBsOwpleHByZXNzaW9uIGxpc3Qg
+W3IubjFdIGVzOwpAQAoKIGkoZXMsbiwuLi4pIHsKICAgLi4uCigKICAgb2Zfbm9kZV9wdXQobik7
+CnwKICAgZSA9IG4KfAorICBvZl9ub2RlX3B1dChuKTsKPyAgZ290byBsOwopCiAgIC4uLgogfQou
+Li4KbDogLi4uIHdoZW4gIT0gbi8vIDwvc21wbD4KCi0tLQoKIGRyaXZlcnMvYmx1ZXRvb3RoL2J0
+bXJ2bF9tYWluLmMgIHwgICAgNSArKysrLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAg
+ICAgfCAgICA0ICsrKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYyAgICAgICAgIHwgICAgNCAr
+KystCiBkcml2ZXJzL2xlZHMvbGVkcy04OHBtODYweC5jICAgICB8ICAgIDEgKwogZHJpdmVycy9s
+ZWRzL2xlZHMtYmNtNjMyOC5jICAgICAgfCAgICA0ICsrKy0KIGRyaXZlcnMvbGVkcy9sZWRzLWJj
+bTYzNTguYyAgICAgIHwgICAgNCArKystCiBkcml2ZXJzL2xlZHMvbGVkcy1wb3dlcm52LmMgICAg
+ICB8ICAgIDggKysrKysrLS0KIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLWF0OTEuYyAgIHwgICAg
+NSArKysrLQogZHJpdmVycy9zb2MvdGkva25hdl9xbXNzX3F1ZXVlLmMgfCAgICAzICsrKwogOSBm
+aWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
