@@ -1,37 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Fri, 23 Oct 2015 12:56:51 -0600
-Message-ID: <562A82F3.3060309@wwwdotorg.org>
-References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 3/6] gpio: add a userspace chardev ABI for GPIOs
+Date: Fri, 23 Oct 2015 17:30:10 -0700
+Message-ID: <20151024003010.GA376@kroah.com>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <1445502750-22672-4-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47401 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbbJXAaL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Oct 2015 20:30:11 -0400
+Content-Disposition: inline
+In-Reply-To: <1445502750-22672-4-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On 10/16/2015 03:24 AM, Jon Hunter wrote:
-> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
-> documentation implies that all functions (pcie, usb3 and sata) can be
-> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
-> been confirmed that this is not the case and the mux'ing options much more
-> limited. Unfortunately, the public documentation has not been updated to
-> reflect this and so detail the actual mux'ing options here by function:
->
-> Function:		Lanes:
-> pcie1 x2:		pcie3, pcie4
-> pcie1 x4:		pcie1, pcie2, pcie3, pcie4
-> pcie2 x1 (option1):	pcie0
-> pcie2 x1 (option2):	pcie2
-> usb3 port 0:		pcie0
-> usb3 port 1 (option 1):	pcie1
-> usb3 port 1 (option 2):	sata0
-> sata:			sata0
+On Thu, Oct 22, 2015 at 10:32:27AM +0200, Linus Walleij wrote:
+> +/**
+> + * struct gpiochip_info - Information about a certain GPIO chip
+> + * @name: the name of this GPIO chip
+> + * @lines: number of GPIO lines on this chip
+> + */
+> +struct gpiochip_info {
+> +	char name[32];
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To be pendantic, s/char/__u8/
 
-I didn't check the actual lists of values, but it sounds about right 
-from memory.
+Otherwise, looks good, but I don't see the read/write protocol here, is
+that in a later patch?
+
+thanks,
+
+greg k-h
