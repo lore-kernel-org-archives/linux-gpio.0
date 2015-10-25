@@ -1,57 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Sun, 25 Oct 2015 07:06:48 +0900
-Message-ID: <20151024220648.GR29919@sirena.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk>
- <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
+Date: Sun, 25 Oct 2015 16:06:26 +0900
+Message-ID: <CAAVeFuLMqCE81c8_e009uu1bYypmbagHS1DnPkZ1vxcuU=ukQg@mail.gmail.com>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org> <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FNX2SHge3qdlDajY"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34470 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103AbbJXWIg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Oct 2015 18:08:36 -0400
-Content-Disposition: inline
-In-Reply-To: <24100858.2KIS8Y2npV@vostro.rjw.lan>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:36157 "EHLO
+	mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750947AbbJYHGq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Oct 2015 03:06:46 -0400
+Received: by ioll68 with SMTP id l68so160264039iol.3
+        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2015 00:06:46 -0700 (PDT)
+In-Reply-To: <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>David
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
+On Thu, Oct 22, 2015 at 5:32 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> GPIO chips have been around for years, but were never real devices,
+> instead they were piggy-backing on a parent device (such as a
+> platform_device or amba_device) but this was always optional.
+> GPIO chips could also exist without any device at all, with its
+> struct device *dev pointer being set to null.
+>
+> When sysfs was in use, a mock device would be created, with the
+> optional parent assigned, or just floating orphaned with NULL
+> as parent.
+>
+> For a proper userspace ABI we need gpiochips to *always have a
+> populated struct device, so add this in the gpio_chip struct.
+> The name "dev" is unfortunately already take so we use "device"
+> to name it.
+>
+> If sysfs is active, it will use this device as parent, and the
+> former parent device "dev" will be set as parent of the new
+> "device" struct member.
 
---FNX2SHge3qdlDajY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
-
-> Well, I'm not quite sure why exactly everyone is so focused on probing here.
-
-Probe deferral is really noisy even if it's working fine on a given
-system so it's constantly being highlighted to people in a way that
-other issues aren't if you're not directly having problems.
-
-There's also the understanding people had that the order things get
-bound changes the ordering for some of the other cases (perhaps it's a
-good idea to do that, it seems likely to be sensible?).
-
-
---FNX2SHge3qdlDajY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWLAD1AAoJECTWi3JdVIfQn9QH/1ZQrvI10PtpWUQHu6GzOxZK
-B1o63z5QhirS2YbZxYLH6hso0K0/4eVmY0VS35L/DM3hRePI1vFZHLKCFH3/jOJX
-AHnTwLpWu9w/iJ3yP7qJuInLq9IYA6Tj32SgYx98IsrN8JhUAFVvn/KM7mJK2jD3
-PdfIDQF5b6ZduAktIUkzKMaYrrxvbRarut+DadjTwJc2so5DvFuIBCBdruGcOOax
-bHfI+PL2ALE+IXn0z7MSioeBvszUB4paMpz7goBvu4OqdOUBxdGz7l0v1BlwI8SL
-X27RYEK77ZN9+DaO0a+OWtQpuYrBIFDnQrN6g+6HuEb2RP5EXZTll7aUeMJ3miw=
-=89D6
------END PGP SIGNATURE-----
-
---FNX2SHge3qdlDajY--
+Why not rename "dev" to "parent" so "dev" becomes what we expect it to
+be? The two members being of the same type, keeping it that way seems
+error-prone to me.
