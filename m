@@ -1,66 +1,51 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 26 Oct 2015 10:12:24 +0900
-Message-ID: <20151026011224.GV29919@sirena.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk>
- <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan>
- <20151024220648.GR29919@sirena.org.uk>
- <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] gpio: add a userspace chardev ABI for GPIOs
+Date: Mon, 26 Oct 2015 10:34:48 +0900
+Message-ID: <20151026013448.GY29919@sirena.org.uk>
+References: <1445502750-22672-4-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CSNFvL6ilyiKL/Hs"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="4mUolEm2oNas7DxE"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35625 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751216AbbJZBfC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Oct 2015 21:35:02 -0400
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry
+In-Reply-To: <1445502750-22672-4-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Amit Kucheria <amit.kucheria@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
---CSNFvL6ilyiKL/Hs
+--4mUolEm2oNas7DxE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 25, 2015 at 02:54:39PM +0100, Rafael J. Wysocki wrote:
-> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
+On Thu, Oct 22, 2015 at 10:32:27AM +0200, Linus Walleij wrote:
 
-> > There's also the understanding people had that the order things get
-> > bound changes the ordering for some of the other cases (perhaps it's a
-> > good idea to do that, it seems likely to be sensible?).
+> +	if (cmd == GPIO_GET_CHIPINFO_IOCTL) {
 
-> But it really doesn't do that.  Also making it do so doesn't help much
-> in the cases where things can happen asynchronously (system
-> suspend/resume, runtime PM).
+> +		return 0;
+> +	}
+> +	return -EINVAL;
 
-Yeah, people seem to have that impression though. :(
+A switch statement might be more scalable as more ioctl()s are added?
 
-> If, instead, there was a way to specify a functional dependency at the
-> device registration time, it might be used to change the order of
-> everything relevant, including probe.  That should help to reduce the
-> noise you're referring to.
-
-This links back to the idea of having generic support for pre-probe
-actions which is also generally useful (the ability to do things like
-power on regulators for devices on enumerable buses so they can be
-enumerated as standard). =20
-
---CSNFvL6ilyiKL/Hs
+--4mUolEm2oNas7DxE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWLX34AAoJECTWi3JdVIfQxWcH/1aCaKRkQgKa9vAZbBaq2sSf
-30EqKg/SLlEPyozfvQqz8QTpxr1XYD4iJ3qT3048aeuYApT7TZVZUMpSpeLuuWcN
-Cmi76xZim7KYTRuT+iFewFse+gaKJyl1zpU+2O0R4VpWxUe2fxwJY159CgqS8/cO
-rv3tQ03svICO5hrXlW9tS/Z/hoGZe9FQiiWYvmvdcM3XEKYkKY9m8B0B64OJ/8Sp
-WmN+EQ1sevAGuMoa3EWIZDhYIbICzBSHA8WLWolALOmEmFEHiz/fjBSf5rYaD42U
-68oNScKwVepB4LeewE+syAzBFVMow0SfbpI6dfbwaiS64BNVbMzP5X5Jq04MZMY=
-=w1Sh
+iQEcBAEBCAAGBQJWLYM3AAoJECTWi3JdVIfQN0IH/A6SHyg+Srnm+FoDhlfe3wVM
+mZBEVbux1Be9+WHiPsSNSfxV5Wmooy2PC+b56YnLREkw1kbIGDQKmlI431/R6R2Y
+P+jo59WgLj8DkZfgdwd41NQ2goK9WNbmvHMgo+9pz+zEjhXfOYtsbWFRKL8rcEp8
+qgcoZ0XSDI24MfOpAiFcCR+reVuZoEngwO/AWQvD2wnrvy0u81XfjCr+H3uLqPvy
+oLTC41IxOgAxjzdBpwL6FKBb3uREfUC5ar4MeNCdUHo6Et/UR3+5SXrGYJMoXGg/
+Qnh6OWCWfSKF3GtFmDMw6ImwO+QxiQ1H1Uu6D+l6sXhwkJXPUo8Dzd3sRSkSfl0=
+=ZyJa
 -----END PGP SIGNATURE-----
 
---CSNFvL6ilyiKL/Hs--
+--4mUolEm2oNas7DxE--
