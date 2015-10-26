@@ -1,75 +1,49 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 26 Oct 2015 13:55:29 +0100
-Message-ID: <CAAObsKAFJ+OKiLR2aMOjf15bd7k89EKsKLpd3ubsPMKeGLkRZw@mail.gmail.com>
-References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan> <20151024220648.GR29919@sirena.org.uk>
- <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com> <20151026105138.20687.13546@quantum>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 6/9] pinctrl: Add IRQ support to STM32 gpios
+Date: Mon, 26 Oct 2015 14:35:42 +0100
+Message-ID: <CACRpkdbQcF8-hR7BP88i5GOrY8QNfxy21ANLgxuaHabzcvrKVA@mail.gmail.com>
+References: <1445102638-11575-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102638-11575-7-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:38735 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753569AbbJZMzw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 08:55:52 -0400
-In-Reply-To: <20151026105138.20687.13546@quantum>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:36760 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750715AbbJZNfn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 09:35:43 -0400
+Received: by obcqt19 with SMTP id qt19so142013859obc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 26 Oct 2015 06:35:42 -0700 (PDT)
+In-Reply-To: <1445102638-11575-7-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshko>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On 26 October 2015 at 11:51, Michael Turquette <mturquette@baylibre.com> wrote:
-> Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
->> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
->> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
->> >
->> >> Well, I'm not quite sure why exactly everyone is so focused on probing here.
->> >
->> > Probe deferral is really noisy even if it's working fine on a given
->> > system so it's constantly being highlighted to people in a way that
->> > other issues aren't if you're not directly having problems.
->> >
->> > There's also the understanding people had that the order things get
->> > bound changes the ordering for some of the other cases (perhaps it's a
->> > good idea to do that, it seems likely to be sensible?).
->>
->> But it really doesn't do that.  Also making it do so doesn't help much
->> in the cases where things can happen asynchronously (system
->> suspend/resume, runtime PM).
->>
->> If, instead, there was a way to specify a functional dependency at the
->> device registration time, it might be used to change the order of
->> everything relevant, including probe.  That should help to reduce the
->> noise you're referring to.
+On Sat, Oct 17, 2015 at 7:23 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
+
+> This patch adds IRQ support to STM32 gpios.
 >
-> Taking it a step further, if functional dependencies were understood at
-> link-time then we could optimize link order as well. There are probably
-> lots of optimizations if we only made the effort to understand these
-> dependencies earlier.
+> The EXTI controller has 16 lines dedicated to GPIOs.
+> EXTI line n can be connected to only line n of one of the GPIO ports, for
+> example EXTI0 can be connected to either PA0, or PB0, or PC0...
+> This port selection is done by specifying the port number into System
+> Config registers.
 >
-> Constructing the device/resource dependency graph before the device ever
-> boots sounds interesting to me.
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 
-Alexander Holler has been looking at that for some time already.
+(...)
+> +static int stm32_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+> +{
+> +       struct stm32_pinctrl *pctl = dev_get_drvdata(chip->dev);
+> +       struct stm32_gpio_bank *bank = gpio_chip_to_bank(chip);
+> +       unsigned int virq;
 
-Regards,
+I don't like when these IRQs are called "virtual" (virq), becuase all
+Linux IRQs are equally virtual. It's just coincidence that sometimes
+the Linux IRQ and the hardware IRQ is the same.
 
-Tomeu
+Just name it "irq".
 
-> Regards,
-> Mike
->
->>
->> If the dependency could only be discovered at the probe time, the
->> order of things might be changed in response to letting the driver
->> core know about it rather than "just in case", which should be more
->> efficient.
->>
->> Thanks,
->> Rafael
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Yours,
+Linus Walleij
