@@ -1,55 +1,35 @@
-From: Y Vo <yvo@apm.com>
-Subject: [PATCH v2 3/3] arm64: dts: Update APM X-Gene standby GPIO controller DTS entries
-Date: Mon, 26 Oct 2015 13:49:35 +0700
-Message-ID: <1445842175-11446-4-git-send-email-yvo@apm.com>
-References: <1445842175-11446-1-git-send-email-yvo@apm.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 0/9] add missing of_node_put
+Date: Mon, 26 Oct 2015 09:48:31 +0100
+Message-ID: <562DE8DF.5090609@samsung.com>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:34692 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753246AbbJZGuA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 02:50:00 -0400
-Received: by padhk11 with SMTP id hk11so179338893pad.1
-        for <linux-gpio@vger.kernel.org>; Sun, 25 Oct 2015 23:50:00 -0700 (PDT)
-In-Reply-To: <1445842175-11446-1-git-send-email-yvo@apm.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:25315 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753170AbbJZIsf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 04:48:35 -0400
+In-reply-to: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Quan Nguyen <qnguyen@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 
-Update APM X-Gene standby GPIO controller DTS entries to support GPIO
-line configuration as input, output or external IRQ pin.
+Hi Julia,
 
-Signed-off-by: Y Vo <yvo@apm.com>
----
- arch/arm64/boot/dts/apm/apm-storm.dtsi |   15 +++++++++------
- 1 files changed, 9 insertions(+), 6 deletions(-)
+Patches 1-4 have been applied to the LED tree, thanks.
 
-diff --git a/arch/arm64/boot/dts/apm/apm-storm.dtsi b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-index 6c5ed11..40a79fb 100644
---- a/arch/arm64/boot/dts/apm/apm-storm.dtsi
-+++ b/arch/arm64/boot/dts/apm/apm-storm.dtsi
-@@ -765,12 +765,15 @@
- 			reg = <0x0 0x17001000 0x0 0x400>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
--			interrupts = 	<0x0 0x28 0x1>,
--					<0x0 0x29 0x1>,
--					<0x0 0x2a 0x1>,
--					<0x0 0x2b 0x1>,
--					<0x0 0x2c 0x1>,
--					<0x0 0x2d 0x1>;
-+			interrupt-parent = <&gic>;
-+			interrupts = 	<0x0 0x28 0x4>,
-+					<0x0 0x29 0x4>,
-+					<0x0 0x2a 0x4>,
-+					<0x0 0x2b 0x4>,
-+					<0x0 0x2c 0x4>,
-+					<0x0 0x2d 0x4>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
- 		};
- 
- 		rtc: rtc@10510000 {
+On 10/24/2015 04:42 PM, Julia Lawall wrote:
+> The various for_each device_node iterators performs an of_node_get on each
+> iteration, so a break out of the loop requires an of_node_put.
+>
+> The complete semantic patch that fixes this problem is
+> (http://coccinelle.lip6.fr):
+>
+[...]
+
 -- 
-1.7.1
-
+Best Regards,
+Jacek Anaszewski
