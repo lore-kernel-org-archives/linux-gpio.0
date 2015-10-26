@@ -1,161 +1,66 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ARM: dts: sun8i: Add Allwinner A83T dtsi
-Date: Sun, 25 Oct 2015 21:20:12 +0100
-Message-ID: <20151025202012.GT10947@lukather>
-References: <1445557577-27383-1-git-send-email-vishnupatekar0510@gmail.com>
- <1445557577-27383-3-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 26 Oct 2015 10:12:24 +0900
+Message-ID: <20151026011224.GV29919@sirena.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <562A5602.7000208@sonymobile.com>
+ <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+ <24100858.2KIS8Y2npV@vostro.rjw.lan>
+ <20151024220648.GR29919@sirena.org.uk>
+ <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="q8laNvmP2d33pnUN"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRB7PSWSYQKGQELIMGUKY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CSNFvL6ilyiKL/Hs"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1445557577-27383-3-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry
 List-Id: linux-gpio@vger.kernel.org
 
---q8laNvmP2d33pnUN
-Content-Type: text/plain; charset=UTF-8
+
+--CSNFvL6ilyiKL/Hs
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Oct 25, 2015 at 02:54:39PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
 
-On Fri, Oct 23, 2015 at 07:46:16AM +0800, Vishnu Patekar wrote:
-> +	memory {
-> +		reg = <0x40000000 0x80000000>;
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv7-timer";
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> > There's also the understanding people had that the order things get
+> > bound changes the ordering for some of the other cases (perhaps it's a
+> > good idea to do that, it seems likely to be sensible?).
 
-Shouldn't the number of CPUs be 8?
+> But it really doesn't do that.  Also making it do so doesn't help much
+> in the cases where things can happen asynchronously (system
+> suspend/resume, runtime PM).
 
-> +		clock-frequency = <24000000>;
-> +		arm,cpu-registers-not-fw-configured;
-> +	};
+Yeah, people seem to have that impression though. :(
 
-Is there some u-boot support for this SoC yet?
+> If, instead, there was a way to specify a functional dependency at the
+> device registration time, it might be used to change the order of
+> everything relevant, including probe.  That should help to reduce the
+> noise you're referring to.
 
-If so, both the memory node and the clock-frequency and
-arm,cpu-registers-not-fw-configured properties are useless (and
-harmful for the latter).
+This links back to the idea of having generic support for pre-probe
+actions which is also generally useful (the ability to do things like
+power on regulators for devices on enumerable buses so they can be
+enumerated as standard). =20
 
-> +	soc@01c00000 {
+--CSNFvL6ilyiKL/Hs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please remove the address. It's both wrong and useless.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		gic: interrupt-controller@01c81000 {
-> +			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
-> +			reg = <0x01c81000 0x1000>,
-> +			      <0x01c82000 0x1000>,
-> +			      <0x01c84000 0x2000>,
-> +			      <0x01c86000 0x2000>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		};
-> +
-> +		pio: pinctrl@01c20800 {
-> +			compatible = "allwinner,sun8i-a83t-pinctrl";
-> +			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+iQEcBAEBCAAGBQJWLX34AAoJECTWi3JdVIfQxWcH/1aCaKRkQgKa9vAZbBaq2sSf
+30EqKg/SLlEPyozfvQqz8QTpxr1XYD4iJ3qT3048aeuYApT7TZVZUMpSpeLuuWcN
+Cmi76xZim7KYTRuT+iFewFse+gaKJyl1zpU+2O0R4VpWxUe2fxwJY159CgqS8/cO
+rv3tQ03svICO5hrXlW9tS/Z/hoGZe9FQiiWYvmvdcM3XEKYkKY9m8B0B64OJ/8Sp
+WmN+EQ1sevAGuMoa3EWIZDhYIbICzBSHA8WLWolALOmEmFEHiz/fjBSf5rYaD42U
+68oNScKwVepB4LeewE+syAzBFVMow0SfbpI6dfbwaiS64BNVbMzP5X5Jq04MZMY=
+=w1Sh
+-----END PGP SIGNATURE-----
 
-Please align these lines with the first one, like you did for the
-GIC's reg for example.
-
-> +			reg = <0x01c20800 0x400>;
-> +			clocks = <&osc24M>;
-> +			gpio-controller;
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			#gpio-cells = <3>;
-> +
-> +			i2c0_pins_a: i2c0@0 {
-> +				allwinner,pins = "PH0", "PH1";
-> +				allwinner,function = "i2c0";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			i2c1_pins_a: i2c1@0 {
-> +				allwinner,pins = "PH2", "PH3";
-> +				allwinner,function = "i2c1";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			i2c2_pins_a: i2c2@0 {
-> +				allwinner,pins = "PH4", "PH5";
-> +				allwinner,function = "i2c2";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc0_pins_a: mmc0@0 {
-> +				allwinner,pins = "PF0", "PF1", "PF2",
-> +						 "PF3", "PF4", "PF5";
-> +				allwinner,function = "mmc0";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc1_pins_a: mmc1@0 {
-> +				allwinner,pins = "PG0", "PG1", "PG2",
-> +						 "PG3", "PG4", "PG5";
-> +				allwinner,function = "mmc1";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			mmc2_8bit_pins: mmc2_8bit {
-> +				allwinner,pins = "PC5", "PC6", "PC8",
-> +						 "PC9", "PC10", "PC11",
-> +						 "PC12", "PC13", "PC14",
-> +						 "PC15";
-> +				allwinner,function = "mmc2";
-> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			uart0_pins_a: uart0@0 {
-> +				allwinner,pins = "PF2", "PF4";
-> +				allwinner,function = "uart0";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-> +
-> +			uart0_pins_b: uart0@1 {
-> +				allwinner,pins = "PB9", "PB10";
-> +				allwinner,function = "uart0";
-> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> +			};
-
-Are you going to use all these options?
-
-Thanks!
-Maxime
-
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---q8laNvmP2d33pnUN--
+--CSNFvL6ilyiKL/Hs--
