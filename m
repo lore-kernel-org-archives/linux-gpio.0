@@ -1,82 +1,60 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: acpi_find_gpio with absent GPIOs
-Date: Mon, 26 Oct 2015 12:20:31 +0200
-Message-ID: <20151026102031.GG1526@lahna.fi.intel.com>
-References: <562A4AB6.1010805@emlix.com>
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 26 Oct 2015 03:51:38 -0700
+Message-ID: <20151026105138.20687.13546@quantum>
+References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com>
+ <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+ <24100858.2KIS8Y2npV@vostro.rjw.lan> <20151024220648.GR29919@sirena.org.uk>
+ <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <562A4AB6.1010805@emlix.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Daniel =?iso-8859-1?Q?Gl=F6ckner?= <dg@emlix.com>
-Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?utf-8?q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbary>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 23, 2015 at 04:56:54PM +0200, Daniel Gl=F6ckner wrote:
-> Hi,
->=20
-> I'm currently trying to use rfkill-gpio with a device that has just a
-> single GPIO assigned by ACPI. rfkill-gpio calls acpi_dev_add_driver_g=
-pios
-> to assign names to the ACPI GPIOs and then uses devm_gpiod_get_option=
-al
-> to request both of them. The problem is that on the second call to
-> devm_gpiod_get_optional acpi_find_gpio falls back to using the GPIO i=
-ndex
-> 0 (from gpiod_get) in _CRS, which leads to the same GPIO being return=
-ed
-> as in the first call. Probing the driver then fails with -EBUSY.
->=20
-> In my opinion it is a bad idea to fall back to indexing the _CRS if t=
-he
-> con_id was found in the _DSD or the GPIOs added by
-> acpi_dev_add_driver_gpios, but I don't know if there are drivers rely=
-ing
-> on this behavior.
+Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
+> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
+> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
+> >
+> >> Well, I'm not quite sure why exactly everyone is so focused on probing here.
+> >
+> > Probe deferral is really noisy even if it's working fine on a given
+> > system so it's constantly being highlighted to people in a way that
+> > other issues aren't if you're not directly having problems.
+> >
+> > There's also the understanding people had that the order things get
+> > bound changes the ordering for some of the other cases (perhaps it's a
+> > good idea to do that, it seems likely to be sensible?).
+> 
+> But it really doesn't do that.  Also making it do so doesn't help much
+> in the cases where things can happen asynchronously (system
+> suspend/resume, runtime PM).
+> 
+> If, instead, there was a way to specify a functional dependency at the
+> device registration time, it might be used to change the order of
+> everything relevant, including probe.  That should help to reduce the
+> noise you're referring to.
 
-I agree it is bad idea and I think this is actually a bug in the
-implementation rather than wanted behavior. No drivers should rely on
-that anyway.
+Taking it a step further, if functional dependencies were understood at
+link-time then we could optimize link order as well. There are probably
+lots of optimizations if we only made the effort to understand these
+dependencies earlier.
 
-> Luckily acpi_get_gpiod_by_index returns -ENODATA if the name can't be
-> found and -ENOENT if the GPIO is absent, so we can distinguish the tw=
-o
-> cases. -EPROBE_DEFER also should not make acpi_find_gpio try to use
-> another GPIO from the _CRS.
->=20
-> There is also the possibility that the GPIO index exceeds the size of
-> the package found in _DSD or added with acpi_dev_add_driver_gpios.
-> The former will return -EPROTO, the latter will forward the error
-> from acpi_dev_get_property_reference (usually -ENODATA). of_find_gpio
-> returns -ENOENT in this case.
->=20
-> So, what of this should be fixed?
+Constructing the device/resource dependency graph before the device ever
+boots sounds interesting to me.
 
-I think both should be fixed.
+Regards,
+Mike
 
-=46or the first maybe something like below?
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5db3445552b1..441be96e18e7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1765,6 +1765,11 @@ static struct gpio_desc *acpi_find_gpio(struct d=
-evice *dev, const char *con_id,
-=20
- 	/* Then from plain _CRS GPIOs */
- 	if (IS_ERR(desc)) {
-+		/* Only fallback if the device has no properties at all */
-+		if (PTR_ERR(desc) =3D=3D -ENODATA &&
-+		    (adev->data.properties || adev->driver_gpios))
-+			return ERR_PTR(-ENOENT);
-+
- 		desc =3D acpi_get_gpiod_by_index(adev, NULL, idx, &info);
- 		if (IS_ERR(desc))
- 			return desc;
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> If the dependency could only be discovered at the probe time, the
+> order of things might be changed in response to letting the driver
+> core know about it rather than "just in case", which should be more
+> efficient.
+> 
+> Thanks,
+> Rafael
