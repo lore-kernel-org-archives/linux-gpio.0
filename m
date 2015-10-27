@@ -1,45 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Tue, 27 Oct 2015 17:07:11 +0100
-Message-ID: <CACRpkdZXnmMufmAmjK7SiRZeLE16FD17krCfH4YD5MQOPt5ZPw@mail.gmail.com>
-References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 9/9] pinctrl: at91: add missing of_node_put
+Date: Tue, 27 Oct 2015 17:18:02 +0100
+Message-ID: <CACRpkdYOMyhz_6G15UkLbp5Jo=7k98_i8p6NUgzOev=gCWNyDQ@mail.gmail.com>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1445697755-26341-10-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34006 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964811AbbJ0QHM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 12:07:12 -0400
-Received: by obbza9 with SMTP id za9so56738454obb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 09:07:11 -0700 (PDT)
-In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445697755-26341-10-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, kernel-janitors@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 List-Id: linux-gpio@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Oct 16, 2015 at 11:24 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+On Sat, Oct 24, 2015 at 4:42 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
-> documentation implies that all functions (pcie, usb3 and sata) can be
-> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
-> been confirmed that this is not the case and the mux'ing options much more
-> limited. Unfortunately, the public documentation has not been updated to
-> reflect this and so detail the actual mux'ing options here by function:
+> for_each_child_of_node performs an of_node_get on each iteration, so
+> a break out of the loop requires an of_node_put.
 >
-> Function:               Lanes:
-> pcie1 x2:               pcie3, pcie4
-> pcie1 x4:               pcie1, pcie2, pcie3, pcie4
-> pcie2 x1 (option1):     pcie0
-> pcie2 x1 (option2):     pcie2
-> usb3 port 0:            pcie0
-> usb3 port 1 (option 1): pcie1
-> usb3 port 1 (option 2): sata0
-> sata:                   sata0
+> A simplified version of the semantic patch that fixes this problem is as
+> follows (http://coccinelle.lip6.fr):
 >
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> @@
+>
+>  for_each_child_of_node(root, child) {
+>    ... when != of_node_put(child)
+>        when != e = child
+> (
+>    return child;
+> |
+> +  of_node_put(child);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Patch applied with Stephen's ACK.
+Patch applied with Ludovic's ACK.
 
 Yours,
 Linus Walleij
