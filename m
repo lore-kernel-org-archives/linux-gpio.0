@@ -1,69 +1,106 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Tue, 27 Oct 2015 00:37:28 +0100
-Message-ID: <CAJZ5v0imLPyq8nxZrqvjXopzD=aBUCp+weBPuJ7Emk9=EQBEnw@mail.gmail.com>
-References: <20151018192931.GY14956@sirena.org.uk>
-	<562A5602.7000208@sonymobile.com>
-	<CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
-	<24100858.2KIS8Y2npV@vostro.rjw.lan>
-	<20151024220648.GR29919@sirena.org.uk>
-	<CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
-	<20151026105138.20687.13546@quantum>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 2/2] pinctrl: uniphier: guard uniphier directory with CONFIG_PINCTRL_UNIPHIER
+Date: Tue, 27 Oct 2015 11:28:31 +0900
+Message-ID: <1445912911-1292-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34533 "EHLO
-	mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751701AbbJZXhc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 19:37:32 -0400
-In-Reply-To: <20151026105138.20687.13546@quantum>
+Received: from conuserg012.nifty.com ([202.248.44.38]:62035 "EHLO
+	conuserg012-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752485AbbJ0C2j (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Oct 2015 22:28:39 -0400
+In-Reply-To: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kern>
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-On Mon, Oct 26, 2015 at 11:51 AM, Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
->> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
->> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
->> >
->> >> Well, I'm not quite sure why exactly everyone is so focused on probing here.
->> >
->> > Probe deferral is really noisy even if it's working fine on a given
->> > system so it's constantly being highlighted to people in a way that
->> > other issues aren't if you're not directly having problems.
->> >
->> > There's also the understanding people had that the order things get
->> > bound changes the ordering for some of the other cases (perhaps it's a
->> > good idea to do that, it seems likely to be sensible?).
->>
->> But it really doesn't do that.  Also making it do so doesn't help much
->> in the cases where things can happen asynchronously (system
->> suspend/resume, runtime PM).
->>
->> If, instead, there was a way to specify a functional dependency at the
->> device registration time, it might be used to change the order of
->> everything relevant, including probe.  That should help to reduce the
->> noise you're referring to.
->
-> Taking it a step further, if functional dependencies were understood at
-> link-time then we could optimize link order as well. There are probably
-> lots of optimizations if we only made the effort to understand these
-> dependencies earlier.
+CONFIG_PINCTRL_UNIPHIER is more suitable than CONFIG_ARCH_UNIPHIER
+to guard the drivers/pinctrl/uniphier directory.
 
-Do you mean the kernel link time or something else?
+The current CONFIG_PINCTRL_UNIPHIER_CORE is a bit long
+(it would break the indentation in drivers/pinctrl/Makefile),
+so rename it into CONFIG_PINCTRL_UNIPHIER.
 
-At least in some cases the dependency information won't be known at
-that time, so we need a way to record a dependency at the time it
-becomes visible to us anyway.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> Constructing the device/resource dependency graph before the device ever
-> boots sounds interesting to me.
+ drivers/pinctrl/Makefile          |  2 +-
+ drivers/pinctrl/uniphier/Kconfig  | 14 +++++++-------
+ drivers/pinctrl/uniphier/Makefile |  2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-That's only practical if you build the kernel for a specific device.
-If you want a generic binary that can work with multiple different
-devices, that graph may very well be different for each of them.
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index cad077c..367af9b 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -50,6 +50,6 @@ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc/
+ obj-$(CONFIG_PLAT_SPEAR)	+= spear/
+ obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
+-obj-$(CONFIG_ARCH_UNIPHIER)	+= uniphier/
++obj-$(CONFIG_PINCTRL_UNIPHIER)	+= uniphier/
+ obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
+ obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
+diff --git a/drivers/pinctrl/uniphier/Kconfig b/drivers/pinctrl/uniphier/Kconfig
+index b1d2f941..7ca72bc 100644
+--- a/drivers/pinctrl/uniphier/Kconfig
++++ b/drivers/pinctrl/uniphier/Kconfig
+@@ -1,6 +1,6 @@
+ if ARCH_UNIPHIER
+ 
+-config PINCTRL_UNIPHIER_CORE
++config PINCTRL_UNIPHIER
+ 	bool
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+@@ -8,31 +8,31 @@ config PINCTRL_UNIPHIER_CORE
+ config PINCTRL_UNIPHIER_PH1_LD4
+ 	tristate "UniPhier PH1-LD4 SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ config PINCTRL_UNIPHIER_PH1_PRO4
+ 	tristate "UniPhier PH1-Pro4 SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ config PINCTRL_UNIPHIER_PH1_SLD8
+ 	tristate "UniPhier PH1-sLD8 SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ config PINCTRL_UNIPHIER_PH1_PRO5
+ 	tristate "UniPhier PH1-Pro5 SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ config PINCTRL_UNIPHIER_PROXSTREAM2
+ 	tristate "UniPhier ProXstream2 SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ config PINCTRL_UNIPHIER_PH1_LD6B
+ 	tristate "UniPhier PH1-LD6b SoC pinctrl driver"
+ 	default y
+-	select PINCTRL_UNIPHIER_CORE
++	select PINCTRL_UNIPHIER
+ 
+ endif
+diff --git a/drivers/pinctrl/uniphier/Makefile b/drivers/pinctrl/uniphier/Makefile
+index e215b10..e7ce967 100644
+--- a/drivers/pinctrl/uniphier/Makefile
++++ b/drivers/pinctrl/uniphier/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_PINCTRL_UNIPHIER_CORE)		+= pinctrl-uniphier-core.o
++obj-y						+= pinctrl-uniphier-core.o
+ 
+ obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD4)		+= pinctrl-ph1-ld4.o
+ obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO4)		+= pinctrl-ph1-pro4.o
+-- 
+1.9.1
 
-Thanks,
-Rafael
