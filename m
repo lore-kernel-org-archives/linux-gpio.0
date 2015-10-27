@@ -1,32 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: Improve pinmux macros documentation
-Date: Tue, 27 Oct 2015 11:18:33 +0100
-Message-ID: <CACRpkdYDZ9SZ8qTx4Ly3QtnKfwkxJc-yRHPeWaGjVE0Nqpy12Q@mail.gmail.com>
-References: <1445368482-24278-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
+Date: Tue, 27 Oct 2015 11:20:21 +0100
+Message-ID: <CACRpkdYdV6iKL0Jnbzz=5JPkMmGS-0yfT+8Hp1mYtUS32xifhg@mail.gmail.com>
+References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1445368482-24278-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niso@kth.se>, Koji Matsuoka <koji.matsuoka.xm@rms.renesas.com>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:36723 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751573AbbJ0KUW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 06:20:22 -0400
+Received: by obcqt19 with SMTP id qt19so165713582obc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 03:20:21 -0700 (PDT)
+In-Reply-To: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 20, 2015 at 9:14 PM, Geert Uytterhoeven
+On Tue, Oct 20, 2015 at 9:26 PM, Geert Uytterhoeven
 <geert+renesas@glider.be> wrote:
 
-> Fix some s/ispr/ipsr/ typos in macro parameters while we're at it.
+>         Hi,
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Clarify same width vs. different widths,
->   - Mention GPSR for PINMUX_IPSR_DATA(),
->   - Document NOGM (= NOGP + MSEL),
->   - Fix s/ispr/ipsr/ typos.
+> Currently single-function pins are described using the raw PINMUX_DATA()
+> macro.
+>
+> Morimoto-san doesn't like that. He proposed to use the existing
+> PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
+> Add pinmux data for single-function pins",
+> http://www.spinics.net/lists/linux-sh/msg44823.html).
+> However, that macro is intended to describe a pinmux configuration
+> without GPIO function, which feels wrong to me.
+>
+> This patch series proposes an alternative, introducing a new macro
+> PINMUX_SINGLE() to describe a pinmux configuration for a single-function
+> pin. It also converts the existing single-function pin descriptions.
 
-Acked-by, I guess you're continuing to collect patches. This one
-could use Lauren'ts ACK.
+If Laurent gives his ACK you can stack these patches for your
+next pull request.
 
 Yours,
 Linus Walleij
