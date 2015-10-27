@@ -1,51 +1,46 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Tue, 27 Oct 2015 06:03:43 +0100
-Message-ID: <10275162.nPuKaJCcTU@vostro.rjw.lan>
-References: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 05/11] dt-binding: Add ngpios property to GPIO controller node
+Date: Tue, 27 Oct 2015 10:41:14 +0100
+Message-ID: <CACRpkdZRmJTF9_yzVJx_vPKH6M6PivcrPiLD7xMEs5HDvsLw7g@mail.gmail.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+	<1445233398-27129-6-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gma>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35981 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753504AbbJ0JlP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 05:41:15 -0400
+Received: by oiao187 with SMTP id o187so116394569oia.3
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 02:41:14 -0700 (PDT)
+In-Reply-To: <1445233398-27129-6-git-send-email-pramodku@broadcom.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Pramod Kumar <pramodku@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 
-On Tuesday, October 20, 2015 12:04:05 PM Alan Stern wrote:
-> On Tue, 20 Oct 2015, Mark Brown wrote:
-> 
-> > On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-> > 
-> > > Furthermore, that applies only to devices that use synchronous suspend.  
-> > > Async suspend is becoming common, and there the only restrictions are 
-> > > parent-child relations plus whatever explicit requirements that drivers 
-> > > impose by calling device_pm_wait_for_dev().
-> > 
-> > Hrm, this is the first I'd noticed that feature though I see the initial
-> > commit dates from January.
-> 
-> Async suspend and device_pm_wait_for_dev() were added in January 2010, 
-> not 2015!
-> 
-> >  It looks like most of the users are PCs at
-> > the minute but we should be using it more widely for embedded things,
-> > there's definitely some cases I'm aware of where it will allow us to
-> > remove some open coding.
-> > 
-> > It does seem like we want to be feeding dependency information we
-> > discover for probing way into the suspend dependencies...
-> 
-> Rafael has been thinking about a way to do this systematically.  
-> Nothing concrete has emerged yet.
+On Mon, Oct 19, 2015 at 7:43 AM, Pramod Kumar <pramodku@broadcom.com> wrote:
 
-Well, good point. :-)
+> Add ngpios property to the gpio controller's DT node so that controller
+> driver extracts total number of gpio lines present in controller
+> from DT and removes dependency on driver.
+>
+> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+> Reviewed-by: Ray Jui <rjui@broadcom.com>
+> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+(...)
+> +- ngpios:
+> +    Total number of GPIOs the controller provides
 
-I've been kind of struggling with finding time to work on the patches lately
-and some aspects of the design are still not finalized.  It seems, though, that
-it can be beneficial to discuss the approach in general, so let me start a new
-thread for that.
+This description is wrong. The number of GPIOs the controller *provides*
+is to be determined by the compatible-string.
 
-Thanks,
-Rafael
+ngpios is used to restrict the number of lines *used* or *routed* from
+the number *available*. (I hope that is what the code does as well.)
+Such as if 12 GPIOs are used of the 32 available on 32bits in a
+register.
+
+Update this description to say what it really means.
+
+Yours,
+Linus Walleij
