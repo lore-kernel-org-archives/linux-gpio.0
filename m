@@ -1,43 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: the needless loop?
-Date: Tue, 27 Oct 2015 16:27:13 +0100
-Message-ID: <CACRpkdbb+2=fyTC_tJqH8RPHV+-x5OTmv8RU4EMx4O23n5zDzw@mail.gmail.com>
-References: <1445445900.22669.41.camel@intel.com>
+Subject: Re: [PATCH v2] gpio: xilinx: Drop architecture dependencies
+Date: Tue, 27 Oct 2015 16:47:45 +0100
+Message-ID: <CACRpkdbD7fk_0RK-zGxib1zXYHcSwDJi5iQrCCbs2QVxe7ZRDw@mail.gmail.com>
+References: <1445276534-6948-1-git-send-email-soren.brinkmann@xilinx.com>
+	<1445575878-31215-1-git-send-email-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:34230 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932274AbbJ0P1O (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 11:27:14 -0400
-Received: by obbza9 with SMTP id za9so55603484obb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 08:27:13 -0700 (PDT)
-In-Reply-To: <1445445900.22669.41.camel@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445575878-31215-1-git-send-email-soren.brinkmann@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Moritz Fischer <moritz.fischer@ettus.com>, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-gpio@vger.kernel.org
-To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, Laurent Meunier <laurent.meunier@st.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 21, 2015 at 6:45 PM, Shevchenko, Andriy
-<andriy.shevchenko@intel.com> wrote:
+On Fri, Oct 23, 2015 at 6:51 AM, Soren Brinkmann
+<soren.brinkmann@xilinx.com> wrote:
 
-> Catch such code in pinconf.c
+> The driver does not have any real architecture dependencies. To avoid
+> listing each architecture that might use this driver on some
+> FPGA-enabled platform, drop these dependencies.
 >
->          for (j = 0; j < map->data.configs.num_configs; j++) {
->                  if (!strcmp(map->data.configs.group_or_pin,
->                                  dbg->pin_name)) {
->                          /* We found the right pin / state */
->                          found = map;
->                          break;
->                  }
->          }
->
-> I do not get how the result of strcmp() would be different during the
-> loop. Can you elaborate?
+> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+> ---
+> v2:
+>  - rebased
 
-As you can see from git blame Laurent Meunier wrote this code,
-(commit f07512e615dd8) so let's
-ask him. I suspect a simple copy/paste error? Laurent?
+Patch applied.
 
 Yours,
 Linus Walleij
