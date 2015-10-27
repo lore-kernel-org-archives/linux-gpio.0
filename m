@@ -1,20 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 04/11] dt-binding: Add new compatible string for gpio
- controller driver
-Date: Tue, 27 Oct 2015 10:49:09 +0100
-Message-ID: <CACRpkdZ8xaoGs2aTzdV2o2s0yDQUT=+Ma4-hp1KhmLckE1-YdQ@mail.gmail.com>
+Subject: Re: [PATCH 07/11] pinctrl: use ngpios propety from DT
+Date: Tue, 27 Oct 2015 10:51:57 +0100
+Message-ID: <CACRpkdY1GDs6ypqCiY3iiv3DkfnHchnY+bWPoCqU=_sgn9f5vQ@mail.gmail.com>
 References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
-	<1445233398-27129-5-git-send-email-pramodku@broadcom.com>
+	<1445233398-27129-8-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:35700 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753471AbbJ0JtK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 05:49:10 -0400
-Received: by obctp1 with SMTP id tp1so138104028obc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 02:49:10 -0700 (PDT)
-In-Reply-To: <1445233398-27129-5-git-send-email-pramodku@broadcom.com>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:35293 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752398AbbJ0Jv6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 05:51:58 -0400
+Received: by obctp1 with SMTP id tp1so138151933obc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 02:51:58 -0700 (PDT)
+In-Reply-To: <1445233398-27129-8-git-send-email-pramodku@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Pramod Kumar <pramodku@broadcom.com>
@@ -22,17 +21,28 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutl
 
 On Mon, Oct 19, 2015 at 7:43 AM, Pramod Kumar <pramodku@broadcom.com> wrote:
 
-> This new compatible string, "brcm,iproc-gpio", should be used for
-> all new iproc-based future SoCs.
+> Since identical hardware is used in several instances and all pins
+> are not routed to pinctrl hence getting total number of gpios from
+> DT make more sense hence stop using total number of gpios pins from
+> drivers and extract it from DT.
 >
 > Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
 > Reviewed-by: Ray Jui <rjui@broadcom.com>
 > Reviewed-by: Scott Branden <sbranden@broadcom.com>
 
-Patch applied with subject tweak.
+This patch is wrong.
 
-Think about Rob's comment to add an overarching SoC
-compatible string, please.
+Keep this per-compatible code, and only overrid the ngpios
+if and only if:
+
+- The ngpios is set in the DT node
+- The ngpios in the DT node is *smaller* than the hardware
+  defined number of GPIOs.
+
+ngpios is for restricting the number of available lines due to
+routing etc, not to define what the hardware has, because the
+hardware most certainly have all the lines, it's just that you're
+not using all of them.
 
 Yours,
 Linus Walleij
