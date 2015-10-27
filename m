@@ -1,53 +1,66 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] drivers/pinctrl: Add the concept of an "init" state
-Date: Tue, 27 Oct 2015 11:25:19 +0100
-Message-ID: <CACRpkdZNBe8P8-FMyQd2E4ieJ2Bck9tgnzAiZqLGWVf8bW6W8Q@mail.gmail.com>
-References: <1445400906-32284-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH -next] gpio: generic: Revert to old error handling in bgpio_map
+Date: Tue, 27 Oct 2015 11:28:07 +0100
+Message-ID: <CACRpkdY_G21Kh3bQDQ=Zz3PxgQnGSiKyow133dQzJWTq2LcJNw@mail.gmail.com>
+References: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:34545 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677AbbJ0KZU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 06:25:20 -0400
-Received: by oies66 with SMTP id s66so116824954oie.1
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 03:25:19 -0700 (PDT)
-In-Reply-To: <1445400906-32284-1-git-send-email-dianders@chromium.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:34641 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752322AbbJ0K2I convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 06:28:08 -0400
+Received: by oies66 with SMTP id s66so116858672oie.1
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 03:28:07 -0700 (PDT)
+In-Reply-To: <1445411520-7175-1-git-send-email-linux@roeck-us.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Heiko Stuebner <heiko@sntech.de>, Caesar Wang <wxt@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>
 
-On Wed, Oct 21, 2015 at 6:15 AM, Douglas Anderson <dianders@chromium.org> wrote:
+On Wed, Oct 21, 2015 at 9:12 AM, Guenter Roeck <linux@roeck-us.net> wro=
+te:
 
-> For pinctrl the "default" state is applied to pins before the driver's
-> probe function is called.  This is normally a sensible thing to do,
-> but in some cases can cause problems.  That's because the pins will
-> change state before the driver is given a chance to program how those
-> pins should behave.
+> Returning an error instead of NULL in bgpio_map if
+> platform_get_resource_byname does not find a resource was introduced =
+with
+> commit cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_=
+map").
+> This results in several qemu runtime failures with default and non-de=
+fault
+> configurations, if attempts are made to boot from mmcblk0. Examples f=
+or
+> failures with multi_v7_defconfig are
 >
-> As an example you might have a regulator that is controlled by a PWM
-> (output high = high voltage, output low = low voltage).  The firmware
-> might leave this pin as driven high.  If we allow the driver core to
-> reconfigure this pin as a PWM pin before the PWM's probe function runs
-> then you might end up running at too low of a voltage while we probe.
+> Machine: vexpress-a9    dtb: vexpress-v2p-ca9
+> Machine: vexpress-a15   dtb: vexpress-v2p-ca15-tc1
 >
-> Let's introudce a new "init" state.  If this is defined we'll set
-> pinctrl to this state before probe and then "default" after probe
-> (unless the driver explicitly changed states already).
+> Crash:
 >
-> An alternative idea that was thought of was to use the pre-existing
-> "sleep" or "idle" states and add a boolean property that we should
-> start in that mode.  This was not done because the "init" state is
-> needed for correctness and those other states are only present (and
-> only transitioned in to and out of) when (optional) power management
-> is enabled.
+> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -=
+6
+> Please append a correct "root=3D" boot option; here are the available=
+ partitions:
+> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-b=
+lock(0,0)
 >
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Tested-by: Caesar Wang <wxt@rock-chips.com>
+> Looking into the code, always returning an error if bgpio_map fails
+> does not appear to make much sense, since the code in bgpio_setup_io
+> specifically supports some of the resources to be NULL.
+>
+> Fixes: cf3f2a2c8bae ("gpio: generic: improve error handling in bgpio_=
+map")
+> Cc: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-Patch applied.
+Patch/revert applied. Thanks for digging in and fixing this G=C3=BCnthe=
+r!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
