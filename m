@@ -1,85 +1,47 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: pinconf: remove needless loop
-Date: Wed, 28 Oct 2015 19:00:49 +0200
-Message-ID: <1446051649.6332.59.camel@linux.intel.com>
-References: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH] MAINTAINERS: Add ACCES 104-IDIO-16 DRIVER entry
+Date: Wed, 28 Oct 2015 17:24:16 -0400
+Message-ID: <20151028212416.GA21860@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:41719 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750731AbbJ1RDN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 28 Oct 2015 13:03:13 -0400
-In-Reply-To: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
+Received: from mail-yk0-f171.google.com ([209.85.160.171]:35815 "EHLO
+	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731AbbJ1VY0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2015 17:24:26 -0400
+Received: by ykek133 with SMTP id k133so22666256yke.2
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2015 14:24:25 -0700 (PDT)
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Meunier <laurent.meunier@st.com>, linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org
 
-On Wed, 2015-10-28 at 15:29 +0100, Laurent Meunier wrote:
-> This removes a needless loop which was catched in pinconf.c.
+Add William Breathitt Gray as the maintainer of the ACCES 104-IDIO-16
+GPIO driver.
 
-I'm not a fan of irregular verbs, but here we are: catched -> caught.
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->=20
-> Suggested-by: Andriy Shevchenko <andriy.shevchenko@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 274f854..73aa81b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -240,6 +240,12 @@ L:	lm-sensors@lm-sensors.org
+ S:	Maintained
+ F:	drivers/hwmon/abituguru3.c
+ 
++ACCES 104-IDIO-16 DRIVER
++M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/gpio/gpio-104-idio-16.c
++
+ ACENIC DRIVER
+ M:	Jes Sorensen <jes@trained-monkey.org>
+ L:	linux-acenic@sunsite.dk
+-- 
+2.4.10
 
-Sometimes the broken Evolution uses wrong address. Please add "linux."
-part after "@". Also, I prefer to use Andy since it's how I'm known
-here.
-
-Otherwise:
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
-> ---
-> =C2=A0drivers/pinctrl/pinconf.c | 13 +++++--------
-> =C2=A01 file changed, 5 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-> index 1fc09dc..19af718 100644
-> --- a/drivers/pinctrl/pinconf.c
-> +++ b/drivers/pinctrl/pinconf.c
-> @@ -414,7 +414,7 @@ static int pinconf_dbg_config_print(struct
-> seq_file *s, void *d)
-> =C2=A0	struct pinctrl_dev *pctldev;
-> =C2=A0	const struct pinconf_ops *confops =3D NULL;
-> =C2=A0	struct dbg_cfg *dbg =3D &pinconf_dbg_conf;
-> -	int i, j;
-> +	int i;
-> =C2=A0	unsigned long config;
-> =C2=A0
-> =C2=A0	mutex_lock(&pinctrl_maps_mutex);
-> @@ -428,13 +428,10 @@ static int pinconf_dbg_config_print(struct
-> seq_file *s, void *d)
-> =C2=A0		if (strcmp(map->name, dbg->state_name))
-> =C2=A0			continue;
-> =C2=A0
-> -		for (j =3D 0; j < map->data.configs.num_configs; j++)
-> {
-> -			if (!strcmp(map->data.configs.group_or_pin,
-> -					dbg->pin_name)) {
-> -				/* We found the right pin / state */
-> -				found =3D map;
-> -				break;
-> -			}
-> +		if (!strcmp(map->data.configs.group_or_pin, dbg-
-> >pin_name)) {
-> +			/* We found the right pin */
-> +			found =3D map;
-> +			break;
-> =C2=A0		}
-> =C2=A0	}
-> =C2=A0
-
---=20
-Andy Shevchenko <andriy.shevchenko@intel.com>
-Intel Finland Oy
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
