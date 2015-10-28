@@ -1,58 +1,52 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: the needless loop?
-Date: Wed, 28 Oct 2015 10:50:56 +0000
-Message-ID: <1446029456.6332.51.camel@intel.com>
-References: <1445445900.22669.41.camel@intel.com>
-	 <CACRpkdbb+2=fyTC_tJqH8RPHV+-x5OTmv8RU4EMx4O23n5zDzw@mail.gmail.com>
-	 <F2D8346926EE43489E99D3215078E1712DF3A1@SAFEX1NODE23.st.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 2/3] gpio: arizona: Support Cirrus Logic CS47L24 and
+ WM1831
+Date: Wed, 28 Oct 2015 11:42:05 +0000
+Message-ID: <20151028114205.GU5828@x1>
+References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1445264027-7357-3-git-send-email-rf@opensource.wolfsonmicro.com>
+ <CACRpkdZMsUbhvKiAEcKuEy7OCGLYG9Up_AUJcfThbVcMdPeLPg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:65506 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753027AbbJ1Ku7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 28 Oct 2015 06:50:59 -0400
-In-Reply-To: <F2D8346926EE43489E99D3215078E1712DF3A1@SAFEX1NODE23.st.com>
-Content-Language: en-US
-Content-ID: <0F5C302B9B616241BAC40EE1EC98A244@intel.com>
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:37563 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755444AbbJ1LmK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2015 07:42:10 -0400
+Received: by wicfv8 with SMTP id fv8so9208601wic.0
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2015 04:42:09 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZMsUbhvKiAEcKuEy7OCGLYG9Up_AUJcfThbVcMdPeLPg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "laurent.meunier@st.com" <laurent.meunier@st.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 
-T24gV2VkLCAyMDE1LTEwLTI4IGF0IDEwOjA3ICswMDAwLCBMYXVyZW50IE1FVU5JRVIgd3JvdGU6
-DQo+IEhpIExpbnVzLCBBbmRyaXksDQo+IA0KPiA+IE9uIFdlZCwgT2N0IDIxLCAyMDE1IGF0IDY6
-NDUgUE0sIFNoZXZjaGVua28sIEFuZHJpeQ0KPiA+IDxhbmRyaXkuc2hldmNoZW5rb0BpbnRlbC5j
-b20+IHdyb3RlOg0KPiA+IA0KPiA+ID4gQ2F0Y2ggc3VjaCBjb2RlIGluIHBpbmNvbmYuYw0KPiA+
-ID4gDQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqBmb3IgKGogPSAwOyBqIDwgbWFwLT5kYXRhLmNv
-bmZpZ3MubnVtX2NvbmZpZ3M7IGorKykgew0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoGlmICghc3RyY21wKG1hcC0+ZGF0YS5jb25maWdzLmdyb3VwX29yX3BpbiwNCj4g
-PiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoGRiZy0+cGluX25hbWUpKSB7DQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIFdlIGZvdW5kIHRoZSByaWdodCBwaW4g
-LyBzdGF0ZSAqLw0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqBmb3VuZCA9IG1hcDsNCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7DQo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgfQ0KPiA+ID4gwqDCoMKgwqDCoMKgwqDCoMKgfQ0KPiA+ID4gDQo+ID4g
-PiBJIGRvIG5vdCBnZXQgaG93IHRoZSByZXN1bHQgb2Ygc3RyY21wKCkgd291bGQgYmUgZGlmZmVy
-ZW50IGR1cmluZw0KPiA+ID4gdGhlDQo+ID4gPiBsb29wLiBDYW4geW91IGVsYWJvcmF0ZT8NCj4g
-PiANCj4gPiBBcyB5b3UgY2FuIHNlZSBmcm9tIGdpdCBibGFtZSBMYXVyZW50IE1ldW5pZXIgd3Jv
-dGUgdGhpcyBjb2RlLA0KPiA+IChjb21taXQNCj4gPiBmMDc1MTJlNjE1ZGQ4KSBzbyBsZXQncyBh
-c2sgaGltLiBJIHN1c3BlY3QgYSBzaW1wbGUgY29weS9wYXN0ZQ0KPiA+IGVycm9yPw0KPiA+IExh
-dXJlbnQ/DQo+IA0KPiBJbmRlZWQgb2J2aW91c2x5IGEgY29weSAvIHBhc3RlIGVycm9yIEkgZGlk
-IA0KPiBUaGUgbG9vcCBzaGFsbCBiZSByZW1vdmVkIC4uLiBIYXMgc29tZW9uZSBhbHJlYWR5IGFu
-eSBwbGFuIHRvIHNlbmQNCj4gdGhlIGZpeCA/IA0KDQpOb3QgbWUsIHRvbyBidXN5IHdpdGggb3Ro
-ZXIgc3R1ZmYgKGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE1LzEwLzI3LzQ1MQ0KKQ0KDQo+IA0K
-PiBMYXVyZW50DQo+IA0KPiA+IFlvdXJzLA0KPiA+IExpbnVzIFdhbGxlaWoNCg0KLS0gDQpBbmR5
-IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4NCkludGVsIEZpbmxhbmQg
-T3kNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQpJbnRlbCBGaW5sYW5kIE95ClJlZ2lzdGVyZWQgQWRkcmVzczogUEwg
-MjgxLCAwMDE4MSBIZWxzaW5raSAKQnVzaW5lc3MgSWRlbnRpdHkgQ29kZTogMDM1NzYwNiAtIDQg
-CkRvbWljaWxlZCBpbiBIZWxzaW5raSAKClRoaXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMg
-bWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIG1hdGVyaWFsIGZvcgp0aGUgc29sZSB1c2Ugb2YgdGhl
-IGludGVuZGVkIHJlY2lwaWVudChzKS4gQW55IHJldmlldyBvciBkaXN0cmlidXRpb24KYnkgb3Ro
-ZXJzIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZApy
-ZWNpcGllbnQsIHBsZWFzZSBjb250YWN0IHRoZSBzZW5kZXIgYW5kIGRlbGV0ZSBhbGwgY29waWVz
-Lgo=
+On Tue, 27 Oct 2015, Linus Walleij wrote:
 
+> On Mon, Oct 19, 2015 at 4:13 PM, Richard Fitzgerald
+> <rf@opensource.wolfsonmicro.com> wrote:
+>=20
+> > The CS47L24 and WM1831 codecs only have two GPIO lines, but are
+> > otherwise similar to the WM8280.
+> >
+> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+>=20
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> Lee can merge this into the MFD tree with patch 1/3 if he likes,
+> I guess that's simplest.
+
+I can do.  Do you require a pull-request?
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
