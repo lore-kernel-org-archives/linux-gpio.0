@@ -1,63 +1,59 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 8/9] ARM: dts: Add leds support to STM32F429 Discovery board
-Date: Wed, 28 Oct 2015 15:24:02 +0100
-Message-ID: <CALszF6Avjb4OEa09fE=_Ye9ngF5PfwheQsNaszqsBFtn+ErZnw@mail.gmail.com>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1445102604-11502-9-git-send-email-mcoquelin.stm32@gmail.com>
-	<CACRpkdYjq9XqKM4imYsaa_HBopS7uFnbb6gf=hRZHGC4baafAg@mail.gmail.com>
-	<CALszF6Bo3x4jWnvDc=28s=517YJrv2=3BuuYmxjqP4ciF17fcQ@mail.gmail.com>
-	<562FEE85.3010204@suse.de>
-	<CACRpkdaQWm7Jz7Zj-amqx3EHVYi_-GvNxyQs9c8ht2WjGjAphg@mail.gmail.com>
-	<562FF234.9010403@suse.de>
-	<563082B3.8040301@linaro.org>
+From: Laurent Meunier <laurent.meunier@st.com>
+Subject: [PATCH] pinctrl: pinconf: remove needless loop
+Date: Wed, 28 Oct 2015 15:29:59 +0100
+Message-ID: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <563082B3.8040301@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58302 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965482AbbJ1Oaz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 28 Oct 2015 10:30:55 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, andriy.shevchenko@intel.com, Laurent Meunier <laurent.meunier@st.com>
 
-2015-10-28 9:09 GMT+01:00 Daniel Thompson <daniel.thompson@linaro.org>:
-> On 27/10/15 21:52, Andreas F=C3=A4rber wrote:
->>
->> Am 27.10.2015 um 22:46 schrieb Linus Walleij:
->>>
->>> Heartbeat is awesome.
->>
->>
->> Yes, it's awesome for testing, but not for a .dts file that ends up =
-in a
->> distro (not the case here, of course) and keeps blinking on the desk=
-=2E
->>
->> If someone wants LEDs to blink, they can set that via sysfs or by
->> modifying their .dts locally.
->>
->> sunxi chose to keep LEDs off my default. For qcom we had a similar
->> discussion some weeks ago. I don't regularly read Linux patches, so =
-feel
->> free to skim the archives yourself.
->
->
-> Among the existing DTS files there is pretty significant use of heart=
-beat
-> although its not absolute.
->
-> There are 119 files that set a default-trigger, of these 91 (~75%) in=
-clude a
-> line to configure a heartbeat.
->
-> Personally I'd be very happy with heartbeat by default on STM32... I'=
-ve
-> seldom worked on a board without a default-enabled heartbeat so they =
-make me
-> feel comfortable. ;-)
+This removes a needless loop which was catched in pinconf.c.
 
-I will add heartbeat in next version, which will arrive when the
-pinctrl driver first review is done.
+Suggested-by: Andriy Shevchenko <andriy.shevchenko@intel.com>
+Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
+---
+ drivers/pinctrl/pinconf.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Thanks,
-Maxime
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 1fc09dc..19af718 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -414,7 +414,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 	struct pinctrl_dev *pctldev;
+ 	const struct pinconf_ops *confops = NULL;
+ 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
+-	int i, j;
++	int i;
+ 	unsigned long config;
+ 
+ 	mutex_lock(&pinctrl_maps_mutex);
+@@ -428,13 +428,10 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 		if (strcmp(map->name, dbg->state_name))
+ 			continue;
+ 
+-		for (j = 0; j < map->data.configs.num_configs; j++) {
+-			if (!strcmp(map->data.configs.group_or_pin,
+-					dbg->pin_name)) {
+-				/* We found the right pin / state */
+-				found = map;
+-				break;
+-			}
++		if (!strcmp(map->data.configs.group_or_pin, dbg->pin_name)) {
++			/* We found the right pin */
++			found = map;
++			break;
+ 		}
+ 	}
+ 
+-- 
+1.9.1
+
