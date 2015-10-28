@@ -1,44 +1,33 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v2 8/9] ARM: dts: Add leds support to STM32F429 Discovery
- board
-Date: Tue, 27 Oct 2015 22:52:52 +0100
-Message-ID: <562FF234.9010403@suse.de>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
- <1445102604-11502-9-git-send-email-mcoquelin.stm32@gmail.com>
- <CACRpkdYjq9XqKM4imYsaa_HBopS7uFnbb6gf=hRZHGC4baafAg@mail.gmail.com>
- <CALszF6Bo3x4jWnvDc=28s=517YJrv2=3BuuYmxjqP4ciF17fcQ@mail.gmail.com>
- <562FEE85.3010204@suse.de>
- <CACRpkdaQWm7Jz7Zj-amqx3EHVYi_-GvNxyQs9c8ht2WjGjAphg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaQWm7Jz7Zj-amqx3EHVYi_-GvNxyQs9c8ht2WjGjAphg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Bruno Herrera <bruherrera@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: YD Tseng <ltyu101@gmail.com>
+Subject: Re:[PATCH v3] gpio: driver for AMD Promontory
+Date: Wed, 28 Oct 2015 11:40:34 +0800
+Message-ID: <1446003634-24320-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:35721 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751976AbbJ1Dkp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 23:40:45 -0400
+Received: by pasz6 with SMTP id z6so242332286pas.2
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 20:40:44 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, dbaryshkov@gmail.com
+Cc: Yd_Tseng@asmedia.com.tw, TungYu_Lu@asmedia.com.tw
 
-QW0gMjcuMTAuMjAxNSB1bSAyMjo0NiBzY2hyaWViIExpbnVzIFdhbGxlaWo6Cj4gSGVhcnRiZWF0
-IGlzIGF3ZXNvbWUuCgpZZXMsIGl0J3MgYXdlc29tZSBmb3IgdGVzdGluZywgYnV0IG5vdCBmb3Ig
-YSAuZHRzIGZpbGUgdGhhdCBlbmRzIHVwIGluIGEKZGlzdHJvIChub3QgdGhlIGNhc2UgaGVyZSwg
-b2YgY291cnNlKSBhbmQga2VlcHMgYmxpbmtpbmcgb24gdGhlIGRlc2suCgpJZiBzb21lb25lIHdh
-bnRzIExFRHMgdG8gYmxpbmssIHRoZXkgY2FuIHNldCB0aGF0IHZpYSBzeXNmcyBvciBieQptb2Rp
-ZnlpbmcgdGhlaXIgLmR0cyBsb2NhbGx5LgoKc3VueGkgY2hvc2UgdG8ga2VlcCBMRURzIG9mZiBt
-eSBkZWZhdWx0LiBGb3IgcWNvbSB3ZSBoYWQgYSBzaW1pbGFyCmRpc2N1c3Npb24gc29tZSB3ZWVr
-cyBhZ28uIEkgZG9uJ3QgcmVndWxhcmx5IHJlYWQgTGludXggcGF0Y2hlcywgc28gZmVlbApmcmVl
-IHRvIHNraW0gdGhlIGFyY2hpdmVzIHlvdXJzZWxmLgoKQ2hlZXJzLApBbmRyZWFzCgotLSAKU1VT
-RSBMaW51eCBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkKR0Y6
-IEZlbGl4IEltZW5kw7ZyZmZlciwgSmFuZSBTbWl0aGFyZCwgR3JhaGFtIE5vcnRvbjsgSFJCIDIx
-Mjg0IChBRyBOw7xybmJlcmcpCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Dear Linus,
+
+Thanks a lot.
+
+> The driver will be in mainline Linux when v4.4 is released in some
+> two months.
+
+V4.4 is too late for us. Will you please give us a hand to release 
+this driver in v4.3? 
+
+> The next step is that I expect you to maintain the driver in the
+> future. Maybe you want to add new functionality to it also?
+
+Yes, we will maintain this driver in the future.
+
+Yours,
+YD Tseng
