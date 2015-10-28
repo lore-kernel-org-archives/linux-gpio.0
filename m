@@ -1,59 +1,40 @@
-From: Laurent Meunier <laurent.meunier@st.com>
-Subject: [PATCH] pinctrl: pinconf: remove needless loop
-Date: Wed, 28 Oct 2015 15:29:59 +0100
-Message-ID: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
+From: Laurent MEUNIER <laurent.meunier@st.com>
+Subject: RE: the needless loop?
+Date: Wed, 28 Oct 2015 14:35:19 +0000
+Message-ID: <F2D8346926EE43489E99D3215078E1712DF7E1@SAFEX1NODE23.st.com>
+References: <1445445900.22669.41.camel@intel.com>
+	 <CACRpkdbb+2=fyTC_tJqH8RPHV+-x5OTmv8RU4EMx4O23n5zDzw@mail.gmail.com>
+	 <F2D8346926EE43489E99D3215078E1712DF3A1@SAFEX1NODE23.st.com>
+ <1446029456.6332.51.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58302 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965482AbbJ1Oaz (ORCPT
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56849 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S966158AbbJ1Of1 (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 28 Oct 2015 10:30:55 -0400
+	Wed, 28 Oct 2015 10:35:27 -0400
+In-Reply-To: <1446029456.6332.51.camel@intel.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, andriy.shevchenko@intel.com, Laurent Meunier <laurent.meunier@st.com>
+To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-This removes a needless loop which was catched in pinconf.c.
-
-Suggested-by: Andriy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
----
- drivers/pinctrl/pinconf.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index 1fc09dc..19af718 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -414,7 +414,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
- 	struct pinctrl_dev *pctldev;
- 	const struct pinconf_ops *confops = NULL;
- 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
--	int i, j;
-+	int i;
- 	unsigned long config;
- 
- 	mutex_lock(&pinctrl_maps_mutex);
-@@ -428,13 +428,10 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
- 		if (strcmp(map->name, dbg->state_name))
- 			continue;
- 
--		for (j = 0; j < map->data.configs.num_configs; j++) {
--			if (!strcmp(map->data.configs.group_or_pin,
--					dbg->pin_name)) {
--				/* We found the right pin / state */
--				found = map;
--				break;
--			}
-+		if (!strcmp(map->data.configs.group_or_pin, dbg->pin_name)) {
-+			/* We found the right pin */
-+			found = map;
-+			break;
- 		}
- 	}
- 
--- 
-1.9.1
-
+PiA+IEluZGVlZCBvYnZpb3VzbHkgYSBjb3B5IC8gcGFzdGUgZXJyb3IgSSBkaWQgVGhlIGxvb3Ag
+c2hhbGwgYmUgcmVtb3ZlZA0KPiA+IC4uLiBIYXMgc29tZW9uZSBhbHJlYWR5IGFueSBwbGFuIHRv
+IHNlbmQgdGhlIGZpeCA/DQo+IA0KPiBOb3QgbWUsIHRvbyBidXN5IHdpdGggb3RoZXIgc3R1ZmYg
+KGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE1LzEwLzI3LzQ1MQ0KPiApDQoNCk9rIHN1cmUgLSBJ
+IHdpbGwgZG8gc28gDQpMYXVyZW50DQoNCj4gPg0KPiA+IExhdXJlbnQNCj4gPg0KPiA+ID4gWW91
+cnMsDQo+ID4gPiBMaW51cyBXYWxsZWlqDQo+IA0KPiAtLQ0KPiBBbmR5IFNoZXZjaGVua28gPGFu
+ZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4gSW50ZWwgRmlubGFuZCBPeQ0KPiAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0NCj4gSW50ZWwgRmlubGFuZCBPeQ0KPiBSZWdpc3RlcmVkIEFkZHJlc3M6IFBMIDI4MSwgMDAx
+ODEgSGVsc2lua2kgQnVzaW5lc3MgSWRlbnRpdHkgQ29kZTogMDM1NzYwNiAtDQo+IDQgRG9taWNp
+bGVkIGluIEhlbHNpbmtpDQo+IA0KPiBUaGlzIGUtbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIG1h
+eSBjb250YWluIGNvbmZpZGVudGlhbCBtYXRlcmlhbCBmb3IgdGhlDQo+IHNvbGUgdXNlIG9mIHRo
+ZSBpbnRlbmRlZCByZWNpcGllbnQocykuIEFueSByZXZpZXcgb3IgZGlzdHJpYnV0aW9uIGJ5IG90
+aGVycyBpcw0KPiBzdHJpY3RseSBwcm9oaWJpdGVkLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5k
+ZWQgcmVjaXBpZW50LCBwbGVhc2UgY29udGFjdCB0aGUNCj4gc2VuZGVyIGFuZCBkZWxldGUgYWxs
+IGNvcGllcy4NCg==
