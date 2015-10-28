@@ -1,40 +1,73 @@
-From: Laurent MEUNIER <laurent.meunier@st.com>
-Subject: RE: the needless loop?
-Date: Wed, 28 Oct 2015 14:35:19 +0000
-Message-ID: <F2D8346926EE43489E99D3215078E1712DF7E1@SAFEX1NODE23.st.com>
-References: <1445445900.22669.41.camel@intel.com>
-	 <CACRpkdbb+2=fyTC_tJqH8RPHV+-x5OTmv8RU4EMx4O23n5zDzw@mail.gmail.com>
-	 <F2D8346926EE43489E99D3215078E1712DF3A1@SAFEX1NODE23.st.com>
- <1446029456.6332.51.camel@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10] gpio: Add GPIO support for the ACCES 104-IDIO-16
+Date: Wed, 28 Oct 2015 16:11:41 +0100
+Message-ID: <CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
+References: <20151019165914.GA22867@sophia>
+	<CACRpkdbQyed0S0Y6MSt35LuOekFprvbPMDpsGku-cBXBt=9j0Q@mail.gmail.com>
+	<20151027142343.GI1548@lahna.fi.intel.com>
+	<CACRpkdbs8US2m1+hEmXbJ9JJT15-iRHnO2L4bk5qeNRgb2vbKg@mail.gmail.com>
+	<20151027165134.GK1548@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56849 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S966158AbbJ1Of1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 28 Oct 2015 10:35:27 -0400
-In-Reply-To: <1446029456.6332.51.camel@intel.com>
-Content-Language: en-US
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:36339 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751008AbbJ1PLn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2015 11:11:43 -0400
+Received: by lbjm5 with SMTP id m5so7980704lbj.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2015 08:11:42 -0700 (PDT)
+In-Reply-To: <20151027165134.GK1548@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-PiA+IEluZGVlZCBvYnZpb3VzbHkgYSBjb3B5IC8gcGFzdGUgZXJyb3IgSSBkaWQgVGhlIGxvb3Ag
-c2hhbGwgYmUgcmVtb3ZlZA0KPiA+IC4uLiBIYXMgc29tZW9uZSBhbHJlYWR5IGFueSBwbGFuIHRv
-IHNlbmQgdGhlIGZpeCA/DQo+IA0KPiBOb3QgbWUsIHRvbyBidXN5IHdpdGggb3RoZXIgc3R1ZmYg
-KGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE1LzEwLzI3LzQ1MQ0KPiApDQoNCk9rIHN1cmUgLSBJ
-IHdpbGwgZG8gc28gDQpMYXVyZW50DQoNCj4gPg0KPiA+IExhdXJlbnQNCj4gPg0KPiA+ID4gWW91
-cnMsDQo+ID4gPiBMaW51cyBXYWxsZWlqDQo+IA0KPiAtLQ0KPiBBbmR5IFNoZXZjaGVua28gPGFu
-ZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4gSW50ZWwgRmlubGFuZCBPeQ0KPiAtLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0NCj4gSW50ZWwgRmlubGFuZCBPeQ0KPiBSZWdpc3RlcmVkIEFkZHJlc3M6IFBMIDI4MSwgMDAx
-ODEgSGVsc2lua2kgQnVzaW5lc3MgSWRlbnRpdHkgQ29kZTogMDM1NzYwNiAtDQo+IDQgRG9taWNp
-bGVkIGluIEhlbHNpbmtpDQo+IA0KPiBUaGlzIGUtbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIG1h
-eSBjb250YWluIGNvbmZpZGVudGlhbCBtYXRlcmlhbCBmb3IgdGhlDQo+IHNvbGUgdXNlIG9mIHRo
-ZSBpbnRlbmRlZCByZWNpcGllbnQocykuIEFueSByZXZpZXcgb3IgZGlzdHJpYnV0aW9uIGJ5IG90
-aGVycyBpcw0KPiBzdHJpY3RseSBwcm9oaWJpdGVkLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5k
-ZWQgcmVjaXBpZW50LCBwbGVhc2UgY29udGFjdCB0aGUNCj4gc2VuZGVyIGFuZCBkZWxldGUgYWxs
-IGNvcGllcy4NCg==
+On Tue, Oct 27, 2015 at 5:51 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Tue, Oct 27, 2015 at 05:42:23PM +0100, Linus Walleij wrote:
+>> On Tue, Oct 27, 2015 at 3:23 PM, Mika Westerberg
+>> <mika.westerberg@linux.intel.com> wrote:
+>> > On Tue, Oct 27, 2015 at 11:06:58AM +0100, Linus Walleij wrote:
+>> >> > +menu "ISA GPIO drivers"
+>> >> > +
+>> >> > +config GPIO_104_IDIO_16
+>> >> > +       tristate "ACCES 104-IDIO-16 GPIO support"
+>> >> > +       depends on X86
+>> >> > +       help
+>> >> > +         Enables GPIO support for the ACCES 104-IDIO-16 family.
+>> >> > +
+>> >> > +endmenu
+>> >>
+>> >> I have five other drivers using port-based I/O:
+>> >>
+>> >> gpio-f7188x.c
+>> >> gpio-it87.c
+>> >> gpio-sch.c
+>> >> gpio-sch311x.c
+>> >> gpio-ts5500.c
+>> >>
+>> >> Do you think it makes sense to move all of these in under
+>> >> the "ISA GPIO drivers" menu as well? I guess they all require
+>> >> ISA after all.
+>> >>
+>> >> (Added their maintainers to the To: line so I can get some input
+>> >> on this.)
+>> >
+>> > Not all of them actually require ISA. For example gpio-sch is part of an
+>> > MFD device which is a PCI device. PCI bus also has notion of I/O ports.
+>>
+>> Hm, is there a more fitting symbol we should sort it under, which
+>> means thingofabob-that-has-portmapped I/O?
+>
+> Well, there's already "Memory mapped GPIO drivers" so how about "I/O
+> mapped GPIO drivers"?
+
+Sure, "Port-mapped I/O GPIO drivers"
+
+But what should I put as "depends" for that submenu, that is maybe
+the real question.
+
+Would (ISA || PCI) suffice?
+
+Yours,
+Linus Walleij
