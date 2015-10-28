@@ -1,48 +1,57 @@
-From: Pramod Kumar <pramodku@broadcom.com>
-Subject: RE: [PATCH 05/11] dt-binding: Add ngpios property to GPIO
- controller node
-Date: Wed, 28 Oct 2015 05:14:34 +0000
-Message-ID: <0C803592FC378B4E83922050AB46442A2AD73E7A@SJEXCHMB10.corp.ad.broadcom.com>
-References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
-	<1445233398-27129-6-git-send-email-pramodku@broadcom.com>
- <CACRpkdZRmJTF9_yzVJx_vPKH6M6PivcrPiLD7xMEs5HDvsLw7g@mail.gmail.com>
+From: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 8/9] ARM: dts: Add leds support to STM32F429 Discovery
+ board
+Date: Wed, 28 Oct 2015 08:09:23 +0000
+Message-ID: <563082B3.8040301@linaro.org>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1445102604-11502-9-git-send-email-mcoquelin.stm32@gmail.com>
+ <CACRpkdYjq9XqKM4imYsaa_HBopS7uFnbb6gf=hRZHGC4baafAg@mail.gmail.com>
+ <CALszF6Bo3x4jWnvDc=28s=517YJrv2=3BuuYmxjqP4ciF17fcQ@mail.gmail.com>
+ <562FEE85.3010204@suse.de>
+ <CACRpkdaQWm7Jz7Zj-amqx3EHVYi_-GvNxyQs9c8ht2WjGjAphg@mail.gmail.com>
+ <562FF234.9010403@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZRmJTF9_yzVJx_vPKH6M6PivcrPiLD7xMEs5HDvsLw7g@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <562FF234.9010403-l3A5Bk7waGM@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgTGludXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMg
-V2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjcgT2N0
-b2JlciAyMDE1IDE1OjExDQo+IFRvOiBQcmFtb2QgS3VtYXINCj4gQ2M6IFJvYiBIZXJyaW5nOyBQ
-YXdlbCBNb2xsOyBNYXJrIFJ1dGxhbmQ7IElhbiBDYW1wYmVsbDsgS3VtYXIgR2FsYTsgUmF5IEp1
-aTsNCj4gU2NvdHQgQnJhbmRlbjsgUnVzc2VsbCBLaW5nOyBsaW51eC1ncGlvQHZnZXIua2VybmVs
-Lm9yZzsgYmNtLWtlcm5lbC1mZWVkYmFjay0NCj4gbGlzdDsgSmFzb24gVXk7IE1hc2FoaXJvIFlh
-bWFkYTsgVGhvbWFzIEdsZWl4bmVyOyBMYXVyZW50IFBpbmNoYXJ0Ow0KPiBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51
-eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9uYXMgR29yc2tpDQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0ggMDUvMTFdIGR0LWJpbmRpbmc6IEFkZCBuZ3Bpb3MgcHJvcGVydHkgdG8gR1BJTyBj
-b250cm9sbGVyDQo+IG5vZGUNCj4gDQo+IE9uIE1vbiwgT2N0IDE5LCAyMDE1IGF0IDc6NDMgQU0s
-IFByYW1vZCBLdW1hciA8cHJhbW9ka3VAYnJvYWRjb20uY29tPg0KPiB3cm90ZToNCj4gDQo+ID4g
-QWRkIG5ncGlvcyBwcm9wZXJ0eSB0byB0aGUgZ3BpbyBjb250cm9sbGVyJ3MgRFQgbm9kZSBzbyB0
-aGF0DQo+ID4gY29udHJvbGxlciBkcml2ZXIgZXh0cmFjdHMgdG90YWwgbnVtYmVyIG9mIGdwaW8g
-bGluZXMgcHJlc2VudCBpbg0KPiA+IGNvbnRyb2xsZXIgZnJvbSBEVCBhbmQgcmVtb3ZlcyBkZXBl
-bmRlbmN5IG9uIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFByYW1vZCBLdW1hciA8
-cHJhbW9ka3VAYnJvYWRjb20uY29tPg0KPiA+IFJldmlld2VkLWJ5OiBSYXkgSnVpIDxyanVpQGJy
-b2FkY29tLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogU2NvdHQgQnJhbmRlbiA8c2JyYW5kZW5AYnJv
-YWRjb20uY29tPg0KPiAoLi4uKQ0KPiA+ICstIG5ncGlvczoNCj4gPiArICAgIFRvdGFsIG51bWJl
-ciBvZiBHUElPcyB0aGUgY29udHJvbGxlciBwcm92aWRlcw0KPiANCj4gVGhpcyBkZXNjcmlwdGlv
-biBpcyB3cm9uZy4gVGhlIG51bWJlciBvZiBHUElPcyB0aGUgY29udHJvbGxlciAqcHJvdmlkZXMq
-IGlzIHRvDQo+IGJlIGRldGVybWluZWQgYnkgdGhlIGNvbXBhdGlibGUtc3RyaW5nLg0KPiANCj4g
-bmdwaW9zIGlzIHVzZWQgdG8gcmVzdHJpY3QgdGhlIG51bWJlciBvZiBsaW5lcyAqdXNlZCogb3Ig
-KnJvdXRlZCogZnJvbSB0aGUNCj4gbnVtYmVyICphdmFpbGFibGUqLiAoSSBob3BlIHRoYXQgaXMg
-d2hhdCB0aGUgY29kZSBkb2VzIGFzIHdlbGwuKSBTdWNoIGFzIGlmIDEyDQo+IEdQSU9zIGFyZSB1
-c2VkIG9mIHRoZSAzMiBhdmFpbGFibGUgb24gMzJiaXRzIGluIGEgcmVnaXN0ZXIuDQo+IA0KPiBV
-cGRhdGUgdGhpcyBkZXNjcmlwdGlvbiB0byBzYXkgd2hhdCBpdCByZWFsbHkgbWVhbnMuDQo+IA0K
-PiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQpUaGFua3MgZm9yIHJldmlld2luZyAuIFdpbGwg
-dXBkYXRlIHRoZSBkZXNjcmlwdGlvbi4NCg0KUmVnYXJkcywNClByYW1vZA0K
+On 27/10/15 21:52, Andreas F=C3=A4rber wrote:
+> Am 27.10.2015 um 22:46 schrieb Linus Walleij:
+>> Heartbeat is awesome.
+>
+> Yes, it's awesome for testing, but not for a .dts file that ends up i=
+n a
+> distro (not the case here, of course) and keeps blinking on the desk.
+>
+> If someone wants LEDs to blink, they can set that via sysfs or by
+> modifying their .dts locally.
+>
+> sunxi chose to keep LEDs off my default. For qcom we had a similar
+> discussion some weeks ago. I don't regularly read Linux patches, so f=
+eel
+> free to skim the archives yourself.
+
+Among the existing DTS files there is pretty significant use of=20
+heartbeat although its not absolute.
+
+There are 119 files that set a default-trigger, of these 91 (~75%)=20
+include a line to configure a heartbeat.
+
+Personally I'd be very happy with heartbeat by default on STM32... I've=
+=20
+seldom worked on a board without a default-enabled heartbeat so they=20
+make me feel comfortable. ;-)
+
+
+Daniel.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
