@@ -1,62 +1,63 @@
-From: Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Subject: RE: [PATCH 07/11] pinctrl: use ngpios propety from DT
-Date: Wed, 28 Oct 2015 11:52:49 +0000
-Message-ID: <0C803592FC378B4E83922050AB46442A2AD742F0@SJEXCHMB10.corp.ad.broadcom.com>
-References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
-	<1445233398-27129-8-git-send-email-pramodku@broadcom.com>
- <CACRpkdY1GDs6ypqCiY3iiv3DkfnHchnY+bWPoCqU=_sgn9f5vQ@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 8/9] ARM: dts: Add leds support to STM32F429 Discovery board
+Date: Wed, 28 Oct 2015 15:24:02 +0100
+Message-ID: <CALszF6Avjb4OEa09fE=_Ye9ngF5PfwheQsNaszqsBFtn+ErZnw@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-9-git-send-email-mcoquelin.stm32@gmail.com>
+	<CACRpkdYjq9XqKM4imYsaa_HBopS7uFnbb6gf=hRZHGC4baafAg@mail.gmail.com>
+	<CALszF6Bo3x4jWnvDc=28s=517YJrv2=3BuuYmxjqP4ciF17fcQ@mail.gmail.com>
+	<562FEE85.3010204@suse.de>
+	<CACRpkdaQWm7Jz7Zj-amqx3EHVYi_-GvNxyQs9c8ht2WjGjAphg@mail.gmail.com>
+	<562FF234.9010403@suse.de>
+	<563082B3.8040301@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdY1GDs6ypqCiY3iiv3DkfnHchnY+bWPoCqU=_sgn9f5vQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <563082B3.8040301@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgTGludXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMg
-V2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjcgT2N0
-b2JlciAyMDE1IDE1OjIyDQo+IFRvOiBQcmFtb2QgS3VtYXINCj4gQ2M6IFJvYiBIZXJyaW5nOyBQ
-YXdlbCBNb2xsOyBNYXJrIFJ1dGxhbmQ7IElhbiBDYW1wYmVsbDsgS3VtYXIgR2FsYTsgUmF5IEp1
-aTsNCj4gU2NvdHQgQnJhbmRlbjsgUnVzc2VsbCBLaW5nOyBsaW51eC1ncGlvQHZnZXIua2VybmVs
-Lm9yZzsgYmNtLWtlcm5lbC1mZWVkYmFjay0NCj4gbGlzdDsgSmFzb24gVXk7IE1hc2FoaXJvIFlh
-bWFkYTsgVGhvbWFzIEdsZWl4bmVyOyBMYXVyZW50IFBpbmNoYXJ0Ow0KPiBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51
-eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9uYXMgR29yc2tpDQo+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0ggMDcvMTFdIHBpbmN0cmw6IHVzZSBuZ3Bpb3MgcHJvcGV0eSBmcm9tIERUDQo+IA0K
-PiBPbiBNb24sIE9jdCAxOSwgMjAxNSBhdCA3OjQzIEFNLCBQcmFtb2QgS3VtYXIgPHByYW1vZGt1
-QGJyb2FkY29tLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+IFNpbmNlIGlkZW50aWNhbCBoYXJkd2Fy
-ZSBpcyB1c2VkIGluIHNldmVyYWwgaW5zdGFuY2VzIGFuZCBhbGwgcGlucyBhcmUNCj4gPiBub3Qg
-cm91dGVkIHRvIHBpbmN0cmwgaGVuY2UgZ2V0dGluZyB0b3RhbCBudW1iZXIgb2YgZ3Bpb3MgZnJv
-bSBEVCBtYWtlDQo+ID4gbW9yZSBzZW5zZSBoZW5jZSBzdG9wIHVzaW5nIHRvdGFsIG51bWJlciBv
-ZiBncGlvcyBwaW5zIGZyb20gZHJpdmVycw0KPiA+IGFuZCBleHRyYWN0IGl0IGZyb20gRFQuDQo+
-ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQcmFtb2QgS3VtYXIgPHByYW1vZGt1QGJyb2FkY29tLmNv
-bT4NCj4gPiBSZXZpZXdlZC1ieTogUmF5IEp1aSA8cmp1aUBicm9hZGNvbS5jb20+DQo+ID4gUmV2
-aWV3ZWQtYnk6IFNjb3R0IEJyYW5kZW4gPHNicmFuZGVuQGJyb2FkY29tLmNvbT4NCj4gDQo+IFRo
-aXMgcGF0Y2ggaXMgd3JvbmcuDQo+IA0KPiBLZWVwIHRoaXMgcGVyLWNvbXBhdGlibGUgY29kZSwg
-YW5kIG9ubHkgb3ZlcnJpZCB0aGUgbmdwaW9zIGlmIGFuZCBvbmx5IGlmOg0KPiANCj4gLSBUaGUg
-bmdwaW9zIGlzIHNldCBpbiB0aGUgRFQgbm9kZQ0KPiAtIFRoZSBuZ3Bpb3MgaW4gdGhlIERUIG5v
-ZGUgaXMgKnNtYWxsZXIqIHRoYW4gdGhlIGhhcmR3YXJlDQo+ICAgZGVmaW5lZCBudW1iZXIgb2Yg
-R1BJT3MuDQo+IA0KPiBuZ3Bpb3MgaXMgZm9yIHJlc3RyaWN0aW5nIHRoZSBudW1iZXIgb2YgYXZh
-aWxhYmxlIGxpbmVzIGR1ZSB0byByb3V0aW5nIGV0Yywgbm90IHRvDQo+IGRlZmluZSB3aGF0IHRo
-ZSBoYXJkd2FyZSBoYXMsIGJlY2F1c2UgdGhlIGhhcmR3YXJlIG1vc3QgY2VydGFpbmx5IGhhdmUg
-YWxsIHRoZQ0KPiBsaW5lcywgaXQncyBqdXN0IHRoYXQgeW91J3JlIG5vdCB1c2luZyBhbGwgb2Yg
-dGhlbS4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQoNCkkgZGlzY3Vzc2VkIHdpdGgg
-QVNJQyB0ZWFtIHJlZ2FyZGluZyB0aGlzIGlQcm9jIEdQSU8gYmxvY2suIFRoZXkgdXNlIGEgbGli
-cmFyeSB0byBjcmVhdGUgdGhlIEdQSU9zIGJsb2NrIHdoZXJlICJ0b3RhbCBudW1iZXIgb2YgR1BJ
-TyBwaW5zKCBsZXQgc2F5IE4pIGluIEdQSU8gYmxvY2siIGlzIHVzZWQgYXMgYW4gcGFyYW1ldGVy
-LiANCkxpYnJhcnkgdXNlcyBhIGNvbnN0cnVjdCBmb3IgKmEqIEdQSU8gcGluLiBUaGlzIGdldHMg
-aW5zdGFudGlhdGVkIE4gdGltZXMgdG8gY3JlYXRlIGEgY29tcGxldGUgR1BJTyBibG9jayB3aXRo
-IE4gcGlucy4NCg0KQWxsIGlQcm9jIGJhc2VkIFNvQ3MgdXNlcyB0aGlzIGxpYnJhcnkuIFNvIEkn
-bSBub3Qgc3VyZSB3aGV0aGVyIGF0dGFjaGluZyAidG90YWwgbnVtYmVyIG9mIEdQSU9zIHBpbnMi
-IHRvIGNvbXBhdGlibGUtc3RyaW5nIG1ha2Ugc2Vuc2UgaW4gdGhpcyBjYXNlLiANCkkgcGVyc29u
-YWxseSBmZWVsIHRoYXQgcGFzc2luZyB0aGlzIG51bWJlciBmcm9tIHRoZSBEVCBtYWtlcyBtb3Jl
-IHNlbnNlIGhlcmUuIEFueSBpUHJvYyBiYXNlZCBmdXR1cmUgYXMgd2VsbCBhcyBjdXJyZW50IFNv
-Q3Mgd291bGQgYmUgYWJsZSB0byB1c2UgdGhpcyBkcml2ZXIgd2l0aG91dCBhbnkgY2hhbmdlLg0K
-DQpQbGVhc2UgYWR2aXNlIHVzIGluIHRoaXMgY2FzZS4NCg0KUmVnYXJkcywNClByYW1vZA0K
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2015-10-28 9:09 GMT+01:00 Daniel Thompson <daniel.thompson@linaro.org>:
+> On 27/10/15 21:52, Andreas F=C3=A4rber wrote:
+>>
+>> Am 27.10.2015 um 22:46 schrieb Linus Walleij:
+>>>
+>>> Heartbeat is awesome.
+>>
+>>
+>> Yes, it's awesome for testing, but not for a .dts file that ends up =
+in a
+>> distro (not the case here, of course) and keeps blinking on the desk=
+=2E
+>>
+>> If someone wants LEDs to blink, they can set that via sysfs or by
+>> modifying their .dts locally.
+>>
+>> sunxi chose to keep LEDs off my default. For qcom we had a similar
+>> discussion some weeks ago. I don't regularly read Linux patches, so =
+feel
+>> free to skim the archives yourself.
+>
+>
+> Among the existing DTS files there is pretty significant use of heart=
+beat
+> although its not absolute.
+>
+> There are 119 files that set a default-trigger, of these 91 (~75%) in=
+clude a
+> line to configure a heartbeat.
+>
+> Personally I'd be very happy with heartbeat by default on STM32... I'=
+ve
+> seldom worked on a board without a default-enabled heartbeat so they =
+make me
+> feel comfortable. ;-)
+
+I will add heartbeat in next version, which will arrive when the
+pinctrl driver first review is done.
+
+Thanks,
+Maxime
