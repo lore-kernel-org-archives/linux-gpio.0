@@ -1,52 +1,62 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 2/3] gpio: arizona: Support Cirrus Logic CS47L24 and
- WM1831
-Date: Wed, 28 Oct 2015 11:42:05 +0000
-Message-ID: <20151028114205.GU5828@x1>
-References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1445264027-7357-3-git-send-email-rf@opensource.wolfsonmicro.com>
- <CACRpkdZMsUbhvKiAEcKuEy7OCGLYG9Up_AUJcfThbVcMdPeLPg@mail.gmail.com>
+From: Pramod Kumar <pramodku-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: RE: [PATCH 07/11] pinctrl: use ngpios propety from DT
+Date: Wed, 28 Oct 2015 11:52:49 +0000
+Message-ID: <0C803592FC378B4E83922050AB46442A2AD742F0@SJEXCHMB10.corp.ad.broadcom.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+	<1445233398-27129-8-git-send-email-pramodku@broadcom.com>
+ <CACRpkdY1GDs6ypqCiY3iiv3DkfnHchnY+bWPoCqU=_sgn9f5vQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:37563 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755444AbbJ1LmK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2015 07:42:10 -0400
-Received: by wicfv8 with SMTP id fv8so9208601wic.0
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2015 04:42:09 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZMsUbhvKiAEcKuEy7OCGLYG9Up_AUJcfThbVcMdPeLPg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdY1GDs6ypqCiY3iiv3DkfnHchnY+bWPoCqU=_sgn9f5vQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonas Gorski <jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 
-On Tue, 27 Oct 2015, Linus Walleij wrote:
-
-> On Mon, Oct 19, 2015 at 4:13 PM, Richard Fitzgerald
-> <rf@opensource.wolfsonmicro.com> wrote:
->=20
-> > The CS47L24 and WM1831 codecs only have two GPIO lines, but are
-> > otherwise similar to the WM8280.
-> >
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
->=20
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->=20
-> Lee can merge this into the MFD tree with patch 1/3 if he likes,
-> I guess that's simplest.
-
-I can do.  Do you require a pull-request?
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+SGkgTGludXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMg
+V2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjcgT2N0
+b2JlciAyMDE1IDE1OjIyDQo+IFRvOiBQcmFtb2QgS3VtYXINCj4gQ2M6IFJvYiBIZXJyaW5nOyBQ
+YXdlbCBNb2xsOyBNYXJrIFJ1dGxhbmQ7IElhbiBDYW1wYmVsbDsgS3VtYXIgR2FsYTsgUmF5IEp1
+aTsNCj4gU2NvdHQgQnJhbmRlbjsgUnVzc2VsbCBLaW5nOyBsaW51eC1ncGlvQHZnZXIua2VybmVs
+Lm9yZzsgYmNtLWtlcm5lbC1mZWVkYmFjay0NCj4gbGlzdDsgSmFzb24gVXk7IE1hc2FoaXJvIFlh
+bWFkYTsgVGhvbWFzIEdsZWl4bmVyOyBMYXVyZW50IFBpbmNoYXJ0Ow0KPiBkZXZpY2V0cmVlQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51
+eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9uYXMgR29yc2tpDQo+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0ggMDcvMTFdIHBpbmN0cmw6IHVzZSBuZ3Bpb3MgcHJvcGV0eSBmcm9tIERUDQo+IA0K
+PiBPbiBNb24sIE9jdCAxOSwgMjAxNSBhdCA3OjQzIEFNLCBQcmFtb2QgS3VtYXIgPHByYW1vZGt1
+QGJyb2FkY29tLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+IFNpbmNlIGlkZW50aWNhbCBoYXJkd2Fy
+ZSBpcyB1c2VkIGluIHNldmVyYWwgaW5zdGFuY2VzIGFuZCBhbGwgcGlucyBhcmUNCj4gPiBub3Qg
+cm91dGVkIHRvIHBpbmN0cmwgaGVuY2UgZ2V0dGluZyB0b3RhbCBudW1iZXIgb2YgZ3Bpb3MgZnJv
+bSBEVCBtYWtlDQo+ID4gbW9yZSBzZW5zZSBoZW5jZSBzdG9wIHVzaW5nIHRvdGFsIG51bWJlciBv
+ZiBncGlvcyBwaW5zIGZyb20gZHJpdmVycw0KPiA+IGFuZCBleHRyYWN0IGl0IGZyb20gRFQuDQo+
+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQcmFtb2QgS3VtYXIgPHByYW1vZGt1QGJyb2FkY29tLmNv
+bT4NCj4gPiBSZXZpZXdlZC1ieTogUmF5IEp1aSA8cmp1aUBicm9hZGNvbS5jb20+DQo+ID4gUmV2
+aWV3ZWQtYnk6IFNjb3R0IEJyYW5kZW4gPHNicmFuZGVuQGJyb2FkY29tLmNvbT4NCj4gDQo+IFRo
+aXMgcGF0Y2ggaXMgd3JvbmcuDQo+IA0KPiBLZWVwIHRoaXMgcGVyLWNvbXBhdGlibGUgY29kZSwg
+YW5kIG9ubHkgb3ZlcnJpZCB0aGUgbmdwaW9zIGlmIGFuZCBvbmx5IGlmOg0KPiANCj4gLSBUaGUg
+bmdwaW9zIGlzIHNldCBpbiB0aGUgRFQgbm9kZQ0KPiAtIFRoZSBuZ3Bpb3MgaW4gdGhlIERUIG5v
+ZGUgaXMgKnNtYWxsZXIqIHRoYW4gdGhlIGhhcmR3YXJlDQo+ICAgZGVmaW5lZCBudW1iZXIgb2Yg
+R1BJT3MuDQo+IA0KPiBuZ3Bpb3MgaXMgZm9yIHJlc3RyaWN0aW5nIHRoZSBudW1iZXIgb2YgYXZh
+aWxhYmxlIGxpbmVzIGR1ZSB0byByb3V0aW5nIGV0Yywgbm90IHRvDQo+IGRlZmluZSB3aGF0IHRo
+ZSBoYXJkd2FyZSBoYXMsIGJlY2F1c2UgdGhlIGhhcmR3YXJlIG1vc3QgY2VydGFpbmx5IGhhdmUg
+YWxsIHRoZQ0KPiBsaW5lcywgaXQncyBqdXN0IHRoYXQgeW91J3JlIG5vdCB1c2luZyBhbGwgb2Yg
+dGhlbS4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQoNCkkgZGlzY3Vzc2VkIHdpdGgg
+QVNJQyB0ZWFtIHJlZ2FyZGluZyB0aGlzIGlQcm9jIEdQSU8gYmxvY2suIFRoZXkgdXNlIGEgbGli
+cmFyeSB0byBjcmVhdGUgdGhlIEdQSU9zIGJsb2NrIHdoZXJlICJ0b3RhbCBudW1iZXIgb2YgR1BJ
+TyBwaW5zKCBsZXQgc2F5IE4pIGluIEdQSU8gYmxvY2siIGlzIHVzZWQgYXMgYW4gcGFyYW1ldGVy
+LiANCkxpYnJhcnkgdXNlcyBhIGNvbnN0cnVjdCBmb3IgKmEqIEdQSU8gcGluLiBUaGlzIGdldHMg
+aW5zdGFudGlhdGVkIE4gdGltZXMgdG8gY3JlYXRlIGEgY29tcGxldGUgR1BJTyBibG9jayB3aXRo
+IE4gcGlucy4NCg0KQWxsIGlQcm9jIGJhc2VkIFNvQ3MgdXNlcyB0aGlzIGxpYnJhcnkuIFNvIEkn
+bSBub3Qgc3VyZSB3aGV0aGVyIGF0dGFjaGluZyAidG90YWwgbnVtYmVyIG9mIEdQSU9zIHBpbnMi
+IHRvIGNvbXBhdGlibGUtc3RyaW5nIG1ha2Ugc2Vuc2UgaW4gdGhpcyBjYXNlLiANCkkgcGVyc29u
+YWxseSBmZWVsIHRoYXQgcGFzc2luZyB0aGlzIG51bWJlciBmcm9tIHRoZSBEVCBtYWtlcyBtb3Jl
+IHNlbnNlIGhlcmUuIEFueSBpUHJvYyBiYXNlZCBmdXR1cmUgYXMgd2VsbCBhcyBjdXJyZW50IFNv
+Q3Mgd291bGQgYmUgYWJsZSB0byB1c2UgdGhpcyBkcml2ZXIgd2l0aG91dCBhbnkgY2hhbmdlLg0K
+DQpQbGVhc2UgYWR2aXNlIHVzIGluIHRoaXMgY2FzZS4NCg0KUmVnYXJkcywNClByYW1vZA0K
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
