@@ -1,33 +1,48 @@
-From: YD Tseng <ltyu101@gmail.com>
-Subject: Re:[PATCH v3] gpio: driver for AMD Promontory
-Date: Wed, 28 Oct 2015 11:40:34 +0800
-Message-ID: <1446003634-24320-1-git-send-email-Yd_Tseng@asmedia.com.tw>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:35721 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751976AbbJ1Dkp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Oct 2015 23:40:45 -0400
-Received: by pasz6 with SMTP id z6so242332286pas.2
-        for <linux-gpio@vger.kernel.org>; Tue, 27 Oct 2015 20:40:44 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Pramod Kumar <pramodku@broadcom.com>
+Subject: RE: [PATCH 05/11] dt-binding: Add ngpios property to GPIO
+ controller node
+Date: Wed, 28 Oct 2015 05:14:34 +0000
+Message-ID: <0C803592FC378B4E83922050AB46442A2AD73E7A@SJEXCHMB10.corp.ad.broadcom.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+	<1445233398-27129-6-git-send-email-pramodku@broadcom.com>
+ <CACRpkdZRmJTF9_yzVJx_vPKH6M6PivcrPiLD7xMEs5HDvsLw7g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZRmJTF9_yzVJx_vPKH6M6PivcrPiLD7xMEs5HDvsLw7g@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, dbaryshkov@gmail.com
-Cc: Yd_Tseng@asmedia.com.tw, TungYu_Lu@asmedia.com.tw
 
-Dear Linus,
-
-Thanks a lot.
-
-> The driver will be in mainline Linux when v4.4 is released in some
-> two months.
-
-V4.4 is too late for us. Will you please give us a hand to release 
-this driver in v4.3? 
-
-> The next step is that I expect you to maintain the driver in the
-> future. Maybe you want to add new functionality to it also?
-
-Yes, we will maintain this driver in the future.
-
-Yours,
-YD Tseng
+SGkgTGludXMsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMg
+V2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjcgT2N0
+b2JlciAyMDE1IDE1OjExDQo+IFRvOiBQcmFtb2QgS3VtYXINCj4gQ2M6IFJvYiBIZXJyaW5nOyBQ
+YXdlbCBNb2xsOyBNYXJrIFJ1dGxhbmQ7IElhbiBDYW1wYmVsbDsgS3VtYXIgR2FsYTsgUmF5IEp1
+aTsNCj4gU2NvdHQgQnJhbmRlbjsgUnVzc2VsbCBLaW5nOyBsaW51eC1ncGlvQHZnZXIua2VybmVs
+Lm9yZzsgYmNtLWtlcm5lbC1mZWVkYmFjay0NCj4gbGlzdDsgSmFzb24gVXk7IE1hc2FoaXJvIFlh
+bWFkYTsgVGhvbWFzIEdsZWl4bmVyOyBMYXVyZW50IFBpbmNoYXJ0Ow0KPiBkZXZpY2V0cmVlQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51
+eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9uYXMgR29yc2tpDQo+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0ggMDUvMTFdIGR0LWJpbmRpbmc6IEFkZCBuZ3Bpb3MgcHJvcGVydHkgdG8gR1BJTyBj
+b250cm9sbGVyDQo+IG5vZGUNCj4gDQo+IE9uIE1vbiwgT2N0IDE5LCAyMDE1IGF0IDc6NDMgQU0s
+IFByYW1vZCBLdW1hciA8cHJhbW9ka3VAYnJvYWRjb20uY29tPg0KPiB3cm90ZToNCj4gDQo+ID4g
+QWRkIG5ncGlvcyBwcm9wZXJ0eSB0byB0aGUgZ3BpbyBjb250cm9sbGVyJ3MgRFQgbm9kZSBzbyB0
+aGF0DQo+ID4gY29udHJvbGxlciBkcml2ZXIgZXh0cmFjdHMgdG90YWwgbnVtYmVyIG9mIGdwaW8g
+bGluZXMgcHJlc2VudCBpbg0KPiA+IGNvbnRyb2xsZXIgZnJvbSBEVCBhbmQgcmVtb3ZlcyBkZXBl
+bmRlbmN5IG9uIGRyaXZlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFByYW1vZCBLdW1hciA8
+cHJhbW9ka3VAYnJvYWRjb20uY29tPg0KPiA+IFJldmlld2VkLWJ5OiBSYXkgSnVpIDxyanVpQGJy
+b2FkY29tLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTogU2NvdHQgQnJhbmRlbiA8c2JyYW5kZW5AYnJv
+YWRjb20uY29tPg0KPiAoLi4uKQ0KPiA+ICstIG5ncGlvczoNCj4gPiArICAgIFRvdGFsIG51bWJl
+ciBvZiBHUElPcyB0aGUgY29udHJvbGxlciBwcm92aWRlcw0KPiANCj4gVGhpcyBkZXNjcmlwdGlv
+biBpcyB3cm9uZy4gVGhlIG51bWJlciBvZiBHUElPcyB0aGUgY29udHJvbGxlciAqcHJvdmlkZXMq
+IGlzIHRvDQo+IGJlIGRldGVybWluZWQgYnkgdGhlIGNvbXBhdGlibGUtc3RyaW5nLg0KPiANCj4g
+bmdwaW9zIGlzIHVzZWQgdG8gcmVzdHJpY3QgdGhlIG51bWJlciBvZiBsaW5lcyAqdXNlZCogb3Ig
+KnJvdXRlZCogZnJvbSB0aGUNCj4gbnVtYmVyICphdmFpbGFibGUqLiAoSSBob3BlIHRoYXQgaXMg
+d2hhdCB0aGUgY29kZSBkb2VzIGFzIHdlbGwuKSBTdWNoIGFzIGlmIDEyDQo+IEdQSU9zIGFyZSB1
+c2VkIG9mIHRoZSAzMiBhdmFpbGFibGUgb24gMzJiaXRzIGluIGEgcmVnaXN0ZXIuDQo+IA0KPiBV
+cGRhdGUgdGhpcyBkZXNjcmlwdGlvbiB0byBzYXkgd2hhdCBpdCByZWFsbHkgbWVhbnMuDQo+IA0K
+PiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQpUaGFua3MgZm9yIHJldmlld2luZyAuIFdpbGwg
+dXBkYXRlIHRoZSBkZXNjcmlwdGlvbi4NCg0KUmVnYXJkcywNClByYW1vZA0K
