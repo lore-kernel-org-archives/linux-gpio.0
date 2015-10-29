@@ -1,94 +1,80 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Make PORT_GP_x() macros consistent
-Date: Thu, 29 Oct 2015 20:39:47 +0100
-Message-ID: <1446147587-20216-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v5 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Thu, 29 Oct 2015 18:38:37 -0500
+Message-ID: <1446161922-8755-1-git-send-email-afd@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:56409 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757050AbbJ2Xi6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 29 Oct 2015 19:38:58 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
-On r8a7795, PORT_GP_x() is a macro for defining GPIOs 0..x.
-In all other sh-pfc code, PORT_GP_x() is a macro for defining GPIOs
-0..(x-1).
+In an effort to cleanup this driver and add Device Tree support
+the driver has been rewritten based on new driver styles and
+modern kernel driver helpers. This has nearly halved the lines
+of code while keeping all previous functionality.
 
-Make the r8a7795 macro definitions consistent with the rest of the
-sh-pfc codebase.
+Platform file based initialization has been dropped as there is
+no examples of this use in the kernel.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+v1 can be found here: [1] v2: [2] v3: [3] v4: [4]
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 7ddb2adfc5a53d7b..29d001b8a727e154 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -13,12 +13,12 @@
- #include "core.h"
- #include "sh_pfc.h"
- 
--#define PORT_GP_3(bank, fn, sfx)					\
-+#define PORT_GP_4(bank, fn, sfx)					\
- 	PORT_GP_1(bank, 0,  fn, sfx), PORT_GP_1(bank, 1,  fn, sfx),	\
- 	PORT_GP_1(bank, 2,  fn, sfx), PORT_GP_1(bank, 3,  fn, sfx)
- 
--#define PORT_GP_14(bank, fn, sfx)					\
--	PORT_GP_3(bank, fn, sfx),					\
-+#define PORT_GP_15(bank, fn, sfx)					\
-+	PORT_GP_4(bank, fn, sfx),					\
- 	PORT_GP_1(bank, 4,  fn, sfx), PORT_GP_1(bank, 5,  fn, sfx),	\
- 	PORT_GP_1(bank, 6,  fn, sfx), PORT_GP_1(bank, 7,  fn, sfx),	\
- 	PORT_GP_1(bank, 8,  fn, sfx), PORT_GP_1(bank, 9,  fn, sfx),	\
-@@ -26,33 +26,33 @@
- 	PORT_GP_1(bank, 12, fn, sfx), PORT_GP_1(bank, 13, fn, sfx),	\
- 	PORT_GP_1(bank, 14, fn, sfx)
- 
--#define PORT_GP_15(bank, fn, sfx)					\
--	PORT_GP_14(bank, fn, sfx),   PORT_GP_1(bank, 15, fn, sfx)
-+#define PORT_GP_16(bank, fn, sfx)					\
-+	PORT_GP_15(bank, fn, sfx),   PORT_GP_1(bank, 15, fn, sfx)
- 
--#define PORT_GP_17(bank, fn, sfx)					\
--	PORT_GP_15(bank, fn, sfx),					\
-+#define PORT_GP_18(bank, fn, sfx)					\
-+	PORT_GP_16(bank, fn, sfx),					\
- 	PORT_GP_1(bank, 16, fn, sfx), PORT_GP_1(bank, 17, fn, sfx)
- 
--#define PORT_GP_25(bank, fn, sfx)					\
--	PORT_GP_17(bank, fn, sfx),					\
-+#define PORT_GP_26(bank, fn, sfx)					\
-+	PORT_GP_18(bank, fn, sfx),					\
- 	PORT_GP_1(bank, 18, fn, sfx), PORT_GP_1(bank, 19, fn, sfx),	\
- 	PORT_GP_1(bank, 20, fn, sfx), PORT_GP_1(bank, 21, fn, sfx),	\
- 	PORT_GP_1(bank, 22, fn, sfx), PORT_GP_1(bank, 23, fn, sfx),	\
- 	PORT_GP_1(bank, 24, fn, sfx), PORT_GP_1(bank, 25, fn, sfx)
- 
--#define PORT_GP_27(bank, fn, sfx)					\
--	PORT_GP_25(bank, fn, sfx),					\
-+#define PORT_GP_28(bank, fn, sfx)					\
-+	PORT_GP_26(bank, fn, sfx),					\
- 	PORT_GP_1(bank, 26, fn, sfx), PORT_GP_1(bank, 27, fn, sfx)
- 
- #define CPU_ALL_PORT(fn, sfx)						\
--	PORT_GP_15(0, fn, sfx),						\
--	PORT_GP_27(1, fn, sfx),						\
--	PORT_GP_14(2, fn, sfx),						\
--	PORT_GP_15(3, fn, sfx),						\
--	PORT_GP_17(4, fn, sfx),						\
--	PORT_GP_25(5, fn, sfx),						\
-+	PORT_GP_16(0, fn, sfx),						\
-+	PORT_GP_28(1, fn, sfx),						\
-+	PORT_GP_15(2, fn, sfx),						\
-+	PORT_GP_16(3, fn, sfx),						\
-+	PORT_GP_18(4, fn, sfx),						\
-+	PORT_GP_26(5, fn, sfx),						\
- 	PORT_GP_32(6, fn, sfx),						\
--	PORT_GP_3(7, fn, sfx)
-+	PORT_GP_4(7, fn, sfx)
- /*
-  * F_() : just information
-  * FM() : macro for FN_xxx / xxx_MARK
+Changes from v4:
+ - Use mfd core to add sub-devices
+
+Changes from v3:
+ - Reorganized regulator driver and related DT node
+ - Other small fixes as discussed in v3 thread
+
+Changes from v2:
+ - Split the series further into subsystems
+
+Changes from v1:
+ - Split the rewrite into delete/create patches
+ - Several small fixes as discussed in v1 thread
+
+[1] http://www.spinics.net/lists/devicetree/msg93863.html
+[2] http://www.spinics.net/lists/devicetree/msg95003.html
+[3] http://www.spinics.net/lists/devicetree/msg95133.html
+[4] http://www.spinics.net/lists/devicetree/msg96109.html
+
+Andrew F. Davis (5):
+  Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
+  mfd: tps65912: Remove old driver in preparation for new driver
+  mfd: tps65912: Add driver for the TPS65912 PMIC
+  regulator: tps65912: Add regulator driver for the TPS65912 PMIC
+  gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
+
+ .../devicetree/bindings/gpio/gpio-tps65912.txt     |  16 +
+ Documentation/devicetree/bindings/mfd/tps65912.txt |  51 ++
+ .../bindings/regulator/tps65912-regulator.txt      |  28 +
+ drivers/gpio/Kconfig                               |   2 +-
+ drivers/gpio/gpio-tps65912.c                       | 289 ++++-----
+ drivers/mfd/Kconfig                                |  22 +-
+ drivers/mfd/Makefile                               |   3 +-
+ drivers/mfd/tps65912-core.c                        | 297 ++++-----
+ drivers/mfd/tps65912-i2c.c                         | 220 +++----
+ drivers/mfd/tps65912-irq.c                         | 217 -------
+ drivers/mfd/tps65912-spi.c                         | 221 +++----
+ drivers/regulator/Kconfig                          |   2 +-
+ drivers/regulator/tps65912-regulator.c             | 711 +++++----------------
+ include/linux/mfd/tps65912.h                       | 211 +++---
+ 14 files changed, 812 insertions(+), 1478 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+ rewrite drivers/gpio/gpio-tps65912.c (69%)
+ rewrite drivers/mfd/tps65912-core.c (95%)
+ rewrite drivers/mfd/tps65912-i2c.c (93%)
+ delete mode 100644 drivers/mfd/tps65912-irq.c
+ rewrite drivers/mfd/tps65912-spi.c (92%)
+ rewrite drivers/regulator/tps65912-regulator.c (94%)
+
 -- 
 1.9.1
 
