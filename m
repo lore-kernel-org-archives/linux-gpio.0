@@ -1,71 +1,125 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v10] gpio: Add GPIO support for the ACCES 104-IDIO-16
-Date: Thu, 29 Oct 2015 10:22:59 +0200
-Message-ID: <20151029082259.GD1548@lahna.fi.intel.com>
-References: <20151019165914.GA22867@sophia>
- <CACRpkdbQyed0S0Y6MSt35LuOekFprvbPMDpsGku-cBXBt=9j0Q@mail.gmail.com>
- <20151027142343.GI1548@lahna.fi.intel.com>
- <CACRpkdbs8US2m1+hEmXbJ9JJT15-iRHnO2L4bk5qeNRgb2vbKg@mail.gmail.com>
- <20151027165134.GK1548@lahna.fi.intel.com>
- <CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add tps65218 gpio driver
+Date: Thu, 29 Oct 2015 14:11:48 +0100
+Message-ID: <CACRpkdZm-kHoiD9EiNHrmv96wKverd63YE9SAfxiOyjnUNe2Gw@mail.gmail.com>
+References: <1445618023-25380-1-git-send-email-nicolassaenzj@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
+In-Reply-To: <1445618023-25380-1-git-send-email-nicolassaenzj@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, Diego Elio =?iso-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 28, 2015 at 04:11:41PM +0100, Linus Walleij wrote:
-> On Tue, Oct 27, 2015 at 5:51 PM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > On Tue, Oct 27, 2015 at 05:42:23PM +0100, Linus Walleij wrote:
-> >> On Tue, Oct 27, 2015 at 3:23 PM, Mika Westerberg
-> >> <mika.westerberg@linux.intel.com> wrote:
-> >> > On Tue, Oct 27, 2015 at 11:06:58AM +0100, Linus Walleij wrote:
-> >> >> > +menu "ISA GPIO drivers"
-> >> >> > +
-> >> >> > +config GPIO_104_IDIO_16
-> >> >> > +       tristate "ACCES 104-IDIO-16 GPIO support"
-> >> >> > +       depends on X86
-> >> >> > +       help
-> >> >> > +         Enables GPIO support for the ACCES 104-IDIO-16 family.
-> >> >> > +
-> >> >> > +endmenu
-> >> >>
-> >> >> I have five other drivers using port-based I/O:
-> >> >>
-> >> >> gpio-f7188x.c
-> >> >> gpio-it87.c
-> >> >> gpio-sch.c
-> >> >> gpio-sch311x.c
-> >> >> gpio-ts5500.c
-> >> >>
-> >> >> Do you think it makes sense to move all of these in under
-> >> >> the "ISA GPIO drivers" menu as well? I guess they all require
-> >> >> ISA after all.
-> >> >>
-> >> >> (Added their maintainers to the To: line so I can get some input
-> >> >> on this.)
-> >> >
-> >> > Not all of them actually require ISA. For example gpio-sch is part of an
-> >> > MFD device which is a PCI device. PCI bus also has notion of I/O ports.
-> >>
-> >> Hm, is there a more fitting symbol we should sort it under, which
-> >> means thingofabob-that-has-portmapped I/O?
-> >
-> > Well, there's already "Memory mapped GPIO drivers" so how about "I/O
-> > mapped GPIO drivers"?
-> 
-> Sure, "Port-mapped I/O GPIO drivers"
-> 
-> But what should I put as "depends" for that submenu, that is maybe
-> the real question.
-> 
-> Would (ISA || PCI) suffice?
+On Fri, Oct 23, 2015 at 6:33 PM, Nicolas Saenz Julienne
+<nicolassaenzj@gmail.com> wrote:
 
-x86 has I/O space regardless of ISA or PCI (even though most probably it
-also has ISA and PCI). Looking at the drivers in question they seem to
-be x86 drivers so maybe "depends on X86"?
+> Driver for the GPIO block found in ti's tps65218 pmics.
+>
+> The device has two GPIOs and one GPO pin which can be configured as follows:
+> GPIO1:
+>         -general-purpose, open-drain output controlled by GPO1 user bit and/or
+>          sequencer
+>         -DDR3 reset input signal from SOC. Signal is either latched or
+>          passed-trough to GPO2 pin. See below for details.
+> GPO2:
+>         -general-purpose output controlled by GPO2 user bit
+>         -DDR3 reset output signal. Signal is controlled by GPIO1 and PGOOD.
+>          See below for details.
+>         -Output buffer can be configured as open-drain or push-pull.
+> GPIO3:
+>         -general-purpose, open-drain output controlled by GPO3 user bit and/or
+>          sequencer
+>         -reset input-signal for DCDC1 and DCDC2.
+>
+> The input configurations are not meant to be used by the user so the driver
+> only offers GPOs.
+>
+> v2: Added request routine that evaluates the fw config flags and removed module
+>     owner
+>
+> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
+(...)
+
+(Attend to the mail robot's comments)
+
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/errno.h>
+> +#include <linux/gpio.h>
+
+Should be <linux/gpio/driver.h>
+
+> +#include <linux/platform_device.h>
+> +#include <linux/mfd/tps65218.h>
+> +#include "gpiolib.h"
+> +
+> +struct tps65218_gpio {
+> +       struct tps65218 *tps65218;
+> +       struct gpio_chip gpio_chip;
+> +};
+> +
+> +#define to_tg(gc)      container_of(gc, struct tps65218_gpio, gpio_chip)
+
+Use a static inline function for this instead.
+
+> +static int tps65218_gpio_get(struct gpio_chip *gc, unsigned offset)
+> +{
+> +       struct tps65218_gpio *tps65218_gpio = to_tg(gc);
+> +       struct tps65218 *tps65218 = tps65218_gpio->tps65218;
+> +       unsigned int val;
+> +       int ret;
+> +
+> +       ret = tps65218_reg_read(tps65218, TPS65218_REG_ENABLE2, &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return val & (TPS65218_ENABLE2_GPIO1 << offset);
+
+Clamp to bool:
+return !!(val & (TPS65218_ENABLE2_GPIO1 << offset));
+
+> +static int tps65218_gpio_output(struct gpio_chip *gc, unsigned offset,
+> +                               int value)
+> +{
+> +       /* Only drives GPOs */
+> +       return 0;
+> +}
+
+So shouldn't you implement a .set_direction() callback that will fail if
+the user tries to set a line as input?
+
+> +static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
+> +{
+> +       struct tps65218_gpio *tps65218_gpio = to_tg(gc);
+> +       struct tps65218 *tps65218 = tps65218_gpio->tps65218;
+> +       unsigned long flags = gc->desc->flags;
+> +       int ret;
+> +
+> +       if (flags & FLAG_OPEN_SOURCE) {
+> +               dev_err(gc->dev, "can't work as open source\n");
+> +               return -EINVAL;
+> +       }
+
+This requires Laurent's recent patches I guess.
+
+> +static struct gpio_chip template_chip = {
+> +       .label                  = "gpio-tps65218",
+> +       .owner                  = THIS_MODULE,
+> +       .request                = tps65218_gpio_request,
+> +       .direction_output       = tps65218_gpio_output,
+> +       .get                    = tps65218_gpio_get,
+> +       .set                    = tps65218_gpio_set,
+> +       .can_sleep              = true,
+> +       .ngpio                  = 3,
+> +       .base                   = -1,
+> +};
+
+As mentioned you need to implement .set_direction() and fail
+to set any line as input.
+
+Apart from this it looks very nice.
+
+Yours,
+Linus Walleij
