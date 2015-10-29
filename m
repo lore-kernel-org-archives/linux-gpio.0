@@ -1,125 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add tps65218 gpio driver
-Date: Thu, 29 Oct 2015 14:11:48 +0100
-Message-ID: <CACRpkdZm-kHoiD9EiNHrmv96wKverd63YE9SAfxiOyjnUNe2Gw@mail.gmail.com>
-References: <1445618023-25380-1-git-send-email-nicolassaenzj@gmail.com>
+From: Laurent MEUNIER <laurent.meunier@st.com>
+Subject: RE: [PATCH] pinctrl: pinconf: remove needless loop
+Date: Thu, 29 Oct 2015 13:25:54 +0000
+Message-ID: <F2D8346926EE43489E99D3215078E1712E045C@SAFEX1NODE23.st.com>
+References: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
+ <1446051649.6332.59.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1445618023-25380-1-git-send-email-nicolassaenzj@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35579 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932088AbbJ2N0C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 29 Oct 2015 09:26:02 -0400
+In-Reply-To: <1446051649.6332.59.camel@linux.intel.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
 
-On Fri, Oct 23, 2015 at 6:33 PM, Nicolas Saenz Julienne
-<nicolassaenzj@gmail.com> wrote:
-
-> Driver for the GPIO block found in ti's tps65218 pmics.
->
-> The device has two GPIOs and one GPO pin which can be configured as follows:
-> GPIO1:
->         -general-purpose, open-drain output controlled by GPO1 user bit and/or
->          sequencer
->         -DDR3 reset input signal from SOC. Signal is either latched or
->          passed-trough to GPO2 pin. See below for details.
-> GPO2:
->         -general-purpose output controlled by GPO2 user bit
->         -DDR3 reset output signal. Signal is controlled by GPIO1 and PGOOD.
->          See below for details.
->         -Output buffer can be configured as open-drain or push-pull.
-> GPIO3:
->         -general-purpose, open-drain output controlled by GPO3 user bit and/or
->          sequencer
->         -reset input-signal for DCDC1 and DCDC2.
->
-> The input configurations are not meant to be used by the user so the driver
-> only offers GPOs.
->
-> v2: Added request routine that evaluates the fw config flags and removed module
->     owner
->
-> Signed-off-by: Nicolas Saenz Julienne <nicolassaenzj@gmail.com>
-(...)
-
-(Attend to the mail robot's comments)
-
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/errno.h>
-> +#include <linux/gpio.h>
-
-Should be <linux/gpio/driver.h>
-
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/tps65218.h>
-> +#include "gpiolib.h"
-> +
-> +struct tps65218_gpio {
-> +       struct tps65218 *tps65218;
-> +       struct gpio_chip gpio_chip;
-> +};
-> +
-> +#define to_tg(gc)      container_of(gc, struct tps65218_gpio, gpio_chip)
-
-Use a static inline function for this instead.
-
-> +static int tps65218_gpio_get(struct gpio_chip *gc, unsigned offset)
-> +{
-> +       struct tps65218_gpio *tps65218_gpio = to_tg(gc);
-> +       struct tps65218 *tps65218 = tps65218_gpio->tps65218;
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret = tps65218_reg_read(tps65218, TPS65218_REG_ENABLE2, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return val & (TPS65218_ENABLE2_GPIO1 << offset);
-
-Clamp to bool:
-return !!(val & (TPS65218_ENABLE2_GPIO1 << offset));
-
-> +static int tps65218_gpio_output(struct gpio_chip *gc, unsigned offset,
-> +                               int value)
-> +{
-> +       /* Only drives GPOs */
-> +       return 0;
-> +}
-
-So shouldn't you implement a .set_direction() callback that will fail if
-the user tries to set a line as input?
-
-> +static int tps65218_gpio_request(struct gpio_chip *gc, unsigned offset)
-> +{
-> +       struct tps65218_gpio *tps65218_gpio = to_tg(gc);
-> +       struct tps65218 *tps65218 = tps65218_gpio->tps65218;
-> +       unsigned long flags = gc->desc->flags;
-> +       int ret;
-> +
-> +       if (flags & FLAG_OPEN_SOURCE) {
-> +               dev_err(gc->dev, "can't work as open source\n");
-> +               return -EINVAL;
-> +       }
-
-This requires Laurent's recent patches I guess.
-
-> +static struct gpio_chip template_chip = {
-> +       .label                  = "gpio-tps65218",
-> +       .owner                  = THIS_MODULE,
-> +       .request                = tps65218_gpio_request,
-> +       .direction_output       = tps65218_gpio_output,
-> +       .get                    = tps65218_gpio_get,
-> +       .set                    = tps65218_gpio_set,
-> +       .can_sleep              = true,
-> +       .ngpio                  = 3,
-> +       .base                   = -1,
-> +};
-
-As mentioned you need to implement .set_direction() and fail
-to set any line as input.
-
-Apart from this it looks very nice.
-
-Yours,
-Linus Walleij
+PiANCj4gT24gV2VkLCAyMDE1LTEwLTI4IGF0IDE1OjI5ICswMTAwLCBMYXVyZW50IE1ldW5pZXIg
+d3JvdGU6DQo+ID4gVGhpcyByZW1vdmVzIGEgbmVlZGxlc3MgbG9vcCB3aGljaCB3YXMgY2F0Y2hl
+ZCBpbiBwaW5jb25mLmMuDQo+IA0KPiBJJ20gbm90IGEgZmFuIG9mIGlycmVndWxhciB2ZXJicywg
+YnV0IGhlcmUgd2UgYXJlOiBjYXRjaGVkIC0+IGNhdWdodC4NCg0KTG9va3MgbGlrZSBteSBsYWNr
+IG9mIHNraWxscyBpbiBFbmdsaXNoIGdyYW1tYXIgZ290IGNhdWdodCAgLi4uIA0KIA0KPiA+DQo+
+ID4gU3VnZ2VzdGVkLWJ5OiBBbmRyaXkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AaW50
+ZWwuY29tPg0KPiANCj4gU29tZXRpbWVzIHRoZSBicm9rZW4gRXZvbHV0aW9uIHVzZXMgd3Jvbmcg
+YWRkcmVzcy4gUGxlYXNlIGFkZCAibGludXguIg0KPiBwYXJ0IGFmdGVyICJAIi4gQWxzbywgSSBw
+cmVmZXIgdG8gdXNlIEFuZHkgc2luY2UgaXQncyBob3cgSSdtIGtub3duIGhlcmUuDQo+IA0KPiBP
+dGhlcndpc2U6DQo+IA0KPiBSZXZpZXdlZC1ieTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hl
+dmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQoNCk9rIHN1cmUgLSBJIHdpbGwgYWRkIGl0IGluIHRo
+ZSBWMiBhbmQgd2lsbCBhbHNvIHVwZGF0ZSB0aGUgcHJldmlvdXMgb25lDQpUaGFua3MgDQoNCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBMYXVyZW50IE1ldW5pZXIgPGxhdXJlbnQubWV1bmllckBzdC5jb20+
+DQo+ID4gLS0tDQo+ID4gwqBkcml2ZXJzL3BpbmN0cmwvcGluY29uZi5jIHwgMTMgKysrKystLS0t
+LS0tLQ0KPiA+IMKgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMo
+LSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY29uZi5jIGIvZHJp
+dmVycy9waW5jdHJsL3BpbmNvbmYuYw0KPiA+IGluZGV4IDFmYzA5ZGMuLjE5YWY3MTggMTAwNjQ0
+DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmNvbmYuYw0KPiA+ICsrKyBiL2RyaXZlcnMv
+cGluY3RybC9waW5jb25mLmMNCj4gPiBAQCAtNDE0LDcgKzQxNCw3IEBAIHN0YXRpYyBpbnQgcGlu
+Y29uZl9kYmdfY29uZmlnX3ByaW50KHN0cnVjdA0KPiA+IHNlcV9maWxlICpzLCB2b2lkICpkKQ0K
+PiA+IMKgCXN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldjsNCj4gPiDCoAljb25zdCBzdHJ1Y3Qg
+cGluY29uZl9vcHMgKmNvbmZvcHMgPSBOVUxMOw0KPiA+IMKgCXN0cnVjdCBkYmdfY2ZnICpkYmcg
+PSAmcGluY29uZl9kYmdfY29uZjsNCj4gPiAtCWludCBpLCBqOw0KPiA+ICsJaW50IGk7DQo+ID4g
+wqAJdW5zaWduZWQgbG9uZyBjb25maWc7DQo+ID4NCj4gPiDCoAltdXRleF9sb2NrKCZwaW5jdHJs
+X21hcHNfbXV0ZXgpOw0KPiA+IEBAIC00MjgsMTMgKzQyOCwxMCBAQCBzdGF0aWMgaW50IHBpbmNv
+bmZfZGJnX2NvbmZpZ19wcmludChzdHJ1Y3QNCj4gPiBzZXFfZmlsZSAqcywgdm9pZCAqZCkNCj4g
+PiDCoAkJaWYgKHN0cmNtcChtYXAtPm5hbWUsIGRiZy0+c3RhdGVfbmFtZSkpDQo+ID4gwqAJCQlj
+b250aW51ZTsNCj4gPg0KPiA+IC0JCWZvciAoaiA9IDA7IGogPCBtYXAtPmRhdGEuY29uZmlncy5u
+dW1fY29uZmlnczsgaisrKQ0KPiA+IHsNCj4gPiAtCQkJaWYgKCFzdHJjbXAobWFwLT5kYXRhLmNv
+bmZpZ3MuZ3JvdXBfb3JfcGluLA0KPiA+IC0JCQkJCWRiZy0+cGluX25hbWUpKSB7DQo+ID4gLQkJ
+CQkvKiBXZSBmb3VuZCB0aGUgcmlnaHQgcGluIC8gc3RhdGUgKi8NCj4gPiAtCQkJCWZvdW5kID0g
+bWFwOw0KPiA+IC0JCQkJYnJlYWs7DQo+ID4gLQkJCX0NCj4gPiArCQlpZiAoIXN0cmNtcChtYXAt
+PmRhdGEuY29uZmlncy5ncm91cF9vcl9waW4sIGRiZy0NCj4gPiA+cGluX25hbWUpKSB7DQo+ID4g
+KwkJCS8qIFdlIGZvdW5kIHRoZSByaWdodCBwaW4gKi8NCj4gPiArCQkJZm91bmQgPSBtYXA7DQo+
+ID4gKwkJCWJyZWFrOw0KPiA+IMKgCQl9DQo+ID4gwqAJfQ0KPiA+DQo+IA0KPiAtLQ0KPiBBbmR5
+IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4gSW50ZWwgRmlubGFuZCBP
+eQ0KDQo=
