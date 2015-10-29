@@ -1,40 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: driver for AMD Promontory
-Date: Thu, 29 Oct 2015 15:28:31 +0100
-Message-ID: <CACRpkdZm_0kBPciDoVyeYBTNRb7_AFZEvoiN=y3yeWSvu9t0jw@mail.gmail.com>
-References: <1446003634-24320-1-git-send-email-Yd_Tseng@asmedia.com.tw>
+Subject: Re: [PATCH v2 2/3] gpio: arizona: Support Cirrus Logic CS47L24 and WM1831
+Date: Thu, 29 Oct 2015 15:29:45 +0100
+Message-ID: <CACRpkdav70DfCdLTfip+mOp=f9MVh8ORX_KVWQHGo3R3gYuA9A@mail.gmail.com>
+References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
+	<1445264027-7357-3-git-send-email-rf@opensource.wolfsonmicro.com>
+	<CACRpkdZMsUbhvKiAEcKuEy7OCGLYG9Up_AUJcfThbVcMdPeLPg@mail.gmail.com>
+	<20151028114205.GU5828@x1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:32955 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752140AbbJ2O2c (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2015 10:28:32 -0400
-Received: by oiad129 with SMTP id d129so34975141oia.0
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2015 07:28:32 -0700 (PDT)
-In-Reply-To: <1446003634-24320-1-git-send-email-Yd_Tseng@asmedia.com.tw>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151028114205.GU5828@x1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 List-Id: linux-gpio@vger.kernel.org
-To: YD Tseng <ltyu101@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Yd_Tseng@asmedia.com.tw, =?UTF-8?B?VHVuZ1l1IEx1KOWRguadseaYsSk=?= <TungYu_Lu@asmedia.com.tw>
 
-On Wed, Oct 28, 2015 at 4:40 AM, YD Tseng <ltyu101@gmail.com> wrote:
-
->> The driver will be in mainline Linux when v4.4 is released in some
->> two months.
+On Wed, Oct 28, 2015 at 12:42 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Tue, 27 Oct 2015, Linus Walleij wrote:
 >
-> V4.4 is too late for us. Will you please give us a hand to release
-> this driver in v4.3?
-
-This is not my decision.
-Read Documentation/development-process/*
-
->> The next step is that I expect you to maintain the driver in the
->> future. Maybe you want to add new functionality to it also?
+>> On Mon, Oct 19, 2015 at 4:13 PM, Richard Fitzgerald
+>> <rf@opensource.wolfsonmicro.com> wrote:
+>>
+>> > The CS47L24 and WM1831 codecs only have two GPIO lines, but are
+>> > otherwise similar to the WM8280.
+>> >
+>> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Lee can merge this into the MFD tree with patch 1/3 if he likes,
+>> I guess that's simplest.
 >
-> Yes, we will maintain this driver in the future.
+> I can do.  Do you require a pull-request?
 
-OK thanks.
+Nah. I usually optimistically assume that these (small) things will
+not clash.
 
 Yours,
 Linus Walleij
