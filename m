@@ -1,47 +1,71 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] MAINTAINERS: Add ACCES 104-IDIO-16 DRIVER entry
-Date: Wed, 28 Oct 2015 17:24:16 -0400
-Message-ID: <20151028212416.GA21860@sophia>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v10] gpio: Add GPIO support for the ACCES 104-IDIO-16
+Date: Thu, 29 Oct 2015 10:22:59 +0200
+Message-ID: <20151029082259.GD1548@lahna.fi.intel.com>
+References: <20151019165914.GA22867@sophia>
+ <CACRpkdbQyed0S0Y6MSt35LuOekFprvbPMDpsGku-cBXBt=9j0Q@mail.gmail.com>
+ <20151027142343.GI1548@lahna.fi.intel.com>
+ <CACRpkdbs8US2m1+hEmXbJ9JJT15-iRHnO2L4bk5qeNRgb2vbKg@mail.gmail.com>
+ <20151027165134.GK1548@lahna.fi.intel.com>
+ <CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f171.google.com ([209.85.160.171]:35815 "EHLO
-	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731AbbJ1VY0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Oct 2015 17:24:26 -0400
-Received: by ykek133 with SMTP id k133so22666256yke.2
-        for <linux-gpio@vger.kernel.org>; Wed, 28 Oct 2015 14:24:25 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, Diego Elio =?iso-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org
 
-Add William Breathitt Gray as the maintainer of the ACCES 104-IDIO-16
-GPIO driver.
+On Wed, Oct 28, 2015 at 04:11:41PM +0100, Linus Walleij wrote:
+> On Tue, Oct 27, 2015 at 5:51 PM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > On Tue, Oct 27, 2015 at 05:42:23PM +0100, Linus Walleij wrote:
+> >> On Tue, Oct 27, 2015 at 3:23 PM, Mika Westerberg
+> >> <mika.westerberg@linux.intel.com> wrote:
+> >> > On Tue, Oct 27, 2015 at 11:06:58AM +0100, Linus Walleij wrote:
+> >> >> > +menu "ISA GPIO drivers"
+> >> >> > +
+> >> >> > +config GPIO_104_IDIO_16
+> >> >> > +       tristate "ACCES 104-IDIO-16 GPIO support"
+> >> >> > +       depends on X86
+> >> >> > +       help
+> >> >> > +         Enables GPIO support for the ACCES 104-IDIO-16 family.
+> >> >> > +
+> >> >> > +endmenu
+> >> >>
+> >> >> I have five other drivers using port-based I/O:
+> >> >>
+> >> >> gpio-f7188x.c
+> >> >> gpio-it87.c
+> >> >> gpio-sch.c
+> >> >> gpio-sch311x.c
+> >> >> gpio-ts5500.c
+> >> >>
+> >> >> Do you think it makes sense to move all of these in under
+> >> >> the "ISA GPIO drivers" menu as well? I guess they all require
+> >> >> ISA after all.
+> >> >>
+> >> >> (Added their maintainers to the To: line so I can get some input
+> >> >> on this.)
+> >> >
+> >> > Not all of them actually require ISA. For example gpio-sch is part of an
+> >> > MFD device which is a PCI device. PCI bus also has notion of I/O ports.
+> >>
+> >> Hm, is there a more fitting symbol we should sort it under, which
+> >> means thingofabob-that-has-portmapped I/O?
+> >
+> > Well, there's already "Memory mapped GPIO drivers" so how about "I/O
+> > mapped GPIO drivers"?
+> 
+> Sure, "Port-mapped I/O GPIO drivers"
+> 
+> But what should I put as "depends" for that submenu, that is maybe
+> the real question.
+> 
+> Would (ISA || PCI) suffice?
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 274f854..73aa81b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -240,6 +240,12 @@ L:	lm-sensors@lm-sensors.org
- S:	Maintained
- F:	drivers/hwmon/abituguru3.c
- 
-+ACCES 104-IDIO-16 DRIVER
-+M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/gpio/gpio-104-idio-16.c
-+
- ACENIC DRIVER
- M:	Jes Sorensen <jes@trained-monkey.org>
- L:	linux-acenic@sunsite.dk
--- 
-2.4.10
-
+x86 has I/O space regardless of ISA or PCI (even though most probably it
+also has ISA and PCI). Looking at the drivers in question they seem to
+be x86 drivers so maybe "depends on X86"?
