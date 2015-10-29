@@ -1,59 +1,60 @@
-From: Laurent MEUNIER <laurent.meunier@st.com>
-Subject: RE: [PATCH] pinctrl: pinconf: remove needless loop
-Date: Thu, 29 Oct 2015 13:25:54 +0000
-Message-ID: <F2D8346926EE43489E99D3215078E1712E045C@SAFEX1NODE23.st.com>
-References: <1446042599-15093-1-git-send-email-laurent.meunier@st.com>
- <1446051649.6332.59.camel@linux.intel.com>
+From: Laurent Meunier <laurent.meunier@st.com>
+Subject: [PATCH V2] pinctrl: pinconf: remove needless loop
+Date: Thu, 29 Oct 2015 14:25:47 +0100
+Message-ID: <1446125147-10670-1-git-send-email-laurent.meunier@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35579 "EHLO
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24711 "EHLO
 	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932088AbbJ2N0C (ORCPT
+	by vger.kernel.org with ESMTP id S932088AbbJ2N0F (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 29 Oct 2015 09:26:02 -0400
-In-Reply-To: <1446051649.6332.59.camel@linux.intel.com>
-Content-Language: en-US
+	Thu, 29 Oct 2015 09:26:05 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, andriy.shevchenko@intel.com, Laurent Meunier <laurent.meunier@st.com>
 
-PiANCj4gT24gV2VkLCAyMDE1LTEwLTI4IGF0IDE1OjI5ICswMTAwLCBMYXVyZW50IE1ldW5pZXIg
-d3JvdGU6DQo+ID4gVGhpcyByZW1vdmVzIGEgbmVlZGxlc3MgbG9vcCB3aGljaCB3YXMgY2F0Y2hl
-ZCBpbiBwaW5jb25mLmMuDQo+IA0KPiBJJ20gbm90IGEgZmFuIG9mIGlycmVndWxhciB2ZXJicywg
-YnV0IGhlcmUgd2UgYXJlOiBjYXRjaGVkIC0+IGNhdWdodC4NCg0KTG9va3MgbGlrZSBteSBsYWNr
-IG9mIHNraWxscyBpbiBFbmdsaXNoIGdyYW1tYXIgZ290IGNhdWdodCAgLi4uIA0KIA0KPiA+DQo+
-ID4gU3VnZ2VzdGVkLWJ5OiBBbmRyaXkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AaW50
-ZWwuY29tPg0KPiANCj4gU29tZXRpbWVzIHRoZSBicm9rZW4gRXZvbHV0aW9uIHVzZXMgd3Jvbmcg
-YWRkcmVzcy4gUGxlYXNlIGFkZCAibGludXguIg0KPiBwYXJ0IGFmdGVyICJAIi4gQWxzbywgSSBw
-cmVmZXIgdG8gdXNlIEFuZHkgc2luY2UgaXQncyBob3cgSSdtIGtub3duIGhlcmUuDQo+IA0KPiBP
-dGhlcndpc2U6DQo+IA0KPiBSZXZpZXdlZC1ieTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hl
-dmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQoNCk9rIHN1cmUgLSBJIHdpbGwgYWRkIGl0IGluIHRo
-ZSBWMiBhbmQgd2lsbCBhbHNvIHVwZGF0ZSB0aGUgcHJldmlvdXMgb25lDQpUaGFua3MgDQoNCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBMYXVyZW50IE1ldW5pZXIgPGxhdXJlbnQubWV1bmllckBzdC5jb20+
-DQo+ID4gLS0tDQo+ID4gwqBkcml2ZXJzL3BpbmN0cmwvcGluY29uZi5jIHwgMTMgKysrKystLS0t
-LS0tLQ0KPiA+IMKgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMo
-LSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvcGluY29uZi5jIGIvZHJp
-dmVycy9waW5jdHJsL3BpbmNvbmYuYw0KPiA+IGluZGV4IDFmYzA5ZGMuLjE5YWY3MTggMTAwNjQ0
-DQo+ID4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmNvbmYuYw0KPiA+ICsrKyBiL2RyaXZlcnMv
-cGluY3RybC9waW5jb25mLmMNCj4gPiBAQCAtNDE0LDcgKzQxNCw3IEBAIHN0YXRpYyBpbnQgcGlu
-Y29uZl9kYmdfY29uZmlnX3ByaW50KHN0cnVjdA0KPiA+IHNlcV9maWxlICpzLCB2b2lkICpkKQ0K
-PiA+IMKgCXN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldjsNCj4gPiDCoAljb25zdCBzdHJ1Y3Qg
-cGluY29uZl9vcHMgKmNvbmZvcHMgPSBOVUxMOw0KPiA+IMKgCXN0cnVjdCBkYmdfY2ZnICpkYmcg
-PSAmcGluY29uZl9kYmdfY29uZjsNCj4gPiAtCWludCBpLCBqOw0KPiA+ICsJaW50IGk7DQo+ID4g
-wqAJdW5zaWduZWQgbG9uZyBjb25maWc7DQo+ID4NCj4gPiDCoAltdXRleF9sb2NrKCZwaW5jdHJs
-X21hcHNfbXV0ZXgpOw0KPiA+IEBAIC00MjgsMTMgKzQyOCwxMCBAQCBzdGF0aWMgaW50IHBpbmNv
-bmZfZGJnX2NvbmZpZ19wcmludChzdHJ1Y3QNCj4gPiBzZXFfZmlsZSAqcywgdm9pZCAqZCkNCj4g
-PiDCoAkJaWYgKHN0cmNtcChtYXAtPm5hbWUsIGRiZy0+c3RhdGVfbmFtZSkpDQo+ID4gwqAJCQlj
-b250aW51ZTsNCj4gPg0KPiA+IC0JCWZvciAoaiA9IDA7IGogPCBtYXAtPmRhdGEuY29uZmlncy5u
-dW1fY29uZmlnczsgaisrKQ0KPiA+IHsNCj4gPiAtCQkJaWYgKCFzdHJjbXAobWFwLT5kYXRhLmNv
-bmZpZ3MuZ3JvdXBfb3JfcGluLA0KPiA+IC0JCQkJCWRiZy0+cGluX25hbWUpKSB7DQo+ID4gLQkJ
-CQkvKiBXZSBmb3VuZCB0aGUgcmlnaHQgcGluIC8gc3RhdGUgKi8NCj4gPiAtCQkJCWZvdW5kID0g
-bWFwOw0KPiA+IC0JCQkJYnJlYWs7DQo+ID4gLQkJCX0NCj4gPiArCQlpZiAoIXN0cmNtcChtYXAt
-PmRhdGEuY29uZmlncy5ncm91cF9vcl9waW4sIGRiZy0NCj4gPiA+cGluX25hbWUpKSB7DQo+ID4g
-KwkJCS8qIFdlIGZvdW5kIHRoZSByaWdodCBwaW4gKi8NCj4gPiArCQkJZm91bmQgPSBtYXA7DQo+
-ID4gKwkJCWJyZWFrOw0KPiA+IMKgCQl9DQo+ID4gwqAJfQ0KPiA+DQo+IA0KPiAtLQ0KPiBBbmR5
-IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4gSW50ZWwgRmlubGFuZCBP
-eQ0KDQo=
+This removes a needless loop which was caught in pinconf.c.
+
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinconf.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 1fc09dc..19af718 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -414,7 +414,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 	struct pinctrl_dev *pctldev;
+ 	const struct pinconf_ops *confops = NULL;
+ 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
+-	int i, j;
++	int i;
+ 	unsigned long config;
+ 
+ 	mutex_lock(&pinctrl_maps_mutex);
+@@ -428,13 +428,10 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 		if (strcmp(map->name, dbg->state_name))
+ 			continue;
+ 
+-		for (j = 0; j < map->data.configs.num_configs; j++) {
+-			if (!strcmp(map->data.configs.group_or_pin,
+-					dbg->pin_name)) {
+-				/* We found the right pin / state */
+-				found = map;
+-				break;
+-			}
++		if (!strcmp(map->data.configs.group_or_pin, dbg->pin_name)) {
++			/* We found the right pin */
++			found = map;
++			break;
+ 		}
+ 	}
+ 
+-- 
+1.9.1
+
