@@ -1,40 +1,133 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH] pinctrl: zynq: fix UTF-8 errors
-Date: Fri, 30 Oct 2015 10:07:08 -0700
-Message-ID: <20151030170708.GM6436@xsjsorenbubuntu>
-References: <1446213973-4999-1-git-send-email-linus.walleij@linaro.org>
- <20151030170338.GL6436@xsjsorenbubuntu>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Fri, 30 Oct 2015 17:10:06 +0000
+Message-ID: <20151030171006.GZ4058@x1>
+References: <1446161922-8755-1-git-send-email-afd@ti.com>
+ <1446161922-8755-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20151030170338.GL6436@xsjsorenbubuntu>
+In-Reply-To: <1446161922-8755-2-git-send-email-afd@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2015-10-30 at 10:03AM -0700, S=C3=B6ren Brinkmann wrote:
-> Hi Linux,
+On Thu, 29 Oct 2015, Andrew F. Davis wrote:
 
-Linus, of course...
+> The TPS65912 PMIC contains several regulators and a GPIO controller.
+> Add bindings for the TPS65912 PMIC.
+>=20
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
 
+Why have you dropped Linus' Review-by?
+
+>  Documentation/devicetree/bindings/mfd/tps65912.txt | 51 ++++++++++++=
+++++++++++
+>  .../bindings/regulator/tps65912-regulator.txt      | 28 ++++++++++++
+>  3 files changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65=
+912.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.tx=
+t
+>  create mode 100644 Documentation/devicetree/bindings/regulator/tps65=
+912-regulator.txt
 >=20
-> On Fri, 2015-10-30 at 03:06PM +0100, Linus Walleij wrote:
-> > Fix up S=C3=B6ren's name in the Zynq driver. I caused this. I fix i=
-t.
-> >=20
-> > Cc: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
->=20
-> Thank you!
->=20
-> 	S=C3=B6ren
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt=
+ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+> new file mode 100644
+> index 0000000..0c5c05c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+> @@ -0,0 +1,16 @@
+> +* TPS65912 GPIO Controller bindings
+> +
+> +Required properties:
+> + - compatible : Should be "ti,tps65912-gpio".
+> + - gpio-controller : Marks the device node as a GPIO Controller.
+> + - #gpio-cells : Should be two.  The first cell is the pin number an=
+d
+
+You should add a (See: ../gpio/gpio.txt) here I think.
+
+> +     the second cell is used to specify flags.
+> +     See include/dt-bindings/gpio/gpio.h for possible values.
+
+This is a Linuxisum and shouldn't really live in here.
+
+I think it would be better to document them in ../gpio/gpio.txt and
+reference that instead.
+
+> +Example:
+> +
+> +	gpio4: tps65912_gpio {
+
+Device names don't belong in node names.
+
+Just "gpio" will do.
+
+> +		compatible =3D "ti,tps65912-gpio";
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +	};
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Doc=
+umentation/devicetree/bindings/mfd/tps65912.txt
+> new file mode 100644
+> index 0000000..da5804a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+> @@ -0,0 +1,51 @@
+> +* TPS65912 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible : Should be "ti,tps65912".
+> + - reg : Slave address or chip select number (I2C / SPI).
+> + - interrupt-parent : The parent interrupt controller.
+> + - interrupts : The interrupt line the device is connected to.
+> + - interrupt-controller : Marks the device node as an interrupt cont=
+roller.
+> + - #interrupt-cells: The number of cells to describe an IRQ, this sh=
+ould be 2.
+> +     The first cell is the IRQ number.
+> +     The second cell is the flags, encoded as the trigger masks from
+> +     ../interrupt-controller/interrupts.txt
+
+Nit: We *normally* treat these as bullet-points and not place
+full-stops on them:
+
+$ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v=
+ "\.$" | wc -l
+5227
+$ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc=
+ -l
+486
+
+=2E.. and I *personally* think it's easier to read the document if it's
+formatted as follows:
+
+- compatible			: Should be "ti,tps65912".
+- reg				: Slave address or chip select number (I2C / SPI).
+- interrupt-parent		: The parent interrupt controller.
+- interrupts			: The interrupt line the device is connected to.
+- interrupt-controller		: Marks the device node as an interrupt control=
+ler.
+- #interrupt-cells		: The number of cells to describe an IRQ, this shou=
+ld be 2.
+					The first cell is the IRQ number.
+					The second cell is the flags, encoded as the trigger masks from
+					../interrupt-controller/interrupts.txt
+
+=2E.. I hope you agree.
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
