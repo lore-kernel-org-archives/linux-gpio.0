@@ -1,36 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2] pinctrl: pinconf: remove needless loop
-Date: Fri, 30 Oct 2015 14:41:01 +0100
-Message-ID: <CACRpkdYT3NjOm_Ax5jUAtSQVfoTnB=JxDMJk09e3-JRD7T0zPg@mail.gmail.com>
-References: <1446125147-10670-1-git-send-email-laurent.meunier@st.com>
+Subject: [PATCH] pinctrl: zynq: fix UTF-8 errors
+Date: Fri, 30 Oct 2015 15:06:13 +0100
+Message-ID: <1446213973-4999-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:35215 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030692AbbJ3NlD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 09:41:03 -0400
-Received: by obctp1 with SMTP id tp1so43863672obc.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 06:41:01 -0700 (PDT)
-In-Reply-To: <1446125147-10670-1-git-send-email-laurent.meunier@st.com>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:33033 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964769AbbJ3OG1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 10:06:27 -0400
+Received: by lbbec13 with SMTP id ec13so51918737lbb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 07:06:25 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Meunier <laurent.meunier@st.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andriy Shevchenko <andriy.shevchenko@intel.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
 
-On Thu, Oct 29, 2015 at 2:25 PM, Laurent Meunier <laurent.meunier@st.com> wrote:
+=46ix up S=C3=B6ren's name in the Zynq driver. I caused this. I fix it.
 
-> This removes a needless loop which was caught in pinconf.c.
->
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-zynq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sorry this does not apply to upstream pin control "devel" branch.
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-z=
+ynq.c
+index 9aefc608ba79..d57b5eca7b98 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -3,7 +3,7 @@
+  *
+  *  Copyright (C) 2014 Xilinx
+  *
+- *  S=C3=83=C2=B6ren Brinkmann <soren.brinkmann@xilinx.com>
++ *  S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
+  *
+  * This program is free software: you can redistribute it and/or modif=
+y
+  * it under the terms of the GNU General Public License as published b=
+y
+@@ -1242,6 +1242,6 @@ static void __exit zynq_pinctrl_exit(void)
+ }
+ module_exit(zynq_pinctrl_exit);
+=20
+-MODULE_AUTHOR("S=C3=83=C2=B6ren Brinkmann <soren.brinkmann@xilinx.com>=
+");
++MODULE_AUTHOR("S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>");
+ MODULE_DESCRIPTION("Xilinx Zynq pinctrl driver");
+ MODULE_LICENSE("GPL");
+--=20
+2.4.3
 
-Please figure out if the problem still persists and make a patch
-based on that branch:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
