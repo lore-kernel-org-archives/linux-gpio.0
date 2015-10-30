@@ -1,41 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio / ACPI: Allow shared GPIO event to be read via
- operation region
-Date: Fri, 30 Oct 2015 21:17:41 +0100
-Message-ID: <CACRpkdaywq+j6k4vKBexJGahb9S2M1=vg3Dwsrh6fDUTD+LgxQ@mail.gmail.com>
-References: <1446199325-48095-1-git-send-email-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2] pinctrl: uniphier: guard uniphier directory with CONFIG_PINCTRL_UNIPHIER
+Date: Fri, 30 Oct 2015 21:51:52 +0100
+Message-ID: <CACRpkdY3Edj5=0Pn6tXYyj2fpb4GqhFKMCWT5EF3R79yzX6EqA@mail.gmail.com>
+References: <1446200895-29592-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:34338 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760644AbbJ3URm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 16:17:42 -0400
-Received: by oies66 with SMTP id s66so65412159oie.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 13:17:41 -0700 (PDT)
-In-Reply-To: <1446199325-48095-1-git-send-email-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1446200895-29592-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, Aaron Lu <aaron.lu@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 30, 2015 at 11:02 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Fri, Oct 30, 2015 at 11:28 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> In Microsoft Surface3 the GPIO detecting lid state is shared between GPIO
-> event and operation region. Below is simplied version of the DSDT from
-> Surface3 including relevant parts:
-(...)
-> To be able to go through acpi_gpio->events list for operation region access
-> we need to make sure the list is properly initialized whenever GPIO chip is
-> registered.
+> CONFIG_PINCTRL_UNIPHIER is more suitable than CONFIG_ARCH_UNIPHIER
+> to guard the drivers/pinctrl/uniphier directory.
 >
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=106571
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> The current CONFIG_PINCTRL_UNIPHIER_CORE is a bit long
+> (it would break the indentation in drivers/pinctrl/Makefile),
+> so rename it into CONFIG_PINCTRL_UNIPHIER.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-I wonder what an operation region is, maybe it's something you can eat.
-But I trust you Mika, so patch applied. Maybe I should get a surface, it
-seems cool.
+Patch applied.
 
-Yours,
+BR,
 Linus Walleij
