@@ -1,93 +1,51 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2] pinctrl: uniphier: guard uniphier directory with CONFIG_PINCTRL_UNIPHIER
-Date: Fri, 30 Oct 2015 19:28:15 +0900
-Message-ID: <1446200895-29592-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: uniphier: guard uniphier directory with CONFIG_PINCTRL_UNIPHIER
+Date: Fri, 30 Oct 2015 19:29:26 +0900
+Message-ID: <CAK7LNAQsD=kG1X0SXPJ78FLpgEwk023cHEjE8P2UAAPhFATqOg@mail.gmail.com>
+References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
+	<1445912911-1292-2-git-send-email-yamada.masahiro@socionext.com>
+	<CACRpkdZ286dBTvd3EO_GTixnS=Cz-ch-H+AzNOJhZwoB63K6jw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg002.nifty.com ([202.248.44.40]:24385 "EHLO
+	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1758617AbbJ3K3i (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Oct 2015 06:29:38 -0400
+In-Reply-To: <CACRpkdZ286dBTvd3EO_GTixnS=Cz-ch-H+AzNOJhZwoB63K6jw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-CONFIG_PINCTRL_UNIPHIER is more suitable than CONFIG_ARCH_UNIPHIER
-to guard the drivers/pinctrl/uniphier directory.
+Hi Linus.
 
-The current CONFIG_PINCTRL_UNIPHIER_CORE is a bit long
-(it would break the indentation in drivers/pinctrl/Makefile),
-so rename it into CONFIG_PINCTRL_UNIPHIER.
+2015-10-29 22:34 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Tue, Oct 27, 2015 at 3:28 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>
+>> CONFIG_PINCTRL_UNIPHIER is more suitable than CONFIG_ARCH_UNIPHIER
+>> to guard the drivers/pinctrl/uniphier directory.
+>>
+>> The current CONFIG_PINCTRL_UNIPHIER_CORE is a bit long
+>> (it would break the indentation in drivers/pinctrl/Makefile),
+>> so rename it into CONFIG_PINCTRL_UNIPHIER.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Holding this back until we know what to do with the first patch
+> but it looks OK.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+I've re-sent this as a single patch
+in case 1/2 might take some time for review.
 
- drivers/pinctrl/Makefile          |  2 +-
- drivers/pinctrl/uniphier/Kconfig  | 14 +++++++-------
- drivers/pinctrl/uniphier/Makefile |  2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index cad077c..367af9b 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -50,6 +50,6 @@ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= samsung/
- obj-$(CONFIG_PINCTRL_SH_PFC)	+= sh-pfc/
- obj-$(CONFIG_PLAT_SPEAR)	+= spear/
- obj-$(CONFIG_ARCH_SUNXI)	+= sunxi/
--obj-$(CONFIG_ARCH_UNIPHIER)	+= uniphier/
-+obj-$(CONFIG_PINCTRL_UNIPHIER)	+= uniphier/
- obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
- obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
-diff --git a/drivers/pinctrl/uniphier/Kconfig b/drivers/pinctrl/uniphier/Kconfig
-index eab23ef..ad90707 100644
---- a/drivers/pinctrl/uniphier/Kconfig
-+++ b/drivers/pinctrl/uniphier/Kconfig
-@@ -1,32 +1,32 @@
- if ARCH_UNIPHIER
- 
--config PINCTRL_UNIPHIER_CORE
-+config PINCTRL_UNIPHIER
- 	bool
- 	select PINMUX
- 	select GENERIC_PINCONF
- 
- config PINCTRL_UNIPHIER_PH1_LD4
- 	tristate "UniPhier PH1-LD4 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- config PINCTRL_UNIPHIER_PH1_PRO4
- 	tristate "UniPhier PH1-Pro4 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- config PINCTRL_UNIPHIER_PH1_SLD8
- 	tristate "UniPhier PH1-sLD8 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- config PINCTRL_UNIPHIER_PH1_PRO5
- 	tristate "UniPhier PH1-Pro5 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- config PINCTRL_UNIPHIER_PROXSTREAM2
- 	tristate "UniPhier ProXstream2 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- config PINCTRL_UNIPHIER_PH1_LD6B
- 	tristate "UniPhier PH1-LD6b SoC pinctrl driver"
--	select PINCTRL_UNIPHIER_CORE
-+	select PINCTRL_UNIPHIER
- 
- endif
-diff --git a/drivers/pinctrl/uniphier/Makefile b/drivers/pinctrl/uniphier/Makefile
-index e215b10..e7ce967 100644
---- a/drivers/pinctrl/uniphier/Makefile
-+++ b/drivers/pinctrl/uniphier/Makefile
-@@ -1,4 +1,4 @@
--obj-$(CONFIG_PINCTRL_UNIPHIER_CORE)		+= pinctrl-uniphier-core.o
-+obj-y						+= pinctrl-uniphier-core.o
- 
- obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_LD4)		+= pinctrl-ph1-ld4.o
- obj-$(CONFIG_PINCTRL_UNIPHIER_PH1_PRO4)		+= pinctrl-ph1-pro4.o
+As you agreed with this one, please let it go in first.
+
+
+
+
 -- 
-1.9.1
+Best Regards
+Masahiro Yamada
