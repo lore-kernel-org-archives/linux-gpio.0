@@ -1,60 +1,89 @@
-From: Sanjeev Sharma <sanjeev_sharma@mentor.com>
-Subject: [PATCH] pinctrl:Convert the composition of devm_request_mem_region and devm_ioremap to a single call
-Date: Fri, 30 Oct 2015 13:21:18 +0530
-Message-ID: <1446191478-22714-1-git-send-email-sanjeev_sharma@mentor.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/3] gpio: xgene: add support to configure GPIO line as input, output or external IRQ pin
+Date: Fri, 30 Oct 2015 09:38:54 +0100
+Message-ID: <3805459.UaJmXm5MV7@wuerfel>
+References: <1445842175-11446-1-git-send-email-yvo@apm.com> <CACRpkdbWKmRKXL=+57KQVYYRc79tgGwCi=7p4LSBwFgUwgz-gw@mail.gmail.com> <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:63982 "EHLO
-	relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758295AbbJ3Hwq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 03:52:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:49972 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932548AbbJ3Ii7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 04:38:59 -0400
+In-Reply-To: <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sanjeev Sharma <sanjeev_sharma@mentor.com>
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Y Vo <yvo@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-Use devm_ioremap_resource() in order to make the code simpler,
-and remove redundant return value check of platform_get_resource()
-because this value is alreadytaken care by devm_ioremap_resource()
+On Friday 30 October 2015 12:41:03 Quan Nguyen wrote:
+> On Thu, Oct 29, 2015 at 8:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Mon, Oct 26, 2015 at 7:49 AM, Y Vo <yvo@apm.com> wrote:
+> > (...)
+> >> +#define XGENE_HWIRQ_TO_GPIO(hwirq)     ((hwirq) + XGENE_GPIO8_IDX)
+> >> +#define XGENE_GPIO_TO_HWIRQ(gpio)      ((gpio) - XGENE_GPIO8_IDX)
+> >> +#define GIC_IRQ_TO_GPIO_IRQ(hwirq)     ((hwirq) - XGENE_GPIO8_HWIRQ)
+> >> +#define GPIO_IRQ_TO_GIC_IRQ(hwirq)     ((hwirq) + XGENE_GPIO8_HWIRQ)
+> >
+> > I'm a bit uneasy about this, maybe I just don't get it.
+> >
+> > What is this indexing into "GIC IRQ" that is starting to happen
+> > here?
+> >
+> > The GIC (if that is drivers/irqchip/irq-gic.c) has a totally dynamic IRQ
+> > translation and the Linux IRQs it is using may change. I am worried
+> > that there is some reliance here on Linux IRQ having certain numbers
+> > because there is certainly no ABI like that.
+> >
+> > Is this 0x48 really an index into the *hardware* offset in the GIC?
+> >
+> > And if it is: why are we not getting this hardware information from the
+> > device tree like all other interrupt numbers and offsets?
+> >
+> > I'm worried about this.
+> 
+> The SPI40(0x48) through SPI45(0x4D) from GIC are mapped as external
+> IRQ0 - IRQ5 in this GPIO block, so it is hardware offset not mapped
+> irq number.
+> 
+> Below is detail:
+> 
+> + GIC: SPI40 (hwirq=0x48)  <=> SB-GPIO: (hwirq=0) (gpio line 8)
+> + GIC: SPI41 (hwirq=0x49)  <=> SB-GPIO: (hwirq=1) (gpio line 9)
+> ...
+> + GIC: SPI45 (hwirq=0x4D)  <=> SB-GPIO: (hwirq=5) (gpio line 13)
+> 
+> These defines are to help translating between Gic hardware irq and
+> SBGPIO hardware irq number.
 
-Signed-off-by: Sanjeev Sharma <sanjeev_sharma@mentor.com>
----
- drivers/pinctrl/pinctrl-single.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+But the numbers are already in DT, so don't duplicate them in the
+source code but just use irq_of_parse_and_map() to get the parent
+irq number.
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index ef04b96..905cc0a 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1865,24 +1865,9 @@ static int pcs_probe(struct platform_device *pdev)
- 						  "pinctrl-single,bit-per-mux");
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(pcs->dev, "could not get resource\n");
--		return -ENODEV;
--	}
--
--	pcs->res = devm_request_mem_region(pcs->dev, res->start,
--			resource_size(res), DRIVER_NAME);
--	if (!pcs->res) {
--		dev_err(pcs->dev, "could not get mem_region\n");
--		return -EBUSY;
--	}
--
--	pcs->size = resource_size(pcs->res);
--	pcs->base = devm_ioremap(pcs->dev, pcs->res->start, pcs->size);
--	if (!pcs->base) {
--		dev_err(pcs->dev, "could not ioremap\n");
--		return -ENODEV;
--	}
-+	pcs->base = devm_ioremap_resource(pcs->dev, res);
-+	if (IS_ERR(pcs->base))
-+		return PTR_ERR(pcs->base);
- 
- 	INIT_RADIX_TREE(&pcs->pgtree, GFP_KERNEL);
- 	INIT_RADIX_TREE(&pcs->ftree, GFP_KERNEL);
--- 
-1.7.11.7
+> >> -       u32 *irq;
+> >> +       void __iomem *regs;
+> >> +       struct irq_domain *gic_domain;
+> >> +       struct irq_domain *irq_domain;
+> >
+> > And there is some secondary gic_domain here, which is confusing
+> > since the GIC does have an IRQ domain too.
+> >
+> > I think I want a clear explanation to how this GPIO controller interacts
+> > with the GIC, and I want it to be part of the patch, as comments in the
+> > code and in the commit message (which is way too small for a complex
+> > patch like this).
+> >
+> > Otherwise I have no chance to understand what is really going on here.
+> 
+> SBGPIO currently is not capable to mask/unmask/... irqs, so these will
+> rely on the parent (GIC) instead. To do so, we need keep a parent
+> domain reference here "struct irq_domain *gic_domain" so we can find
+> correspond parent irq in runtime.
 
+Maybe rename the domain to 'parent_domain' or something like that
+to avoid hardcoding any knowledge of the parent IRQ controller being
+a GIC. If the same GPIO block gets reused on a PowerPC machine, we
+want the driver to just work and not have any ARM specifics in it.
+
+	Arnd
