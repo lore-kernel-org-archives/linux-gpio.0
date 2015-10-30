@@ -1,89 +1,32 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/3] gpio: xgene: add support to configure GPIO line as input, output or external IRQ pin
-Date: Fri, 30 Oct 2015 09:38:54 +0100
-Message-ID: <3805459.UaJmXm5MV7@wuerfel>
-References: <1445842175-11446-1-git-send-email-yvo@apm.com> <CACRpkdbWKmRKXL=+57KQVYYRc79tgGwCi=7p4LSBwFgUwgz-gw@mail.gmail.com> <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: Add ACCES 104-IDIO-16 DRIVER entry
+Date: Fri, 30 Oct 2015 10:20:38 +0100
+Message-ID: <CACRpkdYf+9gmg++guOq8nTj+uAOAhFN=5aM22WxWRmHgpHSE1Q@mail.gmail.com>
+References: <20151028212416.GA21860@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:49972 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932548AbbJ3Ii7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 04:38:59 -0400
-In-Reply-To: <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35428 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759425AbbJ3JUj (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 05:20:39 -0400
+Received: by oifu63 with SMTP id u63so56309313oif.2
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 02:20:39 -0700 (PDT)
+In-Reply-To: <20151028212416.GA21860@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quan Nguyen <qnguyen@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Y Vo <yvo@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Phong Vo <pvo@apm.com>, Toan Le <toanle@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Friday 30 October 2015 12:41:03 Quan Nguyen wrote:
-> On Thu, Oct 29, 2015 at 8:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Mon, Oct 26, 2015 at 7:49 AM, Y Vo <yvo@apm.com> wrote:
-> > (...)
-> >> +#define XGENE_HWIRQ_TO_GPIO(hwirq)     ((hwirq) + XGENE_GPIO8_IDX)
-> >> +#define XGENE_GPIO_TO_HWIRQ(gpio)      ((gpio) - XGENE_GPIO8_IDX)
-> >> +#define GIC_IRQ_TO_GPIO_IRQ(hwirq)     ((hwirq) - XGENE_GPIO8_HWIRQ)
-> >> +#define GPIO_IRQ_TO_GIC_IRQ(hwirq)     ((hwirq) + XGENE_GPIO8_HWIRQ)
-> >
-> > I'm a bit uneasy about this, maybe I just don't get it.
-> >
-> > What is this indexing into "GIC IRQ" that is starting to happen
-> > here?
-> >
-> > The GIC (if that is drivers/irqchip/irq-gic.c) has a totally dynamic IRQ
-> > translation and the Linux IRQs it is using may change. I am worried
-> > that there is some reliance here on Linux IRQ having certain numbers
-> > because there is certainly no ABI like that.
-> >
-> > Is this 0x48 really an index into the *hardware* offset in the GIC?
-> >
-> > And if it is: why are we not getting this hardware information from the
-> > device tree like all other interrupt numbers and offsets?
-> >
-> > I'm worried about this.
-> 
-> The SPI40(0x48) through SPI45(0x4D) from GIC are mapped as external
-> IRQ0 - IRQ5 in this GPIO block, so it is hardware offset not mapped
-> irq number.
-> 
-> Below is detail:
-> 
-> + GIC: SPI40 (hwirq=0x48)  <=> SB-GPIO: (hwirq=0) (gpio line 8)
-> + GIC: SPI41 (hwirq=0x49)  <=> SB-GPIO: (hwirq=1) (gpio line 9)
-> ...
-> + GIC: SPI45 (hwirq=0x4D)  <=> SB-GPIO: (hwirq=5) (gpio line 13)
-> 
-> These defines are to help translating between Gic hardware irq and
-> SBGPIO hardware irq number.
+On Wed, Oct 28, 2015 at 10:24 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-But the numbers are already in DT, so don't duplicate them in the
-source code but just use irq_of_parse_and_map() to get the parent
-irq number.
+> Add William Breathitt Gray as the maintainer of the ACCES 104-IDIO-16
+> GPIO driver.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-> >> -       u32 *irq;
-> >> +       void __iomem *regs;
-> >> +       struct irq_domain *gic_domain;
-> >> +       struct irq_domain *irq_domain;
-> >
-> > And there is some secondary gic_domain here, which is confusing
-> > since the GIC does have an IRQ domain too.
-> >
-> > I think I want a clear explanation to how this GPIO controller interacts
-> > with the GIC, and I want it to be part of the patch, as comments in the
-> > code and in the commit message (which is way too small for a complex
-> > patch like this).
-> >
-> > Otherwise I have no chance to understand what is really going on here.
-> 
-> SBGPIO currently is not capable to mask/unmask/... irqs, so these will
-> rely on the parent (GIC) instead. To do so, we need keep a parent
-> domain reference here "struct irq_domain *gic_domain" so we can find
-> correspond parent irq in runtime.
+Patch applied with some tweaks.
 
-Maybe rename the domain to 'parent_domain' or something like that
-to avoid hardcoding any knowledge of the parent IRQ controller being
-a GIC. If the same GPIO block gets reused on a PowerPC machine, we
-want the driver to just work and not have any ARM specifics in it.
-
-	Arnd
+Yours,
+Linus Walleij
