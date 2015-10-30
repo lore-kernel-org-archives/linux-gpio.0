@@ -1,32 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: Add ACCES 104-IDIO-16 DRIVER entry
-Date: Fri, 30 Oct 2015 10:20:38 +0100
-Message-ID: <CACRpkdYf+9gmg++guOq8nTj+uAOAhFN=5aM22WxWRmHgpHSE1Q@mail.gmail.com>
-References: <20151028212416.GA21860@sophia>
+Subject: Re: [PATCH v10] gpio: Add GPIO support for the ACCES 104-IDIO-16
+Date: Fri, 30 Oct 2015 10:22:28 +0100
+Message-ID: <CACRpkdaRgtrnPVcTTX5VU0F1-NSPU1kWgt7v-tQ0-Ta9upXgmQ@mail.gmail.com>
+References: <20151019165914.GA22867@sophia>
+	<CACRpkdbQyed0S0Y6MSt35LuOekFprvbPMDpsGku-cBXBt=9j0Q@mail.gmail.com>
+	<20151027142343.GI1548@lahna.fi.intel.com>
+	<CACRpkdbs8US2m1+hEmXbJ9JJT15-iRHnO2L4bk5qeNRgb2vbKg@mail.gmail.com>
+	<20151027165134.GK1548@lahna.fi.intel.com>
+	<CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
+	<20151029082259.GD1548@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35428 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759425AbbJ3JUj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 05:20:39 -0400
-Received: by oifu63 with SMTP id u63so56309313oif.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 02:20:39 -0700 (PDT)
-In-Reply-To: <20151028212416.GA21860@sophia>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151029082259.GD1548@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Oct 28, 2015 at 10:24 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Thu, Oct 29, 2015 at 9:22 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> Add William Breathitt Gray as the maintainer of the ACCES 104-IDIO-16
-> GPIO driver.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> x86 has I/O space regardless of ISA or PCI (even though most probably it
+> also has ISA and PCI). Looking at the drivers in question they seem to
+> be x86 drivers so maybe "depends on X86"?
 
-Patch applied with some tweaks.
+Yeah I see it now... x86 had these instructions since ages, I'm
+stupid for not thinking about it the right way :/
+
+OK I will try to create some meny and shovel it under
+depends on X86.
 
 Yours,
 Linus Walleij
