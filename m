@@ -1,137 +1,253 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 1/3] gpio: xgene: add support to configure GPIO line
- as input, output or external IRQ pin
-Date: Fri, 30 Oct 2015 09:35:00 +0000
-Message-ID: <20151030093500.7ad59365@arm.com>
-References: <1445842175-11446-1-git-send-email-yvo@apm.com>
-	<1445842175-11446-2-git-send-email-yvo@apm.com>
-	<CACRpkdbWKmRKXL=+57KQVYYRc79tgGwCi=7p4LSBwFgUwgz-gw@mail.gmail.com>
-	<CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: group port-mapped I/O drivers in a menu
+Date: Fri, 30 Oct 2015 10:38:16 +0100
+Message-ID: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:42828 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758956AbbJ3Jfa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 05:35:30 -0400
-In-Reply-To: <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:33196 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965541AbbJ3JiW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 05:38:22 -0400
+Received: by lbbec13 with SMTP id ec13so47046082lbb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 02:38:21 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quan Nguyen <qnguyen@apm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Phong Vo <pvo@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Feng Kan <fkan@apm.com>, Y Vo <yvo@apm.com>, Toan Le <toanle@apm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Loc Ho <lho@apm.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
 
-On Fri, 30 Oct 2015 12:41:03 +0700
-Quan Nguyen <qnguyen@apm.com> wrote:
+Create a Kconfig submenu for drivers using X86 port-mapped I/O
+and depend on X86 for this.
 
-> Forgive me for not turn on plain text mode my last email.
-> 
-> Hi Linus,
-> 
-> My name is Quan Nguyen, I'm working with Y Vo on this patch.
-> 
-> Allow me to explain as below:
-> 
-> In current implementation, gic irq resources were used in both sbgpio
-> and gpios-key nodes, and this causes confusion.
-> To avoid this, we introduce sbgpio driver as interrupt controller, it
-> now provides 6 external irq pins mapped from gpio line 8-13. The
-> gpio-keys node now uses sbgpio irq resources instead.
-> 
-> -- Quan
-> 
-> 
-> On Thu, Oct 29, 2015 at 8:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Mon, Oct 26, 2015 at 7:49 AM, Y Vo <yvo@apm.com> wrote:
-> >
-> >> Add support to configure GPIO line as input, output or external IRQ pin.
-> >>
-> >> Signed-off-by: Y Vo <yvo@apm.com>
-> >
-> > As I will say again, this description is too terse, add lots of information
-> > on how IRQs work on this controller please. I get confused.
-> 
-> How about:
-> +++++++++++++++++++++++++++++++++
-> Enable X-Gene standby GPIO driver as interrupt controller, it provides
-> 6 external irq pins via gpio line 8-13.
-> +++++++++++++++++++++++++++++++++
-> >
-> > (...)
-> >
-> >> +#define XGENE_GPIO8_HWIRQ              0x48
-> >> +#define XGENE_GPIO8_IDX                        8
-> > (...)
-> >> +#define XGENE_HWIRQ_TO_GPIO(hwirq)     ((hwirq) + XGENE_GPIO8_IDX)
-> >> +#define XGENE_GPIO_TO_HWIRQ(gpio)      ((gpio) - XGENE_GPIO8_IDX)
-> >> +#define GIC_IRQ_TO_GPIO_IRQ(hwirq)     ((hwirq) - XGENE_GPIO8_HWIRQ)
-> >> +#define GPIO_IRQ_TO_GIC_IRQ(hwirq)     ((hwirq) + XGENE_GPIO8_HWIRQ)
-> >
-> > I'm a bit uneasy about this, maybe I just don't get it.
-> >
-> > What is this indexing into "GIC IRQ" that is starting to happen
-> > here?
-> >
-> > The GIC (if that is drivers/irqchip/irq-gic.c) has a totally dynamic IRQ
-> > translation and the Linux IRQs it is using may change. I am worried
-> > that there is some reliance here on Linux IRQ having certain numbers
-> > because there is certainly no ABI like that.
-> >
-> > Is this 0x48 really an index into the *hardware* offset in the GIC?
-> >
-> > And if it is: why are we not getting this hardware information from the
-> > device tree like all other interrupt numbers and offsets?
-> >
-> > I'm worried about this.
-> 
-> The SPI40(0x48) through SPI45(0x4D) from GIC are mapped as external
-> IRQ0 - IRQ5 in this GPIO block, so it is hardware offset not mapped
-> irq number.
-> 
-> Below is detail:
-> 
-> + GIC: SPI40 (hwirq=0x48)  <=> SB-GPIO: (hwirq=0) (gpio line 8)
-> + GIC: SPI41 (hwirq=0x49)  <=> SB-GPIO: (hwirq=1) (gpio line 9)
-> ...
-> + GIC: SPI45 (hwirq=0x4D)  <=> SB-GPIO: (hwirq=5) (gpio line 13)
-> 
-> These defines are to help translating between Gic hardware irq and
-> SBGPIO hardware irq number.
-> 
-> >
-> >> -       u32 *irq;
-> >> +       void __iomem *regs;
-> >> +       struct irq_domain *gic_domain;
-> >> +       struct irq_domain *irq_domain;
-> >
-> > And there is some secondary gic_domain here, which is confusing
-> > since the GIC does have an IRQ domain too.
-> >
-> > I think I want a clear explanation to how this GPIO controller interacts
-> > with the GIC, and I want it to be part of the patch, as comments in the
-> > code and in the commit message (which is way too small for a complex
-> > patch like this).
-> >
-> > Otherwise I have no chance to understand what is really going on here.
-> 
-> SBGPIO currently is not capable to mask/unmask/... irqs, so these will
-> rely on the parent (GIC) instead. To do so, we need keep a parent
-> domain reference here "struct irq_domain *gic_domain" so we can find
-> correspond parent irq in runtime.
+Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Andreas Bofjall <andreas@gazonk.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Diego Elio Petten=C3=B2 <flameeyes@flameeyes.eu>
+Cc: Daniel Krueger <daniel.krueger@systec-electronic.com>
+Cc: Bruno Randolf <br1@einfach.org>
+Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig | 155 ++++++++++++++++++++++++++-----------------=
+--------
+ 1 file changed, 78 insertions(+), 77 deletions(-)
 
-All this only means one thing: this should be implemented as a
-hierarchical domain, just like any other "random widget stacked on top
-of the GIC". Digging into the internals of the GIC driver is not
-acceptable anymore, and this patch is just horrible.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index dbb171d46a48..d20644b9e5b9 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -183,16 +183,6 @@ config GPIO_ETRAXFS
+ 	help
+ 	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
+=20
+-config GPIO_F7188X
+-	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
+-	depends on X86
+-	help
+-	  This option enables support for GPIOs found on Fintek Super-I/O
+-	  chips F71869, F71869A, F71882FG and F71889F.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called f7188x-gpio.
+-
+ config GPIO_GE_FPGA
+ 	bool "GE FPGA based GPIO"
+ 	depends on GE_FPGA
+@@ -242,18 +232,6 @@ config GPIO_IOP
+=20
+ 	  If unsure, say N.
+=20
+-config GPIO_IT87
+-	tristate "IT87xx GPIO support"
+-	depends on X86 # unconditional access to IO space.
+-	help
+-	  Say yes here to support GPIO functionality of IT87xx Super I/O chip=
+s.
+-
+-	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, a=
+nd
+-	  supports the IT8761E Super I/O chip as well.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called gpio_it87
+-
+ config GPIO_LOONGSON
+ 	bool "Loongson-2/3 GPIO support"
+ 	depends on CPU_LOONGSON2 || CPU_LOONGSON3
+@@ -373,42 +351,6 @@ config GPIO_SAMSUNG
+ 	  Legacy GPIO support. Use only for platforms without support for
+ 	  pinctrl.
+=20
+-config GPIO_SCH
+-	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
+-	depends on PCI && X86
+-	select MFD_CORE
+-	select LPC_SCH
+-	help
+-	  Say yes here to support GPIO interface on Intel Poulsbo SCH,
+-	  Intel Tunnel Creek processor, Intel Centerton processor or
+-	  Intel Quark X1000 SoC.
+-
+-	  The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
+-	  powered by the core power rail and are turned off during sleep
+-	  modes (S3 and higher). The remaining four GPIOs are powered by
+-	  the Intel SCH suspend power supply. These GPIOs remain
+-	  active during S3. The suspend powered GPIOs can be used to wake the
+-	  system from the Suspend-to-RAM state.
+-
+-	  The Intel Tunnel Creek processor has 5 GPIOs powered by the
+-	  core power rail and 9 from suspend power supply.
+-
+-	  The Intel Centerton processor has a total of 30 GPIO pins.
+-	  Twenty-one are powered by the core power rail and 9 from the
+-	  suspend power supply.
+-
+-	  The Intel Quark X1000 SoC has 2 GPIOs powered by the core
+-	  power well and 6 from the suspend power well.
+-
+-config GPIO_SCH311X
+-	tristate "SMSC SCH311x SuperI/O GPIO"
+-	help
+-	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
+-	  SCH3116 "Super I/O" chipsets.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called gpio-sch311x.
+-
+ config GPIO_SPEAR_SPICS
+ 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+ 	depends on PLAT_SPEAR
+@@ -445,15 +387,6 @@ config GPIO_TB10X
+ 	select GENERIC_IRQ_CHIP
+ 	select OF_GPIO
+=20
+-config GPIO_TS5500
+-	tristate "TS-5500 DIO blocks and compatibles"
+-	depends on TS5500 || COMPILE_TEST
+-	help
+-	  This driver supports Digital I/O exposed by pin blocks found on som=
+e
+-	  Technologic Systems platforms. It includes, but is not limited to, =
+3
+-	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
+-	  LCD port.
+-
+ config GPIO_TZ1090
+ 	bool "Toumaz Xenif TZ1090 GPIO support"
+ 	depends on SOC_TZ1090
+@@ -552,6 +485,84 @@ config GPIO_ZYNQ
+=20
+ endmenu
+=20
++menu "Port-mapped I/O GPIO drivers"
++	depends on X86
++
++config GPIO_104_IDIO_16
++	tristate "ACCES 104-IDIO-16 GPIO support"
++	depends on X86
++	help
++	  Enables GPIO support for the ACCES 104-IDIO-16 family.
++
++config GPIO_F7188X
++	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
++	depends on X86
++	help
++	  This option enables support for GPIOs found on Fintek Super-I/O
++	  chips F71869, F71869A, F71882FG and F71889F.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called f7188x-gpio.
++
++config GPIO_IT87
++	tristate "IT87xx GPIO support"
++	depends on X86 # unconditional access to IO space.
++	help
++	  Say yes here to support GPIO functionality of IT87xx Super I/O chip=
+s.
++
++	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, a=
+nd
++	  supports the IT8761E Super I/O chip as well.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio_it87
++
++config GPIO_SCH
++	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
++	depends on PCI && X86
++	select MFD_CORE
++	select LPC_SCH
++	help
++	  Say yes here to support GPIO interface on Intel Poulsbo SCH,
++	  Intel Tunnel Creek processor, Intel Centerton processor or
++	  Intel Quark X1000 SoC.
++
++	  The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
++	  powered by the core power rail and are turned off during sleep
++	  modes (S3 and higher). The remaining four GPIOs are powered by
++	  the Intel SCH suspend power supply. These GPIOs remain
++	  active during S3. The suspend powered GPIOs can be used to wake the
++	  system from the Suspend-to-RAM state.
++
++	  The Intel Tunnel Creek processor has 5 GPIOs powered by the
++	  core power rail and 9 from suspend power supply.
++
++	  The Intel Centerton processor has a total of 30 GPIO pins.
++	  Twenty-one are powered by the core power rail and 9 from the
++	  suspend power supply.
++
++	  The Intel Quark X1000 SoC has 2 GPIOs powered by the core
++	  power well and 6 from the suspend power well.
++
++config GPIO_SCH311X
++	tristate "SMSC SCH311x SuperI/O GPIO"
++	help
++	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
++	  SCH3116 "Super I/O" chipsets.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-sch311x.
++
++config GPIO_TS5500
++	tristate "TS-5500 DIO blocks and compatibles"
++	depends on TS5500 || COMPILE_TEST
++	help
++	  This driver supports Digital I/O exposed by pin blocks found on som=
+e
++	  Technologic Systems platforms. It includes, but is not limited to, =
+3
++	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
++	  LCD port.
++
++endmenu
++
+ menu "I2C GPIO expanders"
+ 	depends on I2C
+=20
+@@ -689,16 +700,6 @@ config GPIO_SX150X
+=20
+ endmenu
+=20
+-menu "ISA GPIO drivers"
+-
+-config GPIO_104_IDIO_16
+-	tristate "ACCES 104-IDIO-16 GPIO support"
+-	depends on X86
+-	help
+-	  Enables GPIO support for the ACCES 104-IDIO-16 family.
+-
+-endmenu
+-
+ menu "MFD GPIO expanders"
+=20
+ config GPIO_ADP5520
+--=20
+2.4.3
 
-There is plenty of examples in the tree for you to look at and rewrite
-that code using the abstractions that are already in place.
-
-In the meantime, I am NAKing this patch. Please include the irqchip
-maintainers in the next iteration of this series.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
