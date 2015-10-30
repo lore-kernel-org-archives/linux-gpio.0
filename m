@@ -1,53 +1,139 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 5/5] gpio: tps65912: Add GPIO driver for the TPS65912
- PMIC
-Date: Fri, 30 Oct 2015 17:10:45 +0000
-Message-ID: <20151030171045.GA4058@x1>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Fri, 30 Oct 2015 13:01:28 -0500
+Message-ID: <5633B078.7080209@ti.com>
 References: <1446161922-8755-1-git-send-email-afd@ti.com>
- <1446161922-8755-6-git-send-email-afd@ti.com>
- <CACRpkdb+C1M=cFKDNbJW74hUEA=87aA_weR0u22-9bDKgif6xQ@mail.gmail.com>
+ <1446161922-8755-2-git-send-email-afd@ti.com> <20151030171006.GZ4058@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb+C1M=cFKDNbJW74hUEA=87aA_weR0u22-9bDKgif6xQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:38364 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759717AbbJ3SBp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Oct 2015 14:01:45 -0400
+In-Reply-To: <20151030171006.GZ4058@x1>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 30 Oct 2015, Linus Walleij wrote:
+On 10/30/2015 12:10 PM, Lee Jones wrote:
+> On Thu, 29 Oct 2015, Andrew F. Davis wrote:
+>
+>> The TPS65912 PMIC contains several regulators and a GPIO controller.
+>> Add bindings for the TPS65912 PMIC.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
+>
+> Why have you dropped Linus' Review-by?
+>
 
-> On Fri, Oct 30, 2015 at 12:38 AM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
->=20
-> > This patch adds support for the TPS65912 PMIC GPIOs.
-> >
-> > TPS65912 has five configurable GPIOs that can be used for several
-> > purposes.
-> >
-> > Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
->=20
-> This looks like a fine driver, can't really see anything wrong with i=
-t so:
-> Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->=20
-> > +#define to_tps65912_gpio(gc) container_of(gc, struct tps65912_gpio=
-, gpio_chip)
->=20
-> I would rewrite that to static inline however.
->=20
-> Lee can take this into the MFD tree with my review-tag if he wants.
+Strange, I thought I made a change to this. Well this brings up a question,
+how much change can we have before we are supposed to drop Reviewed/Acked-by?
 
-Please fix this, then resubmit the set with Acks/Reviewed-by's applied.
+>>   Documentation/devicetree/bindings/mfd/tps65912.txt | 51 ++++++++++++++++++++++
+>>   .../bindings/regulator/tps65912-regulator.txt      | 28 ++++++++++++
+>>   3 files changed, 95 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
+>>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>> new file mode 100644
+>> index 0000000..0c5c05c4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
+>> @@ -0,0 +1,16 @@
+>> +* TPS65912 GPIO Controller bindings
+>> +
+>> +Required properties:
+>> + - compatible : Should be "ti,tps65912-gpio".
+>> + - gpio-controller : Marks the device node as a GPIO Controller.
+>> + - #gpio-cells : Should be two.  The first cell is the pin number and
+>
+> You should add a (See: ../gpio/gpio.txt) here I think.
+>
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ACK
+
+>> +     the second cell is used to specify flags.
+>> +     See include/dt-bindings/gpio/gpio.h for possible values.
+>
+> This is a Linuxisum and shouldn't really live in here.
+>
+> I think it would be better to document them in ../gpio/gpio.txt and
+> reference that instead.
+>
+
+Looks like that is already in ../gpio/gpio.txt:57
+
+>> +Example:
+>> +
+>> +	gpio4: tps65912_gpio {
+>
+> Device names don't belong in node names.
+>
+> Just "gpio" will do.
+>
+
+ACK
+
+>> +		compatible = "ti,tps65912-gpio";
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +	};
+>> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
+>> new file mode 100644
+>> index 0000000..da5804a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+>> @@ -0,0 +1,51 @@
+>> +* TPS65912 Power Management Integrated Circuit bindings
+>> +
+>> +Required properties:
+>> + - compatible : Should be "ti,tps65912".
+>> + - reg : Slave address or chip select number (I2C / SPI).
+>> + - interrupt-parent : The parent interrupt controller.
+>> + - interrupts : The interrupt line the device is connected to.
+>> + - interrupt-controller : Marks the device node as an interrupt controller.
+>> + - #interrupt-cells: The number of cells to describe an IRQ, this should be 2.
+>> +     The first cell is the IRQ number.
+>> +     The second cell is the flags, encoded as the trigger masks from
+>> +     ../interrupt-controller/interrupts.txt
+>
+> Nit: We *normally* treat these as bullet-points and not place
+> full-stops on them:
+>
+> $ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v "\.$" | wc -l
+> 5227
+> $ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc -l
+> 486
+>
+
+What about for multi-sentence descriptions, we need the middle full-stops, then to not
+have one on the end seems kinda odd looking.
+
+> ... and I *personally* think it's easier to read the document if it's
+> formatted as follows:
+>
+> - compatible			: Should be "ti,tps65912".
+> - reg				: Slave address or chip select number (I2C / SPI).
+> - interrupt-parent		: The parent interrupt controller.
+> - interrupts			: The interrupt line the device is connected to.
+> - interrupt-controller		: Marks the device node as an interrupt controller.
+> - #interrupt-cells		: The number of cells to describe an IRQ, this should be 2.
+> 					The first cell is the IRQ number.
+> 					The second cell is the flags, encoded as the trigger masks from
+> 					../interrupt-controller/interrupts.txt
+>
+> ... I hope you agree.
+>
+
+Yeah, I did that with the last driver, not sure why I forgot to fix that here, I'll fix this.
+
+> [...]
+>
