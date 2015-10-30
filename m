@@ -1,268 +1,133 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: [PATCH] gpio: group port-mapped I/O drivers in a menu
-Date: Fri, 30 Oct 2015 10:47:27 +0100
-Message-ID: <20151030094727.GG4665@kw.sim.vm.gnt>
-References: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BzCohdixPhurzSK4"
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] gpio / ACPI: Allow shared GPIO event to be read via operation region
+Date: Fri, 30 Oct 2015 12:02:05 +0200
+Message-ID: <1446199325-48095-1-git-send-email-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:39229 "EHLO vm1.sequanux.org"
+Received: from mga09.intel.com ([134.134.136.24]:58687 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030642AbbJ3Jpz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 05:45:55 -0400
-Content-Disposition: inline
-In-Reply-To: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
+	id S966325AbbJ3KCe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Oct 2015 06:02:34 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Diego Elio =?utf-8?Q?Petten=C3=B2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 
+In Microsoft Surface3 the GPIO detecting lid state is shared between GPIO
+event and operation region. Below is simplied version of the DSDT from
+Surface3 including relevant parts:
 
---BzCohdixPhurzSK4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    Scope (GPO0)
+    {
+        Name (_AEI, ResourceTemplate ()
+        {
+            GpioInt (Edge, ActiveBoth, Shared, PullNone, 0x0000,
+                "\\_SB.GPO0", 0x00, ResourceConsumer, ,
+                )
+                {   // Pin list
+                    0x004C
+                }
+        })
 
-On Fri, Oct 30, 2015 at 10:38:16AM +0100, Linus Walleij wrote:
-> Create a Kconfig submenu for drivers using X86 port-mapped I/O
-> and depend on X86 for this.
->=20
-> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
-> Cc: Andreas Bofjall <andreas@gazonk.org>
-> Cc: Simon Guinot <simon.guinot@sequanux.org>
-> Cc: Diego Elio Petten=C3=B2 <flameeyes@flameeyes.eu>
-> Cc: Daniel Krueger <daniel.krueger@systec-electronic.com>
-> Cc: Bruno Randolf <br1@einfach.org>
-> Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/Kconfig | 155 ++++++++++++++++++++++++++-------------------=
-------
->  1 file changed, 78 insertions(+), 77 deletions(-)
+        OperationRegion (GPOR, GeneralPurposeIo, Zero, One)
+        Field (GPOR, ByteAcc, NoLock, Preserve)
+        {
+            Connection (
+                GpioIo (Shared, PullNone, 0x0000, 0x0000,
+                    IoRestrictionNone, "\\_SB.GPO0", 0x00,
+                    ResourceConsumer,,)
+                    {   // Pin list
+                        0x004C
+                    }
+            ),
+            HELD,   1
+        }
 
-Hi Linus,
+        Method (_E4C, 0, Serialized)  // _Exx: Edge-Triggered GPE
+        {
+            If ((HELD == One))
+            {
+                ^^LID.LIDB = One
+            }
+            Else
+            {
+                ^^LID.LIDB = Zero
+                Notify (LID, 0x80) // Status Change
+            }
 
-Acked-by: Simon Guinot <simon.guinot@sequanux.org>
+            Notify (^^PCI0.SPI1.NTRG, One) // Device Check
+        }
+    }
 
-Simon
+When GPIO 0x4c changes we call ASL method _E4C which tries to read HELD
+field (the same GPIO). This triggers following error on the console:
 
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index dbb171d46a48..d20644b9e5b9 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -183,16 +183,6 @@ config GPIO_ETRAXFS
->  	help
->  	  Say yes here to support the GPIO controller on Axis ETRAX FS SoCs.
-> =20
-> -config GPIO_F7188X
-> -	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
-> -	depends on X86
-> -	help
-> -	  This option enables support for GPIOs found on Fintek Super-I/O
-> -	  chips F71869, F71869A, F71882FG and F71889F.
-> -
-> -	  To compile this driver as a module, choose M here: the module will
-> -	  be called f7188x-gpio.
-> -
->  config GPIO_GE_FPGA
->  	bool "GE FPGA based GPIO"
->  	depends on GE_FPGA
-> @@ -242,18 +232,6 @@ config GPIO_IOP
-> =20
->  	  If unsure, say N.
-> =20
-> -config GPIO_IT87
-> -	tristate "IT87xx GPIO support"
-> -	depends on X86 # unconditional access to IO space.
-> -	help
-> -	  Say yes here to support GPIO functionality of IT87xx Super I/O chips.
-> -
-> -	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, and
-> -	  supports the IT8761E Super I/O chip as well.
-> -
-> -	  To compile this driver as a module, choose M here: the module will
-> -	  be called gpio_it87
-> -
->  config GPIO_LOONGSON
->  	bool "Loongson-2/3 GPIO support"
->  	depends on CPU_LOONGSON2 || CPU_LOONGSON3
-> @@ -373,42 +351,6 @@ config GPIO_SAMSUNG
->  	  Legacy GPIO support. Use only for platforms without support for
->  	  pinctrl.
-> =20
-> -config GPIO_SCH
-> -	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
-> -	depends on PCI && X86
-> -	select MFD_CORE
-> -	select LPC_SCH
-> -	help
-> -	  Say yes here to support GPIO interface on Intel Poulsbo SCH,
-> -	  Intel Tunnel Creek processor, Intel Centerton processor or
-> -	  Intel Quark X1000 SoC.
-> -
-> -	  The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
-> -	  powered by the core power rail and are turned off during sleep
-> -	  modes (S3 and higher). The remaining four GPIOs are powered by
-> -	  the Intel SCH suspend power supply. These GPIOs remain
-> -	  active during S3. The suspend powered GPIOs can be used to wake the
-> -	  system from the Suspend-to-RAM state.
-> -
-> -	  The Intel Tunnel Creek processor has 5 GPIOs powered by the
-> -	  core power rail and 9 from suspend power supply.
-> -
-> -	  The Intel Centerton processor has a total of 30 GPIO pins.
-> -	  Twenty-one are powered by the core power rail and 9 from the
-> -	  suspend power supply.
-> -
-> -	  The Intel Quark X1000 SoC has 2 GPIOs powered by the core
-> -	  power well and 6 from the suspend power well.
-> -
-> -config GPIO_SCH311X
-> -	tristate "SMSC SCH311x SuperI/O GPIO"
-> -	help
-> -	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
-> -	  SCH3116 "Super I/O" chipsets.
-> -
-> -	  To compile this driver as a module, choose M here: the module will
-> -	  be called gpio-sch311x.
-> -
->  config GPIO_SPEAR_SPICS
->  	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
->  	depends on PLAT_SPEAR
-> @@ -445,15 +387,6 @@ config GPIO_TB10X
->  	select GENERIC_IRQ_CHIP
->  	select OF_GPIO
-> =20
-> -config GPIO_TS5500
-> -	tristate "TS-5500 DIO blocks and compatibles"
-> -	depends on TS5500 || COMPILE_TEST
-> -	help
-> -	  This driver supports Digital I/O exposed by pin blocks found on some
-> -	  Technologic Systems platforms. It includes, but is not limited to, 3
-> -	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
-> -	  LCD port.
-> -
->  config GPIO_TZ1090
->  	bool "Toumaz Xenif TZ1090 GPIO support"
->  	depends on SOC_TZ1090
-> @@ -552,6 +485,84 @@ config GPIO_ZYNQ
-> =20
->  endmenu
-> =20
-> +menu "Port-mapped I/O GPIO drivers"
-> +	depends on X86
-> +
-> +config GPIO_104_IDIO_16
-> +	tristate "ACCES 104-IDIO-16 GPIO support"
-> +	depends on X86
-> +	help
-> +	  Enables GPIO support for the ACCES 104-IDIO-16 family.
-> +
-> +config GPIO_F7188X
-> +	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
-> +	depends on X86
-> +	help
-> +	  This option enables support for GPIOs found on Fintek Super-I/O
-> +	  chips F71869, F71869A, F71882FG and F71889F.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called f7188x-gpio.
-> +
-> +config GPIO_IT87
-> +	tristate "IT87xx GPIO support"
-> +	depends on X86 # unconditional access to IO space.
-> +	help
-> +	  Say yes here to support GPIO functionality of IT87xx Super I/O chips.
-> +
-> +	  This driver is tested with ITE IT8728 and IT8732 Super I/O chips, and
-> +	  supports the IT8761E Super I/O chip as well.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called gpio_it87
-> +
-> +config GPIO_SCH
-> +	tristate "Intel SCH/TunnelCreek/Centerton/Quark X1000 GPIO"
-> +	depends on PCI && X86
-> +	select MFD_CORE
-> +	select LPC_SCH
-> +	help
-> +	  Say yes here to support GPIO interface on Intel Poulsbo SCH,
-> +	  Intel Tunnel Creek processor, Intel Centerton processor or
-> +	  Intel Quark X1000 SoC.
-> +
-> +	  The Intel SCH contains a total of 14 GPIO pins. Ten GPIOs are
-> +	  powered by the core power rail and are turned off during sleep
-> +	  modes (S3 and higher). The remaining four GPIOs are powered by
-> +	  the Intel SCH suspend power supply. These GPIOs remain
-> +	  active during S3. The suspend powered GPIOs can be used to wake the
-> +	  system from the Suspend-to-RAM state.
-> +
-> +	  The Intel Tunnel Creek processor has 5 GPIOs powered by the
-> +	  core power rail and 9 from suspend power supply.
-> +
-> +	  The Intel Centerton processor has a total of 30 GPIO pins.
-> +	  Twenty-one are powered by the core power rail and 9 from the
-> +	  suspend power supply.
-> +
-> +	  The Intel Quark X1000 SoC has 2 GPIOs powered by the core
-> +	  power well and 6 from the suspend power well.
-> +
-> +config GPIO_SCH311X
-> +	tristate "SMSC SCH311x SuperI/O GPIO"
-> +	help
-> +	  Driver to enable the GPIOs found on SMSC SMSC SCH3112, SCH3114 and
-> +	  SCH3116 "Super I/O" chipsets.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called gpio-sch311x.
-> +
-> +config GPIO_TS5500
-> +	tristate "TS-5500 DIO blocks and compatibles"
-> +	depends on TS5500 || COMPILE_TEST
-> +	help
-> +	  This driver supports Digital I/O exposed by pin blocks found on some
-> +	  Technologic Systems platforms. It includes, but is not limited to, 3
-> +	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
-> +	  LCD port.
-> +
-> +endmenu
-> +
->  menu "I2C GPIO expanders"
->  	depends on I2C
-> =20
-> @@ -689,16 +700,6 @@ config GPIO_SX150X
-> =20
->  endmenu
-> =20
-> -menu "ISA GPIO drivers"
-> -
-> -config GPIO_104_IDIO_16
-> -	tristate "ACCES 104-IDIO-16 GPIO support"
-> -	depends on X86
-> -	help
-> -	  Enables GPIO support for the ACCES 104-IDIO-16 family.
-> -
-> -endmenu
-> -
->  menu "MFD GPIO expanders"
-> =20
->  config GPIO_ADP5520
-> --=20
-> 2.4.3
+    ACPI Error: Method parse/execution failed [\_SB.GPO0._E4C]
+        (Node ffff88013f4b4438), AE_ERROR (20150930/psparse-542)
 
---BzCohdixPhurzSK4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The error happens because ACPI GPIO operation region handler
+(acpi_gpio_adr_space_handler()) tries to acquire the very same GPIO which
+returns an error (-EBUSY) because the GPIO is already reserved for the GPIO
+event.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Fix this so that we "borrow" the event GPIO if we find the GPIO belongs to
+an event. Allow this only for GPIOs that are read.
 
-iEYEARECAAYFAlYzPK8ACgkQgtp0PDeOcDoTewCgkK6X/LcTlTEmH4GIsmAlW0ku
-A7gAoIizr3YYM0itp5ybYb2wWh/3uH8O
-=/eGF
------END PGP SIGNATURE-----
+To be able to go through acpi_gpio->events list for operation region access
+we need to make sure the list is properly initialized whenever GPIO chip is
+registered.
 
---BzCohdixPhurzSK4--
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=106571
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 143a9bdbaa53..bbcac3af2a7a 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -304,7 +304,6 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
+ 	if (ACPI_FAILURE(status))
+ 		return;
+ 
+-	INIT_LIST_HEAD(&acpi_gpio->events);
+ 	acpi_walk_resources(handle, "_AEI",
+ 			    acpi_gpiochip_request_interrupt, acpi_gpio);
+ }
+@@ -603,6 +602,25 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
+ 				break;
+ 			}
+ 		}
++
++		/*
++		 * The same GPIO can be shared between operation region and
++		 * event but only if the access here is ACPI_READ. In that
++		 * case we "borrow" the event GPIO instead.
++		 */
++		if (!found && agpio->sharable == ACPI_SHARED &&
++		     function == ACPI_READ) {
++			struct acpi_gpio_event *event;
++
++			list_for_each_entry(event, &achip->events, node) {
++				if (event->pin == pin) {
++					desc = event->desc;
++					found = true;
++					break;
++				}
++			}
++		}
++
+ 		if (!found) {
+ 			desc = gpiochip_request_own_desc(chip, pin,
+ 							 "ACPI:OpRegion");
+@@ -719,6 +737,7 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
+ 	}
+ 
+ 	acpi_gpio->chip = chip;
++	INIT_LIST_HEAD(&acpi_gpio->events);
+ 
+ 	status = acpi_attach_data(handle, acpi_gpio_chip_dh, acpi_gpio);
+ 	if (ACPI_FAILURE(status)) {
+-- 
+2.6.1
+
