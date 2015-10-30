@@ -1,94 +1,81 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Fri, 30 Oct 2015 14:21:02 -0500
-Message-ID: <5633C31E.5030408@ti.com>
-References: <1446161922-8755-1-git-send-email-afd@ti.com>
- <1446161922-8755-2-git-send-email-afd@ti.com> <20151030171006.GZ4058@x1>
- <5633B078.7080209@ti.com> <20151030190622.GN4058@x1>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/6] GPIO character device skeleton
+Date: Fri, 30 Oct 2015 20:47:14 +0100
+Message-ID: <CACRpkdaKO=L7+73OqnTYjs71F0-UEGTLy4=wszaXEro4dbKfcw@mail.gmail.com>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+	<CAAVeFu+FfgM7tUa0_mWaqQfDiKp2o5TT+ggyAK+yRW4cgHemsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:34897 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752636AbbJ3TVR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 15:21:17 -0400
-In-Reply-To: <20151030190622.GN4058@x1>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:36786 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755102AbbJ3TrP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 15:47:15 -0400
+Received: by obcqt19 with SMTP id qt19so52651424obc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 12:47:15 -0700 (PDT)
+In-Reply-To: <CAAVeFu+FfgM7tUa0_mWaqQfDiKp2o5TT+ggyAK+yRW4cgHemsw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On 10/30/2015 02:06 PM, Lee Jones wrote:
-> On Fri, 30 Oct 2015, Andrew F. Davis wrote:
->
->> On 10/30/2015 12:10 PM, Lee Jones wrote:
->>> On Thu, 29 Oct 2015, Andrew F. Davis wrote:
->>>
->>>> The TPS65912 PMIC contains several regulators and a GPIO controller.
->>>> Add bindings for the TPS65912 PMIC.
->>>>
->>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>>> ---
->>>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
->>>
->>> Why have you dropped Linus' Review-by?
->>>
->>
->> Strange, I thought I made a change to this. Well this brings up a question,
->> how much change can we have before we are supposed to drop Reviewed/Acked-by?
->
-> Common sense call I'm afraid. ;)
->
-> [...]
->
->>>> +     the second cell is used to specify flags.
->>>> +     See include/dt-bindings/gpio/gpio.h for possible values.
->>>
->>> This is a Linuxisum and shouldn't really live in here.
->>>
->>> I think it would be better to document them in ../gpio/gpio.txt and
->>> reference that instead.
->>>
->>
->> Looks like that is already in ../gpio/gpio.txt:57
->
-> There is a mention of GPIO_ACTIVE_HIGH, as it's used in an example.
-> However GPIO_ACTIVE_LOW is missing.  I think both could do with
-> documenting properly, then you can refer to them from here.
->
+On Fri, Oct 30, 2015 at 2:55 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
 
-I mean the lines above the example, they say to use the macros
-defined in include/dt-bindings/gpio/gpio.h whenever possible,
-that's really all I would say.
+> I see where we are going with the general idea and it would be nice to
+> finally get things right. Actually despite my initial reserves I am
+> starting to grow fond of this idea now that I see the code (tested
+> with success on Tegra K1 btw).
 
-> [...]
->
->>>> +Required properties:
->>>> + - compatible : Should be "ti,tps65912".
->>>> + - reg : Slave address or chip select number (I2C / SPI).
->>>> + - interrupt-parent : The parent interrupt controller.
->>>> + - interrupts : The interrupt line the device is connected to.
->>>> + - interrupt-controller : Marks the device node as an interrupt controller.
->>>> + - #interrupt-cells: The number of cells to describe an IRQ, this should be 2.
->>>> +     The first cell is the IRQ number.
->>>> +     The second cell is the flags, encoded as the trigger masks from
->>>> +     ../interrupt-controller/interrupts.txt
->>>
->>> Nit: We *normally* treat these as bullet-points and not place
->>> full-stops on them:
->>>
->>> $ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v "\.$" | wc -l
->>> 5227
->>> $ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc -l
->>> 486
->>>
->>
->> What about for multi-sentence descriptions, we need the middle full-stops, then to not
->> have one on the end seems kinda odd looking.
->
-> That's the way I usually do it -- doesn't look too bad. ;)
->
-> [...]
->
+Thanks, give me your lsgpio :)
+
+> * This series creates one device per GPIO chip. I suppose that a
+> future ioctl will allow the user to change the state of a set of GPIOs
+> in one single syscall (mirroring gpiod_set_array_value()).
+
+Yeah that is mentioned somewhere even, I think.
+
+> In the
+> world of cute embedded nonsense, it is unfortunately not rare to have
+> related GPIOs (that we will want to change relatively at the same
+> time) on different chips. Such scenarios would require several ioctls
+> to update the set of GPIOs. Are we cool with this, or would we prefer
+> one global GPIO device that manages all chips and returns user-space
+> GPIO descriptors that mirror the kernel API more closely?
+
+Since GPIO chips need to be hot-pluggable (example: USB
+expanders) I don't see this happening.
+
+These systems should have not divided their stuff into different
+devices/gpiochips in that case, and instead insisted to have one
+device with many "banks".
+
+Overall the assumptions to the kernel-intenal multiple-line API
+assume any lines switched at the same time need to be in the
+same "unsigned long" anyway. Typically a u32.
+
+> * For all the justified hate that sysfs got, it had the advantage of
+> being directly accessible using only the shell. If we replace it with
+> a character device interface, I think we will need a "libgpio" (that
+> provides easy access to C programs) and "gpio-tools" (simple
+> command-line tools that provide functionality similar to the sysfs
+> interface). Are we ready to start and maintain these? Granted, it
+> should not be too much work, but it's still an extra.
+
+I think the raw ioctl()s will be simple enough and intend to use
+the tools/gpio/* as proper examples. If we need
+tools/gpio/swiss-army-knife.c we will add it too.
+
+ALSA and fbdev and MESA and libusb spawned huge userspace
+libs, but I hope this ioctl() ABI will be simple enough that apps
+can use it directly without a lib. But what do I know.
+
+> How these will be shaped will of course depend on how individual GPIOs
+> are represented in user-space. Security will be a concern, so let's
+> make sure we don't return global integer descriptors for these. ;)
+
+First-come-first-gets-to-use-it seems to be how chardevs etc
+are handled. I imagine there will be ONE program using the gpiochip,
+else userspace have to come up with an arbitration daemon too.
+
+Yours,
+Linus Walleij
