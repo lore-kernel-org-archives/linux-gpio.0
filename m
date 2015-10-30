@@ -1,133 +1,68 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] gpio / ACPI: Allow shared GPIO event to be read via operation region
-Date: Fri, 30 Oct 2015 12:02:05 +0200
-Message-ID: <1446199325-48095-1-git-send-email-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:58687 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S966325AbbJ3KCe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 06:02:34 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] gpio: zynq: Implement irq_(request|release)_resources
+Date: Fri, 30 Oct 2015 11:05:00 +0100 (CET)
+Message-ID: <alpine.DEB.2.11.1510301103150.4032@nanos>
+References: <1445607381-7794-1-git-send-email-soren.brinkmann@xilinx.com> <CACRpkda4QKEJvwkwGLS7OLTP8Nxu5W05tzbcFXA_FPnBsFtKhw@mail.gmail.com> <562FA849.2070306@metafoo.de>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <562FA849.2070306@metafoo.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Michal Simek <michal.simek@xilinx.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, John Linn <linnj@xilinx.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, Aaron Lu <aaron.lu@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 
-In Microsoft Surface3 the GPIO detecting lid state is shared between GPIO
-event and operation region. Below is simplied version of the DSDT from
-Surface3 including relevant parts:
+On Tue, 27 Oct 2015, Lars-Peter Clausen wrote:
+> On 10/27/2015 04:53 PM, Linus Walleij wrote:
+> > On Fri, Oct 23, 2015 at 3:36 PM, Soren Brinkmann
+> > <soren.brinkmann@xilinx.com> wrote:
+> > 
+> >> The driver uses runtime PM to leverage low power techniques. For
+> >> use-cases using GPIO as interrupt the device needs to be in an
+> >> appropriate state.
+> >>
+> >> Reported-by: John Linn <linnj@xilinx.com>
+> >> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+> >> Tested-by: John Linn <linnj@xilinx.com>
+> > 
+> > As pointed out by Grygorii in
+> > commit aca82d1cbb49af34b69ecd4571a0fe48ad9247c1:
+> > 
+> >     The PM runtime API can't be used in atomic contex on -RT even if
+> >     it's configured as irqsafe. As result, below error report can
+> >     be seen when PM runtime API called from IRQ chip's callbacks
+> >     irq_startup/irq_shutdown/irq_set_type, because they are
+> >     protected by RAW spinlock:
+> > (...)
+> >     The IRQ chip interface defines only two callbacks which are executed in
+> >     non-atomic contex - irq_bus_lock/irq_bus_sync_unlock, so lets move
+> >     PM runtime calls there.
+> > 
+> > I.e. these calls are atomic context and it's just luck that it works
+> > and this is fragile.
+> > 
+> > Can you please check if you can move it to
+> > irq_bus_lock()/irq_sync_unlock()
+> > like Grygorii does?
+> 
+> That only powers up the chip when the chip is accessed. For proper IRQ
+> operation the chip needs to be powered up though as long as the IRQ is
+> enabled. request_irq() and free_irq() must always be called from sleepable
+> context. The thing is just that request_resource/release_resource are called
+> from within a raw spinlock, which is necessary since otherwise you can't
+> guarantee that they are only called once for shared interrupts.
+> 
+> It might make sense to add a separate set of callbacks to the irq_chip
+> struct that are called from the sleepable sections of
+> request_irq()/free_irq() which are meant for power management purposes and
+> which wont have the guarantee that they are only called once for shared IRQs
+> (but are still balanced).
+> 
+> Thomas, do you have any thoughts on this?
 
-    Scope (GPO0)
-    {
-        Name (_AEI, ResourceTemplate ()
-        {
-            GpioInt (Edge, ActiveBoth, Shared, PullNone, 0x0000,
-                "\\_SB.GPO0", 0x00, ResourceConsumer, ,
-                )
-                {   // Pin list
-                    0x004C
-                }
-        })
+If you want to keep the chip powered as long as an interrupt is
+enabled, then having a irq chip callback might be the proper solution.
 
-        OperationRegion (GPOR, GeneralPurposeIo, Zero, One)
-        Field (GPOR, ByteAcc, NoLock, Preserve)
-        {
-            Connection (
-                GpioIo (Shared, PullNone, 0x0000, 0x0000,
-                    IoRestrictionNone, "\\_SB.GPO0", 0x00,
-                    ResourceConsumer,,)
-                    {   // Pin list
-                        0x004C
-                    }
-            ),
-            HELD,   1
-        }
+Thanks,
 
-        Method (_E4C, 0, Serialized)  // _Exx: Edge-Triggered GPE
-        {
-            If ((HELD == One))
-            {
-                ^^LID.LIDB = One
-            }
-            Else
-            {
-                ^^LID.LIDB = Zero
-                Notify (LID, 0x80) // Status Change
-            }
-
-            Notify (^^PCI0.SPI1.NTRG, One) // Device Check
-        }
-    }
-
-When GPIO 0x4c changes we call ASL method _E4C which tries to read HELD
-field (the same GPIO). This triggers following error on the console:
-
-    ACPI Error: Method parse/execution failed [\_SB.GPO0._E4C]
-        (Node ffff88013f4b4438), AE_ERROR (20150930/psparse-542)
-
-The error happens because ACPI GPIO operation region handler
-(acpi_gpio_adr_space_handler()) tries to acquire the very same GPIO which
-returns an error (-EBUSY) because the GPIO is already reserved for the GPIO
-event.
-
-Fix this so that we "borrow" the event GPIO if we find the GPIO belongs to
-an event. Allow this only for GPIOs that are read.
-
-To be able to go through acpi_gpio->events list for operation region access
-we need to make sure the list is properly initialized whenever GPIO chip is
-registered.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=106571
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 143a9bdbaa53..bbcac3af2a7a 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -304,7 +304,6 @@ void acpi_gpiochip_request_interrupts(struct gpio_chip *chip)
- 	if (ACPI_FAILURE(status))
- 		return;
- 
--	INIT_LIST_HEAD(&acpi_gpio->events);
- 	acpi_walk_resources(handle, "_AEI",
- 			    acpi_gpiochip_request_interrupt, acpi_gpio);
- }
-@@ -603,6 +602,25 @@ acpi_gpio_adr_space_handler(u32 function, acpi_physical_address address,
- 				break;
- 			}
- 		}
-+
-+		/*
-+		 * The same GPIO can be shared between operation region and
-+		 * event but only if the access here is ACPI_READ. In that
-+		 * case we "borrow" the event GPIO instead.
-+		 */
-+		if (!found && agpio->sharable == ACPI_SHARED &&
-+		     function == ACPI_READ) {
-+			struct acpi_gpio_event *event;
-+
-+			list_for_each_entry(event, &achip->events, node) {
-+				if (event->pin == pin) {
-+					desc = event->desc;
-+					found = true;
-+					break;
-+				}
-+			}
-+		}
-+
- 		if (!found) {
- 			desc = gpiochip_request_own_desc(chip, pin,
- 							 "ACPI:OpRegion");
-@@ -719,6 +737,7 @@ void acpi_gpiochip_add(struct gpio_chip *chip)
- 	}
- 
- 	acpi_gpio->chip = chip;
-+	INIT_LIST_HEAD(&acpi_gpio->events);
- 
- 	status = acpi_attach_data(handle, acpi_gpio_chip_dh, acpi_gpio);
- 	if (ACPI_FAILURE(status)) {
--- 
-2.6.1
-
+	tglx
