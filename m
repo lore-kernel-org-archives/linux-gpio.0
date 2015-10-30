@@ -1,51 +1,38 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 2/2] pinctrl: uniphier: guard uniphier directory with CONFIG_PINCTRL_UNIPHIER
-Date: Fri, 30 Oct 2015 19:29:26 +0900
-Message-ID: <CAK7LNAQsD=kG1X0SXPJ78FLpgEwk023cHEjE8P2UAAPhFATqOg@mail.gmail.com>
-References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
-	<1445912911-1292-2-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdZ286dBTvd3EO_GTixnS=Cz-ch-H+AzNOJhZwoB63K6jw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:24385 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1758617AbbJ3K3i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 06:29:38 -0400
-In-Reply-To: <CACRpkdZ286dBTvd3EO_GTixnS=Cz-ch-H+AzNOJhZwoB63K6jw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Alban Bedel <albeu@free.fr>
+Subject: [PATCH 1/3] MAINTAINERS: Add an entry for the ATH79 GPIO driver
+Date: Fri, 30 Oct 2015 11:36:29 +0100
+Message-ID: <1446201391-22553-1-git-send-email-albeu@free.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Alban Bedel <albeu@free.fr>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus.
+Add an entry for the ATH79 GPIO driver with myself as maintainer.
 
-2015-10-29 22:34 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Oct 27, 2015 at 3:28 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> CONFIG_PINCTRL_UNIPHIER is more suitable than CONFIG_ARCH_UNIPHIER
->> to guard the drivers/pinctrl/uniphier directory.
->>
->> The current CONFIG_PINCTRL_UNIPHIER_CORE is a bit long
->> (it would break the indentation in drivers/pinctrl/Makefile),
->> so rename it into CONFIG_PINCTRL_UNIPHIER.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Holding this back until we know what to do with the first patch
-> but it looks OK.
+Signed-off-by: Alban Bedel <albeu@free.fr>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I've re-sent this as a single patch
-in case 1/2 might take some time for review.
-
-
-As you agreed with this one, please let it go in first.
-
-
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9de185d..957b148 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1780,6 +1780,14 @@ S:	Supported
+ F:	Documentation/aoe/
+ F:	drivers/block/aoe/
+ 
++ATHEROS 71XX/9XXX GPIO DRIVER
++M:	"Alban Bedel <albeu@free.fr>"
++W:	https://github.com/AlbanBedel/linux
++T:	git git://github.com/AlbanBedel/linux
++S:	Maintained
++F:	drivers/gpio/gpio-ath79.c
++F:	Documentation/devicetree/bindings/gpio/gpio-ath79.txt
++
+ ATHEROS ATH GENERIC UTILITIES
+ M:	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+ L:	linux-wireless@vger.kernel.org
 -- 
-Best Regards
-Masahiro Yamada
+2.0.0
