@@ -1,35 +1,137 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v10] gpio: Add GPIO support for the ACCES 104-IDIO-16
-Date: Fri, 30 Oct 2015 10:22:28 +0100
-Message-ID: <CACRpkdaRgtrnPVcTTX5VU0F1-NSPU1kWgt7v-tQ0-Ta9upXgmQ@mail.gmail.com>
-References: <20151019165914.GA22867@sophia>
-	<CACRpkdbQyed0S0Y6MSt35LuOekFprvbPMDpsGku-cBXBt=9j0Q@mail.gmail.com>
-	<20151027142343.GI1548@lahna.fi.intel.com>
-	<CACRpkdbs8US2m1+hEmXbJ9JJT15-iRHnO2L4bk5qeNRgb2vbKg@mail.gmail.com>
-	<20151027165134.GK1548@lahna.fi.intel.com>
-	<CACRpkdZBnmE2F7i2PYuxvO4cpYsGnrcGr0HMKg9WAPVMGnDBTw@mail.gmail.com>
-	<20151029082259.GD1548@lahna.fi.intel.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 1/3] gpio: xgene: add support to configure GPIO line
+ as input, output or external IRQ pin
+Date: Fri, 30 Oct 2015 09:35:00 +0000
+Message-ID: <20151030093500.7ad59365@arm.com>
+References: <1445842175-11446-1-git-send-email-yvo@apm.com>
+	<1445842175-11446-2-git-send-email-yvo@apm.com>
+	<CACRpkdbWKmRKXL=+57KQVYYRc79tgGwCi=7p4LSBwFgUwgz-gw@mail.gmail.com>
+	<CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151029082259.GD1548@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, =?UTF-8?Q?Diego_Elio_Petten=C3=B2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:42828 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758956AbbJ3Jfa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Oct 2015 05:35:30 -0400
+In-Reply-To: <CAFopSPQtuVxSn4SkVHtf-0AZE7MqRJ3XQMutCubzMd8CztA8CA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Phong Vo <pvo@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Feng Kan <fkan@apm.com>, Y Vo <yvo@apm.com>, Toan Le <toanle@apm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Loc Ho <lho@apm.com>
 
-On Thu, Oct 29, 2015 at 9:22 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Fri, 30 Oct 2015 12:41:03 +0700
+Quan Nguyen <qnguyen@apm.com> wrote:
 
-> x86 has I/O space regardless of ISA or PCI (even though most probably it
-> also has ISA and PCI). Looking at the drivers in question they seem to
-> be x86 drivers so maybe "depends on X86"?
+> Forgive me for not turn on plain text mode my last email.
+> 
+> Hi Linus,
+> 
+> My name is Quan Nguyen, I'm working with Y Vo on this patch.
+> 
+> Allow me to explain as below:
+> 
+> In current implementation, gic irq resources were used in both sbgpio
+> and gpios-key nodes, and this causes confusion.
+> To avoid this, we introduce sbgpio driver as interrupt controller, it
+> now provides 6 external irq pins mapped from gpio line 8-13. The
+> gpio-keys node now uses sbgpio irq resources instead.
+> 
+> -- Quan
+> 
+> 
+> On Thu, Oct 29, 2015 at 8:28 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Mon, Oct 26, 2015 at 7:49 AM, Y Vo <yvo@apm.com> wrote:
+> >
+> >> Add support to configure GPIO line as input, output or external IRQ pin.
+> >>
+> >> Signed-off-by: Y Vo <yvo@apm.com>
+> >
+> > As I will say again, this description is too terse, add lots of information
+> > on how IRQs work on this controller please. I get confused.
+> 
+> How about:
+> +++++++++++++++++++++++++++++++++
+> Enable X-Gene standby GPIO driver as interrupt controller, it provides
+> 6 external irq pins via gpio line 8-13.
+> +++++++++++++++++++++++++++++++++
+> >
+> > (...)
+> >
+> >> +#define XGENE_GPIO8_HWIRQ              0x48
+> >> +#define XGENE_GPIO8_IDX                        8
+> > (...)
+> >> +#define XGENE_HWIRQ_TO_GPIO(hwirq)     ((hwirq) + XGENE_GPIO8_IDX)
+> >> +#define XGENE_GPIO_TO_HWIRQ(gpio)      ((gpio) - XGENE_GPIO8_IDX)
+> >> +#define GIC_IRQ_TO_GPIO_IRQ(hwirq)     ((hwirq) - XGENE_GPIO8_HWIRQ)
+> >> +#define GPIO_IRQ_TO_GIC_IRQ(hwirq)     ((hwirq) + XGENE_GPIO8_HWIRQ)
+> >
+> > I'm a bit uneasy about this, maybe I just don't get it.
+> >
+> > What is this indexing into "GIC IRQ" that is starting to happen
+> > here?
+> >
+> > The GIC (if that is drivers/irqchip/irq-gic.c) has a totally dynamic IRQ
+> > translation and the Linux IRQs it is using may change. I am worried
+> > that there is some reliance here on Linux IRQ having certain numbers
+> > because there is certainly no ABI like that.
+> >
+> > Is this 0x48 really an index into the *hardware* offset in the GIC?
+> >
+> > And if it is: why are we not getting this hardware information from the
+> > device tree like all other interrupt numbers and offsets?
+> >
+> > I'm worried about this.
+> 
+> The SPI40(0x48) through SPI45(0x4D) from GIC are mapped as external
+> IRQ0 - IRQ5 in this GPIO block, so it is hardware offset not mapped
+> irq number.
+> 
+> Below is detail:
+> 
+> + GIC: SPI40 (hwirq=0x48)  <=> SB-GPIO: (hwirq=0) (gpio line 8)
+> + GIC: SPI41 (hwirq=0x49)  <=> SB-GPIO: (hwirq=1) (gpio line 9)
+> ...
+> + GIC: SPI45 (hwirq=0x4D)  <=> SB-GPIO: (hwirq=5) (gpio line 13)
+> 
+> These defines are to help translating between Gic hardware irq and
+> SBGPIO hardware irq number.
+> 
+> >
+> >> -       u32 *irq;
+> >> +       void __iomem *regs;
+> >> +       struct irq_domain *gic_domain;
+> >> +       struct irq_domain *irq_domain;
+> >
+> > And there is some secondary gic_domain here, which is confusing
+> > since the GIC does have an IRQ domain too.
+> >
+> > I think I want a clear explanation to how this GPIO controller interacts
+> > with the GIC, and I want it to be part of the patch, as comments in the
+> > code and in the commit message (which is way too small for a complex
+> > patch like this).
+> >
+> > Otherwise I have no chance to understand what is really going on here.
+> 
+> SBGPIO currently is not capable to mask/unmask/... irqs, so these will
+> rely on the parent (GIC) instead. To do so, we need keep a parent
+> domain reference here "struct irq_domain *gic_domain" so we can find
+> correspond parent irq in runtime.
 
-Yeah I see it now... x86 had these instructions since ages, I'm
-stupid for not thinking about it the right way :/
+All this only means one thing: this should be implemented as a
+hierarchical domain, just like any other "random widget stacked on top
+of the GIC". Digging into the internals of the GIC driver is not
+acceptable anymore, and this patch is just horrible.
 
-OK I will try to create some meny and shovel it under
-depends on X86.
+There is plenty of examples in the tree for you to look at and rewrite
+that code using the abstractions that are already in place.
 
-Yours,
-Linus Walleij
+In the meantime, I am NAKing this patch. Please include the irqchip
+maintainers in the next iteration of this series.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny.
