@@ -1,39 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Make PORT_GP_x() macros consistent
-Date: Fri, 30 Oct 2015 15:07:44 +0100
-Message-ID: <CACRpkdZ=xher-CLsNWaTCbrVyp61rQ1vXjB60B5Pi0_77-6idQ@mail.gmail.com>
-References: <1446147587-20216-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v5 5/5] gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
+Date: Fri, 30 Oct 2015 15:13:03 +0100
+Message-ID: <CACRpkdb+C1M=cFKDNbJW74hUEA=87aA_weR0u22-9bDKgif6xQ@mail.gmail.com>
+References: <1446161922-8755-1-git-send-email-afd@ti.com>
+	<1446161922-8755-6-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34416 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966086AbbJ3OHp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 10:07:45 -0400
-Received: by oies66 with SMTP id s66so59261018oie.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 07:07:45 -0700 (PDT)
-In-Reply-To: <1446147587-20216-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:36402 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030592AbbJ3ONE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 10:13:04 -0400
+Received: by obcqt19 with SMTP id qt19so44771055obc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 07:13:03 -0700 (PDT)
+In-Reply-To: <1446161922-8755-6-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Oct 29, 2015 at 8:39 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Oct 30, 2015 at 12:38 AM, Andrew F. Davis <afd@ti.com> wrote:
 
-> On r8a7795, PORT_GP_x() is a macro for defining GPIOs 0..x.
-> In all other sh-pfc code, PORT_GP_x() is a macro for defining GPIOs
-> 0..(x-1).
+> This patch adds support for the TPS65912 PMIC GPIOs.
 >
-> Make the r8a7795 macro definitions consistent with the rest of the
-> sh-pfc codebase.
+> TPS65912 has five configurable GPIOs that can be used for several
+> purposes.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+This looks like a fine driver, can't really see anything wrong with it so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Counting on you to stack this up again, but let's save the next pull
-request until after the merge window.
+> +#define to_tps65912_gpio(gc) container_of(gc, struct tps65912_gpio, gpio_chip)
+
+I would rewrite that to static inline however.
+
+Lee can take this into the MFD tree with my review-tag if he wants.
 
 Yours,
 Linus Walleij
