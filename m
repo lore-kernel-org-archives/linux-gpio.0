@@ -1,55 +1,66 @@
-From: Alban Bedel <albeu@free.fr>
-Subject: [PATCH 3/3] gpio: ath79: Make the driver removable
-Date: Fri, 30 Oct 2015 11:36:31 +0100
-Message-ID: <1446201391-22553-3-git-send-email-albeu@free.fr>
-References: <1446201391-22553-1-git-send-email-albeu@free.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446201391-22553-1-git-send-email-albeu@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Alban Bedel <albeu@free.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: dt-bindings: document the official use of "ngpios"
+Date: Fri, 30 Oct 2015 12:03:22 +0100
+Message-ID: <1446203002-7910-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:33404 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758783AbbJ3LDd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 07:03:33 -0400
+Received: by lbbec13 with SMTP id ec13so48465282lbb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 04:03:32 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, Pramod Kumar <pramodku@broadcom.com>, Jonas Gorski <jogo@openwrt.org>
 
-As we now allow the driver to be built as a module it should be
-removable.
+There are a bunch of drivers that utilize the "ngpios" DT property
+without any vendor prefix. Try to start cleaning up the mess by
+defining what we mean by this property.
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
+Cc: devicetree@vger.kernel.org
+Cc: Pramod Kumar <pramodku@broadcom.com>
+Cc: Jonas Gorski <jogo@openwrt.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-ath79.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/gpio/gpio.txt | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index 3e71ced..6108dff 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -43,6 +43,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
- 		return -ENOMEM;
-+	platform_set_drvdata(pdev, ctrl);
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 63b1b9039ce8..9b081e6143a0 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -129,6 +129,30 @@ Every GPIO controller node must contain both an empty "gpio-controller"
+ property, and a #gpio-cells integer property, which indicates the number of
+ cells in a gpio-specifier.
  
- 	if (np) {
- 		err = of_property_read_u32(np, "ngpios", &ath79_gpio_count);
-@@ -97,12 +98,20 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int ath79_gpio_remove(struct platform_device *pdev)
-+{
-+	struct ath79_gpio *ctrl = platform_get_drvdata(pdev);
++Optionally, a GPIO controller may have a "ngpios" property. This property
++indicates the number of in-use slots of available slots for GPIOs. The
++typical example is something like this: the hardware register is 32 bits
++wide, but only 18 of the bits have a physical counterpart. The driver is
++generally written so that all 32 bits can be used, but the IP block is reused
++in a lot of designs, some using all 32 bits, some using 18 and some using
++12. In this case, setting "ngpios = <18>;" informs the driver that only the
++first 18 GPIOs, at local offset 0 .. 17, are in use.
 +
-+	return bgpio_remove(&ctrl->bgc);
++If these GPIOs do not happen to be the first N GPIOs at offset 0...N, an
++additional bitmask is needed to specify which GPIOs are actually in use,
++and which are dummies. The bindings for this case has not yet been
++specified, but should be specified if/when such hardware appears.
++
++Example:
++
++gpio-controller@00000000 {
++	compatible = "foo";
++	reg = <0x00000000 0x1000>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	ngpios = <18>;
 +}
 +
- static struct platform_driver ath79_gpio_driver = {
- 	.driver = {
- 		.name = "ath79-gpio",
- 		.of_match_table	= ath79_gpio_of_match,
- 	},
- 	.probe = ath79_gpio_probe,
-+	.remove = ath79_gpio_remove,
- };
- 
- module_platform_driver(ath79_gpio_driver);
+ The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+ providing automatic GPIO request and configuration as part of the
+ gpio-controller's driver probe function.
 -- 
-2.0.0
+2.4.3
+
