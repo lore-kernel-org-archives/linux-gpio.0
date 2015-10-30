@@ -1,60 +1,115 @@
-From: Laurent Meunier <laurent.meunier@st.com>
-Subject: [PATCH V3] pinctrl: pinconf: remove needless loop
-Date: Fri, 30 Oct 2015 15:15:51 +0100
-Message-ID: <1446214551-9523-1-git-send-email-laurent.meunier@st.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Make PORT_GP_x() macros consistent
+Date: Fri, 30 Oct 2015 16:24:57 +0200
+Message-ID: <13270943.yfEHAtTNEp@avalon>
+References: <1446147587-20216-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2232 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756769AbbJ3OQC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 10:16:02 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:58631 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753387AbbJ3OY6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 10:24:58 -0400
+In-Reply-To: <1446147587-20216-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, andriy.shevchenko@intel.com, Laurent Meunier <laurent.meunier@st.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-This removes a needless loop which was caught in pinconf.c.
+Hi Geert,
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/pinconf.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index 29a7bb1..4dd7722 100644
---- a/drivers/pinctrl/pinconf.c
-+++ b/drivers/pinctrl/pinconf.c
-@@ -411,7 +411,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
- 	const struct pinctrl_map *found = NULL;
- 	struct pinctrl_dev *pctldev;
- 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
--	int i, j;
-+	int i;
- 
- 	mutex_lock(&pinctrl_maps_mutex);
- 
-@@ -424,13 +424,10 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
- 		if (strcmp(map->name, dbg->state_name))
- 			continue;
- 
--		for (j = 0; j < map->data.configs.num_configs; j++) {
--			if (!strcmp(map->data.configs.group_or_pin,
--					dbg->pin_name)) {
--				/* We found the right pin / state */
--				found = map;
--				break;
--			}
-+		if (!strcmp(map->data.configs.group_or_pin, dbg->pin_name)) {
-+			/* We found the right pin */
-+			found = map;
-+			break;
- 		}
- 	}
- 
+On Thursday 29 October 2015 20:39:47 Geert Uytterhoeven wrote:
+> On r8a7795, PORT_GP_x() is a macro for defining GPIOs 0..x.
+> In all other sh-pfc code, PORT_GP_x() is a macro for defining GPIOs
+> 0..(x-1).
+> 
+> Make the r8a7795 macro definitions consistent with the rest of the
+> sh-pfc codebase.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 36 +++++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c index
+> 7ddb2adfc5a53d7b..29d001b8a727e154 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -13,12 +13,12 @@
+>  #include "core.h"
+>  #include "sh_pfc.h"
+> 
+> -#define PORT_GP_3(bank, fn, sfx)					\
+> +#define PORT_GP_4(bank, fn, sfx)					\
+>  	PORT_GP_1(bank, 0,  fn, sfx), PORT_GP_1(bank, 1,  fn, sfx),	\
+>  	PORT_GP_1(bank, 2,  fn, sfx), PORT_GP_1(bank, 3,  fn, sfx)
+> 
+> -#define PORT_GP_14(bank, fn, sfx)					\
+> -	PORT_GP_3(bank, fn, sfx),					\
+> +#define PORT_GP_15(bank, fn, sfx)					\
+> +	PORT_GP_4(bank, fn, sfx),					\
+>  	PORT_GP_1(bank, 4,  fn, sfx), PORT_GP_1(bank, 5,  fn, sfx),	\
+>  	PORT_GP_1(bank, 6,  fn, sfx), PORT_GP_1(bank, 7,  fn, sfx),	\
+>  	PORT_GP_1(bank, 8,  fn, sfx), PORT_GP_1(bank, 9,  fn, sfx),	\
+> @@ -26,33 +26,33 @@
+>  	PORT_GP_1(bank, 12, fn, sfx), PORT_GP_1(bank, 13, fn, sfx),	\
+>  	PORT_GP_1(bank, 14, fn, sfx)
+> 
+> -#define PORT_GP_15(bank, fn, sfx)					\
+> -	PORT_GP_14(bank, fn, sfx),   PORT_GP_1(bank, 15, fn, sfx)
+> +#define PORT_GP_16(bank, fn, sfx)					\
+> +	PORT_GP_15(bank, fn, sfx),   PORT_GP_1(bank, 15, fn, sfx)
+> 
+> -#define PORT_GP_17(bank, fn, sfx)					\
+> -	PORT_GP_15(bank, fn, sfx),					\
+> +#define PORT_GP_18(bank, fn, sfx)					\
+> +	PORT_GP_16(bank, fn, sfx),					\
+>  	PORT_GP_1(bank, 16, fn, sfx), PORT_GP_1(bank, 17, fn, sfx)
+> 
+> -#define PORT_GP_25(bank, fn, sfx)					\
+> -	PORT_GP_17(bank, fn, sfx),					\
+> +#define PORT_GP_26(bank, fn, sfx)					\
+> +	PORT_GP_18(bank, fn, sfx),					\
+>  	PORT_GP_1(bank, 18, fn, sfx), PORT_GP_1(bank, 19, fn, sfx),	\
+>  	PORT_GP_1(bank, 20, fn, sfx), PORT_GP_1(bank, 21, fn, sfx),	\
+>  	PORT_GP_1(bank, 22, fn, sfx), PORT_GP_1(bank, 23, fn, sfx),	\
+>  	PORT_GP_1(bank, 24, fn, sfx), PORT_GP_1(bank, 25, fn, sfx)
+> 
+> -#define PORT_GP_27(bank, fn, sfx)					\
+> -	PORT_GP_25(bank, fn, sfx),					\
+> +#define PORT_GP_28(bank, fn, sfx)					\
+> +	PORT_GP_26(bank, fn, sfx),					\
+>  	PORT_GP_1(bank, 26, fn, sfx), PORT_GP_1(bank, 27, fn, sfx)
+> 
+>  #define CPU_ALL_PORT(fn, sfx)						\
+> -	PORT_GP_15(0, fn, sfx),						\
+> -	PORT_GP_27(1, fn, sfx),						\
+> -	PORT_GP_14(2, fn, sfx),						\
+> -	PORT_GP_15(3, fn, sfx),						\
+> -	PORT_GP_17(4, fn, sfx),						\
+> -	PORT_GP_25(5, fn, sfx),						\
+> +	PORT_GP_16(0, fn, sfx),						\
+> +	PORT_GP_28(1, fn, sfx),						\
+> +	PORT_GP_15(2, fn, sfx),						\
+> +	PORT_GP_16(3, fn, sfx),						\
+> +	PORT_GP_18(4, fn, sfx),						\
+> +	PORT_GP_26(5, fn, sfx),						\
+>  	PORT_GP_32(6, fn, sfx),						\
+> -	PORT_GP_3(7, fn, sfx)
+> +	PORT_GP_4(7, fn, sfx)
+>  /*
+>   * F_() : just information
+>   * FM() : macro for FN_xxx / xxx_MARK
+
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
 
