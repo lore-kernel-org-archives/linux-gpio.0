@@ -1,235 +1,231 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH v5 4/5] regulator: tps65912: Add regulator driver for the TPS65912 PMIC
-Date: Thu, 29 Oct 2015 18:38:41 -0500
-Message-ID: <1446161922-8755-5-git-send-email-afd@ti.com>
-References: <1446161922-8755-1-git-send-email-afd@ti.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH] gpio: Add IRQ support to ACCES 104-IDIO-16 driver
+Date: Thu, 29 Oct 2015 20:04:26 -0400
+Message-ID: <20151030000406.GA8699@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446161922-8755-1-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:34949 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770AbbJ3AEf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Oct 2015 20:04:35 -0400
+Received: by ykek133 with SMTP id k133so60443571yke.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Oct 2015 17:04:34 -0700 (PDT)
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org
 
-This patch adds support for TPS65912 PMIC regulators.
+The ACCES 104-IDIO-16 series offers Change-of-State detection interrupt
+functionality; if Change-of-State detection is enabled, an interrupt is
+fired off if any input line changes state (i.e. goes from low to high,
+or from high to low). This patch adds support to handle these interrupts
+and allows the user to mask which GPIO lines are affected. The interrupt
+line number for the device may be set via the idio_16_irq module
+parameter.
 
-The regulators set consists of 4 DCDCs and 10 LDOs. The output
-voltages are configurable and are meant to supply power to the
-main processor and other components.
-
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/regulator/Kconfig              |   6 ++
- drivers/regulator/Makefile             |   1 +
- drivers/regulator/tps65912-regulator.c | 170 +++++++++++++++++++++++++++++++++
- 3 files changed, 177 insertions(+)
- create mode 100644 drivers/regulator/tps65912-regulator.c
+ drivers/gpio/Kconfig            |   6 ++-
+ drivers/gpio/gpio-104-idio-16.c | 104 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 108 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 3cb2de9..1dec96a 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -727,6 +727,12 @@ config REGULATOR_TPS65910
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index dbb171d..8635f1a 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -694,8 +694,12 @@ menu "ISA GPIO drivers"
+ config GPIO_104_IDIO_16
+ 	tristate "ACCES 104-IDIO-16 GPIO support"
+ 	depends on X86
++	select GPIOLIB_IRQCHIP
  	help
- 	  This driver supports TPS65910/TPS65911 voltage regulator chips.
+-	  Enables GPIO support for the ACCES 104-IDIO-16 family.
++	  Enables GPIO support for the ACCES 104-IDIO-16 family. The base port
++	  address for the device may be set via the idio_16_base module
++	  parameter. The interrupt line number for the device may be set via the
++	  idio_16_irq module parameter.
  
-+config REGULATOR_TPS65912
-+	tristate "TI TPS65912 Power regulator"
-+	depends on MFD_TPS65912
-+	help
-+	    This driver supports TPS65912 voltage regulator chip.
-+
- config REGULATOR_TPS80031
- 	tristate "TI TPS80031/TPS80032 power regualtor driver"
- 	depends on MFD_TPS80031
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 222ff5f..0f81749 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_REGULATOR_TPS65218) += tps65218-regulator.o
- obj-$(CONFIG_REGULATOR_TPS6524X) += tps6524x-regulator.o
- obj-$(CONFIG_REGULATOR_TPS6586X) += tps6586x-regulator.o
- obj-$(CONFIG_REGULATOR_TPS65910) += tps65910-regulator.o
-+obj-$(CONFIG_REGULATOR_TPS65912) += tps65912-regulator.o
- obj-$(CONFIG_REGULATOR_TPS80031) += tps80031-regulator.o
- obj-$(CONFIG_REGULATOR_TWL4030) += twl-regulator.o
- obj-$(CONFIG_REGULATOR_VEXPRESS) += vexpress.o
-diff --git a/drivers/regulator/tps65912-regulator.c b/drivers/regulator/tps65912-regulator.c
-new file mode 100644
-index 0000000..1c9e474
---- /dev/null
-+++ b/drivers/regulator/tps65912-regulator.c
-@@ -0,0 +1,170 @@
-+/*
-+ * Regulator driver for TPS65912x PMIC
-+ *
-+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * Author: Andrew F. Davis <afd@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ *
-+ * Based on the TPS65218 driver and the previous TPS65912 driver by
-+ * Margarita Olaya Cabrera <magi@slimlogic.co.uk>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/of_regulator.h>
-+
-+#include <linux/mfd/tps65912.h>
-+
-+enum tps65912_regulators { DCDC1, DCDC2, DCDC3, DCDC4, LDO1, LDO2, LDO3,
-+	LDO4, LDO5, LDO6, LDO7, LDO8, LDO9, LDO10 };
-+
-+#define TPS65912_REGULATOR(_name, _id, _of_match, _ops, _vr, _er, _lr)	\
-+	[_id] = {							\
-+		.name			= _name,			\
-+		.of_match		= of_match_ptr(_of_match),	\
-+		.id			= _id,				\
-+		.ops			= &_ops,			\
-+		.n_voltages		= 64,				\
-+		.type			= REGULATOR_VOLTAGE,		\
-+		.owner			= THIS_MODULE,			\
-+		.vsel_reg		= _vr,				\
-+		.vsel_mask		= 0x3f,				\
-+		.enable_reg		= _er,				\
-+		.enable_mask		= BIT(7),			\
-+		.volt_table		= NULL,				\
-+		.linear_ranges		= _lr,				\
-+		.n_linear_ranges	= ARRAY_SIZE(_lr),		\
-+	}
-+
-+static const struct regulator_linear_range tps65912_dcdc_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 0x0, 0x3f, 50000),
-+};
-+
-+static const struct regulator_linear_range tps65912_ldo_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(800000, 0x0, 0x20, 25000),
-+	REGULATOR_LINEAR_RANGE(1650000, 0x21, 0x3c, 50000),
-+	REGULATOR_LINEAR_RANGE(3100000, 0x3d, 0x3f, 100000),
-+};
-+
-+/* Operations permitted on DCDCx */
-+static struct regulator_ops tps65912_ops_dcdc = {
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+};
-+
-+/* Operations permitted on LDOx */
-+static struct regulator_ops tps65912_ops_ldo = {
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.map_voltage		= regulator_map_voltage_linear_range,
-+};
-+
-+static const struct regulator_desc regulators[] = {
-+	TPS65912_REGULATOR("DCDC1", DCDC1, "dcdc1", tps65912_ops_dcdc,
-+			   TPS65912_DCDC1_OP, TPS65912_DCDC1_CTRL,
-+			   tps65912_dcdc_ranges),
-+	TPS65912_REGULATOR("DCDC2", DCDC2, "dcdc2", tps65912_ops_dcdc,
-+			   TPS65912_DCDC2_OP, TPS65912_DCDC2_CTRL,
-+			   tps65912_dcdc_ranges),
-+	TPS65912_REGULATOR("DCDC3", DCDC3, "dcdc3", tps65912_ops_dcdc,
-+			   TPS65912_DCDC3_OP, TPS65912_DCDC3_CTRL,
-+			   tps65912_dcdc_ranges),
-+	TPS65912_REGULATOR("DCDC4", DCDC4, "dcdc4", tps65912_ops_dcdc,
-+			   TPS65912_DCDC4_OP, TPS65912_DCDC4_CTRL,
-+			   tps65912_dcdc_ranges),
-+	TPS65912_REGULATOR("LDO1", LDO1, "ldo1", tps65912_ops_ldo,
-+			   TPS65912_LDO1_OP, TPS65912_LDO1_AVS,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO2", LDO2, "ldo2", tps65912_ops_ldo,
-+			   TPS65912_LDO2_OP, TPS65912_LDO2_AVS,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO3", LDO3, "ldo3", tps65912_ops_ldo,
-+			   TPS65912_LDO3_OP, TPS65912_LDO3_AVS,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO4", LDO4, "ldo4", tps65912_ops_ldo,
-+			   TPS65912_LDO4_OP, TPS65912_LDO4_AVS,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO5", LDO5, "ldo5", tps65912_ops_ldo,
-+			   TPS65912_LDO5, TPS65912_LDO5,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO6", LDO6, "ldo6", tps65912_ops_ldo,
-+			   TPS65912_LDO6, TPS65912_LDO6,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO7", LDO7, "ldo7", tps65912_ops_ldo,
-+			   TPS65912_LDO7, TPS65912_LDO7,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO8", LDO8, "ldo8", tps65912_ops_ldo,
-+			   TPS65912_LDO8, TPS65912_LDO8,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO9", LDO9, "ldo9", tps65912_ops_ldo,
-+			   TPS65912_LDO9, TPS65912_LDO9,
-+			   tps65912_ldo_ranges),
-+	TPS65912_REGULATOR("LDO10", LDO10, "ldo10", tps65912_ops_ldo,
-+			   TPS65912_LDO10, TPS65912_LDO10,
-+			   tps65912_ldo_ranges),
-+};
-+
-+static int tps65912_regulator_probe(struct platform_device *pdev)
+ endmenu
+ 
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 5400d7d..d1298dc 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -11,11 +11,16 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * General Public License for more details.
+  */
++#include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdesc.h>
++#include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -25,20 +30,27 @@
+ static unsigned idio_16_base;
+ module_param(idio_16_base, uint, 0);
+ MODULE_PARM_DESC(idio_16_base, "ACCES 104-IDIO-16 base address");
++static unsigned idio_16_irq;
++module_param(idio_16_irq, uint, 0);
++MODULE_PARM_DESC(idio_16_irq, "ACCES 104-IDIO-16 interrupt line number");
+ 
+ /**
+  * struct idio_16_gpio - GPIO device private data structure
+  * @chip:	instance of the gpio_chip
+- * @lock:	synchronization lock to prevent gpio_set race conditions
++ * @lock:	synchronization lock to prevent I/O race conditions
++ * @irq_mask:	I/O bits affected by interrupts
+  * @base:	base port address of the GPIO device
+  * @extent:	extent of port address region of the GPIO device
++ * @irq:	Interrupt line number
+  * @out_state:	output bits state
+  */
+ struct idio_16_gpio {
+ 	struct gpio_chip chip;
+ 	spinlock_t lock;
++	unsigned long irq_mask;
+ 	unsigned base;
+ 	unsigned extent;
++	unsigned irq;
+ 	unsigned out_state;
+ };
+ 
+@@ -105,6 +117,77 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+ 
++static void idio_16_irq_mask(struct irq_data *data)
 +{
-+	struct tps65912 *tps = dev_get_drvdata(pdev->dev.parent);
-+	struct regulator_config config = { };
-+	struct regulator_dev *rdev;
-+	int i;
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct idio_16_gpio *const idio16gpio = to_idio16gpio(chip);
++	const unsigned long GPIO_MASK = 1UL << irqd_to_hwirq(data);
++	unsigned long flags;
 +
-+	platform_set_drvdata(pdev, tps);
++	idio16gpio->irq_mask &= ~GPIO_MASK;
 +
-+	config.dev = &pdev->dev;
-+	config.driver_data = tps;
-+	config.of_node = pdev->dev.of_node;
-+	config.regmap = tps->regmap;
++	if (!idio16gpio->irq_mask) {
++		spin_lock_irqsave(&idio16gpio->lock, flags);
 +
-+	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
-+		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
-+					       &config);
-+		if (IS_ERR(rdev)) {
-+			dev_err(tps->dev, "failed to register %s regulator\n",
-+				pdev->name);
-+			return PTR_ERR(rdev);
-+		}
++		outb(0, idio16gpio->base + 2);
++
++		spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +	}
++}
++
++static void idio_16_irq_unmask(struct irq_data *data)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct idio_16_gpio *const idio16gpio = to_idio16gpio(chip);
++	const unsigned long GPIO_MASK = 1UL << irqd_to_hwirq(data);
++	const unsigned long PREV_IRQ_MASK = idio16gpio->irq_mask;
++	unsigned long flags;
++
++	idio16gpio->irq_mask |= GPIO_MASK;
++
++	if (!PREV_IRQ_MASK) {
++		spin_lock_irqsave(&idio16gpio->lock, flags);
++
++		outb(0, idio16gpio->base + 1);
++		inb(idio16gpio->base + 2);
++
++		spin_unlock_irqrestore(&idio16gpio->lock, flags);
++	}
++}
++
++static int idio_16_irq_set_type(struct irq_data *data, unsigned flow_type)
++{
++	if (flow_type && (flow_type & IRQ_TYPE_EDGE_BOTH) != IRQ_TYPE_EDGE_BOTH)
++		return -EINVAL;
 +
 +	return 0;
 +}
 +
-+static const struct platform_device_id tps65912_regulator_id_table[] = {
-+	{ "tps65912-regulator", },
-+	{ /* sentinel */ }
++static struct irq_chip idio_16_irqchip = {
++	.name = "104-idio-16",
++	.irq_mask = idio_16_irq_mask,
++	.irq_unmask = idio_16_irq_unmask,
++	.irq_set_type = idio_16_irq_set_type
 +};
-+MODULE_DEVICE_TABLE(platform, tps65912_regulator_id_table);
 +
-+static struct platform_driver tps65912_regulator_driver = {
-+	.driver = {
-+		.name = "tps65912-regulator",
-+	},
-+	.probe = tps65912_regulator_probe,
-+	.id_table = tps65912_regulator_id_table,
-+};
-+module_platform_driver(tps65912_regulator_driver);
++static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
++{
++	struct idio_16_gpio *const idio16gpio = dev_id;
++	struct gpio_chip *const chip = &idio16gpio->chip;
++	int gpio;
 +
-+MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
-+MODULE_DESCRIPTION("TPS65912 voltage regulator driver");
-+MODULE_LICENSE("GPL v2");
++	for_each_set_bit(gpio, &idio16gpio->irq_mask, chip->ngpio)
++		generic_handle_irq(irq_find_mapping(chip->irqdomain, gpio));
++
++	spin_lock(&idio16gpio->lock);
++
++	outb(0, idio16gpio->base + 1);
++
++	spin_unlock(&idio16gpio->lock);
++
++	return IRQ_HANDLED;
++}
++
+ static int __init idio_16_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -113,6 +196,7 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 
+ 	const unsigned BASE = idio_16_base;
+ 	const unsigned EXTENT = 8;
++	const unsigned IRQ = idio_16_irq;
+ 	const char *const NAME = dev_name(dev);
+ 
+ 	idio16gpio = devm_kzalloc(dev, sizeof(*idio16gpio), GFP_KERNEL);
+@@ -138,6 +222,7 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+ 	idio16gpio->base = BASE;
+ 	idio16gpio->extent = EXTENT;
++	idio16gpio->irq = IRQ;
+ 	idio16gpio->out_state = 0xFFFF;
+ 
+ 	spin_lock_init(&idio16gpio->lock);
+@@ -150,8 +235,24 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 		goto err_gpio_register;
+ 	}
+ 
++	err = gpiochip_irqchip_add(&idio16gpio->chip, &idio_16_irqchip, 0,
++		handle_simple_irq, IRQ_TYPE_NONE);
++	if (err) {
++		dev_err(dev, "Could not add irqchip (%d)\n", err);
++		goto err_gpiochip_irqchip_add;
++	}
++
++	err = request_irq(IRQ, idio_16_irq_handler, 0, NAME, idio16gpio);
++	if (err) {
++		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
++		goto err_request_irq;
++	}
++
+ 	return 0;
+ 
++err_request_irq:
++err_gpiochip_irqchip_add:
++	gpiochip_remove(&idio16gpio->chip);
+ err_gpio_register:
+ 	release_region(BASE, EXTENT);
+ err_lock_io_port:
+@@ -162,6 +263,7 @@ static int idio_16_remove(struct platform_device *pdev)
+ {
+ 	struct idio_16_gpio *const idio16gpio = platform_get_drvdata(pdev);
+ 
++	free_irq(idio16gpio->irq, idio16gpio);
+ 	gpiochip_remove(&idio16gpio->chip);
+ 	release_region(idio16gpio->base, idio16gpio->extent);
+ 
 -- 
-1.9.1
+2.4.10
+
