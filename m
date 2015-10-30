@@ -1,60 +1,59 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] pinctrl: baytrail: Serialize all register access
-Date: Fri, 30 Oct 2015 08:26:59 -0700
-Message-ID: <20151030152659.GA29070@kroah.com>
-References: <1438689794-14355-1-git-send-email-mika.westerberg@linux.intel.com>
- <1438689794-14355-2-git-send-email-mika.westerberg@linux.intel.com>
- <CAKi4VAK0WcoP7CHZCrB=r_T=ywo8bcKt=_iA=Tb0mQR64HCoWw@mail.gmail.com>
+From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Subject: Re: [PATCH] gpio: group port-mapped I/O drivers in a menu
+Date: Fri, 30 Oct 2015 11:46:45 -0400
+Message-ID: <20151030154645.GA1156@ketchup.mtl.sfl>
+References: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39373 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752247AbbJ3P1D (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 11:27:03 -0400
+Received: from mail.savoirfairelinux.com ([208.88.110.44]:39035 "EHLO
+	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932912AbbJ3QCT convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 12:02:19 -0400
 Content-Disposition: inline
-In-Reply-To: <CAKi4VAK0WcoP7CHZCrB=r_T=ywo8bcKt=_iA=Tb0mQR64HCoWw@mail.gmail.com>
+In-Reply-To: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lucas De Marchi <lucas.de.marchi@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, Diego Elio =?iso-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>
 
-On Fri, Oct 30, 2015 at 12:48:38PM -0200, Lucas De Marchi wrote:
-> Hi Mika and Linus,
-> 
-> CC'ing Greg.
-> 
-> On Tue, Aug 4, 2015 at 9:03 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> > There is a hardware issue in Intel Baytrail where concurrent GPIO register
-> > access might result reads of 0xffffffff and writes might get dropped
-> > completely.
-> >
-> > Prevent this from happening by taking the serializing lock in all places
-> > where it is possible that more than one thread might be accessing the
-> > hardware concurrently.
-> >
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> 
-> Now that this is on 4.2, can we get it on stable branches?  I was
-> hitting this bug for some time on MinnowBoard Max and this week I had
-> some time to take a look on how to fix it. Good timing, it had already
-> been fixed. Applying this patch the issue is gone on top of 4.1.12.
-> 
-> I'm using these patches from Linus Torvalds' tree:
-> 39ce815 pinctrl: baytrail: Serialize all register access
-> 78e1c89 pinctrl: baytrail: Use raw_spinlock for locking
-> 
-> 
-> The ones to Cherryview could be sent too but I couldn't test them.
-> 
-> Leaving the patch below for reference.
+Hi Linus,
 
-<formletter>
+On Oct. Friday 30 (44) 10:38 AM, Linus Walleij wrote:
+> Create a Kconfig submenu for drivers using X86 port-mapped I/O
+> and depend on X86 for this.
+>=20
+> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Cc: Andreas Bofjall <andreas@gazonk.org>
+> Cc: Simon Guinot <simon.guinot@sequanux.org>
+> Cc: Diego Elio Petten=F2 <flameeyes@flameeyes.eu>
+> Cc: Daniel Krueger <daniel.krueger@systec-electronic.com>
+> Cc: Bruno Randolf <br1@einfach.org>
+> Cc: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/Kconfig | 155 ++++++++++++++++++++++++++---------------=
+----------
+>  1 file changed, 78 insertions(+), 77 deletions(-)
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read Documentation/stable_kernel_rules.txt
-for how to do this properly.
+<snip>
 
-</formletter>
+> +menu "Port-mapped I/O GPIO drivers"
+> +	depends on X86
+> +
+> +config GPIO_104_IDIO_16
+> +	tristate "ACCES 104-IDIO-16 GPIO support"
+> +	depends on X86
+
+Since the menu depends on X86, shouldn't we remove the "depends on X86"
+of its drivers?
+
+Thanks,
+-v
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
