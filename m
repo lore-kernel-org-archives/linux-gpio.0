@@ -1,41 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 5/5] gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
-Date: Fri, 30 Oct 2015 15:13:03 +0100
-Message-ID: <CACRpkdb+C1M=cFKDNbJW74hUEA=87aA_weR0u22-9bDKgif6xQ@mail.gmail.com>
-References: <1446161922-8755-1-git-send-email-afd@ti.com>
-	<1446161922-8755-6-git-send-email-afd@ti.com>
+From: Laurent Meunier <laurent.meunier@st.com>
+Subject: [PATCH V3] pinctrl: pinconf: remove needless loop
+Date: Fri, 30 Oct 2015 15:15:51 +0100
+Message-ID: <1446214551-9523-1-git-send-email-laurent.meunier@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:36402 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030592AbbJ3ONE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 10:13:04 -0400
-Received: by obcqt19 with SMTP id qt19so44771055obc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 07:13:03 -0700 (PDT)
-In-Reply-To: <1446161922-8755-6-git-send-email-afd@ti.com>
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2232 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756769AbbJ3OQC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 30 Oct 2015 10:16:02 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, andriy.shevchenko@intel.com, Laurent Meunier <laurent.meunier@st.com>
 
-On Fri, Oct 30, 2015 at 12:38 AM, Andrew F. Davis <afd@ti.com> wrote:
+This removes a needless loop which was caught in pinconf.c.
 
-> This patch adds support for the TPS65912 PMIC GPIOs.
->
-> TPS65912 has five configurable GPIOs that can be used for several
-> purposes.
->
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Laurent Meunier <laurent.meunier@st.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/pinconf.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-This looks like a fine driver, can't really see anything wrong with it so:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 29a7bb1..4dd7722 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -411,7 +411,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 	const struct pinctrl_map *found = NULL;
+ 	struct pinctrl_dev *pctldev;
+ 	struct dbg_cfg *dbg = &pinconf_dbg_conf;
+-	int i, j;
++	int i;
+ 
+ 	mutex_lock(&pinctrl_maps_mutex);
+ 
+@@ -424,13 +424,10 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+ 		if (strcmp(map->name, dbg->state_name))
+ 			continue;
+ 
+-		for (j = 0; j < map->data.configs.num_configs; j++) {
+-			if (!strcmp(map->data.configs.group_or_pin,
+-					dbg->pin_name)) {
+-				/* We found the right pin / state */
+-				found = map;
+-				break;
+-			}
++		if (!strcmp(map->data.configs.group_or_pin, dbg->pin_name)) {
++			/* We found the right pin */
++			found = map;
++			break;
+ 		}
+ 	}
+ 
+-- 
+1.9.1
 
-> +#define to_tps65912_gpio(gc) container_of(gc, struct tps65912_gpio, gpio_chip)
-
-I would rewrite that to static inline however.
-
-Lee can take this into the MFD tree with my review-tag if he wants.
-
-Yours,
-Linus Walleij
