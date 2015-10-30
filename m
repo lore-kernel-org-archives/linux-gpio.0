@@ -1,139 +1,166 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Fri, 30 Oct 2015 13:01:28 -0500
-Message-ID: <5633B078.7080209@ti.com>
-References: <1446161922-8755-1-git-send-email-afd@ti.com>
- <1446161922-8755-2-git-send-email-afd@ti.com> <20151030171006.GZ4058@x1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] mfd: arizona: Support Cirrus Logic CS47L24 and
+ WM1831
+Date: Fri, 30 Oct 2015 18:29:41 +0000
+Message-ID: <20151030182941.GI4058@x1>
+References: <1445264027-7357-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1445264027-7357-2-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:38364 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759717AbbJ3SBp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 30 Oct 2015 14:01:45 -0400
-In-Reply-To: <20151030171006.GZ4058@x1>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:35078 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760020AbbJ3S3s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 14:29:48 -0400
+Received: by wicll6 with SMTP id ll6so16192745wic.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 11:29:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1445264027-7357-2-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: linus.walleij@linaro.org, broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
 
-On 10/30/2015 12:10 PM, Lee Jones wrote:
-> On Thu, 29 Oct 2015, Andrew F. Davis wrote:
->
->> The TPS65912 PMIC contains several regulators and a GPIO controller.
->> Add bindings for the TPS65912 PMIC.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
->
-> Why have you dropped Linus' Review-by?
->
+On Mon, 19 Oct 2015, Richard Fitzgerald wrote:
 
-Strange, I thought I made a change to this. Well this brings up a question,
-how much change can we have before we are supposed to drop Reviewed/Acked-by?
+> This patch adds the regmap configuration tables and
+> core MFD handling for the CS47L24 and WM1831 codecs.
+>=20
+> Note that compared to the other Arizona codecs, these devices
+> do not have an LDO1 or micsupp regulators, extcon driver, or
+> the DCVDD isolation control.
+>=20
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/arizona.txt |    4 +-
 
->>   Documentation/devicetree/bindings/mfd/tps65912.txt | 51 ++++++++++++++++++++++
->>   .../bindings/regulator/tps65912-regulator.txt      | 28 ++++++++++++
->>   3 files changed, 95 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->>   create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
->>   create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->> new file mode 100644
->> index 0000000..0c5c05c4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->> @@ -0,0 +1,16 @@
->> +* TPS65912 GPIO Controller bindings
->> +
->> +Required properties:
->> + - compatible : Should be "ti,tps65912-gpio".
->> + - gpio-controller : Marks the device node as a GPIO Controller.
->> + - #gpio-cells : Should be two.  The first cell is the pin number and
->
-> You should add a (See: ../gpio/gpio.txt) here I think.
->
+Separate patch please.
 
-ACK
+>  drivers/mfd/Kconfig                               |   19 +-
+>  drivers/mfd/Makefile                              |    3 +
+>  drivers/mfd/arizona-core.c                        |   74 +-
+>  drivers/mfd/arizona-irq.c                         |   40 +-
+>  drivers/mfd/arizona-spi.c                         |    7 +
+>  drivers/mfd/arizona.h                             |    4 +
+>  drivers/mfd/cs47l24-tables.c                      | 1629 +++++++++++=
+++++++++++
+>  include/linux/mfd/arizona/core.h                  |    3 +
+>  9 files changed, 1757 insertions(+), 26 deletions(-)
+>  create mode 100644 drivers/mfd/cs47l24-tables.c
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Docu=
+mentation/devicetree/bindings/mfd/arizona.txt
+> index a8fee60..73f28fa 100644
+> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> @@ -1,4 +1,4 @@
+> -Wolfson Arizona class audio SoCs
+> +Cirrus Logic/Wolfson Microelectronics Arizona class audio SoCs
+> =20
+>  These devices are audio SoCs with extensive digital capabilites and =
+a range
+>  of analogue I/O.
+> @@ -12,6 +12,8 @@ Required properties:
+>          "wlf,wm8997"
+>          "wlf,wm8998"
+>          "wlf,wm1814"
+> +        "wlf,wm1831"
+> +        "cirrus,cs47l24"
+> =20
+>    - reg : I2C slave address when connected using I2C, chip select nu=
+mber when
+>      using SPI.
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 4d92df6..d25bbb3 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1370,24 +1370,24 @@ config MFD_ARIZONA
+>  	bool
+> =20
+>  config MFD_ARIZONA_I2C
+> -	tristate "Wolfson Microelectronics Arizona platform with I2C"
+> +	tristate "Cirrus Logic/Wolfson Microelectronics Arizona platform wi=
+th I2C"
+>  	select MFD_ARIZONA
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	depends on I2C
+>  	help
+> -	  Support for the Wolfson Microelectronics Arizona platform audio S=
+oC
+> -	  core functionality controlled via I2C.
+> +	  Support for the Cirrus Logic/Wolfson Microelectronics Arizona pla=
+tform
+> +	  audio SoC core functionality controlled via I2C.
+> =20
+>  config MFD_ARIZONA_SPI
+> -	tristate "Wolfson Microelectronics Arizona platform with SPI"
+> +	tristate "Cirrus Logic/Wolfson Microelectronics Arizona platform wi=
+th SPI"
+>  	select MFD_ARIZONA
+>  	select MFD_CORE
+>  	select REGMAP_SPI
+>  	depends on SPI_MASTER
+>  	help
+> -	  Support for the Wolfson Microelectronics Arizona platform audio S=
+oC
+> -	  core functionality controlled via I2C.
+> +	  Support for the Cirrus Logic/Wolfson Microelectronics Arizona pla=
+tform
+> +	  audio SoC core functionality controlled via I2C.
+> =20
+>  config MFD_WM5102
+>  	bool "Wolfson Microelectronics WM5102"
+> @@ -1414,6 +1414,13 @@ config MFD_WM8998
+>  	help
+>  	  Support for Wolfson Microelectronics WM8998 low power audio SoC
+> =20
+> +config MFD_CS47L24
+> +	bool "Cirrus Logic CS47L24 and WM1831"
+> +	depends on MFD_ARIZONA
+> +	help
+> +	  Support for Cirrus Logic CS47L24 and WM1831 low power audio SoC
+> +
+> +
 
->> +     the second cell is used to specify flags.
->> +     See include/dt-bindings/gpio/gpio.h for possible values.
->
-> This is a Linuxisum and shouldn't really live in here.
->
-> I think it would be better to document them in ../gpio/gpio.txt and
-> reference that instead.
->
+Superflous '\n'.
 
-Looks like that is already in ../gpio/gpio.txt:57
+[...]
 
->> +Example:
->> +
->> +	gpio4: tps65912_gpio {
->
-> Device names don't belong in node names.
->
-> Just "gpio" will do.
->
+> diff --git a/drivers/mfd/cs47l24-tables.c b/drivers/mfd/cs47l24-table=
+s.c
+> new file mode 100644
+> index 0000000..f877586
+> --- /dev/null
+> +++ b/drivers/mfd/cs47l24-tables.c
+> @@ -0,0 +1,1629 @@
+> +/*
+> + * cs47l24-tables.c  --  data tables for CS47L24 codec
 
-ACK
+Please remove this filename.
 
->> +		compatible = "ti,tps65912-gpio";
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +	};
->> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
->> new file mode 100644
->> index 0000000..da5804a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
->> @@ -0,0 +1,51 @@
->> +* TPS65912 Power Management Integrated Circuit bindings
->> +
->> +Required properties:
->> + - compatible : Should be "ti,tps65912".
->> + - reg : Slave address or chip select number (I2C / SPI).
->> + - interrupt-parent : The parent interrupt controller.
->> + - interrupts : The interrupt line the device is connected to.
->> + - interrupt-controller : Marks the device node as an interrupt controller.
->> + - #interrupt-cells: The number of cells to describe an IRQ, this should be 2.
->> +     The first cell is the IRQ number.
->> +     The second cell is the flags, encoded as the trigger masks from
->> +     ../interrupt-controller/interrupts.txt
->
-> Nit: We *normally* treat these as bullet-points and not place
-> full-stops on them:
->
-> $ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v "\.$" | wc -l
-> 5227
-> $ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc -l
-> 486
->
+They have a habit of becoming unaligned.
 
-What about for multi-sentence descriptions, we need the middle full-stops, then to not
-have one on the end seems kinda odd looking.
+> + * Copyright 2015 Cirrus Logic, Inc.
+> + *
+> + * Author: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 
-> ... and I *personally* think it's easier to read the document if it's
-> formatted as follows:
->
-> - compatible			: Should be "ti,tps65912".
-> - reg				: Slave address or chip select number (I2C / SPI).
-> - interrupt-parent		: The parent interrupt controller.
-> - interrupts			: The interrupt line the device is connected to.
-> - interrupt-controller		: Marks the device node as an interrupt controller.
-> - #interrupt-cells		: The number of cells to describe an IRQ, this should be 2.
-> 					The first cell is the IRQ number.
-> 					The second cell is the flags, encoded as the trigger masks from
-> 					../interrupt-controller/interrupts.txt
->
-> ... I hope you agree.
->
+[...]
 
-Yeah, I did that with the last driver, not sure why I forgot to fix that here, I'll fix this.
-
-> [...]
->
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
