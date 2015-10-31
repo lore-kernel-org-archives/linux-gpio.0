@@ -1,44 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/6] GPIO character device skeleton
-Date: Fri, 30 Oct 2015 23:54:48 +0100
-Message-ID: <3839397.mYWtgokiUO@wuerfel>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org> <20151024184253.GC22220@pengutronix.de> <CACRpkdYiQ=eQpUNspRH27x=9soExn-Mx5Rhc7USqAk7g5DNG_A@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/2] pinctrl: uniphier: enable UniPhier SoCs pinctrl
+ drivers by default
+Date: Sat, 31 Oct 2015 01:41:10 +0000
+Message-ID: <20151031014110.GA1991@localhost>
+References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
+ <CACRpkdY4hs_7dE2KicDeUj7hvbKmHu3pcwQO3eshTtSmzH2PGA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:63259 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753286AbbJ3Wyw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 18:54:52 -0400
-In-Reply-To: <CACRpkdYiQ=eQpUNspRH27x=9soExn-Mx5Rhc7USqAk7g5DNG_A@mail.gmail.com>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:35510 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750919AbbJaCE5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 22:04:57 -0400
+Received: by pasz6 with SMTP id z6so89666200pas.2
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 19:04:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdY4hs_7dE2KicDeUj7hvbKmHu3pcwQO3eshTtSmzH2PGA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Friday 30 October 2015 15:43:18 Linus Walleij wrote:
-> On Sat, Oct 24, 2015 at 8:42 PM, Markus Pargmann <mpa@pengutronix.de> wrote:
+On Thu, Oct 29, 2015 at 02:33:34PM +0100, Linus Walleij wrote:
+> On Tue, Oct 27, 2015 at 3:28 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
 > 
-> > What happens if we have two I2C gpio expanders with the same I2C
-> > addresses connected to different I2C busses? If I see this correctly
-> > they would both show up with the same name. Is there an easy and
-> > race-free way to see which GPIO chip is connected to which I2C bus?
+> > Add "default y" to the Kconfig rather than adding entries into
+> > arch/arm/configs/multi_v7_defconfig.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > 
-> My spontaneous question is: how does ethernet interfaces or whatever
-> handle this nowadays to get unique device names?
+> (...)
+> > config PINCTRL_UNIPHIER_PH1_LD4
+> >         tristate "UniPhier PH1-LD4 SoC pinctrl driver"
+> > +       default y
+> >         select PINCTRL_UNIPHIER_CORE
 > 
-> Currently we are probe-order dependent. It would be good to fix
-> the plug-order business from day 1 but how?
+> Why is it not default y if <PH1_LD4_SOC_THING>?
+> 
+> So it is only turned on if the corresponding SoC is selected?
+> 
+> Or don't you have symbols like that?
+> 
+> ARM SoC folks: can you ACK this patch indicating that this is the way
+> you wanna handle this?
 
-ethernet devices are in their own namespace but can get renamed according
-to distro-specific policy. A common method is to keep a record of all
-mac addresses that were seen in a file in /etc (e.g.
-/etc/udev/rules.d/70-persistent-net.rules) and rename them to whatever
-they were previously known as when they show up with a different name.
+Most other will have a "default MACH_<foo>", but Uniphier lacks those Kconfig
+symbols. Or even a def_bool for that platform such that it's not an option if
+the platform is enabled. It makes no sense to enable a platform but not the
+pinctrl on it, so that's a good way to do it.
 
-For character devices, udev has a complex set of (user-overridable) rules
-to derive one or more stable name(s) from the sysfs attributes.
+I would honestly rather have those in the mach makefile, and make the drivers
+select the right thing by default, than having to know exactly which drivers to
+enable for a specific SoC.
 
-	Arnd
 
+-Olof
