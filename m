@@ -1,58 +1,45 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/2] pinctrl: uniphier: enable UniPhier SoCs pinctrl
- drivers by default
-Date: Sat, 31 Oct 2015 01:41:10 +0000
-Message-ID: <20151031014110.GA1991@localhost>
-References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdY4hs_7dE2KicDeUj7hvbKmHu3pcwQO3eshTtSmzH2PGA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] gpio / ACPI: Allow shared GPIO event to be read via operation region
+Date: Sat, 31 Oct 2015 03:51:21 +0100
+Message-ID: <4111039.FBWfxG0hG5@vostro.rjw.lan>
+References: <1446199325-48095-1-git-send-email-mika.westerberg@linux.intel.com> <CACRpkdaywq+j6k4vKBexJGahb9S2M1=vg3Dwsrh6fDUTD+LgxQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:35510 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750919AbbJaCE5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 22:04:57 -0400
-Received: by pasz6 with SMTP id z6so89666200pas.2
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Oct 2015 19:04:56 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdY4hs_7dE2KicDeUj7hvbKmHu3pcwQO3eshTtSmzH2PGA@mail.gmail.com>
+Received: from v094114.home.net.pl ([79.96.170.134]:64248 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751326AbbJaCWS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Oct 2015 22:22:18 -0400
+In-Reply-To: <CACRpkdaywq+j6k4vKBexJGahb9S2M1=vg3Dwsrh6fDUTD+LgxQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Aaron Lu <aaron.lu@intel.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Oct 29, 2015 at 02:33:34PM +0100, Linus Walleij wrote:
-> On Tue, Oct 27, 2015 at 3:28 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
+On Friday, October 30, 2015 09:17:41 PM Linus Walleij wrote:
+> On Fri, Oct 30, 2015 at 11:02 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
 > 
-> > Add "default y" to the Kconfig rather than adding entries into
-> > arch/arm/configs/multi_v7_defconfig.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> 
+> > In Microsoft Surface3 the GPIO detecting lid state is shared between GPIO
+> > event and operation region. Below is simplied version of the DSDT from
+> > Surface3 including relevant parts:
 > (...)
-> > config PINCTRL_UNIPHIER_PH1_LD4
-> >         tristate "UniPhier PH1-LD4 SoC pinctrl driver"
-> > +       default y
-> >         select PINCTRL_UNIPHIER_CORE
+> > To be able to go through acpi_gpio->events list for operation region access
+> > we need to make sure the list is properly initialized whenever GPIO chip is
+> > registered.
+> >
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=106571
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > 
-> Why is it not default y if <PH1_LD4_SOC_THING>?
-> 
-> So it is only turned on if the corresponding SoC is selected?
-> 
-> Or don't you have symbols like that?
-> 
-> ARM SoC folks: can you ACK this patch indicating that this is the way
-> you wanna handle this?
+> I wonder what an operation region is, maybe it's something you can eat.
 
-Most other will have a "default MACH_<foo>", but Uniphier lacks those Kconfig
-symbols. Or even a def_bool for that platform such that it's not an option if
-the platform is enabled. It makes no sense to enable a platform but not the
-pinctrl on it, so that's a good way to do it.
+That's a way for AML to access things.
 
-I would honestly rather have those in the mach makefile, and make the drivers
-select the right thing by default, than having to know exactly which drivers to
-enable for a specific SoC.
+Basically, if it wants to access a resource, it has to declare "I will be using
+X bytes at location Y in address space Z" and the OS is supposed to provide
+a handler for that.
 
+Thanks,
+Rafael
 
--Olof
