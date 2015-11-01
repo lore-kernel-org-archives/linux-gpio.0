@@ -1,46 +1,35 @@
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Subject: Re: [PATCH] gpio: group port-mapped I/O drivers in a menu
-Date: Sat, 31 Oct 2015 18:03:01 -0400
-Message-ID: <20151031220300.GA18387@ketchup.lan>
-References: <1446197896-5383-1-git-send-email-linus.walleij@linaro.org>
- <20151030154645.GA1156@ketchup.mtl.sfl>
- <CACRpkdYOGCD7D98kBeKmJXA31KEpYR+HPQiDep1QFz60F2v9rQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/6] GPIO character device skeleton
+Date: Sun, 1 Nov 2015 10:37:28 +0100
+Message-ID: <CACRpkdaO7XT+V4bbKE9Vzx+B4rLHXC+YhoX_UdxKSvypQUJZ0A@mail.gmail.com>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+	<20151024184253.GC22220@pengutronix.de>
+	<CACRpkdYiQ=eQpUNspRH27x=9soExn-Mx5Rhc7USqAk7g5DNG_A@mail.gmail.com>
+	<3839397.mYWtgokiUO@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:48145 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750763AbbJaWMR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 31 Oct 2015 18:12:17 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYOGCD7D98kBeKmJXA31KEpYR+HPQiDep1QFz60F2v9rQ@mail.gmail.com>
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34413 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752314AbbKAJh3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Nov 2015 04:37:29 -0500
+Received: by obbza9 with SMTP id za9so74328185obb.1
+        for <linux-gpio@vger.kernel.org>; Sun, 01 Nov 2015 01:37:28 -0800 (PST)
+In-Reply-To: <3839397.mYWtgokiUO@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>, Diego Elio =?iso-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.eu>, Daniel Krueger <daniel.krueger@systec-electronic.com>, Bruno Randolf <br1@einfach.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-Hi Linus,
+On Fri, Oct 30, 2015 at 11:54 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-On Oct. Saturday 31 (44) 10:11 PM, Linus Walleij wrote:
-> On Fri, Oct 30, 2015 at 4:46 PM, Vivien Didelot
-> <vivien.didelot@savoirfairelinux.com> wrote:
-> 
-> >> +menu "Port-mapped I/O GPIO drivers"
-> >> +     depends on X86
-> >> +
-> >> +config GPIO_104_IDIO_16
-> >> +     tristate "ACCES 104-IDIO-16 GPIO support"
-> >> +     depends on X86
-> >
-> > Since the menu depends on X86, shouldn't we remove the "depends on X86"
-> > of its drivers?
-> 
-> Maybe. I'm scared of KConfig.
-> 
-> Will be a separate patch anyways.
+> For character devices, udev has a complex set of (user-overridable) rules
+> to derive one or more stable name(s) from the sysfs attributes.
 
-Entries will inherit the X86 dependency of the menu, so you can safely
-remove it from the entries in this same patch which adds the menu.
+OK I'll go read these I think.
 
-Thanks,
--v
+Doesn't help much with Busybox' mdev though, which I recently discussed
+with Greg and turns out to need a rewrite :/
+
+Yours,
+Linus Walleij
