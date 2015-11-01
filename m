@@ -1,103 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: fix up SPI submenu
-Date: Sun,  1 Nov 2015 10:52:52 +0100
-Message-ID: <1446371572-31924-1-git-send-email-linus.walleij@linaro.org>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 2/3] gpio: ath79: Move to the generic GPIO driver
+Date: Sun, 1 Nov 2015 18:46:59 +0100
+Message-ID: <20151101184659.1824dc35@tock>
+References: <1446201391-22553-1-git-send-email-albeu@free.fr>
+	<1446201391-22553-2-git-send-email-albeu@free.fr>
+	<CACRpkdY3Xjir7pHLhpT9nv1w-KA5E3a767vqZoQronyAWZ1F1w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:36514 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751364AbbKAJxG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 1 Nov 2015 04:53:06 -0500
-Received: by lbjm5 with SMTP id m5so71454385lbj.3
-        for <linux-gpio@vger.kernel.org>; Sun, 01 Nov 2015 01:53:04 -0800 (PST)
+Received: from smtp2-g21.free.fr ([212.27.42.2]:53466 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752448AbbKARrJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 1 Nov 2015 12:47:09 -0500
+In-Reply-To: <CACRpkdY3Xjir7pHLhpT9nv1w-KA5E3a767vqZoQronyAWZ1F1w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Aban Bedel <albeu@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-- Relax dependencies on SPI_MASTER for drivers in the SPI menu
-  that already has this dependency.
-- Move out the expander that would be hidden for I2C access if
-  SPI_MASTER was not selected. Tentatively create a separate
-  menu for this.
-- Move the ZX SoC driver to memory-mapped drivers, this must be
-  a mistake and only worked because the system has an SPI master
-  enabled at the same time.
+On Sat, 31 Oct 2015 22:02:53 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig | 34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
+> On Fri, Oct 30, 2015 at 11:36 AM, Alban Bedel <albeu@free.fr> wrote:
+> 
+> > Turn the ath79 driver into a true driver supporting multiple
+> > instances while dropping most of the code in favor of the generic
+> > MMIO GPIO driver.
+> >
+> > As the driver now depend on CONFIG_GPIO_GENERIC also add a Kconfig
+> > entry to make the driver optional.
+> >
+> > Signed-off-by: Alban Bedel <albeu@free.fr>
+> 
+> This patch looks nice but sadly does not apply to my "devel" branch in
+> the GPIO tree:
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+> 
+> Please rebase it on this branch or wait until after the merge window.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a8dcc99830c3..b18bea08ff25 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -483,6 +483,12 @@ config GPIO_ZYNQ
- 	help
- 	  Say yes here to support Xilinx Zynq GPIO controller.
- 
-+config GPIO_ZX
-+	bool "ZTE ZX GPIO support"
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to support the GPIO device on ZTE ZX SoCs.
-+
- endmenu
- 
- menu "Port-mapped I/O GPIO drivers"
-@@ -984,7 +990,7 @@ menu "SPI GPIO expanders"
- 
- config GPIO_74X164
- 	tristate "74x164 serial-in/parallel-out 8-bits shift register"
--	depends on SPI_MASTER && OF
-+	depends on OF
- 	help
- 	  Driver for 74x164 compatible serial-in/parallel-out 8-outputs
- 	  shift registers. This driver can be used to provide access
-@@ -992,32 +998,28 @@ config GPIO_74X164
- 
- config GPIO_MAX7301
- 	tristate "Maxim MAX7301 GPIO expander"
--	depends on SPI_MASTER
- 	select GPIO_MAX730X
- 	help
- 	  GPIO driver for Maxim MAX7301 SPI-based GPIO expander.
- 
--config GPIO_MCP23S08
--	tristate "Microchip MCP23xxx I/O expander"
--	depends on (SPI_MASTER && !I2C) || I2C
--	help
--	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
--	  I/O expanders.
--	  This provides a GPIO interface supporting inputs and outputs.
--	  The I2C versions of the chips can be used as interrupt-controller.
--
- config GPIO_MC33880
- 	tristate "Freescale MC33880 high-side/low-side switch"
--	depends on SPI_MASTER
- 	help
- 	  SPI driver for Freescale MC33880 high-side/low-side switch.
- 	  This provides GPIO interface supporting inputs and outputs.
- 
--config GPIO_ZX
--	bool "ZTE ZX GPIO support"
--	select GPIOLIB_IRQCHIP
-+endmenu
-+
-+menu "SPI or I2C GPIO expanders"
-+	depends on (SPI_MASTER && !I2C) || I2C
-+
-+config GPIO_MCP23S08
-+	tristate "Microchip MCP23xxx I/O expander"
- 	help
--	  Say yes here to support the GPIO device on ZTE ZX SoCs.
-+	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
-+	  I/O expanders.
-+	  This provides a GPIO interface supporting inputs and outputs.
-+	  The I2C versions of the chips can be used as interrupt-controller.
- 
- endmenu
- 
--- 
-2.4.3
+I see that you applied my previous patch "gpio: ath79: Convert to the
+state container design pattern", this series was supposed to replace
+this patch. I'm sorry I forgot to mention this. That old patch doesn't
+make much sense any more as most of the code it changed just get
+dropped in the move to GPIO_GENERIC.
 
+> > +config GPIO_ATH79
+> > +       tristate "Atheros AR71XX/AR724X/AR913X GPIO support"
+> > +       default y if ATH79
+> > +       depends on ATH79 || COMPILE_TEST
+> 
+> I think the build robot is complaining because of COMPILE_TEST. This
+> driver doesn't really compile on anything else than ATH79 does it?
+> Noone else has asm/mach-ath79/ar71xx_regs.h
+>
+> So I suggest dropping the compile test until this is fixed (e.g. by
+> moving the GPIO register offsets into the driver, what do I know).
+
+I'm going to split the compile test support to a separate patch.
+ 
+Alban
