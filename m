@@ -1,52 +1,62 @@
 From: Johan Hovold <johan@kernel.org>
 Subject: Re: [PATCH 0/6] GPIO character device skeleton
-Date: Mon, 2 Nov 2015 11:00:39 +0100
-Message-ID: <20151102100039.GD8676@localhost>
+Date: Mon, 2 Nov 2015 11:13:47 +0100
+Message-ID: <20151102101347.GA14066@localhost>
 References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
- <20151024175331.GA22220@pengutronix.de>
- <CACRpkdYZD1AQ6AM1PP_P7Yn5zzytXH-VxonrT1tkQ_Jyjbtp7g@mail.gmail.com>
+ <20151024184253.GC22220@pengutronix.de>
+ <CAAVeFuJ7nykUpJjotmXyB6ngb3g3KF5amfO73nSWQfKSLHfFnw@mail.gmail.com>
+ <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:35935 "EHLO
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:35580 "EHLO
 	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751310AbbKBKAe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 05:00:34 -0500
-Received: by lbjm5 with SMTP id m5so84430121lbj.3
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 02:00:32 -0800 (PST)
+	with ESMTP id S1751226AbbKBKNm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 05:13:42 -0500
+Received: by lbbes7 with SMTP id es7so84545654lbb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 02:13:40 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYZD1AQ6AM1PP_P7Yn5zzytXH-VxonrT1tkQ_Jyjbtp7g@mail.gmail.com>
+In-Reply-To: <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Fri, Oct 30, 2015 at 03:40:50PM +0100, Linus Walleij wrote:
-> On Sat, Oct 24, 2015 at 7:53 PM, Markus Pargmann <mpa@pengutronix.de> wrote:
+On Fri, Oct 30, 2015 at 08:48:44PM +0100, Linus Walleij wrote:
+> On Fri, Oct 30, 2015 at 2:55 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
+> > On Sun, Oct 25, 2015 at 3:42 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
 > 
-> >> How to identify and manipulate individual GPIO lines from this
-> >> ABI is a *LATER* *QUESTION*, this is the bare essentials for
-> >> getting there: basic operations on the gpiochip device level.
+> >> What happens if we have two I2C gpio expanders with the same I2C
+> >> addresses connected to different I2C busses? If I see this correctly
+> >> they would both show up with the same name. Is there an easy and
+> >> race-free way to see which GPIO chip is connected to which I2C bus?
 > >
-> > Does this include identifying GPIO lines independent of gpiochips? I
-> > think that is a use-case as well.
+> > I suppose the bus path could be part of the GPIO chip name to avoid
+> > this ambiguity, something like: 7000c000.i2c/0-001c.gpio
 > 
-> My view is that we will NOT support any such GPIO lines.
-> 
-> The new API requires that everyone use gpiolib properly for all their
-> GPIOs if they want to use them from userspace.
-> 
-> We have cases with gpiochips with a single GPIO line, so I don't
-> see why we can't require that.
+> For DT that is the simple solution.
 
-I think Markus question was how to *identify* lines independent of
-gpiochips. That is given a line name how do we find the corresponding
-chip and line (number)?
+Not all devices are platform devices, and the bus path can become quite
+long, for example for usb to uniquely identify the gpio controller this
+could be:
 
-I know this series does not add such mechanisms, but we need to discuss
-this from the start. Do we want user space to iterate over all gpio
-chips to search for a line name? Note that this could result in more
-than one gpio (chip + offset) being returned (consider hot-pluggable
-devices or just dtsi).
+	platform/68000000.ocp/48064000.usbhshost/48064800.ehci/usb1/1-2/1-2.3/1-2.3:1.0/gpiochip7
+
+> Right now it used gpiochip->label if that is set, else the name of
+> the gpiochip device like gpiochip0, gpiochip1 etc.
+
+Perhaps better to just stick to the bus unique names (e.g. gpopchip7),
+and possibly export the label as an additional attribute.
+
+This is the lsgpio output I get on an omap system by the way:
+
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: gpio, 32 GPIO lines
+GPIO chip: twl4030, 20 GPIO lines
+GPIO chip: pl2303, 2 GPIO lines
 
 Johan
