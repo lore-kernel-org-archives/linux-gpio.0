@@ -1,153 +1,266 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
-Date: Mon, 2 Nov 2015 11:31:16 +0100
-Message-ID: <20151102103116.GE8676@localhost>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
- <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO changes for the v4.4 kernel cycle
+Date: Mon, 2 Nov 2015 11:49:18 +0100
+Message-ID: <CACRpkdYuBEz87VP3s0rJ=_N_OgBW3r92Z2whLNMcuiLJtpV7kw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:35158 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024AbbKBKbL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 05:31:11 -0500
-Received: by lfbn126 with SMTP id n126so59406413lfb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 02:31:10 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Thu, Oct 22, 2015 at 10:32:25AM +0200, Linus Walleij wrote:
-> GPIO chips have been around for years, but were never real devices,
-> instead they were piggy-backing on a parent device (such as a
-> platform_device or amba_device) but this was always optional.
-> GPIO chips could also exist without any device at all, with its
-> struct device *dev pointer being set to null.
-> 
-> When sysfs was in use, a mock device would be created, with the
-> optional parent assigned, or just floating orphaned with NULL
-> as parent.
-> 
-> For a proper userspace ABI we need gpiochips to *always have a
-> populated struct device, so add this in the gpio_chip struct.
-> The name "dev" is unfortunately already take so we use "device"
-> to name it.
-> 
-> If sysfs is active, it will use this device as parent, and the
-> former parent device "dev" will be set as parent of the new
-> "device" struct member.
-> 
-> From this point on, gpiochips are devices.
-> 
-> Cc: Johan Hovold <johan@kernel.org>
-> Cc: Michael Welling <mwelling@ieee.org>
-> Cc: Markus Pargmann <mpa@pengutronix.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpiolib-sysfs.c |  2 +-
->  drivers/gpio/gpiolib.c       | 44 +++++++++++++++++++++++++++++++++++++++-----
->  include/linux/gpio/driver.h  |  9 +++++++--
->  3 files changed, 47 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> index b57ed8e55ab5..7e5bc5736e47 100644
-> --- a/drivers/gpio/gpiolib-sysfs.c
-> +++ b/drivers/gpio/gpiolib-sysfs.c
-> @@ -605,7 +605,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
->  	if (chip->names && chip->names[offset])
->  		ioname = chip->names[offset];
->  
-> -	dev = device_create_with_groups(&gpio_class, chip->dev,
-> +	dev = device_create_with_groups(&gpio_class, &chip->device,
->  					MKDEV(0, 0), data, gpio_groups,
->  					ioname ? ioname : "gpio%u",
->  					desc_to_gpio(desc));
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 6798355c61c6..0ab4f75b7f8e 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -16,6 +16,7 @@
->  #include <linux/gpio/driver.h>
->  #include <linux/gpio/machine.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/idr.h>
->  
->  #include "gpiolib.h"
->  
-> @@ -42,6 +43,9 @@
->  #define	extra_checks	0
->  #endif
->  
-> +/* Device and char device-related information */
-> +static DEFINE_IDA(gpio_ida);
-> +
->  /* gpio_lock prevents conflicts during gpio_desc[] table updates.
->   * While any GPIO is requested, its gpio_chip is not removable;
->   * each GPIO's "requested" flag serves as a lock and refcount.
-> @@ -52,7 +56,6 @@ static DEFINE_MUTEX(gpio_lookup_lock);
->  static LIST_HEAD(gpio_lookup_list);
->  LIST_HEAD(gpio_chips);
->  
-> -
->  static void gpiochip_free_hogs(struct gpio_chip *chip);
->  static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
->  
-> @@ -300,7 +303,7 @@ int gpiochip_add(struct gpio_chip *chip)
->  {
->  	unsigned long	flags;
->  	int		status = 0;
-> -	unsigned	id;
-> +	unsigned	i;
->  	int		base = chip->base;
->  	struct gpio_desc *descs;
->  
-> @@ -308,6 +311,28 @@ int gpiochip_add(struct gpio_chip *chip)
->  	if (!descs)
->  		return -ENOMEM;
->  
-> +	/*
-> +	 * The "dev" member of gpiochip is the parent, and the actual
-> +	 * device is named "device" for historical reasons.
-> +	 *
-> +	 * We memset the struct to zero to avoid reentrance issues.
-> +	 */
-> +	memset(&chip->device, 0, sizeof(chip->device));
+Hi Linus,
 
-This is an indication of a larger problem.
+here is the bulk of GPIO changes for the v4.4 development cycle.
+The details are in the signed tag as usual.
 
-First of all, you must never register the same device structure twice.
+The only changes hitting outside drivers/gpio are in the pin control
+subsystem and these seem to have settled nicely in linux-next.
 
-And the larger problem is: With the current interface where a struct
-gpio_chip is passed and registered, how would you prevent the device
-from going away while in use?
+Development mistakes and catfights are nicely documented in the
+reverts as you can see. The outcome of the ABI fight is that we're
+working on a chardev ABI for GPIO now, where hope to show results
+for the v4.5 kernel.
 
-You grab a reference to the chip->device when opening the node (in a
-later patch), but it is not used to manage the life time of struct
-gpio_chip.
+Please pull it in!
 
-> +	if (chip->dev) {
-> +		chip->device.parent = chip->dev;
-> +		chip->device.of_node = chip->dev->of_node;
-> +	} else {
-> +#ifdef CONFIG_OF_GPIO
-> +	/* If the gpiochip has an assigned OF node this takes precedence */
-> +	if (chip->of_node)
-> +		chip->device.of_node = chip->of_node;
-> +#endif
-> +	}
-> +	chip->id = ida_simple_get(&gpio_ida, 0, 0, GFP_KERNEL);
+Yours,
+Linus Walleij
 
-Missing error handling.
 
-> +	dev_set_name(&chip->device, "gpiochip%d", chip->id);
-> +	device_initialize(&chip->device);
-> +	dev_set_drvdata(&chip->device, chip);
-> +
->  	spin_lock_irqsave(&gpio_lock, flags);
->  
->  	if (base < 0) {
+The following changes since commit 1f93e4a96c9109378204c147b3eec0d0e810=
+0fde:
 
-Johan
+  Linux 4.3-rc2 (2015-09-20 14:32:34 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.4-1
+
+for you to fetch changes up to 0963670aeaec2287aa263daa0d41384d4dcd5292=
+:
+
+  gpio: fix up SPI submenu (2015-11-01 10:50:19 +0100)
+
+----------------------------------------------------------------
+This is the bulk of GPIO changes for v4.4:
+
+GPIO core:
+- Define and handle flags for open drain/open collector
+  and open source/open emitter, also know as "single-ended"
+  configurations.
+- Generic request/free operations that handle calling out
+  to the (optional) pin control backend.
+- Some refactoring related to an ABI change that did not
+  happen, yet provide useful.
+- Added a real-time compliance checklist. Many GPIO chips
+  have irqchips, and need to think this over with the RT
+  patches going upstream.
+- Restructure, fix and clean up Kconfig menus a bit.
+
+New drivers:
+- New driver for AMD Promony.
+- New driver for ACCES 104-IDIO-16, a port-mapped I/O
+  card, ISA-style. Very retro.
+
+Subdriver changes:
+- OMAP changes to handle real time requirements.
+- Handle trigger types for edge and level IRQs on PL061
+  properly. As this hardware is very common it needs to
+  set a proper example for others to follow.
+- Some container_of() cleanups.
+- Delete the unused MSM driver in favor of the driver that
+  is embedded inside the pin control driver.
+- Cleanup of the ath79 GPIO driver used by many, many
+  OpenWRT router targets.
+- A consolidated IT87xx driver replacing the earlier
+  very specific IT8761e driver.
+- Handle the TI TCA9539 in the PCA953x driver. Also
+  handle ACPI devices in this subdriver.
+- Drop xilinx arch dependencies as these FPGAs seem to
+  profilate over a few different architectures. MIPS and
+  ARM come to mind.
+
+----------------------------------------------------------------
+Alban Bedel (2):
+      gpio: ath79: Convert to the state container design pattern
+      gpio: MAINTAINERS: Add an entry for the ATH79 GPIO driver
+
+Andy Shevchenko (2):
+      gpio: pca953x: store driver_data for future use
+      gpio: pca953x: support ACPI devices found on Galileo Gen2
+
+Dan Carpenter (1):
+      gpio: pl061: returning with lock held in pl061_irq_type()
+
+Diego Elio Petten=C3=B2 (1):
+      gpio: add GPIO support for IT87xx, replacing gpio-it8761e
+
+Dirk Behme (1):
+      gpio: gpiolib: don't compare an unsigned for >=3D 0
+
+Grygorii Strashko (4):
+      gpio: omap: move pm runtime in irq_chip.irq_bus_lock/sync_unlock
+      gpio: omap: convert to use generic irq handler
+      gpio: omap: fix static checker warning
+      gpio: add a real time compliance notes
+
+Guenter Roeck (1):
+      gpio: generic: Revert to old error handling in bgpio_map
+
+Heiner Kallweit (3):
+      gpio: generic: improve error handling in bgpio_map
+      gpio: generic: modernize remapping
+      gpio: generic: use error pointers
+
+Jonas Gorski (5):
+      gpiolib: provide generic request/free implementations
+      gpio: replace trivial implementations of request/free with generi=
+c one
+      gpio: gpio-xz: use the generic request/free implementations
+      gpio: pl061: use the generic request/free implementations
+      pinctrl: replace trivial implementations of gpio_chip request/fre=
+e
+
+Julia Lawall (1):
+      gpio: max730x: eliminate double free
+
+Kamlakant Patel (1):
+      gpio: xlp: Convert to use gpiolib irqchip helpers
+
+Laurent Pinchart (2):
+      gpiolib: Split GPIO flags parsing and GPIO configuration
+      gpiolib: Add and use OF_GPIO_SINGLE_ENDED flag
+
+Linus Walleij (17):
+      gpio: keep the GPIO line names internal
+      gpio: pl061: detail IRQ trigger handling
+      gpio: etraxfs: use container_of() to get state container
+      gpio: altera: use container_of() to get state container
+      gpio: sx150x: use container_of() to get state container
+      gpio: vf610: use container_of() to get state container
+      gpio: zynq: use container_of() to get state container
+      gpio: add DT bindings for existing consumer flags
+      Revert "gpio-sysfs: Use gpio descriptor name instead of gpiochip
+names array"
+      gpio: pl061: assign the apropriate handler for irqs
+      gpio: add a real time compliance checklist
+      Revert "gpio: add a real time compliance checklist"
+      gpio: group port-mapped I/O drivers in a menu
+      gpio: dt-bindings: document the official use of "ngpios"
+      gpio: drop surplus X86 dependencies
+      gpio: drop surplus I2C dependencies
+      gpio: fix up SPI submenu
+
+Markus Pargmann (5):
+      gpiolib-of: Rename gpio_hog functions to be generic
+      gpio: Introduce gpio descriptor 'name'
+      gpiolib: Use GPIO name from names array for gpio descriptor
+      gpio-sysfs: Use gpio descriptor name instead of gpiochip names ar=
+ray
+      gpiolib: Add gpio name information to /sys/kernel/debug/gpio
+
+Mika Westerberg (1):
+      gpio / ACPI: Allow shared GPIO event to be read via operation reg=
+ion
+
+Nicholas Krause (1):
+      gpio: Fix error checking in the function device_pca957x_init
+
+Richard Fitzgerald (1):
+      gpio: arizona: add support for WM8998 and WM1814
+
+Soren Brinkmann (2):
+      gpio: xilinx: Drop architecture dependencies
+      gpio: zynq: Document interrupt-controller DT binding
+
+Stephen Boyd (1):
+      gpio: msm: Remove unused driver
+
+Thierry Reding (1):
+      gpio: pca953x: Add TI TCA9539 support
+
+William Breathitt Gray (2):
+      gpio: Add GPIO support for the ACCES 104-IDIO-16
+      gpio: Add ACCES 104-IDIO-16 driver maintainer entry
+
+YD Tseng (1):
+      gpio: driver for AMD Promontory
+
+Zubair Lutfullah Kakakhel (1):
+      gpio/xilinx: enable for MIPS
+
+ .../devicetree/bindings/gpio/gpio-msm.txt          |  26 --
+ .../devicetree/bindings/gpio/gpio-pca953x.txt      |   1 +
+ .../devicetree/bindings/gpio/gpio-zynq.txt         |   9 +
+ Documentation/devicetree/bindings/gpio/gpio.txt    |  41 +-
+ Documentation/gpio/driver.txt                      |  80 ++++
+ MAINTAINERS                                        |  14 +
+ drivers/gpio/Kconfig                               | 196 ++++-----
+ drivers/gpio/Makefile                              |   5 +-
+ drivers/gpio/gpio-104-idio-16.c                    | 216 ++++++++++
+ drivers/gpio/gpio-altera.c                         |  15 +-
+ drivers/gpio/gpio-amdpt.c                          | 261 ++++++++++++
+ drivers/gpio/gpio-arizona.c                        |   2 +
+ drivers/gpio/gpio-ath79.c                          | 119 +++---
+ drivers/gpio/gpio-etraxfs.c                        |  23 +-
+ drivers/gpio/gpio-generic.c                        |  58 +--
+ drivers/gpio/gpio-it87.c                           | 411 +++++++++++++=
+++++++
+ drivers/gpio/gpio-it8761e.c                        | 230 -----------
+ drivers/gpio/gpio-lpc18xx.c                        |  14 +-
+ drivers/gpio/gpio-max730x.c                        |   1 -
+ drivers/gpio/gpio-moxart.c                         |  14 +-
+ drivers/gpio/gpio-msm-v2.c                         | 453 -------------=
+--------
+ drivers/gpio/gpio-mvebu.c                          |  14 +-
+ drivers/gpio/gpio-omap.c                           |  82 ++--
+ drivers/gpio/gpio-pca953x.c                        |  45 +-
+ drivers/gpio/gpio-pl061.c                          | 112 +++--
+ drivers/gpio/gpio-sx150x.c                         |  31 +-
+ drivers/gpio/gpio-tb10x.c                          |  14 +-
+ drivers/gpio/gpio-tz1090-pdc.c                     |  14 +-
+ drivers/gpio/gpio-vf610.c                          |  43 +-
+ drivers/gpio/gpio-xlp.c                            |  21 +-
+ drivers/gpio/gpio-zx.c                             |  28 +-
+ drivers/gpio/gpio-zynq.c                           |  32 +-
+ drivers/gpio/gpiolib-acpi.c                        |  21 +-
+ drivers/gpio/gpiolib-legacy.c                      |   8 +-
+ drivers/gpio/gpiolib-of.c                          |  20 +-
+ drivers/gpio/gpiolib.c                             | 175 ++++++--
+ drivers/gpio/gpiolib.h                             |   3 +
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c              |  14 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c         |  14 +-
+ drivers/pinctrl/intel/pinctrl-intel.c              |  14 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  14 +-
+ drivers/pinctrl/nomadik/pinctrl-abx500.c           |  18 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  22 +-
+ drivers/pinctrl/pinctrl-adi2.c                     |  14 +-
+ drivers/pinctrl/pinctrl-as3722.c                   |  14 +-
+ drivers/pinctrl/pinctrl-at91.c                     |  26 +-
+ drivers/pinctrl/pinctrl-coh901.c                   |  22 +-
+ drivers/pinctrl/pinctrl-digicolor.c                |  14 +-
+ drivers/pinctrl/pinctrl-pistachio.c                |  14 +-
+ drivers/pinctrl/pinctrl-rockchip.c                 |  14 +-
+ drivers/pinctrl/pinctrl-st.c                       |  14 +-
+ drivers/pinctrl/pinctrl-xway.c                     |  18 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c                 |  16 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           |  14 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c            |  14 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |  14 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  14 +-
+ drivers/pinctrl/vt8500/pinctrl-wmt.c               |  14 +-
+ include/dt-bindings/gpio/gpio.h                    |  12 +
+ include/linux/gpio/consumer.h                      |   1 +
+ include/linux/gpio/driver.h                        |   3 +
+ include/linux/of_gpio.h                            |   1 +
+ 62 files changed, 1728 insertions(+), 1473 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-msm.txt
+ create mode 100644 drivers/gpio/gpio-104-idio-16.c
+ create mode 100644 drivers/gpio/gpio-amdpt.c
+ create mode 100644 drivers/gpio/gpio-it87.c
+ delete mode 100644 drivers/gpio/gpio-it8761e.c
+ delete mode 100644 drivers/gpio/gpio-msm-v2.c
