@@ -1,62 +1,41 @@
 From: Johan Hovold <johan@kernel.org>
 Subject: Re: [PATCH 0/6] GPIO character device skeleton
-Date: Mon, 2 Nov 2015 11:13:47 +0100
-Message-ID: <20151102101347.GA14066@localhost>
+Date: Mon, 2 Nov 2015 11:16:43 +0100
+Message-ID: <20151102101643.GB14066@localhost>
 References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
  <20151024184253.GC22220@pengutronix.de>
- <CAAVeFuJ7nykUpJjotmXyB6ngb3g3KF5amfO73nSWQfKSLHfFnw@mail.gmail.com>
- <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
+ <CACRpkdYiQ=eQpUNspRH27x=9soExn-Mx5Rhc7USqAk7g5DNG_A@mail.gmail.com>
+ <3839397.mYWtgokiUO@wuerfel>
+ <CACRpkdaO7XT+V4bbKE9Vzx+B4rLHXC+YhoX_UdxKSvypQUJZ0A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:35580 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751226AbbKBKNm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 05:13:42 -0500
-Received: by lbbes7 with SMTP id es7so84545654lbb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 02:13:40 -0800 (PST)
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:35087 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751310AbbKBKQi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 05:16:38 -0500
+Received: by lbbes7 with SMTP id es7so84596269lbb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 02:16:36 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
+In-Reply-To: <CACRpkdaO7XT+V4bbKE9Vzx+B4rLHXC+YhoX_UdxKSvypQUJZ0A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Fri, Oct 30, 2015 at 08:48:44PM +0100, Linus Walleij wrote:
-> On Fri, Oct 30, 2015 at 2:55 AM, Alexandre Courbot <gnurou@gmail.com> wrote:
-> > On Sun, Oct 25, 2015 at 3:42 AM, Markus Pargmann <mpa@pengutronix.de> wrote:
+On Sun, Nov 01, 2015 at 10:37:28AM +0100, Linus Walleij wrote:
+> On Fri, Oct 30, 2015 at 11:54 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 > 
-> >> What happens if we have two I2C gpio expanders with the same I2C
-> >> addresses connected to different I2C busses? If I see this correctly
-> >> they would both show up with the same name. Is there an easy and
-> >> race-free way to see which GPIO chip is connected to which I2C bus?
-> >
-> > I suppose the bus path could be part of the GPIO chip name to avoid
-> > this ambiguity, something like: 7000c000.i2c/0-001c.gpio
+> > For character devices, udev has a complex set of (user-overridable) rules
+> > to derive one or more stable name(s) from the sysfs attributes.
 > 
-> For DT that is the simple solution.
+> OK I'll go read these I think.
+> 
+> Doesn't help much with Busybox' mdev though, which I recently discussed
+> with Greg and turns out to need a rewrite :/
 
-Not all devices are platform devices, and the bus path can become quite
-long, for example for usb to uniquely identify the gpio controller this
-could be:
-
-	platform/68000000.ocp/48064000.usbhshost/48064800.ehci/usb1/1-2/1-2.3/1-2.3:1.0/gpiochip7
-
-> Right now it used gpiochip->label if that is set, else the name of
-> the gpiochip device like gpiochip0, gpiochip1 etc.
-
-Perhaps better to just stick to the bus unique names (e.g. gpopchip7),
-and possibly export the label as an additional attribute.
-
-This is the lsgpio output I get on an omap system by the way:
-
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: gpio, 32 GPIO lines
-GPIO chip: twl4030, 20 GPIO lines
-GPIO chip: pl2303, 2 GPIO lines
+Just stick to the bus unique names (e.g. gpiochip7) rather than try to
+come up with udev rules to rename these. Look at the USB path I just
+posted for an example of what you'd need to parse and encode.
 
 Johan
