@@ -1,64 +1,128 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 5/6] regulator: tps65086: Add regulator driver for the
- TPS65086 PMIC
-Date: Sun, 1 Nov 2015 11:37:35 +0900
-Message-ID: <20151101023735.GE28319@sirena.org.uk>
-References: <1446244904-29315-1-git-send-email-afd@ti.com>
- <1446244904-29315-6-git-send-email-afd@ti.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Mon, 2 Nov 2015 09:17:21 +0000
+Message-ID: <20151102091721.GU4058@x1>
+References: <1446161922-8755-1-git-send-email-afd@ti.com>
+ <1446161922-8755-2-git-send-email-afd@ti.com>
+ <20151030171006.GZ4058@x1>
+ <5633B078.7080209@ti.com>
+ <20151030190622.GN4058@x1>
+ <5633C31E.5030408@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cHOhevsz5PKyTXvv"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44219 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752541AbbKBIxu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 03:53:50 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37831 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752685AbbKBJR0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 04:17:26 -0500
+Received: by wmff134 with SMTP id f134so54623185wmf.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 01:17:24 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1446244904-29315-6-git-send-email-afd@ti.com>
+In-Reply-To: <5633C31E.5030408@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Fri, 30 Oct 2015, Andrew F. Davis wrote:
 
---cHOhevsz5PKyTXvv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 10/30/2015 02:06 PM, Lee Jones wrote:
+> >On Fri, 30 Oct 2015, Andrew F. Davis wrote:
+> >
+> >>On 10/30/2015 12:10 PM, Lee Jones wrote:
+> >>>On Thu, 29 Oct 2015, Andrew F. Davis wrote:
+> >>>
+> >>>>The TPS65912 PMIC contains several regulators and a GPIO controll=
+er.
+> >>>>Add bindings for the TPS65912 PMIC.
+> >>>>
+> >>>>Signed-off-by: Andrew F. Davis <afd@ti.com>
+> >>>>---
+> >>>>  .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
+> >>>
+> >>>Why have you dropped Linus' Review-by?
+> >>>
+> >>
+> >>Strange, I thought I made a change to this. Well this brings up a q=
+uestion,
+> >>how much change can we have before we are supposed to drop Reviewed=
+/Acked-by?
+> >
+> >Common sense call I'm afraid. ;)
+> >
+> >[...]
+> >
+> >>>>+     the second cell is used to specify flags.
+> >>>>+     See include/dt-bindings/gpio/gpio.h for possible values.
+> >>>
+> >>>This is a Linuxisum and shouldn't really live in here.
+> >>>
+> >>>I think it would be better to document them in ../gpio/gpio.txt an=
+d
+> >>>reference that instead.
+> >>>
+> >>
+> >>Looks like that is already in ../gpio/gpio.txt:57
+> >
+> >There is a mention of GPIO_ACTIVE_HIGH, as it's used in an example.
+> >However GPIO_ACTIVE_LOW is missing.  I think both could do with
+> >documenting properly, then you can refer to them from here.
+> >
+>=20
+> I mean the lines above the example, they say to use the macros
+> defined in include/dt-bindings/gpio/gpio.h whenever possible,
+> that's really all I would say.
 
-On Fri, Oct 30, 2015 at 05:41:43PM -0500, Andrew F. Davis wrote:
+Let's at least attempt to stick to the rules.
 
-> +struct tps65086_regulator {
-> +	struct regulator_desc desc;
-> +	unsigned int decay_reg;
-> +	unsigned int decay_mask;
+Please adapt your formatting to <dt-bindings/gpio/gpio.h> in order to
+eradicate any Linuxiness.
 
-The decay_reg and decay_mask fields appear to be entirely write only,
-why are they present?
+> >[...]
+> >
+> >>>>+Required properties:
+> >>>>+ - compatible : Should be "ti,tps65912".
+> >>>>+ - reg : Slave address or chip select number (I2C / SPI).
+> >>>>+ - interrupt-parent : The parent interrupt controller.
+> >>>>+ - interrupts : The interrupt line the device is connected to.
+> >>>>+ - interrupt-controller : Marks the device node as an interrupt =
+controller.
+> >>>>+ - #interrupt-cells: The number of cells to describe an IRQ, thi=
+s should be 2.
+> >>>>+     The first cell is the IRQ number.
+> >>>>+     The second cell is the flags, encoded as the trigger masks =
+from
+> >>>>+     ../interrupt-controller/interrupts.txt
+> >>>
+> >>>Nit: We *normally* treat these as bullet-points and not place
+> >>>full-stops on them:
+> >>>
+> >>>$ git grep "compatible" -- Documentation/devicetree/bindings/ | gr=
+ep -v "\.$" | wc -l
+> >>>5227
+> >>>$ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/=
+ | wc -l
+> >>>486
+> >>>
+> >>
+> >>What about for multi-sentence descriptions, we need the middle full=
+-stops, then to not
+> >>have one on the end seems kinda odd looking.
+> >
+> >That's the way I usually do it -- doesn't look too bad. ;)
+> >
+> >[...]
+> >
 
-> +	ret = of_regulator_match(&pdev->dev, pdev->dev.of_node,
-> +				 tps65086_matches,
-> +				 ARRAY_SIZE(tps65086_matches));
-> +	if (ret < 0) {
-> +		dev_err(tps->dev, "Error parsing regulator init data\n");
-> +		return ret;
-> +	}
-
-Please match regulators using the fields in the regulator_desc rather
-than open coding.
-
---cHOhevsz5PKyTXvv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWNXruAAoJECTWi3JdVIfQ6akH/1bHKm0IO3b4+1k8ucZj2yZ4
-LZXQ5M5R5sqP7nJFMQBW0d09/XYRJlY/22mGiM251ZWbhru0/XXiLVUG/D/2raGw
-fRPFlTJFINPS/GI6SsHCudJmP0E1I0lh0oAgOmiTPv9NyEprmWABHTRU0pd9Y2Oi
-nmuIbi09MKsoom4WgK3FwJXgUvPuEbt829K2701IpvJPLom6573Ejgcr+HvLTcx9
-ytdp7i9IpO37tpan4sa6o2CvnOEwxTKuHLDoDHs+13IMPLNMMfmog5aguEHVssJm
-miQBi7gQOk8Hjw8JH5olEUH6gbqeIN5Bc6nO4CReP4ubdDIaekCay/NcfbB12l0=
-=9eMl
------END PGP SIGNATURE-----
-
---cHOhevsz5PKyTXvv--
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
