@@ -1,76 +1,108 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio: dt-bindings: document the official use of "ngpios"
-Date: Mon, 2 Nov 2015 08:29:23 -0600
-Message-ID: <CAL_Jsq+tiLehdr21JagJoOsO767d-Joy8QT+Y09GPnUKa=TTPA@mail.gmail.com>
-References: <1446203002-7910-1-git-send-email-linus.walleij@linaro.org>
+From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Mon, 2 Nov 2015 09:15:28 -0600
+Message-ID: <56377E10.3010208@ti.com>
+References: <1446161922-8755-1-git-send-email-afd@ti.com>
+ <1446161922-8755-2-git-send-email-afd@ti.com> <20151030171006.GZ4058@x1>
+ <5633B078.7080209@ti.com> <20151030190622.GN4058@x1>
+ <5633C31E.5030408@ti.com> <20151102091721.GU4058@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60202 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753523AbbKBO3r (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 2 Nov 2015 09:29:47 -0500
-In-Reply-To: <1446203002-7910-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151102091721.GU4058@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pramod Kumar <pramodku@broadcom.com>, Jonas Gorski <jogo@openwrt.org>
 
-On Fri, Oct 30, 2015 at 6:03 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> There are a bunch of drivers that utilize the "ngpios" DT property
-> without any vendor prefix. Try to start cleaning up the mess by
-> defining what we mean by this property.
+On 11/02/2015 03:17 AM, Lee Jones wrote:
+> On Fri, 30 Oct 2015, Andrew F. Davis wrote:
 >
-> Cc: devicetree@vger.kernel.org
-> Cc: Pramod Kumar <pramodku@broadcom.com>
-> Cc: Jonas Gorski <jogo@openwrt.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> On 10/30/2015 02:06 PM, Lee Jones wrote:
+>>> On Fri, 30 Oct 2015, Andrew F. Davis wrote:
+>>>
+>>>> On 10/30/2015 12:10 PM, Lee Jones wrote:
+>>>>> On Thu, 29 Oct 2015, Andrew F. Davis wrote:
+>>>>>
+>>>>>> The TPS65912 PMIC contains several regulators and a GPIO controller.
+>>>>>> Add bindings for the TPS65912 PMIC.
+>>>>>>
+>>>>>> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
+>>>>>> ---
+>>>>>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
+>>>>>
+>>>>> Why have you dropped Linus' Review-by?
+>>>>>
+>>>>
+>>>> Strange, I thought I made a change to this. Well this brings up a question,
+>>>> how much change can we have before we are supposed to drop Reviewed/Acked-by?
+>>>
+>>> Common sense call I'm afraid. ;)
+>>>
+>>> [...]
+>>>
+>>>>>> +     the second cell is used to specify flags.
+>>>>>> +     See include/dt-bindings/gpio/gpio.h for possible values.
+>>>>>
+>>>>> This is a Linuxisum and shouldn't really live in here.
+>>>>>
+>>>>> I think it would be better to document them in ../gpio/gpio.txt and
+>>>>> reference that instead.
+>>>>>
+>>>>
+>>>> Looks like that is already in ../gpio/gpio.txt:57
+>>>
+>>> There is a mention of GPIO_ACTIVE_HIGH, as it's used in an example.
+>>> However GPIO_ACTIVE_LOW is missing.  I think both could do with
+>>> documenting properly, then you can refer to them from here.
+>>>
+>>
+>> I mean the lines above the example, they say to use the macros
+>> defined in include/dt-bindings/gpio/gpio.h whenever possible,
+>> that's really all I would say.
+>
+> Let's at least attempt to stick to the rules.
+>
+> Please adapt your formatting to <dt-bindings/gpio/gpio.h> in order to
+> eradicate any Linuxiness.
+>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Works for me, although I pushed v6 a couple days ago with a different
+fix, maybe that will work too?
 
-> ---
->  Documentation/devicetree/bindings/gpio/gpio.txt | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>>> [...]
+>>>
+>>>>>> +Required properties:
+>>>>>> + - compatible : Should be "ti,tps65912".
+>>>>>> + - reg : Slave address or chip select number (I2C / SPI).
+>>>>>> + - interrupt-parent : The parent interrupt controller.
+>>>>>> + - interrupts : The interrupt line the device is connected to.
+>>>>>> + - interrupt-controller : Marks the device node as an interrupt controller.
+>>>>>> + - #interrupt-cells: The number of cells to describe an IRQ, this should be 2.
+>>>>>> +     The first cell is the IRQ number.
+>>>>>> +     The second cell is the flags, encoded as the trigger masks from
+>>>>>> +     ../interrupt-controller/interrupts.txt
+>>>>>
+>>>>> Nit: We *normally* treat these as bullet-points and not place
+>>>>> full-stops on them:
+>>>>>
+>>>>> $ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v "\.$" | wc -l
+>>>>> 5227
+>>>>> $ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc -l
+>>>>> 486
+>>>>>
+>>>>
+>>>> What about for multi-sentence descriptions, we need the middle full-stops, then to not
+>>>> have one on the end seems kinda odd looking.
+>>>
+>>> That's the way I usually do it -- doesn't look too bad. ;)
+>>>
+>>> [...]
+>>>
 >
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index 63b1b9039ce8..9b081e6143a0 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -129,6 +129,30 @@ Every GPIO controller node must contain both an empty "gpio-controller"
->  property, and a #gpio-cells integer property, which indicates the number of
->  cells in a gpio-specifier.
->
-> +Optionally, a GPIO controller may have a "ngpios" property. This property
-> +indicates the number of in-use slots of available slots for GPIOs. The
-> +typical example is something like this: the hardware register is 32 bits
-> +wide, but only 18 of the bits have a physical counterpart. The driver is
-> +generally written so that all 32 bits can be used, but the IP block is reused
-> +in a lot of designs, some using all 32 bits, some using 18 and some using
-> +12. In this case, setting "ngpios = <18>;" informs the driver that only the
-> +first 18 GPIOs, at local offset 0 .. 17, are in use.
-> +
-> +If these GPIOs do not happen to be the first N GPIOs at offset 0...N, an
-> +additional bitmask is needed to specify which GPIOs are actually in use,
-> +and which are dummies. The bindings for this case has not yet been
-> +specified, but should be specified if/when such hardware appears.
-> +
-> +Example:
-> +
-> +gpio-controller@00000000 {
-> +       compatible = "foo";
-> +       reg = <0x00000000 0x1000>;
-> +       gpio-controller;
-> +       #gpio-cells = <2>;
-> +       ngpios = <18>;
-> +}
-> +
->  The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
->  providing automatic GPIO request and configuration as part of the
->  gpio-controller's driver probe function.
-> --
-> 2.4.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
