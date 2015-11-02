@@ -1,7 +1,7 @@
-From: Johan Hovold <johan@kernel.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
-Date: Mon, 2 Nov 2015 14:14:56 +0100
-Message-ID: <20151102131456.GC12503@localhost>
+Date: Mon, 2 Nov 2015 13:17:01 +0000
+Message-ID: <20151102131701.GI20228@sirena.org.uk>
 References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
  <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
  <20151102103116.GE8676@localhost>
@@ -10,61 +10,55 @@ References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
  <20151102124737.GG20228@sirena.org.uk>
  <20151102125347.GA12752@localhost>
  <20151102130633.GH20228@sirena.org.uk>
+ <20151102131456.GC12503@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IR1Y5IvQhrKgS4e6"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34511 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750856AbbKBNOu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 08:14:50 -0500
-Received: by lfgh9 with SMTP id h9so14720624lfg.1
-        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 05:14:49 -0800 (PST)
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44690 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752532AbbKBNRI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 08:17:08 -0500
 Content-Disposition: inline
-In-Reply-To: <20151102130633.GH20228@sirena.org.uk>
+In-Reply-To: <20151102131456.GC12503@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Mon, Nov 02, 2015 at 01:06:33PM +0000, Mark Brown wrote:
-> On Mon, Nov 02, 2015 at 01:53:47PM +0100, Johan Hovold wrote:
-> > On Mon, Nov 02, 2015 at 12:47:37PM +0000, Mark Brown wrote:
-> 
-> > > A memset() should be enough, if not then we have problems with any
-> > > dynamically allocated struct device.
-> 
-> > And how would you know that it is safe to memset that struct device?
-> > There can still be references to it. And driver core explicitly forbids
-> > this (see device_add() for example).
-> 
-> My point here is that the memset() of something that was passed in
-> externally isn't really a problem, it's the suspicious lack of
-> integration with a release function (hence my question about why the
-> driver core isn't complaining when the device gets registered).  The
-> comment is more of a concern than the memset() itself.
 
-Precisely, the memset itself is not the problem, but rather why was done
-in the first place:
+--IR1Y5IvQhrKgS4e6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	*  We memset the struct to zero to avoid reentrance issues.
-	*/
+On Mon, Nov 02, 2015 at 02:14:56PM +0100, Johan Hovold wrote:
+> On Mon, Nov 02, 2015 at 01:06:33PM +0000, Mark Brown wrote:
 
-And to that point, I mentioned that it is illegal to register the same
-struct device twice (and that this was indicative of a larger problem).
+> > > Dynamically allocated struct device are not the problem as then you're
+> > > not *reusing* the same device structure.
 
-> > Dynamically allocated struct device are not the problem as then you're
-> > not *reusing* the same device structure.
-> 
-> You may end up doing exactly that depending on what you get back from
-> the allocator of course.
+> > You may end up doing exactly that depending on what you get back from
+> > the allocator of course.
 
-But then the memory has already been released. You're not deregistering
-and reregistering the same device as in your example.
+> But then the memory has already been released. You're not deregistering
+> and reregistering the same device as in your example.
 
-> The point is to make sure that that the driver
-> model called release(), dynamically allocating and freeing in the
-> release function is the easiest way to do this but it's not magic.
+Depends on your definition of "same" :)  You might get the same address
+back which has been known to confuse unhelpfully designed things.
 
-Agreed.
+--IR1Y5IvQhrKgS4e6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Johan
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWN2JMAAoJECTWi3JdVIfQslkH/RQfZJVrQEmN18bpRD1WotQ5
+bgCMqwb9qxKTAPzSdGwlb10uxfOiLnQppUhdF+A3Rw8DdEH/Y8Yn2TEnAG2K3q8P
+BGmPfQ++P/EDePryzFiHFviBVT7Sm/A16S+5bcoCg8wXtJoE9BW2BJeJvdTym/Zo
+6G+yGzMR3CefGqlpNWuh6yMAwg73yvoecv/hTGKyuBdYVs/+L3Z95su4xI4kxrXG
+UejraaMGjCvJpl34k8NzZv4sNIqHOq5SdfdlbgBqgo5hOTCp7cVv+n6VyTeiptPx
+AihettXtvyb0qsuJx/bUiqyUxUM1YG6v+Kj8L1+GK98qcZr7wgSgIzyEJKYGWa0=
+=+j+r
+-----END PGP SIGNATURE-----
+
+--IR1Y5IvQhrKgS4e6--
