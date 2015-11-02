@@ -1,129 +1,78 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 1/2] pinctrl: uniphier: enable UniPhier SoCs pinctrl
- drivers by default
-Date: Mon, 2 Nov 2015 20:47:09 +0900
-Message-ID: <CAK7LNARaHE5NU=Q2LwEGChV6BiN02s9KbiUztDJ-d7kf9Zcd9Q@mail.gmail.com>
-References: <1445912911-1292-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdY4hs_7dE2KicDeUj7hvbKmHu3pcwQO3eshTtSmzH2PGA@mail.gmail.com>
-	<20151031014110.GA1991@localhost>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
+Date: Mon, 2 Nov 2015 12:25:14 +0000
+Message-ID: <20151102122514.GE20228@sirena.org.uk>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
+ <20151102103116.GE8676@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Yb+qhiCg54lqZFXW"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg003.nifty.com ([202.248.44.41]:46707 "EHLO
-	conssluserg003-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752532AbbKBLrP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 06:47:15 -0500
-In-Reply-To: <20151031014110.GA1991@localhost>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44531 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753490AbbKBMZ1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 07:25:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20151102103116.GE8676@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-
-Hi Olof,
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Amit Kucheria <amit.kucheria@linaro.org>
 
 
-2015-10-31 10:41 GMT+09:00 Olof Johansson <olof@lixom.net>:
-> On Thu, Oct 29, 2015 at 02:33:34PM +0100, Linus Walleij wrote:
->> On Tue, Oct 27, 2015 at 3:28 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>
->> > Add "default y" to the Kconfig rather than adding entries into
->> > arch/arm/configs/multi_v7_defconfig.
->> >
->> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->> (...)
->> > config PINCTRL_UNIPHIER_PH1_LD4
->> >         tristate "UniPhier PH1-LD4 SoC pinctrl driver"
->> > +       default y
->> >         select PINCTRL_UNIPHIER_CORE
->>
->> Why is it not default y if <PH1_LD4_SOC_THING>?
->>
->> So it is only turned on if the corresponding SoC is selected?
->>
->> Or don't you have symbols like that?
->>
->> ARM SoC folks: can you ACK this patch indicating that this is the way
->> you wanna handle this?
->
-> Most other will have a "default MACH_<foo>", but Uniphier lacks those Kconfig
-> symbols. Or even a def_bool for that platform such that it's not an option if
-> the platform is enabled. It makes no sense to enable a platform but not the
-> pinctrl on it, so that's a good way to do it.
->
-> I would honestly rather have those in the mach makefile, and make the drivers
-> select the right thing by default, than having to know exactly which drivers to
-> enable for a specific SoC.
+--Yb+qhiCg54lqZFXW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I have a question.
+On Mon, Nov 02, 2015 at 11:31:16AM +0100, Johan Hovold wrote:
+> On Thu, Oct 22, 2015 at 10:32:25AM +0200, Linus Walleij wrote:
 
+> > +	/*
+> > +	 * The "dev" member of gpiochip is the parent, and the actual
+> > +	 * device is named "device" for historical reasons.
+> > +	 *
+> > +	 * We memset the struct to zero to avoid reentrance issues.
+> > +	 */
+> > +	memset(&chip->device, 0, sizeof(chip->device));
 
-Most of sub-architectures define per-SoC options in their mach-<>/Kconfig,but
-some of them enable DTBs per SoC-family.
+> This is an indication of a larger problem.
 
+> First of all, you must never register the same device structure twice.
 
-For example,
+Well, you can unregister and reregister (and it is reasonable practice
+to make sure that the struct isn't full of noise) - we usually allocate
+things out of kzalloc().
 
-arch/arm/mach-exynos/Kconfig define SoC options.
+> And the larger problem is: With the current interface where a struct
+> gpio_chip is passed and registered, how would you prevent the device
+> from going away while in use?
 
+Hrm, indeed.  Why aren't there complaints about a missing release
+function there?
 
-So,
+> You grab a reference to the chip->device when opening the node (in a
+> later patch), but it is not used to manage the life time of struct
+> gpio_chip.
 
-dtb-$(CONFIG_ARCH_EXYNOS5) += \
-        exynos5250-arndale.dtb \
-        exynos5250-smdk5250.dtb \
-        exynos5250-snow.dtb \
-        exynos5250-spring.dtb \
-        exynos5260-xyref5260.dtb \
-        exynos5410-smdk5410.dtb \
-        exynos5420-arndale-octa.dtb \
-        exynos5420-peach-pit.dtb \
-        exynos5420-smdk5420.dtb \
-        exynos5422-odroidxu3.dtb \
-        exynos5422-odroidxu3-lite.dtb \
-        exynos5440-sd5v1.dtb \
-        exynos5440-ssdk5440.dtb \
-        exynos5800-peach-pi.dtb
+That's a slightly separate thing and even with a different
+implementation of the file we still have to assume that the driver core
+might hold a reference to the device for longer (for example as a result
+of sysfs interactions).
 
-should be like follows?
+--Yb+qhiCg54lqZFXW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-dtb-$(CONFIG_SOC_EXYNOS5250) += \
-        exynos5250-arndale.dtb \
-        exynos5250-smdk5250.dtb \
-        exynos5250-snow.dtb \
-        exynos5250-spring.dtb
-dtb-$(CONFIG_SOC_EXYNOS5260) += \
-        exynos5260-xyref5260.dtb
-dtb-$(CONFIG_SOC_EXYNOS5410) += \
-        exynos5410-smdk5410.dtb
-dtb-$(CONFIG_SOC_EXYNOS5420) += \
-        exynos5420-arndale-octa.dtb \
-        exynos5420-peach-pit.dtb \
-        exynos5420-smdk5420.dtb \
-        exynos5422-odroidxu3.dtb \
-        exynos5422-odroidxu3-lite.dtb
-dtb-$(CONFIG_SOC_EXYNOS5440) += \
-        exynos5440-sd5v1.dtb \
-        exynos5440-ssdk5440.dtb
-dtb-$(CONFIG_SOC_EXYNOS5800) += \
-        exynos5800-peach-pi.dtb
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQEcBAEBCAAGBQJWN1YpAAoJECTWi3JdVIfQzFgH+gI4Q9ifpMifD3wtEzrwQFyp
+L52x9/WgXV/xLHOrXYFgXG4J1TeO/9azvJJWKg5Motgx7c9frJe+N4W1o/RfzMHG
+BzBc8nLqeBOfRn2Y3GpS10g2h2IEb1t+a4bqRIa5brl/DmEPLRq+OsqSOiQjzn+T
+k6mKV8G0nXHAC4Kq4ye565B7mGdHDZ6AIlu2ejVCoZcNuN9Qh+K3kIi19dstv+oH
+uyMaZtC/io0jN8bF7F8ExPrt0oKHOkrJintB3Hi2P3BBdR5gQCTO+3WvDLux5hz1
+tpNLXEuJp4I1ycgFc6qIOqYarI8J7+FowfueBiinM+SfEOCfamj2LNSmgs1Ut8c=
+=Z83T
+-----END PGP SIGNATURE-----
 
-
-
-Likewise for Mediatek DTBs?
-
-dtb-$(CONFIG_ARCH_MEDIATEK) += \
-        mt6580-evbp1.dtb \
-        mt6589-aquaris5.dtb \
-        mt6592-evb.dtb \
-        mt8127-moose.dtb \
-        mt8135-evbp1.dtb
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--Yb+qhiCg54lqZFXW--
