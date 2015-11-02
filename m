@@ -1,62 +1,43 @@
-From: Alban <albeu@free.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH 2/3] gpio: ath79: Move to the generic GPIO driver
-Date: Sun, 1 Nov 2015 18:46:59 +0100
-Message-ID: <20151101184659.1824dc35@tock>
+Date: Mon, 2 Nov 2015 09:30:49 +0100
+Message-ID: <CACRpkdb2K=9BRRscFm6SUWOM+-eZSW4EZqMyQiPKGSZHq+bHYA@mail.gmail.com>
 References: <1446201391-22553-1-git-send-email-albeu@free.fr>
 	<1446201391-22553-2-git-send-email-albeu@free.fr>
 	<CACRpkdY3Xjir7pHLhpT9nv1w-KA5E3a767vqZoQronyAWZ1F1w@mail.gmail.com>
+	<20151101184659.1824dc35@tock>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:53466 "EHLO smtp2-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752448AbbKARrJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 1 Nov 2015 12:47:09 -0500
-In-Reply-To: <CACRpkdY3Xjir7pHLhpT9nv1w-KA5E3a767vqZoQronyAWZ1F1w@mail.gmail.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33720 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752246AbbKBIau (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Nov 2015 03:30:50 -0500
+Received: by oiad129 with SMTP id d129so91082337oia.0
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Nov 2015 00:30:49 -0800 (PST)
+In-Reply-To: <20151101184659.1824dc35@tock>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Aban Bedel <albeu@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Alban <albeu@free.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Sat, 31 Oct 2015 22:02:53 +0100
-Linus Walleij <linus.walleij@linaro.org> wrote:
+On Sun, Nov 1, 2015 at 6:46 PM, Alban <albeu@free.fr> wrote:
+> On Sat, 31 Oct 2015 22:02:53 +0100
+> Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> On Fri, Oct 30, 2015 at 11:36 AM, Alban Bedel <albeu@free.fr> wrote:
-> 
-> > Turn the ath79 driver into a true driver supporting multiple
-> > instances while dropping most of the code in favor of the generic
-> > MMIO GPIO driver.
-> >
-> > As the driver now depend on CONFIG_GPIO_GENERIC also add a Kconfig
-> > entry to make the driver optional.
-> >
-> > Signed-off-by: Alban Bedel <albeu@free.fr>
-> 
-> This patch looks nice but sadly does not apply to my "devel" branch in
-> the GPIO tree:
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
-> 
-> Please rebase it on this branch or wait until after the merge window.
-
-I see that you applied my previous patch "gpio: ath79: Convert to the
-state container design pattern", this series was supposed to replace
-this patch. I'm sorry I forgot to mention this. That old patch doesn't
-make much sense any more as most of the code it changed just get
-dropped in the move to GPIO_GENERIC.
-
-> > +config GPIO_ATH79
-> > +       tristate "Atheros AR71XX/AR724X/AR913X GPIO support"
-> > +       default y if ATH79
-> > +       depends on ATH79 || COMPILE_TEST
-> 
-> I think the build robot is complaining because of COMPILE_TEST. This
-> driver doesn't really compile on anything else than ATH79 does it?
-> Noone else has asm/mach-ath79/ar71xx_regs.h
+>> Please rebase it on this branch or wait until after the merge window.
 >
-> So I suggest dropping the compile test until this is fixed (e.g. by
-> moving the GPIO register offsets into the driver, what do I know).
+> I see that you applied my previous patch "gpio: ath79: Convert to the
+> state container design pattern", this series was supposed to replace
+> this patch. I'm sorry I forgot to mention this. That old patch doesn't
+> make much sense any more as most of the code it changed just get
+> dropped in the move to GPIO_GENERIC.
 
-I'm going to split the compile test support to a separate patch.
- 
-Alban
+Hm you can tell me exactly which commits I need to revert
+or something ... I cannot rebase the tree now.
+
+It would be best if you cook a GPIO_GENERIC patch based on
+devel.
+
+Yours,
+Linus Walleij
