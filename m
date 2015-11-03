@@ -1,108 +1,131 @@
-From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Mon, 2 Nov 2015 09:15:28 -0600
-Message-ID: <56377E10.3010208@ti.com>
-References: <1446161922-8755-1-git-send-email-afd@ti.com>
- <1446161922-8755-2-git-send-email-afd@ti.com> <20151030171006.GZ4058@x1>
- <5633B078.7080209@ti.com> <20151030190622.GN4058@x1>
- <5633C31E.5030408@ti.com> <20151102091721.GU4058@x1>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH 0/6] GPIO character device skeleton
+Date: Tue, 03 Nov 2015 08:23:24 +0100
+Message-ID: <3389425.noBYZr9C6e@adelgunde>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org> <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com> <20151102101347.GA14066@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151102091721.GU4058@x1>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="nextPart2878517.OidkK43KWv"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34454 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751546AbbKCHXp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Nov 2015 02:23:45 -0500
+In-Reply-To: <20151102101347.GA14066@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On 11/02/2015 03:17 AM, Lee Jones wrote:
-> On Fri, 30 Oct 2015, Andrew F. Davis wrote:
->
->> On 10/30/2015 02:06 PM, Lee Jones wrote:
->>> On Fri, 30 Oct 2015, Andrew F. Davis wrote:
->>>
->>>> On 10/30/2015 12:10 PM, Lee Jones wrote:
->>>>> On Thu, 29 Oct 2015, Andrew F. Davis wrote:
->>>>>
->>>>>> The TPS65912 PMIC contains several regulators and a GPIO controller.
->>>>>> Add bindings for the TPS65912 PMIC.
->>>>>>
->>>>>> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
->>>>>> ---
->>>>>>   .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
->>>>>
->>>>> Why have you dropped Linus' Review-by?
->>>>>
->>>>
->>>> Strange, I thought I made a change to this. Well this brings up a question,
->>>> how much change can we have before we are supposed to drop Reviewed/Acked-by?
->>>
->>> Common sense call I'm afraid. ;)
->>>
->>> [...]
->>>
->>>>>> +     the second cell is used to specify flags.
->>>>>> +     See include/dt-bindings/gpio/gpio.h for possible values.
->>>>>
->>>>> This is a Linuxisum and shouldn't really live in here.
->>>>>
->>>>> I think it would be better to document them in ../gpio/gpio.txt and
->>>>> reference that instead.
->>>>>
->>>>
->>>> Looks like that is already in ../gpio/gpio.txt:57
->>>
->>> There is a mention of GPIO_ACTIVE_HIGH, as it's used in an example.
->>> However GPIO_ACTIVE_LOW is missing.  I think both could do with
->>> documenting properly, then you can refer to them from here.
->>>
->>
->> I mean the lines above the example, they say to use the macros
->> defined in include/dt-bindings/gpio/gpio.h whenever possible,
->> that's really all I would say.
->
-> Let's at least attempt to stick to the rules.
->
-> Please adapt your formatting to <dt-bindings/gpio/gpio.h> in order to
-> eradicate any Linuxiness.
->
 
-Works for me, although I pushed v6 a couple days ago with a different
-fix, maybe that will work too?
+--nextPart2878517.OidkK43KWv
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
->>> [...]
->>>
->>>>>> +Required properties:
->>>>>> + - compatible : Should be "ti,tps65912".
->>>>>> + - reg : Slave address or chip select number (I2C / SPI).
->>>>>> + - interrupt-parent : The parent interrupt controller.
->>>>>> + - interrupts : The interrupt line the device is connected to.
->>>>>> + - interrupt-controller : Marks the device node as an interrupt controller.
->>>>>> + - #interrupt-cells: The number of cells to describe an IRQ, this should be 2.
->>>>>> +     The first cell is the IRQ number.
->>>>>> +     The second cell is the flags, encoded as the trigger masks from
->>>>>> +     ../interrupt-controller/interrupts.txt
->>>>>
->>>>> Nit: We *normally* treat these as bullet-points and not place
->>>>> full-stops on them:
->>>>>
->>>>> $ git grep "compatible" -- Documentation/devicetree/bindings/ | grep -v "\.$" | wc -l
->>>>> 5227
->>>>> $ git grep "compatible.*\.$" -- Documentation/devicetree/bindings/ | wc -l
->>>>> 486
->>>>>
->>>>
->>>> What about for multi-sentence descriptions, we need the middle full-stops, then to not
->>>> have one on the end seems kinda odd looking.
->>>
->>> That's the way I usually do it -- doesn't look too bad. ;)
->>>
->>> [...]
->>>
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Monday 02 November 2015 11:13:47 Johan Hovold wrote:
+> On Fri, Oct 30, 2015 at 08:48:44PM +0100, Linus Walleij wrote:
+> > On Fri, Oct 30, 2015 at 2:55 AM, Alexandre Courbot <gnurou@gmail.co=
+m> wrote:
+> > > On Sun, Oct 25, 2015 at 3:42 AM, Markus Pargmann <mpa@pengutronix=
+.de> wrote:
+> >=20
+> > >> What happens if we have two I2C gpio expanders with the same I2C=
+
+> > >> addresses connected to different I2C busses? If I see this corre=
+ctly
+> > >> they would both show up with the same name. Is there an easy and=
+
+> > >> race-free way to see which GPIO chip is connected to which I2C b=
+us?
+> > >
+> > > I suppose the bus path could be part of the GPIO chip name to avo=
+id
+> > > this ambiguity, something like: 7000c000.i2c/0-001c.gpio
+> >=20
+> > For DT that is the simple solution.
+>=20
+> Not all devices are platform devices, and the bus path can become qui=
+te
+> long, for example for usb to uniquely identify the gpio controller th=
+is
+> could be:
+>=20
+> =09platform/68000000.ocp/48064000.usbhshost/48064800.ehci/usb1/1-2/1-=
+2.3/1-2.3:1.0/gpiochip7
+>=20
+> > Right now it used gpiochip->label if that is set, else the name of
+> > the gpiochip device like gpiochip0, gpiochip1 etc.
+>=20
+> Perhaps better to just stick to the bus unique names (e.g. gpopchip7)=
+,
+> and possibly export the label as an additional attribute.
+
+I think this wouldn't be enough. We would still have trouble identifyin=
+g the
+gpiochips, right?
+
+As an idea: We could use the complete path to create some sort of uniqu=
+e id for
+the device (perhaps hash or something different). This id can be export=
+ed as
+device attribute and would allow udev to create some links as known fro=
+m
+/dev/disk/by-id for example. This would make identifying a single chip =
+quite
+easy for any userspace application and we would avoid having this reall=
+y long
+path somewhere.
+
+Best Regards,
+
+Markus
+
+>=20
+> This is the lsgpio output I get on an omap system by the way:
+>=20
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: gpio, 32 GPIO lines
+> GPIO chip: twl4030, 20 GPIO lines
+> GPIO chip: pl2303, 2 GPIO lines
+>=20
+> Johan
+>=20
+
+=2D-=20
+Pengutronix e.K.                           |                           =
+  |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
+  |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
+5 |
+
+--nextPart2878517.OidkK43KWv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWOGD7AAoJEEpcgKtcEGQQsAIQALGyEuk5Qxh+qcjJRZfeTD3U
+sMXSqpkOZ13zn/F+PXIyiVnb8cs6hRbea0Ml++xSXtDye7VvGXlb1kOsFAnZhVl9
+5tVTyPlSJaYBu2yFlHIwWnJHCTBgsxlYnNmEhSfapgr8jcuSzwhlZclYYNj3CPEL
+w5ifFUFfloyJn/wsw+ASq64ljQDapHXPGFoWZyEUaGTWVLY760oUHsPGcuMvkrr5
+s9srvJwmfTlcry8WUUtjujWj4VIuEBNbHuF+sOEsCifLQI44eGaiY+0Piag2SCyI
+Q8C5oQCQpsgsmIdLEyEuvLrI3bCRt/lZ1EgydyiPC2mg9SNbNhvMJXP9cbEuQjyV
+qV0+jHZboBzrOa4G0MYRH7uDr0L/oqaoFoy3mDGMzkLK+JKCCi9ZqIQje1taaxXp
+tdbB3NIyiDKvot2DWLvz7X6jmqWBu33AIVvxAMlH4/2+CMCa1Tei3xdxYIh+LVUS
+0zZBOk5IvNfAAh20rKQdfZvfdfgRVnhNru3hchEVgpNGRPqZ7pICdugouKiGlO/J
+t6RWFsXbbRBd66k7Z9ue/Nd9X2FGuW7zDXfRs6oexFBSQx1ukbWKegaJflkviPsu
+rFyjxnMJY8OGxOOE1Ypj9bHX2/oULWdNEfhHe4kXbLcGvGLe13q4Mfohl+/t2ueE
+G2Un9zvKEfDO+i1EzF78
+=U713
+-----END PGP SIGNATURE-----
+
+--nextPart2878517.OidkK43KWv--
+
