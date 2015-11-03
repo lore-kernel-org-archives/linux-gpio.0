@@ -1,98 +1,75 @@
 From: Markus Pargmann <mpa@pengutronix.de>
 Subject: Re: [PATCH 0/6] GPIO character device skeleton
-Date: Tue, 03 Nov 2015 08:23:24 +0100
-Message-ID: <3389425.noBYZr9C6e@adelgunde>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org> <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com> <20151102101347.GA14066@localhost>
+Date: Tue, 03 Nov 2015 08:39:13 +0100
+Message-ID: <2109736.Oi4ERkUO0L@adelgunde>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org> <CACRpkdaKO=L7+73OqnTYjs71F0-UEGTLy4=wszaXEro4dbKfcw@mail.gmail.com> <20151101024144.GF28319@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2878517.OidkK43KWv"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart1993466.G3OXs7KGJK"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:34454 "EHLO
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:46266 "EHLO
 	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751546AbbKCHXp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Nov 2015 02:23:45 -0500
-In-Reply-To: <20151102101347.GA14066@localhost>
+	with ESMTP id S1750788AbbKCHjR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Nov 2015 02:39:17 -0500
+In-Reply-To: <20151101024144.GF28319@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
 
---nextPart2878517.OidkK43KWv
+--nextPart1993466.G3OXs7KGJK
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 
-On Monday 02 November 2015 11:13:47 Johan Hovold wrote:
-> On Fri, Oct 30, 2015 at 08:48:44PM +0100, Linus Walleij wrote:
+On Sunday 01 November 2015 11:41:44 Mark Brown wrote:
+> On Fri, Oct 30, 2015 at 08:47:14PM +0100, Linus Walleij wrote:
 > > On Fri, Oct 30, 2015 at 2:55 AM, Alexandre Courbot <gnurou@gmail.co=
 m> wrote:
-> > > On Sun, Oct 25, 2015 at 3:42 AM, Markus Pargmann <mpa@pengutronix=
-.de> wrote:
-> >=20
-> > >> What happens if we have two I2C gpio expanders with the same I2C=
-
-> > >> addresses connected to different I2C busses? If I see this corre=
-ctly
-> > >> they would both show up with the same name. Is there an easy and=
-
-> > >> race-free way to see which GPIO chip is connected to which I2C b=
-us?
-> > >
-> > > I suppose the bus path could be part of the GPIO chip name to avo=
-id
-> > > this ambiguity, something like: 7000c000.i2c/0-001c.gpio
-> >=20
-> > For DT that is the simple solution.
 >=20
-> Not all devices are platform devices, and the bus path can become qui=
-te
-> long, for example for usb to uniquely identify the gpio controller th=
-is
-> could be:
->=20
-> =09platform/68000000.ocp/48064000.usbhshost/48064800.ehci/usb1/1-2/1-=
-2.3/1-2.3:1.0/gpiochip7
->=20
-> > Right now it used gpiochip->label if that is set, else the name of
-> > the gpiochip device like gpiochip0, gpiochip1 etc.
->=20
-> Perhaps better to just stick to the bus unique names (e.g. gpopchip7)=
-,
-> and possibly export the label as an additional attribute.
+> > > * For all the justified hate that sysfs got, it had the advantage=
+ of
+> > > being directly accessible using only the shell. If we replace it =
+with
+> > > a character device interface, I think we will need a "libgpio" (t=
+hat
+> > > provides easy access to C programs) and "gpio-tools" (simple
+> > > command-line tools that provide functionality similar to the sysf=
+s
+> > > interface). Are we ready to start and maintain these? Granted, it=
 
-I think this wouldn't be enough. We would still have trouble identifyin=
-g the
-gpiochips, right?
+> > > should not be too much work, but it's still an extra.
+>=20
+> > I think the raw ioctl()s will be simple enough and intend to use
+> > the tools/gpio/* as proper examples. If we need
+> > tools/gpio/swiss-army-knife.c we will add it too.
+>=20
+> > ALSA and fbdev and MESA and libusb spawned huge userspace
+> > libs, but I hope this ioctl() ABI will be simple enough that apps
+> > can use it directly without a lib. But what do I know.
+>=20
+> That only works for very C like languages, for other languages (thing=
+s
+> like scripting languages in particular) you're going to need a librar=
+y
+> for the language to bind to in order to be usable.
 
-As an idea: We could use the complete path to create some sort of uniqu=
-e id for
-the device (perhaps hash or something different). This id can be export=
-ed as
-device attribute and would allow udev to create some links as known fro=
-m
-/dev/disk/by-id for example. This would make identifying a single chip =
-quite
-easy for any userspace application and we would avoid having this reall=
-y long
-path somewhere.
+I think we need real gpio userspace tools for such a chardev interface =
+and not
+only a library. On the one hand there are all the kernel/userspace deve=
+lopers
+that just want to test stuff. On the other hand there are really a lot =
+of
+people that are using small embedded devices (e.g. beaglebone, raspberr=
+y pi,
+...) for really simple applications like using GPIOs to control somethi=
+ng. I am
+sure many of them are just using some really simple bash code to reach =
+their
+goals.
 
 Best Regards,
 
 Markus
-
->=20
-> This is the lsgpio output I get on an omap system by the way:
->=20
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: gpio, 32 GPIO lines
-> GPIO chip: twl4030, 20 GPIO lines
-> GPIO chip: pl2303, 2 GPIO lines
->=20
-> Johan
->=20
 
 =2D-=20
 Pengutronix e.K.                           |                           =
@@ -104,7 +81,7 @@ Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
 Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
 5 |
 
---nextPart2878517.OidkK43KWv
+--nextPart1993466.G3OXs7KGJK
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -112,20 +89,20 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWOGD7AAoJEEpcgKtcEGQQsAIQALGyEuk5Qxh+qcjJRZfeTD3U
-sMXSqpkOZ13zn/F+PXIyiVnb8cs6hRbea0Ml++xSXtDye7VvGXlb1kOsFAnZhVl9
-5tVTyPlSJaYBu2yFlHIwWnJHCTBgsxlYnNmEhSfapgr8jcuSzwhlZclYYNj3CPEL
-w5ifFUFfloyJn/wsw+ASq64ljQDapHXPGFoWZyEUaGTWVLY760oUHsPGcuMvkrr5
-s9srvJwmfTlcry8WUUtjujWj4VIuEBNbHuF+sOEsCifLQI44eGaiY+0Piag2SCyI
-Q8C5oQCQpsgsmIdLEyEuvLrI3bCRt/lZ1EgydyiPC2mg9SNbNhvMJXP9cbEuQjyV
-qV0+jHZboBzrOa4G0MYRH7uDr0L/oqaoFoy3mDGMzkLK+JKCCi9ZqIQje1taaxXp
-tdbB3NIyiDKvot2DWLvz7X6jmqWBu33AIVvxAMlH4/2+CMCa1Tei3xdxYIh+LVUS
-0zZBOk5IvNfAAh20rKQdfZvfdfgRVnhNru3hchEVgpNGRPqZ7pICdugouKiGlO/J
-t6RWFsXbbRBd66k7Z9ue/Nd9X2FGuW7zDXfRs6oexFBSQx1ukbWKegaJflkviPsu
-rFyjxnMJY8OGxOOE1Ypj9bHX2/oULWdNEfhHe4kXbLcGvGLe13q4Mfohl+/t2ueE
-G2Un9zvKEfDO+i1EzF78
-=U713
+iQIcBAABCAAGBQJWOGShAAoJEEpcgKtcEGQQV/8QAKDHJQ+eKlJC0CMvqW9MMx1p
+NkEdDLsnPP7eT4sHc5uDj17fz24hMphzctRMM8MPrxyT8Sti1+O61afJH44K8gDP
+0hBhSLAQn6Ss2w+bV6TKKjGMOEkTNcvBhMF0jRYpLPG3VMJnh0ABuMFRC0o6TzgB
+LvXWEwD3LC1c3lYZzEpBpIzzbWecroDyPaBmIiw8zE9jjp0VL7f1hmYQSjpU0U4a
+lUYY6K03g2+hS1c2b6rnvgid12yHzRbQXdN3m6U/E6E4NlslY1kY52+jkPv2I2wK
+GVzn1ay3utuNkn9i7ex8DuYBhqbP+PZ4QoQ+PNO04F2XnOH6OoWLgcEDY5+ziBPM
+1Gv/DeMC9emlMi+OUIrvkViEUmG8ovsFASgaJFTAucsaduJFKd2b6pU7nJJ/Q1Ly
+o5vTmvkzcdP5Bnp0l6SmUVQaLUupLP0DJajdWNlzgNH474wOvyCYhYesUJI4friM
+HGQftvNrlKUSVUqhuya0TQirHW9BqXcg+voJDfVv5jnf16vcWXOGVTJS5joDSeMo
+pDPM7BfJK+eVLZ8albKgNxe7GhHu74sXEjodR1MEs+vwG3gRyL9+OSH8LvR0QNHH
+5ZFF1pJe2xgT9ZYDrbWmVAfCtabu7udQLmH6SEYxxNhJ6cp1zndFuwbMvD4tXCmp
+lEiV2zle5+9ULeDLfm8Q
+=nd/a
 -----END PGP SIGNATURE-----
 
---nextPart2878517.OidkK43KWv--
+--nextPart1993466.G3OXs7KGJK--
 
