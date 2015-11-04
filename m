@@ -1,104 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/2] drivers/gpio: Port gpio driver to layerscape platform
-Date: Wed, 04 Nov 2015 09:53:13 +0100
-Message-ID: <4040829.fHtCUjX87j@wuerfel>
-References: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com> <1446619704-27669-2-git-send-email-Gang.Liu@freescale.com>
+From: Scott Wood <scottwood@freescale.com>
+Subject: Re: [PATCH 2/2] drivers/gpio: Port gpio driver to layerscape
+ platform
+Date: Wed, 4 Nov 2015 03:17:38 -0600
+Message-ID: <1446628658.12676.14.camel@freescale.com>
+References: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
+	 <1446619704-27669-2-git-send-email-Gang.Liu@freescale.com>
+	 <4040829.fHtCUjX87j@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57437 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932223AbbKDIxv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2015 03:53:51 -0500
-In-Reply-To: <1446619704-27669-2-git-send-email-Gang.Liu@freescale.com>
+Received: from mail-bn1on0119.outbound.protection.outlook.com ([157.56.110.119]:57880
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754509AbbKDJRu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 4 Nov 2015 04:17:50 -0500
+In-Reply-To: <4040829.fHtCUjX87j@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Liu Gang <Gang.Liu@freescale.com>, robh+dt@kernel.org, linus.walleij@linaro.org, shawnguo@kernel.org, devicetree@vger.kernel.org, R58472@freescale.com, Shaveta Leekha <shaveta@freescale.com>, b07421@freescale.com, bhupesh.sharma@freescale.com, linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Liu Gang <Gang.Liu@freescale.com>, robh+dt@kernel.org, linus.walleij@linaro.org, shawnguo@kernel.org, devicetree@vger.kernel.org, R58472@freescale.com, Shaveta Leekha <shaveta@freescale.com>, b07421@freescale.com, bhupesh.sharma@freescale.com, linux-gpio@vger.kernel.org
 
-On Wednesday 04 November 2015 14:48:24 Liu Gang wrote:
-> Layerscape has the same ip block/controller as
-> GPIO on powerpc platform(MPC8XXX).
+On Wed, 2015-11-04 at 09:53 +0100, Arnd Bergmann wrote:
+> On Wednesday 04 November 2015 14:48:24 Liu Gang wrote:
+> > 
+> > +static bool gpio_little_endian;
+> > +static inline u32 gpio_in32(void __iomem *addr)
+> > +{
+> > +   u32 val;
+> > +
+> > +   if (gpio_little_endian)
+> > +           val = ioread32(addr);
+> > +   else
+> > +           val = ioread32be(addr);
+> > +
+> > +   return val;
+> > +}
+> > +
+> > +static inline void gpio_out32(u32 val, void __iomem *addr)
+> > +{
+> > +   if (gpio_little_endian)
+> > +           iowrite32(val, addr);
+> > +   else
+> > +           iowrite32be(val, addr);
+> > +}
 > 
-> So use portable i/o accessors, as in_be32/out_be32
-> accessors are Power architecture specific whereas
-> ioread32/iowrite32 and ioread32be/iowrite32be are
-> available in other architectures.
+> I guess this is fixed per architecture, so you could also do this as
 > 
-> Layerscape GPIO controller's registers may be big
-> or little endian, so the code needs to get the
-> endian property from DTB, then make additional
-> functions to fit right register read/write
-> operations.
-> 
-> Currently the code can support ls2080a GPIO with
-> little endian registers. And it can also work well
-> on other layerscape platform with big endian GPIO
-> registers.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> Signed-off-by: Shaveta Leekha <shaveta@freescale.com>
-> 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 8949b3f..c3ca283 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -290,12 +290,12 @@ config GPIO_MPC5200
->  	depends on PPC_MPC52xx
->  
->  config GPIO_MPC8XXX
-> -	bool "MPC512x/MPC8xxx GPIO support"
-> +	bool "MPC512x/MPC8xxx/QorIQ GPIO support"
->  	depends on PPC_MPC512x || PPC_MPC831x || PPC_MPC834x || PPC_MPC837x || \
-> -		   FSL_SOC_BOOKE || PPC_86xx
-> +		   FSL_SOC_BOOKE || PPC_86xx || ARCH_LAYERSCAPE
->  	help
->  	  Say Y here if you're going to use hardware that connects to the
-> -	  MPC512x/831x/834x/837x/8572/8610 GPIOs.
-> +	  MPC512x/831x/834x/837x/8572/8610/QorIQ GPIOs.
+> static inline void gpio_out32(u32 val, void __iomem *addr)
+> {
+>       if (IS_ENABLED(CONFIG_ARM))
+>               iowrite32(val, addr);
+>       else if (IS_ENABLED(CONFIG_PPC)
+>               iowrite32be(val, addr);
+>       else
+>               BUG();
+> }
 
-It would be nice to also add '|| COMPILE_TEST' here and ensure that
-it also builds on x86 with that set, to get better coverage from
-the automated build testing infrastructure.
+Unfortunately that guess is wrong.  Some of our ARM chips have big-endian I/O 
+and some have little-endian I/O.
 
-> +static bool gpio_little_endian;
-> +static inline u32 gpio_in32(void __iomem *addr)
-> +{
-> +	u32 val;
-> +
-> +	if (gpio_little_endian)
-> +		val = ioread32(addr);
-> +	else
-> +		val = ioread32be(addr);
-> +
-> +	return val;
-> +}
-> +
-> +static inline void gpio_out32(u32 val, void __iomem *addr)
-> +{
-> +	if (gpio_little_endian)
-> +		iowrite32(val, addr);
-> +	else
-> +		iowrite32be(val, addr);
-> +}
+-Scott
 
-I guess this is fixed per architecture, so you could also do this as
-
-static inline void gpio_out32(u32 val, void __iomem *addr)
-{
-	if (IS_ENABLED(CONFIG_ARM))
-		iowrite32(val, addr);
-	else if (IS_ENABLED(CONFIG_PPC)
-		iowrite32be(val, addr);
-	else
-		BUG();
-}
-
-and then check that the DT flag for little-endian matches
-the architecture specific default.
-
-Your version is more generic of course, while the one I show here
-is a little more efficient and avoids the global variable. Your choice.
-
-	Arnd
