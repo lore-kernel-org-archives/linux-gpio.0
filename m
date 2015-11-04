@@ -1,24 +1,25 @@
-From: Jiri Kosina <jikos@kernel.org>
+From: Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>
 Subject: Re: [PATCH] gpio: change member .dev to .parent
-Date: Wed, 4 Nov 2015 10:33:38 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1511041033110.22567@pobox.suse.cz>
+Date: Wed, 4 Nov 2015 10:54:48 +0100
+Message-ID: <20151104095448.GA20076@samfundet.no>
 References: <1446629475-31754-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:49426 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932463AbbKDJdk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 4 Nov 2015 04:33:40 -0500
+Received: from cassarossa.samfundet.no ([193.35.52.29]:45024 "EHLO
+	cassarossa.samfundet.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754672AbbKDJzB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Nov 2015 04:55:01 -0500
+Content-Disposition: inline
 In-Reply-To: <1446629475-31754-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, =?ISO-8859-2?Q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Alek Du <alek.du@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Jiri Kosina <jikos@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Alek Du <alek.du@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 
-On Wed, 4 Nov 2015, Linus Walleij wrote:
-
+Around Wed 04 Nov 2015 10:31:15 +0100 or thereabout, Linus Walleij wrot=
+e:
 > The name .dev in a struct is normally reserved for a struct device
 > that is let us say a superclass to the thing described by the struct.
 > struct gpio_chip stands out by confusingly using a struct device *dev
@@ -68,15 +69,17 @@ On Wed, 4 Nov 2015, Linus Walleij wrote:
 > big patch in the beginning of -rc1. I can create an immutable branch
 > or tag if you think it will cause you problems, so you can pull it
 > in.
+> ---
+>  arch/avr32/mach-at32ap/pio.c                  |  2 +-
 
-Makes sense to me. For drivers/hid
+=46or the tiny AVR32 bits
 
-	Acked-by: Jiri Kosina <jkosina@suse.cz>
+Acked-by: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+
+<snipp everything else>
 
 --=20
-Jiri Kosina
-SUSE Labs
-
+Best regards, Hans-Christian Egtvedt
 --
 To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
