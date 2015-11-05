@@ -1,91 +1,79 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH] pinctrl: Delete unnecessary checks before the function
- call "pinctrl_unregister"
-Date: Thu, 5 Nov 2015 08:53:45 -0800
-Message-ID: <563B8999.4010409@broadcom.com>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <563B810B.6050401@users.sourceforge.net>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] gpio: change member .dev to .parent
+Date: Thu, 5 Nov 2015 10:08:47 -0800
+Message-ID: <20151105180847.GA36023@dtor-ws>
+References: <1446629475-31754-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:1222 "EHLO
-	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1033200AbbKEQxs (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Nov 2015 11:53:48 -0500
-In-Reply-To: <563B810B.6050401@users.sourceforge.net>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:36148 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964781AbbKESIv (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Nov 2015 13:08:51 -0500
+Received: by pacdm15 with SMTP id dm15so69844253pac.3
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2015 10:08:50 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1446629475-31754-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Scott Branden <sbranden@broadcom.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>, Pramod Kumar <pramodku@broadcom.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Jiri Kosina <jikos@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Lee Jones <lee.jones@linaro.org>, Alek Du <alek.du@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 
+On Wed, Nov 04, 2015 at 10:31:15AM +0100, Linus Walleij wrote:
+> The name .dev in a struct is normally reserved for a struct device
+> that is let us say a superclass to the thing described by the struct.
+> struct gpio_chip stands out by confusingly using a struct device *dev
+> to point to the parent device (such as a platform_device) that
+> represents the hardware. As we want to give gpio_chip:s real devices,
+> this is not working. We need to rename this member to parent.
+>=20
+> This was done by two coccinelle scripts, I guess it is possible to
+> combine them into one, but I don't know such stuff. They look like
+> this:
+>=20
+> @@
+> struct gpio_chip *var;
+> @@
+> -var->dev
+> +var->parent
+>=20
+> and:
+>=20
+> @@
+> struct gpio_chip var;
+> @@
+> -var.dev
+> +var.parent
+>=20
+> This patch hits all over the place, but I *strongly* prefer this
+> solution to any piecemal approaches that just exercise patch
+> mechanics all over the place. It mainly hits drivers/gpio and
+> drivers/pinctrl which is my own backyard anyway.
+>=20
+> Cc: Haavard Skinnemoen <hskinnemoen@gmail.com>
+> Cc: Hans-Christian Egtvedt <egtvedt@samfundet.no>
+> Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Jacek Anaszewski <j.anaszewski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Alek Du <alek.du@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-On 11/5/2015 8:17 AM, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Nov 2015 17:10:22 +0100
->
-> The pinctrl_unregister() function tests whether its argument is NULL
-> and then returns immediately. Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 3 +--
->   drivers/pinctrl/pinctrl-single.c          | 5 +----
->   2 files changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-> index 12a48f4..663ad0a 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-> @@ -638,8 +638,7 @@ static int cygnus_gpio_register_pinconf(struct cygnus_gpio *chip)
->
->   static void cygnus_gpio_unregister_pinconf(struct cygnus_gpio *chip)
->   {
-> -	if (chip->pctl)
-> -		pinctrl_unregister(chip->pctl);
-> +	pinctrl_unregister(chip->pctl);
->   }
->
->   struct cygnus_gpio_data {
-> diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> index ef04b96..d24e5f1 100644
-> --- a/drivers/pinctrl/pinctrl-single.c
-> +++ b/drivers/pinctrl/pinctrl-single.c
-> @@ -1484,10 +1484,7 @@ static void pcs_irq_free(struct pcs_device *pcs)
->   static void pcs_free_resources(struct pcs_device *pcs)
->   {
->   	pcs_irq_free(pcs);
-> -
-> -	if (pcs->pctl)
-> -		pinctrl_unregister(pcs->pctl);
-> -
-> +	pinctrl_unregister(pcs->pctl);
->   	pcs_free_funcs(pcs);
->   	pcs_free_pingroups(pcs);
->   }
->
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-The change looks good to me, thanks!
+Thanks.
 
-Reviewed-by: Ray Jui <rjui@broadcom.com>
-
-+ Pramod since he's working on changes on the pinctrl-cygnus-gpio driver.
-
-Ray
+--=20
+Dmitry
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
