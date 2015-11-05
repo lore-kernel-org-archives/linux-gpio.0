@@ -1,36 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: change member .dev to .parent
-Date: Thu, 5 Nov 2015 11:01:49 +0100
-Message-ID: <CACRpkdZ-7mMm+kzKntYWH-6dtOKrFjULux32UL6vxoaAnqrtYg@mail.gmail.com>
-References: <1446629475-31754-1-git-send-email-linus.walleij@linaro.org>
-	<20151104171300.GJ3503@x1>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
+Date: Thu, 5 Nov 2015 10:29:51 +0000
+Message-ID: <20151105102951.GO1717@sirena.org.uk>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
+ <20151102103116.GE8676@localhost>
+ <CACRpkdaVu_1pAPd-7sUeGLEYymynA10WtuxJcnVPKZVYQOeruw@mail.gmail.com>
+ <CACRpkda6Ad4SGW5H4ZDLn0VLZzq0LqLxSC7f2gcCBDNWH5FMnA@mail.gmail.com>
+ <20151105094411.GD7561@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UOYwgDhKKQYesrzQ"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34372 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030867AbbKEKBu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Nov 2015 05:01:50 -0500
-Received: by oies6 with SMTP id s6so1793079oie.1
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Nov 2015 02:01:49 -0800 (PST)
-In-Reply-To: <20151104171300.GJ3503@x1>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48169 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031961AbbKEKau (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Nov 2015 05:30:50 -0500
+Content-Disposition: inline
+In-Reply-To: <20151105094411.GD7561@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, Jiri Kosina <jikos@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Alek Du <alek.du@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Wed, Nov 4, 2015 at 6:13 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 04 Nov 2015, Linus Walleij wrote:
 
->> -             chip->dev             = &pdev->dev;
->> +             chip->parent             = &pdev->dev;
->
-> Are you buggering up my tabbing, or is this a Gitisum?
+--UOYwgDhKKQYesrzQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It's coccinelle doing this ... anyway I'll go in and check manually
-that it looks OK in the end result.
+On Thu, Nov 05, 2015 at 10:44:11AM +0100, Johan Hovold wrote:
+> On Wed, Nov 04, 2015 at 11:48:47AM +0100, Linus Walleij wrote:
 
->   Acked-by: Lee Jones <lee.jones@linaro.org>
+> > Thinking about it maybe it's simplest to just make ->dev a pointer
+> > and kzalloc() it at gpiochip_add().
 
-Thanks!
-Linus Walleij
+> > That should solve this.
+
+> You'd avoid ever reregistering the same struct device, but that would
+> not solve the bigger life-time issue by itself.
+
+You'd need to do something like have the file reference things via
+something attached to that device and then ensure that it's made safe
+(eg, by setting a pointer to NULL and then checking for that on use)
+when removing the device.
+
+--UOYwgDhKKQYesrzQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWOy+eAAoJECTWi3JdVIfQCrYH/0Zrv+Izs6FvmhcUMI0QfztC
+a7ARAGne+bSHB0dUWYhutTdPNtGy349N2Z3p3utDsN0sfg7vjDn2ZvcHGMKxbC4Z
+N9vDDdGmpVBIqLeMcx/yXPRpieAlPQqP2praqnMKNTNPPvHKdAzvSn1MMiZfGNfy
+9bgPdWvbsOjRUoHygf5w8r11UDJg1Ukn76DBv8bcRniQlOa4uw59qL03oIbMooiG
+x+DVhIphpxdCI12A2WIucMstrmyCrR7vm0r8+eCLVlTF6fcUVDF78eInfu5w0y9b
+swQhi7lydRrKkD5tSm498SOw0shDeUPXJdtkl9FprIlDCF7gBhLE6gCntcmsVdc=
+=mStt
+-----END PGP SIGNATURE-----
+
+--UOYwgDhKKQYesrzQ--
