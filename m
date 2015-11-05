@@ -1,216 +1,89 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Fri, 6 Nov 2015 05:02:26 +0800
-Message-ID: <201511060535.iYq1YLYY%fengguang.wu@intel.com>
-References: <20151105193838.GA33410@dtor-ws>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/2 V2] ls2080a/dts: Add little endian property for GPIO
+ IP block
+Date: Thu, 5 Nov 2015 15:21:42 -0600
+Message-ID: <20151105212142.GA22264@rob-hp-laptop>
+References: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="UlVJffcvxoiEqYs2"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:12992 "EHLO mga14.intel.com"
+Received: from mail.kernel.org ([198.145.29.136]:34109 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750851AbbKEVDL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Nov 2015 16:03:11 -0500
+	id S1756348AbbKEVVr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 5 Nov 2015 16:21:47 -0500
 Content-Disposition: inline
-In-Reply-To: <20151105193838.GA33410@dtor-ws>
+In-Reply-To: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, mika.westerberg@linux.intel.com, "Tirdea, Irina" <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liu Gang <Gang.Liu@freescale.com>
+Cc: linus.walleij@linaro.org, arnd@arndb.de, shawnguo@kernel.org, bhupesh.sharma@freescale.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b07421@freescale.com, R58472@freescale.com
 
+On Thu, Nov 05, 2015 at 10:42:21AM +0800, Liu Gang wrote:
+> The GPIO block for ls2080a platform has little endian registers,
+> the GPIO driver needs this property to read/write registers by
+> right interface.
+> 
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Rob Herring <robh@kernel.org>
 
-Hi Dmitry,
-
-[auto build test ERROR on: gpio/for-next]
-[also build test ERROR on: v4.3 next-20151105]
-
-url:    https://github.com/0day-ci/linux/commits/Dmitry-Torokhov/gpiolib-tighten-up-ACPI-legacy-gpio-lookups/20151106-034359
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
-config: cris-etrax-100lx_v2_defconfig (attached as .config)
-reproduce:
-        wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        make.cross ARCH=cris 
-
-All errors (new ones prefixed by >>):
-
-   drivers/gpio/gpiolib.c: In function 'acpi_can_fallback_to_crs':
->> drivers/gpio/gpiolib.c:1859:10: error: dereferencing pointer to incomplete type
-   drivers/gpio/gpiolib.c:1859:35: error: dereferencing pointer to incomplete type
-
-vim +1859 drivers/gpio/gpiolib.c
-
-  1853	static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
-  1854					     const char *con_id)
-  1855	{
-  1856		struct acpi_gpio_lookup *l, *lookup = NULL;
-  1857	
-  1858		/* Never fallback if the device has properties */
-> 1859		if (adev->data.properties || adev->driver_gpios)
-  1860			return false;
-  1861	
-  1862		mutex_lock(&acpi_gpio_lookup_lock);
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---UlVJffcvxoiEqYs2
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-+f8BNEDJXiN2AAA=
-
---UlVJffcvxoiEqYs2--
+> ---
+> V2 changes: No
+> 
+>  Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt | 3 +++
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi          | 4 ++++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> index f2455c5..c836dab 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> @@ -10,6 +10,9 @@ Required properties:
+>    the second cell is used to specify the gpio polarity:
+>        0 = active high
+>        1 = active low
+> +- little-endian : Should be set if the GPIO has little endian
+> +		  registers. No the property means the GPIO
+> +		  registers are big endian mode.
+>  
+>  Example:
+>  
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> index e81cd48..0099205 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> @@ -277,6 +277,7 @@
+>  			reg = <0x0 0x2300000 0x0 0x10000>;
+>  			interrupts = <0 36 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -287,6 +288,7 @@
+>  			reg = <0x0 0x2310000 0x0 0x10000>;
+>  			interrupts = <0 36 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -297,6 +299,7 @@
+>  			reg = <0x0 0x2320000 0x0 0x10000>;
+>  			interrupts = <0 37 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -307,6 +310,7 @@
+>  			reg = <0x0 0x2330000 0x0 0x10000>;
+>  			interrupts = <0 37 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> -- 
+> 2.1.0.27.g96db324
+> 
