@@ -1,55 +1,311 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 3/6] Documentation: tps65086: Add DT bindings for the
- TPS65086 GPO controller
-Date: Wed, 4 Nov 2015 16:57:38 -0600
-Message-ID: <20151104225738.GA5127@rob-hp-laptop>
-References: <1446657135-7820-1-git-send-email-afd@ti.com>
- <1446657135-7820-4-git-send-email-afd@ti.com>
+From: Liu Gang <Gang.Liu@freescale.com>
+Subject: [PATCH 2/2 V2] drivers/gpio: Port gpio driver to layerscape platform
+Date: Thu, 5 Nov 2015 10:42:22 +0800
+Message-ID: <1446691342-1943-2-git-send-email-Gang.Liu@freescale.com>
+References: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1446657135-7820-4-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2on0119.outbound.protection.outlook.com ([65.55.169.119]:24463
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1031785AbbKECt3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 4 Nov 2015 21:49:29 -0500
+In-Reply-To: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robh+dt@kernel.org, linus.walleij@linaro.org, arnd@arndb.de, shawnguo@kernel.org
+Cc: bhupesh.sharma@freescale.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b07421@freescale.com, R58472@freescale.com, Gang.Liu@freescale.com, Shaveta Leekha <shaveta@freescale.com>
 
-On Wed, Nov 04, 2015 at 11:12:12AM -0600, Andrew F. Davis wrote:
-> The TPS65086 PMIC contains several regulators and a GPO controller.
-> Add bindings for the TPS65086 GPO controller.
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+Layerscape has the same ip block/controller as
+GPIO on powerpc platform(MPC8XXX).
 
-Acked-by: Rob Herring <robh@kernel.org>
+So use portable i/o accessors, as in_be32/out_be32
+accessors are Power architecture specific whereas
+ioread32/iowrite32 and ioread32be/iowrite32be are
+available in other architectures.
 
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-tps65086.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65086.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65086.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65086.txt
-> new file mode 100644
-> index 0000000..ba05107
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65086.txt
-> @@ -0,0 +1,16 @@
-> +* TPS65086 GPO Controller bindings
-> +
-> +Required properties:
-> + - compatible		: Should be "ti,tps65086-gpio".
-> + - gpio-controller	: Marks the device node as a GPIO Controller.
-> + - #gpio-cells		: Should be two. The first cell is the pin number
-> +			    and the second cell is used to specify flags.
-> +			    See ../gpio/gpio.txt for possible values.
-> +
-> +Example:
-> +
-> +	gpio4: gpio {
-> +		compatible = "ti,tps65086-gpio";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> -- 
-> 1.9.1
-> 
+Layerscape GPIO controller's registers may be big
+or little endian, so the code needs to get the
+endian property from DTB, then make additional
+functions to fit right register read/write
+operations.
+
+Currently the code can support ls2080a GPIO with
+little endian registers. And it can also work well
+on other layerscape platform with big endian GPIO
+registers.
+
+Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+Signed-off-by: Shaveta Leekha <shaveta@freescale.com>
+---
+V2 changes: Add '|| COMPILE_TEST' based on Arnd's comments.
+
+ drivers/gpio/Kconfig        |  6 ++--
+ drivers/gpio/gpio-mpc8xxx.c | 87 +++++++++++++++++++++++++++++++++------------
+ 2 files changed, 67 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8949b3f..8d4f159 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -290,12 +290,12 @@ config GPIO_MPC5200
+ 	depends on PPC_MPC52xx
+ 
+ config GPIO_MPC8XXX
+-	bool "MPC512x/MPC8xxx GPIO support"
++	bool "MPC512x/MPC8xxx/QorIQ GPIO support"
+ 	depends on PPC_MPC512x || PPC_MPC831x || PPC_MPC834x || PPC_MPC837x || \
+-		   FSL_SOC_BOOKE || PPC_86xx
++		   FSL_SOC_BOOKE || PPC_86xx || ARCH_LAYERSCAPE || COMPILE_TEST
+ 	help
+ 	  Say Y here if you're going to use hardware that connects to the
+-	  MPC512x/831x/834x/837x/8572/8610 GPIOs.
++	  MPC512x/831x/834x/837x/8572/8610/QorIQ GPIOs.
+ 
+ config GPIO_MSM_V2
+ 	tristate "Qualcomm MSM GPIO v2"
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 48ef368..eb7a1ca 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -1,5 +1,5 @@
+ /*
+- * GPIOs on MPC512x/8349/8572/8610 and compatible
++ * GPIOs on MPC512x/8349/8572/8610/QorIQ and compatible
+  *
+  * Copyright (C) 2008 Peter Korsgaard <jacmet@sunsite.dk>
+  *
+@@ -19,6 +19,7 @@
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
+ #include <linux/irq.h>
++#include <linux/irqdomain.h>
+ 
+ #define MPC8XXX_GPIO_PINS	32
+ 
+@@ -44,6 +45,27 @@ struct mpc8xxx_gpio_chip {
+ 	const void *of_dev_id_data;
+ };
+ 
++static bool gpio_little_endian;
++static inline u32 gpio_in32(void __iomem *addr)
++{
++	u32 val;
++
++	if (gpio_little_endian)
++		val = ioread32(addr);
++	else
++		val = ioread32be(addr);
++
++	return val;
++}
++
++static inline void gpio_out32(u32 val, void __iomem *addr)
++{
++	if (gpio_little_endian)
++		iowrite32(val, addr);
++	else
++		iowrite32be(val, addr);
++}
++
+ static inline u32 mpc8xxx_gpio2mask(unsigned int gpio)
+ {
+ 	return 1u << (MPC8XXX_GPIO_PINS - 1 - gpio);
+@@ -59,9 +81,17 @@ static void mpc8xxx_gpio_save_regs(struct of_mm_gpio_chip *mm)
+ {
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 
+-	mpc8xxx_gc->data = in_be32(mm->regs + GPIO_DAT);
++	mpc8xxx_gc->data = gpio_in32(mm->regs + GPIO_DAT);
+ }
+ 
++/* Generic set and clear bits accessor ports */
++#define bgpio_setbits32(_addr, _v) \
++		gpio_out32(gpio_in32(_addr) |  (_v), (_addr))
++#define bgpio_clrbits32(_addr, _v) \
++		gpio_out32(gpio_in32(_addr) & ~(_v), (_addr))
++#define bgpio_clrsetbits32(addr, clear, set) \
++		gpio_out32((gpio_in32(addr) & ~(clear)) | (set), (addr))
++
+ /* Workaround GPIO 1 errata on MPC8572/MPC8536. The status of GPIOs
+  * defined as output cannot be determined by reading GPDAT register,
+  * so we use shadow data register instead. The status of input pins
+@@ -74,9 +104,9 @@ static int mpc8572_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = to_mpc8xxx_gpio_chip(mm);
+ 	u32 out_mask, out_shadow;
+ 
+-	out_mask = in_be32(mm->regs + GPIO_DIR);
++	out_mask = gpio_in32(mm->regs + GPIO_DIR);
+ 
+-	val = in_be32(mm->regs + GPIO_DAT) & ~out_mask;
++	val = gpio_in32(mm->regs + GPIO_DAT) & ~out_mask;
+ 	out_shadow = mpc8xxx_gc->data & out_mask;
+ 
+ 	return (val | out_shadow) & mpc8xxx_gpio2mask(gpio);
+@@ -86,7 +116,7 @@ static int mpc8xxx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct of_mm_gpio_chip *mm = to_of_mm_gpio_chip(gc);
+ 
+-	return in_be32(mm->regs + GPIO_DAT) & mpc8xxx_gpio2mask(gpio);
++	return gpio_in32(mm->regs + GPIO_DAT) & mpc8xxx_gpio2mask(gpio);
+ }
+ 
+ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+@@ -102,7 +132,7 @@ static void mpc8xxx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	else
+ 		mpc8xxx_gc->data &= ~mpc8xxx_gpio2mask(gpio);
+ 
+-	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
++	gpio_out32(mpc8xxx_gc->data, mm->regs + GPIO_DAT);
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -128,7 +158,7 @@ static void mpc8xxx_gpio_set_multiple(struct gpio_chip *gc,
+ 		}
+ 	}
+ 
+-	out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
++	gpio_out32(mpc8xxx_gc->data, mm->regs + GPIO_DAT);
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -141,7 +171,7 @@ static int mpc8xxx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
++	bgpio_clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+@@ -158,7 +188,7 @@ static int mpc8xxx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
++	bgpio_setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 
+@@ -201,7 +231,8 @@ static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 	unsigned int mask;
+ 
+-	mask = in_be32(mm->regs + GPIO_IER) & in_be32(mm->regs + GPIO_IMR);
++	mask = gpio_in32(mm->regs + GPIO_IER)
++		& gpio_in32(mm->regs + GPIO_IMR);
+ 	if (mask)
+ 		generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
+ 						     32 - ffs(mask)));
+@@ -217,7 +248,8 @@ static void mpc8xxx_irq_unmask(struct irq_data *d)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	setbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	bgpio_setbits32(mm->regs + GPIO_IMR,
++			mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -230,7 +262,8 @@ static void mpc8xxx_irq_mask(struct irq_data *d)
+ 
+ 	raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+ 
+-	clrbits32(mm->regs + GPIO_IMR, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	bgpio_clrbits32(mm->regs + GPIO_IMR,
++			mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 
+ 	raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ }
+@@ -240,7 +273,7 @@ static void mpc8xxx_irq_ack(struct irq_data *d)
+ 	struct mpc8xxx_gpio_chip *mpc8xxx_gc = irq_data_get_irq_chip_data(d);
+ 	struct of_mm_gpio_chip *mm = &mpc8xxx_gc->mm_gc;
+ 
+-	out_be32(mm->regs + GPIO_IER, mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++	gpio_out32(mpc8xxx_gpio2mask(irqd_to_hwirq(d)), mm->regs + GPIO_IER);
+ }
+ 
+ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
+@@ -252,15 +285,15 @@ static int mpc8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		setbits32(mm->regs + GPIO_ICR,
+-			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++		bgpio_setbits32(mm->regs + GPIO_ICR,
++				mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrbits32(mm->regs + GPIO_ICR,
+-			  mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
++		bgpio_clrbits32(mm->regs + GPIO_ICR,
++				mpc8xxx_gpio2mask(irqd_to_hwirq(d)));
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+@@ -292,20 +325,20 @@ static int mpc512x_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 	case IRQ_TYPE_LEVEL_LOW:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrsetbits_be32(reg, 3 << shift, 2 << shift);
++		bgpio_clrsetbits32(reg, 3 << shift, 2 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_RISING:
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrsetbits_be32(reg, 3 << shift, 1 << shift);
++		bgpio_clrsetbits32(reg, 3 << shift, 1 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+ 	case IRQ_TYPE_EDGE_BOTH:
+ 		raw_spin_lock_irqsave(&mpc8xxx_gc->lock, flags);
+-		clrbits32(reg, 3 << shift);
++		bgpio_clrbits32(reg, 3 << shift);
+ 		raw_spin_unlock_irqrestore(&mpc8xxx_gc->lock, flags);
+ 		break;
+ 
+@@ -398,6 +431,14 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	mm_gc = &mpc8xxx_gc->mm_gc;
+ 	gc = &mm_gc->gc;
+ 
++	if (of_property_read_bool(np, "little-endian")) {
++		gpio_little_endian = true;
++		dev_dbg(&pdev->dev, "GPIO REGISTERS are LITTLE endian\n");
++	} else {
++		gpio_little_endian = false;
++		dev_dbg(&pdev->dev, "GPIO REGISTERS are BIG endian\n");
++	}
++
+ 	mm_gc->save_regs = mpc8xxx_gpio_save_regs;
+ 	gc->ngpio = MPC8XXX_GPIO_PINS;
+ 	gc->direction_input = mpc8xxx_gpio_dir_in;
+@@ -422,7 +463,7 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	mpc8xxx_gc->irqn = irq_of_parse_and_map(np, 0);
+-	if (mpc8xxx_gc->irqn == NO_IRQ)
++	if (mpc8xxx_gc->irqn == 0)
+ 		return 0;
+ 
+ 	mpc8xxx_gc->irq = irq_domain_add_linear(np, MPC8XXX_GPIO_PINS,
+@@ -435,8 +476,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 		mpc8xxx_gc->of_dev_id_data = id->data;
+ 
+ 	/* ack and mask all irqs */
+-	out_be32(mm_gc->regs + GPIO_IER, 0xffffffff);
+-	out_be32(mm_gc->regs + GPIO_IMR, 0);
++	gpio_out32(0xffffffff, mm_gc->regs + GPIO_IER);
++	gpio_out32(0, mm_gc->regs + GPIO_IMR);
+ 
+ 	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+ 					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
+-- 
+2.1.0.27.g96db324
+
