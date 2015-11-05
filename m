@@ -1,105 +1,51 @@
-From: Sharma Bhupesh <bhupesh.sharma@freescale.com>
-Subject: RE: [PATCH 1/2 V2] ls2080a/dts: Add little endian property for GPIO
- IP block
-Date: Thu, 5 Nov 2015 02:54:37 +0000
-Message-ID: <BY1PR0301MB13033A8948975CFB2B4E628B82290@BY1PR0301MB1303.namprd03.prod.outlook.com>
-References: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1446691342-1943-1-git-send-email-Gang.Liu@freescale.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "robh+dt@kernel.org" <robh+dt@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Liu Gang <Gang.Liu@freescale.com>, Scott Wood <scottwood@freescale.com>, Li Leo <LeoLi@freescale.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: remove redundant if conditional from Kconfig
+Date: Thu,  5 Nov 2015 15:46:03 +0900
+Message-ID: <1446705963-7174-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg009.nifty.com ([202.248.44.35]:52406 "EHLO
+	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1034002AbbKEGpr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Nov 2015 01:45:47 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-Hi Gang,
+The whole menu is guarded by
 
-> From: Liu Gang [mailto:Gang.Liu@freescale.com]
-> Sent: Thursday, November 05, 2015 8:12 AM
-> 
-> The GPIO block for ls2080a platform has little endian registers, the GPIO
-> driver needs this property to read/write registers by right interface.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
-> ---
-> V2 changes: No
-> 
->  Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt | 3 +++
->  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi          | 4 ++++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> index f2455c5..c836dab 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> @@ -10,6 +10,9 @@ Required properties:
->    the second cell is used to specify the gpio polarity:
->        0 = active high
->        1 = active low
-> +- little-endian : Should be set if the GPIO has little endian
-> +		  registers. No the property means the GPIO
-> +		  registers are big endian mode.
+  menu "Pin controllers"
+          depends on PINCTRL
+      ...
+  endmenu
 
-Nitpick: I would suggest rewording this to the following, for better readability:
+The if conditional outside of it is redundant.
 
- +- little-endian : Should be set if the GPIO has little endian
- +		  registers. If this property is not set, then the GPIO
- +		  registers are configured in big endian mode.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Regards,
-Bhupesh
+ drivers/pinctrl/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> 
->  Example:
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> index e81cd48..0099205 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> @@ -277,6 +277,7 @@
->  			reg = <0x0 0x2300000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -287,6 +288,7 @@
->  			reg = <0x0 0x2310000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -297,6 +299,7 @@
->  			reg = <0x0 0x2320000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -307,6 +310,7 @@
->  			reg = <0x0 0x2330000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> --
-> 2.1.0.27.g96db324
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index b422e4e..312c78b 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -5,8 +5,6 @@
+ config PINCTRL
+ 	bool
+ 
+-if PINCTRL
+-
+ menu "Pin controllers"
+ 	depends on PINCTRL
+ 
+@@ -274,5 +272,3 @@ config PINCTRL_TB10X
+ 	select GPIOLIB
+ 
+ endmenu
+-
+-endif
+-- 
+1.9.1
+
