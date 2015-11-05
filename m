@@ -1,87 +1,37 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP
- block
-Date: Thu, 5 Nov 2015 07:27:37 -0600
-Message-ID: <20151105132737.GA11186@rob-hp-laptop>
-References: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 4/7] pinctrl: sunxi: remove redundant "depends on RESET_CONTROLLER"
+Date: Thu, 5 Nov 2015 14:40:07 +0100
+Message-ID: <CACRpkdYmdyxi+6fZNGffE6-JBZGkyq3F__Ywc4rCYYEsQeimMQ@mail.gmail.com>
+References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
+	<1446722128-11961-5-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:59035 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030996AbbKEN1n (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 5 Nov 2015 08:27:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1446722128-11961-5-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: linus.walleij@linaro.org, arnd@arndb.de, shawnguo@kernel.org, bhupesh.sharma@freescale.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, b07421@freescale.com, R58472@freescale.com
 
-On Wed, Nov 04, 2015 at 02:48:23PM +0800, Liu Gang wrote:
-> The GPIO block for ls2080a platform has little endian registers,
-> the GPIO driver needs this property to read/write registers by
-> right interface.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+On Thu, Nov 5, 2015 at 12:15 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> ARCH_SUNXI selects RESET_CONTROLLER.
+> The dependency "depends on RESET_CONTROLLER" is already met.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
+NACK, this pin controller needs that as dependency, I don't worry
+that it's overspecified.
 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> index f2455c5..c836dab 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> @@ -10,6 +10,9 @@ Required properties:
->    the second cell is used to specify the gpio polarity:
->        0 = active high
->        1 = active low
-> +- little-endian : Should be set if the GPIO has little endian
-> +		  registers. No the property means the GPIO
-> +		  registers are big endian mode.
->  
->  Example:
->  
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> index f3c59f9..41bb8c1 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> @@ -277,6 +277,7 @@
->  			reg = <0x0 0x2300000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -287,6 +288,7 @@
->  			reg = <0x0 0x2310000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -297,6 +299,7 @@
->  			reg = <0x0 0x2320000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -307,6 +310,7 @@
->  			reg = <0x0 0x2330000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> -- 
-> 2.1.0.27.g96db324
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+They both do this:
+#include <linux/reset.h>
+
+And the object should specify its dependencies, not rely on them
+being implicitly available.
+
+The dep is there for human readers too, not just machines. And to
+them, this is helpful information.
+
+Yours,
+Linus Walleij
