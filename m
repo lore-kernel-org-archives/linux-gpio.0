@@ -1,64 +1,78 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 0/6] GPIO character device skeleton
-Date: Fri, 6 Nov 2015 11:21:21 +0100
-Message-ID: <20151106102121.GF22538@localhost>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
- <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
- <20151102101347.GA14066@localhost>
- <3389425.noBYZr9C6e@adelgunde>
- <20151103120605.GA18098@localhost>
- <CACRpkdaQYDk4s9b79xh+vL-3SFYp5GN3KpjgsSshzF0E+1-r5A@mail.gmail.com>
- <20151105094015.GC7561@localhost>
- <CACRpkdZsNNdFcJHdPoW=kyOJ0ONS6_sHX18CPwYcQybQ9pSx2g@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+Date: Fri, 6 Nov 2015 13:57:32 +0100
+Message-ID: <CALszF6B7928hpMDMH0_wmo-MakZX7sofO85aeBwv-aCLBHnrkA@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
+	<56261239.5030007@linaro.org>
+	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+	<CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:36115 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1032054AbbKFKVN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 05:21:13 -0500
-Received: by lbblt2 with SMTP id lt2so35467442lbb.3
-        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2015 02:21:12 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZsNNdFcJHdPoW=kyOJ0ONS6_sHX18CPwYcQybQ9pSx2g@mail.gmail.com>
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:34858 "EHLO
+	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161368AbbKFM5d (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 07:57:33 -0500
+In-Reply-To: <CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On Thu, Nov 05, 2015 at 03:11:48PM +0100, Linus Walleij wrote:
-> On Thu, Nov 5, 2015 at 10:40 AM, Johan Hovold <johan@kernel.org> wrote:
-> > On Tue, Nov 03, 2015 at 06:18:42PM +0100, Linus Walleij wrote:
-> 
-> >> It'd be nice if devices could be uniquely identified in the chardev alone
-> >> I think, then we don't need to much reliance on external assumptions
-> >> and traversing sysfs somehow for more info.
-> >
-> > Point is that this is not a gpio-specific problem. Userspace needs to
-> > deal with this for any resource it wants to access (e.g. i2c or spi).
-> 
-> Yeah let's see what others have to say.
-> 
-> > And you should be able to use libudev for tree-traversal without actually
-> > using udevd, right?
-> 
-> Well libudev depends on libsystemd and is using it's subcomponent
-> sd-device to traverse sysfs. It's a pretty fat dependency for a
-> space-constrained embedded system, and the source code is not
-> maintained outside systemd anymore, leading to an
-> all-or-nothing approach it seems to me.
+2015-10-22 14:35 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Tue, Oct 20, 2015 at 6:32 PM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
+>> 2015-10-20 12:06 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
+>>> On 17/10/15 18:23, Maxime Coquelin wrote:
+>
+>>> I suggesting that, like with the clock driver, there is no need to the
+>>> STM32F429_PAXX_FUNC_YYY macros at all.
+>>>
+>>> Given the way you can enumerate pin config options in stm32f429.dtsi then I
+>>> think stm32f429.dtsi is the only file that will ever include this header? If
+>>> so then why not just plug the values directly into the pinmux fields. Its
+>>> not duplicative and is easier to map back to data sheets.
+>>>
+>>> ~~~
+>>> #define PIN_NO(x) ...
+>>> #define PIN_AF(x) ...
+>>>
+>>> usart1_pins_a: usart1@0 {
+>>>                                 pins1 {
+>>>                                         pinmux = PIN_NO(9) | PIN_AF(7);
+>>>                                         bias-disable;
+>>>                                         drive-push-pull;
+>>>                                         slew-rate = <0>;
+>>>                                 };
+>>>                                 ...
+>>>                         };
+>>> ~~~
+>>
+>> The advantage with the defines is that you can see easily which pin we
+>> are talking about.
+>> Moreover, the defines are generated from the datasheet, so it is
+>> painless to generate them.
+>> And it will be consistent with Mediatek implementation, on which I
+>> heavily inspired.
+>>
+>> Linus, what is your view?
+>
+> I have no strong view of this at all.
+>
+> I would ask the opinion of other people doing numbered muxes
+> to see what is generally best for everyone to use,
+> Sascha Hauer specifically, or the Mediatek people.
 
-Seems to me like you're trying to solve a user-space problem in the
-kernel. Even the network-device links you mentioned is something that
-udev provides.
+Thinking again at it, I persist to believe have the defines makes it
+easier to use.
+With auto-completion, it makes it faster and less error prone to
+select the right
+alternate function without parsing the datasheet.
 
-> I don't think it used to be like that but it is like that now...
+But as these defines are not actually used on driver side, maybe I
+could just move
+them to the dts directory?
 
-Yeah, I'm not using the latest and greatest, but the libudev0 182 I took
-a look at has no such dependencies and the lib seemed reasonably small
-(40k).
-
-IIRC there has been discussions about a standalone (mdev) version of it
-as well.
-
-Johan
+Regards,
+Maxime
