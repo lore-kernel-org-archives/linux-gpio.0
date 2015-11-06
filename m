@@ -1,105 +1,138 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [RFC PATCH 0/7] reset: make RESET_CONTROLLER a select'ed option
-Date: Fri, 6 Nov 2015 14:58:04 +0900
-Message-ID: <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
-References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
-	<3770393.BLNOaUSB5Q@wuerfel>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpiolib: tighten up ACPI legacy gpio lookups
+Date: Fri, 6 Nov 2015 10:08:14 +0200
+Message-ID: <20151106080814.GS1509@lahna.fi.intel.com>
+References: <20151105193838.GA33410@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3770393.BLNOaUSB5Q@wuerfel>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:41530 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1031988AbbKFIIT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 6 Nov 2015 03:08:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20151105193838.GA33410@dtor-ws>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Thu, Nov 05, 2015 at 11:38:38AM -0800, Dmitry Torokhov wrote:
+> We should not fall back to the legacy unnamed gpio lookup style if the
+> driver requests gpios with different names, because we'll give out the same
+> gpio twice. Let's keep track of the names that were used for the device and
+> only do the fallback for the first name used.
+> 
+> Also disable fallback to _CRS gpios if ACPI device has DT-like
+> properties or driver-supplied gpio mappings.
 
+Thanks for taking care of this!
 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> 
+> This version incorporates changes suggested by Mika Westerberg in
+> response to the draft patch I posted in Goodix thread.
+> 
+>  drivers/gpio/gpiolib.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a18f00f..9631ee8 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1841,6 +1841,50 @@ static struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
+>  	return desc;
+>  }
+>  
+> +struct acpi_gpio_lookup {
+> +	struct list_head node;
+> +	struct acpi_device *adev;
+> +	const char *con_id;
+> +};
+> +
+> +static DEFINE_MUTEX(acpi_gpio_lookup_lock);
+> +static LIST_HEAD(acpi_gpio_lookup_list);
+> +
+> +static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
+> +				     const char *con_id)
+> +{
+> +	struct acpi_gpio_lookup *l, *lookup = NULL;
+> +
+> +	/* Never fallback if the device has properties */
+> +	if (adev->data.properties || adev->driver_gpios)
+> +		return false;
 
-2015-11-05 23:49 GMT+09:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
-> On Thursday 05 November 2015 20:15:21 Masahiro Yamada wrote:
->> When I was implementing a new reset controller for my SoCs,
->> I struggled to make my sub-menu shown under the reset
->> controller menu.
->> I noticed the Kconfig in reset sub-system are screwed up due to two
->> config options (ARCH_HAS_RESET_CONTROLLER and RESET_CONTROLLER).
->>
->> I think only the former should be select'ed by relevant SoCs,
->> but in fact the latter is also select'ed here and there.
->> Mixing "select" to a user-configurable option is a mess.
->>
->> Finally, I started to wonder whether it could be more simpler?
->>
->> The first patch drops ARCH_HAS_RESET_CONTROLLER.
->> RESET_CONTROLLER should be directly selected by SoCs.
->>
->> The rest of this series are minor clean ups in other
->> sub-systems.
->> I can postpone them if changes over cross sub-systems
->> are not preferred.
->
-> Thanks a lot for picking up this topic! It has been annoying me
-> for a while and I have submitted an experimental patch some time
-> ago, but not finished it myself.
->
-> For some reason, I only see a subset of your patches here (patch 1, 4 and 6),
-> so I don't know exactly what you did.
+I missed the fact that struct acpi_device is declared in
+<acpi/acpi_bus.h> so we can't use the two fields directly here when
+!CONFIG_ACPI. Sorry about that.
 
-All the patches CCed linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
-so you can dig into LKML log or the following patchwork
-https://patchwork.kernel.org/project/LKML/list/
+Do you think we can just add 
 
+#ifdef CONFIG_ACPI
 
+#endif
 
+around the above check?
 
-> For reference, you can find
-> my original patch below. Please check if I did things that your
-> series doesn't do, and whether those are still needed.
+Alternatively we could add an inline function to drivers/gpio/gpiolib.h
+like:
 
-Thanks.
+#ifdef CONFIG_ACPI
+static inline bool acpi_gpio_has_properties(struct acpi_device *adev)
+{
+	return adev->data.properties || adev->driver_gpios;
+}
+#else
+static inline bool acpi_gpio_has_properties(struct acpi_device *adev)
+{
+	return false;
+}
+#endif
 
-Yours looks mostly nice, and this work is worth continuing.
-(I am pleased to review it when you submit the next version.)
-
-I have some comments.
-
-[1]
-Why is ARCH_HAS_RESET_CONTROLLER select'ed by
-ARCH_MULTIPLATFORM, but not by others?
-This seems weird.
-
-We do not have such options like
-  ARCH_HAS_PINCTRL,  ARCH_HAS_COMMON_CLK...
-
-
-[2]
-The difference is that yours is adding per-driver options such as
-RESET_SOCFPGA, RESET_BERLIN, etc.
-I think this is a good idea.
-
-But, I notice lowlevel drivers select RESET_CONTROLLER,
-for example, RESET_SOCFPGA select RESET_CONTROLLER.
-
-We generally do the opposite in other subsystems, I think.
-
-
-For example, the whole of clk menu is guarded by "depends on COMMON_CLK".
-
-menu "Common Clock Framework"
-         depends on COMMON_CLK
-
-     <bunch of low-level drivers>
-
-endmenu
-
-
-Likewise for pinctrl.
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> +
+> +	mutex_lock(&acpi_gpio_lookup_lock);
+> +
+> +	list_for_each_entry(l, &acpi_gpio_lookup_list, node) {
+> +		if (l->adev == adev) {
+> +			lookup = l;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!lookup) {
+> +		lookup = kmalloc(sizeof(*lookup), GFP_KERNEL);
+> +		if (lookup) {
+> +			lookup->adev = adev;
+> +			lookup->con_id = con_id;
+> +			list_add_tail(&lookup->node, &acpi_gpio_lookup_list);
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&acpi_gpio_lookup_lock);
+> +
+> +	return lookup &&
+> +		((!lookup->con_id && !con_id) ||
+> +		 (lookup->con_id && con_id &&
+> +		  strcmp(lookup->con_id, con_id) == 0));
+> +}
+> +
+>  static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+>  					unsigned int idx,
+>  					enum gpio_lookup_flags *flags)
+> @@ -1868,6 +1912,9 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+>  
+>  	/* Then from plain _CRS GPIOs */
+>  	if (IS_ERR(desc)) {
+> +		if (!acpi_can_fallback_to_crs(adev, con_id))
+> +			return ERR_PTR(-ENOENT);
+> +
+>  		desc = acpi_get_gpiod_by_index(adev, NULL, idx, &info);
+>  		if (IS_ERR(desc))
+>  			return desc;
+> -- 
+> 2.6.0.rc2.230.g3dd15c0
+> 
+> 
+> -- 
+> Dmitry
