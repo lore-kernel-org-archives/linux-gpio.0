@@ -1,78 +1,72 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
-Date: Fri, 6 Nov 2015 13:57:32 +0100
-Message-ID: <CALszF6B7928hpMDMH0_wmo-MakZX7sofO85aeBwv-aCLBHnrkA@mail.gmail.com>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
-	<56261239.5030007@linaro.org>
-	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
-	<CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
+From: Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 3/3] ARM: e3xx: Add header file for pinctrl constants
+Date: Fri, 6 Nov 2015 08:01:25 -0800
+Message-ID: <CAAtXAHcdxkJWkGENLukYhqpH2CzozA-ScG8gV-OQt4ta_GNb6Q@mail.gmail.com>
+References: <1446766883-25703-1-git-send-email-moritz.fischer@ettus.com>
+	<1446766883-25703-4-git-send-email-moritz.fischer@ettus.com>
+	<3715539.QztuvljIIp@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f172.google.com ([209.85.220.172]:34858 "EHLO
-	mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161368AbbKFM5d (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 07:57:33 -0500
-In-Reply-To: <CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3715539.QztuvljIIp@wuerfel>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 
-2015-10-22 14:35 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Oct 20, 2015 at 6:32 PM, Maxime Coquelin
-> <mcoquelin.stm32@gmail.com> wrote:
->> 2015-10-20 12:06 GMT+02:00 Daniel Thompson <daniel.thompson@linaro.org>:
->>> On 17/10/15 18:23, Maxime Coquelin wrote:
+Hi Arnd,
+
+On Fri, Nov 6, 2015 at 12:54 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Thursday 05 November 2015 15:41:23 Moritz Fischer wrote:
+>> +/* Pin names for the E31x usecase */
+>> +#define E31X_TX_BANDSEL_2      "DB_1"
+>> +#define E31X_RX1B_BANDSEL_0    "DB_3"
+>> +#define E31X_RX1B_BANDSEL_1    "DB_5"
+>> +#define E31X_VCTXRX2_V2                "DB_7"
+>> +#define E31X_TX_ENABLE1A       "DB_9"
+>> +#define E31X_TX_ENABLE2A       "DB_11"
+>> +#define E31X_TX_BANDSEL_0      "DB_12"
 >
->>> I suggesting that, like with the clock driver, there is no need to the
->>> STM32F429_PAXX_FUNC_YYY macros at all.
->>>
->>> Given the way you can enumerate pin config options in stm32f429.dtsi then I
->>> think stm32f429.dtsi is the only file that will ever include this header? If
->>> so then why not just plug the values directly into the pinmux fields. Its
->>> not duplicative and is easier to map back to data sheets.
->>>
->>> ~~~
->>> #define PIN_NO(x) ...
->>> #define PIN_AF(x) ...
->>>
->>> usart1_pins_a: usart1@0 {
->>>                                 pins1 {
->>>                                         pinmux = PIN_NO(9) | PIN_AF(7);
->>>                                         bias-disable;
->>>                                         drive-push-pull;
->>>                                         slew-rate = <0>;
->>>                                 };
->>>                                 ...
->>>                         };
->>> ~~~
->>
->> The advantage with the defines is that you can see easily which pin we
->> are talking about.
->> Moreover, the defines are generated from the datasheet, so it is
->> painless to generate them.
->> And it will be consistent with Mediatek implementation, on which I
->> heavily inspired.
->>
->> Linus, what is your view?
+> Why not put the strings directly into the .dts files and change the
+> lookup table in the driver accordingly:
 >
-> I have no strong view of this at all.
->
-> I would ask the opinion of other people doing numbered muxes
-> to see what is generally best for everyone to use,
-> Sascha Hauer specifically, or the Mediatek people.
+> +static const struct pinctrl_pin_desc e3xx_pins[] = {
+> +       /* pin0 doesn't exist */
+> +       PINCTRL_PIN(1, "TX_BANDSEL_2"),
+> +       PINCTRL_PIN(3, "RX1B_BANDSEL_0"),
+> +       PINCTRL_PIN(5, "RX1B_BANDSEL_1"),
+> +       PINCTRL_PIN(7, "VCTXRX2_V2"),
 
-Thinking again at it, I persist to believe have the defines makes it
-easier to use.
-With auto-completion, it makes it faster and less error prone to
-select the right
-alternate function without parsing the datasheet.
+That's actually the way I initially had it, however the pin names
+literally changed
+in the schematic depending on which daughter-board you stick into the slot.
+So my plan was to add the #defines for the second daughter-board in a
+follow up patch
+once the pin assignment is final. This would allow me to have something like:
 
-But as these defines are not actually used on driver side, maybe I
-could just move
-them to the dts directory?
+pins = E31X_TX_BANDSEL_2;
+output-low;
 
-Regards,
-Maxime
+in one .dts, while having something like
+
+pins = E33X_TX_BANDSEL_2
+output low;
+
+in the second dts
+
+The other option would have been to stick a e31x_pins and a e33x_pins
+into the driver,
+and set them according to a compatible string or "ettus,daughterboard"
+property on probe.
+
+Does that make sense, or do you think there's a cleaner / better way
+to achieve this sort of behavior?
+
+Thanks for your feedback!
+
+Cheers,
+Moritz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
