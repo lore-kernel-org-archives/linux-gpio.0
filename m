@@ -1,78 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH 0/7] reset: make RESET_CONTROLLER a select'ed option
-Date: Fri, 06 Nov 2015 10:29:54 +0100
-Message-ID: <4121507.a7FHqRxKcX@wuerfel>
-References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com> <3770393.BLNOaUSB5Q@wuerfel> <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 0/6] GPIO character device skeleton
+Date: Fri, 6 Nov 2015 11:21:21 +0100
+Message-ID: <20151106102121.GF22538@localhost>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <CACRpkdYqsGsYOALT3oQwc7fFho2gNe_=3qJ_cHcEO=YR4HAi8w@mail.gmail.com>
+ <20151102101347.GA14066@localhost>
+ <3389425.noBYZr9C6e@adelgunde>
+ <20151103120605.GA18098@localhost>
+ <CACRpkdaQYDk4s9b79xh+vL-3SFYp5GN3KpjgsSshzF0E+1-r5A@mail.gmail.com>
+ <20151105094015.GC7561@localhost>
+ <CACRpkdZsNNdFcJHdPoW=kyOJ0ONS6_sHX18CPwYcQybQ9pSx2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:61407 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1032020AbbKFJbf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 04:31:35 -0500
-In-Reply-To: <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:36115 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1032054AbbKFKVN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 05:21:13 -0500
+Received: by lbblt2 with SMTP id lt2so35467442lbb.3
+        for <linux-gpio@vger.kernel.org>; Fri, 06 Nov 2015 02:21:12 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZsNNdFcJHdPoW=kyOJ0ONS6_sHX18CPwYcQybQ9pSx2g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mips@linux-mips.org, kernel@stlinux.com, David Airlie <airlied@linux.ie>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <maxime.coquelin@st.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Stephe
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Friday 06 November 2015 14:58:04 Masahiro Yamada wrote:
-> 2015-11-05 23:49 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> [1]
-> Why is ARCH_HAS_RESET_CONTROLLER select'ed by
-> ARCH_MULTIPLATFORM, but not by others?
-> This seems weird.
+On Thu, Nov 05, 2015 at 03:11:48PM +0100, Linus Walleij wrote:
+> On Thu, Nov 5, 2015 at 10:40 AM, Johan Hovold <johan@kernel.org> wrote:
+> > On Tue, Nov 03, 2015 at 06:18:42PM +0100, Linus Walleij wrote:
+> 
+> >> It'd be nice if devices could be uniquely identified in the chardev alone
+> >> I think, then we don't need to much reliance on external assumptions
+> >> and traversing sysfs somehow for more info.
+> >
+> > Point is that this is not a gpio-specific problem. Userspace needs to
+> > deal with this for any resource it wants to access (e.g. i2c or spi).
+> 
+> Yeah let's see what others have to say.
+> 
+> > And you should be able to use libudev for tree-traversal without actually
+> > using udevd, right?
+> 
+> Well libudev depends on libsystemd and is using it's subcomponent
+> sd-device to traverse sysfs. It's a pretty fat dependency for a
+> space-constrained embedded system, and the source code is not
+> maintained outside systemd anymore, leading to an
+> all-or-nothing approach it seems to me.
 
-I tried to avoid having to set this from each platform separately,
-and all users of ARCH_HAS_RESET_CONTROLLER on ARM are also
-based on ARCH_MULTIPLATFORM. The other platforms are lagging behind
-in their conversion and use neither reset controllers not
-multiplatform. If anyone wants to make them use reset controllers,
-we probably want them to use multiplatform as well.
+Seems to me like you're trying to solve a user-space problem in the
+kernel. Even the network-device links you mentioned is something that
+udev provides.
 
-> We do not have such options like
->   ARCH_HAS_PINCTRL,  ARCH_HAS_COMMON_CLK...
+> I don't think it used to be like that but it is like that now...
 
-We could of course change it in one direction or another, but it
-didn't seem urgent here.
+Yeah, I'm not using the latest and greatest, but the libudev0 182 I took
+a look at has no such dependencies and the lib seemed reasonably small
+(40k).
 
-> [2]
-> The difference is that yours is adding per-driver options such as
-> RESET_SOCFPGA, RESET_BERLIN, etc.
-> I think this is a good idea.
-> 
-> But, I notice lowlevel drivers select RESET_CONTROLLER,
-> for example, RESET_SOCFPGA select RESET_CONTROLLER.
-> 
-> We generally do the opposite in other subsystems, I think.
-> 
-> 
-> For example, the whole of clk menu is guarded by "depends on COMMON_CLK".
-> 
-> menu "Common Clock Framework"
->          depends on COMMON_CLK
-> 
->      <bunch of low-level drivers>
-> 
-> endmenu
-> 
-> 
-> Likewise for pinctrl.
+IIRC there has been discussions about a standalone (mdev) version of it
+as well.
 
-We can do that too, either way works for me, and we are using both
-in other parts of the kernel. REGMAP is an example for another subsystem
-that gets selected by each driver that relies on the framework.
-
-The practical difference is only in the case that the subsystem
-is enabled (e.g. by using ARCH_MULTIPLATFORM) but all reset drivers
-are disabled. A device driver using the API in one case will see
-the stubbed-out inline helpers and not contain any object code
-that relies on non-NULL return values from them, while in the
-other case it calls into the subsystem code to get the same
-return value at runtime.
-
-If you volunteer to clean up my patch, feel free to choose between
-the two options as you like.
-
-	Arnd
+Johan
