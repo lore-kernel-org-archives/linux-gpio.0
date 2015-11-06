@@ -1,26 +1,44 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Fri, 6 Nov 2015 10:31:42 +0200
-Message-ID: <20151106083142.GV1509@lahna.fi.intel.com>
-References: <20151105193838.GA33410@dtor-ws>
- <20151106080814.GS1509@lahna.fi.intel.com>
- <CAKdAkRSwLBtqUqEj+6gY5vDz5_UJQs=ruUnFfxQQyhDZgxQjyg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC 3/3] ARM: e3xx: Add header file for pinctrl constants
+Date: Fri, 06 Nov 2015 09:54:46 +0100
+Message-ID: <3715539.QztuvljIIp@wuerfel>
+References: <1446766883-25703-1-git-send-email-moritz.fischer@ettus.com> <1446766883-25703-4-git-send-email-moritz.fischer@ettus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:65179 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1032918AbbKFIbr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 6 Nov 2015 03:31:47 -0500
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRSwLBtqUqEj+6gY5vDz5_UJQs=ruUnFfxQQyhDZgxQjyg@mail.gmail.com>
+Received: from mout.kundenserver.de ([212.227.126.131]:55684 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031997AbbKFIzB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Nov 2015 03:55:01 -0500
+In-Reply-To: <1446766883-25703-4-git-send-email-moritz.fischer@ettus.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+To: Moritz Fischer <moritz.fischer@ettus.com>
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org
 
-On Fri, Nov 06, 2015 at 12:25:34AM -0800, Dmitry Torokhov wrote:
-> I wonder if I should move acpi_can_fallback_to_crs() into
-> gpiolib-acpi.c and provide a stub for it...
+On Thursday 05 November 2015 15:41:23 Moritz Fischer wrote:
+> +/* Pin names for the E31x usecase */
+> +#define E31X_TX_BANDSEL_2      "DB_1"
+> +#define E31X_RX1B_BANDSEL_0    "DB_3"
+> +#define E31X_RX1B_BANDSEL_1    "DB_5"
+> +#define E31X_VCTXRX2_V2                "DB_7"
+> +#define E31X_TX_ENABLE1A       "DB_9"
+> +#define E31X_TX_ENABLE2A       "DB_11"
+> +#define E31X_TX_BANDSEL_0      "DB_12"
 
-That works too :-)
+Why not put the strings directly into the .dts files and change the
+lookup table in the driver accordingly:
+
++static const struct pinctrl_pin_desc e3xx_pins[] = {
++       /* pin0 doesn't exist */
++       PINCTRL_PIN(1, "TX_BANDSEL_2"),
++       PINCTRL_PIN(3, "RX1B_BANDSEL_0"),
++       PINCTRL_PIN(5, "RX1B_BANDSEL_1"),
++       PINCTRL_PIN(7, "VCTXRX2_V2"),
+
+That would save you the hassle of the three-way dependency between the
+dts file, the driver and the header when you want to change something
+going through three different maintainer trees.
+
+	arnd
