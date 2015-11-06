@@ -1,150 +1,260 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v6 1/5] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Fri, 6 Nov 2015 14:36:55 -0600
-Message-ID: <20151106203655.GA4950@rob-hp-laptop>
-References: <1446244088-28281-1-git-send-email-afd@ti.com>
- <1446244088-28281-2-git-send-email-afd@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [RFC 2/3] pinctrl: e3xx: Adding support for NI Ettus Research
+ USRP E3xx pinconf
+Date: Fri, 6 Nov 2015 22:56:16 +0200
+Message-ID: <CAHp75Vem4MGuXDqwLKCQLyEsJohxu2GV8xKGH8r6hbp9sSSFDQ@mail.gmail.com>
+References: <1446766883-25703-1-git-send-email-moritz.fischer@ettus.com>
+	<1446766883-25703-3-git-send-email-moritz.fischer@ettus.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1446244088-28281-2-git-send-email-afd@ti.com>
+In-Reply-To: <1446766883-25703-3-git-send-email-moritz.fischer@ettus.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Moritz Fischer <moritz.fischer@ettus.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 30, 2015 at 05:28:04PM -0500, Andrew F. Davis wrote:
-> The TPS65912 PMIC contains several regulators and a GPIO controller.
-> Add bindings for the TPS65912 PMIC.
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-tps65912.txt     | 16 +++++++
->  Documentation/devicetree/bindings/mfd/tps65912.txt | 51 ++++++++++++++++++++++
->  .../bindings/regulator/tps65912-regulator.txt      | 28 ++++++++++++
->  3 files changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
->  create mode 100644 Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
+On Fri, Nov 6, 2015 at 1:41 AM, Moritz Fischer <moritz.fischer@ettus.com> wrote:
+> The USRP E3XX series requires pinctrl to configure the idle state
+> FPGA image for minimizing power consumption.
+> This is required since different daughtercards have different uses
+> for pins on a common connector.
 
-Acked-by: Rob Herring <robh@kernel.org>
+> +#include <linux/pinctrl/pinconf-generic.h>
 
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
-> new file mode 100644
-> index 0000000..ba8d633
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-tps65912.txt
-> @@ -0,0 +1,16 @@
-> +* TPS65912 GPIO Controller bindings
++ empty line?
+
+> +#include "pinctrl-utils.h"
+> +#include "core.h"
+
+> +static int e3xx_pinconf_cfg_get(struct pinctrl_dev *pctldev,
+> +                               unsigned pin,
+> +                               unsigned long *config)
+> +{
+> +       u32 reg, mask;
+> +       int arg;
+> +       struct e3xx_pinctrl *pctrl;
+> +       unsigned int param;
 > +
-> +Required properties:
-> + - compatible		: Should be "ti,tps65912-gpio".
-> + - gpio-controller	: Marks the device node as a GPIO Controller.
-> + - #gpio-cells		: Should be two.  The first cell is the pin number and
-> +			    the second cell is used to specify flags.
-> +			    See ../gpio/gpio.txt for more information.
+> +       param = pinconf_to_config_param(*config);
+> +       pctrl = pinctrl_dev_get_drvdata(pctldev);
 > +
-> +Example:
+> +       if (pin >= E3XX_NUM_DB_PINS)
+> +               return -ENOTSUPP;
 > +
-> +	gpio4: gpio {
-> +		compatible = "ti,tps65912-gpio";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
-> new file mode 100644
-> index 0000000..65426b7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
-> @@ -0,0 +1,51 @@
-> +* TPS65912 Power Management Integrated Circuit bindings
+> +       mask = BIT(pin % E3XX_PINS_PER_REG);
 > +
-> +Required properties:
-> + - compatible		: Should be "ti,tps65912".
-> + - reg			: Slave address or chip select number (I2C / SPI).
-> + - interrupt-parent	: The parent interrupt controller.
-> + - interrupts		: The interrupt line the device is connected to.
-> + - interrupt-controller	: Marks the device node as an interrupt controller.
-> + - #interrupt-cells	: The number of cells to describe an IRQ, this should be 2.
-> +			    The first cell is the IRQ number.
-> +			    The second cell is the flags, encoded as the trigger masks from
-> +			    ../interrupt-controller/interrupts.txt.
+> +       switch (param) {
+> +       case PIN_CONFIG_OUTPUT:
+> +               clk_enable(pctrl->clk);
+> +               reg = e3xx_pinctrl_read(pctrl, E3XX_DDR_OFFSET +
+> +                                       (pin / E3XX_PINS_PER_REG) * 4);
 > +
-> +Additional nodes defined in:
-> + - Regulators: ../regulator/tps65912-regulator.txt
-> + - GPIO: ../gpio/gpio-tps65912.txt.
+> +               clk_disable(pctrl->clk);
+> +               arg = !!(reg & mask);
+
+So, for now arg variable seems redundant, you may use expression
+inside call below.
+
+> +               break;
+> +       default:
+> +               dev_err(pctrl->dev, "requested illegal configuration");
+> +               return -ENOTSUPP;
+> +       };
 > +
-> +Example:
+> +       *config = pinconf_to_config_packed(param, arg);
 > +
-> +	pmic: tps65912@2d {
-> +		compatible = "ti,tps65912";
-> +		reg = <0x2d>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
+> +       return 0;
+> +}
 > +
-> +		regulators {
-> +			compatible = "ti,tps65912-regulator";
+> +static int e3xx_pinconf_cfg_set(struct pinctrl_dev *pctldev,
+> +                               unsigned pin,
+> +                               unsigned long *configs,
+> +                               unsigned num_configs)
+> +{
+> +       u32 reg, mask;
+> +       int i;
+
+unsigned
+
+> +       struct e3xx_pinctrl *pctrl;
+> +       unsigned int param, arg;
 > +
-> +			dcdc1 {
-> +				regulator-name = "vdd_core";
-> +				regulator-min-microvolt = <912000>;
-> +				regulator-max-microvolt = <1144000>;
-> +				regulator-boot-on;
-> +				regulator-always-on;
-> +			};
+> +       if (pin >= E3XX_NUM_DB_PINS)
+> +               return -ENOTSUPP;
+> +       mask = BIT(pin % E3XX_PINS_PER_REG);
 > +
-> +			ldo1 {
-> +				regulator-name = "ldo1";
-> +				regulator-min-microvolt = <1900000>;
-> +				regulator-max-microvolt = <1900000>;
-> +			};
-> +		};
+> +       pctrl = pinctrl_dev_get_drvdata(pctldev);
 > +
-> +		gpio4: gpio {
-> +			compatible = "ti,tps65912-gpio";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +		};
-> +	};
-> diff --git a/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
-> new file mode 100644
-> index 0000000..b81973d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/tps65912-regulator.txt
-> @@ -0,0 +1,28 @@
-> +* TPS65912 regulator bindings
+> +       clk_enable(pctrl->clk);
 > +
-> +Required properties:
-> + - compatible		: Should be "ti,tps65912-regulator".
-> + - list of regulators provided by this controller, must be named
-> +     after their hardware counterparts: dcdc[1-4] and ldo[1-10].
+> +       for (i = 0; i < num_configs; i++) {
+> +               param = pinconf_to_config_param(configs[i]);
+> +               arg = pinconf_to_config_argument(configs[i]);
 > +
-> +Each regulator is defined using the standard binding for regulators.
+> +               switch (param) {
+> +               case PIN_CONFIG_OUTPUT:
+> +                       /* deal with value, set out bit if arg is 1 */
+> +                       reg = e3xx_pinctrl_read(pctrl, E3XX_OUT_OFFSET +
+> +                                               ((pin / E3XX_PINS_PER_REG) * 4))
+> +                               ;
+
+Why not one the previous line?
+
+> +                       reg &= ~mask;
+> +                       if (arg)
+> +                               reg |= mask;
+
+
+
 > +
-> +Example:
+> +                       /* addresses need to be 4 byte aligned */
+> +                       e3xx_pinctrl_write(pctrl, E3XX_OUT_OFFSET +
+> +                                          ((pin / E3XX_PINS_PER_REG) * 4), reg)
+> +                               ;
 > +
-> +	regulator {
-> +		compatible = "ti,tps65912-regulator";
+> +                       /* set ddr bit to high for output */
+> +                       reg = e3xx_pinctrl_read(pctrl, E3XX_DDR_OFFSET +
+> +                                               ((pin / E3XX_PINS_PER_REG) * 4))
+> +                               ;
+
+Ditto.
+
+> +                       reg |= mask;
 > +
-> +		dcdc1 {
-> +			regulator-name = "vdd_core";
-> +			regulator-min-microvolt = <912000>;
-> +			regulator-max-microvolt = <1144000>;
-> +			regulator-boot-on;
-> +			regulator-always-on;
-> +		};
+> +                       /* addresses need to be 4 byte aligned */
+> +                       e3xx_pinctrl_write(pctrl, E3XX_DDR_OFFSET +
+> +                                         ((pin / E3XX_PINS_PER_REG) * 4), reg);
+> +                       break;
 > +
-> +		ldo1 {
-> +			regulator-name = "ldo1";
-> +			regulator-min-microvolt = <1900000>;
-> +			regulator-max-microvolt = <1900000>;
-> +		};
-> +	};
-> -- 
-> 1.9.1
-> 
+> +               default:
+> +                       clk_disable(pctrl->clk);
+> +                       return -ENOTSUPP;
+> +               };
+> +       }
+> +
+> +       clk_disable(pctrl->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +static int e3xx_pinconf_group_set(struct pinctrl_dev *pctldev,
+> +                                 unsigned selector,
+> +                                 unsigned long *configs,
+> +                                 unsigned num_configs)
+> +{
+> +       return -EAGAIN;
+> +}
+> +
+> +static const struct pinconf_ops e3xx_pinconf_ops = {
+> +       .is_generic = true,
+> +       .pin_config_get = e3xx_pinconf_cfg_get,
+> +       .pin_config_set = e3xx_pinconf_cfg_set,
+> +       .pin_config_group_set = e3xx_pinconf_group_set,
+> +};
+> +
+> +static struct pinctrl_desc e3xx_desc = {
+> +       .name = "e3xx_pinctrl",
+> +       .pins = e3xx_pins,
+> +       .npins = ARRAY_SIZE(e3xx_pins),
+> +       .pctlops = &e3xx_pctrl_ops,
+> +       .confops = &e3xx_pinconf_ops,
+> +       .owner = THIS_MODULE,
+> +};
+> +
+> +static int e3xx_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +       struct resource *res;
+> +       struct e3xx_pinctrl *pctrl;
+> +       int err;
+> +
+> +       pctrl = devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+> +       if (!pctrl)
+> +               return -ENOMEM;
+> +       pctrl->dev = &pdev->dev;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+
+> +       if (!res) {
+> +               dev_err(&pdev->dev, "missing IO resource\n");
+> +               return -ENODEV;
+> +       }
+
+Whole condition is redundant.
+
+> +
+> +       pctrl->io_base = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(pctrl->io_base))
+> +               return PTR_ERR(pctrl->io_base);
+> +
+> +       pctrl->clk = devm_clk_get(&pdev->dev, NULL);
+> +       if (IS_ERR(pctrl->clk)) {
+> +               dev_err(&pdev->dev, "input clock not found");
+> +               return PTR_ERR(pctrl->clk);
+> +       }
+> +
+> +       err = clk_prepare(pctrl->clk);
+> +       if (err) {
+> +               dev_err(&pdev->dev, "unable to prepare clock");
+> +               return err;
+> +       }
+> +
+> +       pctrl->pctl = pinctrl_register(&e3xx_desc, &pdev->dev, pctrl);
+> +       if (!pctrl->pctl)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, pctrl);
+> +
+> +       dev_info(&pdev->dev, "NI Ettus Research E3xx pinctrl initialized\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static int e3xx_pinctrl_remove(struct platform_device *pdev)
+> +{
+> +       struct e3xx_pinctrl *pctrl = platform_get_drvdata(pdev);
+> +
+> +       pinctrl_unregister(pctrl->pctl);
+> +
+> +       clk_unprepare(pctrl->clk);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id e3xx_pinctrl_of_match[] = {
+> +       { .compatible = "ettus,e3xx-pinctrl-1.0", },
+> +       {},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, e3xx_pinctrl_of_match);
+> +#endif
+> +
+> +static struct platform_driver e3xx_pinctrl_driver = {
+> +       .probe = e3xx_pinctrl_probe,
+> +       .remove = e3xx_pinctrl_remove,
+> +       .driver = {
+> +               .name = "e3xx_pinctrl",
+> +               .of_match_table = of_match_ptr(e3xx_pinctrl_of_match),
+> +       },
+> +};
+> +
+> +module_platform_driver(e3xx_pinctrl_driver);
+> +
+> +MODULE_AUTHOR("Moritz Fischer <moritz.fischer@ettus.com>");
+> +MODULE_DESCRIPTION("Ettus Research pinctrl driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.4.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
