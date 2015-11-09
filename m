@@ -1,30 +1,29 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: syscon: fix a possible NULL dereference
-Date: Mon, 9 Nov 2015 09:23:12 +0900
-Message-ID: <CAAVeFuK6aypN7E6b6n_gFn0EwK7RKnTyzvxZZ=YWD3TtwNu-Mw@mail.gmail.com>
-References: <1446739355-25849-1-git-send-email-clabbe.montjoie@gmail.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH] gpio: 104-idio-16: Use lowercase symbol names for const
+ variables
+Date: Sun, 8 Nov 2015 20:28:35 -0500
+Message-ID: <563FF6C3.4000009@gmail.com>
+References: <20151104123008.GA15302@sophia>
+ <CAAVeFuJT7uxbQ_rf2o=6w4Ub3aW4Lhn_ED_JQZ+TNpORAVom8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:36700 "EHLO
-	mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751417AbbKIAXd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Nov 2015 19:23:33 -0500
-In-Reply-To: <1446739355-25849-1-git-send-email-clabbe.montjoie@gmail.com>
+Received: from mail-yk0-f176.google.com ([209.85.160.176]:36817 "EHLO
+	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752027AbbKIB2h (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Nov 2015 20:28:37 -0500
+In-Reply-To: <CAAVeFuJT7uxbQ_rf2o=6w4Ub3aW4Lhn_ED_JQZ+TNpORAVom8A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: LABBE Corentin <clabbe.montjoie@gmail.com>
+To: Alexandre Courbot <gnurou@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 6, 2015 at 1:02 AM, LABBE Corentin
-<clabbe.montjoie@gmail.com> wrote:
-> of_match_device could return NULL, and so cause a NULL pointer
-> dereference later at line 199:
-> priv->flags = of_id->data;
->
-> Reported-by: coverity (CID 1324140)
-> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+On 11/08/2015 06:53 PM, Alexandre Courbot wrote:
+> Apart from that this patch seems harmless and the repositioning of
+> some constant declarations is also welcome.
 
-Same (optional) suggestion as the 74xx-mmio patch.
+I'll create a separate patch to reposition the constant declarations. Where in
+particular do you believe would be best for them to be positioned?
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+William Breathitt Gray
