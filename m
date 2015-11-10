@@ -1,93 +1,42 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2 2/2] gpio: zynq: Implement irq_pm_(get|put)
-Date: Mon, 9 Nov 2015 17:00:04 +0200
-Message-ID: <5640B4F4.6080008@ti.com>
-References: <1446668160-17522-1-git-send-email-soren.brinkmann@xilinx.com>
- <1446668160-17522-3-git-send-email-soren.brinkmann@xilinx.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 4/7] ARM: at91/dt: sama5d2: add pio controller node
+Date: Mon, 9 Nov 2015 16:30:34 -0800
+Message-ID: <CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
+References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
+	<1442417823-15850-5-git-send-email-ludovic.desroches@atmel.com>
+	<CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446668160-17522-3-git-send-email-soren.brinkmann@xilinx.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>, Thomas Gleixner <tglx@linutronix.de>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Linn <linnj@xilinx.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f182.google.com ([209.85.160.182]:33916 "EHLO
+	mail-yk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751078AbbKJAae (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Nov 2015 19:30:34 -0500
+Received: by ykfs79 with SMTP id s79so64171767ykf.1
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Nov 2015 16:30:34 -0800 (PST)
+In-Reply-To: <CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Hi Soren,
+Hi Linus,
 
-On 11/04/2015 10:16 PM, Soren Brinkmann wrote:
-> The driver uses runtime PM to leverage low power techniques. For
-> use-cases using GPIO as interrupt the device needs to be in an
-> appropriate state.
-> 
-> Reported-by: John Linn <linnj@xilinx.com>
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+On Mon, Sep 21, 2015 at 11:24 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Wed, Sep 16, 2015 at 8:37 AM, Ludovic Desroches
+> <ludovic.desroches@atmel.com> wrote:
+>
+>> Add pio4 controller node to enable pinmux and gpio.
+>>
+>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+>
+> Patch applied.
 
-I've one question here. As I know, there is one code path when 
-GPIO HW can be accessed before request_irq() during OF boot:
-
-irq_create_of_mapping()
-- irq_create_fwspec_mapping()
-  - irq_set_irq_type()
-
-How do you handle this situation? :(
-
-> ---
-> v2:
->   - declare callbacks static
-> ---
->   drivers/gpio/gpio-zynq.c | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-> index 8abeacac5885..98197f778694 100644
-> --- a/drivers/gpio/gpio-zynq.c
-> +++ b/drivers/gpio/gpio-zynq.c
-> @@ -471,6 +471,22 @@ static int zynq_gpio_set_wake(struct irq_data *data, unsigned int on)
->   	return 0;
->   }
->   
-> +static int zynq_gpio_irq_pm_get(struct irq_data *data)
-> +{
-> +	struct zynq_gpio *gpio = irq_data_get_irq_chip_data(data);
-> +	struct device *dev = gpio->chip.dev;
-> +
-> +	return pm_runtime_get_sync(dev);
-> +}
-> +
-> +static void zynq_gpio_irq_pm_put(struct irq_data *data)
-> +{
-> +	struct zynq_gpio *gpio = irq_data_get_irq_chip_data(data);
-> +	struct device *dev = gpio->chip.dev;
-> +
-> +	pm_runtime_put(dev);
-> +}
-> +
->   /* irq chip descriptor */
->   static struct irq_chip zynq_gpio_level_irqchip = {
->   	.name		= DRIVER_NAME,
-> @@ -480,6 +496,8 @@ static struct irq_chip zynq_gpio_level_irqchip = {
->   	.irq_unmask	= zynq_gpio_irq_unmask,
->   	.irq_set_type	= zynq_gpio_set_irq_type,
->   	.irq_set_wake	= zynq_gpio_set_wake,
-> +	.irq_pm_get	= zynq_gpio_irq_pm_get,
-> +	.irq_pm_put	= zynq_gpio_irq_pm_put,
->   	.flags		= IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
->   			  IRQCHIP_MASK_ON_SUSPEND,
->   };
-> @@ -492,6 +510,8 @@ static struct irq_chip zynq_gpio_edge_irqchip = {
->   	.irq_unmask	= zynq_gpio_irq_unmask,
->   	.irq_set_type	= zynq_gpio_set_irq_type,
->   	.irq_set_wake	= zynq_gpio_set_wake,
-> +	.irq_pm_get	= zynq_gpio_irq_pm_get,
-> +	.irq_pm_put	= zynq_gpio_irq_pm_put,
->   	.flags		= IRQCHIP_MASK_ON_SUSPEND,
->   };
->   
-> 
+Please don't merge DT changes through driver trees unless there's a
+very specific reason to do so, since it introduces random conflicts.
 
 
--- 
-regards,
--grygorii
+Thanks!
+
+-Olof
