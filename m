@@ -1,134 +1,50 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Wed, 11 Nov 2015 11:45:30 -0800
-Message-ID: <20151111194530.GA26559@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: LABBE Corentin <clabbe.montjoie@gmail.com>
+Subject: [PATCH 1/3] gpio: 74xx: fix a possible NULL dereference
+Date: Wed, 11 Nov 2015 21:27:34 +0100
+Message-ID: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:33152 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752761AbbKKTpd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2015 14:45:33 -0500
-Content-Disposition: inline
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:36414 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752109AbbKKU1m (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2015 15:27:42 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gnurou@gmail.com, linus.walleij@linaro.org
+Cc: LABBE Corentin <clabbe.montjoie@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-We should not fall back to the legacy unnamed gpio lookup style if the
-driver requests gpios with different names, because we'll give out the same
-gpio twice. Let's keep track of the names that were used for the device and
-only do the fallback for the first name used.
+of_match_device could return NULL, and so cause a NULL pointer
+dereference later at line 132:
+priv->flags = (uintptr_t) of_id->data;
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reported-by: coverity (CID 1324141)
+Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 ---
+ drivers/gpio/gpio-74xx-mmio.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-v1: incorporated changes suggested by Mika Westerberg in response to the
-draft patch I posted in Goodix thread.
-
-v2: moved acpi_can_fallback_to_crs body to drivers/gpio/gpiolib-acpi.c
-and provided stub for !CONFIG_ACPI case to fix build error if ACPI is
-disabled.
-
- drivers/gpio/gpiolib-acpi.c | 43 +++++++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c      |  3 +++
- drivers/gpio/gpiolib.h      |  8 ++++++++
- 3 files changed, 54 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 143a9bd..d5f3008 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -838,3 +838,46 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
- 	}
- 	return count;
- }
-+
-+struct acpi_crs_lookup {
-+	struct list_head node;
-+	struct acpi_device *adev;
-+	const char *con_id;
-+};
-+
-+static DEFINE_MUTEX(acpi_crs_lookup_lock);
-+static LIST_HEAD(acpi_crs_lookup_list);
-+
-+bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
-+{
-+	struct acpi_crs_lookup *l, *lookup = NULL;
-+
-+	/* Never allow fallback if the device has properties */
-+	if (adev->data.properties || adev->driver_gpios)
-+		return false;
-+
-+	mutex_lock(&acpi_crs_lookup_lock);
-+
-+	list_for_each_entry(l, &acpi_crs_lookup_list, node) {
-+		if (l->adev == adev) {
-+			lookup = l;
-+			break;
-+		}
-+	}
-+
-+	if (!lookup) {
-+		lookup = kmalloc(sizeof(*lookup), GFP_KERNEL);
-+		if (lookup) {
-+			lookup->adev = adev;
-+			lookup->con_id = con_id;
-+			list_add_tail(&lookup->node, &acpi_crs_lookup_list);
-+		}
-+	}
-+
-+	mutex_unlock(&acpi_crs_lookup_lock);
-+
-+	return lookup &&
-+		((!lookup->con_id && !con_id) ||
-+		 (lookup->con_id && con_id &&
-+		  strcmp(lookup->con_id, con_id) == 0));
-+}
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5db3445..0faf4b7 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1765,6 +1765,9 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
+diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
+index 6ed7c0f..6b18682 100644
+--- a/drivers/gpio/gpio-74xx-mmio.c
++++ b/drivers/gpio/gpio-74xx-mmio.c
+@@ -113,13 +113,16 @@ static int mmio_74xx_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
  
- 	/* Then from plain _CRS GPIOs */
- 	if (IS_ERR(desc)) {
-+		if (!acpi_can_fallback_to_crs(adev, con_id))
-+			return ERR_PTR(-ENOENT);
-+
- 		desc = acpi_get_gpiod_by_index(adev, NULL, idx, &info);
- 		if (IS_ERR(desc))
- 			return desc;
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index bf34300..986eb5c 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -44,6 +44,8 @@ struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
- 					  struct acpi_gpio_info *info);
- 
- int acpi_gpio_count(struct device *dev, const char *con_id);
-+
-+bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id);
- #else
- static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
- static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
-@@ -65,6 +67,12 @@ static inline int acpi_gpio_count(struct device *dev, const char *con_id)
+ static int mmio_74xx_gpio_probe(struct platform_device *pdev)
  {
- 	return -ENODEV;
- }
-+
-+static inline bool acpi_can_fallback_to_crs(struct acpi_device *adev,
-+					    const char *con_id)
-+{
-+	return false;
-+}
- #endif
+-	const struct of_device_id *of_id =
+-		of_match_device(mmio_74xx_gpio_ids, &pdev->dev);
++	const struct of_device_id *of_id;
+ 	struct mmio_74xx_gpio_priv *priv;
+ 	struct resource *res;
+ 	void __iomem *dat;
+ 	int err;
  
- struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
++	of_id = of_match_device(mmio_74xx_gpio_ids, &pdev->dev);
++	if (!of_id)
++		return -ENODEV;
++
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
 -- 
-2.6.0.rc2.230.g3dd15c0
+2.4.10
 
-
--- 
-Dmitry
