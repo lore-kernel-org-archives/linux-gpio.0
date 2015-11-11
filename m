@@ -1,84 +1,134 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: [RFC PATCH] gpiolib: fix oops, if gpio name is NULL
-Date: Wed, 11 Nov 2015 14:36:53 +0200
-Message-ID: <1447245413-32209-1-git-send-email-vz@mleia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
+Date: Wed, 11 Nov 2015 11:45:30 -0800
+Message-ID: <20151111194530.GA26559@dtor-ws>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:49192 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751942AbbKKMhB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 11 Nov 2015 07:37:01 -0500
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:33152 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752761AbbKKTpd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2015 14:45:33 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Commit c0017ed71966 ("gpio: Introduce gpio descriptor 'name'") causes
-OOPS on boot on LPC32xx boards:
+We should not fall back to the legacy unnamed gpio lookup style if the
+driver requests gpios with different names, because we'll give out the same
+gpio twice. Let's keep track of the names that were used for the device and
+only do the fallback for the first name used.
 
-    Unable to handle kernel NULL pointer dereference at virtual address 00000000
-    CPU: 0 PID: 1 Comm: swapper Not tainted 4.3.0+ #707
-    Hardware name: LPC32XX SoC (Flattened Device Tree)
-    task: c381baa0 ti: c381e000 task.ti: c381e000
-    PC is at strcmp+0x10/0x40
-    LR is at gpiochip_add+0x3d0/0x4d4
-    pc : [<>]    lr : [<>]    psr: a0000093
-    sp : c381fd60  ip : c381fd70  fp : c381fd6c
-
-    [snip]
-
-    Backtrace:
-    [<>] (strcmp) from [<>] (gpiochip_add+0x3d0/0x4d4)
-    [<>] (gpiochip_add) from [<>] (lpc32xx_gpio_probe+0x44/0x60)
-    [<>] (lpc32xx_gpio_probe) from [<>] (platform_drv_probe+0x40/0x8c)
-    [<>] (platform_drv_probe) from [<>] (driver_probe_device+0x110/0x294)
-    [<>] (driver_probe_device) from [<>] (__driver_attach+0x70/0x94)
-    [<>] (__driver_attach) from [<>] (bus_for_each_dev+0x74/0x98)
-    [<>] (bus_for_each_dev) from [<>] (driver_attach+0x20/0x28)
-    [<>] (driver_attach) from [<>] (bus_add_driver+0xd4/0x1f0)
-    [<>] (bus_add_driver) from [<>] (driver_register+0xa4/0xe8)
-    [<>] (driver_register) from [<>] (__platform_driver_register+0x38/0x4c)
-    [<>] (__platform_driver_register) from [<>] (lpc32xx_gpio_driver_init+0x18/0x20)
-    [<>] (lpc32xx_gpio_driver_init) from [<>] (do_one_initcall+0x108/0x1c8)
-    [<>] (do_one_initcall) from [<>] (kernel_init_freeable+0x10c/0x1d4)
-    [<>] (kernel_init_freeable) from [<>] (kernel_init+0x10/0xec)
-    [<>] (kernel_init) from [<>] (ret_from_fork+0x14/0x24)
-
-This is caused by the fact that at the moment some GPIO names are set
-to NULL, there is a hole in linear representation of one GPI bank, see
-drivers/gpio/gpio-lpc32xx.c / gpi_p3_names[] for details.
-
-The same problem most probably affects also gpio-cs5535.c, see
-cs5535_gpio_names[].
-
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
-Linus, Markus,
 
-I understand that LPC32xx GPIO driver is ugly (hopefully this
-will be changed in future), but please account this problem.
+v1: incorporated changes suggested by Mika Westerberg in response to the
+draft patch I posted in Goodix thread.
 
-I don't ask for inclusion of this change, because my own analysis is
-not done completely.
+v2: moved acpi_can_fallback_to_crs body to drivers/gpio/gpiolib-acpi.c
+and provided stub for !CONFIG_ACPI case to fix build error if ACPI is
+disabled.
 
-Also please review, the same problem probably affects gpio-cs5535.c
-as well, see cs5535_gpio_names[].
+ drivers/gpio/gpiolib-acpi.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c      |  3 +++
+ drivers/gpio/gpiolib.h      |  8 ++++++++
+ 3 files changed, 54 insertions(+)
 
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 143a9bd..d5f3008 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -838,3 +838,46 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
+ 	}
+ 	return count;
+ }
++
++struct acpi_crs_lookup {
++	struct list_head node;
++	struct acpi_device *adev;
++	const char *con_id;
++};
++
++static DEFINE_MUTEX(acpi_crs_lookup_lock);
++static LIST_HEAD(acpi_crs_lookup_list);
++
++bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
++{
++	struct acpi_crs_lookup *l, *lookup = NULL;
++
++	/* Never allow fallback if the device has properties */
++	if (adev->data.properties || adev->driver_gpios)
++		return false;
++
++	mutex_lock(&acpi_crs_lookup_lock);
++
++	list_for_each_entry(l, &acpi_crs_lookup_list, node) {
++		if (l->adev == adev) {
++			lookup = l;
++			break;
++		}
++	}
++
++	if (!lookup) {
++		lookup = kmalloc(sizeof(*lookup), GFP_KERNEL);
++		if (lookup) {
++			lookup->adev = adev;
++			lookup->con_id = con_id;
++			list_add_tail(&lookup->node, &acpi_crs_lookup_list);
++		}
++	}
++
++	mutex_unlock(&acpi_crs_lookup_lock);
++
++	return lookup &&
++		((!lookup->con_id && !con_id) ||
++		 (lookup->con_id && con_id &&
++		  strcmp(lookup->con_id, con_id) == 0));
++}
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a18f00f..2a91f32 100644
+index 5db3445..0faf4b7 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -233,7 +233,7 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
- 		for (i = 0; i != chip->ngpio; ++i) {
- 			struct gpio_desc *gpio = &chip->desc[i];
+@@ -1765,6 +1765,9 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
  
--			if (!gpio->name)
-+			if (!gpio->name || !name)
- 				continue;
+ 	/* Then from plain _CRS GPIOs */
+ 	if (IS_ERR(desc)) {
++		if (!acpi_can_fallback_to_crs(adev, con_id))
++			return ERR_PTR(-ENOENT);
++
+ 		desc = acpi_get_gpiod_by_index(adev, NULL, idx, &info);
+ 		if (IS_ERR(desc))
+ 			return desc;
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index bf34300..986eb5c 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -44,6 +44,8 @@ struct gpio_desc *acpi_get_gpiod_by_index(struct acpi_device *adev,
+ 					  struct acpi_gpio_info *info);
  
- 			if (!strcmp(gpio->name, name)) {
+ int acpi_gpio_count(struct device *dev, const char *con_id);
++
++bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id);
+ #else
+ static inline void acpi_gpiochip_add(struct gpio_chip *chip) { }
+ static inline void acpi_gpiochip_remove(struct gpio_chip *chip) { }
+@@ -65,6 +67,12 @@ static inline int acpi_gpio_count(struct device *dev, const char *con_id)
+ {
+ 	return -ENODEV;
+ }
++
++static inline bool acpi_can_fallback_to_crs(struct acpi_device *adev,
++					    const char *con_id)
++{
++	return false;
++}
+ #endif
+ 
+ struct gpio_desc *of_get_named_gpiod_flags(struct device_node *np,
 -- 
-2.5.0
+2.6.0.rc2.230.g3dd15c0
 
+
+-- 
+Dmitry
