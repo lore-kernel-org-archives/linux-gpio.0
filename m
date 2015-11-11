@@ -1,41 +1,45 @@
 From: LABBE Corentin <clabbe.montjoie@gmail.com>
-Subject: [PATCH 3/3] gpio: palmas: fix a possible NULL dereference
-Date: Wed, 11 Nov 2015 21:27:36 +0100
-Message-ID: <1447273657-1668-3-git-send-email-clabbe.montjoie@gmail.com>
+Subject: [PATCH 2/3] gpio: syscon: fix a possible NULL dereference
+Date: Wed, 11 Nov 2015 21:27:35 +0100
+Message-ID: <1447273657-1668-2-git-send-email-clabbe.montjoie@gmail.com>
 References: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:38074 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752109AbbKKU1p (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Nov 2015 15:27:45 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: gnurou@gmail.com, linus.walleij@linaro.org
 Cc: LABBE Corentin <clabbe.montjoie@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 of_match_device could return NULL, and so cause a NULL pointer
-dereference later.
+dereference later at line 199:
+priv->flags = of_id->data;
 
-Reported-by: coverity (CID 1130700)
+Reported-by: coverity (CID 1324140)
 Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 ---
- drivers/gpio/gpio-palmas.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-syscon.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
-index 171a638..52b447c 100644
---- a/drivers/gpio/gpio-palmas.c
-+++ b/drivers/gpio/gpio-palmas.c
-@@ -167,6 +167,8 @@ static int palmas_gpio_probe(struct platform_device *pdev)
- 	const struct palmas_device_data *dev_data;
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 045a952..7b25fdf 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -187,11 +187,15 @@ MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
+ static int syscon_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	const struct of_device_id *of_id = of_match_device(syscon_gpio_ids, dev);
++	const struct of_device_id *of_id;
+ 	struct syscon_gpio_priv *priv;
+ 	struct device_node *np = dev->of_node;
+ 	int ret;
  
- 	match = of_match_device(of_palmas_gpio_match, &pdev->dev);
-+	if (!match)
++	of_id = of_match_device(syscon_gpio_ids, dev);
++	if (!of_id)
 +		return -ENODEV;
- 	dev_data = match->data;
- 	if (!dev_data)
- 		dev_data = &palmas_dev_data;
++
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
 -- 
 2.4.10
-
