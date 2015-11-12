@@ -1,41 +1,87 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pinctrl: at91-pio4: use %pr format string for resource
-Date: Thu, 12 Nov 2015 15:15:38 +0100
-Message-ID: <3726450.XyTgssZ1KT@wuerfel>
+From: Felipe Balbi <balbi@ti.com>
+Subject: [PATCH] gpio: omap: fix debounce time calculation
+Date: Thu, 12 Nov 2015 11:50:40 -0600
+Message-ID: <1447350640-20347-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:49415 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753701AbbKLRvM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 12 Nov 2015 12:51:12 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linux OMAP Mailing List <linux-omap@vger.kernel.org>, Linux ARM Kernel Mailing List <linux-arm-kernel@lists.infradead.org>, Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-resource_size_t may be defined as 32 or 64 bit depending on configuration,
-so it cannot be printed using the normal format strings, as gcc correctly
-warns:
+According to TRM, debounce is measured in periods of
+the functional clock of the GPIO IP. This means that
+we should divide by the rate of functional clock.
 
-pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-   dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
+Signed-off-by: Felipe Balbi <balbi@ti.com>
+---
+ drivers/gpio/gpio-omap.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-This changes the format string to use the special "%pr" format
-string that prints a resource, and changes the arguments so we
-the resource structure directly. I'm also swapping out the arguments
-to match the text in the format string.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 33edd07d9149..23217e990eaf 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 		atmel_pioctrl->irqs[i] = res->start;
- 		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
- 		irq_set_handler_data(res->start, atmel_pioctrl);
--		dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-+		dev_dbg(dev, "bank %pr: hwirq=%u\n", res, i);
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 56d2d026e62e..2b29fd195521 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -217,15 +217,29 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 	u32			val;
+ 	u32			l;
+ 	bool			enable = !!debounce;
++	unsigned long		flags;
+ 
+ 	if (!bank->dbck_flag)
+ 		return;
+ 
+ 	if (enable) {
+-		debounce = DIV_ROUND_UP(debounce, 31) - 1;
++		struct clk	*clk;
++		unsigned long	rate;
++
++		clk = clk_get(bank->dev, "fck");
++		if (IS_ERR(clk)) {
++			dev_err(bank->dev, "can't get clock\n");
++			return;
++		}
++
++		rate = clk_get_rate(clk);
++		clk_put(clk);
++
++		debounce = DIV_ROUND_UP(debounce, rate);
+ 		debounce &= OMAP4_GPIO_DEBOUNCINGTIME_MASK;
  	}
  
- 	atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
++	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	l = BIT(offset);
+ 
+ 	clk_enable(bank->dbck);
+@@ -256,6 +270,7 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 		bank->context.debounce = debounce;
+ 		bank->context.debounce_en = val;
+ 	}
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
+ /**
+@@ -1002,14 +1017,9 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned offset, int value)
+ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+ 			      unsigned debounce)
+ {
+-	struct gpio_bank *bank;
+-	unsigned long flags;
+-
+-	bank = container_of(chip, struct gpio_bank, chip);
++	struct gpio_bank *bank = container_of(chip, struct gpio_bank, chip);
+ 
+-	raw_spin_lock_irqsave(&bank->lock, flags);
+ 	omap2_set_gpio_debounce(bank, offset, debounce);
+-	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.6.2
+
