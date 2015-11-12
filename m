@@ -1,24 +1,110 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Thu, 12 Nov 2015 11:02:11 +0200
-Message-ID: <20151112090211.GL1509@lahna.fi.intel.com>
-References: <20151111194530.GA26559@dtor-ws>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
+Date: Thu, 12 Nov 2015 13:17:47 +0100
+Message-ID: <CAMuHMdXoAd4TFZNzcycisXSg0gd9nWKLRK0UQyAog4HWHJr5yg@mail.gmail.com>
+References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
+	<8737wdfcd0.wl%kuninori.morimoto.gx@renesas.com>
+	<87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151111194530.GA26559@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 11, 2015 at 11:45:30AM -0800, Dmitry Torokhov wrote:
-> We should not fall back to the legacy unnamed gpio lookup style if the
-> driver requests gpios with different names, because we'll give out the same
-> gpio twice. Let's keep track of the names that were used for the device and
-> only do the fallback for the first name used.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Hi Morimoto-san,
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On Wed, Nov 11, 2015 at 6:29 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> Many SoC needs each PORT_GP_x() macros, but we can share/reuse
+> same one.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Thanks!
+
+I think this still can be improved upon...
+
+ideally you just need log2(32) defines.
+
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -205,22 +205,68 @@ struct sh_pfc_soc_info {
+>  #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
+>  #define PORT_GP_1(bank, pin, fn, sfx)  PORT_GP_CFG_1(bank, pin, fn, sfx, 0)
+
+"PORT_GP_1()" takes a "pin" parameter...
+
+> -#define PORT_GP_CFG_32(bank, fn, sfx, cfg)                             \
+> +#define PORT_GP_CFG_4(bank, fn, sfx, cfg)                                              \
+
+... while "PORT_GP_CFG_X()" (with "X" > 1) don't.
+
+>         PORT_GP_CFG_1(bank, 0,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 1,  fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg),   \
+> +       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
+> +#define PORT_GP_4(bank, fn, sfx)       PORT_GP_CFG_4(bank, fn, sfx, 0)
+> +
+> +#define PORT_GP_CFG_8(bank, fn, sfx, cfg)                                              \
+> +       PORT_GP_CFG_4(bank, fn, sfx, cfg),                                              \
+>         PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg),   \
+> +       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
+> +#define PORT_GP_8(bank, fn, sfx)       PORT_GP_CFG_8(bank, fn, sfx, 0)
+
+Hence you can't simply define PORT_GP_8() in terms of PORT_GP_CFG_4().
+
+So what about:
+
+#define _PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin,
+GP_##bank##_##pin, sfx, cfg)
+#define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
+        _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1,
+fn, sfx, cfg)
+#define _PORT_GP_CFG_4(bank, pin, fn, sfx, cfg) \
+        _PORT_GP_CFG_2(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_2(bank, 2,
+fn, sfx, cfg)
+...
+#define _PORT_GP_CFG_32(bank, pin, fn, sfx, cfg) \
+        _PORT_GP_CFG_16(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_16(bank,
+16, fn, sfx, cfg)
+
+All the rest (only the ones we really need) can be defined in terms of
+the above.
+E.g.
+
+ #define PORT_GP_CFG_1(bank, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg)
+ #define PORT_GP_CFG_2(bank, fn, sfx, cfg) _PORT_GP_CFG_2(bank, 0, fn, sfx, cfg)
+ #define PORT_GP_CFG_4(bank, pin, fn, sfx, cfg) _PORT_GP_CFG_4(bank,
+0, fn, sfx, cfg)
+...
+ #define PORT_GP_CFG_32(bank, fn, sfx, cfg) _PORT_GP_CFG_32(bank, 0,
+fn, sfx, cfg)
+
+and
+
+ #define PORT_GP_1(bank, fn, sfx) _PORT_GP_CFG_1(bank, 0, fn, sfx, 0)
+ #define PORT_GP_2(bank, fn, sfx) _PORT_GP_CFG_2(bank, 0, fn, sfx, 0)
+ #define PORT_GP_4(bank, fn, sfx) _PORT_GP_CFG_4(bank, 0, fn, sfx, 0)
+...
+ #define PORT_GP_32(bank, fn, sfx) _PORT_GP_CFG_32(bank, 0, fn, sfx, 0)
+
+and for the special (non-power-of-two) numbers e.g.
+
+#define PORT_GP_12(bank, fn, sfx) \
+        _PORT_GP_CFG_8(bank, 0, fn, sfx, 0) _PORT_GP_CFG_4(bank, 8, fn, sfx, 0)
+
+What do you think?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
