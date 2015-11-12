@@ -1,110 +1,53 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
-Date: Thu, 12 Nov 2015 13:17:47 +0100
-Message-ID: <CAMuHMdXoAd4TFZNzcycisXSg0gd9nWKLRK0UQyAog4HWHJr5yg@mail.gmail.com>
-References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
-	<8737wdfcd0.wl%kuninori.morimoto.gx@renesas.com>
-	<87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Rename SEL_SCIF to SEL_SATA
+Date: Thu, 12 Nov 2015 15:12:12 +0100
+Message-ID: <1447337532-18258-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Morimoto-san,
+Cfr. Manual Errata for Rev 0.50 of the R-Car Gen3 datasheet.
 
-On Wed, Nov 11, 2015 at 6:29 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> Many SoC needs each PORT_GP_x() macros, but we can share/reuse
-> same one.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+This has no user-visible impact.
 
-Thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I think this still can be improved upon...
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 29d001b8a727e154..bb5f37cbb9502d5f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -495,7 +495,7 @@ FM(IP16_31_28)	IP16_31_28
+ #define MOD_SEL1_13		FM(SEL_SCIF3_0)		FM(SEL_SCIF3_1)
+ #define MOD_SEL1_12		FM(SEL_SCIF2_0)		FM(SEL_SCIF2_1)
+ #define MOD_SEL1_11		FM(SEL_SCIF1_0)		FM(SEL_SCIF1_1)
+-#define MOD_SEL1_10		FM(SEL_SCIF_0)		FM(SEL_SCIF_1)
++#define MOD_SEL1_10		FM(SEL_SATA_0)		FM(SEL_SATA_1)
+ #define MOD_SEL1_9		FM(SEL_REMOCON_0)	FM(SEL_REMOCON_1)
+ #define MOD_SEL1_6		FM(SEL_RCAN0_0)		FM(SEL_RCAN0_1)
+ #define MOD_SEL1_5		FM(SEL_PWM6_0)		FM(SEL_PWM6_1)
+@@ -1033,7 +1033,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_DATA(IP9_19_16,	SD2_DAT3),
+ 
+ 	PINMUX_IPSR_DATA(IP9_23_20,	SD2_DS),
+-	PINMUX_IPSR_MSEL(IP9_23_20,	SATA_DEVSLP_B,		SEL_SCIF_1),
++	PINMUX_IPSR_MSEL(IP9_23_20,	SATA_DEVSLP_B,		SEL_SATA_1),
+ 
+ 	PINMUX_IPSR_DATA(IP9_27_24,	SD3_DAT4),
+ 	PINMUX_IPSR_MSEL(IP9_27_24,	SD2_CD_A,		SEL_SDHI2_0),
+@@ -1293,7 +1293,7 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_IPSR_DATA(IP15_11_8,	SSI_SDATA6),
+ 	PINMUX_IPSR_MSEL(IP15_11_8,	SIM0_CLK_D,		SEL_SIMCARD_3),
+-	PINMUX_IPSR_MSEL(IP15_11_8,	SATA_DEVSLP_A,		SEL_SCIF_0),
++	PINMUX_IPSR_MSEL(IP15_11_8,	SATA_DEVSLP_A,		SEL_SATA_0),
+ 
+ 	PINMUX_IPSR_DATA(IP15_15_12,	SSI_SCK78),
+ 	PINMUX_IPSR_MSEL(IP15_15_12,	HRX2_B,			SEL_HSCIF2_1),
+-- 
+1.9.1
 
-ideally you just need log2(32) defines.
-
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -205,22 +205,68 @@ struct sh_pfc_soc_info {
->  #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
->  #define PORT_GP_1(bank, pin, fn, sfx)  PORT_GP_CFG_1(bank, pin, fn, sfx, 0)
-
-"PORT_GP_1()" takes a "pin" parameter...
-
-> -#define PORT_GP_CFG_32(bank, fn, sfx, cfg)                             \
-> +#define PORT_GP_CFG_4(bank, fn, sfx, cfg)                                              \
-
-... while "PORT_GP_CFG_X()" (with "X" > 1) don't.
-
->         PORT_GP_CFG_1(bank, 0,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 1,  fn, sfx, cfg),   \
-> -       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg),   \
-> +       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
-> +#define PORT_GP_4(bank, fn, sfx)       PORT_GP_CFG_4(bank, fn, sfx, 0)
-> +
-> +#define PORT_GP_CFG_8(bank, fn, sfx, cfg)                                              \
-> +       PORT_GP_CFG_4(bank, fn, sfx, cfg),                                              \
->         PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),   \
-> -       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg),   \
-> +       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
-> +#define PORT_GP_8(bank, fn, sfx)       PORT_GP_CFG_8(bank, fn, sfx, 0)
-
-Hence you can't simply define PORT_GP_8() in terms of PORT_GP_CFG_4().
-
-So what about:
-
-#define _PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin,
-GP_##bank##_##pin, sfx, cfg)
-#define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
-        _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1,
-fn, sfx, cfg)
-#define _PORT_GP_CFG_4(bank, pin, fn, sfx, cfg) \
-        _PORT_GP_CFG_2(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_2(bank, 2,
-fn, sfx, cfg)
-...
-#define _PORT_GP_CFG_32(bank, pin, fn, sfx, cfg) \
-        _PORT_GP_CFG_16(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_16(bank,
-16, fn, sfx, cfg)
-
-All the rest (only the ones we really need) can be defined in terms of
-the above.
-E.g.
-
- #define PORT_GP_CFG_1(bank, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg)
- #define PORT_GP_CFG_2(bank, fn, sfx, cfg) _PORT_GP_CFG_2(bank, 0, fn, sfx, cfg)
- #define PORT_GP_CFG_4(bank, pin, fn, sfx, cfg) _PORT_GP_CFG_4(bank,
-0, fn, sfx, cfg)
-...
- #define PORT_GP_CFG_32(bank, fn, sfx, cfg) _PORT_GP_CFG_32(bank, 0,
-fn, sfx, cfg)
-
-and
-
- #define PORT_GP_1(bank, fn, sfx) _PORT_GP_CFG_1(bank, 0, fn, sfx, 0)
- #define PORT_GP_2(bank, fn, sfx) _PORT_GP_CFG_2(bank, 0, fn, sfx, 0)
- #define PORT_GP_4(bank, fn, sfx) _PORT_GP_CFG_4(bank, 0, fn, sfx, 0)
-...
- #define PORT_GP_32(bank, fn, sfx) _PORT_GP_CFG_32(bank, 0, fn, sfx, 0)
-
-and for the special (non-power-of-two) numbers e.g.
-
-#define PORT_GP_12(bank, fn, sfx) \
-        _PORT_GP_CFG_8(bank, 0, fn, sfx, 0) _PORT_GP_CFG_4(bank, 8, fn, sfx, 0)
-
-What do you think?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
