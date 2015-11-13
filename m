@@ -1,80 +1,86 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the SoC header files
-Date: Fri, 13 Nov 2015 01:53:39 -0300
-Message-ID: <1447390457-1158-2-git-send-email-javier@osg.samsung.com>
-References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@osg.samsung.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
+Date: Fri, 13 Nov 2015 08:44:10 +0100
+Message-ID: <CAMuHMdWSiq3Pna3yxRSYFgZeTMeLYgHaxp115qA-zxw=Ri-BXg@mail.gmail.com>
+References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
+	<8737wdfcd0.wl%kuninori.morimoto.gx@renesas.com>
+	<87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
+	<CAMuHMdXoAd4TFZNzcycisXSg0gd9nWKLRK0UQyAog4HWHJr5yg@mail.gmail.com>
+	<87d1vekao8.wl%kuninori.morimoto.gx@renesas.com>
+	<876116k0vi.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <876116k0vi.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The <dt-bindings/pinctrl/omap.h> header file defines a set of macros
-for different SoCs families that falls under the OMAP sub-arch, that
-allow to define the padconf register physical address instead of the
-register offset from the padconf base.
+Hi Morimoto-san,
 
-But the am43xx and dra7xx SoCs families have their own pinctrl header
-file so the DTS using these SoCs aren't able to use the AM4372_IOPAD()
-and DRA7XX_CORE_IOPAD() macros since <dt-bindings/pinctrl/omap.h> is
-not included.
+On Fri, Nov 13, 2015 at 5:02 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+>> > I think this still can be improved upon...
+>> >
+>> > ideally you just need log2(32) defines.
+>> (snip)
+>> >  #define PORT_GP_CFG_1(bank, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg)
+>> >  #define PORT_GP_CFG_2(bank, fn, sfx, cfg) _PORT_GP_CFG_2(bank, 0, fn, sfx, cfg)
+>> >  #define PORT_GP_CFG_4(bank, pin, fn, sfx, cfg) _PORT_GP_CFG_4(bank,
+>> > 0, fn, sfx, cfg)
+>> > ...
+>> >  #define PORT_GP_CFG_32(bank, fn, sfx, cfg) _PORT_GP_CFG_32(bank, 0,
+>> > fn, sfx, cfg)
+>> >
+>> > and
+>> >
+>> >  #define PORT_GP_1(bank, fn, sfx) _PORT_GP_CFG_1(bank, 0, fn, sfx, 0)
+>> >  #define PORT_GP_2(bank, fn, sfx) _PORT_GP_CFG_2(bank, 0, fn, sfx, 0)
+>> >  #define PORT_GP_4(bank, fn, sfx) _PORT_GP_CFG_4(bank, 0, fn, sfx, 0)
+>> > ...
+>> >  #define PORT_GP_32(bank, fn, sfx) _PORT_GP_CFG_32(bank, 0, fn, sfx, 0)
+>> >
+>> > and for the special (non-power-of-two) numbers e.g.
+>> >
+>> > #define PORT_GP_12(bank, fn, sfx) \
+>> >         _PORT_GP_CFG_8(bank, 0, fn, sfx, 0) _PORT_GP_CFG_4(bank, 8, fn, sfx, 0)
+>>
+>> Ahh indeed, make sense !
+>> I will use this idea. Thanks !
+>
+> Hmm... I'm tring this, but...
+> Can I confirm ? Your idea was this
+>
+> #define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
+>         _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1, fn, sfx, cfg)
+>
+> But I think you want this ?
+>
+> #define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
+> -        _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1, fn, sfx, cfg)
+> +        _PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) _PORT_GP_CFG_1(bank, pin + 1, fn, sfx, cfg)
 
-Move the macros to the correct header files so can be used by the DTS.
+Yes, sorry, that's what I meant.
 
-Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> I noticed it seems difficult, because it is based on
+>
+>         #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
+>                                     ~~~                                            ~~~
+> we can't use (pin + x) style.
+> It seems we need all 0 - 32 definition anyway...
 
----
+Oh right. CPP cannot evaluate the pin number arithmetic :-(
 
- include/dt-bindings/pinctrl/am43xx.h | 6 ++++++
- include/dt-bindings/pinctrl/dra.h    | 6 ++++++
- include/dt-bindings/pinctrl/omap.h   | 2 --
- 3 files changed, 12 insertions(+), 2 deletions(-)
+Then your previous patch is indeed the best we can do, I'm afraid.
 
-diff --git a/include/dt-bindings/pinctrl/am43xx.h b/include/dt-bindings/pinctrl/am43xx.h
-index 774dc1e843c5..344bd1eb3386 100644
---- a/include/dt-bindings/pinctrl/am43xx.h
-+++ b/include/dt-bindings/pinctrl/am43xx.h
-@@ -31,5 +31,11 @@
- #define PIN_INPUT_PULLUP	(INPUT_EN | PULL_UP)
- #define PIN_INPUT_PULLDOWN	(INPUT_EN)
- 
-+/*
-+ * Macro to allow using the absolute physical address instead of the
-+ * padconf registers instead of the offset from padconf base.
-+ */
-+#define AM4372_IOPAD(pa, val)	(((pa) & 0xffff) - 0x0800) (val)
-+
- #endif
- 
-diff --git a/include/dt-bindings/pinctrl/dra.h b/include/dt-bindings/pinctrl/dra.h
-index 4379e29f0460..5c75e80915fc 100644
---- a/include/dt-bindings/pinctrl/dra.h
-+++ b/include/dt-bindings/pinctrl/dra.h
-@@ -67,5 +67,11 @@
- #define PIN_INPUT_PULLUP	(PULL_ENA | INPUT_EN | PULL_UP)
- #define PIN_INPUT_PULLDOWN	(PULL_ENA | INPUT_EN)
- 
-+/*
-+ * Macro to allow using the absolute physical address instead of the
-+ * padconf registers instead of the offset from padconf base.
-+ */
-+#define DRA7XX_CORE_IOPAD(pa, val)	(((pa) & 0xffff) - 0x3400) (val)
-+
- #endif
- 
-diff --git a/include/dt-bindings/pinctrl/omap.h b/include/dt-bindings/pinctrl/omap.h
-index 13949259705a..8100de13851c 100644
---- a/include/dt-bindings/pinctrl/omap.h
-+++ b/include/dt-bindings/pinctrl/omap.h
-@@ -63,8 +63,6 @@
- #define OMAP3_WKUP_IOPAD(pa, val)	OMAP_IOPAD_OFFSET((pa), 0x2a00) (val)
- #define DM816X_IOPAD(pa, val)		OMAP_IOPAD_OFFSET((pa), 0x0800) (val)
- #define AM33XX_IOPAD(pa, val)		OMAP_IOPAD_OFFSET((pa), 0x0800) (val)
--#define AM4372_IOPAD(pa, val)		OMAP_IOPAD_OFFSET((pa), 0x0800) (val)
--#define DRA7XX_CORE_IOPAD(pa, val)	OMAP_IOPAD_OFFSET((pa), 0x3400) (val)
- 
- /*
-  * Macros to allow using the offset from the padconf physical address
--- 
-2.4.3
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
