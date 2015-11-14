@@ -1,69 +1,70 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH] gpio: pxa: change initcall level second attempt
-Date: Fri, 13 Nov 2015 21:22:38 +0100
-Message-ID: <1447446158-20213-1-git-send-email-robert.jarzmik@free.fr>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: Add get_direction support.
+Date: Fri, 13 Nov 2015 16:49:24 -0800
+Message-ID: <1447462164-34639-1-git-send-email-hongzhou.yang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:31558 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754225AbbKMUaU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Nov 2015 15:30:20 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:35260 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752302AbbKNAtc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Nov 2015 19:49:32 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
 
-This patch is a second attempt at what was previously in commit
-6c7e660a27da ("gpio: pxa: set initcall level to module init").
+Since Linux gpio framework return 0 for output, 1 for input.
+But HW use 0 stands for input, and 1 stands for output.
+So use negative to correct it.
 
-The goal is the same : enable gpio & pinctrl driver to work
-together. As pinctrl driver will be initialized at device level, the
-gpio should be as well, so that the deferring mechanism is honored.
+And gpio_chip.get is used to get input value, no need to get
+output value, so removing it.
 
-Yet this patch should also respect the legacy platforms, so the set of
-constraints is :
- - in legacy platforms (ie. non dt), gpio_[gs]et_*() should be available
-   for machine code => core initcall
- - in new platforms (ie. dt based), pinctrl will be available and no
-   machine code => device initcall
-
-In order to fullfill all these constraints, the initcall level is either
-postcore for non devicetree platforms, and device for devicetree platforms.
-
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 ---
- drivers/gpio/gpio-pxa.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ Add get direction support.
+ Remove gpio_chip.get value for output direction.
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index df2ce550f309..bce99182578b 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -690,11 +690,23 @@ static struct platform_driver pxa_gpio_driver = {
- 	.id_table	= gpio_id_table,
- };
- 
--static int __init pxa_gpio_init(void)
-+static int __init pxa_gpio_legacy_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
- 	return platform_driver_register(&pxa_gpio_driver);
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 7726c6c..bbf0230 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -757,7 +757,7 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+ 	reg_addr =  mtk_get_port(pctl, offset) + pctl->devdata->dir_offset;
+ 	bit = BIT(offset & 0xf);
+ 	regmap_read(pctl->regmap1, reg_addr, &read_val);
+-	return !!(read_val & bit);
++	return !(read_val & bit);
  }
--postcore_initcall(pxa_gpio_init);
-+postcore_initcall(pxa_gpio_legacy_init);
-+
-+static int __init pxa_gpio_dt_init(void)
-+{
-+	if (of_have_populated_dt())
-+		return platform_driver_register(&pxa_gpio_driver);
-+
-+	return 0;
-+}
-+device_initcall(pxa_gpio_dt_init);
  
- #ifdef CONFIG_PM
- static int pxa_gpio_suspend(void)
+ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
+@@ -767,12 +767,8 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	unsigned int read_val = 0;
+ 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->dev);
+ 
+-	if (mtk_gpio_get_direction(chip, offset))
+-		reg_addr = mtk_get_port(pctl, offset) +
+-			pctl->devdata->dout_offset;
+-	else
+-		reg_addr = mtk_get_port(pctl, offset) +
+-			pctl->devdata->din_offset;
++	reg_addr = mtk_get_port(pctl, offset) +
++		pctl->devdata->din_offset;
+ 
+ 	bit = BIT(offset & 0xf);
+ 	regmap_read(pctl->regmap1, reg_addr, &read_val);
+@@ -1007,6 +1003,7 @@ static struct gpio_chip mtk_gpio_chip = {
+ 	.owner			= THIS_MODULE,
+ 	.request		= mtk_gpio_request,
+ 	.free			= mtk_gpio_free,
++	.get_direction		= mtk_gpio_get_direction,
+ 	.direction_input	= mtk_gpio_direction_input,
+ 	.direction_output	= mtk_gpio_direction_output,
+ 	.get			= mtk_gpio_get,
 -- 
-2.1.4
+1.7.9.5
 
