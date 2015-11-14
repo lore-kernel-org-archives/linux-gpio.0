@@ -1,70 +1,48 @@
-From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: Add get_direction support.
-Date: Fri, 13 Nov 2015 16:49:24 -0800
-Message-ID: <1447462164-34639-1-git-send-email-hongzhou.yang@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Subject: [PATCH 2/2] gpiolib: do not allow to insert an empty gpiochip
+Date: Sat, 14 Nov 2015 16:38:56 +0800
+Message-ID: <1447490336-10209-3-git-send-email-bamvor.zhangjian@linaro.org>
+References: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:35260 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752302AbbKNAtc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Nov 2015 19:49:32 -0500
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:36771 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbbKNIjP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Nov 2015 03:39:15 -0500
+Received: by pacdm15 with SMTP id dm15so123311273pac.3
+        for <linux-gpio@vger.kernel.org>; Sat, 14 Nov 2015 00:39:14 -0800 (PST)
+In-Reply-To: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, broonie@kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Since Linux gpio framework return 0 for output, 1 for input.
-But HW use 0 stands for input, and 1 stands for output.
-So use negative to correct it.
+We need to check if number of gpio is positive if there is no
+such check in devicetree or acpi or whatever called before
+gpiochip_add.
 
-And gpio_chip.get is used to get input value, no need to get
-output value, so removing it.
+I suppose that devicetree and acpi do not allow insert gpiochip
+with zero number but I do not know if it is enough to ignore
+this check in gpiochip_add.
 
-Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 ---
- Add get direction support.
- Remove gpio_chip.get value for output direction.
+ drivers/gpio/gpiolib.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 7726c6c..bbf0230 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -757,7 +757,7 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	reg_addr =  mtk_get_port(pctl, offset) + pctl->devdata->dir_offset;
- 	bit = BIT(offset & 0xf);
- 	regmap_read(pctl->regmap1, reg_addr, &read_val);
--	return !!(read_val & bit);
-+	return !(read_val & bit);
- }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index cc135d9..868ff15 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -327,6 +327,9 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	if (!descs)
+ 		return -ENOMEM;
  
- static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
-@@ -767,12 +767,8 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	unsigned int read_val = 0;
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->dev);
++	if (chip->ngpio == 0)
++		return -EINVAL;
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
  
--	if (mtk_gpio_get_direction(chip, offset))
--		reg_addr = mtk_get_port(pctl, offset) +
--			pctl->devdata->dout_offset;
--	else
--		reg_addr = mtk_get_port(pctl, offset) +
--			pctl->devdata->din_offset;
-+	reg_addr = mtk_get_port(pctl, offset) +
-+		pctl->devdata->din_offset;
- 
- 	bit = BIT(offset & 0xf);
- 	regmap_read(pctl->regmap1, reg_addr, &read_val);
-@@ -1007,6 +1003,7 @@ static struct gpio_chip mtk_gpio_chip = {
- 	.owner			= THIS_MODULE,
- 	.request		= mtk_gpio_request,
- 	.free			= mtk_gpio_free,
-+	.get_direction		= mtk_gpio_get_direction,
- 	.direction_input	= mtk_gpio_direction_input,
- 	.direction_output	= mtk_gpio_direction_output,
- 	.get			= mtk_gpio_get,
+ 	if (base < 0) {
 -- 
-1.7.9.5
+2.1.4
 
