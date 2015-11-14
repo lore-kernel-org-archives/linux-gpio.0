@@ -1,48 +1,43 @@
 From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Subject: [PATCH 2/2] gpiolib: do not allow to insert an empty gpiochip
-Date: Sat, 14 Nov 2015 16:38:56 +0800
-Message-ID: <1447490336-10209-3-git-send-email-bamvor.zhangjian@linaro.org>
-References: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
+Subject: [PATCH 0/2] Fix bugs in the insertion of gpiochip.
+Date: Sat, 14 Nov 2015 16:38:54 +0800
+Message-ID: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:36771 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750814AbbKNIjP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Nov 2015 03:39:15 -0500
-Received: by pacdm15 with SMTP id dm15so123311273pac.3
-        for <linux-gpio@vger.kernel.org>; Sat, 14 Nov 2015 00:39:14 -0800 (PST)
-In-Reply-To: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:36719 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750814AbbKNIjK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Nov 2015 03:39:10 -0500
+Received: by pacdm15 with SMTP id dm15so123309829pac.3
+        for <linux-gpio@vger.kernel.org>; Sat, 14 Nov 2015 00:39:09 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: linus.walleij@linaro.org, broonie@kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-We need to check if number of gpio is positive if there is no
-such check in devicetree or acpi or whatever called before
-gpiochip_add.
+These patches try to fix following bugs which is found by my gpio
+mockup driver and testscript[1](will send them later):
+1.  Could not check the overlap if the new gpiochip is the secondly
+    gpiochip.
+2.  Could not check the overlap if the new gpiochip is overlap
+    with the left of gpiochip.
+3.  Allow overlap of base of different gpiochip.
+4.  Allow to insert an empty gpiochip
 
-I suppose that devicetree and acpi do not allow insert gpiochip
-with zero number but I do not know if it is enough to ignore
-this check in gpiochip_add.
+The first patch fix the first three by rewriting the logic in the
+gpiochip_add_to_list.
 
-Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
----
- drivers/gpio/gpiolib.c | 3 +++
- 1 file changed, 3 insertions(+)
+The second patch fix the fourth bug in gpiochip_add. I do not
+found the checker in gpiolib.c. Hope it is not a redundant logic.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index cc135d9..868ff15 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -327,6 +327,9 @@ int gpiochip_add(struct gpio_chip *chip)
- 	if (!descs)
- 		return -ENOMEM;
- 
-+	if (chip->ngpio == 0)
-+		return -EINVAL;
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	if (base < 0) {
+[1] https://github.com/bjzhang/linux/tree/gpio-fix-and-mockup-driver
+
+Bamvor Jian Zhang (2):
+  gpiolib: improve overlap check of range of gpio
+  gpiolib: do not allow to insert an empty gpiochip
+
+ drivers/gpio/gpiolib.c | 44 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
+
 -- 
 2.1.4
 
