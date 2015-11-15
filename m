@@ -1,52 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpiolib: improve overlap check of range of gpio
-Date: Sat, 14 Nov 2015 12:30:39 +0100
-Message-ID: <CACRpkdbhR--oY0ygdVFfaTkNxOie8UiitFnZj2pMtp_eLMKsyQ@mail.gmail.com>
-References: <1447490336-10209-1-git-send-email-bamvor.zhangjian@linaro.org>
-	<1447490336-10209-2-git-send-email-bamvor.zhangjian@linaro.org>
-	<CACRpkdbnua=3Wsu9TLkh3naKH=DjWixEuTSUZfz4mxk+mprudQ@mail.gmail.com>
-	<CAFy1USQBpAhqmaHbky+BS3Eru-XHxnshcYnDEvwBux6T9MrP5w@mail.gmail.com>
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: [PATCH] pinctrl: imx1-core: add missing of_node_put
+Date: Sun, 15 Nov 2015 09:34:23 +0530
+Message-ID: <20151115040422.GA15180@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35420 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbbKNLal (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Nov 2015 06:30:41 -0500
-Received: by oige206 with SMTP id e206so62829652oig.2
-        for <linux-gpio@vger.kernel.org>; Sat, 14 Nov 2015 03:30:39 -0800 (PST)
-In-Reply-To: <CAFy1USQBpAhqmaHbky+BS3Eru-XHxnshcYnDEvwBux6T9MrP5w@mail.gmail.com>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:35474 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751934AbbKOEEa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Nov 2015 23:04:30 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Nov 14, 2015 at 12:20 PM, Bamvor Zhang Jian
-<bamvor.zhangjian@linaro.org> wrote:
+for_each_child_of_node performs an of_node_get on each iteration,
+so of_node_put is required on break out of the loop.
 
->> Here we are also below the previous chip, so above the current
->> iterator and below the previous one so we found a "hole".
->> Insert a comment that "we found a hole in the GPIO chip bases".
->
-> Yes, we found a valid range between _chip_prev and chip. Is it more clear
-> if we use ranges(means [base,base+ngpio]) instead of bases?
+This is done using Coccinelle. And semantic patch used for this is
+as follows:
 
-Maybe, maybe both. Suggest something that makes sense to you
-in your updated patch.
+@@
+expression root,e;
+local idexpression child;
+@@
 
->> And here we are above the last chip in the list.
->> Insert a comment about that too.
->> "We are beyond the last chip in the list".
->
-> Yeap. I am sorry for the variable naming and comments. I will update them
-> in the next patch.
+ for_each_child_of_node(root, child) {
+   ... when != of_node_put(child)
+       when != e = child
+(
+   return child;
+|
++  of_node_put(child);
+?  return ...;
+)
+   ...
+ }
 
-The naming is not your fault, there was a bad precedent.
+Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> Except for the above comment, any comments or suggestions
-> for the logic?
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+index 88a7fac..acaf84c 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
+@@ -538,8 +538,10 @@ static int imx1_pinctrl_parse_functions(struct device_node *np,
+ 		func->groups[i] = child->name;
+ 		grp = &info->groups[grp_index++];
+ 		ret = imx1_pinctrl_parse_groups(child, grp, info, i++);
+-		if (ret == -ENOMEM)
++		if (ret == -ENOMEM) {
++			of_node_put(child);
+ 			return ret;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -582,8 +584,10 @@ static int imx1_pinctrl_parse_dt(struct platform_device *pdev,
+ 
+ 	for_each_child_of_node(np, child) {
+ 		ret = imx1_pinctrl_parse_functions(child, info, ifunc++);
+-		if (ret == -ENOMEM)
++		if (ret == -ENOMEM) {
++			of_node_put(child);
+ 			return -ENOMEM;
++		}
+ 	}
+ 
+ 	return 0;
+-- 
+1.9.1
 
-No it makes sense.
-
-Yours,
-Linus Walleij
