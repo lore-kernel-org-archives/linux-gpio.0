@@ -1,139 +1,57 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 00/39] ARM: dts: Convert OMAP boards to use IOPAD pinmux
- macros
-Date: Mon, 16 Nov 2015 10:38:25 -0600
-Message-ID: <564A0681.6010205@ti.com>
-References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
- <20151113144742.GB2517@atomide.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: fix qcom ssbi drivers for 64-bit compilation
+Date: Mon, 16 Nov 2015 17:41:18 +0100
+Message-ID: <5235862.Gokjxf5QH1@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:34624 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752494AbbKPQia (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 16 Nov 2015 11:38:30 -0500
-In-Reply-To: <20151113144742.GB2517@atomide.com>
+Received: from mout.kundenserver.de ([212.227.17.10]:62468 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752845AbbKPQl5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 11:41:57 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, linux-arm-msm@vger.kernel.org
 
-On 11/13/2015 08:47 AM, Tony Lindgren wrote:
-> * Javier Martinez Canillas <javier@osg.samsung.com> [151112 20:55]:
->> Hello Tony,
->>
->> This series converts all the remaining OMAP boards that didn't use the
->> IOPAD macros to specify the padconf register addresses. The only board
->> that I left was arch/arm/boot/dts/am335x-boneblack.dts because Andrew
->> already posted a patch for that DTS [0].
->>
->> I built tested all the DTBs that are build by omap2plus_defconfig and
->> the md5 checksum was the same before and after the patches so there's
->> no functional change and is only to make the DTS more readable.
->
-> Yes great. Being able to compare the register against the documentation
-> helps quite a bit. I plan on applying this series before anything else
-> after -rc1 as it may require other patches to be rebased.
->
->> Patch #1 should be acked by the pinctrl maintainer and picked through
->> the linux-omap tree to maintain bisectability.
->>
->> [0]: https://lkml.org/lkml/2015/10/24/114
->
+When building pinctrl-ssbi-gpio and pinctrl-ssbi-mpp for ARM64, we get
+a compile warning about invalid types:
 
-v3 of my little contribution also out when you pull:
-https://lkml.org/lkml/2015/11/13/480
+drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c: In function 'pm8xxx_gpio_probe':
+drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c: In function 'pm8xxx_mpp_probe':
+drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
 
-> OK let's wait for Linus to take a look at it.
->
-> Tony
->
->
->
->> Javier Martinez Canillas (39):
->>    pinctrl: Move am4372 and dra7 macros to the the SoC header files
->>    ARM: dts: am335x-baltos-ir5221: Remove leftover pinctrl lines
->>    ARM: dts: am335x-baltos-ir5221: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-bone-common: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-bonegreen: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-chiliboard: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-chilisom: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-evm: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-evmsk: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-lxm: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-nano: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-pepper: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-phycore-som: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am335x-wega: Use AM33XX_IOPAD pinmux macro
->>    ARM: dts: am3517-craneboard: Use OMAP3_CORE1_IOPAD pinmux macro
->>    ARM: dts: am437x-gp-evm: Use AM4372_IOPAD pinmux macro
->>    ARM: dts: am437x-idk-evm: Use AM4372_IOPAD pinmux macro
->>    ARM: dts: am437x-sk-evm: Use AM4372_IOPAD pinmux macro
->>    ARM: dts: am43x-epos-evm: Use AM4372_IOPAD pinmux macro
->>    ARM: dts: am57xx-beagle-x15: Use DRA7XX_CORE_IOPAD pinmux macro
->>    ARM: dts: dra7-evm: Use DRA7XX_CORE_IOPAD pinmux macro
->>    ARM: dts: dra72-evm: Use DRA7XX_CORE_IOPAD pinmux macro
->>    ARM: dts: omap3-beagle: Use OMAP3_*_IOPAD pinmux macros
->>    ARM: dts: omap3-beagle-xm: Use OMAP3_*_IOPAD pinmux macros
->>    ARM: dts: omap3-evm-37xx: Use OMAP3_*_IOPAD pinmux macros
->>    ARM: dts: omap3-ldp: Use OMAP3_CORE1_IOPAD pinmux macro
->>    ARM: dts: omap3-n900: Use OMAP3_CORE1_IOPAD pinmux macro
->>    ARM: dts: omap3-n9: Use OMAP3_CORE1_IOPAD pinmux macro
->>    ARM: dts: omap3-zoom3: Use OMAP3_*_IOPAD pinmux macros
->>    ARM: dts: twl4030: Use OMAP3_CORE1_IOPAD pinmux macro
->>    ARM: dts: omap4-panda-a4: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: omap4-panda-common: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: omap4-panda-es: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: omap4-sdp: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: omap4-sdp-es23plus: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: twl6030: Use OMAP4_IOPAD pinmux macro
->>    ARM: dts: omap5-board-common: Use OMAP5_IOPAD pinmux macro
->>    ARM: dts: omap5-cm-t54: Use OMAP5_IOPAD pinmux macro
->>    ARM: dts: omap5-uevm.dts: Use OMAP5_IOPAD pinmux macro
->>
->>   arch/arm/boot/dts/am335x-baltos-ir5221.dts | 186 +++++++-------
->>   arch/arm/boot/dts/am335x-bone-common.dtsi  | 104 ++++----
->>   arch/arm/boot/dts/am335x-bonegreen.dts     |   4 +-
->>   arch/arm/boot/dts/am335x-chiliboard.dts    |  20 +-
->>   arch/arm/boot/dts/am335x-chilisom.dtsi     |  80 +++---
->>   arch/arm/boot/dts/am335x-evm.dts           | 220 ++++++++---------
->>   arch/arm/boot/dts/am335x-evmsk.dts         | 278 ++++++++++-----------
->>   arch/arm/boot/dts/am335x-lxm.dts           | 120 ++++-----
->>   arch/arm/boot/dts/am335x-nano.dts          | 140 +++++------
->>   arch/arm/boot/dts/am335x-pepper.dts        | 200 +++++++--------
->>   arch/arm/boot/dts/am335x-phycore-som.dtsi  |  60 ++---
->>   arch/arm/boot/dts/am335x-wega.dtsi         |  58 ++---
->>   arch/arm/boot/dts/am3517-craneboard.dts    |   2 +-
->>   arch/arm/boot/dts/am437x-gp-evm.dts        | 380 ++++++++++++++---------------
->>   arch/arm/boot/dts/am437x-idk-evm.dts       | 128 +++++-----
->>   arch/arm/boot/dts/am437x-sk-evm.dts        | 298 +++++++++++-----------
->>   arch/arm/boot/dts/am43x-epos-evm.dts       | 246 +++++++++----------
->>   arch/arm/boot/dts/am57xx-beagle-x15.dts    | 198 +++++++--------
->>   arch/arm/boot/dts/dra7-evm.dts             | 254 +++++++++----------
->>   arch/arm/boot/dts/dra72-evm.dts            | 200 +++++++--------
->>   arch/arm/boot/dts/omap3-beagle-xm.dts      |  18 +-
->>   arch/arm/boot/dts/omap3-beagle.dts         |  64 ++---
->>   arch/arm/boot/dts/omap3-evm-37xx.dts       |  54 ++--
->>   arch/arm/boot/dts/omap3-ldp.dts            |  42 ++--
->>   arch/arm/boot/dts/omap3-n900.dts           | 106 ++++----
->>   arch/arm/boot/dts/omap3-n950-n9.dtsi       |  12 +-
->>   arch/arm/boot/dts/omap3-zoom3.dts          |  60 ++---
->>   arch/arm/boot/dts/omap4-panda-a4.dts       |   6 +-
->>   arch/arm/boot/dts/omap4-panda-common.dtsi  | 164 ++++++-------
->>   arch/arm/boot/dts/omap4-panda-es.dts       |  10 +-
->>   arch/arm/boot/dts/omap4-sdp-es23plus.dts   |   6 +-
->>   arch/arm/boot/dts/omap4-sdp.dts            | 110 ++++-----
->>   arch/arm/boot/dts/omap5-board-common.dtsi  |  94 +++----
->>   arch/arm/boot/dts/omap5-cm-t54.dts         |   2 +-
->>   arch/arm/boot/dts/omap5-uevm.dts           |   4 +-
->>   arch/arm/boot/dts/twl4030_omap3.dtsi       |   2 +-
->>   arch/arm/boot/dts/twl6030_omap4.dtsi       |   4 +-
->>   include/dt-bindings/pinctrl/am43xx.h       |   6 +
->>   include/dt-bindings/pinctrl/dra.h          |   6 +
->>   include/dt-bindings/pinctrl/omap.h         |   2 -
->>   40 files changed, 1977 insertions(+), 1971 deletions(-)
->>
->> --
->> 2.4.3
->>
+This changes the code so we cast the pointer to 'unsigned long', which
+is the right thing to do here.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index d809c9eaa323..19a3c3bc2f1f 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -672,7 +672,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	pctrl->dev = &pdev->dev;
+-	pctrl->npins = (unsigned)of_device_get_match_data(&pdev->dev);
++	pctrl->npins = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!pctrl->regmap) {
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+index 8982027de8e8..b868ef1766a0 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+@@ -763,7 +763,7 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	pctrl->dev = &pdev->dev;
+-	pctrl->npins = (unsigned)of_device_get_match_data(&pdev->dev);
++	pctrl->npins = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!pctrl->regmap) {
+
