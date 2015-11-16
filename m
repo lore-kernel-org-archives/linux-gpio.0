@@ -1,55 +1,51 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [RFC PATCH 4/7] pinctrl: sunxi: remove redundant "depends on RESET_CONTROLLER"
-Date: Mon, 16 Nov 2015 12:40:09 +0900
-Message-ID: <CAK7LNAThCGYWjXD4=OdgukUBLhyAtmHFH6VXO1V4DCFCpfTRjg@mail.gmail.com>
-References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
-	<1446722128-11961-5-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdYmdyxi+6fZNGffE6-JBZGkyq3F__Ywc4rCYYEsQeimMQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Subject: [PATCH V2 0/2] Fix bugs in the insertion of gpiochip.
+Date: Mon, 16 Nov 2015 13:02:45 +0800
+Message-ID: <1447650167-29070-1-git-send-email-bamvor.zhangjian@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:38007 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752584AbbKPDk1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 15 Nov 2015 22:40:27 -0500
-In-Reply-To: <CACRpkdYmdyxi+6fZNGffE6-JBZGkyq3F__Ywc4rCYYEsQeimMQ@mail.gmail.com>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:34681 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750712AbbKPFC6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 00:02:58 -0500
+Received: by padhx2 with SMTP id hx2so162555148pad.1
+        for <linux-gpio@vger.kernel.org>; Sun, 15 Nov 2015 21:02:58 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, broonie@kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Hi Linus
+The first version of these patches could be found [1].
 
-2015-11-05 22:40 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Nov 5, 2015 at 12:15 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> ARCH_SUNXI selects RESET_CONTROLLER.
->> The dependency "depends on RESET_CONTROLLER" is already met.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> NACK, this pin controller needs that as dependency, I don't worry
-> that it's overspecified.
->
-> They both do this:
-> #include <linux/reset.h>
->
-> And the object should specify its dependencies, not rely on them
-> being implicitly available.
->
-> The dep is there for human readers too, not just machines. And to
-> them, this is helpful information.
+These patches try to fix following bugs which is found by my gpio
+mockup driver and testscript[1](will send them later):
+1.  Could not check the overlap if the new gpiochip is the secondly
+    gpiochip.
+2.  Could not check the overlap if the new gpiochip is overlap
+    with the left of gpiochip.
+3.  Allow overlap of base of different gpiochip.
+4.  Allow to insert an empty gpiochip
 
-How strict we should follow this rule?
+The first patch fix the first three by rewriting the logic in the
+gpiochip_add_to_list.
 
-Many drivers depend on OF, but do they all have "depends on OF"?
+The second patch fix the fourth bug in gpiochip_add. I do not
+found the checker in gpiolib.c. Hope it is not a redundant logic.
 
+Changes since v1
+1.  Update comment and print according to suggestion given by Linus.
+2.  Delete the dedicated checking for base overlap. The other logic
+    in the patch 1/2 already cover it.
 
+[1] http://www.spinics.net/lists/linux-gpio/msg09594.html
+[2] https://github.com/bjzhang/linux/tree/gpio-fix-and-mockup-driver
 
+Bamvor Jian Zhang (2):
+  gpiolib: improve overlap check of range of gpio
+  gpiolib: do not allow to insert an empty gpiochip
 
+ drivers/gpio/gpiolib.c | 64 +++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 45 insertions(+), 19 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.1.4
+
