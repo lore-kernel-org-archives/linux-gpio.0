@@ -1,42 +1,56 @@
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [PATCH] pinctrl: fix qcom ssbi drivers for 64-bit compilation
-Date: Mon, 16 Nov 2015 10:28:27 -0800
-Message-ID: <20151116182826.GD30882@usrtlx11787.corpusers.net>
-References: <5235862.Gokjxf5QH1@wuerfel>
+From: Li Yang <leoli@freescale.com>
+Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP block
+Date: Mon, 16 Nov 2015 12:56:46 -0600
+Message-ID: <CADRPPNROHmnOHfpAtaii5Hr3hzUmn4BL5OpQ4Q4hr9BGLq8s0Q@mail.gmail.com>
+References: <1446549552-40675-1-git-send-email-Gang.Liu@freescale.com>
+	<CACRpkdbf4X=dcZhtNrcJp7Zp_hnVDGH1gpKML-e=qcAgEzb0Nw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:4327 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751266AbbKPS2h (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 16 Nov 2015 13:28:37 -0500
-Content-Disposition: inline
-In-Reply-To: <5235862.Gokjxf5QH1@wuerfel>
+Received: from mail-lb0-f194.google.com ([209.85.217.194]:32925 "EHLO
+	mail-lb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751151AbbKPS4s (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 13:56:48 -0500
+In-Reply-To: <CACRpkdbf4X=dcZhtNrcJp7Zp_hnVDGH1gpKML-e=qcAgEzb0Nw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liu Gang <Gang.Liu@freescale.com>, Rob Herring <robh+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wood Scott-B07421 <b07421@freescale.com>, Li Yang-R58472 <R58472@freescale.com>
 
-On Mon 16 Nov 08:41 PST 2015, Arnd Bergmann wrote:
+On Mon, Nov 16, 2015 at 9:11 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 3, 2015 at 12:19 PM, Liu Gang <Gang.Liu@freescale.com> wrote:
+>
+>> The GPIO block for ls2080a platform has little endian registers,
+>> the GPIO driver needs this property to read/write registers by
+>> right interface.
+>>
+>> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+>> index f2455c5..c836dab 100644
+>> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+>> @@ -10,6 +10,9 @@ Required properties:
+>>    the second cell is used to specify the gpio polarity:
+>>        0 = active high
+>>        1 = active low
+>> +- little-endian : Should be set if the GPIO has little endian
+>> +                 registers. No the property means the GPIO
+>> +                 registers are big endian mode.
+>
+> That is a very generic binding and I would like the devicetree
+> maintainers to say something about this.
+>
+> I would be OK if this is specified for *all* gpiochips in
+> Documentation/devicetree/bindings/gpio/gpio.txt
+> or even higher up in the desriptions.
+>
+> Just for Freescale seems a bit too local.
 
-> When building pinctrl-ssbi-gpio and pinctrl-ssbi-mpp for ARM64, we get
-> a compile warning about invalid types:
-> 
-> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c: In function 'pm8xxx_gpio_probe':
-> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c: In function 'pm8xxx_mpp_probe':
-> drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> 
-> This changes the code so we cast the pointer to 'unsigned long', which
-> is the right thing to do here.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-
-Thanks Arnd,
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+There is already a generic definition at
+Documentation/devicetree/bindings/common-properties.txt.  But it will
+be special for Freescale controller to say that the default is
+big-endian for backward compatibility.
 
 Regards,
-Bjorn
+Leo
