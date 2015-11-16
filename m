@@ -1,51 +1,161 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP block
-Date: Mon, 16 Nov 2015 16:11:32 +0100
-Message-ID: <CACRpkdbf4X=dcZhtNrcJp7Zp_hnVDGH1gpKML-e=qcAgEzb0Nw@mail.gmail.com>
-References: <1446549552-40675-1-git-send-email-Gang.Liu@freescale.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Subject: [PATCH] gpio-tegra: Do not create the debugfs entry by default
+Date: Mon, 16 Nov 2015 16:07:10 +0000
+Message-ID: <1447690030-26529-1-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33220 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751928AbbKPPLd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 10:11:33 -0500
-Received: by obbww6 with SMTP id ww6so124015226obb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 16 Nov 2015 07:11:33 -0800 (PST)
-In-Reply-To: <1446549552-40675-1-git-send-email-Gang.Liu@freescale.com>
+Received: from eu-smtp-delivery-143.mimecast.com ([146.101.78.143]:52791 "EHLO
+	eu-smtp-delivery-143.mimecast.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752573AbbKPQHo (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 16 Nov 2015 11:07:44 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, b07421@freescale.com, R58472@freescale.com
+To: linux-gpio@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linus.walleij@linaro.org, thierry.reding@gmail.com, swarren@wwwdotorg.org, gnurou@gmail.com, "Suzuki K. Poulose" <suzuki.poulose@arm.com>
 
-On Tue, Nov 3, 2015 at 12:19 PM, Liu Gang <Gang.Liu@freescale.com> wrote:
+The tegra gpio driver creates the debugfs entry irrespective of
+whether the device exists or not. This is enabled on an arm64_defconfig
+and leaves an entry in debugfs on all platforms where it is not
+useful. This patch fixes the issue by creating the entry only when
+a device exists.
 
-> The GPIO block for ls2080a platform has little endian registers,
-> the GPIO driver needs this property to read/write registers by
-> right interface.
->
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> index f2455c5..c836dab 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> @@ -10,6 +10,9 @@ Required properties:
->    the second cell is used to specify the gpio polarity:
->        0 = active high
->        1 = active low
-> +- little-endian : Should be set if the GPIO has little endian
-> +                 registers. No the property means the GPIO
-> +                 registers are big endian mode.
+Signed-off-by: Suzuki K. Poulose <suzuki.poulose@arm.com>
+---
+ drivers/gpio/gpio-tegra.c |  105 ++++++++++++++++++++++++-----------------=
+----
+ 1 file changed, 56 insertions(+), 49 deletions(-)
 
-That is a very generic binding and I would like the devicetree
-maintainers to say something about this.
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 027e5f4..896bf29 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -375,6 +375,60 @@ static int tegra_gpio_irq_set_wake(struct irq_data *d,=
+ unsigned int enable)
+ }
+ #endif
+=20
++#ifdef=09CONFIG_DEBUG_FS
++
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
++
++static int dbg_gpio_show(struct seq_file *s, void *unused)
++{
++=09int i;
++=09int j;
++
++=09for (i =3D 0; i < tegra_gpio_bank_count; i++) {
++=09=09for (j =3D 0; j < 4; j++) {
++=09=09=09int gpio =3D tegra_gpio_compose(i, j, 0);
++=09=09=09seq_printf(s,
++=09=09=09=09"%d:%d %02x %02x %02x %02x %02x %02x %06x\n",
++=09=09=09=09i, j,
++=09=09=09=09tegra_gpio_readl(GPIO_CNF(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_OE(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_OUT(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_IN(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_INT_STA(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_INT_ENB(gpio)),
++=09=09=09=09tegra_gpio_readl(GPIO_INT_LVL(gpio)));
++=09=09}
++=09}
++=09return 0;
++}
++
++static int dbg_gpio_open(struct inode *inode, struct file *file)
++{
++=09return single_open(file, dbg_gpio_show, &inode->i_private);
++}
++
++static const struct file_operations debug_fops =3D {
++=09.open=09=09=3D dbg_gpio_open,
++=09.read=09=09=3D seq_read,
++=09.llseek=09=09=3D seq_lseek,
++=09.release=09=3D single_release,
++};
++
++static void tegra_gpio_debuginit(void)
++{
++=09(void) debugfs_create_file("tegra_gpio", S_IRUGO,
++=09=09=09=09=09NULL, NULL, &debug_fops);
++}
++
++#else
++
++static inline void tegra_gpio_debuginit(void)
++{
++}
++
++#endif
++
+ static struct irq_chip tegra_gpio_irq_chip =3D {
+ =09.name=09=09=3D "GPIO",
+ =09.irq_ack=09=3D tegra_gpio_irq_ack,
+@@ -519,6 +573,8 @@ static int tegra_gpio_probe(struct platform_device *pde=
+v)
+ =09=09=09spin_lock_init(&bank->lvl_lock[j]);
+ =09}
+=20
++=09tegra_gpio_debuginit();
++
+ =09return 0;
+ }
+=20
+@@ -536,52 +592,3 @@ static int __init tegra_gpio_init(void)
+ =09return platform_driver_register(&tegra_gpio_driver);
+ }
+ postcore_initcall(tegra_gpio_init);
+-
+-#ifdef=09CONFIG_DEBUG_FS
+-
+-#include <linux/debugfs.h>
+-#include <linux/seq_file.h>
+-
+-static int dbg_gpio_show(struct seq_file *s, void *unused)
+-{
+-=09int i;
+-=09int j;
+-
+-=09for (i =3D 0; i < tegra_gpio_bank_count; i++) {
+-=09=09for (j =3D 0; j < 4; j++) {
+-=09=09=09int gpio =3D tegra_gpio_compose(i, j, 0);
+-=09=09=09seq_printf(s,
+-=09=09=09=09"%d:%d %02x %02x %02x %02x %02x %02x %06x\n",
+-=09=09=09=09i, j,
+-=09=09=09=09tegra_gpio_readl(GPIO_CNF(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_OE(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_OUT(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_IN(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_INT_STA(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_INT_ENB(gpio)),
+-=09=09=09=09tegra_gpio_readl(GPIO_INT_LVL(gpio)));
+-=09=09}
+-=09}
+-=09return 0;
+-}
+-
+-static int dbg_gpio_open(struct inode *inode, struct file *file)
+-{
+-=09return single_open(file, dbg_gpio_show, &inode->i_private);
+-}
+-
+-static const struct file_operations debug_fops =3D {
+-=09.open=09=09=3D dbg_gpio_open,
+-=09.read=09=09=3D seq_read,
+-=09.llseek=09=09=3D seq_lseek,
+-=09.release=09=3D single_release,
+-};
+-
+-static int __init tegra_gpio_debuginit(void)
+-{
+-=09(void) debugfs_create_file("tegra_gpio", S_IRUGO,
+-=09=09=09=09=09NULL, NULL, &debug_fops);
+-=09return 0;
+-}
+-late_initcall(tegra_gpio_debuginit);
+-#endif
+--=20
+1.7.9.5
 
-I would be OK if this is specified for *all* gpiochips in
-Documentation/devicetree/bindings/gpio/gpio.txt
-or even higher up in the desriptions.
-
-Just for Freescale seems a bit too local.
-
-Yours,
-Linus Walleij
