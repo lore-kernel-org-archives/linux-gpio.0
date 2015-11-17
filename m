@@ -1,43 +1,124 @@
-From: Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: [PATCH v3 0/2] gpiolib: Initializing GPIOs using DT property gpio-initval
-Date: Tue, 17 Nov 2015 11:07:56 +0100
-Message-ID: <1447754878-21099-1-git-send-email-mpa@pengutronix.de>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: Re: [PATCH v3 2/2] gpiolib: Add GPIO initialization
+Date: Tue, 17 Nov 2015 11:21:32 +0100
+Message-ID: <33694835.x5uTstGuv8@adelgunde>
+References: <1447754878-21099-1-git-send-email-mpa@pengutronix.de> <1447754878-21099-3-git-send-email-mpa@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart3738292.jKVHM1jLed"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:36655 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752715AbbKQKVf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:21:35 -0500
+In-Reply-To: <1447754878-21099-3-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de
+
+
+--nextPart3738292.jKVHM1jLed
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 
 Hi,
 
-I completely forgot this series. Here is an update.
+On Tuesday 17 November 2015 11:07:58 Markus Pargmann wrote:
+[...]
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index a18f00fc1bb8..3b35f2fafeb2 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2329,6 +2329,30 @@ static void gpiochip_free_hogs(struct gpio_chi=
+p *chip)
+>  }
+> =20
+>  /**
+> + * gpiod_initialize - Initialize a GPIO with a given value
+> + * @desc:=09gpio whose value will be assigned
+> + * @lflags:=09gpio_lookup_flags - returned from of_find_gpio() or
+> + *=09=09of_get_gpio_hog()
+> + * @dflags:=09gpiod_flags - optional GPIO initialization flags
+> + *
+> + * This is used to initialize GPIOs that were defined in DT
+> + */
+> +int gpiod_initialize(struct gpio_desc *desc, unsigned long lflags,
+> +=09=09     enum gpiod_flags dflags)
+> +{
+> +=09int status;
+> +
 
-This series adds a gpio-initval property to the devicetree. It provides a way
-to initialize GPIOs to a defined value.
-
-In v3 I splitted the patch into dt-bindings and the gpiolib patch. This series
-is now based on v4.4-rc1. gpiod_initialize() does not use common code with
-gpiod_hog anymore.
+Sorry, this is missing a gpiod_parse_flags(). Will fix this and resend =
+tomorrow.
 
 Best Regards,
 
 Markus
 
+> +=09status =3D gpiod_configure_flags(desc, NULL, dflags);
+> +=09if (status < 0) {
+> +=09=09pr_err("initial setup of GPIO (chip %s, offset %d) failed\n",
+> +=09=09       gpiod_to_chip(desc)->label, gpio_chip_hwgpio(desc));
+> +=09=09return status;
+> +=09}
+> +
+> +=09return 0;
+> +}
+> +
+> +/**
+>   * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO f=
+unction
+>   * @dev:=09GPIO consumer, can be NULL for system-global GPIOs
+>   * @con_id:=09function within the GPIO consumer
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index 98ab08c0aa2d..4abf53a5e651 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -107,6 +107,8 @@ int gpiod_request(struct gpio_desc *desc, const c=
+har *label);
+>  void gpiod_free(struct gpio_desc *desc);
+>  int gpiod_hog(struct gpio_desc *desc, const char *name,
+>  =09=09unsigned long lflags, enum gpiod_flags dflags);
+> +int gpiod_initialize(struct gpio_desc *desc, unsigned long lflags,
+> +=09=09     enum gpiod_flags dflags);
+> =20
+>  /*
+>   * Return the GPIO number of the passed descriptor relative to its c=
+hip
+>=20
 
-Markus Pargmann (2):
-  dt-bindings: GPIO: Add gpio-initval
-  gpiolib: Add GPIO initialization
+=2D-=20
+Pengutronix e.K.                           |                           =
+  |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
+  |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
+5 |
 
- Documentation/devicetree/bindings/gpio/gpio.txt | 34 ++++++++++++++++---------
- drivers/gpio/gpiolib-of.c                       | 13 ++++++----
- drivers/gpio/gpiolib.c                          | 24 +++++++++++++++++
- drivers/gpio/gpiolib.h                          |  2 ++
- 4 files changed, 56 insertions(+), 17 deletions(-)
+--nextPart3738292.jKVHM1jLed
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
--- 
-2.6.2
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQIcBAABCAAGBQJWSv+sAAoJEEpcgKtcEGQQ3lAQAJifXF2aOcgytWM1L+LGOuSK
+ShCRhYpNubmrErPDFPJpX5H9tJcAsvHDGo1rlOGt1GZXhYHchNflduvp/+Kuusto
+945Ljk6nzWXvFhb4MFA3gTKD3xkQcA+wHPs8gUBN4uR9xxHn6g+rBo21Hj0DSlcl
+MBr59TR/u4R6woT1Gto1wmm3t9LF5gtd6oKT1cbzo8tMBThcwsnIhBl6yWIFuAvq
+P3XPDykz14TreVLUZF4Zy6VRijGOy+snc8B7e9eU7tn6RO/4UUPEzyBNhjHHZ3uC
++VDMLBnjrQHQ7Ths5/TLNW7PHnB/cy/EU9FhFKnonzkrN6e96SYg6V5KZgDmrSJM
+4SAa+D16hyQw8Vk1I08CiUpptw+bepEzRszu86Oum9KPWCrDpOqiBY4SpTdFj/UG
+4Qb8Bb4TFaCIS0rvl+NeYhcPX3EdCYxYIhVIx7eW2HZpE/b0YRuHvhey/gnwMjFo
+77yE0i+oWGCRJXczizl+7sA0K+Vu0FVaZeMGOdojdDgU0mdtlK2U1x0VLdL7/HFg
+UY+/RDQhJv4FFmSnWCCV45cP9ZMGXX+U9P4IKGu8XwVuOYNp+Bce6OPccliSxGPj
+6SVn55akymMFgrILG3XAGRGj+TENlVABZcfjWxsqI0mXtS/3dryRQkmMS/Adxn/q
+sTLkSRButFgrNdarmJgf
+=AAj/
+-----END PGP SIGNATURE-----
+
+--nextPart3738292.jKVHM1jLed--
+
