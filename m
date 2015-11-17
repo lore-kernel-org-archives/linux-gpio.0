@@ -1,38 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Tue, 17 Nov 2015 11:57:10 +0100
-Message-ID: <CACRpkdaE0KpKCbMbR6KV5h-0d5D=FnHWej9AM-jLa_uNsCMyPQ@mail.gmail.com>
-References: <20151105193838.GA33410@dtor-ws>
+Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+Date: Tue, 17 Nov 2015 12:00:06 +0100
+Message-ID: <CACRpkdZTHcROza2diFCOj783T1zfbkd=Dov3PUzDV2U35qEFXA@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
+	<56261239.5030007@linaro.org>
+	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+	<CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
+	<CALszF6B7928hpMDMH0_wmo-MakZX7sofO85aeBwv-aCLBHnrkA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:36717 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750913AbbKQK5L (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:57:11 -0500
-Received: by obdgf3 with SMTP id gf3so3522887obd.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 02:57:11 -0800 (PST)
-In-Reply-To: <20151105193838.GA33410@dtor-ws>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALszF6B7928hpMDMH0_wmo-MakZX7sofO85aeBwv-aCLBHnrkA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Nov 5, 2015 at 8:38 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Fri, Nov 6, 2015 at 1:57 PM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
 
-> We should not fall back to the legacy unnamed gpio lookup style if the
-> driver requests gpios with different names, because we'll give out the same
-> gpio twice. Let's keep track of the names that were used for the device and
-> only do the fallback for the first name used.
->
-> Also disable fallback to _CRS gpios if ACPI device has DT-like
-> properties or driver-supplied gpio mappings.
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Thinking again at it, I persist to believe have the defines makes it
+> easier to use.
+> With auto-completion, it makes it faster and less error prone to
+> select the right
+> alternate function without parsing the datasheet.
 
-Looking for a newer version of this I think, also would like
-Mika's and/or Rafael's ACKs.
+Auto-completion ... should we design our source code to
+fit certain editors?
+
+> But as these defines are not actually used on driver side, maybe I
+> could just move
+> them to the dts directory?
+
+No strong opinion there. include/dt-bindings is part of the bindings
+documentation actually so I guess it goes there.
 
 Yours,
 Linus Walleij
