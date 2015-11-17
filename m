@@ -1,43 +1,40 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] MAINTAINERS: Update OMAP GPIO driver entry
-Date: Tue, 17 Nov 2015 15:52:59 +0200
-Message-ID: <564B313B.40408@ti.com>
-References: <1447421729-5294-1-git-send-email-javier@osg.samsung.com>
- <CACRpkdZX10H++NB+XNPuMnrfN299Hr6bBGxzH9gBV+W0a2H2Kg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: pxa: change initcall level second attempt
+Date: Tue, 17 Nov 2015 14:56:16 +0100
+Message-ID: <CACRpkdbaej0s0GNYUwbsmwR-fSRMuJR5H+GHrat1sevUBiCgmw@mail.gmail.com>
+References: <1447446158-20213-1-git-send-email-robert.jarzmik@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:45351 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751803AbbKQNxH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 17 Nov 2015 08:53:07 -0500
-In-Reply-To: <CACRpkdZX10H++NB+XNPuMnrfN299Hr6bBGxzH9gBV+W0a2H2Kg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1447446158-20213-1-git-send-email-robert.jarzmik@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus, Javier,
+On Fri, Nov 13, 2015 at 9:22 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-On 11/17/2015 03:49 PM, Linus Walleij wrote:
-> On Fri, Nov 13, 2015 at 2:35 PM, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
+> This patch is a second attempt at what was previously in commit
+> 6c7e660a27da ("gpio: pxa: set initcall level to module init").
 >
->> I'm not as involved in OMAP as I used to be and Grygorii is the most
->> active developer working on this driver and has also been reviewing
->> patches so let's add him as a driver maintainer instead of me.
->>
->> While being there, add the driver's DT binding doc to the file list.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> The goal is the same : enable gpio & pinctrl driver to work
+> together. As pinctrl driver will be initialized at device level, the
+> gpio should be as well, so that the deferring mechanism is honored.
 >
-> Patch applied, unless Grygorii says he doesn't want this.
+> Yet this patch should also respect the legacy platforms, so the set of
+> constraints is :
+>  - in legacy platforms (ie. non dt), gpio_[gs]et_*() should be available
+>    for machine code => core initcall
+>  - in new platforms (ie. dt based), pinctrl will be available and no
+>    machine code => device initcall
 >
+> In order to fullfill all these constraints, the initcall level is either
+> postcore for non devicetree platforms, and device for devicetree platforms.
+>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Thank you for your trust. I'd like to try if there no objection.
+Kludgy, but what can we do.
+Patch applied.
 
-
--- 
-regards,
--grygorii
+Yours,
+Linus Walleij
