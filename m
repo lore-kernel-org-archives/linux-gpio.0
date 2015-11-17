@@ -1,47 +1,109 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/7] ARM: at91/dt: sama5d2: add pio controller node
-Date: Tue, 17 Nov 2015 12:06:03 +0100
-Message-ID: <CACRpkdbhFi531Dm9AgOGhc7XHnnyJ+L3t0FvHOPV-fC2f9X6QQ@mail.gmail.com>
-References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
-	<1442417823-15850-5-git-send-email-ludovic.desroches@atmel.com>
-	<CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
-	<CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [RFC PATCH] gpiolib: fix oops, if gpio name is NULL
+Date: Tue, 17 Nov 2015 13:20:40 +0200
+Message-ID: <564B0D88.4000301@mleia.com>
+References: <1447245413-32209-1-git-send-email-vz@mleia.com> <35337129.pBjQytIvzF@adelgunde>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:34915 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882AbbKQLGE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 06:06:04 -0500
-Received: by obbnk6 with SMTP id nk6so3639910obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 03:06:03 -0800 (PST)
-In-Reply-To: <CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
+Received: from mleia.com ([178.79.152.223]:60628 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752162AbbKQLUo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 17 Nov 2015 06:20:44 -0500
+In-Reply-To: <35337129.pBjQytIvzF@adelgunde>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Markus Pargmann <mpa@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Tue, Nov 10, 2015 at 1:30 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Mon, Sep 21, 2015 at 11:24 AM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
->> On Wed, Sep 16, 2015 at 8:37 AM, Ludovic Desroches
->> <ludovic.desroches@atmel.com> wrote:
+Hi Markus,
+
+On 17.11.2015 11:24, Markus Pargmann wrote:
+> Hi,
+> 
+> On Wednesday 11 November 2015 14:36:53 Vladimir Zapolskiy wrote:
+>> Commit c0017ed71966 ("gpio: Introduce gpio descriptor 'name'") causes
+>> OOPS on boot on LPC32xx boards:
 >>
->>> Add pio4 controller node to enable pinmux and gpio.
->>>
->>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+>>     Unable to handle kernel NULL pointer dereference at virtual address 00000000
+>>     CPU: 0 PID: 1 Comm: swapper Not tainted 4.3.0+ #707
+>>     Hardware name: LPC32XX SoC (Flattened Device Tree)
+>>     task: c381baa0 ti: c381e000 task.ti: c381e000
+>>     PC is at strcmp+0x10/0x40
+>>     LR is at gpiochip_add+0x3d0/0x4d4
+>>     pc : [<>]    lr : [<>]    psr: a0000093
+>>     sp : c381fd60  ip : c381fd70  fp : c381fd6c
 >>
->> Patch applied.
->
-> Please don't merge DT changes through driver trees unless there's a
-> very specific reason to do so, since it introduces random conflicts.
+>>     [snip]
+>>
+>>     Backtrace:
+>>     [<>] (strcmp) from [<>] (gpiochip_add+0x3d0/0x4d4)
+>>     [<>] (gpiochip_add) from [<>] (lpc32xx_gpio_probe+0x44/0x60)
+>>     [<>] (lpc32xx_gpio_probe) from [<>] (platform_drv_probe+0x40/0x8c)
+>>     [<>] (platform_drv_probe) from [<>] (driver_probe_device+0x110/0x294)
+>>     [<>] (driver_probe_device) from [<>] (__driver_attach+0x70/0x94)
+>>     [<>] (__driver_attach) from [<>] (bus_for_each_dev+0x74/0x98)
+>>     [<>] (bus_for_each_dev) from [<>] (driver_attach+0x20/0x28)
+>>     [<>] (driver_attach) from [<>] (bus_add_driver+0xd4/0x1f0)
+>>     [<>] (bus_add_driver) from [<>] (driver_register+0xa4/0xe8)
+>>     [<>] (driver_register) from [<>] (__platform_driver_register+0x38/0x4c)
+>>     [<>] (__platform_driver_register) from [<>] (lpc32xx_gpio_driver_init+0x18/0x20)
+>>     [<>] (lpc32xx_gpio_driver_init) from [<>] (do_one_initcall+0x108/0x1c8)
+>>     [<>] (do_one_initcall) from [<>] (kernel_init_freeable+0x10c/0x1d4)
+>>     [<>] (kernel_init_freeable) from [<>] (kernel_init+0x10/0xec)
+>>     [<>] (kernel_init) from [<>] (ret_from_fork+0x14/0x24)
+>>
+>> This is caused by the fact that at the moment some GPIO names are set
+>> to NULL, there is a hole in linear representation of one GPI bank, see
+>> drivers/gpio/gpio-lpc32xx.c / gpi_p3_names[] for details.
+>>
+>> The same problem most probably affects also gpio-cs5535.c, see
+>> cs5535_gpio_names[].
+>>
+>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>> ---
+>> Linus, Markus,
+>>
+>> I understand that LPC32xx GPIO driver is ugly (hopefully this
+>> will be changed in future), but please account this problem.
+>>
+>> I don't ask for inclusion of this change, because my own analysis is
+>> not done completely.
+>>
+>> Also please review, the same problem probably affects gpio-cs5535.c
+>> as well, see cs5535_gpio_names[].
+> 
+> Thanks for this hint. But I think these patches for gpio_name_to_desc won't get
+> mainline any time soon as this depends on the chardev interface and how it will
+> look like.
+> 
 
-Sorry :(
+sorry for misunderstanding, what do mean by "these patches"?
 
-Even noted this in the pull request to Torvalds, it was in the bottom
-of my patch stack so had been in -next for ages, I was afraid it
-would create more problem than it solves if I reverted the patch,
-but I guess I should have done so anyways.
+I see two options here, one is to fix or revert your c0017ed71966 due to
+caused regressions, another one is to update affected GPIO drivers
+removing discontinuity in GPIO enumeration inside a bank.
 
-Yours,
-Linus Walleij
+With best wishes,
+Vladimir
+
+>>
+>>  drivers/gpio/gpiolib.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>> index a18f00f..2a91f32 100644
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+>> @@ -233,7 +233,7 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
+>>  		for (i = 0; i != chip->ngpio; ++i) {
+>>  			struct gpio_desc *gpio = &chip->desc[i];
+>>  
+>> -			if (!gpio->name)
+>> +			if (!gpio->name || !name)
+>>  				continue;
+>>  
+>>  			if (!strcmp(gpio->name, name)) {
+>>
+> 
