@@ -1,104 +1,92 @@
 From: Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
-Date: Tue, 17 Nov 2015 12:18:51 +0900
-Message-ID: <20151117031851.24924.18884.sendpatchset@little-apple>
+Subject: [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
+Date: Tue, 17 Nov 2015 12:19:12 +0900
+Message-ID: <20151117031912.24924.37315.sendpatchset@little-apple>
 References: <20151117031832.24924.60685.sendpatchset@little-apple>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:33056 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752161AbbKQDRp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 22:17:45 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20151117031832.24924.60685.sendpatchset@little-apple>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-sh@vger.kernel.org
 Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com, Magnus Damm <magnus.damm@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Separate DU CDE and DISP signals to let the r8a7794 ALT
-board that lacks CDE handle the DISP signal by itself.
+Break out the r8a7794 DU ODDF (EXDISP/EXODDF/EXDE) signal
+from the sync group into a separate unit. This makes the
+sync group fit with the r8a7794 ALT board that only uses
+HSYNC and VSYNC signals.
 
-The groups "du0_cde_disp" and "du1_cde_disp" are replaced
-by "du0_cde", "du1_cde", "du0_disp" and "du1_disp".
+This makes the r8a7794 PFC similar to the existing r8a7791
+PFC DU implementation that also groups together HSYNC and
+VSYNC without ODDF.
+
+The groups "du0_oddf" and "du1_oddf" are added and the
+"du0_sync" and "du1_sync" groups are modified.
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   50 +++++++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 16 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- 0008/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 15:04:00.760513000 +0900
-@@ -1616,19 +1616,33 @@ static const unsigned int du1_sync_mux[]
- 	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK,
+--- 0016/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:27:10.190513000 +0900
+@@ -1615,21 +1615,33 @@ static const unsigned int du1_clk1_out_m
+ 	DU1_DOTCLKOUT1_MARK
+ };
+ static const unsigned int du0_sync_pins[] = {
+-	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC, EXDISP/EXODDF/EXCDE */
+-	RCAR_GP_PIN(2, 29), RCAR_GP_PIN(2, 28), RCAR_GP_PIN(2, 27),
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(2, 28), RCAR_GP_PIN(2, 27),
+ };
+ static const unsigned int du0_sync_mux[] = {
+-	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK,
+ 	DU0_EXVSYNC_DU0_VSYNC_MARK, DU0_EXHSYNC_DU0_HSYNC_MARK
+ };
+ static const unsigned int du1_sync_pins[] = {
+-	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC, EXDISP/EXODDF/EXCDE */
+-	RCAR_GP_PIN(4, 29), RCAR_GP_PIN(4, 28), RCAR_GP_PIN(4, 27),
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(4, 28), RCAR_GP_PIN(4, 27),
+ };
+ static const unsigned int du1_sync_mux[] = {
+-	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK,
  	DU1_EXVSYNC_DU1_VSYNC_MARK, DU1_EXHSYNC_DU1_HSYNC_MARK
  };
--static const unsigned int du0_cde_disp_pins[] = {
--	/* CDE DISP */
--	RCAR_GP_PIN(2, 31), RCAR_GP_PIN(2, 30),
--};
--static const unsigned int du0_cde_disp_mux[] = {
--	DU0_CDE_MARK, DU0_DISP_MARK
--};
--static const unsigned int du1_cde_disp_pins[] = {
--	/* CDE DISP */
--	RCAR_GP_PIN(4, 31), RCAR_GP_PIN(4, 30),
-+static const unsigned int du0_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(2, 31),
- };
--static const unsigned int du1_cde_disp_mux[] = {
--	DU1_CDE_MARK, DU1_DISP_MARK
-+static const unsigned int du0_cde_mux[] = {
-+	DU0_CDE_MARK,
++static const unsigned int du0_oddf_pins[] = {
++	/* EXDISP/EXODDF/EXCDE */
++	RCAR_GP_PIN(2, 29),
 +};
-+static const unsigned int du1_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(4, 31),
++static const unsigned int du0_oddf_mux[] = {
++	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK,
 +};
-+static const unsigned int du1_cde_mux[] = {
-+	DU1_CDE_MARK
++static const unsigned int du1_oddf_pins[] = {
++	/* EXDISP/EXODDF/EXCDE */
++	RCAR_GP_PIN(4, 29),
 +};
-+static const unsigned int du0_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(2, 30),
++static const unsigned int du1_oddf_mux[] = {
++	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK,
 +};
-+static const unsigned int du0_disp_mux[] = {
-+	DU0_DISP_MARK
-+};
-+static const unsigned int du1_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(4, 30),
-+};
-+static const unsigned int du1_disp_mux[] = {
-+	DU1_DISP_MARK
- };
- static const unsigned int du0_clk_in_pins[] = {
- 	/* CLKIN */
-@@ -2932,8 +2946,10 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(du1_clk_out),
+ static const unsigned int du0_cde_pins[] = {
+ 	/* CDE */
+ 	RCAR_GP_PIN(2, 31),
+@@ -2962,6 +2974,8 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(du1_clk1_out),
  	SH_PFC_PIN_GROUP(du0_sync),
  	SH_PFC_PIN_GROUP(du1_sync),
--	SH_PFC_PIN_GROUP(du0_cde_disp),
--	SH_PFC_PIN_GROUP(du1_cde_disp),
-+	SH_PFC_PIN_GROUP(du0_cde),
-+	SH_PFC_PIN_GROUP(du1_cde),
-+	SH_PFC_PIN_GROUP(du0_disp),
-+	SH_PFC_PIN_GROUP(du1_disp),
- 	SH_PFC_PIN_GROUP(du0_clk_in),
- 	SH_PFC_PIN_GROUP(du1_clk_in),
- 	SH_PFC_PIN_GROUP(eth_link),
-@@ -3122,8 +3138,10 @@ static const char * const du_groups[] =
- 	"du1_clk_out",
++	SH_PFC_PIN_GROUP(du0_oddf),
++	SH_PFC_PIN_GROUP(du1_oddf),
+ 	SH_PFC_PIN_GROUP(du0_cde),
+ 	SH_PFC_PIN_GROUP(du1_cde),
+ 	SH_PFC_PIN_GROUP(du0_disp),
+@@ -3156,6 +3170,8 @@ static const char * const du_groups[] =
+ 	"du1_dotclkout1",
  	"du0_sync",
  	"du1_sync",
--	"du0_cde_disp",
--	"du1_cde_disp",
-+	"du0_cde",
-+	"du1_cde",
-+	"du0_disp",
-+	"du1_disp",
- };
- 
- static const char * const du0_groups[] = {
++	"du0_oddf",
++	"du1_oddf",
+ 	"du0_cde",
+ 	"du1_cde",
+ 	"du0_disp",
