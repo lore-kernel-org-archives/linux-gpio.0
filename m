@@ -1,7 +1,7 @@
 From: Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
-Date: Tue, 17 Nov 2015 12:19:12 +0900
-Message-ID: <20151117031912.24924.37315.sendpatchset@little-apple>
+Subject: [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+Date: Tue, 17 Nov 2015 12:19:02 +0900
+Message-ID: <20151117031902.24924.4588.sendpatchset@little-apple>
 References: <20151117031832.24924.60685.sendpatchset@little-apple>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20151117031832.24924.60685.sendpatchset@little-apple>
@@ -12,81 +12,82 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Break out the r8a7794 DU ODDF (EXDISP/EXODDF/EXDE) signal
-from the sync group into a separate unit. This makes the
-sync group fit with the r8a7794 ALT board that only uses
-HSYNC and VSYNC signals.
+Add missing r8a7794 DU dot clock output signals and in
+particular the DU1_DOTCLKOUT0 signal on GP4_25 which is
+needed by DU1 on the r8a7794 ALT board.
 
-This makes the r8a7794 PFC similar to the existing r8a7791
-PFC DU implementation that also groups together HSYNC and
-VSYNC without ODDF.
-
-The groups "du0_oddf" and "du1_oddf" are added and the
-"du0_sync" and "du1_sync" groups are modified.
+The groups "du0_clk_out" and "du1_clk_out" are replaced by
+"du0_dotclkout0", "du0_dotclkout1", "du1_dotclkout0" and
+"du1_dotclkout1".
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
---- 0016/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:27:10.190513000 +0900
-@@ -1615,21 +1615,33 @@ static const unsigned int du1_clk1_out_m
+--- 0014/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:08:28.230513000 +0900
+@@ -1586,18 +1586,32 @@ static const unsigned int du1_rgb888_mux
+ 	DU1_DB7_MARK, DU1_DB6_MARK, DU1_DB5_MARK, DU1_DB4_MARK,
+ 	DU1_DB3_MARK, DU1_DB2_MARK, DU1_DB1_MARK, DU1_DB0_MARK,
+ };
+-static const unsigned int du0_clk_out_pins[] = {
++static const unsigned int du0_clk0_out_pins[] = {
+ 	/* CLKOUT */
+ 	RCAR_GP_PIN(2, 25),
+ };
+-static const unsigned int du0_clk_out_mux[] = {
++static const unsigned int du0_clk0_out_mux[] = {
+ 	DU0_DOTCLKOUT0_MARK
+ };
+-static const unsigned int du1_clk_out_pins[] = {
++static const unsigned int du0_clk1_out_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(2, 26),
++};
++static const unsigned int du0_clk1_out_mux[] = {
++	DU0_DOTCLKOUT1_MARK
++};
++static const unsigned int du1_clk0_out_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(4, 25),
++};
++static const unsigned int du1_clk0_out_mux[] = {
++	DU1_DOTCLKOUT0_MARK
++};
++static const unsigned int du1_clk1_out_pins[] = {
+ 	/* CLKOUT */
+ 	RCAR_GP_PIN(4, 26),
+ };
+-static const unsigned int du1_clk_out_mux[] = {
++static const unsigned int du1_clk1_out_mux[] = {
  	DU1_DOTCLKOUT1_MARK
  };
  static const unsigned int du0_sync_pins[] = {
--	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC, EXDISP/EXODDF/EXCDE */
--	RCAR_GP_PIN(2, 29), RCAR_GP_PIN(2, 28), RCAR_GP_PIN(2, 27),
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(2, 28), RCAR_GP_PIN(2, 27),
- };
- static const unsigned int du0_sync_mux[] = {
--	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK,
- 	DU0_EXVSYNC_DU0_VSYNC_MARK, DU0_EXHSYNC_DU0_HSYNC_MARK
- };
- static const unsigned int du1_sync_pins[] = {
--	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC, EXDISP/EXODDF/EXCDE */
--	RCAR_GP_PIN(4, 29), RCAR_GP_PIN(4, 28), RCAR_GP_PIN(4, 27),
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(4, 28), RCAR_GP_PIN(4, 27),
- };
- static const unsigned int du1_sync_mux[] = {
--	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK,
- 	DU1_EXVSYNC_DU1_VSYNC_MARK, DU1_EXHSYNC_DU1_HSYNC_MARK
- };
-+static const unsigned int du0_oddf_pins[] = {
-+	/* EXDISP/EXODDF/EXCDE */
-+	RCAR_GP_PIN(2, 29),
-+};
-+static const unsigned int du0_oddf_mux[] = {
-+	DU0_EXODDF_DU0_ODDF_DISP_CDE_MARK,
-+};
-+static const unsigned int du1_oddf_pins[] = {
-+	/* EXDISP/EXODDF/EXCDE */
-+	RCAR_GP_PIN(4, 29),
-+};
-+static const unsigned int du1_oddf_mux[] = {
-+	DU1_EXODDF_DU1_ODDF_DISP_CDE_MARK,
-+};
- static const unsigned int du0_cde_pins[] = {
- 	/* CDE */
- 	RCAR_GP_PIN(2, 31),
-@@ -2962,6 +2974,8 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(du1_clk1_out),
+@@ -2942,8 +2956,10 @@ static const struct sh_pfc_pin_group pin
+ 	SH_PFC_PIN_GROUP(du0_rgb888),
+ 	SH_PFC_PIN_GROUP(du1_rgb666),
+ 	SH_PFC_PIN_GROUP(du1_rgb888),
+-	SH_PFC_PIN_GROUP(du0_clk_out),
+-	SH_PFC_PIN_GROUP(du1_clk_out),
++	SH_PFC_PIN_GROUP(du0_clk0_out),
++	SH_PFC_PIN_GROUP(du0_clk1_out),
++	SH_PFC_PIN_GROUP(du1_clk0_out),
++	SH_PFC_PIN_GROUP(du1_clk1_out),
  	SH_PFC_PIN_GROUP(du0_sync),
  	SH_PFC_PIN_GROUP(du1_sync),
-+	SH_PFC_PIN_GROUP(du0_oddf),
-+	SH_PFC_PIN_GROUP(du1_oddf),
  	SH_PFC_PIN_GROUP(du0_cde),
- 	SH_PFC_PIN_GROUP(du1_cde),
- 	SH_PFC_PIN_GROUP(du0_disp),
-@@ -3156,6 +3170,8 @@ static const char * const du_groups[] =
- 	"du1_dotclkout1",
+@@ -3134,8 +3150,10 @@ static const char * const du_groups[] =
+ 	"du0_rgb888",
+ 	"du1_rgb666",
+ 	"du1_rgb888",
+-	"du0_clk_out",
+-	"du1_clk_out",
++	"du0_dotclkout0",
++	"du0_dotclkout1",
++	"du1_dotclkout0",
++	"du1_dotclkout1",
  	"du0_sync",
  	"du1_sync",
-+	"du0_oddf",
-+	"du1_oddf",
  	"du0_cde",
- 	"du1_cde",
- 	"du0_disp",
