@@ -1,57 +1,49 @@
-From: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Subject: Re: [PATCH V2 1/2] gpiolib: improve overlap check of range of gpio
-Date: Tue, 17 Nov 2015 22:47:57 +0800
-Message-ID: <CAFy1USQAQFW9rYTVvf9tww1T-JGxtuwS9i85WiCzjB-XPN4p4g@mail.gmail.com>
-References: <1447650167-29070-1-git-send-email-bamvor.zhangjian@linaro.org>
-	<1447650167-29070-2-git-send-email-bamvor.zhangjian@linaro.org>
-	<CACRpkdYOQfMV46GCRfKBxeUFwz7FjUGw-r6Gej6SWef0_j03_A@mail.gmail.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v3 6/6] gpio: tps65086: Add GPIO driver for the TPS65086
+ PMIC
+Date: Tue, 17 Nov 2015 10:11:31 -0600
+Message-ID: <564B51B3.2000102@ti.com>
+References: <1446657135-7820-1-git-send-email-afd@ti.com>
+ <1446657135-7820-7-git-send-email-afd@ti.com>
+ <CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:34694 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751877AbbKQOr5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:47:57 -0500
-Received: by igvg19 with SMTP id g19so97158791igv.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 06:47:57 -0800 (PST)
-In-Reply-To: <CACRpkdYOQfMV46GCRfKBxeUFwz7FjUGw-r6Gej6SWef0_j03_A@mail.gmail.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:56728 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751452AbbKQQLq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 11:11:46 -0500
+In-Reply-To: <CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi, Linus
-
-On 11/17/2015 10:14 PM, Linus Walleij wrote:
-> On Mon, Nov 16, 2015 at 6:02 AM, Bamvor Jian Zhang
-> <bamvor.zhangjian@linaro.org> wrote:
+On 11/17/2015 03:17 AM, Linus Walleij wrote:
+> On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd@ti.com> wrote:
 >
->> There are limitations for the current checker:
->> 1.  Could not check the overlap if the new gpiochip is the secondly
->>     gpiochip.
->> 2.  Could not check the overlap if the new gpiochip is overlap
->>     with the left of gpiochip. E.g. if we insert [c, d] between
->>     [a,b] and [e, f], and e >= c + d, it will successful even if
->>     c < a + b.
->> 3.  Allow overlap of base of different gpiochip.
+>> Add support for the TPS65086 PMIC GPOs.
 >>
->> This patch fix these issues by checking the overlap of both right and
->> left gpiochip in the same loop statement.
+>> TPS65086 has four configurable GPOs that can be used for several
+>> purposes.
 >>
->> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
 >
-> Patch applied with some tweaks. Had to rebase it because
-> I renamed ->dev to ->parent in the GPIO tree, then I found
-> it possible to get rid of the ret variable altogether.
-Oh, I am sorry. I notice you parent patch but I worked on your "for-next"
-branch. I will take care next time.
-
-Thanks your help.
-
-Regards
-
-Bamvor
+> OK...
 >
+>> +static int tps65086_gpio_get(struct gpio_chip *gc, unsigned offset)
+>> +static void tps65086_gpio_set(struct gpio_chip *gc, unsigned offset,
+>
+> Just get/set and no get_direction/direction_input/direction_output?
+> Are you sure?
+>
+
+Yeah, these are output only, I could probably add get_direction and just
+always return output, but setters wouldn't make sense here.
+
+Andrew
+
 > Yours,
 > Linus Walleij
 >
