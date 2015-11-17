@@ -1,33 +1,34 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: improve error checking and
- reporting
-Date: Tue, 17 Nov 2015 07:36:23 -0600
-Message-ID: <564B2D57.2080508@codeaurora.org>
-References: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
- <CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] gpio: 74xx: fix a possible NULL dereference
+Date: Tue, 17 Nov 2015 14:37:51 +0100
+Message-ID: <CACRpkdZF6527SU8qhSnLraO3UVxpRuuovNXE4-DUq3ia5T0JPg@mail.gmail.com>
+References: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:48758 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752068AbbKQNg0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:36:26 -0500
-In-Reply-To: <CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35250 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752535AbbKQNhw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:37:52 -0500
+Received: by obbnk6 with SMTP id nk6so6349197obb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 05:37:51 -0800 (PST)
+In-Reply-To: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: LABBE Corentin <clabbe.montjoie@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Linus Walleij wrote:
-> And I suspect Arnd would be interested to know if you are doing
-> ACPI on something that is certainly not a server-class hardware.
-> Because you shouldn't.
+On Wed, Nov 11, 2015 at 9:27 PM, LABBE Corentin
+<clabbe.montjoie@gmail.com> wrote:
 
-This driver is for the TLMM pin control device on Qualcomm's ARM64 
-Server chip.
+> of_match_device could return NULL, and so cause a NULL pointer
+> dereference later at line 132:
+> priv->flags = (uintptr_t) of_id->data;
+>
+> Reported-by: coverity (CID 1324141)
+> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+Patch applied.
+
+Yours,
+Linus Walleij
