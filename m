@@ -1,46 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Rename SEL_SCIF to SEL_SATA
-Date: Tue, 17 Nov 2015 14:51:18 +0100
-Message-ID: <CAMuHMdVg-h0vV-j4it1u5S8wDEy5zcadr_hb21wgp2EqFxaMCQ@mail.gmail.com>
-References: <1447337532-18258-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdYYA-Pa_RvEe_jLNHz+aChf8050gUn9nu6L+LhxBhP99Q@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] MAINTAINERS: Update OMAP GPIO driver entry
+Date: Tue, 17 Nov 2015 15:52:59 +0200
+Message-ID: <564B313B.40408@ti.com>
+References: <1447421729-5294-1-git-send-email-javier@osg.samsung.com>
+ <CACRpkdZX10H++NB+XNPuMnrfN299Hr6bBGxzH9gBV+W0a2H2Kg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYYA-Pa_RvEe_jLNHz+aChf8050gUn9nu6L+LhxBhP99Q@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:45351 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751803AbbKQNxH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 17 Nov 2015 08:53:07 -0500
+In-Reply-To: <CACRpkdZX10H++NB+XNPuMnrfN299Hr6bBGxzH9gBV+W0a2H2Kg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Linus,
+Hi Linus, Javier,
 
-On Tue, Nov 17, 2015 at 2:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Nov 12, 2015 at 3:12 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+On 11/17/2015 03:49 PM, Linus Walleij wrote:
+> On Fri, Nov 13, 2015 at 2:35 PM, Javier Martinez Canillas
+> <javier@osg.samsung.com> wrote:
 >
->> Cfr. Manual Errata for Rev 0.50 of the R-Car Gen3 datasheet.
+>> I'm not as involved in OMAP as I used to be and Grygorii is the most
+>> active developer working on this driver and has also been reviewing
+>> patches so let's add him as a driver maintainer instead of me.
 >>
->> This has no user-visible impact.
+>> While being there, add the driver's DT binding doc to the file list.
 >>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Patch applied, unless Grygorii says he doesn't want this.
+>
 
-Thanks!
+Thank you for your trust. I'd like to try if there no objection.
 
-> I count on you to continue to accumulate SH-PFC patches and send
-> me pull requests for the v4.5 cycle, OK?
 
-Sure!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+regards,
+-grygorii
