@@ -1,32 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: palmas: fix a possible NULL dereference
-Date: Tue, 17 Nov 2015 14:41:26 +0100
-Message-ID: <CACRpkdZWiKhMiNO6LCOK5Ayt2ny1y7Ce0Du0SLp2nJ=qfB+Qrw@mail.gmail.com>
-References: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
-	<1447273657-1668-3-git-send-email-clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
+Date: Tue, 17 Nov 2015 14:43:14 +0100
+Message-ID: <CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
+References: <20151111194530.GA26559@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447273657-1668-3-git-send-email-clabbe.montjoie@gmail.com>
+In-Reply-To: <20151111194530.GA26559@dtor-ws>
 Sender: linux-kernel-owner@vger.kernel.org
-To: LABBE Corentin <clabbe.montjoie@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 11, 2015 at 9:27 PM, LABBE Corentin
-<clabbe.montjoie@gmail.com> wrote:
+On Wed, Nov 11, 2015 at 8:45 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-> of_match_device could return NULL, and so cause a NULL pointer
-> dereference later.
+> We should not fall back to the legacy unnamed gpio lookup style if the
+> driver requests gpios with different names, because we'll give out the same
+> gpio twice. Let's keep track of the names that were used for the device and
+> only do the fallback for the first name used.
 >
-> Reported-by: coverity (CID 1130700)
-> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>
+> v1: incorporated changes suggested by Mika Westerberg in response to the
+> draft patch I posted in Goodix thread.
+>
+> v2: moved acpi_can_fallback_to_crs body to drivers/gpio/gpiolib-acpi.c
+> and provided stub for !CONFIG_ACPI case to fix build error if ACPI is
+> disabled.
 
-Patch applied.
+Patch applied with Mika's ACK.
 
-ALl of these seem pretty academic, as the match table is likely
-the same that causes the device core to call probe() in the
-first place. But whatever.
+Had to fuzz a bit to make it apply, hope nothing breaks.
 
 Yours,
 Linus Walleij
