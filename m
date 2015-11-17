@@ -1,35 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-tegra: Do not create the debugfs entry by default
-Date: Tue, 17 Nov 2015 15:20:07 +0100
-Message-ID: <CACRpkdYO93V0+B_NW6bCoxr1wDHkUgcuyi=pFaL0bTy650u8kQ@mail.gmail.com>
-References: <1447690030-26529-1-git-send-email-suzuki.poulose@arm.com>
+Subject: Re: [PATCH] pinctrl: fix qcom ssbi drivers for 64-bit compilation
+Date: Tue, 17 Nov 2015 15:34:52 +0100
+Message-ID: <CACRpkdYekZ69TQbewCnr63R2qbPfuVF6gTMfpZQj07ppGsTb8w@mail.gmail.com>
+References: <5235862.Gokjxf5QH1@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35710 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751918AbbKQOUH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:20:07 -0500
-Received: by oige206 with SMTP id e206so5424651oig.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 06:20:07 -0800 (PST)
-In-Reply-To: <1447690030-26529-1-git-send-email-suzuki.poulose@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5235862.Gokjxf5QH1@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Kumar Gala <galak@codeaurora.org>, Andy Gross <agross@codeaurora.org>, David Brown <davidb@codeaurora.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Mon, Nov 16, 2015 at 5:07 PM, Suzuki K. Poulose
-<suzuki.poulose@arm.com> wrote:
+On Mon, Nov 16, 2015 at 5:41 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> The tegra gpio driver creates the debugfs entry irrespective of
-> whether the device exists or not. This is enabled on an arm64_defconfig
-> and leaves an entry in debugfs on all platforms where it is not
-> useful. This patch fixes the issue by creating the entry only when
-> a device exists.
+> When building pinctrl-ssbi-gpio and pinctrl-ssbi-mpp for ARM64, we ge=
+t
+> a compile warning about invalid types:
 >
-> Signed-off-by: Suzuki K. Poulose <suzuki.poulose@arm.com>
+> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c: In function 'pm8xxx_gpio_pr=
+obe':
+> drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c:675:17: warning: cast from p=
+ointer to integer of different size [-Wpointer-to-int-cast]
+> drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c: In function 'pm8xxx_mpp_prob=
+e':
+> drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c:766:17: warning: cast from po=
+inter to integer of different size [-Wpointer-to-int-cast]
+>
+> This changes the code so we cast the pointer to 'unsigned long', whic=
+h
+> is the right thing to do here.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied for fixes with Thierry's ACK.
+Patch applied for fixes with Bj=C3=B6rn's review tag.
 
 Yours,
 Linus Walleij
