@@ -1,42 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 0/3] Adding support for NI Ettus Research USRP E3XX pinconf
-Date: Tue, 17 Nov 2015 11:55:37 +0100
-Message-ID: <CACRpkdbWCaEPD5wdJsh8i_efDOY+Kir4xgoxu5-aNndozRC94A@mail.gmail.com>
-References: <1446766883-25703-1-git-send-email-moritz.fischer@ettus.com>
+Subject: Re: [PATCH] gpiolib: tighten up ACPI legacy gpio lookups
+Date: Tue, 17 Nov 2015 11:57:10 +0100
+Message-ID: <CACRpkdaE0KpKCbMbR6KV5h-0d5D=FnHWej9AM-jLa_uNsCMyPQ@mail.gmail.com>
+References: <20151105193838.GA33410@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33825 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752201AbbKQKzi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:55:38 -0500
-Received: by oies6 with SMTP id s6so2591377oie.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 02:55:37 -0800 (PST)
-In-Reply-To: <1446766883-25703-1-git-send-email-moritz.fischer@ettus.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36717 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbbKQK5L (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:57:11 -0500
+Received: by obdgf3 with SMTP id gf3so3522887obd.3
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 02:57:11 -0800 (PST)
+In-Reply-To: <20151105193838.GA33410@dtor-ws>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Moritz Fischer <moritz.fischer@ettus.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Johan Hovold <johan@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 6, 2015 at 12:41 AM, Moritz Fischer
-<moritz.fischer@ettus.com> wrote:
+On Thu, Nov 5, 2015 at 8:38 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-> I'm planning to use this pinctrl driver to set pins to either
-> input (do nothing, default), or output with a value of (1 or 0).
+> We should not fall back to the legacy unnamed gpio lookup style if the
+> driver requests gpios with different names, because we'll give out the same
+> gpio twice. Let's keep track of the names that were used for the device and
+> only do the fallback for the first name used.
 >
-> Can I use the 'output-low', 'output-high' bindings to achieve this,
-> or am I supposed to implement a gpio controller to do this kind of stuff?
+> Also disable fallback to _CRS gpios if ACPI device has DT-like
+> properties or driver-supplied gpio mappings.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I'm pretty sure you should implement a GPIO chip for this.
-output-low and output-high are for things like lines going to
-a RAM memory that need to be set up as part of a pin control
-state.
-
-> I'm not sure if I'm using the pinctrl framework correctly to achieve this,
-> any suggestions on how to change a pin from output to input, as the bindings
-> documentation explicitly states 'input-enable' does *not* affect output.
-
-Look at pin controllers also implementing GPIO chips.
+Looking for a newer version of this I think, also would like
+Mika's and/or Rafael's ACKs.
 
 Yours,
 Linus Walleij
