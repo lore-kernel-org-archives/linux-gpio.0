@@ -1,63 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP block
-Date: Tue, 17 Nov 2015 15:36:39 +0100
-Message-ID: <CACRpkdZ2H-L=ic+BPDY0QwR1UHq6to9iNEcDof94MXEP53HZsg@mail.gmail.com>
-References: <1446549552-40675-1-git-send-email-Gang.Liu@freescale.com>
-	<CACRpkdbf4X=dcZhtNrcJp7Zp_hnVDGH1gpKML-e=qcAgEzb0Nw@mail.gmail.com>
-	<CADRPPNROHmnOHfpAtaii5Hr3hzUmn4BL5OpQ4Q4hr9BGLq8s0Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: improve error checking and reporting
+Date: Tue, 17 Nov 2015 15:44:04 +0100
+Message-ID: <CACRpkdYhwEqiVJtD_Qn655-Fq5W3Q5yvMkt_dkHum4dkfLvBsA@mail.gmail.com>
+References: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
+	<CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
+	<564B2D57.2080508@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:35049 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751918AbbKQOgk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:36:40 -0500
-Received: by oige206 with SMTP id e206so5726483oig.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 06:36:40 -0800 (PST)
-In-Reply-To: <CADRPPNROHmnOHfpAtaii5Hr3hzUmn4BL5OpQ4Q4hr9BGLq8s0Q@mail.gmail.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:34224 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751711AbbKQOoF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:44:05 -0500
+Received: by oies6 with SMTP id s6so5957225oie.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 06:44:04 -0800 (PST)
+In-Reply-To: <564B2D57.2080508@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Li Yang <leoli@freescale.com>
-Cc: Liu Gang <Gang.Liu@freescale.com>, Rob Herring <robh+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wood Scott-B07421 <b07421@freescale.com>, Li Yang-R58472 <R58472@freescale.com>
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Nov 16, 2015 at 7:56 PM, Li Yang <leoli@freescale.com> wrote:
-> On Mon, Nov 16, 2015 at 9:11 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Tue, Nov 3, 2015 at 12:19 PM, Liu Gang <Gang.Liu@freescale.com> wrote:
+On Tue, Nov 17, 2015 at 2:36 PM, Timur Tabi <timur@codeaurora.org> wrote:
+> Linus Walleij wrote:
 >>
->>> The GPIO block for ls2080a platform has little endian registers,
->>> the GPIO driver needs this property to read/write registers by
->>> right interface.
->>>
->>> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
->>> index f2455c5..c836dab 100644
->>> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
->>> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
->>> @@ -10,6 +10,9 @@ Required properties:
->>>    the second cell is used to specify the gpio polarity:
->>>        0 = active high
->>>        1 = active low
->>> +- little-endian : Should be set if the GPIO has little endian
->>> +                 registers. No the property means the GPIO
->>> +                 registers are big endian mode.
->>
->> That is a very generic binding and I would like the devicetree
->> maintainers to say something about this.
->>
->> I would be OK if this is specified for *all* gpiochips in
->> Documentation/devicetree/bindings/gpio/gpio.txt
->> or even higher up in the desriptions.
->>
->> Just for Freescale seems a bit too local.
+>> And I suspect Arnd would be interested to know if you are doing
+>> ACPI on something that is certainly not a server-class hardware.
+>> Because you shouldn't.
 >
-> There is already a generic definition at
-> Documentation/devicetree/bindings/common-properties.txt.  But it will
-> be special for Freescale controller to say that the default is
-> big-endian for backward compatibility.
+> This driver is for the TLMM pin control device on Qualcomm's ARM64 Server
+> chip.
 
-OK! Why not reference that just like you reference gpio.txt?
-It fooled me so it will fool others.
+Ohhh sweet. OK then.
 
 Yours,
 Linus Walleij
