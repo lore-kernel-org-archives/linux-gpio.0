@@ -1,28 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: 104-idio-16: Use lowercase symbol names for const variables
-Date: Tue, 17 Nov 2015 12:04:11 +0100
-Message-ID: <CACRpkdbPtkxEUBxevE6vtYX2+fz+e3bh6Cq2fgFGVfpiAxzQ9Q@mail.gmail.com>
-References: <20151104123008.GA15302@sophia>
+Subject: Re: [PATCH v2 4/7] ARM: at91/dt: sama5d2: add pio controller node
+Date: Tue, 17 Nov 2015 12:06:03 +0100
+Message-ID: <CACRpkdbhFi531Dm9AgOGhc7XHnnyJ+L3t0FvHOPV-fC2f9X6QQ@mail.gmail.com>
+References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
+	<1442417823-15850-5-git-send-email-ludovic.desroches@atmel.com>
+	<CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
+	<CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151104123008.GA15302@sophia>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:34915 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882AbbKQLGE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 06:06:04 -0500
+Received: by obbnk6 with SMTP id nk6so3639910obb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 03:06:03 -0800 (PST)
+In-Reply-To: <CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-On Wed, Nov 4, 2015 at 1:30 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-
-> To prevent confusion and to match existing coding style used in other
-> gpio drivers symbol names within the 104-idio-16 gpio driver should be
-> lowercase.
+On Tue, Nov 10, 2015 at 1:30 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Mon, Sep 21, 2015 at 11:24 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>> On Wed, Sep 16, 2015 at 8:37 AM, Ludovic Desroches
+>> <ludovic.desroches@atmel.com> wrote:
+>>
+>>> Add pio4 controller node to enable pinmux and gpio.
+>>>
+>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+>>
+>> Patch applied.
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Please don't merge DT changes through driver trees unless there's a
+> very specific reason to do so, since it introduces random conflicts.
 
-This patch doesn not apply on top of the IRQ support I just
-merged, so please rebase it and resend, include Alex' review tag.
+Sorry :(
+
+Even noted this in the pull request to Torvalds, it was in the bottom
+of my patch stack so had been in -next for ages, I was afraid it
+would create more problem than it solves if I reverted the patch,
+but I guess I should have done so anyways.
 
 Yours,
 Linus Walleij
