@@ -1,52 +1,46 @@
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: Re: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the SoC
- header files
-Date: Tue, 17 Nov 2015 10:50:41 -0300
-Message-ID: <564B30B1.4050902@osg.samsung.com>
-References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
- <1447390457-1158-2-git-send-email-javier@osg.samsung.com>
- <CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Rename SEL_SCIF to SEL_SATA
+Date: Tue, 17 Nov 2015 14:51:18 +0100
+Message-ID: <CAMuHMdVg-h0vV-j4it1u5S8wDEy5zcadr_hb21wgp2EqFxaMCQ@mail.gmail.com>
+References: <1447337532-18258-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdYYA-Pa_RvEe_jLNHz+aChf8050gUn9nu6L+LhxBhP99Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYYA-Pa_RvEe_jLNHz+aChf8050gUn9nu6L+LhxBhP99Q@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus,
+Hi Linus,
 
-On 11/17/2015 10:47 AM, Linus Walleij wrote:
-> On Fri, Nov 13, 2015 at 5:53 AM, Javier Martinez Canillas
-> <javier@osg.samsung.com> wrote:
-> 
->> The <dt-bindings/pinctrl/omap.h> header file defines a set of macros
->> for different SoCs families that falls under the OMAP sub-arch, that
->> allow to define the padconf register physical address instead of the
->> register offset from the padconf base.
->>
->> But the am43xx and dra7xx SoCs families have their own pinctrl header
->> file so the DTS using these SoCs aren't able to use the AM4372_IOPAD()
->> and DRA7XX_CORE_IOPAD() macros since <dt-bindings/pinctrl/omap.h> is
->> not included.
->>
->> Move the macros to the correct header files so can be used by the DTS.
->>
->> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> 
-> I need Tony's ACK on this.
+On Tue, Nov 17, 2015 at 2:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Nov 12, 2015 at 3:12 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
+>> Cfr. Manual Errata for Rev 0.50 of the R-Car Gen3 datasheet.
+>>
+>> This has no user-visible impact.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-OK, I believe he was waiting for yours to pick the series though ;)
- 
-> Yours,
-> Linus Walleij
-> 
+Thanks!
 
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+> I count on you to continue to accumulate SH-PFC patches and send
+> me pull requests for the v4.5 cycle, OK?
+
+Sure!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
