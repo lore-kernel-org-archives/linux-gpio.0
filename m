@@ -1,46 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: Add IRQ support to ACCES 104-IDIO-16 driver
-Date: Tue, 17 Nov 2015 10:08:21 +0100
-Message-ID: <CACRpkdY1CBCC7o8MU0Wd4Et1DM6Zbx5CryyquWPjpB-Gmronmw@mail.gmail.com>
-References: <20151103125423.GA5460@sophia>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 3/6] Documentation: tps65086: Add DT bindings for the
+ TPS65086 GPO controller
+Date: Tue, 17 Nov 2015 10:12:26 +0100
+Message-ID: <CACRpkdaD+jjvJFYkEdDEwN_7ogyKVhYYrv8nYjacarnMA67=UQ@mail.gmail.com>
+References: <1446657135-7820-1-git-send-email-afd@ti.com>
+	<1446657135-7820-4-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:34721 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363AbbKQJIW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 04:08:22 -0500
-Received: by oies6 with SMTP id s6so1313374oie.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 01:08:22 -0800 (PST)
-In-Reply-To: <20151103125423.GA5460@sophia>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1446657135-7820-4-git-send-email-afd-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Nov 3, 2015 at 1:54 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
 
-> The ACCES 104-IDIO-16 series offers Change-of-State detection interrupt
-> functionality; if Change-of-State detection is enabled, an interrupt is
-> fired off if any input line changes state (i.e. goes from low to high,
-> or from high to low). This patch adds support to handle these interrupts
-> and allows the user to mask which GPIO lines are affected. The interrupt
-> line number for the device may be set via the idio_16_irq module
-> parameter.
+> The TPS65086 PMIC contains several regulators and a GPO controller.
+> Add bindings for the TPS65086 GPO controller.
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
-> Changes in v2:
->   - Remove includes for <linux/irq.h> and <linux/irqdomain.h>
->   - Rename uppercase variable names to lowercase
->   - Utilize the BIT macro
->   - Move IRQ acknowledgement code to irq_ack callback
->   - Use handle_edge_irq since this device only handles edge IRQs
+> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
 
-Looks just good.
-
-Patch applied for v4.5.
+Patch applied to the GPIO tree with Rob's ACK.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
