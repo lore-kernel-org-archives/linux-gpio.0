@@ -1,49 +1,60 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v3 6/6] gpio: tps65086: Add GPIO driver for the TPS65086
- PMIC
-Date: Tue, 17 Nov 2015 10:11:31 -0600
-Message-ID: <564B51B3.2000102@ti.com>
-References: <1446657135-7820-1-git-send-email-afd@ti.com>
- <1446657135-7820-7-git-send-email-afd@ti.com>
- <CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 4/7] ARM: at91/dt: sama5d2: add pio controller node
+Date: Tue, 17 Nov 2015 11:15:11 -0800
+Message-ID: <CAOesGMhOmqr15Ou_QgJuiWdn6wWFYYLmy6eyf6zOopj8tKcadA@mail.gmail.com>
+References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
+	<1442417823-15850-5-git-send-email-ludovic.desroches@atmel.com>
+	<CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
+	<CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
+	<CACRpkdbhFi531Dm9AgOGhc7XHnnyJ+L3t0FvHOPV-fC2f9X6QQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:56728 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751452AbbKQQLq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 11:11:46 -0500
-In-Reply-To: <CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
+Received: from mail-yk0-f175.google.com ([209.85.160.175]:35518 "EHLO
+	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752068AbbKQTPM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 14:15:12 -0500
+Received: by ykba77 with SMTP id a77so23479191ykb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 11:15:12 -0800 (PST)
+In-Reply-To: <CACRpkdbhFi531Dm9AgOGhc7XHnnyJ+L3t0FvHOPV-fC2f9X6QQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-On 11/17/2015 03:17 AM, Linus Walleij wrote:
-> On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd@ti.com> wrote:
->
->> Add support for the TPS65086 PMIC GPOs.
+On Tue, Nov 17, 2015 at 3:06 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 10, 2015 at 1:30 AM, Olof Johansson <olof@lixom.net> wrote:
+>> On Mon, Sep 21, 2015 at 11:24 AM, Linus Walleij
+>> <linus.walleij@linaro.org> wrote:
+>>> On Wed, Sep 16, 2015 at 8:37 AM, Ludovic Desroches
+>>> <ludovic.desroches@atmel.com> wrote:
+>>>
+>>>> Add pio4 controller node to enable pinmux and gpio.
+>>>>
+>>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+>>>
+>>> Patch applied.
 >>
->> TPS65086 has four configurable GPOs that can be used for several
->> purposes.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Please don't merge DT changes through driver trees unless there's a
+>> very specific reason to do so, since it introduces random conflicts.
 >
-> OK...
+> Sorry :(
 >
->> +static int tps65086_gpio_get(struct gpio_chip *gc, unsigned offset)
->> +static void tps65086_gpio_set(struct gpio_chip *gc, unsigned offset,
->
-> Just get/set and no get_direction/direction_input/direction_output?
-> Are you sure?
->
+> Even noted this in the pull request to Torvalds, it was in the bottom
+> of my patch stack so had been in -next for ages, I was afraid it
+> would create more problem than it solves if I reverted the patch,
+> but I guess I should have done so anyways.
 
-Yeah, these are output only, I could probably add get_direction and just
-always return output, but setters wouldn't make sense here.
+Yeah, it's OK -- I spotted that pull request later as well.
 
-Andrew
+It's not a big deal in most specific instances, I'd say. It's just in
+aggregate it becomes a bother.
 
-> Yours,
-> Linus Walleij
->
+So, just see this as a public reminder since we've seen it creep into
+other driver trees a bit more lately. Mistakes will still happen but
+try to keep it down. And for those who submit patches, feel free to
+point out in the patch that you don't expect the driver/subsystem
+maintainer to apply it to help them out.
+
+
+-Olof
