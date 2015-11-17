@@ -1,36 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Rename SEL_SCIF to SEL_SATA
-Date: Tue, 17 Nov 2015 14:44:37 +0100
-Message-ID: <CACRpkdYYA-Pa_RvEe_jLNHz+aChf8050gUn9nu6L+LhxBhP99Q@mail.gmail.com>
-References: <1447337532-18258-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the SoC
+ header files
+Date: Tue, 17 Nov 2015 14:47:10 +0100
+Message-ID: <CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
+References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
+	<1447390457-1158-2-git-send-email-javier@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:34555 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751918AbbKQNoh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:44:37 -0500
-Received: by oies6 with SMTP id s6so4894123oie.1
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 05:44:37 -0800 (PST)
-In-Reply-To: <1447337532-18258-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:32980 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751832AbbKQNrL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:47:11 -0500
+Received: by obbww6 with SMTP id ww6so6629823obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 05:47:11 -0800 (PST)
+In-Reply-To: <1447390457-1158-2-git-send-email-javier@osg.samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 12, 2015 at 3:12 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Nov 13, 2015 at 5:53 AM, Javier Martinez Canillas
+<javier@osg.samsung.com> wrote:
 
-> Cfr. Manual Errata for Rev 0.50 of the R-Car Gen3 datasheet.
+> The <dt-bindings/pinctrl/omap.h> header file defines a set of macros
+> for different SoCs families that falls under the OMAP sub-arch, that
+> allow to define the padconf register physical address instead of the
+> register offset from the padconf base.
 >
-> This has no user-visible impact.
+> But the am43xx and dra7xx SoCs families have their own pinctrl header
+> file so the DTS using these SoCs aren't able to use the AM4372_IOPAD()
+> and DRA7XX_CORE_IOPAD() macros since <dt-bindings/pinctrl/omap.h> is
+> not included.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Move the macros to the correct header files so can be used by the DTS.
+>
+> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-I count on you to continue to accumulate SH-PFC patches and send
-me pull requests for the v4.5 cycle, OK?
+I need Tony's ACK on this.
 
 Yours,
 Linus Walleij
