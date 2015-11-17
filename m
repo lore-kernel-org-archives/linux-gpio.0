@@ -1,44 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 1/2] gpiolib: improve overlap check of range of gpio
-Date: Tue, 17 Nov 2015 15:14:57 +0100
-Message-ID: <CACRpkdYOQfMV46GCRfKBxeUFwz7FjUGw-r6Gej6SWef0_j03_A@mail.gmail.com>
-References: <1447650167-29070-1-git-send-email-bamvor.zhangjian@linaro.org>
-	<1447650167-29070-2-git-send-email-bamvor.zhangjian@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: improve error checking and reporting
+Date: Tue, 17 Nov 2015 15:15:31 +0100
+Message-ID: <7846916.TvyJAMuMZQ@wuerfel>
+References: <1447171030-15056-1-git-send-email-timur@codeaurora.org> <CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34934 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752315AbbKQOO5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:14:57 -0500
-Received: by oige206 with SMTP id e206so5328000oig.2
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 06:14:57 -0800 (PST)
-In-Reply-To: <1447650167-29070-2-git-send-email-bamvor.zhangjian@linaro.org>
+Received: from mout.kundenserver.de ([212.227.126.187]:54964 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750768AbbKQOQI convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 09:16:08 -0500
+In-Reply-To: <CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Timur Tabi <timur@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Nov 16, 2015 at 6:02 AM, Bamvor Jian Zhang
-<bamvor.zhangjian@linaro.org> wrote:
+On Tuesday 17 November 2015 14:33:49 Linus Walleij wrote:
+> On Tue, Nov 10, 2015 at 4:57 PM, Timur Tabi <timur@codeaurora.org> wr=
+ote:
+>=20
+> > The driver doesn't report an error message if the ACPI tables are m=
+issing
+> > the num-gpios property (which indicates how many GPIOs there are on=
+ this
+> > SOC), and it didn't check to ensure that the mallocs didn't fail.
+> >
+> > Signed-off-by: Timur Tabi <timur@codeaurora.org>
+>=20
+> Waiting for Bj=F6rn's ACK on this.
+>=20
+> And I suspect Arnd would be interested to know if you are doing
+> ACPI on something that is certainly not a server-class hardware.
+> Because you shouldn't.
+>=20
 
-> There are limitations for the current checker:
-> 1.  Could not check the overlap if the new gpiochip is the secondly
->     gpiochip.
-> 2.  Could not check the overlap if the new gpiochip is overlap
->     with the left of gpiochip. E.g. if we insert [c, d] between
->     [a,b] and [e, f], and e >= c + d, it will successful even if
->     c < a + b.
-> 3.  Allow overlap of base of different gpiochip.
->
-> This patch fix these issues by checking the overlap of both right and
-> left gpiochip in the same loop statement.
->
-> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+It's more fun just watching this really. No comment.
 
-Patch applied with some tweaks. Had to rebase it because
-I renamed ->dev to ->parent in the GPIO tree, then I found
-it possible to get rid of the ret variable altogether.
-
-Yours,
-Linus Walleij
+	Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
