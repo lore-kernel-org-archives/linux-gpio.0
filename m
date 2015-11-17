@@ -1,123 +1,55 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
-Date: Tue, 17 Nov 2015 11:50:38 +0100
-Message-ID: <564B067E.2010000@gmail.com>
-References: <1447734177-17258-1-git-send-email-hongzhou.yang@mediatek.com>
- <CAGS+omCiaD-JJdvL77Y4HuvWjgC5tvLDLspsAgXPtD5AP3JA7w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: Delete unnecessary checks before the function
+ call "pinctrl_unregister"
+Date: Tue, 17 Nov 2015 11:50:47 +0100
+Message-ID: <CACRpkdYDwOLsG3NVN36OJo0V+XgU4Z4r6KGy7RpYrmmdJVTyng@mail.gmail.com>
+References: <5307CAA2.8060406@users.sourceforge.net>
+	<alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+	<530A086E.8010901@users.sourceforge.net>
+	<alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+	<530A72AA.3000601@users.sourceforge.net>
+	<alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+	<530B5FB6.6010207@users.sourceforge.net>
+	<alpine.DEB.2.10.1402241710370.2074@hadrien>
+	<530C5E18.1020800@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251014170.2080@hadrien>
+	<530CD2C4.4050903@users.sourceforge.net>
+	<alpine.DEB.2.10.1402251840450.7035@hadrien>
+	<530CF8FF.8080600@users.sourceforge.net>
+	<alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+	<530DD06F.4090703@users.sourceforge.net>
+	<alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+	<5317A59D.4@users.sourceforge.net>
+	<563B810B.6050401@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:38326 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750913AbbKQKul (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:50:41 -0500
-In-Reply-To: <CAGS+omCiaD-JJdvL77Y4HuvWjgC5tvLDLspsAgXPtD5AP3JA7w@mail.gmail.com>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33494 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390AbbKQKur (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 05:50:47 -0500
+Received: by oixx65 with SMTP id x65so2512412oix.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 02:50:47 -0800 (PST)
+In-Reply-To: <563B810B.6050401@users.sourceforge.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>, Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
+On Thu, Nov 5, 2015 at 5:17 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-
-On 17/11/15 09:25, Daniel Kurtz wrote:
-> On Tue, Nov 17, 2015 at 12:22 PM, Hongzhou Yang
-> <hongzhou.yang@mediatek.com> wrote:
->> configs will kmemdup to dup_configs in pictrl util function.
->> So configs need to be freed.
->>
->> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Nov 2015 17:10:22 +0100
 >
-> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> The pinctrl_unregister() function tests whether its argument is NULL
+> and then returns immediately. Thus the test around the call is not needed.
 >
->> ---
->>   Fix a memleak issue.
->>
->>   drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   24 ++++++++++++++----------
->>   1 file changed, 14 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> index bbf0230..0f9e416 100644
->> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
->> @@ -520,21 +520,23 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->>          if (has_config && num_pins >= 1)
->>                  maps_per_pin++;
->>
->> -       if (!num_pins || !maps_per_pin)
->> -               return -EINVAL;
->> +       if (!num_pins || !maps_per_pin) {
->> +               err = -EINVAL;
->> +               goto exit;
->> +       }
->>
->>          reserve = num_pins * maps_per_pin;
->>
->>          err = pinctrl_utils_reserve_map(pctldev, map,
->>                          reserved_maps, num_maps, reserve);
->>          if (err < 0)
->> -               goto fail;
->> +               goto exit;
->>
->>          for (i = 0; i < num_pins; i++) {
->>                  err = of_property_read_u32_index(node, "pinmux",
->>                                  i, &pinfunc);
->>                  if (err)
->> -                       goto fail;
->> +                       goto exit;
->>
->>                  pin = MTK_GET_PIN_NO(pinfunc);
->>                  func = MTK_GET_PIN_FUNC(pinfunc);
->> @@ -543,20 +545,21 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->>                                  func >= ARRAY_SIZE(mtk_gpio_functions)) {
->>                          dev_err(pctl->dev, "invalid pins value.\n");
->>                          err = -EINVAL;
->> -                       goto fail;
->> +                       goto exit;
->>                  }
->>
->>                  grp = mtk_pctrl_find_group_by_pin(pctl, pin);
->>                  if (!grp) {
->>                          dev_err(pctl->dev, "unable to match pin %d to group\n",
->>                                          pin);
->> -                       return -EINVAL;
->> +                       err = -EINVAL;
->> +                       goto exit;
->>                  }
->>
->>                  err = mtk_pctrl_dt_node_to_map_func(pctl, pin, func, grp, map,
->>                                  reserved_maps, num_maps);
->>                  if (err < 0)
->> -                       goto fail;
->> +                       goto exit;
->>
->>                  if (has_config) {
->>                          err = pinctrl_utils_add_map_configs(pctldev, map,
->> @@ -564,13 +567,14 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->>                                          configs, num_configs,
->>                                          PIN_MAP_TYPE_CONFIGS_GROUP);
->>                          if (err < 0)
->> -                               goto fail;
->> +                               goto exit;
->>                  }
->>          }
->>
->> -       return 0;
->> +       err = 0;
->>
->> -fail:
->> +exit:
->> +       kfree(configs);
->>          return err;
->>   }
->>
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
+> This issue was detected by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Patch applied with Ray's Review tag.
+
+Yours,
+Linus Walleij
