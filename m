@@ -1,71 +1,117 @@
 From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: Add get_direction support.
-Date: Tue, 17 Nov 2015 14:17:13 -0800
-Message-ID: <1447798633-24586-1-git-send-email-hongzhou.yang@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
+Date: Tue, 17 Nov 2015 14:33:41 -0800
+Message-ID: <1447799622-3340-1-git-send-email-hongzhou.yang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33316 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932410AbbKQWRZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 17:17:25 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34226 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932441AbbKQWdy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 17:33:54 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
 
-Since Linux gpio framework return 0 for output, 1 for input.
-But HW use 0 stands for input, and 1 stands for output.
-So use negative to correct it.
-
-And gpio_chip.get is used to get input value, no need to get
-output value, so removing it.
+configs will kmemdup to dup_configs in pictrl util function.
+So configs need to be freed.
 
 Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- Base on v4.4-rc1, resend it.
- Add get direction support.
- Remove gpio_chip.get value for output direction.
+ Fix a memleak issue.
+ According to Yingjoe's comment, add return checek for pinconf_generic_parse_dt_config.
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   27 ++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index f307f1d..5c71727 100644
+index 5c71727..8db7cdf 100644
 --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
 +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -747,7 +747,7 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	reg_addr =  mtk_get_port(pctl, offset) + pctl->devdata->dir_offset;
- 	bit = BIT(offset & 0xf);
- 	regmap_read(pctl->regmap1, reg_addr, &read_val);
--	return !!(read_val & bit);
-+	return !(read_val & bit);
+@@ -509,6 +509,9 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 
+ 	err = pinconf_generic_parse_dt_config(node, pctldev, &configs,
+ 		&num_configs);
++	if (err)
++		return err;
++
+ 	if (num_configs)
+ 		has_config = 1;
+ 
+@@ -520,21 +523,23 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	if (has_config && num_pins >= 1)
+ 		maps_per_pin++;
+ 
+-	if (!num_pins || !maps_per_pin)
+-		return -EINVAL;
++	if (!num_pins || !maps_per_pin) {
++		err = -EINVAL;
++		goto exit;
++	}
+ 
+ 	reserve = num_pins * maps_per_pin;
+ 
+ 	err = pinctrl_utils_reserve_map(pctldev, map,
+ 			reserved_maps, num_maps, reserve);
+ 	if (err < 0)
+-		goto fail;
++		goto exit;
+ 
+ 	for (i = 0; i < num_pins; i++) {
+ 		err = of_property_read_u32_index(node, "pinmux",
+ 				i, &pinfunc);
+ 		if (err)
+-			goto fail;
++			goto exit;
+ 
+ 		pin = MTK_GET_PIN_NO(pinfunc);
+ 		func = MTK_GET_PIN_FUNC(pinfunc);
+@@ -543,20 +548,21 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 				func >= ARRAY_SIZE(mtk_gpio_functions)) {
+ 			dev_err(pctl->dev, "invalid pins value.\n");
+ 			err = -EINVAL;
+-			goto fail;
++			goto exit;
+ 		}
+ 
+ 		grp = mtk_pctrl_find_group_by_pin(pctl, pin);
+ 		if (!grp) {
+ 			dev_err(pctl->dev, "unable to match pin %d to group\n",
+ 					pin);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto exit;
+ 		}
+ 
+ 		err = mtk_pctrl_dt_node_to_map_func(pctl, pin, func, grp, map,
+ 				reserved_maps, num_maps);
+ 		if (err < 0)
+-			goto fail;
++			goto exit;
+ 
+ 		if (has_config) {
+ 			err = pinctrl_utils_add_map_configs(pctldev, map,
+@@ -564,13 +570,14 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 					configs, num_configs,
+ 					PIN_MAP_TYPE_CONFIGS_GROUP);
+ 			if (err < 0)
+-				goto fail;
++				goto exit;
+ 		}
+ 	}
+ 
+-	return 0;
++	err = 0;
+ 
+-fail:
++exit:
++	kfree(configs);
+ 	return err;
  }
  
- static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
-@@ -757,12 +757,8 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	unsigned int read_val = 0;
- 	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->dev);
- 
--	if (mtk_gpio_get_direction(chip, offset))
--		reg_addr = mtk_get_port(pctl, offset) +
--			pctl->devdata->dout_offset;
--	else
--		reg_addr = mtk_get_port(pctl, offset) +
--			pctl->devdata->din_offset;
-+	reg_addr = mtk_get_port(pctl, offset) +
-+		pctl->devdata->din_offset;
- 
- 	bit = BIT(offset & 0xf);
- 	regmap_read(pctl->regmap1, reg_addr, &read_val);
-@@ -997,6 +993,7 @@ static struct gpio_chip mtk_gpio_chip = {
- 	.owner			= THIS_MODULE,
- 	.request		= gpiochip_generic_request,
- 	.free			= gpiochip_generic_free,
-+	.get_direction		= mtk_gpio_get_direction,
- 	.direction_input	= mtk_gpio_direction_input,
- 	.direction_output	= mtk_gpio_direction_output,
- 	.get			= mtk_gpio_get,
 -- 
 1.7.9.5
 
