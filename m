@@ -1,117 +1,142 @@
-From: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Subject: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
-Date: Tue, 17 Nov 2015 14:33:41 -0800
-Message-ID: <1447799622-3340-1-git-send-email-hongzhou.yang@mediatek.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v2] gpio: 104-idio-16: Use lowercase symbol names for const
+ variables
+Date: Tue, 17 Nov 2015 18:58:16 -0500
+Message-ID: <20151117235815.GA9477@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:34226 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932441AbbKQWdy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 17:33:54 -0500
+Received: from mail-yk0-f177.google.com ([209.85.160.177]:34354 "EHLO
+	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753953AbbKQX6Z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 18:58:25 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-configs will kmemdup to dup_configs in pictrl util function.
-So configs need to be freed.
+To prevent confusion, and to match the existing coding style used in
+other GPIO drivers, symbol names within the 104-idio-16 GPIO driver
+should be lowercase.
 
-Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- Fix a memleak issue.
- According to Yingjoe's comment, add return checek for pinconf_generic_parse_dt_config.
+Changes in v2:
+  - Rebase to resolve conflict with commit 68d33ef.
+  - Lowercase const variables introduced in commit 68d33ef.
+  - Utilize BIT macro to match coding style of commit 68d33ef.
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   27 ++++++++++++++++---------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/gpio/gpio-104-idio-16.c | 37 ++++++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 5c71727..8db7cdf 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -509,6 +509,9 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 4e8adee..81b6904 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -80,21 +80,21 @@ static struct idio_16_gpio *to_idio16gpio(struct gpio_chip *gc)
+ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct idio_16_gpio *const idio16gpio = to_idio16gpio(chip);
+-	const unsigned BIT_MASK = 1U << (offset-16);
++	const unsigned mask = BIT(offset-16);
  
- 	err = pinconf_generic_parse_dt_config(node, pctldev, &configs,
- 		&num_configs);
-+	if (err)
-+		return err;
-+
- 	if (num_configs)
- 		has_config = 1;
+ 	if (offset < 16)
+ 		return -EINVAL;
  
-@@ -520,21 +523,23 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (has_config && num_pins >= 1)
- 		maps_per_pin++;
+ 	if (offset < 24)
+-		return !!(inb(idio16gpio->base + 1) & BIT_MASK);
++		return !!(inb(idio16gpio->base + 1) & mask);
  
--	if (!num_pins || !maps_per_pin)
--		return -EINVAL;
-+	if (!num_pins || !maps_per_pin) {
-+		err = -EINVAL;
-+		goto exit;
-+	}
- 
- 	reserve = num_pins * maps_per_pin;
- 
- 	err = pinctrl_utils_reserve_map(pctldev, map,
- 			reserved_maps, num_maps, reserve);
- 	if (err < 0)
--		goto fail;
-+		goto exit;
- 
- 	for (i = 0; i < num_pins; i++) {
- 		err = of_property_read_u32_index(node, "pinmux",
- 				i, &pinfunc);
- 		if (err)
--			goto fail;
-+			goto exit;
- 
- 		pin = MTK_GET_PIN_NO(pinfunc);
- 		func = MTK_GET_PIN_FUNC(pinfunc);
-@@ -543,20 +548,21 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 				func >= ARRAY_SIZE(mtk_gpio_functions)) {
- 			dev_err(pctl->dev, "invalid pins value.\n");
- 			err = -EINVAL;
--			goto fail;
-+			goto exit;
- 		}
- 
- 		grp = mtk_pctrl_find_group_by_pin(pctl, pin);
- 		if (!grp) {
- 			dev_err(pctl->dev, "unable to match pin %d to group\n",
- 					pin);
--			return -EINVAL;
-+			err = -EINVAL;
-+			goto exit;
- 		}
- 
- 		err = mtk_pctrl_dt_node_to_map_func(pctl, pin, func, grp, map,
- 				reserved_maps, num_maps);
- 		if (err < 0)
--			goto fail;
-+			goto exit;
- 
- 		if (has_config) {
- 			err = pinctrl_utils_add_map_configs(pctldev, map,
-@@ -564,13 +570,14 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 					configs, num_configs,
- 					PIN_MAP_TYPE_CONFIGS_GROUP);
- 			if (err < 0)
--				goto fail;
-+				goto exit;
- 		}
- 	}
- 
--	return 0;
-+	err = 0;
- 
--fail:
-+exit:
-+	kfree(configs);
- 	return err;
+-	return !!(inb(idio16gpio->base + 5) & (BIT_MASK>>8));
++	return !!(inb(idio16gpio->base + 5) & (mask>>8));
  }
  
+ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct idio_16_gpio *const idio16gpio = to_idio16gpio(chip);
+-	const unsigned BIT_MASK = 1U << offset;
++	const unsigned mask = BIT(offset);
+ 	unsigned long flags;
+ 
+ 	if (offset > 15)
+@@ -103,9 +103,9 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+ 	if (value)
+-		idio16gpio->out_state |= BIT_MASK;
++		idio16gpio->out_state |= mask;
+ 	else
+-		idio16gpio->out_state &= ~BIT_MASK;
++		idio16gpio->out_state &= ~mask;
+ 
+ 	if (offset > 7)
+ 		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
+@@ -200,25 +200,24 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct idio_16_gpio *idio16gpio;
++	const unsigned base = idio_16_base;
++	const unsigned extent = 8;
++	const char *const name = dev_name(dev);
+ 	int err;
+-
+-	const unsigned BASE = idio_16_base;
+-	const unsigned EXTENT = 8;
+-	const unsigned IRQ = idio_16_irq;
+-	const char *const NAME = dev_name(dev);
++	const unsigned irq = idio_16_irq;
+ 
+ 	idio16gpio = devm_kzalloc(dev, sizeof(*idio16gpio), GFP_KERNEL);
+ 	if (!idio16gpio)
+ 		return -ENOMEM;
+ 
+-	if (!request_region(BASE, EXTENT, NAME)) {
++	if (!request_region(base, extent, name)) {
+ 		dev_err(dev, "Unable to lock %s port addresses (0x%X-0x%X)\n",
+-			NAME, BASE, BASE + EXTENT);
++			name, base, base + extent);
+ 		err = -EBUSY;
+ 		goto err_lock_io_port;
+ 	}
+ 
+-	idio16gpio->chip.label = NAME;
++	idio16gpio->chip.label = name;
+ 	idio16gpio->chip.parent = dev;
+ 	idio16gpio->chip.owner = THIS_MODULE;
+ 	idio16gpio->chip.base = -1;
+@@ -228,9 +227,9 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+ 	idio16gpio->chip.get = idio_16_gpio_get;
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+-	idio16gpio->base = BASE;
+-	idio16gpio->extent = EXTENT;
+-	idio16gpio->irq = IRQ;
++	idio16gpio->base = base;
++	idio16gpio->extent = extent;
++	idio16gpio->irq = irq;
+ 	idio16gpio->out_state = 0xFFFF;
+ 
+ 	spin_lock_init(&idio16gpio->lock);
+@@ -250,7 +249,7 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 		goto err_gpiochip_irqchip_add;
+ 	}
+ 
+-	err = request_irq(IRQ, idio_16_irq_handler, 0, NAME, idio16gpio);
++	err = request_irq(irq, idio_16_irq_handler, 0, name, idio16gpio);
+ 	if (err) {
+ 		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
+ 		goto err_request_irq;
+@@ -262,7 +261,7 @@ err_request_irq:
+ err_gpiochip_irqchip_add:
+ 	gpiochip_remove(&idio16gpio->chip);
+ err_gpio_register:
+-	release_region(BASE, EXTENT);
++	release_region(base, extent);
+ err_lock_io_port:
+ 	return err;
+ }
 -- 
-1.7.9.5
+2.4.10
 
