@@ -1,66 +1,45 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH] pinctrl: at91-pio4: use %pr format string for resource
-Date: Tue, 17 Nov 2015 14:33:41 +0100
-Message-ID: <20151117133341.GG16931@odux.rfo.atmel.com>
-References: <3726450.XyTgssZ1KT@wuerfel>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: improve error checking and reporting
+Date: Tue, 17 Nov 2015 14:33:49 +0100
+Message-ID: <CACRpkdb4Ck4XCUEKX7TEgCg8723vZA-sxqmd753O1q9uTBszfQ@mail.gmail.com>
+References: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:29748 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751975AbbKQNdl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:33:41 -0500
-Content-Disposition: inline
-In-Reply-To: <3726450.XyTgssZ1KT@wuerfel>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:34687 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752825AbbKQNdu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Nov 2015 08:33:50 -0500
+Received: by oies6 with SMTP id s6so4722206oie.1
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Nov 2015 05:33:49 -0800 (PST)
+In-Reply-To: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Arnd,
+On Tue, Nov 10, 2015 at 4:57 PM, Timur Tabi <timur@codeaurora.org> wrot=
+e:
 
-On Thu, Nov 12, 2015 at 03:15:38PM +0100, Arnd Bergmann wrote:
-> resource_size_t may be defined as 32 or 64 bit depending on configuration,
-> so it cannot be printed using the normal format strings, as gcc correctly
-> warns:
-> 
-> pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-> pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
->    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-> 
-> This changes the format string to use the special "%pr" format
-> string that prints a resource, and changes the arguments so we
-> the resource structure directly. I'm also swapping out the arguments
-> to match the text in the format string.
-> 
+> The driver doesn't report an error message if the ACPI tables are mis=
+sing
+> the num-gpios property (which indicates how many GPIOs there are on t=
+his
+> SOC), and it didn't check to ensure that the mallocs didn't fail.
+>
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-I agree the format change but not swapping out the arguments. Why do you have
-the feeling they are not matching the text?
+Waiting for Bj=C3=B6rn's ACK on this.
 
-Few lines before you have:
-res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
-atmel_pioctrl->irqs[i] = res->start;
+And I suspect Arnd would be interested to know if you are doing
+ACPI on something that is certainly not a server-class hardware.
+Because you shouldn't.
 
-Each bank has its own irq line this is what I want to print with hwirq.
-Of course it assumes that interrupts are declared in the right order.
-
-Regards
-
-Ludovic
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index 33edd07d9149..23217e990eaf 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
->  		atmel_pioctrl->irqs[i] = res->start;
->  		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
->  		irq_set_handler_data(res->start, atmel_pioctrl);
-> -		dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-> +		dev_dbg(dev, "bank %pr: hwirq=%u\n", res, i);
->  	}
->  
->  	atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
-> 
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
