@@ -1,93 +1,104 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
-Date: Tue, 17 Nov 2015 12:19:02 +0900
-Message-ID: <20151117031902.24924.4588.sendpatchset@little-apple>
-References: <20151117031832.24924.60685.sendpatchset@little-apple>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151117031832.24924.60685.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-sh@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com, Magnus Damm <magnus.damm@gmail.com>
+From: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
+Date: Mon, 16 Nov 2015 20:22:57 -0800
+Message-ID: <1447734177-17258-1-git-send-email-hongzhou.yang@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:47350 "EHLO
+	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751543AbbKQEXQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Nov 2015 23:23:16 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
 
-From: Magnus Damm <damm+renesas@opensource.se>
+configs will kmemdup to dup_configs in pictrl util function.
+So configs need to be freed.
 
-Add missing r8a7794 DU dot clock output signals and in
-particular the DU1_DOTCLKOUT0 signal on GP4_25 which is
-needed by DU1 on the r8a7794 ALT board.
-
-The groups "du0_clk_out" and "du1_clk_out" are replaced by
-"du0_dotclkout0", "du0_dotclkout1", "du1_dotclkout0" and
-"du1_dotclkout1".
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
 ---
+ Fix a memleak issue.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- 0014/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:08:28.230513000 +0900
-@@ -1586,18 +1586,32 @@ static const unsigned int du1_rgb888_mux
- 	DU1_DB7_MARK, DU1_DB6_MARK, DU1_DB5_MARK, DU1_DB4_MARK,
- 	DU1_DB3_MARK, DU1_DB2_MARK, DU1_DB1_MARK, DU1_DB0_MARK,
- };
--static const unsigned int du0_clk_out_pins[] = {
-+static const unsigned int du0_clk0_out_pins[] = {
- 	/* CLKOUT */
- 	RCAR_GP_PIN(2, 25),
- };
--static const unsigned int du0_clk_out_mux[] = {
-+static const unsigned int du0_clk0_out_mux[] = {
- 	DU0_DOTCLKOUT0_MARK
- };
--static const unsigned int du1_clk_out_pins[] = {
-+static const unsigned int du0_clk1_out_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(2, 26),
-+};
-+static const unsigned int du0_clk1_out_mux[] = {
-+	DU0_DOTCLKOUT1_MARK
-+};
-+static const unsigned int du1_clk0_out_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(4, 25),
-+};
-+static const unsigned int du1_clk0_out_mux[] = {
-+	DU1_DOTCLKOUT0_MARK
-+};
-+static const unsigned int du1_clk1_out_pins[] = {
- 	/* CLKOUT */
- 	RCAR_GP_PIN(4, 26),
- };
--static const unsigned int du1_clk_out_mux[] = {
-+static const unsigned int du1_clk1_out_mux[] = {
- 	DU1_DOTCLKOUT1_MARK
- };
- static const unsigned int du0_sync_pins[] = {
-@@ -2942,8 +2956,10 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(du0_rgb888),
- 	SH_PFC_PIN_GROUP(du1_rgb666),
- 	SH_PFC_PIN_GROUP(du1_rgb888),
--	SH_PFC_PIN_GROUP(du0_clk_out),
--	SH_PFC_PIN_GROUP(du1_clk_out),
-+	SH_PFC_PIN_GROUP(du0_clk0_out),
-+	SH_PFC_PIN_GROUP(du0_clk1_out),
-+	SH_PFC_PIN_GROUP(du1_clk0_out),
-+	SH_PFC_PIN_GROUP(du1_clk1_out),
- 	SH_PFC_PIN_GROUP(du0_sync),
- 	SH_PFC_PIN_GROUP(du1_sync),
- 	SH_PFC_PIN_GROUP(du0_cde),
-@@ -3134,8 +3150,10 @@ static const char * const du_groups[] =
- 	"du0_rgb888",
- 	"du1_rgb666",
- 	"du1_rgb888",
--	"du0_clk_out",
--	"du1_clk_out",
-+	"du0_dotclkout0",
-+	"du0_dotclkout1",
-+	"du1_dotclkout0",
-+	"du1_dotclkout1",
- 	"du0_sync",
- 	"du1_sync",
- 	"du0_cde",
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index bbf0230..0f9e416 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -520,21 +520,23 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	if (has_config && num_pins >= 1)
+ 		maps_per_pin++;
+ 
+-	if (!num_pins || !maps_per_pin)
+-		return -EINVAL;
++	if (!num_pins || !maps_per_pin) {
++		err = -EINVAL;
++		goto exit;
++	}
+ 
+ 	reserve = num_pins * maps_per_pin;
+ 
+ 	err = pinctrl_utils_reserve_map(pctldev, map,
+ 			reserved_maps, num_maps, reserve);
+ 	if (err < 0)
+-		goto fail;
++		goto exit;
+ 
+ 	for (i = 0; i < num_pins; i++) {
+ 		err = of_property_read_u32_index(node, "pinmux",
+ 				i, &pinfunc);
+ 		if (err)
+-			goto fail;
++			goto exit;
+ 
+ 		pin = MTK_GET_PIN_NO(pinfunc);
+ 		func = MTK_GET_PIN_FUNC(pinfunc);
+@@ -543,20 +545,21 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 				func >= ARRAY_SIZE(mtk_gpio_functions)) {
+ 			dev_err(pctl->dev, "invalid pins value.\n");
+ 			err = -EINVAL;
+-			goto fail;
++			goto exit;
+ 		}
+ 
+ 		grp = mtk_pctrl_find_group_by_pin(pctl, pin);
+ 		if (!grp) {
+ 			dev_err(pctl->dev, "unable to match pin %d to group\n",
+ 					pin);
+-			return -EINVAL;
++			err = -EINVAL;
++			goto exit;
+ 		}
+ 
+ 		err = mtk_pctrl_dt_node_to_map_func(pctl, pin, func, grp, map,
+ 				reserved_maps, num_maps);
+ 		if (err < 0)
+-			goto fail;
++			goto exit;
+ 
+ 		if (has_config) {
+ 			err = pinctrl_utils_add_map_configs(pctldev, map,
+@@ -564,13 +567,14 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 					configs, num_configs,
+ 					PIN_MAP_TYPE_CONFIGS_GROUP);
+ 			if (err < 0)
+-				goto fail;
++				goto exit;
+ 		}
+ 	}
+ 
+-	return 0;
++	err = 0;
+ 
+-fail:
++exit:
++	kfree(configs);
+ 	return err;
+ }
+ 
+-- 
+1.7.9.5
+
