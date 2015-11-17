@@ -1,57 +1,40 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
-Date: Tue, 17 Nov 2015 10:50:26 +0800
-Message-ID: <CAGS+omAZ+rgT2NG4-U7HK4kZJGHqA8n_0EjZpHfePojYYLd1Xw@mail.gmail.com>
-References: <1447727690-15251-1-git-send-email-hongzhou.yang@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447727690-15251-1-git-send-email-hongzhou.yang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
+Date: Tue, 17 Nov 2015 12:18:32 +0900
+Message-ID: <20151117031832.24924.60685.sendpatchset@little-apple>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: linux-sh@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com, Magnus Damm <magnus.damm@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 17, 2015 at 10:34 AM, Hongzhou Yang
-<hongzhou.yang@mediatek.com> wrote:
-> configs will kmemdup to dup_configs in pictrl util function.
-> So configs need to be freed.
->
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> ---
->  Fix a memleak issue.
->
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index bbf0230..0000b5a 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -568,9 +568,10 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->                 }
->         }
->
-> -       return 0;
-> +       err = 0;
->
->  fail:
+pinctrl: sh-pfc: r8a7794: DU support
 
-This isn't just 'fail' case anymore, so change label name to something
-like "exit".
+[PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+[PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
+[PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+[PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
 
-> +       kfree(configs);
+These patches take the r8a7794 PFC DU support code from the BSP
+and reworks it to fit the r8a7794 ALT board. Tested with the ALT
+VGA port - by default PFC is not used however enabling PFC using
+an incremental (yet to be posted) patch works well.
 
-Do we also need to kfree in the "if (!num_pins || !maps_per_pin)" error case?
+It is worth noting that patch 2-4 modifies the pin groups. This
+means that the upstream DT ABI for PFC DU will differ compared
+to the unreviewed BSP code.
 
->         return err;
->  }
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+In general it is not considered good practice to change the pin
+groups and break compatibility since they are part of the DT ABI.
+
+For this particular case upstream never have had PFC DU support
+for r8a7794, so treating the BSP bindings as experimental and
+migrate away seems reasonable.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
+
+ Written against v4.4-rc1
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  282 ++++++++++++++++++++++++++++++----
+ 1 file changed, 252 insertions(+), 30 deletions(-)
