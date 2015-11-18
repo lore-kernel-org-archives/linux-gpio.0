@@ -1,206 +1,93 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] pinctrl: qcom: pmic-gpio/mpp: of_irq_count() == npins
-Date: Wed, 18 Nov 2015 11:33:17 -0800
-Message-ID: <1447875197-21645-1-git-send-email-sboyd@codeaurora.org>
-References: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Andy Gross <agross@codeaurora.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v7 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Wed, 18 Nov 2015 15:14:50 -0600
+Message-ID: <20151118211450.GA11192@rob-hp-laptop>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+ <1447869580-10416-2-git-send-email-afd@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:59948 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753395AbbKRVOz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 18 Nov 2015 16:14:55 -0500
+Content-Disposition: inline
+In-Reply-To: <1447869580-10416-2-git-send-email-afd@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The number of interrupts is always equal to the number of pins
-provided by the PMIC gpio and MPP hardware blocks. Count the
-number of irqs to figure out the number of pins instead of adding
-more compatible strings or doing math on the reg property. This
-should make the code more generic and ease the number of changes
-we have to make to the driver for each new pmic revision.
+On Wed, Nov 18, 2015 at 11:59:36AM -0600, Andrew F. Davis wrote:
+> The TPS65912 PMIC contains several regulators and a GPIO controller.
+> Add bindings for the TPS65912 PMIC.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>
-Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
+Acked-by: Rob Herring <robh@kernel.org>
 
-Stephen Boyd wrote:
-> We can also figure out the number of the pins from the number
-> of interrupts, so we really don't need to even look at the size of the
-> reg property or model number for the spmi and ssbi modules. I'll propose
-> that change as well tomorrow.
-
-And here's that change. It can be squashed together if desired.
-
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 12 ++++++------
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c  | 11 ++++++-----
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 16 ++++++++++------
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c  | 16 ++++++++++------
- 4 files changed, 32 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 9f9979903fcb..cceda6afe280 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -14,6 +14,7 @@
- #include <linux/gpio.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinmux.h>
-@@ -693,16 +694,15 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 	struct pmic_gpio_pad *pad, *pads;
- 	struct pmic_gpio_state *state;
- 	int ret, npins, i;
--	u32 res[2];
-+	u32 reg;
- 
--	ret = of_property_read_u32_array(dev->of_node, "reg", res, 2);
-+	ret = of_property_read_u32(dev->of_node, "reg", &reg);
- 	if (ret < 0) {
--		dev_err(dev, "missing base address and/or range");
-+		dev_err(dev, "missing base address");
- 		return ret;
- 	}
- 
--	npins = res[1] / PMIC_GPIO_ADDRESS_RANGE;
--
-+	npins = of_irq_count(dev->of_node);
- 	if (!npins)
- 		return -EINVAL;
- 
-@@ -752,7 +752,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
- 		if (pad->irq < 0)
- 			return pad->irq;
- 
--		pad->base = res[0] + i * PMIC_GPIO_ADDRESS_RANGE;
-+		pad->base = reg + i * PMIC_GPIO_ADDRESS_RANGE;
- 
- 		ret = pmic_gpio_populate(state, pad);
- 		if (ret < 0)
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 5a4373dd9c61..b45123066669 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -14,6 +14,7 @@
- #include <linux/gpio.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinmux.h>
-@@ -795,15 +796,15 @@ static int pmic_mpp_probe(struct platform_device *pdev)
- 	struct pmic_mpp_pad *pad, *pads;
- 	struct pmic_mpp_state *state;
- 	int ret, npins, i;
--	u32 res[2];
-+	u32 reg;
- 
--	ret = of_property_read_u32_array(dev->of_node, "reg", res, 2);
-+	ret = of_property_read_u32(dev->of_node, "reg", &reg);
- 	if (ret < 0) {
--		dev_err(dev, "missing base address and/or range");
-+		dev_err(dev, "missing base address");
- 		return ret;
- 	}
- 
--	npins = res[1] / PMIC_MPP_ADDRESS_RANGE;
-+	npins = of_irq_count(dev->of_node);
- 	if (!npins)
- 		return -EINVAL;
- 
-@@ -854,7 +855,7 @@ static int pmic_mpp_probe(struct platform_device *pdev)
- 		if (pad->irq < 0)
- 			return pad->irq;
- 
--		pad->base = res[0] + i * PMIC_MPP_ADDRESS_RANGE;
-+		pad->base = reg + i * PMIC_MPP_ADDRESS_RANGE;
- 
- 		ret = pmic_mpp_populate(state, pad);
- 		if (ret < 0)
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index d809c9eaa323..78fa2281116d 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -23,6 +23,7 @@
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- 
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
- 
-@@ -650,11 +651,12 @@ static int pm8xxx_pin_populate(struct pm8xxx_gpio *pctrl,
- }
- 
- static const struct of_device_id pm8xxx_gpio_of_match[] = {
--	{ .compatible = "qcom,pm8018-gpio", .data = (void *)6 },
--	{ .compatible = "qcom,pm8038-gpio", .data = (void *)12 },
--	{ .compatible = "qcom,pm8058-gpio", .data = (void *)40 },
--	{ .compatible = "qcom,pm8917-gpio", .data = (void *)38 },
--	{ .compatible = "qcom,pm8921-gpio", .data = (void *)44 },
-+	{ .compatible = "qcom,pm8018-gpio" },
-+	{ .compatible = "qcom,pm8038-gpio" },
-+	{ .compatible = "qcom,pm8058-gpio" },
-+	{ .compatible = "qcom,pm8917-gpio" },
-+	{ .compatible = "qcom,pm8921-gpio" },
-+	{ .compatible = "qcom,ssbi-gpio" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, pm8xxx_gpio_of_match);
-@@ -672,7 +674,9 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	pctrl->dev = &pdev->dev;
--	pctrl->npins = (unsigned)of_device_get_match_data(&pdev->dev);
-+	pctrl->npins = of_irq_count(pdev->dev.of_node);
-+	if (!pctrl->npins)
-+		return -EINVAL;
- 
- 	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 	if (!pctrl->regmap) {
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-index 8982027de8e8..0831063da54c 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-@@ -23,6 +23,7 @@
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- 
- #include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
- 
-@@ -741,11 +742,12 @@ static int pm8xxx_pin_populate(struct pm8xxx_mpp *pctrl,
- }
- 
- static const struct of_device_id pm8xxx_mpp_of_match[] = {
--	{ .compatible = "qcom,pm8018-mpp", .data = (void *)6 },
--	{ .compatible = "qcom,pm8038-mpp", .data = (void *)6 },
--	{ .compatible = "qcom,pm8917-mpp", .data = (void *)10 },
--	{ .compatible = "qcom,pm8821-mpp", .data = (void *)4 },
--	{ .compatible = "qcom,pm8921-mpp", .data = (void *)12 },
-+	{ .compatible = "qcom,pm8018-mpp" },
-+	{ .compatible = "qcom,pm8038-mpp" },
-+	{ .compatible = "qcom,pm8917-mpp" },
-+	{ .compatible = "qcom,pm8821-mpp" },
-+	{ .compatible = "qcom,pm8921-mpp" },
-+	{ .compatible = "qcom,ssbi-mpp" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, pm8xxx_mpp_of_match);
-@@ -763,7 +765,9 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	pctrl->dev = &pdev->dev;
--	pctrl->npins = (unsigned)of_device_get_match_data(&pdev->dev);
-+	pctrl->npins = of_irq_count(pdev->dev.of_node);
-+	if (!pctrl->npins)
-+		return -EINVAL;
- 
- 	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 	if (!pctrl->regmap) {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ---
+>  Documentation/devicetree/bindings/mfd/tps65912.txt | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Documentation/devicetree/bindings/mfd/tps65912.txt
+> new file mode 100644
+> index 0000000..717e66d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+> @@ -0,0 +1,50 @@
+> +* TPS65912 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "ti,tps65912".
+> + - reg			: Slave address or chip select number (I2C / SPI).
+> + - interrupt-parent	: The parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt controller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
+> +			    The first cell is the IRQ number.
+> +			    The second cell is the flags, encoded as trigger
+> +			    masks from ../interrupt-controller/interrupts.txt.
+> + - gpio-controller	: Marks the device node as a GPIO Controller.
+> + - #gpio-cells		: Should be two.  The first cell is the pin number and
+> +			    the second cell is used to specify flags.
+> +			    See ../gpio/gpio.txt for more information.
+> + - regulators:		: List of child nodes that specify the regulator
+> +			    initialization data. Child nodes must be named
+> +			    after their hardware counterparts: dcdc[1-4] and
+> +			    ldo[1-10]. Each child nodes is defined using the
+> +			    standard binding for regulators.
+> +
+> +Example:
+> +
+> +	pmic: tps65912@2d {
+> +		compatible = "ti,tps65912";
+> +		reg = <0x2d>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		regulators {
+> +			dcdc1 {
+> +				regulator-name = "vdd_core";
+> +				regulator-min-microvolt = <912000>;
+> +				regulator-max-microvolt = <1144000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo1 {
+> +				regulator-name = "ldo1";
+> +				regulator-min-microvolt = <1900000>;
+> +				regulator-max-microvolt = <1900000>;
+> +			};
+> +		};
+> +	};
+> -- 
+> 1.9.1
+> 
