@@ -1,58 +1,85 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 6/6] gpio: tps65086: Add GPIO driver for the TPS65086 PMIC
-Date: Wed, 18 Nov 2015 10:44:37 +0100
-Message-ID: <CACRpkdYfKXDto0TAyW8L+noomPmfTqV+SekdtFXuAsf_Xe3Bkw@mail.gmail.com>
-References: <1446657135-7820-1-git-send-email-afd@ti.com>
-	<1446657135-7820-7-git-send-email-afd@ti.com>
-	<CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
-	<564B51B3.2000102@ti.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: GPIO: Add gpio-initval
+Date: Wed, 18 Nov 2015 11:20:15 +0100
+Message-ID: <CACRpkdZFwdG7vGVncF9Y=sbpP0vhnU_EfLanTNL=HfU71gRNKw@mail.gmail.com>
+References: <1447754878-21099-1-git-send-email-mpa@pengutronix.de>
+	<1447754878-21099-2-git-send-email-mpa@pengutronix.de>
+	<20151117203542.GA7091@rob-hp-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:34773 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755165AbbKRJoi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 04:44:38 -0500
-Received: by oies6 with SMTP id s6so21800132oie.1
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 01:44:38 -0800 (PST)
-In-Reply-To: <564B51B3.2000102@ti.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36013 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753511AbbKRKUQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 05:20:16 -0500
+Received: by obdgf3 with SMTP id gf3so29856771obd.3
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 02:20:15 -0800 (PST)
+In-Reply-To: <20151117203542.GA7091@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Markus Pargmann <mpa@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Tue, Nov 17, 2015 at 5:11 PM, Andrew F. Davis <afd@ti.com> wrote:
-> On 11/17/2015 03:17 AM, Linus Walleij wrote:
->>
->> On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd@ti.com> wrote:
->>
->>> Add support for the TPS65086 PMIC GPOs.
->>>
->>> TPS65086 has four configurable GPOs that can be used for several
->>> purposes.
->>>
->>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>
->>
->> OK...
->>
->>> +static int tps65086_gpio_get(struct gpio_chip *gc, unsigned offset)
->>> +static void tps65086_gpio_set(struct gpio_chip *gc, unsigned offset,
->>
->>
->> Just get/set and no get_direction/direction_input/direction_output?
->> Are you sure?
->>
+On Tue, Nov 17, 2015 at 9:35 PM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Nov 17, 2015 at 11:07:57AM +0100, Markus Pargmann wrote:
+>> Add a binding for GPIO initialization.
 >
-> Yeah, these are output only, I could probably add get_direction and just
-> always return output, but setters wouldn't make sense here.
+> Some comments, but they are really more on the gpio hog. I must have
+> missed them.
 
-It's important that you note in the driver, commit blurb and maybe even
-Kconfig that these GPIOs are output-only. Someone could get confused.
+They are already merged, and in use :(
 
-You should implement .direction_output() and return 0, and implement
-.direction_input and return negative error code. As it is now, it will
-seem like input is working, while it's not, right?
+>> +Optional properties:
+>> +- line-name:  The GPIO label name. If not present the node name is used.
+>
+> We already have "label" for this purpose.
+
+I would rather say we already have another instance of "line-name"
+for this purpose. See
+Documentation/devicetree/bindings/gpio/gpio.txt
+
+"label" was not chosen because it's a Linuxism (that is what the internal
+API is using) and not to the point.
+
+I like the clear "line" specifier over "pin" etc since GPIOs can be
+chip-internal and what not.
+
+>> + The following two options are mutually exclusive. One of them should be
+>> + specified, but not both:
+>> +- gpio-hog:   A property specifying that this child node represent a GPIO hog.
+>> +- gpio-initval: This GPIO should be initialized to the specified configuration.
+>> +
+>> + The following three options are mutually exclusive. They change the setting of
+>> + the GPIO pin. One of them should be specified:
+>>  - input:      A property specifying to set the GPIO direction as input.
+>>  - output-low  A property specifying to set the GPIO direction as output with
+>>             the value low.
+>>  - output-high A property specifying to set the GPIO direction as output with
+>>             the value high.
+>
+> If they are mutually exclusive, then it should just be one property with
+> values. That is much more simple to validate.
+>
+> But none of this is really even needed. We can do all this with existing
+> bindings. Most gpio controllers use 2 cells and the 2nd cell was
+> reserved for something like this. Simply adding a -gpios property in the
+> gpio controller node would do the job:
+>
+> init-gpios = <&self n (GPIO_ACTIVE_HIGH | GPIO_OUTPUT)>;
+> hog-gpios = <&self m GPIO_INPUT>;
+>
+> Perhaps we don't want to use GPIO_ACTIVE_x here, but we have 31 more
+> free bits to use.
+
+I prefer if the flags to be used for characteristics of the line rather
+than driving it in any way. Anyway the input/output-low/output-high is
+already merged, and in use for hogs.
+
+We looked at using -gpios in a self-referential manner, but that
+made it impossible to name the lines, and that is a desired
+property. Hogged lines need names so we can figure out who is
+using them during debug etc. It also makes the DT more
+human-readable.
 
 Yours,
 Linus Walleij
