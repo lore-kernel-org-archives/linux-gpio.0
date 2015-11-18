@@ -1,36 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Add get_direction support.
-Date: Wed, 18 Nov 2015 14:54:48 +0100
-Message-ID: <CACRpkdYbY7vDNRdMF_goUkwNHnoDAF9RMmAt-+sPqA1=8Hxouw@mail.gmail.com>
-References: <1447798633-24586-1-git-send-email-hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH v2] gpio: 104-idio-16: Use lowercase symbol names for
+ const variables
+Date: Wed, 18 Nov 2015 14:56:38 +0100
+Message-ID: <CACRpkdbaiNZxFJ_HKx7cCL9yrsumWH3tdb1ua2OA315x0k_Yyg@mail.gmail.com>
+References: <20151117235815.GA9477@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:33295 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932659AbbKRNyt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 08:54:49 -0500
-Received: by oixx65 with SMTP id x65so24880708oix.0
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 05:54:48 -0800 (PST)
-In-Reply-To: <1447798633-24586-1-git-send-email-hongzhou.yang@mediatek.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:33747 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754415AbbKRN4j (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 08:56:39 -0500
+Received: by obbww6 with SMTP id ww6so33556976obb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 05:56:39 -0800 (PST)
+In-Reply-To: <20151117235815.GA9477@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 17, 2015 at 11:17 PM, Hongzhou Yang
-<hongzhou.yang@mediatek.com> wrote:
+On Wed, Nov 18, 2015 at 12:58 AM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> Since Linux gpio framework return 0 for output, 1 for input.
-> But HW use 0 stands for input, and 1 stands for output.
-> So use negative to correct it.
+> To prevent confusion, and to match the existing coding style used in
+> other GPIO drivers, symbol names within the 104-idio-16 GPIO driver
+> should be lowercase.
 >
-> And gpio_chip.get is used to get input value, no need to get
-> output value, so removing it.
->
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Changes in v2:
+>   - Rebase to resolve conflict with commit 68d33ef.
+>   - Lowercase const variables introduced in commit 68d33ef.
+>   - Utilize BIT macro to match coding style of commit 68d33ef.
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
