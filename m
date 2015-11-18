@@ -1,61 +1,51 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH v2 4/7] ARM: at91/dt: sama5d2: add pio controller node
-Date: Wed, 18 Nov 2015 08:25:08 +0100
-Message-ID: <20151118072508.GK16931@odux.rfo.atmel.com>
-References: <1442417823-15850-1-git-send-email-ludovic.desroches@atmel.com>
- <1442417823-15850-5-git-send-email-ludovic.desroches@atmel.com>
- <CACRpkdapS-Vi_F-MqOFOPTHa2+zbrsPfPsbQA-Eks+tR3Wjg2A@mail.gmail.com>
- <CAOesGMhXtACRaTurWfQgHNr_mU+VF9TjQJz5wQ4RsSVS+WZ0cA@mail.gmail.com>
- <CACRpkdbhFi531Dm9AgOGhc7XHnnyJ+L3t0FvHOPV-fC2f9X6QQ@mail.gmail.com>
- <CAOesGMhOmqr15Ou_QgJuiWdn6wWFYYLmy6eyf6zOopj8tKcadA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMhOmqr15Ou_QgJuiWdn6wWFYYLmy6eyf6zOopj8tKcadA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, Sascha Hauer <s.hauer@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Subject: [PATCH] gpiolib: make comment consistent with code
+Date: Wed, 18 Nov 2015 17:07:07 +0800
+Message-ID: <1447837627-5462-1-git-send-email-bamvor.zhangjian@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:34065 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755119AbbKRJHQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 04:07:16 -0500
+Received: by padhx2 with SMTP id hx2so38896199pad.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 01:07:15 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-On Tue, Nov 17, 2015 at 11:15:11AM -0800, Olof Johansson wrote:
-> On Tue, Nov 17, 2015 at 3:06 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Tue, Nov 10, 2015 at 1:30 AM, Olof Johansson <olof@lixom.net> wrote:
-> >> On Mon, Sep 21, 2015 at 11:24 AM, Linus Walleij
-> >> <linus.walleij@linaro.org> wrote:
-> >>> On Wed, Sep 16, 2015 at 8:37 AM, Ludovic Desroches
-> >>> <ludovic.desroches@atmel.com> wrote:
-> >>>
-> >>>> Add pio4 controller node to enable pinmux and gpio.
-> >>>>
-> >>>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-> >>>
-> >>> Patch applied.
-> >>
-> >> Please don't merge DT changes through driver trees unless there's a
-> >> very specific reason to do so, since it introduces random conflicts.
-> >
-> > Sorry :(
-> >
-> > Even noted this in the pull request to Torvalds, it was in the bottom
-> > of my patch stack so had been in -next for ages, I was afraid it
-> > would create more problem than it solves if I reverted the patch,
-> > but I guess I should have done so anyways.
-> 
-> Yeah, it's OK -- I spotted that pull request later as well.
-> 
-> It's not a big deal in most specific instances, I'd say. It's just in
-> aggregate it becomes a bother.
-> 
-> So, just see this as a public reminder since we've seen it creep into
-> other driver trees a bit more lately. Mistakes will still happen but
-> try to keep it down. And for those who submit patches, feel free to
-> point out in the patch that you don't expect the driver/subsystem
-> maintainer to apply it to help them out.
-> 
+Commit f4d566a8a0e6 ("gpio: change member .dev to .parent") changes
+member of gpiochip from .dev to .parent. Update the corresponding
+comment.
 
-Ok. Sorry, I didn't think it could cause so many conflicts if not taken
-by Nicolas.
+Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 89e0153..e63bebc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -306,7 +306,7 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+  * different chip.  Otherwise it returns zero as a success code.
+  *
+  * When gpiochip_add() is called very early during boot, so that GPIOs
+- * can be freely used, the chip->dev device must be registered before
++ * can be freely used, the chip->parent device must be registered before
+  * the gpio framework's arch_initcall().  Otherwise sysfs initialization
+  * for GPIOs will fail rudely.
+  *
+@@ -714,7 +714,8 @@ int _gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+ #ifdef CONFIG_OF_GPIO
+ 	/*
+ 	 * If the gpiochip has an assigned OF node this takes precedence
+-	 * FIXME: get rid of this and use gpiochip->dev->of_node everywhere
++	 * FIXME: get rid of this and use gpiochip->parent->of_node
++	 * everywhere
+ 	 */
+ 	if (gpiochip->of_node)
+ 		of_node = gpiochip->of_node;
+-- 
+2.1.4
 
-Ludovic
