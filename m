@@ -1,40 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: 104-idio-16: Use lowercase symbol names for
- const variables
-Date: Wed, 18 Nov 2015 14:56:38 +0100
-Message-ID: <CACRpkdbaiNZxFJ_HKx7cCL9yrsumWH3tdb1ua2OA315x0k_Yyg@mail.gmail.com>
-References: <20151117235815.GA9477@sophia>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] pinctrl: at91-pio4: use %pr format string for resource
+Date: Wed, 18 Nov 2015 16:18:36 +0100
+Message-ID: <5158594.z9FlJvJfpz@wuerfel>
+References: <3726450.XyTgssZ1KT@wuerfel> <20151117133341.GG16931@odux.rfo.atmel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:33747 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754415AbbKRN4j (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 08:56:39 -0500
-Received: by obbww6 with SMTP id ww6so33556976obb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Nov 2015 05:56:39 -0800 (PST)
-In-Reply-To: <20151117235815.GA9477@sophia>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151117133341.GG16931@odux.rfo.atmel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ludovic Desroches <ludovic.desroches@atmel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 18, 2015 at 12:58 AM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Tuesday 17 November 2015 14:33:41 Ludovic Desroches wrote:
+> Hi Arnd,
+> 
+> On Thu, Nov 12, 2015 at 03:15:38PM +0100, Arnd Bergmann wrote:
+> > resource_size_t may be defined as 32 or 64 bit depending on configuration,
+> > so it cannot be printed using the normal format strings, as gcc correctly
+> > warns:
+> > 
+> > pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
+> > pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+> >    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
+> > 
+> > This changes the format string to use the special "%pr" format
+> > string that prints a resource, and changes the arguments so we
+> > the resource structure directly. I'm also swapping out the arguments
+> > to match the text in the format string.
+> > 
+> 
+> I agree the format change but not swapping out the arguments. Why do you have
+> the feeling they are not matching the text?
+> 
+> Few lines before you have:
+> res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+> atmel_pioctrl->irqs[i] = res->start;
+> 
+> Each bank has its own irq line this is what I want to print with hwirq.
+> Of course it assumes that interrupts are declared in the right order.
 
-> To prevent confusion, and to match the existing coding style used in
-> other GPIO drivers, symbol names within the 104-idio-16 GPIO driver
-> should be lowercase.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> Changes in v2:
->   - Rebase to resolve conflict with commit 68d33ef.
->   - Lowercase const variables introduced in commit 68d33ef.
->   - Utilize BIT macro to match coding style of commit 68d33ef.
+Sorry, my mistake. You are completely right and I don't know how I concluded
+it was wrong. It's possible I got confused by the 'hwirq' string and thought
+it could not refer to the resource, which is a virtual irq number rather than
+a hwirq.
 
-Patch applied.
+Anyway, I'll submit a new version with this fixup folded in:
 
-Yours,
-Linus Walleij
+@@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+                atmel_pioctrl->irqs[i] = res->start;
+                irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
+                irq_set_handler_data(res->start, atmel_pioctrl);
+-               dev_dbg(dev, "bank %pr: hwirq=%u\n", res, i);
++               dev_dbg(dev, "bank %i: irq=%pr\n", i, res);
+        }
+ 
+        atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
+
+	Arnd
