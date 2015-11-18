@@ -1,43 +1,87 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2] pinctrl: at91-pio4: use %pr format string for resource
-Date: Wed, 18 Nov 2015 16:21:17 +0100
-Message-ID: <5199877.GVYeflqET9@wuerfel>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v3 6/6] gpio: tps65086: Add GPIO driver for the TPS65086
+ PMIC
+Date: Wed, 18 Nov 2015 10:41:10 -0600
+Message-ID: <564CAA26.4010904@ti.com>
+References: <1446657135-7820-1-git-send-email-afd@ti.com>
+ <1446657135-7820-7-git-send-email-afd@ti.com>
+ <CACRpkdb1V7JxLSbwqf4CX+nDLeQzP=bOA9YMXzE4CFTQfzRL9w@mail.gmail.com>
+ <564B51B3.2000102@ti.com>
+ <CACRpkdYfKXDto0TAyW8L+noomPmfTqV+SekdtFXuAsf_Xe3Bkw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:35245 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752184AbbKRQlZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 18 Nov 2015 11:41:25 -0500
+In-Reply-To: <CACRpkdYfKXDto0TAyW8L+noomPmfTqV+SekdtFXuAsf_Xe3Bkw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-resource_size_t may be defined as 32 or 64 bit depending on configuration,
-so it cannot be printed using the normal format strings, as gcc correctly
-warns:
+On 11/18/2015 03:44 AM, Linus Walleij wrote:
+> On Tue, Nov 17, 2015 at 5:11 PM, Andrew F. Davis <afd@ti.com> wrote:
+>> On 11/17/2015 03:17 AM, Linus Walleij wrote:
+>>>
+>>> On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd@ti.com> wrote:
+>>>
+>>>> Add support for the TPS65086 PMIC GPOs.
+>>>>
+>>>> TPS65086 has four configurable GPOs that can be used for several
+>>>> purposes.
+>>>>
+>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>
+>>>
+>>> OK...
+>>>
+>>>> +static int tps65086_gpio_get(struct gpio_chip *gc, unsigned offset)
+>>>> +static void tps65086_gpio_set(struct gpio_chip *gc, unsigned offset,
+>>>
+>>>
+>>> Just get/set and no get_direction/direction_input/direction_output?
+>>> Are you sure?
+>>>
+>>
+>> Yeah, these are output only, I could probably add get_direction and just
+>> always return output, but setters wouldn't make sense here.
+>
+> It's important that you note in the driver, commit blurb and maybe even
+> Kconfig that these GPIOs are output-only. Someone could get confused.
+>
+> You should implement .direction_output() and return 0, and implement
+> .direction_input and return negative error code. As it is now, it will
+> seem like input is working, while it's not, right?
+>
+> Yours,
+> Linus Walleij
+>
 
-pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-   dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
+Right, will add.
 
-This changes the format string to use the special "%pr" format
-string that prints a resource, and changes the arguments so we
-the resource structure directly.
+Also I would hold off on taking the GPIO bindings just yet. Mark Brown
+has stated he would like the compatible string removed from the regulator
+sub-node before he takes the regulator components, so for consistency sake
+I am also removing the string from GPIO as well. With this, it is difficult
+to have the sub-node still be a GPIO controller.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: don't break ordering of arguments, that part was correct already, unlike
-what I said in v1.
+( gpiochip->of_node vs gpiochip->dev->of_node gpiolib.c:694 etc.. )
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 33edd07d9149..abdc16e5a970 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
- 		atmel_pioctrl->irqs[i] = res->start;
- 		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
- 		irq_set_handler_data(res->start, atmel_pioctrl);
--		dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-+		dev_dbg(dev, "bank %i: irq=%pr\n", i, res);
- 	}
- 
- 	atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
+So the main pmic node will also be the GPIO controller node.
+
+pmic: tps65912@2d {
+	compatible = "ti,tps65912";
+	reg = <0x2d>;
+
+	interrupt-parent = <&gpio1>;
+	interrupts = <28 8>;
+
+	interrupt-controller;
+	#interrupt-cells = <2>;
+
+	gpio-controller;
+	#gpio-cells = <2>;
+};
