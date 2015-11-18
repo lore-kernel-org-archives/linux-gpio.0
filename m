@@ -1,51 +1,30 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [BISECTED] v4.4-rc1 GPIO regression on OMAP1
-Date: Wed, 18 Nov 2015 20:31:06 +0200
-Message-ID: <20151118183106.GC18138@blackmetal.musicnaut.iki.fi>
-References: <20151117214212.GB18138@blackmetal.musicnaut.iki.fi>
- <564C75FE.5000303@ti.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 03/11] dts: pinctrl: Add GPIO to Pinctrl pin mapping in
+ DT
+Date: Wed, 18 Nov 2015 10:39:30 -0800
+Message-ID: <564CC5E2.2070809@gmail.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com> <1445233398-27129-4-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from emh06.mail.saunalahti.fi ([62.142.5.116]:57861 "EHLO
-	emh06.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750719AbbKRSbu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 13:31:50 -0500
-Content-Disposition: inline
-In-Reply-To: <564C75FE.5000303@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445233398-27129-4-git-send-email-pramodku@broadcom.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pramod Kumar <pramodku@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas Gorski <jogo@openwrt.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi,
-
-On Wed, Nov 18, 2015 at 02:58:38PM +0200, Grygorii Strashko wrote:
-> On 11/17/2015 11:42 PM, Aaro Koskinen wrote:
-> >Amstrad E3 computer (OMAP1) boot crashes early with v4.4-rc1. Bisected to:
-> >
-> >	450fa54cfd66e3dda6eda26256637ee8928af12a is the first bad commit
-> >	commit 450fa54cfd66e3dda6eda26256637ee8928af12a
-> >	Author: Grygorii Strashko <grygorii.strashko@ti.com>
-> >	Date:   Fri Sep 25 12:28:03 2015 -0700
-> >	
-> >	    gpio: omap: convert to use generic irq handler
->
-> Could you check pls if below change will solve this issue, pls?
+On 18/10/15 22:43, Pramod Kumar wrote:
+> ASIU gpio controller's pins are muxed with pin-cntroller.
+> Add this mapping through property "gpio-ranges".
 > 
-> iff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 56d2d02..2905e0d 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1129,7 +1129,7 @@ static int omap_gpio_chip_init(struct gpio_bank *bank,
-> struct irq_chip *irqc)
->         }
-> 
->         ret = gpiochip_irqchip_add(&bank->chip, irqc,
-> -                                  irq_base, handle_bad_irq,
-> +                                  irq_base, handle_simple_irq,
->                                    IRQ_TYPE_NONE);
+> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+> Reviewed-by: Ray Jui <rjui@broadcom.com>
+> Reviewed-by: Scott Branden <sbranden@broadcom.com>
 
-This works!
+Applied to devicetree/next, since there was a bit of restructuring, I
+had to manually apply it, please verify the resolution looks correct to you.
 
-A.
+Thanks!
+-- 
+Florian
