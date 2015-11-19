@@ -1,86 +1,66 @@
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Subject: Re: [BISECTED] v4.4-rc1 GPIO regression on OMAP1
-Date: Thu, 19 Nov 2015 23:02:34 +0200
-Message-ID: <20151119210234.GF18138@blackmetal.musicnaut.iki.fi>
-References: <20151117214212.GB18138@blackmetal.musicnaut.iki.fi>
- <564C75FE.5000303@ti.com>
- <20151118183106.GC18138@blackmetal.musicnaut.iki.fi>
- <564DB931.8090904@ti.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v4 0/4] Add support for the TI TPS65086 PMIC
+Date: Thu, 19 Nov 2015 17:01:38 -0600
+Message-ID: <1447974102-24938-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:34363 "EHLO
-	emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934121AbbKSVDU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 16:03:20 -0500
-Content-Disposition: inline
-In-Reply-To: <564DB931.8090904@ti.com>
+Received: from devils.ext.ti.com ([198.47.26.153]:40463 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754559AbbKSXB6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 18:01:58 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
-Hi,
+This series adds support for the TPS65086 PMIC. It is a MFD with an I2C
+interface, several regulators and load switches, and a GPO controller.
 
-On Thu, Nov 19, 2015 at 01:57:37PM +0200, Grygorii Strashko wrote:
-> On 11/18/2015 08:31 PM, Aaro Koskinen wrote:
-> > On Wed, Nov 18, 2015 at 02:58:38PM +0200, Grygorii Strashko wrote:
-> >> On 11/17/2015 11:42 PM, Aaro Koskinen wrote:
-> >>> Amstrad E3 computer (OMAP1) boot crashes early with v4.4-rc1. Bisected to:
-> >>>
-> >>> 	450fa54cfd66e3dda6eda26256637ee8928af12a is the first bad commit
-> >>> 	commit 450fa54cfd66e3dda6eda26256637ee8928af12a
-> >>> 	Author: Grygorii Strashko <grygorii.strashko@ti.com>
-> >>> 	Date:   Fri Sep 25 12:28:03 2015 -0700
-> >>> 	
-> >>> 	    gpio: omap: convert to use generic irq handler
-> >>
-> >> Could you check pls if below change will solve this issue, pls?
-> >>
-> >> iff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> >> index 56d2d02..2905e0d 100644
-> >> --- a/drivers/gpio/gpio-omap.c
-> >> +++ b/drivers/gpio/gpio-omap.c
-> >> @@ -1129,7 +1129,7 @@ static int omap_gpio_chip_init(struct gpio_bank *bank,
-> >> struct irq_chip *irqc)
-> >>          }
-> >>
-> >>          ret = gpiochip_irqchip_add(&bank->chip, irqc,
-> >> -                                  irq_base, handle_bad_irq,
-> >> +                                  irq_base, handle_simple_irq,
-> >>                                     IRQ_TYPE_NONE);
-> > 
-> 
-> Thanks for testing it. But I'd like to ask you for more help here if possible :)
-> Above change is expected to fix the OMAP1 boot, but looking at the OMAP GPIO code
-> I think that MPUIO IRQ are not working :( and this functionality has been broken 
-> long time ago - commit "gpio: omap: convert to use generic irq handler" has just 
-> made hidden issue visible.
-> (I've found only one OMAP1 board which uses MPUIO GPIO as IRQ (board-osk.c)).
-> 
-> So, could I ask you to test another change instead of previous one?
-> 
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1122,8 +1122,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
->         /* MPUIO is a bit different, reading IRQ status clears it */
->         if (bank->is_mpuio) {
->                 irqc->irq_ack = dummy_irq_chip.irq_ack;
-> -               irqc->irq_mask = irq_gc_mask_set_bit;
-> -               irqc->irq_unmask = irq_gc_mask_clr_bit;
->                 if (!bank->regs->wkup_en)
->                         irqc->irq_set_wake = NULL;
->         }
+v1 can be found here: [1] v2: [2] v3: [3]
 
-This fixes the boot crash issue as well...
+Changes from v3:
+ - Removed compatible strings from DT sub-nodes
+ - Rearranged DT bindings
+ - Small fixes
 
-> In my opinion real test will be
-> - request(any MPUIO GPIO IRQ, IRQF_TRIGGER_LOW/HIGH), 
-> - trigger MPUIO GPIO IRQ
-> - free(MPUIO GPIO IRQ)
+Changes from v2:
+ - Use DT match callback in regulator
+ - Typo fixes
 
-...but I don't think I can cover that with my boards (E3/770)?
+Changes from v1:
+ - Split up DT Docs into separate patches
+ - Use mfd core to instantiate sub-devices
+ - Several small fixes as discussed in v1 thread
 
-Anyone willing to donate a 5912 OSK?
+[1] http://www.spinics.net/lists/devicetree/msg98403.html
+[2] http://www.spinics.net/lists/kernel/msg2111345.html
+[3] https://lkml.org/lkml/2015/11/4/393
 
-A.
+Andrew F. Davis (4):
+  Documentation: tps65086: Add DT bindings for the TPS65086 PMIC
+  mfd: tps65086: Add driver for the TPS65086 PMIC
+  regulator: tps65086: Add regulator driver for the TPS65086 PMIC
+  gpio: tps65086: Add GPO driver for the TPS65086 PMIC
+
+ Documentation/devicetree/bindings/mfd/tps65086.txt |  55 +++++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-tps65086.c                       | 144 ++++++++++++
+ drivers/mfd/Kconfig                                |  13 ++
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/tps65086.c                             | 150 ++++++++++++
+ drivers/regulator/Kconfig                          |   7 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/tps65086-regulator.c             | 251 +++++++++++++++++++++
+ include/linux/mfd/tps65086.h                       | 118 ++++++++++
+ 11 files changed, 747 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.txt
+ create mode 100644 drivers/gpio/gpio-tps65086.c
+ create mode 100644 drivers/mfd/tps65086.c
+ create mode 100644 drivers/regulator/tps65086-regulator.c
+ create mode 100644 include/linux/mfd/tps65086.h
+
+-- 
+1.9.1
+
