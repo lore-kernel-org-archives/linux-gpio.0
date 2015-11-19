@@ -1,55 +1,317 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: Re: [PATCH v2] pinctrl: at91-pio4: use %pr format string for resource
-Date: Thu, 19 Nov 2015 17:39:50 +0100
-Message-ID: <20151119163950.GD23317@odux.rfo.atmel.com>
-References: <5199877.GVYeflqET9@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
+Date: Thu, 19 Nov 2015 19:26:13 +0100
+Message-ID: <1447957573-32180-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.243]:43387 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934141AbbKSQju (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 11:39:50 -0500
-Content-Disposition: inline
-In-Reply-To: <5199877.GVYeflqET9@wuerfel>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35829 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752714AbbKSS0I (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 13:26:08 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, Nov 18, 2015 at 04:21:17PM +0100, Arnd Bergmann wrote:
-> resource_size_t may be defined as 32 or 64 bit depending on configuration,
-> so it cannot be printed using the normal format strings, as gcc correctly
-> warns:
-> 
-> pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-> pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
->    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-> 
-> This changes the format string to use the special "%pr" format
-> string that prints a resource, and changes the arguments so we
-> the resource structure directly.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+v3:
+  - Add Acked-by,
+  - Rebased,
 
-Thanks.
+v2:
+  - Rebased.
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 255 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 255 insertions(+)
 
-> ---
-> v2: don't break ordering of arguments, that part was correct already, unlike
-> what I said in v1.
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index 33edd07d9149..abdc16e5a970 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
->  		atmel_pioctrl->irqs[i] = res->start;
->  		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
->  		irq_set_handler_data(res->start, atmel_pioctrl);
-> -		dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
-> +		dev_dbg(dev, "bank %i: irq=%pr\n", i, res);
->  	}
->  
->  	atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
-> 
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 7ddb2adfc5a5..2538ea4d6a81 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1612,6 +1612,191 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
+ 	AVB_AVTP_CAPTURE_B_MARK,
+ };
+ 
++/* - HSCIF0 ----------------------------------------------------------------- */
++static const unsigned int hscif0_data_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 14),
++};
++static const unsigned int hscif0_data_mux[] = {
++	HRX0_MARK, HTX0_MARK,
++};
++static const unsigned int hscif0_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(5, 12),
++};
++static const unsigned int hscif0_clk_mux[] = {
++	HSCK0_MARK,
++};
++static const unsigned int hscif0_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(5, 16), RCAR_GP_PIN(5, 15),
++};
++static const unsigned int hscif0_ctrl_mux[] = {
++	HRTS0_N_MARK, HCTS0_N_MARK,
++};
++/* - HSCIF1 ----------------------------------------------------------------- */
++static const unsigned int hscif1_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 6),
++};
++static const unsigned int hscif1_data_a_mux[] = {
++	HRX1_A_MARK, HTX1_A_MARK,
++};
++static const unsigned int hscif1_clk_a_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(6, 21),
++};
++static const unsigned int hscif1_clk_a_mux[] = {
++	HSCK1_A_MARK,
++};
++static const unsigned int hscif1_ctrl_a_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 7),
++};
++static const unsigned int hscif1_ctrl_a_mux[] = {
++	HRTS1_N_A_MARK, HCTS1_N_A_MARK,
++};
++
++static const unsigned int hscif1_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
++};
++static const unsigned int hscif1_data_b_mux[] = {
++	HRX1_B_MARK, HTX1_B_MARK,
++};
++static const unsigned int hscif1_clk_b_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(5, 0),
++};
++static const unsigned int hscif1_clk_b_mux[] = {
++	HSCK1_B_MARK,
++};
++static const unsigned int hscif1_ctrl_b_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 3),
++};
++static const unsigned int hscif1_ctrl_b_mux[] = {
++	HRTS1_N_B_MARK, HCTS1_N_B_MARK,
++};
++/* - HSCIF2 ----------------------------------------------------------------- */
++static const unsigned int hscif2_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int hscif2_data_a_mux[] = {
++	HRX2_A_MARK, HTX2_A_MARK,
++};
++static const unsigned int hscif2_clk_a_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int hscif2_clk_a_mux[] = {
++	HSCK2_A_MARK,
++};
++static const unsigned int hscif2_ctrl_a_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(6, 7), RCAR_GP_PIN(6, 6),
++};
++static const unsigned int hscif2_ctrl_a_mux[] = {
++	HRTS2_N_A_MARK, HCTS2_N_A_MARK,
++};
++
++static const unsigned int hscif2_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
++};
++static const unsigned int hscif2_data_b_mux[] = {
++	HRX2_B_MARK, HTX2_B_MARK,
++};
++static const unsigned int hscif2_clk_b_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(6, 21),
++};
++static const unsigned int hscif2_clk_b_mux[] = {
++	HSCK1_B_MARK,
++};
++static const unsigned int hscif2_ctrl_b_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 19),
++};
++static const unsigned int hscif2_ctrl_b_mux[] = {
++	HRTS2_N_B_MARK, HCTS2_N_B_MARK,
++};
++/* - HSCIF3 ----------------------------------------------------------------- */
++static const unsigned int hscif3_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 24),
++};
++static const unsigned int hscif3_data_a_mux[] = {
++	HRX3_A_MARK, HTX3_A_MARK,
++};
++static const unsigned int hscif3_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(1, 22),
++};
++static const unsigned int hscif3_clk_mux[] = {
++	HSCK3_MARK,
++};
++static const unsigned int hscif3_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
++};
++static const unsigned int hscif3_ctrl_mux[] = {
++	HRTS3_N_MARK, HCTS3_N_MARK,
++};
++
++static const unsigned int hscif3_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
++};
++static const unsigned int hscif3_data_b_mux[] = {
++	HRX3_B_MARK, HTX3_B_MARK,
++};
++static const unsigned int hscif3_data_c_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
++};
++static const unsigned int hscif3_data_c_mux[] = {
++	HRX3_C_MARK, HTX3_C_MARK,
++};
++static const unsigned int hscif3_data_d_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8),
++};
++static const unsigned int hscif3_data_d_mux[] = {
++	HRX3_D_MARK, HTX3_D_MARK,
++};
++/* - HSCIF4 ----------------------------------------------------------------- */
++static const unsigned int hscif4_data_a_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
++};
++static const unsigned int hscif4_data_a_mux[] = {
++	HRX4_A_MARK, HTX4_A_MARK,
++};
++static const unsigned int hscif4_clk_pins[] = {
++	/* SCK */
++	RCAR_GP_PIN(1, 11),
++};
++static const unsigned int hscif4_clk_mux[] = {
++	HSCK4_MARK,
++};
++static const unsigned int hscif4_ctrl_pins[] = {
++	/* RTS, CTS */
++	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14),
++};
++static const unsigned int hscif4_ctrl_mux[] = {
++	HRTS4_N_MARK, HCTS3_N_MARK,
++};
++
++static const unsigned int hscif4_data_b_pins[] = {
++	/* RX, TX */
++	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
++};
++static const unsigned int hscif4_data_b_mux[] = {
++	HRX4_B_MARK, HTX4_B_MARK,
++};
++
+ /* - I2C -------------------------------------------------------------------- */
+ static const unsigned int i2c1_a_pins[] = {
+ 	/* SDA, SCL */
+@@ -2050,6 +2235,31 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
++	SH_PFC_PIN_GROUP(hscif0_data),
++	SH_PFC_PIN_GROUP(hscif0_clk),
++	SH_PFC_PIN_GROUP(hscif0_ctrl),
++	SH_PFC_PIN_GROUP(hscif1_data_a),
++	SH_PFC_PIN_GROUP(hscif1_clk_a),
++	SH_PFC_PIN_GROUP(hscif1_ctrl_a),
++	SH_PFC_PIN_GROUP(hscif1_data_b),
++	SH_PFC_PIN_GROUP(hscif1_clk_b),
++	SH_PFC_PIN_GROUP(hscif1_ctrl_b),
++	SH_PFC_PIN_GROUP(hscif2_data_a),
++	SH_PFC_PIN_GROUP(hscif2_clk_a),
++	SH_PFC_PIN_GROUP(hscif2_ctrl_a),
++	SH_PFC_PIN_GROUP(hscif2_data_b),
++	SH_PFC_PIN_GROUP(hscif2_clk_b),
++	SH_PFC_PIN_GROUP(hscif2_ctrl_b),
++	SH_PFC_PIN_GROUP(hscif3_data_a),
++	SH_PFC_PIN_GROUP(hscif3_clk),
++	SH_PFC_PIN_GROUP(hscif3_ctrl),
++	SH_PFC_PIN_GROUP(hscif3_data_b),
++	SH_PFC_PIN_GROUP(hscif3_data_c),
++	SH_PFC_PIN_GROUP(hscif3_data_d),
++	SH_PFC_PIN_GROUP(hscif4_data_a),
++	SH_PFC_PIN_GROUP(hscif4_clk),
++	SH_PFC_PIN_GROUP(hscif4_ctrl),
++	SH_PFC_PIN_GROUP(hscif4_data_b),
+ 	SH_PFC_PIN_GROUP(i2c1_a),
+ 	SH_PFC_PIN_GROUP(i2c1_b),
+ 	SH_PFC_PIN_GROUP(i2c2_a),
+@@ -2141,6 +2351,46 @@ static const char * const avb_groups[] = {
+ 	"avb_avtp_capture_b",
+ };
+ 
++static const char * const hscif0_groups[] = {
++	"hscif0_data",
++	"hscif0_clk",
++	"hscif0_ctrl",
++};
++
++static const char * const hscif1_groups[] = {
++	"hscif1_data_a",
++	"hscif1_clk_a",
++	"hscif1_ctrl_a",
++	"hscif1_data_b",
++	"hscif1_clk_b",
++	"hscif1_ctrl_b",
++};
++
++static const char * const hscif2_groups[] = {
++	"hscif2_data_a",
++	"hscif2_clk_a",
++	"hscif2_ctrl_a",
++	"hscif2_data_b",
++	"hscif2_clk_b",
++	"hscif2_ctrl_b",
++};
++
++static const char * const hscif3_groups[] = {
++	"hscif3_data_a",
++	"hscif3_clk",
++	"hscif3_ctrl",
++	"hscif3_data_b",
++	"hscif3_data_c",
++	"hscif3_data_d",
++};
++
++static const char * const hscif4_groups[] = {
++	"hscif4_data_a",
++	"hscif4_clk",
++	"hscif4_ctrl",
++	"hscif4_data_b",
++};
++
+ static const char * const i2c1_groups[] = {
+ 	"i2c1_a",
+ 	"i2c1_b",
+@@ -2231,6 +2481,11 @@ static const char * const ssi_groups[] = {
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(audio_clk),
+ 	SH_PFC_FUNCTION(avb),
++	SH_PFC_FUNCTION(hscif0),
++	SH_PFC_FUNCTION(hscif1),
++	SH_PFC_FUNCTION(hscif2),
++	SH_PFC_FUNCTION(hscif3),
++	SH_PFC_FUNCTION(hscif4),
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
+ 	SH_PFC_FUNCTION(i2c6),
+-- 
+1.9.1
+
