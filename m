@@ -1,130 +1,55 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RFC/PATCH] pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP
- bindings
-Date: Thu, 19 Nov 2015 08:50:17 -0600
-Message-ID: <20151119145017.GA19795@rob-hp-laptop>
-References: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH v2] pinctrl: at91-pio4: use %pr format string for resource
+Date: Thu, 19 Nov 2015 17:39:50 +0100
+Message-ID: <20151119163950.GD23317@odux.rfo.atmel.com>
+References: <5199877.GVYeflqET9@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:56609 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934260AbbKSOuX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 19 Nov 2015 09:50:23 -0500
+Received: from eusmtp01.atmel.com ([212.144.249.243]:43387 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934141AbbKSQju (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 11:39:50 -0500
 Content-Disposition: inline
-In-Reply-To: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
+In-Reply-To: <5199877.GVYeflqET9@wuerfel>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Ludovic Desroches <ludovic.desroches@atmel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Nov 17, 2015 at 05:00:26PM -0800, Stephen Boyd wrote:
-> The drivers don't really need to know which PMIC they're for, so
-> make a generic binding for them. This alleviates us from updating
-> the drivers every time a new PMIC comes out. It's still
-> recommended that we update the binding with new PMIC models and
-> always specify the specific model for the MPPs and gpios before
-> the generic compatible string in devicetree, but this at least
-> cuts down on adding more and more compatible strings to the
-> drivers until we actually need them.
+On Wed, Nov 18, 2015 at 04:21:17PM +0100, Arnd Bergmann wrote:
+> resource_size_t may be defined as 32 or 64 bit depending on configuration,
+> so it cannot be printed using the normal format strings, as gcc correctly
+> warns:
 > 
-> Cc: <devicetree@vger.kernel.org>
-> Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>
-> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
+> pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+>    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
+> 
+> This changes the format string to use the special "%pr" format
+> string that prints a resource, and changes the arguments so we
+> the resource structure directly.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+
+Thanks.
+
 > ---
-
-Seems okay to me. I assume you are going to update all the dts files?
-
-Rob
-
+> v2: don't break ordering of arguments, that part was correct already, unlike
+> what I said in v1.
 > 
-> We can also figure out the number of the pins from the number
-> of interrupts, so we really don't need to even look at the size of the
-> reg property or model number for the spmi and ssbi modules. I'll propose
-> that change as well tomorrow.
+> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+> index 33edd07d9149..abdc16e5a970 100644
+> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
+> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+> @@ -1000,7 +1000,7 @@ static int atmel_pinctrl_probe(struct platform_device *pdev)
+>  		atmel_pioctrl->irqs[i] = res->start;
+>  		irq_set_chained_handler(res->start, atmel_gpio_irq_handler);
+>  		irq_set_handler_data(res->start, atmel_pioctrl);
+> -		dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
+> +		dev_dbg(dev, "bank %i: irq=%pr\n", i, res);
+>  	}
+>  
+>  	atmel_pioctrl->irq_domain = irq_domain_add_linear(dev->of_node,
 > 
->  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 5 ++++-
->  Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt  | 5 ++++-
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 1 +
->  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c                      | 1 +
->  4 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> index a90c812ad642..f1e4643f4132 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> @@ -17,6 +17,9 @@ PMIC's from Qualcomm.
->  		    "qcom,pm8994-gpio"
->  		    "qcom,pma8084-gpio"
->  
-> +		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
-> +		    if the device is on an spmi bus or an ssbi bus respectively
-> +
->  - reg:
->  	Usage: required
->  	Value type: <prop-encoded-array>
-> @@ -183,7 +186,7 @@ to specify in a pin configuration subnode:
->  Example:
->  
->  	pm8921_gpio: gpio@150 {
-> -		compatible = "qcom,pm8921-gpio";
-> +		compatible = "qcom,pm8921-gpio", "qcom,ssbi-gpio";
->  		reg = <0x150 0x160>;
->  		interrupts = <192 1>, <193 1>, <194 1>,
->  			     <195 1>, <196 1>, <197 1>,
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
-> index d74e631e10da..e28320b18ecb 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
-> @@ -18,6 +18,9 @@ of PMIC's from Qualcomm.
->  		    "qcom,pm8994-mpp",
->  		    "qcom,pma8084-mpp",
->  
-> +		    And must contain either "qcom,spmi-mpp" or "qcom,ssbi-mpp"
-> +		    if the device is on an spmi bus or an ssbi bus respectively.
-> +
->  - reg:
->  	Usage: required
->  	Value type: <prop-encoded-array>
-> @@ -157,7 +160,7 @@ to specify in a pin configuration subnode:
->  Example:
->  
->  	mpps@a000 {
-> -		compatible = "qcom,pm8841-mpp";
-> +		compatible = "qcom,pm8841-mpp", "qcom,spmi-mpp";
->  		reg = <0xa000>;
->  		gpio-controller;
->  		#gpio-cells = <2>;
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> index df4413023e21..9f9979903fcb 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -806,6 +806,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
->  	{ .compatible = "qcom,pm8941-gpio" },	/* 36 GPIO's */
->  	{ .compatible = "qcom,pm8994-gpio" },	/* 22 GPIO's */
->  	{ .compatible = "qcom,pma8084-gpio" },	/* 22 GPIO's */
-> +	{ .compatible = "qcom,spmi-gpio" }, /* Generic */
->  	{ },
->  };
->  
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> index 7b4136a22c5b..5a4373dd9c61 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-> @@ -909,6 +909,7 @@ static const struct of_device_id pmic_mpp_of_match[] = {
->  	{ .compatible = "qcom,pm8941-mpp" },	/* 8 MPP's */
->  	{ .compatible = "qcom,pm8994-mpp" },	/* 8 MPP's */
->  	{ .compatible = "qcom,pma8084-mpp" },	/* 8 MPP's */
-> +	{ .compatible = "qcom,spmi-mpp" },	/* Generic */
->  	{ },
->  };
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
