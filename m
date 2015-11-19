@@ -1,65 +1,45 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] pinctrl: bcm2835: Fix initial value for direction_output
-Date: Thu, 19 Nov 2015 00:32:27 +0000
-Message-ID: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
+From: Pramod Kumar <pramodku@broadcom.com>
+Subject: RE: [PATCH 03/11] dts: pinctrl: Add GPIO to Pinctrl pin mapping in
+ DT
+Date: Thu, 19 Nov 2015 03:34:58 +0000
+Message-ID: <0C803592FC378B4E83922050AB46442A2AD9ECBD@SJEXCHMB10.corp.ad.broadcom.com>
+References: <1445233398-27129-1-git-send-email-pramodku@broadcom.com>
+ <1445233398-27129-4-git-send-email-pramodku@broadcom.com>
+ <564CC5E2.2070809@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:58590 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756310AbbKSAjO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 19:39:14 -0500
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:2771 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754954AbbKSDfA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 22:35:00 -0500
+In-Reply-To: <564CC5E2.2070809@gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>
-Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>, Martin Sperl <kernel@martin.sperl.org>
+To: Florian Fainelli <f.fainelli@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 
-Currently the provided initial value for bcm2835_gpio_direction_output
-has no effect. So fix this issue by changing the value before
-changing the GPIO direction. As a result we need to move the function below
-bcm2835_gpio_set.
-
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-CC: Martin Sperl <kernel@martin.sperl.org>
-CC: Stephen Warren <swarren@wwwdotorg.org>
----
-
-This patch was inspired by this discussion [1].
-
-[1] - http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-April/001499.html
-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 8efa235..fd1441b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -352,12 +352,6 @@ static int bcm2835_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return bcm2835_gpio_get_bit(pc, GPLEV0, offset);
- }
- 
--static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
--		unsigned offset, int value)
--{
--	return pinctrl_gpio_direction_output(chip->base + offset);
--}
--
- static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
-@@ -365,6 +359,13 @@ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	bcm2835_gpio_set_bit(pc, value ? GPSET0 : GPCLR0, offset);
- }
- 
-+static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
-+		unsigned offset, int value)
-+{
-+	bcm2835_gpio_set(chip, offset, value);
-+	return pinctrl_gpio_direction_output(chip->base + offset);
-+}
-+
- static int bcm2835_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
--- 
-1.7.9.5
-
+SGkgRmxvcmlhbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGbG9y
+aWFuIEZhaW5lbGxpIFttYWlsdG86Zi5mYWluZWxsaUBnbWFpbC5jb21dDQo+IFNlbnQ6IDE5IE5v
+dmVtYmVyIDIwMTUgMDA6MTANCj4gVG86IFByYW1vZCBLdW1hcjsgUm9iIEhlcnJpbmc7IFBhd2Vs
+IE1vbGw7IE1hcmsgUnV0bGFuZDsgSWFuIENhbXBiZWxsOw0KPiBLdW1hciBHYWxhOyBSYXkgSnVp
+OyBTY290dCBCcmFuZGVuOyBSdXNzZWxsIEtpbmc7IExpbnVzIFdhbGxlaWo7IGxpbnV4LQ0KPiBn
+cGlvQHZnZXIua2VybmVsLm9yZw0KPiBDYzogYmNtLWtlcm5lbC1mZWVkYmFjay1saXN0OyBKYXNv
+biBVeTsgTWFzYWhpcm8gWWFtYWRhOyBUaG9tYXMgR2xlaXhuZXI7DQo+IExhdXJlbnQgUGluY2hh
+cnQ7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0
+cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKb25hcyBHb3Jz
+a2kNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAwMy8xMV0gZHRzOiBwaW5jdHJsOiBBZGQgR1BJTyB0
+byBQaW5jdHJsIHBpbiBtYXBwaW5nIGluIERUDQo+IA0KPiBPbiAxOC8xMC8xNSAyMjo0MywgUHJh
+bW9kIEt1bWFyIHdyb3RlOg0KPiA+IEFTSVUgZ3BpbyBjb250cm9sbGVyJ3MgcGlucyBhcmUgbXV4
+ZWQgd2l0aCBwaW4tY250cm9sbGVyLg0KPiA+IEFkZCB0aGlzIG1hcHBpbmcgdGhyb3VnaCBwcm9w
+ZXJ0eSAiZ3Bpby1yYW5nZXMiLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUHJhbW9kIEt1bWFy
+IDxwcmFtb2RrdUBicm9hZGNvbS5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IFJheSBKdWkgPHJqdWlA
+YnJvYWRjb20uY29tPg0KPiA+IFJldmlld2VkLWJ5OiBTY290dCBCcmFuZGVuIDxzYnJhbmRlbkBi
+cm9hZGNvbS5jb20+DQo+IA0KPiBBcHBsaWVkIHRvIGRldmljZXRyZWUvbmV4dCwgc2luY2UgdGhl
+cmUgd2FzIGEgYml0IG9mIHJlc3RydWN0dXJpbmcsIEkgaGFkIHRvDQo+IG1hbnVhbGx5IGFwcGx5
+IGl0LCBwbGVhc2UgdmVyaWZ5IHRoZSByZXNvbHV0aW9uIGxvb2tzIGNvcnJlY3QgdG8geW91Lg0K
+DQpBcHBsaWVkIHBhdGNoIGxvb2tzIGZpbmUuIFRoYW5rcyBmb3IgaGF2aW5nIHRpbWUgaW4gcmVz
+dHJ1Y3R1cmluZy4gDQoNClJlZ2FyZHMsDQpQcmFtb2QNCg0KPiANCj4gVGhhbmtzIQ0KPiAtLQ0K
+PiBGbG9yaWFuDQo=
