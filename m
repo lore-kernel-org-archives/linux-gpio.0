@@ -1,107 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RESEND PATCH] gpio: Drop owner assignment from i2c_driver
-Date: Thu, 19 Nov 2015 12:57:11 +0900
-Message-ID: <1447905431-30728-1-git-send-email-k.kozlowski@samsung.com>
+From: Andy Gross <agross@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: pmic-gpio/mpp: of_irq_count() == npins
+Date: Thu, 19 Nov 2015 00:04:26 -0600
+Message-ID: <20151119060426.GA22622@qualcomm.com>
+References: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
+ <1447875197-21645-1-git-send-email-sboyd@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19066 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933261AbbKSD5U (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 22:57:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58670 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750908AbbKSGE3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 01:04:29 -0500
+Content-Disposition: inline
+In-Reply-To: <1447875197-21645-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-i2c_driver does not need to set an owner because i2c_register_driver()
-will set it.
+On Wed, Nov 18, 2015 at 11:33:17AM -0800, Stephen Boyd wrote:
+> The number of interrupts is always equal to the number of pins
+> provided by the PMIC gpio and MPP hardware blocks. Count the
+> number of irqs to figure out the number of pins instead of adding
+> more compatible strings or doing math on the reg property. This
+> should make the code more generic and ease the number of changes
+> we have to make to the driver for each new pmic revision.
+> 
+> Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>
+> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+This is pretty nice. 
 
----
+Reviewed-by: Andy Gross <agross@codeaurora.org>
 
-The coccinelle script which generated the patch was sent here:
-http://www.spinics.net/lists/kernel/msg2029903.html
----
- drivers/gpio/gpio-adnp.c       | 1 -
- drivers/gpio/gpio-max7300.c    | 1 -
- drivers/gpio/gpio-max732x.c    | 1 -
- drivers/gpio/gpio-mc9s08dz60.c | 1 -
- drivers/gpio/gpio-pcf857x.c    | 1 -
- drivers/gpio/gpio-sx150x.c     | 1 -
- 6 files changed, 6 deletions(-)
-
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index d3d0a90fe542..85223aac8c55 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -547,7 +547,6 @@ MODULE_DEVICE_TABLE(of, adnp_of_match);
- static struct i2c_driver adnp_i2c_driver = {
- 	.driver = {
- 		.name = "gpio-adnp",
--		.owner = THIS_MODULE,
- 		.of_match_table = adnp_of_match,
- 	},
- 	.probe = adnp_i2c_probe,
-diff --git a/drivers/gpio/gpio-max7300.c b/drivers/gpio/gpio-max7300.c
-index 0cc2c279ab5c..1ae9ba851c9a 100644
---- a/drivers/gpio/gpio-max7300.c
-+++ b/drivers/gpio/gpio-max7300.c
-@@ -65,7 +65,6 @@ MODULE_DEVICE_TABLE(i2c, max7300_id);
- static struct i2c_driver max7300_driver = {
- 	.driver = {
- 		.name = "max7300",
--		.owner = THIS_MODULE,
- 	},
- 	.probe = max7300_probe,
- 	.remove = max7300_remove,
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 8c5252c6c327..2eb0f36ca89f 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -749,7 +749,6 @@ static int max732x_remove(struct i2c_client *client)
- static struct i2c_driver max732x_driver = {
- 	.driver = {
- 		.name		= "max732x",
--		.owner		= THIS_MODULE,
- 		.of_match_table	= of_match_ptr(max732x_of_table),
- 	},
- 	.probe		= max732x_probe,
-diff --git a/drivers/gpio/gpio-mc9s08dz60.c b/drivers/gpio/gpio-mc9s08dz60.c
-index d62b4f8182bf..0a1505df3338 100644
---- a/drivers/gpio/gpio-mc9s08dz60.c
-+++ b/drivers/gpio/gpio-mc9s08dz60.c
-@@ -131,7 +131,6 @@ MODULE_DEVICE_TABLE(i2c, mc9s08dz60_id);
- 
- static struct i2c_driver mc9s08dz60_i2c_driver = {
- 	.driver = {
--		.owner = THIS_MODULE,
- 		.name = "mc9s08dz60",
- 	},
- 	.probe = mc9s08dz60_probe,
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 1d4d9bc8b69d..eced5d0432c3 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -447,7 +447,6 @@ static int pcf857x_remove(struct i2c_client *client)
- static struct i2c_driver pcf857x_driver = {
- 	.driver = {
- 		.name	= "pcf857x",
--		.owner	= THIS_MODULE,
- 		.of_match_table = of_match_ptr(pcf857x_of_table),
- 	},
- 	.probe	= pcf857x_probe,
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index 76f920173a2f..9f8d82cb2d31 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -680,7 +680,6 @@ static int sx150x_remove(struct i2c_client *client)
- static struct i2c_driver sx150x_driver = {
- 	.driver = {
- 		.name = "sx150x",
--		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(sx150x_of_match),
- 	},
- 	.probe    = sx150x_probe,
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
