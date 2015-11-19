@@ -1,82 +1,83 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] i2c: imx: make bus recovery through pinctrl optional
-Date: Thu, 19 Nov 2015 09:08:22 +0100
-Message-ID: <20151119080822.GY22022@pengutronix.de>
-References: <1447804979-29550-1-git-send-email-leoli@freescale.com>
- <20151118072437.GS22022@pengutronix.de>
- <CADRPPNQZye7t2biS2Z8p3y7O6=xw4UcOLRC5ngs2Qvuh0UHXGg@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [BISECTED] v4.4-rc1 GPIO regression on OMAP1
+Date: Thu, 19 Nov 2015 13:57:37 +0200
+Message-ID: <564DB931.8090904@ti.com>
+References: <20151117214212.GB18138@blackmetal.musicnaut.iki.fi>
+ <564C75FE.5000303@ti.com>
+ <20151118183106.GC18138@blackmetal.musicnaut.iki.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:57263 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756203AbbKSIIe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Nov 2015 03:08:34 -0500
-Content-Disposition: inline
-In-Reply-To: <CADRPPNQZye7t2biS2Z8p3y7O6=xw4UcOLRC5ngs2Qvuh0UHXGg@mail.gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:45981 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754723AbbKSL6A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 19 Nov 2015 06:58:00 -0500
+In-Reply-To: <20151118183106.GC18138@blackmetal.musicnaut.iki.fi>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Li Yang <leoli@freescale.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, Gao Pan <b54642@freescale.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hello,
+On 11/18/2015 08:31 PM, Aaro Koskinen wrote:
+> Hi,
+> 
+> On Wed, Nov 18, 2015 at 02:58:38PM +0200, Grygorii Strashko wrote:
+>> On 11/17/2015 11:42 PM, Aaro Koskinen wrote:
+>>> Amstrad E3 computer (OMAP1) boot crashes early with v4.4-rc1. Bisected to:
+>>>
+>>> 	450fa54cfd66e3dda6eda26256637ee8928af12a is the first bad commit
+>>> 	commit 450fa54cfd66e3dda6eda26256637ee8928af12a
+>>> 	Author: Grygorii Strashko <grygorii.strashko@ti.com>
+>>> 	Date:   Fri Sep 25 12:28:03 2015 -0700
+>>> 	
+>>> 	    gpio: omap: convert to use generic irq handler
+>>
+>> Could you check pls if below change will solve this issue, pls?
+>>
+>> iff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+>> index 56d2d02..2905e0d 100644
+>> --- a/drivers/gpio/gpio-omap.c
+>> +++ b/drivers/gpio/gpio-omap.c
+>> @@ -1129,7 +1129,7 @@ static int omap_gpio_chip_init(struct gpio_bank *bank,
+>> struct irq_chip *irqc)
+>>          }
+>>
+>>          ret = gpiochip_irqchip_add(&bank->chip, irqc,
+>> -                                  irq_base, handle_bad_irq,
+>> +                                  irq_base, handle_simple_irq,
+>>                                     IRQ_TYPE_NONE);
+> 
 
-Cc +=3D Linus Walleij, linux-gpio
+Thanks for testing it. But I'd like to ask you for more help here if possible :)
+Above change is expected to fix the OMAP1 boot, but looking at the OMAP GPIO code
+I think that MPUIO IRQ are not working :( and this functionality has been broken 
+long time ago - commit "gpio: omap: convert to use generic irq handler" has just 
+made hidden issue visible.
+(I've found only one OMAP1 board which uses MPUIO GPIO as IRQ (board-osk.c)).
 
-On Wed, Nov 18, 2015 at 04:59:11PM -0600, Li Yang wrote:
-> On Wed, Nov 18, 2015 at 1:24 AM, Uwe Kleine-K=F6nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Tue, Nov 17, 2015 at 06:02:59PM -0600, Li Yang wrote:
-> >> @@ -1125,7 +1119,12 @@ static int i2c_imx_probe(struct platform_de=
-vice *pdev)
-> >>               goto clk_disable;
-> >>       }
-> >>
-> >> -     i2c_imx_init_recovery_info(i2c_imx, pdev);
-> >> +     /* optional bus recovery feature through pinctrl */
-> >> +     i2c_imx->pinctrl =3D devm_pinctrl_get(&pdev->dev);
-> >> +     if (IS_ERR_OR_NULL(i2c_imx->pinctrl))
-> >> +             dev_info(&pdev->dev, "can't get pinctrl, bus recover=
-y feature disabled\n");
-> >> +     else
-> >> +             i2c_imx_init_recovery_info(i2c_imx, pdev);
-> >
-> > I'm pretty sure this is wrong. If pinctrl isn't available
-> > devm_pinctrl_get returns NULL? But AFAIK you must not ignore an err=
-or,
-> > so the better thing to do is:
->=20
-> If CONFIG_PINCTRL is not enabled, the devm_pinctrl_get() will return
-> NULL directly as defined in the include/linux/pinctrl/consumer.h.
->=20
-> If CONFIG_PINCTRL is enabled because we are using a multi-platform
-> image but the actual hardware used doesn't have a pinctrl driver or
-> pinctrl device tree nodes.  It is expected that the devm_pinctrl_get(=
-)
-> will return error.  But as the pinctrl is only used for bus recovery
-> which is just an optional function of this driver.  We shouldn't
-> bailout the probe but keep the driver working without the bus recover=
-y
-> function.  As for generic errors like (!dev) or out-of-memory, the
-> probe will fail elsewhere anyway.
+So, could I ask you to test another change instead of previous one?
 
-IMHO you shouldn't ignore -ENOMEM from devm_pinctrl_get but just the
-case for "there was no pinctrl specified in dt". Also consider the i2c
-driver is loaded before the pinctrl driver and devm_pinctrl_get returns
--EPROBE_DEFER (I assume it does, didn't check), this should be handled.
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1122,8 +1122,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+        /* MPUIO is a bit different, reading IRQ status clears it */
+        if (bank->is_mpuio) {
+                irqc->irq_ack = dummy_irq_chip.irq_ack;
+-               irqc->irq_mask = irq_gc_mask_set_bit;
+-               irqc->irq_unmask = irq_gc_mask_clr_bit;
+                if (!bank->regs->wkup_en)
+                        irqc->irq_set_wake = NULL;
+        }
 
-Best regards
-Uwe
+In my opinion real test will be
+- request(any MPUIO GPIO IRQ, IRQF_TRIGGER_LOW/HIGH), 
+- trigger MPUIO GPIO IRQ
+- free(MPUIO GPIO IRQ)
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+regards,
+-grygorii
