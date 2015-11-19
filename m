@@ -1,54 +1,65 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the
- SoC header files
-Date: Wed, 18 Nov 2015 16:23:10 -0800
-Message-ID: <20151119002310.GF2517@atomide.com>
-References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
- <1447390457-1158-2-git-send-email-javier@osg.samsung.com>
- <CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
- <564B30B1.4050902@osg.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH] pinctrl: bcm2835: Fix initial value for direction_output
+Date: Thu, 19 Nov 2015 00:32:27 +0000
+Message-ID: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47612 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755766AbbKSAXP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 18 Nov 2015 19:23:15 -0500
-Content-Disposition: inline
-In-Reply-To: <564B30B1.4050902@osg.samsung.com>
+Received: from mout.kundenserver.de ([217.72.192.74]:58590 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756310AbbKSAjO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Nov 2015 19:39:14 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Javier Martinez Canillas <javier@osg.samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>, Martin Sperl <kernel@martin.sperl.org>
 
-* Javier Martinez Canillas <javier@osg.samsung.com> [151117 05:51]:
-> Hello Linus,
-> 
-> On 11/17/2015 10:47 AM, Linus Walleij wrote:
-> > On Fri, Nov 13, 2015 at 5:53 AM, Javier Martinez Canillas
-> > <javier@osg.samsung.com> wrote:
-> > 
-> >> The <dt-bindings/pinctrl/omap.h> header file defines a set of macros
-> >> for different SoCs families that falls under the OMAP sub-arch, that
-> >> allow to define the padconf register physical address instead of the
-> >> register offset from the padconf base.
-> >>
-> >> But the am43xx and dra7xx SoCs families have their own pinctrl header
-> >> file so the DTS using these SoCs aren't able to use the AM4372_IOPAD()
-> >> and DRA7XX_CORE_IOPAD() macros since <dt-bindings/pinctrl/omap.h> is
-> >> not included.
-> >>
-> >> Move the macros to the correct header files so can be used by the DTS.
-> >>
-> >> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
-> > 
-> > I need Tony's ACK on this.
-> >
-> 
-> OK, I believe he was waiting for yours to pick the series though ;)
+Currently the provided initial value for bcm2835_gpio_direction_output
+has no effect. So fix this issue by changing the value before
+changing the GPIO direction. As a result we need to move the function below
+bcm2835_gpio_set.
 
-Yeah probably best to keep this series together if you're OK with that.
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+CC: Martin Sperl <kernel@martin.sperl.org>
+CC: Stephen Warren <swarren@wwwdotorg.org>
+---
 
-Regards,
+This patch was inspired by this discussion [1].
 
-Tony
+[1] - http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-April/001499.html
+
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 8efa235..fd1441b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -352,12 +352,6 @@ static int bcm2835_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return bcm2835_gpio_get_bit(pc, GPLEV0, offset);
+ }
+ 
+-static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
+-		unsigned offset, int value)
+-{
+-	return pinctrl_gpio_direction_output(chip->base + offset);
+-}
+-
+ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
+@@ -365,6 +359,13 @@ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	bcm2835_gpio_set_bit(pc, value ? GPSET0 : GPCLR0, offset);
+ }
+ 
++static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
++		unsigned offset, int value)
++{
++	bcm2835_gpio_set(chip, offset, value);
++	return pinctrl_gpio_direction_output(chip->base + offset);
++}
++
+ static int bcm2835_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
+-- 
+1.7.9.5
+
