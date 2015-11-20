@@ -1,90 +1,85 @@
-From: Pramod Kumar <pramodku@broadcom.com>
-Subject: RE: [PATCH v2 6/7] Documentation: Rename gpio controller name from
- cygnus to iproc
-Date: Fri, 20 Nov 2015 17:03:56 +0000
-Message-ID: <0C803592FC378B4E83922050AB46442A2ADA021F@SJEXCHMB10.corp.ad.broadcom.com>
-References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com>
- <1447905139-16002-7-git-send-email-pramodku@broadcom.com>
- <20151120153437.GA7645@rob-hp-laptop>
+From: santosh shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [4.4-rc][PATCH] gpio: omap: drop omap1 mpuio specific
+ irq_mask/unmask callbacks
+Date: Fri, 20 Nov 2015 09:25:08 -0800
+Message-ID: <564F5774.2020404@oracle.com>
+References: <1448026514-21294-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw1-out.broadcom.com ([216.31.210.62]:35369 "EHLO
-	mail-gw1-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759664AbbKTRD7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 12:03:59 -0500
-In-Reply-To: <20151120153437.GA7645@rob-hp-laptop>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1448026514-21294-1-git-send-email-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, tony@atomide.com
+Cc: ssantosh@kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonas Gorski <jogo@openwrt.org>
 
-Hi Rob,
-
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: 20 November 2015 21:05
-> To: Pramod Kumar
-> Cc: Pawel Moll; Mark Rutland; Ian Campbell; Kumar Gala; Ray Jui; Scott Branden;
-> Russell King; Linus Walleij; linux-gpio@vger.kernel.org; bcm-kernel-feedback-
-> list; Jason Uy; Masahiro Yamada; Thomas Gleixner; Laurent Pinchart;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Jonas Gorski
-> Subject: Re: [PATCH v2 6/7] Documentation: Rename gpio controller name from
-> cygnus to iproc
-> 
-> On Thu, Nov 19, 2015 at 09:22:18AM +0530, Pramod Kumar wrote:
-> > Renamed gpio controller's driver name from cygnus to iproc to make it
-> > more generic so that all iProc based SoCs having the same gpio
-> > controller could use this.
-> >
-> > Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-> > Reviewed-by: Ray Jui <rjui@broadcom.com>
-> > Reviewed-by: Scott Branden <sbranden@broadcom.com>
-> 
-> Where's my ack?
-
-Somehow it got missed. I'm sincerely apologetic for it. Will add it.  
-
-Regards,
-Pramod
-> 
-> > ---
-> >  .../bindings/pinctrl/{brcm,cygnus-gpio.txt => brcm,iproc-gpio.txt}    | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)  rename
-> > Documentation/devicetree/bindings/pinctrl/{brcm,cygnus-gpio.txt =>
-> > brcm,iproc-gpio.txt} (97%)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> > b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> > similarity index 97%
-> > rename from
-> > Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> > rename to
-> > Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> > index 8b1e5d1..e427792 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> > +++ b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> > @@ -1,4 +1,4 @@
-> > -Broadcom Cygnus GPIO/PINCONF Controller
-> > +Broadcom iProc GPIO/PINCONF Controller
-> >
-> >  Required properties:
-> >
-> > @@ -7,7 +7,7 @@ Required properties:
-> >      "brcm,cygnus-crmu-gpio" or "brcm,iproc-gpio"
-> >
-> >  - reg:
-> > -    Define the base and range of the I/O address space that contains the
-> Cygnus
-> > +    Define the base and range of the I/O address space that contains
-> > + SoC
-> >  GPIO/PINCONF controller registers
-> >
-> >  - ngpios:
-> > --
-> > 1.9.1
-> >
+On 11/20/2015 5:35 AM, Grygorii Strashko wrote:
+> Originally OMAP MPUIO GPIO irqchip was implemented using Generic irq
+> chip, but after set of reworks Generic irq chip code was replaced by
+> common OMAP GPIO implementation and finally removed by
+> commit d2d05c65c40e ("gpio: omap: Fix regression for MPUIO interrupts").
+> Unfortunately, above commit left .irq_mask/unmask callbacks assigned
+> as below for MPUIO GPIO case:
+> 	irqc->irq_mask = irq_gc_mask_set_bit;
+> 	irqc->irq_unmask = irq_gc_mask_clr_bit;
+>
+> This now causes boot failure on OMAP1 platforms, after
+> commit 450fa54cfd66 ("gpio: omap: convert to use generic irq handler")
+> which forces these callbacks to be called during GPIO IRQs mapping
+> from gpiochip_irq_map:
+>
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> pgd = c0004000
+> [00000000] *pgd=00000000
+> Internal error: Oops: 75 [#1] ARM
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 4.4.0-rc1-e3-los_afe0c+-00002-g25379c0-dirty #1
+> Hardware name: Amstrad E3 (Delta)
+> task: c1836000 ti: c1838000 task.ti: c1838000
+> PC is at irq_gc_mask_set_bit+0x1c/0x60
+> LR is at __irq_do_set_handler+0x118/0x15c
+> pc : [<c004848c>]    lr : [<c0047d4c>]    psr: 600000d3
+> sp : c1839c90  ip : c1862c64  fp : c1839c9c
+> r10: 00000000  r9 : c0411950  r8 : c0411bbc
+> r7 : 00000000  r6 : c185c310  r5 : c00444e8  r4 : c185c300
+> r3 : c1854b50  r2 : 00000000  r1 : 00000000  r0 : c185c310
+> Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
+> Control: 0000317f  Table: 10004000  DAC: 00000057
+> Process swapper (pid: 1, stack limit = 0xc1838190)
+> Stack: (0xc1839c90 to 0xc183a000)
+>
+> [...]
+>
+> Backtrace:
+> [<c0048470>] (irq_gc_mask_set_bit) from [<c0047d4c>] (__irq_do_set_handler+0x118/0x15c)
+> [<c0047c34>] (__irq_do_set_handler) from [<c0047dd4>] (__irq_set_handler+0x44/0x5c)
+>   r6:00000000 r5:c00444e8 r4:c185c300
+> [<c0047d90>] (__irq_set_handler) from [<c0047e1c>] (irq_set_chip_and_handler_name+0x30/0x34)
+>   r7:00000050 r6:00000000 r5:c00444e8 r4:00000050
+> [<c0047dec>] (irq_set_chip_and_handler_name) from [<c01b345c>] (gpiochip_irq_map+0x3c/0x8c)
+>   r7:00000050 r6:00000000 r5:00000050 r4:c1862c64
+> [<c01b3420>] (gpiochip_irq_map) from [<c0049670>] (irq_domain_associate+0x7c/0x1c4)
+>   r5:c185c310 r4:c185cb00
+> [<c00495f4>] (irq_domain_associate) from [<c0049894>] (irq_domain_add_simple+0x98/0xc0)
+>   r8:c0411bbc r7:c185cb00 r6:00000050 r5:00000010 r4:00000001
+> [<c00497fc>] (irq_domain_add_simple) from [<c01b3328>] (_gpiochip_irqchip_add+0x64/0x10c)
+>   r7:c1862c64 r6:c0419280 r5:c1862c64 r4:c1854b50
+> [<c01b32c4>] (_gpiochip_irqchip_add) from [<c01b79f4>] (omap_gpio_probe+0x2fc/0x63c)
+>   r5:c1854b50 r4:c1862c10
+> [<c01b76f8>] (omap_gpio_probe) from [<c01fcf58>] (platform_drv_probe+0x2c/0x64)
+>   r10:00000000 r9:c03e45e8 r8:00000000 r7:c0419294 r6:c0411984 r5:c0419294
+>   r4:c0411950
+> [<c01fcf2c>] (platform_drv_probe) from [<c01fb668>] (really_probe+0x160/0x29c)
+>
+> Hence, fix it by remove obsolete callbacks assignment. After this
+> change 	omap_gpio_mask_irq()/omap_gpio_unmask_irq() will be used
+> for MPUIO IRQs masking, but this now happens anyway from
+> omap_gpio_irq_startup/shutdown().
+>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Fixes: commit d2d05c65c40e ("gpio: omap: Fix regression for MPUIO interrupts")
+> Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
