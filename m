@@ -1,70 +1,67 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
-Date: Fri, 20 Nov 2015 16:16:15 +0900
-Message-ID: <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
-References: <20151117031832.24924.60685.sendpatchset@little-apple>
-	<2997631.z1xUhmAZzM@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/3] gpio: 74xx: fix a possible NULL dereference
+Date: Fri, 20 Nov 2015 10:22:02 +0100
+Message-ID: <CAMuHMdVpVbEDgLcey2BhBpkKjfOLa9PaR6khx4bD_ryr1zrNrg@mail.gmail.com>
+References: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f175.google.com ([209.85.160.175]:34919 "EHLO
-	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754165AbbKTHQQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 02:16:16 -0500
-In-Reply-To: <2997631.z1xUhmAZzM@avalon>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33999 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161167AbbKTJWE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 04:22:04 -0500
+In-Reply-To: <1447273657-1668-1-git-send-email-clabbe.montjoie@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, geert@glider.be
+To: LABBE Corentin <clabbe.montjoie@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Laurent,
-
-On Fri, Nov 20, 2015 at 11:46 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> Hi Magnus,
+On Wed, Nov 11, 2015 at 9:27 PM, LABBE Corentin
+<clabbe.montjoie@gmail.com> wrote:
+> of_match_device could return NULL, and so cause a NULL pointer
+> dereference later at line 132:
+> priv->flags = (uintptr_t) of_id->data;
 >
-> Thank you for the patch.
+> Reported-by: coverity (CID 1324141)
+
+This is a DT-only driver, hence this cannot happen?
+
+> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+> ---
+>  drivers/gpio/gpio-74xx-mmio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
-> On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
->> pinctrl: sh-pfc: r8a7794: DU support
->>
->> [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
->> [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
->> [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
->> [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
->>
->> These patches take the r8a7794 PFC DU support code from the BSP
->> and reworks it to fit the r8a7794 ALT board. Tested with the ALT
->> VGA port - by default PFC is not used however enabling PFC using
->> an incremental (yet to be posted) patch works well.
->>
->> It is worth noting that patch 2-4 modifies the pin groups. This
->> means that the upstream DT ABI for PFC DU will differ compared
->> to the unreviewed BSP code.
->>
->> In general it is not considered good practice to change the pin
->> groups and break compatibility since they are part of the DT ABI.
->>
->> For this particular case upstream never have had PFC DU support
->> for r8a7794, so treating the BSP bindings as experimental and
->> migrate away seems reasonable.
+> diff --git a/drivers/gpio/gpio-74xx-mmio.c b/drivers/gpio/gpio-74xx-mmio.c
+> index 6ed7c0f..6b18682 100644
+> --- a/drivers/gpio/gpio-74xx-mmio.c
+> +++ b/drivers/gpio/gpio-74xx-mmio.c
+> @@ -113,13 +113,16 @@ static int mmio_74xx_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
 >
-> If we start considering DT bindings that never went upstream as stable we'll
-> have a big problem. I mean even bigger than the upstream DT bindings stability
-> problem :-)
-
-I'm not saying that local DT hacks should be considered stable, more
-that it as usual makes sense to follow upstream first with proper DT
-review process early on.
-
->> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>  static int mmio_74xx_gpio_probe(struct platform_device *pdev)
+>  {
+> -       const struct of_device_id *of_id =
+> -               of_match_device(mmio_74xx_gpio_ids, &pdev->dev);
+> +       const struct of_device_id *of_id;
+>         struct mmio_74xx_gpio_priv *priv;
+>         struct resource *res;
+>         void __iomem *dat;
+>         int err;
 >
-> Wouldn't it make sense to merge the 4 patches together ?
+> +       of_id = of_match_device(mmio_74xx_gpio_ids, &pdev->dev);
+> +       if (!of_id)
+> +               return -ENODEV;
+> +
+>         priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 return -ENOMEM;
 
-Yeah, I guess so. My feeling is also that it would be good to verify
-HDMI on ALT before commiting to DT bindings. Right now only one DU
-channel is tested.
+Gr{oetje,eeting}s,
 
-Cheers,
+                        Geert
 
-/ magnus
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
