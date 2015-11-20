@@ -1,66 +1,65 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
-Date: Fri, 20 Nov 2015 16:53:10 +0200
-Message-ID: <7175557.3oSik5Zhyq@avalon>
-References: <20151117031832.24924.60685.sendpatchset@little-apple> <2997631.z1xUhmAZzM@avalon> <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-binding: Add ngpios property to GPIO
+ controller node
+Date: Fri, 20 Nov 2015 09:33:09 -0600
+Message-ID: <20151120153309.GA4944@rob-hp-laptop>
+References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com>
+ <1447905139-16002-2-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Magnus Damm <magnus.damm@gmail.com>
-Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, geert@glider.be
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1447905139-16002-2-git-send-email-pramodku@broadcom.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pramod Kumar <pramodku@broadcom.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas Gorski <jogo@openwrt.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Magnus,
-
-On Friday 20 November 2015 16:16:15 Magnus Damm wrote:
-> On Fri, Nov 20, 2015 at 11:46 AM, Laurent Pinchart wrote:
-> > On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
-> >> pinctrl: sh-pfc: r8a7794: DU support
-> >> 
-> >> [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
-> >> [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
-> >> [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
-> >> [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
-> >> 
-> >> These patches take the r8a7794 PFC DU support code from the BSP
-> >> and reworks it to fit the r8a7794 ALT board. Tested with the ALT
-> >> VGA port - by default PFC is not used however enabling PFC using
-> >> an incremental (yet to be posted) patch works well.
-> >> 
-> >> It is worth noting that patch 2-4 modifies the pin groups. This
-> >> means that the upstream DT ABI for PFC DU will differ compared
-> >> to the unreviewed BSP code.
-> >> 
-> >> In general it is not considered good practice to change the pin
-> >> groups and break compatibility since they are part of the DT ABI.
-> >> 
-> >> For this particular case upstream never have had PFC DU support
-> >> for r8a7794, so treating the BSP bindings as experimental and
-> >> migrate away seems reasonable.
-> > 
-> > If we start considering DT bindings that never went upstream as stable
-> > we'll have a big problem. I mean even bigger than the upstream DT
-> > bindings stability problem :-)
+On Thu, Nov 19, 2015 at 09:22:13AM +0530, Pramod Kumar wrote:
+> Add ngpios property to the gpio controller's DT node so that controller
+> driver extracts total number of in-use gpio lines from DT and removes
+> dependency on driver.
 > 
-> I'm not saying that local DT hacks should be considered stable, more
-> that it as usual makes sense to follow upstream first with proper DT
-> review process early on.
+> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
+> Reviewed-by: Ray Jui <rjui@broadcom.com>
+> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+> ---
+>  Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> > 
-> > Wouldn't it make sense to merge the 4 patches together ?
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+> index 16589fb6..8b1e5d1 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
+> @@ -10,6 +10,9 @@ Required properties:
+>      Define the base and range of the I/O address space that contains the Cygnus
+>  GPIO/PINCONF controller registers
+>  
+> +- ngpios:
+> +    Total number of in-use slots in GPIO controller
+> +
+>  - #gpio-cells:
+>      Must be two. The first cell is the GPIO pin number (within the
+>  controller's pin space) and the second cell is used for the following:
+> @@ -57,6 +60,7 @@ Example:
+>  		compatible = "brcm,cygnus-ccm-gpio";
+>  		reg = <0x1800a000 0x50>,
+>  		      <0x0301d164 0x20>;
+> +		ngpios = <24>;
+>  		#gpio-cells = <2>;
+>  		gpio-controller;
+>  		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> @@ -78,6 +82,7 @@ Example:
+>  	gpio_asiu: gpio@180a5000 {
+>  		compatible = "brcm,cygnus-asiu-gpio";
+>  		reg = <0x180a5000 0x668>;
+> +		ngpios = <146>;
+>  		#gpio-cells = <2>;
+>  		gpio-controller;
+>  		interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+> -- 
+> 1.9.1
 > 
-> Yeah, I guess so. My feeling is also that it would be good to verify
-> HDMI on ALT before commiting to DT bindings. Right now only one DU
-> channel is tested.
-
-I agree with that.
-
--- 
-Regards,
-
-Laurent Pinchart
-
