@@ -1,83 +1,167 @@
-From: Li Yang <leoli@freescale.com>
-Subject: Re: [PATCH] i2c: imx: make bus recovery through pinctrl optional
-Date: Fri, 20 Nov 2015 12:04:44 -0600
-Message-ID: <CADRPPNSVhpQCScw8J4EMPhcAF_j6b2_DmDw0wXORcNsbitn12w@mail.gmail.com>
-References: <1447804979-29550-1-git-send-email-leoli@freescale.com>
-	<20151118072437.GS22022@pengutronix.de>
-	<CADRPPNQZye7t2biS2Z8p3y7O6=xw4UcOLRC5ngs2Qvuh0UHXGg@mail.gmail.com>
-	<20151119080822.GY22022@pengutronix.de>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH 1/4] dt-bindings: gpio: update desription of LPC32xx GPIO
+ controller
+Date: Fri, 20 Nov 2015 20:27:35 +0200
+Message-ID: <564F6617.6090104@mleia.com>
+References: <1447982995-30231-1-git-send-email-vz@mleia.com> <1447982995-30231-2-git-send-email-vz@mleia.com> <20151120141354.GA25446@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:32948 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759881AbbKTSEq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 13:04:46 -0500
-In-Reply-To: <20151119080822.GY22022@pengutronix.de>
+Received: from mleia.com ([178.79.152.223]:45066 "EHLO mail.mleia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1161676AbbKTS1i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 20 Nov 2015 13:27:38 -0500
+In-Reply-To: <20151120141354.GA25446@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, lkml <linux-kernel@vger.kernel.org>, Gao Pan <b54642@freescale.com>, linux-gpio@vger.kernel.org, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Thu, Nov 19, 2015 at 2:08 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello,
->
-> Cc +=3D Linus Walleij, linux-gpio
->
-> On Wed, Nov 18, 2015 at 04:59:11PM -0600, Li Yang wrote:
->> On Wed, Nov 18, 2015 at 1:24 AM, Uwe Kleine-K=C3=B6nig
->> <u.kleine-koenig@pengutronix.de> wrote:
->> > On Tue, Nov 17, 2015 at 06:02:59PM -0600, Li Yang wrote:
->> >> @@ -1125,7 +1119,12 @@ static int i2c_imx_probe(struct platform_d=
-evice *pdev)
->> >>               goto clk_disable;
->> >>       }
->> >>
->> >> -     i2c_imx_init_recovery_info(i2c_imx, pdev);
->> >> +     /* optional bus recovery feature through pinctrl */
->> >> +     i2c_imx->pinctrl =3D devm_pinctrl_get(&pdev->dev);
->> >> +     if (IS_ERR_OR_NULL(i2c_imx->pinctrl))
->> >> +             dev_info(&pdev->dev, "can't get pinctrl, bus recove=
-ry feature disabled\n");
->> >> +     else
->> >> +             i2c_imx_init_recovery_info(i2c_imx, pdev);
->> >
->> > I'm pretty sure this is wrong. If pinctrl isn't available
->> > devm_pinctrl_get returns NULL? But AFAIK you must not ignore an er=
-ror,
->> > so the better thing to do is:
+On 20.11.2015 16:13, Rob Herring wrote:
+> On Fri, Nov 20, 2015 at 03:29:52AM +0200, Vladimir Zapolskiy wrote:
+>> For the purpose of better description of NXP LPC32xx GPIO controller
+>> hardware in device tree format, extend the existing description with
+>> device tree subnodes, which represent 6 GPIO banks within the
+>> controller.
 >>
->> If CONFIG_PINCTRL is not enabled, the devm_pinctrl_get() will return
->> NULL directly as defined in the include/linux/pinctrl/consumer.h.
+>> Note, client interface to the GPIO controller is untouched.
 >>
->> If CONFIG_PINCTRL is enabled because we are using a multi-platform
->> image but the actual hardware used doesn't have a pinctrl driver or
->> pinctrl device tree nodes.  It is expected that the devm_pinctrl_get=
-()
->> will return error.  But as the pinctrl is only used for bus recovery
->> which is just an optional function of this driver.  We shouldn't
->> bailout the probe but keep the driver working without the bus recove=
-ry
->> function.  As for generic errors like (!dev) or out-of-memory, the
->> probe will fail elsewhere anyway.
->
-> IMHO you shouldn't ignore -ENOMEM from devm_pinctrl_get but just the
-> case for "there was no pinctrl specified in dt". Also consider the i2=
-c
-> driver is loaded before the pinctrl driver and devm_pinctrl_get retur=
-ns
-> -EPROBE_DEFER (I assume it does, didn't check), this should be handle=
-d.
+>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+>> ---
+>>  .../devicetree/bindings/gpio/gpio_lpc32xx.txt      | 121 ++++++++++++++++++++-
+>>  1 file changed, 120 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+>> index 4981936..d2da63c 100644
+>> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+>> @@ -15,7 +15,43 @@ Required properties:
+>>     2) pin number
+>>     3) optional parameters:
+>>        - bit 0 specifies polarity (0 for normal, 1 for inverted)
+>> -- reg: Index of the GPIO group
+>> +- #address-cells: should be 2, which stands for GPIO bank id and
+>> +  physical base address of this GPIO bank.
+> 
+> Now you need special code to do address translation. I'd really think 
+> twice about doing this.
 
-Make sense.   -EPROBE_DEFER should be honored.  Maybe it's good to
-check the -ENOMEM too.  I will send a new version.
+Correct, address translation code is needed here...
 
-Thanks,
-Leo
+> Why do you need the bank number?
+
+Only one reason -- backward compatibility in sense of referencing a GPIO
+line on client's side. This API design is broken, I agree.
+
+Honestly I would prefer to get rid of this "feature", new code allows to
+reference on client's side either a parent GPIO controller device node,
+or bank nodes, probably the improvement can be done in a few steps?
+
+  - this change,
+  - convert clients to reference a GPIO bank directly,
+  - remove root GPIO controller (e.g. make it "simple-bus") and convert
+GPIO banks to "gpio-controller"s.
+
+Can an evolution like this happen?
+
+>> +- #size-cells: should be 1, total size of GPIO bank registers.
+>> +
+>> +The NXP LPC32xx SoC GPIO controller device node must contain a list
+>> +of device nodes representing GPIO banks and their descriptions.
+>> +
+>> +The format of subnodes should follow the description below.
+>> +
+>> +Required properties:
+>> +- reg: should contain 3 integer values:
+>> +   1) GPIO bank id from 0 to 5,
+>> +   2) physical base address of this GPIO bank,
+>> +   3) total size of the GPIO bank registers.
+>> +
+>> +Optional properties:
+>> +- gpio-bank-name: human readable name of a GPIO bank,
+>> +- gpio-no-output-state: property of P2 bank, which has special,
+>> +  mapping of its control registers,
+>> +- gpio-offset: property of P3/GPIO bank, offset of bits representing
+>> +  GPIO lines in output and direction registers,
+> 
+> Seems like nr-gpios should have been a mask instead...
+> 
+>> +- gpios: number of GPIO lines per GPIO bank, if this property is
+>> +  omitted, then gpio-input-mask must be present,
+> 
+> "gpios" is already the property name for the client interface.
+> 
+>> +- gpio-input-mask: should contain two bitmasks, the first bitmask is
+>> +  the mapping of GPIO lines to input status register, the second
+>> +  bitmask should be a subset of the first bitmask and it represents
+>> +  input GPIO lines, which may serve as an interrupt source,
+>> +  if gpio-input-mask roperty is omitted, gpios property should be
+>> +  present,
+>> +- interrupts: list of parent interrupts mapped to input GPIO lines,
+>> +- interrupts-extended: list of parent interrupts mapped to input GPIO
+>> +  lines, used if parent interrupts are provided by more than one
+>> +  interrupt controller, this option is used by GPI bank,
+>> +- interrupt-controller: indicates that GPIO bank may serve as an
+>> +  interrupt controller,
+>> +- #interrupt-cells: if interrupt-controller property is present,
+>> +  it should be 2, interrupt id and its flags.
+>>  
+>>  Example:
+>>  
+>> @@ -24,6 +60,89 @@ Example:
+>>  		reg = <0x40028000 0x1000>;
+>>  		gpio-controller;
+>>  		#gpio-cells = <3>; /* bank, pin, flags */
+> 
+> Can't bank and pin be encoded into one cell as the gpio core binding 
+> suggests.
+
+Please see the comment above, the proposed change does not modify this
+legacy part.
+
+>> +
+>> +		ranges = <0 0x0 0x40028000 0x00001000>,
+>> +			 <1 0x0 0x40028000 0x00001000>,
+>> +			 <2 0x0 0x40028000 0x00001000>,
+>> +			 <3 0x0 0x40028000 0x00001000>,
+>> +			 <4 0x0 0x40028000 0x00001000>,
+>> +			 <5 0x0 0x40028000 0x00001000>;
+>> +		#address-cells = <2>;
+>> +		#size-cells = <1>;
+>> +
+>> +		gpio_p0: gpio-controller@0 {
+>> +			reg = <0 0x40 0x1C>;
+>> +			gpio-bank-name = "p0";
+>> +			gpios = <8>;
+>> +
+>> +			interrupt-parent = <&sic2>;
+>> +			interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
+>> +		};
+>> +
+>> +		gpio_p1: gpio-controller@1 {
+>> +			reg = <1 0x60 0x1C>;
+>> +			gpio-bank-name = "p1";
+>> +			gpios = <24>;
+>> +
+>> +			interrupt-parent = <&sic2>;
+>> +			interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
+>> +		};
+>> +
+>> +		gpio_p2: gpio-controller@2 {
+>> +			reg = <2 0x10 0x18>;
+>> +			gpio-bank-name = "p2";
+>> +			gpios = <13>;
+>> +			gpio-no-output-state;
+>> +		};
+>> +
+>> +		gpio_gpio: gpio-controller@3 {
+>> +			reg = <3 0x00 0x1C>;
+> 
+> This overlaps with bank 2.
+
+Yes, it is. Thousand thanks to hardware designers.
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With best wishes,
+Vladimir
