@@ -1,612 +1,632 @@
-From: Matthew McClintock <mmcclint@qca.qualcomm.com>
-Subject: [PATCH v3 1/6] pinctrl: qcom: ipq4019: Add IPQ4019 pinctrl support
-Date: Thu, 19 Nov 2015 17:19:28 -0600
-Message-ID: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
-References: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1447975173-29485-1-git-send-email-mmcclint@qca.qualcomm.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Varadarajan Narayanan <varada@codeaurora.org>, linux-kernel@vger.kernel.org, qca-upstream.external@qca.qualcomm.com, Sricharan R <sricharan@codeaurora.org>, Mathieu Olivari <mathieu@codeaurora.org>, Matthew McClintock <mmcclint@codeaurora.org>
+From: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 3/4] gpio: lpc32xx: remove legacy LPC32xx GPIO driver
+Date: Fri, 20 Nov 2015 03:29:54 +0200
+Message-ID: <1447982995-30231-4-git-send-email-vz@mleia.com>
+References: <1447982995-30231-1-git-send-email-vz@mleia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447982995-30231-1-git-send-email-vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Roland Stigge <stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Varadarajan Narayanan <varada@codeaurora.org>
+Legacy GPIO controller driver for NXP LPC32xx platforms depends on
+hardcoded hardware interrupt values, which makes it unmaintainable
+with newer interrupt controller features like custom platform irq
+handler, dynamic allocation of virtual irqs and sparse irqs.
 
-Add pinctrl driver support for IPQ4019 platform
+The legacy LPX32xx interrupt controller and as a result this legacy
+GPIO controller driver are broken since commit 76ba59f8366f2 ("genirq:
+Add irq_domain-aware core IRQ handler"), the driver will be replaced
+by a new version compatible with current GPIO client device tree
+interface.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
+Signed-off-by: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
 ---
+ drivers/gpio/Makefile       |   1 -
+ drivers/gpio/gpio-lpc32xx.c | 577 --------------------------------------------
+ 2 files changed, 578 deletions(-)
+ delete mode 100644 drivers/gpio/gpio-lpc32xx.c
 
-v3
-- update example with actual values from dts
-- add missing pins 71-99
-- drop many functions and stick to basic functionality
-
-v2
-- add a note in the device tree binding about the TLMM block
-
- .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt      |  74 ++++
- drivers/pinctrl/qcom/Kconfig                       |   8 +
- drivers/pinctrl/qcom/Makefile                      |   1 +
- drivers/pinctrl/qcom/pinctrl-ipq4019.c             | 454 +++++++++++++++++++++
- 4 files changed, 537 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
- create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq4019.c
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
-new file mode 100644
-index 0000000..cfb8500
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
-@@ -0,0 +1,74 @@
-+Qualcomm Atheros IPQ4019 TLMM block
-+
-+This is the Top Level Mode Multiplexor block found on the Qualcomm IPQ8019
-+platform, it provides pinctrl, pinmux, pinconf, and gpiolib facilities.
-+
-+Required properties:
-+- compatible: "qcom,ipq4019-pinctrl"
-+- reg: Should be the base address and length of the TLMM block.
-+- interrupts: Should be the parent IRQ of the TLMM block.
-+- interrupt-controller: Marks the device node as an interrupt controller.
-+- #interrupt-cells: Should be two.
-+- gpio-controller: Marks the device node as a GPIO controller.
-+- #gpio-cells : Should be two.
-+                The first cell is the gpio pin number and the
-+                second cell is used for optional parameters.
-+
-+Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
-+a general description of GPIO and interrupt bindings.
-+
-+Please refer to pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the meaning of the
-+phrase "pin configuration node".
-+
-+The pin configuration nodes act as a container for an abitrary number of
-+subnodes. Each of these subnodes represents some desired configuration for a
-+pin, a group, or a list of pins or groups. This configuration can include the
-+mux function to select on those pin(s)/group(s), and various pin configuration
-+parameters, such as pull-up, drive strength, etc.
-+
-+The name of each subnode is not important; all subnodes should be enumerated
-+and processed purely based on their content.
-+
-+Each subnode only affects those parameters that are explicitly listed. In
-+other words, a subnode that lists a mux function but no pin configuration
-+parameters implies no information about any pin configuration parameters.
-+Similarly, a pin subnode that describes a pullup parameter implies no
-+information about e.g. the mux function.
-+
-+
-+The following generic properties as defined in pinctrl-bindings.txt are valid
-+to specify in a pin configuration subnode:
-+ pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength.
-+
-+Non-empty subnodes must specify the 'pins' property.
-+Note that not all properties are valid for all pins.
-+
-+
-+Valid values for qcom,pins are:
-+  gpio0-gpio99
-+    Supports mux, bias and drive-strength
-+
-+Valid values for qcom,function are:
-+gpio, blsp_uart1, blsp_i2c0, blsp_i2c1, blsp_uart0, blsp_spi1, blsp_spi0
-+
-+Example:
-+
-+	tlmm: pinctrl@1000000 {
-+		compatible = "qcom,ipq4019-pinctrl";
-+		reg = <0x1000000 0x300000>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupts = <0 208 0>;
-+
-+		serial_pins: serial_pinmux {
-+			mux {
-+				pins = "gpio60", "gpio61";
-+				function = "blsp_uart0";
-+				bias-disable;
-+			};
-+		};
-+	};
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 383263a..6b898ef 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -23,6 +23,14 @@ config PINCTRL_APQ8084
- 	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
- 	  Qualcomm TLMM block found in the Qualcomm APQ8084 platform.
- 
-+config PINCTRL_IPQ4019
-+	tristate "Qualcomm IPQ4019 pin controller driver"
-+	depends on GPIOLIB && OF
-+	select PINCTRL_MSM
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm TLMM block found in the Qualcomm IPQ4019 platform.
-+
- config PINCTRL_IPQ8064
- 	tristate "Qualcomm IPQ8064 pin controller driver"
- 	depends on GPIOLIB && OF
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 13b190e..fb9a991 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -2,6 +2,7 @@
- obj-$(CONFIG_PINCTRL_MSM)	+= pinctrl-msm.o
- obj-$(CONFIG_PINCTRL_APQ8064)	+= pinctrl-apq8064.o
- obj-$(CONFIG_PINCTRL_APQ8084)	+= pinctrl-apq8084.o
-+obj-$(CONFIG_PINCTRL_IPQ4019)	+= pinctrl-ipq4019.o
- obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
- obj-$(CONFIG_PINCTRL_MSM8660)	+= pinctrl-msm8660.o
- obj-$(CONFIG_PINCTRL_MSM8960)	+= pinctrl-msm8960.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-new file mode 100644
-index 0000000..122bfab
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-@@ -0,0 +1,454 @@
-+/*
-+ * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-msm.h"
-+
-+static const struct pinctrl_pin_desc ipq4019_pins[] = {
-+	PINCTRL_PIN(0, "GPIO_0"),
-+	PINCTRL_PIN(1, "GPIO_1"),
-+	PINCTRL_PIN(2, "GPIO_2"),
-+	PINCTRL_PIN(3, "GPIO_3"),
-+	PINCTRL_PIN(4, "GPIO_4"),
-+	PINCTRL_PIN(5, "GPIO_5"),
-+	PINCTRL_PIN(6, "GPIO_6"),
-+	PINCTRL_PIN(7, "GPIO_7"),
-+	PINCTRL_PIN(8, "GPIO_8"),
-+	PINCTRL_PIN(9, "GPIO_9"),
-+	PINCTRL_PIN(10, "GPIO_10"),
-+	PINCTRL_PIN(11, "GPIO_11"),
-+	PINCTRL_PIN(12, "GPIO_12"),
-+	PINCTRL_PIN(13, "GPIO_13"),
-+	PINCTRL_PIN(14, "GPIO_14"),
-+	PINCTRL_PIN(15, "GPIO_15"),
-+	PINCTRL_PIN(16, "GPIO_16"),
-+	PINCTRL_PIN(17, "GPIO_17"),
-+	PINCTRL_PIN(18, "GPIO_18"),
-+	PINCTRL_PIN(19, "GPIO_19"),
-+	PINCTRL_PIN(20, "GPIO_20"),
-+	PINCTRL_PIN(21, "GPIO_21"),
-+	PINCTRL_PIN(22, "GPIO_22"),
-+	PINCTRL_PIN(23, "GPIO_23"),
-+	PINCTRL_PIN(24, "GPIO_24"),
-+	PINCTRL_PIN(25, "GPIO_25"),
-+	PINCTRL_PIN(26, "GPIO_26"),
-+	PINCTRL_PIN(27, "GPIO_27"),
-+	PINCTRL_PIN(28, "GPIO_28"),
-+	PINCTRL_PIN(29, "GPIO_29"),
-+	PINCTRL_PIN(30, "GPIO_30"),
-+	PINCTRL_PIN(31, "GPIO_31"),
-+	PINCTRL_PIN(32, "GPIO_32"),
-+	PINCTRL_PIN(33, "GPIO_33"),
-+	PINCTRL_PIN(34, "GPIO_34"),
-+	PINCTRL_PIN(35, "GPIO_35"),
-+	PINCTRL_PIN(36, "GPIO_36"),
-+	PINCTRL_PIN(37, "GPIO_37"),
-+	PINCTRL_PIN(38, "GPIO_38"),
-+	PINCTRL_PIN(39, "GPIO_39"),
-+	PINCTRL_PIN(40, "GPIO_40"),
-+	PINCTRL_PIN(41, "GPIO_41"),
-+	PINCTRL_PIN(42, "GPIO_42"),
-+	PINCTRL_PIN(43, "GPIO_43"),
-+	PINCTRL_PIN(44, "GPIO_44"),
-+	PINCTRL_PIN(45, "GPIO_45"),
-+	PINCTRL_PIN(46, "GPIO_46"),
-+	PINCTRL_PIN(47, "GPIO_47"),
-+	PINCTRL_PIN(48, "GPIO_48"),
-+	PINCTRL_PIN(49, "GPIO_49"),
-+	PINCTRL_PIN(50, "GPIO_50"),
-+	PINCTRL_PIN(51, "GPIO_51"),
-+	PINCTRL_PIN(52, "GPIO_52"),
-+	PINCTRL_PIN(53, "GPIO_53"),
-+	PINCTRL_PIN(54, "GPIO_54"),
-+	PINCTRL_PIN(55, "GPIO_55"),
-+	PINCTRL_PIN(56, "GPIO_56"),
-+	PINCTRL_PIN(57, "GPIO_57"),
-+	PINCTRL_PIN(58, "GPIO_58"),
-+	PINCTRL_PIN(59, "GPIO_59"),
-+	PINCTRL_PIN(60, "GPIO_60"),
-+	PINCTRL_PIN(61, "GPIO_61"),
-+	PINCTRL_PIN(62, "GPIO_62"),
-+	PINCTRL_PIN(63, "GPIO_63"),
-+	PINCTRL_PIN(64, "GPIO_64"),
-+	PINCTRL_PIN(65, "GPIO_65"),
-+	PINCTRL_PIN(66, "GPIO_66"),
-+	PINCTRL_PIN(67, "GPIO_67"),
-+	PINCTRL_PIN(68, "GPIO_68"),
-+	PINCTRL_PIN(69, "GPIO_69"),
-+	PINCTRL_PIN(70, "GPIO_70"),
-+	PINCTRL_PIN(71, "GPIO_71"),
-+	PINCTRL_PIN(72, "GPIO_72"),
-+	PINCTRL_PIN(73, "GPIO_73"),
-+	PINCTRL_PIN(74, "GPIO_74"),
-+	PINCTRL_PIN(75, "GPIO_75"),
-+	PINCTRL_PIN(76, "GPIO_76"),
-+	PINCTRL_PIN(77, "GPIO_77"),
-+	PINCTRL_PIN(78, "GPIO_78"),
-+	PINCTRL_PIN(79, "GPIO_79"),
-+	PINCTRL_PIN(80, "GPIO_80"),
-+	PINCTRL_PIN(81, "GPIO_81"),
-+	PINCTRL_PIN(82, "GPIO_82"),
-+	PINCTRL_PIN(83, "GPIO_83"),
-+	PINCTRL_PIN(84, "GPIO_84"),
-+	PINCTRL_PIN(85, "GPIO_85"),
-+	PINCTRL_PIN(86, "GPIO_86"),
-+	PINCTRL_PIN(87, "GPIO_87"),
-+	PINCTRL_PIN(88, "GPIO_88"),
-+	PINCTRL_PIN(89, "GPIO_89"),
-+	PINCTRL_PIN(90, "GPIO_90"),
-+	PINCTRL_PIN(91, "GPIO_91"),
-+	PINCTRL_PIN(92, "GPIO_92"),
-+	PINCTRL_PIN(93, "GPIO_93"),
-+	PINCTRL_PIN(94, "GPIO_94"),
-+	PINCTRL_PIN(95, "GPIO_95"),
-+	PINCTRL_PIN(96, "GPIO_96"),
-+	PINCTRL_PIN(97, "GPIO_97"),
-+	PINCTRL_PIN(98, "GPIO_98"),
-+	PINCTRL_PIN(99, "GPIO_99"),
-+};
-+
-+#define DECLARE_QCA_GPIO_PINS(pin) \
-+	static const unsigned int gpio##pin##_pins[] = { pin }
-+DECLARE_QCA_GPIO_PINS(0);
-+DECLARE_QCA_GPIO_PINS(1);
-+DECLARE_QCA_GPIO_PINS(2);
-+DECLARE_QCA_GPIO_PINS(3);
-+DECLARE_QCA_GPIO_PINS(4);
-+DECLARE_QCA_GPIO_PINS(5);
-+DECLARE_QCA_GPIO_PINS(6);
-+DECLARE_QCA_GPIO_PINS(7);
-+DECLARE_QCA_GPIO_PINS(8);
-+DECLARE_QCA_GPIO_PINS(9);
-+DECLARE_QCA_GPIO_PINS(10);
-+DECLARE_QCA_GPIO_PINS(11);
-+DECLARE_QCA_GPIO_PINS(12);
-+DECLARE_QCA_GPIO_PINS(13);
-+DECLARE_QCA_GPIO_PINS(14);
-+DECLARE_QCA_GPIO_PINS(15);
-+DECLARE_QCA_GPIO_PINS(16);
-+DECLARE_QCA_GPIO_PINS(17);
-+DECLARE_QCA_GPIO_PINS(18);
-+DECLARE_QCA_GPIO_PINS(19);
-+DECLARE_QCA_GPIO_PINS(20);
-+DECLARE_QCA_GPIO_PINS(21);
-+DECLARE_QCA_GPIO_PINS(22);
-+DECLARE_QCA_GPIO_PINS(23);
-+DECLARE_QCA_GPIO_PINS(24);
-+DECLARE_QCA_GPIO_PINS(25);
-+DECLARE_QCA_GPIO_PINS(26);
-+DECLARE_QCA_GPIO_PINS(27);
-+DECLARE_QCA_GPIO_PINS(28);
-+DECLARE_QCA_GPIO_PINS(29);
-+DECLARE_QCA_GPIO_PINS(30);
-+DECLARE_QCA_GPIO_PINS(31);
-+DECLARE_QCA_GPIO_PINS(32);
-+DECLARE_QCA_GPIO_PINS(33);
-+DECLARE_QCA_GPIO_PINS(34);
-+DECLARE_QCA_GPIO_PINS(35);
-+DECLARE_QCA_GPIO_PINS(36);
-+DECLARE_QCA_GPIO_PINS(37);
-+DECLARE_QCA_GPIO_PINS(38);
-+DECLARE_QCA_GPIO_PINS(39);
-+DECLARE_QCA_GPIO_PINS(40);
-+DECLARE_QCA_GPIO_PINS(41);
-+DECLARE_QCA_GPIO_PINS(42);
-+DECLARE_QCA_GPIO_PINS(43);
-+DECLARE_QCA_GPIO_PINS(44);
-+DECLARE_QCA_GPIO_PINS(45);
-+DECLARE_QCA_GPIO_PINS(46);
-+DECLARE_QCA_GPIO_PINS(47);
-+DECLARE_QCA_GPIO_PINS(48);
-+DECLARE_QCA_GPIO_PINS(49);
-+DECLARE_QCA_GPIO_PINS(50);
-+DECLARE_QCA_GPIO_PINS(51);
-+DECLARE_QCA_GPIO_PINS(52);
-+DECLARE_QCA_GPIO_PINS(53);
-+DECLARE_QCA_GPIO_PINS(54);
-+DECLARE_QCA_GPIO_PINS(55);
-+DECLARE_QCA_GPIO_PINS(56);
-+DECLARE_QCA_GPIO_PINS(57);
-+DECLARE_QCA_GPIO_PINS(58);
-+DECLARE_QCA_GPIO_PINS(59);
-+DECLARE_QCA_GPIO_PINS(60);
-+DECLARE_QCA_GPIO_PINS(61);
-+DECLARE_QCA_GPIO_PINS(62);
-+DECLARE_QCA_GPIO_PINS(63);
-+DECLARE_QCA_GPIO_PINS(64);
-+DECLARE_QCA_GPIO_PINS(65);
-+DECLARE_QCA_GPIO_PINS(66);
-+DECLARE_QCA_GPIO_PINS(67);
-+DECLARE_QCA_GPIO_PINS(68);
-+DECLARE_QCA_GPIO_PINS(69);
-+DECLARE_QCA_GPIO_PINS(70);
-+DECLARE_QCA_GPIO_PINS(71);
-+DECLARE_QCA_GPIO_PINS(72);
-+DECLARE_QCA_GPIO_PINS(73);
-+DECLARE_QCA_GPIO_PINS(74);
-+DECLARE_QCA_GPIO_PINS(75);
-+DECLARE_QCA_GPIO_PINS(76);
-+DECLARE_QCA_GPIO_PINS(77);
-+DECLARE_QCA_GPIO_PINS(78);
-+DECLARE_QCA_GPIO_PINS(79);
-+DECLARE_QCA_GPIO_PINS(80);
-+DECLARE_QCA_GPIO_PINS(81);
-+DECLARE_QCA_GPIO_PINS(82);
-+DECLARE_QCA_GPIO_PINS(83);
-+DECLARE_QCA_GPIO_PINS(84);
-+DECLARE_QCA_GPIO_PINS(85);
-+DECLARE_QCA_GPIO_PINS(86);
-+DECLARE_QCA_GPIO_PINS(87);
-+DECLARE_QCA_GPIO_PINS(88);
-+DECLARE_QCA_GPIO_PINS(89);
-+DECLARE_QCA_GPIO_PINS(90);
-+DECLARE_QCA_GPIO_PINS(91);
-+DECLARE_QCA_GPIO_PINS(92);
-+DECLARE_QCA_GPIO_PINS(93);
-+DECLARE_QCA_GPIO_PINS(94);
-+DECLARE_QCA_GPIO_PINS(95);
-+DECLARE_QCA_GPIO_PINS(96);
-+DECLARE_QCA_GPIO_PINS(97);
-+DECLARE_QCA_GPIO_PINS(98);
-+DECLARE_QCA_GPIO_PINS(99);
-+
-+#define FUNCTION(fname)			                \
-+	[qca_mux_##fname] = {		                \
-+		.name = #fname,				\
-+		.groups = fname##_groups,               \
-+		.ngroups = ARRAY_SIZE(fname##_groups),	\
-+	}
-+
-+#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14) \
-+	{					        \
-+		.name = "gpio" #id,			\
-+		.pins = gpio##id##_pins,		\
-+		.npins = (unsigned)ARRAY_SIZE(gpio##id##_pins),	\
-+		.funcs = (int[]){			\
-+			qca_mux_NA, /* gpio mode */	\
-+			qca_mux_##f1,			\
-+			qca_mux_##f2,			\
-+			qca_mux_##f3,			\
-+			qca_mux_##f4,			\
-+			qca_mux_##f5,			\
-+			qca_mux_##f6,			\
-+			qca_mux_##f7,			\
-+			qca_mux_##f8,			\
-+			qca_mux_##f9,			\
-+			qca_mux_##f10,			\
-+			qca_mux_##f11,			\
-+			qca_mux_##f12,			\
-+			qca_mux_##f13,			\
-+			qca_mux_##f14			\
-+		},				        \
-+		.nfuncs = 15,				\
-+		.ctl_reg = 0x1000 + 0x10 * id,		\
-+		.io_reg = 0x1004 + 0x10 * id,		\
-+		.intr_cfg_reg = 0x1008 + 0x10 * id,	\
-+		.intr_status_reg = 0x100c + 0x10 * id,	\
-+		.intr_target_reg = 0x400 + 0x4 * id,	\
-+		.mux_bit = 2,			\
-+		.pull_bit = 0,			\
-+		.drv_bit = 6,			\
-+		.oe_bit = 9,			\
-+		.in_bit = 0,			\
-+		.out_bit = 1,			\
-+		.intr_enable_bit = 0,		\
-+		.intr_status_bit = 0,		\
-+		.intr_target_bit = 5,		\
-+		.intr_raw_status_bit = 4,	\
-+		.intr_polarity_bit = 1,		\
-+		.intr_detection_bit = 2,	\
-+		.intr_detection_width = 2,	\
-+	}
-+
-+
-+enum ipq4019_functions {
-+	qca_mux_gpio,
-+	qca_mux_blsp_uart1,
-+	qca_mux_blsp_i2c0,
-+	qca_mux_blsp_i2c1,
-+	qca_mux_blsp_uart0,
-+	qca_mux_blsp_spi1,
-+	qca_mux_blsp_spi0,
-+	qca_mux_NA,
-+};
-+
-+static const char * const gpio_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22", "gpio23", "gpio24", "gpio25", "gpio26", "gpio27", "gpio28",
-+	"gpio29", "gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35",
-+	"gpio36", "gpio37", "gpio38", "gpio39", "gpio40", "gpio41", "gpio42",
-+	"gpio43", "gpio44", "gpio45", "gpio46", "gpio47", "gpio48", "gpio49",
-+	"gpio50", "gpio51", "gpio52", "gpio53", "gpio54", "gpio55", "gpio56",
-+	"gpio57", "gpio58", "gpio59", "gpio60", "gpio61", "gpio62", "gpio63",
-+	"gpio64", "gpio65", "gpio66", "gpio67", "gpio68", "gpio69", "gpio70",
-+	"gpio71", "gpio72", "gpio73", "gpio74", "gpio75", "gpio76", "gpio77",
-+	"gpio78", "gpio79", "gpio80", "gpio81", "gpio82", "gpio83", "gpio84",
-+	"gpio85", "gpio86", "gpio87", "gpio88", "gpio89", "gpio90", "gpio91",
-+	"gpio92", "gpio93", "gpio94", "gpio95", "gpio96", "gpio97", "gpio98",
-+	"gpio99",
-+};
-+
-+static const char * const blsp_uart1_groups[] = {
-+	"gpio8", "gpio9", "gpio10", "gpio11",
-+};
-+static const char * const blsp_i2c0_groups[] = {
-+	"gpio10", "gpio11", "gpio20", "gpio21", "gpio58", "gpio59",
-+};
-+static const char * const blsp_spi0_groups[] = {
-+	"gpio12", "gpio13", "gpio14", "gpio15", "gpio45",
-+	"gpio54", "gpio55", "gpio56", "gpio57",
-+};
-+static const char * const blsp_i2c1_groups[] = {
-+	"gpio12", "gpio13", "gpio34", "gpio35",
-+};
-+static const char * const blsp_uart0_groups[] = {
-+	"gpio16", "gpio17", "gpio60", "gpio61",
-+};
-+static const char * const blsp_spi1_groups[] = {
-+	"gpio44", "gpio45", "gpio46", "gpio47",
-+};
-+
-+static const struct msm_function ipq4019_functions[] = {
-+	FUNCTION(gpio),
-+	FUNCTION(blsp_uart1),
-+	FUNCTION(blsp_i2c0),
-+	FUNCTION(blsp_i2c1),
-+	FUNCTION(blsp_uart0),
-+	FUNCTION(blsp_spi1),
-+	FUNCTION(blsp_spi0),
-+};
-+
-+static const struct msm_pingroup ipq4019_groups[] = {
-+	PINGROUP(0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(6, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(7, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(8, blsp_uart1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(9, blsp_uart1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(10, blsp_uart1, NA, NA, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(11, blsp_uart1, NA, NA, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(12, blsp_spi0, blsp_i2c1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(13, blsp_spi0, blsp_i2c1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(14, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(15, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(16, blsp_uart0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(17, blsp_uart0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(18, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(20, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(21, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(22, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(23, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(24, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(25, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(26, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(27, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(28, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(29, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(30, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(31, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(32, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(33, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(34, blsp_i2c1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(35, blsp_i2c1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(36, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(37, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(38, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(39, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(40, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(41, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(42, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(43, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(44, NA, blsp_spi1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(45, NA, blsp_spi1, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(46, NA, blsp_spi1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(47, NA, blsp_spi1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(48, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(49, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(50, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(51, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(52, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(53, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(54, NA, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(55, NA, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(56, NA, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(57, NA, blsp_spi0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(58, NA, NA, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(59, NA, blsp_i2c0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(60, NA, blsp_uart0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(61, NA, blsp_uart0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(62, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(63, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(64, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(65, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(66, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(67, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(68, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+	PINGROUP(69, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
-+};
-+
-+static const struct msm_pinctrl_soc_data ipq4019_pinctrl = {
-+	.pins = ipq4019_pins,
-+	.npins = ARRAY_SIZE(ipq4019_pins),
-+	.functions = ipq4019_functions,
-+	.nfunctions = ARRAY_SIZE(ipq4019_functions),
-+	.groups = ipq4019_groups,
-+	.ngroups = ARRAY_SIZE(ipq4019_groups),
-+	.ngpios = 70,
-+};
-+
-+static int ipq4019_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return msm_pinctrl_probe(pdev, &ipq4019_pinctrl);
-+}
-+
-+static const struct of_device_id ipq4019_pinctrl_of_match[] = {
-+	{ .compatible = "qcom,ipq4019-pinctrl", },
-+	{ },
-+};
-+
-+static struct platform_driver ipq4019_pinctrl_driver = {
-+	.driver = {
-+		.name = "ipq4019-pinctrl",
-+		.owner = THIS_MODULE,
-+		.of_match_table = ipq4019_pinctrl_of_match,
-+	},
-+	.probe = ipq4019_pinctrl_probe,
-+	.remove = msm_pinctrl_remove,
-+};
-+
-+static int __init ipq4019_pinctrl_init(void)
-+{
-+	return platform_driver_register(&ipq4019_pinctrl_driver);
-+}
-+arch_initcall(ipq4019_pinctrl_init);
-+
-+static void __exit ipq4019_pinctrl_exit(void)
-+{
-+	platform_driver_unregister(&ipq4019_pinctrl_driver);
-+}
-+module_exit(ipq4019_pinctrl_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm ipq4019 pinctrl driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DEVICE_TABLE(of, ipq4019_pinctrl_of_match);
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 986dbd8..e3ccd99 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -50,7 +50,6 @@ obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
+ obj-$(CONFIG_GPIO_LOONGSON)	+= gpio-loongson.o
+ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+ obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
+-obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
+ obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
+ obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
+ obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
+diff --git a/drivers/gpio/gpio-lpc32xx.c b/drivers/gpio/gpio-lpc32xx.c
+deleted file mode 100644
+index 47e2dde..0000000
+--- a/drivers/gpio/gpio-lpc32xx.c
++++ /dev/null
+@@ -1,577 +0,0 @@
+-/*
+- * GPIO driver for LPC32xx SoC
+- *
+- * Author: Kevin Wells <kevin.wells-3arQi8VN3Tc@public.gmane.org>
+- *
+- * Copyright (C) 2010 NXP Semiconductors
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/io.h>
+-#include <linux/errno.h>
+-#include <linux/gpio.h>
+-#include <linux/of.h>
+-#include <linux/of_gpio.h>
+-#include <linux/platform_device.h>
+-#include <linux/module.h>
+-#include <linux/platform_data/gpio-lpc32xx.h>
+-
+-#include <mach/hardware.h>
+-#include <mach/platform.h>
+-#include <mach/irqs.h>
+-
+-#define LPC32XX_GPIO_P3_INP_STATE		_GPREG(0x000)
+-#define LPC32XX_GPIO_P3_OUTP_SET		_GPREG(0x004)
+-#define LPC32XX_GPIO_P3_OUTP_CLR		_GPREG(0x008)
+-#define LPC32XX_GPIO_P3_OUTP_STATE		_GPREG(0x00C)
+-#define LPC32XX_GPIO_P2_DIR_SET			_GPREG(0x010)
+-#define LPC32XX_GPIO_P2_DIR_CLR			_GPREG(0x014)
+-#define LPC32XX_GPIO_P2_DIR_STATE		_GPREG(0x018)
+-#define LPC32XX_GPIO_P2_INP_STATE		_GPREG(0x01C)
+-#define LPC32XX_GPIO_P2_OUTP_SET		_GPREG(0x020)
+-#define LPC32XX_GPIO_P2_OUTP_CLR		_GPREG(0x024)
+-#define LPC32XX_GPIO_P2_MUX_SET			_GPREG(0x028)
+-#define LPC32XX_GPIO_P2_MUX_CLR			_GPREG(0x02C)
+-#define LPC32XX_GPIO_P2_MUX_STATE		_GPREG(0x030)
+-#define LPC32XX_GPIO_P0_INP_STATE		_GPREG(0x040)
+-#define LPC32XX_GPIO_P0_OUTP_SET		_GPREG(0x044)
+-#define LPC32XX_GPIO_P0_OUTP_CLR		_GPREG(0x048)
+-#define LPC32XX_GPIO_P0_OUTP_STATE		_GPREG(0x04C)
+-#define LPC32XX_GPIO_P0_DIR_SET			_GPREG(0x050)
+-#define LPC32XX_GPIO_P0_DIR_CLR			_GPREG(0x054)
+-#define LPC32XX_GPIO_P0_DIR_STATE		_GPREG(0x058)
+-#define LPC32XX_GPIO_P1_INP_STATE		_GPREG(0x060)
+-#define LPC32XX_GPIO_P1_OUTP_SET		_GPREG(0x064)
+-#define LPC32XX_GPIO_P1_OUTP_CLR		_GPREG(0x068)
+-#define LPC32XX_GPIO_P1_OUTP_STATE		_GPREG(0x06C)
+-#define LPC32XX_GPIO_P1_DIR_SET			_GPREG(0x070)
+-#define LPC32XX_GPIO_P1_DIR_CLR			_GPREG(0x074)
+-#define LPC32XX_GPIO_P1_DIR_STATE		_GPREG(0x078)
+-
+-#define GPIO012_PIN_TO_BIT(x)			(1 << (x))
+-#define GPIO3_PIN_TO_BIT(x)			(1 << ((x) + 25))
+-#define GPO3_PIN_TO_BIT(x)			(1 << (x))
+-#define GPIO012_PIN_IN_SEL(x, y)		(((x) >> (y)) & 1)
+-#define GPIO3_PIN_IN_SHIFT(x)			((x) == 5 ? 24 : 10 + (x))
+-#define GPIO3_PIN_IN_SEL(x, y)			(((x) >> GPIO3_PIN_IN_SHIFT(y)) & 1)
+-#define GPIO3_PIN5_IN_SEL(x)			(((x) >> 24) & 1)
+-#define GPI3_PIN_IN_SEL(x, y)			(((x) >> (y)) & 1)
+-#define GPO3_PIN_IN_SEL(x, y)			(((x) >> (y)) & 1)
+-
+-struct gpio_regs {
+-	void __iomem *inp_state;
+-	void __iomem *outp_state;
+-	void __iomem *outp_set;
+-	void __iomem *outp_clr;
+-	void __iomem *dir_set;
+-	void __iomem *dir_clr;
+-};
+-
+-/*
+- * GPIO names
+- */
+-static const char *gpio_p0_names[LPC32XX_GPIO_P0_MAX] = {
+-	"p0.0", "p0.1", "p0.2", "p0.3",
+-	"p0.4", "p0.5", "p0.6", "p0.7"
+-};
+-
+-static const char *gpio_p1_names[LPC32XX_GPIO_P1_MAX] = {
+-	"p1.0", "p1.1", "p1.2", "p1.3",
+-	"p1.4", "p1.5", "p1.6", "p1.7",
+-	"p1.8", "p1.9", "p1.10", "p1.11",
+-	"p1.12", "p1.13", "p1.14", "p1.15",
+-	"p1.16", "p1.17", "p1.18", "p1.19",
+-	"p1.20", "p1.21", "p1.22", "p1.23",
+-};
+-
+-static const char *gpio_p2_names[LPC32XX_GPIO_P2_MAX] = {
+-	"p2.0", "p2.1", "p2.2", "p2.3",
+-	"p2.4", "p2.5", "p2.6", "p2.7",
+-	"p2.8", "p2.9", "p2.10", "p2.11",
+-	"p2.12"
+-};
+-
+-static const char *gpio_p3_names[LPC32XX_GPIO_P3_MAX] = {
+-	"gpio00", "gpio01", "gpio02", "gpio03",
+-	"gpio04", "gpio05"
+-};
+-
+-static const char *gpi_p3_names[LPC32XX_GPI_P3_MAX] = {
+-	"gpi00", "gpi01", "gpi02", "gpi03",
+-	"gpi04", "gpi05", "gpi06", "gpi07",
+-	"gpi08", "gpi09",  NULL,    NULL,
+-	 NULL,    NULL,    NULL,   "gpi15",
+-	"gpi16", "gpi17", "gpi18", "gpi19",
+-	"gpi20", "gpi21", "gpi22", "gpi23",
+-	"gpi24", "gpi25", "gpi26", "gpi27",
+-	"gpi28"
+-};
+-
+-static const char *gpo_p3_names[LPC32XX_GPO_P3_MAX] = {
+-	"gpo00", "gpo01", "gpo02", "gpo03",
+-	"gpo04", "gpo05", "gpo06", "gpo07",
+-	"gpo08", "gpo09", "gpo10", "gpo11",
+-	"gpo12", "gpo13", "gpo14", "gpo15",
+-	"gpo16", "gpo17", "gpo18", "gpo19",
+-	"gpo20", "gpo21", "gpo22", "gpo23"
+-};
+-
+-static struct gpio_regs gpio_grp_regs_p0 = {
+-	.inp_state	= LPC32XX_GPIO_P0_INP_STATE,
+-	.outp_set	= LPC32XX_GPIO_P0_OUTP_SET,
+-	.outp_clr	= LPC32XX_GPIO_P0_OUTP_CLR,
+-	.dir_set	= LPC32XX_GPIO_P0_DIR_SET,
+-	.dir_clr	= LPC32XX_GPIO_P0_DIR_CLR,
+-};
+-
+-static struct gpio_regs gpio_grp_regs_p1 = {
+-	.inp_state	= LPC32XX_GPIO_P1_INP_STATE,
+-	.outp_set	= LPC32XX_GPIO_P1_OUTP_SET,
+-	.outp_clr	= LPC32XX_GPIO_P1_OUTP_CLR,
+-	.dir_set	= LPC32XX_GPIO_P1_DIR_SET,
+-	.dir_clr	= LPC32XX_GPIO_P1_DIR_CLR,
+-};
+-
+-static struct gpio_regs gpio_grp_regs_p2 = {
+-	.inp_state	= LPC32XX_GPIO_P2_INP_STATE,
+-	.outp_set	= LPC32XX_GPIO_P2_OUTP_SET,
+-	.outp_clr	= LPC32XX_GPIO_P2_OUTP_CLR,
+-	.dir_set	= LPC32XX_GPIO_P2_DIR_SET,
+-	.dir_clr	= LPC32XX_GPIO_P2_DIR_CLR,
+-};
+-
+-static struct gpio_regs gpio_grp_regs_p3 = {
+-	.inp_state	= LPC32XX_GPIO_P3_INP_STATE,
+-	.outp_state	= LPC32XX_GPIO_P3_OUTP_STATE,
+-	.outp_set	= LPC32XX_GPIO_P3_OUTP_SET,
+-	.outp_clr	= LPC32XX_GPIO_P3_OUTP_CLR,
+-	.dir_set	= LPC32XX_GPIO_P2_DIR_SET,
+-	.dir_clr	= LPC32XX_GPIO_P2_DIR_CLR,
+-};
+-
+-struct lpc32xx_gpio_chip {
+-	struct gpio_chip	chip;
+-	struct gpio_regs	*gpio_grp;
+-};
+-
+-static inline struct lpc32xx_gpio_chip *to_lpc32xx_gpio(
+-	struct gpio_chip *gpc)
+-{
+-	return container_of(gpc, struct lpc32xx_gpio_chip, chip);
+-}
+-
+-static void __set_gpio_dir_p012(struct lpc32xx_gpio_chip *group,
+-	unsigned pin, int input)
+-{
+-	if (input)
+-		__raw_writel(GPIO012_PIN_TO_BIT(pin),
+-			group->gpio_grp->dir_clr);
+-	else
+-		__raw_writel(GPIO012_PIN_TO_BIT(pin),
+-			group->gpio_grp->dir_set);
+-}
+-
+-static void __set_gpio_dir_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin, int input)
+-{
+-	u32 u = GPIO3_PIN_TO_BIT(pin);
+-
+-	if (input)
+-		__raw_writel(u, group->gpio_grp->dir_clr);
+-	else
+-		__raw_writel(u, group->gpio_grp->dir_set);
+-}
+-
+-static void __set_gpio_level_p012(struct lpc32xx_gpio_chip *group,
+-	unsigned pin, int high)
+-{
+-	if (high)
+-		__raw_writel(GPIO012_PIN_TO_BIT(pin),
+-			group->gpio_grp->outp_set);
+-	else
+-		__raw_writel(GPIO012_PIN_TO_BIT(pin),
+-			group->gpio_grp->outp_clr);
+-}
+-
+-static void __set_gpio_level_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin, int high)
+-{
+-	u32 u = GPIO3_PIN_TO_BIT(pin);
+-
+-	if (high)
+-		__raw_writel(u, group->gpio_grp->outp_set);
+-	else
+-		__raw_writel(u, group->gpio_grp->outp_clr);
+-}
+-
+-static void __set_gpo_level_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin, int high)
+-{
+-	if (high)
+-		__raw_writel(GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_set);
+-	else
+-		__raw_writel(GPO3_PIN_TO_BIT(pin), group->gpio_grp->outp_clr);
+-}
+-
+-static int __get_gpio_state_p012(struct lpc32xx_gpio_chip *group,
+-	unsigned pin)
+-{
+-	return GPIO012_PIN_IN_SEL(__raw_readl(group->gpio_grp->inp_state),
+-		pin);
+-}
+-
+-static int __get_gpio_state_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin)
+-{
+-	int state = __raw_readl(group->gpio_grp->inp_state);
+-
+-	/*
+-	 * P3 GPIO pin input mapping is not contiguous, GPIOP3-0..4 is mapped
+-	 * to bits 10..14, while GPIOP3-5 is mapped to bit 24.
+-	 */
+-	return GPIO3_PIN_IN_SEL(state, pin);
+-}
+-
+-static int __get_gpi_state_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin)
+-{
+-	return GPI3_PIN_IN_SEL(__raw_readl(group->gpio_grp->inp_state), pin);
+-}
+-
+-static int __get_gpo_state_p3(struct lpc32xx_gpio_chip *group,
+-	unsigned pin)
+-{
+-	return GPO3_PIN_IN_SEL(__raw_readl(group->gpio_grp->outp_state), pin);
+-}
+-
+-/*
+- * GPIO primitives.
+- */
+-static int lpc32xx_gpio_dir_input_p012(struct gpio_chip *chip,
+-	unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_dir_p012(group, pin, 1);
+-
+-	return 0;
+-}
+-
+-static int lpc32xx_gpio_dir_input_p3(struct gpio_chip *chip,
+-	unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_dir_p3(group, pin, 1);
+-
+-	return 0;
+-}
+-
+-static int lpc32xx_gpio_dir_in_always(struct gpio_chip *chip,
+-	unsigned pin)
+-{
+-	return 0;
+-}
+-
+-static int lpc32xx_gpio_get_value_p012(struct gpio_chip *chip, unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	return __get_gpio_state_p012(group, pin);
+-}
+-
+-static int lpc32xx_gpio_get_value_p3(struct gpio_chip *chip, unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	return __get_gpio_state_p3(group, pin);
+-}
+-
+-static int lpc32xx_gpi_get_value(struct gpio_chip *chip, unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	return __get_gpi_state_p3(group, pin);
+-}
+-
+-static int lpc32xx_gpio_dir_output_p012(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_level_p012(group, pin, value);
+-	__set_gpio_dir_p012(group, pin, 0);
+-
+-	return 0;
+-}
+-
+-static int lpc32xx_gpio_dir_output_p3(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_level_p3(group, pin, value);
+-	__set_gpio_dir_p3(group, pin, 0);
+-
+-	return 0;
+-}
+-
+-static int lpc32xx_gpio_dir_out_always(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpo_level_p3(group, pin, value);
+-	return 0;
+-}
+-
+-static void lpc32xx_gpio_set_value_p012(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_level_p012(group, pin, value);
+-}
+-
+-static void lpc32xx_gpio_set_value_p3(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpio_level_p3(group, pin, value);
+-}
+-
+-static void lpc32xx_gpo_set_value(struct gpio_chip *chip, unsigned pin,
+-	int value)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	__set_gpo_level_p3(group, pin, value);
+-}
+-
+-static int lpc32xx_gpo_get_value(struct gpio_chip *chip, unsigned pin)
+-{
+-	struct lpc32xx_gpio_chip *group = to_lpc32xx_gpio(chip);
+-
+-	return __get_gpo_state_p3(group, pin);
+-}
+-
+-static int lpc32xx_gpio_request(struct gpio_chip *chip, unsigned pin)
+-{
+-	if (pin < chip->ngpio)
+-		return 0;
+-
+-	return -EINVAL;
+-}
+-
+-static int lpc32xx_gpio_to_irq_p01(struct gpio_chip *chip, unsigned offset)
+-{
+-	return IRQ_LPC32XX_P0_P1_IRQ;
+-}
+-
+-static const char lpc32xx_gpio_to_irq_gpio_p3_table[] = {
+-	IRQ_LPC32XX_GPIO_00,
+-	IRQ_LPC32XX_GPIO_01,
+-	IRQ_LPC32XX_GPIO_02,
+-	IRQ_LPC32XX_GPIO_03,
+-	IRQ_LPC32XX_GPIO_04,
+-	IRQ_LPC32XX_GPIO_05,
+-};
+-
+-static int lpc32xx_gpio_to_irq_gpio_p3(struct gpio_chip *chip, unsigned offset)
+-{
+-	if (offset < ARRAY_SIZE(lpc32xx_gpio_to_irq_gpio_p3_table))
+-		return lpc32xx_gpio_to_irq_gpio_p3_table[offset];
+-	return -ENXIO;
+-}
+-
+-static const char lpc32xx_gpio_to_irq_gpi_p3_table[] = {
+-	IRQ_LPC32XX_GPI_00,
+-	IRQ_LPC32XX_GPI_01,
+-	IRQ_LPC32XX_GPI_02,
+-	IRQ_LPC32XX_GPI_03,
+-	IRQ_LPC32XX_GPI_04,
+-	IRQ_LPC32XX_GPI_05,
+-	IRQ_LPC32XX_GPI_06,
+-	IRQ_LPC32XX_GPI_07,
+-	IRQ_LPC32XX_GPI_08,
+-	IRQ_LPC32XX_GPI_09,
+-	-ENXIO, /* 10 */
+-	-ENXIO, /* 11 */
+-	-ENXIO, /* 12 */
+-	-ENXIO, /* 13 */
+-	-ENXIO, /* 14 */
+-	-ENXIO, /* 15 */
+-	-ENXIO, /* 16 */
+-	-ENXIO, /* 17 */
+-	-ENXIO, /* 18 */
+-	IRQ_LPC32XX_GPI_19,
+-	-ENXIO, /* 20 */
+-	-ENXIO, /* 21 */
+-	-ENXIO, /* 22 */
+-	-ENXIO, /* 23 */
+-	-ENXIO, /* 24 */
+-	-ENXIO, /* 25 */
+-	-ENXIO, /* 26 */
+-	-ENXIO, /* 27 */
+-	IRQ_LPC32XX_GPI_28,
+-};
+-
+-static int lpc32xx_gpio_to_irq_gpi_p3(struct gpio_chip *chip, unsigned offset)
+-{
+-	if (offset < ARRAY_SIZE(lpc32xx_gpio_to_irq_gpi_p3_table))
+-		return lpc32xx_gpio_to_irq_gpi_p3_table[offset];
+-	return -ENXIO;
+-}
+-
+-static struct lpc32xx_gpio_chip lpc32xx_gpiochip[] = {
+-	{
+-		.chip = {
+-			.label			= "gpio_p0",
+-			.direction_input	= lpc32xx_gpio_dir_input_p012,
+-			.get			= lpc32xx_gpio_get_value_p012,
+-			.direction_output	= lpc32xx_gpio_dir_output_p012,
+-			.set			= lpc32xx_gpio_set_value_p012,
+-			.request		= lpc32xx_gpio_request,
+-			.to_irq			= lpc32xx_gpio_to_irq_p01,
+-			.base			= LPC32XX_GPIO_P0_GRP,
+-			.ngpio			= LPC32XX_GPIO_P0_MAX,
+-			.names			= gpio_p0_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p0,
+-	},
+-	{
+-		.chip = {
+-			.label			= "gpio_p1",
+-			.direction_input	= lpc32xx_gpio_dir_input_p012,
+-			.get			= lpc32xx_gpio_get_value_p012,
+-			.direction_output	= lpc32xx_gpio_dir_output_p012,
+-			.set			= lpc32xx_gpio_set_value_p012,
+-			.request		= lpc32xx_gpio_request,
+-			.to_irq			= lpc32xx_gpio_to_irq_p01,
+-			.base			= LPC32XX_GPIO_P1_GRP,
+-			.ngpio			= LPC32XX_GPIO_P1_MAX,
+-			.names			= gpio_p1_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p1,
+-	},
+-	{
+-		.chip = {
+-			.label			= "gpio_p2",
+-			.direction_input	= lpc32xx_gpio_dir_input_p012,
+-			.get			= lpc32xx_gpio_get_value_p012,
+-			.direction_output	= lpc32xx_gpio_dir_output_p012,
+-			.set			= lpc32xx_gpio_set_value_p012,
+-			.request		= lpc32xx_gpio_request,
+-			.base			= LPC32XX_GPIO_P2_GRP,
+-			.ngpio			= LPC32XX_GPIO_P2_MAX,
+-			.names			= gpio_p2_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p2,
+-	},
+-	{
+-		.chip = {
+-			.label			= "gpio_p3",
+-			.direction_input	= lpc32xx_gpio_dir_input_p3,
+-			.get			= lpc32xx_gpio_get_value_p3,
+-			.direction_output	= lpc32xx_gpio_dir_output_p3,
+-			.set			= lpc32xx_gpio_set_value_p3,
+-			.request		= lpc32xx_gpio_request,
+-			.to_irq			= lpc32xx_gpio_to_irq_gpio_p3,
+-			.base			= LPC32XX_GPIO_P3_GRP,
+-			.ngpio			= LPC32XX_GPIO_P3_MAX,
+-			.names			= gpio_p3_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p3,
+-	},
+-	{
+-		.chip = {
+-			.label			= "gpi_p3",
+-			.direction_input	= lpc32xx_gpio_dir_in_always,
+-			.get			= lpc32xx_gpi_get_value,
+-			.request		= lpc32xx_gpio_request,
+-			.to_irq			= lpc32xx_gpio_to_irq_gpi_p3,
+-			.base			= LPC32XX_GPI_P3_GRP,
+-			.ngpio			= LPC32XX_GPI_P3_MAX,
+-			.names			= gpi_p3_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p3,
+-	},
+-	{
+-		.chip = {
+-			.label			= "gpo_p3",
+-			.direction_output	= lpc32xx_gpio_dir_out_always,
+-			.set			= lpc32xx_gpo_set_value,
+-			.get			= lpc32xx_gpo_get_value,
+-			.request		= lpc32xx_gpio_request,
+-			.base			= LPC32XX_GPO_P3_GRP,
+-			.ngpio			= LPC32XX_GPO_P3_MAX,
+-			.names			= gpo_p3_names,
+-			.can_sleep		= false,
+-		},
+-		.gpio_grp = &gpio_grp_regs_p3,
+-	},
+-};
+-
+-static int lpc32xx_of_xlate(struct gpio_chip *gc,
+-			    const struct of_phandle_args *gpiospec, u32 *flags)
+-{
+-	/* Is this the correct bank? */
+-	u32 bank = gpiospec->args[0];
+-	if ((bank >= ARRAY_SIZE(lpc32xx_gpiochip) ||
+-	    (gc != &lpc32xx_gpiochip[bank].chip)))
+-		return -EINVAL;
+-
+-	if (flags)
+-		*flags = gpiospec->args[2];
+-	return gpiospec->args[1];
+-}
+-
+-static int lpc32xx_gpio_probe(struct platform_device *pdev)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(lpc32xx_gpiochip); i++) {
+-		if (pdev->dev.of_node) {
+-			lpc32xx_gpiochip[i].chip.of_xlate = lpc32xx_of_xlate;
+-			lpc32xx_gpiochip[i].chip.of_gpio_n_cells = 3;
+-			lpc32xx_gpiochip[i].chip.of_node = pdev->dev.of_node;
+-		}
+-		gpiochip_add(&lpc32xx_gpiochip[i].chip);
+-	}
+-
+-	return 0;
+-}
+-
+-#ifdef CONFIG_OF
+-static const struct of_device_id lpc32xx_gpio_of_match[] = {
+-	{ .compatible = "nxp,lpc3220-gpio", },
+-	{ },
+-};
+-#endif
+-
+-static struct platform_driver lpc32xx_gpio_driver = {
+-	.driver		= {
+-		.name	= "lpc32xx-gpio",
+-		.of_match_table = of_match_ptr(lpc32xx_gpio_of_match),
+-	},
+-	.probe		= lpc32xx_gpio_probe,
+-};
+-
+-module_platform_driver(lpc32xx_gpio_driver);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
