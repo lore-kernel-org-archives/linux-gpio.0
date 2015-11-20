@@ -1,58 +1,94 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 6/7] Documentation: Rename gpio controller name from
- cygnus to iproc
-Date: Fri, 20 Nov 2015 09:34:37 -0600
-Message-ID: <20151120153437.GA7645@rob-hp-laptop>
-References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com>
- <1447905139-16002-7-git-send-email-pramodku@broadcom.com>
+Subject: Re: [PATCH v4 1/4] Documentation: tps65086: Add DT bindings for the
+ TPS65086 PMIC
+Date: Fri, 20 Nov 2015 10:33:21 -0600
+Message-ID: <20151120163321.GA4952@rob-hp-laptop>
+References: <1447974102-24938-1-git-send-email-afd@ti.com>
+ <1447974102-24938-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1447905139-16002-7-git-send-email-pramodku@broadcom.com>
+In-Reply-To: <1447974102-24938-2-git-send-email-afd@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Pramod Kumar <pramodku@broadcom.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas Gorski <jogo@openwrt.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Nov 19, 2015 at 09:22:18AM +0530, Pramod Kumar wrote:
-> Renamed gpio controller's driver name from cygnus to iproc to make it
-> more generic so that all iProc based SoCs having the same gpio controller
-> could use this.
+On Thu, Nov 19, 2015 at 05:01:39PM -0600, Andrew F. Davis wrote:
+> The TPS65086 PMIC contains several regulators and a GPO controller.
+> Add bindings for the TPS65086 PMIC.
 > 
-> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-Where's my ack?
+Acked-by: Rob Herring <robh@kernel.org>
 
 > ---
->  .../bindings/pinctrl/{brcm,cygnus-gpio.txt => brcm,iproc-gpio.txt}    | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->  rename Documentation/devicetree/bindings/pinctrl/{brcm,cygnus-gpio.txt => brcm,iproc-gpio.txt} (97%)
+>  Documentation/devicetree/bindings/mfd/tps65086.txt | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> similarity index 97%
-> rename from Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> rename to Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> index 8b1e5d1..e427792 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/brcm,cygnus-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,iproc-gpio.txt
-> @@ -1,4 +1,4 @@
-> -Broadcom Cygnus GPIO/PINCONF Controller
-> +Broadcom iProc GPIO/PINCONF Controller
->  
->  Required properties:
->  
-> @@ -7,7 +7,7 @@ Required properties:
->      "brcm,cygnus-crmu-gpio" or "brcm,iproc-gpio"
->  
->  - reg:
-> -    Define the base and range of the I/O address space that contains the Cygnus
-> +    Define the base and range of the I/O address space that contains SoC
->  GPIO/PINCONF controller registers
->  
->  - ngpios:
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65086.txt b/Documentation/devicetree/bindings/mfd/tps65086.txt
+> new file mode 100644
+> index 0000000..6b50613
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65086.txt
+> @@ -0,0 +1,55 @@
+> +* TPS65086 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "ti,tps65086".
+> + - reg			: I2C slave address.
+> + - interrupt-parent	: Phandle to he parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt controller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, should be 2.
+> +			    The first cell is the IRQ number.
+> +			    The second cell is the flags, encoded as trigger
+> +			    masks from ../interrupt-controller/interrupts.txt.
+> + - gpio-controller      : Marks the device node as a GPIO Controller.
+> + - #gpio-cells          : Should be two.  The first cell is the pin number and
+> +                            the second cell is used to specify flags.
+> +                            See ../gpio/gpio.txt for more information.
+> + - regulators:          : List of child nodes that specify the regulator
+> +                            initialization data. Child nodes must be named
+> +                            after their hardware counterparts: buck[1-6],
+> +                            ldoa[1-3], swa1, swb[1-2], and vtt. Each child
+> +                            nodes is defined using the standard binding for
+> +                            regulators and the optional regulator properties
+> +                            defined below.
+> +
+> +Optional regulator properties:
+> + - ti,regulator-step-size-25mv	: This is applicable for buck[1,2,6], set this
+> +				    if the regulator is factory set with a 25mv
+> +				    step voltage mapping.
+> + - ti,regulator-decay		: This is applicable for buck[1-6], set this if
+> +				    the output needs to decay, default is for
+> +				    the output to slew down.
+> +
+> +Example:
+> +
+> +	pmic: tps65086@5e {
+> +		compatible = "ti,tps65086";
+> +		reg = <0x5e>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		regulators {
+> +			buck1 {
+> +				regulator-name = "vcc1";
+> +				regulator-min-microvolt = <1600000>;
+> +				regulator-max-microvolt = <1600000>;
+> +				regulator-boot-on;
+> +				ti,regulator-decay;
+> +				ti,regulator-step-size-25mv;
+> +			};
+> +		};
+> +	};
 > -- 
 > 1.9.1
 > 
