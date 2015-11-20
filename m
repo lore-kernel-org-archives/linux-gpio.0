@@ -1,55 +1,66 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4] pinctrl/lantiq: update devicetree bindings
- Documentation
-Date: Fri, 20 Nov 2015 08:26:40 -0600
-Message-ID: <20151120142640.GA3348@rob-hp-laptop>
-References: <1447995151-3857-1-git-send-email-mschiller@tdt.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
+Date: Fri, 20 Nov 2015 16:53:10 +0200
+Message-ID: <7175557.3oSik5Zhyq@avalon>
+References: <20151117031832.24924.60685.sendpatchset@little-apple> <2997631.z1xUhmAZzM@avalon> <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1447995151-3857-1-git-send-email-mschiller-h82pf8jx2gI@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Schiller <mschiller-h82pf8jx2gI@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, blogic-p3rKhJxN3npAfugRpC6u6w@public.gmane.org, hauke-5/S+JYg5SzeELgA04lAiVw@public.gmane.org, jogo-p3rKhJxN3npAfugRpC6u6w@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, geert@glider.be
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 20, 2015 at 05:52:28AM +0100, Martin Schiller wrote:
-> This patch adds the new dedicated "lantiq,pinctrl-<chip>" compatible strings
-> to the devicetree bindings Documentation, where <chip> is one of "ase",
-> "danube", "xrx100", "xrx200" or "xrx300" and marks the "lantiq,pinctrl-xway"
-> and "lantiq,pinctrl-xr9" compatible strings as DEPRECATED.
+Hi Magnus,
 
-This could use a better subject. Every change to bindings are "updating 
-binding description."
-
+On Friday 20 November 2015 16:16:15 Magnus Damm wrote:
+> On Fri, Nov 20, 2015 at 11:46 AM, Laurent Pinchart wrote:
+> > On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
+> >> pinctrl: sh-pfc: r8a7794: DU support
+> >> 
+> >> [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+> >> [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
+> >> [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+> >> [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
+> >> 
+> >> These patches take the r8a7794 PFC DU support code from the BSP
+> >> and reworks it to fit the r8a7794 ALT board. Tested with the ALT
+> >> VGA port - by default PFC is not used however enabling PFC using
+> >> an incremental (yet to be posted) patch works well.
+> >> 
+> >> It is worth noting that patch 2-4 modifies the pin groups. This
+> >> means that the upstream DT ABI for PFC DU will differ compared
+> >> to the unreviewed BSP code.
+> >> 
+> >> In general it is not considered good practice to change the pin
+> >> groups and break compatibility since they are part of the DT ABI.
+> >> 
+> >> For this particular case upstream never have had PFC DU support
+> >> for r8a7794, so treating the BSP bindings as experimental and
+> >> migrate away seems reasonable.
+> > 
+> > If we start considering DT bindings that never went upstream as stable
+> > we'll have a big problem. I mean even bigger than the upstream DT
+> > bindings stability problem :-)
 > 
-> Signed-off-by: Martin Schiller <mschiller-h82pf8jx2gI@public.gmane.org>
-> ---
->  .../bindings/pinctrl/lantiq,pinctrl-xway.txt       | 108 +++++++++++++++++++--
->  1 file changed, 100 insertions(+), 8 deletions(-)
+> I'm not saying that local DT hacks should be considered stable, more
+> that it as usual makes sense to follow upstream first with proper DT
+> review process early on.
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> index e89b467..16daa12 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> @@ -1,7 +1,14 @@
->  Lantiq XWAY pinmux controller
->  
->  Required properties:
-> -- compatible: "lantiq,pinctrl-xway" or "lantiq,pinctrl-xr9"
-> +- compatible: "lantiq,pinctrl-xway", (DEPRECATED: Use XWAY DANUBE Family)
-> +	      "lantiq,pinctrl-xr9", (DEPRECATED: Use XWAY xRX100/xRX200 Family)
-> +	      "lantiq,pinctrl-<chip>", where <chip> is:
+> >> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> > 
+> > Wouldn't it make sense to merge the 4 patches together ?
+> 
+> Yeah, I guess so. My feeling is also that it would be good to verify
+> HDMI on ALT before commiting to DT bindings. Right now only one DU
+> channel is tested.
 
-<chip> first is preferred: lantiq,<chip>-pinctrl
+I agree with that.
 
-> +		"ase" (XWAY AMAZON Family)
-> +		"danube" (XWAY DANUBE Family)
-> +		"xrx100" (XWAY xRX100 Family)
-> +		"xrx200" (XWAY xRX200 Family)
-> +		"xrx300" (XWAY xRX300 Family)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Regards,
+
+Laurent Pinchart
+
