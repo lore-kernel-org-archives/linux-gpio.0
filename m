@@ -1,167 +1,116 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 1/4] dt-bindings: gpio: update desription of LPC32xx GPIO
- controller
-Date: Fri, 20 Nov 2015 20:27:35 +0200
-Message-ID: <564F6617.6090104@mleia.com>
-References: <1447982995-30231-1-git-send-email-vz@mleia.com> <1447982995-30231-2-git-send-email-vz@mleia.com> <20151120141354.GA25446@rob-hp-laptop>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: Re: [4.4-rc][PATCH] gpio: omap: drop omap1 mpuio specific
+ irq_mask/unmask callbacks
+Date: Fri, 20 Nov 2015 22:03:28 +0200
+Message-ID: <20151120200328.GI18138@blackmetal.musicnaut.iki.fi>
+References: <1448026514-21294-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:45066 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161676AbbKTS1i (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 20 Nov 2015 13:27:38 -0500
-In-Reply-To: <20151120141354.GA25446@rob-hp-laptop>
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:49312 "EHLO
+	emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760946AbbKTUEQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 15:04:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1448026514-21294-1-git-send-email-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, tony@atomide.com, ssantosh@kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 20.11.2015 16:13, Rob Herring wrote:
-> On Fri, Nov 20, 2015 at 03:29:52AM +0200, Vladimir Zapolskiy wrote:
->> For the purpose of better description of NXP LPC32xx GPIO controller
->> hardware in device tree format, extend the existing description with
->> device tree subnodes, which represent 6 GPIO banks within the
->> controller.
->>
->> Note, client interface to the GPIO controller is untouched.
->>
->> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->> ---
->>  .../devicetree/bindings/gpio/gpio_lpc32xx.txt      | 121 ++++++++++++++++++++-
->>  1 file changed, 120 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
->> index 4981936..d2da63c 100644
->> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
->> +++ b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
->> @@ -15,7 +15,43 @@ Required properties:
->>     2) pin number
->>     3) optional parameters:
->>        - bit 0 specifies polarity (0 for normal, 1 for inverted)
->> -- reg: Index of the GPIO group
->> +- #address-cells: should be 2, which stands for GPIO bank id and
->> +  physical base address of this GPIO bank.
+Hi,
+
+On Fri, Nov 20, 2015 at 03:35:14PM +0200, Grygorii Strashko wrote:
+> Originally OMAP MPUIO GPIO irqchip was implemented using Generic irq
+> chip, but after set of reworks Generic irq chip code was replaced by
+> common OMAP GPIO implementation and finally removed by
+> commit d2d05c65c40e ("gpio: omap: Fix regression for MPUIO interrupts").
+> Unfortunately, above commit left .irq_mask/unmask callbacks assigned
+> as below for MPUIO GPIO case:
+> 	irqc->irq_mask = irq_gc_mask_set_bit;
+> 	irqc->irq_unmask = irq_gc_mask_clr_bit;
 > 
-> Now you need special code to do address translation. I'd really think 
-> twice about doing this.
-
-Correct, address translation code is needed here...
-
-> Why do you need the bank number?
-
-Only one reason -- backward compatibility in sense of referencing a GPIO
-line on client's side. This API design is broken, I agree.
-
-Honestly I would prefer to get rid of this "feature", new code allows to
-reference on client's side either a parent GPIO controller device node,
-or bank nodes, probably the improvement can be done in a few steps?
-
-  - this change,
-  - convert clients to reference a GPIO bank directly,
-  - remove root GPIO controller (e.g. make it "simple-bus") and convert
-GPIO banks to "gpio-controller"s.
-
-Can an evolution like this happen?
-
->> +- #size-cells: should be 1, total size of GPIO bank registers.
->> +
->> +The NXP LPC32xx SoC GPIO controller device node must contain a list
->> +of device nodes representing GPIO banks and their descriptions.
->> +
->> +The format of subnodes should follow the description below.
->> +
->> +Required properties:
->> +- reg: should contain 3 integer values:
->> +   1) GPIO bank id from 0 to 5,
->> +   2) physical base address of this GPIO bank,
->> +   3) total size of the GPIO bank registers.
->> +
->> +Optional properties:
->> +- gpio-bank-name: human readable name of a GPIO bank,
->> +- gpio-no-output-state: property of P2 bank, which has special,
->> +  mapping of its control registers,
->> +- gpio-offset: property of P3/GPIO bank, offset of bits representing
->> +  GPIO lines in output and direction registers,
+> This now causes boot failure on OMAP1 platforms, after
+> commit 450fa54cfd66 ("gpio: omap: convert to use generic irq handler")
+> which forces these callbacks to be called during GPIO IRQs mapping
+> from gpiochip_irq_map:
 > 
-> Seems like nr-gpios should have been a mask instead...
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> pgd = c0004000
+> [00000000] *pgd=00000000
+> Internal error: Oops: 75 [#1] ARM
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 4.4.0-rc1-e3-los_afe0c+-00002-g25379c0-dirty #1
+> Hardware name: Amstrad E3 (Delta)
+> task: c1836000 ti: c1838000 task.ti: c1838000
+> PC is at irq_gc_mask_set_bit+0x1c/0x60
+> LR is at __irq_do_set_handler+0x118/0x15c
+> pc : [<c004848c>]    lr : [<c0047d4c>]    psr: 600000d3
+> sp : c1839c90  ip : c1862c64  fp : c1839c9c
+> r10: 00000000  r9 : c0411950  r8 : c0411bbc
+> r7 : 00000000  r6 : c185c310  r5 : c00444e8  r4 : c185c300
+> r3 : c1854b50  r2 : 00000000  r1 : 00000000  r0 : c185c310
+> Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
+> Control: 0000317f  Table: 10004000  DAC: 00000057
+> Process swapper (pid: 1, stack limit = 0xc1838190)
+> Stack: (0xc1839c90 to 0xc183a000)
 > 
->> +- gpios: number of GPIO lines per GPIO bank, if this property is
->> +  omitted, then gpio-input-mask must be present,
+> [...]
 > 
-> "gpios" is already the property name for the client interface.
+> Backtrace:
+> [<c0048470>] (irq_gc_mask_set_bit) from [<c0047d4c>] (__irq_do_set_handler+0x118/0x15c)
+> [<c0047c34>] (__irq_do_set_handler) from [<c0047dd4>] (__irq_set_handler+0x44/0x5c)
+>  r6:00000000 r5:c00444e8 r4:c185c300
+> [<c0047d90>] (__irq_set_handler) from [<c0047e1c>] (irq_set_chip_and_handler_name+0x30/0x34)
+>  r7:00000050 r6:00000000 r5:c00444e8 r4:00000050
+> [<c0047dec>] (irq_set_chip_and_handler_name) from [<c01b345c>] (gpiochip_irq_map+0x3c/0x8c)
+>  r7:00000050 r6:00000000 r5:00000050 r4:c1862c64
+> [<c01b3420>] (gpiochip_irq_map) from [<c0049670>] (irq_domain_associate+0x7c/0x1c4)
+>  r5:c185c310 r4:c185cb00
+> [<c00495f4>] (irq_domain_associate) from [<c0049894>] (irq_domain_add_simple+0x98/0xc0)
+>  r8:c0411bbc r7:c185cb00 r6:00000050 r5:00000010 r4:00000001
+> [<c00497fc>] (irq_domain_add_simple) from [<c01b3328>] (_gpiochip_irqchip_add+0x64/0x10c)
+>  r7:c1862c64 r6:c0419280 r5:c1862c64 r4:c1854b50
+> [<c01b32c4>] (_gpiochip_irqchip_add) from [<c01b79f4>] (omap_gpio_probe+0x2fc/0x63c)
+>  r5:c1854b50 r4:c1862c10
+> [<c01b76f8>] (omap_gpio_probe) from [<c01fcf58>] (platform_drv_probe+0x2c/0x64)
+>  r10:00000000 r9:c03e45e8 r8:00000000 r7:c0419294 r6:c0411984 r5:c0419294
+>  r4:c0411950
+> [<c01fcf2c>] (platform_drv_probe) from [<c01fb668>] (really_probe+0x160/0x29c)
 > 
->> +- gpio-input-mask: should contain two bitmasks, the first bitmask is
->> +  the mapping of GPIO lines to input status register, the second
->> +  bitmask should be a subset of the first bitmask and it represents
->> +  input GPIO lines, which may serve as an interrupt source,
->> +  if gpio-input-mask roperty is omitted, gpios property should be
->> +  present,
->> +- interrupts: list of parent interrupts mapped to input GPIO lines,
->> +- interrupts-extended: list of parent interrupts mapped to input GPIO
->> +  lines, used if parent interrupts are provided by more than one
->> +  interrupt controller, this option is used by GPI bank,
->> +- interrupt-controller: indicates that GPIO bank may serve as an
->> +  interrupt controller,
->> +- #interrupt-cells: if interrupt-controller property is present,
->> +  it should be 2, interrupt id and its flags.
->>  
->>  Example:
->>  
->> @@ -24,6 +60,89 @@ Example:
->>  		reg = <0x40028000 0x1000>;
->>  		gpio-controller;
->>  		#gpio-cells = <3>; /* bank, pin, flags */
+> Hence, fix it by remove obsolete callbacks assignment. After this
+> change 	omap_gpio_mask_irq()/omap_gpio_unmask_irq() will be used
+> for MPUIO IRQs masking, but this now happens anyway from
+> omap_gpio_irq_startup/shutdown().
 > 
-> Can't bank and pin be encoded into one cell as the gpio core binding 
-> suggests.
+> Cc: Tony Lindgren <tony@atomide.com>
+> Fixes: commit d2d05c65c40e ("gpio: omap: Fix regression for MPUIO interrupts")
+> Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Please see the comment above, the proposed change does not modify this
-legacy part.
+Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
->> +
->> +		ranges = <0 0x0 0x40028000 0x00001000>,
->> +			 <1 0x0 0x40028000 0x00001000>,
->> +			 <2 0x0 0x40028000 0x00001000>,
->> +			 <3 0x0 0x40028000 0x00001000>,
->> +			 <4 0x0 0x40028000 0x00001000>,
->> +			 <5 0x0 0x40028000 0x00001000>;
->> +		#address-cells = <2>;
->> +		#size-cells = <1>;
->> +
->> +		gpio_p0: gpio-controller@0 {
->> +			reg = <0 0x40 0x1C>;
->> +			gpio-bank-name = "p0";
->> +			gpios = <8>;
->> +
->> +			interrupt-parent = <&sic2>;
->> +			interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		gpio_p1: gpio-controller@1 {
->> +			reg = <1 0x60 0x1C>;
->> +			gpio-bank-name = "p1";
->> +			gpios = <24>;
->> +
->> +			interrupt-parent = <&sic2>;
->> +			interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		gpio_p2: gpio-controller@2 {
->> +			reg = <2 0x10 0x18>;
->> +			gpio-bank-name = "p2";
->> +			gpios = <13>;
->> +			gpio-no-output-state;
->> +		};
->> +
->> +		gpio_gpio: gpio-controller@3 {
->> +			reg = <3 0x00 0x1C>;
+> ---
+>  drivers/gpio/gpio-omap.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> This overlaps with bank 2.
-
-Yes, it is. Thousand thanks to hardware designers.
-
---
-With best wishes,
-Vladimir
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 56d2d02..f7fbb46 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1122,8 +1122,6 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  	/* MPUIO is a bit different, reading IRQ status clears it */
+>  	if (bank->is_mpuio) {
+>  		irqc->irq_ack = dummy_irq_chip.irq_ack;
+> -		irqc->irq_mask = irq_gc_mask_set_bit;
+> -		irqc->irq_unmask = irq_gc_mask_clr_bit;
+>  		if (!bank->regs->wkup_en)
+>  			irqc->irq_set_wake = NULL;
+>  	}
+> -- 
+> 2.6.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
