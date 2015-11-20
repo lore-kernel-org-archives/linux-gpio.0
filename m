@@ -1,107 +1,70 @@
-From: Martin Schiller <mschiller@tdt.de>
-Subject: [PATCH 4/4] pinctrl/lantiq: fix up pinmux
-Date: Fri, 20 Nov 2015 05:52:31 +0100
-Message-ID: <1447995151-3857-4-git-send-email-mschiller@tdt.de>
-References: <1447995151-3857-1-git-send-email-mschiller@tdt.de>
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
+Date: Fri, 20 Nov 2015 16:16:15 +0900
+Message-ID: <CANqRtoTMf4TP2gcEuF4y5qdRz0fdf9-sebS=ymg+4zAGMj8dSA@mail.gmail.com>
+References: <20151117031832.24924.60685.sendpatchset@little-apple>
+	<2997631.z1xUhmAZzM@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1447995151-3857-1-git-send-email-mschiller@tdt.de>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, Martin Schiller <mschiller@tdt.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f175.google.com ([209.85.160.175]:34919 "EHLO
+	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754165AbbKTHQQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 02:16:16 -0500
+In-Reply-To: <2997631.z1xUhmAZzM@avalon>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: SH-Linux <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Koji Matsuoka <koji.matsuoka.xm@renesas.com>, linux-gpio <linux-gpio@vger.kernel.org>, "Simon Horman [Horms]" <horms@verge.net.au>, geert@glider.be
 
-From: John Crispin <blogic@openwrt.org>
+Hi Laurent,
 
-This patch is included in the openwrt patchset for several years now and needs
-to go upstream as well. It includes the following changes:
-1. Fix up inline function call to xway_mux_apply
-2. Fix GPIO Setup of GPIO Port3
-3. Implement gpio_chip.to_irq
+On Fri, Nov 20, 2015 at 11:46 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Magnus,
+>
+> Thank you for the patch.
+>
+> On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
+>> pinctrl: sh-pfc: r8a7794: DU support
+>>
+>> [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+>> [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
+>> [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+>> [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
+>>
+>> These patches take the r8a7794 PFC DU support code from the BSP
+>> and reworks it to fit the r8a7794 ALT board. Tested with the ALT
+>> VGA port - by default PFC is not used however enabling PFC using
+>> an incremental (yet to be posted) patch works well.
+>>
+>> It is worth noting that patch 2-4 modifies the pin groups. This
+>> means that the upstream DT ABI for PFC DU will differ compared
+>> to the unreviewed BSP code.
+>>
+>> In general it is not considered good practice to change the pin
+>> groups and break compatibility since they are part of the DT ABI.
+>>
+>> For this particular case upstream never have had PFC DU support
+>> for r8a7794, so treating the BSP bindings as experimental and
+>> migrate away seems reasonable.
+>
+> If we start considering DT bindings that never went upstream as stable we'll
+> have a big problem. I mean even bigger than the upstream DT bindings stability
+> problem :-)
 
-Signed-off-by: John Crispin <blogic@openwrt.org>
-Signed-off-by: Martin Schiller <mschiller@tdt.de>
----
- drivers/pinctrl/pinctrl-xway.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+I'm not saying that local DT hacks should be considered stable, more
+that it as usual makes sense to follow upstream first with proper DT
+review process early on.
 
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index 234d3f4..11ec71c 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1507,10 +1507,9 @@ static struct pinctrl_desc xway_pctrl_desc = {
- 	.confops	= &xway_pinconf_ops,
- };
- 
--static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
-+static int mux_apply(struct ltq_pinmux_info *info,
- 				int pin, int mux)
- {
--	struct ltq_pinmux_info *info = pinctrl_dev_get_drvdata(pctrldev);
- 	int port = PORT(pin);
- 	u32 alt1_reg = GPIO_ALT1(pin);
- 
-@@ -1530,6 +1529,14 @@ static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
- 	return 0;
- }
- 
-+static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
-+				int pin, int mux)
-+{
-+	struct ltq_pinmux_info *info = pinctrl_dev_get_drvdata(pctrldev);
-+
-+	return mux_apply(info, pin, mux);
-+}
-+
- static const struct ltq_cfg_param xway_cfg_params[] = {
- 	{"lantiq,pull",		LTQ_PINCONF_PARAM_PULL},
- 	{"lantiq,open-drain",	LTQ_PINCONF_PARAM_OPEN_DRAIN},
-@@ -1574,12 +1581,28 @@ static int xway_gpio_dir_out(struct gpio_chip *chip, unsigned int pin, int val)
- {
- 	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
- 
-+	if (PORT(pin) == PORT3)
-+		gpio_setbit(info->membase[0], GPIO3_OD, PORT_PIN(pin));
-+	else
-+		gpio_setbit(info->membase[0], GPIO_OD(pin), PORT_PIN(pin));
- 	gpio_setbit(info->membase[0], GPIO_DIR(pin), PORT_PIN(pin));
- 	xway_gpio_set(chip, pin, val);
- 
- 	return 0;
- }
- 
-+static int xway_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
-+	int i;
-+
-+	for (i = 0; i < info->num_exin; i++)
-+		if (info->exin[i] == offset)
-+			return ltq_eiu_get_irq(i);
-+
-+	return -1;
-+}
-+
- static struct gpio_chip xway_chip = {
- 	.label = "gpio-xway",
- 	.direction_input = xway_gpio_dir_in,
-@@ -1588,6 +1611,7 @@ static struct gpio_chip xway_chip = {
- 	.set = xway_gpio_set,
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-+	.to_irq = xway_gpio_to_irq,
- 	.base = -1,
- };
- 
--- 
-2.1.4
+>> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+>
+> Wouldn't it make sense to merge the 4 patches together ?
+
+Yeah, I guess so. My feeling is also that it would be good to verify
+HDMI on ALT before commiting to DT bindings. Right now only one DU
+channel is tested.
+
+Cheers,
+
+/ magnus
