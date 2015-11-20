@@ -1,43 +1,63 @@
-From: Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/4] gpio: lpc32xx: add new LPC32xx GPIO controller driver
-Date: Fri, 20 Nov 2015 03:29:51 +0200
-Message-ID: <1447982995-30231-1-git-send-email-vz@mleia.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Roland Stigge <stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
+Date: Fri, 20 Nov 2015 04:46:50 +0200
+Message-ID: <2997631.z1xUhmAZzM@avalon>
+References: <20151117031832.24924.60685.sendpatchset@little-apple>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20151117031832.24924.60685.sendpatchset@little-apple>
+Sender: linux-sh-owner@vger.kernel.org
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-sh@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be
 List-Id: linux-gpio@vger.kernel.org
 
-The changeset updates NXP LPC32xx GPIO controller driver on basis of
-the new LPC32xx irqchip driver.
+Hi Magnus,
 
-Unfortunately the old driver has too many hacks inherited from the
-ancient legacy NXP BSP and I find it can not be maintained, the new
-driver has compatible interface to device tree clients, so moving
-to the new driver should not impact any GPIO consumers.
+Thank you for the patch.
 
-The changeset has dependencies on the recent updates to LPC32xx DTS:
- * http://permalink.gmane.org/gmane.linux.ports.arm.kernel/456304
- * Recent LPC32xx CCF series (no link at the moment)
- * Recent LPC32xx irqchip series (no link at the moment)
+On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
+> pinctrl: sh-pfc: r8a7794: DU support
+> 
+> [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+> [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
+> [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+> [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
+> 
+> These patches take the r8a7794 PFC DU support code from the BSP
+> and reworks it to fit the r8a7794 ALT board. Tested with the ALT
+> VGA port - by default PFC is not used however enabling PFC using
+> an incremental (yet to be posted) patch works well.
+> 
+> It is worth noting that patch 2-4 modifies the pin groups. This
+> means that the upstream DT ABI for PFC DU will differ compared
+> to the unreviewed BSP code.
+> 
+> In general it is not considered good practice to change the pin
+> groups and break compatibility since they are part of the DT ABI.
+> 
+> For this particular case upstream never have had PFC DU support
+> for r8a7794, so treating the BSP bindings as experimental and
+> migrate away seems reasonable.
 
-Vladimir Zapolskiy (4):
-  dt-bindings: gpio: update desription of LPC32xx GPIO controller
-  arm: dts: lpc32xx: extend description of gpio controller node
-  gpio: lpc32xx: remove legacy LPC32xx GPIO driver
-  gpio: lpc32xx: add new LPC32xx GPIO controller driver
+If we start considering DT bindings that never went upstream as stable we'll 
+have a big problem. I mean even bigger than the upstream DT bindings stability 
+problem :-)
 
- .../devicetree/bindings/gpio/gpio_lpc32xx.txt      | 121 ++-
- arch/arm/boot/dts/lpc32xx.dtsi                     |  85 +-
- drivers/gpio/Kconfig                               |   8 +
- drivers/gpio/Makefile                              |   2 +-
- drivers/gpio/gpio-lpc32xx.c                        | 961 +++++++++++----------
- 5 files changed, 735 insertions(+), 442 deletions(-)
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+
+Wouldn't it make sense to merge the 4 patches together ?
+
+> ---
+> 
+>  Written against v4.4-rc1
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  282 +++++++++++++++++++++++++++----
+>  1 file changed, 252 insertions(+), 30 deletions(-)
 
 -- 
-2.1.4
+Regards,
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Laurent Pinchart
+
