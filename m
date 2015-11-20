@@ -1,45 +1,41 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [RFC/PATCH] pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP
- bindings
-Date: Fri, 20 Nov 2015 09:53:34 -0800
-Message-ID: <20151120175334.GR32672@codeaurora.org>
-References: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
- <20151119145017.GA19795@rob-hp-laptop>
+From: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+Subject: [PATCH 0/3] pinmux support for Broadcom NSP SOC
+Date: Fri, 20 Nov 2015 12:55:20 -0500
+Message-ID: <1448042120-9212-1-git-send-email-yrdreddy@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60390 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759585AbbKTRxh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Nov 2015 12:53:37 -0500
-Content-Disposition: inline
-In-Reply-To: <20151119145017.GA19795@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, "Ivan T. Ivanov" <iivanov@mm-sol.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-On 11/19, Rob Herring wrote:
-> On Tue, Nov 17, 2015 at 05:00:26PM -0800, Stephen Boyd wrote:
-> > The drivers don't really need to know which PMIC they're for, so
-> > make a generic binding for them. This alleviates us from updating
-> > the drivers every time a new PMIC comes out. It's still
-> > recommended that we update the binding with new PMIC models and
-> > always specify the specific model for the MPPs and gpios before
-> > the generic compatible string in devicetree, but this at least
-> > cuts down on adding more and more compatible strings to the
-> > drivers until we actually need them.
-> > 
-> > Cc: <devicetree@vger.kernel.org>
-> > Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>
-> > Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > ---
-> 
-> Seems okay to me. I assume you are going to update all the dts files?
+This patchset contains the pinmux support for the Broadcom's
+Northstar Plus (NSP) SOC.
 
-Yep, I'll send out patches to do that.
+The first patch provides the documentation details and the
+second patch contains the driver details. The third patch
+contains the enable method.
+
+This patchset has been tested on NSP bcm958625HR board.
+This patchset is based on v4.4.0-rc1 and is available from github
+repo: https://github.com/Broadcom/cygnus-linux.git
+branch: nsp-pinmux-v1
+
+Yendapally Reddy Dhananjaya Reddy (3):
+  pinctrl: Broadcom NSP pinctrl device tree bindings
+  pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC
+  ARM: dts: enable pinctrl for Broadcom NSP
+
+ .../bindings/pinctrl/brcm,nsp-pinmux.txt           |  79 +++
+ arch/arm/boot/dts/bcm-nsp.dtsi                     |   7 +
+ arch/arm/boot/dts/bcm958625k.dts                   |   9 +
+ drivers/pinctrl/bcm/Kconfig                        |  13 +
+ drivers/pinctrl/bcm/Makefile                       |   1 +
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c              | 650 +++++++++++++++++++++
+ 6 files changed, 759 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-pinmux.txt
+ create mode 100644 drivers/pinctrl/bcm/pinctrl-nsp-mux.c
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.1.0
