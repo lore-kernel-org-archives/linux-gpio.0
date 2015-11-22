@@ -1,44 +1,97 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] gpio: 104-idio-16: Disable IRQ on device probe
-Date: Sun, 22 Nov 2015 11:38:55 -0500
-Message-ID: <20151122163855.GA18100@sophia>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: gpio: update desription of LPC32xx GPIO
+ controller
+Date: Sun, 22 Nov 2015 15:09:22 -0600
+Message-ID: <20151122210922.GA6853@rob-hp-laptop>
+References: <1447982995-30231-1-git-send-email-vz@mleia.com>
+ <1447982995-30231-2-git-send-email-vz@mleia.com>
+ <20151120141354.GA25446@rob-hp-laptop>
+ <564F6617.6090104@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:34081 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752362AbbKVQjJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Nov 2015 11:39:09 -0500
+Received: from mail.kernel.org ([198.145.29.136]:37605 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752041AbbKVVJ1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 22 Nov 2015 16:09:27 -0500
 Content-Disposition: inline
+In-Reply-To: <564F6617.6090104@mleia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 
-IRQ should be disabled on device probe so that the device IRQ is in a
-known starting state. If IRQ is not disabled, interrupts may be reported
-as handled by the IRQ handler, despite no irq_unmask calls made by the
-user.
+On Fri, Nov 20, 2015 at 08:27:35PM +0200, Vladimir Zapolskiy wrote:
+> On 20.11.2015 16:13, Rob Herring wrote:
+> > On Fri, Nov 20, 2015 at 03:29:52AM +0200, Vladimir Zapolskiy wrote:
+> >> For the purpose of better description of NXP LPC32xx GPIO controller
+> >> hardware in device tree format, extend the existing description with
+> >> device tree subnodes, which represent 6 GPIO banks within the
+> >> controller.
+> >>
+> >> Note, client interface to the GPIO controller is untouched.
+> >>
+> >> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+> >> ---
+> >>  .../devicetree/bindings/gpio/gpio_lpc32xx.txt      | 121 ++++++++++++++++++++-
+> >>  1 file changed, 120 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+> >> index 4981936..d2da63c 100644
+> >> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+> >> +++ b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+> >> @@ -15,7 +15,43 @@ Required properties:
+> >>     2) pin number
+> >>     3) optional parameters:
+> >>        - bit 0 specifies polarity (0 for normal, 1 for inverted)
+> >> -- reg: Index of the GPIO group
+> >> +- #address-cells: should be 2, which stands for GPIO bank id and
+> >> +  physical base address of this GPIO bank.
+> > 
+> > Now you need special code to do address translation. I'd really think 
+> > twice about doing this.
+> 
+> Correct, address translation code is needed here...
+> 
+> > Why do you need the bank number?
+> 
+> Only one reason -- backward compatibility in sense of referencing a GPIO
+> line on client's side. This API design is broken, I agree.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-idio-16.c | 3 +++
- 1 file changed, 3 insertions(+)
+What client exactly? Between the dtb and kernel or kernel and userspace 
+or ...?
 
-diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
-index 81b6904..efe3ff7 100644
---- a/drivers/gpio/gpio-104-idio-16.c
-+++ b/drivers/gpio/gpio-104-idio-16.c
-@@ -242,6 +242,9 @@ static int __init idio_16_probe(struct platform_device *pdev)
- 		goto err_gpio_register;
- 	}
- 
-+	/* Disable IRQ by default */
-+	outb(0, base + 2);
-+
- 	err = gpiochip_irqchip_add(&idio16gpio->chip, &idio_16_irqchip, 0,
- 		handle_edge_irq, IRQ_TYPE_NONE);
- 	if (err) {
--- 
-2.4.10
+> Honestly I would prefer to get rid of this "feature", new code allows to
+> reference on client's side either a parent GPIO controller device node,
+> or bank nodes, probably the improvement can be done in a few steps?
+> 
+>   - this change,
+>   - convert clients to reference a GPIO bank directly,
+>   - remove root GPIO controller (e.g. make it "simple-bus") and convert
+> GPIO banks to "gpio-controller"s.
+> 
+> Can an evolution like this happen?
 
+You generally don't want bindings to evolve.
+
+
+> >> +		gpio_p2: gpio-controller@2 {
+> >> +			reg = <2 0x10 0x18>;
+> >> +			gpio-bank-name = "p2";
+> >> +			gpios = <13>;
+> >> +			gpio-no-output-state;
+> >> +		};
+> >> +
+> >> +		gpio_gpio: gpio-controller@3 {
+> >> +			reg = <3 0x00 0x1C>;
+> > 
+> > This overlaps with bank 2.
+> 
+> Yes, it is. Thousand thanks to hardware designers.
+
+Then you might want to split these into 2 regions. The problem is 
+request_resource does not work with overlapping resources. Or just don't 
+do subnodes. If there is not a lot of variations in the subnode data, 
+then just leave that information in the kernel.
+
+Rob
