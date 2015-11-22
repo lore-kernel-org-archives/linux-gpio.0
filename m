@@ -1,79 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 3/4] regulator: tps65086: Add regulator driver for the
- TPS65086 PMIC
-Date: Sun, 22 Nov 2015 13:13:21 +0000
-Message-ID: <20151122131321.GM26072@sirena.org.uk>
-References: <1447974102-24938-1-git-send-email-afd@ti.com>
- <1447974102-24938-4-git-send-email-afd@ti.com>
- <20151121133739.GG26072@sirena.org.uk>
- <5650D6D2.5060108@ti.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH] gpio: 104-idio-16: Disable IRQ on device probe
+Date: Sun, 22 Nov 2015 11:38:55 -0500
+Message-ID: <20151122163855.GA18100@sophia>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="g6DVDhPhk1bqxDrC"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43186 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672AbbKVNNe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Nov 2015 08:13:34 -0500
+Received: from mail-yk0-f176.google.com ([209.85.160.176]:34081 "EHLO
+	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752362AbbKVQjJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Nov 2015 11:39:09 -0500
 Content-Disposition: inline
-In-Reply-To: <5650D6D2.5060108@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+IRQ should be disabled on device probe so that the device IRQ is in a
+known starting state. If IRQ is not disabled, interrupts may be reported
+as handled by the IRQ handler, despite no irq_unmask calls made by the
+user.
 
---g6DVDhPhk1bqxDrC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-104-idio-16.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Sat, Nov 21, 2015 at 02:40:50PM -0600, Andrew F. Davis wrote:
-> On 11/21/2015 07:37 AM, Mark Brown wrote:
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 81b6904..efe3ff7 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -242,6 +242,9 @@ static int __init idio_16_probe(struct platform_device *pdev)
+ 		goto err_gpio_register;
+ 	}
+ 
++	/* Disable IRQ by default */
++	outb(0, base + 2);
++
+ 	err = gpiochip_irqchip_add(&idio16gpio->chip, &idio_16_irqchip, 0,
+ 		handle_edge_irq, IRQ_TYPE_NONE);
+ 	if (err) {
+-- 
+2.4.10
 
-> >An earlier version of this patch has already been applied, please don't
-> >resend already applied patches but send incremental patches with any
-> >changes.
-
-> Odd, I didn't seem to get any message for this getting applied. Looks
-> like only a couple lines difference from the version in the regulators
-> branch, I don't imagine you are able to rebase that with these changes?
-
-As a matter of policy I try to avoid rewriting history unless it is
-really required.
-
-> Anyway the reason that line needed changed is over a confusion in
-> what the 'of_node' does in 'struct regulator_config'. The description
-> seems to make it seem like it is the node that gets checked for
-> init data.
-
-The current behaviour is the intended behaviour.
-
-> >* @of_node: OpenFirmware node to parse for device tree bindings (may be
-> >*           NULL).
-
-> But the 'of_node' that is actually searched is the one given in
-> regulator_config->dev->of_node. Is this intended behavior (drivers
-> assume it is so it probably has to be now) and if so, the above
-> description might need to be clarified as too what that 'of_node'
-> pointer really does?
-
-Please submit a patch with any clarification you think is needed.
-of_node is the name of the container subnode of the main node for the
-device where we look for init data - both are used.
-
---g6DVDhPhk1bqxDrC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWUb9wAAoJECTWi3JdVIfQf0EH/iDVkhnWLMgG7vkZAvTlX9CI
-jxuuwUV4ZlkFO9lEbGpkaasgUyCUZghthsh/G6jBTYGH97FYP/a/jxt0WPInR+3s
-Lz7MfnJo410TZcCwnDty5LNaPdYU4jaAQddwfxN7Uw2alY7+A3/m6TBnAob/bSLg
-coLDvrBwR1OBAKsMxOcgHSW/R2NcnhC2MJp+yI/AQN+iKq/MRxe0aqFqojoihf6g
-YqftSImrciux1+Eb+8zuk9Yi+1LxmM9BG4ElhRzSmZcesPOBLM0FBOAT7gy1Ru1f
-kxNqBgyVRSKnwpPNCnFn8f5z8SLSuI2AVrw5XygTP8y/Vh3F6y3S4gPcKCZVRrY=
-=O5l9
------END PGP SIGNATURE-----
-
---g6DVDhPhk1bqxDrC--
