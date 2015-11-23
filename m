@@ -1,47 +1,33 @@
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Subject: Re: [RFC/PATCH] pinctrl: qcom: Add generic ssbi and spmi GPIO/MPP
- bindings
-Date: Mon, 23 Nov 2015 10:22:57 -0800
-Message-ID: <20151123182257.GP30882@usrtlx11787.corpusers.net>
-References: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: Add msm8996 pinctrl driver
+Date: Mon, 23 Nov 2015 10:26:03 -0800
+Message-ID: <20151123182603.GQ30882@usrtlx11787.corpusers.net>
+References: <1447806946-7137-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from seldrel01.sonyericsson.com ([37.139.156.2]:3251 "EHLO
-	seldrel01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751795AbbKWSXQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 23 Nov 2015 13:23:16 -0500
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1447808426-21834-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <1447806946-7137-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
 To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Ivan T. Ivanov" <iivanov@mm-sol.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Joonwoo Park <joonwoop@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue 17 Nov 17:00 PST 2015, Stephen Boyd wrote:
+On Tue 17 Nov 16:35 PST 2015, Stephen Boyd wrote:
 
-> The drivers don't really need to know which PMIC they're for, so
-> make a generic binding for them. This alleviates us from updating
-> the drivers every time a new PMIC comes out. It's still
-> recommended that we update the binding with new PMIC models and
-> always specify the specific model for the MPPs and gpios before
-> the generic compatible string in devicetree, but this at least
-> cuts down on adding more and more compatible strings to the
-> drivers until we actually need them.
+> From: Joonwoo Park <joonwoop@codeaurora.org>
+> 
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for msm8996.
 > 
 > Cc: <devicetree@vger.kernel.org>
-> Cc: "Ivan T. Ivanov" <iivanov@mm-sol.com>
 > Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
+> [sboyd@codeaurora.org: Remove duplicate entries and enums]
 > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 > ---
-> 
 
-I must say that when it comes to writing dts files I much prefer the msm
-way of denoting functions over the pmic one. But because of that
-decision this makes perfect sense!
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
 Regards,
 Bjorn
