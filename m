@@ -1,81 +1,60 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH] pinctrl: intel: fix bug of register offset calculation
-Date: Mon, 23 Nov 2015 10:17:55 +0200
-Message-ID: <20151123081755.GS1604@lahna.fi.intel.com>
-References: <1448278093-16515-1-git-send-email-qipeng.zha@intel.com>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: RE: [PATCH 1/4] pinctrl/lantiq: update devicetree bindings
+ Documentation
+Date: Mon, 23 Nov 2015 10:46:37 +0000
+Message-ID: <6a6af36764c34428851b0cc8f513e89d@TDT-MS.TDTNET.local>
+References: <1447995151-3857-1-git-send-email-mschiller@tdt.de>
+ <20151120142640.GA3348@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:59660 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753499AbbKWISN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 23 Nov 2015 03:18:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1448278093-16515-1-git-send-email-qipeng.zha@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20151120142640.GA3348@rob-hp-laptop>
+Content-Language: de-DE
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Rob Herring <robh@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "ralf@linux-mips.org" <ralf@linux-mips.org>, "blogic@openwrt.org" <blogic@openwrt.org>, "hauke@hauke-m.de" <hauke@hauke-m.de>, "jogo@openwrt.org" <jogo@openwrt.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com
 
-On Mon, Nov 23, 2015 at 07:28:13PM +0800, Qipeng Zha wrote:
-> From: zhengq <qi.zheng@intel.com>
-> 
-> The group size for registers PADCFGLOCK, HOSTSW_OWN,
-> GPI_IS, GPI_IE, are not always 24. Add a parameter to let
-> the platform has the chance to reset the value.
-> Also fix the bug of register PAD_OWN offset calculation.
-
-Should that be a separate patch?
-
-> 
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-broxton.c |  1 +
->  drivers/pinctrl/intel/pinctrl-intel.c   | 57 +++++++++++++++++++++------------
->  drivers/pinctrl/intel/pinctrl-intel.h   |  3 ++
->  3 files changed, 40 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-> index e42d5d4..5979d38 100644
-> --- a/drivers/pinctrl/intel/pinctrl-broxton.c
-> +++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-> @@ -28,6 +28,7 @@
->  		.padcfglock_offset = BXT_PADCFGLOCK,	\
->  		.hostown_offset = BXT_HOSTSW_OWN,	\
->  		.ie_offset = BXT_GPI_IE,		\
-> +		.gpp_size = 32,                         \
->  		.pin_base = (s),			\
->  		.npins = ((e) - (s) + 1),		\
->  	}
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 392e28d..d1e790a 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -37,6 +37,7 @@
->  #define PADOWN_BITS			4
->  #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
->  #define PADOWN_MASK(p)			(0xf << PADOWN_SHIFT(p))
-> +#define PADOWN_GPP(p)			((p)/8)
-
-Make that ((p) / 8).
-
->  
->  /* Offset from pad_regs */
->  #define PADCFG0				0x000
-> @@ -108,6 +109,14 @@ struct intel_pinctrl {
->  #define gpiochip_to_pinctrl(c)	container_of(c, struct intel_pinctrl, chip)
->  #define pin_to_padno(c, p)	((p) - (c)->pin_base)
->  
-> +static unsigned intel_npads_in_gpp(const struct intel_community *community)
-> +{
-> +	if (!community || !community->gpp_size)
-> +		return NPADS_IN_GPP;
-> +	else
-> +		return community->gpp_size;
-> +}
-
-Instead of this, let's just add correct gpp_size to sunrisepoint part
-and drop the above function and NPADS_IN_GPP macro.
-
-Otherwise this looks good to me, thanks.
+T24gMTEvMjAvMjAxNSBhdCAzOjI2IFBNLCBSb2IgSGVycmluZyB3cm90ZToNCj4gT24gRnJpLCBO
+b3YgMjAsIDIwMTUgYXQgMDU6NTI6MjhBTSArMDEwMCwgTWFydGluIFNjaGlsbGVyIHdyb3RlOg0K
+PiA+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgbmV3IGRlZGljYXRlZCAibGFudGlxLHBpbmN0cmwtPGNo
+aXA+IiBjb21wYXRpYmxlDQo+IHN0cmluZ3MNCj4gPiB0byB0aGUgZGV2aWNldHJlZSBiaW5kaW5n
+cyBEb2N1bWVudGF0aW9uLCB3aGVyZSA8Y2hpcD4gaXMgb25lIG9mDQo+ICJhc2UiLA0KPiA+ICJk
+YW51YmUiLCAieHJ4MTAwIiwgInhyeDIwMCIgb3IgInhyeDMwMCIgYW5kIG1hcmtzIHRoZQ0KPiAi
+bGFudGlxLHBpbmN0cmwteHdheSINCj4gPiBhbmQgImxhbnRpcSxwaW5jdHJsLXhyOSIgY29tcGF0
+aWJsZSBzdHJpbmdzIGFzIERFUFJFQ0FURUQuDQo+DQo+IFRoaXMgY291bGQgdXNlIGEgYmV0dGVy
+IHN1YmplY3QuIEV2ZXJ5IGNoYW5nZSB0byBiaW5kaW5ncyBhcmUgInVwZGF0aW5nDQo+IGJpbmRp
+bmcgZGVzY3JpcHRpb24uIg0KDQpPSywgc28gd291bGQgInBpbmN0cmwvbGFudGlxOiB1cGRhdGlu
+ZyBkdCBiaW5kaW5nIGRlc2NyaXB0aW9uIiBiZSBiZXR0ZXI/DQoNCj4NCj4gPg0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IE1hcnRpbiBTY2hpbGxlciA8bXNjaGlsbGVyQHRkdC5kZT4NCj4gPiAtLS0NCj4g
+PiAgLi4uL2JpbmRpbmdzL3BpbmN0cmwvbGFudGlxLHBpbmN0cmwteHdheS50eHQgICAgICAgfCAx
+MDgNCj4gKysrKysrKysrKysrKysrKysrKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMDAgaW5z
+ZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQNCj4gYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9sYW50aXEscGluY3RybC14d2F5
+LnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL2xhbnRp
+cSxwaW5jdHJsLXh3YXkudHh0DQo+ID4gaW5kZXggZTg5YjQ2Ny4uMTZkYWExMiAxMDA2NDQNCj4g
+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9sYW50aXEs
+cGluY3RybC0NCj4geHdheS50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvcGluY3RybC9sYW50aXEscGluY3RybC0NCj4geHdheS50eHQNCj4gPiBAQCAtMSw3
+ICsxLDE0IEBADQo+ID4gIExhbnRpcSBYV0FZIHBpbm11eCBjb250cm9sbGVyDQo+ID4NCj4gPiAg
+UmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiAtLSBjb21wYXRpYmxlOiAibGFudGlxLHBpbmN0cmwt
+eHdheSIgb3IgImxhbnRpcSxwaW5jdHJsLXhyOSINCj4gPiArLSBjb21wYXRpYmxlOiAibGFudGlx
+LHBpbmN0cmwteHdheSIsIChERVBSRUNBVEVEOiBVc2UgWFdBWSBEQU5VQkUNCj4gRmFtaWx5KQ0K
+PiA+ICsgICAgICAibGFudGlxLHBpbmN0cmwteHI5IiwgKERFUFJFQ0FURUQ6IFVzZSBYV0FZIHhS
+WDEwMC94UlgyMDANCj4gRmFtaWx5KQ0KPiA+ICsgICAgICAibGFudGlxLHBpbmN0cmwtPGNoaXA+
+Iiwgd2hlcmUgPGNoaXA+IGlzOg0KPg0KPiA8Y2hpcD4gZmlyc3QgaXMgcHJlZmVycmVkOiBsYW50
+aXEsPGNoaXA+LXBpbmN0cmwNCj4NCj4gPiArImFzZSIgKFhXQVkgQU1BWk9OIEZhbWlseSkNCj4g
+PiArImRhbnViZSIgKFhXQVkgREFOVUJFIEZhbWlseSkNCj4gPiArInhyeDEwMCIgKFhXQVkgeFJY
+MTAwIEZhbWlseSkNCj4gPiArInhyeDIwMCIgKFhXQVkgeFJYMjAwIEZhbWlseSkNCj4gPiArInhy
+eDMwMCIgKFhXQVkgeFJYMzAwIEZhbWlseSkNCg0KTm8gcHJvYmxlbSwgSSB3aWxsIGNoYW5nZSB0
+aGlzIHRvICJsYW50aXEsPGNoaXA+LXBpbmN0cmwiIGZvciB0aGUgbmV3IGJpbmRpbmdzLg0KDQpN
+YXJ0aW4NCg0K
