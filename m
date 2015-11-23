@@ -1,97 +1,249 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: gpio: update desription of LPC32xx GPIO
- controller
-Date: Sun, 22 Nov 2015 15:09:22 -0600
-Message-ID: <20151122210922.GA6853@rob-hp-laptop>
-References: <1447982995-30231-1-git-send-email-vz@mleia.com>
- <1447982995-30231-2-git-send-email-vz@mleia.com>
- <20151120141354.GA25446@rob-hp-laptop>
- <564F6617.6090104@mleia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Qipeng Zha <qipeng.zha@intel.com>
+Subject: [PATCH] pinctrl: intel: fix bug of register offset calculation
+Date: Mon, 23 Nov 2015 19:28:13 +0800
+Message-ID: <1448278093-16515-1-git-send-email-qipeng.zha@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37605 "EHLO mail.kernel.org"
+Received: from mga09.intel.com ([134.134.136.24]:40679 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752041AbbKVVJ1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 22 Nov 2015 16:09:27 -0500
-Content-Disposition: inline
-In-Reply-To: <564F6617.6090104@mleia.com>
+	id S1753258AbbKWDYA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 22 Nov 2015 22:24:00 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, qi.zheng@intel.com, qipeng.zha@intel.com
 
-On Fri, Nov 20, 2015 at 08:27:35PM +0200, Vladimir Zapolskiy wrote:
-> On 20.11.2015 16:13, Rob Herring wrote:
-> > On Fri, Nov 20, 2015 at 03:29:52AM +0200, Vladimir Zapolskiy wrote:
-> >> For the purpose of better description of NXP LPC32xx GPIO controller
-> >> hardware in device tree format, extend the existing description with
-> >> device tree subnodes, which represent 6 GPIO banks within the
-> >> controller.
-> >>
-> >> Note, client interface to the GPIO controller is untouched.
-> >>
-> >> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> >> ---
-> >>  .../devicetree/bindings/gpio/gpio_lpc32xx.txt      | 121 ++++++++++++++++++++-
-> >>  1 file changed, 120 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
-> >> index 4981936..d2da63c 100644
-> >> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
-> >> +++ b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
-> >> @@ -15,7 +15,43 @@ Required properties:
-> >>     2) pin number
-> >>     3) optional parameters:
-> >>        - bit 0 specifies polarity (0 for normal, 1 for inverted)
-> >> -- reg: Index of the GPIO group
-> >> +- #address-cells: should be 2, which stands for GPIO bank id and
-> >> +  physical base address of this GPIO bank.
-> > 
-> > Now you need special code to do address translation. I'd really think 
-> > twice about doing this.
-> 
-> Correct, address translation code is needed here...
-> 
-> > Why do you need the bank number?
-> 
-> Only one reason -- backward compatibility in sense of referencing a GPIO
-> line on client's side. This API design is broken, I agree.
+From: zhengq <qi.zheng@intel.com>
 
-What client exactly? Between the dtb and kernel or kernel and userspace 
-or ...?
+The group size for registers PADCFGLOCK, HOSTSW_OWN,
+GPI_IS, GPI_IE, are not always 24. Add a parameter to let
+the platform has the chance to reset the value.
+Also fix the bug of register PAD_OWN offset calculation.
 
-> Honestly I would prefer to get rid of this "feature", new code allows to
-> reference on client's side either a parent GPIO controller device node,
-> or bank nodes, probably the improvement can be done in a few steps?
-> 
->   - this change,
->   - convert clients to reference a GPIO bank directly,
->   - remove root GPIO controller (e.g. make it "simple-bus") and convert
-> GPIO banks to "gpio-controller"s.
-> 
-> Can an evolution like this happen?
+Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-broxton.c |  1 +
+ drivers/pinctrl/intel/pinctrl-intel.c   | 57 +++++++++++++++++++++------------
+ drivers/pinctrl/intel/pinctrl-intel.h   |  3 ++
+ 3 files changed, 40 insertions(+), 21 deletions(-)
 
-You generally don't want bindings to evolve.
+diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
+index e42d5d4..5979d38 100644
+--- a/drivers/pinctrl/intel/pinctrl-broxton.c
++++ b/drivers/pinctrl/intel/pinctrl-broxton.c
+@@ -28,6 +28,7 @@
+ 		.padcfglock_offset = BXT_PADCFGLOCK,	\
+ 		.hostown_offset = BXT_HOSTSW_OWN,	\
+ 		.ie_offset = BXT_GPI_IE,		\
++		.gpp_size = 32,                         \
+ 		.pin_base = (s),			\
+ 		.npins = ((e) - (s) + 1),		\
+ 	}
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 392e28d..d1e790a 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -37,6 +37,7 @@
+ #define PADOWN_BITS			4
+ #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
+ #define PADOWN_MASK(p)			(0xf << PADOWN_SHIFT(p))
++#define PADOWN_GPP(p)			((p)/8)
+ 
+ /* Offset from pad_regs */
+ #define PADCFG0				0x000
+@@ -108,6 +109,14 @@ struct intel_pinctrl {
+ #define gpiochip_to_pinctrl(c)	container_of(c, struct intel_pinctrl, chip)
+ #define pin_to_padno(c, p)	((p) - (c)->pin_base)
+ 
++static unsigned intel_npads_in_gpp(const struct intel_community *community)
++{
++	if (!community || !community->gpp_size)
++		return NPADS_IN_GPP;
++	else
++		return community->gpp_size;
++}
++
+ static struct intel_community *intel_get_community(struct intel_pinctrl *pctrl,
+ 						   unsigned pin)
+ {
+@@ -142,7 +151,7 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
+ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
+ {
+ 	const struct intel_community *community;
+-	unsigned padno, gpp, gpp_offset, offset;
++	unsigned padno, gpp, offset;
+ 	void __iomem *padown;
+ 
+ 	community = intel_get_community(pctrl, pin);
+@@ -152,9 +161,8 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
+ 		return true;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
+-	gpp_offset = padno % NPADS_IN_GPP;
+-	offset = community->padown_offset + gpp * 16 + (gpp_offset / 8) * 4;
++	gpp = PADOWN_GPP(padno);
++	offset = community->padown_offset + gpp * 4;
+ 	padown = community->regs + offset;
+ 
+ 	return !(readl(padown) & PADOWN_MASK(padno));
+@@ -163,7 +171,7 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
+ static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned pin)
+ {
+ 	const struct intel_community *community;
+-	unsigned padno, gpp, offset;
++	unsigned padno, gpp, offset, gpp_size;
+ 	void __iomem *hostown;
+ 
+ 	community = intel_get_community(pctrl, pin);
+@@ -173,17 +181,18 @@ static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned pin)
+ 		return false;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
++	gpp_size = intel_npads_in_gpp(community);
++	gpp = padno / gpp_size;
+ 	offset = community->hostown_offset + gpp * 4;
+ 	hostown = community->regs + offset;
+ 
+-	return !(readl(hostown) & BIT(padno % NPADS_IN_GPP));
++	return !(readl(hostown) & BIT(padno % gpp_size));
+ }
+ 
+ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+ {
+ 	struct intel_community *community;
+-	unsigned padno, gpp, offset;
++	unsigned padno, gpp, offset, gpp_size;
+ 	u32 value;
+ 
+ 	community = intel_get_community(pctrl, pin);
+@@ -193,7 +202,8 @@ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+ 		return false;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
++	gpp_size = intel_npads_in_gpp(community);
++	gpp = padno / gpp_size;
+ 
+ 	/*
+ 	 * If PADCFGLOCK and PADCFGLOCKTX bits are both clear for this pad,
+@@ -202,12 +212,12 @@ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+ 	 */
+ 	offset = community->padcfglock_offset + gpp * 8;
+ 	value = readl(community->regs + offset);
+-	if (value & BIT(pin % NPADS_IN_GPP))
++	if (value & BIT(pin % gpp_size))
+ 		return true;
+ 
+ 	offset = community->padcfglock_offset + 4 + gpp * 8;
+ 	value = readl(community->regs + offset);
+-	if (value & BIT(pin % NPADS_IN_GPP))
++	if (value & BIT(pin % gpp_size))
+ 		return true;
+ 
+ 	return false;
+@@ -663,8 +673,9 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		unsigned padno = pin_to_padno(community, pin);
+-		unsigned gpp_offset = padno % NPADS_IN_GPP;
+-		unsigned gpp = padno / NPADS_IN_GPP;
++		unsigned gpp_size = intel_npads_in_gpp(community);
++		unsigned gpp_offset = padno % gpp_size;
++		unsigned gpp = padno / gpp_size;
+ 
+ 		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
+ 	}
+@@ -685,8 +696,9 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		unsigned padno = pin_to_padno(community, pin);
+-		unsigned gpp_offset = padno % NPADS_IN_GPP;
+-		unsigned gpp = padno / NPADS_IN_GPP;
++		unsigned gpp_size = intel_npads_in_gpp(community);
++		unsigned gpp_offset = padno % gpp_size;
++		unsigned gpp = padno / gpp_size;
+ 		void __iomem *reg;
+ 		u32 value;
+ 
+@@ -772,7 +784,7 @@ static int intel_gpio_irq_wake(struct irq_data *d, unsigned int on)
+ 	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
+ 	const struct intel_community *community;
+ 	unsigned pin = irqd_to_hwirq(d);
+-	unsigned padno, gpp, gpp_offset;
++	unsigned padno, gpp, gpp_offset, gpp_size;
+ 	u32 gpe_en;
+ 
+ 	community = intel_get_community(pctrl, pin);
+@@ -780,8 +792,9 @@ static int intel_gpio_irq_wake(struct irq_data *d, unsigned int on)
+ 		return -EINVAL;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
+-	gpp_offset = padno % NPADS_IN_GPP;
++	gpp_size = intel_npads_in_gpp(community);
++	gpp = padno / gpp_size;
++	gpp_offset = padno % gpp_size;
+ 
+ 	/* Clear the existing wake status */
+ 	writel(BIT(gpp_offset), community->regs + GPI_GPE_STS + gpp * 4);
+@@ -807,6 +820,7 @@ static irqreturn_t intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
+ {
+ 	struct gpio_chip *gc = &pctrl->chip;
+ 	irqreturn_t ret = IRQ_NONE;
++	unsigned gpp_size = intel_npads_in_gpp(community);
+ 	int gpp;
+ 
+ 	for (gpp = 0; gpp < community->ngpps; gpp++) {
+@@ -819,14 +833,14 @@ static irqreturn_t intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
+ 		/* Only interrupts that are enabled */
+ 		pending &= enabled;
+ 
+-		for_each_set_bit(gpp_offset, &pending, NPADS_IN_GPP) {
++		for_each_set_bit(gpp_offset, &pending, gpp_size) {
+ 			unsigned padno, irq;
+ 
+ 			/*
+ 			 * The last group in community can have less pins
+ 			 * than NPADS_IN_GPP.
+ 			 */
+-			padno = gpp_offset + gpp * NPADS_IN_GPP;
++			padno = gpp_offset + gpp * gpp_size;
+ 			if (padno >= community->npins)
+ 				break;
+ 
+@@ -1002,7 +1016,8 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 
+ 		community->regs = regs;
+ 		community->pad_regs = regs + padbar;
+-		community->ngpps = DIV_ROUND_UP(community->npins, NPADS_IN_GPP);
++		community->ngpps = DIV_ROUND_UP(community->npins,
++						intel_npads_in_gpp(community));
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 4ec8b57..b602157 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -55,6 +55,8 @@ struct intel_function {
+  *                  ACPI).
+  * @ie_offset: Register offset of GPI_IE from @regs.
+  * @pin_base: Starting pin of pins in this community
++ * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
++ *            HOSTSW_OWN,  GPI_IS, GPI_IE, etc.
+  * @npins: Number of pins in this community
+  * @regs: Community specific common registers (reserved for core driver)
+  * @pad_regs: Community specific pad registers (reserved for core driver)
+@@ -68,6 +70,7 @@ struct intel_community {
+ 	unsigned hostown_offset;
+ 	unsigned ie_offset;
+ 	unsigned pin_base;
++	unsigned gpp_size;
+ 	size_t npins;
+ 	void __iomem *regs;
+ 	void __iomem *pad_regs;
+-- 
+1.8.3.2
 
-
-> >> +		gpio_p2: gpio-controller@2 {
-> >> +			reg = <2 0x10 0x18>;
-> >> +			gpio-bank-name = "p2";
-> >> +			gpios = <13>;
-> >> +			gpio-no-output-state;
-> >> +		};
-> >> +
-> >> +		gpio_gpio: gpio-controller@3 {
-> >> +			reg = <3 0x00 0x1C>;
-> > 
-> > This overlaps with bank 2.
-> 
-> Yes, it is. Thousand thanks to hardware designers.
-
-Then you might want to split these into 2 regions. The problem is 
-request_resource does not work with overlapping resources. Or just don't 
-do subnodes. If there is not a lot of variations in the subnode data, 
-then just leave that information in the kernel.
-
-Rob
