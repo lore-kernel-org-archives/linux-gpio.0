@@ -1,136 +1,103 @@
-From: Martin Schiller <mschiller@tdt.de>
-Subject: RE: [PATCH 2/4] pinctrl/lantiq: introduce new dedicated devicetree
- bindings
-Date: Mon, 23 Nov 2015 11:00:04 +0000
-Message-ID: <b42ea50ff4c548d2b447f0dd55e59578@TDT-MS.TDTNET.local>
-References: <1447995151-3857-1-git-send-email-mschiller@tdt.de>
- <1447995151-3857-2-git-send-email-mschiller@tdt.de>
- <5650850A.5050000@hauke-m.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Nizam Haider <nizamhaider786@gmail.com>
+Subject: [PATCH] Gpio: use dev_get_platdata()
+Date: Mon, 23 Nov 2015 20:53:18 +0530
+Message-ID: <1448292198-6798-1-git-send-email-nizamhaider786@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mxout51.expurgate.net ([91.198.224.51]:49743 "EHLO
-	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752160AbbKWLAO (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2015 06:00:14 -0500
-In-Reply-To: <5650850A.5050000@hauke-m.de>
-Content-Language: de-DE
+Received: from mail-pa0-f68.google.com ([209.85.220.68]:32769 "EHLO
+	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754643AbbKWPXp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Nov 2015 10:23:45 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hauke Mehrtens <hauke@hauke-m.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "galak@codeaurora.org" <galak@codeaurora.org>, "ralf@linux-mips.org" <ralf@linux-mips.org>, "blogic@openwrt.org" <blogic@openwrt.org>, "jogo@openwrt.org" <jogo@openwrt.org>
+To: albeu@free.fr, linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Nizam Haider <nizamhaider786@gmail.com>, Nizam Haider <nijamh@cdac.in>
 
-T24gMTEvMjEvMjAxNSBhdCAzOjUxIFBNLCBIYXVrZSBNZWhydGVucyB3cm90ZToNCj4gT24gMTEv
-MjAvMjAxNSAwNTo1MiBBTSwgTWFydGluIFNjaGlsbGVyIHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2gg
-aW50cm9kdWNlcyBuZXcgZGVkaWNhdGVkICJsYW50aXEscGluY3RybC08Y2hpcD4iDQo+IGRldmlj
-ZXRyZWUNCj4gPiBiaW5kaW5ncywgd2hlcmUgPGNoaXA+IGlzIG9uZSBvZiAiYXNlIiwgImRhbnVi
-ZSIsICJ4cngxMDAiLCAieHJ4MjAwIg0KPiBvcg0KPiA+ICJ4cngzMDAiIGFuZCBtYXJrcyB0aGUg
-ImxhbnRpcSxwaW5jdHJsLXh3YXkiIGFuZCAibGFudGlxLHBpbmN0cmwteHI5Ig0KPiBiaW5kaW5n
-cyBhcw0KPiA+IERFUFJFQ0FURUQuDQoNCihzbmlwKQ0KDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvcGluY3RybC9waW5jdHJsLWxhbnRpcS5oDQo+IGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwt
-bGFudGlxLmgNCj4gPiBpbmRleCBlYjg5YmEwLi5lMTM3ZDEzIDEwMDY0NA0KPiA+IC0tLSBhL2Ry
-aXZlcnMvcGluY3RybC9waW5jdHJsLWxhbnRpcS5oDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJs
-L3BpbmN0cmwtbGFudGlxLmgNCj4gPiBAQCAtMTYyLDYgKzE2MiwxNCBAQCBlbnVtIGx0cV9waW4g
-ew0KPiA+ICBHUElPNTMsDQo+ID4gIEdQSU81NCwNCj4gPiAgR1BJTzU1LA0KPiA+ICtHUElPNTYs
-DQo+ID4gK0dQSU81NywNCj4gPiArR1BJTzU4LA0KPiA+ICtHUElPNTksDQo+ID4gK0dQSU82MCwg
-LyogNjAgKi8NCj4gPiArR1BJTzYxLA0KPiA+ICtHUElPNjIsDQo+ID4gK0dQSU82MywNCj4gPg0K
-PiA+ICBHUElPNjQsDQo+ID4gIEdQSU82NSwNCj4NCj4gV2hhdCBpcyB0aGUgYWR2YW50YWdlIG9m
-IHVzaW5nIHRoaXMgZW51bSBjb21wYXJlZCB0byBqdXN0IHVzZSBpbnRlZ2Vycw0KPiBkaXJlY3Rs
-eT8gV2FzIGl0IGludGVudGlvbmFsbHkgdGhhdCBHUElPNjQgaGFzIHRoZSBudW1iZXIgNTYgYmVm
-b3JlPw0KDQpNYXliZSB0aGlzIEdQSU81NiAtIEdQSU82MyBnYXAgaGFzIHNvbWUgcmVsYXRpb24g
-dG8gdGhlIHhSWDEwMCAoYWthIGFyOSkgU29DLA0Kd2hpY2ggaGFzIDMgMS8yIEdQSU8gUG9ydHMg
-b2YgMTZiaXRzIChHUElPMCAtIEdQSU81NSkuDQoNCg0KPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL3BpbmN0cmwvcGluY3RybC14d2F5LmMNCj4gYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC14
-d2F5LmMNCj4gPiBpbmRleCBhZTcyNGJkLi4yMzRkM2Y0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
-cnMvcGluY3RybC9waW5jdHJsLXh3YXkuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9waW5j
-dHJsLXh3YXkuYw0KPiA+IEBAIC03LDYgKzcsNyBAQA0KPiA+ICAgKiAgcHVibGlzaGhlZCBieSB0
-aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLg0KPiA+ICAgKg0KPiA+ICAgKiAgQ29weXJpZ2h0
-IChDKSAyMDEyIEpvaG4gQ3Jpc3BpbiA8YmxvZ2ljQG9wZW53cnQub3JnPg0KPiA+ICsgKiAgQ29w
-eXJpZ2h0IChDKSAyMDE1IE1hcnRpbiBTY2hpbGxlciA8bXNjaGlsbGVyQHRkdC5kZT4NCj4gPiAg
-ICovDQo+ID4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Vyci5oPg0KPiA+IEBAIC0yNCw3ICsyNSw3
-IEBADQo+ID4NCj4gPiAgI2luY2x1ZGUgPGxhbnRpcV9zb2MuaD4NCj4gPg0KPiA+IC0vKiB3ZSBo
-YXZlIDMgMS8yIGJhbmtzIG9mIDE2IGJpdCBlYWNoICovDQo+ID4gKy8qIHdlIGhhdmUgdXAgdG8g
-NCBiYW5rcyBvZiAxNiBiaXQgZWFjaCAqLw0KPiA+ICAjZGVmaW5lIFBJTlMxNg0KPiA+ICAjZGVm
-aW5lIFBPUlQzMw0KPiA+ICAjZGVmaW5lIFBPUlQoeCkoeCAvIFBJTlMpDQo+ID4gQEAgLTM1LDcg
-KzM2LDcgQEANCj4gPiAgI2RlZmluZSBNVVhfQUxUMTB4Mg0KPiA+DQo+ID4gIC8qDQo+ID4gLSAq
-IGVhY2ggYmFuayBoYXMgdGhpcyBvZmZzZXQgYXBhcnQgZnJvbSB0aGUgMS8yIGJhbmsgdGhhdCBp
-cyBtaXhlZA0KPiBpbnRvIHRoZQ0KPiA+ICsgKiBlYWNoIGJhbmsgaGFzIHRoaXMgb2Zmc2V0IGFw
-YXJ0IGZyb20gdGhlIDR0aCBiYW5rIHRoYXQgaXMgbWl4ZWQNCj4gaW50byB0aGUNCj4gPiAgICog
-b3RoZXIgMyByYW5nZXMNCj4gPiAgICovDQo+ID4gICNkZWZpbmUgUkVHX09GRjB4MzANCj4gPiBA
-QCAtNTEsNyArNTIsNyBAQA0KPiA+ICAjZGVmaW5lIEdQSU9fUFVEU0VMKHApKEdQSU9fQkFTRShw
-KSArIDB4MWMpDQo+ID4gICNkZWZpbmUgR1BJT19QVURFTihwKShHUElPX0JBU0UocCkgKyAweDIw
-KQ0KPiA+DQo+ID4gLS8qIHRoZSAxLzIgcG9ydCBuZWVkcyBzcGVjaWFsIG9mZnNldHMgZm9yIHNv
-bWUgcmVnaXN0ZXJzICovDQo+ID4gKy8qIHRoZSA0dGggcG9ydCBuZWVkcyBzcGVjaWFsIG9mZnNl
-dHMgZm9yIHNvbWUgcmVnaXN0ZXJzICovDQo+ID4gICNkZWZpbmUgR1BJTzNfT0QoR1BJT19CQVNF
-KDApICsgMHgyNCkNCj4gPiAgI2RlZmluZSBHUElPM19QVURTRUwoR1BJT19CQVNFKDApICsgMHgy
-OCkNCj4gPiAgI2RlZmluZSBHUElPM19QVURFTihHUElPX0JBU0UoMCkgKyAweDJDKQ0KPiA+IEBA
-IC04MCwxNyArODEsMTggQEANCj4gPiAgI2RlZmluZSBGVU5DX01VWChmLCBtKVwNCj4gPiAgeyAu
-ZnVuYyA9IGYsIC5tdXggPSBYV0FZX01VWF8jI20sIH0NCj4gPg0KDQooc25pcCkNCg0KPiA+ICAv
-KiAtLS0tLS0tLS0gIHBpbmNvbmYgcmVsYXRlZCBjb2RlIC0tLS0tLS0tLSAqLw0KPiA+ICBzdGF0
-aWMgaW50IHh3YXlfcGluY29uZl9nZXQoc3RydWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LA0KPiA+
-ICB1bnNpZ25lZCBwaW4sDQo+ID4gQEAgLTY5NSw5ICsxNTkzLDYgQEAgc3RhdGljIHN0cnVjdCBn
-cGlvX2NoaXAgeHdheV9jaGlwID0gew0KPiA+DQo+ID4NCj4gPiAgLyogLS0tLS0tLS0tIHJlZ2lz
-dGVyIHRoZSBwaW5jdHJsIGxheWVyIC0tLS0tLS0tLSAqLw0KPiA+IC1zdGF0aWMgY29uc3QgdW5z
-aWduZWQgeHdheV9leGluX3Bpbl9tYXBbXSA9IHtHUElPMCwgR1BJTzEsIEdQSU8yLA0KPiBHUElP
-MzksIEdQSU80NiwgR1BJTzl9Ow0KPiA+IC1zdGF0aWMgY29uc3QgdW5zaWduZWQgYXNlX2V4aW5f
-cGluc19tYXBbXSA9IHtHUElPNiwgR1BJTzI5LCBHUElPMH07DQo+ID4gLQ0KPiA+ICBzdGF0aWMg
-c3RydWN0IHBpbmN0cmxfeHdheV9zb2Mgew0KPiA+ICBpbnQgcGluX2NvdW50Ow0KPiA+ICBjb25z
-dCBzdHJ1Y3QgbHRxX21mcF9waW4gKm1mcDsNCj4gPiBAQCAtNzA4LDIxICsxNjAzLDQxIEBAIHN0
-YXRpYyBzdHJ1Y3QgcGluY3RybF94d2F5X3NvYyB7DQo+ID4gIGNvbnN0IHVuc2lnbmVkICpleGlu
-Ow0KPiA+ICB1bnNpZ25lZCBpbnQgbnVtX2V4aW47DQo+ID4gIH0gc29jX2NmZ1tdID0gew0KPiA+
-IC0vKiBsZWdhY3kgeHdheSAqLw0KPiA+ICsvKiBsZWdhY3kgeHdheSAoREVQUkVDQVRFRDogVXNl
-IFhXQVkgREFOVUJFIEZhbWlseSkgKi8NCj4gPiAge1hXQVlfTUFYX1BJTiwgeHdheV9tZnAsDQo+
-ID4gIHh3YXlfZ3JwcywgQVJSQVlfU0laRSh4d2F5X2dycHMpLA0KPiA+IC1kYW51YmVfZnVuY3Ms
-IEFSUkFZX1NJWkUoZGFudWJlX2Z1bmNzKSwNCj4gPiArbGVnYWN5X2RhbnViZV9mdW5jcywgQVJS
-QVlfU0laRShsZWdhY3lfZGFudWJlX2Z1bmNzKSwNCj4gPiAgeHdheV9leGluX3Bpbl9tYXAsIDN9
-LA0KPg0KPiBXaGF0IGlzIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gdGhpcyBlbnRyeSBhbmQgdGhl
-IG5ldyBkYW51YmUgZW50cnk/IElzDQo+IHRoaXMgbGVnYXkgZW50cnkgbmVlZGVkIGhlcmUgb3Vy
-IGNhbiB3ZSBtYXAgdGhhdCB0byB0aGUgZGFudWJlIGVudHJ5Pw0KPiBJZg0KPiBpdCBpcyBub3Qg
-bmVlZGVkIHlvdSBzaG91bGQgcHJvYmFibHkgY2hhbmdlIGl0IGRpcmVjdGx5IGluIHRoZQ0KPiB4
-d2F5X21hdGNoIHRhYmxlLg0KDQpZZXMsIHlvdSBhcmUgcmlnaHQuIFdlIGNvdWxkIHNpbXBseSBt
-YXRjaCB0aGUgb2xkICJsYW50aXEscGluY3RybC14d2F5Ig0KY29tcGF0aWJsZSBzdHJpbmcgdG8g
-dGhlIG5ldyBkYW51YmUgZW50cnksIHdoZW4gd2UgYWxzbyBhZGQgdGhlIG9sZCAic3BpIg0KbXV4
-IGdyb3VwIChERVBSRUNBVEVEIGluIHRoZSBhc2UgY29kZSkgaGVyZSB0b28uDQoNCj4NCj4gPiAt
-LyogeHdheSB4cjkgc2VyaWVzICovDQo+ID4gKy8qIHh3YXkgeHI5IHNlcmllcyAoREVQUkVDQVRF
-RDogVXNlIFhXQVkgeFJYMTAwL3hSWDIwMCBGYW1pbHkpICovDQo+ID4gIHtYUjlfTUFYX1BJTiwg
-eHdheV9tZnAsDQo+ID4gIHh3YXlfZ3JwcywgQVJSQVlfU0laRSh4d2F5X2dycHMpLA0KPiA+ICB4
-cnhfZnVuY3MsIEFSUkFZX1NJWkUoeHJ4X2Z1bmNzKSwNCj4gPiAgeHdheV9leGluX3Bpbl9tYXAs
-IDZ9LA0KPiA+IC0vKiB4d2F5IGFzZSBzZXJpZXMgKi8NCj4gPiAte1hXQVlfTUFYX1BJTiwgYXNl
-X21mcCwNCj4gPiArLyogWFdBWSBBTUFaT04gRmFtaWx5ICovDQo+ID4gK3tBU0VfTUFYX1BJTiwg
-YXNlX21mcCwNCj4gPiAgYXNlX2dycHMsIEFSUkFZX1NJWkUoYXNlX2dycHMpLA0KPiA+ICBhc2Vf
-ZnVuY3MsIEFSUkFZX1NJWkUoYXNlX2Z1bmNzKSwNCj4gPiAtYXNlX2V4aW5fcGluc19tYXAsIDN9
-LA0KPiA+ICthc2VfZXhpbl9waW5fbWFwLCAzfSwNCj4gPiArLyogWFdBWSBEQU5VQkUgRmFtaWx5
-ICovDQo+ID4gK3tEQU5VQkVfTUFYX1BJTiwgZGFudWJlX21mcCwNCj4gPiArZGFudWJlX2dycHMs
-IEFSUkFZX1NJWkUoZGFudWJlX2dycHMpLA0KPiA+ICtkYW51YmVfZnVuY3MsIEFSUkFZX1NJWkUo
-ZGFudWJlX2Z1bmNzKSwNCj4gPiArZGFudWJlX2V4aW5fcGluX21hcCwgM30sDQo+ID4gKy8qIFhX
-QVkgeFJYMTAwIEZhbWlseSAqLw0KPiA+ICt7WFJYMTAwX01BWF9QSU4sIHhyeDEwMF9tZnAsDQo+
-ID4gK3hyeDEwMF9ncnBzLCBBUlJBWV9TSVpFKHhyeDEwMF9ncnBzKSwNCj4gPiAreHJ4MTAwX2Z1
-bmNzLCBBUlJBWV9TSVpFKHhyeDEwMF9mdW5jcyksDQo+ID4gK3hyeDEwMF9leGluX3Bpbl9tYXAs
-IDZ9LA0KPiA+ICsvKiBYV0FZIHhSWDIwMCBGYW1pbHkgKi8NCj4gPiAre1hSWDIwMF9NQVhfUElO
-LCB4cngyMDBfbWZwLA0KPiA+ICt4cngyMDBfZ3JwcywgQVJSQVlfU0laRSh4cngyMDBfZ3Jwcyks
-DQo+ID4gK3hyeDIwMF9mdW5jcywgQVJSQVlfU0laRSh4cngyMDBfZnVuY3MpLA0KPiA+ICt4cngy
-MDBfZXhpbl9waW5fbWFwLCA2fSwNCj4gPiArLyogWFdBWSB4UlgzMDAgRmFtaWx5ICovDQo+ID4g
-K3tYUlgzMDBfTUFYX1BJTiwgeHJ4MzAwX21mcCwNCj4gPiAreHJ4MzAwX2dycHMsIEFSUkFZX1NJ
-WkUoeHJ4MzAwX2dycHMpLA0KPiA+ICt4cngzMDBfZnVuY3MsIEFSUkFZX1NJWkUoeHJ4MzAwX2Z1
-bmNzKSwNCj4gPiAreHJ4MzAwX2V4aW5fcGluX21hcCwgNX0sDQo+ID4gIH07DQo+ID4NCj4gPiAg
-c3RhdGljIHN0cnVjdCBwaW5jdHJsX2dwaW9fcmFuZ2UgeHdheV9ncGlvX3JhbmdlID0gew0KPiA+
-IEBAIC03MzQsNiArMTY0OSwxMCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCB4
-d2F5X21hdGNoW10gPQ0KPiB7DQo+ID4gIHsgLmNvbXBhdGlibGUgPSAibGFudGlxLHBpbmN0cmwt
-eHdheSIsIC5kYXRhID0gJnNvY19jZmdbMF19LA0KPiA+ICB7IC5jb21wYXRpYmxlID0gImxhbnRp
-cSxwaW5jdHJsLXhyOSIsIC5kYXRhID0gJnNvY19jZmdbMV19LA0KPiA+ICB7IC5jb21wYXRpYmxl
-ID0gImxhbnRpcSxwaW5jdHJsLWFzZSIsIC5kYXRhID0gJnNvY19jZmdbMl19LA0KPiA+ICt7IC5j
-b21wYXRpYmxlID0gImxhbnRpcSxwaW5jdHJsLWRhbnViZSIsIC5kYXRhID0gJnNvY19jZmdbM119
-LA0KPiA+ICt7IC5jb21wYXRpYmxlID0gImxhbnRpcSxwaW5jdHJsLXhyeDEwMCIsIC5kYXRhID0g
-JnNvY19jZmdbNF19LA0KPiA+ICt7IC5jb21wYXRpYmxlID0gImxhbnRpcSxwaW5jdHJsLXhyeDIw
-MCIsIC5kYXRhID0gJnNvY19jZmdbNV19LA0KPiA+ICt7IC5jb21wYXRpYmxlID0gImxhbnRpcSxw
-aW5jdHJsLXhyeDMwMCIsIC5kYXRhID0gJnNvY19jZmdbNl19LA0KPg0KPiBVc2luZyBwb2ludGVy
-cyB0byBhbiBhcnJheSBlbGVtbnQgaGVyZSBsb29rcyBlcnJvciBwcm9uZSB0byBtZS4gV2h5IG5v
-dA0KPiB1c2Ugb25lIHN0YXRpYyBlbnRyeSBmb3IgZWFjaCBTb0MgYW5kIHJlZmVyZW5jZSBpdCBk
-aXJlY3RseS4NCj4NCj4gU29tZXRoaW5nIGxpa2UgdGhpczoNCj4NCj4gc3RhdGljIHN0cnVjdCBw
-aW5jdHJsX3h3YXlfc29jIHBpbmN0cmxfeHJ4MzAwID0gew0KPiBYUlgzMDBfTUFYX1BJTiwgeHJ4
-MzAwX21mcCwNCj4geHJ4MzAwX2dycHMsIEFSUkFZX1NJWkUoeHJ4MzAwX2dycHMpLA0KPiB4cngz
-MDBfZnVuY3MsIEFSUkFZX1NJWkUoeHJ4MzAwX2Z1bmNzKSwNCj4geHJ4MzAwX2V4aW5fcGluX21h
-cCwgNQ0KPiB9Ow0KPg0KPiBUaGVuIHlvdSBjYW4ganVzdCBkbyB0aGlzOg0KPiB7IC5jb21wYXRp
-YmxlID0gImxhbnRpcSxwaW5jdHJsLXhyeDMwMCIsIC5kYXRhID0gJnBpbmN0cmxfeHJ4MzAwfSwN
-Cj4NCg0KR29vZCBwb2ludCwgSSB3aWxsIGNoYW5nZSB0aGF0Lg0KDQpNYXJ0aW4NCg==
+Use the wrapper function for retrieving the platform data instead of
+accessing dev->platform_data directly.
+
+Signed-off-by: Nizam Haider <nijamh@cdac.in>
+---
+ drivers/gpio/gpio-ath79.c   | 2 +-
+ drivers/gpio/gpio-davinci.c | 2 +-
+ drivers/gpio/gpio-f7188x.c  | 2 +-
+ drivers/gpio/gpio-octeon.c  | 2 +-
+ drivers/gpio/gpio-sch311x.c | 4 ++--
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index e5827a5..4c687c9 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -138,7 +138,7 @@ static const struct of_device_id ath79_gpio_of_match[] = {
+ 
+ static int ath79_gpio_probe(struct platform_device *pdev)
+ {
+-	struct ath79_gpio_platform_data *pdata = pdev->dev.platform_data;
++	struct ath79_gpio_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct ath79_gpio_ctrl *ctrl;
+ 	struct resource *res;
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 5e71538..c2c87ba 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -149,7 +149,7 @@ davinci_gpio_get_pdata(struct platform_device *pdev)
+ 	u32 val;
+ 
+ 	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node)
+-		return pdev->dev.platform_data;
++		return dev_get_platdata(&pdev->dev);
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index 5e3c4fa..1917bb8 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -298,7 +298,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ {
+ 	int err;
+ 	int i;
+-	struct f7188x_sio *sio = pdev->dev.platform_data;
++	struct f7188x_sio *sio = dev_get_platdata(&pdev->dev);
+ 	struct f7188x_gpio_data *data;
+ 
+ 	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
+index 62ae251..1251a04 100644
+--- a/drivers/gpio/gpio-octeon.c
++++ b/drivers/gpio/gpio-octeon.c
+@@ -128,7 +128,7 @@ out:
+ 
+ static int octeon_gpio_remove(struct platform_device *pdev)
+ {
+-	struct gpio_chip *chip = pdev->dev.platform_data;
++	struct gpio_chip *chip = dev_get_platdata(&pdev->dev);
+ 	gpiochip_remove(chip);
+ 	return 0;
+ }
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+index 0cb1141..da1f14f 100644
+--- a/drivers/gpio/gpio-sch311x.c
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -229,7 +229,7 @@ static int sch311x_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
+ 
+ static int sch311x_gpio_probe(struct platform_device *pdev)
+ {
+-	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_pdev_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct sch311x_gpio_priv *priv;
+ 	struct sch311x_gpio_block *block;
+ 	int err, i;
+@@ -289,7 +289,7 @@ exit_err:
+ 
+ static int sch311x_gpio_remove(struct platform_device *pdev)
+ {
+-	struct sch311x_pdev_data *pdata = pdev->dev.platform_data;
++	struct sch311x_pdev_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct sch311x_gpio_priv *priv = platform_get_drvdata(pdev);
+ 	int i;
+ 
+-- 
+1.8.1.4
+
