@@ -1,97 +1,111 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: rcar: Improve clock error handling and reporting
-Date: Tue, 24 Nov 2015 16:05:28 +0100
-Message-ID: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Tue, 24 Nov 2015 16:25:33 +0000
+Message-ID: <20151124162533.GH807@x1>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+ <1447869580-10416-2-git-send-email-afd@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:36028 "EHLO
+	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752960AbbKXQZi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 11:25:38 -0500
+Received: by wmww144 with SMTP id w144so145953277wmw.1
+        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2015 08:25:37 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1447869580-10416-2-git-send-email-afd@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-If the Renesas R-Car GPIO driver cannot find a functional clock, it
-prints a warning, .e.g.
+On Wed, 18 Nov 2015, Andrew F. Davis wrote:
 
-	gpio_rcar ffc40000.gpio: unable to get clock
+> The TPS65912 PMIC contains several regulators and a GPIO controller.
+> Add bindings for the TPS65912 PMIC.
+>=20
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/tps65912.txt | 50 ++++++++++++=
+++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.tx=
+t
 
-and continues, as the clock is optional, depending on the SoC type.
-This warning may confuse users.
+=46or my own reference:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
-To fix this, add a flag to indicate that the clock is mandatory or
-optional:
-  - If the clock is mandatory (on R-Car Gen2), a missing clock is now
-    treated as a fatal error,
-  - If the clock is optional (on R-Car Gen1), the warning is no longer
-    printed.
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65912.txt b/Doc=
+umentation/devicetree/bindings/mfd/tps65912.txt
+> new file mode 100644
+> index 0000000..717e66d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65912.txt
+> @@ -0,0 +1,50 @@
+> +* TPS65912 Power Management Integrated Circuit bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "ti,tps65912".
+> + - reg			: Slave address or chip select number (I2C / SPI).
+> + - interrupt-parent	: The parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt cont=
+roller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, should=
+ be 2.
+> +			    The first cell is the IRQ number.
+> +			    The second cell is the flags, encoded as trigger
+> +			    masks from ../interrupt-controller/interrupts.txt.
+> + - gpio-controller	: Marks the device node as a GPIO Controller.
+> + - #gpio-cells		: Should be two.  The first cell is the pin number a=
+nd
+> +			    the second cell is used to specify flags.
+> +			    See ../gpio/gpio.txt for more information.
+> + - regulators:		: List of child nodes that specify the regulator
+> +			    initialization data. Child nodes must be named
+> +			    after their hardware counterparts: dcdc[1-4] and
+> +			    ldo[1-10]. Each child nodes is defined using the
+> +			    standard binding for regulators.
+> +
+> +Example:
+> +
+> +	pmic: tps65912@2d {
+> +		compatible =3D "ti,tps65912";
+> +		reg =3D <0x2d>;
+> +		interrupt-parent =3D <&gpio1>;
+> +		interrupts =3D <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <2>;
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +
+> +		regulators {
+> +			dcdc1 {
+> +				regulator-name =3D "vdd_core";
+> +				regulator-min-microvolt =3D <912000>;
+> +				regulator-max-microvolt =3D <1144000>;
+> +				regulator-boot-on;
+> +				regulator-always-on;
+> +			};
+> +
+> +			ldo1 {
+> +				regulator-name =3D "ldo1";
+> +				regulator-min-microvolt =3D <1900000>;
+> +				regulator-max-microvolt =3D <1900000>;
+> +			};
+> +		};
+> +	};
 
-The new flag is merged with the existing has_both_edge_trigger boolean
-into a bitfield to save space.
-
-Suggested-by: Magnus Damm <magnus.damm@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "gpio: rcar: Remove obsolete platform data support".
-
-Tested on r8a7779/marzen (no functional clock) and r8a7791/koelsch (with
-and without mandatory functional clock).
-
- drivers/gpio/gpio-rcar.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index bb6e363d5178634c..c890ac14b23a65ea 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -39,6 +39,7 @@ struct gpio_rcar_priv {
- 	struct clk *clk;
- 	unsigned int irq_parent;
- 	unsigned has_both_edge_trigger:1;
-+	unsigned needs_clk:1;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -316,15 +317,18 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
- }
- 
- struct gpio_rcar_info {
--	bool has_both_edge_trigger;
-+	unsigned has_both_edge_trigger:1;
-+	unsigned needs_clk:1;
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
--	.has_both_edge_trigger = false,
-+	.has_both_edge_trigger = 0,
-+	.needs_clk = 0,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
--	.has_both_edge_trigger = true,
-+	.has_both_edge_trigger = 1,
-+	.needs_clk = 1,
- };
- 
- static const struct of_device_id gpio_rcar_of_table[] = {
-@@ -371,6 +375,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
- 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
- 	p->has_both_edge_trigger = info->has_both_edge_trigger;
-+	p->needs_clk = info->needs_clk;
- 
- 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
- 		dev_warn(&p->pdev->dev,
-@@ -409,7 +414,11 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 
- 	p->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(p->clk)) {
--		dev_warn(dev, "unable to get clock\n");
-+		if (p->needs_clk) {
-+			dev_err(dev, "unable to get clock\n");
-+			ret = PTR_ERR(p->clk);
-+			goto err0;
-+		}
- 		p->clk = NULL;
- 	}
- 
--- 
-1.9.1
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
