@@ -1,91 +1,68 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP
- block
-Date: Tue, 24 Nov 2015 14:57:32 +0800
-Message-ID: <20151124065732.GM11999@tiger>
-References: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
+Date: Tue, 24 Nov 2015 09:57:18 +0100
+Message-ID: <CAMuHMdVWG=0fm3_8xSCiSrOYdEwsR_UeD+AL7e+CXO1TGKNzhQ@mail.gmail.com>
+References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
+	<8737wdfcd0.wl%kuninori.morimoto.gx@renesas.com>
+	<87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60092 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751485AbbKXG6D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 24 Nov 2015 01:58:03 -0500
-Content-Disposition: inline
-In-Reply-To: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Liu Gang <Gang.Liu@freescale.com>
-Cc: robh+dt@kernel.org, linus.walleij@linaro.org, arnd@arndb.de, devicetree@vger.kernel.org, R58472@freescale.com, b07421@freescale.com, bhupesh.sharma@freescale.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Nov 04, 2015 at 02:48:23PM +0800, Liu Gang wrote:
-> The GPIO block for ls2080a platform has little endian registers,
-> the GPIO driver needs this property to read/write registers by
-> right interface.
-> 
-> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
+Hi Morimoto-san,
 
-Please do not mix binding doc together with dts changes in one patch.
+On Wed, Nov 11, 2015 at 6:29 AM, Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -205,22 +205,68 @@ struct sh_pfc_soc_info {
+>  #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin, GP_##bank##_##pin, sfx, cfg)
+>  #define PORT_GP_1(bank, pin, fn, sfx)  PORT_GP_CFG_1(bank, pin, fn, sfx, 0)
+>
+> -#define PORT_GP_CFG_32(bank, fn, sfx, cfg)                             \
+> +#define PORT_GP_CFG_4(bank, fn, sfx, cfg)                                              \
+>         PORT_GP_CFG_1(bank, 0,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 1,  fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg),   \
+> +       PORT_GP_CFG_1(bank, 2,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 3,  fn, sfx, cfg)
+> +#define PORT_GP_4(bank, fn, sfx)       PORT_GP_CFG_4(bank, fn, sfx, 0)
+> +
+> +#define PORT_GP_CFG_8(bank, fn, sfx, cfg)                                              \
+> +       PORT_GP_CFG_4(bank, fn, sfx, cfg),                                              \
+>         PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg),   \
+> +       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
+> +#define PORT_GP_8(bank, fn, sfx)       PORT_GP_CFG_8(bank, fn, sfx, 0)
+> +
+> +#define PORT_GP_CFG_9(bank, fn, sfx, cfg)                                              \
+> +       PORT_GP_CFG_8(bank, fn, sfx, cfg),                                              \
+> +       PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg)
+> +#define PORT_GP_9(bank, fn, sfx)       PORT_GP_CFG_9(bank, fn, sfx, 0)
+> +
+> +#define PORT_GP_CFG_12(bank, fn, sfx, cfg)                                             \
+> +       PORT_GP_CFG_8(bank, fn, sfx, cfg),                                              \
+>         PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 10, fn, sfx, cfg), PORT_GP_CFG_1(bank, 11, fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 12, fn, sfx, cfg), PORT_GP_CFG_1(bank, 13, fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 14, fn, sfx, cfg), PORT_GP_CFG_1(bank, 15, fn, sfx, cfg),   \
+> -       PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg),   \
+> +       PORT_GP_CFG_1(bank, 10, fn, sfx, cfg), PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
+> +#define PORT_GP_12(bank, fn, sfx)      PORT_GP_CFG_12(bank, fn, sfx, 0)
 
-Shawn
+The *_8 and *_12 definitions don't seem to be used (except for defining
+later variants in the series)?
 
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> index f2455c5..c836dab 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
-> @@ -10,6 +10,9 @@ Required properties:
->    the second cell is used to specify the gpio polarity:
->        0 = active high
->        1 = active low
-> +- little-endian : Should be set if the GPIO has little endian
-> +		  registers. No the property means the GPIO
-> +		  registers are big endian mode.
->  
->  Example:
->  
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> index f3c59f9..41bb8c1 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
-> @@ -277,6 +277,7 @@
->  			reg = <0x0 0x2300000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -287,6 +288,7 @@
->  			reg = <0x0 0x2310000 0x0 0x10000>;
->  			interrupts = <0 36 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -297,6 +299,7 @@
->  			reg = <0x0 0x2320000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> @@ -307,6 +310,7 @@
->  			reg = <0x0 0x2330000 0x0 0x10000>;
->  			interrupts = <0 37 0x4>; /* Level high type */
->  			gpio-controller;
-> +			little-endian;
->  			#gpio-cells = <2>;
->  			interrupt-controller;
->  			#interrupt-cells = <2>;
-> -- 
-> 2.1.0.27.g96db324
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
