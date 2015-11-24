@@ -1,64 +1,68 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: Re: [PATCH 1/3] pinctrl: berlin: guard sub-directory with
- CONFIG_PINCTRL_BERLIN
-Date: Tue, 24 Nov 2015 20:02:59 +0800
-Message-ID: <20151124200259.6c002d1f@xhacker>
-References: <1448365524-12605-1-git-send-email-yamada.masahiro@socionext.com>
-	<1448365524-12605-2-git-send-email-yamada.masahiro@socionext.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 3/4] regulator: tps65086: Add regulator driver for the
+ TPS65086 PMIC
+Date: Tue, 24 Nov 2015 12:11:55 +0000
+Message-ID: <20151124121155.GK1929@sirena.org.uk>
+References: <1447974102-24938-1-git-send-email-afd@ti.com>
+ <1447974102-24938-4-git-send-email-afd@ti.com>
+ <20151121133739.GG26072@sirena.org.uk>
+ <5650D6D2.5060108@ti.com>
+ <20151122131321.GM26072@sirena.org.uk>
+ <56534FA7.2040200@ti.com>
+ <20151123190026.GS26072@sirena.org.uk>
+ <56536677.5070102@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:39283 "EHLO
-	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752112AbbKXMGi (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 24 Nov 2015 07:06:38 -0500
-In-Reply-To: <1448365524-12605-2-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OOq1TgGhe8eTwFBO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56536677.5070102@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Antoine Tenart <antoine.tenart@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-kernel@vger.kernel.org
 
-On Tue, 24 Nov 2015 20:45:22 +0900
-Masahiro Yamada wrote:
 
-> CONFIG_PINCTRL_BERLIN is more suitable than CONFIG_ARCH_BERLIN
-> to guard the drivers/pinctrl/berlin/ directory.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+--OOq1TgGhe8eTwFBO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'm not maintainers, but this patch looks good to me. So if you need, 
+On Mon, Nov 23, 2015 at 01:18:15PM -0600, Andrew F. Davis wrote:
 
-Acked-by: Jisheng Zhang <jszhang@marvell.com>
+> Right, so this is the kind of description that would be nice with the
+> declaration.
 
-> ---
-> 
->  drivers/pinctrl/Makefile        | 2 +-
->  drivers/pinctrl/berlin/Makefile | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> index 738cb49..17c0206 100644
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-> @@ -41,7 +41,7 @@ obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
->  obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
->  
->  obj-$(CONFIG_ARCH_BCM)		+= bcm/
-> -obj-$(CONFIG_ARCH_BERLIN)	+= berlin/
-> +obj-$(CONFIG_PINCTRL_BERLIN)	+= berlin/
->  obj-y				+= freescale/
->  obj-$(CONFIG_X86)		+= intel/
->  obj-$(CONFIG_PLAT_ORION)        += mvebu/
-> diff --git a/drivers/pinctrl/berlin/Makefile b/drivers/pinctrl/berlin/Makefile
-> index 06f9402..6f641ce 100644
-> --- a/drivers/pinctrl/berlin/Makefile
-> +++ b/drivers/pinctrl/berlin/Makefile
-> @@ -1,4 +1,4 @@
-> -obj-$(CONFIG_PINCTRL_BERLIN)		+= berlin.o
-> +obj-y					+= berlin.o
->  obj-$(CONFIG_PINCTRL_BERLIN_BG2)	+= berlin-bg2.o
->  obj-$(CONFIG_PINCTRL_BERLIN_BG2CD)	+= berlin-bg2cd.o
->  obj-$(CONFIG_PINCTRL_BERLIN_BG2Q)	+= berlin-bg2q.o
+Feel free to send patches for the documentation, bearing in mind that
+there is a limit to how large we cna make it.
 
+> >>in the config takes precedence over the one in config->dev, the
+> >>opposite is true for regulators, this is very confusing and should be
+> >>standardized.
+
+> >No, they both do the same thing.
+
+> I don't see that, config->dev->of_node is checked for the init data in
+> regulator_of_get_init_data, then config->of_node is then ignored if that
+> succeeds.
+
+Right, like I say this is because nobody should ever actually be using
+that capability if they also have good bindings.  If anyone did have a
+sensible use case that'd be where it would go but as things stand they
+will be pushed to do the right thing.
+
+--OOq1TgGhe8eTwFBO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWVFQGAAoJECTWi3JdVIfQdmQH/3+Frbwh9PyJ+y+ZLzrKNwro
+ud0849OraOtw08iASbo+4a7nDlWfryqyEzd8SWgInpI4yA5xWtrrJKrLKWNZOvaa
+w5qf1KmL5sR4Qc9kTXZrckLLvv+ERQHKo3fc0AB8HPTrw7p9Zn8f+dNzliTF1IYY
+Ee5mS06rz1Zc8oQ3y59ozmL9K3D4IO5YmX1GDTEf3lkbBCIRxFL9ymlGa8FFNMI7
+a/fr7mhLvwFCsBLyN3b52wNthsyoIpugqkuFx8OlUt43FwylfC1G7Yig3SsNWANJ
+nFIidMmzgzcx/t1b4yfNT0u4bYGBoTJQ6UPI0wL+1HfmVaJeocPl5M3rvD3aEPU=
+=PHWn
+-----END PGP SIGNATURE-----
+
+--OOq1TgGhe8eTwFBO--
