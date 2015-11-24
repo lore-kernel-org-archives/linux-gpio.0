@@ -1,111 +1,85 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Tue, 24 Nov 2015 16:26:24 +0000
-Message-ID: <20151124162624.GI807@x1>
-References: <1447869580-10416-1-git-send-email-afd@ti.com>
+Subject: Re: [PATCH v3 2/5] mfd: arizona: Update DT bindings to add CS47L24
+ and WM1831
+Date: Tue, 24 Nov 2015 17:01:53 +0000
+Message-ID: <20151124170153.GF12874@x1>
+References: <1446563316-28878-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1446563316-28878-3-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37829 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754577AbbKXQ0a (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 11:26:30 -0500
-Received: by wmww144 with SMTP id w144so33652765wmw.0
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Nov 2015 08:26:29 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1447869580-10416-1-git-send-email-afd@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1446563316-28878-3-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: linus.walleij@linaro.org, broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 18 Nov 2015, Andrew F. Davis wrote:
+On Tue, 03 Nov 2015, Richard Fitzgerald wrote:
 
-> In an effort to cleanup this driver and add Device Tree support
-> the driver has been rewritten based on new driver styles and
-> modern kernel driver helpers. This has nearly halved the lines
-> of code while keeping all previous functionality.
+> This updates the Arizona MFD device tree bindings to add the
+> Cirrus Logic CS47L24 and WM1831 codecs. Note that unlike all the
+> other codecs the DCVDD-supply and MICVDD-supply are mandatory.
 >=20
-> Platform file based initialization has been dropped as there is
-> no examples of this use in the kernel.
->=20
-> v1 can be found here: [1] v2: [2] v3: [3] v4: [4] v5: [5] v6: [6]
->=20
-> Changes from v6:
->  - Removed compatible strings from DT sub-nodes
->  - Rearranged DT bindings
->  - Small fixes
->=20
-> Changes from v5:
->  - Small formatting changes to DT Docs
->  - Converted to_tps65912_gpio from macro to inline function
->=20
-> Changes from v4:
->  - Use mfd core to add sub-devices
->=20
-> Changes from v3:
->  - Reorganized regulator driver and related DT node
->  - Other small fixes as discussed in v3 thread
->=20
-> Changes from v2:
->  - Split the series further into subsystems
->=20
-> Changes from v1:
->  - Split the rewrite into delete/create patches
->  - Several small fixes as discussed in v1 thread
->=20
-> [1] http://www.spinics.net/lists/devicetree/msg93863.html
-> [2] http://www.spinics.net/lists/devicetree/msg95003.html
-> [3] http://www.spinics.net/lists/devicetree/msg95133.html
-> [4] http://www.spinics.net/lists/devicetree/msg96109.html
-> [5] http://www.spinics.net/lists/devicetree/msg100601.html
-> [6] https://lkml.org/lkml/2015/10/30/690
->=20
-> Andrew F. Davis (5):
->   Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
->   mfd: tps65912: Remove old driver in preparation for new driver
->   mfd: tps65912: Add driver for the TPS65912 PMIC
->   regulator: tps65912: Add regulator driver for the TPS65912 PMIC
->   gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
->=20
->  Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
->  drivers/gpio/Kconfig                               |   2 +-
->  drivers/gpio/gpio-tps65912.c                       | 317 ++++-----
->  drivers/mfd/Kconfig                                |  20 +-
->  drivers/mfd/Makefile                               |   3 +-
->  drivers/mfd/tps65912-core.c                        | 290 ++++-----
->  drivers/mfd/tps65912-i2c.c                         | 219 +++----
->  drivers/mfd/tps65912-irq.c                         | 217 -------
->  drivers/mfd/tps65912-spi.c                         | 219 +++----
->  drivers/regulator/Kconfig                          |   2 +-
->  drivers/regulator/tps65912-regulator.c             | 710 +++++------=
-----------
->  include/linux/mfd/tps65912.h                       | 208 +++---
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/arizona.txt | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 
-Just waiting for the regulator Ack now, right?
+Applied, thanks.
 
->  12 files changed, 780 insertions(+), 1477 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912.tx=
-t
->  rewrite drivers/gpio/gpio-tps65912.c (74%)
->  rewrite drivers/mfd/tps65912-core.c (95%)
->  rewrite drivers/mfd/tps65912-i2c.c (93%)
->  delete mode 100644 drivers/mfd/tps65912-irq.c
->  rewrite drivers/mfd/tps65912-spi.c (92%)
->  rewrite drivers/regulator/tps65912-regulator.c (94%)
->=20
-> --=20
-> 1.9.1
->=20
+> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Docu=
+mentation/devicetree/bindings/mfd/arizona.txt
+> index 18be0cb..84e1af5 100644
+> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> @@ -1,4 +1,4 @@
+> -Wolfson Arizona class audio SoCs
+> +Cirrus Logic/Wolfson Microelectronics Arizona class audio SoCs
+> =20
+>  These devices are audio SoCs with extensive digital capabilites and =
+a range
+>  of analogue I/O.
+> @@ -6,12 +6,14 @@ of analogue I/O.
+>  Required properties:
+> =20
+>    - compatible : One of the following chip-specific strings:
+> +        "cirrus,cs47l24"
+>          "wlf,wm5102"
+>          "wlf,wm5110"
+>          "wlf,wm8280"
+>          "wlf,wm8997"
+>          "wlf,wm8998"
+>          "wlf,wm1814"
+> +        "wlf,wm1831"
+> =20
+>    - reg : I2C slave address when connected using I2C, chip select nu=
+mber when
+>      using SPI.
+> @@ -41,6 +43,10 @@ Required properties:
+> =20
+>    - SPKVDD-supply : Speaker driver power supply (wm8997)
+> =20
+> +  - DCVDD-supply : Main power supply (cs47l24, wm1831)
+> +
+> +  - MICVDD-supply : Microphone power supply (cs47l24, wm1831)
+> +
+>  Optional properties:
+> =20
+>    - wlf,reset : GPIO specifier for the GPIO controlling /RESET
+> @@ -69,6 +75,7 @@ Optional properties:
+>    - DCVDD-supply, MICVDD-supply : Power supplies, only need to be sp=
+ecified if
+>      they are being externally supplied. As covered in
+>      Documentation/devicetree/bindings/regulator/regulator.txt
+> +    (wm5102, wm5110, wm8280, wm8997, wm8998, wm1814)
+> =20
+>  Also see child specific device properties:
+>    Regulator - ../regulator/arizona-regulator.txt
 
 --=20
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
 Linaro.org =E2=94=82 Open source software for ARM SoCs
 =46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
