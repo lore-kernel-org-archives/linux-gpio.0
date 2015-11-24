@@ -1,72 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
-Date: Tue, 24 Nov 2015 10:35:03 +0100
-Message-ID: <CAMuHMdV9Q+4DvWFdsEG6STVFdxUvHX17q-a5fp=rbD6vgVPQDg@mail.gmail.com>
-References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
-	<8737wdfcd0.wl%kuninori.morimoto.gx@renesas.com>
-	<87ziyldrxk.wl%kuninori.morimoto.gx@renesas.com>
-	<CAMuHMdVWG=0fm3_8xSCiSrOYdEwsR_UeD+AL7e+CXO1TGKNzhQ@mail.gmail.com>
-	<87610rydit.wl%kuninori.morimoto.gx@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33046 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752508AbbKXJfE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 04:35:04 -0500
-In-Reply-To: <87610rydit.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 2/3] pinctrl: mvebu: guard sub-directory with CONFIG_PINCTRL_MVEBU
+Date: Tue, 24 Nov 2015 20:45:23 +0900
+Message-ID: <1448365524-12605-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1448365524-12605-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1448365524-12605-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Morimoto-san,
+CONFIG_PINCTRL_MVEBU is more suitable than CONFIG_PLAT_ORION
+to guard the drivers/pinctrl/mvebu/ directory.
 
-On Tue, Nov 24, 2015 at 10:09 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->
->> > +#define PORT_GP_CFG_8(bank, fn, sfx, cfg)                                              \
->> > +       PORT_GP_CFG_4(bank, fn, sfx, cfg),                                              \
->> >         PORT_GP_CFG_1(bank, 4,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 5,  fn, sfx, cfg),   \
->> > -       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg),   \
->> > +       PORT_GP_CFG_1(bank, 6,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 7,  fn, sfx, cfg)
->> > +#define PORT_GP_8(bank, fn, sfx)       PORT_GP_CFG_8(bank, fn, sfx, 0)
->> > +
->> > +#define PORT_GP_CFG_9(bank, fn, sfx, cfg)                                              \
->> > +       PORT_GP_CFG_8(bank, fn, sfx, cfg),                                              \
->> > +       PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg)
->> > +#define PORT_GP_9(bank, fn, sfx)       PORT_GP_CFG_9(bank, fn, sfx, 0)
->> > +
->> > +#define PORT_GP_CFG_12(bank, fn, sfx, cfg)                                             \
->> > +       PORT_GP_CFG_8(bank, fn, sfx, cfg),                                              \
->> >         PORT_GP_CFG_1(bank, 8,  fn, sfx, cfg), PORT_GP_CFG_1(bank, 9,  fn, sfx, cfg),   \
->> > -       PORT_GP_CFG_1(bank, 10, fn, sfx, cfg), PORT_GP_CFG_1(bank, 11, fn, sfx, cfg),   \
->> > -       PORT_GP_CFG_1(bank, 12, fn, sfx, cfg), PORT_GP_CFG_1(bank, 13, fn, sfx, cfg),   \
->> > -       PORT_GP_CFG_1(bank, 14, fn, sfx, cfg), PORT_GP_CFG_1(bank, 15, fn, sfx, cfg),   \
->> > -       PORT_GP_CFG_1(bank, 16, fn, sfx, cfg), PORT_GP_CFG_1(bank, 17, fn, sfx, cfg),   \
->> > +       PORT_GP_CFG_1(bank, 10, fn, sfx, cfg), PORT_GP_CFG_1(bank, 11, fn, sfx, cfg)
->> > +#define PORT_GP_12(bank, fn, sfx)      PORT_GP_CFG_12(bank, fn, sfx, 0)
->>
->> The *_8 and *_12 definitions don't seem to be used (except for defining
->> later variants in the series)?
->
-> I think _12 is used in pfc-sh7734.c ?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Sorry, I meant *_14.
+ drivers/pinctrl/Makefile       | 2 +-
+ drivers/pinctrl/mvebu/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> I added _8 because pfc-r8a7779.c is using _9.
-> I don't like odd number definition.
-
-OK, that explains it for both *_8 and *_14. Not unreasonable, as you can fit
-two entries on a single line.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 17c0206..cdc4a61 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -44,7 +44,7 @@ obj-$(CONFIG_ARCH_BCM)		+= bcm/
+ obj-$(CONFIG_PINCTRL_BERLIN)	+= berlin/
+ obj-y				+= freescale/
+ obj-$(CONFIG_X86)		+= intel/
+-obj-$(CONFIG_PLAT_ORION)        += mvebu/
++obj-$(CONFIG_PINCTRL_MVEBU)	+= mvebu/
+ obj-y				+= nomadik/
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+ obj-$(CONFIG_PINCTRL_SAMSUNG)	+= samsung/
+diff --git a/drivers/pinctrl/mvebu/Makefile b/drivers/pinctrl/mvebu/Makefile
+index 554d8af..18270cd 100644
+--- a/drivers/pinctrl/mvebu/Makefile
++++ b/drivers/pinctrl/mvebu/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_PINCTRL_MVEBU)	+= pinctrl-mvebu.o
++obj-y				+= pinctrl-mvebu.o
+ obj-$(CONFIG_PINCTRL_DOVE)	+= pinctrl-dove.o
+ obj-$(CONFIG_PINCTRL_KIRKWOOD)	+= pinctrl-kirkwood.o
+ obj-$(CONFIG_PINCTRL_ARMADA_370) += pinctrl-armada-370.o
+-- 
+1.9.1
