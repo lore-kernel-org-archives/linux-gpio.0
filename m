@@ -1,77 +1,91 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: rework UniPhier pinctrl entries in Kconfig
-Date: Tue, 24 Nov 2015 15:00:45 +0900
-Message-ID: <1448344846-28726-1-git-send-email-yamada.masahiro@socionext.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 1/2] ls2080a/dts: Add little endian property for GPIO IP
+ block
+Date: Tue, 24 Nov 2015 14:57:32 +0800
+Message-ID: <20151124065732.GM11999@tiger>
+References: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg009.nifty.com ([202.248.44.35]:29556 "EHLO
-	conuserg009-v.nifty.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753180AbbKXGAq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 01:00:46 -0500
+Received: from mail.kernel.org ([198.145.29.136]:60092 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751485AbbKXG6D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 24 Nov 2015 01:58:03 -0500
+Content-Disposition: inline
+In-Reply-To: <1446619704-27669-1-git-send-email-Gang.Liu@freescale.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Liu Gang <Gang.Liu@freescale.com>
+Cc: robh+dt@kernel.org, linus.walleij@linaro.org, arnd@arndb.de, devicetree@vger.kernel.org, R58472@freescale.com, b07421@freescale.com, bhupesh.sharma@freescale.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-There is a plan to support more pinctrl drivers for this SoC family.
-Move the driver entries into a sub menu by using "menuconfig".
-Also, add the missing dependency "depends on OF && MFD_SYSCON".
+On Wed, Nov 04, 2015 at 02:48:23PM +0800, Liu Gang wrote:
+> The GPIO block for ls2080a platform has little endian registers,
+> the GPIO driver needs this property to read/write registers by
+> right interface.
+> 
+> Signed-off-by: Liu Gang <Gang.Liu@freescale.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Please do not mix binding doc together with dts changes in one patch.
 
- drivers/pinctrl/uniphier/Kconfig | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+Shawn
 
-diff --git a/drivers/pinctrl/uniphier/Kconfig b/drivers/pinctrl/uniphier/Kconfig
-index ad90707..7abd614 100644
---- a/drivers/pinctrl/uniphier/Kconfig
-+++ b/drivers/pinctrl/uniphier/Kconfig
-@@ -1,32 +1,35 @@
--if ARCH_UNIPHIER
--
--config PINCTRL_UNIPHIER
--	bool
-+menuconfig PINCTRL_UNIPHIER
-+	bool "UniPhier SoC pinctrl drivers"
-+	depends on ARCH_UNIPHIER
-+	depends on OF && MFD_SYSCON
-+	default y
- 	select PINMUX
- 	select GENERIC_PINCONF
- 
-+if PINCTRL_UNIPHIER
-+
- config PINCTRL_UNIPHIER_PH1_LD4
- 	tristate "UniPhier PH1-LD4 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- config PINCTRL_UNIPHIER_PH1_PRO4
- 	tristate "UniPhier PH1-Pro4 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- config PINCTRL_UNIPHIER_PH1_SLD8
- 	tristate "UniPhier PH1-sLD8 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- config PINCTRL_UNIPHIER_PH1_PRO5
- 	tristate "UniPhier PH1-Pro5 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- config PINCTRL_UNIPHIER_PROXSTREAM2
- 	tristate "UniPhier ProXstream2 SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- config PINCTRL_UNIPHIER_PH1_LD6B
- 	tristate "UniPhier PH1-LD6b SoC pinctrl driver"
--	select PINCTRL_UNIPHIER
-+	default y
- 
- endif
--- 
-1.9.1
-
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> index f2455c5..c836dab 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mpc8xxx.txt
+> @@ -10,6 +10,9 @@ Required properties:
+>    the second cell is used to specify the gpio polarity:
+>        0 = active high
+>        1 = active low
+> +- little-endian : Should be set if the GPIO has little endian
+> +		  registers. No the property means the GPIO
+> +		  registers are big endian mode.
+>  
+>  Example:
+>  
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> index f3c59f9..41bb8c1 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi
+> @@ -277,6 +277,7 @@
+>  			reg = <0x0 0x2300000 0x0 0x10000>;
+>  			interrupts = <0 36 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -287,6 +288,7 @@
+>  			reg = <0x0 0x2310000 0x0 0x10000>;
+>  			interrupts = <0 36 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -297,6 +299,7 @@
+>  			reg = <0x0 0x2320000 0x0 0x10000>;
+>  			interrupts = <0 37 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> @@ -307,6 +310,7 @@
+>  			reg = <0x0 0x2330000 0x0 0x10000>;
+>  			interrupts = <0 37 0x4>; /* Level high type */
+>  			gpio-controller;
+> +			little-endian;
+>  			#gpio-cells = <2>;
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+> -- 
+> 2.1.0.27.g96db324
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
