@@ -1,71 +1,196 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH V2 2/2] pinctrl: intel: fix bug of register offset
- calculation
-Date: Wed, 25 Nov 2015 10:40:18 +0200
-Message-ID: <20151125084018.GT1587@lahna.fi.intel.com>
-References: <1448451408-55078-1-git-send-email-qipeng.zha@intel.com>
- <1448451408-55078-2-git-send-email-qipeng.zha@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Qipeng Zha <qipeng.zha@intel.com>
+Subject: [PATCH V3 2/2] pinctrl: intel: fix bug of register offset calculation
+Date: Thu, 26 Nov 2015 01:09:51 +0800
+Message-ID: <1448471391-1115-2-git-send-email-qipeng.zha@intel.com>
+References: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:20420 "EHLO mga14.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:8683 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753738AbbKYIm3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 25 Nov 2015 03:42:29 -0500
-Content-Disposition: inline
-In-Reply-To: <1448451408-55078-2-git-send-email-qipeng.zha@intel.com>
+	id S932133AbbKYJFc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 25 Nov 2015 04:05:32 -0500
+In-Reply-To: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, mika.westerberg@intel.com, qi.zheng@intel.com, qipeng.zha@intel.com
 
-On Wed, Nov 25, 2015 at 07:36:48PM +0800, Qipeng Zha wrote:
-> The group size for registers PADCFGLOCK, HOSTSW_OWN, GPI_IS,
-> GPI_IE, are not 24 for Broxton, Add a parameter to allow
-> different platform to set correct value.
-> 
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-broxton.c      |  1 +
->  drivers/pinctrl/intel/pinctrl-intel.c        | 45 +++++++++++++++-------------
->  drivers/pinctrl/intel/pinctrl-intel.h        |  3 ++
->  drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  1 +
->  4 files changed, 30 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
-> index e42d5d4..5979d38 100644
-> --- a/drivers/pinctrl/intel/pinctrl-broxton.c
-> +++ b/drivers/pinctrl/intel/pinctrl-broxton.c
-> @@ -28,6 +28,7 @@
->  		.padcfglock_offset = BXT_PADCFGLOCK,	\
->  		.hostown_offset = BXT_HOSTSW_OWN,	\
->  		.ie_offset = BXT_GPI_IE,		\
-> +		.gpp_size = 32,                         \
->  		.pin_base = (s),			\
->  		.npins = ((e) - (s) + 1),		\
->  	}
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index e3f580b..8b88b60 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -25,9 +25,6 @@
->  
->  #include "pinctrl-intel.h"
->  
-> -/* Maximum number of pads in each group */
-> -#define NPADS_IN_GPP			24
-> -
->  /* Offset from regs */
->  #define PADBAR				0x00c
->  #define GPI_IS				0x100
-> @@ -108,6 +105,7 @@ struct intel_pinctrl {
->  
->  #define gpiochip_to_pinctrl(c)	container_of(c, struct intel_pinctrl, chip)
->  #define pin_to_padno(c, p)	((p) - (c)->pin_base)
-> +#define npads_in_gpp(c)		((c)->gpp_size)
+The group size for registers PADCFGLOCK, HOSTSW_OWN, GPI_IS,
+GPI_IE, are not 24 for Broxton, Add a parameter to allow
+different platform to set correct value.
 
-This is pretty useless macro. You can just use community->gpp_size
-everywhere. Up to you.
+---
+change in v3:
+ use community->gpp_size directly, not macro.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+change in v2:
+ define gpp_size for sunrisepoint in its private structure.
+
+Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-broxton.c      |  1 +
+ drivers/pinctrl/intel/pinctrl-intel.c        | 32 +++++++++++++---------------
+ drivers/pinctrl/intel/pinctrl-intel.h        |  3 +++
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  1 +
+ 4 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
+index e42d5d4..5979d38 100644
+--- a/drivers/pinctrl/intel/pinctrl-broxton.c
++++ b/drivers/pinctrl/intel/pinctrl-broxton.c
+@@ -28,6 +28,7 @@
+ 		.padcfglock_offset = BXT_PADCFGLOCK,	\
+ 		.hostown_offset = BXT_HOSTSW_OWN,	\
+ 		.ie_offset = BXT_GPI_IE,		\
++		.gpp_size = 32,                         \
+ 		.pin_base = (s),			\
+ 		.npins = ((e) - (s) + 1),		\
+ 	}
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index e3f580b..d88cbcf 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -25,9 +25,6 @@
+ 
+ #include "pinctrl-intel.h"
+ 
+-/* Maximum number of pads in each group */
+-#define NPADS_IN_GPP			24
+-
+ /* Offset from regs */
+ #define PADBAR				0x00c
+ #define GPI_IS				0x100
+@@ -173,11 +170,11 @@ static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned pin)
+ 		return false;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
++	gpp = padno / community->gpp_size;
+ 	offset = community->hostown_offset + gpp * 4;
+ 	hostown = community->regs + offset;
+ 
+-	return !(readl(hostown) & BIT(padno % NPADS_IN_GPP));
++	return !(readl(hostown) & BIT(padno % community->gpp_size));
+ }
+ 
+ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+@@ -193,7 +190,7 @@ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+ 		return false;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
++	gpp = padno / community->gpp_size;
+ 
+ 	/*
+ 	 * If PADCFGLOCK and PADCFGLOCKTX bits are both clear for this pad,
+@@ -202,12 +199,12 @@ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
+ 	 */
+ 	offset = community->padcfglock_offset + gpp * 8;
+ 	value = readl(community->regs + offset);
+-	if (value & BIT(pin % NPADS_IN_GPP))
++	if (value & BIT(pin % community->gpp_size))
+ 		return true;
+ 
+ 	offset = community->padcfglock_offset + 4 + gpp * 8;
+ 	value = readl(community->regs + offset);
+-	if (value & BIT(pin % NPADS_IN_GPP))
++	if (value & BIT(pin % community->gpp_size))
+ 		return true;
+ 
+ 	return false;
+@@ -663,8 +660,8 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		unsigned padno = pin_to_padno(community, pin);
+-		unsigned gpp_offset = padno % NPADS_IN_GPP;
+-		unsigned gpp = padno / NPADS_IN_GPP;
++		unsigned gpp_offset = padno % community->gpp_size;
++		unsigned gpp = padno / community->gpp_size;
+ 
+ 		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
+ 	}
+@@ -685,8 +682,8 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ 	community = intel_get_community(pctrl, pin);
+ 	if (community) {
+ 		unsigned padno = pin_to_padno(community, pin);
+-		unsigned gpp_offset = padno % NPADS_IN_GPP;
+-		unsigned gpp = padno / NPADS_IN_GPP;
++		unsigned gpp_offset = padno % community->gpp_size;
++		unsigned gpp = padno / community->gpp_size;
+ 		void __iomem *reg;
+ 		u32 value;
+ 
+@@ -780,8 +777,8 @@ static int intel_gpio_irq_wake(struct irq_data *d, unsigned int on)
+ 		return -EINVAL;
+ 
+ 	padno = pin_to_padno(community, pin);
+-	gpp = padno / NPADS_IN_GPP;
+-	gpp_offset = padno % NPADS_IN_GPP;
++	gpp = padno / community->gpp_size;
++	gpp_offset = padno % community->gpp_size;
+ 
+ 	/* Clear the existing wake status */
+ 	writel(BIT(gpp_offset), community->regs + GPI_GPE_STS + gpp * 4);
+@@ -819,14 +816,14 @@ static irqreturn_t intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
+ 		/* Only interrupts that are enabled */
+ 		pending &= enabled;
+ 
+-		for_each_set_bit(gpp_offset, &pending, NPADS_IN_GPP) {
++		for_each_set_bit(gpp_offset, &pending, community->gpp_size) {
+ 			unsigned padno, irq;
+ 
+ 			/*
+ 			 * The last group in community can have less pins
+ 			 * than NPADS_IN_GPP.
+ 			 */
+-			padno = gpp_offset + gpp * NPADS_IN_GPP;
++			padno = gpp_offset + gpp * community->gpp_size;
+ 			if (padno >= community->npins)
+ 				break;
+ 
+@@ -1002,7 +999,8 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 
+ 		community->regs = regs;
+ 		community->pad_regs = regs + padbar;
+-		community->ngpps = DIV_ROUND_UP(community->npins, NPADS_IN_GPP);
++		community->ngpps = DIV_ROUND_UP(community->npins,
++						community->gpp_size);
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
+index 4ec8b57..b602157 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.h
++++ b/drivers/pinctrl/intel/pinctrl-intel.h
+@@ -55,6 +55,8 @@ struct intel_function {
+  *                  ACPI).
+  * @ie_offset: Register offset of GPI_IE from @regs.
+  * @pin_base: Starting pin of pins in this community
++ * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
++ *            HOSTSW_OWN,  GPI_IS, GPI_IE, etc.
+  * @npins: Number of pins in this community
+  * @regs: Community specific common registers (reserved for core driver)
+  * @pad_regs: Community specific pad registers (reserved for core driver)
+@@ -68,6 +70,7 @@ struct intel_community {
+ 	unsigned hostown_offset;
+ 	unsigned ie_offset;
+ 	unsigned pin_base;
++	unsigned gpp_size;
+ 	size_t npins;
+ 	void __iomem *regs;
+ 	void __iomem *pad_regs;
+diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+index 1de9ae5..c725a53 100644
+--- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
++++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
+@@ -30,6 +30,7 @@
+ 		.padcfglock_offset = SPT_PADCFGLOCK,	\
+ 		.hostown_offset = SPT_HOSTSW_OWN,	\
+ 		.ie_offset = SPT_GPI_IE,		\
++		.gpp_size = 24,				\
+ 		.pin_base = (s),			\
+ 		.npins = ((e) - (s) + 1),		\
+ 	}
+-- 
+1.8.3.2
+
