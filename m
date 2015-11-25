@@ -1,78 +1,64 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH V3 1/2] pinctrl: intel: fix offset calculation issue of
- register PAD_OWN
-Date: Wed, 25 Nov 2015 12:03:57 +0200
-Message-ID: <20151125100357.GW1587@lahna.fi.intel.com>
-References: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
+Date: Wed, 25 Nov 2015 11:14:00 +0100
+Message-ID: <CAMuHMdWKcBbRwkgFxfatgPF2UFo2OTGAJ0wp3Q8sOGCXWB5SiA@mail.gmail.com>
+References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+	<2326541.taAcxUkgxs@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:56710 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750699AbbKYKEH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 25 Nov 2015 05:04:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35854 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751009AbbKYKOE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 05:14:04 -0500
+In-Reply-To: <2326541.taAcxUkgxs@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Nov 26, 2015 at 01:09:50AM +0800, Qipeng Zha wrote:
-> The equation of offset calculation is not correct for PAD_OWN,
-> verified this fix will get right offset.
-> 
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-intel.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 392e28d..e3f580b 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -37,6 +37,7 @@
->  #define PADOWN_BITS			4
->  #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
->  #define PADOWN_MASK(p)			(0xf << PADOWN_SHIFT(p))
-> +#define PADOWN_GPP(p)			((p) / 8)
->  
->  /* Offset from pad_regs */
->  #define PADCFG0				0x000
-> @@ -142,7 +143,7 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
->  static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
->  {
->  	const struct intel_community *community;
-> -	unsigned padno, gpp, gpp_offset, offset;
-> +	unsigned padno, gpp, offset;
->  	void __iomem *padown;
->  
->  	community = intel_get_community(pctrl, pin);
-> @@ -152,9 +153,8 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
->  		return true;
->  
->  	padno = pin_to_padno(community, pin);
-> -	gpp = padno / NPADS_IN_GPP;
-> -	gpp_offset = padno % NPADS_IN_GPP;
-> -	offset = community->padown_offset + gpp * 16 + (gpp_offset / 8) * 4;
-> +	gpp = PADOWN_GPP(padno);
-> +	offset = community->padown_offset + gpp * 4;
+Hi Laurent,
 
-Actually have you verified this on Sunrisepoint? 
+On Wed, Nov 25, 2015 at 1:48 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tuesday 20 October 2015 21:26:31 Geert Uytterhoeven wrote:
+>> Currently single-function pins are described using the raw PINMUX_DATA()
+>> macro.
+>>
+>> Morimoto-san doesn't like that. He proposed to use the existing
+>> PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
+>> Add pinmux data for single-function pins",
+>> http://www.spinics.net/lists/linux-sh/msg44823.html).
+>> However, that macro is intended to describe a pinmux configuration
+>> without GPIO function, which feels wrong to me.
+>>
+>> This patch series proposes an alternative, introducing a new macro
+>> PINMUX_SINGLE() to describe a pinmux configuration for a single-function
+>> pin. It also converts the existing single-function pin descriptions.
+>>
+>> Thanks for your comments!
+>
+> For patches 2-4,
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-If you check the public datasheet (6th Generation Intel Core processor
-I/O Datasheet vol2) the GPP_B starts from 0x30.
+Thanks!
 
-First pad in GPP_B is 24 so we get:
+> But why haven't you included the other SoCs ?
 
-  current code: 0x30
-  your code:    0x2c
+Because this was an RFC. Didn't want to look for more occurrences if my RFC
+was rejected.
 
-So this needs to take the gpp_size in account as well.
+Seems like there are indeed more possible users on emev2, r8a778, r8a7779,
+and sh7734.
 
->  	padown = community->regs + offset;
->  
->  	return !(readl(padown) & PADOWN_MASK(padno));
-> -- 
-> 1.8.3.2
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
