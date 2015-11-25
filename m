@@ -1,180 +1,73 @@
-From: Martin Schiller <mschiller@tdt.de>
-Subject: [PATCH v2 1/4] pinctrl/lantiq: updating devicetree binding description
-Date: Wed, 25 Nov 2015 11:18:56 +0100
-Message-ID: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Strange message from Kirkwood pinctrl driver
+Date: Wed, 25 Nov 2015 11:27:46 +0100
+Message-ID: <CACRpkdah4w-=qHS+q_=Ab-RiJyvbCKY-Rp5Ya0x+F=3DL2iuBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mxout51.expurgate.net ([91.198.224.51]:47670 "EHLO
-	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752006AbbKYKTt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 05:19:49 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:33772 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752248AbbKYK1r (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 05:27:47 -0500
+Received: by oixx65 with SMTP id x65so26555740oix.0
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Nov 2015 02:27:47 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com, Martin Schiller <mschiller@tdt.de>
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>
 
-This patch adds the new dedicated "lantiq,<chip>-pinctrl" compatible strings
-to the devicetree bindings Documentation, where <chip> is one of "ase",
-"danube", "xrx100", "xrx200" or "xrx300" and marks the "lantiq,pinctrl-xway",
-"lantiq,pinctrl-ase" and "lantiq,pinctrl-xr9" compatible strings as DEPRECATED.
+Hi Sebastian,
 
-Signed-off-by: Martin Schiller <mschiller@tdt.de>
----
- .../bindings/pinctrl/lantiq,pinctrl-xway.txt       | 110 +++++++++++++++++++--
- 1 file changed, 102 insertions(+), 8 deletions(-)
+trying to use the Kirkwood pinctrl driver with compatible =
+"marvell,88f6192-pinctrl";
+on a Pogoplug series 4 yields the following message when instantiating
+the driver:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-index e89b467..8e5216b 100644
---- a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-@@ -1,7 +1,16 @@
- Lantiq XWAY pinmux controller
- 
- Required properties:
--- compatible: "lantiq,pinctrl-xway" or "lantiq,pinctrl-xr9"
-+- compatible: "lantiq,pinctrl-xway", (DEPRECATED: Use "lantiq,pinctrl-danube")
-+	      "lantiq,pinctrl-xr9", (DEPRECATED: Use "lantiq,xrx100-pinctrl" or
-+					"lantiq,xrx200-pinctrl")
-+	      "lantiq,pinctrl-ase", (DEPRECATED: Use "lantiq,ase-pinctrl")
-+	      "lantiq,<chip>-pinctrl", where <chip> is:
-+		"ase" (XWAY AMAZON Family)
-+		"danube" (XWAY DANUBE Family)
-+		"xrx100" (XWAY xRX100 Family)
-+		"xrx200" (XWAY xRX200 Family)
-+		"xrx300" (XWAY xRX300 Family)
- - reg: Should contain the physical address and length of the gpio/pinmux
-   register range
- 
-@@ -36,19 +45,87 @@ Required subnode-properties:
- 
- Valid values for group and function names:
- 
-+XWAY: (DEPRECATED: Use DANUBE)
-   mux groups:
-     exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
-     ebu wait, nand ale, nand cs1, nand cle, spi, spi_cs1, spi_cs2, spi_cs3,
--    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi , gpt1, gpt2,
-+    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2,
-     gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3, req1, req2,
-     req3
- 
--  additional mux groups (XR9 only):
--    mdio, nand rdy, nand rd, exin3, exin4, gnt4, req4
-+  functions:
-+    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu
-+
-+XR9: ( DEPRECATED: Use xRX100/xRX200)
-+  mux groups:
-+    exin0, exin1, exin2, exin3, exin4, jtag, ebu a23, ebu a24, ebu a25,
-+    ebu clk, ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy,
-+    nand rd, spi, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6,
-+    asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
-+    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
-+    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
-+
-+  functions:
-+    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio, gphy
-+
-+AMAZON:
-+  mux groups:
-+    exin0, exin1, exin2, jtag, spi_di, spi_do, spi_clk, spi_cs1, spi_cs2,
-+    spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc, stp, gpt1, gpt2, gpt3, clkout0,
-+    clkout1, clkout2, mdio, dfe led0, dfe led1, ephy led0, ephy led1, ephy led2
-+
-+  functions:
-+    spi, asc, cgu, jtag, exin, stp, gpt, mdio, ephy, dfe
-+
-+DANUBE:
-+  mux groups:
-+    exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
-+    ebu wait, nand ale, nand cs1, nand cle, spi_di, spi_do, spi_clk, spi_cs1,
-+    spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi,
-+    gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3,
-+    req1, req2, req3, dfe led0, dfe led1
- 
-   functions:
--    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio
-+    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, dfe
- 
-+xRX100:
-+  mux groups:
-+    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
-+    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
-+    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
-+    spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
-+    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
-+    dfe led0, dfe led1
-+
-+  functions:
-+    spi, asc, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe
-+
-+xRX200:
-+  mux groups:
-+    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
-+    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
-+    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
-+    spi_cs6, usif uart_rx, usif uart_tx, usif uart_rts, usif uart_cts,
-+    usif uart_dtr, usif uart_dsr, usif uart_dcd, usif uart_ri, usif spi_di,
-+    usif spi_do, usif spi_clk, usif spi_cs0, usif spi_cs1, usif spi_cs2,
-+    stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1,
-+    gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio, dfe led0, dfe led1,
-+    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
-+
-+  functions:
-+    spi, usif, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe, gphy
-+
-+xRX300:
-+  mux groups:
-+    exin0, exin1, exin2, exin4, nand ale, nand cs0, nand cs1, nand cle,
-+    nand rdy, nand rd, nand_d0, nand_d1, nand_d2, nand_d3, nand_d4, nand_d5,
-+    nand_d6, nand_d7, nand_d1, nand wr, nand wp, nand se, spi_di, spi_do,
-+    spi_clk, spi_cs1, spi_cs4, spi_cs6, usif uart_rx, usif uart_tx,
-+    usif spi_di, usif spi_do, usif spi_clk, usif spi_cs0, stp, clkout2,
-+    mdio, dfe led0, dfe led1, ephy0 led0, ephy0 led1, ephy1 led0, ephy1 led1
-+
-+  functions:
-+    spi, usif, cgu, exin, stp, ebu, mdio, dfe, ephy
- 
- 
- Definition of pin configurations:
-@@ -62,15 +139,32 @@ Optional subnode-properties:
-     0: none, 1: down, 2: up.
- - lantiq,open-drain: Boolean, enables open-drain on the defined pin.
- 
--Valid values for XWAY pin names:
-+Valid values for XWAY pin names: (DEPRECATED: Use DANUBE)
-   Pinconf pins can be referenced via the names io0-io31.
- 
--Valid values for XR9 pin names:
-+Valid values for XR9 pin names: (DEPRECATED: Use xrX100/xRX200)
-   Pinconf pins can be referenced via the names io0-io55.
- 
-+Valid values for AMAZON pin names:
-+  Pinconf pins can be referenced via the names io0-io31.
-+
-+Valid values for DANUBE pin names:
-+  Pinconf pins can be referenced via the names io0-io31.
-+
-+Valid values for xRX100 pin names:
-+  Pinconf pins can be referenced via the names io0-io55.
-+
-+Valid values for xRX200 pin names:
-+  Pinconf pins can be referenced via the names io0-io49.
-+
-+Valid values for xRX300 pin names:
-+  Pinconf pins can be referenced via the names io0-io1,io3-io6,io8-io11,
-+						io13-io19,io23-io27,io34-io36,
-+						io42-io43,io48-io61.
-+
- Example:
- 	gpio: pinmux@E100B10 {
--		compatible = "lantiq,pinctrl-xway";
-+		compatible = "lantiq,danube-pinctrl";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
- 
--- 
-2.1.4
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 36
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 37
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 38
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 39
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 40
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 41
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 42
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 43
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 44
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 45
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 46
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 47
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 48
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 49
+kirkwood-pinctrl f1010000.pin-controller: registered pinctrl driver
 
+It looks harmless but seems like a bug and make me uncertain.
+
+The following naive patch fixes it:
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
+b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
+index 0f07dc554a1d..6c7c2c8819b8 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
++++ b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
+@@ -411,7 +411,7 @@ static struct mvebu_pinctrl_soc_info mv88f6190_info = {
+        .controls = mv88f619x_mpp_controls,
+        .ncontrols = ARRAY_SIZE(mv88f619x_mpp_controls),
+        .modes = mv88f6xxx_mpp_modes,
+-       .nmodes = ARRAY_SIZE(mv88f6xxx_mpp_modes),
++       .nmodes = ARRAY_SIZE(mv88f6xxx_mpp_modes) - 14,
+        .gpioranges = mv88f619x_gpio_ranges,
+        .ngpioranges = ARRAY_SIZE(mv88f619x_gpio_ranges),
+ };
+@@ -421,7 +421,7 @@ static struct mvebu_pinctrl_soc_info mv88f6192_info = {
+        .controls = mv88f619x_mpp_controls,
+        .ncontrols = ARRAY_SIZE(mv88f619x_mpp_controls),
+        .modes = mv88f6xxx_mpp_modes,
+-       .nmodes = ARRAY_SIZE(mv88f6xxx_mpp_modes),
++       .nmodes = ARRAY_SIZE(mv88f6xxx_mpp_modes) - 14,
+        .gpioranges = mv88f619x_gpio_ranges,
+        .ngpioranges = ARRAY_SIZE(mv88f619x_gpio_ranges),
+ };
+
+What is the proper way to fix this?
+
+Yours,
+Linus Walleij
