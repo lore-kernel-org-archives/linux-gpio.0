@@ -1,50 +1,43 @@
-From: Jonas Gorski <jogo@openwrt.org>
-Subject: Re: [PATCH v2 4/4] pinctrl/lantiq: fix up pinmux
-Date: Wed, 25 Nov 2015 11:40:20 +0100
-Message-ID: <CAOiHx=moeuw-qWdq0YVzVD3dv0Zq+3rxb2tAKV1Hiz35y4+7DQ@mail.gmail.com>
-References: <1448446739-5541-1-git-send-email-mschiller@tdt.de> <1448446739-5541-4-git-send-email-mschiller@tdt.de>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: [PATCH] pinctrl: update document for pinconf_generic_parse_dt_config
+Date: Wed, 25 Nov 2015 20:13:23 +0800
+Message-ID: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:48499 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752631AbbKYKlG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 25 Nov 2015 05:41:06 -0500
-In-Reply-To: <1448446739-5541-4-git-send-email-mschiller@tdt.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ludovic.desroches@atmel.com, Yingjoe Chen <yingjoe.chen@mediatek.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Schiller <mschiller@tdt.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, MIPS Mailing List <linux-mips@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>, John Crispin <blogic@openwrt.org>, Hauke Mehrtens <hauke@hauke-m.de>, daniel.schwierzeck@gmail.com
 
-Hi
+The returned configs from pinconf_generic_parse_dt_config() is
+duplicated from original. Make it clear it must be freed when no
+longer necessary.
 
-On Wed, Nov 25, 2015 at 11:18 AM, Martin Schiller <mschiller@tdt.de> wrote:
-> From: John Crispin <blogic@openwrt.org>
->
-> This patch is included in the openwrt patchset for several years now and needs
-> to go upstream as well. It includes the following changes:
-> 1. Fix up inline function call to xway_mux_apply
+Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+---
+It seems memleak in pinctrl-mtk-common.c[1] is not alone. After a quick
+glance I notice similar issues in drivers/pinctrl/pinctrl-at91-pio4.c and
+drivers/pinctrl/nomadik/pinctrl-abx500.c.
 
-This really needs an explanation what is being fixed here.
+I think it make sense to update document to make it clear it should be freed.
 
-> 2. Fix GPIO Setup of GPIO Port3
+[1] http://lists.infradead.org/pipermail/linux-mediatek/2015-November/002967.html
+---
+ drivers/pinctrl/pinconf-generic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This change looks fine.
-
-> 3. Implement gpio_chip.to_irq
-
-These are three different changes (two fixes, one new feature) and
-therefore should be split up into three patches.
-
-> Signed-off-by: John Crispin <blogic@openwrt.org>
-> Signed-off-by: Martin Schiller <mschiller@tdt.de>
-> ---
-
-Also please provide a changelog for your patches here.
-
->  drivers/pinctrl/pinctrl-xway.c | 28 ++++++++++++++++++++++++++--
->  1 file changed, 26 insertions(+), 2 deletions(-)
->
-
-
-Jonas
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index 099a344..79e6159 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -220,6 +220,7 @@ static void parse_dt_cfg(struct device_node *np,
+  * parse the config properties into generic pinconfig values.
+  * @np: node containing the pinconfig properties
+  * @configs: array with nconfigs entries containing the generic pinconf values
++ *           must be freed when no longer necessary.
+  * @nconfigs: umber of configurations
+  */
+ int pinconf_generic_parse_dt_config(struct device_node *np,
+-- 
+1.9.1
