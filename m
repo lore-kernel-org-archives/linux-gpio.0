@@ -1,53 +1,65 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
-Date: Wed, 25 Nov 2015 02:18:01 +0200
-Message-ID: <11321076.yAsIxzsHHx@avalon>
-References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com> <CAMuHMdWSiq3Pna3yxRSYFgZeTMeLYgHaxp115qA-zxw=Ri-BXg@mail.gmail.com> <877flmjnp5.wl%kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
+Date: Wed, 25 Nov 2015 02:48:44 +0200
+Message-ID: <2326541.taAcxUkgxs@avalon>
+References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <877flmjnp5.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41154 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932230AbbKYAsg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 19:48:36 -0500
+In-Reply-To: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Morimoto-san,
+Hi Geert,
 
-On Friday 13 November 2015 08:47:07 Kuninori Morimoto wrote:
-> Hi Geert, Laurent
+Thank you for the patches.
+
+On Tuesday 20 October 2015 21:26:31 Geert Uytterhoeven wrote:
+> 	Hi,
 > 
-> > > #define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
-> > > -        _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1,
-> > > fn, sfx, cfg) +        _PORT_GP_CFG_1(bank, pin, fn, sfx, cfg)
-> > > _PORT_GP_CFG_1(bank, pin + 1, fn, sfx, cfg)
-> (snip)
+> Currently single-function pins are described using the raw PINMUX_DATA()
+> macro.
 > 
-> > > I noticed it seems difficult, because it is based on
-> > > 
-> > >         #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin,
-> > >         GP_##bank##_##pin, sfx, cfg)> >         
-> > >                                     ~~~                                 
-> > >                                               ~~~
-> > > 
-> > > we can't use (pin + x) style.
-> > > It seems we need all 0 - 32 definition anyway...
-> > 
-> > Oh right. CPP cannot evaluate the pin number arithmetic :-(
-> > 
-> > Then your previous patch is indeed the best we can do, I'm afraid.
+> Morimoto-san doesn't like that. He proposed to use the existing
+> PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
+> Add pinmux data for single-function pins",
+> http://www.spinics.net/lists/linux-sh/msg44823.html).
+> However, that macro is intended to describe a pinmux configuration
+> without GPIO function, which feels wrong to me.
 > 
-> I think your idea was good, but unfortunately we can't use it.
-> Laurent, what do you think about this patch ?
+> This patch series proposes an alternative, introducing a new macro
+> PINMUX_SINGLE() to describe a pinmux configuration for a single-function
+> pin. It also converts the existing single-function pin descriptions.
+> 
+> Thanks for your comments!
 
-It would be great to have a more powerful C preprocessor to create a single 
-macro that would take the number of pins as a parameter. I think C++ templates 
-could do so ;-)
-
-I think your patch is indeed the best that can be done.
+For patches 2-4,
 
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+But why haven't you included the other SoCs ?
+
+> Geert Uytterhoeven (4):
+>   pinctrl: sh-pfc: Add PINMUX_SINGLE()
+>   pinctrl: sh-pfc: r8a7790: Use PINMUX_SINGLE() instead of raw
+>     PINMUX_DATA()
+>   pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw
+>     PINMUX_DATA()
+>   pinctrl: sh-pfc: r8a7794: Use PINMUX_SINGLE() instead of raw
+>     PINMUX_DATA()
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 18 +++++++--------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 ++++++++++++++--------------
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 44 +++++++++++++++++----------------
+>  drivers/pinctrl/sh-pfc/sh_pfc.h      |  7 ++++++
+>  4 files changed, 55 insertions(+), 48 deletions(-)
 
 -- 
 Regards,
