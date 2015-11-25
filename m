@@ -1,67 +1,56 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
-Date: Wed, 25 Nov 2015 09:16:12 +0900
-Message-ID: <20151125001611.GE20596@verge.net.au>
-References: <20151117031832.24924.60685.sendpatchset@little-apple>
- <2997631.z1xUhmAZzM@avalon>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
+Date: Wed, 25 Nov 2015 02:18:01 +0200
+Message-ID: <11321076.yAsIxzsHHx@avalon>
+References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com> <CAMuHMdWSiq3Pna3yxRSYFgZeTMeLYgHaxp115qA-zxw=Ri-BXg@mail.gmail.com> <877flmjnp5.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2997631.z1xUhmAZzM@avalon>
+In-Reply-To: <877flmjnp5.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-sh-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, geert@glider.be
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Nov 20, 2015 at 04:46:50AM +0200, Laurent Pinchart wrote:
-> Hi Magnus,
-> 
-> Thank you for the patch.
-> 
-> On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
-> > pinctrl: sh-pfc: r8a7794: DU support
-> > 
-> > [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
-> > [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
-> > [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
-> > [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
-> > 
-> > These patches take the r8a7794 PFC DU support code from the BSP
-> > and reworks it to fit the r8a7794 ALT board. Tested with the ALT
-> > VGA port - by default PFC is not used however enabling PFC using
-> > an incremental (yet to be posted) patch works well.
-> > 
-> > It is worth noting that patch 2-4 modifies the pin groups. This
-> > means that the upstream DT ABI for PFC DU will differ compared
-> > to the unreviewed BSP code.
-> > 
-> > In general it is not considered good practice to change the pin
-> > groups and break compatibility since they are part of the DT ABI.
-> > 
-> > For this particular case upstream never have had PFC DU support
-> > for r8a7794, so treating the BSP bindings as experimental and
-> > migrate away seems reasonable.
-> 
-> If we start considering DT bindings that never went upstream as stable
-> we'll have a big problem. I mean even bigger than the upstream DT
-> bindings stability problem :-)
+Hi Morimoto-san,
 
-FWIW, I agree.
+On Friday 13 November 2015 08:47:07 Kuninori Morimoto wrote:
+> Hi Geert, Laurent
+> 
+> > > #define _PORT_GP_CFG_2(bank, pin, fn, sfx, cfg) \
+> > > -        _PORT_GP_CFG_1(bank, 0, fn, sfx, cfg) _PORT_GP_CFG_1(bank, 1,
+> > > fn, sfx, cfg) +        _PORT_GP_CFG_1(bank, pin, fn, sfx, cfg)
+> > > _PORT_GP_CFG_1(bank, pin + 1, fn, sfx, cfg)
+> (snip)
+> 
+> > > I noticed it seems difficult, because it is based on
+> > > 
+> > >         #define PORT_GP_CFG_1(bank, pin, fn, sfx, cfg) fn(bank, pin,
+> > >         GP_##bank##_##pin, sfx, cfg)> >         
+> > >                                     ~~~                                 
+> > >                                               ~~~
+> > > 
+> > > we can't use (pin + x) style.
+> > > It seems we need all 0 - 32 definition anyway...
+> > 
+> > Oh right. CPP cannot evaluate the pin number arithmetic :-(
+> > 
+> > Then your previous patch is indeed the best we can do, I'm afraid.
+> 
+> I think your idea was good, but unfortunately we can't use it.
+> Laurent, what do you think about this patch ?
 
-> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> 
-> Wouldn't it make sense to merge the 4 patches together ?
-> 
-> > ---
-> > 
-> >  Written against v4.4-rc1
-> > 
-> >  drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  282 +++++++++++++++++++++++++++----
-> >  1 file changed, 252 insertions(+), 30 deletions(-)
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+It would be great to have a more powerful C preprocessor to create a single 
+macro that would take the number of pins as a parameter. I think C++ templates 
+could do so ;-)
+
+I think your patch is indeed the best that can be done.
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+-- 
+Regards,
+
+Laurent Pinchart
+
