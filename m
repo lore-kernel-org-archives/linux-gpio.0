@@ -1,49 +1,78 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2][RFC] pinctrl: sh-pfc: share/reuse same PORT_GP_x() macros
-Date: Wed, 25 Nov 2015 10:31:12 +0100
-Message-ID: <CAMuHMdWg8foANs5L1tLQMAVJuV0sy8zZ1Ts-ZKKVXu1cUaUPTg@mail.gmail.com>
-References: <87io5ajkz9.wl%kuninori.morimoto.gx@renesas.com>
-	<CAMuHMdWSiq3Pna3yxRSYFgZeTMeLYgHaxp115qA-zxw=Ri-BXg@mail.gmail.com>
-	<877flmjnp5.wl%kuninori.morimoto.gx@renesas.com>
-	<11321076.yAsIxzsHHx@avalon>
-	<87k2p67fbt.wl%kuninori.morimoto.gx@renesas.com>
+From: Mika Westerberg <mika.westerberg@intel.com>
+Subject: Re: [PATCH V3 1/2] pinctrl: intel: fix offset calculation issue of
+ register PAD_OWN
+Date: Wed, 25 Nov 2015 12:03:57 +0200
+Message-ID: <20151125100357.GW1587@lahna.fi.intel.com>
+References: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <87k2p67fbt.wl%kuninori.morimoto.gx@renesas.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:56710 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750699AbbKYKEH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 25 Nov 2015 05:04:07 -0500
+Content-Disposition: inline
+In-Reply-To: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Qipeng Zha <qipeng.zha@intel.com>
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com
 
-On Wed, Nov 25, 2015 at 7:45 AM, Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
->> > I think your idea was good, but unfortunately we can't use it.
->> > Laurent, what do you think about this patch ?
->>
->> It would be great to have a more powerful C preprocessor to create a single
->> macro that would take the number of pins as a parameter. I think C++ templates
->> could do so ;-)
->>
->> I think your patch is indeed the best that can be done.
->>
->> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> Thanks
->
->>> LinusW ? Geert ?
->
-> Is it possible to pickup this patch ?
+On Thu, Nov 26, 2015 at 01:09:50AM +0800, Qipeng Zha wrote:
+> The equation of offset calculation is not correct for PAD_OWN,
+> verified this fix will get right offset.
+> 
+> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-intel.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index 392e28d..e3f580b 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -37,6 +37,7 @@
+>  #define PADOWN_BITS			4
+>  #define PADOWN_SHIFT(p)			((p) % 8 * PADOWN_BITS)
+>  #define PADOWN_MASK(p)			(0xf << PADOWN_SHIFT(p))
+> +#define PADOWN_GPP(p)			((p) / 8)
+>  
+>  /* Offset from pad_regs */
+>  #define PADCFG0				0x000
+> @@ -142,7 +143,7 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
+>  static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
+>  {
+>  	const struct intel_community *community;
+> -	unsigned padno, gpp, gpp_offset, offset;
+> +	unsigned padno, gpp, offset;
+>  	void __iomem *padown;
+>  
+>  	community = intel_get_community(pctrl, pin);
+> @@ -152,9 +153,8 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
+>  		return true;
+>  
+>  	padno = pin_to_padno(community, pin);
+> -	gpp = padno / NPADS_IN_GPP;
+> -	gpp_offset = padno % NPADS_IN_GPP;
+> -	offset = community->padown_offset + gpp * 16 + (gpp_offset / 8) * 4;
+> +	gpp = PADOWN_GPP(padno);
+> +	offset = community->padown_offset + gpp * 4;
 
-Thanks, will queue in sh-pfc-for-v4.5.
+Actually have you verified this on Sunrisepoint? 
 
-Gr{oetje,eeting}s,
+If you check the public datasheet (6th Generation Intel Core processor
+I/O Datasheet vol2) the GPP_B starts from 0x30.
 
-                        Geert
+First pad in GPP_B is 24 so we get:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  current code: 0x30
+  your code:    0x2c
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+So this needs to take the gpp_size in account as well.
+
+>  	padown = community->regs + offset;
+>  
+>  	return !(readl(padown) & PADOWN_MASK(padno));
+> -- 
+> 1.8.3.2
