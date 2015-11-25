@@ -1,17 +1,17 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
-Date: Wed, 25 Nov 2015 02:48:44 +0200
-Message-ID: <2326541.taAcxUkgxs@avalon>
-References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 1/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
+Date: Wed, 25 Nov 2015 02:49:55 +0200
+Message-ID: <3546719.xIF05iocVT@avalon>
+References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be> <1445369195-25117-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41154 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:41158 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932230AbbKYAsg (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 19:48:36 -0500
-In-Reply-To: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
+	with ESMTP id S1755456AbbKYAtq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Nov 2015 19:49:46 -0500
+In-Reply-To: <1445369195-25117-2-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -19,47 +19,42 @@ Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.w
 
 Hi Geert,
 
-Thank you for the patches.
+Thank you for the patch.
 
-On Tuesday 20 October 2015 21:26:31 Geert Uytterhoeven wrote:
-> 	Hi,
+On Tuesday 20 October 2015 21:26:32 Geert Uytterhoeven wrote:
+> Add a macro to describe a pinmux configuration for a single-function
+> pin.
 > 
-> Currently single-function pins are described using the raw PINMUX_DATA()
-> macro.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/pinctrl/sh-pfc/sh_pfc.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Morimoto-san doesn't like that. He proposed to use the existing
-> PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
-> Add pinmux data for single-function pins",
-> http://www.spinics.net/lists/linux-sh/msg44823.html).
-> However, that macro is intended to describe a pinmux configuration
-> without GPIO function, which feels wrong to me.
+> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 63e6cd050d0fb7d2..932fbef8bad400dd
+> 100644
+> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+> @@ -277,6 +277,13 @@ struct sh_pfc_soc_info {
+>  	PINMUX_DATA(fn##_MARK, FN_##ms, FN_##ipsr, FN_##fn)
 > 
-> This patch series proposes an alternative, introducing a new macro
-> PINMUX_SINGLE() to describe a pinmux configuration for a single-function
-> pin. It also converts the existing single-function pin descriptions.
-> 
-> Thanks for your comments!
+>  /*
+> + * Describe a pinmux configuration for a single-function pin.
 
-For patches 2-4,
+I would say "single-function pin with GPIO capability".
+
+Apart from that,
 
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-But why haven't you included the other SoCs ?
-
-> Geert Uytterhoeven (4):
->   pinctrl: sh-pfc: Add PINMUX_SINGLE()
->   pinctrl: sh-pfc: r8a7790: Use PINMUX_SINGLE() instead of raw
->     PINMUX_DATA()
->   pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw
->     PINMUX_DATA()
->   pinctrl: sh-pfc: r8a7794: Use PINMUX_SINGLE() instead of raw
->     PINMUX_DATA()
-> 
->  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 18 +++++++--------
->  drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 34 ++++++++++++++--------------
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 44 +++++++++++++++++----------------
->  drivers/pinctrl/sh-pfc/sh_pfc.h      |  7 ++++++
->  4 files changed, 55 insertions(+), 48 deletions(-)
+> + *   - fn: Function name
+> + */
+> +#define PINMUX_SINGLE(fn)						\
+> +	PINMUX_DATA(fn##_MARK, FN_##fn)
+> +
+> +/*
+>   * GP port style (32 ports banks)
+>   */
 
 -- 
 Regards,
