@@ -1,81 +1,61 @@
-From: Simon Guinot <simon.guinot@sequanux.org>
-Subject: Re: Strange message from Kirkwood pinctrl driver
-Date: Wed, 25 Nov 2015 16:24:05 +0100
-Message-ID: <20151125152405.GG4665@kw.sim.vm.gnt>
-References: <CACRpkdah4w-=qHS+q_=Ab-RiJyvbCKY-Rp5Ya0x+F=3DL2iuBA@mail.gmail.com>
- <20151125144645.GE11384@lunn.ch>
- <CACRpkdbi=iCV1B=u60mNqRWhcgAcs33J-DeB-C=r+2v1eLPbpQ@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the
+ SoC header files
+Date: Wed, 25 Nov 2015 10:39:40 -0800
+Message-ID: <20151125183939.GM2517@atomide.com>
+References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
+ <1447390457-1158-2-git-send-email-javier@osg.samsung.com>
+ <CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
+ <564B30B1.4050902@osg.samsung.com>
+ <20151119002310.GF2517@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pTYhUwqpXRR/mkN7"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from vm1.sequanux.org ([188.165.36.56]:40564 "EHLO vm1.sequanux.org"
+Received: from muru.com ([72.249.23.125]:48539 "EHLO muru.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752752AbbKYPQ0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 25 Nov 2015 10:16:26 -0500
+	id S1750967AbbKYSjp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 25 Nov 2015 13:39:45 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbi=iCV1B=u60mNqRWhcgAcs33J-DeB-C=r+2v1eLPbpQ@mail.gmail.com>
+In-Reply-To: <20151119002310.GF2517@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+Linus,
 
---pTYhUwqpXRR/mkN7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Tony Lindgren <tony@atomide.com> [151118 16:25]:
+> * Javier Martinez Canillas <javier@osg.samsung.com> [151117 05:51]:
+> > Hello Linus,
+> > 
+> > On 11/17/2015 10:47 AM, Linus Walleij wrote:
+> > > On Fri, Nov 13, 2015 at 5:53 AM, Javier Martinez Canillas
+> > > <javier@osg.samsung.com> wrote:
+> > > 
+> > >> The <dt-bindings/pinctrl/omap.h> header file defines a set of macros
+> > >> for different SoCs families that falls under the OMAP sub-arch, that
+> > >> allow to define the padconf register physical address instead of the
+> > >> register offset from the padconf base.
+> > >>
+> > >> But the am43xx and dra7xx SoCs families have their own pinctrl header
+> > >> file so the DTS using these SoCs aren't able to use the AM4372_IOPAD()
+> > >> and DRA7XX_CORE_IOPAD() macros since <dt-bindings/pinctrl/omap.h> is
+> > >> not included.
+> > >>
+> > >> Move the macros to the correct header files so can be used by the DTS.
+> > >>
+> > >> Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> > > 
+> > > I need Tony's ACK on this.
+> > >
+> > 
+> > OK, I believe he was waiting for yours to pick the series though ;)
+> 
+> Yeah probably best to keep this series together if you're OK with that.
 
-On Wed, Nov 25, 2015 at 03:55:16PM +0100, Linus Walleij wrote:
-> On Wed, Nov 25, 2015 at 3:46 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> > On Wed, Nov 25, 2015 at 11:27:46AM +0100, Linus Walleij wrote:
-> >> Hi Sebastian,
-> >>
-> >> trying to use the Kirkwood pinctrl driver with compatible =3D
-> >> "marvell,88f6192-pinctrl";
-> >> on a Pogoplug series 4 yields the following message when instantiating
-> >> the driver:
-> >>
-> >> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 36
-> >> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 37
-> >> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 38
-> >> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 39
-> >> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 40
-> >
-> > Hi Linus
-> >
-> > Humm, interesting. I don't remember it doing that before. I will look
-> > into this in the next couple of days.
->=20
-> There are only few devices using it: it is declared in
-> kirkwood-6192.dtsi and that is just used by:
->=20
-> kirkwood-blackarmor-nas220.dts
-> kirkwood-laplug.dts
-> kirkwood-rd88f6192.dts
-> ... and my new device tree
->=20
-> Interestingly, kirkwood-ns2[lite|mini].dts specifies it's compatible
-> with "marvell,kirkwood-88f6192" but instead includes
-> kirkwood-ns2-common.dtsi which includes
-> kirkwood-6281.dtsi. I haven't wrapped my head around that
-> one, I suspect it's a bug.
+Care to ack this one? I'd like to apply this series for v4.5 within next
+few days..
 
-Don't wrap your head too much about that :) It is indeed a bug and it
-explains why I didn't see this messages before.
+Regards,
 
-Simon
-
---pTYhUwqpXRR/mkN7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlZV0pUACgkQgtp0PDeOcDpV+wCfZgY0PBk+BVw62iasN7uNdBpR
-OOYAnjZUWeJu+a/UUkL3MctnUNi8gZQB
-=ldpC
------END PGP SIGNATURE-----
-
---pTYhUwqpXRR/mkN7--
+Tony
