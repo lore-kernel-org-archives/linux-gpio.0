@@ -1,43 +1,69 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: [PATCH] pinctrl: update document for pinconf_generic_parse_dt_config
-Date: Wed, 25 Nov 2015 20:13:23 +0800
-Message-ID: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ludovic.desroches@atmel.com, Yingjoe Chen <yingjoe.chen@mediatek.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: sh7734: Add missing cfg macro parameter to fix build
+Date: Wed, 25 Nov 2015 13:52:13 +0100
+Message-ID: <1448455933-20276-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-The returned configs from pinconf_generic_parse_dt_config() is
-duplicated from original. Make it clear it must be freed when no
-longer necessary.
+When building for SH7734:
 
-Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:2: error: '_GP_DATA' undeclared here (not in a function)
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+    ...
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:1: error: macro "_GP_INOUTSEL" passed 5 arguments, but takes just 4
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:53: error: '_GP_INOUTSEL' undeclared here (not in a function)
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:2: warning: (near initialization for '(anonymous)[0]') [enabled by default]
+    ...
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:1: error: macro "_GP_INDT" passed 5 arguments, but takes just 4
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:47: error: '_GP_INDT' undeclared here (not in a function)
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+    drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:2: warning: (near initialization for '(anonymous)[0]') [enabled by default]
+    ...
+
+Add the missing "cfg" macro parameters to the sh7734-specific
+_GP_DATA(), _GP_INOUTSEL(), and _GP_INDT() macros to fix this.
+
+Fixes: 22768fc60abbf58b ("pinctrl: sh-pfc: Add macros defining GP ports with config flags")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-It seems memleak in pinctrl-mtk-common.c[1] is not alone. After a quick
-glance I notice similar issues in drivers/pinctrl/pinctrl-at91-pio4.c and
-drivers/pinctrl/nomadik/pinctrl-abx500.c.
+Hi Linus,
 
-I think it make sense to update document to make it clear it should be freed.
+This is a regression introduced in v4.4-rc1.
+Thanks for applying directly!
 
-[1] http://lists.infradead.org/pipermail/linux-mediatek/2015-November/002967.html
+How to trigger (there's no sh7734 defconfig):
+  - make ARCH=sh se7724_defconfig
+  - enable CONFIG_CPU_SUBTYPE_SH7734
+  - make drivers/pinctrl/sh-pfc/pfc-sh7734.o
 ---
- drivers/pinctrl/pinconf-generic.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 099a344..79e6159 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -220,6 +220,7 @@ static void parse_dt_cfg(struct device_node *np,
-  * parse the config properties into generic pinconfig values.
-  * @np: node containing the pinconfig properties
-  * @configs: array with nconfigs entries containing the generic pinconf values
-+ *           must be freed when no longer necessary.
-  * @nconfigs: umber of configurations
-  */
- int pinconf_generic_parse_dt_config(struct device_node *np,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index e7deb51de7dc4fd4..9842bb1067969701 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -31,11 +31,11 @@
+ 	PORT_GP_12(5, fn, sfx)
+ 
+ #undef _GP_DATA
+-#define _GP_DATA(bank, pin, name, sfx)					\
++#define _GP_DATA(bank, pin, name, sfx, cfg)				\
+ 	PINMUX_DATA(name##_DATA, name##_FN, name##_IN, name##_OUT)
+ 
+-#define _GP_INOUTSEL(bank, pin, name, sfx)	name##_IN, name##_OUT
+-#define _GP_INDT(bank, pin, name, sfx)		name##_DATA
++#define _GP_INOUTSEL(bank, pin, name, sfx, cfg)	name##_IN, name##_OUT
++#define _GP_INDT(bank, pin, name, sfx, cfg)	name##_DATA
+ #define GP_INOUTSEL(bank)	PORT_GP_32_REV(bank, _GP_INOUTSEL, unused)
+ #define GP_INDT(bank)		PORT_GP_32_REV(bank, _GP_INDT, unused)
+ 
 -- 
 1.9.1
+
