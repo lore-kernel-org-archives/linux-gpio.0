@@ -1,64 +1,104 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH/RFC 0/4] pinctrl: sh-pfc: Add PINMUX_SINGLE()
-Date: Wed, 25 Nov 2015 11:14:00 +0100
-Message-ID: <CAMuHMdWKcBbRwkgFxfatgPF2UFo2OTGAJ0wp3Q8sOGCXWB5SiA@mail.gmail.com>
-References: <1445369195-25117-1-git-send-email-geert+renesas@glider.be>
-	<2326541.taAcxUkgxs@avalon>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: [PATCH v2 4/4] pinctrl/lantiq: fix up pinmux
+Date: Wed, 25 Nov 2015 11:18:59 +0100
+Message-ID: <1448446739-5541-4-git-send-email-mschiller@tdt.de>
+References: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:35854 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009AbbKYKOE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 05:14:04 -0500
-In-Reply-To: <2326541.taAcxUkgxs@avalon>
+Received: from mxout51.expurgate.net ([91.198.224.51]:36448 "EHLO
+	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751732AbbKYKTt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 05:19:49 -0500
+In-Reply-To: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com, Martin Schiller <mschiller@tdt.de>
 
-Hi Laurent,
+From: John Crispin <blogic@openwrt.org>
 
-On Wed, Nov 25, 2015 at 1:48 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday 20 October 2015 21:26:31 Geert Uytterhoeven wrote:
->> Currently single-function pins are described using the raw PINMUX_DATA()
->> macro.
->>
->> Morimoto-san doesn't like that. He proposed to use the existing
->> PINMUX_IPSR_NOGP() macro instead (cfr. "[RFC] pinctrl: sh-pfc: r8a7795:
->> Add pinmux data for single-function pins",
->> http://www.spinics.net/lists/linux-sh/msg44823.html).
->> However, that macro is intended to describe a pinmux configuration
->> without GPIO function, which feels wrong to me.
->>
->> This patch series proposes an alternative, introducing a new macro
->> PINMUX_SINGLE() to describe a pinmux configuration for a single-function
->> pin. It also converts the existing single-function pin descriptions.
->>
->> Thanks for your comments!
->
-> For patches 2-4,
->
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This patch is included in the openwrt patchset for several years now and needs
+to go upstream as well. It includes the following changes:
+1. Fix up inline function call to xway_mux_apply
+2. Fix GPIO Setup of GPIO Port3
+3. Implement gpio_chip.to_irq
 
-Thanks!
+Signed-off-by: John Crispin <blogic@openwrt.org>
+Signed-off-by: Martin Schiller <mschiller@tdt.de>
+---
+ drivers/pinctrl/pinctrl-xway.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-> But why haven't you included the other SoCs ?
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index a064962..f0b1b48 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1496,10 +1496,9 @@ static struct pinctrl_desc xway_pctrl_desc = {
+ 	.confops	= &xway_pinconf_ops,
+ };
+ 
+-static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
++static int mux_apply(struct ltq_pinmux_info *info,
+ 				int pin, int mux)
+ {
+-	struct ltq_pinmux_info *info = pinctrl_dev_get_drvdata(pctrldev);
+ 	int port = PORT(pin);
+ 	u32 alt1_reg = GPIO_ALT1(pin);
+ 
+@@ -1519,6 +1518,14 @@ static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
+ 	return 0;
+ }
+ 
++static inline int xway_mux_apply(struct pinctrl_dev *pctrldev,
++				int pin, int mux)
++{
++	struct ltq_pinmux_info *info = pinctrl_dev_get_drvdata(pctrldev);
++
++	return mux_apply(info, pin, mux);
++}
++
+ static const struct ltq_cfg_param xway_cfg_params[] = {
+ 	{"lantiq,pull",		LTQ_PINCONF_PARAM_PULL},
+ 	{"lantiq,open-drain",	LTQ_PINCONF_PARAM_OPEN_DRAIN},
+@@ -1563,12 +1570,28 @@ static int xway_gpio_dir_out(struct gpio_chip *chip, unsigned int pin, int val)
+ {
+ 	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
+ 
++	if (PORT(pin) == PORT3)
++		gpio_setbit(info->membase[0], GPIO3_OD, PORT_PIN(pin));
++	else
++		gpio_setbit(info->membase[0], GPIO_OD(pin), PORT_PIN(pin));
+ 	gpio_setbit(info->membase[0], GPIO_DIR(pin), PORT_PIN(pin));
+ 	xway_gpio_set(chip, pin, val);
+ 
+ 	return 0;
+ }
+ 
++static int xway_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++{
++	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
++	int i;
++
++	for (i = 0; i < info->num_exin; i++)
++		if (info->exin[i] == offset)
++			return ltq_eiu_get_irq(i);
++
++	return -1;
++}
++
+ static struct gpio_chip xway_chip = {
+ 	.label = "gpio-xway",
+ 	.direction_input = xway_gpio_dir_in,
+@@ -1577,6 +1600,7 @@ static struct gpio_chip xway_chip = {
+ 	.set = xway_gpio_set,
+ 	.request = gpiochip_generic_request,
+ 	.free = gpiochip_generic_free,
++	.to_irq = xway_gpio_to_irq,
+ 	.base = -1,
+ };
+ 
+-- 
+2.1.4
 
-Because this was an RFC. Didn't want to look for more occurrences if my RFC
-was rejected.
-
-Seems like there are indeed more possible users on emev2, r8a778, r8a7779,
-and sh7734.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
