@@ -1,26 +1,67 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 2/7] dts: define ngpios property in gpio controller's
- node
-Date: Tue, 24 Nov 2015 16:11:03 -0800
-Message-ID: <5654FC97.5040302@gmail.com>
-References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com> <1447905139-16002-3-git-send-email-pramodku@broadcom.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 00/04] pinctrl: sh-pfc: r8a7794: DU support
+Date: Wed, 25 Nov 2015 09:16:12 +0900
+Message-ID: <20151125001611.GE20596@verge.net.au>
+References: <20151117031832.24924.60685.sendpatchset@little-apple>
+ <2997631.z1xUhmAZzM@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447905139-16002-3-git-send-email-pramodku@broadcom.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pramod Kumar <pramodku@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, Jason Uy <jasonuy@broadcom.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas Gorski <jogo@openwrt.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2997631.z1xUhmAZzM@avalon>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, geert@glider.be
 List-Id: linux-gpio@vger.kernel.org
 
-On 18/11/15 19:52, Pramod Kumar wrote:
-> Add ngpios property in cygnus ASIU, CCM and CRMU gpio controller's node
+On Fri, Nov 20, 2015 at 04:46:50AM +0200, Laurent Pinchart wrote:
+> Hi Magnus,
 > 
-> Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
-> Reviewed-by: Ray Jui <rjui@broadcom.com>
-> Reviewed-by: Scott Branden <sbranden@broadcom.com>
+> Thank you for the patch.
+> 
+> On Tuesday 17 November 2015 12:18:32 Magnus Damm wrote:
+> > pinctrl: sh-pfc: r8a7794: DU support
+> > 
+> > [PATCH 01/04] pinctrl: sh-pfc: r8a7794: Add DU pin groups
+> > [PATCH 02/04] pinctrl: sh-pfc: r8a7794: Separate DU CDE and DISP
+> > [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock signals
+> > [PATCH 04/04] pinctrl: sh-pfc: r8a7794: Break out ODDF from sync
+> > 
+> > These patches take the r8a7794 PFC DU support code from the BSP
+> > and reworks it to fit the r8a7794 ALT board. Tested with the ALT
+> > VGA port - by default PFC is not used however enabling PFC using
+> > an incremental (yet to be posted) patch works well.
+> > 
+> > It is worth noting that patch 2-4 modifies the pin groups. This
+> > means that the upstream DT ABI for PFC DU will differ compared
+> > to the unreviewed BSP code.
+> > 
+> > In general it is not considered good practice to change the pin
+> > groups and break compatibility since they are part of the DT ABI.
+> > 
+> > For this particular case upstream never have had PFC DU support
+> > for r8a7794, so treating the BSP bindings as experimental and
+> > migrate away seems reasonable.
+> 
+> If we start considering DT bindings that never went upstream as stable
+> we'll have a big problem. I mean even bigger than the upstream DT
+> bindings stability problem :-)
 
-Applied to devicetree/next with a more specific subject, thanks!
--- 
-Florian
+FWIW, I agree.
+
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Wouldn't it make sense to merge the 4 patches together ?
+> 
+> > ---
+> > 
+> >  Written against v4.4-rc1
+> > 
+> >  drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  282 +++++++++++++++++++++++++++----
+> >  1 file changed, 252 insertions(+), 30 deletions(-)
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
