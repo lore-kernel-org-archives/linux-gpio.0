@@ -1,165 +1,188 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFD 2/3] selftest/gpio: add gpio test case
-Date: Thu, 26 Nov 2015 10:50:58 +0100
-Message-ID: <CACRpkdbSkmhm=Q=vxydQa=-zAmmxBqhSGpXUjpW-jv3YQHJuzA@mail.gmail.com>
-References: <1447491097-14799-1-git-send-email-bamvor.zhangjian@linaro.org>
-	<1447491097-14799-3-git-send-email-bamvor.zhangjian@linaro.org>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: [PATCH v3 1/5] pinctrl/lantiq: updating devicetree binding description
+Date: Thu, 26 Nov 2015 11:00:06 +0100
+Message-ID: <1448532010-30930-1-git-send-email-mschiller@tdt.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:36705 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752335AbbKZJu7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 04:50:59 -0500
-Received: by obdgf3 with SMTP id gf3so59790833obd.3
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2015 01:50:59 -0800 (PST)
-In-Reply-To: <1447491097-14799-3-git-send-email-bamvor.zhangjian@linaro.org>
+Received: from mxout51.expurgate.net ([194.37.255.51]:57397 "EHLO
+	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751060AbbKZKBY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 05:01:24 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com, Martin Schiller <mschiller@tdt.de>
 
-On Sat, Nov 14, 2015 at 9:51 AM, Bamvor Jian Zhang
-<bamvor.zhangjian@linaro.org> wrote:
+This patch adds the new dedicated "lantiq,<chip>-pinctrl" compatible strings
+to the devicetree bindings Documentation, where <chip> is one of "ase",
+"danube", "xrx100", "xrx200" or "xrx300" and marks the "lantiq,pinctrl-xway",
+"lantiq,pinctrl-ase" and "lantiq,pinctrl-xr9" compatible strings as DEPRECATED.
 
-> This test script try to do whitebox testing for gpio subsystem(
-> based on gpiolib). It manipulate gpio-mockup device through sysfs
-> provided and check the result from debugfs.
->
-> Test the following things:
-> 1.  Add single, multi gpiochip with the checking of overlap.
-> 2.  Test direction and output value for valid pin.
-> 3.  Test dynamic allocation of gpio base.
->
-> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Signed-off-by: Martin Schiller <mschiller@tdt.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+Changes in v3:
+None
 
-I like what this test is doing, but at some point we will need tests
-written in C.
+Changes in v2:
+- subject of the patch
+- changed "lantiq,pinctrl-<chip>" to "lantiq,<chip>-pinctrl"
 
-The reason is that we are working on a character device for gpio,
-and once we have that, we want to be able to run these tests using
-the same program.
+ .../bindings/pinctrl/lantiq,pinctrl-xway.txt       | 110 +++++++++++++++++++--
+ 1 file changed, 102 insertions(+), 8 deletions(-)
 
-But maybe this suffice for the sysfs tests of the current ABI.
+diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
+index e89b467..8e5216b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
++++ b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
+@@ -1,7 +1,16 @@
+ Lantiq XWAY pinmux controller
+ 
+ Required properties:
+-- compatible: "lantiq,pinctrl-xway" or "lantiq,pinctrl-xr9"
++- compatible: "lantiq,pinctrl-xway", (DEPRECATED: Use "lantiq,pinctrl-danube")
++	      "lantiq,pinctrl-xr9", (DEPRECATED: Use "lantiq,xrx100-pinctrl" or
++					"lantiq,xrx200-pinctrl")
++	      "lantiq,pinctrl-ase", (DEPRECATED: Use "lantiq,ase-pinctrl")
++	      "lantiq,<chip>-pinctrl", where <chip> is:
++		"ase" (XWAY AMAZON Family)
++		"danube" (XWAY DANUBE Family)
++		"xrx100" (XWAY xRX100 Family)
++		"xrx200" (XWAY xRX200 Family)
++		"xrx300" (XWAY xRX300 Family)
+ - reg: Should contain the physical address and length of the gpio/pinmux
+   register range
+ 
+@@ -36,19 +45,87 @@ Required subnode-properties:
+ 
+ Valid values for group and function names:
+ 
++XWAY: (DEPRECATED: Use DANUBE)
+   mux groups:
+     exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
+     ebu wait, nand ale, nand cs1, nand cle, spi, spi_cs1, spi_cs2, spi_cs3,
+-    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi , gpt1, gpt2,
++    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2,
+     gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3, req1, req2,
+     req3
+ 
+-  additional mux groups (XR9 only):
+-    mdio, nand rdy, nand rd, exin3, exin4, gnt4, req4
++  functions:
++    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu
++
++XR9: ( DEPRECATED: Use xRX100/xRX200)
++  mux groups:
++    exin0, exin1, exin2, exin3, exin4, jtag, ebu a23, ebu a24, ebu a25,
++    ebu clk, ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy,
++    nand rd, spi, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6,
++    asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
++    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
++    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
++
++  functions:
++    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio, gphy
++
++AMAZON:
++  mux groups:
++    exin0, exin1, exin2, jtag, spi_di, spi_do, spi_clk, spi_cs1, spi_cs2,
++    spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc, stp, gpt1, gpt2, gpt3, clkout0,
++    clkout1, clkout2, mdio, dfe led0, dfe led1, ephy led0, ephy led1, ephy led2
++
++  functions:
++    spi, asc, cgu, jtag, exin, stp, gpt, mdio, ephy, dfe
++
++DANUBE:
++  mux groups:
++    exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
++    ebu wait, nand ale, nand cs1, nand cle, spi_di, spi_do, spi_clk, spi_cs1,
++    spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi,
++    gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3,
++    req1, req2, req3, dfe led0, dfe led1
+ 
+   functions:
+-    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio
++    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, dfe
+ 
++xRX100:
++  mux groups:
++    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
++    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
++    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
++    spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
++    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
++    dfe led0, dfe led1
++
++  functions:
++    spi, asc, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe
++
++xRX200:
++  mux groups:
++    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
++    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
++    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
++    spi_cs6, usif uart_rx, usif uart_tx, usif uart_rts, usif uart_cts,
++    usif uart_dtr, usif uart_dsr, usif uart_dcd, usif uart_ri, usif spi_di,
++    usif spi_do, usif spi_clk, usif spi_cs0, usif spi_cs1, usif spi_cs2,
++    stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1,
++    gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio, dfe led0, dfe led1,
++    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
++
++  functions:
++    spi, usif, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe, gphy
++
++xRX300:
++  mux groups:
++    exin0, exin1, exin2, exin4, nand ale, nand cs0, nand cs1, nand cle,
++    nand rdy, nand rd, nand_d0, nand_d1, nand_d2, nand_d3, nand_d4, nand_d5,
++    nand_d6, nand_d7, nand_d1, nand wr, nand wp, nand se, spi_di, spi_do,
++    spi_clk, spi_cs1, spi_cs4, spi_cs6, usif uart_rx, usif uart_tx,
++    usif spi_di, usif spi_do, usif spi_clk, usif spi_cs0, stp, clkout2,
++    mdio, dfe led0, dfe led1, ephy0 led0, ephy0 led1, ephy1 led0, ephy1 led1
++
++  functions:
++    spi, usif, cgu, exin, stp, ebu, mdio, dfe, ephy
+ 
+ 
+ Definition of pin configurations:
+@@ -62,15 +139,32 @@ Optional subnode-properties:
+     0: none, 1: down, 2: up.
+ - lantiq,open-drain: Boolean, enables open-drain on the defined pin.
+ 
+-Valid values for XWAY pin names:
++Valid values for XWAY pin names: (DEPRECATED: Use DANUBE)
+   Pinconf pins can be referenced via the names io0-io31.
+ 
+-Valid values for XR9 pin names:
++Valid values for XR9 pin names: (DEPRECATED: Use xrX100/xRX200)
+   Pinconf pins can be referenced via the names io0-io55.
+ 
++Valid values for AMAZON pin names:
++  Pinconf pins can be referenced via the names io0-io31.
++
++Valid values for DANUBE pin names:
++  Pinconf pins can be referenced via the names io0-io31.
++
++Valid values for xRX100 pin names:
++  Pinconf pins can be referenced via the names io0-io55.
++
++Valid values for xRX200 pin names:
++  Pinconf pins can be referenced via the names io0-io49.
++
++Valid values for xRX300 pin names:
++  Pinconf pins can be referenced via the names io0-io1,io3-io6,io8-io11,
++						io13-io19,io23-io27,io34-io36,
++						io42-io43,io48-io61.
++
+ Example:
+ 	gpio: pinmux@E100B10 {
+-		compatible = "lantiq,pinctrl-xway";
++		compatible = "lantiq,danube-pinctrl";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+ 
+-- 
+2.1.4
 
-> +++ b/tools/testing/selftests/gpio/gpio.sh
-
-Rename it gpio-mockup-sysfs.sh please.
-
-> +#!/bin/bash
-> +
-> +module="gpio-mockup"
-
-This is ABI so not changing, you can just encode it into the
-program, but OK.
-
-> +
-> +SYSFS=
-> +GPIO_SYSFS=
-> +GPIO_DRV_SYSFS=
-> +DEBUGFS=
-> +GPIO_DEBUGFS=
-> +
-> +prerequisite()
-> +{
-> +       msg="skip all tests:"
-> +
-> +       if [ $UID != 0 ]; then
-> +               echo $msg must be run as root >&2
-> +               exit 0
-> +       fi
-> +
-> +       SYSFS=`mount -t sysfs | head -1 | awk '{ print $3 }'`
-> +       if [ ! -d "$SYSFS" ]; then
-> +               echo $msg sysfs is not mounted >&2
-> +               exit 0
-> +       fi
-> +       GPIO_SYSFS=`echo $SYSFS/class/gpio`
-> +       GPIO_DRV_SYSFS=`echo $SYSFS/devices/platform/$module/gpio`
-> +
-> +       DEBUGFS=`mount -t debugfs | head -1 | awk '{ print $3 }'`
-> +       if [ ! -d "$DEBUGFS" ]; then
-> +               echo $msg debugfs is not mounted >&2
-> +               exit 0
-> +       fi
-> +       GPIO_DEBUGFS=`echo $DEBUGFS/gpio`
-> +
-> +}
-
-Looks good.
-
-> +insert_module()
-> +{
-> +       if modprobe -q $module $1; then
-> +               echo -n ""
-> +       else
-> +               echo $msg insmod $module failed >&2
-> +               exit 0
-> +       fi
-> +}
-> +
-> +remove_module()
-> +{
-> +       modprobe -r -q $module
-> +}
-> +
-> +die()
-> +{
-> +       remove_module
-> +       exit 1
-> +}
-
-So this inserting/removing modules work fine unless you want to
-run the tests with the module compiled-in. We should support that
-usecase too. So these functions must bail out silently if the module
-is already loaded (compiled in).
-
-> +gpio_test()
-> +{
-> +       param=$1
-> +       if [ X$2 != X ]; then
-> +               invalid_pin=$2
-> +       fi
-> +       if [ X$param = X ]; then
-> +               insert_module
-> +       else
-> +               insert_module "conf=$param"
-> +       fi
-
-As mentioned in the previous patch I'm suspicious about the parameters.
-Let's just have one or two mock chips and cut down on the
-parameterization.
-
-> +       echo -n "GPIO $module test with base,ngpio configure<"
-> +       if [ X$param = X ]; then
-> +               echo "(default)>: ";
-> +       else
-> +               echo "$param>: "
-> +       fi
-> +       printf "%-10s %-5s %-5s\n" name base ngpio
-> +       gpiochip=`ls -d $GPIO_DRV_SYSFS/gpiochip* 2>/dev/null`
-> +       if [ X"$gpiochip" = X ]; then
-> +               echo "no gpiochip"
-> +       else
-> +               for chip in $gpiochip; do
-> +                       name=`basename $chip`
-> +                       base=`cat $chip/base`
-> +                       ngpio=`cat $chip/ngpio`
-
-This is nice, because it relies on the chip informing us about the
-base and ngpio, meaning we can use a dynamic base, as pointed
-out in the previous patch.
-
-> +#test dynamic allocation of gpio
-> +gpio_test "-1,32"
-> +gpio_test "-1,32,32,16" 31
-> +gpio_test "-1,32,40,16,-1,5" 38
-
-I think these are the only tests we should have, really.
-
-Using base 0 as some tests are doing is not going to work on
-any system that already has a built-in GPIO (SoC) controller.
-I think it is better to just use and test dynamic allocations.
-
-Yours,
-Linus Walleij
