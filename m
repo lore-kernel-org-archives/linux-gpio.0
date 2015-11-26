@@ -1,170 +1,165 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFD 1/3] gpio/mockup: add virtual gpio device
-Date: Thu, 26 Nov 2015 10:34:49 +0100
-Message-ID: <CACRpkdag_xkSp6uTsoK9tso5mkrGotOeMMjECvecP4ti+5-q_A@mail.gmail.com>
+Subject: Re: [PATCH RFD 2/3] selftest/gpio: add gpio test case
+Date: Thu, 26 Nov 2015 10:50:58 +0100
+Message-ID: <CACRpkdbSkmhm=Q=vxydQa=-zAmmxBqhSGpXUjpW-jv3YQHJuzA@mail.gmail.com>
 References: <1447491097-14799-1-git-send-email-bamvor.zhangjian@linaro.org>
-	<1447491097-14799-2-git-send-email-bamvor.zhangjian@linaro.org>
+	<1447491097-14799-3-git-send-email-bamvor.zhangjian@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33965 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753162AbbKZJeu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 04:34:50 -0500
-Received: by oies6 with SMTP id s6so44596464oie.1
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2015 01:34:49 -0800 (PST)
-In-Reply-To: <1447491097-14799-2-git-send-email-bamvor.zhangjian@linaro.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:36705 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752335AbbKZJu7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 04:50:59 -0500
+Received: by obdgf3 with SMTP id gf3so59790833obd.3
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Nov 2015 01:50:59 -0800 (PST)
+In-Reply-To: <1447491097-14799-3-git-send-email-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Kamlakant Patel <kamlakant.patel@broadcom.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
 On Sat, Nov 14, 2015 at 9:51 AM, Bamvor Jian Zhang
 <bamvor.zhangjian@linaro.org> wrote:
 
-> This patch add basic structure of a virtual gpio device(gpio-mockup)
-> for testing gpio subsystem. The tester could manipulate such device
-> through sysfs and check the result from debugfs.
+> This test script try to do whitebox testing for gpio subsystem(
+> based on gpiolib). It manipulate gpio-mockup device through sysfs
+> provided and check the result from debugfs.
 >
-> Currently, it support one or more gpiochip(determined by module
-> parameters with base,ngpio pair). One could test the overlap of
-> different gpiochip and test the direction and/or output values of
-> these chips.
+> Test the following things:
+> 1.  Add single, multi gpiochip with the checking of overlap.
+> 2.  Test direction and output value for valid pin.
+> 3.  Test dynamic allocation of gpio base.
 >
-> Signed-off-by: Kamlakant Patel <kamlakant.patel@linaro.org>
 > Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-This is looking quite nice. Just minor nitpicks:
+I like what this test is doing, but at some point we will need tests
+written in C.
 
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/platform_device.h>
+The reason is that we are working on a character device for gpio,
+and once we have that, we want to be able to run these tests using
+the same program.
+
+But maybe this suffice for the sysfs tests of the current ABI.
+
+> +++ b/tools/testing/selftests/gpio/gpio.sh
+
+Rename it gpio-mockup-sysfs.sh please.
+
+> +#!/bin/bash
 > +
-> +#define GPIO_NAME      "gpio-mockup"
-> +#define        MAX_GC          5
-> +
-> +enum direction {
-> +       IN,
-> +       OUT
-> +};
-> +
-> +/*
-> + * struct gpio_pin_status - structure describing a GPIO status
-> + * @dir:       Configures direction of gpio as "in" or "out", 0=in, 1=out
-> + * @value:     Configures status of the gpio as 0(low) or 1(high)
-> + */
-> +struct gpio_pin_status {
-> +       enum direction  dir;
-> +       int             value;
+> +module="gpio-mockup"
 
-bool value
-
-Since it is only 0/1.
-
-> +struct mockup_gpio_controller {
-> +       struct gpio_chip        gc;
-> +       struct gpio_pin_status  *stats;
-> +};
-> +
-> +int conf[MAX_GC << 1];
-> +int params_nr;
-> +module_param_array(conf, int, &params_nr, 0400);
-
-I don't really understand why we need these.
-
-"params_nr" is a way too generic name, plus such module parameters
-should be documented in Documentation/kernel-parameters.txt
-gpio_test_chips = n is better, but I don't really see why we need to
-specify this at all, can't we just decide how many we need? Why
-do we need more than one?
-
-> +const char *pins_name[MAX_GC] = {"A", "B", "C", "D", "E"};
-
-So this has 5 pins. Any special reason why?
-I think 32 is more typical, but there may be a point in having some
-odd number.
+This is ABI so not changing, you can just encode it into the
+program, but OK.
 
 > +
-> +static int
-> +mockup_gpio_get(struct gpio_chip *gc, unsigned offset)
+> +SYSFS=
+> +GPIO_SYSFS=
+> +GPIO_DRV_SYSFS=
+> +DEBUGFS=
+> +GPIO_DEBUGFS=
+> +
+> +prerequisite()
 > +{
-> +       struct mockup_gpio_controller *cntr = container_of(gc,
-> +                       struct mockup_gpio_controller, gc);
+> +       msg="skip all tests:"
 > +
-> +       return cntr->stats[offset].value;
+> +       if [ $UID != 0 ]; then
+> +               echo $msg must be run as root >&2
+> +               exit 0
+> +       fi
+> +
+> +       SYSFS=`mount -t sysfs | head -1 | awk '{ print $3 }'`
+> +       if [ ! -d "$SYSFS" ]; then
+> +               echo $msg sysfs is not mounted >&2
+> +               exit 0
+> +       fi
+> +       GPIO_SYSFS=`echo $SYSFS/class/gpio`
+> +       GPIO_DRV_SYSFS=`echo $SYSFS/devices/platform/$module/gpio`
+> +
+> +       DEBUGFS=`mount -t debugfs | head -1 | awk '{ print $3 }'`
+> +       if [ ! -d "$DEBUGFS" ]; then
+> +               echo $msg debugfs is not mounted >&2
+> +               exit 0
+> +       fi
+> +       GPIO_DEBUGFS=`echo $DEBUGFS/gpio`
+> +
+> +}
 
-This should still work with a bool there I think.
+Looks good.
 
-> +static void
-> +mockup_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+> +insert_module()
 > +{
-> +       struct mockup_gpio_controller *cntr = container_of(gc,
-> +                       struct mockup_gpio_controller, gc);
-> +
-> +       if (value)
-> +               cntr->stats[offset].value = 1;
+> +       if modprobe -q $module $1; then
+> +               echo -n ""
 > +       else
-> +               cntr->stats[offset].value = 0;
-
-Assign like this to do boolean clamping:
-
-cntr->stats[offset].value = !!value;
-
-
-> +int mockup_gpio_add(struct device *dev, struct mockup_gpio_controller *cntr,
-> +               const char *name, int base, int ngpio)
+> +               echo $msg insmod $module failed >&2
+> +               exit 0
+> +       fi
+> +}
+> +
+> +remove_module()
 > +{
-> +       int ret;
+> +       modprobe -r -q $module
+> +}
 > +
-> +       cntr->gc.base = base;
-
-I don't think base should be specified for the test chip.
-We should set this to -1 and get a dynamic base, whatever
-it is. Then the test scripts should deal with that.
-
-Doing this also makes the conf array go away.
-
-> +static int
-> +mockup_gpio_probe(struct platform_device *pdev)
+> +die()
 > +{
-> +       struct device *dev = &pdev->dev;
-> +       struct mockup_gpio_controller *cntr;
-> +       int ret;
-> +       int i, j;
-> +       int base;
-> +       int ngpio;
-> +
-> +       if (params_nr == 0) {
-> +               params_nr = 2;
-> +               conf[0] = 0;
-> +               conf[1] = 32;
-> +       }
+> +       remove_module
+> +       exit 1
+> +}
 
-This needs explaining. Why do we want 2 test gpio chips by default?
-Why not just one?
+So this inserting/removing modules work fine unless you want to
+run the tests with the module compiled-in. We should support that
+usecase too. So these functions must bail out silently if the module
+is already loaded (compiled in).
 
-Why is the base of the second one 32 and not 5 since there is 5 pins
-on each chip?
+> +gpio_test()
+> +{
+> +       param=$1
+> +       if [ X$2 != X ]; then
+> +               invalid_pin=$2
+> +       fi
+> +       if [ X$param = X ]; then
+> +               insert_module
+> +       else
+> +               insert_module "conf=$param"
+> +       fi
 
-I would think adding just one chip or two with very varying characteristics
-is the way to go. Like one 32 line chip and one 5 line chip or
-something.
+As mentioned in the previous patch I'm suspicious about the parameters.
+Let's just have one or two mock chips and cut down on the
+parameterization.
 
-> +
-> +       cntr = devm_kzalloc(dev, sizeof(*cntr) * params_nr, GFP_KERNEL);
-> +       if (!cntr)
-> +               return -ENOMEM;
-> +
-> +       platform_set_drvdata(pdev, cntr);
-> +
-> +       for (i = 0; i < params_nr >> 1; i++) {
-> +               base = conf[i << 1];
-> +               ngpio = conf[(i << 1) + 1];
+> +       echo -n "GPIO $module test with base,ngpio configure<"
+> +       if [ X$param = X ]; then
+> +               echo "(default)>: ";
+> +       else
+> +               echo "$param>: "
+> +       fi
+> +       printf "%-10s %-5s %-5s\n" name base ngpio
+> +       gpiochip=`ls -d $GPIO_DRV_SYSFS/gpiochip* 2>/dev/null`
+> +       if [ X"$gpiochip" = X ]; then
+> +               echo "no gpiochip"
+> +       else
+> +               for chip in $gpiochip; do
+> +                       name=`basename $chip`
+> +                       base=`cat $chip/base`
+> +                       ngpio=`cat $chip/ngpio`
 
-These should go away I think.
+This is nice, because it relies on the chip informing us about the
+base and ngpio, meaning we can use a dynamic base, as pointed
+out in the previous patch.
 
-The rest looks good.
+> +#test dynamic allocation of gpio
+> +gpio_test "-1,32"
+> +gpio_test "-1,32,32,16" 31
+> +gpio_test "-1,32,40,16,-1,5" 38
+
+I think these are the only tests we should have, really.
+
+Using base 0 as some tests are doing is not going to work on
+any system that already has a built-in GPIO (SoC) controller.
+I think it is better to just use and test dynamic allocations.
 
 Yours,
 Linus Walleij
