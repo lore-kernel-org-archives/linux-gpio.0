@@ -1,191 +1,45 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] pinctrl/lantiq: updating devicetree binding
- description
-Date: Wed, 25 Nov 2015 14:05:22 -0600
-Message-ID: <20151125200522.GB30473@rob-hp-laptop>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: RE: [PATCH v2 4/4] pinctrl/lantiq: fix up pinmux
+Date: Thu, 26 Nov 2015 06:40:18 +0000
+Message-ID: <c9edbc5eafed4639983f8bcefe8e872e@TDT-MS.TDTNET.local>
 References: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
+ <1448446739-5541-4-git-send-email-mschiller@tdt.de>
+ <CAOiHx=moeuw-qWdq0YVzVD3dv0Zq+3rxb2tAKV1Hiz35y4+7DQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:34768 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563AbbKYUFZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Nov 2015 15:05:25 -0500
-Content-Disposition: inline
-In-Reply-To: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
+Received: from mxout51.expurgate.net ([194.37.255.51]:43358 "EHLO
+	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750786AbbKZGk2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 01:40:28 -0500
+In-Reply-To: <CAOiHx=moeuw-qWdq0YVzVD3dv0Zq+3rxb2tAKV1Hiz35y4+7DQ@mail.gmail.com>
+Content-Language: de-DE
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Schiller <mschiller@tdt.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org, linus.walleij@linaro.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com
+To: Jonas Gorski <jogo@openwrt.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, MIPS Mailing List <linux-mips@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>, John Crispin <blogic@openwrt.org>, Hauke Mehrtens <hauke@hauke-m.de>, "daniel.schwierzeck@gmail.com" <daniel.schwierzeck@gmail.com>
 
-On Wed, Nov 25, 2015 at 11:18:56AM +0100, Martin Schiller wrote:
-> This patch adds the new dedicated "lantiq,<chip>-pinctrl" compatible strings
-> to the devicetree bindings Documentation, where <chip> is one of "ase",
-> "danube", "xrx100", "xrx200" or "xrx300" and marks the "lantiq,pinctrl-xway",
-> "lantiq,pinctrl-ase" and "lantiq,pinctrl-xr9" compatible strings as DEPRECATED.
-> 
-> Signed-off-by: Martin Schiller <mschiller@tdt.de>
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-> ---
->  .../bindings/pinctrl/lantiq,pinctrl-xway.txt       | 110 +++++++++++++++++++--
->  1 file changed, 102 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> index e89b467..8e5216b 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/lantiq,pinctrl-xway.txt
-> @@ -1,7 +1,16 @@
->  Lantiq XWAY pinmux controller
->  
->  Required properties:
-> -- compatible: "lantiq,pinctrl-xway" or "lantiq,pinctrl-xr9"
-> +- compatible: "lantiq,pinctrl-xway", (DEPRECATED: Use "lantiq,pinctrl-danube")
-> +	      "lantiq,pinctrl-xr9", (DEPRECATED: Use "lantiq,xrx100-pinctrl" or
-> +					"lantiq,xrx200-pinctrl")
-> +	      "lantiq,pinctrl-ase", (DEPRECATED: Use "lantiq,ase-pinctrl")
-> +	      "lantiq,<chip>-pinctrl", where <chip> is:
-> +		"ase" (XWAY AMAZON Family)
-> +		"danube" (XWAY DANUBE Family)
-> +		"xrx100" (XWAY xRX100 Family)
-> +		"xrx200" (XWAY xRX200 Family)
-> +		"xrx300" (XWAY xRX300 Family)
->  - reg: Should contain the physical address and length of the gpio/pinmux
->    register range
->  
-> @@ -36,19 +45,87 @@ Required subnode-properties:
->  
->  Valid values for group and function names:
->  
-> +XWAY: (DEPRECATED: Use DANUBE)
->    mux groups:
->      exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
->      ebu wait, nand ale, nand cs1, nand cle, spi, spi_cs1, spi_cs2, spi_cs3,
-> -    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi , gpt1, gpt2,
-> +    spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2,
->      gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3, req1, req2,
->      req3
->  
-> -  additional mux groups (XR9 only):
-> -    mdio, nand rdy, nand rd, exin3, exin4, gnt4, req4
-> +  functions:
-> +    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu
-> +
-> +XR9: ( DEPRECATED: Use xRX100/xRX200)
-> +  mux groups:
-> +    exin0, exin1, exin2, exin3, exin4, jtag, ebu a23, ebu a24, ebu a25,
-> +    ebu clk, ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy,
-> +    nand rd, spi, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6,
-> +    asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
-> +    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
-> +    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
-> +
-> +  functions:
-> +    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio, gphy
-> +
-> +AMAZON:
-> +  mux groups:
-> +    exin0, exin1, exin2, jtag, spi_di, spi_do, spi_clk, spi_cs1, spi_cs2,
-> +    spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc, stp, gpt1, gpt2, gpt3, clkout0,
-> +    clkout1, clkout2, mdio, dfe led0, dfe led1, ephy led0, ephy led1, ephy led2
-> +
-> +  functions:
-> +    spi, asc, cgu, jtag, exin, stp, gpt, mdio, ephy, dfe
-> +
-> +DANUBE:
-> +  mux groups:
-> +    exin0, exin1, exin2, jtag, ebu a23, ebu a24, ebu a25, ebu clk, ebu cs1,
-> +    ebu wait, nand ale, nand cs1, nand cle, spi_di, spi_do, spi_clk, spi_cs1,
-> +    spi_cs2, spi_cs3, spi_cs4, spi_cs5, spi_cs6, asc0, asc0 cts rts, stp, nmi,
-> +    gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1, gnt2, gnt3,
-> +    req1, req2, req3, dfe led0, dfe led1
->  
->    functions:
-> -    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, mdio
-> +    spi, asc, cgu, jtag, exin, stp, gpt, nmi, pci, ebu, dfe
->  
-> +xRX100:
-> +  mux groups:
-> +    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
-> +    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
-> +    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
-> +    spi_cs6, asc0, asc0 cts rts, stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1,
-> +    clkout2, clkout3, gnt1, gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio,
-> +    dfe led0, dfe led1
-> +
-> +  functions:
-> +    spi, asc, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe
-> +
-> +xRX200:
-> +  mux groups:
-> +    exin0, exin1, exin2, exin3, exin4, ebu a23, ebu a24, ebu a25, ebu clk,
-> +    ebu cs1, ebu wait, nand ale, nand cs1, nand cle, nand rdy, nand rd,
-> +    spi_di, spi_do, spi_clk, spi_cs1, spi_cs2, spi_cs3, spi_cs4, spi_cs5,
-> +    spi_cs6, usif uart_rx, usif uart_tx, usif uart_rts, usif uart_cts,
-> +    usif uart_dtr, usif uart_dsr, usif uart_dcd, usif uart_ri, usif spi_di,
-> +    usif spi_do, usif spi_clk, usif spi_cs0, usif spi_cs1, usif spi_cs2,
-> +    stp, nmi, gpt1, gpt2, gpt3, clkout0, clkout1, clkout2, clkout3, gnt1,
-> +    gnt2, gnt3, gnt4, req1, req2, req3, req4, mdio, dfe led0, dfe led1,
-> +    gphy0 led0, gphy0 led1, gphy0 led2, gphy1 led0, gphy1 led1, gphy1 led2
-> +
-> +  functions:
-> +    spi, usif, cgu, exin, stp, gpt, nmi, pci, ebu, mdio, dfe, gphy
-> +
-> +xRX300:
-> +  mux groups:
-> +    exin0, exin1, exin2, exin4, nand ale, nand cs0, nand cs1, nand cle,
-> +    nand rdy, nand rd, nand_d0, nand_d1, nand_d2, nand_d3, nand_d4, nand_d5,
-> +    nand_d6, nand_d7, nand_d1, nand wr, nand wp, nand se, spi_di, spi_do,
-> +    spi_clk, spi_cs1, spi_cs4, spi_cs6, usif uart_rx, usif uart_tx,
-> +    usif spi_di, usif spi_do, usif spi_clk, usif spi_cs0, stp, clkout2,
-> +    mdio, dfe led0, dfe led1, ephy0 led0, ephy0 led1, ephy1 led0, ephy1 led1
-> +
-> +  functions:
-> +    spi, usif, cgu, exin, stp, ebu, mdio, dfe, ephy
->  
->  
->  Definition of pin configurations:
-> @@ -62,15 +139,32 @@ Optional subnode-properties:
->      0: none, 1: down, 2: up.
->  - lantiq,open-drain: Boolean, enables open-drain on the defined pin.
->  
-> -Valid values for XWAY pin names:
-> +Valid values for XWAY pin names: (DEPRECATED: Use DANUBE)
->    Pinconf pins can be referenced via the names io0-io31.
->  
-> -Valid values for XR9 pin names:
-> +Valid values for XR9 pin names: (DEPRECATED: Use xrX100/xRX200)
->    Pinconf pins can be referenced via the names io0-io55.
->  
-> +Valid values for AMAZON pin names:
-> +  Pinconf pins can be referenced via the names io0-io31.
-> +
-> +Valid values for DANUBE pin names:
-> +  Pinconf pins can be referenced via the names io0-io31.
-> +
-> +Valid values for xRX100 pin names:
-> +  Pinconf pins can be referenced via the names io0-io55.
-> +
-> +Valid values for xRX200 pin names:
-> +  Pinconf pins can be referenced via the names io0-io49.
-> +
-> +Valid values for xRX300 pin names:
-> +  Pinconf pins can be referenced via the names io0-io1,io3-io6,io8-io11,
-> +						io13-io19,io23-io27,io34-io36,
-> +						io42-io43,io48-io61.
-> +
->  Example:
->  	gpio: pinmux@E100B10 {
-> -		compatible = "lantiq,pinctrl-xway";
-> +		compatible = "lantiq,danube-pinctrl";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&state_default>;
->  
-> -- 
-> 2.1.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMTEvMjUvMjAxNSBhdCAxMTo0MCBBTSwgSm9uYXMgR29yc2tpIHdyb3RlOg0KPiBIaQ0KPg0K
+PiBPbiBXZWQsIE5vdiAyNSwgMjAxNSBhdCAxMToxOCBBTSwgTWFydGluIFNjaGlsbGVyIDxtc2No
+aWxsZXJAdGR0LmRlPg0KPiB3cm90ZToNCj4gPiBGcm9tOiBKb2huIENyaXNwaW4gPGJsb2dpY0Bv
+cGVud3J0Lm9yZz4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggaXMgaW5jbHVkZWQgaW4gdGhlIG9wZW53
+cnQgcGF0Y2hzZXQgZm9yIHNldmVyYWwgeWVhcnMgbm93DQo+IGFuZCBuZWVkcw0KPiA+IHRvIGdv
+IHVwc3RyZWFtIGFzIHdlbGwuIEl0IGluY2x1ZGVzIHRoZSBmb2xsb3dpbmcgY2hhbmdlczoNCj4g
+PiAxLiBGaXggdXAgaW5saW5lIGZ1bmN0aW9uIGNhbGwgdG8geHdheV9tdXhfYXBwbHkNCj4NCj4g
+VGhpcyByZWFsbHkgbmVlZHMgYW4gZXhwbGFuYXRpb24gd2hhdCBpcyBiZWluZyBmaXhlZCBoZXJl
+Lg0KDQpJIGhvcGUgSm9obiAtIGFzIHRoZSBvcmlnaW5hbCBhdXRob3Igb2YgdGhpcyBwYXRjaCAt
+IGNhbiBleHBsYWluDQp3aHkgdGhpcyBjaGFuZ2UgaXMgbmVjZXNzYXJ5Lg0KDQo+DQo+ID4gMi4g
+Rml4IEdQSU8gU2V0dXAgb2YgR1BJTyBQb3J0Mw0KPg0KPiBUaGlzIGNoYW5nZSBsb29rcyBmaW5l
+Lg0KPg0KPiA+IDMuIEltcGxlbWVudCBncGlvX2NoaXAudG9faXJxDQo+DQo+IFRoZXNlIGFyZSB0
+aHJlZSBkaWZmZXJlbnQgY2hhbmdlcyAodHdvIGZpeGVzLCBvbmUgbmV3IGZlYXR1cmUpIGFuZA0K
+PiB0aGVyZWZvcmUgc2hvdWxkIGJlIHNwbGl0IHVwIGludG8gdGhyZWUgcGF0Y2hlcy4NCg0KQXMg
+SSdtIG5vdCB0aGUgYXV0aG9yIG9mIHRoaXMgcGF0Y2gsIEkgZGVjaWRlZCB0byBsZWF2ZSBpdCBh
+cyBpdCBpcy4NCkJ1dCBwZXIgc2UgeW91IGFyZSByaWdodCwgaXQgd291bGQgYmUgYmV0dGVyIHRv
+IHNwbGl0IGl0IHVwLg0KDQo+DQo+ID4gU2lnbmVkLW9mZi1ieTogSm9obiBDcmlzcGluIDxibG9n
+aWNAb3BlbndydC5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWFydGluIFNjaGlsbGVyIDxtc2No
+aWxsZXJAdGR0LmRlPg0KPiA+IC0tLQ0KPg0KPiBBbHNvIHBsZWFzZSBwcm92aWRlIGEgY2hhbmdl
+bG9nIGZvciB5b3VyIHBhdGNoZXMgaGVyZS4NCg0KT0suDQoNCj4NCj4gPiAgZHJpdmVycy9waW5j
+dHJsL3BpbmN0cmwteHdheS5jIHwgMjggKysrKysrKysrKysrKysrKysrKysrKysrKystLQ0KPiA+
+ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0K
+Pg0KPg0KPiBKb25hcw0KDQpNYXJ0aW4NCg0KDQo=
