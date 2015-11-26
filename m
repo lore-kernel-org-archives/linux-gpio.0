@@ -1,51 +1,65 @@
-From: Martin Schiller <mschiller@tdt.de>
-Subject: [PATCH v3 4/5] pinctrl/lantiq: Fix GPIO Setup of GPIO Port3
-Date: Thu, 26 Nov 2015 11:00:09 +0100
-Message-ID: <1448532010-30930-4-git-send-email-mschiller@tdt.de>
-References: <1448532010-30930-1-git-send-email-mschiller@tdt.de>
+From: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
+Subject: [PATCH] gpiolib: return 0 or 1 in gpiod_get_value*() functions
+Date: Thu, 26 Nov 2015 11:08:45 +0100
+Message-ID: <1448532525-12629-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mxout51.expurgate.net ([194.37.255.51]:33937 "EHLO
-	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbbKZKBs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 05:01:48 -0500
-In-Reply-To: <1448532010-30930-1-git-send-email-mschiller@tdt.de>
+Received: from mail1.bemta12.messagelabs.com ([216.82.251.6]:50819 "EHLO
+	mail1.bemta12.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750845AbbKZKPi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 26 Nov 2015 05:15:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-mips@linux-mips.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, ralf@linux-mips.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com, Martin Schiller <mschiller@tdt.de>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, jose.diazdegrenudepedro@digi.com, hector.palacios@digi.com
 
-From: John Crispin <blogic@openwrt.org>
+Commit 79a9becda894 moved the awareness of active low state
+into the gpiod_get_value*() functions, but it only inverts the
+GPIO's raw value when it is active low. If the GPIO is active
+high, the gpiod_get_value*() functions return the raw value of
+the register, which can be any positive value.
 
-Signed-off-by: John Crispin <blogic@openwrt.org>
-Signed-off-by: Martin Schiller <mschiller@tdt.de>
+This patch does a double inversion when the GPIO is active high
+to make sure either a 0 or 1 is returned by these functions.
+
+Signed-off-by: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
+Signed-off-by: Hector Palacios <hector.palacios@digi.com>
 ---
-Changes in v3:
-- Moved this change into a separate patch
+ drivers/gpio/gpiolib.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Changes in v2: 
-None
-
- drivers/pinctrl/pinctrl-xway.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
-index a064962..b78baaa 100644
---- a/drivers/pinctrl/pinctrl-xway.c
-+++ b/drivers/pinctrl/pinctrl-xway.c
-@@ -1563,6 +1563,10 @@ static int xway_gpio_dir_out(struct gpio_chip *chip, unsigned int pin, int val)
- {
- 	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 50c4922fe53a..20f472a25b55 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1981,9 +1981,9 @@ int gpiod_get_value(const struct gpio_desc *desc)
  
-+	if (PORT(pin) == PORT3)
-+		gpio_setbit(info->membase[0], GPIO3_OD, PORT_PIN(pin));
+ 	value = _gpiod_get_raw_value(desc);
+ 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+-		value = !value;
+-
+-	return value;
++		return !value;
 +	else
-+		gpio_setbit(info->membase[0], GPIO_OD(pin), PORT_PIN(pin));
- 	gpio_setbit(info->membase[0], GPIO_DIR(pin), PORT_PIN(pin));
- 	xway_gpio_set(chip, pin, val);
++		return !!value
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_value);
+ 
+@@ -2224,9 +2224,9 @@ int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+ 
+ 	value = _gpiod_get_raw_value(desc);
+ 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+-		value = !value;
+-
+-	return value;
++		return !value;
++	else
++		return !!value;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_value_cansleep);
  
 -- 
-2.1.4
+2.6.3
 
