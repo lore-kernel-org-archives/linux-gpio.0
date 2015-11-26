@@ -1,45 +1,80 @@
-From: Martin Schiller <mschiller@tdt.de>
-Subject: RE: [PATCH v2 4/4] pinctrl/lantiq: fix up pinmux
-Date: Thu, 26 Nov 2015 06:40:18 +0000
-Message-ID: <c9edbc5eafed4639983f8bcefe8e872e@TDT-MS.TDTNET.local>
+From: John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH v2 4/4] pinctrl/lantiq: fix up pinmux
+Date: Thu, 26 Nov 2015 08:04:33 +0100
+Message-ID: <5656AF01.3050700@openwrt.org>
 References: <1448446739-5541-1-git-send-email-mschiller@tdt.de>
  <1448446739-5541-4-git-send-email-mschiller@tdt.de>
  <CAOiHx=moeuw-qWdq0YVzVD3dv0Zq+3rxb2tAKV1Hiz35y4+7DQ@mail.gmail.com>
+ <c9edbc5eafed4639983f8bcefe8e872e@TDT-MS.TDTNET.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mxout51.expurgate.net ([194.37.255.51]:43358 "EHLO
-	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786AbbKZGk2 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Nov 2015 01:40:28 -0500
-In-Reply-To: <CAOiHx=moeuw-qWdq0YVzVD3dv0Zq+3rxb2tAKV1Hiz35y4+7DQ@mail.gmail.com>
-Content-Language: de-DE
+Received: from arrakis.dune.hu ([78.24.191.176]:36820 "EHLO arrakis.dune.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752034AbbKZHEl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 26 Nov 2015 02:04:41 -0500
+In-Reply-To: <c9edbc5eafed4639983f8bcefe8e872e@TDT-MS.TDTNET.local>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jonas Gorski <jogo@openwrt.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, MIPS Mailing List <linux-mips@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>, John Crispin <blogic@openwrt.org>, Hauke Mehrtens <hauke@hauke-m.de>, "daniel.schwierzeck@gmail.com" <daniel.schwierzeck@gmail.com>
+To: Martin Schiller <mschiller@tdt.de>, Jonas Gorski <jogo@openwrt.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, MIPS Mailing List <linux-mips@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Ralf Baechle <ralf@linux-mips.org>, Hauke Mehrtens <hauke@hauke-m.de>, "daniel.schwierzeck@gmail.com" <daniel.schwierzeck@gmail.com>
 
-T24gMTEvMjUvMjAxNSBhdCAxMTo0MCBBTSwgSm9uYXMgR29yc2tpIHdyb3RlOg0KPiBIaQ0KPg0K
-PiBPbiBXZWQsIE5vdiAyNSwgMjAxNSBhdCAxMToxOCBBTSwgTWFydGluIFNjaGlsbGVyIDxtc2No
-aWxsZXJAdGR0LmRlPg0KPiB3cm90ZToNCj4gPiBGcm9tOiBKb2huIENyaXNwaW4gPGJsb2dpY0Bv
-cGVud3J0Lm9yZz4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggaXMgaW5jbHVkZWQgaW4gdGhlIG9wZW53
-cnQgcGF0Y2hzZXQgZm9yIHNldmVyYWwgeWVhcnMgbm93DQo+IGFuZCBuZWVkcw0KPiA+IHRvIGdv
-IHVwc3RyZWFtIGFzIHdlbGwuIEl0IGluY2x1ZGVzIHRoZSBmb2xsb3dpbmcgY2hhbmdlczoNCj4g
-PiAxLiBGaXggdXAgaW5saW5lIGZ1bmN0aW9uIGNhbGwgdG8geHdheV9tdXhfYXBwbHkNCj4NCj4g
-VGhpcyByZWFsbHkgbmVlZHMgYW4gZXhwbGFuYXRpb24gd2hhdCBpcyBiZWluZyBmaXhlZCBoZXJl
-Lg0KDQpJIGhvcGUgSm9obiAtIGFzIHRoZSBvcmlnaW5hbCBhdXRob3Igb2YgdGhpcyBwYXRjaCAt
-IGNhbiBleHBsYWluDQp3aHkgdGhpcyBjaGFuZ2UgaXMgbmVjZXNzYXJ5Lg0KDQo+DQo+ID4gMi4g
-Rml4IEdQSU8gU2V0dXAgb2YgR1BJTyBQb3J0Mw0KPg0KPiBUaGlzIGNoYW5nZSBsb29rcyBmaW5l
-Lg0KPg0KPiA+IDMuIEltcGxlbWVudCBncGlvX2NoaXAudG9faXJxDQo+DQo+IFRoZXNlIGFyZSB0
-aHJlZSBkaWZmZXJlbnQgY2hhbmdlcyAodHdvIGZpeGVzLCBvbmUgbmV3IGZlYXR1cmUpIGFuZA0K
-PiB0aGVyZWZvcmUgc2hvdWxkIGJlIHNwbGl0IHVwIGludG8gdGhyZWUgcGF0Y2hlcy4NCg0KQXMg
-SSdtIG5vdCB0aGUgYXV0aG9yIG9mIHRoaXMgcGF0Y2gsIEkgZGVjaWRlZCB0byBsZWF2ZSBpdCBh
-cyBpdCBpcy4NCkJ1dCBwZXIgc2UgeW91IGFyZSByaWdodCwgaXQgd291bGQgYmUgYmV0dGVyIHRv
-IHNwbGl0IGl0IHVwLg0KDQo+DQo+ID4gU2lnbmVkLW9mZi1ieTogSm9obiBDcmlzcGluIDxibG9n
-aWNAb3BlbndydC5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWFydGluIFNjaGlsbGVyIDxtc2No
-aWxsZXJAdGR0LmRlPg0KPiA+IC0tLQ0KPg0KPiBBbHNvIHBsZWFzZSBwcm92aWRlIGEgY2hhbmdl
-bG9nIGZvciB5b3VyIHBhdGNoZXMgaGVyZS4NCg0KT0suDQoNCj4NCj4gPiAgZHJpdmVycy9waW5j
-dHJsL3BpbmN0cmwteHdheS5jIHwgMjggKysrKysrKysrKysrKysrKysrKysrKysrKystLQ0KPiA+
-ICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0K
-Pg0KPg0KPiBKb25hcw0KDQpNYXJ0aW4NCg0KDQo=
+
+
+On 26/11/2015 07:40, Martin Schiller wrote:
+> On 11/25/2015 at 11:40 AM, Jonas Gorski wrote:
+>> Hi
+>>
+>> On Wed, Nov 25, 2015 at 11:18 AM, Martin Schiller <mschiller@tdt.de>
+>> wrote:
+>>> From: John Crispin <blogic@openwrt.org>
+>>>
+>>> This patch is included in the openwrt patchset for several years now
+>> and needs
+>>> to go upstream as well. It includes the following changes:
+>>> 1. Fix up inline function call to xway_mux_apply
+>>
+>> This really needs an explanation what is being fixed here.
+> 
+> I hope John - as the original author of this patch - can explain
+> why this change is necessary.
+
+what change? why am I in Cc: and not To: if an action is required ?
+
+	John
+
+> 
+>>
+>>> 2. Fix GPIO Setup of GPIO Port3
+>>
+>> This change looks fine.
+>>
+>>> 3. Implement gpio_chip.to_irq
+>>
+>> These are three different changes (two fixes, one new feature) and
+>> therefore should be split up into three patches.
+> 
+> As I'm not the author of this patch, I decided to leave it as it is.
+> But per se you are right, it would be better to split it up.
+> 
+>>
+>>> Signed-off-by: John Crispin <blogic@openwrt.org>
+>>> Signed-off-by: Martin Schiller <mschiller@tdt.de>
+>>> ---
+>>
+>> Also please provide a changelog for your patches here.
+> 
+> OK.
+> 
+>>
+>>>  drivers/pinctrl/pinctrl-xway.c | 28 ++++++++++++++++++++++++++--
+>>>  1 file changed, 26 insertions(+), 2 deletions(-)
+>>>
+>>
+>>
+>> Jonas
+> 
+> Martin
+> 
+> 
