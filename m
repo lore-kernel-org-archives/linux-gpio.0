@@ -1,57 +1,68 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: mediatek: Modify pinctrl bindings for
- mt2701
-Date: Fri, 27 Nov 2015 14:38:00 -0600
-Message-ID: <20151127203800.GA9092@rob-hp-laptop>
-References: <1448527472-20651-1-git-send-email-biao.huang@mediatek.com>
- <1448527472-20651-3-git-send-email-biao.huang@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Peter Rosin <peda@lysator.liu.se>
+Subject: [RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
+Date: Fri, 27 Nov 2015 22:36:11 +0100
+Message-ID: <1448660173-29214-1-git-send-email-peda@lysator.liu.se>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54564 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754450AbbK0UiF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 27 Nov 2015 15:38:05 -0500
-Content-Disposition: inline
-In-Reply-To: <1448527472-20651-3-git-send-email-biao.huang@mediatek.com>
+Received: from mail.lysator.liu.se ([130.236.254.3]:39211 "EHLO
+	mail.lysator.liu.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754835AbbK0Vga (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Nov 2015 16:36:30 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@lysator.liu.se>, Peter Rosin <peda@axentia.se>
 
-On Thu, Nov 26, 2015 at 04:44:29PM +0800, Biao Huang wrote:
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> index 0480bc3..ca6a27a 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> @@ -4,10 +4,11 @@ The Mediatek's Pin controller is used to control SoC pins.
->  
->  Required properties:
->  - compatible: value should be one of the following.
-> -    (a) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
-> -    (b) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
-> -    (c) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
-> -    (d) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
-> +    (a) "mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
-> +    (b) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
-> +    (c) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
-> +    (d) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
-> +    (e) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+From: Peter Rosin <peda@axentia.se>
 
-If you were trying to sort these, they still aren't quite sorted. There 
-is no point in sorting if you number (or letter) them because you will 
-have to update many lines on any change. So drop the (a), (b), (c), etc.
+Hi!
 
-Rob
+I have a signal connected to a gpio pin which is the output of
+a comparator. By changing the level of one of the inputs to the
+comparator, I can detect the envelope of the other input to
+the comparator by using a series of measurements much in the
+same maner a manual ADC works, but watching for changes on the
+comparator over a period of time instead of only the immediate
+output.
 
->  - pins-are-numbered: Specify the subnodes are using numbered pinmux to
->    specify pins.
->  - gpio-controller : Marks the device node as a gpio controller.
-> -- 
-> 1.7.9.5
-> 
+Now, the input signal to the comparator might have a high frequency,
+which will cause the output from the comparator (and thus the GPIO
+input) to change rapidly.
+
+A common(?) idiom for this is to use the interrupt status register
+to catch the glitches, but then not have any interrupt tied to
+the pin as that could possibly generate pointless bursts of
+(expensive) interrupts.
+
+So, these two patches expose an interface to the PIO_ISR register
+of the pio controllers on the platform I'm targetting. The first
+patch adds some infrastructure to the gpio core and the second
+patch hooks up "my" pin controller.
+
+But hey, this seems like an old problem and I was surprised that
+I had to touch the source to do it. Which makes me wonder what I'm
+missing and what others needing to see short pulses on a pin but not
+needing/wanting interrupts are doing?
+
+Yes, there needs to be a way to select the interrupt edge w/o
+actually arming the interrupt, that is missing. And probably
+other things too, but I didn't want to do more work in case this
+is a dead end for some reason...
+
+Cheers,
+Peter
+
+Peter Rosin (2):
+  gpio: Add isr property of gpio pins
+  pinctrl: at91: expose the isr bit
+
+ Documentation/gpio/sysfs.txt   |   12 ++++++++++
+ drivers/gpio/gpiolib-sysfs.c   |   30 ++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c         |   15 ++++++++++++
+ drivers/pinctrl/pinctrl-at91.c |   50 ++++++++++++++++++++++++++++++++++++----
+ include/linux/gpio/consumer.h  |    1 +
+ include/linux/gpio/driver.h    |    2 ++
+ 6 files changed, 106 insertions(+), 4 deletions(-)
+
+-- 
+1.7.10.4
+
