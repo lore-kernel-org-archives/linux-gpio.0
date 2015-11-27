@@ -1,53 +1,57 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Fri, 27 Nov 2015 09:37:21 -0800
-Message-ID: <20151127173721.GC27040@dtor-ws>
-References: <20151111194530.GA26559@dtor-ws>
- <CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: mediatek: Modify pinctrl bindings for
+ mt2701
+Date: Fri, 27 Nov 2015 14:38:00 -0600
+Message-ID: <20151127203800.GA9092@rob-hp-laptop>
+References: <1448527472-20651-1-git-send-email-biao.huang@mediatek.com>
+ <1448527472-20651-3-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:36317 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754684AbbK0RhY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Nov 2015 12:37:24 -0500
+Received: from mail.kernel.org ([198.145.29.136]:54564 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754450AbbK0UiF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 27 Nov 2015 15:38:05 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
+In-Reply-To: <1448527472-20651-3-git-send-email-biao.huang@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Biao Huang <biao.huang@mediatek.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com
 
-On Tue, Nov 17, 2015 at 02:43:14PM +0100, Linus Walleij wrote:
-> On Wed, Nov 11, 2015 at 8:45 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
+On Thu, Nov 26, 2015 at 04:44:29PM +0800, Biao Huang wrote:
+> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> ---
+>  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> > We should not fall back to the legacy unnamed gpio lookup style if the
-> > driver requests gpios with different names, because we'll give out the same
-> > gpio twice. Let's keep track of the names that were used for the device and
-> > only do the fallback for the first name used.
-> >
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >
-> > v1: incorporated changes suggested by Mika Westerberg in response to the
-> > draft patch I posted in Goodix thread.
-> >
-> > v2: moved acpi_can_fallback_to_crs body to drivers/gpio/gpiolib-acpi.c
-> > and provided stub for !CONFIG_ACPI case to fix build error if ACPI is
-> > disabled.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> index 0480bc3..ca6a27a 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> @@ -4,10 +4,11 @@ The Mediatek's Pin controller is used to control SoC pins.
+>  
+>  Required properties:
+>  - compatible: value should be one of the following.
+> -    (a) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
+> -    (b) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
+> -    (c) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
+> -    (d) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+> +    (a) "mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
+> +    (b) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
+> +    (c) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
+> +    (d) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
+> +    (e) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+
+If you were trying to sort these, they still aren't quite sorted. There 
+is no point in sorting if you number (or letter) them because you will 
+have to update many lines on any change. So drop the (a), (b), (c), etc.
+
+Rob
+
+>  - pins-are-numbered: Specify the subnodes are using numbered pinmux to
+>    specify pins.
+>  - gpio-controller : Marks the device node as a gpio controller.
+> -- 
+> 1.7.9.5
 > 
-> Patch applied with Mika's ACK.
-> 
-> Had to fuzz a bit to make it apply, hope nothing breaks.
-
-Hmm, I'd like to get this patch into my tree as well to apply Irina's
-goodix pieces on top to make sure they do not break. Would it be OK for
-me to just apply the patch and hope git will sort it out when we merge
-into next/mainline, you maybe you could prepare a 4.3-based branch with
-the patch for me to pull?
-
-Thanks!
-
--- 
-Dmitry
