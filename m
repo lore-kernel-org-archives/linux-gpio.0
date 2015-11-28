@@ -1,162 +1,95 @@
-From: Peter Rosin <peda@lysator.liu.se>
-Subject: [RFC PATCH 1/2] gpio: Add isr property of gpio pins
-Date: Fri, 27 Nov 2015 22:36:12 +0100
-Message-ID: <1448660173-29214-2-git-send-email-peda@lysator.liu.se>
-References: <1448660173-29214-1-git-send-email-peda@lysator.liu.se>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH] pinctrl: mvebu: complain about missing group after checking variant
+Date: Sat, 28 Nov 2015 11:14:05 +0100
+Message-ID: <1448705645-13881-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.lysator.liu.se ([130.236.254.3]:50775 "EHLO
-	mail.lysator.liu.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755296AbbK0Vgb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Nov 2015 16:36:31 -0500
-In-Reply-To: <1448660173-29214-1-git-send-email-peda@lysator.liu.se>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34061 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751098AbbK1KOP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Nov 2015 05:14:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@lysator.liu.se>, Peter Rosin <peda@axentia.se>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Simon Guinot <simon.guinot@sequanux.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+Common MVEBU pinctrl driver core gets an array of controls to modify
+a specific set of registers and an array of modes for each pingroup
+from each of the different SoC families of MVEBU.
 
-Adds the possibility to read the interrupt status register bit for the
-gpio pin. Expose the bit as an isr file in sysfs.
+Some SoC families comprise different variants that differ in available
+pingroups and also controls, but to ease driver development, we can
+pass a variant mask to disable specific pingroups for some variants.
+However, controls are limited to the true number of pinctrl groups
+available on a variant.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Now, when pinctrl core driver parses over above arrays, it tries to
+match modes with available controls and complains about missing
+controls for modes that are passed to the core but actually are not
+available on a variant with:
+
+kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 36
+
+This warning is a false-positive and annoying, so move the warning
+after we checked the variant mask for each mode setting. Also, if
+there is no supported setting for this variant, do not complain at
+all.
+
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Reported-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/gpio/sysfs.txt  |   12 ++++++++++++
- drivers/gpio/gpiolib-sysfs.c  |   30 ++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c        |   15 +++++++++++++++
- include/linux/gpio/consumer.h |    1 +
- include/linux/gpio/driver.h   |    2 ++
- 5 files changed, 60 insertions(+)
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@free-electrons.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
-index 535b6a8a7a7c..ded7ef9d01be 100644
---- a/Documentation/gpio/sysfs.txt
-+++ b/Documentation/gpio/sysfs.txt
-@@ -97,6 +97,18 @@ and have the following read/write attributes:
- 		for "rising" and "falling" edges will follow this
- 		setting.
+diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+index 77d2221d379d..dbc95369317a 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
++++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
+@@ -663,16 +663,9 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 	/* assign mpp modes to groups */
+ 	for (n = 0; n < soc->nmodes; n++) {
+ 		struct mvebu_mpp_mode *mode = &soc->modes[n];
+-		struct mvebu_pinctrl_group *grp =
+-			mvebu_pinctrl_find_group_by_pid(pctl, mode->pid);
++		struct mvebu_pinctrl_group *grp;
+ 		unsigned num_settings;
  
-+	"isr" ... reads as either 0 (false) or 1 (true). Reading the
-+		file will clear the value, so that reading a 1 means
-+		that there has been an interrupt-triggering action
-+		on the pin since the file was last read.
-+
-+		This file exists only if the gpio chip supports reading
-+		the interrupt status register bit for the pin.
-+
-+		Note that if reading the isr register for this pin
-+		interferes with active interrupts, the read will fail
-+		with an error.
-+
- GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
- controller implementing GPIOs starting at #42) and have the following
- read-only attributes:
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index b57ed8e55ab5..f6fe68fab191 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -139,6 +139,28 @@ static ssize_t value_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(value);
+-		if (!grp) {
+-			dev_warn(&pdev->dev, "unknown pinctrl group %d\n",
+-				mode->pid);
+-			continue;
+-		}
+-
+ 		for (num_settings = 0; ;) {
+ 			struct mvebu_mpp_ctrl_setting *set =
+ 				&mode->settings[num_settings];
+@@ -695,6 +688,17 @@ int mvebu_pinctrl_probe(struct platform_device *pdev)
+ 				set->flags = MVEBU_SETTING_GPI;
+ 		}
  
-+static ssize_t isr_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct gpiod_data	*data = dev_get_drvdata(dev);
-+	struct gpio_desc	*desc = data->desc;
-+	ssize_t			status;
-+	int			isr;
++		/* skip modes with no settings for this variant */
++		if (!num_settings)
++			continue;
 +
-+	mutex_lock(&data->mutex);
++		grp = mvebu_pinctrl_find_group_by_pid(pctl, mode->pid);
++		if (!grp) {
++			dev_warn(&pdev->dev, "unknown pinctrl group %d\n",
++				mode->pid);
++			continue;
++		}
 +
-+	isr = gpiod_get_isr_cansleep(desc);
-+	if (isr < 0)
-+		status = isr;
-+	else
-+		status = sprintf(buf, "%d\n", isr);
-+
-+	mutex_unlock(&data->mutex);
-+
-+	return status;
-+}
-+static DEVICE_ATTR_RO(isr);
-+
- static irqreturn_t gpio_sysfs_irq(int irq, void *priv)
- {
- 	struct gpiod_data *data = priv;
-@@ -367,6 +389,13 @@ static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
- 			mode = 0;
- 		if (!show_direction && test_bit(FLAG_IS_OUT, &desc->flags))
- 			mode = 0;
-+	} else if (attr == &dev_attr_isr.attr) {
-+		if (!desc->chip->get_isr)
-+			mode = 0;
-+		if (gpiod_to_irq(desc) < 0)
-+			mode = 0;
-+		if (!show_direction && test_bit(FLAG_IS_OUT, &desc->flags))
-+			mode = 0;
+ 		grp->settings = mode->settings;
+ 		grp->num_settings = num_settings;
  	}
- 
- 	return mode;
-@@ -377,6 +406,7 @@ static struct attribute *gpio_attrs[] = {
- 	&dev_attr_edge.attr,
- 	&dev_attr_value.attr,
- 	&dev_attr_active_low.attr,
-+	&dev_attr_isr.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d120c3..b45e70b2713e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1572,6 +1572,21 @@ int gpiod_get_value_cansleep(const struct gpio_desc *desc)
- }
- EXPORT_SYMBOL_GPL(gpiod_get_value_cansleep);
- 
-+int gpiod_get_isr_cansleep(const struct gpio_desc *desc)
-+{
-+	struct gpio_chip *chip;
-+	int offset;
-+
-+	might_sleep_if(extra_checks);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	chip = desc->chip;
-+	offset = gpio_chip_hwgpio(desc);
-+	return chip->get_isr ? chip->get_isr(chip, offset) : -ENXIO;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_isr_cansleep);
-+
- /**
-  * gpiod_set_raw_value_cansleep() - assign a gpio's raw value
-  * @desc: gpio whose value will be assigned
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index adac255aee86..d0290c14dc84 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -119,6 +119,7 @@ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
- void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array);
-+int gpiod_get_isr_cansleep(const struct gpio_desc *desc);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c8393cd4d44f..dccfb12f9112 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -96,6 +96,8 @@ struct gpio_chip {
- 						unsigned offset);
- 	void			(*set)(struct gpio_chip *chip,
- 						unsigned offset, int value);
-+	int			(*get_isr)(struct gpio_chip *chip,
-+						unsigned offset);
- 	void			(*set_multiple)(struct gpio_chip *chip,
- 						unsigned long *mask,
- 						unsigned long *bits);
 -- 
-1.7.10.4
+2.1.4
 
