@@ -1,56 +1,99 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 2/4] gpio: pxa: convert to devm_ioremap
-Date: Sat, 28 Nov 2015 22:37:43 +0100
-Message-ID: <1448746665-13422-3-git-send-email-robert.jarzmik@free.fr>
+Subject: [PATCH 4/4] gpio: pxa: add pin control gpio direction and request
+Date: Sat, 28 Nov 2015 22:37:45 +0100
+Message-ID: <1448746665-13422-5-git-send-email-robert.jarzmik@free.fr>
 References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:46830 "EHLO
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:46023 "EHLO
 	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750746AbbK1Vln (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Nov 2015 16:41:43 -0500
+	with ESMTP id S1751851AbbK1Vlp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Nov 2015 16:41:45 -0500
 In-Reply-To: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
 
-Use the device managed ioremap to simplify the probe function.
+If a pin control driver is available, use it to change the gpio
+direction. If not fallback to directly manipulating the gpio direction
+register.
+
+The reason to use the pin control driver first is that pin control in
+pxa2xx architecture implies changing the gpio direction, even for non
+gpio functions. In order to do it atomically, only one driver should
+control the gpio direction, and if a pin controller is available, it has
+to be him.
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/gpio/gpio-pxa.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-pxa.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index de2cfbeccaa1..8558abf98204 100644
+index 7e02157c5b92..01d507502d56 100644
 --- a/drivers/gpio/gpio-pxa.c
 +++ b/drivers/gpio/gpio-pxa.c
-@@ -614,9 +614,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 		|| (irq_mux <= 0))
- 		return -EINVAL;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EINVAL;
--	gpio_reg_base = ioremap(res->start, resource_size(res));
-+	gpio_reg_base = devm_ioremap(&pdev->dev, res->start,
-+				     resource_size(res));
- 	if (!gpio_reg_base)
- 		return -EINVAL;
+@@ -24,6 +24,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/slab.h>
+@@ -251,6 +252,11 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	void __iomem *base = gpio_bank_base(chip, offset);
+ 	uint32_t value, mask = GPIO_bit(offset);
+ 	unsigned long flags;
++	int ret;
++
++	ret = pinctrl_gpio_direction_input(chip->base + offset);
++	if (!ret)
++		return 0;
  
-@@ -627,13 +626,11 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "Error %ld to get gpio clock\n",
- 			PTR_ERR(clk));
--		iounmap(gpio_reg_base);
- 		return PTR_ERR(clk);
- 	}
- 	ret = clk_prepare_enable(clk);
- 	if (ret) {
- 		clk_put(clk);
--		iounmap(gpio_reg_base);
- 		return ret;
- 	}
+ 	spin_lock_irqsave(&gpio_lock, flags);
  
+@@ -271,9 +277,14 @@ static int pxa_gpio_direction_output(struct gpio_chip *chip,
+ 	void __iomem *base = gpio_bank_base(chip, offset);
+ 	uint32_t tmp, mask = GPIO_bit(offset);
+ 	unsigned long flags;
++	int ret;
+ 
+ 	writel_relaxed(mask, base + (value ? GPSR_OFFSET : GPCR_OFFSET));
+ 
++	ret = pinctrl_gpio_direction_output(chip->base + offset);
++	if (!ret)
++		return 0;
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	tmp = readl_relaxed(base + GPDR_OFFSET);
+@@ -318,6 +329,16 @@ static int pxa_gpio_of_xlate(struct gpio_chip *gc,
+ }
+ #endif
+ 
++static int pxa_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	return pinctrl_request_gpio(chip->base + offset);
++}
++
++static void pxa_gpio_free(struct gpio_chip *chip, unsigned int offset)
++{
++	pinctrl_free_gpio(chip->base + offset);
++}
++
+ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
+ 			      struct device_node *np, void __iomem *regbase)
+ {
+@@ -336,6 +357,8 @@ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
+ 	pchip->chip.set = pxa_gpio_set;
+ 	pchip->chip.to_irq = pxa_gpio_to_irq;
+ 	pchip->chip.ngpio = ngpio;
++	pchip->chip.request = pxa_gpio_request;
++	pchip->chip.free = pxa_gpio_free;
+ #ifdef CONFIG_OF_GPIO
+ 	pchip->chip.of_node = np;
+ 	pchip->chip.of_xlate = pxa_gpio_of_xlate;
 -- 
 2.1.4
 
