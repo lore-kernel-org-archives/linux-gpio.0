@@ -1,338 +1,67 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 3/4] gpio: pxa: change the interrupt management
-Date: Sat, 28 Nov 2015 22:37:44 +0100
-Message-ID: <1448746665-13422-4-git-send-email-robert.jarzmik@free.fr>
-References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
+From: Clemens Gruber <clemens.gruber@pqgruber.com>
+Subject: gpio-mxc: gpiod_get_value returns INT_MIN when the GPIO is off
+Date: Sun, 29 Nov 2015 00:02:01 +0100
+Message-ID: <20151128230200.GA21951@archie.tuxnet.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.pqgruber.com ([178.189.19.235]:34957 "EHLO
+	mail.pqgruber.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751161AbbK1XIp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 28 Nov 2015 18:08:45 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org
 
-The interrupt management is changed by this patch to rely on chip data
-instead of chained interrupts.
+Hi,
 
-The main goal is to loosen the dependency on the global pxa chip
-structure in favor of the passed chip data. The secondary goal is to
-better show in /proc/interrupts the difference between interrupts for
-gpio0 and gpio1 (directly wired to interrupt controller), and the other
-gpios (wired onto a third line in the interrupt controller).
+I am writing a module which reads several GPIO input states from a
+Freescale i.MX6Q. I can control the input states through hardware
+buttons attached to my development board. They are all connected exactly
+the same, with external pull up resistors.
+I am using the current torvalds/linux master branch.
 
-The last advantage of this patch is that the interrupt is actually
-requested, so that another driver cannot steal this line, or overwrite
-the handler.
+The list in my DT looks like this:
+my-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>,
+	<&gpio1 8 GPIO_ACTIVE_LOW>,
+	/* .... */
+	<&gpio6 31 GPIO_ACTIVE_LOW>,
+	<&gpio7 11 GPIO_ACTIVE_LOW>;
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- drivers/gpio/gpio-pxa.c | 145 +++++++++++++++++++++++++++---------------------
- 1 file changed, 82 insertions(+), 63 deletions(-)
+In my platform driver module, I first call gpiod_get_array(dev, "my",
+GPIOD_IN);
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 8558abf98204..7e02157c5b92 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -64,11 +64,6 @@
- int pxa_last_gpio;
- static int irq_base;
- 
--#ifdef CONFIG_OF
--static struct irq_domain *domain;
--static struct device_node *pxa_gpio_of_node;
--#endif
--
- struct pxa_gpio_bank {
- 	void __iomem	*regbase;
- 	unsigned long	irq_mask;
-@@ -87,6 +82,7 @@ struct pxa_gpio_chip {
- 	struct device *dev;
- 	struct gpio_chip chip;
- 	struct pxa_gpio_bank *banks;
-+	struct irq_domain *irqdomain;
- 
- 	int irq0;
- 	int irq1;
-@@ -231,14 +227,23 @@ static inline int __gpio_is_occupied(struct pxa_gpio_chip *pchip, unsigned gpio)
- 	return ret;
- }
- 
--static int pxa_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
-+int pxa_irq_to_gpio(int irq)
- {
--	return offset + irq_base;
-+	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
-+	int irq_gpio0;
-+
-+	irq_gpio0 = irq_find_mapping(pchip->irqdomain, 0);
-+	if (irq_gpio0 > 0)
-+		return irq - irq_gpio0;
-+
-+	return irq_gpio0;
- }
- 
--int pxa_irq_to_gpio(int irq)
-+static int pxa_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
--	return irq - irq_base;
-+	struct pxa_gpio_chip *pchip = chip_to_pxachip(chip);
-+
-+	return irq_find_mapping(pchip->irqdomain, offset);
- }
- 
- static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-@@ -314,7 +319,7 @@ static int pxa_gpio_of_xlate(struct gpio_chip *gc,
- #endif
- 
- static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
--			      void __iomem *regbase)
-+			      struct device_node *np, void __iomem *regbase)
- {
- 	int i, gpio, nbanks = DIV_ROUND_UP(ngpio, 32);
- 	struct pxa_gpio_bank *bank;
-@@ -332,7 +337,7 @@ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
- 	pchip->chip.to_irq = pxa_gpio_to_irq;
- 	pchip->chip.ngpio = ngpio;
- #ifdef CONFIG_OF_GPIO
--	pchip->chip.of_node = pxa_gpio_of_node;
-+	pchip->chip.of_node = np;
- 	pchip->chip.of_xlate = pxa_gpio_of_xlate;
- 	pchip->chip.of_gpio_n_cells = 2;
- #endif
-@@ -362,8 +367,8 @@ static inline void update_edge_detect(struct pxa_gpio_bank *c)
- 
- static int pxa_gpio_irq_type(struct irq_data *d, unsigned int type)
- {
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
--	int gpio = pxa_irq_to_gpio(d->irq);
-+	struct pxa_gpio_chip *pchip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = irqd_to_hwirq(d);
- 	struct pxa_gpio_bank *c = gpio_to_pxabank(&pchip->chip, gpio);
- 	unsigned long gpdr, mask = GPIO_bit(gpio);
- 
-@@ -405,16 +410,13 @@ static int pxa_gpio_irq_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
- 
--static void pxa_gpio_demux_handler(struct irq_desc *desc)
-+static irqreturn_t pxa_gpio_demux_handler(int in_irq, void *d)
- {
- 	int loop, gpio, n, handled = 0;
- 	unsigned long gedr;
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
-+	struct pxa_gpio_chip *pchip = d;
- 	struct pxa_gpio_bank *c;
- 
--	chained_irq_enter(chip, desc);
--
- 	do {
- 		loop = 0;
- 		for_each_gpio_bank(gpio, c, pchip) {
-@@ -428,15 +430,31 @@ static void pxa_gpio_demux_handler(struct irq_desc *desc)
- 				generic_handle_irq(gpio_to_irq(gpio + n));
- 			}
- 		}
-+		handled += loop;
- 	} while (loop);
- 
--	chained_irq_exit(chip, desc);
-+	return handled ? IRQ_HANDLED : IRQ_NONE;
-+}
-+
-+static irqreturn_t pxa_gpio_direct_handler(int in_irq, void *d)
-+{
-+	struct pxa_gpio_chip *pchip = d;
-+
-+	if (in_irq == pchip->irq0) {
-+		generic_handle_irq(gpio_to_irq(0));
-+	} else if (in_irq == pchip->irq1) {
-+		generic_handle_irq(gpio_to_irq(1));
-+	} else {
-+		pr_err("%s() unknown irq %d\n", __func__, in_irq);
-+		return IRQ_NONE;
-+	}
-+	return IRQ_HANDLED;
- }
- 
- static void pxa_ack_muxed_gpio(struct irq_data *d)
- {
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
--	int gpio = pxa_irq_to_gpio(d->irq);
-+	struct pxa_gpio_chip *pchip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = irqd_to_hwirq(d);
- 	void __iomem *base = gpio_bank_base(&pchip->chip, gpio);
- 
- 	writel_relaxed(GPIO_bit(gpio), base + GEDR_OFFSET);
-@@ -444,8 +462,8 @@ static void pxa_ack_muxed_gpio(struct irq_data *d)
- 
- static void pxa_mask_muxed_gpio(struct irq_data *d)
- {
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
--	int gpio = pxa_irq_to_gpio(d->irq);
-+	struct pxa_gpio_chip *pchip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = irqd_to_hwirq(d);
- 	struct pxa_gpio_bank *b = gpio_to_pxabank(&pchip->chip, gpio);
- 	void __iomem *base = gpio_bank_base(&pchip->chip, gpio);
- 	uint32_t grer, gfer;
-@@ -460,8 +478,8 @@ static void pxa_mask_muxed_gpio(struct irq_data *d)
- 
- static int pxa_gpio_set_wake(struct irq_data *d, unsigned int on)
- {
--	int gpio = pxa_irq_to_gpio(d->irq);
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
-+	struct pxa_gpio_chip *pchip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = irqd_to_hwirq(d);
- 
- 	if (pchip->set_wake)
- 		return pchip->set_wake(gpio, on);
-@@ -471,8 +489,8 @@ static int pxa_gpio_set_wake(struct irq_data *d, unsigned int on)
- 
- static void pxa_unmask_muxed_gpio(struct irq_data *d)
- {
--	struct pxa_gpio_chip *pchip = pxa_gpio_chip;
--	int gpio = pxa_irq_to_gpio(d->irq);
-+	struct pxa_gpio_chip *pchip = irq_data_get_irq_chip_data(d);
-+	unsigned int gpio = irqd_to_hwirq(d);
- 	struct pxa_gpio_bank *c = gpio_to_pxabank(&pchip->chip, gpio);
- 
- 	c->irq_mask |= GPIO_bit(gpio);
-@@ -531,6 +549,7 @@ static int pxa_irq_domain_map(struct irq_domain *d, unsigned int irq,
- {
- 	irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
- 				 handle_edge_irq);
-+	irq_set_chip_data(irq, d->host_data);
- 	irq_set_noprobe(irq);
- 	return 0;
- }
-@@ -544,7 +563,6 @@ static int pxa_gpio_probe_dt(struct platform_device *pdev,
- 			     struct pxa_gpio_chip *pchip)
- {
- 	int nr_gpios;
--	struct device_node *np = pdev->dev.of_node;
- 	const struct of_device_id *of_id =
- 				of_match_device(pxa_gpio_dt_ids, &pdev->dev);
- 	const struct pxa_gpio_id *gpio_id;
-@@ -564,10 +582,7 @@ static int pxa_gpio_probe_dt(struct platform_device *pdev,
- 		dev_err(&pdev->dev, "Failed to allocate IRQ numbers\n");
- 		return irq_base;
- 	}
--	domain = irq_domain_add_legacy(np, nr_gpios, irq_base, 0,
--				       &pxa_irq_domain_ops, pchip);
--	pxa_gpio_of_node = np;
--	return 0;
-+	return irq_base;
- }
- #else
- #define pxa_gpio_probe_dt(pdev, pchip)		(-1)
-@@ -581,7 +596,7 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	struct pxa_gpio_platform_data *info;
- 	void __iomem *gpio_reg_base;
--	int gpio, irq, ret, use_of = 0;
-+	int gpio, ret;
- 	int irq0 = 0, irq1 = 0, irq_mux, gpio_offset = 0;
- 
- 	pchip = devm_kzalloc(&pdev->dev, sizeof(*pchip), GFP_KERNEL);
-@@ -597,22 +612,29 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 		pxa_last_gpio = pxa_gpio_nums(pdev);
- 		pchip->set_wake = info->gpio_set_wake;
- 	} else {
--		irq_base = 0;
--		use_of = 1;
--		ret = pxa_gpio_probe_dt(pdev, pchip);
--		if (ret < 0)
-+		irq_base = pxa_gpio_probe_dt(pdev, pchip);
-+		if (irq_base < 0)
- 			return -EINVAL;
- 	}
- 
- 	if (!pxa_last_gpio)
- 		return -EINVAL;
- 
-+	pchip->irqdomain = irq_domain_add_legacy(pdev->dev.of_node,
-+						 pxa_last_gpio + 1, irq_base,
-+						 0, &pxa_irq_domain_ops, pchip);
-+	if (IS_ERR(pchip->irqdomain))
-+		return PTR_ERR(pchip->irqdomain);
-+
- 	irq0 = platform_get_irq_byname(pdev, "gpio0");
- 	irq1 = platform_get_irq_byname(pdev, "gpio1");
- 	irq_mux = platform_get_irq_byname(pdev, "gpio_mux");
- 	if ((irq0 > 0 && irq1 <= 0) || (irq0 <= 0 && irq1 > 0)
- 		|| (irq_mux <= 0))
- 		return -EINVAL;
-+
-+	pchip->irq0 = irq0;
-+	pchip->irq1 = irq1;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	gpio_reg_base = devm_ioremap(&pdev->dev, res->start,
- 				     resource_size(res));
-@@ -635,7 +657,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Initialize GPIO chips */
--	ret = pxa_init_gpio_chip(pchip, pxa_last_gpio + 1, gpio_reg_base);
-+	ret = pxa_init_gpio_chip(pchip, pxa_last_gpio + 1, pdev->dev.of_node,
-+				 gpio_reg_base);
- 	if (ret) {
- 		clk_put(clk);
- 		return ret;
-@@ -651,35 +674,31 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 			writel_relaxed(~0, c->regbase + ED_MASK_OFFSET);
- 	}
- 
--	if (!use_of) {
--		if (irq0 > 0) {
--			irq = gpio_to_irq(0);
--			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
--						 handle_edge_irq);
--			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
--		}
--		if (irq1 > 0) {
--			irq = gpio_to_irq(1);
--			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
--						 handle_edge_irq);
--			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
--		}
--
--		for (irq  = gpio_to_irq(gpio_offset);
--			irq <= gpio_to_irq(pxa_last_gpio); irq++) {
--			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
--						 handle_edge_irq);
--			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
--		}
-+	if (irq0 > 0) {
-+		ret = devm_request_irq(&pdev->dev,
-+				       irq0, pxa_gpio_direct_handler, 0,
-+				       "gpio-0", pchip);
-+		if (ret)
-+			dev_err(&pdev->dev, "request of gpio0 irq failed: %d\n",
-+				ret);
- 	}
-+	if (irq1 > 0) {
-+		ret = devm_request_irq(&pdev->dev,
-+				       irq1, pxa_gpio_direct_handler, 0,
-+				       "gpio-1", pchip);
-+		if (ret)
-+			dev_err(&pdev->dev, "request of gpio1 irq failed: %d\n",
-+				ret);
-+	}
-+	ret = devm_request_irq(&pdev->dev,
-+			       irq_mux, pxa_gpio_demux_handler, 0,
-+				       "gpio-mux", pchip);
-+	if (ret)
-+		dev_err(&pdev->dev, "request of gpio-mux irq failed: %d\n",
-+				ret);
- 
--	if (irq0 > 0)
--		irq_set_chained_handler(irq0, pxa_gpio_demux_handler);
--	if (irq1 > 0)
--		irq_set_chained_handler(irq1, pxa_gpio_demux_handler);
- 	pxa_gpio_chip = pchip;
- 
--	irq_set_chained_handler(irq_mux, pxa_gpio_demux_handler);
- 	return 0;
- }
- 
--- 
-2.1.4
+Then I can successfully read in the input states of my GPIOs and get
+"correct" values for all but one of them: GPIO6_31
+Meaning: When no button is pressed, every call to
+gpiod_get_value(my_gpios->desc[i]) returns 0 and if one of the buttons
+is pressed, it returns 1.
+Except for gpio6 31: It returns -2^31 (INT_MIN) when no button is
+pressed and 1 if a button is pressed.
+
+I double checked the pinmuxing and the hardware, the input state should
+be off / 0 and not -2^31. The internal pull up is also enabled.
+Muxing: fsl,pins = <MX6QDL_PAD_EIM_BCLK__GPIO6_IO31 0x1b099>;
+
+I read through the source of gpio-generic.c and came across
+bgpio_get_set. If I interpret the code correctly, it is set as the get
+function of the gpio chip. (because BGPIOF_READ_OUTPUT_REG_SET is passed
+as flags argument when bgpio_init is called from gpio-mxc.c)
+In the case of gpio6_31, the pin2mask function would return 1 << 31 as
+unsigned long, meaning 2^31 and then the unsigned long return value of
+read_reg is bitmasked with 2^31 which would result in 2^31 if it is on
+and 0 if it is off.
+But because gpiod_get_value returns an int, the 2^31 unsigned long is
+casted to a signed int, which means it returns -2^31 if it is active.
+But in this case, it returns -2^31 if it is inactive and 1 if it is
+active...
+
+I can workaround by checking gpiod_get_value(desc) == 1 but I'd really
+like to know what's causing this (odd?) behavior.
+
+Am I doing something wrong here?
+
+Thanks,
+Clemens
