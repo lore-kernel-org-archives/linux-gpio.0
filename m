@@ -1,440 +1,169 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2] gpio: Add GPIO support for the ACCES 104-IDI-48
-Date: Sun, 29 Nov 2015 11:33:46 -0500
-Message-ID: <20151129163346.GA13433@sophia>
+From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] ARM: dts: sun8i: Add Allwinner A83T dtsi
+Date: Mon, 30 Nov 2015 02:09:14 +0800
+Message-ID: <CAEzqOZsiwbaKwH4J5CjaHoX6rdgj6kq3opvBUXiGJRfum_Se8Q@mail.gmail.com>
+References: <1445557577-27383-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1445557577-27383-3-git-send-email-vishnupatekar0510@gmail.com> <20151025202012.GT10947@lukather>
+Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f170.google.com ([209.85.160.170]:33178 "EHLO
-	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751675AbbK2Qdz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Nov 2015 11:33:55 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBD64TFVR3YIBBXX65SZAKGQEKEOS5WY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20151025202012.GT10947@lukather>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The ACCES 104-IDI-48 family of PC/104 utility boards feature 48
-individually optically isolated digital inputs. Enabled inputs feature
-change-of-state detection capability; if change-of-state detection is
-enabled, an interrupt is fired off if a change of input level
-(low-to-high or high-to-low) is detected. Change-of-state IRQs are
-enabled/disabled on 8-bit boundaries, for a total of six boundaries.
+Hello Maxime,
+Sorry for delayed response.
 
-This driver provides GPIO and IRQ support for these 48 channels of
-digital input. The base port address for the device may be configured
-via the idi_48_base module parameter. The interrupt line number for the
-device may be configured via the idi_48_irq module parameter.
+On Mon, Oct 26, 2015 at 4:20 AM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> Hi,
+>
+> On Fri, Oct 23, 2015 at 07:46:16AM +0800, Vishnu Patekar wrote:
+>> +     memory {
+>> +             reg = <0x40000000 0x80000000>;
+>> +     };
+>> +
+>> +     timer {
+>> +             compatible = "arm,armv7-timer";
+>> +             interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +                          <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +                          <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>> +                          <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>
+> Shouldn't the number of CPUs be 8?
+Yes, It should be 8, also need to change in gic node to 8 CPUs.
+No, smp support till now, still I'll change it in next patch version.
+>
+>> +             clock-frequency = <24000000>;
+>> +             arm,cpu-registers-not-fw-configured;
+>> +     };
+>
+> Is there some u-boot support for this SoC yet?
+recently, I've posted the v2 of u-boot patch.
+>
+> If so, both the memory node and the clock-frequency and
+> arm,cpu-registers-not-fw-configured properties are useless (and
+> harmful for the latter).
+Correct, As, timer support is added in u-boot, I'll remove these two.
+>
+>> +     soc@01c00000 {
+>
+> Please remove the address. It's both wrong and useless.
+>
+>> +             compatible = "simple-bus";
+>> +             #address-cells = <1>;
+>> +             #size-cells = <1>;
+>> +             ranges;
+>> +
+>> +             gic: interrupt-controller@01c81000 {
+>> +                     compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
+>> +                     reg = <0x01c81000 0x1000>,
+>> +                           <0x01c82000 0x1000>,
+>> +                           <0x01c84000 0x2000>,
+>> +                           <0x01c86000 0x2000>;
+>> +                     interrupt-controller;
+>> +                     #interrupt-cells = <3>;
+>> +                     interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>> +             };
+>> +
+>> +             pio: pinctrl@01c20800 {
+>> +                     compatible = "allwinner,sun8i-a83t-pinctrl";
+>> +                     interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+>
+> Please align these lines with the first one, like you did for the
+> GIC's reg for example.
+Okie.
+>
+>> +                     reg = <0x01c20800 0x400>;
+>> +                     clocks = <&osc24M>;
+>> +                     gpio-controller;
+>> +                     interrupt-controller;
+>> +                     #interrupt-cells = <3>;
+>> +                     #gpio-cells = <3>;
+>> +
+>> +                     i2c0_pins_a: i2c0@0 {
+>> +                             allwinner,pins = "PH0", "PH1";
+>> +                             allwinner,function = "i2c0";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     i2c1_pins_a: i2c1@0 {
+>> +                             allwinner,pins = "PH2", "PH3";
+>> +                             allwinner,function = "i2c1";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     i2c2_pins_a: i2c2@0 {
+>> +                             allwinner,pins = "PH4", "PH5";
+>> +                             allwinner,function = "i2c2";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     mmc0_pins_a: mmc0@0 {
+>> +                             allwinner,pins = "PF0", "PF1", "PF2",
+>> +                                              "PF3", "PF4", "PF5";
+>> +                             allwinner,function = "mmc0";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_30_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     mmc1_pins_a: mmc1@0 {
+>> +                             allwinner,pins = "PG0", "PG1", "PG2",
+>> +                                              "PG3", "PG4", "PG5";
+>> +                             allwinner,function = "mmc1";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_30_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     mmc2_8bit_pins: mmc2_8bit {
+>> +                             allwinner,pins = "PC5", "PC6", "PC8",
+>> +                                              "PC9", "PC10", "PC11",
+>> +                                              "PC12", "PC13", "PC14",
+>> +                                              "PC15";
+>> +                             allwinner,function = "mmc2";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_30_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     uart0_pins_a: uart0@0 {
+>> +                             allwinner,pins = "PF2", "PF4";
+>> +                             allwinner,function = "uart0";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>> +
+>> +                     uart0_pins_b: uart0@1 {
+>> +                             allwinner,pins = "PB9", "PB10";
+>> +                             allwinner,function = "uart0";
+>> +                             allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+>> +                             allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+>> +                     };
+>
+> Are you going to use all these options?
+Not, only uart0_pins_a and uart0_pins_b and mmc0_pins_a will be used for now.
+As, these are not enabled, I don't see any harm in keeping those here.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
-Changes in v2:
-  - Reimplement irq_ack callback as a NOOP since status register read in
-    idi_48_irq_handler clears all pending interrupts.
+Let me know in case you want to remove, I'll do it.
 
- MAINTAINERS                    |   6 +
- drivers/gpio/Kconfig           |   9 ++
- drivers/gpio/Makefile          |   1 +
- drivers/gpio/gpio-104-idi-48.c | 340 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 356 insertions(+)
- create mode 100644 drivers/gpio/gpio-104-idi-48.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 629727e..f04fb49 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -240,6 +240,12 @@ L:	lm-sensors@lm-sensors.org
- S:	Maintained
- F:	drivers/hwmon/abituguru3.c
- 
-+ACCES 104-IDI-48 GPIO DRIVER
-+M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/gpio/gpio-104-idi-48.c
-+
- ACCES 104-IDIO-16 GPIO DRIVER
- M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
- L:	linux-gpio@vger.kernel.org
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 18e1aa0..30d8bd3 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -503,6 +503,15 @@ config GPIO_104_IDIO_16
- 	  parameter. The interrupt line number for the device may be set via the
- 	  idio_16_irq module parameter.
- 
-+config GPIO_104_IDI_48
-+	tristate "ACCES 104-IDI-48 GPIO support"
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Enables GPIO support for the ACCES 104-IDI-48 family. The base port
-+	  address for the device may be configured via the idi_48_base module
-+	  parameter. The interrupt line number for the device may be configured
-+	  via the idi_48_irq module parameter.
-+
- config GPIO_F7188X
- 	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
- 	help
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 986dbd8..548e9b5 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
- obj-$(CONFIG_GPIO_GENERIC)	+= gpio-generic.o
- 
- obj-$(CONFIG_GPIO_104_IDIO_16)	+= gpio-104-idio-16.o
-+obj-$(CONFIG_GPIO_104_IDI_48)	+= gpio-104-idi-48.o
- obj-$(CONFIG_GPIO_74X164)	+= gpio-74x164.o
- obj-$(CONFIG_GPIO_74XX_MMIO)	+= gpio-74xx-mmio.o
- obj-$(CONFIG_GPIO_ADNP)		+= gpio-adnp.o
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-new file mode 100644
-index 0000000..61860e7
---- /dev/null
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -0,0 +1,340 @@
-+/*
-+ * GPIO driver for the ACCES 104-IDI-48 family
-+ * Copyright (C) 2015 William Breathitt Gray
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License, version 2, as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqdesc.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+
-+static unsigned idi_48_base;
-+module_param(idi_48_base, uint, 0);
-+MODULE_PARM_DESC(idi_48_base, "ACCES 104-IDI-48 base address");
-+static unsigned idi_48_irq;
-+module_param(idi_48_irq, uint, 0);
-+MODULE_PARM_DESC(idi_48_irq, "ACCES 104-IDI-48 interrupt line number");
-+
-+/**
-+ * struct idi_48_gpio - GPIO device private data structure
-+ * @chip:	instance of the gpio_chip
-+ * @lock:	synchronization lock to prevent I/O race conditions
-+ * @irq_mask:	input bits affected by interrupts
-+ * @base:	base port address of the GPIO device
-+ * @extent:	extent of port address region of the GPIO device
-+ * @irq:	Interrupt line number
-+ * @cos_enb:	Change-Of-State IRQ enable boundaries mask
-+ */
-+struct idi_48_gpio {
-+	struct gpio_chip chip;
-+	spinlock_t lock;
-+	unsigned char irq_mask[6];
-+	unsigned base;
-+	unsigned extent;
-+	unsigned irq;
-+	unsigned char cos_enb;
-+};
-+
-+static int idi_48_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-+{
-+	return 1;
-+}
-+
-+static int idi_48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-+{
-+	return 0;
-+}
-+
-+static struct idi_48_gpio *to_idi48gpio(struct gpio_chip *gc)
-+{
-+	return container_of(gc, struct idi_48_gpio, chip);
-+}
-+
-+static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	unsigned i;
-+	const unsigned register_offset[6] = { 0, 1, 2, 4, 5, 6 };
-+	unsigned base_offset;
-+	unsigned mask;
-+
-+	for (i = 0; i < 48; i += 8)
-+		if (offset < i + 8) {
-+			base_offset = register_offset[i / 8];
-+			mask = BIT(offset - i);
-+
-+			return !!(inb(idi48gpio->base + base_offset) & mask);
-+		}
-+
-+	/* The following line should never execute since offset < 48 */
-+	return 0;
-+}
-+
-+static void idi_48_irq_ack(struct irq_data *data)
-+{
-+}
-+
-+static void idi_48_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	const unsigned offset = irqd_to_hwirq(data);
-+	unsigned i;
-+	unsigned mask;
-+	unsigned boundary;
-+	unsigned long flags;
-+
-+	for (i = 0; i < 48; i += 8)
-+		if (offset < i + 8) {
-+			mask = BIT(offset - i);
-+			boundary = i / 8;
-+
-+			idi48gpio->irq_mask[boundary] &= ~mask;
-+
-+			if (!idi48gpio->irq_mask[boundary]) {
-+				idi48gpio->cos_enb &= ~BIT(boundary);
-+
-+				spin_lock_irqsave(&idi48gpio->lock, flags);
-+
-+				outb(idi48gpio->cos_enb, idi48gpio->base + 7);
-+
-+				spin_unlock_irqrestore(&idi48gpio->lock, flags);
-+			}
-+
-+			return;
-+		}
-+}
-+
-+static void idi_48_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	const unsigned offset = irqd_to_hwirq(data);
-+	unsigned i;
-+	unsigned mask;
-+	unsigned boundary;
-+	unsigned prev_irq_mask;
-+	unsigned long flags;
-+
-+	for (i = 0; i < 48; i += 8)
-+		if (offset < i + 8) {
-+			mask = BIT(offset - i);
-+			boundary = i / 8;
-+			prev_irq_mask = idi48gpio->irq_mask[boundary];
-+
-+			idi48gpio->irq_mask[boundary] |= mask;
-+
-+			if (!prev_irq_mask) {
-+				idi48gpio->cos_enb |= BIT(boundary);
-+
-+				spin_lock_irqsave(&idi48gpio->lock, flags);
-+
-+				outb(idi48gpio->cos_enb, idi48gpio->base + 7);
-+
-+				spin_unlock_irqrestore(&idi48gpio->lock, flags);
-+			}
-+
-+			return;
-+		}
-+}
-+
-+static int idi_48_irq_set_type(struct irq_data *data, unsigned flow_type)
-+{
-+	/* The only valid irq types are none and both-edges */
-+	if (flow_type != IRQ_TYPE_NONE &&
-+		(flow_type & IRQ_TYPE_EDGE_BOTH) != IRQ_TYPE_EDGE_BOTH)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static struct irq_chip idi_48_irqchip = {
-+	.name = "104-idi-48",
-+	.irq_ack = idi_48_irq_ack,
-+	.irq_mask = idi_48_irq_mask,
-+	.irq_unmask = idi_48_irq_unmask,
-+	.irq_set_type = idi_48_irq_set_type
-+};
-+
-+static irqreturn_t idi_48_irq_handler(int irq, void *dev_id)
-+{
-+	struct idi_48_gpio *const idi48gpio = dev_id;
-+	unsigned long cos_status;
-+	unsigned long boundary;
-+	unsigned long irq_mask;
-+	unsigned long bit_num;
-+	unsigned long gpio;
-+	struct gpio_chip *const chip = &idi48gpio->chip;
-+
-+	spin_lock(&idi48gpio->lock);
-+
-+	cos_status = inb(idi48gpio->base + 7);
-+
-+	spin_unlock(&idi48gpio->lock);
-+
-+	/* IRQ Status (bit 6) is active low (0 = IRQ generated by device) */
-+	if (cos_status & BIT(6))
-+		return IRQ_NONE;
-+
-+	/* Bit 0-5 indicate which Change-Of-State boundary triggered the IRQ */
-+	cos_status &= 0x3F;
-+
-+	for_each_set_bit(boundary, &cos_status, 6) {
-+		irq_mask = idi48gpio->irq_mask[boundary];
-+
-+		for_each_set_bit(bit_num, &irq_mask, 8) {
-+			gpio = bit_num + boundary * 8;
-+
-+			generic_handle_irq(irq_find_mapping(chip->irqdomain,
-+				gpio));
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int __init idi_48_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct idi_48_gpio *idi48gpio;
-+	const unsigned base = idi_48_base;
-+	const unsigned extent = 8;
-+	const char *const name = dev_name(dev);
-+	int err;
-+	const unsigned irq = idi_48_irq;
-+
-+	idi48gpio = devm_kzalloc(dev, sizeof(*idi48gpio), GFP_KERNEL);
-+	if (!idi48gpio)
-+		return -ENOMEM;
-+
-+	if (!request_region(base, extent, name)) {
-+		dev_err(dev, "Unable to lock %s port addresses (0x%X-0x%X)\n",
-+			name, base, base + extent);
-+		err = -EBUSY;
-+		goto err_lock_io_port;
-+	}
-+
-+	idi48gpio->chip.label = name;
-+	idi48gpio->chip.parent = dev;
-+	idi48gpio->chip.owner = THIS_MODULE;
-+	idi48gpio->chip.base = -1;
-+	idi48gpio->chip.ngpio = 48;
-+	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
-+	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
-+	idi48gpio->chip.get = idi_48_gpio_get;
-+	idi48gpio->base = base;
-+	idi48gpio->extent = extent;
-+	idi48gpio->irq = irq;
-+
-+	spin_lock_init(&idi48gpio->lock);
-+
-+	dev_set_drvdata(dev, idi48gpio);
-+
-+	err = gpiochip_add(&idi48gpio->chip);
-+	if (err) {
-+		dev_err(dev, "GPIO registering failed (%d)\n", err);
-+		goto err_gpio_register;
-+	}
-+
-+	/* Disable IRQ by default */
-+	outb(0, base + 7);
-+	inb(base + 7);
-+
-+	err = gpiochip_irqchip_add(&idi48gpio->chip, &idi_48_irqchip, 0,
-+		handle_edge_irq, IRQ_TYPE_NONE);
-+	if (err) {
-+		dev_err(dev, "Could not add irqchip (%d)\n", err);
-+		goto err_gpiochip_irqchip_add;
-+	}
-+
-+	err = request_irq(irq, idi_48_irq_handler, 0, name, idi48gpio);
-+	if (err) {
-+		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
-+		goto err_request_irq;
-+	}
-+
-+	return 0;
-+
-+err_request_irq:
-+err_gpiochip_irqchip_add:
-+	gpiochip_remove(&idi48gpio->chip);
-+err_gpio_register:
-+	release_region(base, extent);
-+err_lock_io_port:
-+	return err;
-+}
-+
-+static int idi_48_remove(struct platform_device *pdev)
-+{
-+	struct idi_48_gpio *const idi48gpio = platform_get_drvdata(pdev);
-+
-+	free_irq(idi48gpio->irq, idi48gpio);
-+	gpiochip_remove(&idi48gpio->chip);
-+	release_region(idi48gpio->base, idi48gpio->extent);
-+
-+	return 0;
-+}
-+
-+static struct platform_device *idi_48_device;
-+
-+static struct platform_driver idi_48_driver = {
-+	.driver = {
-+		.name = "104-idi-48"
-+	},
-+	.remove = idi_48_remove
-+};
-+
-+static void __exit idi_48_exit(void)
-+{
-+	platform_device_unregister(idi_48_device);
-+	platform_driver_unregister(&idi_48_driver);
-+}
-+
-+static int __init idi_48_init(void)
-+{
-+	int err;
-+
-+	idi_48_device = platform_device_alloc(idi_48_driver.driver.name, -1);
-+	if (!idi_48_device)
-+		return -ENOMEM;
-+
-+	err = platform_device_add(idi_48_device);
-+	if (err)
-+		goto err_platform_device;
-+
-+	err = platform_driver_probe(&idi_48_driver, idi_48_probe);
-+	if (err)
-+		goto err_platform_driver;
-+
-+	return 0;
-+
-+err_platform_driver:
-+	platform_device_del(idi_48_device);
-+err_platform_device:
-+	platform_device_put(idi_48_device);
-+	return err;
-+}
-+
-+module_init(idi_48_init);
-+module_exit(idi_48_exit);
-+
-+MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
-+MODULE_DESCRIPTION("ACCES 104-IDI-48 GPIO driver");
-+MODULE_LICENSE("GPL");
--- 
-2.4.10
-
+>
+> Thanks!
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux, Kernel and Android engineering
+> http://free-electrons.com
