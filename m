@@ -1,31 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: fix a memleak when do dt maps.
-Date: Sun, 29 Nov 2015 22:35:39 +0100
-Message-ID: <CACRpkdZLA-qu8uzO-7HRnwR6h6y8Gkhw0rs8St8BXjfduUFykA@mail.gmail.com>
-References: <1447799622-3340-1-git-send-email-hongzhou.yang@mediatek.com>
+Subject: Re: [PATCH] gpiolib: make comment consistent with code
+Date: Sun, 29 Nov 2015 22:37:45 +0100
+Message-ID: <CACRpkdaWoxaQvT-EB46nr=YuN+sNqRe7OsxSCcGxH6SFyXeTcA@mail.gmail.com>
+References: <1447837627-5462-1-git-send-email-bamvor.zhangjian@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1447799622-3340-1-git-send-email-hongzhou.yang@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Colin Ian King <colin.king@canonical.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, srv_heupstream@mediatek.com, Sascha Hauer <kernel@pengutronix.de>, biao.huang@mediatek.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:36502 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752562AbbK2Vhp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Nov 2015 16:37:45 -0500
+Received: by obdgf3 with SMTP id gf3so114716683obd.3
+        for <linux-gpio@vger.kernel.org>; Sun, 29 Nov 2015 13:37:45 -0800 (PST)
+In-Reply-To: <1447837627-5462-1-git-send-email-bamvor.zhangjian@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Nov 17, 2015 at 11:33 PM, Hongzhou Yang
-<hongzhou.yang@mediatek.com> wrote:
+On Wed, Nov 18, 2015 at 10:07 AM, Bamvor Jian Zhang
+<bamvor.zhangjian@linaro.org> wrote:
 
-> configs will kmemdup to dup_configs in pictrl util function.
-> So configs need to be freed.
+> Commit f4d566a8a0e6 ("gpio: change member .dev to .parent") changes
+> member of gpiochip from .dev to .parent. Update the corresponding
+> comment.
 >
-> Signed-off-by: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
->  Fix a memleak issue.
->  According to Yingjoe's comment, add return checek for pinconf_generic_parse_dt_config.
+> Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 
-Patch applied with Yingjoe's review tag.
+Patch applied.
 
 Yours,
 Linus Walleij
