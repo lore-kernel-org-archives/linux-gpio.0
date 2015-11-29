@@ -1,137 +1,440 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [RFC PATCH] gpiolib: fix oops, if gpio name is NULL
-Date: Sun, 29 Nov 2015 14:44:30 +0200
-Message-ID: <565AF32E.2020307@mleia.com>
-References: <1447245413-32209-1-git-send-email-vz@mleia.com> <35337129.pBjQytIvzF@adelgunde> <564B0D88.4000301@mleia.com> <1556500.sdcUFi7dPa@adelgunde>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v2] gpio: Add GPIO support for the ACCES 104-IDI-48
+Date: Sun, 29 Nov 2015 11:33:46 -0500
+Message-ID: <20151129163346.GA13433@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:34357 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751993AbbK2Mof (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 29 Nov 2015 07:44:35 -0500
-In-Reply-To: <1556500.sdcUFi7dPa@adelgunde>
+Received: from mail-yk0-f170.google.com ([209.85.160.170]:33178 "EHLO
+	mail-yk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675AbbK2Qdz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Nov 2015 11:33:55 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+The ACCES 104-IDI-48 family of PC/104 utility boards feature 48
+individually optically isolated digital inputs. Enabled inputs feature
+change-of-state detection capability; if change-of-state detection is
+enabled, an interrupt is fired off if a change of input level
+(low-to-high or high-to-low) is detected. Change-of-state IRQs are
+enabled/disabled on 8-bit boundaries, for a total of six boundaries.
 
-On 17.11.2015 13:50, Markus Pargmann wrote:
-> Hi Vladimir,
-> 
-> On Tuesday 17 November 2015 13:20:40 Vladimir Zapolskiy wrote:
->> Hi Markus,
->>
->> On 17.11.2015 11:24, Markus Pargmann wrote:
->>> Hi,
->>>
->>> On Wednesday 11 November 2015 14:36:53 Vladimir Zapolskiy wrote:
->>>> Commit c0017ed71966 ("gpio: Introduce gpio descriptor 'name'") causes
->>>> OOPS on boot on LPC32xx boards:
->>>>
->>>>     Unable to handle kernel NULL pointer dereference at virtual address 00000000
->>>>     CPU: 0 PID: 1 Comm: swapper Not tainted 4.3.0+ #707
->>>>     Hardware name: LPC32XX SoC (Flattened Device Tree)
->>>>     task: c381baa0 ti: c381e000 task.ti: c381e000
->>>>     PC is at strcmp+0x10/0x40
->>>>     LR is at gpiochip_add+0x3d0/0x4d4
->>>>     pc : [<>]    lr : [<>]    psr: a0000093
->>>>     sp : c381fd60  ip : c381fd70  fp : c381fd6c
->>>>
->>>>     [snip]
->>>>
->>>>     Backtrace:
->>>>     [<>] (strcmp) from [<>] (gpiochip_add+0x3d0/0x4d4)
->>>>     [<>] (gpiochip_add) from [<>] (lpc32xx_gpio_probe+0x44/0x60)
->>>>     [<>] (lpc32xx_gpio_probe) from [<>] (platform_drv_probe+0x40/0x8c)
->>>>     [<>] (platform_drv_probe) from [<>] (driver_probe_device+0x110/0x294)
->>>>     [<>] (driver_probe_device) from [<>] (__driver_attach+0x70/0x94)
->>>>     [<>] (__driver_attach) from [<>] (bus_for_each_dev+0x74/0x98)
->>>>     [<>] (bus_for_each_dev) from [<>] (driver_attach+0x20/0x28)
->>>>     [<>] (driver_attach) from [<>] (bus_add_driver+0xd4/0x1f0)
->>>>     [<>] (bus_add_driver) from [<>] (driver_register+0xa4/0xe8)
->>>>     [<>] (driver_register) from [<>] (__platform_driver_register+0x38/0x4c)
->>>>     [<>] (__platform_driver_register) from [<>] (lpc32xx_gpio_driver_init+0x18/0x20)
->>>>     [<>] (lpc32xx_gpio_driver_init) from [<>] (do_one_initcall+0x108/0x1c8)
->>>>     [<>] (do_one_initcall) from [<>] (kernel_init_freeable+0x10c/0x1d4)
->>>>     [<>] (kernel_init_freeable) from [<>] (kernel_init+0x10/0xec)
->>>>     [<>] (kernel_init) from [<>] (ret_from_fork+0x14/0x24)
->>>>
->>>> This is caused by the fact that at the moment some GPIO names are set
->>>> to NULL, there is a hole in linear representation of one GPI bank, see
->>>> drivers/gpio/gpio-lpc32xx.c / gpi_p3_names[] for details.
->>>>
->>>> The same problem most probably affects also gpio-cs5535.c, see
->>>> cs5535_gpio_names[].
->>>>
->>>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
->>>> ---
->>>> Linus, Markus,
->>>>
->>>> I understand that LPC32xx GPIO driver is ugly (hopefully this
->>>> will be changed in future), but please account this problem.
->>>>
->>>> I don't ask for inclusion of this change, because my own analysis is
->>>> not done completely.
->>>>
->>>> Also please review, the same problem probably affects gpio-cs5535.c
->>>> as well, see cs5535_gpio_names[].
->>>
->>> Thanks for this hint. But I think these patches for gpio_name_to_desc won't get
->>> mainline any time soon as this depends on the chardev interface and how it will
->>> look like.
->>>
->>
->> sorry for misunderstanding, what do mean by "these patches"?
->>
->> I see two options here, one is to fix or revert your c0017ed71966 due to
->> caused regressions, another one is to update affected GPIO drivers
->> removing discontinuity in GPIO enumeration inside a bank.
-> 
-> Sorry, seems I was on a wrong kernel version when checking this morning. Linus
-> removed lots of my patches from his tree after some correct comments so I
-> thought this patch was removed as well.
+This driver provides GPIO and IRQ support for these 48 channels of
+digital input. The base port address for the device may be configured
+via the idi_48_base module parameter. The interrupt line number for the
+device may be configured via the idi_48_irq module parameter.
 
-Linus, should I resend this fix for v4.4 or is it good enough for
-application?
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+Changes in v2:
+  - Reimplement irq_ack callback as a NOOP since status register read in
+    idi_48_irq_handler clears all pending interrupts.
 
-> As it is mainline your patch looks good to me. Perhaps a comment on why we need
-> to check for !name at this point would be good.
+ MAINTAINERS                    |   6 +
+ drivers/gpio/Kconfig           |   9 ++
+ drivers/gpio/Makefile          |   1 +
+ drivers/gpio/gpio-104-idi-48.c | 340 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 356 insertions(+)
+ create mode 100644 drivers/gpio/gpio-104-idi-48.c
 
-There is such a description in the commit message, why this check is needed.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 629727e..f04fb49 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -240,6 +240,12 @@ L:	lm-sensors@lm-sensors.org
+ S:	Maintained
+ F:	drivers/hwmon/abituguru3.c
+ 
++ACCES 104-IDI-48 GPIO DRIVER
++M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/gpio/gpio-104-idi-48.c
++
+ ACCES 104-IDIO-16 GPIO DRIVER
+ M:	"William Breathitt Gray" <vilhelm.gray@gmail.com>
+ L:	linux-gpio@vger.kernel.org
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 18e1aa0..30d8bd3 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -503,6 +503,15 @@ config GPIO_104_IDIO_16
+ 	  parameter. The interrupt line number for the device may be set via the
+ 	  idio_16_irq module parameter.
+ 
++config GPIO_104_IDI_48
++	tristate "ACCES 104-IDI-48 GPIO support"
++	select GPIOLIB_IRQCHIP
++	help
++	  Enables GPIO support for the ACCES 104-IDI-48 family. The base port
++	  address for the device may be configured via the idi_48_base module
++	  parameter. The interrupt line number for the device may be configured
++	  via the idi_48_irq module parameter.
++
+ config GPIO_F7188X
+ 	tristate "F71869, F71869A, F71882FG and F71889F GPIO support"
+ 	help
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 986dbd8..548e9b5 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_GPIO_ACPI)		+= gpiolib-acpi.o
+ obj-$(CONFIG_GPIO_GENERIC)	+= gpio-generic.o
+ 
+ obj-$(CONFIG_GPIO_104_IDIO_16)	+= gpio-104-idio-16.o
++obj-$(CONFIG_GPIO_104_IDI_48)	+= gpio-104-idi-48.o
+ obj-$(CONFIG_GPIO_74X164)	+= gpio-74x164.o
+ obj-$(CONFIG_GPIO_74XX_MMIO)	+= gpio-74xx-mmio.o
+ obj-$(CONFIG_GPIO_ADNP)		+= gpio-adnp.o
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+new file mode 100644
+index 0000000..61860e7
+--- /dev/null
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -0,0 +1,340 @@
++/*
++ * GPIO driver for the ACCES 104-IDI-48 family
++ * Copyright (C) 2015 William Breathitt Gray
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/interrupt.h>
++#include <linux/irqdesc.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++
++static unsigned idi_48_base;
++module_param(idi_48_base, uint, 0);
++MODULE_PARM_DESC(idi_48_base, "ACCES 104-IDI-48 base address");
++static unsigned idi_48_irq;
++module_param(idi_48_irq, uint, 0);
++MODULE_PARM_DESC(idi_48_irq, "ACCES 104-IDI-48 interrupt line number");
++
++/**
++ * struct idi_48_gpio - GPIO device private data structure
++ * @chip:	instance of the gpio_chip
++ * @lock:	synchronization lock to prevent I/O race conditions
++ * @irq_mask:	input bits affected by interrupts
++ * @base:	base port address of the GPIO device
++ * @extent:	extent of port address region of the GPIO device
++ * @irq:	Interrupt line number
++ * @cos_enb:	Change-Of-State IRQ enable boundaries mask
++ */
++struct idi_48_gpio {
++	struct gpio_chip chip;
++	spinlock_t lock;
++	unsigned char irq_mask[6];
++	unsigned base;
++	unsigned extent;
++	unsigned irq;
++	unsigned char cos_enb;
++};
++
++static int idi_48_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++	return 1;
++}
++
++static int idi_48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
++{
++	return 0;
++}
++
++static struct idi_48_gpio *to_idi48gpio(struct gpio_chip *gc)
++{
++	return container_of(gc, struct idi_48_gpio, chip);
++}
++
++static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
++	unsigned i;
++	const unsigned register_offset[6] = { 0, 1, 2, 4, 5, 6 };
++	unsigned base_offset;
++	unsigned mask;
++
++	for (i = 0; i < 48; i += 8)
++		if (offset < i + 8) {
++			base_offset = register_offset[i / 8];
++			mask = BIT(offset - i);
++
++			return !!(inb(idi48gpio->base + base_offset) & mask);
++		}
++
++	/* The following line should never execute since offset < 48 */
++	return 0;
++}
++
++static void idi_48_irq_ack(struct irq_data *data)
++{
++}
++
++static void idi_48_irq_mask(struct irq_data *data)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
++	const unsigned offset = irqd_to_hwirq(data);
++	unsigned i;
++	unsigned mask;
++	unsigned boundary;
++	unsigned long flags;
++
++	for (i = 0; i < 48; i += 8)
++		if (offset < i + 8) {
++			mask = BIT(offset - i);
++			boundary = i / 8;
++
++			idi48gpio->irq_mask[boundary] &= ~mask;
++
++			if (!idi48gpio->irq_mask[boundary]) {
++				idi48gpio->cos_enb &= ~BIT(boundary);
++
++				spin_lock_irqsave(&idi48gpio->lock, flags);
++
++				outb(idi48gpio->cos_enb, idi48gpio->base + 7);
++
++				spin_unlock_irqrestore(&idi48gpio->lock, flags);
++			}
++
++			return;
++		}
++}
++
++static void idi_48_irq_unmask(struct irq_data *data)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
++	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
++	const unsigned offset = irqd_to_hwirq(data);
++	unsigned i;
++	unsigned mask;
++	unsigned boundary;
++	unsigned prev_irq_mask;
++	unsigned long flags;
++
++	for (i = 0; i < 48; i += 8)
++		if (offset < i + 8) {
++			mask = BIT(offset - i);
++			boundary = i / 8;
++			prev_irq_mask = idi48gpio->irq_mask[boundary];
++
++			idi48gpio->irq_mask[boundary] |= mask;
++
++			if (!prev_irq_mask) {
++				idi48gpio->cos_enb |= BIT(boundary);
++
++				spin_lock_irqsave(&idi48gpio->lock, flags);
++
++				outb(idi48gpio->cos_enb, idi48gpio->base + 7);
++
++				spin_unlock_irqrestore(&idi48gpio->lock, flags);
++			}
++
++			return;
++		}
++}
++
++static int idi_48_irq_set_type(struct irq_data *data, unsigned flow_type)
++{
++	/* The only valid irq types are none and both-edges */
++	if (flow_type != IRQ_TYPE_NONE &&
++		(flow_type & IRQ_TYPE_EDGE_BOTH) != IRQ_TYPE_EDGE_BOTH)
++		return -EINVAL;
++
++	return 0;
++}
++
++static struct irq_chip idi_48_irqchip = {
++	.name = "104-idi-48",
++	.irq_ack = idi_48_irq_ack,
++	.irq_mask = idi_48_irq_mask,
++	.irq_unmask = idi_48_irq_unmask,
++	.irq_set_type = idi_48_irq_set_type
++};
++
++static irqreturn_t idi_48_irq_handler(int irq, void *dev_id)
++{
++	struct idi_48_gpio *const idi48gpio = dev_id;
++	unsigned long cos_status;
++	unsigned long boundary;
++	unsigned long irq_mask;
++	unsigned long bit_num;
++	unsigned long gpio;
++	struct gpio_chip *const chip = &idi48gpio->chip;
++
++	spin_lock(&idi48gpio->lock);
++
++	cos_status = inb(idi48gpio->base + 7);
++
++	spin_unlock(&idi48gpio->lock);
++
++	/* IRQ Status (bit 6) is active low (0 = IRQ generated by device) */
++	if (cos_status & BIT(6))
++		return IRQ_NONE;
++
++	/* Bit 0-5 indicate which Change-Of-State boundary triggered the IRQ */
++	cos_status &= 0x3F;
++
++	for_each_set_bit(boundary, &cos_status, 6) {
++		irq_mask = idi48gpio->irq_mask[boundary];
++
++		for_each_set_bit(bit_num, &irq_mask, 8) {
++			gpio = bit_num + boundary * 8;
++
++			generic_handle_irq(irq_find_mapping(chip->irqdomain,
++				gpio));
++		}
++	}
++
++	return IRQ_HANDLED;
++}
++
++static int __init idi_48_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct idi_48_gpio *idi48gpio;
++	const unsigned base = idi_48_base;
++	const unsigned extent = 8;
++	const char *const name = dev_name(dev);
++	int err;
++	const unsigned irq = idi_48_irq;
++
++	idi48gpio = devm_kzalloc(dev, sizeof(*idi48gpio), GFP_KERNEL);
++	if (!idi48gpio)
++		return -ENOMEM;
++
++	if (!request_region(base, extent, name)) {
++		dev_err(dev, "Unable to lock %s port addresses (0x%X-0x%X)\n",
++			name, base, base + extent);
++		err = -EBUSY;
++		goto err_lock_io_port;
++	}
++
++	idi48gpio->chip.label = name;
++	idi48gpio->chip.parent = dev;
++	idi48gpio->chip.owner = THIS_MODULE;
++	idi48gpio->chip.base = -1;
++	idi48gpio->chip.ngpio = 48;
++	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
++	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
++	idi48gpio->chip.get = idi_48_gpio_get;
++	idi48gpio->base = base;
++	idi48gpio->extent = extent;
++	idi48gpio->irq = irq;
++
++	spin_lock_init(&idi48gpio->lock);
++
++	dev_set_drvdata(dev, idi48gpio);
++
++	err = gpiochip_add(&idi48gpio->chip);
++	if (err) {
++		dev_err(dev, "GPIO registering failed (%d)\n", err);
++		goto err_gpio_register;
++	}
++
++	/* Disable IRQ by default */
++	outb(0, base + 7);
++	inb(base + 7);
++
++	err = gpiochip_irqchip_add(&idi48gpio->chip, &idi_48_irqchip, 0,
++		handle_edge_irq, IRQ_TYPE_NONE);
++	if (err) {
++		dev_err(dev, "Could not add irqchip (%d)\n", err);
++		goto err_gpiochip_irqchip_add;
++	}
++
++	err = request_irq(irq, idi_48_irq_handler, 0, name, idi48gpio);
++	if (err) {
++		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
++		goto err_request_irq;
++	}
++
++	return 0;
++
++err_request_irq:
++err_gpiochip_irqchip_add:
++	gpiochip_remove(&idi48gpio->chip);
++err_gpio_register:
++	release_region(base, extent);
++err_lock_io_port:
++	return err;
++}
++
++static int idi_48_remove(struct platform_device *pdev)
++{
++	struct idi_48_gpio *const idi48gpio = platform_get_drvdata(pdev);
++
++	free_irq(idi48gpio->irq, idi48gpio);
++	gpiochip_remove(&idi48gpio->chip);
++	release_region(idi48gpio->base, idi48gpio->extent);
++
++	return 0;
++}
++
++static struct platform_device *idi_48_device;
++
++static struct platform_driver idi_48_driver = {
++	.driver = {
++		.name = "104-idi-48"
++	},
++	.remove = idi_48_remove
++};
++
++static void __exit idi_48_exit(void)
++{
++	platform_device_unregister(idi_48_device);
++	platform_driver_unregister(&idi_48_driver);
++}
++
++static int __init idi_48_init(void)
++{
++	int err;
++
++	idi_48_device = platform_device_alloc(idi_48_driver.driver.name, -1);
++	if (!idi_48_device)
++		return -ENOMEM;
++
++	err = platform_device_add(idi_48_device);
++	if (err)
++		goto err_platform_device;
++
++	err = platform_driver_probe(&idi_48_driver, idi_48_probe);
++	if (err)
++		goto err_platform_driver;
++
++	return 0;
++
++err_platform_driver:
++	platform_device_del(idi_48_device);
++err_platform_device:
++	platform_device_put(idi_48_device);
++	return err;
++}
++
++module_init(idi_48_init);
++module_exit(idi_48_exit);
++
++MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
++MODULE_DESCRIPTION("ACCES 104-IDI-48 GPIO driver");
++MODULE_LICENSE("GPL");
+-- 
+2.4.10
 
-With best wishes,
-Vladimir
-
-> Best Regards,
-> 
-> Markus
-> 
->>
->> With best wishes,
->> Vladimir
->>
->>>>
->>>>  drivers/gpio/gpiolib.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
->>>> index a18f00f..2a91f32 100644
->>>> --- a/drivers/gpio/gpiolib.c
->>>> +++ b/drivers/gpio/gpiolib.c
->>>> @@ -233,7 +233,7 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
->>>>  		for (i = 0; i != chip->ngpio; ++i) {
->>>>  			struct gpio_desc *gpio = &chip->desc[i];
->>>>  
->>>> -			if (!gpio->name)
->>>> +			if (!gpio->name || !name)
->>>>  				continue;
->>>>  
->>>>  			if (!strcmp(gpio->name, name)) {
->>>>
->>>
->>
-> 
