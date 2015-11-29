@@ -1,52 +1,40 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 3/4] gpio: pxa: change the interrupt management
-Date: Sun, 29 Nov 2015 11:03:38 +0100
-Message-ID: <87poyt6s1x.fsf@belgarion.home>
-References: <201511290719.aiYQvtmz%fengguang.wu@intel.com>
+From: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: sunxi: Introduce Allwinner for A83T support
+Date: Sun, 29 Nov 2015 20:02:44 +0800
+Message-ID: <CAEzqOZuRPcwcv2=Ni82GMyYnTnKHrZWtk3QOZZBQC5KYkd3J8w@mail.gmail.com>
+References: <1445557577-27383-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1445557577-27383-2-git-send-email-vishnupatekar0510@gmail.com> <CAGb2v645Bwzdc1Uq0sR9SWqQH4htiO6qyPs28Hc5iOiJffXDHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201511290719.aiYQvtmz%fengguang.wu@intel.com> (kbuild test
-	robot's message of "Sun, 29 Nov 2015 07:23:56 +0800")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f176.google.com ([209.85.213.176]:35483 "EHLO
+	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751815AbbK2MDF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 29 Nov 2015 07:03:05 -0500
+In-Reply-To: <CAGb2v645Bwzdc1Uq0sR9SWqQH4htiO6qyPs28Hc5iOiJffXDHQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Linus Walleij <linus.walleij@linaro.org>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-kbuild test robot <lkp@intel.com> writes:
+Hello,
+Sorry for delayed response.
 
-> Hi Robert,
+On Fri, Oct 23, 2015 at 9:37 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Fri, Oct 23, 2015 at 7:46 AM, Vishnu Patekar
+> <vishnupatekar0510@gmail.com> wrote:
+>> Allwinner A83T is octa-core cortex-a7 based SoC.
+>> It's clock control unit and prcm, pinmux are different from previous sun8i
+>> series.
+>> Its processor cores are arragned in two clusters 4 cores each,
+>> similar to A80.
+>>
+>> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 >
-> [auto build test ERROR on: gpio/for-next]
-> [also build test ERROR on: v4.4-rc2 next-20151127]
+> Could you also update Documentation/arm/sunxi/README, so it says A83T
+> is supported?
+I'll update and send next version.
 >
-> url:    https://github.com/0day-ci/linux/commits/Robert-Jarzmik/gpio-pxa-integrate-with-pincontrol/20151129-054738
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
-> config: arm-pxa910_defconfig (attached as .config)
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
+> Otherwise,
 >
-> All errors (new ones prefixed by >>):
->
->    drivers/gpio/gpio-pxa.c: In function 'pxa_gpio_probe':
->>> drivers/gpio/gpio-pxa.c:625:12: error: 'pxa_irq_domain_ops' undeclared (first use in this function)
->            0, &pxa_irq_domain_ops, pchip);
->                ^
->    drivers/gpio/gpio-pxa.c:625:12: note: each undeclared identifier is reported only once for each function it appears in
->    drivers/gpio/gpio-pxa.c: At top level:
->    drivers/gpio/gpio-pxa.c:500:24: warning: 'pxa_muxed_gpio_chip' defined but not used [-Wunused-variable]
->     static struct irq_chip pxa_muxed_gpio_chip = {
-
-Ok, that one is a matter of "#ifdef CONFIG_OF" englobbing pxa_irq_domain_ops and
-pxa_irq_domain_map().
-
-Didn't see it as the platform_data based test has CONFIG_OF activated in my
-kernel. That will be for v2, and tested without the CONFIG_OF to be sure.
-
-Cheers.
-
---
-Robert
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
