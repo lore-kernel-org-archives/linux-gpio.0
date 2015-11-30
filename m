@@ -1,51 +1,34 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] pinctrl: sh-pfc: r8a7779: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
-Date: Mon, 30 Nov 2015 14:41:04 +0100
-Message-ID: <1448890865-1856-4-git-send-email-geert+renesas@glider.be>
-References: <1448890865-1856-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: 104-idio-16: Disable IRQ on device probe
+Date: Mon, 30 Nov 2015 14:42:29 +0100
+Message-ID: <CACRpkdaXhsrRnZvgavS-hf7TgrGVsz43HwCPLR-2S=YtiGOZ5g@mail.gmail.com>
+References: <20151122163855.GA18100@sophia>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40554 "EHLO
-	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754246AbbK3NlJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 08:41:09 -0500
-In-Reply-To: <1448890865-1856-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:33486 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753881AbbK3Nma (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 08:42:30 -0500
+Received: by obbww6 with SMTP id ww6so126819446obb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 05:42:29 -0800 (PST)
+In-Reply-To: <20151122163855.GA18100@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Sun, Nov 22, 2015 at 5:38 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index 928eeb02a086d8b8..94bcc674abdd5612 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -609,14 +609,14 @@ enum {
- static const u16 pinmux_data[] = {
- 	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
- 
--	PINMUX_DATA(AVS1_MARK, FN_AVS1),
--	PINMUX_DATA(AVS1_MARK, FN_AVS1),
--	PINMUX_DATA(A17_MARK, FN_A17),
--	PINMUX_DATA(A18_MARK, FN_A18),
--	PINMUX_DATA(A19_MARK, FN_A19),
--
--	PINMUX_DATA(USB_PENC0_MARK, FN_USB_PENC0),
--	PINMUX_DATA(USB_PENC1_MARK, FN_USB_PENC1),
-+	PINMUX_SINGLE(AVS1),
-+	PINMUX_SINGLE(AVS1),
-+	PINMUX_SINGLE(A17),
-+	PINMUX_SINGLE(A18),
-+	PINMUX_SINGLE(A19),
-+
-+	PINMUX_SINGLE(USB_PENC0),
-+	PINMUX_SINGLE(USB_PENC1),
- 
- 	PINMUX_IPSR_GPSR(IP0_2_0, USB_PENC2),
- 	PINMUX_IPSR_MSEL(IP0_2_0, SCK0, SEL_SCIF0_0),
--- 
-1.9.1
+> IRQ should be disabled on device probe so that the device IRQ is in a
+> known starting state. If IRQ is not disabled, interrupts may be reported
+> as handled by the IRQ handler, despite no irq_unmask calls made by the
+> user.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
+Patch applied.
+
+Yours,
+Linus Walleij
