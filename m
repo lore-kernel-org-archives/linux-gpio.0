@@ -1,65 +1,97 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH v2] gpiolib: return 0 or 1 in gpiod_get_value*() functions
-Date: Mon, 30 Nov 2015 12:05:49 -0800
-Message-ID: <CAJAp7OhsnS_ysO9W4Ordm+UTjvcoyYht1zR9yLqgcdto8C175A@mail.gmail.com>
-References: <1448904631-30230-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 0/6] pinctrl: pxa: add pxa27x pin control support
+Date: Mon, 30 Nov 2015 22:06:37 +0100
+Message-ID: <87lh9f6vtu.fsf@belgarion.home>
+References: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
+	<CACRpkdaJO6noUd_a5d122G3EiO6-u9bu_gZMg1Tky=PS9O5yUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:34014 "EHLO
-	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751587AbbK3UFv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 15:05:51 -0500
-Received: by lffu14 with SMTP id u14so212769849lff.1
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 12:05:50 -0800 (PST)
-In-Reply-To: <1448904631-30230-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaJO6noUd_a5d122G3EiO6-u9bu_gZMg1Tky=PS9O5yUA@mail.gmail.com>
+	(Linus Walleij's message of "Mon, 30 Nov 2015 14:05:35 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Daniel Mack <daniel@zonque.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, hector.palacios@digi.com
 
-On Mon, Nov 30, 2015 at 9:30 AM, Jose Diaz de Grenu de Pedro
-<Jose.DiazdeGrenudePedro@digi.com> wrote:
-> Commit 79a9becda894 moved the awareness of active low state
-> into the gpiod_get_value*() functions, but it only inverts the
-> GPIO's raw value when it is active low. If the GPIO is active
-> high, the gpiod_get_value*() functions return the raw value of
-> the register, which can be any positive value.
+Linus Walleij <linus.walleij@linaro.org> writes:
+
+> On Sat, Nov 21, 2015 at 7:04 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 >
-> This patch does a double inversion when the GPIO is active high
-> to make sure either 0 or 1 is returned by these functions.
+>> I've been working on this for some time now, it's time pxa archtecture gets a
+>> proper pin control support.
+>>
+>> This serie provides support for pxa27x architecture, and paves the way to pxa2xx
+>> one. I've tested this on my pxa27x board, in both device-tree and non
+>> device-tree builds.
 >
-> Signed-off-by: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
-> Signed-off-by: Hector Palacios <hector.palacios@digi.com>
-> ---
-> change in v2:
->  - add missing semicolon
-> ---
->  drivers/gpio/gpiolib.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> So in 2013 Haojian removed PXA3xx, MMP2, PXA168 and PXA910 in favor
+> of using pinctrl-single.c shared with OMAP.
 >
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 50c4922fe53a..bd96f0457ba8 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1981,9 +1981,9 @@ int gpiod_get_value(const struct gpio_desc *desc)
->
->         value = _gpiod_get_raw_value(desc);
->         if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
-> -               value = !value;
-> -
-> -       return value;
-> +               return !value;
-> +       else
-> +               return !!value;
->  }
->  EXPORT_SYMBOL_GPL(gpiod_get_value);
+> See
+> commit 62194200e5e383af2085faf35b6f009364446069
+> "pinctrl: remove pxa pinctrl driver"
+Yes, for MMP2, PXA168 and PXA910. Up to my best understanding this didn't cover
+pxa3xx, but I might be wrong.
 
-On linux-next (at least) _gpiod_get_raw_value() returns the following value:
+> What makes the PXA27x so different from its siblings that it still
+> warrants its own driver? Why can this one not use pinctrl-single
+> as well?
+There are several factors I considered, which apply for both pxa25x and pxa27x :
+ - pinmuxing
+   - the "alternate" function is not dictated by a single register for a given
+     pin. The function is dictated by 2 registers : the gpio direction register
+     and the alternate function register.
+     That means that setting alternate function "MMCLK" for examples implies
+     writing to the gpio direction register (GPDR) "output", and writing to the
+     alternate function register (GAFR) the function.
+     I don't think pinctrl-single can handle this complexity, correct me if I'm
+     wrong.
 
-value = value < 0 ? value : !!value;
+   - MMP2, PXA168 and PXA910 are "post-multi platform" kernel. That means there
+     is not "machine code", and that all their boards are described in
+     devicetree (correct me Haojian if I'm wrong).
+     On the other hand, pxa25x, pxa27x and pxa3xx platform have still a lot of
+     machine files (arch/arm/mach-pxa/*.c). The goal of this serie is to remove
+     arch/arm/mach-pxa/mfp-*.c files, which predate pin control API, by
+     converting these machine files to pin control.
+     The long term goal is to have only one code maintained for pxa pinmuxing,
+     for both devicetree and platform_data board, and I'd rather have it in
+     pinctrl rather than arch/arm/mach-pxa.
 
-So this should already be negative errno, 0 or 1.
+   - gpio direction register sharing
+     As GPDR is needed for both gpio driver and pinctrl, I'd like to have a
+     single point where GPDR is manipulated. As pincontrol cannot be configured
+     without it, I was thinking have a pinctrl driver driving GPDR, and
+     gpio-pxa.c using it.
+     I don't see pinctrl-single enabling that either.
 
-Regards,
-Bjorn
+   - non contiguous register ranges
+     GPDR and GAFR are not contiguous, ie. you don't have the guarantee that
+     GPDR(pin(x+1)) is either GPDR(pin(x)) or GPDR(pin(x)) + 4.
+     Or said differently the register sets are sparse, and I don't know if
+     pinctrl-single can handle that.
+
+ - pinconf
+   - nothing special here, only a register set (sparse AFAIR).
+     I don't know if pinctrl-single can handle non contiguous MMIO ranges.
+
+Now for pxa3xx, I think pinctrl-single might be usable, as this architecture has
+a proper pincontrol register set. This is something I will look into next, as
+long as the legacy platform can use pinctrl-single too (ie. from machine code).
+
+I might remember other reasons in the next days, these ones are the most obvious
+which came to my mind.
+
+If you think of another way, I'm all for it, my personal objectives are :
+ - removing mfp* files
+ - having the same code handle devicetree and platform_data boards
+ - having consistency in gpio direction handling
+ - having pinctrl debug facilities (I love /sys/kernel/debug/pinctrl**)
+ - having pin function names consistency across the boards if possible (ie. if
+   MMCLK is used on boardX, then MMCLK must be used in boardY, and not MMCCLK)
+
+Cheers.
+
+-- 
+Robert
