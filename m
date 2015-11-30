@@ -1,37 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: at91-pio4: use %pr format string for resource
-Date: Mon, 30 Nov 2015 09:47:03 +0100
-Message-ID: <CACRpkdZ4F8Loyoh6niCvkM=S8KcekTs8EvXRmB-0WxcRFw_8+g@mail.gmail.com>
-References: <5199877.GVYeflqET9@wuerfel>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7791/r8a7795: Add SCIF_CLK support
+Date: Mon, 30 Nov 2015 09:48:34 +0100
+Message-ID: <CACRpkdbZSJXVZrgyJZyoaVxarPbq0D4ezZdo53kQz+ANDFb9=g@mail.gmail.com>
+References: <1447957827-32637-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5199877.GVYeflqET9@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1447957827-32637-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Nov 18, 2015 at 4:21 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, Nov 19, 2015 at 7:30 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> resource_size_t may be defined as 32 or 64 bit depending on configuration,
-> so it cannot be printed using the normal format strings, as gcc correctly
-> warns:
+>         Hi Linus, Laurent,
 >
-> pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
-> pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
->    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
->
-> This changes the format string to use the special "%pr" format
-> string that prints a resource, and changes the arguments so we
-> the resource structure directly.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: don't break ordering of arguments, that part was correct already, unlike
-> what I said in v1.
+> This patch series add pins, groups, and a function for SCIF_CLK on R-Car
+> M2 and R-Car H3. SCIF_CLK is the external clock source for the Baud Rate
+> Generator for External Clock (BRG) on (H)SCIF.
 
-Patch applied with Ludovic's review tag.
+Acked-by from my side, expect that you queue these and send me
+a pull request.
 
 Yours,
 Linus Walleij
