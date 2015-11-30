@@ -1,36 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] i2c: imx: make bus recovery through pinctrl optional
-Date: Mon, 30 Nov 2015 13:55:19 +0100
-Message-ID: <CACRpkdbb-GFJSVvxOLda6CVG_fB2zAPPC2MMzQ6P1mAfvsrkPw@mail.gmail.com>
-References: <1448055950-21190-1-git-send-email-leoli@freescale.com>
+Subject: Re: [PATCH 0/6] pinctrl: pxa: add pxa27x pin control support
+Date: Mon, 30 Nov 2015 14:05:35 +0100
+Message-ID: <CACRpkdaJO6noUd_a5d122G3EiO6-u9bu_gZMg1Tky=PS9O5yUA@mail.gmail.com>
+References: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34451 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752959AbbK3MzU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 07:55:20 -0500
-Received: by oies6 with SMTP id s6so95193428oie.1
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 04:55:19 -0800 (PST)
-In-Reply-To: <1448055950-21190-1-git-send-email-leoli@freescale.com>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35089 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753943AbbK3NFg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 08:05:36 -0500
+Received: by oige206 with SMTP id e206so94124453oig.2
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 05:05:35 -0800 (PST)
+In-Reply-To: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Li Yang <leoli@freescale.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gao Pan <b54642@freescale.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>, Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Daniel Mack <daniel@zonque.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Nov 20, 2015 at 10:45 PM, Li Yang <leoli@freescale.com> wrote:
+On Sat, Nov 21, 2015 at 7:04 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-> -       if (IS_ERR(i2c_imx->pinctrl)) {
-> +       /* bailout on -ENOMEM or -EPROBE_DEFER, continue for other errors */
-> +       if (PTR_ERR(i2c_imx->pinctrl) == -ENOMEM ||
-> +                       PTR_ERR(i2c_imx->pinctrl) == -EPROBE_DEFER) {
+> I've been working on this for some time now, it's time pxa archtecture gets a
+> proper pin control support.
+>
+> This serie provides support for pxa27x architecture, and paves the way to pxa2xx
+> one. I've tested this on my pxa27x board, in both device-tree and non
+> device-tree builds.
 
-This is one of the evils of deferred probe: you never know if
-something will eventually turn up. It feels wrong to bail out
-on deferred probe...
+So in 2013 Haojian removed PXA3xx, MMP2, PXA168 and PXA910 in favor
+of using pinctrl-single.c shared with OMAP.
 
-I have no better idea though.
-Acked-by
+See
+commit 62194200e5e383af2085faf35b6f009364446069
+"pinctrl: remove pxa pinctrl driver"
+
+What makes the PXA27x so different from its siblings that it still
+warrants its own driver? Why can this one not use pinctrl-single
+as well?
 
 Yours,
 Linus Walleij
