@@ -1,97 +1,43 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 0/6] pinctrl: pxa: add pxa27x pin control support
-Date: Mon, 30 Nov 2015 22:06:37 +0100
-Message-ID: <87lh9f6vtu.fsf@belgarion.home>
-References: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
-	<CACRpkdaJO6noUd_a5d122G3EiO6-u9bu_gZMg1Tky=PS9O5yUA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaJO6noUd_a5d122G3EiO6-u9bu_gZMg1Tky=PS9O5yUA@mail.gmail.com>
-	(Linus Walleij's message of "Mon, 30 Nov 2015 14:05:35 +0100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: Daniel Mack <daniel@zonque.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Christophe Ricard <christophe.ricard@gmail.com>
+Subject: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
+Date: Mon, 30 Nov 2015 23:47:51 +0100
+Message-ID: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:36676 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753968AbbK3Wsl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 17:48:41 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com
+Cc: linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+Hi,
 
-> On Sat, Nov 21, 2015 at 7:04 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
->
->> I've been working on this for some time now, it's time pxa archtecture gets a
->> proper pin control support.
->>
->> This serie provides support for pxa27x architecture, and paves the way to pxa2xx
->> one. I've tested this on my pxa27x board, in both device-tree and non
->> device-tree builds.
->
-> So in 2013 Haojian removed PXA3xx, MMP2, PXA168 and PXA910 in favor
-> of using pinctrl-single.c shared with OMAP.
->
-> See
-> commit 62194200e5e383af2085faf35b6f009364446069
-> "pinctrl: remove pxa pinctrl driver"
-Yes, for MMP2, PXA168 and PXA910. Up to my best understanding this didn't cover
-pxa3xx, but I might be wrong.
+This serie only move from RFC to final. I am also adding gpio folks for potential
+feedback.
 
-> What makes the PXA27x so different from its siblings that it still
-> warrants its own driver? Why can this one not use pinctrl-single
-> as well?
-There are several factors I considered, which apply for both pxa25x and pxa27x :
- - pinmuxing
-   - the "alternate" function is not dictated by a single register for a given
-     pin. The function is dictated by 2 registers : the gpio direction register
-     and the alternate function register.
-     That means that setting alternate function "MMCLK" for examples implies
-     writing to the gpio direction register (GPDR) "output", and writing to the
-     alternate function register (GAFR) the function.
-     I don't think pinctrl-single can handle this complexity, correct me if I'm
-     wrong.
+ACPI probing method does not retrieve irq_type from a gpio interrupt declared
+with GpioInt as it is done with devicetree probing. In other terms, irq_get_trigger_type
+will always send back 0.
 
-   - MMP2, PXA168 and PXA910 are "post-multi platform" kernel. That means there
-     is not "machine code", and that all their boards are described in
-     devicetree (correct me Haojian if I'm wrong).
-     On the other hand, pxa25x, pxa27x and pxa3xx platform have still a lot of
-     machine files (arch/arm/mach-pxa/*.c). The goal of this serie is to remove
-     arch/arm/mach-pxa/mfp-*.c files, which predate pin control API, by
-     converting these machine files to pin control.
-     The long term goal is to have only one code maintained for pxa pinmuxing,
-     for both devicetree and platform_data board, and I'd rather have it in
-     pinctrl rather than arch/arm/mach-pxa.
+Those 2 patches propose a way to retrieve the correct interrupt polarity/type from a GpioInt
+acpi declaration when using irq_get_trigger_type.
 
-   - gpio direction register sharing
-     As GPDR is needed for both gpio driver and pinctrl, I'd like to have a
-     single point where GPDR is manipulated. As pincontrol cannot be configured
-     without it, I was thinking have a pinctrl driver driving GPDR, and
-     gpio-pxa.c using it.
-     I don't see pinctrl-single enabling that either.
+Best Regards
+Christophe 
 
-   - non contiguous register ranges
-     GPDR and GAFR are not contiguous, ie. you don't have the guarantee that
-     GPDR(pin(x+1)) is either GPDR(pin(x)) or GPDR(pin(x)) + 4.
-     Or said differently the register sets are sparse, and I don't know if
-     pinctrl-single can handle that.
+Christophe Ricard (2):
+  acpi: Rename acpi_gsi_get_irq_type to acpi_get_irq_type and export
+    symbol
+  ACPI / gpio: Add irq_type when a gpio is used as an interrupt
 
- - pinconf
-   - nothing special here, only a register set (sparse AFAIR).
-     I don't know if pinctrl-single can handle non contiguous MMIO ranges.
-
-Now for pxa3xx, I think pinctrl-single might be usable, as this architecture has
-a proper pincontrol register set. This is something I will look into next, as
-long as the legacy platform can use pinctrl-single too (ie. from machine code).
-
-I might remember other reasons in the next days, these ones are the most obvious
-which came to my mind.
-
-If you think of another way, I'm all for it, my personal objectives are :
- - removing mfp* files
- - having the same code handle devicetree and platform_data boards
- - having consistency in gpio direction handling
- - having pinctrl debug facilities (I love /sys/kernel/debug/pinctrl**)
- - having pin function names consistency across the boards if possible (ie. if
-   MMCLK is used on boardX, then MMCLK must be used in boardY, and not MMCCLK)
-
-Cheers.
+ drivers/acpi/gsi.c          | 21 +--------------------
+ drivers/acpi/utils.c        | 21 +++++++++++++++++++++
+ drivers/gpio/gpiolib-acpi.c |  5 ++++-
+ include/linux/acpi.h        |  2 ++
+ 4 files changed, 28 insertions(+), 21 deletions(-)
 
 -- 
-Robert
+2.1.4
+
