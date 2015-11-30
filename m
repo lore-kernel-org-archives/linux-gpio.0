@@ -1,20 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/7] pinctrl: Add new compatible string to GPIO
- controller driver
-Date: Mon, 30 Nov 2015 09:37:51 +0100
-Message-ID: <CACRpkdZcCvHw02SvpMG1boL1FWNsrQ+vSVqyy3PYGM2pXMpYyA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] gpio: Rename func/macro/var to IP-block,iproc
+Date: Mon, 30 Nov 2015 09:41:15 +0100
+Message-ID: <CACRpkdYXa=vT_T=GANMCzcRdOQjUSnM74Zzht1v1nydN3X+_fw@mail.gmail.com>
 References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com>
-	<1447905139-16002-5-git-send-email-pramodku@broadcom.com>
+	<1447905139-16002-6-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:35872 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753281AbbK3Ihw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 03:37:52 -0500
-Received: by obdgf3 with SMTP id gf3so122614405obd.3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 00:37:51 -0800 (PST)
-In-Reply-To: <1447905139-16002-5-git-send-email-pramodku@broadcom.com>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:33948 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753571AbbK3IlQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 03:41:16 -0500
+Received: by obbbj7 with SMTP id bj7so121215021obb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 00:41:15 -0800 (PST)
+In-Reply-To: <1447905139-16002-6-git-send-email-pramodku@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Pramod Kumar <pramodku@broadcom.com>
@@ -22,14 +21,15 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutl
 
 On Thu, Nov 19, 2015 at 4:52 AM, Pramod Kumar <pramodku@broadcom.com> wrote:
 
-> This compatible string should be used for all new iproc based future
-> SoCs having the same GPIO controller hardware.
+> Change functions, macros and variables name from cygnus to IP block,
+> iproc, so that it could be used in all iproc based future SoCs having
+> same GPIO controller block.
 >
 > Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
 > Reviewed-by: Ray Jui <rjui@broadcom.com>
 > Reviewed-by: Scott Branden <sbranden@broadcom.com>
 
-Patch applied.
+Patch applied. Required some rebasing so check the result.
 
 Yours,
 Linus Walleij
