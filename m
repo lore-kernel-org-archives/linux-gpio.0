@@ -1,56 +1,37 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-Date: Mon, 30 Nov 2015 17:48:55 +0900
-Message-ID: <CAK7LNASwK_B7L7wpgTBEdoOOeFrHFD603q_Wfap-v+C3FWpFWg@mail.gmail.com>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 4/4] gpio: tps65086: Add GPO driver for the TPS65086 PMIC
+Date: Mon, 30 Nov 2015 09:50:58 +0100
+Message-ID: <CACRpkdaetwCU91e6hyDr4OHmrKgPY+bcPLtjCYz4mTcLqmxr1Q@mail.gmail.com>
+References: <1447974102-24938-1-git-send-email-afd@ti.com>
+	<1447974102-24938-5-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-clk@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447974102-24938-5-git-send-email-afd-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2015-11-30 17:46 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the target index is not
-> found in the property.  In this case, NULL should be returned.
+On Fri, Nov 20, 2015 at 12:01 AM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
+
+> Add support for the TPS65086 PMIC GPOs.
 >
-> For example,
+> TPS65086 has four configurable GPOs that can be used for several
+> purposes. These are output only.
 >
->         oscillator {
->                 compatible = "myclocktype";
->                 #clock-cells = <1>;
->                 clock-indices = <1>, <3>;
->                 clock-output-names = "clka", "clkb";
->         };
->
->         consumer {
->                 compatible = "myclockconsumer";
->                 clocks = <&oscillator 0>, <&oscillator 1>;
->         };
->
-> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-> this is correct).   Because the "clock-indices" in the clock parent
-> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-> return NULL.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
+(...)
+> +       gpio->tps = dev_get_drvdata(pdev->dev.parent);
+> +       gpio->chip = template_chip;
+> +       gpio->chip.dev = gpio->tps->dev;
 
+We have renamed this to .parent in linux-next and it needs to
+be altered to compile upstream.
 
-
-I've sent v2 to linux-gpio@vger.kernel.org by mistake.
-
-My intention was to send it linux-clk@vger.kernel.org.
-
-
-Sorry, Linus Walleij.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
