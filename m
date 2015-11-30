@@ -1,213 +1,643 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: Re: [RFC PATCH] gpiolib: fix oops, if gpio name is NULL
-Date: Mon, 30 Nov 2015 10:51:25 +0100
-Message-ID: <1681441.GQgjGhYvLn@adelgunde>
-References: <1447245413-32209-1-git-send-email-vz@mleia.com> <1556500.sdcUFi7dPa@adelgunde> <565AF32E.2020307@mleia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/4] gpio: lpc32xx: add new LPC32xx GPIO controller driver
+Date: Mon, 30 Nov 2015 11:23:52 +0100
+Message-ID: <CACRpkdb+hUVQY-RBsWkRRhxN37wapaxL6FNfkAxozPtHeU5Fqw@mail.gmail.com>
+References: <1447982995-30231-1-git-send-email-vz@mleia.com>
+	<1447982995-30231-5-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2596408.6Q0bHURmG4"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:58042 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752628AbbK3Jvf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 04:51:35 -0500
-In-Reply-To: <565AF32E.2020307@mleia.com>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:35140 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752562AbbK3KXx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 05:23:53 -0500
+Received: by obbnk6 with SMTP id nk6so122849671obb.2
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 02:23:52 -0800 (PST)
+In-Reply-To: <1447982995-30231-5-git-send-email-vz@mleia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Roland Stigge <stigge@antcom.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Fri, Nov 20, 2015 at 2:29 AM, Vladimir Zapolskiy <vz@mleia.com> wrote:
 
---nextPart2596408.6Q0bHURmG4
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+> The change adds a replacement to a legacy unmaintainable LPC32xx GPIO
+> controller driver.
+>
+> The driver gets all information to configure a GPIO bank from its
+> device tree node, the driver is capable to assign interrupt controller
+> roles to its GPIO banks and it has no hardcoded dependencies on
+> hardware interrupt numbers, control register addresses, mapping of
+> GPIO lines to interrupts or bitfields.
+>
+> The new driver is compatible with device tree clients of the legacy
+> driver, no changes on GPIO client side are needed.
+>
+> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+(...)
 
-Hi,
+Overall question: why are you not creating one device and thus
+one gpio_chip per bank?
 
-On Sunday 29 November 2015 14:44:30 Vladimir Zapolskiy wrote:
-> Hi Linus,
->=20
-> On 17.11.2015 13:50, Markus Pargmann wrote:
-> > Hi Vladimir,
-> >=20
-> > On Tuesday 17 November 2015 13:20:40 Vladimir Zapolskiy wrote:
-> >> Hi Markus,
-> >>
-> >> On 17.11.2015 11:24, Markus Pargmann wrote:
-> >>> Hi,
-> >>>
-> >>> On Wednesday 11 November 2015 14:36:53 Vladimir Zapolskiy wrote:
-> >>>> Commit c0017ed71966 ("gpio: Introduce gpio descriptor 'name'") c=
-auses
-> >>>> OOPS on boot on LPC32xx boards:
-> >>>>
-> >>>>     Unable to handle kernel NULL pointer dereference at virtual =
-address 00000000
-> >>>>     CPU: 0 PID: 1 Comm: swapper Not tainted 4.3.0+ #707
-> >>>>     Hardware name: LPC32XX SoC (Flattened Device Tree)
-> >>>>     task: c381baa0 ti: c381e000 task.ti: c381e000
-> >>>>     PC is at strcmp+0x10/0x40
-> >>>>     LR is at gpiochip_add+0x3d0/0x4d4
-> >>>>     pc : [<>]    lr : [<>]    psr: a0000093
-> >>>>     sp : c381fd60  ip : c381fd70  fp : c381fd6c
-> >>>>
-> >>>>     [snip]
-> >>>>
-> >>>>     Backtrace:
-> >>>>     [<>] (strcmp) from [<>] (gpiochip_add+0x3d0/0x4d4)
-> >>>>     [<>] (gpiochip_add) from [<>] (lpc32xx_gpio_probe+0x44/0x60)=
+That would make this driver a lot simpler I think. Please motivate
+if you want to keep it like this.
 
-> >>>>     [<>] (lpc32xx_gpio_probe) from [<>] (platform_drv_probe+0x40=
-/0x8c)
-> >>>>     [<>] (platform_drv_probe) from [<>] (driver_probe_device+0x1=
-10/0x294)
-> >>>>     [<>] (driver_probe_device) from [<>] (__driver_attach+0x70/0=
-x94)
-> >>>>     [<>] (__driver_attach) from [<>] (bus_for_each_dev+0x74/0x98=
-)
-> >>>>     [<>] (bus_for_each_dev) from [<>] (driver_attach+0x20/0x28)
-> >>>>     [<>] (driver_attach) from [<>] (bus_add_driver+0xd4/0x1f0)
-> >>>>     [<>] (bus_add_driver) from [<>] (driver_register+0xa4/0xe8)
-> >>>>     [<>] (driver_register) from [<>] (__platform_driver_register=
-+0x38/0x4c)
-> >>>>     [<>] (__platform_driver_register) from [<>] (lpc32xx_gpio_dr=
-iver_init+0x18/0x20)
-> >>>>     [<>] (lpc32xx_gpio_driver_init) from [<>] (do_one_initcall+0=
-x108/0x1c8)
-> >>>>     [<>] (do_one_initcall) from [<>] (kernel_init_freeable+0x10c=
-/0x1d4)
-> >>>>     [<>] (kernel_init_freeable) from [<>] (kernel_init+0x10/0xec=
-)
-> >>>>     [<>] (kernel_init) from [<>] (ret_from_fork+0x14/0x24)
-> >>>>
-> >>>> This is caused by the fact that at the moment some GPIO names ar=
-e set
-> >>>> to NULL, there is a hole in linear representation of one GPI ban=
-k, see
-> >>>> drivers/gpio/gpio-lpc32xx.c / gpi_p3_names[] for details.
-> >>>>
-> >>>> The same problem most probably affects also gpio-cs5535.c, see
-> >>>> cs5535_gpio_names[].
-> >>>>
-> >>>> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> >>>> ---
-> >>>> Linus, Markus,
-> >>>>
-> >>>> I understand that LPC32xx GPIO driver is ugly (hopefully this
-> >>>> will be changed in future), but please account this problem.
-> >>>>
-> >>>> I don't ask for inclusion of this change, because my own analysi=
-s is
-> >>>> not done completely.
-> >>>>
-> >>>> Also please review, the same problem probably affects gpio-cs553=
-5.c
-> >>>> as well, see cs5535_gpio_names[].
-> >>>
-> >>> Thanks for this hint. But I think these patches for gpio_name_to_=
-desc won't get
-> >>> mainline any time soon as this depends on the chardev interface a=
-nd how it will
-> >>> look like.
-> >>>
-> >>
-> >> sorry for misunderstanding, what do mean by "these patches"?
-> >>
-> >> I see two options here, one is to fix or revert your c0017ed71966 =
-due to
-> >> caused regressions, another one is to update affected GPIO drivers=
+Doing that would probably also enable you to use
+GPIOLIB_IRQCHIP which would be a big win.
 
-> >> removing discontinuity in GPIO enumeration inside a bank.
-> >=20
-> > Sorry, seems I was on a wrong kernel version when checking this mor=
-ning. Linus
-> > removed lots of my patches from his tree after some correct comment=
-s so I
-> > thought this patch was removed as well.
->=20
-> Linus, should I resend this fix for v4.4 or is it good enough for
-> application?
->=20
-> > As it is mainline your patch looks good to me. Perhaps a comment on=
- why we need
-> > to check for !name at this point would be good.
->=20
-> There is such a description in the commit message, why this check is =
-needed.
+> +#define pr_fmt(fmt) "%s: " fmt, __func__
 
-I meant a code comment. But that's not too important.
+Usually a driver shall use dev_*(dev,) and not need quirks
+like this to modify prints. Why is this needed?
 
-Best Regards,
+> +#include <linux/interrupt.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/slab.h>
 
-Markus
+This file will need
+#include <linux/bitops.h>
 
->=20
-> With best wishes,
-> Vladimir
->=20
-> > Best Regards,
-> >=20
-> > Markus
-> >=20
-> >>
-> >> With best wishes,
-> >> Vladimir
-> >>
-> >>>>
-> >>>>  drivers/gpio/gpiolib.c | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> >>>> index a18f00f..2a91f32 100644
-> >>>> --- a/drivers/gpio/gpiolib.c
-> >>>> +++ b/drivers/gpio/gpiolib.c
-> >>>> @@ -233,7 +233,7 @@ static struct gpio_desc *gpio_name_to_desc(c=
-onst char * const name)
-> >>>>  =09=09for (i =3D 0; i !=3D chip->ngpio; ++i) {
-> >>>>  =09=09=09struct gpio_desc *gpio =3D &chip->desc[i];
-> >>>> =20
-> >>>> -=09=09=09if (!gpio->name)
-> >>>> +=09=09=09if (!gpio->name || !name)
-> >>>>  =09=09=09=09continue;
-> >>>> =20
-> >>>>  =09=09=09if (!strcmp(gpio->name, name)) {
-> >>>>
-> >>>
-> >>
-> >=20
->=20
+You should also include
+#include <linux/gpio/driver.h>
 
-=2D-=20
-Pengutronix e.K.                           |                           =
-  |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0  =
-  |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-555=
-5 |
+Even if this gets in implicitly.
 
---nextPart2596408.6Q0bHURmG4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> +#define to_lpc32xx_gpio_chip(c)        container_of(chip, struct lpc32xx_gpio_chip, c)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Rewrite this into a static inline function. Defines are ugly.
 
-iQIcBAABCAAGBQJWXBwkAAoJEEpcgKtcEGQQU5YQAITMFI/BHS9z3sJLJ6tfLU4j
-+rf8ijBrYGZFV7SeBbEa8U6pt/I4rQsgervoBI77ZkHTp5OedJj6SzNWWEsMXjMz
-Yp0bs7Q2vBl+UI+YGGyic7d96lin53xCNzLD+cYWHUbsDN9aFy6IYg99vTuzm4Gc
-EI/32XiMAVkjtC7jTcIiv96mu4Cl4lf9Xf3yACeDAU0rZSXW5BEZXNlsdw9suc45
-S8HfIuUPDvfuBt9uGNsW7BWNJjGI4XCzSQduC+78/INNb1Mj5lzi10KdE1kBAZUj
-X8umGWGdbbUtrC1thvd7yN6NhuOXYFU94WuJW6ybCKQy8Z0zD77gRSmqk6ELLmMN
-gve0JyFEXbfKLC9WhThDU5qaT1tG1fGbLnHGXNWmjX8+Ban1xD73j0duPLuxUK2r
-Pj1M5zvxiYM8OAn/gwjSWPUXXtJ+z9c6rNyN8pgcIPoN2lctQveF56mbYHEOdkva
-AAsGrIqoqEDHTrf5IM2z5rEdSeZ1SR2cgfcX0xIl1MHROmXYDL3t2Co7YGC+eXXj
-f8rjCoiRaN+CYyxEU9ZvgiQs2+UkzyJZWs8daAG0dS/pHZchb99CwvvbeUNvsVaQ
-+5BzVq2GSX8iZ+22ESUalrEVq5Wz5sOnHDcKTc5ZPCdwvw8ZxCDAEjJxIf9T66b+
-f31KZUljQMMxMeDuVuPD
-=oioa
------END PGP SIGNATURE-----
+> +struct lpc32xx_gpio_chip;
+> +
+> +struct lpc32xx_irq_data {
+> +       struct lpc32xx_gpio_chip *bank;
+> +       u32 idx;
+> +       u32 parent;
+> +       u32 gpio;
+> +};
 
---nextPart2596408.6Q0bHURmG4--
+This needs some kerneldoc, and I think it looks very weird,
+like you are reimplementing irqdomain or something.
 
+Some circular dependency of one device pointing
+back to the other, why? Is this necessary?
+
+> +struct lpc32xx_gpio_chip {
+> +       struct gpio_chip chip;
+> +
+> +       struct device *dev;
+> +       void __iomem *base;
+> +       void __iomem *input;
+> +       void __iomem *output;
+> +       void __iomem *dir;
+> +
+> +       bool input_only;
+> +       bool output_only;
+> +       u32 *output_states;
+> +       u32 offset;
+> +       u32 input_mask;
+> +       u32 interrupt_mask;
+> +
+> +       const char **gpio_names;
+
+The gpio_chip has a field named .names for this,
+why are you reimplementing this in your driver?
+
+> +       u32 nirq;
+> +       struct resource *irq_res;
+> +       struct lpc32xx_irq_data *irqs;
+> +};
+
+Kerneldoc this struct so I understand it, too.
+
+> +
+> +static struct lpc32xx_gpio_chip *lpc32xx_gpio_chips[LPC32XX_GPIO_BANKS];
+
+I don't see why you are doing a local array of these but I
+guess I will find out...
+
+> +/* Count set bits in mask, i.e. get max relative bit position */
+> +static int bit_count(u32 mask)
+> +{
+> +       int count = 0;
+> +
+> +       for (; mask; mask >>= 1)
+> +               if (mask & 0x1)
+> +                       count++;
+> +
+> +       return count;
+> +}
+
+Nope. This is already in the kernel, sometimes assembly-optimized
+for certain architectures.
+
+Just use
+
+#include <linux/bitops.h>
+hweight32(mask);
+
+> +/*
+> + * If mask has less or equal than "rel" set bits, i.e.
+> + * relative bit is set, find its abosulute bit position
+
+Spelling.
+
+> + */
+> +static int bit_abs(u32 rel, u32 mask)
+> +{
+> +       int idx, val = 0;
+> +
+> +       for (idx = 0; idx <= rel; val++, mask >>= 1) {
+> +               if (mask & 0x1)
+> +                       idx++;
+> +               if (!mask)
+> +                       return -EINVAL;
+> +       }
+> +       val--;
+> +
+> +       return val;
+> +}
+> +
+> +/*
+> + * If mask has set bit on absolute position,
+> + * find relative bit number in set bits
+> + */
+> +static int bit_rel(u32 abs, u32 mask)
+> +{
+> +       int val = 0;
+> +
+> +       if (!(BIT(abs) & mask))
+> +               return -EINVAL;
+> +
+> +       for (; abs; abs--, mask >>= 1) {
+> +               if (mask & 0x1)
+> +                       val++;
+> +       }
+> +       return val;
+> +}
+> +
+> +/*
+> + * Composition of bit_abs() and bit_rel(),
+> + * mapping of one relative bit position into another
+> + */
+> +static int bit_map(u32 rel, u32 from, u32 to)
+> +{
+> +       int ret;
+> +
+> +       ret = bit_abs(rel, from);
+> +       if (ret < 0)
+> +               return ret;
+> +       return bit_rel(ret, to);
+> +}
+
+I suspect these are reiplementations of generic concepts as well.
+Please study <linux/bitops.h> and <asm/bitops.h>
+
+We have all kinds of operations for finding first set bit, last set
+bit, hamming weight, modifying bitmasks etc etc.
+
+> +static int lpc32xx_gpio_get(struct gpio_chip *chip, unsigned gpio)
+
+Rename parameter "gpio" to "offset", as this is not a global number
+but chip-local.
+
+> +{
+> +       struct lpc32xx_gpio_chip *c = to_lpc32xx_gpio_chip(chip);
+> +       u32 val, direction = lpc32xx_gpio_dir_get(chip, gpio);
+> +       int ret;
+> +
+> +       if (direction == GPIOF_DIR_OUT) {
+> +               /* Return cached value in case of P2 bank */
+> +               if (c->output_states)
+> +                       return c->output_states[gpio];
+> +
+> +               val = readl(c->output + LPC32XX_GPIO_STATE);
+> +               val >>= gpio + c->offset;
+
+Do it like this:
+
+return !!(readl(c->output + LPC32XX_GPIO_STATE) & BIT(c->offset + offset));
+
+> +       } else {
+
+Just skip the else clause and un-indent. If we're here, it is input.
+
+> +               if (c->input_mask) {
+> +                       /* Special case of GPI and GPIO decomposition */
+> +                       ret = bit_abs(gpio, c->input_mask);
+> +                       if (ret < 0)
+> +                               return ret;
+> +               } else {
+> +                       ret = gpio;
+> +               }
+> +
+> +               val = readl(c->input) >> ret;
+
+Just
+return !!(readl(c->input) & BIT(offset));
+
+> +       }
+> +
+> +       return val & 0x1;
+> +}
+
+(...)
+> +static int lpc32xx_gpio_dir_input(struct gpio_chip *chip, unsigned gpio)
+
+Rename "gpio" to "offset"
+
+> +{
+> +       struct lpc32xx_gpio_chip *c = to_lpc32xx_gpio_chip(chip);
+> +
+> +       if (c->output_only)
+> +               return -EINVAL;
+> +
+> +       writel(BIT(gpio + c->offset), c->dir + LPC32XX_GPIO_CLEAR);
+
+This looks right.
+
+> +static int lpc32xx_gpio_dir_output(struct gpio_chip *chip,
+> +                                  unsigned gpio, int value)
+
+Rename "gpio" to "offset".
+
+> +static int lpc32xx_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+> +{
+> +       struct lpc32xx_gpio_chip *bank = to_lpc32xx_gpio_chip(chip);
+> +       int ret;
+> +
+> +       if (!bank->chip.irqchip) {
+> +               dev_dbg(bank->dev, "%s: no interrupt controller\n",
+> +                       bank->gpio_names[gpio]);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (bank->input_mask) {
+> +               ret = bit_map(gpio, bank->input_mask, bank->interrupt_mask);
+> +               if (ret >= 0)
+> +                       ret = irq_find_mapping(bank->chip.irqdomain, ret);
+> +       }
+> +
+> +       return ret;
+
+What happens if bank.irqchip is exis and bank->input_mask is blank?
+
+You return an unitialized ret variable.
+
+Again: why is it not possible to use the GPIOLIB_IRQCHIP and get rid of
+all the custom IRQ handling in the driver? If you do one device
+per bank I think this would be possible, and maybe even if you
+keep this composite driver, because gpiochip_irqchip_add() can
+be called several times if referring to the same gpio_chip.
+
+> +static irqreturn_t lpc32xx_gpio_irq_handler(int irq, void *irqdata)
+> +{
+> +       struct lpc32xx_irq_data *data = irqdata;
+> +       struct lpc32xx_gpio_chip *c = data->bank;
+> +       int virq = irq_find_mapping(c->chip.irqdomain, data->idx);
+> +       u32 val;
+> +
+> +       if (irq_get_trigger_type(virq) == IRQ_TYPE_EDGE_BOTH) {
+> +               val = lpc32xx_gpio_get(&c->chip, c->irqs[data->idx].gpio);
+> +               if (val)
+> +                       irq_set_irq_type(irq, IRQ_TYPE_EDGE_FALLING);
+> +               else
+> +                       irq_set_irq_type(irq, IRQ_TYPE_EDGE_RISING);
+> +       }
+> +
+> +       generic_handle_irq(virq);
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static int lpc32xx_gpio_irq_set_type(struct irq_data *d, unsigned type)
+> +{
+> +       struct irq_domain *id = d->domain;
+> +       struct lpc32xx_gpio_chip *c = (struct lpc32xx_gpio_chip *)id->host_data;
+> +       u32 val;
+> +
+> +       irqd_set_trigger_type(d, type);
+> +
+> +       if (type == IRQ_TYPE_EDGE_BOTH) {
+> +               val = lpc32xx_gpio_get(&c->chip, c->irqs[d->hwirq].gpio);
+> +               if (val)
+> +                       type = IRQ_TYPE_EDGE_FALLING;
+> +               else
+> +                       type = IRQ_TYPE_EDGE_RISING;
+> +       }
+
+Use a switch() statement here. What if somebody tries to set a
+LEVEL IRQ? You need a default: clause.
+
+> +       irq_set_irq_type(c->irqs[d->hwirq].parent, type);
+
+This looks weird. Why is the IRQ output line from the gpiochip
+changing type just because it is starting to detect IRQs on its
+GPIO lines in a different way?
+
+Just because the gpiochip starts to do edges, it doesn't mean
+it starts outputting edges all of a sudden, if i was level
+IRQs before (the most common).
+
+Please explain this or put in a big comment about how these
+IRQs work on the platform.
+
+> +static unsigned int lpc32xx_gpio_irq_startup(struct irq_data *d)
+> +{
+> +       struct irq_domain *id = d->domain;
+> +       struct lpc32xx_gpio_chip *c = (struct lpc32xx_gpio_chip *)id->host_data;
+> +       int ret;
+> +
+> +       ret = request_irq(c->irqs[d->hwirq].parent,
+> +                         lpc32xx_gpio_irq_handler,
+> +                         IRQF_TRIGGER_NONE, dev_name(c->dev),
+> +                         &c->irqs[d->hwirq]);
+
+And here the parent IRQ is requested with NONE trigger.
+Why? Isn't the gpio chip coupled to that line with some
+buffer logic that clearly states which IRQ type should
+be used to interface the parent?
+
+> +static int lpc32xx_of_xlate(struct gpio_chip *gc,
+> +                           const struct of_phandle_args *gpiospec, u32 *flags)
+> +{
+> +       u32 idx = gpiospec->args[0];
+> +
+> +       if (idx > LPC32XX_GPIO_BANKS || &lpc32xx_gpio_chips[idx]->chip != gc)
+> +               return -EINVAL;
+
+return of_gpio_simple_xlate(gc, gpiospec, flags);
+
+> +
+> +       if (flags)
+> +               *flags = gpiospec->args[2];
+> +
+> +       return gpiospec->args[1];
+> +}
+
+Then you don't need to reimplement this, right?
+
+> +static int lpc32xx_add_irqchip(struct lpc32xx_gpio_chip *bank,
+> +                              struct device_node *node)
+
+Please try to use GPIOLIB_IRQCHIP instead. Please.
+
+> +{
+> +       int idx, virq;
+> +       struct gpio_chip *gpiochip = &bank->chip;
+> +       struct irq_chip *irqchip;
+> +
+> +       irqchip = devm_kzalloc(bank->dev, sizeof(*irqchip), GFP_KERNEL);
+> +       if (!irqchip)
+> +               return -ENOMEM;
+> +
+> +       irqchip->name           = bank->chip.label;
+> +       irqchip->irq_startup    = lpc32xx_gpio_irq_startup;
+> +       irqchip->irq_shutdown   = lpc32xx_gpio_irq_shutdown;
+> +       irqchip->irq_set_type   = lpc32xx_gpio_irq_set_type;
+
+If you persist on this, you need to have
+.irq_request_resources()/.irq_release_resources() calling
+gpiochip_lock_as_irq() and gpiochip_unlock_as_irq() to
+protect the IRQ lines. GPIOLIB_IRQCHIP would again
+handle this for you.
+
+> +static int lpc32xx_set_irqs(struct lpc32xx_gpio_chip *bank,
+> +                           struct device_node *node)
+> +{
+> +       int idx, ret;
+> +       u32 nirq;
+> +
+> +       nirq = bit_count(bank->interrupt_mask);
+> +       if (nirq != of_irq_count(node)) {
+> +               dev_err(bank->dev, "mismatch in interrupt configuration\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       bank->irqs = devm_kzalloc(bank->dev, sizeof(*bank->irqs) * nirq,
+> +                                 GFP_KERNEL);
+> +       if (!bank->irqs)
+> +               return -ENOMEM;
+> +
+> +       for (idx = 0; idx < nirq; idx++) {
+> +               bank->irqs[idx].parent = irq_of_parse_and_map(node, idx);
+> +               if (!bank->irqs[idx].parent) {
+> +                       dev_err(bank->dev, "can not parse irq %d\n", idx);
+> +                       return -EINVAL;
+> +               }
+> +
+> +               bank->irqs[idx].bank = bank;
+> +               bank->irqs[idx].idx = idx;
+> +
+> +               ret = bit_map(idx, bank->interrupt_mask, bank->input_mask);
+> +               if (ret < 0)
+> +                       return ret;
+> +               bank->irqs[idx].gpio = ret;
+> +       }
+
+This all looks weird to me. A bit like a reimplemented irqdomain, and I
+have no clue what this code is doing because this weird IRQ
+scheme is not explained anywhere.
+
+I strongly suspect that creating one device per GPIO bank would make
+things simpler. Or at least one GPIO chip per bank.
+
+> +static int lpc32xx_set_gpio_names(struct lpc32xx_gpio_chip *bank, u32 ngpio)
+> +{
+> +       char *gpio_names;
+> +       u32 mask, idx, val = 0, step = strlen(bank->chip.label) + 4;
+> +
+> +       bank->gpio_names = devm_kzalloc(bank->dev,
+> +                                       ngpio * sizeof(*bank->gpio_names),
+> +                                       GFP_KERNEL);
+> +       if (!bank->gpio_names)
+> +               return -ENOMEM;
+
+The gpio_chip has a names field. If you want to do this stuff,
+use that.
+
+> +static int of_node_to_gpio(struct device *dev, struct device_node *node)
+> +{
+> +       int ret, id;
+> +       struct lpc32xx_gpio_chip *bank;
+> +       u32 ngpio = 0;
+> +
+> +       bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+> +       if (!bank)
+> +               return -ENOMEM;
+> +       bank->dev = dev;
+> +
+> +       bank->base = of_iomap(node, 0);
+> +       if (!bank->base) {
+> +               dev_err(dev, "cannot map GPIO registers\n");
+> +               return -ENOMEM;
+> +       }
+
+If every bank has its own register range it *should* be its own device
+too.
+
+> +       bank->input_only = of_property_read_bool(node, "gpio-input-only");
+> +       bank->output_only = of_property_read_bool(node, "gpio-output-only");
+> +       if (bank->input_only && bank->output_only) {
+> +               dev_err(dev, "%s: input-only and output-only is invalid\n",
+> +                       node->full_name);
+> +               return -EINVAL;
+> +       }
+
+Since these properties are named "gpio-*" not "nxp,*" they should
+be documented in Documentation/devicetree/bindings/gpio/gpio.txt
+before you use them. (They seem totally reasonable and useful
+to me!)
+
+> +       of_property_read_u32(node, "gpio-offset", &bank->offset);
+
+What is this exactly?
+
+> +
+> +       if (of_find_property(node, "gpio-input-mask", &id)) {
+> +               if (id < 2 * sizeof(u32)) {
+> +                       dev_err(dev, "invalid format of gpio-input-mask\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               of_property_read_u32_index(node, "gpio-input-mask",
+> +                                          0, &bank->input_mask);
+> +               of_property_read_u32_index(node, "gpio-input-mask",
+> +                                          1, &bank->interrupt_mask);
+> +
+> +               if ((bank->input_mask & bank->interrupt_mask) !=
+> +                   bank->interrupt_mask) {
+> +                       dev_err(dev, "interrupt mask must be a subset of input mask\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               ret = lpc32xx_set_irqs(bank, node);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       if (bank->input_mask)
+> +               ngpio = bit_count(bank->input_mask);
+> +       else
+> +               of_property_read_u32(node, "gpios", &ngpio);
+> +       if (!ngpio) {
+> +               dev_err(dev, "cannot get number of gpios\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       /*
+> +        * Special handling of P2, the bank does not have output state
+> +        * register and its mapping starts from direction control registers
+> +        */
+> +       if (of_property_read_bool(node, "gpio-no-output-state")) {
+> +               bank->output_states = devm_kzalloc(dev, ngpio * (sizeof(u32)),
+> +                                                  GFP_KERNEL);
+> +               if (!bank->output_states)
+> +                       return -ENOMEM;
+> +
+> +               bank->input = bank->base + LPC32XX_GPIO_P2_INPUT;
+> +               bank->output = bank->base + LPC32XX_GPIO_P2_OUTPUT;
+> +               bank->dir = bank->base + LPC32XX_GPIO_P2_DIR;
+> +       } else {
+> +               bank->input = bank->base + LPC32XX_GPIO_INPUT;
+> +               bank->output = bank->base + LPC32XX_GPIO_OUTPUT;
+> +               bank->dir = bank->base + LPC32XX_GPIO_DIR;
+> +       }
+> +
+> +       of_property_read_string(node, "gpio-bank-name", &bank->chip.label);
+> +       if (bank->chip.label) {
+> +               ret = lpc32xx_set_gpio_names(bank, ngpio);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       /* Default GPIO bank enumeration, first address cell from reg */
+> +       ret = of_property_read_u32(node, "reg", &id);
+> +       if (ret < 0 || id >= LPC32XX_GPIO_BANKS) {
+> +               dev_err(dev, "can not get valid GPIO bank id\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       lpc32xx_gpio_chips[id] = bank;
+> +
+> +       bank->chip.dev = dev;
+> +
+> +       bank->chip.direction_input      = lpc32xx_gpio_dir_input;
+> +       bank->chip.direction_output     = lpc32xx_gpio_dir_output;
+> +       bank->chip.get_direction        = lpc32xx_gpio_dir_get;
+> +
+> +       bank->chip.get                  = lpc32xx_gpio_get;
+> +       bank->chip.set                  = lpc32xx_gpio_set;
+> +
+> +       bank->chip.to_irq               = lpc32xx_gpio_to_irq;
+> +
+> +       bank->chip.base                 = id * 32;
+
+Use -1 instead so you get a dynamically assigned base.
+
+> +       bank->chip.ngpio                = ngpio;
+> +       bank->chip.names                = bank->gpio_names;
+> +       bank->chip.can_sleep            = false;
+> +
+> +       bank->chip.of_xlate             = lpc32xx_of_xlate;
+> +       bank->chip.of_gpio_n_cells      = 3;
+
+I wonder if you even need your own translation functions.
+With one device per bank, certainly not.
+
+> +       bank->chip.of_node              = dev->of_node;
+> +
+> +       ret = gpiochip_add(&bank->chip);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (of_find_property(node, "interrupt-controller", NULL)) {
+> +               if (bank->input_mask)
+> +                       ret = lpc32xx_add_irqchip(bank, node);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int lpc32xx_gpio_remove(struct platform_device *pdev);
+> +static int lpc32xx_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *child;
+> +       int ret;
+> +
+> +       for_each_available_child_of_node(pdev->dev.of_node, child) {
+> +               ret = of_node_to_gpio(&pdev->dev, child);
+> +               if (ret)
+> +                       goto error;
+> +       }
+
+If the node in the device tree just declares "simple-bus"
+it will spawn devices for all subnodes, if they have
+compatible ="" strings.
+
+> +static int lpc32xx_gpio_remove(struct platform_device *pdev)
+> +{
+> +       u32 idx, i;
+> +       struct irq_domain *irqd;
+> +
+> +       for (idx = 0; idx < LPC32XX_GPIO_BANKS; idx++) {
+> +               if (!lpc32xx_gpio_chips[idx])
+> +                       continue;
+
+Use the platform device data to find a reference to the chip
+and remove it. Get rid of this complicated array. Look
+at how other drivers do it.
+
+Just use platform_set_drvdata(pdev, foo); in probe()
+then in remove():
+
+struct my_gpio *foo = platform_get_drvdata(pdev);
+
+gpiochip_remove(&foo->gc);
+
+Like that.
+
+Yours,
+Linus Walleij
