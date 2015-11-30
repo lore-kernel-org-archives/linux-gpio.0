@@ -1,52 +1,53 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 00/39] ARM: dts: Convert OMAP boards to use IOPAD pinmux
- macros
-Date: Mon, 30 Nov 2015 08:49:26 -0800
-Message-ID: <20151130164925.GD2517@atomide.com>
-References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
- <20151113144742.GB2517@atomide.com>
- <564A0681.6010205@ti.com>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH 2/3] pinctrl: nsp: add pinmux driver support for Broadcom
+ NSP SoC
+Date: Mon, 30 Nov 2015 09:05:40 -0800
+Message-ID: <565C81E4.90507@broadcom.com>
+References: <1448042245-25702-1-git-send-email-yrdreddy@broadcom.com>
+ <CACRpkdZ=vyPSiPCUppfDWC9OShqfe-BRvB5QjU1AZmbDbYvsZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:49355 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751704AbbK3Qtb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 30 Nov 2015 11:49:31 -0500
-Content-Disposition: inline
-In-Reply-To: <564A0681.6010205@ti.com>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:29027 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751484AbbK3RFn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 12:05:43 -0500
+In-Reply-To: <CACRpkdZ=vyPSiPCUppfDWC9OShqfe-BRvB5QjU1AZmbDbYvsZQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-* Andrew F. Davis <afd@ti.com> [151116 08:39]:
-> On 11/13/2015 08:47 AM, Tony Lindgren wrote:
-> >* Javier Martinez Canillas <javier@osg.samsung.com> [151112 20:55]:
-> >>Hello Tony,
-> >>
-> >>This series converts all the remaining OMAP boards that didn't use the
-> >>IOPAD macros to specify the padconf register addresses. The only board
-> >>that I left was arch/arm/boot/dts/am335x-boneblack.dts because Andrew
-> >>already posted a patch for that DTS [0].
-> >>
-> >>I built tested all the DTBs that are build by omap2plus_defconfig and
-> >>the md5 checksum was the same before and after the patches so there's
-> >>no functional change and is only to make the DTS more readable.
-> >
-> >Yes great. Being able to compare the register against the documentation
-> >helps quite a bit. I plan on applying this series before anything else
-> >after -rc1 as it may require other patches to be rebased.
-> >
-> >>Patch #1 should be acked by the pinctrl maintainer and picked through
-> >>the linux-omap tree to maintain bisectability.
-> >>
-> >>[0]: https://lkml.org/lkml/2015/10/24/114
-> >
-> 
-> v3 of my little contribution also out when you pull:
-> https://lkml.org/lkml/2015/11/13/480
+Hi Linus,
 
-Applying that one too into omap-for-v4.5/dt thanks.
+On 11/30/2015 4:49 AM, Linus Walleij wrote:
+> On Fri, Nov 20, 2015 at 6:57 PM, Yendapally Reddy Dhananjaya Reddy
+> <yrdreddy@broadcom.com> wrote:
+>
+>> This adds the initial support of the Broadcom NSP pinmux driver.
+>>
+>> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+>
+> So what does Ray and Stephen say about this?
+>
+> Is the hardware unique enough to warrant its own driver?
+>
+> Or should it utilize/extend one of the existing Broadcom
+> drivers?
 
-Tony
+Currently, the IOMUX configurations in Cygnus, NSP, and NS2 are 
+completely different and require a separate driver to each of these 
+SoCs. We now realize the shortcomings and have been communicating with 
+our ASIC team. We'd like to fix this for the next-gen of our SoC. We are 
+driving towards using a register layout that will allow us to use just 
+"pinctrl-single" and "pinconf-single."
+
+>
+> Yours,
+> Linus Walleij
+>
+
+Thanks,
+
+Ray
