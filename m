@@ -1,31 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Gpio: use dev_get_platdata()
-Date: Mon, 30 Nov 2015 16:42:05 +0100
-Message-ID: <CACRpkdaYVsg6wjANST1Ok3M8bTeO=kY22eFRrY4pC_hV=CCX0Q@mail.gmail.com>
-References: <1448292198-6798-1-git-send-email-nizamhaider786@gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v2 3/9] includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+Date: Mon, 30 Nov 2015 16:55:35 +0100
+Message-ID: <CALszF6DLfpA6bdndRvBjufXnsoOxRT0bgN8P_D=2gqc1CK4=+A@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-4-git-send-email-mcoquelin.stm32@gmail.com>
+	<56261239.5030007@linaro.org>
+	<CALszF6DQ2G_Fzhk_SP+A0i_Z4mg9etdf1NcfQS3cPpB0zNot-w@mail.gmail.com>
+	<CACRpkdashSEWL+KFgD+MmdoZwjXnsXpxy-MPmDciO9n87+6BBQ@mail.gmail.com>
+	<CALszF6B7928hpMDMH0_wmo-MakZX7sofO85aeBwv-aCLBHnrkA@mail.gmail.com>
+	<CACRpkdZTHcROza2diFCOj783T1zfbkd=Dov3PUzDV2U35qEFXA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:33369 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752593AbbK3PmG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 10:42:06 -0500
-Received: by obbww6 with SMTP id ww6so129906204obb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 07:42:05 -0800 (PST)
-In-Reply-To: <1448292198-6798-1-git-send-email-nizamhaider786@gmail.com>
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:34982 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237AbbK3Pzg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 10:55:36 -0500
+In-Reply-To: <CACRpkdZTHcROza2diFCOj783T1zfbkd=Dov3PUzDV2U35qEFXA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nizam Haider <nizamhaider786@gmail.com>
-Cc: Alban Bedel <albeu@free.fr>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nizam Haider <nijamh@cdac.in>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Daniel Thompson <daniel.thompson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On Mon, Nov 23, 2015 at 4:23 PM, Nizam Haider <nizamhaider786@gmail.com> wrote:
-
-> Use the wrapper function for retrieving the platform data instead of
-> accessing dev->platform_data directly.
+2015-11-17 12:00 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Fri, Nov 6, 2015 at 1:57 PM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
 >
-> Signed-off-by: Nizam Haider <nijamh@cdac.in>
+>> Thinking again at it, I persist to believe have the defines makes it
+>> easier to use.
+>> With auto-completion, it makes it faster and less error prone to
+>> select the right
+>> alternate function without parsing the datasheet.
+>
+> Auto-completion ... should we design our source code to
+> fit certain editors?
+No, you are right.
+But even without auto-completion, it is easier to have the values pre-computed.
+And Mediatek has the defines, so it is better to do the same for STM32
+for consistency.
 
-Patch applied. Thanks!
+>> But as these defines are not actually used on driver side, maybe I
+>> could just move
+>> them to the dts directory?
+>
+> No strong opinion there. include/dt-bindings is part of the bindings
+> documentation actually so I guess it goes there.
+Ok.
 
-Yours,
-Linus Walleij
+Thanks,
+Maxime
