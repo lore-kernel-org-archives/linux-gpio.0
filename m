@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/5] pinctrl/lantiq: update devicetree binding in dts file
-Date: Mon, 30 Nov 2015 13:15:38 +0100
-Message-ID: <CACRpkdav_vbU1BG+LF+NnCy-w1f8fGobBVoX-QSykbYd+jCWFw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] pinctrl/lantiq: Fix GPIO Setup of GPIO Port3
+Date: Mon, 30 Nov 2015 13:17:40 +0100
+Message-ID: <CACRpkdZsBhZd-NtVHMgo+Z0oQN5d_-8QU6MnZ7vx9du=sBd7oQ@mail.gmail.com>
 References: <1448532010-30930-1-git-send-email-mschiller@tdt.de>
-	<1448532010-30930-3-git-send-email-mschiller@tdt.de>
+	<1448532010-30930-4-git-send-email-mschiller@tdt.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:36300 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753275AbbK3MPj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 07:15:39 -0500
-Received: by oiww189 with SMTP id w189so93554783oiw.3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 04:15:38 -0800 (PST)
-In-Reply-To: <1448532010-30930-3-git-send-email-mschiller@tdt.de>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33187 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753968AbbK3MRl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 07:17:41 -0500
+Received: by oixx65 with SMTP id x65so93528056oix.0
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 04:17:40 -0800 (PST)
+In-Reply-To: <1448532010-30930-4-git-send-email-mschiller@tdt.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Martin Schiller <mschiller@tdt.de>
@@ -21,17 +21,16 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.
 
 On Thu, Nov 26, 2015 at 11:00 AM, Martin Schiller <mschiller@tdt.de> wrote:
 
-> This patch updates the compatible string in the easy50712.dts file to the new
-> "lantiq,danube-pinctrl".
+> From: John Crispin <blogic@openwrt.org>
 >
+> Signed-off-by: John Crispin <blogic@openwrt.org>
 > Signed-off-by: Martin Schiller <mschiller@tdt.de>
 > ---
 > Changes in v3:
-> None
+> - Moved this change into a separate patch
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Please merge this through the MIPS tree.
+Patch applied, I conjured a commit blurb because this was missing
+one.
 
 Yours,
 Linus Walleij
