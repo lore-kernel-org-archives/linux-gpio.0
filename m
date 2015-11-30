@@ -1,199 +1,160 @@
 From: Barry Song <21cnbao@gmail.com>
-Subject: [PATCH 3/5] pinctrl: atlas7: adjust pin groups of atlas7 nanddisk
-Date: Mon, 30 Nov 2015 06:05:55 +0000
-Message-ID: <1448863557-25352-3-git-send-email-21cnbao@gmail.com>
+Subject: [PATCH 2/5] pinctrl: altas7: add sd9 function mux support
+Date: Mon, 30 Nov 2015 06:05:54 +0000
+Message-ID: <1448863557-25352-2-git-send-email-21cnbao@gmail.com>
 References: <1448863557-25352-1-git-send-email-21cnbao@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34956 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752715AbbK3Fzr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 00:55:47 -0500
-Received: by pacej9 with SMTP id ej9so173483817pac.2
-        for <linux-gpio@vger.kernel.org>; Sun, 29 Nov 2015 21:55:47 -0800 (PST)
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:34912 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752065AbbK3Fzp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 00:55:45 -0500
+Received: by pacej9 with SMTP id ej9so173482489pac.2
+        for <linux-gpio@vger.kernel.org>; Sun, 29 Nov 2015 21:55:44 -0800 (PST)
 In-Reply-To: <1448863557-25352-1-git-send-email-21cnbao@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org
-Cc: workgroup.linux@csr.com, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>
+Cc: workgroup.linux@csr.com, Yonghui Zhang <yonghui.zhang@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-From: Wei Chen <Wei.Chen@csr.com>
+From: Yonghui Zhang <yonghui.zhang@csr.com>
 
-Remove write-protect and chip-selector pins from nand pin group.
-And then create two separate pin groups for these two pin.
+The sd9 pin mux with sd3 and it is selected by SYS2PCI_SDIO9SEL.
+This makes the codes ugly since the register is not in pinctrl
+module.
 
-So the nand driver can choose correct pin groups as board desgin:
-For example:
-1. nand without wp&cs:
-	nand@17050000 {
-		pinctrl-0 = <&nd_df_basic_pmx>;
-	};
-2. nand with wp
-        nand@17050000 {
-                pinctrl-0 = <&nd_df_basic_pmx &nd_df_wp_pmx>;
-        };
-3. nand with cs:
-        nand@17050000 {
-                pinctrl-0 = <&nd_df_basic_pmx &nd_df_cs_pmx>;
-        };
-4. nand with wp&cs:
-        nand@17050000 {
-                pinctrl-0 = <&nd_df_basic_pmx &nd_df_wp_pmx &nd_df_cs_pmx>;
-        };
-
-Signed-off-by: Wei Chen <Wei.Chen@csr.com>
+Signed-off-by: Yonghui Zhang <yonghui.zhang@csr.com>
 Signed-off-by: Barry Song <Baohua.Song@csr.com>
 ---
- drivers/pinctrl/sirf/pinctrl-atlas7.c | 88 +++++++++++------------------------
- 1 file changed, 27 insertions(+), 61 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 44 ++++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-index 47c63c5..f73eff5 100644
+index 30db524..47c63c5 100644
 --- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
 +++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
-@@ -889,12 +889,10 @@ static const unsigned int lr_lcdrom_pins[] = { 73, 54, 57, 58, 59, 60, 61,
- 		62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 56, 53, 55, };
- static const unsigned int lvds_analog_pins[] = { 149, 150, 151, 152, 153, 154,
- 		155, 156, 157, 158, };
--static const unsigned int nd_df_pins[] = { 44, 43, 42, 41, 40, 39, 38, 37,
--		47, 46, 52, 51, 45, 49, 50, 48, 124, };
--static const unsigned int nd_df_nowp_pins[] = { 44, 43, 42, 41, 40, 39, 38,
--		37, 47, 46, 52, 51, 45, 49, 50, 48, };
--static const unsigned int nd_df_nocs_pins[] = { 44, 43, 42, 41, 40, 39, 38,
--		37, 47, 46, 52, 45, 49, 50, 48, 124, };
-+static const unsigned int nd_df_basic_pins[] = { 44, 43, 42, 41, 40, 39, 38,
-+		37, 47, 46, 52, 45, 49, 50, 48, };
-+static const unsigned int nd_df_wp_pins[] = { 124, };
-+static const unsigned int nd_df_cs_pins[] = { 51, };
- static const unsigned int ps_pins[] = { 120, 119, 121, };
- static const unsigned int pwc_core_on_pins[] = { 8, };
- static const unsigned int pwc_ext_on_pins[] = { 6, };
-@@ -1148,9 +1146,9 @@ struct atlas7_pin_group altas7_pin_groups[] = {
- 	GROUP("ld_ldd_lck_grp", ld_ldd_lck_pins),
- 	GROUP("lr_lcdrom_grp", lr_lcdrom_pins),
- 	GROUP("lvds_analog_grp", lvds_analog_pins),
--	GROUP("nd_df_grp", nd_df_pins),
--	GROUP("nd_df_nowp_grp", nd_df_nowp_pins),
--	GROUP("nd_df_nocs_grp", nd_df_nocs_pins),
-+	GROUP("nd_df_basic_grp", nd_df_basic_pins),
-+	GROUP("nd_df_wp_grp", nd_df_wp_pins),
-+	GROUP("nd_df_cs_grp", nd_df_cs_pins),
- 	GROUP("ps_grp", ps_pins),
- 	GROUP("pwc_core_on_grp", pwc_core_on_pins),
- 	GROUP("pwc_ext_on_grp", pwc_ext_on_pins),
-@@ -1428,9 +1426,9 @@ static const char * const ld_ldd_fck_grp[] = { "ld_ldd_fck_grp", };
- static const char * const ld_ldd_lck_grp[] = { "ld_ldd_lck_grp", };
- static const char * const lr_lcdrom_grp[] = { "lr_lcdrom_grp", };
- static const char * const lvds_analog_grp[] = { "lvds_analog_grp", };
--static const char * const nd_df_grp[] = { "nd_df_grp", };
--static const char * const nd_df_nowp_grp[] = { "nd_df_nowp_grp", };
--static const char * const nd_df_nocs_grp[] = { "nd_df_nocs_grp", };
-+static const char * const nd_df_basic_grp[] = { "nd_df_basic_grp", };
-+static const char * const nd_df_wp_grp[] = { "nd_df_wp_grp", };
-+static const char * const nd_df_cs_grp[] = { "nd_df_cs_grp", };
- static const char * const ps_grp[] = { "ps_grp", };
- static const char * const pwc_core_on_grp[] = { "pwc_core_on_grp", };
- static const char * const pwc_ext_on_grp[] = { "pwc_ext_on_grp", };
-@@ -3182,7 +3180,7 @@ static struct atlas7_grp_mux lvds_analog_grp_mux = {
- 	.pad_mux_list = lvds_analog_grp_pad_mux,
+@@ -161,6 +161,9 @@ enum altas7_pad_type {
+ #define IN_DISABLE_VAL_1_REG_SET	0x0A88
+ #define IN_DISABLE_VAL_1_REG_CLR	0x0A8C
+ 
++/* Offset of the SDIO9SEL*/
++#define SYS2PCI_SDIO9SEL 0x14
++
+ struct dt_params {
+ 	const char *property;
+ 	int value;
+@@ -370,6 +373,7 @@ struct atlas7_pmx {
+ 	struct pinctrl_desc pctl_desc;
+ 	struct atlas7_pinctrl_data *pctl_data;
+ 	void __iomem *regs[ATLAS7_PINCTRL_REG_BANKS];
++	void __iomem *sys2pci_base;
+ 	u32 status_ds[NUM_OF_IN_DISABLE_REG];
+ 	u32 status_dsv[NUM_OF_IN_DISABLE_REG];
+ 	struct atlas7_pad_status sleep_data[ATLAS7_PINCTRL_TOTAL_PINS];
+@@ -946,7 +950,7 @@ static const unsigned int sd2_cdb_pins0[] = { 124, };
+ static const unsigned int sd2_cdb_pins1[] = { 161, };
+ static const unsigned int sd2_wpb_pins0[] = { 123, };
+ static const unsigned int sd2_wpb_pins1[] = { 163, };
+-static const unsigned int sd3_pins[] = { 85, 86, 87, 88, 89, 90, };
++static const unsigned int sd3_9_pins[] = { 85, 86, 87, 88, 89, 90, };
+ static const unsigned int sd5_pins[] = { 91, 92, 93, 94, 95, 96, };
+ static const unsigned int sd6_pins0[] = { 79, 78, 74, 75, 76, 77, };
+ static const unsigned int sd6_pins1[] = { 101, 99, 100, 110, 109, 111, };
+@@ -1199,7 +1203,7 @@ struct atlas7_pin_group altas7_pin_groups[] = {
+ 	GROUP("sd2_cdb_grp1", sd2_cdb_pins1),
+ 	GROUP("sd2_wpb_grp0", sd2_wpb_pins0),
+ 	GROUP("sd2_wpb_grp1", sd2_wpb_pins1),
+-	GROUP("sd3_grp", sd3_pins),
++	GROUP("sd3_9_grp", sd3_9_pins),
+ 	GROUP("sd5_grp", sd5_pins),
+ 	GROUP("sd6_grp0", sd6_pins0),
+ 	GROUP("sd6_grp1", sd6_pins1),
+@@ -1482,7 +1486,7 @@ static const char * const sd2_cdb_grp0[] = { "sd2_cdb_grp0", };
+ static const char * const sd2_cdb_grp1[] = { "sd2_cdb_grp1", };
+ static const char * const sd2_wpb_grp0[] = { "sd2_wpb_grp0", };
+ static const char * const sd2_wpb_grp1[] = { "sd2_wpb_grp1", };
+-static const char * const sd3_grp[] = { "sd3_grp", };
++static const char * const sd3_9_grp[] = { "sd3_9_grp", };
+ static const char * const sd5_grp[] = { "sd5_grp", };
+ static const char * const sd6_grp0[] = { "sd6_grp0", };
+ static const char * const sd6_grp1[] = { "sd6_grp1", };
+@@ -3771,7 +3775,7 @@ static struct atlas7_grp_mux sd2_wpb_grp1_mux = {
+ 	.pad_mux_list = sd2_wpb_grp1_pad_mux,
  };
  
--static struct atlas7_pad_mux nd_df_grp_pad_mux[] = {
-+static struct atlas7_pad_mux nd_df_basic_grp_pad_mux[] = {
- 	MUX(1, 44, 1, N, N, N, N),
- 	MUX(1, 43, 1, N, N, N, N),
- 	MUX(1, 42, 1, N, N, N, N),
-@@ -3194,65 +3192,33 @@ static struct atlas7_pad_mux nd_df_grp_pad_mux[] = {
- 	MUX(1, 47, 1, N, N, N, N),
- 	MUX(1, 46, 1, N, N, N, N),
- 	MUX(1, 52, 1, N, N, N, N),
--	MUX(1, 51, 1, N, N, N, N),
- 	MUX(1, 45, 1, N, N, N, N),
- 	MUX(1, 49, 1, N, N, N, N),
- 	MUX(1, 50, 1, N, N, N, N),
- 	MUX(1, 48, 1, N, N, N, N),
--	MUX(1, 124, 4, N, N, N, N),
+-static struct atlas7_pad_mux sd3_grp_pad_mux[] = {
++static struct atlas7_pad_mux sd3_9_grp_pad_mux[] = {
+ 	MUX(1, 85, 1, N, N, N, N),
+ 	MUX(1, 86, 1, N, N, N, N),
+ 	MUX(1, 87, 1, N, N, N, N),
+@@ -3780,9 +3784,9 @@ static struct atlas7_pad_mux sd3_grp_pad_mux[] = {
+ 	MUX(1, 90, 1, N, N, N, N),
  };
  
--static struct atlas7_grp_mux nd_df_grp_mux = {
--	.pad_mux_count = ARRAY_SIZE(nd_df_grp_pad_mux),
--	.pad_mux_list = nd_df_grp_pad_mux,
-+static struct atlas7_grp_mux nd_df_basic_grp_mux = {
-+	.pad_mux_count = ARRAY_SIZE(nd_df_basic_grp_pad_mux),
-+	.pad_mux_list = nd_df_basic_grp_pad_mux,
+-static struct atlas7_grp_mux sd3_grp_mux = {
+-	.pad_mux_count = ARRAY_SIZE(sd3_grp_pad_mux),
+-	.pad_mux_list = sd3_grp_pad_mux,
++static struct atlas7_grp_mux sd3_9_grp_mux = {
++	.pad_mux_count = ARRAY_SIZE(sd3_9_grp_pad_mux),
++	.pad_mux_list = sd3_9_grp_pad_mux,
  };
  
--static struct atlas7_pad_mux nd_df_nowp_grp_pad_mux[] = {
--	MUX(1, 44, 1, N, N, N, N),
--	MUX(1, 43, 1, N, N, N, N),
--	MUX(1, 42, 1, N, N, N, N),
--	MUX(1, 41, 1, N, N, N, N),
--	MUX(1, 40, 1, N, N, N, N),
--	MUX(1, 39, 1, N, N, N, N),
--	MUX(1, 38, 1, N, N, N, N),
--	MUX(1, 37, 1, N, N, N, N),
--	MUX(1, 47, 1, N, N, N, N),
--	MUX(1, 46, 1, N, N, N, N),
--	MUX(1, 52, 1, N, N, N, N),
--	MUX(1, 51, 1, N, N, N, N),
--	MUX(1, 45, 1, N, N, N, N),
--	MUX(1, 49, 1, N, N, N, N),
--	MUX(1, 50, 1, N, N, N, N),
--	MUX(1, 48, 1, N, N, N, N),
-+static struct atlas7_pad_mux nd_df_wp_grp_pad_mux[] = {
-+	MUX(1, 124, 4, N, N, N, N),
- };
+ static struct atlas7_pad_mux sd5_grp_pad_mux[] = {
+@@ -4715,10 +4719,11 @@ static struct atlas7_pmx_func atlas7_pmx_functions[] = {
+ 	FUNCTION("sd2_cdb_m1", sd2_cdb_grp1, &sd2_cdb_grp1_mux),
+ 	FUNCTION("sd2_wpb_m0", sd2_wpb_grp0, &sd2_wpb_grp0_mux),
+ 	FUNCTION("sd2_wpb_m1", sd2_wpb_grp1, &sd2_wpb_grp1_mux),
+-	FUNCTION("sd3", sd3_grp, &sd3_grp_mux),
++	FUNCTION("sd3", sd3_9_grp, &sd3_9_grp_mux),
+ 	FUNCTION("sd5", sd5_grp, &sd5_grp_mux),
+ 	FUNCTION("sd6_m0", sd6_grp0, &sd6_grp0_mux),
+ 	FUNCTION("sd6_m1", sd6_grp1, &sd6_grp1_mux),
++	FUNCTION("sd9", sd3_9_grp, &sd3_9_grp_mux),
+ 	FUNCTION("sp0_ext_ldo_on",
+ 			sp0_ext_ldo_on_grp,
+ 			&sp0_ext_ldo_on_grp_mux),
+@@ -5126,6 +5131,14 @@ static int atlas7_pmx_set_mux(struct pinctrl_dev *pctldev,
+ 	pr_debug("PMX DUMP ### Function:[%s] Group:[%s] #### START >>>\n",
+ 			pmx_func->name, pin_grp->name);
  
--static struct atlas7_grp_mux nd_df_nowp_grp_mux = {
--	.pad_mux_count = ARRAY_SIZE(nd_df_nowp_grp_pad_mux),
--	.pad_mux_list = nd_df_nowp_grp_pad_mux,
-+static struct atlas7_grp_mux nd_df_wp_grp_mux = {
-+	.pad_mux_count = ARRAY_SIZE(nd_df_wp_grp_pad_mux),
-+	.pad_mux_list = nd_df_wp_grp_pad_mux,
- };
++	/* the sd3 and sd9 pin select by SYS2PCI_SDIO9SEL register */
++	if (pin_grp->pins == (unsigned int *)&sd3_9_pins) {
++		if (!strcmp(pmx_func->name, "sd9"))
++			writel(1, pmx->sys2pci_base + SYS2PCI_SDIO9SEL);
++		else
++			writel(0, pmx->sys2pci_base + SYS2PCI_SDIO9SEL);
++	}
++
+ 	grp_mux = pmx_func->grpmux;
  
--static struct atlas7_pad_mux nd_df_nocs_grp_pad_mux[] = {
--	MUX(1, 44, 1, N, N, N, N),
--	MUX(1, 43, 1, N, N, N, N),
--	MUX(1, 42, 1, N, N, N, N),
--	MUX(1, 41, 1, N, N, N, N),
--	MUX(1, 40, 1, N, N, N, N),
--	MUX(1, 39, 1, N, N, N, N),
--	MUX(1, 38, 1, N, N, N, N),
--	MUX(1, 37, 1, N, N, N, N),
--	MUX(1, 47, 1, N, N, N, N),
--	MUX(1, 46, 1, N, N, N, N),
--	MUX(1, 52, 1, N, N, N, N),
--	MUX(1, 45, 1, N, N, N, N),
--	MUX(1, 49, 1, N, N, N, N),
--	MUX(1, 50, 1, N, N, N, N),
--	MUX(1, 48, 1, N, N, N, N),
--	MUX(1, 124, 4, N, N, N, N),
-+static struct atlas7_pad_mux nd_df_cs_grp_pad_mux[] = {
-+	MUX(1, 51, 1, N, N, N, N),
- };
+ 	for (idx = 0; idx < grp_mux->pad_mux_count; idx++) {
+@@ -5414,12 +5427,27 @@ static int atlas7_pinmux_probe(struct platform_device *pdev)
+ 	struct atlas7_pmx *pmx;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	u32 banks = ATLAS7_PINCTRL_REG_BANKS;
++	struct device_node *sys2pci_np;
++	struct resource res;
  
--static struct atlas7_grp_mux nd_df_nocs_grp_mux = {
--	.pad_mux_count = ARRAY_SIZE(nd_df_nocs_grp_pad_mux),
--	.pad_mux_list = nd_df_nocs_grp_pad_mux,
-+static struct atlas7_grp_mux nd_df_cs_grp_mux = {
-+	.pad_mux_count = ARRAY_SIZE(nd_df_cs_grp_pad_mux),
-+	.pad_mux_list = nd_df_cs_grp_pad_mux,
- };
+ 	/* Create state holders etc for this driver */
+ 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
+ 	if (!pmx)
+ 		return -ENOMEM;
  
- static struct atlas7_pad_mux ps_grp_pad_mux[] = {
-@@ -4630,9 +4596,9 @@ static struct atlas7_pmx_func atlas7_pmx_functions[] = {
- 	FUNCTION("ld_ldd_lck", ld_ldd_lck_grp, &ld_ldd_lck_grp_mux),
- 	FUNCTION("lr_lcdrom", lr_lcdrom_grp, &lr_lcdrom_grp_mux),
- 	FUNCTION("lvds_analog", lvds_analog_grp, &lvds_analog_grp_mux),
--	FUNCTION("nd_df", nd_df_grp, &nd_df_grp_mux),
--	FUNCTION("nd_df_nowp", nd_df_nowp_grp, &nd_df_nowp_grp_mux),
--	FUNCTION("nd_df_nocs", nd_df_nocs_grp, &nd_df_nocs_grp_mux),
-+	FUNCTION("nd_df_basic", nd_df_basic_grp, &nd_df_basic_grp_mux),
-+	FUNCTION("nd_df_wp", nd_df_wp_grp, &nd_df_wp_grp_mux),
-+	FUNCTION("nd_df_cs", nd_df_cs_grp, &nd_df_cs_grp_mux),
- 	FUNCTION("ps", ps_grp, &ps_grp_mux),
- 	FUNCTION("pwc_core_on", pwc_core_on_grp, &pwc_core_on_grp_mux),
- 	FUNCTION("pwc_ext_on", pwc_ext_on_grp, &pwc_ext_on_grp_mux),
++	/* The sd3 and sd9 shared all pins, and the function select by
++	 * SYS2PCI_SDIO9SEL register
++	 */
++	sys2pci_np = of_find_node_by_name(NULL, "sys2pci");
++	if (!sys2pci_np)
++		return -EINVAL;
++	ret = of_address_to_resource(sys2pci_np, 0, &res);
++	if (ret)
++		return ret;
++	pmx->sys2pci_base = devm_ioremap_resource(&pdev->dev, &res);
++	if (IS_ERR(pmx->sys2pci_base))
++		return -ENOMEM;
++
+ 	pmx->dev = &pdev->dev;
+ 
+ 	pmx->pctl_data = &atlas7_ioc_data;
 -- 
 1.9.1
 
