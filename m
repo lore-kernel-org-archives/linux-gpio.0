@@ -1,183 +1,37 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: Improve pinmux macros documentation
-Date: Mon, 30 Nov 2015 13:46:29 +0100
-Message-ID: <CAMuHMdWPcq5q9jDGcwdnuHHHr4tKwL4ZkVP0u493HbDYh=HfTA@mail.gmail.com>
-References: <1445368482-24278-1-git-send-email-geert+renesas@glider.be>
-	<7920206.k8fTIRXnzu@avalon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] pinctrl: nsp: add pinmux driver support for Broadcom
+ NSP SoC
+Date: Mon, 30 Nov 2015 13:49:23 +0100
+Message-ID: <CACRpkdZ=vyPSiPCUppfDWC9OShqfe-BRvB5QjU1AZmbDbYvsZQ@mail.gmail.com>
+References: <1448042245-25702-1-git-send-email-yrdreddy@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:35671 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752606AbbK3Mqa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 07:46:30 -0500
-In-Reply-To: <7920206.k8fTIRXnzu@avalon>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:36798 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752822AbbK3MtY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 07:49:24 -0500
+Received: by obdgf3 with SMTP id gf3so126987758obd.3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 04:49:24 -0800 (PST)
+In-Reply-To: <1448042245-25702-1-git-send-email-yrdreddy@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niso@kth.se>, Koji Matsuoka <koji.matsuoka.xm@rms.renesas.com>, Magnus Damm <damm@opensource.se>, Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-Hi Laurent,
+On Fri, Nov 20, 2015 at 6:57 PM, Yendapally Reddy Dhananjaya Reddy
+<yrdreddy@broadcom.com> wrote:
 
-On Wed, Nov 25, 2015 at 2:37 AM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tuesday 20 October 2015 21:14:42 Geert Uytterhoeven wrote:
->> Fix some s/ispr/ipsr/ typos in macro parameters while we're at it.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v2:
->>   - Clarify same width vs. different widths,
->>   - Mention GPSR for PINMUX_IPSR_DATA(),
->>   - Document NOGM (=3D NOGP + MSEL),
->>   - Fix s/ispr/ipsr/ typos.
->> ---
->>  drivers/pinctrl/sh-pfc/sh_pfc.h | 84 ++++++++++++++++++++++++++++++=
-++++++--
->>  1 file changed, 81 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
->> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 7b373d43d981899f..63e6cd050d=
-0fb7d2
->> 100644
->> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
->> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-
->> -#define PINMUX_IPSR_NOGP(ispr, fn)                                 =
-  \
->> +/*
->> + * Describe a pinmux configuration without GPIO function that needs
->> + * configuration in a Peripheral Function Select Register (IPSR)
->> + *   - ipsr: IPSR field (unused, for documentation purposes only)
->> + *   - fn: Function name
->> + */
->> +#define PINMUX_IPSR_NOGP(ipsr, fn)                                 =
-  \
->>       PINMUX_DATA(fn##_MARK, FN_##fn)
+> This adds the initial support of the Broadcom NSP pinmux driver.
 >
-> That's very confusing, as the ipsr argument is indeed unused, but the=
- fn
-> argument refers to a field value in an IPSR register. Could we fix th=
-at ? The
+> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
 
-Long live reverse-engineering pinctrl macros...
+So what does Ray and Stephen say about this?
 
-> same comment applies for other macros below.
+Is the hardware unique enough to warrant its own driver?
 
-OK.
+Or should it utilize/extend one of the existing Broadcom
+drivers?
 
->> +/*
->> + * Describe a pinmux configuration with GPIO function that needs
->> configuration
->> + * in both a Peripheral Function Select Register (IPSR) and in a
->> + * GPIO/Peripheral Function Select Register 1 (GPSR)
->> + *   - ipsr: IPSR field
->> + *   - fn: Function name
->> + */
->>  #define PINMUX_IPSR_DATA(ipsr, fn)                                 =
-  \
->>       PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ipsr)
->
-> Should we rename this to PINMUX_IPSR_GPSR ?
-
-No, I don't want to show up in "git blame" for every single sh-pfc line=
-!
-
-Kidding, yes, will do in a separate patch.
-
->> -#define PINMUX_IPSR_NOGM(ispr, fn, ms)                             =
-          \
->> +
->> +/*
->> + * Describe a pinmux configuration without GPIO function that needs
->> + * configuration in a Peripheral Function Select Register (IPSR), a=
-nd where
->> the
->> + * pinmux function has a representation in a configuration register=
-=2E
->
-> I'd talk about module select register instead of configuration regist=
-er.
-> Configuration register is too vague.
-
-OK.
-
->> + *   - ipsr: IPSR field
->> + *   - fn: Function name
->> + *   - ms: Configuration register selector
->
-> I'd rename ms to msel to be more explicit.
-
-OK.
-
->> +#define PINMUX_IPSR_NOGM(ipsr, fn, ms)                             =
-          \
->>       PINMUX_DATA(fn##_MARK, FN_##fn, FN_##ms)
->> +
->> +/*
->> + * Describe a pinmux configuration where the pinmux function has no
->> + * representation in the configuration registers but instead solely
->> + * depends on a group selection.
->> + *   - ipsr: IPSR field
->> + *   - fn: Function name
->> + *   - ms: Group selector
->> + */
->>  #define PINMUX_IPSR_NOFN(ipsr, fn, ms)                             =
-          \
->>       PINMUX_DATA(fn##_MARK, FN_##ipsr, FN_##ms)
->
-> Those pins can be used as GPIO as well, right ? I think that should b=
-e
-> mentioned.
-
-Indeed.
-
-> The macro is used for emev2 only. It refers to a GPSR bit, not to an =
-IPSR
-> register. I think the ipsr argument should be renamed to reflect that=
-=2E
-
-Done.
-
->> +/*
->> + * Describe a pinmux configuration where the pinmux function has a
->> + * representation in a configuration register.
->
-> You mention "configuration register" here (and in the PINMUX_IPSR_NOG=
-M
-> description), while you talk about "group selector" for PINMUX_IPSR_N=
-OFN.
-> Aren't they the same ?
-
-More or less. PINMUX_IPSR_NOFN() is special as EMEV2 has different
-register sets than other Renesas SoCs.
-
-> As the comments I've made here have an air of d=C3=A9j=C3=A0 vu, I ch=
-ecked my review to
-> v1 and realized you haven't replied to it. I don't think all the comm=
-ents I
-> made have been addressed in v2.
-
-I thought I addressed all comments, modulo a few open questions.
-
-Stay tuned for v3...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
