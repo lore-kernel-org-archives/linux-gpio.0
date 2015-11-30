@@ -1,32 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 6/6] gpio: tps65086: Add GPIO driver for the TPS65086 PMIC
-Date: Mon, 30 Nov 2015 09:28:33 +0100
-Message-ID: <CACRpkday8yoPMCJ0vRqO5ySam84woffXAzjar2gJ+Nw-1iGbuw@mail.gmail.com>
-References: <1446657135-7820-1-git-send-email-afd@ti.com>
-	<1446657135-7820-7-git-send-email-afd@ti.com>
+Subject: Re: [PATCH] pinctrl: bcm2835: Fix initial value for direction_output
+Date: Mon, 30 Nov 2015 09:29:55 +0100
+Message-ID: <CACRpkdbZicosnYnp6ZxqvOhLdyuTJTHv2gYR0spWoGMzbToYOg@mail.gmail.com>
+References: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1446657135-7820-7-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:33984 "EHLO
+	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753110AbbK3I3z (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 03:29:55 -0500
+Received: by oies6 with SMTP id s6so91754585oie.1
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 00:29:55 -0800 (PST)
+In-Reply-To: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Martin Sperl <kernel@martin.sperl.org>
 
-On Wed, Nov 4, 2015 at 6:12 PM, Andrew F. Davis <afd@ti.com> wrote:
+On Thu, Nov 19, 2015 at 1:32 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-> Add support for the TPS65086 PMIC GPOs.
+> Currently the provided initial value for bcm2835_gpio_direction_output
+> has no effect. So fix this issue by changing the value before
+> changing the GPIO direction. As a result we need to move the function below
+> bcm2835_gpio_set.
 >
-> TPS65086 has four configurable GPOs that can be used for several
-> purposes.
->
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> CC: Martin Sperl <kernel@martin.sperl.org>
+> CC: Stephen Warren <swarren@wwwdotorg.org>
 
-(...)
-> +       gpio->tps = dev_get_drvdata(pdev->dev.parent);
-> +       gpio->gpio_chip = template_chip;
-
-No gpio->gpio_chip.parent = &pdev->dev?
+Waiting for Stephen's ACK on this.
 
 Yours,
 Linus Walleij
