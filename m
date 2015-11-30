@@ -1,57 +1,52 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a7778: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
-Date: Mon, 30 Nov 2015 14:41:03 +0100
-Message-ID: <1448890865-1856-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 4/4] pinctrl: sh-pfc: sh7734: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+Date: Mon, 30 Nov 2015 14:41:05 +0100
+Message-ID: <1448890865-1856-5-git-send-email-geert+renesas@glider.be>
 References: <1448890865-1856-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:55808 "EHLO
-	laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754055AbbK3NlI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 08:41:08 -0500
+Return-path: <linux-sh-owner@vger.kernel.org>
 In-Reply-To: <1448890865-1856-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-sh-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 6b6e5aa2db0d7d10..411d0887ba19bae6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -548,17 +548,17 @@ enum {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 5243da3564c84a1a..9e5212fb49fa516c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -585,15 +585,18 @@ enum {
  static const u16 pinmux_data[] = {
  	PINMUX_DATA_GP_ALL(), /* PINMUX_DATA(GP_M_N_DATA, GP_M_N_FN...), */
  
--	PINMUX_DATA(PENC0_MARK,		FN_PENC0),
--	PINMUX_DATA(PENC1_MARK,		FN_PENC1),
--	PINMUX_DATA(A1_MARK,		FN_A1),
--	PINMUX_DATA(A2_MARK,		FN_A2),
--	PINMUX_DATA(A3_MARK,		FN_A3),
--	PINMUX_DATA(WE0_MARK,		FN_WE0),
--	PINMUX_DATA(AUDIO_CLKA_MARK,	FN_AUDIO_CLKA),
--	PINMUX_DATA(AUDIO_CLKB_MARK,	FN_AUDIO_CLKB),
--	PINMUX_DATA(SSI_SCK34_MARK,	FN_SSI_SCK34),
--	PINMUX_DATA(AVS1_MARK,		FN_AVS1),
--	PINMUX_DATA(AVS2_MARK,		FN_AVS2),
-+	PINMUX_SINGLE(PENC0),
-+	PINMUX_SINGLE(PENC1),
-+	PINMUX_SINGLE(A1),
-+	PINMUX_SINGLE(A2),
-+	PINMUX_SINGLE(A3),
+-	PINMUX_DATA(CLKOUT_MARK, FN_CLKOUT),
+-	PINMUX_DATA(BS_MARK, FN_BS), PINMUX_DATA(CS0_MARK, FN_CS0),
+-	PINMUX_DATA(EX_CS0_MARK, FN_EX_CS0),
+-	PINMUX_DATA(RD_MARK, FN_RD), PINMUX_DATA(WE0_MARK, FN_WE0),
+-	PINMUX_DATA(WE1_MARK, FN_WE1),
+-	PINMUX_DATA(SCL0_MARK, FN_SCL0), PINMUX_DATA(PENC0_MARK, FN_PENC0),
+-	PINMUX_DATA(USB_OVC0_MARK, FN_USB_OVC0),
+-	PINMUX_DATA(IRQ2_B_MARK, FN_IRQ2_B),
+-		PINMUX_DATA(IRQ3_B_MARK, FN_IRQ3_B),
++	PINMUX_SINGLE(CLKOUT),
++	PINMUX_SINGLE(BS),
++	PINMUX_SINGLE(CS0),
++	PINMUX_SINGLE(EX_CS0),
++	PINMUX_SINGLE(RD),
 +	PINMUX_SINGLE(WE0),
-+	PINMUX_SINGLE(AUDIO_CLKA),
-+	PINMUX_SINGLE(AUDIO_CLKB),
-+	PINMUX_SINGLE(SSI_SCK34),
-+	PINMUX_SINGLE(AVS1),
-+	PINMUX_SINGLE(AVS2),
++	PINMUX_SINGLE(WE1),
++	PINMUX_SINGLE(SCL0),
++	PINMUX_SINGLE(PENC0),
++	PINMUX_SINGLE(USB_OVC0),
++	PINMUX_SINGLE(IRQ2_B),
++	PINMUX_SINGLE(IRQ3_B),
  
  	/* IPSR0 */
- 	PINMUX_IPSR_GPSR(IP0_1_0,	PRESETOUT),
+ 	PINMUX_IPSR_GPSR(IP0_1_0, A0),
 -- 
 1.9.1
 
