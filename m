@@ -1,56 +1,68 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH] pinctrl: bcm2835: Fix initial value for direction_output
-Date: Mon, 30 Nov 2015 09:17:36 -0800
-Message-ID: <87r3j7tnin.fsf@eliezer.anholt.net>
-References: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
+From: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
+Subject: [PATCH v2] gpiolib: return 0 or 1 in gpiod_get_value*() functions
+Date: Mon, 30 Nov 2015 18:30:31 +0100
+Message-ID: <1448904631-30230-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gabe.freedesktop.org ([131.252.210.177]:42612 "EHLO
-	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751484AbbK3RRk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 12:17:40 -0500
-In-Reply-To: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
+Received: from mail1.bemta12.messagelabs.com ([216.82.251.3]:19267 "EHLO
+	mail1.bemta12.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752541AbbK3Ral (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 30 Nov 2015 12:30:41 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>, Martin Sperl <kernel@martin.sperl.org>
+To: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, jose.diazdegrenudepedro@digi.com, hector.palacios@digi.com
 
---=-=-=
-Content-Type: text/plain
+Commit 79a9becda894 moved the awareness of active low state
+into the gpiod_get_value*() functions, but it only inverts the
+GPIO's raw value when it is active low. If the GPIO is active
+high, the gpiod_get_value*() functions return the raw value of
+the register, which can be any positive value.
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+This patch does a double inversion when the GPIO is active high
+to make sure either 0 or 1 is returned by these functions.
 
-> Currently the provided initial value for bcm2835_gpio_direction_output
-> has no effect. So fix this issue by changing the value before
-> changing the GPIO direction. As a result we need to move the function below
-> bcm2835_gpio_set.
->
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> CC: Martin Sperl <kernel@martin.sperl.org>
-> CC: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
+Signed-off-by: Hector Palacios <hector.palacios@digi.com>
+---
+change in v2:
+ - add missing semicolon
+---
+ drivers/gpio/gpiolib.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Acked-by: Eric Anholt <eric@anholt.net>
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 50c4922fe53a..bd96f0457ba8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1981,9 +1981,9 @@ int gpiod_get_value(const struct gpio_desc *desc)
+ 
+ 	value = _gpiod_get_raw_value(desc);
+ 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+-		value = !value;
+-
+-	return value;
++		return !value;
++	else
++		return !!value;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_value);
+ 
+@@ -2224,9 +2224,9 @@ int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+ 
+ 	value = _gpiod_get_raw_value(desc);
+ 	if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+-		value = !value;
+-
+-	return value;
++		return !value;
++	else
++		return !!value;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_get_value_cansleep);
+ 
+-- 
+2.6.3
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBCgAGBQJWXISxAAoJELXWKTbR/J7oiFwP/34k7Q6wDLfHa9/yUnpVhjKJ
-7PKErCFlVO0NMrNQ6fNWm22KG38ctzbFNs1EQ6c1zXulh1AOtWc9kXT2J3rp5BKE
-vU4cxsLrNRe2sJJUCgrVMWjnNDYtkM1qS/5XrB7JNgBmfqHluT07ADkAx4BoLp6m
-+P7q89U7/QD0UZZvTQ/giQN21wCvoB1sFANne2rFc7eUtAKM9Ke7S0GCpi+Xd6c9
-ytCRFYS5gixwGw2P0ILSqgmqnlaPHLctuTr2T+eH1OEq4VjSSNsnV1xcZah82A0y
-9J+2gaRZArzKjl7bPHCfo0vvlW+BXdFgIQ/LgclM9LuS55Z4iQ0HO9kgAkmIAsqm
-jdl24Cb/sAxeoY2q1kCdenBIhPJzoFik9OtifGehp/i65lEI3NJPctPSn+b+2s5w
-DNumQqD4tT98GDS2qHvh/HVcBGVKV8n/7WDRHDSRo85gWk+U467/O8IRcxkPhw2Q
-KwxoodWTBb2AWvIJD59QN+fP6BGwWq4sFUbn75sP1zcAeYYHFua/qPRmi8BGj706
-rJqgXvXMeOkTpF33otm/qHtG9ut6xM4dAqZv8XcSpF6AftzgoMrlQQaSC6tVlIfg
-54GUZA7iKrN2yYywRHy6vclkBNKwGTLsI53LK4PRt+kIPNZaX1Y7yyuqNz9GWKFu
-ZfdJe3ZUl+mFlCvHtqbO
-=kGuf
------END PGP SIGNATURE-----
---=-=-=--
