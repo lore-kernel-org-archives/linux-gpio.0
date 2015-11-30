@@ -1,19 +1,20 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/7] pinctrl: use ngpios propety from DT
-Date: Mon, 30 Nov 2015 09:36:49 +0100
-Message-ID: <CACRpkdYsgAqQaMNwjCSnZy_47JACTyNtW7qfUKSk4f0=1GPV0g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] pinctrl: Add new compatible string to GPIO
+ controller driver
+Date: Mon, 30 Nov 2015 09:37:51 +0100
+Message-ID: <CACRpkdZcCvHw02SvpMG1boL1FWNsrQ+vSVqyy3PYGM2pXMpYyA@mail.gmail.com>
 References: <1447905139-16002-1-git-send-email-pramodku@broadcom.com>
-	<1447905139-16002-4-git-send-email-pramodku@broadcom.com>
+	<1447905139-16002-5-git-send-email-pramodku@broadcom.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:34974 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753427AbbK3Igu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 03:36:50 -0500
-Received: by obbnk6 with SMTP id nk6so121078740obb.2
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 00:36:49 -0800 (PST)
-In-Reply-To: <1447905139-16002-4-git-send-email-pramodku@broadcom.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:35872 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753281AbbK3Ihw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 03:37:52 -0500
+Received: by obdgf3 with SMTP id gf3so122614405obd.3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Nov 2015 00:37:51 -0800 (PST)
+In-Reply-To: <1447905139-16002-5-git-send-email-pramodku@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Pramod Kumar <pramodku@broadcom.com>
@@ -21,9 +22,8 @@ Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutl
 
 On Thu, Nov 19, 2015 at 4:52 AM, Pramod Kumar <pramodku@broadcom.com> wrote:
 
-> Since identical hardware is used in several instances and every
-> instance will have different in-use pins. Hence extracting this
-> number from DT via "ngpios" property.
+> This compatible string should be used for all new iproc based future
+> SoCs having the same GPIO controller hardware.
 >
 > Signed-off-by: Pramod Kumar <pramodku@broadcom.com>
 > Reviewed-by: Ray Jui <rjui@broadcom.com>
