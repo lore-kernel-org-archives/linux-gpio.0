@@ -1,61 +1,46 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 4/7] ARM: dts: sun9i: Add consumer IR receiver device
- node and pinmux settings
-Date: Tue, 1 Dec 2015 14:09:31 +0100
-Message-ID: <20151201130931.GM29263@lukather>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 6/7] ARM: dts: sun9i: Add Reduced Serial Bus
+ controller device node to A80 dtsi
+Date: Tue, 1 Dec 2015 14:10:11 +0100
+Message-ID: <20151201131011.GO29263@lukather>
 References: <1448948845-28347-1-git-send-email-wens@csie.org>
- <1448948845-28347-5-git-send-email-wens@csie.org>
+ <1448948845-28347-7-git-send-email-wens@csie.org>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LJm8egi4vkexsie5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="rZHzn+A9B7nBTGyj"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBPVY62ZAKGQEXJO2PWQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1448948845-28347-5-git-send-email-wens@csie.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
+In-Reply-To: <1448948845-28347-7-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-
---LJm8egi4vkexsie5
-Content-Type: text/plain; charset=us-ascii
+--rZHzn+A9B7nBTGyj
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 01, 2015 at 01:47:22PM +0800, Chen-Yu Tsai wrote:
-> The Allwinner A80 SoC has a consumer IR receiver, which is the same as
-> older SoCs.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On Tue, Dec 01, 2015 at 01:47:24PM +0800, Chen-Yu Tsai wrote:
+> This patch adds a device node for the Reduced Serial Bus (RSB)
+> controller and the defacto pinmux setting to the A80 dtsi.
+> 
+> Since there is only one possible pinmux setting for RSB, just
+> set it in the dtsi.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 
 Applied, thanks!
 Maxime
 
---=20
+-- 
 Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
-
---LJm8egi4vkexsie5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWXZwLAAoJEBx+YmzsjxAgIu8P/i5gpRcayOpgZZuOL9rVf6ET
-CvDUW+kYafVJPL8oFwurSXeYrkEg+I+PSSCgn1JUshdGVDQootlZw1z372ctX7+8
-Piz3QgbM9I4VEZy5U/fBxs5tcUj7Ml3qFObH7OsC2/a6q6rkKE1nnN61d0B1wgZQ
-USY7s/VuyH/UIkHpkxKQh2aMytd/d8zdAsuA9lSA2Ws8YAhdV/zjBjYf5OdARpoo
-IWZXDw+8EIEHx5d7ntnh1QRFD+6YGgE+bSbbKuyYyAb2Cl8uUJV8040n2q+zVRNJ
-/7Kp4+KdHS9qJKGmWtDgY4DUarHD6k66KWLKV+MMsB1g9XZwSQaPYxKvKxyhktk8
-CWFQno4CjpkjRsAE0u/7kkf08GSGkXNaNRn83XJ9d2PpCePEkYQr2I7vbpF9eufl
-3i2g34+lFJI4xH650+YKBUuRScUwAQNA7LbKCs6R/T7P+2yMPQgzVx51qMCI9wzM
-vccBl0Sqk7htpiTaHKiOZDfeWNxhbAc0fbIMmgetdBrt4PSz74iWwSUUBcfQw9yF
-SifrLWm2AFeiJjVF5eJxBV3RIclZIX3lulHuLa0KfMeDAKsfwQMdVIgc79p7hfG0
-TVaQGcJmjtpJyP4JKuFzHPHx8/CAm8puBzo8+KmS+taw8wjf/jEEoqzkOUcgpsAs
-6Z0DL9TIYJZshXGqpwBf
-=hRKo
------END PGP SIGNATURE-----
-
---LJm8egi4vkexsie5--
+--rZHzn+A9B7nBTGyj--
