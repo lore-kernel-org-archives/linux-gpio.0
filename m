@@ -1,41 +1,41 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: dts: sun9i: optimus: Enable
- Reduced Serial Bus controller
-Date: Tue, 1 Dec 2015 14:10:31 +0100
-Message-ID: <20151201131031.GP29263@lukather>
-References: <1448948845-28347-1-git-send-email-wens@csie.org>
- <1448948845-28347-8-git-send-email-wens@csie.org>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: single: Use a separate lockdep class
+Date: Tue, 1 Dec 2015 15:06:13 +0100
+Message-ID: <CACRpkda3g7FXV4vLtj0LnV5H3vhumDrngHeJ6F7yc8y1k_dABg@mail.gmail.com>
+References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JF+ytOk7PH04NsRm"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBUVY62ZAKGQEBY5UI5Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1448948845-28347-8-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
---JF+ytOk7PH04NsRm
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:33358 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755364AbbLAOGN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 09:06:13 -0500
+Received: by obbww6 with SMTP id ww6so5457441obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 06:06:13 -0800 (PST)
+In-Reply-To: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>, Tony Lindgren <tony@atomide.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 01, 2015 at 01:47:25PM +0800, Chen-Yu Tsai wrote:
-> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> ---
+On Fri, Nov 27, 2015 at 6:20 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 
-Applied, thanks!
-Maxime
+> The single pinmux controller can be cascaded to the other interrupt
+> controllers. Hence when propagating wake-up settings to its parent
+> interrupt controller, there's possiblity of detecting possible recursive
+> locking and getting lockdep warning.
+>
+> This patch avoids this false positive by using a separate lockdep class
+> for this single pinctrl interrupts.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---JF+ytOk7PH04NsRm--
+I need Tony's ACK on this patch before applying.
+
+Is it a regression that needs to go into fixes?
+
+Yours,
+Linus Walleij
