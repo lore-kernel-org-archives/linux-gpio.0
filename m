@@ -1,110 +1,71 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid clock-indices
-Date: Tue, 1 Dec 2015 11:48:03 +0900
-Message-ID: <CAK7LNAT5Q+MVj8KvT_WMwtAFhFN5Q6yXk6vY9oNpoBtEBs-C6Q@mail.gmail.com>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
-	<20151201005802.GE17532@codeaurora.org>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH 3/7] ARM: dts: sun9i: optimus: Enable LED3
+Date: Tue,  1 Dec 2015 13:47:21 +0800
+Message-ID: <1448948845-28347-4-git-send-email-wens@csie.org>
+References: <1448948845-28347-1-git-send-email-wens@csie.org>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg002.nifty.com ([202.248.44.40]:25576 "EHLO
-	conssluserg002-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751837AbbLACs0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 30 Nov 2015 21:48:26 -0500
-In-Reply-To: <20151201005802.GE17532@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBCMILY6JWQBBB7HI6SZAKGQE7WFU43I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1448948845-28347-1-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <http://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <http://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+LED3 is connected to pin PM15 on R_PIO.
 
+Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+---
+ arch/arm/boot/dts/sun9i-a80-optimus.dts | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-2015-12-01 9:58 GMT+09:00 Stephen Boyd <sboyd@codeaurora.org>:
-> On 11/30, Masahiro Yamada wrote:
->> Currently, of_clk_get_parent_name() returns a wrong parent clock name
->> when "clock-indices" property exists and the target index is not
->> found in the property.  In this case, NULL should be returned.
->>
->> For example,
->>
->>         oscillator {
->>                 compatible = "myclocktype";
->>                 #clock-cells = <1>;
->>                 clock-indices = <1>, <3>;
->>                 clock-output-names = "clka", "clkb";
->>         };
->>
->>         consumer {
->>                 compatible = "myclockconsumer";
->>                 clocks = <&oscillator 0>, <&oscillator 1>;
->>         };
->>
->> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
->> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
->> this is correct).   Because the "clock-indices" in the clock parent
->> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
->> return NULL.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Here's the proposed alternative, if you agree I will merge it
-> with the above commit text and attribution to you.
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index a66efc9d8bfc..f54583a9835a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->                 }
->                 count++;
->         }
-> +       /* We went off the end of 'clock-indices' without finding it */
-> +       if (!vp && count)
-> +               return NULL;
->
->         if (of_property_read_string_index(clkspec.np, "clock-output-names",
->                                           index,
->
-
-No, again.
-The existence of "clock-indices" should be checked
-in order to omit the zero-length "clock-indices".
-
-
-OK, let me guess the next alternative from you.
-
-
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
->                 }
->                 count++;
->         }
-> +       /* We went off the end of 'clock-indices' without finding it */
-> +       if (prop && !vp)
-> +               return NULL;
->
->         if (of_property_read_string_index(clkspec.np, "clock-output-names",
->                                           index,
->
-
-This works, but clumsy things are:
-
-[1] If the "clock-indices" is missing, we can know it
-     before looping around the of_property_for_each_u32().
-     Checking the "prop" after the loop seems odd.
-
-[2] "prop" and "vp" seem to be temporary storage that we should not
-     know what they exactly are, like the auxiliary pointer in
-list_for_each_safe().
-
-
-Why do you insist on of_property_for_each_u32()?
-It no longer fits in here.
-
-
+diff --git a/arch/arm/boot/dts/sun9i-a80-optimus.dts b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+index 6ce4b5e8b615..ae7db9fcb2a7 100644
+--- a/arch/arm/boot/dts/sun9i-a80-optimus.dts
++++ b/arch/arm/boot/dts/sun9i-a80-optimus.dts
+@@ -65,7 +65,7 @@
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+-		pinctrl-0 = <&led_pins_optimus>;
++		pinctrl-0 = <&led_pins_optimus>, <&led_r_pins_optimus>;
+ 
+ 		/* The LED names match those found on the board */
+ 
+@@ -74,7 +74,10 @@
+ 			gpios = <&pio 7 1 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		/* led3 is on PM15, in R_PIO */
++		led3 {
++			label = "optimus:led3:usr";
++			gpios = <&r_pio 1 15 GPIO_ACTIVE_HIGH>; /* PM15 */
++		};
+ 
+ 		led4 {
+ 			label = "optimus:led4:usr";
+@@ -180,6 +183,15 @@
+ 	status = "okay";
+ };
+ 
++&r_pio {
++	led_r_pins_optimus: led-pins@1 {
++		allwinner,pins = "PM15";
++		allwinner,function = "gpio_out";
++		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
++		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
 -- 
-Best Regards
-Masahiro Yamada
+2.6.2
