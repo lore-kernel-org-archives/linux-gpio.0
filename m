@@ -1,82 +1,71 @@
-From: Ludovic Desroches <ludovic.desroches@atmel.com>
-Subject: [PATCH] pinctrl: at91-pio4: fix memleak after using dt map
-Date: Tue, 1 Dec 2015 15:19:02 +0100
-Message-ID: <1448979542-1202-1-git-send-email-ludovic.desroches@atmel.com>
+From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v5 3/4] regulator: tps65086: Update regulator driver for the TPS65086 PMIC
+Date: Tue, 1 Dec 2015 12:44:03 -0600
+Message-ID: <1448995444-29031-4-git-send-email-afd@ti.com>
+References: <1448995444-29031-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eusmtp01.atmel.com ([212.144.249.242]:42816 "EHLO
-	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755216AbbLAOSq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 09:18:46 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1448995444-29031-1-git-send-email-afd-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, nicolas.ferre@atmel.com, yingjoe.chen@mediatek.com, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-configs is allocated by pinconf_generic_parse_dt_config(),
-pinctrl_utils_add_map_configs() duplicates configs so it can and has to
-be freed to prevent memory leaks.
+Make changes to allow this driver to work with the updated TPS65086 core
+driver and bindings.
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Reported-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
 ---
- drivers/pinctrl/pinctrl-at91-pio4.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/regulator/tps65086-regulator.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index 33edd07..3a384ee 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -500,7 +500,8 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (!num_pins) {
- 		dev_err(pctldev->dev, "no pins found in node %s\n",
- 			of_node_full_name(np));
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto exit;
- 	}
+diff --git a/drivers/regulator/tps65086-regulator.c b/drivers/regulator/tps65086-regulator.c
+index c26fc7e..33f389d 100644
+--- a/drivers/regulator/tps65086-regulator.c
++++ b/drivers/regulator/tps65086-regulator.c
+@@ -16,10 +16,9 @@
+  */
  
- 	/*
-@@ -514,19 +515,19 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	ret = pinctrl_utils_reserve_map(pctldev, map, reserved_maps, num_maps,
- 					reserve);
- 	if (ret < 0)
--		return ret;
-+		goto exit;
+ #include <linux/module.h>
+-#include <linux/of_device.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+-#include <linux/regulator/of_regulator.h>
  
- 	for (i = 0; i < num_pins; i++) {
- 		const char *group, *func;
+ #include <linux/mfd/tps65086.h>
  
- 		ret = of_property_read_u32_index(np, "pinmux", i, &pinfunc);
- 		if (ret)
--			return ret;
-+			goto exit;
+@@ -31,6 +30,7 @@ enum tps65086_regulators { BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, LDOA1,
+ 		.desc = {						\
+ 			.name			= _name,		\
+ 			.of_match		= of_match_ptr(_of),	\
++			.regulators_node	= "regulators",		\
+ 			.of_parse_cb		= tps65086_of_parse_cb,	\
+ 			.id			= _id,			\
+ 			.ops			= &reg_ops,		\
+@@ -54,6 +54,7 @@ enum tps65086_regulators { BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, LDOA1,
+ 		.desc = {						\
+ 			.name			= _name,		\
+ 			.of_match		= of_match_ptr(_of),	\
++			.regulators_node	= "regulators",		\
+ 			.of_parse_cb		= tps65086_of_parse_cb,	\
+ 			.id			= _id,			\
+ 			.ops			= &switch_ops,		\
+@@ -213,8 +214,8 @@ static int tps65086_regulator_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, tps);
  
- 		ret = atmel_pctl_xlate_pinfunc(pctldev, np, pinfunc, &group,
- 					       &func);
- 		if (ret)
--			return ret;
-+			goto exit;
+ 	config.dev = &pdev->dev;
++	config.dev->of_node = tps->dev->of_node;
+ 	config.driver_data = tps;
+-	config.of_node = pdev->dev.of_node;
+ 	config.regmap = tps->regmap;
  
- 		pinctrl_utils_add_map_mux(pctldev, map, reserved_maps, num_maps,
- 					  group, func);
-@@ -537,11 +538,13 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 					configs, num_configs,
- 					PIN_MAP_TYPE_CONFIGS_GROUP);
- 			if (ret < 0)
--				return ret;
-+				goto exit;
- 		}
- 	}
- 
--	return 0;
-+exit:
-+	kfree(configs);
-+	return ret;
- }
- 
- static int atmel_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
 -- 
-2.5.0
+1.9.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
