@@ -1,28 +1,43 @@
-From: Christophe Ricard <christophe.ricard@gmail.com>
-Subject: Re: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
-Date: Tue, 1 Dec 2015 08:03:59 +0100
-Message-ID: <565D465F.6090703@gmail.com>
-References: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
- <20151201010330.GE2064@katana>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH] ARM: pxa: make more mach/*.h files local
+Date: Tue, 01 Dec 2015 08:22:34 +0100
+Message-ID: <87a8pu7hvp.fsf@belgarion.home>
+References: <1905725.SU2iekYqHg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20151201010330.GE2064@katana>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:41363 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755173AbbLAHWi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 02:22:38 -0500
+In-Reply-To: <1905725.SU2iekYqHg@wuerfel> (Arnd Bergmann's message of "Mon, 30
+	Nov 2015 15:53:01 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Wolfram,
+Arnd Bergmann <arnd@arndb.de> writes:
 
-This is correct that this serie does not impact i2c core at all.
-
-Best Regards
-Christophe
-
-On 01/12/2015 02:03, Wolfram Sang wrote:
->> This serie only move from RFC to final. I am also adding gpio folks for potential
->> feedback.
-> Why is this relevant for I2C?
+> Lots of header files are never included outside of a mach-pxa
+> directory and do not need to be made visible in include/mach,
+> so let's just move them all down one level.
 >
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I've been carrying patches like this one in my multiplatform series
+> for a while, the PXA one is the largest.
+>
+> I'd like to merge that for 4.5, any objections?
+No, I like this very much.
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+
+> Do you want to take it into a PXA branch to avoid conflicts, or should
+> I put it into arm-soc directly?
+I don't have any patch so far queued for v4.5, so please take it, I think I'll
+skip v4.5 pull.
+
+Cheers.
+
+--
+Robert
