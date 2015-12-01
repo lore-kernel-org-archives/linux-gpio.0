@@ -1,68 +1,51 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2] clk: let of_clk_get_parent_name() fail for invalid
- clock-indices
-Date: Mon, 30 Nov 2015 16:58:02 -0800
-Message-ID: <20151201005802.GE17532@codeaurora.org>
-References: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
+Date: Tue, 1 Dec 2015 02:03:30 +0100
+Message-ID: <20151201010330.GE2064@katana>
+References: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:34722 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751816AbbLAA6E (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Nov 2015 19:58:04 -0500
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RpqchZ26BWispMcB"
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1448873164-22415-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Christophe Ricard <christophe.ricard@gmail.com>
+Cc: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/30, Masahiro Yamada wrote:
-> Currently, of_clk_get_parent_name() returns a wrong parent clock name
-> when "clock-indices" property exists and the target index is not
-> found in the property.  In this case, NULL should be returned.
-> 
-> For example,
-> 
->         oscillator {
->                 compatible = "myclocktype";
->                 #clock-cells = <1>;
->                 clock-indices = <1>, <3>;
->                 clock-output-names = "clka", "clkb";
->         };
-> 
->         consumer {
->                 compatible = "myclockconsumer";
->                 clocks = <&oscillator 0>, <&oscillator 1>;
->         };
-> 
-> Currently, of_clk_get_parent_name(consumer_np, 0) returns "clka"
-> (and of_clk_get_parent_name(consumer_np, 1) also returns "clka",
-> this is correct).   Because the "clock-indices" in the clock parent
-> does not contain <0>, of_clk_get_parent_name(consumer_np, 0) should
-> return NULL.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Here's the proposed alternative, if you agree I will merge it
-with the above commit text and attribution to you.
+--RpqchZ26BWispMcB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a66efc9d8bfc..f54583a9835a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3079,6 +3079,9 @@ const char *of_clk_get_parent_name(struct device_node *np, int index)
- 		}
- 		count++;
- 	}
-+	/* We went off the end of 'clock-indices' without finding it */
-+	if (!vp && count)
-+		return NULL;
- 
- 	if (of_property_read_string_index(clkspec.np, "clock-output-names",
- 					  index,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> This serie only move from RFC to final. I am also adding gpio folks for potential
+> feedback.
+
+Why is this relevant for I2C?
+
+
+--RpqchZ26BWispMcB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWXPHiAAoJEBQN5MwUoCm2xjMQAJKdyzgnruhEz9bXQj+Ny3hT
+dFW7H1IKzKKdDUQFhdWl4DC4xG6FWtfOBZXlC9NFuZnGqkW0JGnxrI/0cvdD7Spx
+OxcNgf7WuyGOY2VEblKYG0Hs5SWemktLHSpaXu2NrdL4LsE92Nh1jt3WoePhYC39
+gIu/xOkMxdP1f0J7iVq5T94qzzEQlIJ06r69y57WEX0RL8JzLB3M780v1D2aVCgI
+3sSwOQx/mX9uJq4U/R4EExHfBH9BfzZXyYP5s2WmWauOG/8hcptB1SPNUtu75h2h
+Md+Dd9hCE0NSimwgFeCE+wyuwC4Il4YWvVlrzQrt7J4MH+h+IqhF7cnIc+lhVoYz
+CAMRxPaLq9nQn66apNopYLcOaOOBDpLfBvm20nTN6R3t4ig+WCBsv49L7yI8YrH7
+QGJwdGUcg5ixhSIpqjsRkryP+OJcaV0l8prM/nyPREz05Dt0jGeaahe4fgPbBKzD
+kOOFtIDbbn82Rm2/XIDJH3IzPJp7eCDlvZTgt1sx7W1jwWFEYpXBQbJmOEdnKw1k
+bw+WVq22dXVHhvbgTOqGCeND1s+6Ajf83oH0pE275Q2/gdBiZd+NdDIEXQdR0RpF
+on8oB48QeS+KyxwnQUun9XOCLNhchLLf1NLLA7Yp13qv/+prrpxUzSdOywdxpOoD
+Auu1tXl4v2wXW6H9m6FQ
+=xhsb
+-----END PGP SIGNATURE-----
+
+--RpqchZ26BWispMcB--
