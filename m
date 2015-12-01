@@ -1,30 +1,37 @@
-From: Mika Westerberg <mika.westerberg@intel.com>
-Subject: Re: [PATCH V4 2/2] pinctrl: intel: fix offset calculation issue of
- register PAD_OWN
-Date: Tue, 1 Dec 2015 11:20:42 +0200
-Message-ID: <20151201092042.GA2774@lahna.fi.intel.com>
-References: <1448882416-40845-1-git-send-email-qipeng.zha@intel.com>
- <1448882416-40845-2-git-send-email-qipeng.zha@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: Add msm8996 pinctrl driver
+Date: Tue, 1 Dec 2015 10:31:46 +0100
+Message-ID: <CACRpkdbLOjUfrURnUriMOuZdF9HF1SXcxy4SfM1f4Y8xZyxayQ@mail.gmail.com>
+References: <1447806946-7137-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:64130 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755555AbbLAJWw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 1 Dec 2015 04:22:52 -0500
-Content-Disposition: inline
-In-Reply-To: <1448882416-40845-2-git-send-email-qipeng.zha@intel.com>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:32908 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755939AbbLAJbr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 04:31:47 -0500
+Received: by obbww6 with SMTP id ww6so256477obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 01:31:47 -0800 (PST)
+In-Reply-To: <1447806946-7137-1-git-send-email-sboyd@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, qi.zheng@intel.com
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Joonwoo Park <joonwoop@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-On Mon, Nov 30, 2015 at 07:20:16PM +0800, Qipeng Zha wrote:
-> The calculation equation of PAD_OWN register offset is not
-> correct for Broxton, verified this fix will get right
-> offset for Broxton.
-> 
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+On Wed, Nov 18, 2015 at 1:35 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> From: Joonwoo Park <joonwoop@codeaurora.org>
+>
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for msm8996.
+>
+> Cc: <devicetree@vger.kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Joonwoo Park <joonwoop@codeaurora.org>
+> [sboyd@codeaurora.org: Remove duplicate entries and enums]
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+Patch applied with the ACKs!
+
+Yours,
+Linus Walleij
