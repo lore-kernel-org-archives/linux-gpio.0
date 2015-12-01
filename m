@@ -1,49 +1,57 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] pinctrl: Add support STM32 MCUs
-Date: Tue, 1 Dec 2015 10:53:24 +0100
-Message-ID: <CALszF6Cd=yei0m2Zs=+k=KT5RUzdesGWPK7PAQPdj_-Ouan=2A@mail.gmail.com>
-References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1445102604-11502-5-git-send-email-mcoquelin.stm32@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: rcar: Improve clock error handling and reporting
+Date: Tue, 1 Dec 2015 10:54:57 +0100
+Message-ID: <CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
+References: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445102604-11502-5-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bruno Herrera <bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Tue, Nov 24, 2015 at 4:05 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-2015-10-17 19:23 GMT+02:00 Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> This patch adds pinctrl and GPIO support to STMicroelectronic's STM32
-> family of MCUs.
+> If the Renesas R-Car GPIO driver cannot find a functional clock, it
+> prints a warning, .e.g.
 >
-> While it only supports STM32F429 for now, it has been designed to enable
-> support of other MCUs of the family (e.g. STM32F746).
+>         gpio_rcar ffc40000.gpio: unable to get clock
 >
-> Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> and continues, as the clock is optional, depending on the SoC type.
+> This warning may confuse users.
+>
+> To fix this, add a flag to indicate that the clock is mandatory or
+> optional:
+>   - If the clock is mandatory (on R-Car Gen2), a missing clock is now
+>     treated as a fatal error,
+>   - If the clock is optional (on R-Car Gen1), the warning is no longer
+>     printed.
+>
+> The new flag is merged with the existing has_both_edge_trigger boolean
+> into a bitfield to save space.
+
+*DON'T* try to save bits in a megabyte kernel like this.
+The better readability is worth the extra bits or bytes it takes.
+Besides, did you really try to compile it before/after that change
+to verify that it actually saved that space?
+
+> Suggested-by: Magnus Damm <magnus.damm@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/pinctrl/Kconfig                   |    1 +
->  drivers/pinctrl/Makefile                  |    1 +
->  drivers/pinctrl/stm32/Kconfig             |   16 +
->  drivers/pinctrl/stm32/Makefile            |    5 +
->  drivers/pinctrl/stm32/pinctrl-stm32.c     |  856 +++++++++++++++
->  drivers/pinctrl/stm32/pinctrl-stm32.h     |   43 +
->  drivers/pinctrl/stm32/pinctrl-stm32f429.c | 1598 +++++++++++++++++++++++++++++
->  7 files changed, 2520 insertions(+)
->  create mode 100644 drivers/pinctrl/stm32/Kconfig
->  create mode 100644 drivers/pinctrl/stm32/Makefile
->  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.c
->  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.h
->  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f429.c
->
+> This depends on "gpio: rcar: Remove obsolete platform data support".
 
-Gentle reminder, do you know when you will be able to review this driver?
+Where is that patch? This does not apply to my tree,
+probably because of this.
 
-Thanks in advance,
-Maxime
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please sent the patches in a series.
+
+>         unsigned has_both_edge_trigger:1;
+> +       unsigned needs_clk:1;
+
+both should be bool and assigned true/false.
+
+Yours,
+Linus Walleij
