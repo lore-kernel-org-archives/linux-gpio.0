@@ -1,57 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: Improve clock error handling and reporting
-Date: Tue, 1 Dec 2015 10:54:57 +0100
-Message-ID: <CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
-References: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v7 1/5] Documentation: tps65912: Add DT bindings for the
+ TPS65912 PMIC
+Date: Tue, 1 Dec 2015 10:56:18 +0100
+Message-ID: <CACRpkdbKQrvFaQ4EF6AK-pNTG+UGqgo1esv-VPisGTBLNRHoHw@mail.gmail.com>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+	<1447869580-10416-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-sh-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447869580-10416-2-git-send-email-afd-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Nov 24, 2015 at 4:05 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, Nov 18, 2015 at 6:59 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
 
-> If the Renesas R-Car GPIO driver cannot find a functional clock, it
-> prints a warning, .e.g.
+> The TPS65912 PMIC contains several regulators and a GPIO controller.
+> Add bindings for the TPS65912 PMIC.
 >
->         gpio_rcar ffc40000.gpio: unable to get clock
->
-> and continues, as the clock is optional, depending on the SoC type.
-> This warning may confuse users.
->
-> To fix this, add a flag to indicate that the clock is mandatory or
-> optional:
->   - If the clock is mandatory (on R-Car Gen2), a missing clock is now
->     treated as a fatal error,
->   - If the clock is optional (on R-Car Gen1), the warning is no longer
->     printed.
->
-> The new flag is merged with the existing has_both_edge_trigger boolean
-> into a bitfield to save space.
+> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
 
-*DON'T* try to save bits in a megabyte kernel like this.
-The better readability is worth the extra bits or bytes it takes.
-Besides, did you really try to compile it before/after that change
-to verify that it actually saved that space?
-
-> Suggested-by: Magnus Damm <magnus.damm@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> This depends on "gpio: rcar: Remove obsolete platform data support".
-
-Where is that patch? This does not apply to my tree,
-probably because of this.
-
-Please sent the patches in a series.
-
->         unsigned has_both_edge_trigger:1;
-> +       unsigned needs_clk:1;
-
-both should be bool and assigned true/false.
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
