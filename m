@@ -1,83 +1,38 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: rcar: Improve clock error handling and reporting
-Date: Tue, 1 Dec 2015 11:09:32 +0100
-Message-ID: <CAMuHMdUJYF_DQ_zaS-+nEcam-tuwPCjeowvr-iQyqJdz=825Zg@mail.gmail.com>
-References: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
-	<CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: update document for pinconf_generic_parse_dt_config
+Date: Tue, 1 Dec 2015 11:12:16 +0100
+Message-ID: <CACRpkdZ_9EOA2PVcPQgoM2UHor5jdtsGBSzomYEn0hOJEF=g1w@mail.gmail.com>
+References: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35904 "EHLO
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:33396 "EHLO
 	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755759AbbLAKJd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 05:09:33 -0500
-In-Reply-To: <CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
+	with ESMTP id S1754713AbbLAKMR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 05:12:17 -0500
+Received: by obbww6 with SMTP id ww6so964602obb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 02:12:17 -0800 (PST)
+In-Reply-To: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+To: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-Hi Linus,
+On Wed, Nov 25, 2015 at 1:13 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
 
-On Tue, Dec 1, 2015 at 10:54 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Nov 24, 2015 at 4:05 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
+> The returned configs from pinconf_generic_parse_dt_config() is
+> duplicated from original. Make it clear it must be freed when no
+> longer necessary.
 >
->> If the Renesas R-Car GPIO driver cannot find a functional clock, it
->> prints a warning, .e.g.
->>
->>         gpio_rcar ffc40000.gpio: unable to get clock
->>
->> and continues, as the clock is optional, depending on the SoC type.
->> This warning may confuse users.
->>
->> To fix this, add a flag to indicate that the clock is mandatory or
->> optional:
->>   - If the clock is mandatory (on R-Car Gen2), a missing clock is now
->>     treated as a fatal error,
->>   - If the clock is optional (on R-Car Gen1), the warning is no longer
->>     printed.
->>
->> The new flag is merged with the existing has_both_edge_trigger boolean
->> into a bitfield to save space.
->
-> *DON'T* try to save bits in a megabyte kernel like this.
-> The better readability is worth the extra bits or bytes it takes.
-> Besides, did you really try to compile it before/after that change
-> to verify that it actually saved that space?
+> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-Is it better readable?
+Patch applied.
 
-Size also depends on how many more flags we'll add later.
+> It seems memleak in pinctrl-mtk-common.c[1] is not alone. After a quick
+> glance I notice similar issues in drivers/pinctrl/pinctrl-at91-pio4.c and
+> drivers/pinctrl/nomadik/pinctrl-abx500.c.
 
->> Suggested-by: Magnus Damm <magnus.damm@gmail.com>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> This depends on "gpio: rcar: Remove obsolete platform data support".
->
-> Where is that patch? This does not apply to my tree,
-> probably because of this.
+Patches fixing them are coming? ;)
 
-IIRC, you said "include it in your pull request" for that series.
-
-> Please sent the patches in a series.
-
-I can send both to you, as they're not pinctrl but gpio.
-
->>         unsigned has_both_edge_trigger:1;
->> +       unsigned needs_clk:1;
->
-> both should be bool and assigned true/false.
-
-OK, if you prefer it that way.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
