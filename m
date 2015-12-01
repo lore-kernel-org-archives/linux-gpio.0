@@ -1,31 +1,83 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 1/5] Documentation: tps65912: Add DT bindings for the
- TPS65912 PMIC
-Date: Tue, 1 Dec 2015 10:56:18 +0100
-Message-ID: <CACRpkdbKQrvFaQ4EF6AK-pNTG+UGqgo1esv-VPisGTBLNRHoHw@mail.gmail.com>
-References: <1447869580-10416-1-git-send-email-afd@ti.com>
-	<1447869580-10416-2-git-send-email-afd@ti.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: rcar: Improve clock error handling and reporting
+Date: Tue, 1 Dec 2015 11:09:32 +0100
+Message-ID: <CAMuHMdUJYF_DQ_zaS-+nEcam-tuwPCjeowvr-iQyqJdz=825Zg@mail.gmail.com>
+References: <1448377528-19307-1-git-send-email-geert+renesas@glider.be>
+	<CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1447869580-10416-2-git-send-email-afd-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35904 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755759AbbLAKJd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 05:09:33 -0500
+In-Reply-To: <CACRpkdabE9=UsGsRqzVZg3P09ntLTMz1NE3ginQ_XdFiddh4bw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Alexandre Courbot <gnurou@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
 
-On Wed, Nov 18, 2015 at 6:59 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
+Hi Linus,
 
-> The TPS65912 PMIC contains several regulators and a GPIO controller.
-> Add bindings for the TPS65912 PMIC.
+On Tue, Dec 1, 2015 at 10:54 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 24, 2015 at 4:05 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
-> Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
+>> If the Renesas R-Car GPIO driver cannot find a functional clock, it
+>> prints a warning, .e.g.
+>>
+>>         gpio_rcar ffc40000.gpio: unable to get clock
+>>
+>> and continues, as the clock is optional, depending on the SoC type.
+>> This warning may confuse users.
+>>
+>> To fix this, add a flag to indicate that the clock is mandatory or
+>> optional:
+>>   - If the clock is mandatory (on R-Car Gen2), a missing clock is now
+>>     treated as a fatal error,
+>>   - If the clock is optional (on R-Car Gen1), the warning is no longer
+>>     printed.
+>>
+>> The new flag is merged with the existing has_both_edge_trigger boolean
+>> into a bitfield to save space.
+>
+> *DON'T* try to save bits in a megabyte kernel like this.
+> The better readability is worth the extra bits or bytes it takes.
+> Besides, did you really try to compile it before/after that change
+> to verify that it actually saved that space?
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Is it better readable?
 
-Yours,
-Linus Walleij
+Size also depends on how many more flags we'll add later.
+
+>> Suggested-by: Magnus Damm <magnus.damm@gmail.com>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> This depends on "gpio: rcar: Remove obsolete platform data support".
+>
+> Where is that patch? This does not apply to my tree,
+> probably because of this.
+
+IIRC, you said "include it in your pull request" for that series.
+
+> Please sent the patches in a series.
+
+I can send both to you, as they're not pinctrl but gpio.
+
+>>         unsigned has_both_edge_trigger:1;
+>> +       unsigned needs_clk:1;
+>
+> both should be bool and assigned true/false.
+
+OK, if you prefer it that way.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
