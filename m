@@ -1,43 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add GPIO support for the ACCES 104-IDI-48
-Date: Tue, 1 Dec 2015 09:57:27 +0100
-Message-ID: <CACRpkda7QAKB=7W6rVA8fh873wTy9wm=8ta+mKZmuP2Sj7rCHA@mail.gmail.com>
-References: <20151123175450.GA16041@sophia>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: improve error checking and reporting
+Date: Tue, 1 Dec 2015 09:59:38 +0100
+Message-ID: <CACRpkdbuiW34i+iZdujw4-sjrAY6K09BoVPxfGYsJsm4Cc6+Tg@mail.gmail.com>
+References: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:35281 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755343AbbLAI52 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 03:57:28 -0500
-Received: by obbnk6 with SMTP id nk6so149590876obb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 00:57:27 -0800 (PST)
-In-Reply-To: <20151123175450.GA16041@sophia>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:34754 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755524AbbLAI7j convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 03:59:39 -0500
+Received: by oies6 with SMTP id s6so113404849oie.1
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 00:59:38 -0800 (PST)
+In-Reply-To: <1447171030-15056-1-git-send-email-timur@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Timur Tabi <timur@codeaurora.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Nov 23, 2015 at 6:54 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Tue, Nov 10, 2015 at 4:57 PM, Timur Tabi <timur@codeaurora.org> wrot=
+e:
 
-> The ACCES 104-IDI-48 family of PC/104 utility boards feature 48
-> individually optically isolated digital inputs. Enabled inputs feature
-> change-of-state detection capability; if change-of-state detection is
-> enabled, an interrupt is fired off if a change of input level
-> (low-to-high or high-to-low) is detected. Change-of-state IRQs are
-> enabled/disabled on 8-bit boundaries, for a total of six boundaries.
+> The driver doesn't report an error message if the ACPI tables are mis=
+sing
+> the num-gpios property (which indicates how many GPIOs there are on t=
+his
+> SOC), and it didn't check to ensure that the mallocs didn't fail.
 >
-> This driver provides GPIO and IRQ support for these 48 channels of
-> digital input. The base port address for the device may be configured
-> via the idi_48_base module parameter. The interrupt line number for the
-> device may be configured via the idi_48_irq module parameter.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-This is a very nice and clean written driver.
-
-Patch applied.
+Patch applied with Bj=C3=B6rn's review tag.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
