@@ -1,38 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: update document for pinconf_generic_parse_dt_config
-Date: Tue, 1 Dec 2015 11:12:16 +0100
-Message-ID: <CACRpkdZ_9EOA2PVcPQgoM2UHor5jdtsGBSzomYEn0hOJEF=g1w@mail.gmail.com>
-References: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: sh7734: Add missing cfg macro parameter
+ to fix build
+Date: Tue, 1 Dec 2015 11:13:35 +0100
+Message-ID: <CACRpkdawUfss2NDwLfEPEJQZ+YifqtbHg+xOX7qsYkrNmBZjUw@mail.gmail.com>
+References: <1448455933-20276-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33396 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754713AbbLAKMR (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Dec 2015 05:12:17 -0500
-Received: by obbww6 with SMTP id ww6so964602obb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Dec 2015 02:12:17 -0800 (PST)
-In-Reply-To: <1448453603-38980-1-git-send-email-yingjoe.chen@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1448455933-20276-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ludovic Desroches <ludovic.desroches@atmel.com>
 
-On Wed, Nov 25, 2015 at 1:13 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
+On Wed, Nov 25, 2015 at 1:52 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> The returned configs from pinconf_generic_parse_dt_config() is
-> duplicated from original. Make it clear it must be freed when no
-> longer necessary.
+> When building for SH7734:
 >
-> Signed-off-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:2: error: '_GP_DATA' undeclared here (not in a function)
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:586:1: error: macro "_GP_DATA" passed 5 arguments, but takes just 4
+>     ...
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:1: error: macro "_GP_INOUTSEL" passed 5 arguments, but takes just 4
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:53: error: '_GP_INOUTSEL' undeclared here (not in a function)
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2389:2: warning: (near initialization for '(anonymous)[0]') [enabled by default]
+>     ...
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:1: error: macro "_GP_INDT" passed 5 arguments, but takes just 4
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:47: error: '_GP_INDT' undeclared here (not in a function)
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:2: warning: initialization makes integer from pointer without a cast [enabled by default]
+>     drivers/pinctrl/sh-pfc/pfc-sh7734.c:2416:2: warning: (near initialization for '(anonymous)[0]') [enabled by default]
+>     ...
+>
+> Add the missing "cfg" macro parameters to the sh7734-specific
+> _GP_DATA(), _GP_INOUTSEL(), and _GP_INDT() macros to fix this.
+>
+> Fixes: 22768fc60abbf58b ("pinctrl: sh-pfc: Add macros defining GP ports with config flags")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Patch applied.
-
-> It seems memleak in pinctrl-mtk-common.c[1] is not alone. After a quick
-> glance I notice similar issues in drivers/pinctrl/pinctrl-at91-pio4.c and
-> drivers/pinctrl/nomadik/pinctrl-abx500.c.
-
-Patches fixing them are coming? ;)
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
