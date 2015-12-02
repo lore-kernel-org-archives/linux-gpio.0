@@ -1,149 +1,58 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
-Date: Wed, 02 Dec 2015 23:11:35 +0300
-Message-ID: <1512650.VUqGxiAB2A@wasted.cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Wed, 2 Dec 2015 23:38:33 +0000
+Message-ID: <20151202233833.18b17d72a5fda99c5a877788@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA256";
+ boundary="Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add the EtherAVB pin groups to the R8A7791 PFC driver.
+--Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Linus,
 
----
-The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
+After merging the gpio tree, today's linux-next build (x86 allmodconfig)
+failed like this:
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   92 +++++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
+make[1]: Leaving directory '/home/broonie/next/x86_64_allmodconfig'
+/home/broonie/next/next/sound/soc/soc-ac97.c: In function 'snd_soc_ac97_ini=
+t_gpio':
+/home/broonie/next/next/sound/soc/soc-ac97.c:145:22: error: 'struct gpio_ch=
+ip' has no member named 'dev'
+  gpio_priv->gpio_chip.dev =3D codec->dev;
+                      ^
+/home/broonie/next/next/scripts/Makefile.build:258: recipe for target 'soun=
+d/soc/soc-ac97.o' failed
+/home/broonie/next/next/scripts/Makefile.build:407: recipe for target 'soun=
+d/soc' failed
+make[3]: *** [sound/soc/soc-ac97.o] Error 1
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1740,6 +1740,82 @@ static const unsigned int audio_clkout_m
- 	AUDIO_CLKOUT_MARK,
- };
- 
-+/* - AVB -------------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdio_pins[] = {
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int avb_mdio_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 28),
-+	RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
-+static const unsigned int avb_gmii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21), RCAR_GP_PIN(5, 22), RCAR_GP_PIN(5, 23),
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 30), RCAR_GP_PIN(5, 17),
-+	RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27), RCAR_GP_PIN(5, 28),
-+	RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int avb_gmii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
-+	AVB_TXD6_MARK, AVB_TXD7_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
-+	AVB_RXD6_MARK, AVB_RXD7_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
-+	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
-+
- /* - CAN -------------------------------------------------------------------- */
- 
- static const unsigned int can0_data_pins[] = {
-@@ -4258,6 +4334,12 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(audio_clk_b_b),
- 	SH_PFC_PIN_GROUP(audio_clk_c),
- 	SH_PFC_PIN_GROUP(audio_clkout),
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdio),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(can0_data),
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can0_data_c),
-@@ -4597,6 +4679,15 @@ static const char * const audio_clk_grou
- 	"audio_clkout",
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdio",
-+	"avb_mii",
-+	"avb_gmii",
-+};
-+
- static const char * const can0_groups[] = {
- 	"can0_data",
- 	"can0_data_b",
-@@ -5081,6 +5172,7 @@ static const char * const vin2_groups[]
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(du),
+We need to cross merge the AC'97 GPIO chip into your tree for you to do the
+conversion, I'll send you a pull request later (or in the mornining). For n=
+ow
+I used the last gpio tree that was included in a -next.
 
+--Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWX4D5AAoJECTWi3JdVIfQ9+MH/iKr2BxaXihxY9x9bTDiMq0F
+E8Hz6bsd8sfVSPse/MPjxV4V43qAkf4F+K4wVDBXkKF6w21RE4JBZBQWM0ADMdgG
+tpF9dujHLrdvhf4aMOp1pEFRH6q+j+NBJRE3miS896+e/tbhOXEr1vNMJGLcUHwF
++ec7NBWBRGFst3Ka+MVz+E64Jw1II5fSq4I1rduq1f32kQprN5iToFtrKeyLCCgZ
+bJBbgUto/sMhen+l/MvlY5YAgdWOaZTZVP/7vGXVefpnPFGYwW6b9K2x5finoOTv
+XavMMZQ1+Urmb3ShleJAjhPqKK7ttL+kMVz3pGlju0+RAWHC5dwMLhU6MTeD7y8=
+=2rG+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ--
