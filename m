@@ -1,57 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] pinctrl: at91: Use platform_register/unregister_drivers()
-Date: Wed,  2 Dec 2015 17:31:55 +0100
-Message-ID: <1449073915-12663-2-git-send-email-thierry.reding@gmail.com>
-References: <1449073915-12663-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449073915-12663-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH] pinctrl: bcm: Default PINCTRL_BCM281XX to y for
+ ARCH_BCM_MOBILE
+Date: Wed, 2 Dec 2015 09:42:57 -0800
+Message-ID: <565F2DA1.60908@broadcom.com>
+References: <1449020490-27084-1-git-send-email-f.fainelli@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-gw2-out.broadcom.com ([216.31.210.63]:7381 "EHLO
+	mail-gw2-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756118AbbLBRm7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Dec 2015 12:42:59 -0500
+In-Reply-To: <1449020490-27084-1-git-send-email-f.fainelli@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>, linux-gpio@vger.kernel.org
+Cc: sbranden@broadcom.com, linus.walleij@linaro.org, bcm-kernel-feedback-list@broadcom.com
 
-From: Thierry Reding <treding@nvidia.com>
 
-These new helpers simplify implementing multi-driver modules and
-properly handle failure to register one driver by unregistering all
-previously registered drivers.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/pinctrl/pinctrl-at91.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On 12/1/2015 5:41 PM, Florian Fainelli wrote:
+> This driver is mandatory for proper operation on the platforms covered
+> by the ARCH_BCM_MOBILE Kconfig symbol, make sure we do that driver on
+> for these platforms.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>   drivers/pinctrl/bcm/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+> index cd11d4d9ad58..b63d7068f26c 100644
+> --- a/drivers/pinctrl/bcm/Kconfig
+> +++ b/drivers/pinctrl/bcm/Kconfig
+> @@ -9,6 +9,7 @@ config PINCTRL_BCM281XX
+>   	select PINCONF
+>   	select GENERIC_PINCONF
+>   	select REGMAP_MMIO
+> +	default ARCH_BCM_MOBILE
+>   	help
+>   	  Say Y here to support Broadcom BCM281xx pinctrl driver, which is used
+>   	  for the BCM281xx SoC family, including BCM11130, BCM11140, BCM11351,
+>
 
-diff --git a/drivers/pinctrl/pinctrl-at91.c b/drivers/pinctrl/pinctrl-at91.c
-index 0d2fc0cff35e..47b625b1b789 100644
---- a/drivers/pinctrl/pinctrl-at91.c
-+++ b/drivers/pinctrl/pinctrl-at91.c
-@@ -1828,20 +1828,20 @@ static struct platform_driver at91_pinctrl_driver = {
- 	.remove = at91_pinctrl_remove,
- };
- 
-+static struct platform_driver * const drivers[] = {
-+	&at91_gpio_driver,
-+	&at91_pinctrl_driver,
-+};
-+
- static int __init at91_pinctrl_init(void)
- {
--	int ret;
--
--	ret = platform_driver_register(&at91_gpio_driver);
--	if (ret)
--		return ret;
--	return platform_driver_register(&at91_pinctrl_driver);
-+	return platform_register_drivers(drivers, ARRAY_SIZE(drivers));
- }
- arch_initcall(at91_pinctrl_init);
- 
- static void __exit at91_pinctrl_exit(void)
- {
--	platform_driver_unregister(&at91_pinctrl_driver);
-+	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
- }
- 
- module_exit(at91_pinctrl_exit);
--- 
-2.5.0
+pinmux and pinctrl related configurations from the bcm281xx pinctrl 
+driver are indeed mandatory for ARCH_BCM_MOBILE related platforms for 
+some peripherals to function properly. It looks like we are missing some 
+required configurations in the DT files though, but I guess that needs 
+to be addressed by separate patches.
+
+This change looks good to me!
+
+Reviewed-by: Ray Jui <rjui@broadcom.com>
+
+Thanks!
+
+Ray
