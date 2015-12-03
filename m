@@ -1,81 +1,49 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
- flag
-Date: Thu, 3 Dec 2015 18:59:08 +0000
-Message-ID: <566090FC.1020502@arm.com>
-References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
- <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
- <20151203181337.GV23396@atomide.com>
+From: Michael Welling <mwelling@ieee.org>
+Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
+Date: Thu, 3 Dec 2015 15:26:04 -0600
+Message-ID: <20151203212604.GA10240@qwerty.qwertyembedded>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
+ <20151102103116.GE8676@localhost>
+ <CACRpkdaVu_1pAPd-7sUeGLEYymynA10WtuxJcnVPKZVYQOeruw@mail.gmail.com>
+ <CACRpkda6Ad4SGW5H4ZDLn0VLZzq0LqLxSC7f2gcCBDNWH5FMnA@mail.gmail.com>
+ <20151105094411.GD7561@localhost>
+ <CACRpkdavyg8f8fWoQBQCqRAJKxiZDiC72QDSsWjbk1b1v=u3Lw@mail.gmail.com>
+ <CACRpkdbeFJMZ5vbHGFmPeG_5qTdKsL+2xL4RjKHF759PFiz5Yw@mail.gmail.com>
+ <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151203181337.GV23396@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34191 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751950AbbLCV0a (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Dec 2015 16:26:30 -0500
+Received: by padhx2 with SMTP id hx2so75250777pad.1
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Dec 2015 13:26:30 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-
-
-On 03/12/15 18:13, Tony Lindgren wrote:
-> * Linus Walleij <linus.walleij@linaro.org> [151201 06:07]:
->> On Fri, Nov 27, 2015 at 6:21 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>
->>> From: Sudeep Holla <Sudeep.Holla@arm.com>
->>>
->>> The IRQF_NO_SUSPEND flag is used to identify the interrupts that should
->>> be left enabled so as to allow them to work as expected during the
->>> suspend-resume cycle, but doesn't guarantee that it will wake the system
->>> from a suspended state, enable_irq_wake is recommended to be used for
->>> the wakeup.
->>>
->>> This patch removes the use of IRQF_NO_SUSPEND flags replacing it with
->>> irq_set_irq_wake instead.
->>>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: linux-gpio@vger.kernel.org
->>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>
->> I need Tony's ACK on this as well.
->
-> At least on omaps, this controller is always powered and we never want to
-> suspend it as it handles wake-up events for all the IO pins. And that
-> usecase sounds exactly like what you're describing above.
+On Thu, Dec 03, 2015 at 03:06:48PM +0100, Linus Walleij wrote:
+> On Thu, Dec 3, 2015 at 3:04 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> > 3-1. Split gpio_chip in a static descriptor with a vtable for callbacks
+> >    and other static config called struct gpio_chip, and
+> >    struct gpio_device that is returned as a pointer from
+> >    gpiochip_add(). It will need to be free:ed by gpiodevice_remove()
+> >    after that.
+> 
+> This will look something like this uglyhack:
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=gpiochip-desc&id=610b19c1832acfdf6ff62523addfa08b76f77343
 >
 
-Understood, but I assume this is a generic driver that can be used by
-any pinmux.
+Lots of red and green just in time for Christmas.
 
-> I don't quite follow what your suggested alternative for an interrupt
-> controller is?
->
+Let me take a look at what it would take to recover from said theoretical stab.
+ 
+> Yours,
+> Linus Walleij
 
-Why can't we use enable_irq_wake even for parent/interrupt controller as
-they can be considered as parent wakeup irq. I agree the interrupt
-controller may not be powered down, but still it's part of wakeup and
-the irq core needs to identify that. By just marking IRQF_NO_SUSPEND,
-you are saying that you can handle interrupt in the suspend path but not
-informing that it's a wakeup interrupt.
-
-With this change, the wakeup handler (including the parent handler) is
-called when it's safe as the irq core maintains the state machine.
-
-> At least we need to have the alternative patched in with this chage before
-> just removing IRQF_NO_SUSPEND.
->
-
-I have added irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake
-which ensures it's marked for wakeup.
-
-> The enable_irq_wake is naturally used for the consumer drivers of this
-> interrupt controller and actually mostly done automatically now with the
-> dev_pm_set_dedicated_wake_irq.
->
-
-Agreed, no doubt on that.
-
--- 
-Regards,
-Sudeep
