@@ -1,74 +1,59 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl:Convert the composition of
- devm_request_mem_region and devm_ioremap to a single call
-Date: Thu, 3 Dec 2015 13:44:16 -0800
-Message-ID: <20151203214415.GC23396@atomide.com>
-References: <1446191478-22714-1-git-send-email-sanjeev_sharma@mentor.com>
- <CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: single: Use a separate lockdep class
+Date: Thu, 3 Dec 2015 13:46:46 -0800
+Message-ID: <20151203214646.GD23396@atomide.com>
+References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
+ <CACRpkda3g7FXV4vLtj0LnV5H3vhumDrngHeJ6F7yc8y1k_dABg@mail.gmail.com>
+ <565DAA09.3030201@arm.com>
+ <20151203180721.GU23396@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:50651 "EHLO muru.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750736AbbLCVqv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 3 Dec 2015 16:46:51 -0500
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sanjeev Sharma <sanjeev_sharma@mentor.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20151203180721.GU23396@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-* Linus Walleij <linus.walleij@linaro.org> [151030 12:54]:
-> Please run posts like this by the maintainers. Tony Lindgren is one
-> user, Haojian is another.
+* Tony Lindgren <tony@atomide.com> [151203 10:07]:
+> * Sudeep Holla <sudeep.holla@arm.com> [151201 06:10]:
+> > 
+> > 
+> > On 01/12/15 14:06, Linus Walleij wrote:
+> > >On Fri, Nov 27, 2015 at 6:20 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > >
+> > >>The single pinmux controller can be cascaded to the other interrupt
+> > >>controllers. Hence when propagating wake-up settings to its parent
+> > >>interrupt controller, there's possiblity of detecting possible recursive
+> > >>locking and getting lockdep warning.
+> > >>
+> > >>This patch avoids this false positive by using a separate lockdep class
+> > >>for this single pinctrl interrupts.
+> > >>
+> > >>Cc: Linus Walleij <linus.walleij@linaro.org>
+> > >>Cc: linux-gpio@vger.kernel.org
+> > >>Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> > >>Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > >
+> > >I need Tony's ACK on this patch before applying.
+> > >
+> > >Is it a regression that needs to go into fixes?
+> > >
+> > 
+> > Not really, only needed by PATCH 2/2 to avoid recursive locking.
+> 
+> No problem with this patch, so:
+> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-I think we need to add ourselves to MAINTAINERS for this driver,
-otherwise we'll keep on missing emails.
+Actually this needs to be merged together with 1/2 once the pending
+issues are fixed as this will add a lockdep warning with 1/2.
 
-> On Fri, Oct 30, 2015 at 8:51 AM, Sanjeev Sharma
-> <sanjeev_sharma@mentor.com> wrote:
-> > Use devm_ioremap_resource() in order to make the code simpler,
-> > and remove redundant return value check of platform_get_resource()
-> > because this value is alreadytaken care by devm_ioremap_resource()
-> >
-> > Signed-off-by: Sanjeev Sharma <sanjeev_sharma@mentor.com>
-> > ---
-> >  drivers/pinctrl/pinctrl-single.c | 21 +++------------------
-> >  1 file changed, 3 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-> > index ef04b96..905cc0a 100644
-> > --- a/drivers/pinctrl/pinctrl-single.c
-> > +++ b/drivers/pinctrl/pinctrl-single.c
-> > @@ -1865,24 +1865,9 @@ static int pcs_probe(struct platform_device *pdev)
-> >                                                   "pinctrl-single,bit-per-mux");
-> >
-> >         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -       if (!res) {
-> > -               dev_err(pcs->dev, "could not get resource\n");
-> > -               return -ENODEV;
-> > -       }
-> > -
-> > -       pcs->res = devm_request_mem_region(pcs->dev, res->start,
-> > -                       resource_size(res), DRIVER_NAME);
-> > -       if (!pcs->res) {
-> > -               dev_err(pcs->dev, "could not get mem_region\n");
-> > -               return -EBUSY;
-> > -       }
-> > -
-> > -       pcs->size = resource_size(pcs->res);
-> > -       pcs->base = devm_ioremap(pcs->dev, pcs->res->start, pcs->size);
-> > -       if (!pcs->base) {
-> > -               dev_err(pcs->dev, "could not ioremap\n");
-> > -               return -ENODEV;
-> > -       }
-> > +       pcs->base = devm_ioremap_resource(pcs->dev, res);
-> > +       if (IS_ERR(pcs->base))
-> > +               return PTR_ERR(pcs->base);
-> >
-> >         INIT_RADIX_TREE(&pcs->pgtree, GFP_KERNEL);
-> >         INIT_RADIX_TREE(&pcs->ftree, GFP_KERNEL);
+So for now:
 
-This won't work, we're using the physical address from pcs->res in the
-code at least in pcs_add_pin.
-
-Regards,
-
-Tony
+Un-Acked-by: Tony Lindgren <tony@atomide.com>
