@@ -1,58 +1,65 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Wed, 2 Dec 2015 23:38:33 +0000
-Message-ID: <20151202233833.18b17d72a5fda99c5a877788@kernel.org>
+Subject: [GIT PULL] AC'97 gpiochip
+Date: Thu, 3 Dec 2015 00:12:14 +0000
+Message-ID: <20151203001214.GP1929@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA256";
- boundary="Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-
---Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ejY4sNDb8HmDJL0E"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58308 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756816AbbLCAMV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Dec 2015 19:12:21 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-After merging the gpio tree, today's linux-next build (x86 allmodconfig)
-failed like this:
+--ejY4sNDb8HmDJL0E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-make[1]: Leaving directory '/home/broonie/next/x86_64_allmodconfig'
-/home/broonie/next/next/sound/soc/soc-ac97.c: In function 'snd_soc_ac97_ini=
-t_gpio':
-/home/broonie/next/next/sound/soc/soc-ac97.c:145:22: error: 'struct gpio_ch=
-ip' has no member named 'dev'
-  gpio_priv->gpio_chip.dev =3D codec->dev;
-                      ^
-/home/broonie/next/next/scripts/Makefile.build:258: recipe for target 'soun=
-d/soc/soc-ac97.o' failed
-/home/broonie/next/next/scripts/Makefile.build:407: recipe for target 'soun=
-d/soc' failed
-make[3]: *** [sound/soc/soc-ac97.o] Error 1
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
-We need to cross merge the AC'97 GPIO chip into your tree for you to do the
-conversion, I'll send you a pull request later (or in the mornining). For n=
-ow
-I used the last gpio tree that was included in a -next.
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
 
---Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ
-Content-Type: application/pgp-signature
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/asoc-ac97-gpio
+
+for you to fetch changes up to 9bf5c3d11f1fbaf43399d189f05fb20ceb46ee5d:
+
+  ASoC: ac97: add gpio chip (2015-11-18 18:08:54 +0000)
+
+----------------------------------------------------------------
+ASoC: Add a GPIO chip for AC'97
+
+GPIOs are part of the AC'97 spec, enable their use on embedded platforms
+using AC'97.
+
+----------------------------------------------------------------
+Robert Jarzmik (1):
+      ASoC: ac97: add gpio chip
+
+ include/sound/ac97_codec.h |   3 ++
+ sound/soc/soc-ac97.c       | 125 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 128 insertions(+)
+
+--ejY4sNDb8HmDJL0E
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWX4D5AAoJECTWi3JdVIfQ9+MH/iKr2BxaXihxY9x9bTDiMq0F
-E8Hz6bsd8sfVSPse/MPjxV4V43qAkf4F+K4wVDBXkKF6w21RE4JBZBQWM0ADMdgG
-tpF9dujHLrdvhf4aMOp1pEFRH6q+j+NBJRE3miS896+e/tbhOXEr1vNMJGLcUHwF
-+ec7NBWBRGFst3Ka+MVz+E64Jw1II5fSq4I1rduq1f32kQprN5iToFtrKeyLCCgZ
-bJBbgUto/sMhen+l/MvlY5YAgdWOaZTZVP/7vGXVefpnPFGYwW6b9K2x5finoOTv
-XavMMZQ1+Urmb3ShleJAjhPqKK7ttL+kMVz3pGlju0+RAWHC5dwMLhU6MTeD7y8=
-=2rG+
+iQEcBAEBCAAGBQJWX4jeAAoJECTWi3JdVIfQvJUH/RPgf2GfIHgX5QKkLKaoX/um
+REgVN8t7NSVuhO8LeTN+TAwggFCVeMVQDMcJvCSW4kD5RMI9LhEVGnopPYdWLoQC
+JXnhbXqo4dg8g2yeJGAfDy+QoEhk2O6MqoXdeEioTGTaNGaoB2cDqabOiVXFfVUs
+EczQtwofetE2aFXKYoGOa6Db3tTndxv+PgNEbZ/JhLEJcy2XyicBCErPjbsXLG3t
+PX51h0qcF09DO6GzyGBzvdE17FVi6CoabhvYrQNBP7pyLZLncHdVpLwPBWJQ+DHl
+KBtTHzXscOnpZtw8k2pdveTGs4xvi8gpr7sm0NI+ZO0j0i9hsx9UPnjhq7C9Vkc=
+=c8n6
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__2_Dec_2015_23_38_33_+0000_kBM/5fbCnHa=2=iQ--
+--ejY4sNDb8HmDJL0E--
