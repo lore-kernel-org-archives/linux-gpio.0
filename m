@@ -1,65 +1,73 @@
 From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
- flag
-Date: Thu, 3 Dec 2015 13:40:14 -0800
-Message-ID: <20151203214013.GB23396@atomide.com>
-References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
- <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
- <20151203181337.GV23396@atomide.com>
- <566090FC.1020502@arm.com>
+Subject: Re: [PATCH] pinctrl:Convert the composition of
+ devm_request_mem_region and devm_ioremap to a single call
+Date: Thu, 3 Dec 2015 13:44:16 -0800
+Message-ID: <20151203214415.GC23396@atomide.com>
+References: <1446191478-22714-1-git-send-email-sanjeev_sharma@mentor.com>
+ <CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:50640 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751177AbbLCVkU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 3 Dec 2015 16:40:20 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <566090FC.1020502@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sanjeev Sharma <sanjeev_sharma@mentor.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 
-* Sudeep Holla <sudeep.holla@arm.com> [151203 11:00]:
-> On 03/12/15 18:13, Tony Lindgren wrote:
-> >At least on omaps, this controller is always powered and we never want to
-> >suspend it as it handles wake-up events for all the IO pins. And that
-> >usecase sounds exactly like what you're describing above.
+* Linus Walleij <linus.walleij@linaro.org> [151030 12:54]:
+> Please run posts like this by the maintainers. Tony Lindgren is one
+> user, Haojian is another.
+
+I think we need to add ourselves to MAINTAINERS for this driver,
+otherwise we'll keep on missing emails.
+
+> On Fri, Oct 30, 2015 at 8:51 AM, Sanjeev Sharma
+> <sanjeev_sharma@mentor.com> wrote:
+> > Use devm_ioremap_resource() in order to make the code simpler,
+> > and remove redundant return value check of platform_get_resource()
+> > because this value is alreadytaken care by devm_ioremap_resource()
 > >
-> 
-> Understood, but I assume this is a generic driver that can be used by
-> any pinmux.
-
-Right no question about that, but we need to keep things working. I just
-pasted the output to this thread what happens coming back up from suspend.
-
-> >I don't quite follow what your suggested alternative for an interrupt
-> >controller is?
-> 
-> Why can't we use enable_irq_wake even for parent/interrupt controller as
-> they can be considered as parent wakeup irq. I agree the interrupt
-> controller may not be powered down, but still it's part of wakeup and
-> the irq core needs to identify that. By just marking IRQF_NO_SUSPEND,
-> you are saying that you can handle interrupt in the suspend path but not
-> informing that it's a wakeup interrupt.
-> 
-> With this change, the wakeup handler (including the parent handler) is
-> called when it's safe as the irq core maintains the state machine.
-
-Maybe paste a suggested patch and I can try it. I guess you mean call
-that from pinctrl-single.c.
-
-> >At least we need to have the alternative patched in with this chage before
-> >just removing IRQF_NO_SUSPEND.
+> > Signed-off-by: Sanjeev Sharma <sanjeev_sharma@mentor.com>
+> > ---
+> >  drivers/pinctrl/pinctrl-single.c | 21 +++------------------
+> >  1 file changed, 3 insertions(+), 18 deletions(-)
 > >
-> 
-> I have added irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake
-> which ensures it's marked for wakeup.
+> > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> > index ef04b96..905cc0a 100644
+> > --- a/drivers/pinctrl/pinctrl-single.c
+> > +++ b/drivers/pinctrl/pinctrl-single.c
+> > @@ -1865,24 +1865,9 @@ static int pcs_probe(struct platform_device *pdev)
+> >                                                   "pinctrl-single,bit-per-mux");
+> >
+> >         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -       if (!res) {
+> > -               dev_err(pcs->dev, "could not get resource\n");
+> > -               return -ENODEV;
+> > -       }
+> > -
+> > -       pcs->res = devm_request_mem_region(pcs->dev, res->start,
+> > -                       resource_size(res), DRIVER_NAME);
+> > -       if (!pcs->res) {
+> > -               dev_err(pcs->dev, "could not get mem_region\n");
+> > -               return -EBUSY;
+> > -       }
+> > -
+> > -       pcs->size = resource_size(pcs->res);
+> > -       pcs->base = devm_ioremap(pcs->dev, pcs->res->start, pcs->size);
+> > -       if (!pcs->base) {
+> > -               dev_err(pcs->dev, "could not ioremap\n");
+> > -               return -ENODEV;
+> > -       }
+> > +       pcs->base = devm_ioremap_resource(pcs->dev, res);
+> > +       if (IS_ERR(pcs->base))
+> > +               return PTR_ERR(pcs->base);
+> >
+> >         INIT_RADIX_TREE(&pcs->pgtree, GFP_KERNEL);
+> >         INIT_RADIX_TREE(&pcs->ftree, GFP_KERNEL);
 
-Hmm well see the error I pasted in this thread, maybe that provides
-more clues.
+This won't work, we're using the physical address from pcs->res in the
+code at least in pcs_add_pin.
 
 Regards,
 
