@@ -1,49 +1,75 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
-Date: Thu, 3 Dec 2015 15:26:04 -0600
-Message-ID: <20151203212604.GA10240@qwerty.qwertyembedded>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
- <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
- <20151102103116.GE8676@localhost>
- <CACRpkdaVu_1pAPd-7sUeGLEYymynA10WtuxJcnVPKZVYQOeruw@mail.gmail.com>
- <CACRpkda6Ad4SGW5H4ZDLn0VLZzq0LqLxSC7f2gcCBDNWH5FMnA@mail.gmail.com>
- <20151105094411.GD7561@localhost>
- <CACRpkdavyg8f8fWoQBQCqRAJKxiZDiC72QDSsWjbk1b1v=u3Lw@mail.gmail.com>
- <CACRpkdbeFJMZ5vbHGFmPeG_5qTdKsL+2xL4RjKHF759PFiz5Yw@mail.gmail.com>
- <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
+ flag
+Date: Thu, 3 Dec 2015 13:37:15 -0800
+Message-ID: <20151203213715.GA23396@atomide.com>
+References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
+ <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
+ <20151203181337.GV23396@atomide.com>
+ <56608B72.1040101@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:34191 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950AbbLCV0a (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Dec 2015 16:26:30 -0500
-Received: by padhx2 with SMTP id hx2so75250777pad.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Dec 2015 13:26:30 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <56608B72.1040101@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Thu, Dec 03, 2015 at 03:06:48PM +0100, Linus Walleij wrote:
-> On Thu, Dec 3, 2015 at 3:04 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+* Grygorii Strashko <grygorii.strashko@ti.com> [151203 10:36]:
 > 
-> > 3-1. Split gpio_chip in a static descriptor with a vtable for callbacks
-> >    and other static config called struct gpio_chip, and
-> >    struct gpio_device that is returned as a pointer from
-> >    gpiochip_add(). It will need to be free:ed by gpiodevice_remove()
-> >    after that.
+> I think, this patch should not break our wake-up functionality.
+> It will just change the moment when pcs_irq_handler() will be called:
 > 
-> This will look something like this uglyhack:
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=gpiochip-desc&id=610b19c1832acfdf6ff62523addfa08b76f77343
->
+> before this change:
+> - suspend_enter()
+>   ....
+>   - arch_suspend_enable_irqs();
+>     - ^ right here
+> 
+> after this change:
+> - suspend_enter()
+>   ....
+>   dpm_resume_noirq()
+>   - resume_device_irqs()
+>     ^ here
+> 
+> Correct? And as for me this is more safe.
 
-Lots of red and green just in time for Christmas.
+I think there's more to it though. With both applied, it produces this on
+coming back up from suspend:
 
-Let me take a look at what it would take to recover from said theoretical stab.
- 
-> Yours,
-> Linus Walleij
+PM: noirq resume of devices complete after 18.127 msecs
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 123 at kernel/irq/manage.c:605 irq_set_irq_wake+0xbc/0xfc()
+Unbalanced IRQ 375 wake disable
+Modules linked in: ledtrig_default_on leds_gpio led_class rtc_twl twl4030_wdt
+CPU: 0 PID: 123 Comm: bash Tainted: G        W       4.4.0-rc3-dirty #2682
+Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[<c0017df0>] (unwind_backtrace) from [<c0014084>] (show_stack+0x10/0x14)
+<c0014084>] (show_stack) from [<c03492d0>] (dump_stack+0x84/0x9c)
+[<c03492d0>] (dump_stack) from [<c003ca2c>] (warn_slowpath_common+0x7c/0xb8)
+[<c003ca2c>] (warn_slowpath_common) from [<c003ca98>] (warn_slowpath_fmt+0x30/0x40)
+[<c003ca98>] (warn_slowpath_fmt) from [<c009b66c>] (irq_set_irq_wake+0xbc/0xfc)
+[<c009b66c>] (irq_set_irq_wake) from [<c03f0f1c>] (device_wakeup_disarm_wake_irqs+0x70/0x12c)
+[<c03f0f1c>] (device_wakeup_disarm_wake_irqs) from [<c03ee4ac>] (dpm_resume_noirq+0x20c/0x2e4)
+[<c03ee4ac>] (dpm_resume_noirq) from [<c0095e94>] (suspend_devices_and_enter+0x1e4/0x6bc)
+[<c0095e94>] (suspend_devices_and_enter) from [<c00966c4>] (pm_suspend+0x358/0x4b8)
+[<c00966c4>] (pm_suspend) from [<c0094fdc>] (state_store+0x64/0xb8)
+[<c0094fdc>] (state_store) from [<c034b46c>] (kobj_attr_store+0x14/0x20)
+[<c034b46c>] (kobj_attr_store) from [<c01ea4d8>] (sysfs_kf_write+0x4c/0x50)
+[<c01ea4d8>] (sysfs_kf_write) from [<c01e9afc>] (kernfs_fop_write+0xbc/0x1cc)
+[<c01e9afc>] (kernfs_fop_write) from [<c0171c7c>] (__vfs_write+0x24/0xd8)
+[<c0171c7c>] (__vfs_write) from [<c0172520>] (vfs_write+0x94/0x154)
+[<c0172520>] (vfs_write) from [<c0172d1c>] (SyS_write+0x40/0x94)
+[<c0172d1c>] (SyS_write) from [<c000f760>] (ret_fast_syscall+0x0/0x1c)
+---[ end trace 321b51565e161bee ]---
 
+And these both need to be applied together when we have a fix for the above
+as otherwise we'll get the lock recursion Sudeep mentioned in patch 2/2.
+
+Regards,
+
+Tony
