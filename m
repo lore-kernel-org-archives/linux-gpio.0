@@ -1,106 +1,41 @@
-From: Markus Pargmann <mpa@pengutronix.de>
-Subject: [PATCH v4 2/2] gpiolib: Add GPIO initialization
-Date: Fri,  4 Dec 2015 14:06:28 +0100
-Message-ID: <1449234388-4007-3-git-send-email-mpa@pengutronix.de>
-References: <1449234388-4007-1-git-send-email-mpa@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: davinci: fix missed parent conversion
+Date: Fri,  4 Dec 2015 14:15:20 +0100
+Message-ID: <1449234920-27375-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:47978 "EHLO
-	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752296AbbLDNGk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 08:06:40 -0500
-In-Reply-To: <1449234388-4007-1-git-send-email-mpa@pengutronix.de>
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:34941 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699AbbLDNPZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 08:15:25 -0500
+Received: by lbbed20 with SMTP id ed20so5862337lbb.2
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Dec 2015 05:15:24 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-This functions adds a way to initialize a GPIO without hogging it.
+I missed to convert this driver properly to use .parent to
+point to the parent device. ARMv7 multiplatform would not
+compile.
 
-Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpiolib-of.c | 13 ++++++++-----
- drivers/gpio/gpiolib.c    | 26 ++++++++++++++++++++++++++
- drivers/gpio/gpiolib.h    |  2 ++
- 3 files changed, 36 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-davinci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 5fe34a9df3e6..48cdc22eabf2 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -211,15 +211,18 @@ static void of_gpiochip_scan_gpios(struct gpio_chip *chip)
- 	enum gpiod_flags dflags;
- 
- 	for_each_child_of_node(chip->of_node, np) {
--		if (!of_property_read_bool(np, "gpio-hog"))
--			continue;
- 
- 		desc = of_parse_own_gpio(np, &name, &lflags, &dflags);
--		if (IS_ERR(desc))
-+		if (IS_ERR(desc) || !dflags)
- 			continue;
- 
--		if (gpiod_hog(desc, name, lflags, dflags))
--			continue;
-+		if (of_property_read_bool(np, "gpio-hog"))
-+			gpiod_hog(desc, name, lflags, dflags);
-+		else if (of_property_read_bool(np, "gpio-initval"))
-+			gpiod_initialize(desc, lflags, dflags);
-+		else
-+			dev_dbg(chip->dev, "GPIO line %d (%s): neither gpio-hog nor gpio-initval found.\n",
-+				desc_to_gpio(desc), np->name);
- 	}
- }
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a18f00fc1bb8..10e16b3f0667 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2329,6 +2329,32 @@ static void gpiochip_free_hogs(struct gpio_chip *chip)
- }
- 
- /**
-+ * gpiod_initialize - Initialize a GPIO with a given value
-+ * @desc:	gpio whose value will be assigned
-+ * @lflags:	gpio_lookup_flags - returned from of_find_gpio() or
-+ *		of_get_gpio_hog()
-+ * @dflags:	gpiod_flags - optional GPIO initialization flags
-+ *
-+ * This is used to initialize GPIOs that were defined in DT
-+ */
-+int gpiod_initialize(struct gpio_desc *desc, unsigned long lflags,
-+		     enum gpiod_flags dflags)
-+{
-+	int status;
-+
-+	gpiod_parse_flags(desc, lflags);
-+
-+	status = gpiod_configure_flags(desc, NULL, dflags);
-+	if (status < 0) {
-+		pr_err("initial setup of GPIO (chip %s, offset %d) failed\n",
-+		       gpiod_to_chip(desc)->label, gpio_chip_hwgpio(desc));
-+		return status;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-  * gpiod_get_array - obtain multiple GPIOs from a multi-index GPIO function
-  * @dev:	GPIO consumer, can be NULL for system-global GPIOs
-  * @con_id:	function within the GPIO consumer
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 98ab08c0aa2d..4abf53a5e651 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -107,6 +107,8 @@ int gpiod_request(struct gpio_desc *desc, const char *label);
- void gpiod_free(struct gpio_desc *desc);
- int gpiod_hog(struct gpio_desc *desc, const char *name,
- 		unsigned long lflags, enum gpiod_flags dflags);
-+int gpiod_initialize(struct gpio_desc *desc, unsigned long lflags,
-+		     enum gpiod_flags dflags);
- 
- /*
-  * Return the GPIO number of the passed descriptor relative to its chip
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 9fd32f76ffa7..65ebaef935e1 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -254,7 +254,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ #ifdef CONFIG_OF_GPIO
+ 		chips[i].chip.of_gpio_n_cells = 2;
+ 		chips[i].chip.of_xlate = davinci_gpio_of_xlate;
+-		chips[i].chip.dev = dev;
++		chips[i].chip.parent = dev;
+ 		chips[i].chip.of_node = dev->of_node;
+ #endif
+ 		spin_lock_init(&chips[i].lock);
 -- 
-2.6.2
+2.4.3
 
