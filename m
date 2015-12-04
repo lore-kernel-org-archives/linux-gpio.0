@@ -1,61 +1,60 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
- flag
-Date: Fri, 4 Dec 2015 16:11:06 +0000
-Message-ID: <5661BB1A.6020709@arm.com>
-References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
- <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
- <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
- <20151203181337.GV23396@atomide.com> <56608B72.1040101@ti.com>
- <20151203213715.GA23396@atomide.com> <56616E74.9000604@ti.com>
- <20151204153504.GF23396@atomide.com> <5661B861.7010203@ti.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v5 4/4] gpio: tps65086: Add GPO driver for the TPS65086
+ PMIC
+Date: Fri, 4 Dec 2015 10:11:29 -0600
+Message-ID: <5661BB31.5020907@ti.com>
+References: <201512020445.59TmUa1O%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5661B861.7010203@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:35529 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754311AbbLDQLr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 4 Dec 2015 11:11:47 -0500
+In-Reply-To: <201512020445.59TmUa1O%fengguang.wu@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On 12/01/2015 02:16 PM, kbuild test robot wrote:
+> Hi Andrew,
+>
+> [auto build test ERROR on next-20151127]
+> [cannot apply to ljones-mfd/for-mfd-next gpio/for-next v4.4-rc3 v4.4-rc2 v4.4-rc1 v4.4-rc3]
+>
+> url:    https://github.com/0day-ci/linux/commits/Andrew-F-Davis/Documentation-tps65086-Add-DT-bindings-for-the-TPS65086-PMIC/20151202-024903
+> config: i386-allmodconfig (attached as .config)
+> reproduce:
+>          # save the attached .config to linux build tree
+>          make ARCH=i386
+>
+> All errors (new ones prefixed by >>):
+>
+>     drivers/gpio/gpio-tps65086.c: In function 'tps65086_gpio_probe':
+>>> drivers/gpio/gpio-tps65086.c:106:12: error: 'struct gpio_chip' has no member named 'parent'
+>       gpio->chip.parent = gpio->tps->dev;
+>                 ^
+>
+> vim +106 drivers/gpio/gpio-tps65086.c
+>
+>     100			return -ENOMEM;
+>     101	
+>     102		platform_set_drvdata(pdev, gpio);
+>     103	
+>     104		gpio->tps = dev_get_drvdata(pdev->dev.parent);
+>     105		gpio->chip = template_chip;
+>   > 106		gpio->chip.parent = gpio->tps->dev;
+>     107	
+>     108		ret = gpiochip_add(&gpio->chip);
+>     109		if (ret < 0) {
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
 
-
-On 04/12/15 15:59, Grygorii Strashko wrote:
->
-> Sorry, I can't test it right now :(
-> Potential fix below:
-
-I had posted similar patch a while ago which Tony rejected.
-I might have made a mistake of not putting them together, though they
-were part of the same series[1], patch 12 and 16
-
-> diff --git a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
-> index 2dbd378..4e56fd9 100644
-> --- a/arch/arm/mach-omap2/pm34xx.c
-> +++ b/arch/arm/mach-omap2/pm34xx.c
-> @@ -481,7 +481,7 @@ int __init omap3_pm_init(void)
->
->          /* IO interrupt is shared with mux code */
->          ret = request_irq(omap_prcm_event_to_irq("io"),
-> -               _prcm_int_handle_io, IRQF_SHARED | IRQF_NO_SUSPEND, "pm_io",
-> +               _prcm_int_handle_io, IRQF_SHARED, "pm_io",
->                  omap3_pm_init);
->          enable_irq(omap_prcm_event_to_irq("io"));
->
-> @@ -489,6 +489,7 @@ int __init omap3_pm_init(void)
->                  pr_err("pm: Failed to request pm_io irq\n");
->                  goto err2;
->          }
-> +       enable_irq_wake(omap_prcm_event_to_irq("io"));
->
->          ret = pwrdm_for_each(pwrdms_setup, NULL);
->          if (ret) {
->
->
->
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1509.2/03937.html
--- 
-Regards,
-Sudeep
+I'm probably going to drop the GPIO support in the next series push, this
+patch was NAK'd for not using .parent, now we have this. I will wait till
+the GPIO subsystem is stable and push this separately then.
