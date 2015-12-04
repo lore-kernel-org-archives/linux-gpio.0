@@ -1,95 +1,59 @@
-From: =?UTF-8?q?Timo=20Ter=C3=A4s?= <timo.teras@iki.fi>
-Subject: [PATCH] gpio: mcp23s08: support setting pullups from device tree data
-Date: Fri,  4 Dec 2015 13:46:13 +0200
-Message-ID: <1449229573-25759-1-git-send-email-timo.teras@iki.fi>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Fri, 4 Dec 2015 12:02:40 +0000
+Message-ID: <20151204120240.GW26072@sirena.org.uk>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+ <20151124162624.GI807@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:33231 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755388AbbLDLqb (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 06:46:31 -0500
-Received: by lbbkw15 with SMTP id kw15so18939746lbb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Dec 2015 03:46:30 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Fw8vdPO5iEPGjqL+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151124162624.GI807@x1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: =?UTF-8?q?Timo=20Ter=C3=A4s?= <timo.teras@iki.fi>
 
-Make pullup configurable from device tree data.
 
-Signed-off-by: Timo Ter=C3=A4s <timo.teras@iki.fi>
----
-I'm not fully certain how the pullup data should be made configurable v=
-ia OF.
-gpio-twl4030.c uses similar approach as this, but gpio-samsung.c makes =
-the
-pullup configuration seems to be part of the custom data in gpio specif=
-iers.
+--Fw8vdPO5iEPGjqL+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt |  1 +
- drivers/gpio/gpio-mcp23s08.c                             | 14 ++++++++=
-+++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+On Tue, Nov 24, 2015 at 04:26:24PM +0000, Lee Jones wrote:
+> On Wed, 18 Nov 2015, Andrew F. Davis wrote:
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b=
-/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-index f3332b9..c7d2128 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
-@@ -59,6 +59,7 @@ Optional device specific properties:
-         On devices with only one interrupt output this property is use=
-less.
- - microchip,irq-active-high: Sets the INTPOL flag in the IOCON registe=
-r. This
-         configures the IRQ output polarity as active high.
-+- microchip,pullups: Configuration value for GPPU register.
-=20
- Example I2C (with interrupt):
- gpiom1: gpio@20 {
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.=
-c
-index 73db7ec..2320230 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -786,9 +786,12 @@ static int mcp230xx_probe(struct i2c_client *clien=
-t,
- 	match =3D of_match_device(of_match_ptr(mcp23s08_i2c_of_match),
- 					&client->dev);
- 	if (match) {
-+		u32 pullups =3D 0;
- 		pdata =3D &local_pdata;
- 		pdata->base =3D -1;
--		pdata->chip[0].pullups =3D 0;
-+		of_property_read_u32(client->dev.of_node, "microchip,pullups",
-+				     &pullups);
-+		pdata->chip[0].pullups =3D pullups;
- 		pdata->irq_controller =3D	of_property_read_bool(
- 					client->dev.of_node,
- 					"interrupt-controller");
-@@ -910,9 +913,14 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		pdata =3D &local_pdata;
- 		pdata->base =3D -1;
- 		for (addr =3D 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
--			pdata->chip[addr].pullups =3D 0;
--			if (spi_present_mask & (1 << addr))
-+			u32 pullups =3D 0;
-+			if (spi_present_mask & (1 << addr)) {
-+				of_property_read_u32_index(spi->dev.of_node,
-+							   "microchip,pullups",
-+							   addr, &pullups);
- 				chips++;
-+			}
-+			pdata->chip[addr].pullups =3D pullups;
- 		}
- 		pdata->irq_controller =3D	of_property_read_bool(
- 					spi->dev.of_node,
---=20
-2.6.3
+> >  Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
+> >  drivers/gpio/Kconfig                               |   2 +-
+> >  drivers/gpio/gpio-tps65912.c                       | 317 ++++-----
+> >  drivers/mfd/Kconfig                                |  20 +-
+> >  drivers/mfd/Makefile                               |   3 +-
+> >  drivers/mfd/tps65912-core.c                        | 290 ++++-----
+> >  drivers/mfd/tps65912-i2c.c                         | 219 +++----
+> >  drivers/mfd/tps65912-irq.c                         | 217 -------
+> >  drivers/mfd/tps65912-spi.c                         | 219 +++----
+> >  drivers/regulator/Kconfig                          |   2 +-
+> >  drivers/regulator/tps65912-regulator.c             | 710 +++++----------------
+> >  include/linux/mfd/tps65912.h                       | 208 +++---
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Just waiting for the regulator Ack now, right?
+
+No, you also need to work out what to do about the GPIO driver not
+building in -next due to interface changes in gpiolib.
+
+--Fw8vdPO5iEPGjqL+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWYYDaAAoJECTWi3JdVIfQasoH/jCW6bFWireb1/pEvX41niNg
+vC6k8ppC805meatrkw/OF6BjzcZPLUNl1YFNvgITjaH4gyZeVi9lhQ3TacmtQWRM
+BBAK6zuDPT+cmvL4YTFZ7Ga4UQh5CrlXtesW/D/FvNR2oq5BtJF0wlITTB12EQvV
+Xwz9aGnIKzqaRIA2wZFkKJFs5b4Sgn19E/VjUDGBlZJzVnqpxjel2TYoxpx0alsD
+whfww+g4t4CQ2JGwawPP45AA66UNbmpe2DBzPDXWWpfRlY3UIpf9zAw/u2HWsxmU
+dXEhSKZjESu6Ay/dkb0+Ss4Z4ud8Wtaz4uB+lDTKoO6oWAY5gVQ922vD7SqV54Y=
+=Vjdx
+-----END PGP SIGNATURE-----
+
+--Fw8vdPO5iEPGjqL+--
