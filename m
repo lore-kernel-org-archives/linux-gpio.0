@@ -1,95 +1,43 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] gpio: rcar: Improve clock error handling and reporting
-Date: Fri,  4 Dec 2015 16:33:53 +0100
-Message-ID: <1449243233-11089-3-git-send-email-geert+renesas@glider.be>
-References: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] gpio: rcar: Miscellaneous updates
+Date: Fri,  4 Dec 2015 16:33:51 +0100
+Message-ID: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46808 "EHLO
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46792 "EHLO
 	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755165AbbLDPdz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 10:33:55 -0500
-In-Reply-To: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
+	with ESMTP id S1755130AbbLDPdy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 10:33:54 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-If the Renesas R-Car GPIO driver cannot find a functional clock, it
-prints a warning, .e.g.
+	Hi Linus, Alex,
 
-	gpio_rcar ffc40000.gpio: unable to get clock
+Here are two updates for the Renesas R-Car GPIO driver.
+I combined them in one series, as the second patch depends on the first.
 
-and continues, as the clock is optional, depending on the SoC type.
-This warning may confuse users.
+Thanks for applying!
 
-To fix this, add a flag to indicate that the clock is mandatory or
-optional:
-  - If the clock is mandatory (on R-Car Gen2 and Gen3), a missing clock
-    is now treated as a fatal error,
-  - If the clock is optional (on R-Car Gen1), the warning is no longer
-    printed.
+Geert Uytterhoeven (2):
+  gpio: rcar: Remove obsolete platform data support
+  gpio: rcar: Improve clock error handling and reporting
 
-Suggested-by: Magnus Damm <magnus.damm@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Use booleans instead of bitfields,
-  - Add reference to R-Car Gen3.
----
- drivers/gpio/gpio-rcar.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-rcar.c                | 88 ++++++++++++++-------------------
+ include/linux/platform_data/gpio-rcar.h | 29 -----------
+ 2 files changed, 36 insertions(+), 81 deletions(-)
+ delete mode 100644 include/linux/platform_data/gpio-rcar.h
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 1ed52fc026cb4dd2..624a435e69889d7e 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -39,6 +39,7 @@ struct gpio_rcar_priv {
- 	struct clk *clk;
- 	unsigned int irq_parent;
- 	bool has_both_edge_trigger;
-+	bool needs_clk;
- };
- 
- #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -317,14 +318,17 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
- 
- struct gpio_rcar_info {
- 	bool has_both_edge_trigger;
-+	bool needs_clk;
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
- 	.has_both_edge_trigger = false,
-+	.needs_clk = false,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
- 	.has_both_edge_trigger = true,
-+	.needs_clk = true,
- };
- 
- static const struct of_device_id gpio_rcar_of_table[] = {
-@@ -371,6 +375,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
- 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
- 	p->has_both_edge_trigger = info->has_both_edge_trigger;
-+	p->needs_clk = info->needs_clk;
- 
- 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
- 		dev_warn(&p->pdev->dev,
-@@ -409,7 +414,11 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 
- 	p->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(p->clk)) {
--		dev_warn(dev, "unable to get clock\n");
-+		if (p->needs_clk) {
-+			dev_err(dev, "unable to get clock\n");
-+			ret = PTR_ERR(p->clk);
-+			goto err0;
-+		}
- 		p->clk = NULL;
- 	}
- 
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
