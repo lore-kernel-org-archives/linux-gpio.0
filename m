@@ -1,129 +1,40 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Fri, 4 Dec 2015 08:43:58 +0000
-Message-ID: <20151204084358.GD26902@x1>
-References: <1447869580-10416-1-git-send-email-afd@ti.com>
- <20151124162624.GI807@x1>
- <56606558.9080200@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Phil Reid <preid@electromag.com.au>
+Subject: [PATCH 1/2] gpiolib: prevent fault 'Unable to handle kernel paging request at virtual address'
+Date: Fri,  4 Dec 2015 17:06:24 +0800
+Message-ID: <1449219985-67261-2-git-send-email-preid@electromag.com.au>
+References: <1449219985-67261-1-git-send-email-preid@electromag.com.au>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35808 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755372AbbLDIoC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 03:44:02 -0500
-Received: by wmuu63 with SMTP id u63so52641508wmu.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Dec 2015 00:44:01 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <56606558.9080200@ti.com>
+Received: from 203-59-230-133.perm.iinet.net.au ([203.59.230.133]:52064 "EHLO
+	preid-centos7.electromag.com.au" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755625AbbLDJQE (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 04:16:04 -0500
+In-Reply-To: <1449219985-67261-1-git-send-email-preid@electromag.com.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: gnurou@gmail.com, linux-gpio@vger.kernel.org
+Cc: Phil Reid <preid@electromag.com.au>
 
-On Thu, 03 Dec 2015, Andrew F. Davis wrote:
+gpiod_request when gpio returns -EBUSY results in fault.
+Changing to pr_warn fixes the problem.
 
-> On 11/24/2015 10:26 AM, Lee Jones wrote:
-> >On Wed, 18 Nov 2015, Andrew F. Davis wrote:
-> >
-> >>In an effort to cleanup this driver and add Device Tree support
-> >>the driver has been rewritten based on new driver styles and
-> >>modern kernel driver helpers. This has nearly halved the lines
-> >>of code while keeping all previous functionality.
-> >>
-> >>Platform file based initialization has been dropped as there is
-> >>no examples of this use in the kernel.
-> >>
-> >>v1 can be found here: [1] v2: [2] v3: [3] v4: [4] v5: [5] v6: [6]
-> >>
-> >>Changes from v6:
-> >>  - Removed compatible strings from DT sub-nodes
-> >>  - Rearranged DT bindings
-> >>  - Small fixes
-> >>
-> >>Changes from v5:
-> >>  - Small formatting changes to DT Docs
-> >>  - Converted to_tps65912_gpio from macro to inline function
-> >>
-> >>Changes from v4:
-> >>  - Use mfd core to add sub-devices
-> >>
-> >>Changes from v3:
-> >>  - Reorganized regulator driver and related DT node
-> >>  - Other small fixes as discussed in v3 thread
-> >>
-> >>Changes from v2:
-> >>  - Split the series further into subsystems
-> >>
-> >>Changes from v1:
-> >>  - Split the rewrite into delete/create patches
-> >>  - Several small fixes as discussed in v1 thread
-> >>
-> >>[1] http://www.spinics.net/lists/devicetree/msg93863.html
-> >>[2] http://www.spinics.net/lists/devicetree/msg95003.html
-> >>[3] http://www.spinics.net/lists/devicetree/msg95133.html
-> >>[4] http://www.spinics.net/lists/devicetree/msg96109.html
-> >>[5] http://www.spinics.net/lists/devicetree/msg100601.html
-> >>[6] https://lkml.org/lkml/2015/10/30/690
-> >>
-> >>Andrew F. Davis (5):
-> >>   Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
-> >>   mfd: tps65912: Remove old driver in preparation for new driver
-> >>   mfd: tps65912: Add driver for the TPS65912 PMIC
-> >>   regulator: tps65912: Add regulator driver for the TPS65912 PMIC
-> >>   gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
-> >>
-> >>  Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
-> >>  drivers/gpio/Kconfig                               |   2 +-
-> >>  drivers/gpio/gpio-tps65912.c                       | 317 ++++----=
--
-> >>  drivers/mfd/Kconfig                                |  20 +-
-> >>  drivers/mfd/Makefile                               |   3 +-
-> >>  drivers/mfd/tps65912-core.c                        | 290 ++++----=
--
-> >>  drivers/mfd/tps65912-i2c.c                         | 219 +++----
-> >>  drivers/mfd/tps65912-irq.c                         | 217 -------
-> >>  drivers/mfd/tps65912-spi.c                         | 219 +++----
-> >>  drivers/regulator/Kconfig                          |   2 +-
-> >>  drivers/regulator/tps65912-regulator.c             | 710 +++++---=
--------------
-> >>  include/linux/mfd/tps65912.h                       | 208 +++---
-> >
-> >Just waiting for the regulator Ack now, right?
-> >
->=20
-> I believe so, is there a friendly way to poke Mark Brown so this does=
-n't
-> get caught in his filter? This is almost identical to the regulator h=
-e
-> applied the other day from me so I don't imagine there will be much p=
-roblem
-> with this patch.
+Signed-off-by: Phil Reid <preid@electromag.com.au>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just repost the set with all the remaining Acks and explain in the
-cover letter that you're only missing one Ack.  I can prod Mark from
-that point.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a18f00f..0ef01b8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -961,7 +961,7 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
+ 
+ done:
+ 	if (status)
+-		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
++		pr_warn("%s: status %d\n", __func__, status);
+ 
+ 	return status;
+ }
+-- 
+1.8.3.1
 
-> >>  12 files changed, 780 insertions(+), 1477 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912=
-=2Etxt
-> >>  rewrite drivers/gpio/gpio-tps65912.c (74%)
-> >>  rewrite drivers/mfd/tps65912-core.c (95%)
-> >>  rewrite drivers/mfd/tps65912-i2c.c (93%)
-> >>  delete mode 100644 drivers/mfd/tps65912-irq.c
-> >>  rewrite drivers/mfd/tps65912-spi.c (92%)
-> >>  rewrite drivers/regulator/tps65912-regulator.c (94%)
-> >>
-> >
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
