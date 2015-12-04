@@ -1,59 +1,129 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/2] pinctrl: single: Use a separate lockdep class
-Date: Thu, 3 Dec 2015 13:46:46 -0800
-Message-ID: <20151203214646.GD23396@atomide.com>
-References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
- <CACRpkda3g7FXV4vLtj0LnV5H3vhumDrngHeJ6F7yc8y1k_dABg@mail.gmail.com>
- <565DAA09.3030201@arm.com>
- <20151203180721.GU23396@atomide.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Fri, 4 Dec 2015 08:43:58 +0000
+Message-ID: <20151204084358.GD26902@x1>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+ <20151124162624.GI807@x1>
+ <56606558.9080200@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:50651 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750736AbbLCVqv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 3 Dec 2015 16:46:51 -0500
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:35808 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755372AbbLDIoC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 03:44:02 -0500
+Received: by wmuu63 with SMTP id u63so52641508wmu.0
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Dec 2015 00:44:01 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20151203180721.GU23396@atomide.com>
+In-Reply-To: <56606558.9080200@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [151203 10:07]:
-> * Sudeep Holla <sudeep.holla@arm.com> [151201 06:10]:
-> > 
-> > 
-> > On 01/12/15 14:06, Linus Walleij wrote:
-> > >On Fri, Nov 27, 2015 at 6:20 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> > >
-> > >>The single pinmux controller can be cascaded to the other interrupt
-> > >>controllers. Hence when propagating wake-up settings to its parent
-> > >>interrupt controller, there's possiblity of detecting possible recursive
-> > >>locking and getting lockdep warning.
-> > >>
-> > >>This patch avoids this false positive by using a separate lockdep class
-> > >>for this single pinctrl interrupts.
-> > >>
-> > >>Cc: Linus Walleij <linus.walleij@linaro.org>
-> > >>Cc: linux-gpio@vger.kernel.org
-> > >>Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> > >>Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > >
-> > >I need Tony's ACK on this patch before applying.
-> > >
-> > >Is it a regression that needs to go into fixes?
-> > >
-> > 
-> > Not really, only needed by PATCH 2/2 to avoid recursive locking.
-> 
-> No problem with this patch, so:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
+On Thu, 03 Dec 2015, Andrew F. Davis wrote:
 
-Actually this needs to be merged together with 1/2 once the pending
-issues are fixed as this will add a lockdep warning with 1/2.
+> On 11/24/2015 10:26 AM, Lee Jones wrote:
+> >On Wed, 18 Nov 2015, Andrew F. Davis wrote:
+> >
+> >>In an effort to cleanup this driver and add Device Tree support
+> >>the driver has been rewritten based on new driver styles and
+> >>modern kernel driver helpers. This has nearly halved the lines
+> >>of code while keeping all previous functionality.
+> >>
+> >>Platform file based initialization has been dropped as there is
+> >>no examples of this use in the kernel.
+> >>
+> >>v1 can be found here: [1] v2: [2] v3: [3] v4: [4] v5: [5] v6: [6]
+> >>
+> >>Changes from v6:
+> >>  - Removed compatible strings from DT sub-nodes
+> >>  - Rearranged DT bindings
+> >>  - Small fixes
+> >>
+> >>Changes from v5:
+> >>  - Small formatting changes to DT Docs
+> >>  - Converted to_tps65912_gpio from macro to inline function
+> >>
+> >>Changes from v4:
+> >>  - Use mfd core to add sub-devices
+> >>
+> >>Changes from v3:
+> >>  - Reorganized regulator driver and related DT node
+> >>  - Other small fixes as discussed in v3 thread
+> >>
+> >>Changes from v2:
+> >>  - Split the series further into subsystems
+> >>
+> >>Changes from v1:
+> >>  - Split the rewrite into delete/create patches
+> >>  - Several small fixes as discussed in v1 thread
+> >>
+> >>[1] http://www.spinics.net/lists/devicetree/msg93863.html
+> >>[2] http://www.spinics.net/lists/devicetree/msg95003.html
+> >>[3] http://www.spinics.net/lists/devicetree/msg95133.html
+> >>[4] http://www.spinics.net/lists/devicetree/msg96109.html
+> >>[5] http://www.spinics.net/lists/devicetree/msg100601.html
+> >>[6] https://lkml.org/lkml/2015/10/30/690
+> >>
+> >>Andrew F. Davis (5):
+> >>   Documentation: tps65912: Add DT bindings for the TPS65912 PMIC
+> >>   mfd: tps65912: Remove old driver in preparation for new driver
+> >>   mfd: tps65912: Add driver for the TPS65912 PMIC
+> >>   regulator: tps65912: Add regulator driver for the TPS65912 PMIC
+> >>   gpio: tps65912: Add GPIO driver for the TPS65912 PMIC
+> >>
+> >>  Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
+> >>  drivers/gpio/Kconfig                               |   2 +-
+> >>  drivers/gpio/gpio-tps65912.c                       | 317 ++++----=
+-
+> >>  drivers/mfd/Kconfig                                |  20 +-
+> >>  drivers/mfd/Makefile                               |   3 +-
+> >>  drivers/mfd/tps65912-core.c                        | 290 ++++----=
+-
+> >>  drivers/mfd/tps65912-i2c.c                         | 219 +++----
+> >>  drivers/mfd/tps65912-irq.c                         | 217 -------
+> >>  drivers/mfd/tps65912-spi.c                         | 219 +++----
+> >>  drivers/regulator/Kconfig                          |   2 +-
+> >>  drivers/regulator/tps65912-regulator.c             | 710 +++++---=
+-------------
+> >>  include/linux/mfd/tps65912.h                       | 208 +++---
+> >
+> >Just waiting for the regulator Ack now, right?
+> >
+>=20
+> I believe so, is there a friendly way to poke Mark Brown so this does=
+n't
+> get caught in his filter? This is almost identical to the regulator h=
+e
+> applied the other day from me so I don't imagine there will be much p=
+roblem
+> with this patch.
 
-So for now:
+Just repost the set with all the remaining Acks and explain in the
+cover letter that you're only missing one Ack.  I can prod Mark from
+that point.
 
-Un-Acked-by: Tony Lindgren <tony@atomide.com>
+> >>  12 files changed, 780 insertions(+), 1477 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65912=
+=2Etxt
+> >>  rewrite drivers/gpio/gpio-tps65912.c (74%)
+> >>  rewrite drivers/mfd/tps65912-core.c (95%)
+> >>  rewrite drivers/mfd/tps65912-i2c.c (93%)
+> >>  delete mode 100644 drivers/mfd/tps65912-irq.c
+> >>  rewrite drivers/mfd/tps65912-spi.c (92%)
+> >>  rewrite drivers/regulator/tps65912-regulator.c (94%)
+> >>
+> >
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
