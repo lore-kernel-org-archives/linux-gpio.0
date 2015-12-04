@@ -1,68 +1,77 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 0/2] gpiolib exception & gpio-pca953x set_multiple support
-Date: Fri, 4 Dec 2015 17:21:18 +0800
-Message-ID: <56615B0E.4020508@electromag.com.au>
-References: <1449219985-67261-1-git-send-email-preid@electromag.com.au>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: [PATCH v4] pinctrl/lantiq: Implement gpio_chip.to_irq
+Date: Fri, 4 Dec 2015 11:05:44 +0100
+Message-ID: <1449223544-3527-1-git-send-email-mschiller@tdt.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:48264 "EHLO
-	anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755895AbbLDJV3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 04:21:29 -0500
-In-Reply-To: <1449219985-67261-1-git-send-email-preid@electromag.com.au>
+Received: from mxout51.expurgate.net ([194.37.255.51]:57278 "EHLO
+	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755177AbbLDKGG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 05:06:06 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>, gnurou@gmail.com, linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, blogic@openwrt.org, hauke@hauke-m.de, jogo@openwrt.org, daniel.schwierzeck@gmail.com, Martin Schiller <mschiller@tdt.de>
 
-Sorry for the bad cover. Script got away from me.
-Should have contained.
+From: John Crispin <blogic@openwrt.org>
 
-First patch prevents a fault that was occuring when the gpio bit was BUSY.
-Call stack was as follows:
-[<802dfbb8>] (strnlen) from [<802e1170>] (string+0x40/0x10c)
-[<802e1170>] (string) from [<802e2fcc>] (vsnprintf+0x178/0x39c)
-[<802e2fcc>] (vsnprintf) from [<802e34e0>] (pointer+0x2f0/0x548)
-[<802e34e0>] (pointer) from [<802e2f80>] (vsnprintf+0x12c/0x39c)
-[<802e2f80>] (vsnprintf) from [<802e374c>] (vscnprintf+0x14/0x2c)
-[<802e374c>] (vscnprintf) from [<8006d9d0>] (vprintk_emit+0xd8/0x558)
-[<8006d9d0>] (vprintk_emit) from [<8006dfd4>] (vprintk_default+0x34/0x3c)
-[<8006dfd4>] (vprintk_default) from [<800e1284>] (printk+0x88/0x90)
-[<800e1284>] (printk) from [<802fffc0>] (__dynamic_pr_debug+0x58/0x68)
-[<802fffc0>] (__dynamic_pr_debug) from [<80309380>] (gpiod_request+0xf0/0x180)
-[<80309380>] (gpiod_request) from [<803095f4>] (gpiod_get_index+0xd8/0x2fc)
-[<803095f4>] (gpiod_get_index) from [<7f043be0>] (emit_gpiod_of_get+0x30/0xe4 [EmitDrv])
-[<7f043be0>] (emit_gpiod_of_get [EmitDrv]) from [<7f043d0c>] (emit_gpiod_of_array_get+0x78/0xa0 [EmitDrv])
-[<7f043d0c>] (emit_gpiod_of_array_get [EmitDrv]) from [<7f04945c>] (adc_mod_probe+0x128/0x338 [AdcMod])
-[<7f04945c>] (adc_mod_probe [AdcMod]) from [<7f043228>] (emit_probe+0x12c/0x224 [EmitDrv])
-[<7f043228>] (emit_probe [EmitDrv]) from [<7f043824>] (emit_iio_probe_alloc+0x6c/0xe0 [EmitDrv])
-[<7f043824>] (emit_iio_probe_alloc [EmitDrv]) from [<7f04913c>] (adc_mod_drv_probe+0x24/0x28 [AdcMod])
-[<7f04913c>] (adc_mod_drv_probe [AdcMod]) from [<80350980>] (platform_drv_probe+0x54/0xb4)
-[<80350980>] (platform_drv_probe) from [<8034e754>] (driver_probe_device+0x2ec/0x45c)
-[<8034e754>] (driver_probe_device) from [<8034e960>] (__driver_attach+0x9c/0xa0)
-[<8034e960>] (__driver_attach) from [<8034c4d8>] (bus_for_each_dev+0x70/0xa4)
-[<8034c4d8>] (bus_for_each_dev) from [<8034df98>] (driver_attach+0x2c/0x30)
-[<8034df98>] (driver_attach) from [<8034dad0>] (bus_add_driver+0x1c8/0x27c)
-[<8034dad0>] (bus_add_driver) from [<8034f4e4>] (driver_register+0x88/0x108)
-[<8034f4e4>] (driver_register) from [<803508ac>] (__platform_driver_register+0x64/0x6c)
-[<803508ac>] (__platform_driver_register) from [<7f04c048>] (adc_mod_init+0x48/0x6c [AdcMod])
-[<7f04c048>] (adc_mod_init [AdcMod]) from [<8000984c>] (do_one_initcall+0xc8/0x200)
-[<8000984c>] (do_one_initcall) from [<800e154c>] (do_init_module+0x70/0x1e0)
-[<800e154c>] (do_init_module) from [<8009e59c>] (load_module+0x1cb4/0x2170)
-[<8009e59c>] (load_module) from [<8009ec64>] (SyS_finit_module+0x8c/0xbc)
-[<8009ec64>] (SyS_finit_module) from [<80010800>] (ret_fast_syscall+0x0/0x3c)
-Code: e24cb004 e3510000 e241e001 0a000011 (e5d01000)
+Some drivers require a way to translate GPIO pins to their IRQ numbers.
 
+This patch adds the .to_irq() gpiolib callback to the pinctrl-xway
+driver, which returns an IRQ mapping for a given GPIO pin.
 
-Second patch adds support for set multiple bits in one i2c transaction.
-This speeds up setting 'sets' of output bits.
+Signed-off-by: John Crispin <blogic@openwrt.org>
+Signed-off-by: Martin Schiller <mschiller@tdt.de>
+---
+Changes in v4:
+- Added commit message + comment 
 
+Changes in v3:
+- Moved this change into a separate patch
 
+Changes in v2: 
+None
 
+ drivers/pinctrl/pinctrl-xway.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index b78baaa..66f0048 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1573,6 +1573,22 @@ static int xway_gpio_dir_out(struct gpio_chip *chip, unsigned int pin, int val)
+ 	return 0;
+ }
+ 
++/*
++ * gpiolib gpiod_to_irq callback function.
++ * Returns the mapped IRQ (external interrupt) number for a given GPIO pin.
++ */
++static int xway_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++{
++	struct ltq_pinmux_info *info = dev_get_drvdata(chip->dev);
++	int i;
++
++	for (i = 0; i < info->num_exin; i++)
++		if (info->exin[i] == offset)
++			return ltq_eiu_get_irq(i);
++
++	return -1;
++}
++
+ static struct gpio_chip xway_chip = {
+ 	.label = "gpio-xway",
+ 	.direction_input = xway_gpio_dir_in,
+@@ -1581,6 +1597,7 @@ static struct gpio_chip xway_chip = {
+ 	.set = xway_gpio_set,
+ 	.request = gpiochip_generic_request,
+ 	.free = gpiochip_generic_free,
++	.to_irq = xway_gpio_to_irq,
+ 	.base = -1,
+ };
+ 
 -- 
-Regards
-Phil Reid
+2.1.4
 
