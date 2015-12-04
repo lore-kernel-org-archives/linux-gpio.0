@@ -1,61 +1,60 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
-Date: Fri, 4 Dec 2015 16:31:17 -0600
-Message-ID: <20151204223117.GA2861@qwerty.qwertyembedded>
-References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
- <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
- <20151102103116.GE8676@localhost>
- <CACRpkdaVu_1pAPd-7sUeGLEYymynA10WtuxJcnVPKZVYQOeruw@mail.gmail.com>
- <CACRpkda6Ad4SGW5H4ZDLn0VLZzq0LqLxSC7f2gcCBDNWH5FMnA@mail.gmail.com>
- <20151105094411.GD7561@localhost>
- <CACRpkdavyg8f8fWoQBQCqRAJKxiZDiC72QDSsWjbk1b1v=u3Lw@mail.gmail.com>
- <CACRpkdbeFJMZ5vbHGFmPeG_5qTdKsL+2xL4RjKHF759PFiz5Yw@mail.gmail.com>
- <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
+From: Christophe Ricard <christophe.ricard@gmail.com>
+Subject: Re: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
+Date: Sat, 5 Dec 2015 00:36:19 +0100
+Message-ID: <56622373.7020406@gmail.com>
+References: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
+ <20151201112127.GA1593@lahna.fi.intel.com>
+ <CALD+uuxJw5tQ2XY99nHigXdNkcXGnng+r9NZ8H9TqUF9GbgW=A@mail.gmail.com>
+ <20151201130324.GE1593@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:35525 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751869AbbLDWbn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 17:31:43 -0500
-Received: by pacej9 with SMTP id ej9so93225058pac.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Dec 2015 14:31:42 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYhKnzccriPkL7B0xv5B0qOvpj3myK+ggk-7vKcT=q4kw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20151201130324.GE1593@lahna.fi.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: rjw@rjwysocki.net, Len Brown <lenb@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-On Thu, Dec 03, 2015 at 03:06:48PM +0100, Linus Walleij wrote:
-> On Thu, Dec 3, 2015 at 3:04 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> > 3-1. Split gpio_chip in a static descriptor with a vtable for callbacks
-> >    and other static config called struct gpio_chip, and
-> >    struct gpio_device that is returned as a pointer from
-> >    gpiochip_add(). It will need to be free:ed by gpiodevice_remove()
-> >    after that.
-> 
-> This will look something like this uglyhack:
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/commit/?h=gpiochip-desc&id=610b19c1832acfdf6ff62523addfa08b76f77343
->
+Hi Mika,
 
-Still quite a few place where a gpio_device is being access as if a gpio_chip:
-gpio_device_set_desc_names
-gpio_device_set_multiple
-gpiod_hog
-gpio_device_free_hogs
-gpiolib_dbg_show
-gpiolib_seq_show
-..
 
-There is still some calls to gpiod_to_chip which was changed to gpiod_to_device.
-gpiod_hog
-..
+On 01/12/2015 14:03, Mika Westerberg wrote:
+[...]
+>>     Now for the same kind of i2c driver using acpi description, the GpioInt
+>>     polarity/type is at the moment never kept in the irq property.
+>>     It is possible to check that following about the same path...
+>>     i2c_device_probe (drivers/i2c/i2c-core.c), retrieves irq property from
+>>     acpi_dev_gpio_irq_get but does not save the irq_type.
+>>     This would allow not to have to use an additional gpio field and all
+>>     the configuration step to configure the gpio interrupt correctly in a
+>>     device driver and taking a real benefit of the GpioInt acpi keyword
+>>     compare to GpioIo keyword.
+>>     Most the of the drivers based on acpi description retrieve gpio number
+>>     to assign an interrupt and a fix polarity. I believe my patchset
+>>     proposal would improve this and allow to
+>>     be much closer with devicetree.
+>>     Do you see any issue with this ?
+> No, but I wonder if it would be better to do this in acpi_dev_gpio_irq_get()
+> instead of acpi_find_gpio() which gets called everytime a GPIO is looked up?
+I believe, setting the irq type requires triggering and polarity data 
+stored into a struct acpi_resource_gpio.
 
-The gpiochip_add function prototype was changed in the header but the definition did not change.
+acpi_dev_gpio_irq_get call acpi_get_gpiod_by_index which run acpi_find_gpio.
 
-Lots of work to do still. Let me know if and how I can help.
+Actually acpi_dev_gpio_irq_get is called everytime an i2c device slave 
+is probed, acpi_find_gpio will get called to "register" gpios.
+If done correctly, i think this will be done only once...
 
-> Yours,
-> Linus Walleij
+The only improvement i may see would be to add an extra field in the 
+acpi_gpio_info structure in drivers/gpio/gpiolib.h (for example int 
+irq_type).
+And call irq_set_irq_type in acpi_dev_gpio_irq_get if the gpio is an 
+interrupt.
+
+I guess the current proposal and this one are equivalent...
+
+What do you think ?
+
+Best Regards
+Christophe
