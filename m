@@ -1,60 +1,58 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v5 4/4] gpio: tps65086: Add GPO driver for the TPS65086
- PMIC
-Date: Fri, 4 Dec 2015 10:11:29 -0600
-Message-ID: <5661BB31.5020907@ti.com>
-References: <201512020445.59TmUa1O%fengguang.wu@intel.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
+ flag
+Date: Fri, 4 Dec 2015 16:15:29 +0000
+Message-ID: <5661BC21.2050802@arm.com>
+References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
+ <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
+ <20151203181337.GV23396@atomide.com> <566090FC.1020502@arm.com>
+ <20151203214013.GB23396@atomide.com> <20151204154031.GG23396@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:35529 "EHLO arroyo.ext.ti.com"
+Received: from foss.arm.com ([217.140.101.70]:55222 "EHLO foss.arm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754311AbbLDQLr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 4 Dec 2015 11:11:47 -0500
-In-Reply-To: <201512020445.59TmUa1O%fengguang.wu@intel.com>
+	id S1753584AbbLDQPe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 4 Dec 2015 11:15:34 -0500
+In-Reply-To: <20151204154031.GG23396@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 
-On 12/01/2015 02:16 PM, kbuild test robot wrote:
-> Hi Andrew,
+Hi Tony,
+
+On 04/12/15 15:40, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [151203 13:41]:
+>> * Sudeep Holla <sudeep.holla@arm.com> [151203 11:00]:
+>>>
+>>> I have added irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake
+>>> which ensures it's marked for wakeup.
+>>
+>> Hmm well see the error I pasted in this thread, maybe that provides
+>> more clues.
 >
-> [auto build test ERROR on next-20151127]
-> [cannot apply to ljones-mfd/for-mfd-next gpio/for-next v4.4-rc3 v4.4-rc2 v4.4-rc1 v4.4-rc3]
->
-> url:    https://github.com/0day-ci/linux/commits/Andrew-F-Davis/Documentation-tps65086-Add-DT-bindings-for-the-TPS65086-PMIC/20151202-024903
-> config: i386-allmodconfig (attached as .config)
-> reproduce:
->          # save the attached .config to linux build tree
->          make ARCH=i386
->
-> All errors (new ones prefixed by >>):
->
->     drivers/gpio/gpio-tps65086.c: In function 'tps65086_gpio_probe':
->>> drivers/gpio/gpio-tps65086.c:106:12: error: 'struct gpio_chip' has no member named 'parent'
->       gpio->chip.parent = gpio->tps->dev;
->                 ^
->
-> vim +106 drivers/gpio/gpio-tps65086.c
->
->     100			return -ENOMEM;
->     101	
->     102		platform_set_drvdata(pdev, gpio);
->     103	
->     104		gpio->tps = dev_get_drvdata(pdev->dev.parent);
->     105		gpio->chip = template_chip;
->   > 106		gpio->chip.parent = gpio->tps->dev;
->     107	
->     108		ret = gpiochip_add(&gpio->chip);
->     109		if (ret < 0) {
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> The irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake does not
+> look right to me as pcs_irq_set_wake toggles the irq_wake for each pin
+> separately, not for the whole controller.
 >
 
-I'm probably going to drop the GPIO support in the next series push, this
-patch was NAK'd for not using .parent, now we have this. I will wait till
-the GPIO subsystem is stable and push this separately then.
+After thinking more about it we need some way to tell IRQ core that
+pcs_soc->irq is wakeup capable. Is that going to happen automatically
+via dev_pm_set_dedicated_wake_irq as you mentioned earlier ?
+
+> I think all that can be left out with the snipped from Grygorii, and maybe
+> also the lock_class_key changes.
+>
+
+If we not calling irq_set_irq_wake(pcs_soc->irq) in pcs_irq_set_wake, do
+you see possibility of lockdep recursion in any other paths.
+
+Otherwise we don't need this if we remove irq_set_irq_wake(pcs_soc->irq)
+from pcs_irq_set_wake
+
+-- 
+Regards,
+Sudeep
