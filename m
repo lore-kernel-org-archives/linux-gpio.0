@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] gpio: rcar: Remove obsolete platform data support
-Date: Fri,  4 Dec 2015 16:33:52 +0100
-Message-ID: <1449243233-11089-2-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] gpio: rcar: Improve clock error handling and reporting
+Date: Fri,  4 Dec 2015 16:33:53 +0100
+Message-ID: <1449243233-11089-3-git-send-email-geert+renesas@glider.be>
 References: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38776 "EHLO
-	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755187AbbLDPdz (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46808 "EHLO
+	xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755165AbbLDPdz (ORCPT
 	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 10:33:55 -0500
 In-Reply-To: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -14,228 +14,82 @@ List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Since commit 4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete
-setup code"), Renesas R-Car SoCs are only supported in generic DT-only
-ARM multi-platform builds.  The driver doesn't need to use platform data
-anymore, hence remove platform data configuration.
+If the Renesas R-Car GPIO driver cannot find a functional clock, it
+prints a warning, .e.g.
 
-Make gpio_rcar_priv.has_both_edge_trigger a boolean for consistency with
-gpio_rcar_info.has_both_edge_trigger.
-Move gpio_rcar_priv.irq_parent down while we're at it, to prevent gaps
-on 64-bit.
+	gpio_rcar ffc40000.gpio: unable to get clock
 
+and continues, as the clock is optional, depending on the SoC type.
+This warning may confuse users.
+
+To fix this, add a flag to indicate that the clock is mandatory or
+optional:
+  - If the clock is mandatory (on R-Car Gen2 and Gen3), a missing clock
+    is now treated as a fatal error,
+  - If the clock is optional (on R-Car Gen1), the warning is no longer
+    printed.
+
+Suggested-by: Magnus Damm <magnus.damm@gmail.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Commit 4baadb9e05c68962 is in v4.4-rc1.
-
 v2:
-  - Convert gpio_rcar_priv.has_both_edge_trigger from a bitfield to a
-    boolean.
+  - Use booleans instead of bitfields,
+  - Add reference to R-Car Gen3.
 ---
- drivers/gpio/gpio-rcar.c                | 77 +++++++++++----------------------
- include/linux/platform_data/gpio-rcar.h | 29 -------------
- 2 files changed, 26 insertions(+), 80 deletions(-)
- delete mode 100644 include/linux/platform_data/gpio-rcar.h
+ drivers/gpio/gpio-rcar.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 3cbb25ecfc7a1b6a..1ed52fc026cb4dd2 100644
+index 1ed52fc026cb4dd2..624a435e69889d7e 100644
 --- a/drivers/gpio/gpio-rcar.c
 +++ b/drivers/gpio/gpio-rcar.c
-@@ -25,7 +25,6 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
--#include <linux/platform_data/gpio-rcar.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/spinlock.h>
-@@ -34,12 +33,12 @@
- struct gpio_rcar_priv {
- 	void __iomem *base;
- 	spinlock_t lock;
--	struct gpio_rcar_config config;
- 	struct platform_device *pdev;
- 	struct gpio_chip gpio_chip;
- 	struct irq_chip irq_chip;
--	unsigned int irq_parent;
+@@ -39,6 +39,7 @@ struct gpio_rcar_priv {
  	struct clk *clk;
-+	unsigned int irq_parent;
-+	bool has_both_edge_trigger;
+ 	unsigned int irq_parent;
+ 	bool has_both_edge_trigger;
++	bool needs_clk;
  };
  
  #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
-@@ -121,7 +120,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
- 	gpio_rcar_modify_bit(p, EDGLEVEL, hwirq, !level_trigger);
+@@ -317,14 +318,17 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
  
- 	/* Select one edge or both edges in BOTHEDGE */
--	if (p->config.has_both_edge_trigger)
-+	if (p->has_both_edge_trigger)
- 		gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+ struct gpio_rcar_info {
+ 	bool has_both_edge_trigger;
++	bool needs_clk;
+ };
  
- 	/* Select "Interrupt Input Mode" in IOINTSEL */
-@@ -161,7 +160,7 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
- 						      false);
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
--		if (!p->config.has_both_edge_trigger)
-+		if (!p->has_both_edge_trigger)
- 			return -EINVAL;
- 		gpio_rcar_config_interrupt_input_mode(p, hwirq, true, false,
- 						      true);
-@@ -355,39 +354,29 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+ 	.has_both_edge_trigger = false,
++	.needs_clk = false,
+ };
  
- MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+ 	.has_both_edge_trigger = true,
++	.needs_clk = true,
+ };
  
--static int gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
-+static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- {
--	struct gpio_rcar_config *pdata = dev_get_platdata(&p->pdev->dev);
- 	struct device_node *np = p->pdev->dev.of_node;
-+	const struct of_device_id *match;
-+	const struct gpio_rcar_info *info;
- 	struct of_phandle_args args;
- 	int ret;
+ static const struct of_device_id gpio_rcar_of_table[] = {
+@@ -371,6 +375,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+ 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+ 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
+ 	p->has_both_edge_trigger = info->has_both_edge_trigger;
++	p->needs_clk = info->needs_clk;
  
--	if (pdata) {
--		p->config = *pdata;
--	} else if (IS_ENABLED(CONFIG_OF) && np) {
--		const struct of_device_id *match;
--		const struct gpio_rcar_info *info;
-+	match = of_match_node(gpio_rcar_of_table, np);
-+	if (!match)
-+		return -EINVAL;
- 
--		match = of_match_node(gpio_rcar_of_table, np);
--		if (!match)
--			return -EINVAL;
-+	info = match->data;
- 
--		info = match->data;
-+	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
-+	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
-+	p->has_both_edge_trigger = info->has_both_edge_trigger;
- 
--		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
--						       &args);
--		p->config.number_of_pins = ret == 0 ? args.args[2]
--					 : RCAR_MAX_GPIO_PER_BANK;
--		p->config.gpio_base = -1;
--		p->config.has_both_edge_trigger = info->has_both_edge_trigger;
--	}
--
--	if (p->config.number_of_pins == 0 ||
--	    p->config.number_of_pins > RCAR_MAX_GPIO_PER_BANK) {
-+	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
+ 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
  		dev_warn(&p->pdev->dev,
--			 "Invalid number of gpio lines %u, using %u\n",
--			 p->config.number_of_pins, RCAR_MAX_GPIO_PER_BANK);
--		p->config.number_of_pins = RCAR_MAX_GPIO_PER_BANK;
-+			 "Invalid number of gpio lines %u, using %u\n", *npins,
-+			 RCAR_MAX_GPIO_PER_BANK);
-+		*npins = RCAR_MAX_GPIO_PER_BANK;
+@@ -409,7 +414,11 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 
+ 	p->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(p->clk)) {
+-		dev_warn(dev, "unable to get clock\n");
++		if (p->needs_clk) {
++			dev_err(dev, "unable to get clock\n");
++			ret = PTR_ERR(p->clk);
++			goto err0;
++		}
+ 		p->clk = NULL;
  	}
  
- 	return 0;
-@@ -401,6 +390,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	struct irq_chip *irq_chip;
- 	struct device *dev = &pdev->dev;
- 	const char *name = dev_name(dev);
-+	unsigned int npins;
- 	int ret;
- 
- 	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
-@@ -410,8 +400,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	p->pdev = pdev;
- 	spin_lock_init(&p->lock);
- 
--	/* Get device configuration from DT node or platform data. */
--	ret = gpio_rcar_parse_pdata(p);
-+	/* Get device configuration from DT node */
-+	ret = gpio_rcar_parse_dt(p, &npins);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -451,8 +441,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 	gpio_chip->label = name;
- 	gpio_chip->parent = dev;
- 	gpio_chip->owner = THIS_MODULE;
--	gpio_chip->base = p->config.gpio_base;
--	gpio_chip->ngpio = p->config.number_of_pins;
-+	gpio_chip->base = -1;
-+	gpio_chip->ngpio = npins;
- 
- 	irq_chip = &p->irq_chip;
- 	irq_chip->name = name;
-@@ -468,8 +458,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 		goto err0;
- 	}
- 
--	ret = gpiochip_irqchip_add(gpio_chip, irq_chip, p->config.irq_base,
--				   handle_level_irq, IRQ_TYPE_NONE);
-+	ret = gpiochip_irqchip_add(gpio_chip, irq_chip, 0, handle_level_irq,
-+				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(dev, "cannot add irqchip\n");
- 		goto err1;
-@@ -483,22 +473,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
- 		goto err1;
- 	}
- 
--	dev_info(dev, "driving %d GPIOs\n", p->config.number_of_pins);
--
--	/* warn in case of mismatch if irq base is specified */
--	if (p->config.irq_base) {
--		ret = irq_find_mapping(gpio_chip->irqdomain, 0);
--		if (p->config.irq_base != ret)
--			dev_warn(dev, "irq base mismatch (%u/%u)\n",
--				 p->config.irq_base, ret);
--	}
--
--	if (p->config.pctl_name) {
--		ret = gpiochip_add_pin_range(gpio_chip, p->config.pctl_name, 0,
--					     gpio_chip->base, gpio_chip->ngpio);
--		if (ret < 0)
--			dev_warn(dev, "failed to add pin range\n");
--	}
-+	dev_info(dev, "driving %d GPIOs\n", npins);
- 
- 	return 0;
- 
-diff --git a/include/linux/platform_data/gpio-rcar.h b/include/linux/platform_data/gpio-rcar.h
-deleted file mode 100644
-index 2d8d6943281376a7..0000000000000000
---- a/include/linux/platform_data/gpio-rcar.h
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/*
-- * Renesas R-Car GPIO Support
-- *
-- *  Copyright (C) 2013 Magnus Damm
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef __GPIO_RCAR_H__
--#define __GPIO_RCAR_H__
--
--struct gpio_rcar_config {
--	int gpio_base;
--	unsigned int irq_base;
--	unsigned int number_of_pins;
--	const char *pctl_name;
--	unsigned has_both_edge_trigger:1;
--};
--
--#define RCAR_GP_PIN(bank, pin)		(((bank) * 32) + (pin))
--
--#endif /* __GPIO_RCAR_H__ */
 -- 
 1.9.1
 
