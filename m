@@ -1,274 +1,241 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/7] pinctrl: sunxi: Add A80 special pin controller
-Date: Fri, 4 Dec 2015 08:39:04 -0600
-Message-ID: <20151204143904.GA10784@rob-hp-laptop>
-References: <1448948845-28347-1-git-send-email-wens@csie.org>
- <1448948845-28347-2-git-send-email-wens@csie.org>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDJIP47K7MERBDWLQ2ZQKGQELT62FZY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1448948845-28347-2-git-send-email-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <http://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <http://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <http://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <http://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <http://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/2] gpio: rcar: Remove obsolete platform data support
+Date: Fri,  4 Dec 2015 16:33:52 +0100
+Message-ID: <1449243233-11089-2-git-send-email-geert+renesas@glider.be>
+References: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38776 "EHLO
+	baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755187AbbLDPdz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 10:33:55 -0500
+In-Reply-To: <1449243233-11089-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Dec 01, 2015 at 01:47:19PM +0800, Chen-Yu Tsai wrote:
-> From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> 
-> Like the previous designs, the A80 has a special pin controller for the
-> critical pins, like the PMIC bus.
-> 
-> Add a driver for this controller.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> [wens: Add A80 compatible strings to bindings doc; fix pin function
->        names based on v1.3 datasheet; constify of_device_id table]
-> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> ---
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   2 +
+Since commit 4baadb9e05c68962 ("ARM: shmobile: r8a7778: remove obsolete
+setup code"), Renesas R-Car SoCs are only supported in generic DT-only
+ARM multi-platform builds.  The driver doesn't need to use platform data
+anymore, hence remove platform data configuration.
 
-For the binding:
+Make gpio_rcar_priv.has_both_edge_trigger a boolean for consistency with
+gpio_rcar_info.has_both_edge_trigger.
+Move gpio_rcar_priv.irq_parent down while we're at it, to prevent gaps
+on 64-bit.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Commit 4baadb9e05c68962 is in v4.4-rc1.
 
->  drivers/pinctrl/sunxi/Kconfig                      |   5 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c        | 181 +++++++++++++++++++++
->  4 files changed, 189 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> index b321b26780dc..b3b6c2f210d7 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-> @@ -18,6 +18,8 @@ Required properties:
->    "allwinner,sun8i-a23-r-pinctrl"
->    "allwinner,sun8i-a33-pinctrl"
->    "allwinner,sun8i-a83t-pinctrl"
-> +  "allwinner,sun9i-a80-pinctrl"
-> +  "allwinner,sun9i-a80-r-pinctrl"
->  
->  - reg: Should contain the register physical address and length for the
->    pin controller.
-> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-> index e68fd951129a..0252b3fa41ce 100644
-> --- a/drivers/pinctrl/sunxi/Kconfig
-> +++ b/drivers/pinctrl/sunxi/Kconfig
-> @@ -55,4 +55,9 @@ config PINCTRL_SUN9I_A80
->  	def_bool MACH_SUN9I
->  	select PINCTRL_SUNXI_COMMON
->  
-> +config PINCTRL_SUN9I_A80_R
-> +	def_bool MACH_SUN9I
-> +	depends on RESET_CONTROLLER
-> +	select PINCTRL_SUNXI_COMMON
-> +
->  endif
-> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-> index e08029034510..0b4b827f314b 100644
-> --- a/drivers/pinctrl/sunxi/Makefile
-> +++ b/drivers/pinctrl/sunxi/Makefile
-> @@ -14,3 +14,4 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
->  obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
->  obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
->  obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
-> +obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
-> new file mode 100644
-> index 000000000000..42547ffa20a8
-> --- /dev/null
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
-> @@ -0,0 +1,181 @@
-> +/*
-> + * Allwinner A80 SoCs special pins pinctrl driver.
-> + *
-> + * Copyright (C) 2014 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2.  This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/reset.h>
-> +
-> +#include "pinctrl-sunxi.h"
-> +
-> +static const struct sunxi_desc_pin sun9i_a80_r_pins[] = {
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_uart"),	/* TX */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_uart"),	/* RX */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TMS */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TDO */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TDI */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_cir_rx"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "1wire"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_ps2"),		/* SCK1 */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_ps2"),		/* SDA1 */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-> +
-> +	/* Hole */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 0),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 0)),	/* PM_EINT0 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 1),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 1)),	/* PM_EINT1 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 2),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 2)),	/* PM_EINT2 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 3),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 3)),	/* PM_EINT3 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 4),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1"),	/* LRCKR */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 4)),	/* PM_EINT4 */
-> +
-> +	/* Hole */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 8),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_i2c1"),	/* SCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 8)),	/* PM_EINT8 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 9),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_i2c1"),	/* SDA */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 9)),	/* PM_EINT9 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 10),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* MCLK */
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* MCLK */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 11),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* BCLK */
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* BCLK */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 12),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* LRCK */
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* LRCK */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 13),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* DIN */
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* DIN */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 14),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* DOUT */
-> +		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* DOUT */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 15),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 15)),	/* PM_EINT15 */
-> +
-> +	/* Hole */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(N, 0),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2c0"),	/* SCK */
-> +		  SUNXI_FUNCTION(0x3, "s_rsb")),	/* SCK */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(N, 1),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2c0"),	/* SDA */
-> +		  SUNXI_FUNCTION(0x3, "s_rsb")),	/* SDA */
-> +};
-> +
-> +static const struct sunxi_pinctrl_desc sun9i_a80_r_pinctrl_data = {
-> +	.pins = sun9i_a80_r_pins,
-> +	.npins = ARRAY_SIZE(sun9i_a80_r_pins),
-> +	.pin_base = PL_BASE,
-> +	.irq_banks = 2,
-> +};
-> +
-> +static int sun9i_a80_r_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	return sunxi_pinctrl_init(pdev,
-> +				  &sun9i_a80_r_pinctrl_data);
-> +}
-> +
-> +static const struct of_device_id sun9i_a80_r_pinctrl_match[] = {
-> +	{ .compatible = "allwinner,sun9i-a80-r-pinctrl", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, sun9i_a80_r_pinctrl_match);
-> +
-> +static struct platform_driver sun9i_a80_r_pinctrl_driver = {
-> +	.probe	= sun9i_a80_r_pinctrl_probe,
-> +	.driver	= {
-> +		.name		= "sun9i-a80-r-pinctrl",
-> +		.owner		= THIS_MODULE,
-> +		.of_match_table	= sun9i_a80_r_pinctrl_match,
-> +	},
-> +};
-> +module_platform_driver(sun9i_a80_r_pinctrl_driver);
-> +
-> +MODULE_AUTHOR("Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org");
-> +MODULE_DESCRIPTION("Allwinner A80 R_PIO pinctrl driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.6.2
-> 
+v2:
+  - Convert gpio_rcar_priv.has_both_edge_trigger from a bitfield to a
+    boolean.
+---
+ drivers/gpio/gpio-rcar.c                | 77 +++++++++++----------------------
+ include/linux/platform_data/gpio-rcar.h | 29 -------------
+ 2 files changed, 26 insertions(+), 80 deletions(-)
+ delete mode 100644 include/linux/platform_data/gpio-rcar.h
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 3cbb25ecfc7a1b6a..1ed52fc026cb4dd2 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -25,7 +25,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/pinctrl/consumer.h>
+-#include <linux/platform_data/gpio-rcar.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spinlock.h>
+@@ -34,12 +33,12 @@
+ struct gpio_rcar_priv {
+ 	void __iomem *base;
+ 	spinlock_t lock;
+-	struct gpio_rcar_config config;
+ 	struct platform_device *pdev;
+ 	struct gpio_chip gpio_chip;
+ 	struct irq_chip irq_chip;
+-	unsigned int irq_parent;
+ 	struct clk *clk;
++	unsigned int irq_parent;
++	bool has_both_edge_trigger;
+ };
+ 
+ #define IOINTSEL 0x00	/* General IO/Interrupt Switching Register */
+@@ -121,7 +120,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+ 	gpio_rcar_modify_bit(p, EDGLEVEL, hwirq, !level_trigger);
+ 
+ 	/* Select one edge or both edges in BOTHEDGE */
+-	if (p->config.has_both_edge_trigger)
++	if (p->has_both_edge_trigger)
+ 		gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+ 
+ 	/* Select "Interrupt Input Mode" in IOINTSEL */
+@@ -161,7 +160,7 @@ static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
+ 						      false);
+ 		break;
+ 	case IRQ_TYPE_EDGE_BOTH:
+-		if (!p->config.has_both_edge_trigger)
++		if (!p->has_both_edge_trigger)
+ 			return -EINVAL;
+ 		gpio_rcar_config_interrupt_input_mode(p, hwirq, true, false,
+ 						      true);
+@@ -355,39 +354,29 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 
+ MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
+ 
+-static int gpio_rcar_parse_pdata(struct gpio_rcar_priv *p)
++static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+ {
+-	struct gpio_rcar_config *pdata = dev_get_platdata(&p->pdev->dev);
+ 	struct device_node *np = p->pdev->dev.of_node;
++	const struct of_device_id *match;
++	const struct gpio_rcar_info *info;
+ 	struct of_phandle_args args;
+ 	int ret;
+ 
+-	if (pdata) {
+-		p->config = *pdata;
+-	} else if (IS_ENABLED(CONFIG_OF) && np) {
+-		const struct of_device_id *match;
+-		const struct gpio_rcar_info *info;
++	match = of_match_node(gpio_rcar_of_table, np);
++	if (!match)
++		return -EINVAL;
+ 
+-		match = of_match_node(gpio_rcar_of_table, np);
+-		if (!match)
+-			return -EINVAL;
++	info = match->data;
+ 
+-		info = match->data;
++	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
++	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
++	p->has_both_edge_trigger = info->has_both_edge_trigger;
+ 
+-		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
+-						       &args);
+-		p->config.number_of_pins = ret == 0 ? args.args[2]
+-					 : RCAR_MAX_GPIO_PER_BANK;
+-		p->config.gpio_base = -1;
+-		p->config.has_both_edge_trigger = info->has_both_edge_trigger;
+-	}
+-
+-	if (p->config.number_of_pins == 0 ||
+-	    p->config.number_of_pins > RCAR_MAX_GPIO_PER_BANK) {
++	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
+ 		dev_warn(&p->pdev->dev,
+-			 "Invalid number of gpio lines %u, using %u\n",
+-			 p->config.number_of_pins, RCAR_MAX_GPIO_PER_BANK);
+-		p->config.number_of_pins = RCAR_MAX_GPIO_PER_BANK;
++			 "Invalid number of gpio lines %u, using %u\n", *npins,
++			 RCAR_MAX_GPIO_PER_BANK);
++		*npins = RCAR_MAX_GPIO_PER_BANK;
+ 	}
+ 
+ 	return 0;
+@@ -401,6 +390,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	struct irq_chip *irq_chip;
+ 	struct device *dev = &pdev->dev;
+ 	const char *name = dev_name(dev);
++	unsigned int npins;
+ 	int ret;
+ 
+ 	p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
+@@ -410,8 +400,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	p->pdev = pdev;
+ 	spin_lock_init(&p->lock);
+ 
+-	/* Get device configuration from DT node or platform data. */
+-	ret = gpio_rcar_parse_pdata(p);
++	/* Get device configuration from DT node */
++	ret = gpio_rcar_parse_dt(p, &npins);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -451,8 +441,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	gpio_chip->label = name;
+ 	gpio_chip->parent = dev;
+ 	gpio_chip->owner = THIS_MODULE;
+-	gpio_chip->base = p->config.gpio_base;
+-	gpio_chip->ngpio = p->config.number_of_pins;
++	gpio_chip->base = -1;
++	gpio_chip->ngpio = npins;
+ 
+ 	irq_chip = &p->irq_chip;
+ 	irq_chip->name = name;
+@@ -468,8 +458,8 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 		goto err0;
+ 	}
+ 
+-	ret = gpiochip_irqchip_add(gpio_chip, irq_chip, p->config.irq_base,
+-				   handle_level_irq, IRQ_TYPE_NONE);
++	ret = gpiochip_irqchip_add(gpio_chip, irq_chip, 0, handle_level_irq,
++				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_err(dev, "cannot add irqchip\n");
+ 		goto err1;
+@@ -483,22 +473,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 		goto err1;
+ 	}
+ 
+-	dev_info(dev, "driving %d GPIOs\n", p->config.number_of_pins);
+-
+-	/* warn in case of mismatch if irq base is specified */
+-	if (p->config.irq_base) {
+-		ret = irq_find_mapping(gpio_chip->irqdomain, 0);
+-		if (p->config.irq_base != ret)
+-			dev_warn(dev, "irq base mismatch (%u/%u)\n",
+-				 p->config.irq_base, ret);
+-	}
+-
+-	if (p->config.pctl_name) {
+-		ret = gpiochip_add_pin_range(gpio_chip, p->config.pctl_name, 0,
+-					     gpio_chip->base, gpio_chip->ngpio);
+-		if (ret < 0)
+-			dev_warn(dev, "failed to add pin range\n");
+-	}
++	dev_info(dev, "driving %d GPIOs\n", npins);
+ 
+ 	return 0;
+ 
+diff --git a/include/linux/platform_data/gpio-rcar.h b/include/linux/platform_data/gpio-rcar.h
+deleted file mode 100644
+index 2d8d6943281376a7..0000000000000000
+--- a/include/linux/platform_data/gpio-rcar.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/*
+- * Renesas R-Car GPIO Support
+- *
+- *  Copyright (C) 2013 Magnus Damm
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#ifndef __GPIO_RCAR_H__
+-#define __GPIO_RCAR_H__
+-
+-struct gpio_rcar_config {
+-	int gpio_base;
+-	unsigned int irq_base;
+-	unsigned int number_of_pins;
+-	const char *pctl_name;
+-	unsigned has_both_edge_trigger:1;
+-};
+-
+-#define RCAR_GP_PIN(bank, pin)		(((bank) * 32) + (pin))
+-
+-#endif /* __GPIO_RCAR_H__ */
+-- 
+1.9.1
+
