@@ -1,59 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Fri, 4 Dec 2015 12:02:40 +0000
-Message-ID: <20151204120240.GW26072@sirena.org.uk>
-References: <1447869580-10416-1-git-send-email-afd@ti.com>
- <20151124162624.GI807@x1>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Fw8vdPO5iEPGjqL+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151124162624.GI807@x1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Markus Pargmann <mpa@pengutronix.de>
+Subject: [PATCH v4 1/2] dt-bindings: GPIO: Add gpio-initval
+Date: Fri,  4 Dec 2015 14:06:27 +0100
+Message-ID: <1449234388-4007-2-git-send-email-mpa@pengutronix.de>
+References: <1449234388-4007-1-git-send-email-mpa@pengutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:46779 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754368AbbLDNGY (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 08:06:24 -0500
+In-Reply-To: <1449234388-4007-1-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Markus Pargmann <mpa@pengutronix.de>
 
+Add a binding for GPIO initialization.
 
---Fw8vdPO5iEPGjqL+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Markus Pargmann <mpa@pengutronix.de>
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 34 ++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
-On Tue, Nov 24, 2015 at 04:26:24PM +0000, Lee Jones wrote:
-> On Wed, 18 Nov 2015, Andrew F. Davis wrote:
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 069cdf6f9dac..d11abfa13add 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -155,29 +155,39 @@ gpio-controller@00000000 {
+ 	ngpios = <18>;
+ }
+ 
+-The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+-providing automatic GPIO request and configuration as part of the
+-gpio-controller's driver probe function.
++The GPIO chip may contain GPIO definitions. These define properties for single
++GPIOs of this controller.
+ 
+-Each GPIO hog definition is represented as a child node of the GPIO controller.
++There are two types of GPIO definitions:
++
++- GPIO hogging is a mechanism providing automatic GPIO request and
++  configuration as part of the gpio-controller driver's probe function. The
++  GPIO is held until the gpio-controller is removed.
++- GPIO initialization provides an automatic initialization to known save
++  values. The GPIO can be used normally afterwards.
++
++Each GPIO definition is represented as a child node of the GPIO controller.
+ Required properties:
+-- gpio-hog:   A property specifying that this child node represent a GPIO hog.
+ - gpios:      Store the GPIO information (id, flags, ...). Shall contain the
+ 	      number of cells specified in its parent node (GPIO controller
+ 	      node).
+-Only one of the following properties scanned in the order shown below.
+-This means that when multiple properties are present they will be searched
+-in the order presented below and the first match is taken as the intended
+-configuration.
++
++Optional properties:
++- line-name:  The GPIO label name. If not present the node name is used.
++
++ The following two options are mutually exclusive. One of them should be
++ specified, but not both:
++- gpio-hog:   A property specifying that this child node represent a GPIO hog.
++- gpio-initval: This GPIO should be initialized to the specified configuration.
++
++ The following three options are mutually exclusive. They change the setting of
++ the GPIO pin. One of them should be specified:
+ - input:      A property specifying to set the GPIO direction as input.
+ - output-low  A property specifying to set the GPIO direction as output with
+ 	      the value low.
+ - output-high A property specifying to set the GPIO direction as output with
+ 	      the value high.
+ 
+-Optional properties:
+-- line-name:  The GPIO label name. If not present the node name is used.
+-
+ Example of two SOC GPIO banks defined as gpio-controller nodes:
+ 
+ 	qe_pio_a: gpio-controller@1400 {
+-- 
+2.6.2
 
-> >  Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
-> >  drivers/gpio/Kconfig                               |   2 +-
-> >  drivers/gpio/gpio-tps65912.c                       | 317 ++++-----
-> >  drivers/mfd/Kconfig                                |  20 +-
-> >  drivers/mfd/Makefile                               |   3 +-
-> >  drivers/mfd/tps65912-core.c                        | 290 ++++-----
-> >  drivers/mfd/tps65912-i2c.c                         | 219 +++----
-> >  drivers/mfd/tps65912-irq.c                         | 217 -------
-> >  drivers/mfd/tps65912-spi.c                         | 219 +++----
-> >  drivers/regulator/Kconfig                          |   2 +-
-> >  drivers/regulator/tps65912-regulator.c             | 710 +++++----------------
-> >  include/linux/mfd/tps65912.h                       | 208 +++---
-
-> Just waiting for the regulator Ack now, right?
-
-No, you also need to work out what to do about the GPIO driver not
-building in -next due to interface changes in gpiolib.
-
---Fw8vdPO5iEPGjqL+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWYYDaAAoJECTWi3JdVIfQasoH/jCW6bFWireb1/pEvX41niNg
-vC6k8ppC805meatrkw/OF6BjzcZPLUNl1YFNvgITjaH4gyZeVi9lhQ3TacmtQWRM
-BBAK6zuDPT+cmvL4YTFZ7Ga4UQh5CrlXtesW/D/FvNR2oq5BtJF0wlITTB12EQvV
-Xwz9aGnIKzqaRIA2wZFkKJFs5b4Sgn19E/VjUDGBlZJzVnqpxjel2TYoxpx0alsD
-whfww+g4t4CQ2JGwawPP45AA66UNbmpe2DBzPDXWWpfRlY3UIpf9zAw/u2HWsxmU
-dXEhSKZjESu6Ay/dkb0+Ss4Z4ud8Wtaz4uB+lDTKoO6oWAY5gVQ922vD7SqV54Y=
-=Vjdx
------END PGP SIGNATURE-----
-
---Fw8vdPO5iEPGjqL+--
