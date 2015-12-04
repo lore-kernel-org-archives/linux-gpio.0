@@ -1,52 +1,62 @@
-From: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
-Subject: [PATCH v2 0/3] gpio support for Broadcom NSP
-Date: Fri, 4 Dec 2015 12:09:41 -0500
-Message-ID: <1449248981-12102-1-git-send-email-yrdreddy@broadcom.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 2/2] pinctrl: single: remove misuse of IRQF_NO_SUSPEND
+ flag
+Date: Fri, 4 Dec 2015 09:10:50 -0800
+Message-ID: <20151204171050.GM23396@atomide.com>
+References: <1448644860-29323-1-git-send-email-sudeep.holla@arm.com>
+ <1448644860-29323-2-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdYy1fPAm5r0GxXxzgZA7RsqJ6ZtPtNzd1bzrfkME_j09g@mail.gmail.com>
+ <20151203181337.GV23396@atomide.com>
+ <566090FC.1020502@arm.com>
+ <20151203214013.GB23396@atomide.com>
+ <20151204154031.GG23396@atomide.com>
+ <5661BC21.2050802@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:12366 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754526AbbLDRKX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Dec 2015 12:10:23 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5661BC21.2050802@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
 
-This is the second iteration in the series.
+* Sudeep Holla <sudeep.holla@arm.com> [151204 08:16]:
+> Hi Tony,
+> 
+> On 04/12/15 15:40, Tony Lindgren wrote:
+> >* Tony Lindgren <tony@atomide.com> [151203 13:41]:
+> >>* Sudeep Holla <sudeep.holla@arm.com> [151203 11:00]:
+> >>>
+> >>>I have added irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake
+> >>>which ensures it's marked for wakeup.
+> >>
+> >>Hmm well see the error I pasted in this thread, maybe that provides
+> >>more clues.
+> >
+> >The irq_set_irq_wake(pcs_soc->irq, state) in pcs_irq_set_wake does not
+> >look right to me as pcs_irq_set_wake toggles the irq_wake for each pin
+> >separately, not for the whole controller.
+> >
+> 
+> After thinking more about it we need some way to tell IRQ core that
+> pcs_soc->irq is wakeup capable. Is that going to happen automatically
+> via dev_pm_set_dedicated_wake_irq as you mentioned earlier ?
+> 
+> >I think all that can be left out with the snipped from Grygorii, and maybe
+> >also the lock_class_key changes.
+> >
+> 
+> If we not calling irq_set_irq_wake(pcs_soc->irq) in pcs_irq_set_wake, do
+> you see possibility of lockdep recursion in any other paths.
+> 
+> Otherwise we don't need this if we remove irq_set_irq_wake(pcs_soc->irq)
+> from pcs_irq_set_wake
 
-Changes in v2:
-Addressed the review comments on device tree bindings and
-the device tree file.
+I think Grygorii is right here and this is correct as it's a counter
+once the other issues are sorted out and we have figured out what all
+needs to be patched together.
 
-This patchset contains the gpio support for the Broadcom's
-Northstar Plus (NSP) SOC.
+Regards,
 
-The first patch provides the documentation details and the
-second patch contains driver details. The third patch
-contains the enable method.
-
-This patchset has been tested on NSP bcm958625HR board with pinctrl
-patch added.
-This patchset is based on v4.4.0-rc1 and is available from github
-repo: https://github.com/Broadcom/cygnus-linux.git
-branch: nsp-gpio-v1
-
-Yendapally Reddy Dhananjaya Reddy (3):
-  pinctrl: Broadcom NSP GPIO-a device tree bindings
-  pinctrl: nsp: add gpio-a driver support for Broadcom NSP SoC
-  ARM: dts: enable GPIO-a for Broadcom NSP
-
- .../devicetree/bindings/pinctrl/brcm,nsp-gpio.txt  |  80 +++
- arch/arm/boot/dts/bcm-nsp.dtsi                     |  12 +
- drivers/pinctrl/bcm/Kconfig                        |  17 +
- drivers/pinctrl/bcm/Makefile                       |   1 +
- drivers/pinctrl/bcm/pinctrl-nsp-gpio.c             | 749 +++++++++++++++++++++
- 5 files changed, 859 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.txt
- create mode 100644 drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-
--- 
-2.1.0
-
+Tony
