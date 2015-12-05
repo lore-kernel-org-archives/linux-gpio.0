@@ -1,60 +1,56 @@
-From: Christophe Ricard <christophe.ricard@gmail.com>
-Subject: Re: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
-Date: Sat, 5 Dec 2015 00:36:19 +0100
-Message-ID: <56622373.7020406@gmail.com>
-References: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
- <20151201112127.GA1593@lahna.fi.intel.com>
- <CALD+uuxJw5tQ2XY99nHigXdNkcXGnng+r9NZ8H9TqUF9GbgW=A@mail.gmail.com>
- <20151201130324.GE1593@lahna.fi.intel.com>
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
+Date: Sat, 05 Dec 2015 10:42:44 +0000
+Message-ID: <5662BFA4.1010304@collabora.co.uk>
+References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk> <20151204185713.GA22925@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20151201130324.GE1593@lahna.fi.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: rjw@rjwysocki.net, Len Brown <lenb@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, andriy.shevchenko@linux.intel.com, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60915 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752026AbbLEKmt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Dec 2015 05:42:49 -0500
+In-Reply-To: <20151204185713.GA22925@kroah.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Hi Mika,
 
 
-On 01/12/2015 14:03, Mika Westerberg wrote:
-[...]
->>     Now for the same kind of i2c driver using acpi description, the GpioInt
->>     polarity/type is at the moment never kept in the irq property.
->>     It is possible to check that following about the same path...
->>     i2c_device_probe (drivers/i2c/i2c-core.c), retrieves irq property from
->>     acpi_dev_gpio_irq_get but does not save the irq_type.
->>     This would allow not to have to use an additional gpio field and all
->>     the configuration step to configure the gpio interrupt correctly in a
->>     device driver and taking a real benefit of the GpioInt acpi keyword
->>     compare to GpioIo keyword.
->>     Most the of the drivers based on acpi description retrieve gpio number
->>     to assign an interrupt and a fix polarity. I believe my patchset
->>     proposal would improve this and allow to
->>     be much closer with devicetree.
->>     Do you see any issue with this ?
-> No, but I wonder if it would be better to do this in acpi_dev_gpio_irq_get()
-> instead of acpi_find_gpio() which gets called everytime a GPIO is looked up?
-I believe, setting the irq type requires triggering and polarity data 
-stored into a struct acpi_resource_gpio.
+On 04/12/15 18:57, Greg Kroah-Hartman wrote:
+> On Fri, Dec 04, 2015 at 05:31:14PM +0000, Martyn Welch wrote:
+>> Select Chromebooks have gpio attached to switches used to cause the
+>> firmware to enter alternative modes of operation and/or control other
+>> device characteristics (such as write protection on flash devices). This
+>> patch adds a driver that exposes a read-only interface to allow these
+>> signals to be read from user space.
+>>
+>> This functionality has been generalised to provide support for any device
+>> with device tree support which needs to identify a gpio as being used for a
+>> specific task.
+>>
+>> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+>> ---
+>>   drivers/misc/Kconfig       |  11 ++++
+>>   drivers/misc/Makefile      |   1 +
+>>   drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
+>
+> Why isn't this in drivers/gpio/ ?
+>
+> why make it a misc driver?
+>
 
-acpi_dev_gpio_irq_get call acpi_get_gpiod_by_index which run acpi_find_gpio.
+I thought all the drivers in /drivers/gpio were gpio drivers, rather 
+than users of the gpio framework. Is that not the case?
 
-Actually acpi_dev_gpio_irq_get is called everytime an i2c device slave 
-is probed, acpi_find_gpio will get called to "register" gpios.
-If done correctly, i think this will be done only once...
+Happy to move it if the consensus is that that's the correct place to 
+put it.
 
-The only improvement i may see would be to add an extra field in the 
-acpi_gpio_info structure in drivers/gpio/gpiolib.h (for example int 
-irq_type).
-And call irq_set_irq_type in acpi_dev_gpio_irq_get if the gpio is an 
-interrupt.
+Martyn
 
-I guess the current proposal and this one are equivalent...
-
-What do you think ?
-
-Best Regards
-Christophe
+> thanks,
+>
+> greg k-h
+>
