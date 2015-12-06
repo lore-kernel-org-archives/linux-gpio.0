@@ -1,56 +1,99 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: [PATCH 2/3] Add support for monitoring gpio switches
-Date: Sat, 05 Dec 2015 10:42:44 +0000
-Message-ID: <5662BFA4.1010304@collabora.co.uk>
-References: <1449250275-23435-1-git-send-email-martyn.welch@collabora.co.uk> <1449250275-23435-3-git-send-email-martyn.welch@collabora.co.uk> <20151204185713.GA22925@kroah.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH] gpio: drop surplus PCI and USB dependencies
+Date: Sun, 6 Dec 2015 14:52:45 -0600
+Message-ID: <1449435165-14020-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60915 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752026AbbLEKmt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 5 Dec 2015 05:42:49 -0500
-In-Reply-To: <20151204185713.GA22925@kroah.com>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:48804 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754384AbbLFUwu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 6 Dec 2015 15:52:50 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: linux-gpio@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
+The PCI/USB expander menus already depend on PCI/USB, drop subdependecies
+on individual drivers.
 
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ drivers/gpio/Kconfig | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-On 04/12/15 18:57, Greg Kroah-Hartman wrote:
-> On Fri, Dec 04, 2015 at 05:31:14PM +0000, Martyn Welch wrote:
->> Select Chromebooks have gpio attached to switches used to cause the
->> firmware to enter alternative modes of operation and/or control other
->> device characteristics (such as write protection on flash devices). This
->> patch adds a driver that exposes a read-only interface to allow these
->> signals to be read from user space.
->>
->> This functionality has been generalised to provide support for any device
->> with device tree support which needs to identify a gpio as being used for a
->> specific task.
->>
->> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
->> ---
->>   drivers/misc/Kconfig       |  11 ++++
->>   drivers/misc/Makefile      |   1 +
->>   drivers/misc/gpio-switch.c | 160 +++++++++++++++++++++++++++++++++++++++++++++
->
-> Why isn't this in drivers/gpio/ ?
->
-> why make it a misc driver?
->
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 30d8bd3..c204fd4 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -920,7 +920,6 @@ menu "PCI GPIO expanders"
+ 
+ config GPIO_AMD8111
+ 	tristate "AMD 8111 GPIO driver"
+-	depends on PCI
+ 	help
+ 	  The AMD 8111 south bridge contains 32 GPIO pins which can be used.
+ 
+@@ -932,7 +931,7 @@ config GPIO_AMD8111
+ 
+ config GPIO_BT8XX
+ 	tristate "BT8XX GPIO abuser"
+-	depends on PCI && VIDEO_BT848=n
++	depends on VIDEO_BT848=n
+ 	help
+ 	  The BT8xx frame grabber chip has 24 GPIO pins that can be abused
+ 	  as a cheap PCI GPIO card.
+@@ -948,14 +947,13 @@ config GPIO_BT8XX
+ 
+ config GPIO_INTEL_MID
+ 	bool "Intel Mid GPIO support"
+-	depends on PCI && X86
++	depends on X86
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Say Y here to support Intel Mid GPIO.
+ 
+ config GPIO_ML_IOH
+ 	tristate "OKI SEMICONDUCTOR ML7213 IOH GPIO support"
+-	depends on PCI
+ 	select GENERIC_IRQ_CHIP
+ 	help
+ 	  ML7213 is companion chip for Intel Atom E6xx series.
+@@ -965,7 +963,7 @@ config GPIO_ML_IOH
+ 
+ config GPIO_PCH
+ 	tristate "Intel EG20T PCH/LAPIS Semiconductor IOH(ML7223/ML7831) GPIO"
+-	depends on PCI && (X86_32 || COMPILE_TEST)
++	depends on X86_32 || COMPILE_TEST
+ 	select GENERIC_IRQ_CHIP
+ 	help
+ 	  This driver is for PCH(Platform controller Hub) GPIO of Intel Topcliff
+@@ -981,7 +979,6 @@ config GPIO_PCH
+ 
+ config GPIO_RDC321X
+ 	tristate "RDC R-321x GPIO support"
+-	depends on PCI
+ 	select MFD_CORE
+ 	select MFD_RDC321X
+ 	help
+@@ -990,7 +987,7 @@ config GPIO_RDC321X
+ 
+ config GPIO_SODAVILLE
+ 	bool "Intel Sodaville GPIO support"
+-	depends on X86 && PCI && OF
++	depends on X86 && OF
+ 	select GPIO_GENERIC
+ 	select GENERIC_IRQ_CHIP
+ 	help
+@@ -1041,7 +1038,7 @@ menu "USB GPIO expanders"
+ 
+ config GPIO_VIPERBOARD
+ 	tristate "Viperboard GPIO a & b support"
+-	depends on MFD_VIPERBOARD && USB
++	depends on MFD_VIPERBOARD
+ 	help
+ 	  Say yes here to access the GPIO signals of Nano River
+ 	  Technologies Viperboard. There are two GPIO chips on the
+-- 
+1.9.1
 
-I thought all the drivers in /drivers/gpio were gpio drivers, rather 
-than users of the gpio framework. Is that not the case?
-
-Happy to move it if the consensus is that that's the correct place to 
-put it.
-
-Martyn
-
-> thanks,
->
-> greg k-h
->
