@@ -1,75 +1,71 @@
-From: Christophe Henri RICARD <christophe-h.ricard@st.com>
-Subject: RE: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
-Date: Mon, 7 Dec 2015 11:53:56 +0100
-Message-ID: <8646C2A85C5D44419E1B33F16B0BD5010245661EE1@SAFEX1MAIL1.st.com>
-References: <1448923673-2582-1-git-send-email-christophe-h.ricard@st.com>
- <20151201112127.GA1593@lahna.fi.intel.com>
- <CALD+uuxJw5tQ2XY99nHigXdNkcXGnng+r9NZ8H9TqUF9GbgW=A@mail.gmail.com>
- <20151201130324.GE1593@lahna.fi.intel.com> <56622373.7020406@gmail.com>
- <20151207105221.GI16813@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] AC'97 gpiochip
+Date: Mon, 7 Dec 2015 13:34:31 +0100
+Message-ID: <CACRpkdah5HLMR+fT5JRWdSNj-hFpRGm_mvu8mbJ__NA-SLwzTw@mail.gmail.com>
+References: <20151203001214.GP1929@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35759 "EHLO
-	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932098AbbLGKyL convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 7 Dec 2015 05:54:11 -0500
-In-Reply-To: <20151207105221.GI16813@lahna.fi.intel.com>
-Content-Language: en-US
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:33891 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754455AbbLGMec (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2015 07:34:32 -0500
+Received: by lbbcs9 with SMTP id cs9so60425116lbb.1
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Dec 2015 04:34:31 -0800 (PST)
+In-Reply-To: <20151203001214.GP1929@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Christophe Ricard <christophe.ricard@gmail.com>
-Cc: "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Mika,
+On Thu, Dec 3, 2015 at 1:12 AM, Mark Brown <broonie@kernel.org> wrote:
 
-Ok, i will send a RFC serie tonight. I have also noticed the spi core s=
-et the irq field to -1 in acpi. This will be fixed in this serie.
+> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+>
+>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/asoc-ac97-gpio
+>
+> for you to fetch changes up to 9bf5c3d11f1fbaf43399d189f05fb20ceb46ee5d:
+>
+>   ASoC: ac97: add gpio chip (2015-11-18 18:08:54 +0000)
+>
+> ----------------------------------------------------------------
+> ASoC: Add a GPIO chip for AC'97
 
-Best Regards
-Christophe
+Pulled to the GPIO devel branch, then I immediately applied this on top:
 
------Original Message-----
-=46rom: Mika Westerberg [mailto:mika.westerberg@linux.intel.com]=20
-Sent: lundi 7 d=E9cembre 2015 11:52
-To: Christophe Ricard
-Cc: rjw@rjwysocki.net; Len Brown; Linus Walleij; Alexandre Courbot; and=
-riy.shevchenko@linux.intel.com; linux-i2c@vger.kernel.org; linux-gpio@v=
-ger.kernel.org; linux-acpi@vger.kernel.org; Christophe Henri RICARD
-Subject: Re: [PATCH v3 0/2] ACPI: Add irq_type to gpio interrupt
+>From a1eb9d5751220433998ae2e66216288161b1355b Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 7 Dec 2015 13:32:28 +0100
+Subject: [PATCH] ASoC: ac97: fix parent assignment
 
-On Sat, Dec 05, 2015 at 12:36:19AM +0100, Christophe Ricard wrote:
-> >No, but I wonder if it would be better to do this in=20
-> >acpi_dev_gpio_irq_get() instead of acpi_find_gpio() which gets calle=
-d everytime a GPIO is looked up?
-> I believe, setting the irq type requires triggering and polarity data=
-=20
-> stored into a struct acpi_resource_gpio.
->=20
-> acpi_dev_gpio_irq_get call acpi_get_gpiod_by_index which run acpi_fin=
-d_gpio.
->=20
-> Actually acpi_dev_gpio_irq_get is called everytime an i2c device slav=
-e=20
-> is probed, acpi_find_gpio will get called to "register" gpios.
-> If done correctly, i think this will be done only once...
->=20
-> The only improvement i may see would be to add an extra field in the=20
-> acpi_gpio_info structure in drivers/gpio/gpiolib.h (for example int=20
-> irq_type).
-> And call irq_set_irq_type in acpi_dev_gpio_irq_get if the gpio is an=20
-> interrupt.
->=20
-> I guess the current proposal and this one are equivalent...
->=20
-> What do you think ?
+Upstream GPIO has substituted .dev for .parent in struct gpio_chip.
 
-Actually I think it may be useful to add triggering flags to acpi_gpio_=
-info.
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ sound/soc/soc-ac97.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
+index ae563e379a72..a2012652f212 100644
+--- a/sound/soc/soc-ac97.c
++++ b/sound/soc/soc-ac97.c
+@@ -142,7 +142,7 @@ static int snd_soc_ac97_init_gpio(struct snd_ac97 *ac97,
+     gpio_priv->codec = codec;
+     gpio_priv->gpio_chip = snd_soc_ac97_gpio_chip;
+     gpio_priv->gpio_chip.ngpio = AC97_NUM_GPIOS;
+-    gpio_priv->gpio_chip.dev = codec->dev;
++    gpio_priv->gpio_chip.parent = codec->dev;
+     gpio_priv->gpio_chip.base = -1;
+
+     ret = gpiochip_add(&gpio_priv->gpio_chip);
+-- 
+2.4.3
+
+
+
+Yours,
+Linus Walleij
