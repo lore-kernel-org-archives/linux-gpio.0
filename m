@@ -1,70 +1,50 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH RESEND] pinctrl: bcm2835: Fix initial value for direction_output
-Date: Mon,  7 Dec 2015 18:10:24 +0000
-Message-ID: <1449511825-6156-1-git-send-email-stefan.wahren@i2se.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Mon, 7 Dec 2015 13:58:47 -0600
+Message-ID: <5665E4F7.1070707@ti.com>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+ <20151124162624.GI807@x1> <20151204120240.GW26072@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:56299 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754942AbbLGSLW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2015 13:11:22 -0500
+Received: from bear.ext.ti.com ([192.94.94.41]:57246 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932511AbbLGT7C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 7 Dec 2015 14:59:02 -0500
+In-Reply-To: <20151204120240.GW26072@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>
-Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>
+To: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Currently the provided initial value for bcm2835_gpio_direction_output
-has no effect. So fix this issue by changing the value before
-changing the GPIO direction. As a result we need to move the function below
-bcm2835_gpio_set.
+On 12/04/2015 06:02 AM, Mark Brown wrote:
+> On Tue, Nov 24, 2015 at 04:26:24PM +0000, Lee Jones wrote:
+>> On Wed, 18 Nov 2015, Andrew F. Davis wrote:
+>
+>>>   Documentation/devicetree/bindings/mfd/tps65912.txt |  50 ++
+>>>   drivers/gpio/Kconfig                               |   2 +-
+>>>   drivers/gpio/gpio-tps65912.c                       | 317 ++++-----
+>>>   drivers/mfd/Kconfig                                |  20 +-
+>>>   drivers/mfd/Makefile                               |   3 +-
+>>>   drivers/mfd/tps65912-core.c                        | 290 ++++-----
+>>>   drivers/mfd/tps65912-i2c.c                         | 219 +++----
+>>>   drivers/mfd/tps65912-irq.c                         | 217 -------
+>>>   drivers/mfd/tps65912-spi.c                         | 219 +++----
+>>>   drivers/regulator/Kconfig                          |   2 +-
+>>>   drivers/regulator/tps65912-regulator.c             | 710 +++++----------------
+>>>   include/linux/mfd/tps65912.h                       | 208 +++---
+>
+>> Just waiting for the regulator Ack now, right?
+>
+> No, you also need to work out what to do about the GPIO driver not
+> building in -next due to interface changes in gpiolib.
+>
 
-Suggested-by: Martin Sperl <kernel@martin.sperl.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Fixes: e1b2dc70cd5b ("pinctrl: add bcm2835 driver")
-Acked-by: Stephen Warren <swarren@wwwdotorg.org>
-Acked-by: Eric Anholt <eric@anholt.net>
----
-
-This patch was inspired by this discussion [1].
-
-[1] - http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-April/001499.html
-
-Changes:
-- added suggested-by, fixes and acked-by tag since first submit
-
- drivers/pinctrl/bcm/pinctrl-bcm2835.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 8efa235..fd1441b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -352,12 +352,6 @@ static int bcm2835_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return bcm2835_gpio_get_bit(pc, GPLEV0, offset);
- }
- 
--static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
--		unsigned offset, int value)
--{
--	return pinctrl_gpio_direction_output(chip->base + offset);
--}
--
- static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
-@@ -365,6 +359,13 @@ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	bcm2835_gpio_set_bit(pc, value ? GPSET0 : GPCLR0, offset);
- }
- 
-+static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
-+		unsigned offset, int value)
-+{
-+	bcm2835_gpio_set(chip, offset, value);
-+	return pinctrl_gpio_direction_output(chip->base + offset);
-+}
-+
- static int bcm2835_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
--- 
-1.7.9.5
-
+As all of this driver should be taken though the MFD tree how
+can this gpiolib change be handled? If we have gpio.parent it
+will not build on MFD, with gpio.dev it will fail to build when
+the changes are merged from the gpio subsystem. As the change
+has not been merged into linux-next as far a I can tell maybe
+this should be taken as is, then when the gpiolib change is
+made this can be changed with all the other drivers?
