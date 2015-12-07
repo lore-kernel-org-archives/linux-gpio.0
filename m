@@ -1,71 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] AC'97 gpiochip
-Date: Mon, 7 Dec 2015 13:34:31 +0100
-Message-ID: <CACRpkdah5HLMR+fT5JRWdSNj-hFpRGm_mvu8mbJ__NA-SLwzTw@mail.gmail.com>
-References: <20151203001214.GP1929@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH RESEND] pinctrl: bcm2835: Fix initial value for direction_output
+Date: Mon,  7 Dec 2015 18:10:24 +0000
+Message-ID: <1449511825-6156-1-git-send-email-stefan.wahren@i2se.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:33891 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754455AbbLGMec (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2015 07:34:32 -0500
-Received: by lbbcs9 with SMTP id cs9so60425116lbb.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Dec 2015 04:34:31 -0800 (PST)
-In-Reply-To: <20151203001214.GP1929@sirena.org.uk>
+Received: from mout.kundenserver.de ([212.227.126.135]:56299 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754942AbbLGSLW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2015 13:11:22 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>
 
-On Thu, Dec 3, 2015 at 1:12 AM, Mark Brown <broonie@kernel.org> wrote:
+Currently the provided initial value for bcm2835_gpio_direction_output
+has no effect. So fix this issue by changing the value before
+changing the GPIO direction. As a result we need to move the function below
+bcm2835_gpio_set.
 
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
->
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/asoc-ac97-gpio
->
-> for you to fetch changes up to 9bf5c3d11f1fbaf43399d189f05fb20ceb46ee5d:
->
->   ASoC: ac97: add gpio chip (2015-11-18 18:08:54 +0000)
->
-> ----------------------------------------------------------------
-> ASoC: Add a GPIO chip for AC'97
-
-Pulled to the GPIO devel branch, then I immediately applied this on top:
-
->From a1eb9d5751220433998ae2e66216288161b1355b Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 7 Dec 2015 13:32:28 +0100
-Subject: [PATCH] ASoC: ac97: fix parent assignment
-
-Upstream GPIO has substituted .dev for .parent in struct gpio_chip.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Suggested-by: Martin Sperl <kernel@martin.sperl.org>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Fixes: e1b2dc70cd5b ("pinctrl: add bcm2835 driver")
+Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+Acked-by: Eric Anholt <eric@anholt.net>
 ---
- sound/soc/soc-ac97.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-ac97.c b/sound/soc/soc-ac97.c
-index ae563e379a72..a2012652f212 100644
---- a/sound/soc/soc-ac97.c
-+++ b/sound/soc/soc-ac97.c
-@@ -142,7 +142,7 @@ static int snd_soc_ac97_init_gpio(struct snd_ac97 *ac97,
-     gpio_priv->codec = codec;
-     gpio_priv->gpio_chip = snd_soc_ac97_gpio_chip;
-     gpio_priv->gpio_chip.ngpio = AC97_NUM_GPIOS;
--    gpio_priv->gpio_chip.dev = codec->dev;
-+    gpio_priv->gpio_chip.parent = codec->dev;
-     gpio_priv->gpio_chip.base = -1;
+This patch was inspired by this discussion [1].
 
-     ret = gpiochip_add(&gpio_priv->gpio_chip);
+[1] - http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-April/001499.html
+
+Changes:
+- added suggested-by, fixes and acked-by tag since first submit
+
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 8efa235..fd1441b 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -352,12 +352,6 @@ static int bcm2835_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return bcm2835_gpio_get_bit(pc, GPLEV0, offset);
+ }
+ 
+-static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
+-		unsigned offset, int value)
+-{
+-	return pinctrl_gpio_direction_output(chip->base + offset);
+-}
+-
+ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
+@@ -365,6 +359,13 @@ static void bcm2835_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	bcm2835_gpio_set_bit(pc, value ? GPSET0 : GPCLR0, offset);
+ }
+ 
++static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
++		unsigned offset, int value)
++{
++	bcm2835_gpio_set(chip, offset, value);
++	return pinctrl_gpio_direction_output(chip->base + offset);
++}
++
+ static int bcm2835_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct bcm2835_pinctrl *pc = dev_get_drvdata(chip->dev);
 -- 
-2.4.3
+1.7.9.5
 
-
-
-Yours,
-Linus Walleij
