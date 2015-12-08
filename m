@@ -1,157 +1,93 @@
-From: Peter Rosin <peda@lysator.liu.se>
-Subject: [RESEND RFC PATCH 1/2] gpio: Add isr property of gpio pins
-Date: Tue,  8 Dec 2015 04:20:07 +0100
-Message-ID: <1449544808-3163-2-git-send-email-peda@lysator.liu.se>
-References: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@lysator.liu.se>, Peter Rosin <peda@axentia.se>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/6] gpio: make the gpiochip a real device
+Date: Tue, 8 Dec 2015 10:29:28 +0100
+Message-ID: <20151208092928.GB13090@localhost>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+ <1445502750-22672-2-git-send-email-linus.walleij@linaro.org>
+ <20151102103116.GE8676@localhost>
+ <CACRpkdaVu_1pAPd-7sUeGLEYymynA10WtuxJcnVPKZVYQOeruw@mail.gmail.com>
+ <CACRpkda6Ad4SGW5H4ZDLn0VLZzq0LqLxSC7f2gcCBDNWH5FMnA@mail.gmail.com>
+ <20151105094411.GD7561@localhost>
+ <CACRpkdavyg8f8fWoQBQCqRAJKxiZDiC72QDSsWjbk1b1v=u3Lw@mail.gmail.com>
+ <CACRpkdbeFJMZ5vbHGFmPeG_5qTdKsL+2xL4RjKHF759PFiz5Yw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:36195 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932522AbbLHJ24 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2015 04:28:56 -0500
+Received: by lfs39 with SMTP id 39so8778850lfs.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2015 01:28:55 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbeFJMZ5vbHGFmPeG_5qTdKsL+2xL4RjKHF759PFiz5Yw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-From: Peter Rosin <peda@axentia.se>
+On Thu, Dec 03, 2015 at 03:04:14PM +0100, Linus Walleij wrote:
+> On Mon, Nov 16, 2015 at 3:27 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> > If I don't use device_add()/device_del(), I see this must mean I have to use
+> > device_register()/device_unregister() as the latter only decrease the refcount
+> > and wait for the instance to die off.
+> >
+> > So am I reading it correctly if I understand that this is what we should be
+> > doing? I.e device_register()/device_unregister() and then wait for the
+> > .remove() call to do its deed, so the kobj/struct device is kept around if
+> > e.g. sysfs or the chardev has open files.
+> 
+> Hard to get advice on design here I see. Anyways, the clean thing to
+> do (after some weeks of thinking) seems to be this:
+> 
+> 1. Introduce a void *data into gpio_chip and gpiochip_set_data()
+>    gpiochip_get_data() set/get it.
+> 
+> 2. Replace all occurences of container_of() dereferencing in all
+>    GPIO drivers with gpiochip_[set|get]_data() so as to avoid having
+>    gpio_chip to be embedded into state containers.
+> 
+> 3-1. Split gpio_chip in a static descriptor with a vtable for callbacks
+>    and other static config called struct gpio_chip, and
+>    struct gpio_device that is returned as a pointer from
+>    gpiochip_add(). It will need to be free:ed by gpiodevice_remove()
+>    after that.
+> 
+> 3-2. In the same patch set rename all functions to indicate that
+>    we are now operating on a gpio_device not a gpio_chip.
+> 
+> 3-3. After a GPIO driver issues gpio_device_unregister()
+>    it may stay around if there are still references to the
+>    struct device.
+> 
+> This is a very tiresome refactoring, but I'm growing confident that
+> it is what needs to happen to manage gpio devices in the future.
+> 
+> After step 3-3 we have a clean gpio_device containing a
+> struct device, and from there we apply the initial chardev
+> interface.
 
-Adds the possibility to read the interrupt status register bit for the
-gpio pin. Expose the bit as an isr file in sysfs.
+This sounds unnecessarily complicated.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- Documentation/gpio/sysfs.txt  |   12 ++++++++++++
- drivers/gpio/gpiolib-sysfs.c  |   30 ++++++++++++++++++++++++++++++
- drivers/gpio/gpiolib.c        |   15 +++++++++++++++
- include/linux/gpio/consumer.h |    1 +
- include/linux/gpio/driver.h   |    2 ++
- 5 files changed, 60 insertions(+)
+Why not use a more standard approach of
 
-diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
-index 535b6a8a7a7c..ded7ef9d01be 100644
---- a/Documentation/gpio/sysfs.txt
-+++ b/Documentation/gpio/sysfs.txt
-@@ -97,6 +97,18 @@ and have the following read/write attributes:
- 		for "rising" and "falling" edges will follow this
- 		setting.
- 
-+	"isr" ... reads as either 0 (false) or 1 (true). Reading the
-+		file will clear the value, so that reading a 1 means
-+		that there has been an interrupt-triggering action
-+		on the pin since the file was last read.
-+
-+		This file exists only if the gpio chip supports reading
-+		the interrupt status register bit for the pin.
-+
-+		Note that if reading the isr register for this pin
-+		interferes with active interrupts, the read will fail
-+		with an error.
-+
- GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
- controller implementing GPIOs starting at #42) and have the following
- read-only attributes:
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index b57ed8e55ab5..f6fe68fab191 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -139,6 +139,28 @@ static ssize_t value_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(value);
- 
-+static ssize_t isr_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct gpiod_data	*data = dev_get_drvdata(dev);
-+	struct gpio_desc	*desc = data->desc;
-+	ssize_t			status;
-+	int			isr;
-+
-+	mutex_lock(&data->mutex);
-+
-+	isr = gpiod_get_isr_cansleep(desc);
-+	if (isr < 0)
-+		status = isr;
-+	else
-+		status = sprintf(buf, "%d\n", isr);
-+
-+	mutex_unlock(&data->mutex);
-+
-+	return status;
-+}
-+static DEVICE_ATTR_RO(isr);
-+
- static irqreturn_t gpio_sysfs_irq(int irq, void *priv)
- {
- 	struct gpiod_data *data = priv;
-@@ -367,6 +389,13 @@ static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
- 			mode = 0;
- 		if (!show_direction && test_bit(FLAG_IS_OUT, &desc->flags))
- 			mode = 0;
-+	} else if (attr == &dev_attr_isr.attr) {
-+		if (!desc->chip->get_isr)
-+			mode = 0;
-+		if (gpiod_to_irq(desc) < 0)
-+			mode = 0;
-+		if (!show_direction && test_bit(FLAG_IS_OUT, &desc->flags))
-+			mode = 0;
- 	}
- 
- 	return mode;
-@@ -377,6 +406,7 @@ static struct attribute *gpio_attrs[] = {
- 	&dev_attr_edge.attr,
- 	&dev_attr_value.attr,
- 	&dev_attr_active_low.attr,
-+	&dev_attr_isr.attr,
- 	NULL,
- };
- 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d120c3..b45e70b2713e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1572,6 +1572,21 @@ int gpiod_get_value_cansleep(const struct gpio_desc *desc)
- }
- EXPORT_SYMBOL_GPL(gpiod_get_value_cansleep);
- 
-+int gpiod_get_isr_cansleep(const struct gpio_desc *desc)
-+{
-+	struct gpio_chip *chip;
-+	int offset;
-+
-+	might_sleep_if(extra_checks);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	chip = desc->chip;
-+	offset = gpio_chip_hwgpio(desc);
-+	return chip->get_isr ? chip->get_isr(chip, offset) : -ENXIO;
-+}
-+EXPORT_SYMBOL_GPL(gpiod_get_isr_cansleep);
-+
- /**
-  * gpiod_set_raw_value_cansleep() - assign a gpio's raw value
-  * @desc: gpio whose value will be assigned
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index adac255aee86..d0290c14dc84 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -119,6 +119,7 @@ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
- void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 					struct gpio_desc **desc_array,
- 					int *value_array);
-+int gpiod_get_isr_cansleep(const struct gpio_desc *desc);
- 
- int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce);
- 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c8393cd4d44f..dccfb12f9112 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -96,6 +96,8 @@ struct gpio_chip {
- 						unsigned offset);
- 	void			(*set)(struct gpio_chip *chip,
- 						unsigned offset, int value);
-+	int			(*get_isr)(struct gpio_chip *chip,
-+						unsigned offset);
- 	void			(*set_multiple)(struct gpio_chip *chip,
- 						unsigned long *mask,
- 						unsigned long *bits);
--- 
-1.7.10.4
+	gpiochip_create()
+
+that allocates the state container that the driver can then initialise
+further (e.g. callback pointers) and finally register with a call to:
+
+	gpiochip_add()
+
+When the parent device is going away, it calls
+
+	gpiochip_remove()
+
+which unregisters the gpiochip device (i.e. calls device_del), updates
+its state to "disconnected" and drops the gpiolib's reference.
+
+There may still be other devices (consumers) holding references to the
+gpiochip device, which is not deallocated until the final reference is
+dropped (i.e. at final gpiod_free).
+
+Johan
