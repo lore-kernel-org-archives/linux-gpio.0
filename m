@@ -1,91 +1,78 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
-Date: Tue, 8 Dec 2015 15:30:02 +0300
-Message-ID: <5666CD4A.8030903@cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
- <1512650.VUqGxiAB2A@wasted.cogentembedded.com>
- <CAMuHMdX5d90NS0btT28yAUD3iNSDdV_GLPOwDMAt9PcTvU4dMA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:35572 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753195AbbLHMaF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2015 07:30:05 -0500
-Received: by lfdl133 with SMTP id l133so11506633lfd.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2015 04:30:04 -0800 (PST)
-In-Reply-To: <CAMuHMdX5d90NS0btT28yAUD3iNSDdV_GLPOwDMAt9PcTvU4dMA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [PATCH v3 0/9] Add STM32 pinctrl/GPIO driver
+Date: Tue,  8 Dec 2015 13:45:02 +0100
+Message-ID: <1449578711-6141-1-git-send-email-mcoquelin.stm32@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello.
+Hi Linus, all,
 
-On 12/8/2015 3:12 PM, Geert Uytterhoeven wrote:
+This is the second round of STM32 pinctrl series, which improves DT
+bindings declaration and documentation, and also fixes some commit fixup
+issues. The series also contains two more patches, adding GPIO LEDs
+support as a user of this driver.
 
->> Add the EtherAVB pin groups to the R8A7791 PFC driver.
->
-> Thanks for your patch!
->
->> +static const unsigned int avb_mii_pins[] = {
->> +       RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
->> +       RCAR_GP_PIN(5, 21),
->> +
->> +       RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
->> +       RCAR_GP_PIN(5, 3),
->> +
->> +       RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
->> +       RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 28),
->> +       RCAR_GP_PIN(5, 29),
->> +};
->> +static const unsigned int avb_mii_mux[] = {
->> +       AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
->> +       AVB_TXD3_MARK,
->> +
->> +       AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
->> +       AVB_RXD3_MARK,
->> +
->> +       AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
->> +       AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_CLK_MARK,
->> +       AVB_COL_MARK,
->> +};
->
-> The MII pin list include RX_ER, but not TX_ER...
+The STM32 family has 16 pins per GPIO bank, and the number of bank varies
+depending on the model.
 
-    Wikipedia tells me TX_ER is optional for MII.
+Pins can be multiplexed either in GPIO mode, alternate function (up to 15
+functions per pin) or analog (for ADC/DAC).
 
-> ... while the GMII pin list includes both RX_ER and TX_ER. Is that correct?
-> Should it be the other way around?
->
-> Section "45A.3.13.1 MII Frame Transmission/Reception Timing" of the R-Car Gen2
-> datasheet shows timing diagrams for both AVB_TX_ER and AVB_RX_ER, so I'd expect
-> both pins to be needed for MII.
+Changes since v2:
+-----------------
+ - Rebase on v4.4-rc1
+ - Declare leds also for Eval board
+ - Set green led as heartbeat
+ - Collect some acks
 
-    Hm, interesting...
+Changes since v1:
+-----------------
+ - Add GPIO LEDs support in DT and defconfig
+ - Changes pinmux DT bindings from macros to raw values (Daniel)
+ - Improve DT bindings documentation (Daniel)
+ - Fix some commit fixup and rebase issues.
 
-> Unfortunately Section "45A.3.13.2 GMII Frame Reception Timing" shows timing
-> diagrams for receive only (thus involving AVB_RX_ER only), so I'm not sure the
-> AVB_TX_ER pin is actually needed for GMII.
+Kind regards,
+Maxime
 
-    It is.
+Maxime Coquelin (9):
+  ARM: Kconfig: Introduce MACH_STM32F429 flag
+  Documentation: dt-bindings: Document STM32 pinctrl driver DT bindings
+  includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+  pinctrl: Add STM32 MCUs support
+  ARM: mach-stm32: Select pinctrl
+  ARM: dts: Add pinctrl node to STM32F429
+  ARM: dts: Add USART1 pin config to STM32F429 boards
+  ARM: dts: Add leds support to STM32F429 boards
+  ARM: config: Enable GPIO Led driver in stm32_defconfig
 
-> I don't have schematics for any R-Car Gen2 board that has AVB support, so I
-> can't check myself how the MII/GMII is really wired.
+ .../bindings/pinctrl/st,stm32-pinctrl.txt          |  126 ++
+ arch/arm/Kconfig                                   |    6 +
+ arch/arm/boot/dts/stm32429i-eval.dts               |   19 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |   13 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |  110 ++
+ arch/arm/configs/stm32_defconfig                   |    1 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/stm32/Kconfig                      |   16 +
+ drivers/pinctrl/stm32/Makefile                     |    5 +
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  856 +++++++++++
+ drivers/pinctrl/stm32/pinctrl-stm32.h              |   43 +
+ drivers/pinctrl/stm32/pinctrl-stm32f429.c          | 1598 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-stm32.h        |   12 +
+ include/dt-bindings/pinctrl/stm32f429-pinfunc.h    | 1241 +++++++++++++++
+ 15 files changed, 4048 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+ create mode 100644 drivers/pinctrl/stm32/Kconfig
+ create mode 100644 drivers/pinctrl/stm32/Makefile
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.c
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.h
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f429.c
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-stm32.h
+ create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
 
-    The standard Lager/Porter boards require some modification to use an an 
-AVB daughter board, AFAIK.
-
-> Note that this also applies to the existing AVB pinmux data in pfc-r8a7790.c.
-
-    And we haven't really tested MII, only GMII.
-
-[...]
-
-> Gr{oetje,eeting}s,
->
->                          Geert
-
-MBR, Sergei
-
+-- 
+1.9.1
