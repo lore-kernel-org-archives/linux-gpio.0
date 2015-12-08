@@ -1,63 +1,30 @@
-From: biao huang <biao.huang@mediatek.com>
-Subject: Re: [PATCH 2/5] dt-bindings: mediatek: Modify pinctrl bindings for
- mt2701
-Date: Tue, 8 Dec 2015 18:56:53 +0800
-Message-ID: <1449572213.15850.3.camel@mhfsdcap03>
-References: <1448527472-20651-1-git-send-email-biao.huang@mediatek.com>
-	 <1448527472-20651-3-git-send-email-biao.huang@mediatek.com>
-	 <20151127203800.GA9092@rob-hp-laptop>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4 1/3] acpi: Rename acpi_gsi_get_irq_type to
+ acpi_get_irq_type and export symbol
+Date: Tue, 8 Dec 2015 13:28:55 +0200
+Message-ID: <20151208112855.GI1766@lahna.fi.intel.com>
+References: <1449527952-8399-1-git-send-email-christophe-h.ricard@st.com>
+ <1449527952-8399-2-git-send-email-christophe-h.ricard@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([218.249.47.111]:28661 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932537AbbLHK5H (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2015 05:57:07 -0500
-In-Reply-To: <20151127203800.GA9092@rob-hp-laptop>
+Received: from mga03.intel.com ([134.134.136.65]:39777 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754814AbbLHL3B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Dec 2015 06:29:01 -0500
+Content-Disposition: inline
+In-Reply-To: <1449527952-8399-2-git-send-email-christophe-h.ricard@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream <srv_heupstream@mediatek.com>
+To: Christophe Ricard <christophe.ricard@gmail.com>
+Cc: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, broonie@kernel.org, linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 
-On Sat, 2015-11-28 at 04:38 +0800, Rob Herring wrote:
-> On Thu, Nov 26, 2015 at 04:44:29PM +0800, Biao Huang wrote:
-> > Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> > index 0480bc3..ca6a27a 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> > @@ -4,10 +4,11 @@ The Mediatek's Pin controller is used to control SoC pins.
-> >  
-> >  Required properties:
-> >  - compatible: value should be one of the following.
-> > -    (a) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
-> > -    (b) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
-> > -    (c) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
-> > -    (d) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
-> > +    (a) "mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
-> > +    (b) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
-> > +    (c) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
-> > +    (d) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
-> > +    (e) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+On Mon, Dec 07, 2015 at 11:39:10PM +0100, Christophe Ricard wrote:
+> acpi_gsi_get_irq_type could be use out of gsi purpose.
 > 
-> If you were trying to sort these, they still aren't quite sorted. There 
-> is no point in sorting if you number (or letter) them because you will 
-> have to update many lines on any change. So drop the (a), (b), (c), etc.
+> Rename and make it available as a utility function.
 > 
-> Rob
-> 
-Thanks for your comments, I'll modify this in next patch. And patch v2
-will be sent in next week.
-> >  - pins-are-numbered: Specify the subnodes are using numbered pinmux to
-> >    specify pins.
-> >  - gpio-controller : Marks the device node as a gpio controller.
-> > -- 
-> > 1.7.9.5
-> > 
+> Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
 
-
+There is already a function acpi_dev_irq_flags() converts ACPI flags to
+Linux resource IRQ flags. Any reason you are not using that?
