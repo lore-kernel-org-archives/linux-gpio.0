@@ -1,52 +1,107 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v4 3/3] ACPI / spi: attach gpio irq from acpi description
- to spi device
-Date: Tue, 8 Dec 2015 13:59:17 +0200
-Message-ID: <20151208115917.GN1766@lahna.fi.intel.com>
-References: <1449527952-8399-1-git-send-email-christophe-h.ricard@st.com>
- <1449527952-8399-4-git-send-email-christophe-h.ricard@st.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
+Date: Tue, 8 Dec 2015 13:12:12 +0100
+Message-ID: <CAMuHMdX5d90NS0btT28yAUD3iNSDdV_GLPOwDMAt9PcTvU4dMA@mail.gmail.com>
+References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+	<1512650.VUqGxiAB2A@wasted.cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:22399 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964844AbbLHL7W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Dec 2015 06:59:22 -0500
-Content-Disposition: inline
-In-Reply-To: <1449527952-8399-4-git-send-email-christophe-h.ricard@st.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1512650.VUqGxiAB2A@wasted.cogentembedded.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-sh list <linux-sh@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Christophe Ricard <christophe.ricard@gmail.com>
-Cc: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, broonie@kernel.org, linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 
-On Mon, Dec 07, 2015 at 11:39:12PM +0100, Christophe Ricard wrote:
-> spi->irq was ignoring GpioInt property setting it to -1.
-> acpi_dev_gpio_irq_get returns and configure the slave irq  according to
-> the acpi slave node description.
-> It is now inline with devicetree behavior.
-> 
-> Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
-> ---
->  drivers/spi/spi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index a5f53de..5c10815 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -1534,7 +1534,7 @@ static acpi_status acpi_spi_add_device(acpi_handle handle, u32 level,
->  	}
->  
->  	ACPI_COMPANION_SET(&spi->dev, adev);
-> -	spi->irq = -1;
-> +	spi->irq = acpi_dev_gpio_irq_get(ACPI_COMPANION(&spi->dev), 0);
+Hi Sergei,
 
-Also I think we should first check for the normal Interrupt() resource
-(like what we are already doing in acpi_spi_add_resource()) and only
-then resort back to use GPIO
+On Wed, Dec 2, 2015 at 9:11 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the EtherAVB pin groups to the R8A7791 PFC driver.
 
->  
->  	INIT_LIST_HEAD(&resource_list);
->  	ret = acpi_dev_get_resources(adev, &resource_list,
-> -- 
-> 2.1.4
+Thanks for your patch!
+
+> +static const unsigned int avb_mii_pins[] = {
+> +       RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
+> +       RCAR_GP_PIN(5, 21),
+> +
+> +       RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
+> +       RCAR_GP_PIN(5, 3),
+> +
+> +       RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
+> +       RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 28),
+> +       RCAR_GP_PIN(5, 29),
+> +};
+> +static const unsigned int avb_mii_mux[] = {
+> +       AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
+> +       AVB_TXD3_MARK,
+> +
+> +       AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
+> +       AVB_RXD3_MARK,
+> +
+> +       AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
+> +       AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_CLK_MARK,
+> +       AVB_COL_MARK,
+> +};
+
+The MII pin list include RX_ER, but not TX_ER...
+
+> +static const unsigned int avb_gmii_pins[] = {
+> +       RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
+> +       RCAR_GP_PIN(5, 21), RCAR_GP_PIN(5, 22), RCAR_GP_PIN(5, 23),
+> +       RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
+> +
+> +       RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
+> +       RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
+> +       RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
+> +
+> +       RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
+> +       RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 30), RCAR_GP_PIN(5, 17),
+> +       RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27), RCAR_GP_PIN(5, 28),
+> +       RCAR_GP_PIN(5, 29),
+> +};
+> +static const unsigned int avb_gmii_mux[] = {
+> +       AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
+> +       AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
+> +       AVB_TXD6_MARK, AVB_TXD7_MARK,
+> +
+> +       AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
+> +       AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
+> +       AVB_RXD6_MARK, AVB_RXD7_MARK,
+> +
+> +       AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
+> +       AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
+> +       AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
+> +       AVB_COL_MARK,
+> +};
+
+... while the GMII pin list includes both RX_ER and TX_ER. Is that correct?
+Should it be the other way around?
+
+Section "45A.3.13.1 MII Frame Transmission/Reception Timing" of the R-Car Gen2
+datasheet shows timing diagrams for both AVB_TX_ER and AVB_RX_ER, so I'd expect
+both pins to be needed for MII.
+
+Unfortunately Section "45A.3.13.2 GMII Frame Reception Timing" shows timing
+diagrams for receive only (thus involving AVB_RX_ER only), so I'm not sure the
+AVB_TX_ER pin is actually needed for GMII.
+
+I don't have schematics for any R-Car Gen2 board that has AVB support, so I
+can't check myself how the MII/GMII is really wired.
+
+Note that this also applies to the existing AVB pinmux data in pfc-r8a7790.c.
+
+Can you please check/clarify? I'm not an Ethernet PHY expert.
+
+Thanks again!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
