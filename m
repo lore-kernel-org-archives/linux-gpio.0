@@ -1,43 +1,68 @@
-From: Christophe Ricard <christophe.ricard@gmail.com>
-Subject: [PATCH v4 0/3] ACPI: Add irq_type to gpio interrupt
-Date: Mon,  7 Dec 2015 23:39:09 +0100
-Message-ID: <1449527952-8399-1-git-send-email-christophe-h.ricard@st.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, broonie@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
+From: Peter Rosin <peda@lysator.liu.se>
+Subject: [RESEND RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
+Date: Tue,  8 Dec 2015 04:20:06 +0100
+Message-ID: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.lysator.liu.se ([130.236.254.3]:33517 "EHLO
+	mail.lysator.liu.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932360AbbLHDUW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Dec 2015 22:20:22 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@lysator.liu.se>, Peter Rosin <peda@axentia.se>
 
-Hi,
+From: Peter Rosin <peda@axentia.se>
 
-ACPI probing method does not retrieve irq_type from a gpio interrupt declared
-with GpioInt as it is done with devicetree probing. In other terms, irq_get_trigger_type
-will always send back 0.
+Hi!
 
-Those 3 patches propose a way to retrieve the correct interrupt polarity/type from a GpioInt
-acpi declaration when using irq_get_trigger_type.
+I have a signal connected to a gpio pin which is the output of
+a comparator. By changing the level of one of the inputs to the
+comparator, I can detect the envelope of the other input to
+the comparator by using a series of measurements much in the
+same maner a manual ADC works, but watching for changes on the
+comparator over a period of time instead of only the immediate
+output.
 
-Since v3:
-- A new fied irq_type in acpi_gpio_info is added and the way the irq_type is attached to the irq is improved.
-- The irq described in the acpi spi slave node is now set 
+Now, the input signal to the comparator might have a high frequency,
+which will cause the output from the comparator (and thus the GPIO
+input) to change rapidly.
 
-Best Regards
-Christophe 
+A common(?) idiom for this is to use the interrupt status register
+to catch the glitches, but then not have any interrupt tied to
+the pin as that could possibly generate pointless bursts of
+(expensive) interrupts.
 
-Christophe Ricard (3):
-  acpi: Rename acpi_gsi_get_irq_type to acpi_get_irq_type and export
-    symbol
-  ACPI / gpio: Add irq_type when a gpio is used as an interrupt
-  ACPI / spi: attach gpio irq from acpi description to spi device
+So, these two patches expose an interface to the PIO_ISR register
+of the pio controllers on the platform I'm targetting. The first
+patch adds some infrastructure to the gpio core and the second
+patch hooks up "my" pin controller.
 
- drivers/acpi/gsi.c          | 21 +--------------------
- drivers/acpi/utils.c        | 21 +++++++++++++++++++++
- drivers/gpio/gpiolib-acpi.c | 22 ++++++++++++++++++----
- drivers/gpio/gpiolib.h      |  1 +
- drivers/spi/spi.c           |  2 +-
- include/linux/acpi.h        |  2 ++
- 6 files changed, 44 insertions(+), 25 deletions(-)
+But hey, this seems like an old problem and I was surprised that
+I had to touch the source to do it. Which makes me wonder what I'm
+missing and what others needing to see short pulses on a pin but not
+needing/wanting interrupts are doing?
+
+Yes, there needs to be a way to select the interrupt edge w/o
+actually arming the interrupt, that is missing. And probably
+other things too, but I didn't want to do more work in case this
+is a dead end for some reason...
+
+Cheers,
+Peter
+
+Peter Rosin (2):
+  gpio: Add isr property of gpio pins
+  pinctrl: at91: expose the isr bit
+
+ Documentation/gpio/sysfs.txt   |   12 ++++++++++
+ drivers/gpio/gpiolib-sysfs.c   |   30 ++++++++++++++++++++++++
+ drivers/gpio/gpiolib.c         |   15 ++++++++++++
+ drivers/pinctrl/pinctrl-at91.c |   50 ++++++++++++++++++++++++++++++++++++----
+ include/linux/gpio/consumer.h  |    1 +
+ include/linux/gpio/driver.h    |    2 ++
+ 6 files changed, 106 insertions(+), 4 deletions(-)
 
 -- 
-2.1.4
+1.7.10.4
 
