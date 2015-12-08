@@ -1,17 +1,17 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 Subject: Re: [PATCH v4 3/3] ACPI / spi: attach gpio irq from acpi description
  to spi device
-Date: Tue, 8 Dec 2015 13:35:23 +0200
-Message-ID: <20151208113523.GK1766@lahna.fi.intel.com>
+Date: Tue, 8 Dec 2015 13:59:17 +0200
+Message-ID: <20151208115917.GN1766@lahna.fi.intel.com>
 References: <1449527952-8399-1-git-send-email-christophe-h.ricard@st.com>
  <1449527952-8399-4-git-send-email-christophe-h.ricard@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:42507 "EHLO mga02.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:22399 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932345AbbLHLf2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 8 Dec 2015 06:35:28 -0500
+	id S964844AbbLHL7W (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Dec 2015 06:59:22 -0500
 Content-Disposition: inline
 In-Reply-To: <1449527952-8399-4-git-send-email-christophe-h.ricard@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -41,7 +41,9 @@ On Mon, Dec 07, 2015 at 11:39:12PM +0100, Christophe Ricard wrote:
 > -	spi->irq = -1;
 > +	spi->irq = acpi_dev_gpio_irq_get(ACPI_COMPANION(&spi->dev), 0);
 
-You can use "adev" here instead of ACPI_COMPANION(&spi->dev).
+Also I think we should first check for the normal Interrupt() resource
+(like what we are already doing in acpi_spi_add_resource()) and only
+then resort back to use GPIO
 
 >  
 >  	INIT_LIST_HEAD(&resource_list);
