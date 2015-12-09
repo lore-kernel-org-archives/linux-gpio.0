@@ -1,90 +1,78 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 105/182] pinctrl: rockchip: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:32:18 +0100
-Message-ID: <1449667938-2753-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 103/182] pinctrl: digicolor: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:32:01 +0100
+Message-ID: <1449667921-2612-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:33901 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754172AbbLINcW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:32:22 -0500
-Received: by lffu14 with SMTP id u14so34313913lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:32:21 -0800 (PST)
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:35279 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754181AbbLINcG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:32:06 -0500
+Received: by lbpu9 with SMTP id u9so29824300lbp.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:32:04 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Baruch Siach <baruch@tkos.co.il>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/pinctrl/pinctrl-digicolor.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 2b88a40f61d3..56b8ce2a3df9 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -224,11 +224,6 @@ static struct regmap_config rockchip_regmap_config = {
- 	.reg_stride = 4,
- };
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index d8efb2ccac6c..f1343d6ca823 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -171,7 +171,7 @@ static struct pinmux_ops dc_pmxops = {
  
--static inline struct rockchip_pin_bank *gc_to_pin_bank(struct gpio_chip *gc)
--{
--	return container_of(gc, struct rockchip_pin_bank, gpio_chip);
--}
--
- static const inline struct rockchip_pin_group *pinctrl_name_to_group(
- 					const struct rockchip_pinctrl *info,
- 					const char *name)
-@@ -939,7 +934,7 @@ static int _rockchip_pmx_gpio_set_direction(struct gpio_chip *chip,
- 	unsigned long flags;
- 	u32 data;
+ static int dc_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct dc_pinmap *pmap = container_of(chip, struct dc_pinmap, chip);
++	struct dc_pinmap *pmap = gpiochip_get_data(chip);
+ 	int reg_off = GP_DRIVE0(gpio/PINS_PER_COLLECTION);
+ 	int bit_off = gpio % PINS_PER_COLLECTION;
+ 	u8 drive;
+@@ -191,7 +191,7 @@ static void dc_gpio_set(struct gpio_chip *chip, unsigned gpio, int value);
+ static int dc_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+ 				    int value)
+ {
+-	struct dc_pinmap *pmap = container_of(chip, struct dc_pinmap, chip);
++	struct dc_pinmap *pmap = gpiochip_get_data(chip);
+ 	int reg_off = GP_DRIVE0(gpio/PINS_PER_COLLECTION);
+ 	int bit_off = gpio % PINS_PER_COLLECTION;
+ 	u8 drive;
+@@ -210,7 +210,7 @@ static int dc_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
  
--	bank = gc_to_pin_bank(chip);
-+	bank = gpiochip_get_data(chip);
+ static int dc_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct dc_pinmap *pmap = container_of(chip, struct dc_pinmap, chip);
++	struct dc_pinmap *pmap = gpiochip_get_data(chip);
+ 	int reg_off = GP_INPUT(gpio/PINS_PER_COLLECTION);
+ 	int bit_off = gpio % PINS_PER_COLLECTION;
+ 	u8 input;
+@@ -222,7 +222,7 @@ static int dc_gpio_get(struct gpio_chip *chip, unsigned gpio)
  
- 	ret = rockchip_set_mux(bank, pin, RK_FUNC_GPIO);
+ static void dc_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ {
+-	struct dc_pinmap *pmap = container_of(chip, struct dc_pinmap, chip);
++	struct dc_pinmap *pmap = gpiochip_get_data(chip);
+ 	int reg_off = GP_OUTPUT0(gpio/PINS_PER_COLLECTION);
+ 	int bit_off = gpio % PINS_PER_COLLECTION;
+ 	u8 output;
+@@ -258,7 +258,7 @@ static int dc_gpiochip_add(struct dc_pinmap *pmap, struct device_node *np)
+ 
+ 	spin_lock_init(&pmap->lock);
+ 
+-	ret = gpiochip_add(chip);
++	ret = gpiochip_add_data(chip, pmap);
  	if (ret < 0)
-@@ -1376,7 +1371,7 @@ static int rockchip_pinctrl_register(struct platform_device *pdev,
+ 		return ret;
  
- static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
- {
--	struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
-+	struct rockchip_pin_bank *bank = gpiochip_get_data(gc);
- 	void __iomem *reg = bank->reg_base + GPIO_SWPORT_DR;
- 	unsigned long flags;
- 	u32 data;
-@@ -1400,7 +1395,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
-  */
- static int rockchip_gpio_get(struct gpio_chip *gc, unsigned offset)
- {
--	struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
-+	struct rockchip_pin_bank *bank = gpiochip_get_data(gc);
- 	u32 data;
- 
- 	clk_enable(bank->clk);
-@@ -1439,7 +1434,7 @@ static int rockchip_gpio_direction_output(struct gpio_chip *gc,
-  */
- static int rockchip_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
- {
--	struct rockchip_pin_bank *bank = gc_to_pin_bank(gc);
-+	struct rockchip_pin_bank *bank = gpiochip_get_data(gc);
- 	unsigned int virq;
- 
- 	if (!bank->domain)
-@@ -1758,7 +1753,7 @@ static int rockchip_gpiolib_register(struct platform_device *pdev,
- 		gc->of_node = bank->of_node;
- 		gc->label = bank->name;
- 
--		ret = gpiochip_add(gc);
-+		ret = gpiochip_add_data(gc, bank);
- 		if (ret) {
- 			dev_err(&pdev->dev, "failed to register gpio_chip %s, error code: %d\n",
- 							gc->label, ret);
 -- 
 2.4.3
 
