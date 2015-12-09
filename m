@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 173/182] serial: max310x: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:50:16 +0100
-Message-ID: <1449669016-6882-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 174/182] serial: sc16is7xx: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:50:25 +0100
+Message-ID: <1449669025-6929-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:33684 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753131AbbLINuV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:21 -0500
-Received: by lbbkw15 with SMTP id kw15so30350515lbb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:20 -0800 (PST)
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:33285 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753131AbbLINu3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:29 -0500
+Received: by lfaz4 with SMTP id z4so34652367lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:28 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -24,67 +24,71 @@ Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 Greg, please ACK this so I can take it through the GPIO tree.
 ---
- drivers/tty/serial/max310x.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/tty/serial/sc16is7xx.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 3f98165b479c..3f6e0ab725fe 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index cc86c348d809..b1eefcd80d05 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
 @@ -17,7 +17,7 @@
  #include <linux/clk.h>
  #include <linux/delay.h>
  #include <linux/device.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
+ #include <linux/i2c.h>
  #include <linux/module.h>
  #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -1036,7 +1036,7 @@ static SIMPLE_DEV_PM_OPS(max310x_pm_ops, max310x_suspend, max310x_resume);
- static int max310x_gpio_get(struct gpio_chip *chip, unsigned offset)
+@@ -1083,8 +1083,7 @@ static const struct uart_ops sc16is7xx_ops = {
+ static int sc16is7xx_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
  	unsigned int val;
--	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
-+	struct max310x_port *s = gpiochip_get_data(chip);
- 	struct uart_port *port = &s->p[offset / 4].port;
+-	struct sc16is7xx_port *s = container_of(chip, struct sc16is7xx_port,
+-						gpio);
++	struct sc16is7xx_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[0].port;
  
- 	val = max310x_port_read(port, MAX310X_GPIODATA_REG);
-@@ -1046,7 +1046,7 @@ static int max310x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	val = sc16is7xx_port_read(port, SC16IS7XX_IOSTATE_REG);
+@@ -1094,8 +1093,7 @@ static int sc16is7xx_gpio_get(struct gpio_chip *chip, unsigned offset)
  
- static void max310x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static void sc16is7xx_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
  {
--	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
-+	struct max310x_port *s = gpiochip_get_data(chip);
- 	struct uart_port *port = &s->p[offset / 4].port;
+-	struct sc16is7xx_port *s = container_of(chip, struct sc16is7xx_port,
+-						gpio);
++	struct sc16is7xx_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[0].port;
  
- 	max310x_port_update(port, MAX310X_GPIODATA_REG, 1 << (offset % 4),
-@@ -1055,7 +1055,7 @@ static void max310x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 
- static int max310x_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	sc16is7xx_port_update(port, SC16IS7XX_IOSTATE_REG, BIT(offset),
+@@ -1105,8 +1103,7 @@ static void sc16is7xx_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ static int sc16is7xx_gpio_direction_input(struct gpio_chip *chip,
+ 					  unsigned offset)
  {
--	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
-+	struct max310x_port *s = gpiochip_get_data(chip);
- 	struct uart_port *port = &s->p[offset / 4].port;
+-	struct sc16is7xx_port *s = container_of(chip, struct sc16is7xx_port,
+-						gpio);
++	struct sc16is7xx_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[0].port;
  
- 	max310x_port_update(port, MAX310X_GPIOCFG_REG, 1 << (offset % 4), 0);
-@@ -1066,7 +1066,7 @@ static int max310x_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int max310x_gpio_direction_output(struct gpio_chip *chip,
- 					 unsigned offset, int value)
+ 	sc16is7xx_port_update(port, SC16IS7XX_IODIR_REG, BIT(offset), 0);
+@@ -1117,8 +1114,7 @@ static int sc16is7xx_gpio_direction_input(struct gpio_chip *chip,
+ static int sc16is7xx_gpio_direction_output(struct gpio_chip *chip,
+ 					   unsigned offset, int val)
  {
--	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
-+	struct max310x_port *s = gpiochip_get_data(chip);
- 	struct uart_port *port = &s->p[offset / 4].port;
+-	struct sc16is7xx_port *s = container_of(chip, struct sc16is7xx_port,
+-						gpio);
++	struct sc16is7xx_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[0].port;
  
- 	max310x_port_update(port, MAX310X_GPIODATA_REG, 1 << (offset % 4),
-@@ -1183,7 +1183,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
- 	s->gpio.base		= -1;
- 	s->gpio.ngpio		= devtype->nr * 4;
- 	s->gpio.can_sleep	= 1;
--	ret = gpiochip_add(&s->gpio);
-+	ret = gpiochip_add_data(&s->gpio, s);
- 	if (ret)
- 		goto out_uart;
- #endif
+ 	sc16is7xx_port_update(port, SC16IS7XX_IOSTATE_REG, BIT(offset),
+@@ -1189,7 +1185,7 @@ static int sc16is7xx_probe(struct device *dev,
+ 		s->gpio.base		 = -1;
+ 		s->gpio.ngpio		 = devtype->nr_gpio;
+ 		s->gpio.can_sleep	 = 1;
+-		ret = gpiochip_add(&s->gpio);
++		ret = gpiochip_add_data(&s->gpio, s);
+ 		if (ret)
+ 			goto out_thread;
+ 	}
 -- 
 2.4.3
 
