@@ -1,143 +1,72 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 008/182] gpio: adnp: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:13:44 +0100
-Message-ID: <1449666824-30112-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 007/182] gpio: 74x164: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:13:33 +0100
+Message-ID: <1449666813-30065-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:34864 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753317AbbLINNt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:13:49 -0500
-Received: by lbpu9 with SMTP id u9so29515104lbp.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:13:47 -0800 (PST)
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:34001 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752672AbbLINNl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:13:41 -0500
+Received: by lffu14 with SMTP id u14so33948405lff.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:13:40 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
+Cc: Alexander Shiyan <shc_work@mail.ru>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-adnp.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-74x164.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
-index b8a1ac133390..fb5b47b69f14 100644
---- a/drivers/gpio/gpio-adnp.c
-+++ b/drivers/gpio/gpio-adnp.c
-@@ -36,11 +36,6 @@ struct adnp {
- 	u8 *irq_low;
+diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
+index fb555300008f..34c20e802da9 100644
+--- a/drivers/gpio/gpio-74x164.c
++++ b/drivers/gpio/gpio-74x164.c
+@@ -26,11 +26,6 @@ struct gen_74x164_chip {
+ 	u32			registers;
  };
  
--static inline struct adnp *to_adnp(struct gpio_chip *chip)
+-static struct gen_74x164_chip *gpio_to_74x164_chip(struct gpio_chip *gc)
 -{
--	return container_of(chip, struct adnp, gpio);
+-	return container_of(gc, struct gen_74x164_chip, gpio_chip);
 -}
 -
- static int adnp_read(struct adnp *adnp, unsigned offset, uint8_t *value)
+ static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
  {
- 	int err;
-@@ -72,7 +67,7 @@ static int adnp_write(struct adnp *adnp, unsigned offset, uint8_t value)
+ 	struct spi_device *spi = to_spi_device(chip->gpio_chip.parent);
+@@ -68,7 +63,7 @@ static int __gen_74x164_write_config(struct gen_74x164_chip *chip)
  
- static int adnp_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int gen_74x164_get_value(struct gpio_chip *gc, unsigned offset)
  {
--	struct adnp *adnp = to_adnp(chip);
-+	struct adnp *adnp = gpiochip_get_data(chip);
- 	unsigned int reg = offset >> adnp->reg_shift;
- 	unsigned int pos = offset & 7;
- 	u8 value;
-@@ -106,7 +101,7 @@ static void __adnp_gpio_set(struct adnp *adnp, unsigned offset, int value)
- 
- static void adnp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-	struct gen_74x164_chip *chip = gpio_to_74x164_chip(gc);
++	struct gen_74x164_chip *chip = gpiochip_get_data(gc);
+ 	u8 bank = offset / 8;
+ 	u8 pin = offset % 8;
+ 	int ret;
+@@ -83,7 +78,7 @@ static int gen_74x164_get_value(struct gpio_chip *gc, unsigned offset)
+ static void gen_74x164_set_value(struct gpio_chip *gc,
+ 		unsigned offset, int val)
  {
--	struct adnp *adnp = to_adnp(chip);
-+	struct adnp *adnp = gpiochip_get_data(chip);
+-	struct gen_74x164_chip *chip = gpio_to_74x164_chip(gc);
++	struct gen_74x164_chip *chip = gpiochip_get_data(gc);
+ 	u8 bank = offset / 8;
+ 	u8 pin = offset % 8;
  
- 	mutex_lock(&adnp->i2c_lock);
- 	__adnp_gpio_set(adnp, offset, value);
-@@ -115,7 +110,7 @@ static void adnp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+@@ -154,7 +149,7 @@ static int gen_74x164_probe(struct spi_device *spi)
+ 		goto exit_destroy;
+ 	}
  
- static int adnp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	struct adnp *adnp = to_adnp(chip);
-+	struct adnp *adnp = gpiochip_get_data(chip);
- 	unsigned int reg = offset >> adnp->reg_shift;
- 	unsigned int pos = offset & 7;
- 	u8 value;
-@@ -150,7 +145,7 @@ out:
- static int adnp_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 				      int value)
- {
--	struct adnp *adnp = to_adnp(chip);
-+	struct adnp *adnp = gpiochip_get_data(chip);
- 	unsigned int reg = offset >> adnp->reg_shift;
- 	unsigned int pos = offset & 7;
- 	int err;
-@@ -187,7 +182,7 @@ out:
+-	ret = gpiochip_add(&chip->gpio_chip);
++	ret = gpiochip_add_data(&chip->gpio_chip, chip);
+ 	if (!ret)
+ 		return 0;
  
- static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- {
--	struct adnp *adnp = to_adnp(chip);
-+	struct adnp *adnp = gpiochip_get_data(chip);
- 	unsigned int num_regs = 1 << adnp->reg_shift, i, j;
- 	int err;
- 
-@@ -270,7 +265,7 @@ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
- 	chip->of_node = chip->parent->of_node;
- 	chip->owner = THIS_MODULE;
- 
--	err = gpiochip_add(chip);
-+	err = gpiochip_add_data(chip, adnp);
- 	if (err)
- 		return err;
- 
-@@ -340,7 +335,7 @@ static irqreturn_t adnp_irq(int irq, void *data)
- static void adnp_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct adnp *adnp = to_adnp(gc);
-+	struct adnp *adnp = gpiochip_get_data(gc);
- 	unsigned int reg = d->hwirq >> adnp->reg_shift;
- 	unsigned int pos = d->hwirq & 7;
- 
-@@ -350,7 +345,7 @@ static void adnp_irq_mask(struct irq_data *d)
- static void adnp_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct adnp *adnp = to_adnp(gc);
-+	struct adnp *adnp = gpiochip_get_data(gc);
- 	unsigned int reg = d->hwirq >> adnp->reg_shift;
- 	unsigned int pos = d->hwirq & 7;
- 
-@@ -360,7 +355,7 @@ static void adnp_irq_unmask(struct irq_data *d)
- static int adnp_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct adnp *adnp = to_adnp(gc);
-+	struct adnp *adnp = gpiochip_get_data(gc);
- 	unsigned int reg = d->hwirq >> adnp->reg_shift;
- 	unsigned int pos = d->hwirq & 7;
- 
-@@ -390,7 +385,7 @@ static int adnp_irq_set_type(struct irq_data *d, unsigned int type)
- static void adnp_irq_bus_lock(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct adnp *adnp = to_adnp(gc);
-+	struct adnp *adnp = gpiochip_get_data(gc);
- 
- 	mutex_lock(&adnp->irq_lock);
- }
-@@ -398,7 +393,7 @@ static void adnp_irq_bus_lock(struct irq_data *d)
- static void adnp_irq_bus_unlock(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct adnp *adnp = to_adnp(gc);
-+	struct adnp *adnp = gpiochip_get_data(gc);
- 	unsigned int num_regs = 1 << adnp->reg_shift, i;
- 
- 	mutex_lock(&adnp->i2c_lock);
 -- 
 2.4.3
 
