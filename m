@@ -1,46 +1,137 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
-Date: Wed, 9 Dec 2015 11:49:50 -0800
-Message-ID: <20151209194950.GA23396@atomide.com>
-References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v1 1/8] pinctrl: rockchip: add support for the rk3228
+Date: Wed, 9 Dec 2015 14:09:05 -0600
+Message-ID: <20151209200905.GA28970@rob-hp-laptop>
+References: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com>
+ <1449651853-1667-2-git-send-email-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:51867 "EHLO muru.com"
+Received: from mail.kernel.org ([198.145.29.136]:45553 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754302AbbLITt5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Dec 2015 14:49:57 -0500
+	id S1751039AbbLIUJK (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 15:09:10 -0500
 Content-Disposition: inline
-In-Reply-To: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1449651853-1667-2-git-send-email-jeffy.chen@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>, arm@kernel.org, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Rabin Vincent <rab>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: heiko@sntech.de, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>
 
-* Linus Walleij <linus.walleij@linaro.org> [151209 05:14]:
-> The separate struct bgpio_chip has been a pain to handle, both
-> by being confusingly similar in name to struct gpio_chip and
-> for being contained inside a struct so that struct gpio_chip
-> is contained in a struct contained in a struct, making several
-> steps of dereferencing necessary.
+On Wed, Dec 09, 2015 at 05:04:06PM +0800, Jeffy Chen wrote:
+> The pinctrl of rk3228 is much the same as rk3288's, but
+> without pmu.
 > 
-> Make things simpler: include the fields directly into
-> <linux/gpio/driver.h>, #ifdef:ed for CONFIG_GENERIC_GPIO, and
-> get rid of the <linux/basic_mmio_gpio.h> altogether. Prefix
-> some of the member variables with bgpio_* and add proper
-> kerneldoc while we're at it.
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 > 
-> Modify all users to handle the change and use a struct
-> gpio_chip directly. And while we're at it: replace all
-> container_of() dereferencing by gpiochip_get_data() and
-> registering the gpio_chip with gpiochip_add_data().
-...
-
 > ---
-> ARM SoC folks and Lee: it would be great if you could
-> ACK the few lines hitting arch/arm/* and drivers/mfd/* in this
-> so I can take it through the GPIO tree.
+> 
+>  .../bindings/pinctrl/rockchip,pinctrl.txt          |  3 +-
 
-For omap:
+For the binding:
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/pinctrl/pinctrl-rockchip.c                 | 53 ++++++++++++++++++++++
+>  2 files changed, 55 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+> index 391ef4b..0cd701b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+> @@ -21,7 +21,8 @@ defined as gpio sub-nodes of the pinmux controller.
+>  Required properties for iomux controller:
+>    - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
+>  		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
+> -		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
+> +		       "rockchip,rk3228-pinctrl", "rockchip,rk3288-pinctrl"
+> +		       "rockchip,rk3368-pinctrl"
+>    - rockchip,grf: phandle referencing a syscon providing the
+>  	 "general register files"
+>  
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+> index a065112..faab36e 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -614,6 +614,40 @@ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+>  	}
+>  }
+>  
+> +#define RK3228_PULL_OFFSET		0x100
+> +
+> +static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+> +				    int pin_num, struct regmap **regmap,
+> +				    int *reg, u8 *bit)
+> +{
+> +	struct rockchip_pinctrl *info = bank->drvdata;
+> +
+> +	*regmap = info->regmap_base;
+> +	*reg = RK3228_PULL_OFFSET;
+> +	*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
+> +	*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
+> +
+> +	*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
+> +	*bit *= RK3188_PULL_BITS_PER_PIN;
+> +}
+> +
+> +#define RK3228_DRV_GRF_OFFSET		0x200
+> +
+> +static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+> +				    int pin_num, struct regmap **regmap,
+> +				    int *reg, u8 *bit)
+> +{
+> +	struct rockchip_pinctrl *info = bank->drvdata;
+> +
+> +	*regmap = info->regmap_base;
+> +	*reg = RK3228_DRV_GRF_OFFSET;
+> +	*reg += bank->bank_num * RK3288_DRV_BANK_STRIDE;
+> +	*reg += ((pin_num / RK3288_DRV_PINS_PER_REG) * 4);
+> +
+> +	*bit = (pin_num % RK3288_DRV_PINS_PER_REG);
+> +	*bit *= RK3288_DRV_BITS_PER_PIN;
+> +}
+> +
+>  #define RK3368_PULL_GRF_OFFSET		0x100
+>  #define RK3368_PULL_PMU_OFFSET		0x10
+>  
+> @@ -2143,6 +2177,23 @@ static struct rockchip_pin_ctrl rk3188_pin_ctrl = {
+>  		.pull_calc_reg		= rk3188_calc_pull_reg_and_bit,
+>  };
+>  
+> +static struct rockchip_pin_bank rk3228_pin_banks[] = {
+> +	PIN_BANK(0, 32, "gpio0"),
+> +	PIN_BANK(1, 32, "gpio1"),
+> +	PIN_BANK(2, 32, "gpio2"),
+> +	PIN_BANK(3, 32, "gpio3"),
+> +};
+> +
+> +static struct rockchip_pin_ctrl rk3228_pin_ctrl = {
+> +		.pin_banks		= rk3228_pin_banks,
+> +		.nr_banks		= ARRAY_SIZE(rk3228_pin_banks),
+> +		.label			= "RK3228-GPIO",
+> +		.type			= RK3288,
+> +		.grf_mux_offset		= 0x0,
+> +		.pull_calc_reg		= rk3228_calc_pull_reg_and_bit,
+> +		.drv_calc_reg		= rk3228_calc_drv_reg_and_bit,
+> +};
+> +
+>  static struct rockchip_pin_bank rk3288_pin_banks[] = {
+>  	PIN_BANK_IOMUX_FLAGS(0, 24, "gpio0", IOMUX_SOURCE_PMU,
+>  					     IOMUX_SOURCE_PMU,
+> @@ -2220,6 +2271,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+>  		.data = (void *)&rk3066b_pin_ctrl },
+>  	{ .compatible = "rockchip,rk3188-pinctrl",
+>  		.data = (void *)&rk3188_pin_ctrl },
+> +	{ .compatible = "rockchip,rk3228-pinctrl",
+> +		.data = (void *)&rk3228_pin_ctrl },
+>  	{ .compatible = "rockchip,rk3288-pinctrl",
+>  		.data = (void *)&rk3288_pin_ctrl },
+>  	{ .compatible = "rockchip,rk3368-pinctrl",
+> -- 
+> 2.1.4
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
