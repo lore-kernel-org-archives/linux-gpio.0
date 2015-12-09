@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 144/182] powerpc: mpc8349emitx: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:41:16 +0100
-Message-ID: <1449668476-4929-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 145/182] powerpc: sysdev: cpm1: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:41:23 +0100
+Message-ID: <1449668483-4976-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:33371 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753925AbbLINlU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:41:20 -0500
-Received: by lfaz4 with SMTP id z4so34471661lfa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:41:19 -0800 (PST)
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:36460 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753925AbbLINl2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:41:28 -0500
+Received: by lbblt2 with SMTP id lt2so30303787lbb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:41:27 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
@@ -28,40 +28,137 @@ Power maintainers: please ACK this. I cannot really say if this
 should ideally be broken out as a separate driver in drivers/gpio
 or if it is better to keep it here. For now just refactoring...
 ---
- arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/sysdev/cpm1.c | 36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-diff --git a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-index 15e8021ddef9..dbcd0303afed 100644
---- a/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-+++ b/arch/powerpc/platforms/83xx/mcu_mpc8349emitx.c
-@@ -16,7 +16,7 @@
- #include <linux/device.h>
- #include <linux/mutex.h>
- #include <linux/i2c.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
- #include <linux/slab.h>
-@@ -99,7 +99,7 @@ static void mcu_power_off(void)
+diff --git a/arch/powerpc/sysdev/cpm1.c b/arch/powerpc/sysdev/cpm1.c
+index 5e6ff38ea69f..937ba5444ffe 100644
+--- a/arch/powerpc/sysdev/cpm1.c
++++ b/arch/powerpc/sysdev/cpm1.c
+@@ -529,15 +529,9 @@ struct cpm1_gpio16_chip {
+ 	u16 cpdata;
+ };
  
- static void mcu_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+-static inline struct cpm1_gpio16_chip *
+-to_cpm1_gpio16_chip(struct of_mm_gpio_chip *mm_gc)
+-{
+-	return container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
+-}
+-
+ static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
  {
--	struct mcu *mcu = container_of(gc, struct mcu, gc);
-+	struct mcu *mcu = gpiochip_get_data(gc);
- 	u8 bit = 1 << (4 + gpio);
+-	struct cpm1_gpio16_chip *cpm1_gc = to_cpm1_gpio16_chip(mm_gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
  
- 	mutex_lock(&mcu->lock);
-@@ -136,7 +136,7 @@ static int mcu_gpiochip_add(struct mcu *mcu)
- 	gc->direction_output = mcu_gpio_dir_out;
- 	gc->of_node = np;
+ 	cpm1_gc->cpdata = in_be16(&iop->dat);
+@@ -557,7 +551,7 @@ static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
+ static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
+ 	int value)
+ {
+-	struct cpm1_gpio16_chip *cpm1_gc = to_cpm1_gpio16_chip(mm_gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
  
--	return gpiochip_add(gc);
-+	return gpiochip_add_data(gc, mcu);
+ 	if (value)
+@@ -571,7 +565,7 @@ static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
+ static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = to_cpm1_gpio16_chip(mm_gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+ 
+@@ -585,7 +579,7 @@ static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = to_cpm1_gpio16_chip(mm_gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+@@ -603,7 +597,7 @@ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int cpm1_gpio16_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = to_cpm1_gpio16_chip(mm_gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+@@ -639,7 +633,7 @@ int cpm1_gpiochip_add16(struct device_node *np)
+ 	gc->get = cpm1_gpio16_get;
+ 	gc->set = cpm1_gpio16_set;
+ 
+-	return of_mm_gpiochip_add(np, mm_gc);
++	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
  }
  
- static int mcu_gpiochip_remove(struct mcu *mcu)
+ struct cpm1_gpio32_chip {
+@@ -650,15 +644,9 @@ struct cpm1_gpio32_chip {
+ 	u32 cpdata;
+ };
+ 
+-static inline struct cpm1_gpio32_chip *
+-to_cpm1_gpio32_chip(struct of_mm_gpio_chip *mm_gc)
+-{
+-	return container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
+-}
+-
+ static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct cpm1_gpio32_chip *cpm1_gc = to_cpm1_gpio32_chip(mm_gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
+ 
+ 	cpm1_gc->cpdata = in_be32(&iop->dat);
+@@ -678,7 +666,7 @@ static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
+ static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
+ 	int value)
+ {
+-	struct cpm1_gpio32_chip *cpm1_gc = to_cpm1_gpio32_chip(mm_gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
+ 
+ 	if (value)
+@@ -692,7 +680,7 @@ static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
+ static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = to_cpm1_gpio32_chip(mm_gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+ 
+@@ -706,7 +694,7 @@ static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = to_cpm1_gpio32_chip(mm_gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+@@ -724,7 +712,7 @@ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int cpm1_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = to_cpm1_gpio32_chip(mm_gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+@@ -760,7 +748,7 @@ int cpm1_gpiochip_add32(struct device_node *np)
+ 	gc->get = cpm1_gpio32_get;
+ 	gc->set = cpm1_gpio32_set;
+ 
+-	return of_mm_gpiochip_add(np, mm_gc);
++	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
+ }
+ 
+ static int cpm_init_par_io(void)
 -- 
 2.4.3
 
