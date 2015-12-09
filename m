@@ -1,33 +1,38 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 081/182] gpio: wm8994: use gpiochip data pointer
-Date: Wed, 9 Dec 2015 14:50:04 +0000
-Message-ID: <20151209145004.GJ6058@localhost.localdomain>
-References: <1449667681-1258-1-git-send-email-linus.walleij@linaro.org>
+From: Maxime Coquelin <maxime.coquelin@st.com>
+Subject: Re: [PATCH 106/182] pinctrl: st: use gpiochip data pointer
+Date: Wed, 9 Dec 2015 15:54:44 +0100
+Message-ID: <566840B4.40603@st.com>
+References: <1449667946-2800-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:57643 "EHLO
-	mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751331AbbLIOuN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 09:50:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1449667681-1258-1-git-send-email-linus.walleij@linaro.org>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:5245 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751341AbbLIOzA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 09:55:00 -0500
+In-Reply-To: <1449667946-2800-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Patrice Chotard <patrice.chotard@st.com>
 
-On Wed, Dec 09, 2015 at 02:28:01PM +0100, Linus Walleij wrote:
+Hi Linus,
+
+On 12/09/2015 02:32 PM, Linus Walleij wrote:
 > This makes the driver use the data pointer added to the gpio_chip
 > to store a pointer to the state container instead of relying on
 > container_of().
-> 
-> Cc: patches@opensource.wolfsonmicro.com
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Cc: Srinivas Kandagatla<srinivas.kandagatla@gmail.com>
+> Cc: Maxime Coquelin<maxime.coquelin@st.com>
+> Cc: Patrice Chotard<patrice.chotard@st.com>
+> Signed-off-by: Linus Walleij<linus.walleij@linaro.org>
 > ---
+>   drivers/pinctrl/pinctrl-st.c | 21 +++++++++------------
+>   1 file changed, 9 insertions(+), 12 deletions(-)
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Acked-by: Maxime Coquelin <maxime.coquelin@st.com>
 
 Thanks,
-Charles
+Maxime
