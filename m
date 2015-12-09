@@ -1,93 +1,188 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH 069/182] gpio: tps65910: use gpiochip data pointer
-Date: Wed, 9 Dec 2015 11:25:04 -0500
-Message-ID: <566855E0.9020705@nvidia.com>
-References: <1449667441-619-1-git-send-email-linus.walleij@linaro.org>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH 090/182] pinctrl: cygnus-gpio: use gpiochip data pointer
+Date: Wed, 9 Dec 2015 09:06:23 -0800
+Message-ID: <56685F8F.4020700@broadcom.com>
+References: <1449667793-1826-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7311 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751332AbbLIQZH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 11:25:07 -0500
-In-Reply-To: <1449667441-619-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:26143 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752288AbbLIRG0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 12:06:26 -0500
+In-Reply-To: <1449667793-1826-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
 
-On 12/9/2015 8:24 AM, Linus Walleij wrote:
+Hi Linus,
+
+The change itself looks fine to me. But I thought the previous patchset 
+from Pramod changes the file name, all the function names and macros 
+from "cygnus" to "iproc" and have been merged by you?
+
+Shouldn't this patch be developed on top of that? Or am I missing something?
+
+Thanks,
+
+Ray
+
+On 12/9/2015 5:29 AM, Linus Walleij wrote:
 > This makes the driver use the data pointer added to the gpio_chip
 > to store a pointer to the state container instead of relying on
 > container_of().
-> 
-> Cc: Rhyland Klein <rklein@nvidia.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+>
+> Cc: bcm-kernel-feedback-list@broadcom.com
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Jon Mason <jonmason@broadcom.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/gpio/gpio-tps65910.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-tps65910.c b/drivers/gpio/gpio-tps65910.c
-> index 83894c0387fb..e81eee7627a3 100644
-> --- a/drivers/gpio/gpio-tps65910.c
-> +++ b/drivers/gpio/gpio-tps65910.c
-> @@ -27,14 +27,9 @@ struct tps65910_gpio {
->  	struct tps65910 *tps65910;
->  };
->  
-> -static inline struct tps65910_gpio *to_tps65910_gpio(struct gpio_chip *chip)
+>   drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 33 +++++++++++++------------------
+>   1 file changed, 14 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> index bd212b269094..d15e52c40c83 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
+> @@ -24,7 +24,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/io.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/driver.h>
+>   #include <linux/ioport.h>
+>   #include <linux/of_device.h>
+>   #include <linux/of_irq.h>
+> @@ -96,11 +96,6 @@ struct cygnus_gpio {
+>   	struct pinctrl_desc pctldesc;
+>   };
+>
+> -static inline struct cygnus_gpio *to_cygnus_gpio(struct gpio_chip *gc)
 > -{
-> -	return container_of(chip, struct tps65910_gpio, gpio_chip);
+> -	return container_of(gc, struct cygnus_gpio, gc);
 > -}
 > -
->  static int tps65910_gpio_get(struct gpio_chip *gc, unsigned offset)
->  {
-> -	struct tps65910_gpio *tps65910_gpio = to_tps65910_gpio(gc);
-> +	struct tps65910_gpio *tps65910_gpio = gpiochip_get_data(gc);
->  	struct tps65910 *tps65910 = tps65910_gpio->tps65910;
->  	unsigned int val;
->  
-> @@ -49,7 +44,7 @@ static int tps65910_gpio_get(struct gpio_chip *gc, unsigned offset)
->  static void tps65910_gpio_set(struct gpio_chip *gc, unsigned offset,
->  			      int value)
->  {
-> -	struct tps65910_gpio *tps65910_gpio = to_tps65910_gpio(gc);
-> +	struct tps65910_gpio *tps65910_gpio = gpiochip_get_data(gc);
->  	struct tps65910 *tps65910 = tps65910_gpio->tps65910;
->  
->  	if (value)
-> @@ -63,7 +58,7 @@ static void tps65910_gpio_set(struct gpio_chip *gc, unsigned offset,
->  static int tps65910_gpio_output(struct gpio_chip *gc, unsigned offset,
->  				int value)
->  {
-> -	struct tps65910_gpio *tps65910_gpio = to_tps65910_gpio(gc);
-> +	struct tps65910_gpio *tps65910_gpio = gpiochip_get_data(gc);
->  	struct tps65910 *tps65910 = tps65910_gpio->tps65910;
->  
->  	/* Set the initial value */
-> @@ -75,7 +70,7 @@ static int tps65910_gpio_output(struct gpio_chip *gc, unsigned offset,
->  
->  static int tps65910_gpio_input(struct gpio_chip *gc, unsigned offset)
->  {
-> -	struct tps65910_gpio *tps65910_gpio = to_tps65910_gpio(gc);
-> +	struct tps65910_gpio *tps65910_gpio = gpiochip_get_data(gc);
->  	struct tps65910 *tps65910 = tps65910_gpio->tps65910;
->  
->  	return tps65910_reg_clear_bits(tps65910, TPS65910_GPIO0 + offset,
-> @@ -175,7 +170,7 @@ static int tps65910_gpio_probe(struct platform_device *pdev)
->  	}
->  
->  skip_init:
-> -	ret = gpiochip_add(&tps65910_gpio->gpio_chip);
-> +	ret = gpiochip_add_data(&tps65910_gpio->gpio_chip, tps65910_gpio);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
->  		return ret;
-> 
-
-Acked-By: Rhyland Klein <rklein@nvidia.com>
-
--- 
-nvpublic
+>   /*
+>    * Mapping from PINCONF pins to GPIO pins is 1-to-1
+>    */
+> @@ -145,7 +140,7 @@ static inline bool cygnus_get_bit(struct cygnus_gpio *chip, unsigned int reg,
+>   static void cygnus_gpio_irq_handler(struct irq_desc *desc)
+>   {
+>   	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	struct irq_chip *irq_chip = irq_desc_get_chip(desc);
+>   	int i, bit;
+>
+> @@ -178,7 +173,7 @@ static void cygnus_gpio_irq_handler(struct irq_desc *desc)
+>   static void cygnus_gpio_irq_ack(struct irq_data *d)
+>   {
+>   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned gpio = d->hwirq;
+>   	unsigned int offset = CYGNUS_GPIO_REG(gpio,
+>   			CYGNUS_GPIO_INT_CLR_OFFSET);
+> @@ -197,7 +192,7 @@ static void cygnus_gpio_irq_ack(struct irq_data *d)
+>   static void cygnus_gpio_irq_set_mask(struct irq_data *d, bool unmask)
+>   {
+>   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned gpio = d->hwirq;
+>
+>   	cygnus_set_bit(chip, CYGNUS_GPIO_INT_MSK_OFFSET, gpio, unmask);
+> @@ -206,7 +201,7 @@ static void cygnus_gpio_irq_set_mask(struct irq_data *d, bool unmask)
+>   static void cygnus_gpio_irq_mask(struct irq_data *d)
+>   {
+>   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned long flags;
+>
+>   	spin_lock_irqsave(&chip->lock, flags);
+> @@ -217,7 +212,7 @@ static void cygnus_gpio_irq_mask(struct irq_data *d)
+>   static void cygnus_gpio_irq_unmask(struct irq_data *d)
+>   {
+>   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned long flags;
+>
+>   	spin_lock_irqsave(&chip->lock, flags);
+> @@ -228,7 +223,7 @@ static void cygnus_gpio_irq_unmask(struct irq_data *d)
+>   static int cygnus_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>   {
+>   	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned gpio = d->hwirq;
+>   	bool level_triggered = false;
+>   	bool dual_edge = false;
+> @@ -290,7 +285,7 @@ static struct irq_chip cygnus_gpio_irq_chip = {
+>    */
+>   static int cygnus_gpio_request(struct gpio_chip *gc, unsigned offset)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned gpio = gc->base + offset;
+>
+>   	/* not all Cygnus GPIO pins can be muxed individually */
+> @@ -302,7 +297,7 @@ static int cygnus_gpio_request(struct gpio_chip *gc, unsigned offset)
+>
+>   static void cygnus_gpio_free(struct gpio_chip *gc, unsigned offset)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned gpio = gc->base + offset;
+>
+>   	if (!chip->pinmux_is_supported)
+> @@ -313,7 +308,7 @@ static void cygnus_gpio_free(struct gpio_chip *gc, unsigned offset)
+>
+>   static int cygnus_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned long flags;
+>
+>   	spin_lock_irqsave(&chip->lock, flags);
+> @@ -328,7 +323,7 @@ static int cygnus_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
+>   static int cygnus_gpio_direction_output(struct gpio_chip *gc, unsigned gpio,
+>   					int val)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned long flags;
+>
+>   	spin_lock_irqsave(&chip->lock, flags);
+> @@ -343,7 +338,7 @@ static int cygnus_gpio_direction_output(struct gpio_chip *gc, unsigned gpio,
+>
+>   static void cygnus_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned long flags;
+>
+>   	spin_lock_irqsave(&chip->lock, flags);
+> @@ -355,7 +350,7 @@ static void cygnus_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
+>
+>   static int cygnus_gpio_get(struct gpio_chip *gc, unsigned gpio)
+>   {
+> -	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
+> +	struct cygnus_gpio *chip = gpiochip_get_data(gc);
+>   	unsigned int offset = CYGNUS_GPIO_REG(gpio,
+>   					      CYGNUS_GPIO_DATA_IN_OFFSET);
+>   	unsigned int shift = CYGNUS_GPIO_SHIFT(gpio);
+> @@ -732,7 +727,7 @@ static int cygnus_gpio_probe(struct platform_device *pdev)
+>   	chip->pinmux_is_supported = of_property_read_bool(dev->of_node,
+>   							"gpio-ranges");
+>
+> -	ret = gpiochip_add(gc);
+> +	ret = gpiochip_add_data(gc, chip);
+>   	if (ret < 0) {
+>   		dev_err(dev, "unable to add GPIO chip\n");
+>   		return ret;
+>
