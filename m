@@ -1,96 +1,137 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 047/182] gpio: palmas: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:19:18 +0100
-Message-ID: <1449667158-31977-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 048/182] gpio: pca953x: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:19:32 +0100
+Message-ID: <1449667172-32024-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:34417 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673AbbLINT3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:19:29 -0500
-Received: by lbbcs9 with SMTP id cs9so29740817lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:19:27 -0800 (PST)
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:34956 "EHLO
+	mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673AbbLINTh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:19:37 -0500
+Received: by lfdl133 with SMTP id l133so33874151lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:19:36 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Toby Smith <toby@tismith.id.au>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Andrew Chew <achew@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Markus Pargmann <mpa@pengutronix.de>
+Cc: Toby Smith <toby@tismith.id.au>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-palmas.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
-index 5f09ed1700dc..fec4e868afc8 100644
---- a/drivers/gpio/gpio-palmas.c
-+++ b/drivers/gpio/gpio-palmas.c
-@@ -35,14 +35,9 @@ struct palmas_device_data {
- 	int ngpio;
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 2eaf235a39e5..deef862fc87a 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -107,11 +107,6 @@ struct pca953x_chip {
+ 	unsigned long driver_data;
  };
  
--static inline struct palmas_gpio *to_palmas_gpio(struct gpio_chip *chip)
+-static inline struct pca953x_chip *to_pca(struct gpio_chip *gc)
 -{
--	return container_of(chip, struct palmas_gpio, gpio_chip);
+-	return container_of(gc, struct pca953x_chip, gpio_chip);
 -}
 -
- static int palmas_gpio_get(struct gpio_chip *gc, unsigned offset)
+ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+ 				int off)
  {
--	struct palmas_gpio *pg = to_palmas_gpio(gc);
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
- 	struct palmas *palmas = pg->palmas;
- 	unsigned int val;
- 	int ret;
-@@ -74,7 +69,7 @@ static int palmas_gpio_get(struct gpio_chip *gc, unsigned offset)
- static void palmas_gpio_set(struct gpio_chip *gc, unsigned offset,
- 			int value)
- {
--	struct palmas_gpio *pg = to_palmas_gpio(gc);
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
- 	struct palmas *palmas = pg->palmas;
- 	int ret;
- 	unsigned int reg;
-@@ -96,7 +91,7 @@ static void palmas_gpio_set(struct gpio_chip *gc, unsigned offset,
- static int palmas_gpio_output(struct gpio_chip *gc, unsigned offset,
- 				int value)
- {
--	struct palmas_gpio *pg = to_palmas_gpio(gc);
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
- 	struct palmas *palmas = pg->palmas;
- 	int ret;
- 	unsigned int reg;
-@@ -118,7 +113,7 @@ static int palmas_gpio_output(struct gpio_chip *gc, unsigned offset,
+@@ -214,7 +209,7 @@ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
  
- static int palmas_gpio_input(struct gpio_chip *gc, unsigned offset)
+ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
  {
--	struct palmas_gpio *pg = to_palmas_gpio(gc);
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
- 	struct palmas *palmas = pg->palmas;
- 	int ret;
- 	unsigned int reg;
-@@ -136,7 +131,7 @@ static int palmas_gpio_input(struct gpio_chip *gc, unsigned offset)
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 reg_val;
+ 	int ret, offset = 0;
  
- static int palmas_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -243,7 +238,7 @@ exit:
+ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 		unsigned off, int val)
  {
--	struct palmas_gpio *pg = to_palmas_gpio(gc);
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
- 	struct palmas *palmas = pg->palmas;
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 reg_val;
+ 	int ret, offset = 0;
  
- 	return palmas_irq_get_virq(palmas, PALMAS_GPIO_0_IRQ + offset);
-@@ -198,7 +193,7 @@ static int palmas_gpio_probe(struct platform_device *pdev)
- 	else
- 		palmas_gpio->gpio_chip.base = -1;
+@@ -293,7 +288,7 @@ exit:
  
--	ret = gpiochip_add(&palmas_gpio->gpio_chip);
-+	ret = gpiochip_add_data(&palmas_gpio->gpio_chip, palmas_gpio);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ {
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u32 reg_val;
+ 	int ret, offset = 0;
+ 
+@@ -321,7 +316,7 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ 
+ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ {
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 reg_val;
+ 	int ret, offset = 0;
+ 
+@@ -374,7 +369,7 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
+ static void pca953x_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 
+ 	chip->irq_mask[d->hwirq / BANK_SZ] &= ~(1 << (d->hwirq % BANK_SZ));
+ }
+@@ -382,7 +377,7 @@ static void pca953x_irq_mask(struct irq_data *d)
+ static void pca953x_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 
+ 	chip->irq_mask[d->hwirq / BANK_SZ] |= 1 << (d->hwirq % BANK_SZ);
+ }
+@@ -390,7 +385,7 @@ static void pca953x_irq_unmask(struct irq_data *d)
+ static void pca953x_irq_bus_lock(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 
+ 	mutex_lock(&chip->irq_lock);
+ }
+@@ -398,7 +393,7 @@ static void pca953x_irq_bus_lock(struct irq_data *d)
+ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 new_irqs;
+ 	int level, i;
+ 
+@@ -421,7 +416,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ static int pca953x_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pca953x_chip *chip = to_pca(gc);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	int bank_nb = d->hwirq / BANK_SZ;
+ 	u8 mask = 1 << (d->hwirq % BANK_SZ);
+ 
+@@ -721,7 +716,7 @@ static int pca953x_probe(struct i2c_client *client,
+ 	if (ret)
  		return ret;
+ 
+-	ret = gpiochip_add(&chip->gpio_chip);
++	ret = gpiochip_add_data(&chip->gpio_chip, chip);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.4.3
 
