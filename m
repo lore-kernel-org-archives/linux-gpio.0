@@ -1,61 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 182/182] gpio: remove non-parametrized register functions
-Date: Wed,  9 Dec 2015 14:52:17 +0100
-Message-ID: <1449669137-7414-1-git-send-email-linus.walleij@linaro.org>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 135/182] MIPS: alchemy: switch to gpiochip_add_data()
+Date: Wed, 9 Dec 2015 14:54:48 +0100
+Message-ID: <20151209135448.GI4722@linux-mips.org>
+References: <1449668342-4446-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:35816 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754778AbbLINwW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:52:22 -0500
-Received: by lbpu9 with SMTP id u9so30171161lbp.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:52:21 -0800 (PST)
+Received: from eddie.linux-mips.org ([148.251.95.138]:42832 "EHLO
+	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751499AbbLINy6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:54:58 -0500
+Received: from localhost.localdomain ([127.0.0.1]:38078 "EHLO linux-mips.org"
+        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
+        id S27013559AbbLINy5F8Lc9 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 14:54:57 +0100
+Content-Disposition: inline
+In-Reply-To: <1449668342-4446-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, linux-mips@linux-mips.org
 
-This removes gpiochip_add() and of_mm_gpiochip_add() in favor
-of the *_data() functions that also take a pointer to driver
-state data. This way all new drivers will use the parametrized
-interface.
+On Wed, Dec 09, 2015 at 02:39:02PM +0100, Linus Walleij wrote:
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- include/linux/gpio/driver.h | 4 ----
- include/linux/of_gpio.h     | 5 -----
- 2 files changed, 9 deletions(-)
+> We're planning to remove the gpiochip_add() function to swith
+> to gpiochip_add_data() with NULL for data argument.
+> 
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: linux-mips@linux-mips.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Ralf: please ACK this so I can take it through the GPIO tree.
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index 3334ba66f6a8..0c40dc6c6b21 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -201,10 +201,6 @@ extern const char *gpiochip_is_requested(struct gpio_chip *chip,
- 
- /* add/remove chips */
- extern int gpiochip_add_data(struct gpio_chip *chip, void *data);
--static inline int gpiochip_add(struct gpio_chip *chip)
--{
--	return gpiochip_add_data(chip, NULL);
--}
- extern void gpiochip_remove(struct gpio_chip *chip);
- extern struct gpio_chip *gpiochip_find(void *data,
- 			      int (*match)(struct gpio_chip *chip, void *data));
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 54a23d6e4892..2204dc0e4493 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -54,11 +54,6 @@ extern int of_get_named_gpio_flags(struct device_node *np,
- extern int of_mm_gpiochip_add_data(struct device_node *np,
- 				   struct of_mm_gpio_chip *mm_gc,
- 				   void *data);
--static inline int of_mm_gpiochip_add(struct device_node *np,
--				     struct of_mm_gpio_chip *mm_gc)
--{
--	return of_mm_gpiochip_add_data(np, mm_gc, NULL);
--}
- extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
- 
- extern int of_gpiochip_add(struct gpio_chip *gc);
--- 
-2.4.3
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
 
+> BTW: would be nice if the MIPS GPIO drivers could move down
+> to drivers/gpio in the long run.
+
+I agree - but for practical reasons this won't happen quickly.
+
+  Ralf
