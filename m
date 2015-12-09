@@ -1,142 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 153/182] bcma: gpio: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:43:53 +0100
-Message-ID: <1449668633-5547-1-git-send-email-linus.walleij@linaro.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 000/182] Rid struct gpio_chip from container_of() usage
+Date: Wed, 9 Dec 2015 13:44:11 +0000
+Message-ID: <20151209134410.GH8644@n2100.arm.linux.org.uk>
+References: <1449666515-23343-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:32776 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754083AbbLINoA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:44:00 -0500
-Received: by lfaz4 with SMTP id z4so34524171lfa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:43:58 -0800 (PST)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1449666515-23343-1-git-send-email-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Michael Welling <mwelling-EkmVulN54Sk@public.gmane.org>, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Haavard Skinnemoen <hskinnemoen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sonic Zhang <sonic.zhang-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Greg Ungerer <gerg-JBU5SbJe1FlAfugRpC6u6w@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, Anatolij Gustschin <agust-ynQEQJNshbs@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, zajec5@gmail.com, Hauke Mehrtens <hauke@hauke-m.de>, Kalle Valo <kvalo@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-wireless@vger.kernel.org
 
-This makes the driver use the data pointer added to the gpio_chip
-to store a pointer to the state container instead of relying on
-container_of().
+On Wed, Dec 09, 2015 at 02:08:35PM +0100, Linus Walleij wrote:
+> Because we want to have a proper userspace ABI for GPIO chips,
+> which involves using a character device that the user opens
+> and closes. While the character device is open, the underlying
+> kernel objects must not go away.
 
-Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-BCMA maintainers: please ACK this so I can take it through the
-GPIO tree.
----
- drivers/bcma/driver_gpio.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+Okay, so you stop the gpio_chip struct from going away.  What
+about the code which is called via gpio_chip - say, if userspace
+keep shte chardev open, and someone rmmod's the driver providing
+the GPIO driver.
 
-diff --git a/drivers/bcma/driver_gpio.c b/drivers/bcma/driver_gpio.c
-index 949754427ce2..98067f757fb0 100644
---- a/drivers/bcma/driver_gpio.c
-+++ b/drivers/bcma/driver_gpio.c
-@@ -17,14 +17,9 @@
-=20
- #define BCMA_GPIO_MAX_PINS	32
-=20
--static inline struct bcma_drv_cc *bcma_gpio_get_cc(struct gpio_chip *c=
-hip)
--{
--	return container_of(chip, struct bcma_drv_cc, gpio);
--}
--
- static int bcma_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	return !!bcma_chipco_gpio_in(cc, 1 << gpio);
- }
-@@ -32,14 +27,14 @@ static int bcma_gpio_get_value(struct gpio_chip *ch=
-ip, unsigned gpio)
- static void bcma_gpio_set_value(struct gpio_chip *chip, unsigned gpio,
- 				int value)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	bcma_chipco_gpio_out(cc, 1 << gpio, value ? 1 << gpio : 0);
- }
-=20
- static int bcma_gpio_direction_input(struct gpio_chip *chip, unsigned =
-gpio)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	bcma_chipco_gpio_outen(cc, 1 << gpio, 0);
- 	return 0;
-@@ -48,7 +43,7 @@ static int bcma_gpio_direction_input(struct gpio_chip=
- *chip, unsigned gpio)
- static int bcma_gpio_direction_output(struct gpio_chip *chip, unsigned=
- gpio,
- 				      int value)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	bcma_chipco_gpio_outen(cc, 1 << gpio, 1 << gpio);
- 	bcma_chipco_gpio_out(cc, 1 << gpio, value ? 1 << gpio : 0);
-@@ -57,7 +52,7 @@ static int bcma_gpio_direction_output(struct gpio_chi=
-p *chip, unsigned gpio,
-=20
- static int bcma_gpio_request(struct gpio_chip *chip, unsigned gpio)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	bcma_chipco_gpio_control(cc, 1 << gpio, 0);
- 	/* clear pulldown */
-@@ -70,7 +65,7 @@ static int bcma_gpio_request(struct gpio_chip *chip, =
-unsigned gpio)
-=20
- static void bcma_gpio_free(struct gpio_chip *chip, unsigned gpio)
- {
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-=20
- 	/* clear pullup */
- 	bcma_chipco_gpio_pullup(cc, 1 << gpio, 0);
-@@ -81,7 +76,7 @@ static void bcma_gpio_free(struct gpio_chip *chip, un=
-signed gpio)
- static void bcma_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(gc);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(gc);
- 	int gpio =3D irqd_to_hwirq(d);
- 	u32 val =3D bcma_chipco_gpio_in(cc, BIT(gpio));
-=20
-@@ -92,7 +87,7 @@ static void bcma_gpio_irq_unmask(struct irq_data *d)
- static void bcma_gpio_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
--	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(gc);
-+	struct bcma_drv_cc *cc =3D gpiochip_get_data(gc);
- 	int gpio =3D irqd_to_hwirq(d);
-=20
- 	bcma_chipco_gpio_intmask(cc, BIT(gpio), 0);
-@@ -216,7 +211,7 @@ int bcma_gpio_init(struct bcma_drv_cc *cc)
- 	else
- 		chip->base		=3D -1;
-=20
--	err =3D gpiochip_add(chip);
-+	err =3D gpiochip_add_data(chip, cc);
- 	if (err)
- 		return err;
-=20
---=20
-2.4.3
+I'm not sure that splitting up objects in this way really solves
+anything at all.  Yes, it divorses the driver's private data from
+the subsystem data, but is that really an advantage?
 
+Network drivers have a similar issue, and the way this problem is
+solved there is that alloc_netdev() is always used to allocate the
+subsystem data structure and any driver private data structure as
+one allocation, and the lifetime of both objects remains under the
+control of the subsystem.
+
+The allocated memory is only freed when the last user goes away,
+and net has protection to prevent an unregistered driver from
+being called (via locks on every path into the layer.)
+
+Things get a little more complex with gpio, because there's the
+issue that some methods are spinlocked while others can take
+semaphores, but it should be possible to come up with a solution
+to that - maybe an atomic_t which is incremented whenever we're
+in some operation provided it's >= 0 (otherwise it fails), and
+decremented when the operation completes.  We can then control
+in the unregistration path further GPIO accesses, and also
+prevent new accesses occuring by setting the atomic_t to -1.
+This shouldn't require any additional locking in any path.  It
+does mean that the unregistration path needs careful thought to
+ensure that when we set it to -1, we wait for it to be dropped
+by the appropriate amount.
+
+-- 
+RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
