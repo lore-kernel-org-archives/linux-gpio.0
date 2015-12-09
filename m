@@ -1,64 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Wed, 9 Dec 2015 16:11:30 +0100
-Message-ID: <CACRpkda7fRZ=CB=Ec2iHmA=u9w6T7-WH2RNVvxBS5jL8he77Tg@mail.gmail.com>
-References: <20151111194530.GA26559@dtor-ws>
-	<CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
-	<20151127173721.GC27040@dtor-ws>
+Subject: Re: [PATCH v2] pinctrl: mvebu: complain about missing group after
+ checking variant
+Date: Wed, 9 Dec 2015 16:15:52 +0100
+Message-ID: <CACRpkdYWzyeJNFJ8DzmsZ1rZ8w=ptkm4wGE4MgdGS=EcBzg1Rw@mail.gmail.com>
+References: <1448705645-13881-1-git-send-email-sebastian.hesselbarth@gmail.com>
+	<1448706409-16912-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151127173721.GC27040@dtor-ws>
+In-Reply-To: <1448706409-16912-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Simon Guinot <simon.guinot@sequanux.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Dmitry,
+On Sat, Nov 28, 2015 at 11:26 AM, Sebastian Hesselbarth
+<sebastian.hesselbarth@gmail.com> wrote:
 
-Sorry for me being so damned slow.
-
-On Fri, Nov 27, 2015 at 6:37 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Tue, Nov 17, 2015 at 02:43:14PM +0100, Linus Walleij wrote:
->> On Wed, Nov 11, 2015 at 8:45 PM, Dmitry Torokhov
->> <dmitry.torokhov@gmail.com> wrote:
->>
->> > We should not fall back to the legacy unnamed gpio lookup style if the
->> > driver requests gpios with different names, because we'll give out the same
->> > gpio twice. Let's keep track of the names that were used for the device and
->> > only do the fallback for the first name used.
->> >
->> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> > ---
->> >
->> > v1: incorporated changes suggested by Mika Westerberg in response to the
->> > draft patch I posted in Goodix thread.
->> >
->> > v2: moved acpi_can_fallback_to_crs body to drivers/gpio/gpiolib-acpi.c
->> > and provided stub for !CONFIG_ACPI case to fix build error if ACPI is
->> > disabled.
->>
->> Patch applied with Mika's ACK.
->>
->> Had to fuzz a bit to make it apply, hope nothing breaks.
+> Common MVEBU pinctrl driver core gets an array of controls to modify
+> a specific set of registers and an array of modes for each pingroup
+> from each of the different SoC families of MVEBU.
 >
-> Hmm, I'd like to get this patch into my tree as well to apply Irina's
-> goodix pieces on top to make sure they do not break. Would it be OK for
-> me to just apply the patch and hope git will sort it out when we merge
-> into next/mainline, you maybe you could prepare a 4.3-based branch with
-> the patch for me to pull?
+> Some SoC families comprise different variants that differ in available
+> pingroups and also controls, but to ease driver development, we can
+> pass a variant mask to disable specific pingroups for some variants.
+> However, controls are limited to the true number of pinctrl groups
+> avaiable on a variant.
+>
+> Now, when pinctrl core driver parses over above arrays, it tries to
+> match modes with available controls and complains about missing
+> controls for modes that are passed to the core but actually are not
+> avaiable on a variant with:
+>
+> kirkwood-pinctrl f1010000.pin-controller: unknown pinctrl group 36
+>
+> This warning is a false-positive and annoying, so move the warning
+> after we checked the variant mask for each mode setting. Also, if
+> there is no supported setting for this variant, do not complain at
+> all.
+>
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Reported-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Changelog:
+> v1->v2:
+> - modify settings loop to allow to check for !num_settings
 
-I had to fuzz the patch so then you need to get the version I applied out
-of my tree.
-
-But I'm not going to rebase the tree so you can pull commit
-9c3c9bc9cc980d8981f75109f3921576daf75723
-from the GPIO tree if you like. Or I can make a tag there if
-you prefer, just tell me.
-
-I'm stacking a loooot of GPIO patches on top, so I prefer not to have
-any conflicts.
+Patch applied!
 
 Yours,
 Linus Walleij
