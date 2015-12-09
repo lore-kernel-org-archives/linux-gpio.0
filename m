@@ -1,44 +1,39 @@
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH v1 0/8] This serial of patches add dts/pinctrl/clock-tree/doc for rk3228
-Date: Wed,  9 Dec 2015 17:04:05 +0800
-Message-ID: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: heiko@sntech.de, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org, Xing Zheng <zhengxing@rock-chips.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 1/2] gpio: pca953x: add onsemi,pca9654 id
+Date: Wed, 9 Dec 2015 09:33:47 +0000
+Message-ID: <5667F57B.6050206@codethink.co.uk>
+References: <1449569966-16816-1-git-send-email-ben.dooks@codethink.co.uk>
+ <1449569966-16816-2-git-send-email-ben.dooks@codethink.co.uk>
+ <CACRpkdYv4Hh09QK_wTqx_VNy=Bc1+Ai7==E4ZmCU1FWr8G7T3Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:34141 "EHLO
+	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753501AbbLIJdw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 04:33:52 -0500
+In-Reply-To: <CACRpkdYv4Hh09QK_wTqx_VNy=Bc1+Ai7==E4ZmCU1FWr8G7T3Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-platform, with these patches, my evb board could boot into initramfs.
+On 09/12/15 07:05, Linus Walleij wrote:
+> On Tue, Dec 8, 2015 at 11:19 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> 
+>> Add onsemi,pca9654 which is also compatible with the nxp,pca9524 as it
+>> is an 8bit expander with an interrupt output.
+>>
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> 
+> Patch applied.
+> 
+> Yours,
+> Linus Walleij
 
-
-Jeffy Chen (8):
-  pinctrl: rockchip: add support for the rk3228
-  clk: rockchip: add dt-binding header for rk3228
-  rockchip: add clock controller for rk3228
-  dt-bindings: add documentation of rk3228 clock controller
-  clk: rockchip: allow more than 2 parents for cpuclk
-  ARM: rockchip: enable support for RK3228 SoCs
-  ARM: dts: rockchip: add core rk3228 dtsi
-  ARM: dts: rockchip: add rk3228-evb board
-
- .../bindings/clock/rockchip,rk3228-cru.txt         |  58 ++
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   3 +-
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk3228-evb.dts                   |  56 ++
- arch/arm/boot/dts/rk3228.dtsi                      | 478 +++++++++++++
- arch/arm/mach-rockchip/rockchip.c                  |   1 +
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-cpu.c                     |   4 +-
- drivers/clk/rockchip/clk-rk3228.c                  | 762 +++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |  11 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |  53 ++
- include/dt-bindings/clock/rk3228-cru.h             | 220 ++++++
- 12 files changed, 1644 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
- create mode 100644 arch/arm/boot/dts/rk3228-evb.dts
- create mode 100644 arch/arm/boot/dts/rk3228.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk3228.c
- create mode 100644 include/dt-bindings/clock/rk3228-cru.h
+Thank you.
 
 -- 
-2.1.4
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
