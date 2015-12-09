@@ -1,71 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: pca953x: make inclusion of <linux/of_platform.h> unconditional
-Date: Wed,  9 Dec 2015 11:06:14 +0100
-Message-ID: <1449655574-6550-1-git-send-email-linus.walleij@linaro.org>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH RFT] gpio: ath79: Fix the logic to clear offset bit of
+ AR71XX_GPIO_REG_OE register
+Date: Wed, 9 Dec 2015 11:19:15 +0100
+Message-ID: <20151209111915.786d9dcf@avionic-0020>
+References: <1449586867.5555.1.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:34901 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962AbbLIKGU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 05:06:20 -0500
-Received: by lbpu9 with SMTP id u9so26699399lbp.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 02:06:18 -0800 (PST)
+Received: from smtp2-g21.free.fr ([212.27.42.2]:4708 "EHLO smtp2-g21.free.fr"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754358AbbLIKTY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 05:19:24 -0500
+In-Reply-To: <1449586867.5555.1.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben.dooks@codethink.co.uk>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alban <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-After adding the DT matching in
-commit 6f29c9afbe636fc0e35c82a11eaf45c3b85eb07a
-"gpio: pca935x: fix of-only probed devices"
-compilation fails like this:
+On Tue, 08 Dec 2015 23:01:07 +0800
+Axel Lin <axel.lin@ingics.com> wrote:
 
-CC [M]  drivers/gpio/gpio-pca953x.o
-gpio-pca953x.c: In function =E2=80=98pca953x_probe=E2=80=99:
-gpio-pca953x.c:693:11: error: implicit declaration of
-function =E2=80=98of_match_device=E2=80=99 [-Werror=3Dimplicit-function=
--declaration]
-match =3D of_match_device(pca953x_dt_ids, &client->dev);
-        ^
-gpio-pca953x.c:693:9: warning: assignment makes pointer from
-integer without a cast [-Wint-conversion]
-match =3D of_match_device(pca953x_dt_ids, &client->dev);
-        ^
-cc1: some warnings being treated as errors
-=2E./scripts/Makefile.build:264: recipe for target
-'drivers/gpio/gpio-pca953x.o' failed
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-After removing the conditional inclusion guards compilation
-works fine again. Might be a module problem so that
-fix.
+Acked-by: Alban Bedel <albeu@free.fr>
 
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-pca953x.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 14729657a112..2eaf235a39e5 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -18,9 +18,7 @@
- #include <linux/i2c.h>
- #include <linux/platform_data/pca953x.h>
- #include <linux/slab.h>
--#ifdef CONFIG_OF_GPIO
- #include <linux/of_platform.h>
--#endif
- #include <linux/acpi.h>
-=20
- #define PCA953X_INPUT		0
---=20
-2.4.3
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
+>  drivers/gpio/gpio-ath79.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+> index e5827a5..5eaea8b 100644
+> --- a/drivers/gpio/gpio-ath79.c
+> +++ b/drivers/gpio/gpio-ath79.c
+> @@ -113,7 +113,7 @@ static int ar934x_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+>  		__raw_writel(BIT(offset), ctrl->base + AR71XX_GPIO_REG_CLEAR);
+>  
+>  	__raw_writel(
+> -		__raw_readl(ctrl->base + AR71XX_GPIO_REG_OE) & BIT(offset),
+> +		__raw_readl(ctrl->base + AR71XX_GPIO_REG_OE) & ~BIT(offset),
+>  		ctrl->base + AR71XX_GPIO_REG_OE);
+>  
+>  	spin_unlock_irqrestore(&ctrl->lock, flags);
