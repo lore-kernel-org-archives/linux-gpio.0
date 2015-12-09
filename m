@@ -1,148 +1,36 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: [PATCH 153/182] bcma: gpio: use gpiochip data pointer
-Date: Wed, 9 Dec 2015 23:18:30 +0100
-Message-ID: <5668A8B6.5050700@hauke-m.de>
-References: <1449668633-5547-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/5] ARM: mediatek: Add MT2701 config options for mediatek SoCs.
+Date: Wed, 9 Dec 2015 23:44:36 +0100
+Message-ID: <CACRpkdYdJmb5vLmDmaRGt=0PGs3GzyPnqtEh3UJQ5euoxyg6Fg@mail.gmail.com>
+References: <1448527472-20651-1-git-send-email-biao.huang@mediatek.com>
+	<1448527472-20651-2-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hauke-m.de ([5.39.93.123]:42856 "EHLO hauke-m.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752822AbbLIWSe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Dec 2015 17:18:34 -0500
-In-Reply-To: <1449668633-5547-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1448527472-20651-2-git-send-email-biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Erin Lo <erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, zajec5@gmail.com, Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-wireless@vger.kernel.org
 
-On 12/09/2015 02:43 PM, Linus Walleij wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
->=20
-> Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
-> Cc: Hauke Mehrtens <hauke@hauke-m.de>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: linux-wireless@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> BCMA maintainers: please ACK this so I can take it through the
-> GPIO tree.
-> ---
+On Thu, Nov 26, 2015 at 9:44 AM, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
 
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+> From: Erin Lo <erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+>
+> The upcoming MTK pinctrl driver have a big pin table for each SoC
+> and we don't want to bloat the kernel binary if we don't need it.
+> Add config options so we can build for one SoC only. Add MT2701.
+>
+> Signed-off-by: Erin Lo <erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
->  drivers/bcma/driver_gpio.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/bcma/driver_gpio.c b/drivers/bcma/driver_gpio.c
-> index 949754427ce2..98067f757fb0 100644
-> --- a/drivers/bcma/driver_gpio.c
-> +++ b/drivers/bcma/driver_gpio.c
-> @@ -17,14 +17,9 @@
-> =20
->  #define BCMA_GPIO_MAX_PINS	32
-> =20
-> -static inline struct bcma_drv_cc *bcma_gpio_get_cc(struct gpio_chip =
-*chip)
-> -{
-> -	return container_of(chip, struct bcma_drv_cc, gpio);
-> -}
-> -
->  static int bcma_gpio_get_value(struct gpio_chip *chip, unsigned gpio=
-)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	return !!bcma_chipco_gpio_in(cc, 1 << gpio);
->  }
-> @@ -32,14 +27,14 @@ static int bcma_gpio_get_value(struct gpio_chip *=
-chip, unsigned gpio)
->  static void bcma_gpio_set_value(struct gpio_chip *chip, unsigned gpi=
-o,
->  				int value)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	bcma_chipco_gpio_out(cc, 1 << gpio, value ? 1 << gpio : 0);
->  }
-> =20
->  static int bcma_gpio_direction_input(struct gpio_chip *chip, unsigne=
-d gpio)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	bcma_chipco_gpio_outen(cc, 1 << gpio, 0);
->  	return 0;
-> @@ -48,7 +43,7 @@ static int bcma_gpio_direction_input(struct gpio_ch=
-ip *chip, unsigned gpio)
->  static int bcma_gpio_direction_output(struct gpio_chip *chip, unsign=
-ed gpio,
->  				      int value)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	bcma_chipco_gpio_outen(cc, 1 << gpio, 1 << gpio);
->  	bcma_chipco_gpio_out(cc, 1 << gpio, value ? 1 << gpio : 0);
-> @@ -57,7 +52,7 @@ static int bcma_gpio_direction_output(struct gpio_c=
-hip *chip, unsigned gpio,
-> =20
->  static int bcma_gpio_request(struct gpio_chip *chip, unsigned gpio)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	bcma_chipco_gpio_control(cc, 1 << gpio, 0);
->  	/* clear pulldown */
-> @@ -70,7 +65,7 @@ static int bcma_gpio_request(struct gpio_chip *chip=
-, unsigned gpio)
-> =20
->  static void bcma_gpio_free(struct gpio_chip *chip, unsigned gpio)
->  {
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(chip);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(chip);
-> =20
->  	/* clear pullup */
->  	bcma_chipco_gpio_pullup(cc, 1 << gpio, 0);
-> @@ -81,7 +76,7 @@ static void bcma_gpio_free(struct gpio_chip *chip, =
-unsigned gpio)
->  static void bcma_gpio_irq_unmask(struct irq_data *d)
->  {
->  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(gc);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(gc);
->  	int gpio =3D irqd_to_hwirq(d);
->  	u32 val =3D bcma_chipco_gpio_in(cc, BIT(gpio));
-> =20
-> @@ -92,7 +87,7 @@ static void bcma_gpio_irq_unmask(struct irq_data *d=
-)
->  static void bcma_gpio_irq_mask(struct irq_data *d)
->  {
->  	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> -	struct bcma_drv_cc *cc =3D bcma_gpio_get_cc(gc);
-> +	struct bcma_drv_cc *cc =3D gpiochip_get_data(gc);
->  	int gpio =3D irqd_to_hwirq(d);
-> =20
->  	bcma_chipco_gpio_intmask(cc, BIT(gpio), 0);
-> @@ -216,7 +211,7 @@ int bcma_gpio_init(struct bcma_drv_cc *cc)
->  	else
->  		chip->base		=3D -1;
-> =20
-> -	err =3D gpiochip_add(chip);
-> +	err =3D gpiochip_add_data(chip, cc);
->  	if (err)
->  		return err;
-> =20
->=20
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+FWIW, take this through the ARM SoC tree, since it's
+just a Kconfig symbol, the pin control patches
+should be possible to merge orthogonally.
 
+Yours,
+Linus Walleij
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
