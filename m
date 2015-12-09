@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 156/182] input: adp5589-keys: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:45:10 +0100
-Message-ID: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 157/182] input: ad7879: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:45:21 +0100
+Message-ID: <1449668721-5832-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:34747 "EHLO
-	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753029AbbLINpP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:45:15 -0500
-Received: by lffu14 with SMTP id u14so34564461lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:45:14 -0800 (PST)
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:35621 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753092AbbLINp0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:45:26 -0500
+Received: by lfdl133 with SMTP id l133so34375171lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:45:25 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -24,58 +24,58 @@ Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 Dmitry: please ACK this so I can take it through the GPIO tree.
 ---
- drivers/input/keyboard/adp5589-keys.c | 10 +++++-----
+ drivers/input/touchscreen/ad7879.c | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/input/keyboard/adp5589-keys.c b/drivers/input/keyboard/adp5589-keys.c
-index 4d446d5085aa..0b72345cf7b6 100644
---- a/drivers/input/keyboard/adp5589-keys.c
-+++ b/drivers/input/keyboard/adp5589-keys.c
-@@ -387,7 +387,7 @@ static int adp5589_write(struct i2c_client *client, u8 reg, u8 val)
- #ifdef CONFIG_GPIOLIB
- static int adp5589_gpio_get_value(struct gpio_chip *chip, unsigned off)
+diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
+index 16b5cc2196f2..583a0590ceb2 100644
+--- a/drivers/input/touchscreen/ad7879.c
++++ b/drivers/input/touchscreen/ad7879.c
+@@ -379,7 +379,7 @@ static const struct attribute_group ad7879_attr_group = {
+ static int ad7879_gpio_direction_input(struct gpio_chip *chip,
+ 					unsigned gpio)
  {
--	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
-+	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
- 	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
- 	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
++	struct ad7879 *ts = gpiochip_get_data(chip);
+ 	int err;
  
-@@ -399,7 +399,7 @@ static int adp5589_gpio_get_value(struct gpio_chip *chip, unsigned off)
- static void adp5589_gpio_set_value(struct gpio_chip *chip,
- 				   unsigned off, int val)
+ 	mutex_lock(&ts->mutex);
+@@ -393,7 +393,7 @@ static int ad7879_gpio_direction_input(struct gpio_chip *chip,
+ static int ad7879_gpio_direction_output(struct gpio_chip *chip,
+ 					unsigned gpio, int level)
  {
--	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
-+	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
- 	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
- 	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
++	struct ad7879 *ts = gpiochip_get_data(chip);
+ 	int err;
  
-@@ -418,7 +418,7 @@ static void adp5589_gpio_set_value(struct gpio_chip *chip,
+ 	mutex_lock(&ts->mutex);
+@@ -412,7 +412,7 @@ static int ad7879_gpio_direction_output(struct gpio_chip *chip,
  
- static int adp5589_gpio_direction_input(struct gpio_chip *chip, unsigned off)
+ static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
  {
--	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
-+	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
- 	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
- 	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
- 	int ret;
-@@ -438,7 +438,7 @@ static int adp5589_gpio_direction_input(struct gpio_chip *chip, unsigned off)
- static int adp5589_gpio_direction_output(struct gpio_chip *chip,
- 					 unsigned off, int val)
+-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
++	struct ad7879 *ts = gpiochip_get_data(chip);
+ 	u16 val;
+ 
+ 	mutex_lock(&ts->mutex);
+@@ -425,7 +425,7 @@ static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+ static void ad7879_gpio_set_value(struct gpio_chip *chip,
+ 				  unsigned gpio, int value)
  {
--	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
-+	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
- 	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
- 	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
- 	int ret;
-@@ -525,7 +525,7 @@ static int adp5589_gpio_add(struct adp5589_kpad *kpad)
+-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
++	struct ad7879 *ts = gpiochip_get_data(chip);
  
- 	mutex_init(&kpad->gpio_lock);
+ 	mutex_lock(&ts->mutex);
+ 	if (value)
+@@ -456,7 +456,7 @@ static int ad7879_gpio_add(struct ad7879 *ts,
+ 		ts->gc.owner = THIS_MODULE;
+ 		ts->gc.parent = ts->dev;
  
--	error = gpiochip_add(&kpad->gc);
-+	error = gpiochip_add_data(&kpad->gc, kpad);
- 	if (error) {
- 		dev_err(dev, "gpiochip_add failed, err: %d\n", error);
- 		return error;
+-		ret = gpiochip_add(&ts->gc);
++		ret = gpiochip_add_data(&ts->gc, ts);
+ 		if (ret)
+ 			dev_err(ts->dev, "failed to register gpio %d\n",
+ 				ts->gc.base);
 -- 
 2.4.3
 
