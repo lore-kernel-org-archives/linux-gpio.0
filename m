@@ -1,99 +1,71 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 166/182] mfd: tc6393xb: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:48:00 +0100
-Message-ID: <1449668880-6404-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 167/182] mfd: tps65010: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:48:09 +0100
+Message-ID: <1449668889-6451-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36026 "EHLO
-	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbbLINsF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:48:05 -0500
-Received: by lfs39 with SMTP id 39so34757095lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:48:04 -0800 (PST)
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:33069 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753092AbbLINsN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:48:13 -0500
+Received: by lfaz4 with SMTP id z4so34607428lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:48:12 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Baryshkov <dbaryshkov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
 Lee please ACK this so I can take it through the GPIO tree.
 ---
- drivers/mfd/tc6393xb.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/mfd/tps65010.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
-index 8c84a513016b..a5253f9a5089 100644
---- a/drivers/mfd/tc6393xb.c
-+++ b/drivers/mfd/tc6393xb.c
-@@ -24,7 +24,7 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mfd/tc6393xb.h>
+diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
+index b96847491277..1ffb8ebd7b2c 100644
+--- a/drivers/mfd/tps65010.c
++++ b/drivers/mfd/tps65010.c
+@@ -34,7 +34,7 @@
+ 
+ #include <linux/i2c/tps65010.h>
+ 
 -#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
- #include <linux/slab.h>
  
- #define SCR_REVID	0x08		/* b Revision ID	*/
-@@ -434,7 +434,7 @@ static struct mfd_cell tc6393xb_cells[] = {
- static int tc6393xb_gpio_get(struct gpio_chip *chip,
- 		unsigned offset)
- {
--	struct tc6393xb *tc6393xb = container_of(chip, struct tc6393xb, gpio);
-+	struct tc6393xb *tc6393xb = gpiochip_get_data(chip);
  
- 	/* XXX: does dsr also represent inputs? */
- 	return tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8))
-@@ -444,7 +444,7 @@ static int tc6393xb_gpio_get(struct gpio_chip *chip,
- static void __tc6393xb_gpio_set(struct gpio_chip *chip,
- 		unsigned offset, int value)
- {
--	struct tc6393xb *tc6393xb = container_of(chip, struct tc6393xb, gpio);
-+	struct tc6393xb *tc6393xb = gpiochip_get_data(chip);
- 	u8  dsr;
+ /*-------------------------------------------------------------------------*/
+@@ -477,7 +477,7 @@ tps65010_output(struct gpio_chip *chip, unsigned offset, int value)
+ 	if (offset < 4) {
+ 		struct tps65010		*tps;
  
- 	dsr = tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8));
-@@ -459,7 +459,7 @@ static void __tc6393xb_gpio_set(struct gpio_chip *chip,
- static void tc6393xb_gpio_set(struct gpio_chip *chip,
- 		unsigned offset, int value)
- {
--	struct tc6393xb *tc6393xb = container_of(chip, struct tc6393xb, gpio);
-+	struct tc6393xb *tc6393xb = gpiochip_get_data(chip);
- 	unsigned long flags;
+-		tps = container_of(chip, struct tps65010, chip);
++		tps = gpiochip_get_data(chip);
+ 		if (!(tps->outmask & (1 << offset)))
+ 			return -EINVAL;
+ 		tps65010_set_gpio_out_value(offset + 1, value);
+@@ -494,7 +494,7 @@ static int tps65010_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	int			value;
+ 	struct tps65010		*tps;
  
- 	spin_lock_irqsave(&tc6393xb->lock, flags);
-@@ -472,7 +472,7 @@ static void tc6393xb_gpio_set(struct gpio_chip *chip,
- static int tc6393xb_gpio_direction_input(struct gpio_chip *chip,
- 			unsigned offset)
- {
--	struct tc6393xb *tc6393xb = container_of(chip, struct tc6393xb, gpio);
-+	struct tc6393xb *tc6393xb = gpiochip_get_data(chip);
- 	unsigned long flags;
- 	u8 doecr;
+-	tps = container_of(chip, struct tps65010, chip);
++	tps = gpiochip_get_data(chip);
  
-@@ -490,7 +490,7 @@ static int tc6393xb_gpio_direction_input(struct gpio_chip *chip,
- static int tc6393xb_gpio_direction_output(struct gpio_chip *chip,
- 			unsigned offset, int value)
- {
--	struct tc6393xb *tc6393xb = container_of(chip, struct tc6393xb, gpio);
-+	struct tc6393xb *tc6393xb = gpiochip_get_data(chip);
- 	unsigned long flags;
- 	u8 doecr;
+ 	if (offset < 4) {
+ 		value = i2c_smbus_read_byte_data(tps->client, TPS_DEFGPIO);
+@@ -651,7 +651,7 @@ static int tps65010_probe(struct i2c_client *client,
+ 		tps->chip.ngpio = 7;
+ 		tps->chip.can_sleep = 1;
  
-@@ -517,7 +517,7 @@ static int tc6393xb_register_gpio(struct tc6393xb *tc6393xb, int gpio_base)
- 	tc6393xb->gpio.direction_input = tc6393xb_gpio_direction_input;
- 	tc6393xb->gpio.direction_output = tc6393xb_gpio_direction_output;
- 
--	return gpiochip_add(&tc6393xb->gpio);
-+	return gpiochip_add_data(&tc6393xb->gpio, tc6393xb);
- }
- 
- /*--------------------------------------------------------------------------*/
+-		status = gpiochip_add(&tps->chip);
++		status = gpiochip_add_data(&tps->chip, tps);
+ 		if (status < 0)
+ 			dev_err(&client->dev, "can't add gpiochip, err %d\n",
+ 					status);
 -- 
 2.4.3
 
