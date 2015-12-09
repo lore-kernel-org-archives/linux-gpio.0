@@ -1,39 +1,82 @@
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: Re: [PATCH 1/2] gpio: pca953x: add onsemi,pca9654 id
-Date: Wed, 9 Dec 2015 09:33:47 +0000
-Message-ID: <5667F57B.6050206@codethink.co.uk>
-References: <1449569966-16816-1-git-send-email-ben.dooks@codethink.co.uk>
- <1449569966-16816-2-git-send-email-ben.dooks@codethink.co.uk>
- <CACRpkdYv4Hh09QK_wTqx_VNy=Bc1+Ai7==E4ZmCU1FWr8G7T3Q@mail.gmail.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v3 2/9] Documentation: dt-bindings: Document STM32 pinctrl
+ driver DT bindings
+Date: Wed, 9 Dec 2015 10:37:40 +0100
+Message-ID: <CALszF6Ct5omDxbysmD=7MHYDT5-EowKH+L+sqSbp29R9tHfkdA@mail.gmail.com>
+References: <1449578711-6141-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1449578711-6141-3-git-send-email-mcoquelin.stm32@gmail.com>
+	<20151209034137.GA15954@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ducie-dc1.codethink.co.uk ([185.25.241.215]:34141 "EHLO
-	ducie-dc1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753501AbbLIJdw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 04:33:52 -0500
-In-Reply-To: <CACRpkdYv4Hh09QK_wTqx_VNy=Bc1+Ai7==E4ZmCU1FWr8G7T3Q@mail.gmail.com>
+Received: from mail-qg0-f41.google.com ([209.85.192.41]:35012 "EHLO
+	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752689AbbLIJhl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 04:37:41 -0500
+In-Reply-To: <20151209034137.GA15954@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On 09/12/15 07:05, Linus Walleij wrote:
-> On Tue, Dec 8, 2015 at 11:19 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> 
->> Add onsemi,pca9654 which is also compatible with the nxp,pca9524 as it
->> is an 8bit expander with an interrupt output.
+Hi Rob,
+
+2015-12-09 4:41 GMT+01:00 Rob Herring <robh@kernel.org>:
+> On Tue, Dec 08, 2015 at 01:45:04PM +0100, Maxime Coquelin wrote:
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> ---
+>>  .../bindings/pinctrl/st,stm32-pinctrl.txt          | 126 +++++++++++++++++++++
+>>  1 file changed, 126 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
 >>
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> 
-> Patch applied.
-> 
-> Yours,
-> Linus Walleij
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+>> new file mode 100644
+>> index 0000000..7b4800c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+>> @@ -0,0 +1,126 @@
+>> +* STM32 GPIO and Pin Mux/Config controller
+>> +
+>> +STMicroelectronics's STM32 MCUs intregrate a GPIO and Pin mux/config hardware
+>> +controller. It controls the input/output settings on the available pins and
+>> +also provides ability to multiplex and configure the output of various on-chip
+>> +controllers onto these pads.
+>> +
+>> +Pin controller node:
+>> +Required properies:
+>> + - compatible: value should be one of the following:
+>> +   (a) "st,stm32f429-pinctrl"
+>> + - #address-cells: The value of this property must be 1
+>> + - #size-cells       : The value of this property must be 1
+>> + - ranges    : defines mapping between pin controller node (parent) to
+>> +   gpio-bank node (children).
+>> + - pins-are-numbered: Specify the subnodes are using numbered pinmux to
+>> +   specify pins.
+>> +
+>> +GPIO controller/bank node:
+>> +Required properties:
+>> + - gpio-controller : Indicates this device is a GPIO controller
+>> + - #gpio-cells         : Should be two.
+>> +                     The first cell is the pin number
+>> +                     The second one is the polarity:
+>> +                             - 0 for active high
+>> +                             - 1 for active low
+>> + - reg                 : The gpio address range, relative to the pinctrl range
+>> + - clocks      : clock that drives this bank
+>> + - st,bank-name        : Should be a name string for this bank as specified in
+>> +   the datasheet
+>
+> How do you intend to use this? We should come up with something generic
+> or drop it.
+Good point.
+It is used to have a meaningful name set in gpio_chip's label.
+I see two alternatives:
+ 1. replace "st,bank-name" with label
+ 2. use aliases, and construct label in driver with something like:
+     kasprintf(GFP_KERNEL, "GPIO%c", 'A' + of_alias_get_id(np, "gpio"));
 
-Thank you.
+What do you prefer?
+Do you have other ideas?
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+Thanks,
+Maxime
