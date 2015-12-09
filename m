@@ -1,101 +1,90 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 172/182] staging: vme: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:50:05 +0100
-Message-ID: <1449669005-6835-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 173/182] serial: max310x: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:50:16 +0100
+Message-ID: <1449669016-6882-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:33107 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753131AbbLINuL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:11 -0500
-Received: by lfaz4 with SMTP id z4so34645969lfa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:09 -0800 (PST)
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:33684 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753131AbbLINuV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:21 -0500
+Received: by lbbkw15 with SMTP id kw15so30350515lbb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:20 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Martyn Welch <martyn@welchs.me.uk>, Manohar Vanga <manohar.vanga@gmail.com>, devel@driverdev.osuosl.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jiri Slaby <jslaby@suse.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Martyn Welch <martyn@welchs.me.uk>
-Cc: Manohar Vanga <manohar.vanga@gmail.com>
-Cc: devel@driverdev.osuosl.org
+Cc: Jiri Slaby <jslaby@suse.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Greg, please ACK this so I can take this through the GPIO tree.
+Greg, please ACK this so I can take it through the GPIO tree.
 ---
- drivers/staging/vme/devices/vme_pio2_gpio.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/tty/serial/max310x.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/vme/devices/vme_pio2_gpio.c b/drivers/staging/vme/devices/vme_pio2_gpio.c
-index 77901b345a71..a2b740ab7ffe 100644
---- a/drivers/staging/vme/devices/vme_pio2_gpio.c
-+++ b/drivers/staging/vme/devices/vme_pio2_gpio.c
+diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
+index 3f98165b479c..3f6e0ab725fe 100644
+--- a/drivers/tty/serial/max310x.c
++++ b/drivers/tty/serial/max310x.c
 @@ -17,7 +17,7 @@
+ #include <linux/clk.h>
+ #include <linux/delay.h>
  #include <linux/device.h>
- #include <linux/platform_device.h>
- #include <linux/ctype.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
- #include <linux/slab.h>
- #include <linux/vme.h>
- 
-@@ -25,16 +25,11 @@
- 
- static const char driver_name[] = "pio2_gpio";
- 
--static struct pio2_card *gpio_to_pio2_card(struct gpio_chip *chip)
--{
--	return container_of(chip, struct pio2_card, gc);
--}
--
- static int pio2_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -1036,7 +1036,7 @@ static SIMPLE_DEV_PM_OPS(max310x_pm_ops, max310x_suspend, max310x_resume);
+ static int max310x_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
- 	u8 reg;
- 	int retval;
--	struct pio2_card *card = gpio_to_pio2_card(chip);
-+	struct pio2_card *card = gpiochip_get_data(chip);
+ 	unsigned int val;
+-	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
++	struct max310x_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[offset / 4].port;
  
- 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
- 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
-@@ -72,7 +67,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	val = max310x_port_read(port, MAX310X_GPIODATA_REG);
+@@ -1046,7 +1046,7 @@ static int max310x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 
+ static void max310x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
- 	u8 reg;
- 	int retval;
--	struct pio2_card *card = gpio_to_pio2_card(chip);
-+	struct pio2_card *card = gpiochip_get_data(chip);
+-	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
++	struct max310x_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[offset / 4].port;
  
- 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
- 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
-@@ -102,7 +97,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
- static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+ 	max310x_port_update(port, MAX310X_GPIODATA_REG, 1 << (offset % 4),
+@@ -1055,7 +1055,7 @@ static void max310x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ static int max310x_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
  {
- 	int data;
--	struct pio2_card *card = gpio_to_pio2_card(chip);
-+	struct pio2_card *card = gpiochip_get_data(chip);
+-	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
++	struct max310x_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[offset / 4].port;
  
- 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
- 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
-@@ -121,7 +116,7 @@ static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
- static int pio2_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
+ 	max310x_port_update(port, MAX310X_GPIOCFG_REG, 1 << (offset % 4), 0);
+@@ -1066,7 +1066,7 @@ static int max310x_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ static int max310x_gpio_direction_output(struct gpio_chip *chip,
+ 					 unsigned offset, int value)
  {
- 	int data;
--	struct pio2_card *card = gpio_to_pio2_card(chip);
-+	struct pio2_card *card = gpiochip_get_data(chip);
+-	struct max310x_port *s = container_of(chip, struct max310x_port, gpio);
++	struct max310x_port *s = gpiochip_get_data(chip);
+ 	struct uart_port *port = &s->p[offset / 4].port;
  
- 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
- 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
-@@ -207,7 +202,7 @@ int pio2_gpio_init(struct pio2_card *card)
- 	card->gc.set = pio2_gpio_set;
- 
- 	/* This function adds a memory mapped GPIO chip */
--	retval = gpiochip_add(&(card->gc));
-+	retval = gpiochip_add_data(&(card->gc), card);
- 	if (retval) {
- 		dev_err(&card->vdev->dev, "Unable to register GPIO\n");
- 		kfree(card->gc.label);
+ 	max310x_port_update(port, MAX310X_GPIODATA_REG, 1 << (offset % 4),
+@@ -1183,7 +1183,7 @@ static int max310x_probe(struct device *dev, struct max310x_devtype *devtype,
+ 	s->gpio.base		= -1;
+ 	s->gpio.ngpio		= devtype->nr * 4;
+ 	s->gpio.can_sleep	= 1;
+-	ret = gpiochip_add(&s->gpio);
++	ret = gpiochip_add_data(&s->gpio, s);
+ 	if (ret)
+ 		goto out_uart;
+ #endif
 -- 
 2.4.3
 
