@@ -1,79 +1,153 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 113/182] pinctrl: sunxi: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:33:19 +0100
-Message-ID: <1449667999-3152-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 115/182] pinctrl: sirf-atlas7: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:33:33 +0100
+Message-ID: <1449668013-3246-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f181.google.com ([209.85.217.181]:33673 "EHLO
-	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754451AbbLINdX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:33:23 -0500
-Received: by lbbkw15 with SMTP id kw15so30058776lbb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:33:22 -0800 (PST)
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:33974 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754451AbbLINdi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:33:38 -0500
+Received: by lbbcs9 with SMTP id cs9so29982143lbb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:33:36 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Barry Song <baohua@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index a437e4f8628b..a1b672cbb8e0 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -12,7 +12,7 @@
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 1850dc1b3863..3a95ffdbaa72 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -355,11 +355,6 @@ struct atlas7_gpio_chip {
+ 	struct atlas7_gpio_bank banks[0];
+ };
  
- #include <linux/io.h>
- #include <linux/clk.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/module.h>
-@@ -454,7 +454,7 @@ static int sunxi_pinctrl_gpio_direction_input(struct gpio_chip *chip,
- 
- static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
+-static inline struct atlas7_gpio_chip *to_atlas7_gpio(struct gpio_chip *gc)
+-{
+-	return container_of(gc, struct atlas7_gpio_chip, chip);
+-}
+-
+ /**
+  * @dev: a pointer back to containing device
+  * @virtbase: the offset to the controller in virtual memory
+@@ -5600,7 +5595,7 @@ static int __atlas7_gpio_to_pin(struct atlas7_gpio_chip *a7gc, u32 gpio)
+ static void atlas7_gpio_irq_ack(struct irq_data *d)
  {
--	struct sunxi_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
- 	u32 reg = sunxi_data_reg(offset);
- 	u8 index = sunxi_data_offset(offset);
- 	u32 set_mux = pctl->desc->irq_read_needs_mux &&
-@@ -475,7 +475,7 @@ static int sunxi_pinctrl_gpio_get(struct gpio_chip *chip, unsigned offset)
- static void sunxi_pinctrl_gpio_set(struct gpio_chip *chip,
- 				unsigned offset, int value)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
+ 	struct atlas7_gpio_bank *bank;
+ 	void __iomem *ctrl_reg;
+ 	u32 val, pin_in_bank;
+@@ -5638,7 +5633,7 @@ static void __atlas7_gpio_irq_mask(struct atlas7_gpio_chip *a7gc, int idx)
+ static void atlas7_gpio_irq_mask(struct irq_data *d)
  {
--	struct sunxi_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
- 	u32 reg = sunxi_data_reg(offset);
- 	u8 index = sunxi_data_offset(offset);
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
  	unsigned long flags;
-@@ -522,7 +522,7 @@ static int sunxi_pinctrl_gpio_of_xlate(struct gpio_chip *gc,
  
- static int sunxi_pinctrl_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ 	spin_lock_irqsave(&a7gc->lock, flags);
+@@ -5651,7 +5646,7 @@ static void atlas7_gpio_irq_mask(struct irq_data *d)
+ static void atlas7_gpio_irq_unmask(struct irq_data *d)
  {
--	struct sunxi_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
- 	struct sunxi_desc_function *desc;
- 	unsigned pinnum = pctl->desc->pin_base + offset;
- 	unsigned irqnum;
-@@ -962,7 +962,7 @@ int sunxi_pinctrl_init(struct platform_device *pdev,
- 	pctl->chip->parent = &pdev->dev;
- 	pctl->chip->base = pctl->desc->pin_base;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
+ 	struct atlas7_gpio_bank *bank;
+ 	void __iomem *ctrl_reg;
+ 	u32 val, pin_in_bank;
+@@ -5675,7 +5670,7 @@ static int atlas7_gpio_irq_type(struct irq_data *d,
+ 				unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
+ 	struct atlas7_gpio_bank *bank;
+ 	void __iomem *ctrl_reg;
+ 	u32 val, pin_in_bank;
+@@ -5744,7 +5739,7 @@ static struct irq_chip atlas7_gpio_irq_chip = {
+ static void atlas7_gpio_handle_irq(struct irq_desc *desc)
+ {
+ 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(gc);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
+ 	struct atlas7_gpio_bank *bank = NULL;
+ 	u32 status, ctrl;
+ 	int pin_in_bank = 0, idx;
+@@ -5812,7 +5807,7 @@ static void __atlas7_gpio_set_input(struct atlas7_gpio_chip *a7gc,
+ static int atlas7_gpio_request(struct gpio_chip *chip,
+ 				unsigned int gpio)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	int ret;
+ 	unsigned long flags;
  
--	ret = gpiochip_add(pctl->chip);
-+	ret = gpiochip_add_data(pctl->chip, pctl);
- 	if (ret)
- 		goto pinctrl_error;
+@@ -5840,7 +5835,7 @@ static int atlas7_gpio_request(struct gpio_chip *chip,
+ static void atlas7_gpio_free(struct gpio_chip *chip,
+ 				unsigned int gpio)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
  
+ 	spin_lock_irqsave(&a7gc->lock, flags);
+@@ -5856,7 +5851,7 @@ static void atlas7_gpio_free(struct gpio_chip *chip,
+ static int atlas7_gpio_direction_input(struct gpio_chip *chip,
+ 					unsigned int gpio)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&a7gc->lock, flags);
+@@ -5893,7 +5888,7 @@ static void __atlas7_gpio_set_output(struct atlas7_gpio_chip *a7gc,
+ static int atlas7_gpio_direction_output(struct gpio_chip *chip,
+ 				unsigned int gpio, int value)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&a7gc->lock, flags);
+@@ -5908,7 +5903,7 @@ static int atlas7_gpio_direction_output(struct gpio_chip *chip,
+ static int atlas7_gpio_get_value(struct gpio_chip *chip,
+ 					unsigned int gpio)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	struct atlas7_gpio_bank *bank;
+ 	u32 val, pin_in_bank;
+ 	unsigned long flags;
+@@ -5928,7 +5923,7 @@ static int atlas7_gpio_get_value(struct gpio_chip *chip,
+ static void atlas7_gpio_set_value(struct gpio_chip *chip,
+ 				unsigned int gpio, int value)
+ {
+-	struct atlas7_gpio_chip *a7gc = to_atlas7_gpio(chip);
++	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	struct atlas7_gpio_bank *bank;
+ 	void __iomem *ctrl_reg;
+ 	u32 ctrl, pin_in_bank;
+@@ -6015,7 +6010,7 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 	chip->parent = &pdev->dev;
+ 
+ 	/* Add gpio chip to system */
+-	ret = gpiochip_add(chip);
++	ret = gpiochip_add_data(chip, a7gc);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 		"%s: error in probe function with status %d\n",
 -- 
 2.4.3
 
