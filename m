@@ -1,94 +1,134 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 064/182] gpio: syscon: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:23:22 +0100
-Message-ID: <1449667402-349-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 063/182] gpio: sx150x: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:23:14 +0100
+Message-ID: <1449667394-32767-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:35932 "EHLO
-	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585AbbLINX1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:27 -0500
-Received: by lfs39 with SMTP id 39so34275712lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:25 -0800 (PST)
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:34906 "EHLO
+	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585AbbLINXT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:19 -0500
+Received: by lfdl133 with SMTP id l133so33946473lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:18 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Chen <Wei.Chen@csr.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Alexander Shiyan <shc_work@mail.ru>
+Cc: Wei Chen <Wei.Chen@csr.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-syscon.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-sx150x.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index cd6afee11f84..15efe7119efb 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -59,14 +59,9 @@ struct syscon_gpio_priv {
- 	u32				dir_reg_offset;
+diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
+index cf12d8e3ce3e..43bc4406d4f6 100644
+--- a/drivers/gpio/gpio-sx150x.c
++++ b/drivers/gpio/gpio-sx150x.c
+@@ -160,11 +160,6 @@ static const struct of_device_id sx150x_of_match[] = {
  };
+ MODULE_DEVICE_TABLE(of, sx150x_of_match);
  
--static inline struct syscon_gpio_priv *to_syscon_gpio(struct gpio_chip *chip)
+-struct sx150x_chip *to_sx150x(struct gpio_chip *gc)
 -{
--	return container_of(chip, struct syscon_gpio_priv, chip);
+-	return container_of(gc, struct sx150x_chip, gpio_chip);
 -}
 -
- static int syscon_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static s32 sx150x_i2c_write(struct i2c_client *client, u8 reg, u8 val)
  {
--	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
- 	unsigned int val, offs;
- 	int ret;
+ 	s32 err = i2c_smbus_write_byte_data(client, reg, val);
+@@ -301,7 +296,7 @@ static int sx150x_io_output(struct sx150x_chip *chip, unsigned offset, int val)
  
-@@ -82,7 +77,7 @@ static int syscon_gpio_get(struct gpio_chip *chip, unsigned offset)
- 
- static void syscon_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ static int sx150x_gpio_get(struct gpio_chip *gc, unsigned offset)
  {
--	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
- 	unsigned int offs;
+-	struct sx150x_chip *chip = to_sx150x(gc);
++	struct sx150x_chip *chip = gpiochip_get_data(gc);
+ 	int status = -EINVAL;
  
- 	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
-@@ -95,7 +90,7 @@ static void syscon_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 	if (!offset_is_oscio(chip, offset)) {
+@@ -315,7 +310,7 @@ static int sx150x_gpio_get(struct gpio_chip *gc, unsigned offset)
  
- static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+ static void sx150x_gpio_set(struct gpio_chip *gc, unsigned offset, int val)
  {
--	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
+-	struct sx150x_chip *chip = to_sx150x(gc);
++	struct sx150x_chip *chip = gpiochip_get_data(gc);
  
- 	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
- 		unsigned int offs;
-@@ -113,7 +108,7 @@ static int syscon_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+ 	mutex_lock(&chip->lock);
+ 	if (offset_is_oscio(chip, offset))
+@@ -327,7 +322,7 @@ static void sx150x_gpio_set(struct gpio_chip *gc, unsigned offset, int val)
  
- static int syscon_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int val)
+ static int sx150x_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
  {
--	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
+-	struct sx150x_chip *chip = to_sx150x(gc);
++	struct sx150x_chip *chip = gpiochip_get_data(gc);
+ 	int status = -EINVAL;
  
- 	if (priv->data->flags & GPIO_SYSCON_FEAT_DIR) {
- 		unsigned int offs;
-@@ -144,7 +139,7 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
- 
- static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ 	if (!offset_is_oscio(chip, offset)) {
+@@ -342,7 +337,7 @@ static int sx150x_gpio_direction_output(struct gpio_chip *gc,
+ 					unsigned offset,
+ 					int val)
  {
--	struct syscon_gpio_priv *priv = to_syscon_gpio(chip);
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
- 	unsigned int offs;
- 	int ret;
+-	struct sx150x_chip *chip = to_sx150x(gc);
++	struct sx150x_chip *chip = gpiochip_get_data(gc);
+ 	int status = 0;
  
-@@ -239,7 +234,7 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	if (!offset_is_oscio(chip, offset)) {
+@@ -355,7 +350,7 @@ static int sx150x_gpio_direction_output(struct gpio_chip *gc,
  
- 	platform_set_drvdata(pdev, priv);
+ static void sx150x_irq_mask(struct irq_data *d)
+ {
+-	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
++	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	unsigned n = d->hwirq;
  
--	return gpiochip_add(&priv->chip);
-+	return gpiochip_add_data(&priv->chip, priv);
+ 	chip->irq_masked |= (1 << n);
+@@ -364,7 +359,7 @@ static void sx150x_irq_mask(struct irq_data *d)
+ 
+ static void sx150x_irq_unmask(struct irq_data *d)
+ {
+-	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
++	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	unsigned n = d->hwirq;
+ 
+ 	chip->irq_masked &= ~(1 << n);
+@@ -373,7 +368,7 @@ static void sx150x_irq_unmask(struct irq_data *d)
+ 
+ static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
+ {
+-	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
++	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	unsigned n, val = 0;
+ 
+ 	if (flow_type & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
+@@ -428,14 +423,14 @@ static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
+ 
+ static void sx150x_irq_bus_lock(struct irq_data *d)
+ {
+-	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
++	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 
+ 	mutex_lock(&chip->lock);
  }
  
- static int syscon_gpio_remove(struct platform_device *pdev)
+ static void sx150x_irq_bus_sync_unlock(struct irq_data *d)
+ {
+-	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
++	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	unsigned n;
+ 
+ 	if (chip->irq_update == NO_UPDATE_PENDING)
+@@ -647,7 +642,7 @@ static int sx150x_probe(struct i2c_client *client,
+ 	if (rc < 0)
+ 		return rc;
+ 
+-	rc = gpiochip_add(&chip->gpio_chip);
++	rc = gpiochip_add_data(&chip->gpio_chip, chip);
+ 	if (rc)
+ 		return rc;
+ 
 -- 
 2.4.3
 
