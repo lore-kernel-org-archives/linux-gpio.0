@@ -1,149 +1,99 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 018/182] gpio: crystalcove: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:15:11 +0100
-Message-ID: <1449666911-30596-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 020/182] gpio: da9052: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:15:28 +0100
+Message-ID: <1449666928-30690-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33588 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751617AbbLINPS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:15:18 -0500
-Received: by lfaz4 with SMTP id z4so33961747lfa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:15:16 -0800 (PST)
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33997 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751617AbbLINPc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:15:32 -0500
+Received: by lffu14 with SMTP id u14so33985125lff.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:15:31 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Shobhit Kumar <shobhit.kumar@intel.com>, "Zhu, Lejun" <lejun.zhu@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Ashish Jangam <ashish.jangam@kpitcummins.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Shobhit Kumar <shobhit.kumar@intel.com>
-Cc: Zhu, Lejun <lejun.zhu@linux.intel.com>
+Cc: Ashish Jangam <ashish.jangam@kpitcummins.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-crystalcove.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-da9052.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
-index 141093a8cd3f..7865ef0d3352 100644
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -86,11 +86,6 @@ struct crystalcove_gpio {
- 	bool set_irq_mask;
+diff --git a/drivers/gpio/gpio-da9052.c b/drivers/gpio/gpio-da9052.c
+index 2e9578ec0ca1..b9fba2156216 100644
+--- a/drivers/gpio/gpio-da9052.c
++++ b/drivers/gpio/gpio-da9052.c
+@@ -51,11 +51,6 @@ struct da9052_gpio {
+ 	struct gpio_chip gp;
  };
  
--static inline struct crystalcove_gpio *to_cg(struct gpio_chip *gc)
+-static inline struct da9052_gpio *to_da9052_gpio(struct gpio_chip *chip)
 -{
--	return container_of(gc, struct crystalcove_gpio, chip);
+-	return container_of(chip, struct da9052_gpio, gp);
 -}
 -
- static inline int to_reg(int gpio, enum ctrl_register reg_type)
+ static unsigned char da9052_gpio_port_odd(unsigned offset)
  {
- 	int reg;
-@@ -134,7 +129,7 @@ static void crystalcove_update_irq_ctrl(struct crystalcove_gpio *cg, int gpio)
+ 	return offset % 2;
+@@ -63,7 +58,7 @@ static unsigned char da9052_gpio_port_odd(unsigned offset)
  
- static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
+ static int da9052_gpio_get(struct gpio_chip *gc, unsigned offset)
  {
--	struct crystalcove_gpio *cg = to_cg(chip);
-+	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 
- 	if (gpio > CRYSTALCOVE_VGPIO_NUM)
- 		return 0;
-@@ -146,7 +141,7 @@ static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
- static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
- 				    int value)
- {
--	struct crystalcove_gpio *cg = to_cg(chip);
-+	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 
- 	if (gpio > CRYSTALCOVE_VGPIO_NUM)
- 		return 0;
-@@ -157,7 +152,7 @@ static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
- 
- static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
--	struct crystalcove_gpio *cg = to_cg(chip);
-+	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
+-	struct da9052_gpio *gpio = to_da9052_gpio(gc);
++	struct da9052_gpio *gpio = gpiochip_get_data(gc);
+ 	int da9052_port_direction = 0;
  	int ret;
- 	unsigned int val;
  
-@@ -174,7 +169,7 @@ static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
- static void crystalcove_gpio_set(struct gpio_chip *chip,
- 				 unsigned gpio, int value)
+@@ -105,7 +100,7 @@ static int da9052_gpio_get(struct gpio_chip *gc, unsigned offset)
+ 
+ static void da9052_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
  {
--	struct crystalcove_gpio *cg = to_cg(chip);
-+	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
+-	struct da9052_gpio *gpio = to_da9052_gpio(gc);
++	struct da9052_gpio *gpio = gpiochip_get_data(gc);
+ 	int ret;
  
- 	if (gpio > CRYSTALCOVE_VGPIO_NUM)
- 		return;
-@@ -187,7 +182,8 @@ static void crystalcove_gpio_set(struct gpio_chip *chip,
+ 	if (da9052_gpio_port_odd(offset)) {
+@@ -131,7 +126,7 @@ static void da9052_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
  
- static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+ static int da9052_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
  {
--	struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
-+	struct crystalcove_gpio *cg =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+-	struct da9052_gpio *gpio = to_da9052_gpio(gc);
++	struct da9052_gpio *gpio = gpiochip_get_data(gc);
+ 	unsigned char register_value;
+ 	int ret;
  
- 	switch (type) {
- 	case IRQ_TYPE_NONE:
-@@ -213,14 +209,16 @@ static int crystalcove_irq_type(struct irq_data *data, unsigned type)
- 
- static void crystalcove_bus_lock(struct irq_data *data)
+@@ -157,7 +152,7 @@ static int da9052_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+ static int da9052_gpio_direction_output(struct gpio_chip *gc,
+ 					unsigned offset, int value)
  {
--	struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
-+	struct crystalcove_gpio *cg =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+-	struct da9052_gpio *gpio = to_da9052_gpio(gc);
++	struct da9052_gpio *gpio = gpiochip_get_data(gc);
+ 	unsigned char register_value;
+ 	int ret;
  
- 	mutex_lock(&cg->buslock);
- }
+@@ -182,7 +177,7 @@ static int da9052_gpio_direction_output(struct gpio_chip *gc,
  
- static void crystalcove_bus_sync_unlock(struct irq_data *data)
+ static int da9052_gpio_to_irq(struct gpio_chip *gc, u32 offset)
  {
--	struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
-+	struct crystalcove_gpio *cg =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 	int gpio = data->hwirq;
+-	struct da9052_gpio *gpio = to_da9052_gpio(gc);
++	struct da9052_gpio *gpio = gpiochip_get_data(gc);
+ 	struct da9052 *da9052 = gpio->da9052;
  
- 	if (cg->update & UPDATE_IRQ_TYPE)
-@@ -234,7 +232,8 @@ static void crystalcove_bus_sync_unlock(struct irq_data *data)
+ 	int irq;
+@@ -222,7 +217,7 @@ static int da9052_gpio_probe(struct platform_device *pdev)
+ 	if (pdata && pdata->gpio_base)
+ 		gpio->gp.base = pdata->gpio_base;
  
- static void crystalcove_irq_unmask(struct irq_data *data)
- {
--	struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
-+	struct crystalcove_gpio *cg =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
- 	cg->set_irq_mask = false;
- 	cg->update |= UPDATE_IRQ_MASK;
-@@ -242,7 +241,8 @@ static void crystalcove_irq_unmask(struct irq_data *data)
- 
- static void crystalcove_irq_mask(struct irq_data *data)
- {
--	struct crystalcove_gpio *cg = to_cg(irq_data_get_irq_chip_data(data));
-+	struct crystalcove_gpio *cg =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
- 	cg->set_irq_mask = true;
- 	cg->update |= UPDATE_IRQ_MASK;
-@@ -288,7 +288,7 @@ static irqreturn_t crystalcove_gpio_irq_handler(int irq, void *data)
- static void crystalcove_gpio_dbg_show(struct seq_file *s,
- 				      struct gpio_chip *chip)
- {
--	struct crystalcove_gpio *cg = to_cg(chip);
-+	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
- 	int gpio, offset;
- 	unsigned int ctlo, ctli, mirqs0, mirqsx, irq;
- 
-@@ -345,7 +345,7 @@ static int crystalcove_gpio_probe(struct platform_device *pdev)
- 	cg->chip.dbg_show = crystalcove_gpio_dbg_show;
- 	cg->regmap = pmic->regmap;
- 
--	retval = gpiochip_add(&cg->chip);
-+	retval = gpiochip_add_data(&cg->chip, cg);
- 	if (retval) {
- 		dev_warn(&pdev->dev, "add gpio chip error: %d\n", retval);
- 		return retval;
+-	ret = gpiochip_add(&gpio->gp);
++	ret = gpiochip_add_data(&gpio->gp, gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
 -- 
 2.4.3
 
