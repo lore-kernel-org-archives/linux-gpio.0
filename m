@@ -1,94 +1,131 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 073/182] gpio: tz1090-pdc: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:27:00 +0100
-Message-ID: <1449667620-870-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 077/182] gpio: viperboard: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:27:30 +0100
+Message-ID: <1449667650-1062-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34848 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753942AbbLIN1F (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:27:05 -0500
-Received: by lfdl133 with SMTP id l133so34016818lfd.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:27:03 -0800 (PST)
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:32924 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753754AbbLIN1f (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:27:35 -0500
+Received: by lbbkw15 with SMTP id kw15so29960102lbb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:27:33 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, James Hogan <james.hogan@imgtec.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars Poeschel <poeschel@lemonage.de>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: James Hogan <james.hogan@imgtec.com>
+Cc: Lars Poeschel <poeschel@lemonage.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-tz1090-pdc.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-viperboard.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tz1090-pdc.c b/drivers/gpio/gpio-tz1090-pdc.c
-index a974397164b2..c182342297ac 100644
---- a/drivers/gpio/gpio-tz1090-pdc.c
-+++ b/drivers/gpio/gpio-tz1090-pdc.c
-@@ -49,7 +49,6 @@ struct tz1090_pdc_gpio {
- 	void __iomem *reg;
- 	int irq[GPIO_PDC_NIRQ];
- };
--#define to_pdc(c)	container_of(c, struct tz1090_pdc_gpio, chip)
- 
- /* Register accesses into the PDC MMIO area */
- 
-@@ -70,7 +69,7 @@ static inline unsigned int pdc_read(struct tz1090_pdc_gpio *priv,
- static int tz1090_pdc_gpio_direction_input(struct gpio_chip *chip,
- 					   unsigned int offset)
+diff --git a/drivers/gpio/gpio-viperboard.c b/drivers/gpio/gpio-viperboard.c
+index 26e7edb74f42..023496d62b87 100644
+--- a/drivers/gpio/gpio-viperboard.c
++++ b/drivers/gpio/gpio-viperboard.c
+@@ -88,8 +88,7 @@ static int vprbrd_gpioa_get(struct gpio_chip *chip,
+ 		unsigned offset)
  {
--	struct tz1090_pdc_gpio *priv = to_pdc(chip);
-+	struct tz1090_pdc_gpio *priv = gpiochip_get_data(chip);
- 	u32 value;
- 	int lstat;
+ 	int ret, answer, error = 0;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpioa);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpioa_msg *gamsg = (struct vprbrd_gpioa_msg *)vb->buf;
  
-@@ -87,7 +86,7 @@ static int tz1090_pdc_gpio_direction_output(struct gpio_chip *chip,
- 					    unsigned int offset,
- 					    int output_value)
+@@ -139,8 +138,7 @@ static void vprbrd_gpioa_set(struct gpio_chip *chip,
+ 		unsigned offset, int value)
  {
--	struct tz1090_pdc_gpio *priv = to_pdc(chip);
-+	struct tz1090_pdc_gpio *priv = gpiochip_get_data(chip);
- 	u32 value;
- 	int lstat;
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpioa);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpioa_msg *gamsg = (struct vprbrd_gpioa_msg *)vb->buf;
  
-@@ -112,14 +111,14 @@ static int tz1090_pdc_gpio_direction_output(struct gpio_chip *chip,
- 
- static int tz1090_pdc_gpio_get(struct gpio_chip *chip, unsigned int offset)
+@@ -181,8 +179,7 @@ static int vprbrd_gpioa_direction_input(struct gpio_chip *chip,
+ 			unsigned offset)
  {
--	struct tz1090_pdc_gpio *priv = to_pdc(chip);
-+	struct tz1090_pdc_gpio *priv = gpiochip_get_data(chip);
- 	return pdc_read(priv, REG_SOC_GPIO_STATUS) & BIT(offset);
- }
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpioa);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpioa_msg *gamsg = (struct vprbrd_gpioa_msg *)vb->buf;
  
- static void tz1090_pdc_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 				int output_value)
+@@ -219,8 +216,7 @@ static int vprbrd_gpioa_direction_output(struct gpio_chip *chip,
+ 			unsigned offset, int value)
  {
--	struct tz1090_pdc_gpio *priv = to_pdc(chip);
-+	struct tz1090_pdc_gpio *priv = gpiochip_get_data(chip);
- 	u32 value;
- 	int lstat;
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpioa);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpioa_msg *gamsg = (struct vprbrd_gpioa_msg *)vb->buf;
  
-@@ -139,7 +138,7 @@ static void tz1090_pdc_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 
- static int tz1090_pdc_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+@@ -287,8 +283,7 @@ static int vprbrd_gpiob_get(struct gpio_chip *chip,
  {
--	struct tz1090_pdc_gpio *priv = to_pdc(chip);
-+	struct tz1090_pdc_gpio *priv = gpiochip_get_data(chip);
- 	unsigned int syswake = offset - GPIO_PDC_IRQ_FIRST;
- 	int irq;
+ 	int ret;
+ 	u16 val;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpiob);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpiob_msg *gbmsg = (struct vprbrd_gpiob_msg *)vb->buf;
  
-@@ -207,7 +206,7 @@ static int tz1090_pdc_gpio_probe(struct platform_device *pdev)
- 		priv->irq[i] = irq_of_parse_and_map(np, i);
+@@ -319,8 +314,7 @@ static void vprbrd_gpiob_set(struct gpio_chip *chip,
+ 		unsigned offset, int value)
+ {
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpiob);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 	struct vprbrd_gpiob_msg *gbmsg = (struct vprbrd_gpiob_msg *)vb->buf;
  
- 	/* Add the GPIO bank */
--	gpiochip_add(&priv->chip);
-+	gpiochip_add_data(&priv->chip, priv);
+@@ -353,8 +347,7 @@ static int vprbrd_gpiob_direction_input(struct gpio_chip *chip,
+ 			unsigned offset)
+ {
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpiob);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
  
- 	return 0;
- }
+ 	gpio->gpiob_out &= ~(1 << offset);
+@@ -375,8 +368,7 @@ static int vprbrd_gpiob_direction_output(struct gpio_chip *chip,
+ 			unsigned offset, int value)
+ {
+ 	int ret;
+-	struct vprbrd_gpio *gpio =
+-			container_of(chip, struct vprbrd_gpio, gpiob);
++	struct vprbrd_gpio *gpio = gpiochip_get_data(chip);
+ 	struct vprbrd *vb = gpio->vb;
+ 
+ 	gpio->gpiob_out |= (1 << offset);
+@@ -418,7 +410,7 @@ static int vprbrd_gpio_probe(struct platform_device *pdev)
+ 	vb_gpio->gpioa.get = vprbrd_gpioa_get;
+ 	vb_gpio->gpioa.direction_input = vprbrd_gpioa_direction_input;
+ 	vb_gpio->gpioa.direction_output = vprbrd_gpioa_direction_output;
+-	ret = gpiochip_add(&vb_gpio->gpioa);
++	ret = gpiochip_add_data(&vb_gpio->gpioa, vb_gpio);
+ 	if (ret < 0) {
+ 		dev_err(vb_gpio->gpioa.parent, "could not add gpio a");
+ 		goto err_gpioa;
+@@ -435,7 +427,7 @@ static int vprbrd_gpio_probe(struct platform_device *pdev)
+ 	vb_gpio->gpiob.get = vprbrd_gpiob_get;
+ 	vb_gpio->gpiob.direction_input = vprbrd_gpiob_direction_input;
+ 	vb_gpio->gpiob.direction_output = vprbrd_gpiob_direction_output;
+-	ret = gpiochip_add(&vb_gpio->gpiob);
++	ret = gpiochip_add_data(&vb_gpio->gpiob, vb_gpio);
+ 	if (ret < 0) {
+ 		dev_err(vb_gpio->gpiob.parent, "could not add gpio b");
+ 		goto err_gpiob;
 -- 
 2.4.3
 
