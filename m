@@ -1,97 +1,88 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 038/182] gpio: mcp: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:18:01 +0100
-Message-ID: <1449667081-31552-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 039/182] gpio: ml-ioh: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:18:11 +0100
+Message-ID: <1449667091-31599-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:34333 "EHLO
-	mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531AbbLINSH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:18:07 -0500
-Received: by lffu14 with SMTP id u14so34034331lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:18:05 -0800 (PST)
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36223 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751531AbbLINSR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:18:17 -0500
+Received: by lfs39 with SMTP id 39so34174633lfs.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:18:16 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexander Stein <alexander.stein@systec-electronic.com>, Sonic Zhang <sonic.zhang@analog.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Feng Tang <feng.tang@intel.com>, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Sonic Zhang <sonic.zhang@analog.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mcp23s08.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-ml-ioh.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 13cace0ca6f7..c767879e4dd9 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -269,7 +269,7 @@ static const struct mcp23s08_ops mcp23s17_ops = {
- 
- static int mcp23s08_direction_input(struct gpio_chip *chip, unsigned offset)
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 5536108aa9db..91aa40c2287f 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -106,7 +106,7 @@ static const int num_ports[] = {6, 12, 16, 16, 15, 16, 16, 12};
+ static void ioh_gpio_set(struct gpio_chip *gpio, unsigned nr, int val)
  {
--	struct mcp23s08	*mcp = container_of(chip, struct mcp23s08, chip);
-+	struct mcp23s08	*mcp = gpiochip_get_data(chip);
- 	int status;
+ 	u32 reg_val;
+-	struct ioh_gpio *chip =	container_of(gpio, struct ioh_gpio, gpio);
++	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
+ 	unsigned long flags;
  
- 	mutex_lock(&mcp->lock);
-@@ -281,7 +281,7 @@ static int mcp23s08_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	spin_lock_irqsave(&chip->spinlock, flags);
+@@ -122,7 +122,7 @@ static void ioh_gpio_set(struct gpio_chip *gpio, unsigned nr, int val)
  
- static int mcp23s08_get(struct gpio_chip *chip, unsigned offset)
+ static int ioh_gpio_get(struct gpio_chip *gpio, unsigned nr)
  {
--	struct mcp23s08	*mcp = container_of(chip, struct mcp23s08, chip);
-+	struct mcp23s08	*mcp = gpiochip_get_data(chip);
- 	int status;
+-	struct ioh_gpio *chip =	container_of(gpio, struct ioh_gpio, gpio);
++	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
  
- 	mutex_lock(&mcp->lock);
-@@ -312,7 +312,7 @@ static int __mcp23s08_set(struct mcp23s08 *mcp, unsigned mask, int value)
- 
- static void mcp23s08_set(struct gpio_chip *chip, unsigned offset, int value)
- {
--	struct mcp23s08	*mcp = container_of(chip, struct mcp23s08, chip);
-+	struct mcp23s08	*mcp = gpiochip_get_data(chip);
- 	unsigned mask = 1 << offset;
- 
- 	mutex_lock(&mcp->lock);
-@@ -323,7 +323,7 @@ static void mcp23s08_set(struct gpio_chip *chip, unsigned offset, int value)
- static int
- mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
- {
--	struct mcp23s08	*mcp = container_of(chip, struct mcp23s08, chip);
-+	struct mcp23s08	*mcp = gpiochip_get_data(chip);
- 	unsigned mask = 1 << offset;
- 	int status;
- 
-@@ -377,7 +377,7 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
- 
- static int mcp23s08_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
--	struct mcp23s08 *mcp = container_of(chip, struct mcp23s08, chip);
-+	struct mcp23s08 *mcp = gpiochip_get_data(chip);
- 
- 	return irq_find_mapping(mcp->irq_domain, offset);
+ 	return ioread32(&chip->reg->regs[chip->ch].pi) & (1 << nr);
  }
-@@ -544,7 +544,7 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	int		t;
- 	unsigned	mask;
+@@ -130,7 +130,7 @@ static int ioh_gpio_get(struct gpio_chip *gpio, unsigned nr)
+ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 				     int val)
+ {
+-	struct ioh_gpio *chip =	container_of(gpio, struct ioh_gpio, gpio);
++	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
+ 	u32 pm;
+ 	u32 reg_val;
+ 	unsigned long flags;
+@@ -155,7 +155,7 @@ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
  
--	mcp = container_of(chip, struct mcp23s08, chip);
-+	mcp = gpiochip_get_data(chip);
+ static int ioh_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+ {
+-	struct ioh_gpio *chip =	container_of(gpio, struct ioh_gpio, gpio);
++	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
+ 	u32 pm;
+ 	unsigned long flags;
  
- 	/* NOTE: we only handle one bank for now ... */
- 	bank = '0' + ((mcp->addr >> 1) & 0x7);
-@@ -704,7 +704,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			goto fail;
- 	}
+@@ -225,7 +225,7 @@ static void ioh_gpio_restore_reg_conf(struct ioh_gpio *chip)
  
--	status = gpiochip_add(&mcp->chip);
-+	status = gpiochip_add_data(&mcp->chip, mcp);
- 	if (status < 0)
- 		goto fail;
+ static int ioh_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
+ {
+-	struct ioh_gpio *chip = container_of(gpio, struct ioh_gpio, gpio);
++	struct ioh_gpio *chip = gpiochip_get_data(gpio);
+ 	return chip->irq_base + offset;
+ }
  
+@@ -450,7 +450,7 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 		chip->ch = i;
+ 		spin_lock_init(&chip->spinlock);
+ 		ioh_gpio_setup(chip, num_ports[i]);
+-		ret = gpiochip_add(&chip->gpio);
++		ret = gpiochip_add_data(&chip->gpio, chip);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "IOH gpio: Failed to register GPIO\n");
+ 			goto err_gpiochip_add;
 -- 
 2.4.3
 
