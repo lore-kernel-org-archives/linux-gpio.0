@@ -1,135 +1,49 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v1 1/8] pinctrl: rockchip: add support for the rk3228
-Date: Wed, 09 Dec 2015 12:30:10 +0100
-Message-ID: <2989163.WWcXAyahsV@diego>
-References: <1449651853-1667-1-git-send-email-jeffy.chen@rock-chips.com> <1449651853-1667-2-git-send-email-jeffy.chen@rock-chips.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Wed, 9 Dec 2015 13:35:00 +0100
+Message-ID: <CACRpkdZU3RrXmPr1fDzCMumhQ8nWEf126iC1rDu=xiLFj7DU+A@mail.gmail.com>
+References: <1447869580-10416-1-git-send-email-afd@ti.com>
+	<20151124162624.GI807@x1>
+	<20151204120240.GW26072@sirena.org.uk>
+	<5665E4F7.1070707@ti.com>
+	<20151208191657.GA5727@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449651853-1667-2-git-send-email-jeffy.chen@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:33972 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752636AbbLIMfB (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 07:35:01 -0500
+Received: by oies6 with SMTP id s6so25960980oie.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 04:35:00 -0800 (PST)
+In-Reply-To: <20151208191657.GA5727@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Jeffy,
+On Tue, Dec 8, 2015 at 8:16 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, Dec 07, 2015 at 01:58:47PM -0600, Andrew F. Davis wrote:
+>
+>> As all of this driver should be taken though the MFD tree how
+>> can this gpiolib change be handled? If we have gpio.parent it
+>> will not build on MFD, with gpio.dev it will fail to build when
+>> the changes are merged from the gpio subsystem. As the change
+>> has not been merged into linux-next as far a I can tell maybe
+>> this should be taken as is, then when the gpiolib change is
+>> made this can be changed with all the other drivers?
+>
+> Do a cross tree merge in one direction or the other between MFD and GPIO.
 
-Am Mittwoch, 9. Dezember 2015, 17:04:06 schrieb Jeffy Chen:
-> The pinctrl of rk3228 is much the same as rk3288's, but
-> without pmu.
-> 
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+If Lee makes an immutable branch with this stuff on it I can
+pull that in and put a fix on top of it (like I recently did with
+the ASoC AC97 codec). I have "only" renamed
+the .dev field of struct gpio_chip to .parent but I'm bombing
+out another 150 or so patches today, ridding all GPIO drivers
+in the kernel of container_of().
 
-After verifying the offset and register-layout values with the TRM
+A bit painful but nothing to what tglx has gone through for
+refactoring IRQ chips...
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-I just love how that still seems to fit for new socs ;-)
-
-
-Thanks
-Heiko
-
-
-> ---
-> 
->  .../bindings/pinctrl/rockchip,pinctrl.txt          |  3 +-
->  drivers/pinctrl/pinctrl-rockchip.c                 | 53
-> ++++++++++++++++++++++ 2 files changed, 55 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt index
-> 391ef4b..0cd701b 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> @@ -21,7 +21,8 @@ defined as gpio sub-nodes of the pinmux controller.
->  Required properties for iomux controller:
->    - compatible: one of "rockchip,rk2928-pinctrl",
-> "rockchip,rk3066a-pinctrl" "rockchip,rk3066b-pinctrl",
-> "rockchip,rk3188-pinctrl"
-> -		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
-> +		       "rockchip,rk3228-pinctrl", "rockchip,rk3288-pinctrl"
-> +		       "rockchip,rk3368-pinctrl"
->    - rockchip,grf: phandle referencing a syscon providing the
->  	 "general register files"
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index a065112..faab36e 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -614,6 +614,40 @@ static void rk3288_calc_drv_reg_and_bit(struct
-> rockchip_pin_bank *bank, }
->  }
-> 
-> +#define RK3228_PULL_OFFSET		0x100
-> +
-> +static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-> +				    int pin_num, struct regmap **regmap,
-> +				    int *reg, u8 *bit)
-> +{
-> +	struct rockchip_pinctrl *info = bank->drvdata;
-> +
-> +	*regmap = info->regmap_base;
-> +	*reg = RK3228_PULL_OFFSET;
-> +	*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
-> +	*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
-> +
-> +	*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
-> +	*bit *= RK3188_PULL_BITS_PER_PIN;
-> +}
-> +
-> +#define RK3228_DRV_GRF_OFFSET		0x200
-> +
-> +static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-> +				    int pin_num, struct regmap **regmap,
-> +				    int *reg, u8 *bit)
-> +{
-> +	struct rockchip_pinctrl *info = bank->drvdata;
-> +
-> +	*regmap = info->regmap_base;
-> +	*reg = RK3228_DRV_GRF_OFFSET;
-> +	*reg += bank->bank_num * RK3288_DRV_BANK_STRIDE;
-> +	*reg += ((pin_num / RK3288_DRV_PINS_PER_REG) * 4);
-> +
-> +	*bit = (pin_num % RK3288_DRV_PINS_PER_REG);
-> +	*bit *= RK3288_DRV_BITS_PER_PIN;
-> +}
-> +
->  #define RK3368_PULL_GRF_OFFSET		0x100
->  #define RK3368_PULL_PMU_OFFSET		0x10
-> 
-> @@ -2143,6 +2177,23 @@ static struct rockchip_pin_ctrl rk3188_pin_ctrl = {
->  		.pull_calc_reg		= rk3188_calc_pull_reg_and_bit,
->  };
-> 
-> +static struct rockchip_pin_bank rk3228_pin_banks[] = {
-> +	PIN_BANK(0, 32, "gpio0"),
-> +	PIN_BANK(1, 32, "gpio1"),
-> +	PIN_BANK(2, 32, "gpio2"),
-> +	PIN_BANK(3, 32, "gpio3"),
-> +};
-> +
-> +static struct rockchip_pin_ctrl rk3228_pin_ctrl = {
-> +		.pin_banks		= rk3228_pin_banks,
-> +		.nr_banks		= ARRAY_SIZE(rk3228_pin_banks),
-> +		.label			= "RK3228-GPIO",
-> +		.type			= RK3288,
-> +		.grf_mux_offset		= 0x0,
-> +		.pull_calc_reg		= rk3228_calc_pull_reg_and_bit,
-> +		.drv_calc_reg		= rk3228_calc_drv_reg_and_bit,
-> +};
-> +
->  static struct rockchip_pin_bank rk3288_pin_banks[] = {
->  	PIN_BANK_IOMUX_FLAGS(0, 24, "gpio0", IOMUX_SOURCE_PMU,
->  					     IOMUX_SOURCE_PMU,
-> @@ -2220,6 +2271,8 @@ static const struct of_device_id
-> rockchip_pinctrl_dt_match[] = { .data = (void *)&rk3066b_pin_ctrl },
->  	{ .compatible = "rockchip,rk3188-pinctrl",
->  		.data = (void *)&rk3188_pin_ctrl },
-> +	{ .compatible = "rockchip,rk3228-pinctrl",
-> +		.data = (void *)&rk3228_pin_ctrl },
->  	{ .compatible = "rockchip,rk3288-pinctrl",
->  		.data = (void *)&rk3288_pin_ctrl },
->  	{ .compatible = "rockchip,rk3368-pinctrl",
+Yours,
+Linus Walleij
