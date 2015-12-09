@@ -1,104 +1,83 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 026/182] gpio: intel-mid: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:16:21 +0100
-Message-ID: <1449666981-30980-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 025/182] gpio: f7188: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:16:10 +0100
+Message-ID: <1449666970-30929-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f177.google.com ([209.85.217.177]:33979 "EHLO
-	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753145AbbLINQ0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:16:26 -0500
-Received: by lbbcs9 with SMTP id cs9so29689358lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:16:25 -0800 (PST)
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:33106 "EHLO
+	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753156AbbLINQS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:16:18 -0500
+Received: by lfaz4 with SMTP id z4so33981454lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:16:16 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Cohen <david.a.cohen@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andreas Bofjall <andreas@gazonk.org>, Simon Guinot <simon.guinot@sequanux.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: David Cohen <david.a.cohen@linux.intel.com>
+Cc: Andreas Bofjall <andreas@gazonk.org>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-intel-mid.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ drivers/gpio/gpio-f7188x.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/gpio-intel-mid.c b/drivers/gpio/gpio-intel-mid.c
-index 1c46a7ef2680..6b7957a1f0b0 100644
---- a/drivers/gpio/gpio-intel-mid.c
-+++ b/drivers/gpio/gpio-intel-mid.c
-@@ -78,15 +78,10 @@ struct intel_mid_gpio {
- 	struct pci_dev			*pdev;
- };
- 
--static inline struct intel_mid_gpio *to_intel_gpio_priv(struct gpio_chip *gc)
--{
--	return container_of(gc, struct intel_mid_gpio, chip);
--}
--
- static void __iomem *gpio_reg(struct gpio_chip *chip, unsigned offset,
- 			      enum GPIO_REG reg_type)
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index 2be7337cf4ae..d62fd6bbaf82 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -193,8 +193,7 @@ static struct f7188x_gpio_bank f71889_gpio_bank[] = {
+ static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
  {
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(chip);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(chip);
- 	unsigned nreg = chip->ngpio / 32;
- 	u8 reg = offset / 32;
+ 	int err;
+-	struct f7188x_gpio_bank *bank =
+-		container_of(chip, struct f7188x_gpio_bank, chip);
++	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir;
  
-@@ -96,7 +91,7 @@ static void __iomem *gpio_reg(struct gpio_chip *chip, unsigned offset,
- static void __iomem *gpio_reg_2bit(struct gpio_chip *chip, unsigned offset,
- 				   enum GPIO_REG reg_type)
+@@ -215,8 +214,7 @@ static int f7188x_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+ static int f7188x_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(chip);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(chip);
- 	unsigned nreg = chip->ngpio / 32;
- 	u8 reg = offset / 16;
+ 	int err;
+-	struct f7188x_gpio_bank *bank =
+-		container_of(chip, struct f7188x_gpio_bank, chip);
++	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir, data;
  
-@@ -138,7 +133,7 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+@@ -241,8 +239,7 @@ static int f7188x_gpio_direction_out(struct gpio_chip *chip,
+ 				     unsigned offset, int value)
+ {
+ 	int err;
+-	struct f7188x_gpio_bank *bank =
+-		container_of(chip, struct f7188x_gpio_bank, chip);
++	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 dir, data_out;
  
- static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+@@ -270,8 +267,7 @@ static int f7188x_gpio_direction_out(struct gpio_chip *chip,
+ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(chip);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(chip);
- 	void __iomem *gpdr = gpio_reg(chip, offset, GPDR);
- 	u32 value;
- 	unsigned long flags;
-@@ -161,7 +156,7 @@ static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int intel_gpio_direction_output(struct gpio_chip *chip,
- 			unsigned offset, int value)
- {
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(chip);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(chip);
- 	void __iomem *gpdr = gpio_reg(chip, offset, GPDR);
- 	unsigned long flags;
+ 	int err;
+-	struct f7188x_gpio_bank *bank =
+-		container_of(chip, struct f7188x_gpio_bank, chip);
++	struct f7188x_gpio_bank *bank = gpiochip_get_data(chip);
+ 	struct f7188x_sio *sio = bank->data->sio;
+ 	u8 data_out;
  
-@@ -185,7 +180,7 @@ static int intel_gpio_direction_output(struct gpio_chip *chip,
- static int intel_mid_irq_type(struct irq_data *d, unsigned type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(gc);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(gc);
- 	u32 gpio = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	u32 value;
-@@ -304,7 +299,7 @@ MODULE_DEVICE_TABLE(pci, intel_gpio_ids);
- static void intel_mid_irq_handler(struct irq_desc *desc)
- {
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct intel_mid_gpio *priv = to_intel_gpio_priv(gc);
-+	struct intel_mid_gpio *priv = gpiochip_get_data(gc);
- 	struct irq_data *data = irq_desc_get_irq_data(desc);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	u32 base, gpio, mask;
-@@ -406,7 +401,7 @@ static int intel_gpio_probe(struct pci_dev *pdev,
- 	spin_lock_init(&priv->lock);
+@@ -336,7 +332,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 		bank->chip.parent = &pdev->dev;
+ 		bank->data = data;
  
- 	pci_set_drvdata(pdev, priv);
--	retval = gpiochip_add(&priv->chip);
-+	retval = gpiochip_add_data(&priv->chip, priv);
- 	if (retval) {
- 		dev_err(&pdev->dev, "gpiochip_add error %d\n", retval);
- 		return retval;
+-		err = gpiochip_add(&bank->chip);
++		err = gpiochip_add_data(&bank->chip, bank);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to register gpiochip %d: %d\n",
 -- 
 2.4.3
 
