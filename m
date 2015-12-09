@@ -1,134 +1,148 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 063/182] gpio: sx150x: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:23:14 +0100
-Message-ID: <1449667394-32767-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 061/182] gpio: stmpe: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:23:00 +0100
+Message-ID: <1449667380-32673-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34906 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585AbbLINXT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:19 -0500
-Received: by lfdl133 with SMTP id l133so33946473lfd.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:18 -0800 (PST)
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:33656 "EHLO
+	mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753156AbbLINXF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:05 -0500
+Received: by lfaz4 with SMTP id z4so34112982lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:03 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Wei Chen <Wei.Chen@csr.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bhupesh Sharma <bhupesh.sharma@st.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Wei Chen <Wei.Chen@csr.com>
+Cc: Bhupesh Sharma <bhupesh.sharma@st.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-sx150x.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ drivers/gpio/gpio-stmpe.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpio/gpio-sx150x.c b/drivers/gpio/gpio-sx150x.c
-index cf12d8e3ce3e..43bc4406d4f6 100644
---- a/drivers/gpio/gpio-sx150x.c
-+++ b/drivers/gpio/gpio-sx150x.c
-@@ -160,11 +160,6 @@ static const struct of_device_id sx150x_of_match[] = {
+diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
+index 9e471979aa9e..5197edf1acfd 100644
+--- a/drivers/gpio/gpio-stmpe.c
++++ b/drivers/gpio/gpio-stmpe.c
+@@ -36,14 +36,9 @@ struct stmpe_gpio {
+ 	u8 oldregs[CACHE_NR_REGS][CACHE_NR_BANKS];
  };
- MODULE_DEVICE_TABLE(of, sx150x_of_match);
  
--struct sx150x_chip *to_sx150x(struct gpio_chip *gc)
+-static inline struct stmpe_gpio *to_stmpe_gpio(struct gpio_chip *chip)
 -{
--	return container_of(gc, struct sx150x_chip, gpio_chip);
+-	return container_of(chip, struct stmpe_gpio, chip);
 -}
 -
- static s32 sx150x_i2c_write(struct i2c_client *client, u8 reg, u8 val)
+ static int stmpe_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
- 	s32 err = i2c_smbus_write_byte_data(client, reg, val);
-@@ -301,7 +296,7 @@ static int sx150x_io_output(struct sx150x_chip *chip, unsigned offset, int val)
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(chip);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	u8 reg = stmpe->regs[STMPE_IDX_GPMR_LSB] - (offset / 8);
+ 	u8 mask = 1 << (offset % 8);
+@@ -58,7 +53,7 @@ static int stmpe_gpio_get(struct gpio_chip *chip, unsigned offset)
  
- static int sx150x_gpio_get(struct gpio_chip *gc, unsigned offset)
+ static void stmpe_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
  {
--	struct sx150x_chip *chip = to_sx150x(gc);
-+	struct sx150x_chip *chip = gpiochip_get_data(gc);
- 	int status = -EINVAL;
- 
- 	if (!offset_is_oscio(chip, offset)) {
-@@ -315,7 +310,7 @@ static int sx150x_gpio_get(struct gpio_chip *gc, unsigned offset)
- 
- static void sx150x_gpio_set(struct gpio_chip *gc, unsigned offset, int val)
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(chip);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	int which = val ? STMPE_IDX_GPSR_LSB : STMPE_IDX_GPCR_LSB;
+ 	u8 reg = stmpe->regs[which] - (offset / 8);
+@@ -77,7 +72,7 @@ static void stmpe_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+ static int stmpe_gpio_direction_output(struct gpio_chip *chip,
+ 					 unsigned offset, int val)
  {
--	struct sx150x_chip *chip = to_sx150x(gc);
-+	struct sx150x_chip *chip = gpiochip_get_data(gc);
- 
- 	mutex_lock(&chip->lock);
- 	if (offset_is_oscio(chip, offset))
-@@ -327,7 +322,7 @@ static void sx150x_gpio_set(struct gpio_chip *gc, unsigned offset, int val)
- 
- static int sx150x_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(chip);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
+ 	u8 mask = 1 << (offset % 8);
+@@ -90,7 +85,7 @@ static int stmpe_gpio_direction_output(struct gpio_chip *chip,
+ static int stmpe_gpio_direction_input(struct gpio_chip *chip,
+ 					unsigned offset)
  {
--	struct sx150x_chip *chip = to_sx150x(gc);
-+	struct sx150x_chip *chip = gpiochip_get_data(gc);
- 	int status = -EINVAL;
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(chip);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	u8 reg = stmpe->regs[STMPE_IDX_GPDR_LSB] - (offset / 8);
+ 	u8 mask = 1 << (offset % 8);
+@@ -100,7 +95,7 @@ static int stmpe_gpio_direction_input(struct gpio_chip *chip,
  
- 	if (!offset_is_oscio(chip, offset)) {
-@@ -342,7 +337,7 @@ static int sx150x_gpio_direction_output(struct gpio_chip *gc,
- 					unsigned offset,
- 					int val)
+ static int stmpe_gpio_request(struct gpio_chip *chip, unsigned offset)
  {
--	struct sx150x_chip *chip = to_sx150x(gc);
-+	struct sx150x_chip *chip = gpiochip_get_data(gc);
- 	int status = 0;
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(chip);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(chip);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
  
- 	if (!offset_is_oscio(chip, offset)) {
-@@ -355,7 +350,7 @@ static int sx150x_gpio_direction_output(struct gpio_chip *gc,
- 
- static void sx150x_irq_mask(struct irq_data *d)
+ 	if (stmpe_gpio->norequest_mask & (1 << offset))
+@@ -123,7 +118,7 @@ static struct gpio_chip template_chip = {
+ static int stmpe_gpio_irq_set_type(struct irq_data *d, unsigned int type)
  {
--	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
-+	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 	unsigned n = d->hwirq;
- 
- 	chip->irq_masked |= (1 << n);
-@@ -364,7 +359,7 @@ static void sx150x_irq_mask(struct irq_data *d)
- 
- static void sx150x_irq_unmask(struct irq_data *d)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = 1 << (offset % 8);
+@@ -151,7 +146,7 @@ static int stmpe_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ static void stmpe_gpio_irq_lock(struct irq_data *d)
  {
--	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
-+	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 	unsigned n = d->hwirq;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
  
- 	chip->irq_masked &= ~(1 << n);
-@@ -373,7 +368,7 @@ static void sx150x_irq_unmask(struct irq_data *d)
- 
- static int sx150x_irq_set_type(struct irq_data *d, unsigned int flow_type)
- {
--	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
-+	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 	unsigned n, val = 0;
- 
- 	if (flow_type & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
-@@ -428,14 +423,14 @@ static irqreturn_t sx150x_irq_thread_fn(int irq, void *dev_id)
- 
- static void sx150x_irq_bus_lock(struct irq_data *d)
- {
--	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
-+	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 
- 	mutex_lock(&chip->lock);
+ 	mutex_lock(&stmpe_gpio->irq_lock);
  }
- 
- static void sx150x_irq_bus_sync_unlock(struct irq_data *d)
+@@ -159,7 +154,7 @@ static void stmpe_gpio_irq_lock(struct irq_data *d)
+ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
  {
--	struct sx150x_chip *chip = to_sx150x(irq_data_get_irq_chip_data(d));
-+	struct sx150x_chip *chip = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 	unsigned n;
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+ 	static const u8 regmap[] = {
+@@ -193,7 +188,7 @@ static void stmpe_gpio_irq_sync_unlock(struct irq_data *d)
+ static void stmpe_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = 1 << (offset % 8);
+@@ -204,7 +199,7 @@ static void stmpe_gpio_irq_mask(struct irq_data *d)
+ static void stmpe_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+ 	int offset = d->hwirq;
+ 	int regoffset = offset / 8;
+ 	int mask = 1 << (offset % 8);
+@@ -216,7 +211,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
+ 			       struct gpio_chip *gc,
+ 			       unsigned offset, unsigned gpio)
+ {
+-	struct stmpe_gpio *stmpe_gpio = to_stmpe_gpio(gc);
++	struct stmpe_gpio *stmpe_gpio = gpiochip_get_data(gc);
+ 	struct stmpe *stmpe = stmpe_gpio->stmpe;
+ 	const char *label = gpiochip_is_requested(gc, offset);
+ 	int num_banks = DIV_ROUND_UP(stmpe->num_gpios, 8);
+@@ -375,7 +370,7 @@ static int stmpe_gpio_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto out_free;
  
- 	if (chip->irq_update == NO_UPDATE_PENDING)
-@@ -647,7 +642,7 @@ static int sx150x_probe(struct i2c_client *client,
- 	if (rc < 0)
- 		return rc;
- 
--	rc = gpiochip_add(&chip->gpio_chip);
-+	rc = gpiochip_add_data(&chip->gpio_chip, chip);
- 	if (rc)
- 		return rc;
- 
+-	ret = gpiochip_add(&stmpe_gpio->chip);
++	ret = gpiochip_add_data(&stmpe_gpio->chip, stmpe_gpio);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
+ 		goto out_disable;
 -- 
 2.4.3
 
