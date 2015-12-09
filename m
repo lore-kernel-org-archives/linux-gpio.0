@@ -1,82 +1,71 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH v3 2/9] Documentation: dt-bindings: Document STM32 pinctrl
- driver DT bindings
-Date: Wed, 9 Dec 2015 10:37:40 +0100
-Message-ID: <CALszF6Ct5omDxbysmD=7MHYDT5-EowKH+L+sqSbp29R9tHfkdA@mail.gmail.com>
-References: <1449578711-6141-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<1449578711-6141-3-git-send-email-mcoquelin.stm32@gmail.com>
-	<20151209034137.GA15954@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: pca953x: make inclusion of <linux/of_platform.h> unconditional
+Date: Wed,  9 Dec 2015 11:06:14 +0100
+Message-ID: <1449655574-6550-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f41.google.com ([209.85.192.41]:35012 "EHLO
-	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752689AbbLIJhl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 04:37:41 -0500
-In-Reply-To: <20151209034137.GA15954@rob-hp-laptop>
+Received: from mail-lb0-f181.google.com ([209.85.217.181]:34901 "EHLO
+	mail-lb0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750962AbbLIKGU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 05:06:20 -0500
+Received: by lbpu9 with SMTP id u9so26699399lbp.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 02:06:18 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben.dooks@codethink.co.uk>
 
-Hi Rob,
+After adding the DT matching in
+commit 6f29c9afbe636fc0e35c82a11eaf45c3b85eb07a
+"gpio: pca935x: fix of-only probed devices"
+compilation fails like this:
 
-2015-12-09 4:41 GMT+01:00 Rob Herring <robh@kernel.org>:
-> On Tue, Dec 08, 2015 at 01:45:04PM +0100, Maxime Coquelin wrote:
->> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> ---
->>  .../bindings/pinctrl/st,stm32-pinctrl.txt          | 126 +++++++++++++++++++++
->>  1 file changed, 126 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->> new file mode 100644
->> index 0000000..7b4800c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->> @@ -0,0 +1,126 @@
->> +* STM32 GPIO and Pin Mux/Config controller
->> +
->> +STMicroelectronics's STM32 MCUs intregrate a GPIO and Pin mux/config hardware
->> +controller. It controls the input/output settings on the available pins and
->> +also provides ability to multiplex and configure the output of various on-chip
->> +controllers onto these pads.
->> +
->> +Pin controller node:
->> +Required properies:
->> + - compatible: value should be one of the following:
->> +   (a) "st,stm32f429-pinctrl"
->> + - #address-cells: The value of this property must be 1
->> + - #size-cells       : The value of this property must be 1
->> + - ranges    : defines mapping between pin controller node (parent) to
->> +   gpio-bank node (children).
->> + - pins-are-numbered: Specify the subnodes are using numbered pinmux to
->> +   specify pins.
->> +
->> +GPIO controller/bank node:
->> +Required properties:
->> + - gpio-controller : Indicates this device is a GPIO controller
->> + - #gpio-cells         : Should be two.
->> +                     The first cell is the pin number
->> +                     The second one is the polarity:
->> +                             - 0 for active high
->> +                             - 1 for active low
->> + - reg                 : The gpio address range, relative to the pinctrl range
->> + - clocks      : clock that drives this bank
->> + - st,bank-name        : Should be a name string for this bank as specified in
->> +   the datasheet
->
-> How do you intend to use this? We should come up with something generic
-> or drop it.
-Good point.
-It is used to have a meaningful name set in gpio_chip's label.
-I see two alternatives:
- 1. replace "st,bank-name" with label
- 2. use aliases, and construct label in driver with something like:
-     kasprintf(GFP_KERNEL, "GPIO%c", 'A' + of_alias_get_id(np, "gpio"));
+CC [M]  drivers/gpio/gpio-pca953x.o
+gpio-pca953x.c: In function =E2=80=98pca953x_probe=E2=80=99:
+gpio-pca953x.c:693:11: error: implicit declaration of
+function =E2=80=98of_match_device=E2=80=99 [-Werror=3Dimplicit-function=
+-declaration]
+match =3D of_match_device(pca953x_dt_ids, &client->dev);
+        ^
+gpio-pca953x.c:693:9: warning: assignment makes pointer from
+integer without a cast [-Wint-conversion]
+match =3D of_match_device(pca953x_dt_ids, &client->dev);
+        ^
+cc1: some warnings being treated as errors
+=2E./scripts/Makefile.build:264: recipe for target
+'drivers/gpio/gpio-pca953x.o' failed
 
-What do you prefer?
-Do you have other ideas?
+After removing the conditional inclusion guards compilation
+works fine again. Might be a module problem so that
+fix.
 
-Thanks,
-Maxime
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-pca953x.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 14729657a112..2eaf235a39e5 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -18,9 +18,7 @@
+ #include <linux/i2c.h>
+ #include <linux/platform_data/pca953x.h>
+ #include <linux/slab.h>
+-#ifdef CONFIG_OF_GPIO
+ #include <linux/of_platform.h>
+-#endif
+ #include <linux/acpi.h>
+=20
+ #define PCA953X_INPUT		0
+--=20
+2.4.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
