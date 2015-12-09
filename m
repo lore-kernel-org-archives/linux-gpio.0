@@ -1,125 +1,179 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 106/182] pinctrl: st: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:32:26 +0100
-Message-ID: <1449667946-2800-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 107/182] pinctrl: msm: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:32:33 +0100
+Message-ID: <1449667953-2847-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:36756 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754153AbbLINca (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:32:30 -0500
-Received: by lfs39 with SMTP id 39so34452112lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:32:29 -0800 (PST)
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35800 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754153AbbLINci (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:32:38 -0500
+Received: by lfdl133 with SMTP id l133so34123994lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:32:36 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, =?UTF-8?q?Bj=C3=B6rn=20Andersson?= <bjorn.andersson@sonymobile.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@gmail.com>
-Cc: Maxime Coquelin <maxime.coquelin@st.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Bj=C3=B6rn Andersson <bjorn.andersson@sonymobile.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-st.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 52639e65ea67..fac844a85cb4 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -203,9 +203,6 @@
- #define gpio_range_to_bank(chip) \
- 		container_of(chip, struct st_gpio_bank, range)
- 
--#define gpio_chip_to_bank(chip) \
--		container_of(chip, struct st_gpio_bank, gpio_chip)
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/=
+pinctrl-msm.c
+index af2a13040898..8777cf083eef 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -69,11 +69,6 @@ struct msm_pinctrl {
+ 	void __iomem *regs;
+ };
+=20
+-static inline struct msm_pinctrl *to_msm_pinctrl(struct gpio_chip *gc)
+-{
+-	return container_of(gc, struct msm_pinctrl, chip);
+-}
 -
- #define pc_to_bank(pc) \
- 		container_of(pc, struct st_gpio_bank, pc)
- 
-@@ -744,14 +741,14 @@ static void st_gpio_direction(struct st_gpio_bank *bank,
- 
- static int st_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int msm_get_groups_count(struct pinctrl_dev *pctldev)
  {
--	struct st_gpio_bank *bank = gpio_chip_to_bank(chip);
-+	struct st_gpio_bank *bank = gpiochip_get_data(chip);
- 
- 	return !!(readl(bank->base + REG_PIO_PIN) & BIT(offset));
- }
- 
- static void st_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	struct msm_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctldev);
+@@ -381,7 +376,7 @@ static struct pinctrl_desc msm_pinctrl_desc =3D {
+ static int msm_gpio_direction_input(struct gpio_chip *chip, unsigned o=
+ffset)
  {
--	struct st_gpio_bank *bank = gpio_chip_to_bank(chip);
-+	struct st_gpio_bank *bank = gpiochip_get_data(chip);
- 	__st_gpio_set(bank, offset, value);
- }
- 
-@@ -765,7 +762,7 @@ static int st_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int st_gpio_direction_output(struct gpio_chip *chip,
- 	unsigned offset, int value)
- {
--	struct st_gpio_bank *bank = gpio_chip_to_bank(chip);
-+	struct st_gpio_bank *bank = gpiochip_get_data(chip);
- 
- 	__st_gpio_set(bank, offset, value);
- 	pinctrl_gpio_direction_output(chip->base + offset);
-@@ -775,7 +772,7 @@ static int st_gpio_direction_output(struct gpio_chip *chip,
- 
- static int st_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- {
--	struct st_gpio_bank *bank = gpio_chip_to_bank(chip);
-+	struct st_gpio_bank *bank = gpiochip_get_data(chip);
- 	struct st_pio_control pc = bank->pc;
- 	unsigned long config;
- 	unsigned int direction = 0;
-@@ -1325,7 +1322,7 @@ static int st_pctl_parse_functions(struct device_node *np,
- static void st_gpio_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct st_gpio_bank *bank = gpio_chip_to_bank(gc);
-+	struct st_gpio_bank *bank = gpiochip_get_data(gc);
- 
- 	writel(BIT(d->hwirq), bank->base + REG_PIO_CLR_PMASK);
- }
-@@ -1333,7 +1330,7 @@ static void st_gpio_irq_mask(struct irq_data *d)
- static void st_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct st_gpio_bank *bank = gpio_chip_to_bank(gc);
-+	struct st_gpio_bank *bank = gpiochip_get_data(gc);
- 
- 	writel(BIT(d->hwirq), bank->base + REG_PIO_SET_PMASK);
- }
-@@ -1341,7 +1338,7 @@ static void st_gpio_irq_unmask(struct irq_data *d)
- static int st_gpio_irq_set_type(struct irq_data *d, unsigned type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct st_gpio_bank *bank = gpio_chip_to_bank(gc);
-+	struct st_gpio_bank *bank = gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D container_of(chip, struct msm_pinctrl, =
+chip);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(chip);
  	unsigned long flags;
- 	int comp, pin = d->hwirq;
  	u32 val;
-@@ -1455,7 +1452,7 @@ static void st_gpio_irq_handler(struct irq_desc *desc)
- 	/* interrupt dedicated per bank */
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct st_gpio_bank *bank = gpio_chip_to_bank(gc);
-+	struct st_gpio_bank *bank = gpiochip_get_data(gc);
- 
- 	chained_irq_enter(chip, desc);
- 	__gpio_irq_handler(bank);
-@@ -1532,7 +1529,7 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
- 	range->pin_base = range->base = range->id * ST_GPIO_PINS_PER_BANK;
- 	range->npins = bank->gpio_chip.ngpio;
- 	range->gc = &bank->gpio_chip;
--	err  = gpiochip_add(&bank->gpio_chip);
-+	err  = gpiochip_add_data(&bank->gpio_chip, bank);
- 	if (err) {
- 		dev_err(dev, "Failed to add gpiochip(%d)!\n", bank_num);
- 		return err;
--- 
+=20
+@@ -401,7 +396,7 @@ static int msm_gpio_direction_input(struct gpio_chi=
+p *chip, unsigned offset)
+ static int msm_gpio_direction_output(struct gpio_chip *chip, unsigned =
+offset, int value)
+ {
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D container_of(chip, struct msm_pinctrl, =
+chip);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 	u32 val;
+=20
+@@ -428,7 +423,7 @@ static int msm_gpio_direction_output(struct gpio_ch=
+ip *chip, unsigned offset, in
+ static int msm_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D container_of(chip, struct msm_pinctrl, =
+chip);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(chip);
+ 	u32 val;
+=20
+ 	g =3D &pctrl->soc->groups[offset];
+@@ -440,7 +435,7 @@ static int msm_gpio_get(struct gpio_chip *chip, uns=
+igned offset)
+ static void msm_gpio_set(struct gpio_chip *chip, unsigned offset, int =
+value)
+ {
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D container_of(chip, struct msm_pinctrl, =
+chip);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 	u32 val;
+=20
+@@ -468,7 +463,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *=
+s,
+ 				  unsigned gpio)
+ {
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D container_of(chip, struct msm_pinctrl, =
+chip);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(chip);
+ 	unsigned func;
+ 	int is_out;
+ 	int drive;
+@@ -567,7 +562,7 @@ static void msm_gpio_update_dual_edge_pos(struct ms=
+m_pinctrl *pctrl,
+ static void msm_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+ 	unsigned long flags;
+ 	u32 val;
+@@ -588,7 +583,7 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ static void msm_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+ 	unsigned long flags;
+ 	u32 val;
+@@ -613,7 +608,7 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
+ static void msm_gpio_irq_ack(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+ 	unsigned long flags;
+ 	u32 val;
+@@ -638,7 +633,7 @@ static void msm_gpio_irq_ack(struct irq_data *d)
+ static int msm_gpio_irq_set_type(struct irq_data *d, unsigned int type=
+)
+ {
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	const struct msm_pingroup *g;
+ 	unsigned long flags;
+ 	u32 val;
+@@ -732,7 +727,7 @@ static int msm_gpio_irq_set_type(struct irq_data *d=
+, unsigned int type)
+ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ {
+ 	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	unsigned long flags;
+=20
+ 	spin_lock_irqsave(&pctrl->lock, flags);
+@@ -757,7 +752,7 @@ static void msm_gpio_irq_handler(struct irq_desc *d=
+esc)
+ {
+ 	struct gpio_chip *gc =3D irq_desc_get_handler_data(desc);
+ 	const struct msm_pingroup *g;
+-	struct msm_pinctrl *pctrl =3D to_msm_pinctrl(gc);
++	struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
+ 	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+ 	int irq_pin;
+ 	int handled =3D 0;
+@@ -804,7 +799,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+ 	chip->owner =3D THIS_MODULE;
+ 	chip->of_node =3D pctrl->dev->of_node;
+=20
+-	ret =3D gpiochip_add(&pctrl->chip);
++	ret =3D gpiochip_add_data(&pctrl->chip, pctrl);
+ 	if (ret) {
+ 		dev_err(pctrl->dev, "Failed register gpiochip\n");
+ 		return ret;
+--=20
 2.4.3
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
