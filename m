@@ -1,14 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 147/182] powerpc: ppc4xx: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:41:39 +0100
-Message-ID: <1449668499-5071-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 148/182] powerpc: qe_lib-gpio: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:41:47 +0100
+Message-ID: <1449668507-5118-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36599 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585AbbLINln (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:41:43 -0500
-Received: by lfs39 with SMTP id 39so34630400lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:41:42 -0800 (PST)
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:36654 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585AbbLINlw (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:41:52 -0500
+Received: by lbblt2 with SMTP id lt2so30310419lbb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:41:51 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
@@ -24,74 +24,85 @@ Cc: Paul Mackerras <paulus@samba.org>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Power maintainers: please ACK this. This looks like a pretty clean
-GPIO driver that should ideally move to drivers/gpio. It should be
-fine to change the include from <linux/gpio.h> to
-<linux/gpio/driver.h> on this as it does not appear to use the
-consumer API.
+Power maintainers: please ACK this. I cannot really say if this
+should ideally be broken out as a separate driver in drivers/gpio
+or if it is better to keep it here. For now just refactoring...
 ---
- arch/powerpc/sysdev/ppc4xx_gpio.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ arch/powerpc/sysdev/qe_lib/gpio.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/ppc4xx_gpio.c b/arch/powerpc/sysdev/ppc4xx_gpio.c
-index fc65ad1b3293..96145ea09835 100644
---- a/arch/powerpc/sysdev/ppc4xx_gpio.c
-+++ b/arch/powerpc/sysdev/ppc4xx_gpio.c
-@@ -27,7 +27,7 @@
+diff --git a/arch/powerpc/sysdev/qe_lib/gpio.c b/arch/powerpc/sysdev/qe_lib/gpio.c
+index 521e67a49dc4..90caaad7889f 100644
+--- a/arch/powerpc/sysdev/qe_lib/gpio.c
++++ b/arch/powerpc/sysdev/qe_lib/gpio.c
+@@ -18,6 +18,8 @@
  #include <linux/io.h>
  #include <linux/of.h>
  #include <linux/of_gpio.h>
--#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
- #include <linux/types.h>
++/* FIXME: needed for gpio_to_chip() get rid of this */
+ #include <linux/gpio.h>
  #include <linux/slab.h>
+ #include <linux/export.h>
+@@ -37,15 +39,9 @@ struct qe_gpio_chip {
+ 	struct qe_pio_regs saved_regs;
+ };
  
-@@ -67,12 +67,6 @@ struct ppc4xx_gpio_chip {
-  * There are a maximum of 32 gpios in each gpio controller.
-  */
- 
--static inline struct ppc4xx_gpio_chip *
--to_ppc4xx_gpiochip(struct of_mm_gpio_chip *mm_gc)
+-static inline struct qe_gpio_chip *
+-to_qe_gpio_chip(struct of_mm_gpio_chip *mm_gc)
 -{
--	return container_of(mm_gc, struct ppc4xx_gpio_chip, mm_gc);
+-	return container_of(mm_gc, struct qe_gpio_chip, mm_gc);
 -}
 -
- static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ static void qe_gpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct qe_gpio_chip *qe_gc = to_qe_gpio_chip(mm_gc);
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(&mm_gc->gc);
+ 	struct qe_pio_regs __iomem *regs = mm_gc->regs;
+ 
+ 	qe_gc->cpdata = in_be32(&regs->cpdata);
+@@ -69,7 +65,7 @@ static int qe_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ static void qe_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
  {
  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-@@ -97,7 +91,7 @@ static void
- ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+-	struct qe_gpio_chip *qe_gc = to_qe_gpio_chip(mm_gc);
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+ 	struct qe_pio_regs __iomem *regs = mm_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (QE_PIO_PINS - 1 - gpio);
+@@ -89,7 +85,7 @@ static void qe_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int qe_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
  {
  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ppc4xx_gpio_chip *chip = to_ppc4xx_gpiochip(mm_gc);
-+	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+-	struct qe_gpio_chip *qe_gc = to_qe_gpio_chip(mm_gc);
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
  	unsigned long flags;
  
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -112,7 +106,7 @@ ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+@@ -104,7 +100,7 @@ static int qe_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
  {
  	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ppc4xx_gpio_chip *chip = to_ppc4xx_gpiochip(mm_gc);
-+	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
- 	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
+-	struct qe_gpio_chip *qe_gc = to_qe_gpio_chip(mm_gc);
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
  	unsigned long flags;
  
-@@ -142,7 +136,7 @@ static int
- ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
- 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ppc4xx_gpio_chip *chip = to_ppc4xx_gpiochip(mm_gc);
-+	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
- 	struct ppc4xx_gpio __iomem *regs = mm_gc->regs;
- 	unsigned long flags;
+ 	qe_gpio_set(gc, gpio, val);
+@@ -165,7 +161,7 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ 	}
  
-@@ -200,7 +194,7 @@ static int __init ppc4xx_add_gpiochips(void)
- 		gc->get = ppc4xx_gpio_get;
- 		gc->set = ppc4xx_gpio_set;
+ 	mm_gc = to_of_mm_gpio_chip(gc);
+-	qe_gc = to_qe_gpio_chip(mm_gc);
++	qe_gc = gpiochip_get_data(gc);
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+ 
+@@ -302,7 +298,7 @@ static int __init qe_add_gpiochips(void)
+ 		gc->get = qe_gpio_get;
+ 		gc->set = qe_gpio_set;
  
 -		ret = of_mm_gpiochip_add(np, mm_gc);
-+		ret = of_mm_gpiochip_add_data(np, mm_gc, ppc4xx_gc);
++		ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
  		if (ret)
  			goto err;
  		continue;
