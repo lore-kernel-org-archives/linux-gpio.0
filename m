@@ -1,19 +1,70 @@
-From: robert@project.com
-Subject: Update
-Date: Tue, 08 Dec 2015 20:43:13 -0600
-Message-ID: <20151209025519.EF16624F6F__33201.0226477452$1449629897$gmane$org@smtp.altrodesign.cz>
-Reply-To: beckfordchambs@gmail.com
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/9] Documentation: dt-bindings: Document STM32
+ pinctrl driver DT bindings
+Date: Tue, 8 Dec 2015 21:41:37 -0600
+Message-ID: <20151209034137.GA15954@rob-hp-laptop>
+References: <1449578711-6141-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1449578711-6141-3-git-send-email-mcoquelin.stm32@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2.altrodesign.cz ([109.123.203.224]:43856 "EHLO
-	smtp2.altrodesign.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751599AbbLIC5p convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Dec 2015 21:57:45 -0500
-Content-Description: Mail message body
+Received: from mail.kernel.org ([198.145.29.136]:40002 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751294AbbLIDll (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 8 Dec 2015 22:41:41 -0500
+Content-Disposition: inline
+In-Reply-To: <1449578711-6141-3-git-send-email-mcoquelin.stm32@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <robert@project.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
 
-Good day, hoping you read this email and respond to me in good time.I do not intend to solicit for funds but your time and energy in using my own resources to assist the less privileged becauseI am medically ill and confined at the moment hence I request your indulgence.I will give you a comprehensive brief once I hear from you.  Thanks and reply. Robert Grondahl
+On Tue, Dec 08, 2015 at 01:45:04PM +0100, Maxime Coquelin wrote:
+> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> ---
+>  .../bindings/pinctrl/st,stm32-pinctrl.txt          | 126 +++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> new file mode 100644
+> index 0000000..7b4800c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> @@ -0,0 +1,126 @@
+> +* STM32 GPIO and Pin Mux/Config controller
+> +
+> +STMicroelectronics's STM32 MCUs intregrate a GPIO and Pin mux/config hardware
+> +controller. It controls the input/output settings on the available pins and
+> +also provides ability to multiplex and configure the output of various on-chip
+> +controllers onto these pads.
+> +
+> +Pin controller node:
+> +Required properies:
+> + - compatible: value should be one of the following:
+> +   (a) "st,stm32f429-pinctrl"
+> + - #address-cells: The value of this property must be 1
+> + - #size-cells	: The value of this property must be 1
+> + - ranges	: defines mapping between pin controller node (parent) to
+> +   gpio-bank node (children).
+> + - pins-are-numbered: Specify the subnodes are using numbered pinmux to
+> +   specify pins.
+> +
+> +GPIO controller/bank node:
+> +Required properties:
+> + - gpio-controller : Indicates this device is a GPIO controller
+> + - #gpio-cells	  : Should be two.
+> +			The first cell is the pin number
+> +			The second one is the polarity:
+> +				- 0 for active high
+> +				- 1 for active low
+> + - reg		  : The gpio address range, relative to the pinctrl range
+> + - clocks	  : clock that drives this bank
+> + - st,bank-name	  : Should be a name string for this bank as specified in
+> +   the datasheet
+
+How do you intend to use this? We should come up with something generic 
+or drop it.
+
+Rob
+
