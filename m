@@ -1,98 +1,64 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH 155/182] input: adp5588-keys: use gpiochip data pointer
-Date: Wed, 9 Dec 2015 14:42:48 +0100
-Message-ID: <56682FD8.8080003@analog.com>
-References: <1449668693-5734-1-git-send-email-linus.walleij@linaro.org>
-Reply-To: <michael.hennerich@analog.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 170/182] platform: x86: intel-pmic: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:49:00 +0100
+Message-ID: <1449668940-6643-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn1on0080.outbound.protection.outlook.com ([157.56.110.80]:45888
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754640AbbLINtP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Dec 2015 08:49:15 -0500
-In-Reply-To: <1449668693-5734-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:36053 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753251AbbLINtH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:49:07 -0500
+Received: by lbblt2 with SMTP id lt2so30434272lbb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:49:06 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Feng Tang <feng.tang@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On 12/09/2015 02:44 PM, Linus Walleij wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
->
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This makes the driver use the data pointer added to the gpio_chip
+to store a pointer to the state container instead of relying on
+container_of().
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+It seems to be unclear who maintains platform/x86, so I'm just
+gonna merge this patch into the GPIO tree unless there is a protest
+from someone who wants to have a say.
+---
+ drivers/platform/x86/intel_pmic_gpio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ---
-> Dmitry: please ACK this so I can take it through the GPIO tree.
-> ---
->   drivers/input/keyboard/adp5588-keys.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-> index 21a62d0fa764..53fe9a3fb620 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -73,7 +73,7 @@ static int adp5588_write(struct i2c_client *client, u8 reg, u8 val)
->   #ifdef CONFIG_GPIOLIB
->   static int adp5588_gpio_get_value(struct gpio_chip *chip, unsigned off)
->   {
-> -	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
-> +	struct adp5588_kpad *kpad = gpiochip_get_data(chip);
->   	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
->   	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
->   	int val;
-> @@ -93,7 +93,7 @@ static int adp5588_gpio_get_value(struct gpio_chip *chip, unsigned off)
->   static void adp5588_gpio_set_value(struct gpio_chip *chip,
->   				   unsigned off, int val)
->   {
-> -	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
-> +	struct adp5588_kpad *kpad = gpiochip_get_data(chip);
->   	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
->   	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
->
-> @@ -112,7 +112,7 @@ static void adp5588_gpio_set_value(struct gpio_chip *chip,
->
->   static int adp5588_gpio_direction_input(struct gpio_chip *chip, unsigned off)
->   {
-> -	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
-> +	struct adp5588_kpad *kpad = gpiochip_get_data(chip);
->   	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
->   	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
->   	int ret;
-> @@ -130,7 +130,7 @@ static int adp5588_gpio_direction_input(struct gpio_chip *chip, unsigned off)
->   static int adp5588_gpio_direction_output(struct gpio_chip *chip,
->   					 unsigned off, int val)
->   {
-> -	struct adp5588_kpad *kpad = container_of(chip, struct adp5588_kpad, gc);
-> +	struct adp5588_kpad *kpad = gpiochip_get_data(chip);
->   	unsigned int bank = ADP5588_BANK(kpad->gpiomap[off]);
->   	unsigned int bit = ADP5588_BIT(kpad->gpiomap[off]);
->   	int ret;
-> @@ -210,7 +210,7 @@ static int adp5588_gpio_add(struct adp5588_kpad *kpad)
->
->   	mutex_init(&kpad->gpio_lock);
->
-> -	error = gpiochip_add(&kpad->gc);
-> +	error = gpiochip_add_data(&kpad->gc, kpad);
->   	if (error) {
->   		dev_err(dev, "gpiochip_add failed, err: %d\n", error);
->   		return error;
->
-
-
+diff --git a/drivers/platform/x86/intel_pmic_gpio.c b/drivers/platform/x86/intel_pmic_gpio.c
+index 0e73fd10ba72..63b371d6ee55 100644
+--- a/drivers/platform/x86/intel_pmic_gpio.c
++++ b/drivers/platform/x86/intel_pmic_gpio.c
+@@ -30,7 +30,7 @@
+ #include <linux/ioport.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <asm/intel_scu_ipc.h>
+ #include <linux/device.h>
+ #include <linux/intel_pmic_gpio.h>
+@@ -174,7 +174,7 @@ static int pmic_irq_type(struct irq_data *data, unsigned type)
+ 
+ static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct pmic_gpio *pg = container_of(chip, struct pmic_gpio, chip);
++	struct pmic_gpio *pg = gpiochip_get_data(chip);
+ 
+ 	return pg->irq_base + offset;
+ }
+@@ -279,7 +279,7 @@ static int platform_pmic_gpio_probe(struct platform_device *pdev)
+ 	mutex_init(&pg->buslock);
+ 
+ 	pg->chip.parent = dev;
+-	retval = gpiochip_add(&pg->chip);
++	retval = gpiochip_add_data(&pg->chip, pg);
+ 	if (retval) {
+ 		pr_err("Can not add pmic gpio chip\n");
+ 		goto err;
 -- 
-Greetings,
-Michael
+2.4.3
 
---
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-Margaret Seif
