@@ -1,88 +1,100 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 175/182] video: fbdev: via: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:50:49 +0100
-Message-ID: <1449669049-7022-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 176/182] ASoC: rt5677: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:51:19 +0100
+Message-ID: <1449669079-7119-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:35922 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754769AbbLINux (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:53 -0500
-Received: by lbblt2 with SMTP id lt2so30466780lbb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:52 -0800 (PST)
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:34816 "EHLO
+	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754719AbbLINv0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:51:26 -0500
+Received: by lfdl133 with SMTP id l133so34494136lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:51:24 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: Bard Liao <bardliao@realtek.com>
+Cc: Oder Chiou <oder_chiou@realtek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Tomi: please ACK this so I can take it through the GPIO tree.
+Liam/Mark: please ACK this so I can merge it into the GPIO tree.
 ---
- drivers/video/fbdev/via/via-gpio.c | 17 ++++++-----------
+ sound/soc/codecs/rt5677.c | 17 ++++++-----------
  1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/video/fbdev/via/via-gpio.c b/drivers/video/fbdev/via/via-gpio.c
-index 6f433b8cee12..ab3a00df9773 100644
---- a/drivers/video/fbdev/via/via-gpio.c
-+++ b/drivers/video/fbdev/via/via-gpio.c
-@@ -6,7 +6,7 @@
-  */
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 1f590b5a6718..89dda8962c7c 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -4500,14 +4500,9 @@ static int rt5677_set_bias_level(struct snd_soc_codec *codec,
+ }
  
- #include <linux/spinlock.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/platform_device.h>
- #include <linux/via-core.h>
- #include <linux/via-gpio.h>
-@@ -83,9 +83,7 @@ struct viafb_gpio_cfg {
- static void via_gpio_set(struct gpio_chip *chip, unsigned int nr,
- 			 int value)
+ #ifdef CONFIG_GPIOLIB
+-static inline struct rt5677_priv *gpio_to_rt5677(struct gpio_chip *chip)
+-{
+-	return container_of(chip, struct rt5677_priv, gpio_chip);
+-}
+-
+ static void rt5677_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
--	struct viafb_gpio_cfg *cfg = container_of(chip,
--						  struct viafb_gpio_cfg,
--						  gpio_chip);
-+	struct viafb_gpio_cfg *cfg = gpiochip_get_data(chip);
- 	u8 reg;
- 	struct viafb_gpio *gpio;
- 	unsigned long flags;
-@@ -115,9 +113,7 @@ static int via_gpio_dir_out(struct gpio_chip *chip, unsigned int nr,
-  */
- static int via_gpio_dir_input(struct gpio_chip *chip, unsigned int nr)
- {
--	struct viafb_gpio_cfg *cfg = container_of(chip,
--						  struct viafb_gpio_cfg,
--						  gpio_chip);
-+	struct viafb_gpio_cfg *cfg = gpiochip_get_data(chip);
- 	struct viafb_gpio *gpio;
- 	unsigned long flags;
+-	struct rt5677_priv *rt5677 = gpio_to_rt5677(chip);
++	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
  
-@@ -131,9 +127,7 @@ static int via_gpio_dir_input(struct gpio_chip *chip, unsigned int nr)
- 
- static int via_gpio_get(struct gpio_chip *chip, unsigned int nr)
+ 	switch (offset) {
+ 	case RT5677_GPIO1 ... RT5677_GPIO5:
+@@ -4528,7 +4523,7 @@ static void rt5677_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static int rt5677_gpio_direction_out(struct gpio_chip *chip,
+ 				     unsigned offset, int value)
  {
--	struct viafb_gpio_cfg *cfg = container_of(chip,
--						  struct viafb_gpio_cfg,
--						  gpio_chip);
-+	struct viafb_gpio_cfg *cfg = gpiochip_get_data(chip);
- 	u8 reg;
- 	struct viafb_gpio *gpio;
- 	unsigned long flags;
-@@ -255,7 +249,8 @@ static int viafb_gpio_probe(struct platform_device *platdev)
- 	 * Get registered.
- 	 */
- 	viafb_gpio_config.gpio_chip.base = -1;  /* Dynamic */
--	ret = gpiochip_add(&viafb_gpio_config.gpio_chip);
-+	ret = gpiochip_add_data(&viafb_gpio_config.gpio_chip,
-+				&viafb_gpio_config);
- 	if (ret) {
- 		printk(KERN_ERR "viafb: failed to add gpios (%d)\n", ret);
- 		viafb_gpio_config.gpio_chip.ngpio = 0;
+-	struct rt5677_priv *rt5677 = gpio_to_rt5677(chip);
++	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
+ 
+ 	switch (offset) {
+ 	case RT5677_GPIO1 ... RT5677_GPIO5:
+@@ -4552,7 +4547,7 @@ static int rt5677_gpio_direction_out(struct gpio_chip *chip,
+ 
+ static int rt5677_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct rt5677_priv *rt5677 = gpio_to_rt5677(chip);
++	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
+ 	int value, ret;
+ 
+ 	ret = regmap_read(rt5677->regmap, RT5677_GPIO_ST, &value);
+@@ -4564,7 +4559,7 @@ static int rt5677_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 
+ static int rt5677_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct rt5677_priv *rt5677 = gpio_to_rt5677(chip);
++	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
+ 
+ 	switch (offset) {
+ 	case RT5677_GPIO1 ... RT5677_GPIO5:
+@@ -4618,7 +4613,7 @@ static void rt5677_gpio_config(struct rt5677_priv *rt5677, unsigned offset,
+ 
+ static int rt5677_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct rt5677_priv *rt5677 = gpio_to_rt5677(chip);
++	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
+ 	struct regmap_irq_chip_data *data = rt5677->irq_data;
+ 	int irq;
+ 
+@@ -4677,7 +4672,7 @@ static void rt5677_init_gpio(struct i2c_client *i2c)
+ 	rt5677->gpio_chip.parent = &i2c->dev;
+ 	rt5677->gpio_chip.base = -1;
+ 
+-	ret = gpiochip_add(&rt5677->gpio_chip);
++	ret = gpiochip_add_data(&rt5677->gpio_chip, rt5677);
+ 	if (ret != 0)
+ 		dev_err(&i2c->dev, "Failed to add GPIOs: %d\n", ret);
+ }
 -- 
 2.4.3
 
