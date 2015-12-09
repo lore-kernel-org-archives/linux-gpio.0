@@ -1,133 +1,78 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 032/182] gpio: lynxpoint: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:17:13 +0100
-Message-ID: <1449667033-31266-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 033/182] gpio: max730x: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:17:21 +0100
+Message-ID: <1449667041-31314-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:36148 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753598AbbLINRT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:17:19 -0500
-Received: by lbblt2 with SMTP id lt2so29889758lbb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:17:18 -0800 (PST)
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:34470 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753598AbbLINR0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:17:26 -0500
+Received: by lbbcs9 with SMTP id cs9so29706161lbb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:17:25 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Roland Stigge <stigge@antcom.de>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Roland Stigge <stigge@antcom.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-lynxpoint.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-max730x.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-lynxpoint.c b/drivers/gpio/gpio-lynxpoint.c
-index 6a48ffd6e0db..13107772be4f 100644
---- a/drivers/gpio/gpio-lynxpoint.c
-+++ b/drivers/gpio/gpio-lynxpoint.c
-@@ -97,7 +97,7 @@ struct lp_gpio {
- static unsigned long lp_gpio_reg(struct gpio_chip *chip, unsigned offset,
- 				 int reg)
- {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	int reg_offset;
+diff --git a/drivers/gpio/gpio-max730x.c b/drivers/gpio/gpio-max730x.c
+index 5d6a723cb414..08807368f007 100644
+--- a/drivers/gpio/gpio-max730x.c
++++ b/drivers/gpio/gpio-max730x.c
+@@ -50,7 +50,7 @@
  
- 	if (reg == LP_CONFIG1 || reg == LP_CONFIG2)
-@@ -112,7 +112,7 @@ static unsigned long lp_gpio_reg(struct gpio_chip *chip, unsigned offset,
- 
- static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
+ static int max7301_direction_input(struct gpio_chip *chip, unsigned offset)
  {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long conf2 = lp_gpio_reg(chip, offset, LP_CONFIG2);
- 	unsigned long acpi_use = lp_gpio_reg(chip, offset, LP_ACPI_OWNED);
-@@ -137,7 +137,7 @@ static int lp_gpio_request(struct gpio_chip *chip, unsigned offset)
- 
- static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
+-	struct max7301 *ts = container_of(chip, struct max7301, chip);
++	struct max7301 *ts = gpiochip_get_data(chip);
+ 	u8 *config;
+ 	u8 offset_bits, pin_config;
+ 	int ret;
+@@ -92,7 +92,7 @@ static int __max7301_set(struct max7301 *ts, unsigned offset, int value)
+ static int max7301_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				    int value)
  {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	unsigned long conf2 = lp_gpio_reg(chip, offset, LP_CONFIG2);
+-	struct max7301 *ts = container_of(chip, struct max7301, chip);
++	struct max7301 *ts = gpiochip_get_data(chip);
+ 	u8 *config;
+ 	u8 offset_bits;
+ 	int ret;
+@@ -120,7 +120,7 @@ static int max7301_direction_output(struct gpio_chip *chip, unsigned offset,
  
- 	/* disable input sensing */
-@@ -149,7 +149,7 @@ static void lp_gpio_free(struct gpio_chip *chip, unsigned offset)
- static int lp_irq_type(struct irq_data *d, unsigned type)
+ static int max7301_get(struct gpio_chip *chip, unsigned offset)
  {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	u32 value;
-@@ -191,7 +191,7 @@ static int lp_gpio_get(struct gpio_chip *chip, unsigned offset)
+-	struct max7301 *ts = container_of(chip, struct max7301, chip);
++	struct max7301 *ts = gpiochip_get_data(chip);
+ 	int config, level = -EINVAL;
  
- static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
+ 	/* First 4 pins are unused in the controller */
+@@ -148,7 +148,7 @@ static int max7301_get(struct gpio_chip *chip, unsigned offset)
  
-@@ -207,7 +207,7 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ static void max7301_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+-	struct max7301 *ts = container_of(chip, struct max7301, chip);
++	struct max7301 *ts = gpiochip_get_data(chip);
  
- static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
+ 	/* First 4 pins are unused in the controller */
+ 	offset += 4;
+@@ -213,7 +213,7 @@ int __max730x_probe(struct max7301 *ts)
+ 		}
+ 	}
  
-@@ -221,7 +221,7 @@ static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- static int lp_gpio_direction_output(struct gpio_chip *chip,
- 				      unsigned offset, int value)
- {
--	struct lp_gpio *lg = container_of(chip, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(chip);
- 	unsigned long reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
- 	unsigned long flags;
+-	ret = gpiochip_add(&ts->chip);
++	ret = gpiochip_add_data(&ts->chip, ts);
+ 	if (ret)
+ 		goto exit_destroy;
  
-@@ -238,7 +238,7 @@ static void lp_gpio_irq_handler(struct irq_desc *desc)
- {
- 	struct irq_data *data = irq_desc_get_irq_data(desc);
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(gc);
- 	struct irq_chip *chip = irq_data_get_irq_chip(data);
- 	u32 base, pin, mask;
- 	unsigned long reg, ena, pending;
-@@ -273,7 +273,7 @@ static void lp_irq_mask(struct irq_data *d)
- static void lp_irq_enable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -286,7 +286,7 @@ static void lp_irq_enable(struct irq_data *d)
- static void lp_irq_disable(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct lp_gpio *lg = container_of(gc, struct lp_gpio, chip);
-+	struct lp_gpio *lg = gpiochip_get_data(gc);
- 	u32 hwirq = irqd_to_hwirq(d);
- 	unsigned long reg = lp_gpio_reg(&lg->chip, hwirq, LP_INT_ENABLE);
- 	unsigned long flags;
-@@ -370,7 +370,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 	gc->can_sleep = false;
- 	gc->parent = dev;
- 
--	ret = gpiochip_add(gc);
-+	ret = gpiochip_add_data(gc, lg);
- 	if (ret) {
- 		dev_err(dev, "failed adding lp-gpio chip\n");
- 		return ret;
 -- 
 2.4.3
 
