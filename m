@@ -1,119 +1,98 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] gpio: pl061: add support for wakeup configuration
-Date: Wed, 9 Dec 2015 15:20:54 +0000
-Message-ID: <566846D6.6010501@arm.com>
-References: <1448644755-29183-1-git-send-email-sudeep.holla@arm.com>
- <CACRpkdZKKWbWDmRGGfHSuF1R-OLubLkuCPWtYxXVh+iwprL7-Q@mail.gmail.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: [PATCH 157/182] input: ad7879: use gpiochip data pointer
+Date: Wed, 9 Dec 2015 14:43:43 +0100
+Message-ID: <5668300F.8070800@analog.com>
+References: <1449668721-5832-1-git-send-email-linus.walleij@linaro.org>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:50241 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937AbbLIPU6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 9 Dec 2015 10:20:58 -0500
-In-Reply-To: <CACRpkdZKKWbWDmRGGfHSuF1R-OLubLkuCPWtYxXVh+iwprL7-Q@mail.gmail.com>
+Received: from mail-bl2on0097.outbound.protection.outlook.com ([65.55.169.97]:54811
+	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750977AbbLIPWb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 10:22:31 -0500
+In-Reply-To: <1449668721-5832-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Aubrey Li <aubrey.li@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sudeep Holla <sudeep.holla@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-
-
-On 09/12/15 15:08, Linus Walleij wrote:
-> On Fri, Nov 27, 2015 at 6:19 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+On 12/09/2015 02:45 PM, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 >
->> The PL061 supports interrupts and those can be wakeup interrupts. We
->> need to provide support for configuring those interrupts as wakeup
->> sources.
->>
->> This patch adds irq_set_wake callback for PL061 so that GPIO interrupts
->> can be configured as wakeup.
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
->>   drivers/gpio/gpio-pl061.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
->> index 4d4b37676702..8b1cbd5767f9 100644
->> --- a/drivers/gpio/gpio-pl061.c
->> +++ b/drivers/gpio/gpio-pl061.c
->> @@ -14,6 +14,7 @@
->>   #include <linux/module.h>
->>   #include <linux/io.h>
->>   #include <linux/ioport.h>
->> +#include <linux/interrupt.h>
->>   #include <linux/irq.h>
->>   #include <linux/irqchip/chained_irq.h>
->>   #include <linux/bitops.h>
->> @@ -269,12 +270,20 @@ static void pl061_irq_ack(struct irq_data *d)
->>          spin_unlock(&chip->lock);
->>   }
->>
->> +static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
->> +{
->> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> +
->> +       return irq_set_irq_wake(gc->irq_parent, state);
->> +}
->> +
->>   static struct irq_chip pl061_irqchip = {
->>          .name           = "pl061",
->>          .irq_ack        = pl061_irq_ack,
->>          .irq_mask       = pl061_irq_mask,
->>          .irq_unmask     = pl061_irq_unmask,
->>          .irq_set_type   = pl061_irq_type,
->> +       .irq_set_wake   = pl061_irq_set_wake,
->>   };
+> Cc: Michael Hennerich <michael.hennerich@analog.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+
+> ---
+> Dmitry: please ACK this so I can take it through the GPIO tree.
+> ---
+>   drivers/input/touchscreen/ad7879.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> Is this really all that is needed? Don't you need to call
-> device_wakeup_enable(&adev->dev, 1); on the amba (primecell)
-> device providing this GPIO, lest it may be suspended itself
-> and render this exercise pointless.
+> diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
+> index 16b5cc2196f2..583a0590ceb2 100644
+> --- a/drivers/input/touchscreen/ad7879.c
+> +++ b/drivers/input/touchscreen/ad7879.c
+> @@ -379,7 +379,7 @@ static const struct attribute_group ad7879_attr_group = {
+>   static int ad7879_gpio_direction_input(struct gpio_chip *chip,
+>   					unsigned gpio)
+>   {
+> -	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
+> +	struct ad7879 *ts = gpiochip_get_data(chip);
+>   	int err;
 >
-
-Do you mean something like :
-
-
--->8--
-
-diff --git i/drivers/gpio/gpio-pl061.c w/drivers/gpio/gpio-pl061.c
-index 4d4b37676702..467e0b278cf0 100644
---- i/drivers/gpio/gpio-pl061.c
-+++ w/drivers/gpio/gpio-pl061.c
-@@ -354,6 +354,7 @@ static int pl061_probe(struct amba_device *adev, 
-const struct amba_id *id)
-         }
-
-         amba_set_drvdata(adev, chip);
-+       dev_pm_set_wake_irq(&adev->dev, irq);
-         dev_info(&adev->dev, "PL061 GPIO chip @%pa registered\n",
-                  &adev->res.start);
-
--->8--
-
-If yes, I agree that's one possible solution.
-
-> And if not, why not?
+>   	mutex_lock(&ts->mutex);
+> @@ -393,7 +393,7 @@ static int ad7879_gpio_direction_input(struct gpio_chip *chip,
+>   static int ad7879_gpio_direction_output(struct gpio_chip *chip,
+>   					unsigned gpio, int level)
+>   {
+> -	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
+> +	struct ad7879 *ts = gpiochip_get_data(chip);
+>   	int err;
+>
+>   	mutex_lock(&ts->mutex);
+> @@ -412,7 +412,7 @@ static int ad7879_gpio_direction_output(struct gpio_chip *chip,
+>
+>   static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+>   {
+> -	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
+> +	struct ad7879 *ts = gpiochip_get_data(chip);
+>   	u16 val;
+>
+>   	mutex_lock(&ts->mutex);
+> @@ -425,7 +425,7 @@ static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
+>   static void ad7879_gpio_set_value(struct gpio_chip *chip,
+>   				  unsigned gpio, int value)
+>   {
+> -	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
+> +	struct ad7879 *ts = gpiochip_get_data(chip);
+>
+>   	mutex_lock(&ts->mutex);
+>   	if (value)
+> @@ -456,7 +456,7 @@ static int ad7879_gpio_add(struct ad7879 *ts,
+>   		ts->gc.owner = THIS_MODULE;
+>   		ts->gc.parent = ts->dev;
+>
+> -		ret = gpiochip_add(&ts->gc);
+> +		ret = gpiochip_add_data(&ts->gc, ts);
+>   		if (ret)
+>   			dev_err(ts->dev, "failed to register gpio %d\n",
+>   				ts->gc.base);
 >
 
-The only reason I didn't go for the above solution is that some
-platforms may not have any gpio pins as wakeup source, so it may be
-unnecessary to do that. Also in order to that, we also implicitly force
-platforms to mark the GPIO controller as wakeup source rather than just
-the few GPIO pins that are wakeup capable.
-
-> How are GPIO chips providing IRQs actually going to do this,
-> provided that they need to be kept awake themselves?
->
-
-Not gone through all the implementations. Just started with PL061 when I
-tested on Juno(Beware it doesn't work with std. firmware as there are
-some know issues still under investigation)
 
 -- 
-Regards,
-Sudeep
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
+Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
+Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
+Margaret Seif
