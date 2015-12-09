@@ -1,168 +1,125 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 099/182] pinctrl: amd: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:31:28 +0100
-Message-ID: <1449667888-2402-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 097/182] pinctrl: abx500: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:31:14 +0100
+Message-ID: <1449667874-2245-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:36219 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754327AbbLINbe (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:31:34 -0500
-Received: by lfs39 with SMTP id 39so34433130lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:31:33 -0800 (PST)
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:36075 "EHLO
+	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754518AbbLINbS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:31:18 -0500
+Received: by lfs39 with SMTP id 39so34427815lfs.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:31:17 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ken Xue <Ken.Xue@amd.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Ken Xue <Ken.Xue@amd.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/pinctrl-amd.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ drivers/pinctrl/nomadik/pinctrl-abx500.c | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index a74b2b0a75e0..657449431301 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -35,16 +35,11 @@
- #include "pinctrl-utils.h"
- #include "pinctrl-amd.h"
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index 434d5de0177b..085e60106ec2 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -109,19 +109,10 @@ struct abx500_pinctrl {
+ 	int irq_cluster_size;
+ };
  
--static inline struct amd_gpio *to_amd_gpio(struct gpio_chip *gc)
+-/**
+- * to_abx500_pinctrl() - get the pointer to abx500_pinctrl
+- * @chip:	Member of the structure abx500_pinctrl
+- */
+-static inline struct abx500_pinctrl *to_abx500_pinctrl(struct gpio_chip *chip)
 -{
--	return container_of(gc, struct amd_gpio, gc);
+-	return container_of(chip, struct abx500_pinctrl, chip);
 -}
 -
- static int amd_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
+ static int abx500_gpio_get_bit(struct gpio_chip *chip, u8 reg,
+ 			       unsigned offset, bool *bit)
  {
- 	unsigned long flags;
- 	u32 pin_reg;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
-@@ -71,7 +66,7 @@ static int amd_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	u8 pos = offset % 8;
+ 	u8 val;
+ 	int ret;
+@@ -143,7 +134,7 @@ static int abx500_gpio_get_bit(struct gpio_chip *chip, u8 reg,
+ static int abx500_gpio_set_bits(struct gpio_chip *chip, u8 reg,
+ 				unsigned offset, int val)
  {
- 	u32 pin_reg;
- 	unsigned long flags;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	u8 pos = offset % 8;
+ 	int ret;
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
-@@ -90,7 +85,7 @@ static int amd_gpio_get_value(struct gpio_chip *gc, unsigned offset)
+@@ -164,7 +155,7 @@ static int abx500_gpio_set_bits(struct gpio_chip *chip, u8 reg,
+  */
+ static int abx500_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
- 	u32 pin_reg;
- 	unsigned long flags;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	bool bit;
+ 	bool is_out;
+ 	u8 gpio_offset = offset - 1;
+@@ -192,7 +183,7 @@ out:
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
-@@ -103,7 +98,7 @@ static void amd_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
+ static void abx500_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
  {
- 	u32 pin_reg;
- 	unsigned long flags;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	int ret;
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
-@@ -122,7 +117,7 @@ static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 	u32 pin_reg;
- 	int ret = 0;
- 	unsigned long flags;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ 	ret = abx500_gpio_set_bits(chip, AB8500_GPIO_OUT1_REG, offset, val);
+@@ -272,7 +263,7 @@ out:
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
-@@ -186,7 +181,7 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	unsigned int bank, i, pin_num;
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ static bool abx500_pullud_supported(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	struct pullud *pullud = pct->soc->pullud;
  
- 	char *level_trig;
- 	char *active_level;
-@@ -327,7 +322,7 @@ static void amd_gpio_irq_enable(struct irq_data *d)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ 	return (pullud &&
+@@ -284,7 +275,7 @@ static int abx500_gpio_direction_output(struct gpio_chip *chip,
+ 					unsigned offset,
+ 					int val)
+ {
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	unsigned gpio;
+ 	int ret;
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
-@@ -351,7 +346,7 @@ static void amd_gpio_irq_disable(struct irq_data *d)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+@@ -332,7 +323,7 @@ static int abx500_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
-@@ -366,7 +361,7 @@ static void amd_gpio_irq_mask(struct irq_data *d)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ static int abx500_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	/* The AB8500 GPIO numbers are off by one */
+ 	int gpio = offset + 1;
+ 	int hwirq;
+@@ -634,7 +625,7 @@ static void abx500_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	unsigned i;
+ 	unsigned gpio = chip->base;
+-	struct abx500_pinctrl *pct = to_abx500_pinctrl(chip);
++	struct abx500_pinctrl *pct = gpiochip_get_data(chip);
+ 	struct pinctrl_dev *pctldev = pct->pctldev;
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
-@@ -380,7 +375,7 @@ static void amd_gpio_irq_unmask(struct irq_data *d)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ 	for (i = 0; i < chip->ngpio; i++, gpio++) {
+@@ -1211,7 +1202,7 @@ static int abx500_gpio_probe(struct platform_device *pdev)
+ 	pct->irq_cluster = pct->soc->gpio_irq_cluster;
+ 	pct->irq_cluster_size = pct->soc->ngpio_irq_cluster;
  
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
-@@ -394,7 +389,7 @@ static void amd_gpio_irq_eoi(struct irq_data *d)
- 	u32 reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	reg = readl(gpio_dev->base + WAKE_INT_MASTER_REG);
-@@ -409,7 +404,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	u32 pin_reg;
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
- 	spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
-@@ -504,7 +499,7 @@ static void amd_gpio_irq_handler(struct irq_desc *desc)
- 	unsigned long flags;
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct amd_gpio *gpio_dev = to_amd_gpio(gc);
-+	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
- 	chained_irq_enter(chip, desc);
- 	/*enable GPIO interrupt again*/
-@@ -795,7 +790,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 		return PTR_ERR(gpio_dev->pctrl);
- 	}
- 
--	ret = gpiochip_add(&gpio_dev->gc);
-+	ret = gpiochip_add_data(&gpio_dev->gc, gpio_dev);
- 	if (ret)
- 		goto out1;
- 
+-	ret = gpiochip_add(&pct->chip);
++	ret = gpiochip_add_data(&pct->chip, pct);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
+ 		return ret;
 -- 
 2.4.3
 
