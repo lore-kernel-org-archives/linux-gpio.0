@@ -1,49 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Wed, 9 Dec 2015 13:35:00 +0100
-Message-ID: <CACRpkdZU3RrXmPr1fDzCMumhQ8nWEf126iC1rDu=xiLFj7DU+A@mail.gmail.com>
-References: <1447869580-10416-1-git-send-email-afd@ti.com>
-	<20151124162624.GI807@x1>
-	<20151204120240.GW26072@sirena.org.uk>
-	<5665E4F7.1070707@ti.com>
-	<20151208191657.GA5727@sirena.org.uk>
+From: "Westerberg, Mika" <mika.westerberg@intel.com>
+Subject: Re: [PATCH V4 1/2] pinctrl: intel: fix bug of register offset
+ calculation
+Date: Wed, 9 Dec 2015 15:07:24 +0200
+Message-ID: <20151209130724.GT1766@lahna.fi.intel.com>
+References: <1448882416-40845-1-git-send-email-qipeng.zha@intel.com>
+ <CACRpkdYP6gP9EqF8VHE2RMRY4Kczyitb2tKD0v9Rcwdjr3Ht_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:33972 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752636AbbLIMfB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 07:35:01 -0500
-Received: by oies6 with SMTP id s6so25960980oie.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 04:35:00 -0800 (PST)
-In-Reply-To: <20151208191657.GA5727@sirena.org.uk>
+Received: from mga14.intel.com ([192.55.52.115]:57631 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752867AbbLINJg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 08:09:36 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYP6gP9EqF8VHE2RMRY4Kczyitb2tKD0v9Rcwdjr3Ht_A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
 
-On Tue, Dec 8, 2015 at 8:16 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Dec 07, 2015 at 01:58:47PM -0600, Andrew F. Davis wrote:
->
->> As all of this driver should be taken though the MFD tree how
->> can this gpiolib change be handled? If we have gpio.parent it
->> will not build on MFD, with gpio.dev it will fail to build when
->> the changes are merged from the gpio subsystem. As the change
->> has not been merged into linux-next as far a I can tell maybe
->> this should be taken as is, then when the gpiolib change is
->> made this can be changed with all the other drivers?
->
-> Do a cross tree merge in one direction or the other between MFD and GPIO.
+On Tue, Dec 01, 2015 at 03:10:40PM +0100, Linus Walleij wrote:
+> On Mon, Nov 30, 2015 at 12:20 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
+> 
+> > The group size for registers PADCFGLOCK, HOSTSW_OWN, GPI_IS,
+> > GPI_IE, are not 24 for Broxton, Add a parameter to allow
+> > different platform to set correct value.
+> >
+> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
+> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
+> >
+> > ---
+> > change in v4:
+> >  no code change, re-send because the other patch set is update.
+> 
+> I've already applied the v3 version so no action :)
 
-If Lee makes an immutable branch with this stuff on it I can
-pull that in and put a fix on top of it (like I recently did with
-the ASoC AC97 codec). I have "only" renamed
-the .dev field of struct gpio_chip to .parent but I'm bombing
-out another 150 or so patches today, ridding all GPIO drivers
-in the kernel of container_of().
+Can you also take patch 2/2 of this series? It fixes the other bug
+Qipeng found.
 
-A bit painful but nothing to what tglx has gone through for
-refactoring IRQ chips...
-
-Yours,
-Linus Walleij
+Thanks.
