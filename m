@@ -1,87 +1,84 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 118/182] pinctrl: mediatek: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:33:56 +0100
-Message-ID: <1449668036-3391-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 120/182] pinctrl: xway: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:34:10 +0100
+Message-ID: <1449668050-3485-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:34155 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754452AbbLINeA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:34:00 -0500
-Received: by lbbcs9 with SMTP id cs9so29988748lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:33:58 -0800 (PST)
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:35715 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754193AbbLINeU (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:34:20 -0500
+Received: by lfdl133 with SMTP id l133so34157786lfd.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:34:18 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Pramod Gurav <pramod.gurav@smartplayin.com>, John Crispin <blogic@openwrt.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Pramod Gurav <pramod.gurav@smartplayin.com>
+Cc: John Crispin <blogic@openwrt.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+This driver looks a bit weird: it is registering the gpiochip
+before the pin controller, yet depend on resolving the pin controller
+state from the gpiochip callbacks. This patch means no semantic
+change but please look to see if you can register the gpiochip
+after the pin controller instead, if you have time.
+---
+ drivers/pinctrl/pinctrl-xway.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index a71f68362967..57644aa0ad2a 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -14,7 +14,7 @@
-  */
- 
- #include <linux/io.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -95,7 +95,7 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index b4380fb72001..e92aa05a741b 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -648,7 +648,7 @@ static struct ltq_pinmux_info xway_info = {
+ /* ---------  gpio_chip related code --------- */
+ static void xway_gpio_set(struct gpio_chip *chip, unsigned int pin, int val)
  {
- 	unsigned int reg_addr;
- 	unsigned int bit;
--	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
+-	struct ltq_pinmux_info *info = dev_get_drvdata(chip->parent);
++	struct ltq_pinmux_info *info = gpiochip_get_data(chip);
  
- 	reg_addr = mtk_get_port(pctl, offset) + pctl->devdata->dout_offset;
- 	bit = BIT(offset & 0xf);
-@@ -742,7 +742,7 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
- 	unsigned int bit;
- 	unsigned int read_val = 0;
+ 	if (val)
+ 		gpio_setbit(info->membase[0], GPIO_OUT(pin), PORT_PIN(pin));
+@@ -658,14 +658,14 @@ static void xway_gpio_set(struct gpio_chip *chip, unsigned int pin, int val)
  
--	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
- 
- 	reg_addr =  mtk_get_port(pctl, offset) + pctl->devdata->dir_offset;
- 	bit = BIT(offset & 0xf);
-@@ -755,7 +755,7 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	unsigned int reg_addr;
- 	unsigned int bit;
- 	unsigned int read_val = 0;
--	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
- 
- 	if (mtk_gpio_get_direction(chip, offset))
- 		reg_addr = mtk_get_port(pctl, offset) +
-@@ -772,7 +772,7 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned offset)
- static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ static int xway_gpio_get(struct gpio_chip *chip, unsigned int pin)
  {
- 	const struct mtk_desc_pin *pin;
--	struct mtk_pinctrl *pctl = dev_get_drvdata(chip->parent);
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
- 	int irq;
+-	struct ltq_pinmux_info *info = dev_get_drvdata(chip->parent);
++	struct ltq_pinmux_info *info = gpiochip_get_data(chip);
  
- 	pin = pctl->devdata->pins + offset;
-@@ -1351,7 +1351,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 	pctl->chip->parent = &pdev->dev;
- 	pctl->chip->base = -1;
+ 	return gpio_getbit(info->membase[0], GPIO_IN(pin), PORT_PIN(pin));
+ }
  
--	ret = gpiochip_add(pctl->chip);
-+	ret = gpiochip_add_data(pctl->chip, pctl);
+ static int xway_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
+ {
+-	struct ltq_pinmux_info *info = dev_get_drvdata(chip->parent);
++	struct ltq_pinmux_info *info = gpiochip_get_data(chip);
+ 
+ 	gpio_clearbit(info->membase[0], GPIO_DIR(pin), PORT_PIN(pin));
+ 
+@@ -674,7 +674,7 @@ static int xway_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
+ 
+ static int xway_gpio_dir_out(struct gpio_chip *chip, unsigned int pin, int val)
+ {
+-	struct ltq_pinmux_info *info = dev_get_drvdata(chip->parent);
++	struct ltq_pinmux_info *info = gpiochip_get_data(chip);
+ 
+ 	gpio_setbit(info->membase[0], GPIO_DIR(pin), PORT_PIN(pin));
+ 	xway_gpio_set(chip, pin, val);
+@@ -784,7 +784,7 @@ static int pinmux_xway_probe(struct platform_device *pdev)
+ 
+ 	/* load the gpio chip */
+ 	xway_chip.parent = &pdev->dev;
+-	ret = gpiochip_add(&xway_chip);
++	ret = gpiochip_add_data(&xway_chip, &xway_info);
  	if (ret) {
- 		ret = -EINVAL;
- 		goto pctrl_error;
+ 		dev_err(&pdev->dev, "Failed to register gpio chip\n");
+ 		return ret;
 -- 
 2.4.3
 
