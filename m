@@ -1,173 +1,173 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 090/182] pinctrl: cygnus-gpio: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:29:53 +0100
-Message-ID: <1449667793-1826-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 091/182] pinctrl: baytrail: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:30:28 +0100
+Message-ID: <1449667828-1881-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34663 "EHLO
-	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753984AbbLINaE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:30:04 -0500
-Received: by lffu14 with SMTP id u14so34267853lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:30:02 -0800 (PST)
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:33324 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754356AbbLINad (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:30:33 -0500
+Received: by lbbkw15 with SMTP id kw15so30010582lbb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:30:32 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Jon Mason <jonmason@broadcom.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c | 33 +++++++++++++------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-index bd212b269094..d15e52c40c83 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c
-@@ -24,7 +24,7 @@
- #include <linux/slab.h>
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index bb92f8ae6b33..9d2fcc869f30 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -20,7 +20,7 @@
+ #include <linux/types.h>
+ #include <linux/bitops.h>
  #include <linux/interrupt.h>
- #include <linux/io.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
- #include <linux/ioport.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-@@ -96,11 +96,6 @@ struct cygnus_gpio {
- 	struct pinctrl_desc pctldesc;
+ #include <linux/acpi.h>
+ #include <linux/platform_device.h>
+ #include <linux/seq_file.h>
+@@ -147,12 +147,10 @@ struct byt_gpio {
+ 	struct byt_gpio_pin_context	*saved_context;
  };
  
--static inline struct cygnus_gpio *to_cygnus_gpio(struct gpio_chip *gc)
--{
--	return container_of(gc, struct cygnus_gpio, gc);
--}
+-#define to_byt_gpio(c)	container_of(c, struct byt_gpio, chip)
 -
- /*
-  * Mapping from PINCONF pins to GPIO pins is 1-to-1
-  */
-@@ -145,7 +140,7 @@ static inline bool cygnus_get_bit(struct cygnus_gpio *chip, unsigned int reg,
- static void cygnus_gpio_irq_handler(struct irq_desc *desc)
+ static void __iomem *byt_gpio_reg(struct gpio_chip *chip, unsigned offset,
+ 				 int reg)
  {
- 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	struct irq_chip *irq_chip = irq_desc_get_chip(desc);
- 	int i, bit;
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	u32 reg_offset;
  
-@@ -178,7 +173,7 @@ static void cygnus_gpio_irq_handler(struct irq_desc *desc)
- static void cygnus_gpio_irq_ack(struct irq_data *d)
+ 	if (reg == BYT_INT_STAT_REG)
+@@ -193,7 +191,7 @@ static u32 byt_get_gpio_mux(struct byt_gpio *vg, unsigned offset)
+ 
+ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_CONF0_REG);
+ 	u32 value, gpio_mux;
+ 	unsigned long flags;
+@@ -229,7 +227,7 @@ static int byt_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 
+ static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 
+ 	byt_gpio_clear_triggering(vg, offset);
+ 	pm_runtime_put(&vg->pdev->dev);
+@@ -237,7 +235,7 @@ static void byt_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ static int byt_irq_type(struct irq_data *d, unsigned type)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(irq_data_get_irq_chip_data(d));
++	struct byt_gpio *vg = gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	u32 offset = irqd_to_hwirq(d);
+ 	u32 value;
+ 	unsigned long flags;
+@@ -273,7 +271,7 @@ static int byt_irq_type(struct irq_data *d, unsigned type)
+ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 	u32 val;
+ 
+@@ -286,7 +284,7 @@ static int byt_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 
+ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 old_val;
+@@ -305,7 +303,7 @@ static void byt_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	void __iomem *reg = byt_gpio_reg(chip, offset, BYT_VAL_REG);
+ 	unsigned long flags;
+ 	u32 value;
+@@ -324,7 +322,7 @@ static int byt_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 				     unsigned gpio, int value)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	void __iomem *conf_reg = byt_gpio_reg(chip, gpio, BYT_CONF0_REG);
+ 	void __iomem *reg = byt_gpio_reg(chip, gpio, BYT_VAL_REG);
+ 	unsigned long flags;
+@@ -356,7 +354,7 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ 
+ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+-	struct byt_gpio *vg = to_byt_gpio(chip);
++	struct byt_gpio *vg = gpiochip_get_data(chip);
+ 	int i;
+ 	u32 conf0, val, offs;
+ 
+@@ -428,7 +426,7 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_data *data = irq_desc_get_irq_data(desc);
+-	struct byt_gpio *vg = to_byt_gpio(irq_desc_get_handler_data(desc));
++	struct byt_gpio *vg = gpiochip_get_data(irq_desc_get_handler_data(desc));
+ 	struct irq_chip *chip = irq_data_get_irq_chip(data);
+ 	u32 base, pin;
+ 	void __iomem *reg;
+@@ -450,7 +448,7 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ static void byt_irq_ack(struct irq_data *d)
  {
  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned gpio = d->hwirq;
- 	unsigned int offset = CYGNUS_GPIO_REG(gpio,
- 			CYGNUS_GPIO_INT_CLR_OFFSET);
-@@ -197,7 +192,7 @@ static void cygnus_gpio_irq_ack(struct irq_data *d)
- static void cygnus_gpio_irq_set_mask(struct irq_data *d, bool unmask)
+-	struct byt_gpio *vg = to_byt_gpio(gc);
++	struct byt_gpio *vg = gpiochip_get_data(gc);
+ 	unsigned offset = irqd_to_hwirq(d);
+ 	void __iomem *reg;
+ 
+@@ -463,7 +461,7 @@ static void byt_irq_ack(struct irq_data *d)
+ static void byt_irq_unmask(struct irq_data *d)
  {
  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned gpio = d->hwirq;
- 
- 	cygnus_set_bit(chip, CYGNUS_GPIO_INT_MSK_OFFSET, gpio, unmask);
-@@ -206,7 +201,7 @@ static void cygnus_gpio_irq_set_mask(struct irq_data *d, bool unmask)
- static void cygnus_gpio_irq_mask(struct irq_data *d)
+-	struct byt_gpio *vg = to_byt_gpio(gc);
++	struct byt_gpio *vg = gpiochip_get_data(gc);
+ 	unsigned offset = irqd_to_hwirq(d);
+ 	unsigned long flags;
+ 	void __iomem *reg;
+@@ -498,7 +496,7 @@ static void byt_irq_unmask(struct irq_data *d)
+ static void byt_irq_mask(struct irq_data *d)
  {
  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags;
+-	struct byt_gpio *vg = to_byt_gpio(gc);
++	struct byt_gpio *vg = gpiochip_get_data(gc);
  
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -217,7 +212,7 @@ static void cygnus_gpio_irq_mask(struct irq_data *d)
- static void cygnus_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -228,7 +223,7 @@ static void cygnus_gpio_irq_unmask(struct irq_data *d)
- static int cygnus_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned gpio = d->hwirq;
- 	bool level_triggered = false;
- 	bool dual_edge = false;
-@@ -290,7 +285,7 @@ static struct irq_chip cygnus_gpio_irq_chip = {
-  */
- static int cygnus_gpio_request(struct gpio_chip *gc, unsigned offset)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned gpio = gc->base + offset;
- 
- 	/* not all Cygnus GPIO pins can be muxed individually */
-@@ -302,7 +297,7 @@ static int cygnus_gpio_request(struct gpio_chip *gc, unsigned offset)
- 
- static void cygnus_gpio_free(struct gpio_chip *gc, unsigned offset)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned gpio = gc->base + offset;
- 
- 	if (!chip->pinmux_is_supported)
-@@ -313,7 +308,7 @@ static void cygnus_gpio_free(struct gpio_chip *gc, unsigned offset)
- 
- static int cygnus_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -328,7 +323,7 @@ static int cygnus_gpio_direction_input(struct gpio_chip *gc, unsigned gpio)
- static int cygnus_gpio_direction_output(struct gpio_chip *gc, unsigned gpio,
- 					int val)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -343,7 +338,7 @@ static int cygnus_gpio_direction_output(struct gpio_chip *gc, unsigned gpio,
- 
- static void cygnus_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -355,7 +350,7 @@ static void cygnus_gpio_set(struct gpio_chip *gc, unsigned gpio, int val)
- 
- static int cygnus_gpio_get(struct gpio_chip *gc, unsigned gpio)
- {
--	struct cygnus_gpio *chip = to_cygnus_gpio(gc);
-+	struct cygnus_gpio *chip = gpiochip_get_data(gc);
- 	unsigned int offset = CYGNUS_GPIO_REG(gpio,
- 					      CYGNUS_GPIO_DATA_IN_OFFSET);
- 	unsigned int shift = CYGNUS_GPIO_SHIFT(gpio);
-@@ -732,7 +727,7 @@ static int cygnus_gpio_probe(struct platform_device *pdev)
- 	chip->pinmux_is_supported = of_property_read_bool(dev->of_node,
- 							"gpio-ranges");
+ 	byt_gpio_clear_triggering(vg, irqd_to_hwirq(d));
+ }
+@@ -605,7 +603,7 @@ static int byt_gpio_probe(struct platform_device *pdev)
+ 				       sizeof(*vg->saved_context), GFP_KERNEL);
+ #endif
  
 -	ret = gpiochip_add(gc);
-+	ret = gpiochip_add_data(gc, chip);
- 	if (ret < 0) {
- 		dev_err(dev, "unable to add GPIO chip\n");
++	ret = gpiochip_add_data(gc, vg);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed adding byt-gpio chip\n");
  		return ret;
 -- 
 2.4.3
