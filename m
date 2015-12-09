@@ -1,68 +1,85 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 067/182] gpio: timberdale: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:23:45 +0100
-Message-ID: <1449667425-518-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 068/182] gpio: tps6586x: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:23:53 +0100
+Message-ID: <1449667433-567-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:35522 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753331AbbLINXu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:50 -0500
-Received: by lbpu9 with SMTP id u9so29686308lbp.2
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:48 -0800 (PST)
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:36206 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753902AbbLINX6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:23:58 -0500
+Received: by lfs39 with SMTP id 39so34285443lfs.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:23:56 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-timberdale.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-tps6586x.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index dda8f21811eb..a6de10c5275b 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -53,7 +53,7 @@ struct timbgpio {
- static int timbgpio_update_bit(struct gpio_chip *gpio, unsigned index,
- 	unsigned offset, bool enabled)
+diff --git a/drivers/gpio/gpio-tps6586x.c b/drivers/gpio/gpio-tps6586x.c
+index 89b2249100b0..87de5486a29e 100644
+--- a/drivers/gpio/gpio-tps6586x.c
++++ b/drivers/gpio/gpio-tps6586x.c
+@@ -38,14 +38,9 @@ struct tps6586x_gpio {
+ 	struct device *parent;
+ };
+ 
+-static inline struct tps6586x_gpio *to_tps6586x_gpio(struct gpio_chip *chip)
+-{
+-	return container_of(chip, struct tps6586x_gpio, gpio_chip);
+-}
+-
+ static int tps6586x_gpio_get(struct gpio_chip *gc, unsigned offset)
  {
--	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
-+	struct timbgpio *tgpio = gpiochip_get_data(gpio);
- 	u32 reg;
+-	struct tps6586x_gpio *tps6586x_gpio = to_tps6586x_gpio(gc);
++	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
+ 	uint8_t val;
+ 	int ret;
  
- 	spin_lock(&tgpio->lock);
-@@ -77,7 +77,7 @@ static int timbgpio_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
- 
- static int timbgpio_gpio_get(struct gpio_chip *gpio, unsigned nr)
+@@ -59,7 +54,7 @@ static int tps6586x_gpio_get(struct gpio_chip *gc, unsigned offset)
+ static void tps6586x_gpio_set(struct gpio_chip *gc, unsigned offset,
+ 			      int value)
  {
--	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
-+	struct timbgpio *tgpio = gpiochip_get_data(gpio);
- 	u32 value;
+-	struct tps6586x_gpio *tps6586x_gpio = to_tps6586x_gpio(gc);
++	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
  
- 	value = ioread32(tgpio->membase + TGPIOVAL);
-@@ -98,7 +98,7 @@ static void timbgpio_gpio_set(struct gpio_chip *gpio,
- 
- static int timbgpio_to_irq(struct gpio_chip *gpio, unsigned offset)
+ 	tps6586x_update(tps6586x_gpio->parent, TPS6586X_GPIOSET2,
+ 			value << offset, 1 << offset);
+@@ -68,7 +63,7 @@ static void tps6586x_gpio_set(struct gpio_chip *gc, unsigned offset,
+ static int tps6586x_gpio_output(struct gpio_chip *gc, unsigned offset,
+ 				int value)
  {
--	struct timbgpio *tgpio = container_of(gpio, struct timbgpio, gpio);
-+	struct timbgpio *tgpio = gpiochip_get_data(gpio);
+-	struct tps6586x_gpio *tps6586x_gpio = to_tps6586x_gpio(gc);
++	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
+ 	uint8_t val, mask;
  
- 	if (tgpio->irq_base <= 0)
- 		return -EINVAL;
-@@ -279,7 +279,7 @@ static int timbgpio_probe(struct platform_device *pdev)
- 	gc->ngpio = pdata->nr_pins;
- 	gc->can_sleep = false;
+ 	tps6586x_gpio_set(gc, offset, value);
+@@ -82,7 +77,7 @@ static int tps6586x_gpio_output(struct gpio_chip *gc, unsigned offset,
  
--	err = gpiochip_add(gc);
-+	err = gpiochip_add_data(gc, tgpio);
- 	if (err)
- 		return err;
+ static int tps6586x_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ {
+-	struct tps6586x_gpio *tps6586x_gpio = to_tps6586x_gpio(gc);
++	struct tps6586x_gpio *tps6586x_gpio = gpiochip_get_data(gc);
  
+ 	return tps6586x_irq_get_virq(tps6586x_gpio->parent,
+ 				TPS6586X_INT_PLDO_0 + offset);
+@@ -122,7 +117,7 @@ static int tps6586x_gpio_probe(struct platform_device *pdev)
+ 	else
+ 		tps6586x_gpio->gpio_chip.base = -1;
+ 
+-	ret = gpiochip_add(&tps6586x_gpio->gpio_chip);
++	ret = gpiochip_add_data(&tps6586x_gpio->gpio_chip, tps6586x_gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
 -- 
 2.4.3
 
