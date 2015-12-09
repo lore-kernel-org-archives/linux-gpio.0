@@ -1,64 +1,110 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 040/182] gpio: mm-lantiq: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:18:20 +0100
-Message-ID: <1449667100-31646-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 041/182] gpio: mpc5200: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:18:28 +0100
+Message-ID: <1449667108-31693-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:33915 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531AbbLINSZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:18:25 -0500
-Received: by lbbcs9 with SMTP id cs9so29722975lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:18:23 -0800 (PST)
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:33283 "EHLO
+	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751310AbbLINSd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:18:33 -0500
+Received: by lfaz4 with SMTP id z4so34025489lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:18:32 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, John Crispin <blogic@openwrt.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: John Crispin <blogic@openwrt.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-mm-lantiq.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-mpc5200.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
-index f67ef2283d64..a2071ed69f79 100644
---- a/drivers/gpio/gpio-mm-lantiq.c
-+++ b/drivers/gpio/gpio-mm-lantiq.c
-@@ -61,9 +61,7 @@ static void ltq_mm_apply(struct ltq_mm *chip)
-  */
- static void ltq_mm_set(struct gpio_chip *gc, unsigned offset, int value)
+diff --git a/drivers/gpio/gpio-mpc5200.c b/drivers/gpio/gpio-mpc5200.c
+index 4c542153e923..ff6551c67502 100644
+--- a/drivers/gpio/gpio-mpc5200.c
++++ b/drivers/gpio/gpio-mpc5200.c
+@@ -71,8 +71,7 @@ static inline void
+ __mpc52xx_wkup_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
  {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct ltq_mm *chip =
--		container_of(mm_gc, struct ltq_mm, mmchip);
-+	struct ltq_mm *chip = gpiochip_get_data(gc);
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
  
- 	if (value)
- 		chip->shadow |= (1 << offset);
-@@ -93,8 +91,7 @@ static int ltq_mm_dir_out(struct gpio_chip *gc, unsigned offset, int value)
-  */
- static void ltq_mm_save_regs(struct of_mm_gpio_chip *mm_gc)
+ 	if (val)
+@@ -100,8 +99,7 @@ mpc52xx_wkup_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int mpc52xx_wkup_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
  {
--	struct ltq_mm *chip =
--		container_of(mm_gc, struct ltq_mm, mmchip);
-+	struct ltq_mm *chip = gpiochip_get_data(&mm_gc->gc);
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
+ 	unsigned long flags;
  
- 	/* tell the ebu controller which memory address we will be using */
- 	ltq_ebu_w32(CPHYSADDR(chip->mmchip.regs) | 0x1, LTQ_EBU_ADDRSEL1);
-@@ -122,7 +119,7 @@ static int ltq_mm_probe(struct platform_device *pdev)
- 	if (!of_property_read_u32(pdev->dev.of_node, "lantiq,shadow", &shadow))
- 		chip->shadow = shadow;
+@@ -125,8 +123,7 @@ mpc52xx_wkup_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct mpc52xx_gpio_wkup __iomem *regs = mm_gc->regs;
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	unsigned long flags;
  
--	return of_mm_gpiochip_add(pdev->dev.of_node, &chip->mmchip);
-+	return of_mm_gpiochip_add_data(pdev->dev.of_node, &chip->mmchip, chip);
- }
+ 	spin_lock_irqsave(&gpio_lock, flags);
+@@ -169,7 +166,7 @@ static int mpc52xx_wkup_gpiochip_probe(struct platform_device *ofdev)
+ 	gc->get              = mpc52xx_wkup_gpio_get;
+ 	gc->set              = mpc52xx_wkup_gpio_set;
  
- static int ltq_mm_remove(struct platform_device *pdev)
+-	ret = of_mm_gpiochip_add(ofdev->dev.of_node, &chip->mmchip);
++	ret = of_mm_gpiochip_add_data(ofdev->dev.of_node, &chip->mmchip, chip);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -236,8 +233,7 @@ static inline void
+ __mpc52xx_simple_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
+ 
+ 	if (val)
+@@ -264,8 +260,7 @@ mpc52xx_simple_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ static int mpc52xx_simple_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
+ 	unsigned long flags;
+ 
+@@ -288,8 +283,7 @@ static int
+ mpc52xx_simple_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct mpc52xx_gpiochip *chip = container_of(mm_gc,
+-			struct mpc52xx_gpiochip, mmchip);
++	struct mpc52xx_gpiochip *chip = gpiochip_get_data(gc);
+ 	struct mpc52xx_gpio __iomem *regs = mm_gc->regs;
+ 	unsigned long flags;
+ 
+@@ -334,7 +328,7 @@ static int mpc52xx_simple_gpiochip_probe(struct platform_device *ofdev)
+ 	gc->get              = mpc52xx_simple_gpio_get;
+ 	gc->set              = mpc52xx_simple_gpio_set;
+ 
+-	ret = of_mm_gpiochip_add(ofdev->dev.of_node, &chip->mmchip);
++	ret = of_mm_gpiochip_add_data(ofdev->dev.of_node, &chip->mmchip, chip);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.4.3
 
