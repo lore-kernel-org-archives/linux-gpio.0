@@ -1,94 +1,107 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 082/182] gpio: xgene: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:28:08 +0100
-Message-ID: <1449667688-1317-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 083/182] gpio: xilinx: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:28:24 +0100
+Message-ID: <1449667704-1395-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:34722 "EHLO
-	mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751617AbbLIN2O (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:28:14 -0500
-Received: by lffu14 with SMTP id u14so34233611lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:28:13 -0800 (PST)
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:34553 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751617AbbLIN2b (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:28:31 -0500
+Received: by lbbcs9 with SMTP id cs9so29892930lbb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:28:30 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Feng Kan <fkan@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Feng Kan <fkan@apm.com>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: S=C3=B6ren Brinkmann <soren.brinkmann@xilinx.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-xgene.c | 17 ++++++-----------
+ drivers/gpio/gpio-xilinx.c | 17 ++++++-----------
  1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index b8ceb71885f6..592e9cdf9c53 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -47,14 +47,9 @@ struct xgene_gpio {
- #endif
- };
- 
--static inline struct xgene_gpio *to_xgene_gpio(struct gpio_chip *chip)
--{
--	return container_of(chip, struct xgene_gpio, chip);
--}
--
- static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index 5c2971e1cb08..3345ab0ba1b3 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -92,8 +92,7 @@ static inline int xgpio_offset(struct xgpio_instance =
+*chip, int gpio)
+ static int xgpio_get(struct gpio_chip *gc, unsigned int gpio)
  {
--	struct xgene_gpio *chip = to_xgene_gpio(gc);
-+	struct xgene_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long bank_offset;
- 	u32 bit_offset;
- 
-@@ -65,7 +60,7 @@ static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
- 
- static void __xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
+ 	struct of_mm_gpio_chip *mm_gc =3D to_of_mm_gpio_chip(gc);
+-	struct xgpio_instance *chip =3D
+-	    container_of(mm_gc, struct xgpio_instance, mmchip);
++	struct xgpio_instance *chip =3D gpiochip_get_data(gc);
+ 	u32 val;
+=20
+ 	val =3D xgpio_readreg(mm_gc->regs + XGPIO_DATA_OFFSET +
+@@ -115,8 +114,7 @@ static void xgpio_set(struct gpio_chip *gc, unsigne=
+d int gpio, int val)
  {
--	struct xgene_gpio *chip = to_xgene_gpio(gc);
-+	struct xgene_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long bank_offset;
- 	u32 setval, bit_offset;
- 
-@@ -82,7 +77,7 @@ static void __xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
- 
- static void xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
- {
--	struct xgene_gpio *chip = to_xgene_gpio(gc);
-+	struct xgene_gpio *chip = gpiochip_get_data(gc);
  	unsigned long flags;
- 
- 	spin_lock_irqsave(&chip->lock, flags);
-@@ -92,7 +87,7 @@ static void xgene_gpio_set(struct gpio_chip *gc, unsigned int offset, int val)
- 
- static int xgene_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
+ 	struct of_mm_gpio_chip *mm_gc =3D to_of_mm_gpio_chip(gc);
+-	struct xgpio_instance *chip =3D
+-	    container_of(mm_gc, struct xgpio_instance, mmchip);
++	struct xgpio_instance *chip =3D gpiochip_get_data(gc);
+ 	int index =3D  xgpio_index(chip, gpio);
+ 	int offset =3D  xgpio_offset(chip, gpio);
+=20
+@@ -147,8 +145,7 @@ static int xgpio_dir_in(struct gpio_chip *gc, unsig=
+ned int gpio)
  {
--	struct xgene_gpio *chip = to_xgene_gpio(gc);
-+	struct xgene_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags, bank_offset;
- 	u32 dirval, bit_offset;
- 
-@@ -113,7 +108,7 @@ static int xgene_gpio_dir_in(struct gpio_chip *gc, unsigned int offset)
- static int xgene_gpio_dir_out(struct gpio_chip *gc,
- 					unsigned int offset, int val)
+ 	unsigned long flags;
+ 	struct of_mm_gpio_chip *mm_gc =3D to_of_mm_gpio_chip(gc);
+-	struct xgpio_instance *chip =3D
+-	    container_of(mm_gc, struct xgpio_instance, mmchip);
++	struct xgpio_instance *chip =3D gpiochip_get_data(gc);
+ 	int index =3D  xgpio_index(chip, gpio);
+ 	int offset =3D  xgpio_offset(chip, gpio);
+=20
+@@ -180,8 +177,7 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsi=
+gned int gpio, int val)
  {
--	struct xgene_gpio *chip = to_xgene_gpio(gc);
-+	struct xgene_gpio *chip = gpiochip_get_data(gc);
- 	unsigned long flags, bank_offset;
- 	u32 dirval, bit_offset;
- 
-@@ -198,7 +193,7 @@ static int xgene_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, gpio);
- 
--	err = gpiochip_add(&gpio->chip);
-+	err = gpiochip_add_data(&gpio->chip, gpio);
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"failed to register gpiochip.\n");
--- 
+ 	unsigned long flags;
+ 	struct of_mm_gpio_chip *mm_gc =3D to_of_mm_gpio_chip(gc);
+-	struct xgpio_instance *chip =3D
+-	    container_of(mm_gc, struct xgpio_instance, mmchip);
++	struct xgpio_instance *chip =3D gpiochip_get_data(gc);
+ 	int index =3D  xgpio_index(chip, gpio);
+ 	int offset =3D  xgpio_offset(chip, gpio);
+=20
+@@ -211,8 +207,7 @@ static int xgpio_dir_out(struct gpio_chip *gc, unsi=
+gned int gpio, int val)
+  */
+ static void xgpio_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct xgpio_instance *chip =3D
+-	    container_of(mm_gc, struct xgpio_instance, mmchip);
++	struct xgpio_instance *chip =3D gpiochip_get_data(&mm_gc->gc);
+=20
+ 	xgpio_writereg(mm_gc->regs + XGPIO_DATA_OFFSET,	chip->gpio_state[0]);
+ 	xgpio_writereg(mm_gc->regs + XGPIO_TRI_OFFSET, chip->gpio_dir[0]);
+@@ -314,7 +309,7 @@ static int xgpio_probe(struct platform_device *pdev=
+)
+ 	chip->mmchip.save_regs =3D xgpio_save_regs;
+=20
+ 	/* Call the OF gpio helper to setup and register the GPIO device */
+-	status =3D of_mm_gpiochip_add(np, &chip->mmchip);
++	status =3D of_mm_gpiochip_add_data(np, &chip->mmchip, chip);
+ 	if (status) {
+ 		pr_err("%s: error in probe function with status %d\n",
+ 		       np->full_name, status);
+--=20
 2.4.3
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
