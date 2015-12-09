@@ -1,45 +1,95 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: pca935x: fix of-only probed devices
-Date: Wed, 9 Dec 2015 08:07:23 +0100
-Message-ID: <CACRpkdZ-sAW6tJKa_6hiBgd==X-AbqxdTmmsnBYiJYaJ2r6uaw@mail.gmail.com>
-References: <1449569966-16816-1-git-send-email-ben.dooks@codethink.co.uk>
-	<1449569966-16816-3-git-send-email-ben.dooks@codethink.co.uk>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [RESEND RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
+Date: Wed, 9 Dec 2015 09:01:55 +0100
+Message-ID: <20151209080155.GB7411@odux.rfo.atmel.com>
+References: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:35081 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750862AbbLIHHY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 02:07:24 -0500
-Received: by oige206 with SMTP id e206so22211960oig.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Dec 2015 23:07:23 -0800 (PST)
-In-Reply-To: <1449569966-16816-3-git-send-email-ben.dooks@codethink.co.uk>
+Received: from eusmtp01.atmel.com ([212.144.249.243]:58500 "EHLO
+	eusmtp01.atmel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751100AbbLIICS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 03:02:18 -0500
+Content-Disposition: inline
+In-Reply-To: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Peter Rosin <peda@lysator.liu.se>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Peter Rosin <peda@axentia.se>
 
-On Tue, Dec 8, 2015 at 11:19 AM, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+Hi Peter,
 
-> If the pca953x device is probed from OF using the proper OF probing then
-> the i2c-client will be NULL and the device probe will fail as id is NULL
-> and it isn't an ACPI device (previous drivers would simply OOPS out).
->
-> Add support for the of_device_id table having the same data as the others
-> so that the correct paths will be taken when registering a device.
->
-> An example of current valid of node which did not work:
->
->         gpio@38 {
->                 compatible = "onsemi,pca9654", "nxp,pca9534";
->                 reg = <0x38>;
->                 interrupt-parent = <&gpio5>;
->                 interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
->         };
->
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+On Tue, Dec 08, 2015 at 04:20:06AM +0100, Peter Rosin wrote:
+> From: Peter Rosin <peda@axentia.se>
+> 
+> Hi!
+> 
+> I have a signal connected to a gpio pin which is the output of
+> a comparator. By changing the level of one of the inputs to the
+> comparator, I can detect the envelope of the other input to
+> the comparator by using a series of measurements much in the
+> same maner a manual ADC works, but watching for changes on the
+> comparator over a period of time instead of only the immediate
+> output.
+> 
+> Now, the input signal to the comparator might have a high frequency,
+> which will cause the output from the comparator (and thus the GPIO
+> input) to change rapidly.
+> 
+> A common(?) idiom for this is to use the interrupt status register
+> to catch the glitches, but then not have any interrupt tied to
+> the pin as that could possibly generate pointless bursts of
+> (expensive) interrupts.
+> 
 
-Patch applied.
+Well I don't know if this use case as already been considered. I
+understand you don't want to be overwhelmed by interrupts but why not
+using the interrupt to start polling the PDSR (Pin Data Status
+Register)?
 
-Yours,
-Linus Walleij
+I am really not confortable about exposing the ISR since there is a
+clean on read. You have taken precautions by checking the IMR before but
+if there is a single driver using a gpio as an irq, you will never get
+the ISR.
+
+Regards
+
+Ludovic
+
+> So, these two patches expose an interface to the PIO_ISR register
+> of the pio controllers on the platform I'm targetting. The first
+> patch adds some infrastructure to the gpio core and the second
+> patch hooks up "my" pin controller.
+> 
+> But hey, this seems like an old problem and I was surprised that
+> I had to touch the source to do it. Which makes me wonder what I'm
+> missing and what others needing to see short pulses on a pin but not
+> needing/wanting interrupts are doing?
+> 
+> Yes, there needs to be a way to select the interrupt edge w/o
+> actually arming the interrupt, that is missing. And probably
+> other things too, but I didn't want to do more work in case this
+> is a dead end for some reason...
+> 
+> Cheers,
+> Peter
+> 
+> Peter Rosin (2):
+>   gpio: Add isr property of gpio pins
+>   pinctrl: at91: expose the isr bit
+> 
+>  Documentation/gpio/sysfs.txt   |   12 ++++++++++
+>  drivers/gpio/gpiolib-sysfs.c   |   30 ++++++++++++++++++++++++
+>  drivers/gpio/gpiolib.c         |   15 ++++++++++++
+>  drivers/pinctrl/pinctrl-at91.c |   50 ++++++++++++++++++++++++++++++++++++----
+>  include/linux/gpio/consumer.h  |    1 +
+>  include/linux/gpio/driver.h    |    2 ++
+>  6 files changed, 106 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 1.7.10.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
