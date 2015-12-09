@@ -1,85 +1,143 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 005/182] gpio: 104-idi-48: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:13:15 +0100
-Message-ID: <1449666795-29971-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 008/182] gpio: adnp: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:13:44 +0100
+Message-ID: <1449666824-30112-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:36628 "EHLO
-	mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753362AbbLINNV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:13:21 -0500
-Received: by lfs39 with SMTP id 39so34078561lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:13:19 -0800 (PST)
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:34864 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753317AbbLINNt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:13:49 -0500
+Received: by lbpu9 with SMTP id u9so29515104lbp.2
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:13:47 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-104-idi-48.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/gpio/gpio-adnp.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index b5c693409a58..779db930da8b 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -62,14 +62,9 @@ static int idi_48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
+diff --git a/drivers/gpio/gpio-adnp.c b/drivers/gpio/gpio-adnp.c
+index b8a1ac133390..fb5b47b69f14 100644
+--- a/drivers/gpio/gpio-adnp.c
++++ b/drivers/gpio/gpio-adnp.c
+@@ -36,11 +36,6 @@ struct adnp {
+ 	u8 *irq_low;
+ };
  
--static struct idi_48_gpio *to_idi48gpio(struct gpio_chip *gc)
+-static inline struct adnp *to_adnp(struct gpio_chip *chip)
 -{
--	return container_of(gc, struct idi_48_gpio, chip);
+-	return container_of(chip, struct adnp, gpio);
 -}
 -
- static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int adnp_read(struct adnp *adnp, unsigned offset, uint8_t *value)
  {
--	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
- 	unsigned i;
- 	const unsigned register_offset[6] = { 0, 1, 2, 4, 5, 6 };
- 	unsigned base_offset;
-@@ -90,7 +85,7 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
- static void idi_48_irq_ack(struct irq_data *data)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
- 	unsigned long flags;
+ 	int err;
+@@ -72,7 +67,7 @@ static int adnp_write(struct adnp *adnp, unsigned offset, uint8_t value)
  
- 	spin_lock_irqsave(&idi48gpio->lock, flags);
-@@ -103,7 +98,7 @@ static void idi_48_irq_ack(struct irq_data *data)
- static void idi_48_irq_mask(struct irq_data *data)
+ static int adnp_gpio_get(struct gpio_chip *chip, unsigned offset)
  {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
- 	const unsigned offset = irqd_to_hwirq(data);
- 	unsigned i;
- 	unsigned mask;
-@@ -134,7 +129,7 @@ static void idi_48_irq_mask(struct irq_data *data)
- static void idi_48_irq_unmask(struct irq_data *data)
+-	struct adnp *adnp = to_adnp(chip);
++	struct adnp *adnp = gpiochip_get_data(chip);
+ 	unsigned int reg = offset >> adnp->reg_shift;
+ 	unsigned int pos = offset & 7;
+ 	u8 value;
+@@ -106,7 +101,7 @@ static void __adnp_gpio_set(struct adnp *adnp, unsigned offset, int value)
+ 
+ static void adnp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
--	struct idi_48_gpio *const idi48gpio = to_idi48gpio(chip);
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
- 	const unsigned offset = irqd_to_hwirq(data);
- 	unsigned i;
- 	unsigned mask;
-@@ -256,7 +251,7 @@ static int __init idi_48_probe(struct platform_device *pdev)
+-	struct adnp *adnp = to_adnp(chip);
++	struct adnp *adnp = gpiochip_get_data(chip);
  
- 	dev_set_drvdata(dev, idi48gpio);
+ 	mutex_lock(&adnp->i2c_lock);
+ 	__adnp_gpio_set(adnp, offset, value);
+@@ -115,7 +110,7 @@ static void adnp_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
  
--	err = gpiochip_add(&idi48gpio->chip);
-+	err = gpiochip_add_data(&idi48gpio->chip, idi48gpio);
- 	if (err) {
- 		dev_err(dev, "GPIO registering failed (%d)\n", err);
- 		goto err_gpio_register;
+ static int adnp_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ {
+-	struct adnp *adnp = to_adnp(chip);
++	struct adnp *adnp = gpiochip_get_data(chip);
+ 	unsigned int reg = offset >> adnp->reg_shift;
+ 	unsigned int pos = offset & 7;
+ 	u8 value;
+@@ -150,7 +145,7 @@ out:
+ static int adnp_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 				      int value)
+ {
+-	struct adnp *adnp = to_adnp(chip);
++	struct adnp *adnp = gpiochip_get_data(chip);
+ 	unsigned int reg = offset >> adnp->reg_shift;
+ 	unsigned int pos = offset & 7;
+ 	int err;
+@@ -187,7 +182,7 @@ out:
+ 
+ static void adnp_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+-	struct adnp *adnp = to_adnp(chip);
++	struct adnp *adnp = gpiochip_get_data(chip);
+ 	unsigned int num_regs = 1 << adnp->reg_shift, i, j;
+ 	int err;
+ 
+@@ -270,7 +265,7 @@ static int adnp_gpio_setup(struct adnp *adnp, unsigned int num_gpios)
+ 	chip->of_node = chip->parent->of_node;
+ 	chip->owner = THIS_MODULE;
+ 
+-	err = gpiochip_add(chip);
++	err = gpiochip_add_data(chip, adnp);
+ 	if (err)
+ 		return err;
+ 
+@@ -340,7 +335,7 @@ static irqreturn_t adnp_irq(int irq, void *data)
+ static void adnp_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct adnp *adnp = to_adnp(gc);
++	struct adnp *adnp = gpiochip_get_data(gc);
+ 	unsigned int reg = d->hwirq >> adnp->reg_shift;
+ 	unsigned int pos = d->hwirq & 7;
+ 
+@@ -350,7 +345,7 @@ static void adnp_irq_mask(struct irq_data *d)
+ static void adnp_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct adnp *adnp = to_adnp(gc);
++	struct adnp *adnp = gpiochip_get_data(gc);
+ 	unsigned int reg = d->hwirq >> adnp->reg_shift;
+ 	unsigned int pos = d->hwirq & 7;
+ 
+@@ -360,7 +355,7 @@ static void adnp_irq_unmask(struct irq_data *d)
+ static int adnp_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct adnp *adnp = to_adnp(gc);
++	struct adnp *adnp = gpiochip_get_data(gc);
+ 	unsigned int reg = d->hwirq >> adnp->reg_shift;
+ 	unsigned int pos = d->hwirq & 7;
+ 
+@@ -390,7 +385,7 @@ static int adnp_irq_set_type(struct irq_data *d, unsigned int type)
+ static void adnp_irq_bus_lock(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct adnp *adnp = to_adnp(gc);
++	struct adnp *adnp = gpiochip_get_data(gc);
+ 
+ 	mutex_lock(&adnp->irq_lock);
+ }
+@@ -398,7 +393,7 @@ static void adnp_irq_bus_lock(struct irq_data *d)
+ static void adnp_irq_bus_unlock(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct adnp *adnp = to_adnp(gc);
++	struct adnp *adnp = gpiochip_get_data(gc);
+ 	unsigned int num_regs = 1 << adnp->reg_shift, i;
+ 
+ 	mutex_lock(&adnp->i2c_lock);
 -- 
 2.4.3
 
