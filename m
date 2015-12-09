@@ -1,77 +1,97 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 055/182] gpio: rdc321x: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:22:15 +0100
-Message-ID: <1449667335-32388-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 057/182] gpio: sch: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:22:30 +0100
+Message-ID: <1449667350-32482-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36349 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754284AbbLINWU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:22:20 -0500
-Received: by lfs39 with SMTP id 39so34253889lfs.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:22:18 -0800 (PST)
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:34697 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754526AbbLINWf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:22:35 -0500
+Received: by lffu14 with SMTP id u14so34121925lff.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:22:33 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Chang Rebecca Swee Fun <rebecca.swee.fun.chang@intel.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-rdc321x.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-sch.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
-index d729bc8a554d..96ddee3f464a 100644
---- a/drivers/gpio/gpio-rdc321x.c
-+++ b/drivers/gpio/gpio-rdc321x.c
-@@ -47,7 +47,7 @@ static int rdc_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
- 	u32 value = 0;
- 	int reg;
+diff --git a/drivers/gpio/gpio-sch.c b/drivers/gpio/gpio-sch.c
+index a8a333ade9aa..5314ee4b947d 100644
+--- a/drivers/gpio/gpio-sch.c
++++ b/drivers/gpio/gpio-sch.c
+@@ -41,8 +41,6 @@ struct sch_gpio {
+ 	unsigned short resume_base;
+ };
  
--	gpch = container_of(chip, struct rdc321x_gpio, chip);
-+	gpch = gpiochip_get_data(chip);
- 	reg = gpio < 32 ? gpch->reg1_data_base : gpch->reg2_data_base;
- 
- 	spin_lock(&gpch->lock);
-@@ -65,7 +65,7 @@ static void rdc_gpio_set_value_impl(struct gpio_chip *chip,
- 	struct rdc321x_gpio *gpch;
- 	int reg = (gpio < 32) ? 0 : 1;
- 
--	gpch = container_of(chip, struct rdc321x_gpio, chip);
-+	gpch = gpiochip_get_data(chip);
- 
- 	if (value)
- 		gpch->data_reg[reg] |= 1 << (gpio & 0x1f);
-@@ -83,7 +83,7 @@ static void rdc_gpio_set_value(struct gpio_chip *chip,
+-#define to_sch_gpio(gc)	container_of(gc, struct sch_gpio, chip)
+-
+ static unsigned sch_gpio_offset(struct sch_gpio *sch, unsigned gpio,
+ 				unsigned reg)
  {
- 	struct rdc321x_gpio *gpch;
+@@ -65,7 +63,7 @@ static unsigned sch_gpio_bit(struct sch_gpio *sch, unsigned gpio)
  
--	gpch = container_of(chip, struct rdc321x_gpio, chip);
-+	gpch = gpiochip_get_data(chip);
- 	spin_lock(&gpch->lock);
- 	rdc_gpio_set_value_impl(chip, gpio, value);
- 	spin_unlock(&gpch->lock);
-@@ -96,7 +96,7 @@ static int rdc_gpio_config(struct gpio_chip *chip,
- 	int err;
- 	u32 reg;
+ static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
++	struct sch_gpio *sch = gpiochip_get_data(gc);
+ 	unsigned short offset, bit;
+ 	u8 reg_val;
  
--	gpch = container_of(chip, struct rdc321x_gpio, chip);
-+	gpch = gpiochip_get_data(chip);
+@@ -80,7 +78,7 @@ static int sch_gpio_reg_get(struct gpio_chip *gc, unsigned gpio, unsigned reg)
+ static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
+ 			     int val)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
++	struct sch_gpio *sch = gpiochip_get_data(gc);
+ 	unsigned short offset, bit;
+ 	u8 reg_val;
  
- 	spin_lock(&gpch->lock);
- 	err = pci_read_config_dword(gpch->sb_pdev, gpio < 32 ?
-@@ -194,7 +194,7 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
+@@ -97,7 +95,7 @@ static void sch_gpio_reg_set(struct gpio_chip *gc, unsigned gpio, unsigned reg,
  
- 	dev_info(&pdev->dev, "registering %d GPIOs\n",
- 					rdc321x_gpio_dev->chip.ngpio);
--	return gpiochip_add(&rdc321x_gpio_dev->chip);
-+	return gpiochip_add_data(&rdc321x_gpio_dev->chip, rdc321x_gpio_dev);
+ static int sch_gpio_direction_in(struct gpio_chip *gc, unsigned gpio_num)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
++	struct sch_gpio *sch = gpiochip_get_data(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GIO, 1);
+@@ -112,7 +110,7 @@ static int sch_gpio_get(struct gpio_chip *gc, unsigned gpio_num)
+ 
+ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
++	struct sch_gpio *sch = gpiochip_get_data(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GLV, val);
+@@ -122,7 +120,7 @@ static void sch_gpio_set(struct gpio_chip *gc, unsigned gpio_num, int val)
+ static int sch_gpio_direction_out(struct gpio_chip *gc, unsigned gpio_num,
+ 				  int val)
+ {
+-	struct sch_gpio *sch = to_sch_gpio(gc);
++	struct sch_gpio *sch = gpiochip_get_data(gc);
+ 
+ 	spin_lock(&sch->lock);
+ 	sch_gpio_reg_set(gc, gpio_num, GIO, 0);
+@@ -217,7 +215,7 @@ static int sch_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, sch);
+ 
+-	return gpiochip_add(&sch->chip);
++	return gpiochip_add_data(&sch->chip, sch);
  }
  
- static int rdc321x_gpio_remove(struct platform_device *pdev)
+ static int sch_gpio_remove(struct platform_device *pdev)
 -- 
 2.4.3
 
