@@ -1,170 +1,101 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 171/182] ssb: gpio_driver: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:49:35 +0100
-Message-ID: <1449668975-6737-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 172/182] staging: vme: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:50:05 +0100
+Message-ID: <1449669005-6835-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:34146 "EHLO
-	mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754640AbbLINtk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:49:40 -0500
-Received: by lffu14 with SMTP id u14so34652533lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:49:39 -0800 (PST)
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:33107 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753131AbbLINuL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:50:11 -0500
+Received: by lfaz4 with SMTP id z4so34645969lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:50:09 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Hauke Mehrtens <hauke@hauke-m.de>, Michael Buesch <m@bues.ch>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Martyn Welch <martyn@welchs.me.uk>, Manohar Vanga <manohar.vanga@gmail.com>, devel@driverdev.osuosl.org
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: Michael Buesch <m@bues.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Martyn Welch <martyn@welchs.me.uk>
+Cc: Manohar Vanga <manohar.vanga@gmail.com>
+Cc: devel@driverdev.osuosl.org
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Micael please ACK this so I can take it through the GPIO tree.
+Greg, please ACK this so I can take this through the GPIO tree.
 ---
- drivers/ssb/driver_gpio.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ drivers/staging/vme/devices/vme_pio2_gpio.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/ssb/driver_gpio.c b/drivers/ssb/driver_gpio.c
-index f92e266d48f8..180e027b1c8a 100644
---- a/drivers/ssb/driver_gpio.c
-+++ b/drivers/ssb/driver_gpio.c
-@@ -8,7 +8,7 @@
-  * Licensed under the GNU/GPL. See COPYING for details.
-  */
- 
+diff --git a/drivers/staging/vme/devices/vme_pio2_gpio.c b/drivers/staging/vme/devices/vme_pio2_gpio.c
+index 77901b345a71..a2b740ab7ffe 100644
+--- a/drivers/staging/vme/devices/vme_pio2_gpio.c
++++ b/drivers/staging/vme/devices/vme_pio2_gpio.c
+@@ -17,7 +17,7 @@
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
+ #include <linux/ctype.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/driver.h>
- #include <linux/irq.h>
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
-@@ -22,15 +22,10 @@
-  * Shared
-  **************************************************/
+ #include <linux/slab.h>
+ #include <linux/vme.h>
  
--static struct ssb_bus *ssb_gpio_get_bus(struct gpio_chip *chip)
+@@ -25,16 +25,11 @@
+ 
+ static const char driver_name[] = "pio2_gpio";
+ 
+-static struct pio2_card *gpio_to_pio2_card(struct gpio_chip *chip)
 -{
--	return container_of(chip, struct ssb_bus, gpio);
+-	return container_of(chip, struct pio2_card, gc);
 -}
 -
- #if IS_ENABLED(CONFIG_SSB_EMBEDDED)
- static int ssb_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
+ static int pio2_gpio_get(struct gpio_chip *chip, unsigned int offset)
  {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
+ 	u8 reg;
+ 	int retval;
+-	struct pio2_card *card = gpio_to_pio2_card(chip);
++	struct pio2_card *card = gpiochip_get_data(chip);
  
- 	if (bus->bustype == SSB_BUSTYPE_SSB)
- 		return irq_find_mapping(bus->irq_domain, gpio);
-@@ -45,7 +40,7 @@ static int ssb_gpio_to_irq(struct gpio_chip *chip, unsigned gpio)
- 
- static int ssb_gpio_chipco_get_value(struct gpio_chip *chip, unsigned gpio)
+ 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
+ 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+@@ -72,7 +67,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
  {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
+ 	u8 reg;
+ 	int retval;
+-	struct pio2_card *card = gpio_to_pio2_card(chip);
++	struct pio2_card *card = gpiochip_get_data(chip);
  
- 	return !!ssb_chipco_gpio_in(&bus->chipco, 1 << gpio);
- }
-@@ -53,7 +48,7 @@ static int ssb_gpio_chipco_get_value(struct gpio_chip *chip, unsigned gpio)
- static void ssb_gpio_chipco_set_value(struct gpio_chip *chip, unsigned gpio,
- 				      int value)
+ 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
+ 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+@@ -102,7 +97,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
  {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
+ 	int data;
+-	struct pio2_card *card = gpio_to_pio2_card(chip);
++	struct pio2_card *card = gpiochip_get_data(chip);
  
- 	ssb_chipco_gpio_out(&bus->chipco, 1 << gpio, value ? 1 << gpio : 0);
- }
-@@ -61,7 +56,7 @@ static void ssb_gpio_chipco_set_value(struct gpio_chip *chip, unsigned gpio,
- static int ssb_gpio_chipco_direction_input(struct gpio_chip *chip,
- 					   unsigned gpio)
+ 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
+ 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+@@ -121,7 +116,7 @@ static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+ static int pio2_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
  {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
+ 	int data;
+-	struct pio2_card *card = gpio_to_pio2_card(chip);
++	struct pio2_card *card = gpiochip_get_data(chip);
  
- 	ssb_chipco_gpio_outen(&bus->chipco, 1 << gpio, 0);
- 	return 0;
-@@ -70,7 +65,7 @@ static int ssb_gpio_chipco_direction_input(struct gpio_chip *chip,
- static int ssb_gpio_chipco_direction_output(struct gpio_chip *chip,
- 					    unsigned gpio, int value)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
+ 	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
+ 		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+@@ -207,7 +202,7 @@ int pio2_gpio_init(struct pio2_card *card)
+ 	card->gc.set = pio2_gpio_set;
  
- 	ssb_chipco_gpio_outen(&bus->chipco, 1 << gpio, 1 << gpio);
- 	ssb_chipco_gpio_out(&bus->chipco, 1 << gpio, value ? 1 << gpio : 0);
-@@ -79,7 +74,7 @@ static int ssb_gpio_chipco_direction_output(struct gpio_chip *chip,
- 
- static int ssb_gpio_chipco_request(struct gpio_chip *chip, unsigned gpio)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	ssb_chipco_gpio_control(&bus->chipco, 1 << gpio, 0);
- 	/* clear pulldown */
-@@ -92,7 +87,7 @@ static int ssb_gpio_chipco_request(struct gpio_chip *chip, unsigned gpio)
- 
- static void ssb_gpio_chipco_free(struct gpio_chip *chip, unsigned gpio)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	/* clear pullup */
- 	ssb_chipco_gpio_pullup(&bus->chipco, 1 << gpio, 0);
-@@ -246,7 +241,7 @@ static int ssb_gpio_chipco_init(struct ssb_bus *bus)
- 	if (err)
- 		return err;
- 
--	err = gpiochip_add(chip);
-+	err = gpiochip_add_data(chip, bus);
- 	if (err) {
- 		ssb_gpio_irq_chipco_domain_exit(bus);
- 		return err;
-@@ -263,7 +258,7 @@ static int ssb_gpio_chipco_init(struct ssb_bus *bus)
- 
- static int ssb_gpio_extif_get_value(struct gpio_chip *chip, unsigned gpio)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	return !!ssb_extif_gpio_in(&bus->extif, 1 << gpio);
- }
-@@ -271,7 +266,7 @@ static int ssb_gpio_extif_get_value(struct gpio_chip *chip, unsigned gpio)
- static void ssb_gpio_extif_set_value(struct gpio_chip *chip, unsigned gpio,
- 				     int value)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	ssb_extif_gpio_out(&bus->extif, 1 << gpio, value ? 1 << gpio : 0);
- }
-@@ -279,7 +274,7 @@ static void ssb_gpio_extif_set_value(struct gpio_chip *chip, unsigned gpio,
- static int ssb_gpio_extif_direction_input(struct gpio_chip *chip,
- 					  unsigned gpio)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	ssb_extif_gpio_outen(&bus->extif, 1 << gpio, 0);
- 	return 0;
-@@ -288,7 +283,7 @@ static int ssb_gpio_extif_direction_input(struct gpio_chip *chip,
- static int ssb_gpio_extif_direction_output(struct gpio_chip *chip,
- 					   unsigned gpio, int value)
- {
--	struct ssb_bus *bus = ssb_gpio_get_bus(chip);
-+	struct ssb_bus *bus = gpiochip_get_data(chip);
- 
- 	ssb_extif_gpio_outen(&bus->extif, 1 << gpio, 1 << gpio);
- 	ssb_extif_gpio_out(&bus->extif, 1 << gpio, value ? 1 << gpio : 0);
-@@ -439,7 +434,7 @@ static int ssb_gpio_extif_init(struct ssb_bus *bus)
- 	if (err)
- 		return err;
- 
--	err = gpiochip_add(chip);
-+	err = gpiochip_add_data(chip, bus);
- 	if (err) {
- 		ssb_gpio_irq_extif_domain_exit(bus);
- 		return err;
+ 	/* This function adds a memory mapped GPIO chip */
+-	retval = gpiochip_add(&(card->gc));
++	retval = gpiochip_add_data(&(card->gc), card);
+ 	if (retval) {
+ 		dev_err(&card->vdev->dev, "Unable to register GPIO\n");
+ 		kfree(card->gc.label);
 -- 
 2.4.3
 
