@@ -1,42 +1,98 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/3] acpi: Rename acpi_gsi_get_irq_type to
- acpi_get_irq_type and export symbol
-Date: Wed, 9 Dec 2015 16:19:46 +0200
-Message-ID: <CAHp75Vfc=YT8TrUHo2Tdd=4e9-C=rQY126wraKpyn0B-=0n3-w@mail.gmail.com>
-References: <1449527952-8399-1-git-send-email-christophe-h.ricard@st.com>
-	<1449527952-8399-2-git-send-email-christophe-h.ricard@st.com>
-	<20151208112855.GI1766@lahna.fi.intel.com>
-	<5667523F.60704@gmail.com>
-	<20151209133646.GV1766@lahna.fi.intel.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: [PATCH 156/182] input: adp5589-keys: use gpiochip data pointer
+Date: Wed, 9 Dec 2015 14:43:06 +0100
+Message-ID: <56682FEA.1040705@analog.com>
+References: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20151209133646.GV1766@lahna.fi.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Christophe Ricard <christophe.ricard@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown <broonie@kernel.org>, linux-spi <linux-spi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Christophe Ricard <christophe-h.ricard@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn1on0075.outbound.protection.outlook.com ([157.56.110.75]:63904
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752120AbbLIOWd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 09:22:33 -0500
+In-Reply-To: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Wed, Dec 9, 2015 at 3:36 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Tue, Dec 08, 2015 at 10:57:19PM +0100, Christophe Ricard wrote:
->> I believe changes done in this patch take benefit of another existing
->> function used in acpi gsi context that is doing the
->> job as expected.
->>
->> Do you still believe acpi_dev_irq_flags is more appropriate ?
+On 12/09/2015 02:45 PM, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 >
-> I don't have strong feelings about that. I just wanted to point out
-> there already exists such function.
+> Cc: Michael Hennerich <michael.hennerich@analog.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+
+> ---
+> Dmitry: please ACK this so I can take it through the GPIO tree.
+> ---
+>   drivers/input/keyboard/adp5589-keys.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> However, if you do use acpi_gsi_get_irq_type() I think it should be
-> placed to the same file as acpi_dev_irq_flags().
-
-And perhaps renamed accordingly
-
-acpi_dev_get_irq_type() I suppose.
+> diff --git a/drivers/input/keyboard/adp5589-keys.c b/drivers/input/keyboard/adp5589-keys.c
+> index 4d446d5085aa..0b72345cf7b6 100644
+> --- a/drivers/input/keyboard/adp5589-keys.c
+> +++ b/drivers/input/keyboard/adp5589-keys.c
+> @@ -387,7 +387,7 @@ static int adp5589_write(struct i2c_client *client, u8 reg, u8 val)
+>   #ifdef CONFIG_GPIOLIB
+>   static int adp5589_gpio_get_value(struct gpio_chip *chip, unsigned off)
+>   {
+> -	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
+> +	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
+>   	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
+>   	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+>
+> @@ -399,7 +399,7 @@ static int adp5589_gpio_get_value(struct gpio_chip *chip, unsigned off)
+>   static void adp5589_gpio_set_value(struct gpio_chip *chip,
+>   				   unsigned off, int val)
+>   {
+> -	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
+> +	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
+>   	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
+>   	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+>
+> @@ -418,7 +418,7 @@ static void adp5589_gpio_set_value(struct gpio_chip *chip,
+>
+>   static int adp5589_gpio_direction_input(struct gpio_chip *chip, unsigned off)
+>   {
+> -	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
+> +	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
+>   	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
+>   	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+>   	int ret;
+> @@ -438,7 +438,7 @@ static int adp5589_gpio_direction_input(struct gpio_chip *chip, unsigned off)
+>   static int adp5589_gpio_direction_output(struct gpio_chip *chip,
+>   					 unsigned off, int val)
+>   {
+> -	struct adp5589_kpad *kpad = container_of(chip, struct adp5589_kpad, gc);
+> +	struct adp5589_kpad *kpad = gpiochip_get_data(chip);
+>   	unsigned int bank = kpad->var->bank(kpad->gpiomap[off]);
+>   	unsigned int bit = kpad->var->bit(kpad->gpiomap[off]);
+>   	int ret;
+> @@ -525,7 +525,7 @@ static int adp5589_gpio_add(struct adp5589_kpad *kpad)
+>
+>   	mutex_init(&kpad->gpio_lock);
+>
+> -	error = gpiochip_add(&kpad->gc);
+> +	error = gpiochip_add_data(&kpad->gc, kpad);
+>   	if (error) {
+>   		dev_err(dev, "gpiochip_add failed, err: %d\n", error);
+>   		return error;
+>
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
+Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
+Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
+Margaret Seif
