@@ -1,105 +1,100 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 094/182] pinctrl: intel: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:30:50 +0100
-Message-ID: <1449667850-2059-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 095/182] pinctrl: meson: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:30:58 +0100
+Message-ID: <1449667858-2137-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:34120 "EHLO
-	mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754451AbbLINaz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:30:55 -0500
-Received: by lffu14 with SMTP id u14so34285097lff.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:30:53 -0800 (PST)
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:32850 "EHLO
+	mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754447AbbLINbC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:31:02 -0500
+Received: by lfaz4 with SMTP id z4so34267056lfa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:31:01 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Beniamino Galvani <b.galvani@gmail.com>, Carlo Caione <carlo@endlessm.com>, Antoine Tenart <antoine.tenart@free-electrons.com>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Beniamino Galvani <b.galvani@gmail.com>
+Cc: Carlo Caione <carlo@endlessm.com>
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 401c186244be..9597f57f07a0 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -105,7 +105,6 @@ struct intel_pinctrl {
- 	struct intel_pinctrl_context context;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 4b5f6829144d..50cab27c64d4 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -448,11 +448,6 @@ static const struct pinconf_ops meson_pinconf_ops = {
+ 	.is_generic		= true,
  };
  
--#define gpiochip_to_pinctrl(c)	container_of(c, struct intel_pinctrl, chip)
- #define pin_to_padno(c, p)	((p) - (c)->pin_base)
- 
- static struct intel_community *intel_get_community(struct intel_pinctrl *pctrl,
-@@ -598,7 +597,7 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
- 
- static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
+-static inline struct meson_domain *to_meson_domain(struct gpio_chip *chip)
+-{
+-	return container_of(chip, struct meson_domain, chip);
+-}
+-
+ static int meson_gpio_request(struct gpio_chip *chip, unsigned gpio)
  {
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
+ 	return pinctrl_request_gpio(chip->base + gpio);
+@@ -460,14 +455,14 @@ static int meson_gpio_request(struct gpio_chip *chip, unsigned gpio)
  
- 	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-@@ -610,7 +609,7 @@ static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static void meson_gpio_free(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct meson_domain *domain = to_meson_domain(chip);
++	struct meson_domain *domain = gpiochip_get_data(chip);
  
- static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(chip);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
+ 	pinctrl_free_gpio(domain->data->pin_base + gpio);
+ }
  
- 	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-@@ -654,7 +653,7 @@ static const struct gpio_chip intel_gpio_chip = {
- static void intel_gpio_irq_ack(struct irq_data *d)
+ static int meson_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
  {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
+-	struct meson_domain *domain = to_meson_domain(chip);
++	struct meson_domain *domain = gpiochip_get_data(chip);
+ 	unsigned int reg, bit, pin;
+ 	struct meson_bank *bank;
+ 	int ret;
+@@ -485,7 +480,7 @@ static int meson_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ static int meson_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+ 				       int value)
+ {
+-	struct meson_domain *domain = to_meson_domain(chip);
++	struct meson_domain *domain = gpiochip_get_data(chip);
+ 	unsigned int reg, bit, pin;
+ 	struct meson_bank *bank;
+ 	int ret;
+@@ -507,7 +502,7 @@ static int meson_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
  
-@@ -675,7 +674,7 @@ static void intel_gpio_irq_ack(struct irq_data *d)
- static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
+ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
  {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
- 	unsigned long flags;
-@@ -715,7 +714,7 @@ static void intel_gpio_irq_unmask(struct irq_data *d)
- static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	unsigned pin = irqd_to_hwirq(d);
- 	unsigned long flags;
- 	void __iomem *reg;
-@@ -769,7 +768,7 @@ static int intel_gpio_irq_type(struct irq_data *d, unsigned type)
- static int intel_gpio_irq_wake(struct irq_data *d, unsigned int on)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_pinctrl *pctrl = gpiochip_to_pinctrl(gc);
-+	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
- 	unsigned padno, gpp, gpp_offset;
-@@ -877,7 +876,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	pctrl->chip.parent = pctrl->dev;
- 	pctrl->chip.base = -1;
+-	struct meson_domain *domain = to_meson_domain(chip);
++	struct meson_domain *domain = gpiochip_get_data(chip);
+ 	unsigned int reg, bit, pin;
+ 	struct meson_bank *bank;
+ 	int ret;
+@@ -524,7 +519,7 @@ static void meson_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
  
--	ret = gpiochip_add(&pctrl->chip);
-+	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to register gpiochip\n");
- 		return ret;
+ static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ {
+-	struct meson_domain *domain = to_meson_domain(chip);
++	struct meson_domain *domain = gpiochip_get_data(chip);
+ 	unsigned int reg, bit, val, pin;
+ 	struct meson_bank *bank;
+ 	int ret;
+@@ -575,7 +570,7 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
+ 		domain->chip.of_node = domain->of_node;
+ 		domain->chip.of_gpio_n_cells = 2;
+ 
+-		ret = gpiochip_add(&domain->chip);
++		ret = gpiochip_add_data(&domain->chip, domain);
+ 		if (ret) {
+ 			dev_err(pc->dev, "can't add gpio chip %s\n",
+ 				domain->data->name);
 -- 
 2.4.3
 
