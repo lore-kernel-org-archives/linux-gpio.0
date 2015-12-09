@@ -1,112 +1,125 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 074/182] gpio: tz1090: use gpiochip data pointer
-Date: Wed,  9 Dec 2015 14:27:07 +0100
-Message-ID: <1449667627-920-1-git-send-email-linus.walleij@linaro.org>
+Subject: [PATCH 076/182] gpio: vf610: use gpiochip data pointer
+Date: Wed,  9 Dec 2015 14:27:22 +0100
+Message-ID: <1449667642-1015-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:33944 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754319AbbLIN1M (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:27:12 -0500
-Received: by lbbcs9 with SMTP id cs9so29870668lbb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:27:10 -0800 (PST)
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34291 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753754AbbLIN11 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 08:27:27 -0500
+Received: by lffu14 with SMTP id u14so34217811lff.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 05:27:26 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, James Hogan <james.hogan@imgtec.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>
 
 This makes the driver use the data pointer added to the gpio_chip
 to store a pointer to the state container instead of relying on
 container_of().
 
-Cc: James Hogan <james.hogan@imgtec.com>
+Cc: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-tz1090.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/gpio/gpio-vf610.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tz1090.c b/drivers/gpio/gpio-tz1090.c
-index 7858d90202f3..c2acf9b64a73 100644
---- a/drivers/gpio/gpio-tz1090.c
-+++ b/drivers/gpio/gpio-tz1090.c
-@@ -62,7 +62,6 @@ struct tz1090_gpio_bank {
- 	int irq;
- 	char label[16];
- };
--#define to_bank(c)	container_of(c, struct tz1090_gpio_bank, chip)
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 9031e60c815c..6284bdbe1e0c 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -62,11 +62,6 @@ struct vf610_gpio_port {
  
- /**
-  * struct tz1090_gpio - Overall GPIO device private data
-@@ -187,7 +186,7 @@ static inline int tz1090_gpio_read_bit(struct tz1090_gpio_bank *bank,
- static int tz1090_gpio_direction_input(struct gpio_chip *chip,
- 				       unsigned int offset)
+ static struct irq_chip vf610_gpio_irq_chip;
+ 
+-static struct vf610_gpio_port *to_vf610_gp(struct gpio_chip *gc)
+-{
+-	return container_of(gc, struct vf610_gpio_port, gc);
+-}
+-
+ static const struct of_device_id vf610_gpio_dt_ids[] = {
+ 	{ .compatible = "fsl,vf610-gpio" },
+ 	{ /* sentinel */ }
+@@ -84,14 +79,14 @@ static inline u32 vf610_gpio_readl(void __iomem *reg)
+ 
+ static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
  {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 	tz1090_gpio_set_bit(bank, REG_GPIO_DIR, offset);
+-	struct vf610_gpio_port *port = to_vf610_gp(gc);
++	struct vf610_gpio_port *port = gpiochip_get_data(gc);
  
- 	return 0;
-@@ -196,7 +195,7 @@ static int tz1090_gpio_direction_input(struct gpio_chip *chip,
- static int tz1090_gpio_direction_output(struct gpio_chip *chip,
- 					unsigned int offset, int output_value)
- {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 	int lstat;
- 
- 	__global_lock2(lstat);
-@@ -212,7 +211,7 @@ static int tz1090_gpio_direction_output(struct gpio_chip *chip,
-  */
- static int tz1090_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 
- 	return tz1090_gpio_read_bit(bank, REG_GPIO_DIN, offset);
- }
-@@ -223,14 +222,14 @@ static int tz1090_gpio_get(struct gpio_chip *chip, unsigned int offset)
- static void tz1090_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 			    int output_value)
- {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 
- 	tz1090_gpio_mod_bit(bank, REG_GPIO_DOUT, offset, output_value);
+ 	return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & BIT(gpio));
  }
  
- static int tz1090_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
  {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 	int ret;
+-	struct vf610_gpio_port *port = to_vf610_gp(gc);
++	struct vf610_gpio_port *port = gpiochip_get_data(gc);
+ 	unsigned long mask = BIT(gpio);
  
- 	ret = pinctrl_request_gpio(chip->base + offset);
-@@ -245,7 +244,7 @@ static int tz1090_gpio_request(struct gpio_chip *chip, unsigned int offset)
- 
- static void tz1090_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ 	if (val)
+@@ -116,7 +111,7 @@ static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+ static void vf610_gpio_irq_handler(struct irq_desc *desc)
  {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
- 
- 	pinctrl_free_gpio(chip->base + offset);
- 
-@@ -254,7 +253,7 @@ static void tz1090_gpio_free(struct gpio_chip *chip, unsigned int offset)
- 
- static int tz1090_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_desc_get_handler_data(desc));
++		gpiochip_get_data(irq_desc_get_handler_data(desc));
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int pin;
+ 	unsigned long irq_isfr;
+@@ -137,7 +132,7 @@ static void vf610_gpio_irq_handler(struct irq_desc *desc)
+ static void vf610_gpio_irq_ack(struct irq_data *d)
  {
--	struct tz1090_gpio_bank *bank = to_bank(chip);
-+	struct tz1090_gpio_bank *bank = gpiochip_get_data(chip);
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_data_get_irq_chip_data(d));
++		gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	int gpio = d->hwirq;
  
- 	if (!bank->domain)
- 		return -EINVAL;
-@@ -440,7 +439,7 @@ static int tz1090_gpio_bank_probe(struct tz1090_gpio_bank_info *info)
- 	bank->chip.ngpio		= 30;
+ 	vf610_gpio_writel(BIT(gpio), port->base + PORT_ISFR);
+@@ -146,7 +141,7 @@ static void vf610_gpio_irq_ack(struct irq_data *d)
+ static int vf610_gpio_irq_set_type(struct irq_data *d, u32 type)
+ {
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_data_get_irq_chip_data(d));
++		gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	u8 irqc;
  
- 	/* Add the GPIO bank */
--	gpiochip_add(&bank->chip);
-+	gpiochip_add_data(&bank->chip, bank);
+ 	switch (type) {
+@@ -182,7 +177,7 @@ static int vf610_gpio_irq_set_type(struct irq_data *d, u32 type)
+ static void vf610_gpio_irq_mask(struct irq_data *d)
+ {
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_data_get_irq_chip_data(d));
++		gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	void __iomem *pcr_base = port->base + PORT_PCR(d->hwirq);
  
- 	/* Get the GPIO bank IRQ if provided */
- 	bank->irq = irq_of_parse_and_map(np, 0);
+ 	vf610_gpio_writel(0, pcr_base);
+@@ -191,7 +186,7 @@ static void vf610_gpio_irq_mask(struct irq_data *d)
+ static void vf610_gpio_irq_unmask(struct irq_data *d)
+ {
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_data_get_irq_chip_data(d));
++		gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 	void __iomem *pcr_base = port->base + PORT_PCR(d->hwirq);
+ 
+ 	vf610_gpio_writel(port->irqc[d->hwirq] << PORT_PCR_IRQC_OFFSET,
+@@ -201,7 +196,7 @@ static void vf610_gpio_irq_unmask(struct irq_data *d)
+ static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
+ {
+ 	struct vf610_gpio_port *port =
+-		to_vf610_gp(irq_data_get_irq_chip_data(d));
++		gpiochip_get_data(irq_data_get_irq_chip_data(d));
+ 
+ 	if (enable)
+ 		enable_irq_wake(port->irq);
+@@ -261,7 +256,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	gc->direction_output = vf610_gpio_direction_output;
+ 	gc->set = vf610_gpio_set;
+ 
+-	ret = gpiochip_add(gc);
++	ret = gpiochip_add_data(gc, port);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
 2.4.3
 
