@@ -1,51 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pca953x: make inclusion of <linux/of_platform.h> unconditional
-Date: Thu, 10 Dec 2015 19:30:30 +0100
-Message-ID: <CACRpkdbu9ccfiSZFqpYBveh0ShND5fA1zTCzxURcJLeTnu2JQw@mail.gmail.com>
-References: <1449655574-6550-1-git-send-email-linus.walleij@linaro.org>
-	<56680830.8010607@codethink.co.uk>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 6/6] pinctrl: activate pxa architecture
+Date: Thu, 10 Dec 2015 19:59:25 +0100
+Message-ID: <87zixii0z6.fsf@belgarion.home>
+References: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
+	<1448129093-20722-7-git-send-email-robert.jarzmik@free.fr>
+	<CACRpkdZyAqfCcaPWZ0RKxcPEYNJ_BxTe9SHV6FdT6x9rygHEEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:33214 "EHLO
-	mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751229AbbLJSaa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 13:30:30 -0500
-Received: by oixx65 with SMTP id x65so51305544oix.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 10:30:30 -0800 (PST)
-In-Reply-To: <56680830.8010607@codethink.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZyAqfCcaPWZ0RKxcPEYNJ_BxTe9SHV6FdT6x9rygHEEw@mail.gmail.com>
+	(Linus Walleij's message of "Thu, 10 Dec 2015 16:14:55 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>
 
-On Wed, Dec 9, 2015 at 11:53 AM, Ben Dooks <ben.dooks@codethink.co.uk> =
-wrote:
-> On 09/12/15 10:06, Linus Walleij wrote:
->> After adding the DT matching in
->> commit 6f29c9afbe636fc0e35c82a11eaf45c3b85eb07a
->> "gpio: pca935x: fix of-only probed devices"
->> compilation fails like this:
->>
->> CC [M]  drivers/gpio/gpio-pca953x.o
->> gpio-pca953x.c: In function =E2=80=98pca953x_probe=E2=80=99:
->> gpio-pca953x.c:693:11: error: implicit declaration of
->> function =E2=80=98of_match_device=E2=80=99 [-Werror=3Dimplicit-funct=
-ion-declaration]
->> match =3D of_match_device(pca953x_dt_ids, &client->dev);
+Linus Walleij <linus.walleij@linaro.org> writes:
+
+> On Sat, Nov 21, 2015 at 7:04 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 >
-> Thanks, given the driver makes no other attempt to remove OF
-> lists if there is no OF present then this may as well be
-> unconditionally included.
+>> As the pxa architecture, at least for pxa27x, supports pin control,
+>> activate it in the pinctrl tree.
+>>
+>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>
+> All 6 patches applied. I can see that you know what you're doing
+> so let's go ahead with this driver. Any issues can be patched
+> up later.
+Thanks Linus. Let's hope I live up to your expectations :)
 
-Hm it seems to fail compilation on a few defconfigs still...
-Need to think about adding deps or reintroducing these ifdefs.
+Cheers.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Robert
