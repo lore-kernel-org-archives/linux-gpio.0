@@ -1,34 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: at91-pio4: fix memleak after using dt map
-Date: Thu, 10 Dec 2015 18:26:43 +0100
-Message-ID: <CACRpkda7S+TgoZU0ApuVvYtOty-vaBLzPLeEkbDgw+jPs1_RVQ@mail.gmail.com>
-References: <1448979542-1202-1-git-send-email-ludovic.desroches@atmel.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 1/4] gpio: pxa: convert to one gpiochip
+Date: Thu, 10 Dec 2015 18:28:00 +0100
+Message-ID: <87h9jqjjrz.fsf@belgarion.home>
+References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
+	<1448746665-13422-2-git-send-email-robert.jarzmik@free.fr>
+	<CACRpkdbNRck0S_6P4+HX-4bSkLvsnbOokig4oGgB+vVt6M2sdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f50.google.com ([209.85.218.50]:33068 "EHLO
-	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753576AbbLJR0o (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 12:26:44 -0500
-Received: by oixx65 with SMTP id x65so50274918oix.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 09:26:43 -0800 (PST)
-In-Reply-To: <1448979542-1202-1-git-send-email-ludovic.desroches@atmel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbNRck0S_6P4+HX-4bSkLvsnbOokig4oGgB+vVt6M2sdg@mail.gmail.com>
+	(Linus Walleij's message of "Thu, 10 Dec 2015 16:04:22 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Ludovic Desroches <ludovic.desroches@atmel.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>
 
-On Tue, Dec 1, 2015 at 3:19 PM, Ludovic Desroches
-<ludovic.desroches@atmel.com> wrote:
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-> configs is allocated by pinconf_generic_parse_dt_config(),
-> pinctrl_utils_add_map_configs() duplicates configs so it can and has to
-> be freed to prevent memory leaks.
+> On Sat, Nov 28, 2015 at 10:37 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 >
-> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-> Reported-by: Yingjoe Chen <yingjoe.chen@mediatek.com>
+>> The pxa gpio IP is provided by one chip, which holds multiple banks.
+>>
+>> Another reason the driver should register only one gpiochip instead of
+>> multiple gpiochips (ie. 1 per each bank) is that for pincontrol and
+>> devicetree integration (think gpio-ranges), it's impossible to have the
+>> contiguous pin range 0..127 mapped to gpios 0..127.
+>>
+>> This patch, amongst other thinks, paves the path to loosen the bond with
+>> the global structure variable pxa_gpio_chip.
+>>
+>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>
+> Patch applied.
+>
+> Since noone else seems to care, would you consider sending a patch
+> to MAINTAINERS listing yourself as maintainer of this GPIO driver?
+>
+> Yours,
+> Linus Walleij
 
-Patch applied.
+But of course, I'll do it with pleasure right after work :)
 
-Yours,
-Linus Walleij
+Cheers.
+
+-- 
+Robert
