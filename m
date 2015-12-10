@@ -1,81 +1,84 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH] gpio: zynq: Do PM initialization earlier to support gpio hogs
-Date: Thu, 10 Dec 2015 12:10:12 +0100
-Message-ID: <fc67101afc0d10efbaeeb6bc3d881ab49e3f4671.1449745801.git.michal.simek@xilinx.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.5
+Date: Thu, 10 Dec 2015 14:04:51 +0100
+Message-ID: <1449752691-30438-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:33979 "EHLO
+	albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751041AbbLJNE4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 08:04:56 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-GPIO hogs registration is call at the end of gpiochip_add() function.
-Calling sequence is:
-gpiochip_add -> of_gpiochip_add -> of_gpiochip_scan_hogs ->
-gpiod_hog -> gpiochip_request_own_desc -> __gpiod_request ->
-chip->request -> zynq_gpio_request which calls pm_runtime_get_sync()
-which returns -13 because PM is not initialized yet.
+	Hi Linus,
 
-Initialize PM before gpiochip_add is called to fix this issue.
+The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
----
+  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
 
- drivers/gpio/gpio-zynq.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+are available in the git repository at:
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 00306e70a420..a0cabd17c9d0 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -710,23 +710,23 @@ static int zynq_gpio_probe(struct platform_device *pdev)
- 	chip->base = -1;
- 	chip->ngpio = gpio->p_data->ngpio;
- 
--	/* Enable GPIO clock */
-+	/* Retrieve GPIO clock */
- 	gpio->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(gpio->clk)) {
- 		dev_err(&pdev->dev, "input clock not found.\n");
- 		return PTR_ERR(gpio->clk);
- 	}
--	ret = clk_prepare_enable(gpio->clk);
--	if (ret) {
--		dev_err(&pdev->dev, "Unable to enable clock.\n");
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_runtime_get_sync(&pdev->dev);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	/* report a bug if gpio chip registration fails */
- 	ret = gpiochip_add(chip);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to add gpio chip\n");
--		goto err_disable_clk;
-+		goto err_pm_put;
- 	}
- 
- 	/* disable interrupts for all banks */
-@@ -744,15 +744,14 @@ static int zynq_gpio_probe(struct platform_device *pdev)
- 	gpiochip_set_chained_irqchip(chip, &zynq_gpio_edge_irqchip, gpio->irq,
- 				     zynq_gpio_irqhandler);
- 
--	pm_runtime_set_active(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_put(&pdev->dev);
- 
- 	return 0;
- 
- err_rm_gpiochip:
- 	gpiochip_remove(chip);
--err_disable_clk:
--	clk_disable_unprepare(gpio->clk);
-+err_pm_put:
-+	pm_runtime_put(&pdev->dev);
- 
- 	return ret;
- }
--- 
-1.9.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.5
+
+for you to fetch changes up to f27200f9dce59ce5063bf722ef6ccedd34e4357b:
+
+  pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support (2015-12-08 14:18:45 +0100)
+
+Summary:
+  - r8a7791: Add support for SCIF_CLK,
+  - r8a7795: Add support for HSCIF, MSIOF, and SCIF_CLK,
+  - sh73a0: Add support for MSIOF,
+  - Assorted fixes, cleanups and consolidatons.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (19):
+      pinctrl: sh-pfc: Add PINMUX_SINGLE()
+      pinctrl: sh-pfc: r8a7790: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7791: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7794: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7795: Make PORT_GP_x() macros consistent
+      pinctrl: sh-pfc: r8a7795: Rename SEL_SCIF to SEL_SATA
+      pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
+      pinctrl: sh-pfc: emev2: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7778: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7779: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: sh7734: Use PINMUX_SINGLE() instead of raw PINMUX_DATA()
+      pinctrl: sh-pfc: r8a7795: Add pinmux data for single-function pins
+      pinctrl: sh-pfc: r8a7795: Add MSIOF pins, groups, and functions
+      pinctrl: sh-pfc: emev2: Correct comment for CFI data pins
+      pinctrl: sh-pfc: r8a7740: Correct comment for LCD1 data pins
+      pinctrl: sh-pfc: sh73a0: Correct comment for LCD2 data pins
+      pinctrl: sh-pfc: sh73a0: Add MSIOF support
+      pinctrl: sh-pfc: r8a7791: Add SCIF_CLK support
+      pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
+
+Kuninori Morimoto (1):
+      pinctrl: sh-pfc: Share/reuse same PORT_GP_x() macros
+
+ drivers/pinctrl/sh-pfc/pfc-emev2.c   |  136 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c |    2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c |   22 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c |   21 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c |   35 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   74 ++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   63 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 1207 ++++++++++++++++++++++++++++++++--
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c  |  548 ++++++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c  |   29 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   74 ++-
+ 11 files changed, 1949 insertions(+), 262 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
