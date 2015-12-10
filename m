@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 165/182] mfd: sm501: use gpiochip data pointer
-Date: Thu, 10 Dec 2015 10:35:38 +0000
-Message-ID: <20151210103538.GL17876@x1>
-References: <1449668873-6354-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 164/182] mfd: htc-i2cpld: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 10:35:51 +0000
+Message-ID: <20151210103551.GM17876@x1>
+References: <1449668865-6307-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:34938 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752559AbbLJKfn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:43 -0500
-Received: by mail-wm0-f43.google.com with SMTP id u63so17673426wmu.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:42 -0800 (PST)
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:37818 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902AbbLJKfz (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:55 -0500
+Received: by wmww144 with SMTP id w144so18478183wmw.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:54 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1449668873-6354-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1449668865-6307-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Ben Dooks <ben@fluff.org.uk>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
 On Wed, 09 Dec 2015, Linus Walleij wrote:
 
@@ -27,86 +27,78 @@ On Wed, 09 Dec 2015, Linus Walleij wrote:
 > container_of().
 >=20
 > Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Ben Dooks <ben@fluff.org.uk>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee please ACK this so I can take it through the GPIO tree.
 > ---
->  drivers/mfd/sm501.c | 15 +++++----------
+>  drivers/mfd/htc-i2cpld.c | 15 +++++----------
 >  1 file changed, 5 insertions(+), 10 deletions(-)
 
 Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
-> index c646784c5a7d..65cd0d2a822a 100644
-> --- a/drivers/mfd/sm501.c
-> +++ b/drivers/mfd/sm501.c
-> @@ -879,11 +879,6 @@ static int sm501_register_display(struct sm501_d=
-evdata *sm,
+> diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
+> index bd6b96d07ab8..3f9eee5f8fb9 100644
+> --- a/drivers/mfd/htc-i2cpld.c
+> +++ b/drivers/mfd/htc-i2cpld.c
+> @@ -227,8 +227,7 @@ static irqreturn_t htcpld_handler(int irq, void *=
+dev)
+>  static void htcpld_chip_set(struct gpio_chip *chip, unsigned offset,=
+ int val)
+>  {
+>  	struct i2c_client *client;
+> -	struct htcpld_chip *chip_data =3D
+> -		container_of(chip, struct htcpld_chip, chip_out);
+> +	struct htcpld_chip *chip_data =3D gpiochip_get_data(chip);
+>  	unsigned long flags;
 > =20
->  #ifdef CONFIG_MFD_SM501_GPIO
+>  	client =3D chip_data->client;
+> @@ -257,14 +256,12 @@ static void htcpld_chip_set_ni(struct work_stru=
+ct *work)
 > =20
-> -static inline struct sm501_gpio_chip *to_sm501_gpio(struct gpio_chip=
- *gc)
-> -{
-> -	return container_of(gc, struct sm501_gpio_chip, gpio);
-> -}
+>  static int htcpld_chip_get(struct gpio_chip *chip, unsigned offset)
+>  {
+> -	struct htcpld_chip *chip_data;
+> +	struct htcpld_chip *chip_data =3D gpiochip_get_data(chip);
+>  	u8 cache;
+> =20
+>  	if (!strncmp(chip->label, "htcpld-out", 10)) {
+> -		chip_data =3D container_of(chip, struct htcpld_chip, chip_out);
+>  		cache =3D chip_data->cache_out;
+>  	} else if (!strncmp(chip->label, "htcpld-in", 9)) {
+> -		chip_data =3D container_of(chip, struct htcpld_chip, chip_in);
+>  		cache =3D chip_data->cache_in;
+>  	} else
+>  		return -EINVAL;
+> @@ -291,9 +288,7 @@ static int htcpld_direction_input(struct gpio_chi=
+p *chip,
+> =20
+>  static int htcpld_chip_to_irq(struct gpio_chip *chip, unsigned offse=
+t)
+>  {
+> -	struct htcpld_chip *chip_data;
 > -
->  static inline struct sm501_devdata *sm501_gpio_to_dev(struct sm501_g=
-pio *gpio)
->  {
->  	return container_of(gpio, struct sm501_devdata, gpio);
-> @@ -892,7 +887,7 @@ static inline struct sm501_devdata *sm501_gpio_to=
-_dev(struct sm501_gpio *gpio)
->  static int sm501_gpio_get(struct gpio_chip *chip, unsigned offset)
+> -	chip_data =3D container_of(chip, struct htcpld_chip, chip_in);
+> +	struct htcpld_chip *chip_data =3D gpiochip_get_data(chip);
 > =20
->  {
-> -	struct sm501_gpio_chip *smgpio =3D to_sm501_gpio(chip);
-> +	struct sm501_gpio_chip *smgpio =3D gpiochip_get_data(chip);
->  	unsigned long result;
+>  	if (offset < chip_data->nirqs)
+>  		return chip_data->irq_start + offset;
+> @@ -451,14 +446,14 @@ static int htcpld_register_chip_gpio(
+>  	gpio_chip->ngpio           =3D plat_chip_data->num_gpios;
 > =20
->  	result =3D smc501_readl(smgpio->regbase + SM501_GPIO_DATA_LOW);
-> @@ -923,7 +918,7 @@ static void sm501_gpio_ensure_gpio(struct sm501_g=
-pio_chip *smchip,
->  static void sm501_gpio_set(struct gpio_chip *chip, unsigned offset, =
-int value)
+>  	/* Add the GPIO chips */
+> -	ret =3D gpiochip_add(&(chip->chip_out));
+> +	ret =3D gpiochip_add_data(&(chip->chip_out), chip);
+>  	if (ret) {
+>  		dev_warn(dev, "Unable to register output GPIOs for 0x%x: %d\n",
+>  			 plat_chip_data->addr, ret);
+>  		return ret;
+>  	}
 > =20
->  {
-> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
-> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
->  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
->  	unsigned long bit =3D 1 << offset;
->  	void __iomem *regs =3D smchip->regbase;
-> @@ -948,7 +943,7 @@ static void sm501_gpio_set(struct gpio_chip *chip=
-, unsigned offset, int value)
-> =20
->  static int sm501_gpio_input(struct gpio_chip *chip, unsigned offset)
->  {
-> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
-> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
->  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
->  	void __iomem *regs =3D smchip->regbase;
->  	unsigned long bit =3D 1 << offset;
-> @@ -974,7 +969,7 @@ static int sm501_gpio_input(struct gpio_chip *chi=
-p, unsigned offset)
->  static int sm501_gpio_output(struct gpio_chip *chip,
->  			     unsigned offset, int value)
->  {
-> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
-> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
->  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
->  	unsigned long bit =3D 1 << offset;
->  	void __iomem *regs =3D smchip->regbase;
-> @@ -1039,7 +1034,7 @@ static int sm501_gpio_register_chip(struct sm50=
-1_devdata *sm,
->  	gchip->base   =3D base;
->  	chip->ourgpio =3D gpio;
-> =20
-> -	return gpiochip_add(gchip);
-> +	return gpiochip_add_data(gchip, chip);
->  }
-> =20
->  static int sm501_register_gpio(struct sm501_devdata *sm)
+> -	ret =3D gpiochip_add(&(chip->chip_in));
+> +	ret =3D gpiochip_add_data(&(chip->chip_in), chip);
+>  	if (ret) {
+>  		dev_warn(dev, "Unable to register input GPIOs for 0x%x: %d\n",
+>  			 plat_chip_data->addr, ret);
 
 --=20
 Lee Jones
