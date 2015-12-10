@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 166/182] mfd: tc6393xb: use gpiochip data pointer
-Date: Thu, 10 Dec 2015 10:35:21 +0000
-Message-ID: <20151210103521.GK17876@x1>
-References: <1449668880-6404-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 165/182] mfd: sm501: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 10:35:38 +0000
+Message-ID: <20151210103538.GL17876@x1>
+References: <1449668873-6354-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:33814 "EHLO
-	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752875AbbLJKfZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:25 -0500
-Received: by mail-wm0-f45.google.com with SMTP id v187so25989094wmv.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:24 -0800 (PST)
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:34938 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752559AbbLJKfn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:43 -0500
+Received: by mail-wm0-f43.google.com with SMTP id u63so17673426wmu.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:42 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1449668880-6404-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1449668873-6354-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Dmitry Baryshkov <dbaryshkov@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Ben Dooks <ben@fluff.org.uk>
 
 On Wed, 09 Dec 2015, Linus Walleij wrote:
 
@@ -27,94 +27,86 @@ On Wed, 09 Dec 2015, Linus Walleij wrote:
 > container_of().
 >=20
 > Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>
+> Cc: Ben Dooks <ben@fluff.org.uk>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee please ACK this so I can take it through the GPIO tree.
 > ---
->  drivers/mfd/tc6393xb.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  drivers/mfd/sm501.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
 
 Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
-> index 8c84a513016b..a5253f9a5089 100644
-> --- a/drivers/mfd/tc6393xb.c
-> +++ b/drivers/mfd/tc6393xb.c
-> @@ -24,7 +24,7 @@
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/tmio.h>
->  #include <linux/mfd/tc6393xb.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/driver.h>
->  #include <linux/slab.h>
+> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> index c646784c5a7d..65cd0d2a822a 100644
+> --- a/drivers/mfd/sm501.c
+> +++ b/drivers/mfd/sm501.c
+> @@ -879,11 +879,6 @@ static int sm501_register_display(struct sm501_d=
+evdata *sm,
 > =20
->  #define SCR_REVID	0x08		/* b Revision ID	*/
-> @@ -434,7 +434,7 @@ static struct mfd_cell tc6393xb_cells[] =3D {
->  static int tc6393xb_gpio_get(struct gpio_chip *chip,
->  		unsigned offset)
+>  #ifdef CONFIG_MFD_SM501_GPIO
+> =20
+> -static inline struct sm501_gpio_chip *to_sm501_gpio(struct gpio_chip=
+ *gc)
+> -{
+> -	return container_of(gc, struct sm501_gpio_chip, gpio);
+> -}
+> -
+>  static inline struct sm501_devdata *sm501_gpio_to_dev(struct sm501_g=
+pio *gpio)
 >  {
-> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+>  	return container_of(gpio, struct sm501_devdata, gpio);
+> @@ -892,7 +887,7 @@ static inline struct sm501_devdata *sm501_gpio_to=
+_dev(struct sm501_gpio *gpio)
+>  static int sm501_gpio_get(struct gpio_chip *chip, unsigned offset)
 > =20
->  	/* XXX: does dsr also represent inputs? */
->  	return tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8))
-> @@ -444,7 +444,7 @@ static int tc6393xb_gpio_get(struct gpio_chip *ch=
-ip,
->  static void __tc6393xb_gpio_set(struct gpio_chip *chip,
->  		unsigned offset, int value)
 >  {
-> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
->  	u8  dsr;
+> -	struct sm501_gpio_chip *smgpio =3D to_sm501_gpio(chip);
+> +	struct sm501_gpio_chip *smgpio =3D gpiochip_get_data(chip);
+>  	unsigned long result;
 > =20
->  	dsr =3D tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8));
-> @@ -459,7 +459,7 @@ static void __tc6393xb_gpio_set(struct gpio_chip =
-*chip,
->  static void tc6393xb_gpio_set(struct gpio_chip *chip,
->  		unsigned offset, int value)
+>  	result =3D smc501_readl(smgpio->regbase + SM501_GPIO_DATA_LOW);
+> @@ -923,7 +918,7 @@ static void sm501_gpio_ensure_gpio(struct sm501_g=
+pio_chip *smchip,
+>  static void sm501_gpio_set(struct gpio_chip *chip, unsigned offset, =
+int value)
+> =20
 >  {
-> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
->  	unsigned long flags;
+> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
+> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
+>  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
+>  	unsigned long bit =3D 1 << offset;
+>  	void __iomem *regs =3D smchip->regbase;
+> @@ -948,7 +943,7 @@ static void sm501_gpio_set(struct gpio_chip *chip=
+, unsigned offset, int value)
 > =20
->  	spin_lock_irqsave(&tc6393xb->lock, flags);
-> @@ -472,7 +472,7 @@ static void tc6393xb_gpio_set(struct gpio_chip *c=
-hip,
->  static int tc6393xb_gpio_direction_input(struct gpio_chip *chip,
->  			unsigned offset)
+>  static int sm501_gpio_input(struct gpio_chip *chip, unsigned offset)
 >  {
-> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
->  	unsigned long flags;
->  	u8 doecr;
-> =20
-> @@ -490,7 +490,7 @@ static int tc6393xb_gpio_direction_input(struct g=
-pio_chip *chip,
->  static int tc6393xb_gpio_direction_output(struct gpio_chip *chip,
->  			unsigned offset, int value)
+> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
+> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
+>  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
+>  	void __iomem *regs =3D smchip->regbase;
+>  	unsigned long bit =3D 1 << offset;
+> @@ -974,7 +969,7 @@ static int sm501_gpio_input(struct gpio_chip *chi=
+p, unsigned offset)
+>  static int sm501_gpio_output(struct gpio_chip *chip,
+>  			     unsigned offset, int value)
 >  {
-> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
->  	unsigned long flags;
->  	u8 doecr;
+> -	struct sm501_gpio_chip *smchip =3D to_sm501_gpio(chip);
+> +	struct sm501_gpio_chip *smchip =3D gpiochip_get_data(chip);
+>  	struct sm501_gpio *smgpio =3D smchip->ourgpio;
+>  	unsigned long bit =3D 1 << offset;
+>  	void __iomem *regs =3D smchip->regbase;
+> @@ -1039,7 +1034,7 @@ static int sm501_gpio_register_chip(struct sm50=
+1_devdata *sm,
+>  	gchip->base   =3D base;
+>  	chip->ourgpio =3D gpio;
 > =20
-> @@ -517,7 +517,7 @@ static int tc6393xb_register_gpio(struct tc6393xb=
- *tc6393xb, int gpio_base)
->  	tc6393xb->gpio.direction_input =3D tc6393xb_gpio_direction_input;
->  	tc6393xb->gpio.direction_output =3D tc6393xb_gpio_direction_output;
-> =20
-> -	return gpiochip_add(&tc6393xb->gpio);
-> +	return gpiochip_add_data(&tc6393xb->gpio, tc6393xb);
+> -	return gpiochip_add(gchip);
+> +	return gpiochip_add_data(gchip, chip);
 >  }
 > =20
->  /*------------------------------------------------------------------=
---------*/
+>  static int sm501_register_gpio(struct sm501_devdata *sm)
 
 --=20
 Lee Jones
