@@ -1,34 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 6/6] pinctrl: activate pxa architecture
-Date: Thu, 10 Dec 2015 16:14:55 +0100
-Message-ID: <CACRpkdZyAqfCcaPWZ0RKxcPEYNJ_BxTe9SHV6FdT6x9rygHEEw@mail.gmail.com>
-References: <1448129093-20722-1-git-send-email-robert.jarzmik@free.fr>
-	<1448129093-20722-7-git-send-email-robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2] gpio: Add GPIO support for the ACCES 104-IDI-48
+Date: Thu, 10 Dec 2015 16:17:55 +0100
+Message-ID: <CACRpkda1Ss5=0XRT8q_tfe7xd_f2fe4RngCCK7pSzz12p3w7sg@mail.gmail.com>
+References: <20151129163346.GA13433@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33268 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753698AbbLJPO4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 10:14:56 -0500
-Received: by oixx65 with SMTP id x65so47999021oix.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 07:14:56 -0800 (PST)
-In-Reply-To: <1448129093-20722-7-git-send-email-robert.jarzmik@free.fr>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151129163346.GA13433@sophia>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sat, Nov 21, 2015 at 7:04 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+On Sun, Nov 29, 2015 at 5:33 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> As the pxa architecture, at least for pxa27x, supports pin control,
-> activate it in the pinctrl tree.
+> The ACCES 104-IDI-48 family of PC/104 utility boards feature 48
+> individually optically isolated digital inputs. Enabled inputs feature
+> change-of-state detection capability; if change-of-state detection is
+> enabled, an interrupt is fired off if a change of input level
+> (low-to-high or high-to-low) is detected. Change-of-state IRQs are
+> enabled/disabled on 8-bit boundaries, for a total of six boundaries.
 >
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> This driver provides GPIO and IRQ support for these 48 channels of
+> digital input. The base port address for the device may be configured
+> via the idi_48_base module parameter. The interrupt line number for the
+> device may be configured via the idi_48_irq module parameter.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> ---
+> Changes in v2:
+>   - Reimplement irq_ack callback as a NOOP since status register read in
+>     idi_48_irq_handler clears all pending interrupts.
 
-All 6 patches applied. I can see that you know what you're doing
-so let's go ahead with this driver. Any issues can be patched
-up later.
+Sorry I seem to have already applied an earlier version of the driver
+to my tree.
+
+Can you make an incremental patch fixing up what is on my
+"devel" branch to what was in v2 instead?
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
 
 Yours,
 Linus Walleij
