@@ -1,40 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: bcm2835: Fix initial value for direction_output
-Date: Thu, 10 Dec 2015 19:08:59 +0100
-Message-ID: <CACRpkdaTM-1hD1h_R8gQWOyru_eAd-bvwCM9XBvMyGUmvinmow@mail.gmail.com>
-References: <1447893147-9458-1-git-send-email-stefan.wahren@i2se.com>
-	<565E6B22.3060808@wwwdotorg.org>
-	<565EFF99.7020704@i2se.com>
+Subject: Re: [PATCH] gpio: 104-idio-16: Clear pending interrupt in IRQ handler
+Date: Thu, 10 Dec 2015 19:13:07 +0100
+Message-ID: <CACRpkdY53JH978-0_-BtzR9Wc=nvpp_qhJDK8AowTTzhuaPBPQ@mail.gmail.com>
+References: <20151203012303.GA13986@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36355 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752746AbbLJSJA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 13:09:00 -0500
-Received: by oiww189 with SMTP id w189so50916467oiw.3
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 10:09:00 -0800 (PST)
-In-Reply-To: <565EFF99.7020704@i2se.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:35295 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754650AbbLJSNI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 13:13:08 -0500
+Received: by obc18 with SMTP id 18so64120797obc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 10:13:07 -0800 (PST)
+In-Reply-To: <20151203012303.GA13986@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, Martin Sperl <kernel@martin.sperl.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Dec 2, 2015 at 3:26 PM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> Am 02.12.2015 um 04:53 schrieb Stephen Warren:
->> On 11/18/2015 05:32 PM, Stefan Wahren wrote:
->>> Currently the provided initial value for bcm2835_gpio_direction_output
->>> has no effect. So fix this issue by changing the value before
->>> changing the GPIO direction. As a result we need to move the function below
->>> bcm2835_gpio_set.
->> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
->>
->
-> Should i resend the patch with
->
-> Suggested-by: Martin Sperl <kernel@martin.sperl.org>
+On Thu, Dec 3, 2015 at 2:23 AM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-No, I added this when applying the patch.
+> The ACCES 104-IDIO-16 uses a single interrupt to indicate a possible
+> change-of-state in any of the digital input lines. As such, only a
+> single write to the device's "Clear Interrupt" register is necessary to
+> acknowledge the IRQ for all respective GPIO.
+>
+> This patch moves the "Clear Interrupt" register write operation from the
+> irq_ack callback to the IRQ handler function, wherefore each interrupt
+> may be cleared respectively by executing a single outb call at the end
+> of the idio_16_irq_handler function, rather than multiple redundant outb
+> calls as a result of the generic_handle_irq call for each masked GPIO.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+
+Rebased and applied this patch.
 
 Yours,
 Linus Walleij
