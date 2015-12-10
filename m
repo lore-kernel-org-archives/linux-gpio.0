@@ -1,29 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: at91: Use platform_register/unregister_drivers()
-Date: Thu, 10 Dec 2015 23:52:27 +0100
-Message-ID: <CACRpkdbf5PNtffdY22PWpDHyoMhyFHSpM8Tywr_SrYSvetHNjg@mail.gmail.com>
-References: <1449073915-12663-1-git-send-email-thierry.reding@gmail.com>
-	<1449073915-12663-2-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH] pinctrl: bcm: Default PINCTRL_BCM281XX to y for ARCH_BCM_MOBILE
+Date: Thu, 10 Dec 2015 23:54:33 +0100
+Message-ID: <CACRpkdasK1Xx4S_CD0ykwW=jpWgo64ANXecgbFzDNH5ewduCyA@mail.gmail.com>
+References: <1449020490-27084-1-git-send-email-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449073915-12663-2-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:36608 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753730AbbLJWye (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 17:54:34 -0500
+Received: by obcse5 with SMTP id se5so70747451obc.3
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 14:54:33 -0800 (PST)
+In-Reply-To: <1449020490-27084-1-git-send-email-f.fainelli@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-On Wed, Dec 2, 2015 at 5:31 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+On Wed, Dec 2, 2015 at 2:41 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> From: Thierry Reding <treding@nvidia.com>
+> This driver is mandatory for proper operation on the platforms covered
+> by the ARCH_BCM_MOBILE Kconfig symbol, make sure we do that driver on
+> for these platforms.
 >
-> These new helpers simplify implementing multi-driver modules and
-> properly handle failure to register one driver by unregistering all
-> previously registered drivers.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Patch applied.
+Patch applied with Ray's Review tag.
 
 Yours,
 Linus Walleij
