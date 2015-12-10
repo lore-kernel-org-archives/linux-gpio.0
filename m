@@ -1,68 +1,106 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 113/182] pinctrl: sunxi: use gpiochip data pointer
-Date: Thu, 10 Dec 2015 10:51:10 +0100
-Message-ID: <20151210095110.GC27957@lukather>
-References: <1449667999-3152-1-git-send-email-linus.walleij@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 163/182] mfd: htc-egpio: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 10:33:53 +0000
+Message-ID: <20151210103353.GG17876@x1>
+References: <1449668857-6260-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LCbsoPZWBRMqE7TI"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:57567 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750790AbbLJKGT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:06:19 -0500
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:33107 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753248AbbLJKd5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:33:57 -0500
+Received: by mail-wm0-f54.google.com with SMTP id c201so25896341wme.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:33:57 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1449667999-3152-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1449668857-6260-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Chen-Yu Tsai <wens@csie.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Philipp Zabel <philipp.zabel@gmail.com>
 
+On Wed, 09 Dec 2015, Linus Walleij wrote:
 
---LCbsoPZWBRMqE7TI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Dec 09, 2015 at 02:33:19PM +0100, Linus Walleij wrote:
 > This makes the driver use the data pointer added to the gpio_chip
 > to store a pointer to the state container instead of relying on
 > container_of().
 >=20
-> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Philipp Zabel <philipp.zabel@gmail.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Lee please ACK this so I can take it through the GPIO tree.
+> Philipp: should this driver move to drivers/gpio? Looks like
+> so to me.
+> ---
+>  drivers/mfd/htc-egpio.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Thanks,
-Maxime
+> diff --git a/drivers/mfd/htc-egpio.c b/drivers/mfd/htc-egpio.c
+> index d334e7d8a77d..2e066fe66ca7 100644
+> --- a/drivers/mfd/htc-egpio.c
+> +++ b/drivers/mfd/htc-egpio.c
+> @@ -155,7 +155,7 @@ static int egpio_get(struct gpio_chip *chip, unsi=
+gned offset)
+> =20
+>  	pr_debug("egpio_get_value(%d)\n", chip->base + offset);
+> =20
+> -	egpio =3D container_of(chip, struct egpio_chip, chip);
+> +	egpio =3D gpiochip_get_data(chip);
+>  	ei    =3D dev_get_drvdata(egpio->dev);
+>  	bit   =3D egpio_bit(ei, offset);
+>  	reg   =3D egpio->reg_start + egpio_pos(ei, offset);
+> @@ -170,7 +170,7 @@ static int egpio_direction_input(struct gpio_chip=
+ *chip, unsigned offset)
+>  {
+>  	struct egpio_chip *egpio;
+> =20
+> -	egpio =3D container_of(chip, struct egpio_chip, chip);
+> +	egpio =3D gpiochip_get_data(chip);
+>  	return test_bit(offset, &egpio->is_out) ? -EINVAL : 0;
+>  }
+> =20
+> @@ -192,7 +192,7 @@ static void egpio_set(struct gpio_chip *chip, uns=
+igned offset, int value)
+>  	pr_debug("egpio_set(%s, %d(%d), %d)\n",
+>  			chip->label, offset, offset+chip->base, value);
+> =20
+> -	egpio =3D container_of(chip, struct egpio_chip, chip);
+> +	egpio =3D gpiochip_get_data(chip);
+>  	ei    =3D dev_get_drvdata(egpio->dev);
+>  	bit   =3D egpio_bit(ei, offset);
+>  	pos   =3D egpio_pos(ei, offset);
+> @@ -216,7 +216,7 @@ static int egpio_direction_output(struct gpio_chi=
+p *chip,
+>  {
+>  	struct egpio_chip *egpio;
+> =20
+> -	egpio =3D container_of(chip, struct egpio_chip, chip);
+> +	egpio =3D gpiochip_get_data(chip);
+>  	if (test_bit(offset, &egpio->is_out)) {
+>  		egpio_set(chip, offset, value);
+>  		return 0;
+> @@ -330,7 +330,7 @@ static int __init egpio_probe(struct platform_dev=
+ice *pdev)
+>  		chip->base            =3D pdata->chip[i].gpio_base;
+>  		chip->ngpio           =3D pdata->chip[i].num_gpios;
+> =20
+> -		gpiochip_add(chip);
+> +		gpiochip_add_data(chip, &ei->chip[i]);
+>  	}
+> =20
+>  	/* Set initial pin values */
 
 --=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---LCbsoPZWBRMqE7TI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWaUsOAAoJEBx+YmzsjxAgBbYP/3LU8Yvf2BD6jqQ72g1JIQfc
-rPrH1Amx0fI7vo4juY8pg8v4bTya41AzTScNoNus4P6e9ZNKNJ9ju7OdEz0cgoJq
-OgHiycRHhsnDn7frIjKN6vlZGB40fUQC4QfsBrmmGerBPGyUWGDexp2lflOcwKi4
-RFLyTtODK0mMAGgno4+BoBz6dnUOfd474aDqkaBZhytT0IDRKApf4Yunup0gmSxu
-vmv0ogXIWVESQilNj8c8Wqgjk9WV6BMLutxxD8Ah7anHFbPA2CVEKd28CgcqKWzJ
-tnnka/+EQ7msvRdEAH30DHVUeV/JFEDjx7U1aisUfPGZe8yN2VvT3e7vonVrbhkm
-RPZ3w8OrS8kK+Kc8bZIw++X5l2OqLtnZcTh8OFOBIB3UITqyGzOPCbXqsWil4Joj
-TEAB4nDhntvJvv/6VMim3jV44VihLQ5LUToCk+zgz0fWwvnq+uR2eyegJV72WYcF
-1+ueby2xADavqMvALi2fJPmFZIEYqnmbBkT8Y8BDnnrp5DwSjm06nXhTMr4BZ8U6
-ciSph433yqOB9nfv2+LSvBq9eYt2w6ShK010TAYVtfqgg14P2Zbx872pls00gEsV
-Wiva03BIG81fTT/N4/UuOjP90nE3uwZk6dEXkdpOQ4ICqjbjjSs4pf9nj4iXojSV
-jp5MrfVraFT6guZHW0Md
-=zCOe
------END PGP SIGNATURE-----
-
---LCbsoPZWBRMqE7TI--
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
