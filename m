@@ -1,34 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/3] gpio support for Broadcom NSP
-Date: Thu, 10 Dec 2015 18:47:01 +0100
-Message-ID: <CACRpkdbnj1NCtPkMsaCQPb5cKXqz7D3dqF7vNf08NoK1sY_B5Q@mail.gmail.com>
-References: <1449248981-12102-1-git-send-email-yrdreddy@broadcom.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: nsp-gpio: fix up parent attribute
+Date: Thu, 10 Dec 2015 18:52:10 +0100
+Message-ID: <1449769930-8629-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:33209 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752152AbbLJRrB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 12:47:01 -0500
-Received: by obbsd4 with SMTP id sd4so14714015obb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 09:47:01 -0800 (PST)
-In-Reply-To: <1449248981-12102-1-git-send-email-yrdreddy@broadcom.com>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:32982 "EHLO
+	mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753118AbbLJRwR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 12:52:17 -0500
+Received: by lfaz4 with SMTP id z4so62157714lfa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 09:52:15 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
 
-On Fri, Dec 4, 2015 at 6:09 PM, Yendapally Reddy Dhananjaya Reddy
-<yrdreddy@broadcom.com> wrote:
+The .dev field has been renamed .parent in the GPIO tree.
+Fix it up.
 
-> This is the second iteration in the series.
->
-> Changes in v2:
-> Addressed the review comments on device tree bindings and
-> the device tree file.
+Cc: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I've merged this on a special branch so I can also pull it into the GPIO
-tree for pending refactorings.
+diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+index 06b7aaf3548c..bb7891e786e3 100644
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+@@ -668,7 +668,7 @@ static int nsp_gpio_probe(struct platform_device *pdev)
+ 	gc->can_sleep = false;
+ 	gc->ngpio = val;
+ 	gc->label = dev_name(dev);
+-	gc->dev = dev;
++	gc->parent = dev;
+ 	gc->of_node = dev->of_node;
+ 	gc->request = nsp_gpio_request;
+ 	gc->free = nsp_gpio_free;
+-- 
+2.4.3
 
-Yours,
-Linus Walleij
