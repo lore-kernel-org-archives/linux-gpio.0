@@ -1,36 +1,36 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 0/4] gpio: pxa: integrate with pincontrol
-Date: Thu, 10 Dec 2015 18:31:08 +0100
-Message-ID: <87d1uejjmr.fsf@belgarion.home>
+Subject: Re: [PATCH 4/4] gpio: pxa: add pin control gpio direction and request
+Date: Thu, 10 Dec 2015 18:33:10 +0100
+Message-ID: <878u52jjjd.fsf@belgarion.home>
 References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-	<CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
-	<87lh92kbjg.fsf@belgarion.home>
-	<CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
+	<1448746665-13422-5-git-send-email-robert.jarzmik@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
-	(Linus Walleij's message of "Thu, 10 Dec 2015 16:02:12 +0100")
+In-Reply-To: <1448746665-13422-5-git-send-email-robert.jarzmik@free.fr>
+	(Robert Jarzmik's message of "Sat, 28 Nov 2015 22:37:45 +0100")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <zonque@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
 
->>    - the GPDR (gpio direction register) shared access bothers me a bit
->
-> How is it shared and between what users?
-It's shared between the pin controller and the gpio controller.
+> +static int pxa_gpio_request(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	return pinctrl_request_gpio(chip->base + offset);
+> +}
+> +
+> +static void pxa_gpio_free(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	pinctrl_free_gpio(chip->base + offset);
+> +}
 
-The odd thing with the pxa architecture is that the GPDR bit selects between 2
-different alternate functions, even when the pin is not a GPIO. Strange design,
-isn't it ?
+This part will need a bit of rework : in the case of a platform data board,
+pinctrl_*() returns -EPROBE_DEFER, preventing any gpio user to claim a gpio.
 
-As a consequence, both the gpio driver and pinctrl have to modify it, for
-different purposes :
- - pinctrl will modify it to select a specific alternate function
- - gpio driver will modify it when the pin is a GPIO, to modify its direction.
+Either I hold with this patch to see how pxa pinctrl goes, or drop it, but in
+any case this one is not ready yet for merge.
 
 Cheers.
 
