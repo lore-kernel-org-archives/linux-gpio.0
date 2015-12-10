@@ -1,37 +1,62 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH 156/182] input: adp5589-keys: use gpiochip data pointer
-Date: Wed, 9 Dec 2015 17:47:52 -0600
-Message-ID: <20151209234752.GB8146@deathstar>
-References: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+From: "Xuetao Guan" <gxt@mprc.pku.edu.cn>
+Subject: Re: [PATCH 152/182] unicore32: gpio: switch to gpiochip_add_data()
+Date: Thu, 10 Dec 2015 08:21:48 +0800 (CST)
+Message-ID: <50102.59.108.92.109.1449706908.squirrel@mprc.pku.edu.cn>
+References: <1449668587-5452-1-git-send-email-linus.walleij@linaro.org>
+Reply-To: gxt@mprc.pku.edu.cn
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;charset=gb2312
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:36290 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752533AbbLIXsB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 18:48:01 -0500
-Received: by mail-ig0-f174.google.com with SMTP id ph11so1680191igc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Dec 2015 15:48:01 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+Received: from mprc.pku.edu.cn ([162.105.203.9]:41555 "EHLO mprc.pku.edu.cn"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750849AbbLJAfI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 9 Dec 2015 19:35:08 -0500
+In-Reply-To: <1449668587-5452-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Guan Xuetao <gxt@mprc.pku.edu.cn>, Linus Walleij <linus.walleij@linaro.org>
 
-On Wed, Dec 09, 2015 at 02:45:10PM +0100, Linus Walleij wrote:
-> @@ -525,7 +525,7 @@ static int adp5589_gpio_add(struct adp5589_kpad *kpad)
->  
->  	mutex_init(&kpad->gpio_lock);
->  
-> -	error = gpiochip_add(&kpad->gc);
-> +	error = gpiochip_add_data(&kpad->gc, kpad);
->  	if (error) {
->  		dev_err(dev, "gpiochip_add failed, err: %d\n", error);
+> We're planning to remove the gpiochip_add() function to swith
+> to gpiochip_add_data() with NULL for data argument.
+>
+> Cc: Guan Xuetao <gxt@mprc.pku.edu.cn>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-Another dev_err referencing gpiochip_add instead of gpiochip_add_data.
+Thanks,
+Acked-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
 
->  		return error;
-> -- 
+> ---
+> Guan please ACK this so I can take it through the GPIO tree.
+> BTW this could possibly move to drivers/gpio but I don't have
+> the whole picture here. The internal consumers should be
+> converted to the GPIO descriptor API.
+> ---
+>  arch/unicore32/kernel/gpio.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/unicore32/kernel/gpio.c b/arch/unicore32/kernel/gpio.c
+> index cb12ec39552c..54a54c335a72 100644
+> --- a/arch/unicore32/kernel/gpio.c
+> +++ b/arch/unicore32/kernel/gpio.c
+> @@ -14,6 +14,8 @@
+>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+> +#include <linux/gpio/driver.h>
+> +/* FIXME: needed for gpio_set_value() - convert to use descriptors or
+> hogs */
+>  #include <linux/gpio.h>
+>  #include <mach/hardware.h>
+>
+> @@ -118,5 +120,5 @@ void __init puv3_init_gpio(void)
+>   *	gpio_set_value(GPO_SET_V2, 1);
+>   */
+>  #endif
+> -	gpiochip_add(&puv3_gpio_chip);
+> +	gpiochip_add_data(&puv3_gpio_chip, NULL);
+>  }
+> --
 > 2.4.3
-> 
+>
+
