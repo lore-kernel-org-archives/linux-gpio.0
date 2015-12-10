@@ -1,15 +1,16 @@
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 1/4] gpio: pxa: convert to one gpiochip
-Date: Thu, 10 Dec 2015 18:28:00 +0100
-Message-ID: <87h9jqjjrz.fsf@belgarion.home>
+Subject: Re: [PATCH 0/4] gpio: pxa: integrate with pincontrol
+Date: Thu, 10 Dec 2015 18:31:08 +0100
+Message-ID: <87d1uejjmr.fsf@belgarion.home>
 References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-	<1448746665-13422-2-git-send-email-robert.jarzmik@free.fr>
-	<CACRpkdbNRck0S_6P4+HX-4bSkLvsnbOokig4oGgB+vVt6M2sdg@mail.gmail.com>
+	<CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
+	<87lh92kbjg.fsf@belgarion.home>
+	<CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbNRck0S_6P4+HX-4bSkLvsnbOokig4oGgB+vVt6M2sdg@mail.gmail.com>
-	(Linus Walleij's message of "Thu, 10 Dec 2015 16:04:22 +0100")
+In-Reply-To: <CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
+	(Linus Walleij's message of "Thu, 10 Dec 2015 16:02:12 +0100")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
@@ -17,29 +18,19 @@ List-Id: linux-gpio@vger.kernel.org
 
 Linus Walleij <linus.walleij@linaro.org> writes:
 
-> On Sat, Nov 28, 2015 at 10:37 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>>    - the GPDR (gpio direction register) shared access bothers me a bit
 >
->> The pxa gpio IP is provided by one chip, which holds multiple banks.
->>
->> Another reason the driver should register only one gpiochip instead of
->> multiple gpiochips (ie. 1 per each bank) is that for pincontrol and
->> devicetree integration (think gpio-ranges), it's impossible to have the
->> contiguous pin range 0..127 mapped to gpios 0..127.
->>
->> This patch, amongst other thinks, paves the path to loosen the bond with
->> the global structure variable pxa_gpio_chip.
->>
->> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->
-> Patch applied.
->
-> Since noone else seems to care, would you consider sending a patch
-> to MAINTAINERS listing yourself as maintainer of this GPIO driver?
->
-> Yours,
-> Linus Walleij
+> How is it shared and between what users?
+It's shared between the pin controller and the gpio controller.
 
-But of course, I'll do it with pleasure right after work :)
+The odd thing with the pxa architecture is that the GPDR bit selects between 2
+different alternate functions, even when the pin is not a GPIO. Strange design,
+isn't it ?
+
+As a consequence, both the gpio driver and pinctrl have to modify it, for
+different purposes :
+ - pinctrl will modify it to select a specific alternate function
+ - gpio driver will modify it when the pin is a GPIO, to modify its direction.
 
 Cheers.
 
