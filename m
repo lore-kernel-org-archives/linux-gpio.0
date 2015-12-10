@@ -1,63 +1,34 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl:Convert the composition of
- devm_request_mem_region and devm_ioremap to a single call
-Date: Thu, 10 Dec 2015 14:31:42 -0800
-Message-ID: <20151210223142.GH23396@atomide.com>
-References: <1446191478-22714-1-git-send-email-sanjeev_sharma@mentor.com>
- <CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
- <20151203214415.GC23396@atomide.com>
- <CACRpkdZFw=tbRmh1_qUeRvVKokMqYd35FEO+NPbp+=gwSE6yDA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: adi2: Use platform_register/unregister_drivers()
+Date: Thu, 10 Dec 2015 23:46:09 +0100
+Message-ID: <CACRpkdbtF+Nyy8gcBAjzoc6e6zKWVBWS4T=tARdyjQAFW7qO=w@mail.gmail.com>
+References: <1449073915-12663-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZFw=tbRmh1_qUeRvVKokMqYd35FEO+NPbp+=gwSE6yDA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sanjeev Sharma <sanjeev_sharma@mentor.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:35413 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753327AbbLJWqK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 17:46:10 -0500
+Received: by oige206 with SMTP id e206so54919912oig.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 14:46:09 -0800 (PST)
+In-Reply-To: <1449073915-12663-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-* Linus Walleij <linus.walleij@linaro.org> [151210 10:18]:
-> On Thu, Dec 3, 2015 at 10:44 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > * Linus Walleij <linus.walleij@linaro.org> [151030 12:54]:
-> >> Please run posts like this by the maintainers. Tony Lindgren is one
-> >> user, Haojian is another.
-> >
-> > I think we need to add ourselves to MAINTAINERS for this driver,
-> > otherwise we'll keep on missing emails.
-> 
-> Good idea! Patches accepted.
+On Wed, Dec 2, 2015 at 5:31 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 
-How about this one below?
+> From: Thierry Reding <treding@nvidia.com>
+>
+> These new helpers simplify implementing multi-driver modules and
+> properly handle failure to register one driver by unregistering all
+> previously registered drivers.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Regards,
+Patch applied.
 
-Tony
-
-8< -----------------------
-From: Tony Lindgren <tony@atomide.com>
-Date: Thu, 10 Dec 2015 14:27:32 -0800
-Subject: [PATCH] MAINTAINERS: pinctrl: Add maintainers for pinctrl-single
-
-Otherwise we keep missing patches related to this driver.
-
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8379,6 +8379,14 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- S:	Maintained
- F:	drivers/pinctrl/samsung/
- 
-+PIN CONTROLLER - SINGLE
-+M:	Tony Lindgren <tony@atomide.com>
-+M:	Haojian Zhuang <haojian.zhuang@linaro.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-omap@vger.kernel.org
-+S:	Maintained
-+F:	drivers/pinctrl/pinctrl-single.c
-+
- PIN CONTROLLER - ST SPEAR
- M:	Viresh Kumar <vireshk@kernel.org>
- L:	spear-devel@list.st.com
+Yours,
+Linus Walleij
