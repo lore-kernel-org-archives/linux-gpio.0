@@ -1,45 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: 74x164: Use a single SPI transfer instead of
- multiple transfers
-Date: Thu, 10 Dec 2015 17:20:58 +0100
-Message-ID: <CACRpkdbRYj7pYYtWcW=+XHH=FrNncYVJQ5mNoXNbfv2WjDUjkQ@mail.gmail.com>
-References: <1448894126-9309-1-git-send-email-geert+renesas@glider.be>
-	<1448894126-9309-3-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH 12/28] gpio: pch: allow build on MIPS platforms
+Date: Thu, 10 Dec 2015 17:23:56 +0100
+Message-ID: <CACRpkdZgYFMgEqd3AZn0Vp14BDiYQuUPzT7eGPB69Qs1m7Bo7w@mail.gmail.com>
+References: <1448900513-20856-1-git-send-email-paul.burton@imgtec.com>
+	<1448900513-20856-13-git-send-email-paul.burton@imgtec.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:36433 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751491AbbLJQU7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 11:20:59 -0500
-Received: by obcse5 with SMTP id se5so62939840obc.3
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 08:20:59 -0800 (PST)
-In-Reply-To: <1448894126-9309-3-git-send-email-geert+renesas@glider.be>
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35835 "EHLO
+	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751343AbbLJQX5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 11:23:57 -0500
+Received: by oige206 with SMTP id e206so49165855oig.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 08:23:56 -0800 (PST)
+In-Reply-To: <1448900513-20856-13-git-send-email-paul.burton@imgtec.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Paul Burton <paul.burton@imgtec.com>
+Cc: Linux MIPS <linux-mips@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 3:35 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Nov 30, 2015 at 5:21 PM, Paul Burton <paul.burton@imgtec.com> wrote:
 
-> Currently the 74x164 driver assembles an SPI message from an array of
-> one-byte SPI transfers, one for each daisy-chained shift register, as
-> the first byte sent will end up in the last register.
-> This array is allocated and deallocated on each GPIO write access.
+> Allow the pch_gpio driver to be built for MIPS platforms, in preparation
+> for use on the MIPS Boston board.
 >
-> By storing the data in the internal buffer in reverse order, we can
-> use a single SPI transfer with the internal buffer directly, simplifying
-> the code a lot, and avoiding memory (de)allocations.
->
-> This also avoids transient values on the GPIO outputs when using an SPI
-> master that cannot keep the hardware chip select asserted in between
-> multiple transfers (and would need cs-gpios for proper operation).
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Paul Burton <paul.burton@imgtec.com>
 
-Patch rebased and applied. (Accounting for .dev -> .parent refactoring.)
+Patch applied to the GPIO tree.
+
+All GPIO patches should go separately to the GPIO tree, especially
+this merge window as I'm doing refactorings.
 
 Yours,
 Linus Walleij
