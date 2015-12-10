@@ -1,78 +1,44 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
-Date: Thu, 10 Dec 2015 11:19:58 +0900
-Message-ID: <5668E14E.8010302@samsung.com>
-References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+From: biao huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 4/5] pinctrl: mediatek: Add Pinctrl/GPIO/EINT driver for
+ mt2701
+Date: Thu, 10 Dec 2015 10:34:52 +0800
+Message-ID: <1449714892.17341.3.camel@mhfsdcap03>
+References: <1448527472-20651-1-git-send-email-biao.huang@mediatek.com>
+ <1448527472-20651-5-git-send-email-biao.huang@mediatek.com>
+ <CACRpkda2vgrVEisH=akc5aj6h4LW+mBTqgbAiF3E=3zcu6A28A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:21940 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945AbbLJCUK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Dec 2015 21:20:10 -0500
-In-reply-to: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <CACRpkda2vgrVEisH=akc5aj6h4LW+mBTqgbAiF3E=3zcu6A28A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>
-Cc: arm@kernel.org, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Rabin Vincent <rabin@rab.in>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
 
-On 09.12.2015 22:12, Linus Walleij wrote:
-> The separate struct bgpio_chip has been a pain to handle, both
-> by being confusingly similar in name to struct gpio_chip and
-> for being contained inside a struct so that struct gpio_chip
-> is contained in a struct contained in a struct, making several
-> steps of dereferencing necessary.
+On Wed, 2015-12-09 at 23:52 +0100, Linus Walleij wrote:
+> On Thu, Nov 26, 2015 at 9:44 AM, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
 > 
-> Make things simpler: include the fields directly into
-> <linux/gpio/driver.h>, #ifdef:ed for CONFIG_GENERIC_GPIO, and
-> get rid of the <linux/basic_mmio_gpio.h> altogether. Prefix
-> some of the member variables with bgpio_* and add proper
-> kerneldoc while we're at it.
+> > Add mt2701 support using mediatek common pinctrl driver.
+> > MT2701 have some special pins need an extra setting register
+> > than other ICs, so adding this support to common code.
+> >
+> > Signed-off-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 > 
-> Modify all users to handle the change and use a struct
-> gpio_chip directly. And while we're at it: replace all
-> container_of() dereferencing by gpiochip_get_data() and
-> registering the gpio_chip with gpiochip_add_data().
+> This looks uncontroversial, but I would like to have some of the
+> other Mediatek driver authors send their Ack/Review tags,
+> so Hongzhou & Yingjoe: can you review this and the other
+> patch to the pin control driver?
+The v2 patch will be sent in next week, and there are some changes in
+mt2701 drivers. And I'll add Hongzhou & Yingjoe to review these patches.
 > 
-> Cc: arm@kernel.org
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Alexander Shiyan <shc_work@mail.ru>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Gregory Fong <gregory.0xf0@gmail.com>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Cc: Rabin Vincent <rabin@rab.in>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ARM SoC folks and Lee: it would be great if you could
-> ACK the few lines hitting arch/arm/* and drivers/mfd/* in this
-> so I can take it through the GPIO tree.
-> ---
->  arch/arm/mach-clps711x/board-autcpu12.c |   2 +-
->  arch/arm/mach-clps711x/board-p720t.c    |   2 +-
->  arch/arm/mach-imx/mach-mx21ads.c        |   2 +-
->  arch/arm/mach-omap1/board-ams-delta.c   |   2 +-
->  arch/arm/mach-s3c64xx/mach-crag6410.c   |   2 +-
-
-For s3c64xx:
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
-Best regards,
-Krzysztof
-
+> Yours,
+> Linus Walleij
