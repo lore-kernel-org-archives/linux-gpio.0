@@ -1,39 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4 2/2] pinctrl: intel: fix offset calculation issue of
- register PAD_OWN
-Date: Thu, 10 Dec 2015 18:05:24 +0100
-Message-ID: <CACRpkdaXe0-SaV_d-KMYJ-mvC=ezjqcMnkVmCyj2MeH7TKUYmw@mail.gmail.com>
-References: <1448882416-40845-1-git-send-email-qipeng.zha@intel.com>
-	<1448882416-40845-2-git-send-email-qipeng.zha@intel.com>
+Subject: Re: [PATCH v2 4/9] pinctrl: Add support STM32 MCUs
+Date: Thu, 10 Dec 2015 18:08:19 +0100
+Message-ID: <CACRpkda4eSHu57Tw6F-kmxY_EOSEhpRiowQN9o4LbPVgE_Xvkw@mail.gmail.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+	<1445102604-11502-5-git-send-email-mcoquelin.stm32@gmail.com>
+	<CALszF6Cd=yei0m2Zs=+k=KT5RUzdesGWPK7PAQPdj_-Ouan=2A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34527 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752571AbbLJRFZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 12:05:25 -0500
-Received: by oigl9 with SMTP id l9so10161820oig.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 09:05:24 -0800 (PST)
-In-Reply-To: <1448882416-40845-2-git-send-email-qipeng.zha@intel.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:34891 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751901AbbLJRIT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 12:08:19 -0500
+Received: by obc18 with SMTP id 18so62714691obc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 09:08:19 -0800 (PST)
+In-Reply-To: <CALszF6Cd=yei0m2Zs=+k=KT5RUzdesGWPK7PAQPdj_-Ouan=2A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Qipeng Zha <qipeng.zha@intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Westerberg, Mika" <mika.westerberg@intel.com>, Qi Zheng <qi.zheng@intel.com>
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On Mon, Nov 30, 2015 at 12:20 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
-
-> The calculation equation of PAD_OWN register offset is not
-> correct for Broxton, verified this fix will get right
-> offset for Broxton.
+On Tue, Dec 1, 2015 at 10:53 AM, Maxime Coquelin
+<mcoquelin.stm32@gmail.com> wrote:
+> 2015-10-17 19:23 GMT+02:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
+>> This patch adds pinctrl and GPIO support to STMicroelectronic's STM32
+>> family of MCUs.
+>>
+>> While it only supports STM32F429 for now, it has been designed to enable
+>> support of other MCUs of the family (e.g. STM32F746).
+>>
+>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> ---
+>>  drivers/pinctrl/Kconfig                   |    1 +
+>>  drivers/pinctrl/Makefile                  |    1 +
+>>  drivers/pinctrl/stm32/Kconfig             |   16 +
+>>  drivers/pinctrl/stm32/Makefile            |    5 +
+>>  drivers/pinctrl/stm32/pinctrl-stm32.c     |  856 +++++++++++++++
+>>  drivers/pinctrl/stm32/pinctrl-stm32.h     |   43 +
+>>  drivers/pinctrl/stm32/pinctrl-stm32f429.c | 1598 +++++++++++++++++++++++++++++
+>>  7 files changed, 2520 insertions(+)
+>>  create mode 100644 drivers/pinctrl/stm32/Kconfig
+>>  create mode 100644 drivers/pinctrl/stm32/Makefile
+>>  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.c
+>>  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.h
+>>  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f429.c
+>>
 >
-> Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
->
-> ---
-> change in v4
->  fix the equation regarding to sunprisepoint platform.
+> Gentle reminder, do you know when you will be able to review this driver?
 
-Patch applied for fixes with Mika's ACK.
+I'm a bit overloaded so reviewing of large chunks of code takes time.
+
+It would be great if I could have some Reviewed-by tags from someone
+else who's familiar with pin control.
+
+Patrice: do you have a chance to review this driver and help us?
 
 Yours,
 Linus Walleij
