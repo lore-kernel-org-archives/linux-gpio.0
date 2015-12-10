@@ -1,42 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/28] MIPS Boston board support
-Date: Thu, 10 Dec 2015 17:26:31 +0100
-Message-ID: <CACRpkdb2YhSbaYUXh4Dz7juObHxmWLc8Gj6UmkJ=Nv69UNfaPA@mail.gmail.com>
-References: <1448900513-20856-1-git-send-email-paul.burton@imgtec.com>
-        <20151130163413.GB1929@sirena.org.uk>
+Subject: Re: [PATCH 01/39] pinctrl: Move am4372 and dra7 macros to the the SoC
+ header files
+Date: Thu, 10 Dec 2015 17:48:56 +0100
+Message-ID: <CACRpkdbVv9vsC34ko+nkuy-mNYdY2MFeC16Vch9n2CWSHYy2GA@mail.gmail.com>
+References: <1447390457-1158-1-git-send-email-javier@osg.samsung.com>
+	<1447390457-1158-2-git-send-email-javier@osg.samsung.com>
+	<CACRpkdZt2NXD-WzLRcxNuvu9fM6j9GPRjnAungv1jxJvipKYAQ@mail.gmail.com>
+	<564B30B1.4050902@osg.samsung.com>
+	<20151119002310.GF2517@atomide.com>
+	<20151125183939.GM2517@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20151130163413.GB1929@sirena.org.uk>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Mark Brown <broonie@kernel.org>
-Cc: Paul Burton <paul.burton@imgtec.com>, Linux MIPS <linux-mips@linux-mips.org>, Arnd Bergmann <arnd@arndb.de>, Joshua Kinard <kumba@gentoo.org>, Alessandro Zummo <a.zummo@towertech.it>, Jiri Slaby <jslaby@suse.com>, Bjorn Helgaas <bhelgaas@google.com>, Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>, Kumar Gala <galak@codeaurora.org>, Yijing Wang <wangyijing@huawei.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, John Crispin <blogic@openwrt.org>, Jayachandran C <jchandra@broadcom.com>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ray Jui <rjui@broadcom.com>, Richard Cochran <richardcochran@gmail.com>, Tejun Heo <tj@kernel.org>, Michal
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:36140 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608AbbLJQs4 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 11:48:56 -0500
+Received: by oiww189 with SMTP id w189so49581335oiw.3
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 08:48:56 -0800 (PST)
+In-Reply-To: <20151125183939.GM2517@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Nov 30, 2015 at 5:34 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Nov 30, 2015 at 04:21:25PM +0000, Paul Burton wrote:
->> This series introduces support for the Imagination Technologies MIPS
->> Boston development board. Boston is an FPGA-based development board
->> akin to the much older Malta board, built around a Xilinx FPGA running
->> a MIPS CPU & other logic including a PCIe root port connected to an
->> Intel EG20T Platform Controller Hub. This provides a base set of
->> peripherals including SATA, USB, SD/MMC, ethernet, I2C & GPIOs. PCIe
->> slots are also present for expansion.
+On Wed, Nov 25, 2015 at 7:39 PM, Tony Lindgren <tony@atomide.com> wrote:
+> Linus,
+(...)
+>> > OK, I believe he was waiting for yours to pick the series though ;)
+>>
+>> Yeah probably best to keep this series together if you're OK with that.
 >
-> This is an insanely big CC list :(
->
-> What are the interdependencies here - does this really need to be one
-> patch series or can the individual driver changes go in separately?
+> Care to ack this one? I'd like to apply this series for v4.5 within next
+> few days..
 
-I took the two GPIO patches and ran off with them at least.
+Sorry for the delay. ACK.
 
 Yours,
 Linus Walleij
