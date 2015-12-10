@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 167/182] mfd: tps65010: use gpiochip data pointer
-Date: Thu, 10 Dec 2015 10:35:03 +0000
-Message-ID: <20151210103503.GJ17876@x1>
-References: <1449668889-6451-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 166/182] mfd: tc6393xb: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 10:35:21 +0000
+Message-ID: <20151210103521.GK17876@x1>
+References: <1449668880-6404-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36452 "EHLO
-	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751126AbbLJKfI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:08 -0500
-Received: by mail-wm0-f42.google.com with SMTP id w144so17617404wmw.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:08 -0800 (PST)
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:33814 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752875AbbLJKfZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 05:35:25 -0500
+Received: by mail-wm0-f45.google.com with SMTP id v187so25989094wmv.1
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 02:35:24 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1449668889-6451-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1449668880-6404-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Dmitry Baryshkov <dbaryshkov@gmail.com>
 
 On Wed, 09 Dec 2015, Linus Walleij wrote:
 
@@ -27,59 +27,94 @@ On Wed, 09 Dec 2015, Linus Walleij wrote:
 > container_of().
 >=20
 > Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee please ACK this so I can take it through the GPIO tree.
 > ---
->  drivers/mfd/tps65010.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/mfd/tc6393xb.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
 Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
-> index b96847491277..1ffb8ebd7b2c 100644
-> --- a/drivers/mfd/tps65010.c
-> +++ b/drivers/mfd/tps65010.c
-> @@ -34,7 +34,7 @@
-> =20
->  #include <linux/i2c/tps65010.h>
-> =20
+> diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
+> index 8c84a513016b..a5253f9a5089 100644
+> --- a/drivers/mfd/tc6393xb.c
+> +++ b/drivers/mfd/tc6393xb.c
+> @@ -24,7 +24,7 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/tmio.h>
+>  #include <linux/mfd/tc6393xb.h>
 > -#include <linux/gpio.h>
 > +#include <linux/gpio/driver.h>
+>  #include <linux/slab.h>
 > =20
+>  #define SCR_REVID	0x08		/* b Revision ID	*/
+> @@ -434,7 +434,7 @@ static struct mfd_cell tc6393xb_cells[] =3D {
+>  static int tc6393xb_gpio_get(struct gpio_chip *chip,
+>  		unsigned offset)
+>  {
+> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
+pio);
+> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+> =20
+>  	/* XXX: does dsr also represent inputs? */
+>  	return tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8))
+> @@ -444,7 +444,7 @@ static int tc6393xb_gpio_get(struct gpio_chip *ch=
+ip,
+>  static void __tc6393xb_gpio_set(struct gpio_chip *chip,
+>  		unsigned offset, int value)
+>  {
+> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
+pio);
+> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+>  	u8  dsr;
+> =20
+>  	dsr =3D tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8));
+> @@ -459,7 +459,7 @@ static void __tc6393xb_gpio_set(struct gpio_chip =
+*chip,
+>  static void tc6393xb_gpio_set(struct gpio_chip *chip,
+>  		unsigned offset, int value)
+>  {
+> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
+pio);
+> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+>  	unsigned long flags;
+> =20
+>  	spin_lock_irqsave(&tc6393xb->lock, flags);
+> @@ -472,7 +472,7 @@ static void tc6393xb_gpio_set(struct gpio_chip *c=
+hip,
+>  static int tc6393xb_gpio_direction_input(struct gpio_chip *chip,
+>  			unsigned offset)
+>  {
+> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
+pio);
+> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+>  	unsigned long flags;
+>  	u8 doecr;
+> =20
+> @@ -490,7 +490,7 @@ static int tc6393xb_gpio_direction_input(struct g=
+pio_chip *chip,
+>  static int tc6393xb_gpio_direction_output(struct gpio_chip *chip,
+>  			unsigned offset, int value)
+>  {
+> -	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
+pio);
+> +	struct tc6393xb *tc6393xb =3D gpiochip_get_data(chip);
+>  	unsigned long flags;
+>  	u8 doecr;
+> =20
+> @@ -517,7 +517,7 @@ static int tc6393xb_register_gpio(struct tc6393xb=
+ *tc6393xb, int gpio_base)
+>  	tc6393xb->gpio.direction_input =3D tc6393xb_gpio_direction_input;
+>  	tc6393xb->gpio.direction_output =3D tc6393xb_gpio_direction_output;
+> =20
+> -	return gpiochip_add(&tc6393xb->gpio);
+> +	return gpiochip_add_data(&tc6393xb->gpio, tc6393xb);
+>  }
 > =20
 >  /*------------------------------------------------------------------=
--------*/
-> @@ -477,7 +477,7 @@ tps65010_output(struct gpio_chip *chip, unsigned =
-offset, int value)
->  	if (offset < 4) {
->  		struct tps65010		*tps;
-> =20
-> -		tps =3D container_of(chip, struct tps65010, chip);
-> +		tps =3D gpiochip_get_data(chip);
->  		if (!(tps->outmask & (1 << offset)))
->  			return -EINVAL;
->  		tps65010_set_gpio_out_value(offset + 1, value);
-> @@ -494,7 +494,7 @@ static int tps65010_gpio_get(struct gpio_chip *ch=
-ip, unsigned offset)
->  	int			value;
->  	struct tps65010		*tps;
-> =20
-> -	tps =3D container_of(chip, struct tps65010, chip);
-> +	tps =3D gpiochip_get_data(chip);
-> =20
->  	if (offset < 4) {
->  		value =3D i2c_smbus_read_byte_data(tps->client, TPS_DEFGPIO);
-> @@ -651,7 +651,7 @@ static int tps65010_probe(struct i2c_client *clie=
-nt,
->  		tps->chip.ngpio =3D 7;
->  		tps->chip.can_sleep =3D 1;
-> =20
-> -		status =3D gpiochip_add(&tps->chip);
-> +		status =3D gpiochip_add_data(&tps->chip, tps);
->  		if (status < 0)
->  			dev_err(&client->dev, "can't add gpiochip, err %d\n",
->  					status);
+--------*/
 
 --=20
 Lee Jones
