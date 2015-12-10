@@ -1,41 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add GPIO support for the ACCES 104-IDI-48
-Date: Thu, 10 Dec 2015 16:18:46 +0100
-Message-ID: <CACRpkdZ3VcL1JJs97cZkPdATGCPVhdSfkBjossNTAw7idMzzbg@mail.gmail.com>
-References: <20151123175450.GA16041@sophia>
-	<CACRpkda7QAKB=7W6rVA8fh873wTy9wm=8ta+mKZmuP2Sj7rCHA@mail.gmail.com>
-	<565D994A.8080002@gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: atlas7: add pingroup with reduced cs line
+ for atlas7 nand
+Date: Thu, 10 Dec 2015 16:20:08 +0100
+Message-ID: <CACRpkda5d1S59mwCwMAWCVJzppn9o71-kevL=j31jDG_VpKoYg@mail.gmail.com>
+References: <1448863557-25352-1-git-send-email-21cnbao@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:35778 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753798AbbLJPSr (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 10:18:47 -0500
-Received: by obc18 with SMTP id 18so60231056obc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 07:18:46 -0800 (PST)
-In-Reply-To: <565D994A.8080002@gmail.com>
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:34148 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751448AbbLJPUI (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 10:20:08 -0500
+Received: by oigl9 with SMTP id l9so8322391oig.1
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 07:20:08 -0800 (PST)
+In-Reply-To: <1448863557-25352-1-git-send-email-21cnbao@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>
 
-On Tue, Dec 1, 2015 at 1:57 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> On 12/01/2015 03:57 AM, Linus Walleij wrote:
->> This is a very nice and clean written driver.
->>
->> Patch applied.
->>
->> Yours,
->> Linus Walleij
+On Mon, Nov 30, 2015 at 7:05 AM, Barry Song <21cnbao@gmail.com> wrote:
+
+> From: Wei Chen <Wei.Chen@csr.com>
 >
-> I submitted a version 2 of this patch with a minor optimization change
-> to the IRQ acknowledgment functionality. Should I resubmit that change
-> as a separate patch based on top of this commit?
+> The nand in atlas7 has two chip select line. But in most time, the
+> nand only has one chip, so only one chip select line is enough.
+> The nand driver select this new pin group can free one chip select
+> line for other modules to avoid pin conflict.
+>
+> Signed-off-by: Wei Chen <Wei.Chen@csr.com>
+> Signed-off-by: Barry Song <Baohua.Song@csr.com>
 
-Yes please. Sorry for the mess, I'm under quite heavy workload
-and prone to make mistakes and unpredictable delays right now.
+Patch applied.
 
 Yours,
 Linus Walleij
