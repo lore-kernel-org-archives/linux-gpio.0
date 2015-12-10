@@ -1,49 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: nsp: add pinmux driver support for Broadcom
- NSP SoC
-Date: Thu, 10 Dec 2015 17:50:24 +0100
-Message-ID: <CACRpkdaytru_AOK4p9Si9fJs6=DKgrqJ6HV4-To_a8Q+R+40jA@mail.gmail.com>
-References: <1448042245-25702-1-git-send-email-yrdreddy@broadcom.com>
-	<CACRpkdZ=vyPSiPCUppfDWC9OShqfe-BRvB5QjU1AZmbDbYvsZQ@mail.gmail.com>
-	<565C81E4.90507@broadcom.com>
+Subject: Re: [PATCH v2] gpiolib: return 0 or 1 in gpiod_get_value*() functions
+Date: Thu, 10 Dec 2015 17:54:01 +0100
+Message-ID: <CACRpkdYqX53dmg-SugBsGk-RYTXiLeAZkx1Ws5s8RMU6wjTjxA@mail.gmail.com>
+References: <1448904631-30230-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <565C81E4.90507@broadcom.com>
+In-Reply-To: <1448904631-30230-1-git-send-email-Jose.DiazdeGrenudePedro@digi.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: Jose Diaz de Grenu de Pedro <Jose.DiazdeGrenudePedro@digi.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Hector Palacios <hector.palacios@digi.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Nov 30, 2015 at 6:05 PM, Ray Jui <rjui@broadcom.com> wrote:
-> Hi Linus,
->
-> On 11/30/2015 4:49 AM, Linus Walleij wrote:
->>
->> On Fri, Nov 20, 2015 at 6:57 PM, Yendapally Reddy Dhananjaya Reddy
->> <yrdreddy@broadcom.com> wrote:
->>
->>> This adds the initial support of the Broadcom NSP pinmux driver.
->>>
->>> Signed-off-by: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
->>
->>
->> So what does Ray and Stephen say about this?
->>
->> Is the hardware unique enough to warrant its own driver?
->>
->> Or should it utilize/extend one of the existing Broadcom
->> drivers?
->
->
-> Currently, the IOMUX configurations in Cygnus, NSP, and NS2 are completely
-> different and require a separate driver to each of these SoCs. We now
-> realize the shortcomings and have been communicating with our ASIC team.
-> We'd like to fix this for the next-gen of our SoC. We are driving towards
-> using a register layout that will allow us to use just "pinctrl-single" and
-> "pinconf-single."
+On Mon, Nov 30, 2015 at 6:30 PM, Jose Diaz de Grenu de Pedro
+<Jose.DiazdeGrenudePedro@digi.com> wrote:
 
-OK can you provide your reviews for the NSP driver?
+> Commit 79a9becda894 moved the awareness of active low state
+> into the gpiod_get_value*() functions, but it only inverts the
+> GPIO's raw value when it is active low. If the GPIO is active
+> high, the gpiod_get_value*() functions return the raw value of
+> the register, which can be any positive value.
+
+No, because:
+
+static int _gpiod_get_raw_value(const struct gpio_desc *desc)
+{
+        struct gpio_chip        *chip;
+        int offset;
+        int value;
+
+        chip = desc->chip;
+        offset = gpio_chip_hwgpio(desc);
+        value = chip->get ? chip->get(chip, offset) : -EIO;
+        value = value < 0 ? value : !!value;
+        trace_gpio_value(desc_to_gpio(desc), 1, value);
+        return value;
+}
+
+This returns a negative error code or the value clamped to [0,1]
 
 Yours,
 Linus Walleij
