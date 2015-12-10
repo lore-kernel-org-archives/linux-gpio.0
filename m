@@ -1,63 +1,40 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 0/4] gpio: pxa: integrate with pincontrol
-Date: Thu, 10 Dec 2015 08:28:19 +0100
-Message-ID: <87lh92kbjg.fsf@belgarion.home>
-References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-	<CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH 153/182] bcma: gpio: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 08:41:52 +0100
+Message-ID: <CACna6rzNy_SjXqTbTB66_hCTWpO1eK25LQ7L9qw_kQQYw1DEPQ@mail.gmail.com>
+References: <1449668633-5547-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:37537 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752465AbbLJH2W (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 02:28:22 -0500
-In-Reply-To: <CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
-	(Linus Walleij's message of "Wed, 9 Dec 2015 23:58:22 +0100")
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:38904 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751201AbbLJHlx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 02:41:53 -0500
+In-Reply-To: <1449668633-5547-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Hauke Mehrtens <hauke@hauke-m.de>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
-
-> On Sat, Nov 28, 2015 at 10:37 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+On 9 December 2015 at 14:43, Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 >
->> Hi Linus, Alexandre and Haojian,
->>
->> This serie aims at several cleanups and improvements in the pxa gpio driver, to
->
-> I have concerns about this series.
->
-> I am worried that joining the banks into one gpio_chip makes it
-> impossible for you GPIOLIB_IRQCHIP. Usually that is possible and
-> preferrable when using a chained handler if e.g. one bank has
-> one IRQ line.
->
-> But overall that depends on how the IRQs map on this hardware.
-> Can you describe how the GPIO IRQs work on the PXA27x?
-Of course.
+> Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+> Cc: Hauke Mehrtens <hauke@hauke-m.de>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: linux-wireless@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> BCMA maintainers: please ACK this so I can take it through the
+> GPIO tree.
 
-For PXA27x, there are 3 interrupts directly connected to the CPU of the SoC,
-ie. the primary irq controller :
- - one is only triggered if GPIO0 has a rising/falling edge
- - one is only triggered if GPIO1 has a rising/falling edge
- - the last is triggered if any GPIOn has a rising/falling edge (n >= 2)
-
-The condition to program the rising/falling edge which implies the interrupt to
-be asserted is in a GPIO block register, GFER and GRER (1 bit per GPIO).
-
-The fact that the last interrupt (let's call it gpiomux_irq) is triggered by
-GPIOs from _all_ the banks makes me believe it's a single IP block, ie. a single
-chip.
-
-Now if you have concerns with this, then maybe you can advise another approach,
-I'm pretty open. The final goal will be for me :
- - gpio and pinctrl have to cooperate
-   - today, with the current state, it's impossible to map pins 0..127 to gpios
-     0..127, at least in a device-tree .dts file
-   - the GPDR (gpio direction register) shared access bothers me a bit
-
-Cheers.
-
--- 
-Robert
+Acked-by: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
