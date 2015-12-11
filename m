@@ -1,53 +1,68 @@
-From: "Westerberg, Mika" <mika.westerberg@intel.com>
-Subject: Re: [PATCH V3 2/2] pinctrl: intel: fix bug of register offset
- calculation
-Date: Fri, 11 Dec 2015 10:02:34 +0200
-Message-ID: <20151211080234.GD12007@lahna.fi.intel.com>
-References: <1448471391-1115-1-git-send-email-qipeng.zha@intel.com>
- <1448471391-1115-2-git-send-email-qipeng.zha@intel.com>
- <CACRpkdY5Jp25FRpE6hDYeVaS2W2Jp9jkV1amFpFCJkmQi4Nw3w@mail.gmail.com>
- <20151210090432.GC1766@lahna.fi.intel.com>
- <CACRpkdZjYn78f9+Q8GO0tb8kHDZNk=bz+_SDBfgQ7GCvRcmsMg@mail.gmail.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH v2 4/9] pinctrl: Add support STM32 MCUs
+Date: Fri, 11 Dec 2015 09:20:50 +0100
+Message-ID: <566A8762.4040108@st.com>
+References: <1445102604-11502-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <1445102604-11502-5-git-send-email-mcoquelin.stm32@gmail.com>
+ <CALszF6Cd=yei0m2Zs=+k=KT5RUzdesGWPK7PAQPdj_-Ouan=2A@mail.gmail.com>
+ <CACRpkda4eSHu57Tw6F-kmxY_EOSEhpRiowQN9o4LbPVgE_Xvkw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:18094 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751871AbbLKICi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 11 Dec 2015 03:02:38 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZjYn78f9+Q8GO0tb8kHDZNk=bz+_SDBfgQ7GCvRcmsMg@mail.gmail.com>
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:58010 "EHLO
+	mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750906AbbLKIVh (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 11 Dec 2015 03:21:37 -0500
+In-Reply-To: <CACRpkda4eSHu57Tw6F-kmxY_EOSEhpRiowQN9o4LbPVgE_Xvkw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Qipeng Zha <qipeng.zha@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Qi Zheng <qi.zheng@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
-On Thu, Dec 10, 2015 at 10:58:44PM +0100, Linus Walleij wrote:
-> On Thu, Dec 10, 2015 at 10:04 AM, Westerberg, Mika
-> <mika.westerberg@intel.com> wrote:
-> > On Tue, Dec 01, 2015 at 11:16:45AM +0100, Linus Walleij wrote:
-> >> On Wed, Nov 25, 2015 at 6:09 PM, Qipeng Zha <qipeng.zha@intel.com> wrote:
-> >>
-> >> > The group size for registers PADCFGLOCK, HOSTSW_OWN, GPI_IS,
-> >> > GPI_IE, are not 24 for Broxton, Add a parameter to allow
-> >> > different platform to set correct value.
-> >> >
-> >> > ---
-> >> > change in v3:
-> >> >  use community->gpp_size directly, not macro.
-> >> >
-> >> > change in v2:
-> >> >  define gpp_size for sunrisepoint in its private structure.
-> >> >
-> >> > Signed-off-by: Qi Zheng <qi.zheng@intel.com>
-> >> > Signed-off-by: Qipeng Zha <qipeng.zha@intel.com>
-> >>
-> >> Patch applied. For 4.5 since I can't figure out if this is
-> >> a regression or not.
-> >
-> > Broxton support was added in v4.4 so it would be nice if these patches
-> > could get still into v4.4.
-> 
-> Yeah I queued it for fixes, but missed to apply 1/2, fixing it up now.
+Hi Linus
 
-Thanks!
+I will try to review it before end of next week
+
+Patrice
+
+
+
+On 12/10/2015 06:08 PM, Linus Walleij wrote:
+> On Tue, Dec 1, 2015 at 10:53 AM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com> wrote:
+>> 2015-10-17 19:23 GMT+02:00 Maxime Coquelin <mcoquelin.stm32@gmail.com>:
+>>> This patch adds pinctrl and GPIO support to STMicroelectronic's STM32
+>>> family of MCUs.
+>>>
+>>> While it only supports STM32F429 for now, it has been designed to enable
+>>> support of other MCUs of the family (e.g. STM32F746).
+>>>
+>>> Signed-off-by: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>>> ---
+>>>   drivers/pinctrl/Kconfig                   |    1 +
+>>>   drivers/pinctrl/Makefile                  |    1 +
+>>>   drivers/pinctrl/stm32/Kconfig             |   16 +
+>>>   drivers/pinctrl/stm32/Makefile            |    5 +
+>>>   drivers/pinctrl/stm32/pinctrl-stm32.c     |  856 +++++++++++++++
+>>>   drivers/pinctrl/stm32/pinctrl-stm32.h     |   43 +
+>>>   drivers/pinctrl/stm32/pinctrl-stm32f429.c | 1598 +++++++++++++++++++++++++++++
+>>>   7 files changed, 2520 insertions(+)
+>>>   create mode 100644 drivers/pinctrl/stm32/Kconfig
+>>>   create mode 100644 drivers/pinctrl/stm32/Makefile
+>>>   create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.c
+>>>   create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.h
+>>>   create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f429.c
+>>>
+>> Gentle reminder, do you know when you will be able to review this driver?
+> I'm a bit overloaded so reviewing of large chunks of code takes time.
+>
+> It would be great if I could have some Reviewed-by tags from someone
+> else who's familiar with pin control.
+>
+> Patrice: do you have a chance to review this driver and help us?
+>
+> Yours,
+> Linus Walleij
+
