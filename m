@@ -1,38 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 134/182] m68k: gpio: switch to gpiochip_add_data()
-Date: Fri, 11 Dec 2015 19:28:11 +0100
-Message-ID: <CACRpkdYXDhvL26Xd=UeX5yc0tH5Ke7aAjxedLRPr6Cfx_i7UQA@mail.gmail.com>
-References: <1449668315-4352-1-git-send-email-linus.walleij@linaro.org>
-	<CAMuHMdXhcaDfhwOR6Cw+zU+AWFPNftiZ0NtQPS9nssH1YfkC8A@mail.gmail.com>
+Subject: Re: [PATCH 158/182] leds: pca9532: use gpiochip data pointer
+Date: Fri, 11 Dec 2015 19:39:30 +0100
+Message-ID: <CACRpkdZxtQQpV5w51Km8wVytFtDZui_qQeMsRoVq6rEW9xt0QA@mail.gmail.com>
+References: <1449668770-5933-1-git-send-email-linus.walleij@linaro.org>
+	<56683AC3.6070300@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:33344 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751420AbbLKS2L (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 13:28:11 -0500
-Received: by obbsd4 with SMTP id sd4so39761498obb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 10:28:11 -0800 (PST)
-In-Reply-To: <CAMuHMdXhcaDfhwOR6Cw+zU+AWFPNftiZ0NtQPS9nssH1YfkC8A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <56683AC3.6070300@samsung.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Riku Voipio <riku.voipio@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Ungerer <gerg@uclinux.org>
 
-On Wed, Dec 9, 2015 at 2:59 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Linus,
->
-> On Wed, Dec 9, 2015 at 2:38 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> We're planning to remove the gpiochip_add() function to swith
->> to gpiochip_add_data() with NULL for data argument.
->
-> Just wondering, and I don't think this was clarified in the cover letter
-> (I'm not subscribed to linux-gpio, so I used a web archive): why don't you keep
-> gpiochip_add() as an inline wrapper around gpiochip_add_data()?
-> That would avoid conversions like this one.
+On Wed, Dec 9, 2015 at 3:29 PM, Jacek Anaszewski
+<j.anaszewski@samsung.com> wrote:
 
-Because I don't want that kind of stuff around cluttering the place.
-Besides it's only a handful drivers of the 180 or so I converted.
+> This applies only with 3-way merge due to work queue removal related
+> changes that already sit on LED git. Nothing clever can be done to fix
+> that since those changes depend on LED core changes and this patch
+> depends on GPIO changes. We'll need to add relevant remarks in the pull
+> requests.
+
+OK we will notice it in linux-next first I guess, so CC:in that list.
+I plan to merge this into the GPIO tree next week.
 
 Yours,
 Linus Walleij
