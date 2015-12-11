@@ -1,29 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 158/182] leds: pca9532: use gpiochip data pointer
-Date: Fri, 11 Dec 2015 19:39:30 +0100
-Message-ID: <CACRpkdZxtQQpV5w51Km8wVytFtDZui_qQeMsRoVq6rEW9xt0QA@mail.gmail.com>
-References: <1449668770-5933-1-git-send-email-linus.walleij@linaro.org>
-	<56683AC3.6070300@samsung.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH 0/2] gpio: Add driver for SPI serializers
+Date: Fri, 11 Dec 2015 13:46:22 -0600
+Message-ID: <1449863184-29668-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <56683AC3.6070300@samsung.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Riku Voipio <riku.voipio@iki.fi>, Richard Purdie <rpurdie@rpsys.net>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:44402 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751434AbbLKTqh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 11 Dec 2015 14:46:37 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
-On Wed, Dec 9, 2015 at 3:29 PM, Jacek Anaszewski
-<j.anaszewski@samsung.com> wrote:
+Hello all,
 
-> This applies only with 3-way merge due to work queue removal related
-> changes that already sit on LED git. Nothing clever can be done to fix
-> that since those changes depend on LED core changes and this patch
-> depends on GPIO changes. We'll need to add relevant remarks in the pull
-> requests.
+This series adds a GPI(General Purpose Input) driver for generic
+parallel-in/serial-out shift registers, such as the SN65HVS882
+that this driver was tested on. This should also work for the rest
+of the SN65HVS88x series as well as other 74x165 style devices.
 
-OK we will notice it in linux-next first I guess, so CC:in that list.
-I plan to merge this into the GPIO tree next week.
+Thanks,
+Andrew
 
-Yours,
-Linus Walleij
+Andrew F. Davis (2):
+  dt-bindings: GPIO: Add generic serializer binding
+  gpio: Add driver for SPI serializers
+
+ .../devicetree/bindings/gpio/gpio-pisosr.txt       |  34 ++++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-pisosr.c                         | 182 +++++++++++++++++++++
+ 4 files changed, 223 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+ create mode 100644 drivers/gpio/gpio-pisosr.c
+
+-- 
+2.6.4
+
