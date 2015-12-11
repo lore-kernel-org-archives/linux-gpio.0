@@ -1,38 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/4] pinctrl: rockchip: add support for the rk3228
-Date: Fri, 11 Dec 2015 19:11:12 +0100
-Message-ID: <CACRpkdY6U2aYZY6Sd_cyMVWNOL_LfU812g+jezGoFLjEi7HYKQ@mail.gmail.com>
-References: <1449797452-19389-1-git-send-email-jeffy.chen@rock-chips.com>
-	<1449797452-19389-2-git-send-email-jeffy.chen@rock-chips.com>
+Subject: Re: [PATCH RFT] gpio: ath79: Fix the logic to clear offset bit of
+ AR71XX_GPIO_REG_OE register
+Date: Fri, 11 Dec 2015 19:13:56 +0100
+Message-ID: <CACRpkdbkxZwN6U3PtXRzU80xp5et2GwVgjmbSs116RppfdE69w@mail.gmail.com>
+References: <1449586867.5555.1.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:36032 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751519AbbLKSLN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 13:11:13 -0500
-Received: by oiww189 with SMTP id w189so67043118oiw.3
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 10:11:12 -0800 (PST)
-In-Reply-To: <1449797452-19389-2-git-send-email-jeffy.chen@rock-chips.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:33454 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751635AbbLKSN5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 13:13:57 -0500
+Received: by obbsd4 with SMTP id sd4so39481116obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 10:13:56 -0800 (PST)
+In-Reply-To: <1449586867.5555.1.camel@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Alban Bedel <albeu@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 2:30 AM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+On Tue, Dec 8, 2015 at 4:01 PM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> The pinctrl of rk3228 is much the same as rk3288's, but
-> without pmu.
->
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Rob Herring <robh@kernel.org>
->
-> ---
->
-> Changes in v2: None
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
 
-Same as I applied then, I also added the same Review/ACKs.
+Patch applied for fixes with Alban's ACK.
 
 Yours,
 Linus Walleij
