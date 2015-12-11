@@ -1,51 +1,132 @@
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH v2 0/4] Add support for rk3228 Soc platform
-Date: Fri, 11 Dec 2015 09:30:48 +0800
-Message-ID: <1449797452-19389-1-git-send-email-jeffy.chen@rock-chips.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from regular2.263xmail.com ([211.157.152.3]:36316 "EHLO
-	regular2.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751054AbbLKBbS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 20:31:18 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v2 1/4] pinctrl: rockchip: add support for the rk3228
+Date: Fri, 11 Dec 2015 09:30:49 +0800
+Message-ID: <1449797452-19389-2-git-send-email-jeffy.chen@rock-chips.com>
+References: <1449797452-19389-1-git-send-email-jeffy.chen@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1449797452-19389-1-git-send-email-jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-gpio@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
 
-This serial of patches add dts/pinctrl/clock-tree/doc for rk3228
-platform, with these patches, my evb board could boot into initramfs.
+The pinctrl of rk3228 is much the same as rk3288's, but
+without pmu.
 
-Changes in v2:
-Fix some clock tree errors.
-Fix some coding styles.
+Signed-off-by: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-Separate board and core properties.
-Remove phy clocks.
-Order nodes by register address.
-Add vgic registers and interrupt.
+---
 
-Move board properties into board dts.
+Changes in v2: None
 
-Jeffy Chen (4):
-  pinctrl: rockchip: add support for the rk3228
-  rockchip: add clock controller for rk3228
-  ARM: dts: rockchip: add core rk3228 dtsi
-  ARM: dts: rockchip: add rk3228-evb board
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |  3 +-
+ drivers/pinctrl/pinctrl-rockchip.c                 | 53 ++++++++++++++++++++++
+ 2 files changed, 55 insertions(+), 1 deletion(-)
 
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   3 +-
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/rk3228-evb.dts                   |  66 ++
- arch/arm/boot/dts/rk3228.dtsi                      | 442 +++++++++++++
- drivers/clk/rockchip/Makefile                      |   1 +
- drivers/clk/rockchip/clk-rk3228.c                  | 681 +++++++++++++++++++++
- drivers/clk/rockchip/clk.h                         |  11 +-
- drivers/pinctrl/pinctrl-rockchip.c                 |  53 ++
- 8 files changed, 1256 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/boot/dts/rk3228-evb.dts
- create mode 100644 arch/arm/boot/dts/rk3228.dtsi
- create mode 100644 drivers/clk/rockchip/clk-rk3228.c
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+index 391ef4b..0cd701b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
+@@ -21,7 +21,8 @@ defined as gpio sub-nodes of the pinmux controller.
+ Required properties for iomux controller:
+   - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
+ 		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
+-		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
++		       "rockchip,rk3228-pinctrl", "rockchip,rk3288-pinctrl"
++		       "rockchip,rk3368-pinctrl"
+   - rockchip,grf: phandle referencing a syscon providing the
+ 	 "general register files"
+ 
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index a065112..faab36e 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -614,6 +614,40 @@ static void rk3288_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	}
+ }
+ 
++#define RK3228_PULL_OFFSET		0x100
++
++static void rk3228_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
++				    int pin_num, struct regmap **regmap,
++				    int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	*reg = RK3228_PULL_OFFSET;
++	*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
++	*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
++
++	*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
++	*bit *= RK3188_PULL_BITS_PER_PIN;
++}
++
++#define RK3228_DRV_GRF_OFFSET		0x200
++
++static void rk3228_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
++				    int pin_num, struct regmap **regmap,
++				    int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++
++	*regmap = info->regmap_base;
++	*reg = RK3228_DRV_GRF_OFFSET;
++	*reg += bank->bank_num * RK3288_DRV_BANK_STRIDE;
++	*reg += ((pin_num / RK3288_DRV_PINS_PER_REG) * 4);
++
++	*bit = (pin_num % RK3288_DRV_PINS_PER_REG);
++	*bit *= RK3288_DRV_BITS_PER_PIN;
++}
++
+ #define RK3368_PULL_GRF_OFFSET		0x100
+ #define RK3368_PULL_PMU_OFFSET		0x10
+ 
+@@ -2143,6 +2177,23 @@ static struct rockchip_pin_ctrl rk3188_pin_ctrl = {
+ 		.pull_calc_reg		= rk3188_calc_pull_reg_and_bit,
+ };
+ 
++static struct rockchip_pin_bank rk3228_pin_banks[] = {
++	PIN_BANK(0, 32, "gpio0"),
++	PIN_BANK(1, 32, "gpio1"),
++	PIN_BANK(2, 32, "gpio2"),
++	PIN_BANK(3, 32, "gpio3"),
++};
++
++static struct rockchip_pin_ctrl rk3228_pin_ctrl = {
++		.pin_banks		= rk3228_pin_banks,
++		.nr_banks		= ARRAY_SIZE(rk3228_pin_banks),
++		.label			= "RK3228-GPIO",
++		.type			= RK3288,
++		.grf_mux_offset		= 0x0,
++		.pull_calc_reg		= rk3228_calc_pull_reg_and_bit,
++		.drv_calc_reg		= rk3228_calc_drv_reg_and_bit,
++};
++
+ static struct rockchip_pin_bank rk3288_pin_banks[] = {
+ 	PIN_BANK_IOMUX_FLAGS(0, 24, "gpio0", IOMUX_SOURCE_PMU,
+ 					     IOMUX_SOURCE_PMU,
+@@ -2220,6 +2271,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 		.data = (void *)&rk3066b_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3188-pinctrl",
+ 		.data = (void *)&rk3188_pin_ctrl },
++	{ .compatible = "rockchip,rk3228-pinctrl",
++		.data = (void *)&rk3228_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3288-pinctrl",
+ 		.data = (void *)&rk3288_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3368-pinctrl",
 -- 
 2.1.4
-
-
