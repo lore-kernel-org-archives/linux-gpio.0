@@ -1,101 +1,40 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] pinctrl: sh-pfc: r8a7779: Add SCIF_CLK support
-Date: Fri, 11 Dec 2015 14:48:56 +0100
-Message-ID: <1449841738-17490-2-git-send-email-geert+renesas@glider.be>
-References: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:36139 "EHLO
-	andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752280AbbLKNtE (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 08:49:04 -0500
-In-Reply-To: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 0/3] pinctrl: sh-pfc: r8a7779/r8a7790/r8a7794: Add SCIF_CLK support
+Date: Fri, 11 Dec 2015 14:48:55 +0100
+Message-ID: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-Add pins, groups, and a function for SCIF_CLK, which is the external
-clock source for the Baud Rate Generator for External Clock (BRG) on
-SCIF.
+	Hi Linus, Laurent,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+This patch series add pins, groups, and a function for SCIF_CLK on R-Car
+SoCs that don't have that support yet (H1, H2, and E2). SCIF_CLK is the
+external clock source for the Baud Rate Generator for External Clock
+(BRG) on (H)SCIF.
+
+Geert Uytterhoeven (3):
+  pinctrl: sh-pfc: r8a7779: Add SCIF_CLK support
+  pinctrl: sh-pfc: r8a7790: Add SCIF_CLK support
+  pinctrl: sh-pfc: r8a7794: Add SCIF_CLK support
+
  drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 23 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 23 ++++++++++++++++++++
+ 3 files changed, 87 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-index afc5d80353c568fd..bd17eccb6a8901a8 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7779.c
-@@ -2282,6 +2282,35 @@ static const unsigned int scif5_clk_d_pins[] = {
- static const unsigned int scif5_clk_d_mux[] = {
- 	SCK5_D_MARK,
- };
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(4, 28),
-+};
-+static const unsigned int scif_clk_mux[] = {
-+	SCIF_CLK_MARK,
-+};
-+static const unsigned int scif_clk_b_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(4, 5),
-+};
-+static const unsigned int scif_clk_b_mux[] = {
-+	SCIF_CLK_B_MARK,
-+};
-+static const unsigned int scif_clk_c_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(4, 18),
-+};
-+static const unsigned int scif_clk_c_mux[] = {
-+	SCIF_CLK_C_MARK,
-+};
-+static const unsigned int scif_clk_d_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(2, 29),
-+};
-+static const unsigned int scif_clk_d_mux[] = {
-+	SCIF_CLK_D_MARK,
-+};
- /* - SDHI0 ------------------------------------------------------------------ */
- static const unsigned int sdhi0_data1_pins[] = {
- 	/* D0 */
-@@ -2693,6 +2722,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk_c),
- 	SH_PFC_PIN_GROUP(scif5_data_d),
- 	SH_PFC_PIN_GROUP(scif5_clk_d),
-+	SH_PFC_PIN_GROUP(scif_clk),
-+	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(scif_clk_c),
-+	SH_PFC_PIN_GROUP(scif_clk_d),
- 	SH_PFC_PIN_GROUP(sdhi0_data1),
- 	SH_PFC_PIN_GROUP(sdhi0_data4),
- 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-@@ -2902,6 +2935,13 @@ static const char * const scif5_groups[] = {
- 	"scif5_clk_d",
- };
- 
-+static const char * const scif_clk_groups[] = {
-+	"scif_clk",
-+	"scif_clk_b",
-+	"scif_clk_c",
-+	"scif_clk_d",
-+};
-+
- static const char * const sdhi0_groups[] = {
- 	"sdhi0_data1",
- 	"sdhi0_data4",
-@@ -2997,6 +3037,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
-+	SH_PFC_FUNCTION(scif_clk),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
 -- 
 1.9.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
