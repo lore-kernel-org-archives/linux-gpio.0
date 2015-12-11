@@ -1,36 +1,26 @@
-From: Andy Gross <andy.gross@linaro.org>
-Subject: Re: [v3,1/6] pinctrl: qcom: ipq4019: Add IPQ4019 pinctrl support
-Date: Thu, 10 Dec 2015 22:03:00 -0600
-Message-ID: <20151211040300.GA804@Agamemnon.attlocal.net>
-References: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 092/182] pinctrl: bcm2835: use gpiochip data pointer
+Date: Thu, 10 Dec 2015 22:20:48 -0700
+Message-ID: <566A5D30.2040401@wwwdotorg.org>
+References: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:33832 "EHLO
-	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752043AbbLKEDC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Dec 2015 23:03:02 -0500
-Received: by oigl9 with SMTP id l9so18445282oig.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 20:03:01 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1447975173-29485-2-git-send-email-mmcclint@qca.qualcomm.com>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:46499 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754063AbbLKFUu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 00:20:50 -0500
+In-Reply-To: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Matthew McClintock <mmcclint@qca.qualcomm.com>
-Cc: Andy Gross <agross@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Varadarajan Narayanan <varada@codeaurora.org>, linux-kernel@vger.kernel.org, qca-upstream.external@qca.qualcomm.com, Sricharan R <sricharan@codeaurora.org>, Mathieu Olivari <mathieu@codeaurora.org>, Matthew McClintock <mmcclint@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Eric Anholt <eric@anholt.net>
 
-On Thu, Nov 19, 2015 at 05:19:28PM -0600, Matthew McClintock wrote:
-> From: Varadarajan Narayanan <varada@codeaurora.org>
-> 
-> Add pinctrl driver support for IPQ4019 platform
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Mathieu Olivari <mathieu@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> Signed-off-by: Matthew McClintock <mmcclint@codeaurora.org>
-> Acked-by: Rob Herring <robh@kernel.org>
+On 12/09/2015 06:30 AM, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 
-Looks good.  Much better than before.
-
-Reviewed-by: Andy Gross <andy.gross@linaro.org>
-
+This looks like it's fine, but I wonder what is the justification for
+the change? It might be good to mention that in the commit description.
