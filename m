@@ -1,50 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: generic: clamp values from bgpio_get_set()
-Date: Fri, 11 Dec 2015 22:36:18 +0100
-Message-ID: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] gpio: Add driver for SPI serializers
+Date: Fri, 11 Dec 2015 22:43:35 +0100
+Message-ID: <CACRpkdaWRYeg_A5xWuSMX=J7-VFMh+kjKVADO_wuhZ1n2Joskg@mail.gmail.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:33755 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753058AbbLKVgX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:36:23 -0500
-Received: by lbbkw15 with SMTP id kw15so77682013lbb.0
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:36:22 -0800 (PST)
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:34346 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753544AbbLKVng (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:43:36 -0500
+Received: by oihr132 with SMTP id r132so10488113oih.1
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:43:35 -0800 (PST)
+In-Reply-To: <1449863184-29668-1-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: "Andrew F. Davis" <afd@ti.com>, Mark Brown <broonie@kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The bgpio_get_set() call should return a value clamped to [0,1],
-the current code will return a negative value if reading
-bit 31, which turns the value negative as this is a signed value
-and thus gets interpreted as an error by the gpiolib core.
-Found on the gpio-mxc but applies to any MMIO driver.
+On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
 
-Fixes: b19e7f51a55f "gpio: gpio-generic: add flag to read out output value from reg_set"
-Cc: kernel@pengutronix.de
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-generic.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> This series adds a GPI(General Purpose Input) driver for generic
+> parallel-in/serial-out shift registers, such as the SN65HVS882
+> that this driver was tested on. This should also work for the rest
+> of the SN65HVS88x series as well as other 74x165 style devices.
 
-diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
-index 72088028d7a9..ea581dc23d44 100644
---- a/drivers/gpio/gpio-generic.c
-+++ b/drivers/gpio/gpio-generic.c
-@@ -141,9 +141,9 @@ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
- 	unsigned long pinmask = bgc->pin2mask(bgc, gpio);
- 
- 	if (bgc->dir & pinmask)
--		return bgc->read_reg(bgc->reg_set) & pinmask;
-+		return !!(bgc->read_reg(bgc->reg_set) & pinmask);
- 	else
--		return bgc->read_reg(bgc->reg_dat) & pinmask;
-+		return !!(bgc->read_reg(bgc->reg_dat) & pinmask);
- }
- 
- static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
--- 
-2.4.3
+Pretty interesting, I'd like you to CC SPI maintainer Mark Brown
+on this patch series, and the SPI mailing list.
 
+Looking closer at the code.
+
+Yours,
+Linus Walleij
