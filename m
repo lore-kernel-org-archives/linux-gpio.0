@@ -1,65 +1,50 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Fri, 11 Dec 2015 13:46:23 -0600
-Message-ID: <1449863184-29668-2-git-send-email-afd@ti.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449863184-29668-1-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: generic: clamp values from bgpio_get_set()
+Date: Fri, 11 Dec 2015 22:36:18 +0100
+Message-ID: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:33755 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753058AbbLKVgX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:36:23 -0500
+Received: by lbbkw15 with SMTP id kw15so77682013lbb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:36:22 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Add binding for generic parallel-in/serial-out shift register devices
-used as GPIO.
+The bgpio_get_set() call should return a value clamped to [0,1],
+the current code will return a negative value if reading
+bit 31, which turns the value negative as this is a signed value
+and thus gets interpreted as an error by the gpiolib core.
+Found on the gpio-mxc but applies to any MMIO driver.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Fixes: b19e7f51a55f "gpio: gpio-generic: add flag to read out output value from reg_set"
+Cc: kernel@pengutronix.de
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Reported-by: Clemens Gruber <clemens.gruber@pqgruber.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/gpio/gpio-pisosr.txt       | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+ drivers/gpio/gpio-generic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-new file mode 100644
-index 0000000..e69e8ec
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-@@ -0,0 +1,34 @@
-+Generic Parallel-in/Serial-out Shift Register GPIO Driver
-+
-+This binding describes generic parallel-in/serial-out shift register
-+devices that can be used for GPI (General Purpose Input). This includes
-+SN74165 serial-out shift registers and the SN65HVS88x series of
-+industrial serializers.
-+
-+Required properties:
-+ - compatible		: Should be "pisosr-gpio".
-+ - gpio-controller	: Marks the device node as a GPIO controller.
-+ - #gpio-cells		: Should be two. For consumer use see gpio.txt.
-+
-+Optional properties:
-+ - ngpios		: Number of GPIO lines, default is 8.
-+ - load-gpios		: GPIO pin specifier attached to load enable, this
-+			  pin is pulsed before reading from the device to
-+			  load input pin values into the the device.
-+
-+For other required and optional properties of SPI slave
-+nodes please refer to ../spi/spi-bus.txt.
-+
-+Example:
-+
-+	sn65hvs882@0 {
-+		compatible = "pisosr-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		load-gpios = <&gpio2 23 GPIO_ACTIVE_LOW>;
-+
-+		reg = <0>;
-+		spi-max-frequency = <1000000>;
-+		spi-cpol;
-+	};
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index 72088028d7a9..ea581dc23d44 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -141,9 +141,9 @@ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
+ 	unsigned long pinmask = bgc->pin2mask(bgc, gpio);
+ 
+ 	if (bgc->dir & pinmask)
+-		return bgc->read_reg(bgc->reg_set) & pinmask;
++		return !!(bgc->read_reg(bgc->reg_set) & pinmask);
+ 	else
+-		return bgc->read_reg(bgc->reg_dat) & pinmask;
++		return !!(bgc->read_reg(bgc->reg_dat) & pinmask);
+ }
+ 
+ static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
 -- 
-2.6.4
+2.4.3
+
