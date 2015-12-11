@@ -1,76 +1,110 @@
-From: Sonic Zhang <sonic.adi@gmail.com>
-Subject: Re: [PATCH 132/182] blackfin: gpio: switch to gpiochip_add_data()
-Date: Fri, 11 Dec 2015 14:24:33 +0800
-Message-ID: <CAJxxZ0P9TL3reKrbJZKH2UFZnM2zWRDmfJPGP2Tdsn+=akJtqg@mail.gmail.com>
-References: <1449668260-4207-1-git-send-email-linus.walleij@linaro.org>
+From: Martyn Welch <martyn@welchs.me.uk>
+Subject: Re: [PATCH 172/182] staging: vme: use gpiochip data pointer
+Date: Fri, 11 Dec 2015 06:58:13 +0000
+Message-ID: <566A7405.9080302@welchs.me.uk>
+References: <1449669005-6835-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f44.google.com ([209.85.192.44]:35837 "EHLO
-	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751324AbbLKGuf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 01:50:35 -0500
-Received: by qgec40 with SMTP id c40so186322978qge.2
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 22:50:35 -0800 (PST)
-In-Reply-To: <1449668260-4207-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37108 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753231AbbLKG6R (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 01:58:17 -0500
+Received: by wmnn186 with SMTP id n186so17973869wmn.0
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 22:58:15 -0800 (PST)
+In-Reply-To: <1449669005-6835-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Sonic Zhang <sonic.zhang@analog.com>, Steven Miao <realmz6@gmail.com>, adi-buildroot-devel@lists.sourceforge.net
-
-Acked-by: Sonic Zhang <sonic.zhang@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Manohar Vanga <manohar.vanga@gmail.com>, devel@driverdev.osuosl.org
 
 
-On Wed, Dec 9, 2015 at 9:37 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> We're planning to remove the gpiochip_add() function to swith
-> to gpiochip_add_data() with NULL for data argument.
+
+On 09/12/15 13:50, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 >
-> Cc: Sonic Zhang <sonic.zhang@analog.com>
-> Cc: Steven Miao <realmz6@gmail.com>
-> Cc: adi-buildroot-devel@lists.sourceforge.net
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Martyn Welch <martyn@welchs.me.uk>
+> Cc: Manohar Vanga <manohar.vanga@gmail.com>
+> Cc: devel@driverdev.osuosl.org
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Blackfin maintainers: please ACK this so I can take it through
-> the GPIO tree.
->
-> BTW: isn't this going away? I liked Sonic's
-> drivers/pinctrl/pinctrl-adi2.c driver, is this adi1? It should be
-> modernized and moved to drivers/pinctrl.
 
-This is the legacy driver for Blackfin 5xx serial silicons. The
-Blackfin 54x and 6xx silicons use a different pinmux model and are
-only supported in driver drivers/pinctrl/pinctrl-adi2.c ,
+Signed-of-by: Martyn Welch <martyn@welchs.me.uk>
 
 > ---
->  arch/blackfin/kernel/bfin_gpio.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Greg, please ACK this so I can take this through the GPIO tree.
+> ---
+>   drivers/staging/vme/devices/vme_pio2_gpio.c | 17 ++++++-----------
+>   1 file changed, 6 insertions(+), 11 deletions(-)
 >
-> diff --git a/arch/blackfin/kernel/bfin_gpio.c b/arch/blackfin/kernel/bfin_gpio.c
-> index a017359c1826..7a91cc6ea4b2 100644
-> --- a/arch/blackfin/kernel/bfin_gpio.c
-> +++ b/arch/blackfin/kernel/bfin_gpio.c
-> @@ -11,6 +11,8 @@
->  #include <linux/err.h>
->  #include <linux/proc_fs.h>
->  #include <linux/seq_file.h>
+> diff --git a/drivers/staging/vme/devices/vme_pio2_gpio.c b/drivers/staging/vme/devices/vme_pio2_gpio.c
+> index 77901b345a71..a2b740ab7ffe 100644
+> --- a/drivers/staging/vme/devices/vme_pio2_gpio.c
+> +++ b/drivers/staging/vme/devices/vme_pio2_gpio.c
+> @@ -17,7 +17,7 @@
+>   #include <linux/device.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/ctype.h>
+> -#include <linux/gpio.h>
 > +#include <linux/gpio/driver.h>
-> +/* FIXME: consumer API required for gpio_set_value() etc, get rid of this */
->  #include <linux/gpio.h>
->  #include <linux/irq.h>
->
-> @@ -1197,7 +1199,7 @@ static struct gpio_chip bfin_chip = {
->
->  static int __init bfin_gpiolib_setup(void)
->  {
-> -       return gpiochip_add(&bfin_chip);
-> +       return gpiochip_add_data(&bfin_chip, NULL);
->  }
->  arch_initcall(bfin_gpiolib_setup);
->  #endif
-> --
-> 2.4.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>   #include <linux/slab.h>
+>   #include <linux/vme.h>
+>   
+> @@ -25,16 +25,11 @@
+>   
+>   static const char driver_name[] = "pio2_gpio";
+>   
+> -static struct pio2_card *gpio_to_pio2_card(struct gpio_chip *chip)
+> -{
+> -	return container_of(chip, struct pio2_card, gc);
+> -}
+> -
+>   static int pio2_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>   {
+>   	u8 reg;
+>   	int retval;
+> -	struct pio2_card *card = gpio_to_pio2_card(chip);
+> +	struct pio2_card *card = gpiochip_get_data(chip);
+>   
+>   	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
+>   		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+> @@ -72,7 +67,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>   {
+>   	u8 reg;
+>   	int retval;
+> -	struct pio2_card *card = gpio_to_pio2_card(chip);
+> +	struct pio2_card *card = gpiochip_get_data(chip);
+>   
+>   	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
+>   		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+> @@ -102,7 +97,7 @@ static void pio2_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>   static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+>   {
+>   	int data;
+> -	struct pio2_card *card = gpio_to_pio2_card(chip);
+> +	struct pio2_card *card = gpiochip_get_data(chip);
+>   
+>   	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == OUTPUT) |
+>   		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+> @@ -121,7 +116,7 @@ static int pio2_gpio_dir_in(struct gpio_chip *chip, unsigned offset)
+>   static int pio2_gpio_dir_out(struct gpio_chip *chip, unsigned offset, int value)
+>   {
+>   	int data;
+> -	struct pio2_card *card = gpio_to_pio2_card(chip);
+> +	struct pio2_card *card = gpiochip_get_data(chip);
+>   
+>   	if ((card->bank[PIO2_CHANNEL_BANK[offset]].config == INPUT) |
+>   		(card->bank[PIO2_CHANNEL_BANK[offset]].config == NOFIT)) {
+> @@ -207,7 +202,7 @@ int pio2_gpio_init(struct pio2_card *card)
+>   	card->gc.set = pio2_gpio_set;
+>   
+>   	/* This function adds a memory mapped GPIO chip */
+> -	retval = gpiochip_add(&(card->gc));
+> +	retval = gpiochip_add_data(&(card->gc), card);
+>   	if (retval) {
+>   		dev_err(&card->vdev->dev, "Unable to register GPIO\n");
+>   		kfree(card->gc.label);
+
