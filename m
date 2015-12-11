@@ -1,26 +1,34 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 092/182] pinctrl: bcm2835: use gpiochip data pointer
-Date: Thu, 10 Dec 2015 22:20:48 -0700
-Message-ID: <566A5D30.2040401@wwwdotorg.org>
-References: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 112/182] pinctrl: samsung: use gpiochip data pointer
+Date: Fri, 11 Dec 2015 15:14:10 +0900
+Message-ID: <CA+Ln22HrFVwtMDRg4wC10EwESf+PixDa4-3eKsqnD4ELEGqSXQ@mail.gmail.com>
+References: <1449667992-3104-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:46499 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754063AbbLKFUu (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 00:20:50 -0500
-In-Reply-To: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:34399 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753840AbbLKGOL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 01:14:11 -0500
+Received: by qgeb1 with SMTP id b1so186495161qge.1
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Dec 2015 22:14:10 -0800 (PST)
+In-Reply-To: <1449667992-3104-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Eric Anholt <eric@anholt.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
-On 12/09/2015 06:30 AM, Linus Walleij wrote:
+Hi Linus,
+
+2015-12-09 22:33 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
 > This makes the driver use the data pointer added to the gpio_chip
 > to store a pointer to the state container instead of relying on
 > container_of().
 
-This looks like it's fine, but I wonder what is the justification for
-the change? It might be good to mention that in the commit description.
+I always thought container_of() was preferred because of higher type
+safety than void *data pointers. Is there any reason for mandating the
+(IMHO worse) new method of accessing data, even though the one
+currently used seems to be still valid?
+
+Best regards,
+Tomasz
