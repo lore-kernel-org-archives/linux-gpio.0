@@ -1,34 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] gpio: Add driver for SPI serializers
-Date: Fri, 11 Dec 2015 22:43:35 +0100
-Message-ID: <CACRpkdaWRYeg_A5xWuSMX=J7-VFMh+kjKVADO_wuhZ1n2Joskg@mail.gmail.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] gpio: generic: clamp values from bgpio_get_set()
+Date: Fri, 11 Dec 2015 19:47:09 -0200
+Message-ID: <CAOMZO5DVNm9JK080RQ+OnhtBVyt+VYc5PmdYDUzRnJDBZ+3CEg@mail.gmail.com>
+References: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:34346 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753544AbbLKVng (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:43:36 -0500
-Received: by oihr132 with SMTP id r132so10488113oih.1
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:43:35 -0800 (PST)
-In-Reply-To: <1449863184-29668-1-git-send-email-afd@ti.com>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:38636 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752849AbbLKVrK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:47:10 -0500
+Received: by igbxm8 with SMTP id xm8so48278165igb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:47:09 -0800 (PST)
+In-Reply-To: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>, Mark Brown <broonie@kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
+Hi Linus,
 
-> This series adds a GPI(General Purpose Input) driver for generic
-> parallel-in/serial-out shift registers, such as the SN65HVS882
-> that this driver was tested on. This should also work for the rest
-> of the SN65HVS88x series as well as other 74x165 style devices.
+On Fri, Dec 11, 2015 at 7:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> The bgpio_get_set() call should return a value clamped to [0,1],
+> the current code will return a negative value if reading
+> bit 31, which turns the value negative as this is a signed value
+> and thus gets interpreted as an error by the gpiolib core.
+> Found on the gpio-mxc but applies to any MMIO driver.
+>
+> Fixes: b19e7f51a55f "gpio: gpio-generic: add flag to read out output value from reg_set"
 
-Pretty interesting, I'd like you to CC SPI maintainer Mark Brown
-on this patch series, and the SPI mailing list.
+This commit appeared in 4.2, so it would be nice to add a stable tag:
 
-Looking closer at the code.
+Cc: <stable@vger.kernel.org> # 4.2+
 
-Yours,
-Linus Walleij
+Regards,
+
+Fabio Estevam
