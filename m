@@ -1,97 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
-Date: Fri, 11 Dec 2015 13:53:05 +0100
-Message-ID: <CACRpkdYN=n=Q+UpLbWjxJHP-FYi_e4cHFE_d1_fR2r7QYcqgYQ@mail.gmail.com>
-References: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:34707 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751276AbbLKMxG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 07:53:06 -0500
-Received: by obciw8 with SMTP id iw8so82664769obc.1
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 04:53:05 -0800 (PST)
-In-Reply-To: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] pinctrl: sh-pfc: r8a7794: Add SCIF_CLK support
+Date: Fri, 11 Dec 2015 14:48:58 +0100
+Message-ID: <1449841738-17490-4-git-send-email-geert+renesas@glider.be>
+References: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@lysator.liu.se>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Peter Rosin <peda@axentia.se>
 
-Quoting extensively since I'm involving the linux-iio mailinglist.
+Add pins, groups, and a function for SCIF_CLK, which is the external
+clock source for the Baud Rate Generator for External Clock (BRG) on
+(H)SCIF.
 
-The use case you describe is hand-in-glove with Industrial I/O.
-I think you want a trigger interface from IIO and read events from
-userspace using the IIO character device.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Look at the userspace examples in tools/iio for how it's used
-in userspace, the subsystem is in drivers/iio. I suspect
-drivers/iio/adc/polled-gpio.c or something is where you actually
-want to go with this. The module should do all the fastpath
-work and then expose what you actually want to know to
-userspace using the IIO triggers or events.
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index 10995fa6c3cb2ff9..3718c7846bfd5cd3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -2625,6 +2625,21 @@ static const unsigned int scifb2_ctrl_pins[] = {
+ static const unsigned int scifb2_ctrl_mux[] = {
+ 	SCIFB2_RTS_N_MARK, SCIFB2_CTS_N_MARK,
+ };
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(1, 23),
++};
++static const unsigned int scif_clk_mux[] = {
++	SCIF_CLK_MARK,
++};
++static const unsigned int scif_clk_b_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(3, 29),
++};
++static const unsigned int scif_clk_b_mux[] = {
++	SCIF_CLK_B_MARK,
++};
+ /* - SDHI0 ------------------------------------------------------------------ */
+ static const unsigned int sdhi0_data1_pins[] = {
+ 	/* D0 */
+@@ -3052,6 +3067,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scifb2_data),
+ 	SH_PFC_PIN_GROUP(scifb2_clk),
+ 	SH_PFC_PIN_GROUP(scifb2_ctrl),
++	SH_PFC_PIN_GROUP(scif_clk),
++	SH_PFC_PIN_GROUP(scif_clk_b),
+ 	SH_PFC_PIN_GROUP(sdhi0_data1),
+ 	SH_PFC_PIN_GROUP(sdhi0_data4),
+ 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
+@@ -3335,6 +3352,11 @@ static const char * const scifb2_groups[] = {
+ 	"scifb2_ctrl",
+ };
+ 
++static const char * const scif_clk_groups[] = {
++	"scif_clk",
++	"scif_clk_b",
++};
++
+ static const char * const sdhi0_groups[] = {
+ 	"sdhi0_data1",
+ 	"sdhi0_data4",
+@@ -3422,6 +3444,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(scifb0),
+ 	SH_PFC_FUNCTION(scifb1),
+ 	SH_PFC_FUNCTION(scifb2),
++	SH_PFC_FUNCTION(scif_clk),
+ 	SH_PFC_FUNCTION(sdhi0),
+ 	SH_PFC_FUNCTION(sdhi1),
+ 	SH_PFC_FUNCTION(sdhi2),
+-- 
+1.9.1
 
-I have used IIO myself, it is really neat for this kind of usecase,
-and designed right from the ground up.
-
-I think you whould think about how to write the right kind of
-driver for IIO to do what you want.
-
-Yours,
-Linus Walleij
-
-On Tue, Dec 8, 2015 at 4:20 AM, Peter Rosin <peda@lysator.liu.se> wrote:
-> From: Peter Rosin <peda@axentia.se>
->
-> Hi!
->
-> I have a signal connected to a gpio pin which is the output of
-> a comparator. By changing the level of one of the inputs to the
-> comparator, I can detect the envelope of the other input to
-> the comparator by using a series of measurements much in the
-> same maner a manual ADC works, but watching for changes on the
-> comparator over a period of time instead of only the immediate
-> output.
->
-> Now, the input signal to the comparator might have a high frequency,
-> which will cause the output from the comparator (and thus the GPIO
-> input) to change rapidly.
->
-> A common(?) idiom for this is to use the interrupt status register
-> to catch the glitches, but then not have any interrupt tied to
-> the pin as that could possibly generate pointless bursts of
-> (expensive) interrupts.
->
-> So, these two patches expose an interface to the PIO_ISR register
-> of the pio controllers on the platform I'm targetting. The first
-> patch adds some infrastructure to the gpio core and the second
-> patch hooks up "my" pin controller.
->
-> But hey, this seems like an old problem and I was surprised that
-> I had to touch the source to do it. Which makes me wonder what I'm
-> missing and what others needing to see short pulses on a pin but not
-> needing/wanting interrupts are doing?
->
-> Yes, there needs to be a way to select the interrupt edge w/o
-> actually arming the interrupt, that is missing. And probably
-> other things too, but I didn't want to do more work in case this
-> is a dead end for some reason...
->
-> Cheers,
-> Peter
->
-> Peter Rosin (2):
->   gpio: Add isr property of gpio pins
->   pinctrl: at91: expose the isr bit
->
->  Documentation/gpio/sysfs.txt   |   12 ++++++++++
->  drivers/gpio/gpiolib-sysfs.c   |   30 ++++++++++++++++++++++++
->  drivers/gpio/gpiolib.c         |   15 ++++++++++++
->  drivers/pinctrl/pinctrl-at91.c |   50 ++++++++++++++++++++++++++++++++++++----
->  include/linux/gpio/consumer.h  |    1 +
->  include/linux/gpio/driver.h    |    2 ++
->  6 files changed, 106 insertions(+), 4 deletions(-)
->
-> --
-> 1.7.10.4
->
