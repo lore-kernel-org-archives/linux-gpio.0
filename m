@@ -1,38 +1,56 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] gpio: generic: clamp values from bgpio_get_set()
-Date: Fri, 11 Dec 2015 19:47:09 -0200
-Message-ID: <CAOMZO5DVNm9JK080RQ+OnhtBVyt+VYc5PmdYDUzRnJDBZ+3CEg@mail.gmail.com>
-References: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Fri, 11 Dec 2015 22:48:41 +0100
+Message-ID: <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+	<1449863184-29668-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:38636 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752849AbbLKVrK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Dec 2015 16:47:10 -0500
-Received: by igbxm8 with SMTP id xm8so48278165igb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Dec 2015 13:47:09 -0800 (PST)
-In-Reply-To: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1449863184-29668-2-git-send-email-afd@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Hi Linus,
+On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
 
-On Fri, Dec 11, 2015 at 7:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> The bgpio_get_set() call should return a value clamped to [0,1],
-> the current code will return a negative value if reading
-> bit 31, which turns the value negative as this is a signed value
-> and thus gets interpreted as an error by the gpiolib core.
-> Found on the gpio-mxc but applies to any MMIO driver.
+> Add binding for generic parallel-in/serial-out shift register devices
+> used as GPIO.
 >
-> Fixes: b19e7f51a55f "gpio: gpio-generic: add flag to read out output value from reg_set"
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-This commit appeared in 4.2, so it would be nice to add a stable tag:
+> +Generic Parallel-in/Serial-out Shift Register GPIO Driver
+> +
+> +This binding describes generic parallel-in/serial-out shift register
+> +devices that can be used for GPI (General Purpose Input). This includes
+> +SN74165 serial-out shift registers and the SN65HVS88x series of
+> +industrial serializers.
+> +
+> +Required properties:
+> + - compatible          : Should be "pisosr-gpio".
 
-Cc: <stable@vger.kernel.org> # 4.2+
+I think it should also define compatible strings on the "vendor,device"
+format apart from the generic compatible. Sooner or later we may need
+to differentiate them and then that comes in handy.
 
-Regards,
+> + - gpio-controller     : Marks the device node as a GPIO controller.
+> + - #gpio-cells         : Should be two. For consumer use see gpio.txt.
+> +
+> +Optional properties:
+> + - ngpios              : Number of GPIO lines, default is 8.
 
-Fabio Estevam
+If you didn't do "pisosr-gpio" but instead "foo,sn74165", maybe you
+don't need to have this in the device tree but instead it can be
+determined from the compatible string?
+
+In that case do that.
+
+> + - load-gpios          : GPIO pin specifier attached to load enable, this
+> +                         pin is pulsed before reading from the device to
+> +                         load input pin values into the the device.
+
+OK seems necessary.
+
+Yours,
+Linus Walleij
