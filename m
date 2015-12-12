@@ -1,45 +1,53 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH 031/182] gpio: lpc32xx: use gpiochip data pointer
-Date: Sat, 12 Dec 2015 22:47:31 +0200
-Message-ID: <566C87E3.8030602@mleia.com>
-References: <1449667026-31219-1-git-send-email-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH] fixup! pinctrl: pxa: pxa2xx: add pin control skeleton
+Date: Sat, 12 Dec 2015 22:43:05 +0100
+Message-ID: <1449956585-17118-1-git-send-email-robert.jarzmik@free.fr>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mleia.com ([178.79.152.223]:41432 "EHLO mail.mleia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752105AbbLLUre (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 12 Dec 2015 15:47:34 -0500
-In-Reply-To: <1449667026-31219-1-git-send-email-linus.walleij@linaro.org>
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:20556 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751219AbbLLVn7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Dec 2015 16:43:59 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Roland Stigge <stigge@antcom.de>
+To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+The wrong free functions were used to release temporary buffers.
 
-On 09.12.2015 15:17, Linus Walleij wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
-> 
-> Cc: Roland Stigge <stigge@antcom.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This didn't show up in the normal driver's life. Yet in suspend to RAM,
+the managed resource list is walked, and as memory was released, the
+list is corrupted and make the kernel Oops.
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+Linus, if it's time, then this can fixup the commit. If not, I'll
+provide a better commit message.
+---
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
-> Roland: this looks like a driver that should move to drivers/pinctrl
-> since it is obviously controlling a lot of pins. Can you confirm?
+diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+index e01914460219..d90e205cf809 100644
+--- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
++++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
+@@ -292,7 +292,7 @@ static int pxa2xx_build_functions(struct pxa_pinctrl *pctl)
+ 	if (!pctl->functions)
+ 		return -ENOMEM;
+ 
+-	kfree(functions);
++	devm_kfree(pctl->dev, functions);
+ 	return 0;
+ }
+ 
+@@ -328,7 +328,7 @@ static int pxa2xx_build_groups(struct pxa_pinctrl *pctl)
+ 		memcpy(func->groups, gtmp, ngroups * sizeof(*gtmp));
+ 	}
+ 
+-	kfree(gtmp);
++	devm_kfree(pctl->dev, gtmp);
+ 	return 0;
+ }
+ 
+-- 
+2.1.4
 
-The platform to which this driver belongs is unmaintained (and broken)
-for more than one year.
-
-If you remember I've recently sent a complete replacement of this
-driver, but not this legacy driver nor mine new one control pin
-functions, there should be another pinctrl driver.
-
---
-With best wishes,
-Vladimir
