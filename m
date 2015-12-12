@@ -1,53 +1,48 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH] fixup! pinctrl: pxa: pxa2xx: add pin control skeleton
-Date: Sat, 12 Dec 2015 22:43:05 +0100
-Message-ID: <1449956585-17118-1-git-send-email-robert.jarzmik@free.fr>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 176/182] ASoC: rt5677: use gpiochip data pointer
+Date: Sat, 12 Dec 2015 22:48:29 +0000
+Message-ID: <20151212224829.GA579@sirena.org.uk>
+References: <1449669079-7119-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:20556 "EHLO
-	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751219AbbLLVn7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Dec 2015 16:43:59 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44582 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751183AbbLLWss (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 12 Dec 2015 17:48:48 -0500
+Content-Disposition: inline
+In-Reply-To: <1449669079-7119-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org
 
-The wrong free functions were used to release temporary buffers.
 
-This didn't show up in the normal driver's life. Yet in suspend to RAM,
-the managed resource list is walked, and as memory was released, the
-list is corrupted and make the kernel Oops.
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
-Linus, if it's time, then this can fixup the commit. If not, I'll
-provide a better commit message.
----
- drivers/pinctrl/pxa/pinctrl-pxa2xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Dec 09, 2015 at 02:51:19PM +0100, Linus Walleij wrote:
+> This makes the driver use the data pointer added to the gpio_chip
+> to store a pointer to the state container instead of relying on
+> container_of().
 
-diff --git a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-index e01914460219..d90e205cf809 100644
---- a/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-+++ b/drivers/pinctrl/pxa/pinctrl-pxa2xx.c
-@@ -292,7 +292,7 @@ static int pxa2xx_build_functions(struct pxa_pinctrl *pctl)
- 	if (!pctl->functions)
- 		return -ENOMEM;
- 
--	kfree(functions);
-+	devm_kfree(pctl->dev, functions);
- 	return 0;
- }
- 
-@@ -328,7 +328,7 @@ static int pxa2xx_build_groups(struct pxa_pinctrl *pctl)
- 		memcpy(func->groups, gtmp, ngroups * sizeof(*gtmp));
- 	}
- 
--	kfree(gtmp);
-+	devm_kfree(pctl->dev, gtmp);
- 	return 0;
- }
- 
--- 
-2.1.4
+Acked-by: Mark Brown <broonie@kernel.org>
 
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWbKQ8AAoJECTWi3JdVIfQxvgH/2snGIAkQNHC2rC3JNZsCrjb
+uTxdQ63Rz2Xgp1U4Veu8uC1RAsV2AE97Qp6voKLzh9gReosMx8GT0r65fODnM9j6
+CGOPx2h9hzPQbGwGmG/0TFgVGiLW2MZNhWzYKuIhaX90XNPVaVphWl5iizrdET6D
+kIy/Ux6ur3YyMxPJvs0oMYBvtG8yA6iivzCpu63Tkw5k+G1yShvKhslO1wmWcPjx
+awBrY2jNgkw/00SB1OeJ7xlRuWPfRDCnZxJIhsmGUjrQRAom05sETyM2O4g8h/jP
+Ck7vYx4FHiNINox1qA2PqezAz5V9+Hj9zwNDJrxISVZBbI/tG8+zc5edoPVrLyg=
+=nsAB
+-----END PGP SIGNATURE-----
+
+--J/dobhs11T7y2rNN--
