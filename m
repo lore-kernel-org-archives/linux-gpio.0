@@ -1,60 +1,51 @@
-From: Greg Ungerer <gerg@uclinux.org>
-Subject: Re: [PATCH 134/182] m68k: gpio: switch to gpiochip_add_data()
-Date: Mon, 14 Dec 2015 10:49:50 +1000
-Message-ID: <566E122E.8070700@uclinux.org>
-References: <1449668315-4352-1-git-send-email-linus.walleij@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 0/3] pinctrl: sh-pfc: r8a7779/r8a7790/r8a7794: Add SCIF_CLK support
+Date: Sun, 13 Dec 2015 20:45:13 +0200
+Message-ID: <6563506.quzPSTWjGH@avalon>
+References: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from icp-osb-irony-out5.external.iinet.net.au ([203.59.1.221]:5997
-	"EHLO icp-osb-irony-out5.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751342AbbLNA7G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Sun, 13 Dec 2015 19:59:06 -0500
-In-Reply-To: <1449668315-4352-1-git-send-email-linus.walleij@linaro.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39151 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752247AbbLNBg5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 20:36:57 -0500
+In-Reply-To: <1449841738-17490-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Linus,
+Hi Geert,
 
-On 09/12/15 23:38, Linus Walleij wrote:
-> We're planning to remove the gpiochip_add() function to swith
-> to gpiochip_add_data() with NULL for data argument.
+Thank you for the patch.
+
+On Friday 11 December 2015 14:48:55 Geert Uytterhoeven wrote:
+> 	Hi Linus, Laurent,
 > 
-> Cc: Greg Ungerer <gerg@uclinux.org>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Coldfire maintainers: please ACK this so I can take it through
-> the GPIO tree.
-
-Acked-by: Greg Ungerer <gerg@uclinux.org>
-
-Thanks
-Greg
-
-
-
-> Also consider abstracting out GPIO and moving it to drivers/gpio
-> at some point. It would involve some work though.
-> ---
->  arch/m68k/coldfire/gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch series add pins, groups, and a function for SCIF_CLK on R-Car
+> SoCs that don't have that support yet (H1, H2, and E2). SCIF_CLK is the
+> external clock source for the Baud Rate Generator for External Clock
+> (BRG) on (H)SCIF.
 > 
-> diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
-> index e7e428681ec5..19c335d5031d 100644
-> --- a/arch/m68k/coldfire/gpio.c
-> +++ b/arch/m68k/coldfire/gpio.c
-> @@ -178,7 +178,7 @@ static struct gpio_chip mcfgpio_chip = {
->  
->  static int __init mcfgpio_sysinit(void)
->  {
-> -	gpiochip_add(&mcfgpio_chip);
-> +	gpiochip_add_data(&mcfgpio_chip, NULL);
->  	return subsys_system_register(&mcfgpio_subsys, NULL);
->  }
->  
-> 
+> Geert Uytterhoeven (3):
+>   pinctrl: sh-pfc: r8a7779: Add SCIF_CLK support
+>   pinctrl: sh-pfc: r8a7790: Add SCIF_CLK support
+>   pinctrl: sh-pfc: r8a7794: Add SCIF_CLK support
+
+I haven't checked the pin assignments so I'll trust you on that. The function 
+and group names seem good to me, so, for the whole series,
+
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 41 +++++++++++++++++++++++++++++++++
+>  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 23 ++++++++++++++++++++
+>  drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 23 ++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
+
+-- 
+Regards,
+
+Laurent Pinchart
 
