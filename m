@@ -1,39 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 135/182] MIPS: alchemy: switch to gpiochip_add_data()
-Date: Sun, 13 Dec 2015 21:25:48 +0100
-Message-ID: <CACRpkdbmpE5i4_WmUcG-EZZBrTKpAtLwjLwrH48F6hxGEA9JvQ@mail.gmail.com>
-References: <1449668342-4446-1-git-send-email-linus.walleij@linaro.org>
-	<CAOLZvyGe5SV044P+uje5ro+F5yHoUVqz6or4QBMfdCgXW92sbA@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH] i2c: create builtin_i2c_driver to avoid registration boilerplate
+Date: Sun, 13 Dec 2015 15:33:19 -0500
+Message-ID: <1450038799-27995-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:35198 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752036AbbLMUZt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:25:49 -0500
-Received: by obc18 with SMTP id 18so117400087obc.2
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 12:25:48 -0800 (PST)
-In-Reply-To: <CAOLZvyGe5SV044P+uje5ro+F5yHoUVqz6or4QBMfdCgXW92sbA@mail.gmail.com>
+Received: from mail1.windriver.com ([147.11.146.13]:40107 "EHLO
+	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752020AbbLMUfl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:35:41 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Manuel Lauss <manuel.lauss@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Ralf Baechle <ralf@linux-mips.org>, Linux-MIPS <linux-mips@linux-mips.org>
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Wolfram Sang <wsa@the-dreams.de>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On Wed, Dec 9, 2015 at 10:44 PM, Manuel Lauss <manuel.lauss@gmail.com> wrote:
-> On Wed, Dec 9, 2015 at 2:39 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->> ---
->> Ralf: please ACK this so I can take it through the GPIO tree.
->> BTW: would be nice if the MIPS GPIO drivers could move down
->> to drivers/gpio in the long run.
->
-> Is there a specific reason?  I have no objections to moving it, but
-> on the other hand I also like that (in this case) most/all chip-specific
-> code is grouped together and not scattered around the tree.
+In commit f309d4443130bf814e991f836e919dca22df37ae ("platform_device:
+better support builtin boilerplate avoidance") we introduced the
+builtin_driver macro.
 
-Here is a reason. This patch series. If I could just change all that and have
-the dependencies inside the GPIO tree, refactoring struggles would be
-so much easier.
+Here we use that support and extend it to I2C driver registration,
+so where a driver is clearly non-modular and builtin-only, we can
+register it in a similar fashion.  And existing code that is clearly
+non-modular can be updated with the simple mapping of
 
-Yours,
-Linus Walleij
+     module_i2c_driver(...)  ---> builtin_i2c_driver(...)
+
+We've essentially cloned the former to make the latter, and taken
+out the remove/module_exit parts since those never get used in a
+non-modular build of the code.
+
+A similar thing was done in commit b4eb6cdbbd13698704863f680c643c569909e1c2
+("PCI: Add builtin_pci_driver() to avoid registration boilerplate").
+
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+
+[I've about 10 drivers/mfd and one drivers/gpio users of this in
+ my personal testing queue, but obviously I can't submit those
+ until builtin_i2c_driver makes it to mainline.  Since there are
+ no drivers/i2c users yet this change is sent to i2c on its own.]
+
+ include/linux/i2c.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 768063baafbf..d3ca750bfcdf 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -622,7 +622,7 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
+ }
+ 
+ /**
+- * module_i2c_driver() - Helper macro for registering a I2C driver
++ * module_i2c_driver() - Helper macro for registering a modular I2C driver
+  * @__i2c_driver: i2c_driver struct
+  *
+  * Helper macro for I2C drivers which do not do anything special in module
+@@ -633,6 +633,17 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
+ 	module_driver(__i2c_driver, i2c_add_driver, \
+ 			i2c_del_driver)
+ 
++/**
++ * builtin_i2c_driver() - Helper macro for registering a builtin I2C driver
++ * @__i2c_driver: i2c_driver struct
++ *
++ * Helper macro for I2C drivers which do not do anything special in their
++ * init. This eliminates a lot of boilerplate. Each driver may only
++ * use this macro once, and calling it replaces device_initcall().
++ */
++#define builtin_i2c_driver(__i2c_driver) \
++	builtin_driver(__i2c_driver, i2c_add_driver)
++
+ #endif /* I2C */
+ 
+ #if IS_ENABLED(CONFIG_OF)
+-- 
+2.5.0
+
