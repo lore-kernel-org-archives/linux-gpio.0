@@ -1,35 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
-Date: Sun, 13 Dec 2015 21:15:01 +0100
-Message-ID: <CACRpkdZxGYaRJ_LY0jjHkb67j70Aws53ec2DtwrOzdBfEOj5gQ@mail.gmail.com>
-References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
-	<20151209230852.GB28304@deathstar>
+Subject: Re: [PATCH 052/182] gpio: pxa: use gpiochip data pointer
+Date: Sun, 13 Dec 2015 21:19:49 +0100
+Message-ID: <CACRpkdbdAb4DRWnp_PkxuQpDxaf6O4tY8OMxHd1iWyC-z8J8hg@mail.gmail.com>
+References: <1449667312-32244-1-git-send-email-linus.walleij@linaro.org>
+	<87poyfjnim.fsf@belgarion.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:36648 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751987AbbLMUPD (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:15:03 -0500
-Received: by oian133 with SMTP id n133so4182934oia.3
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 12:15:01 -0800 (PST)
-In-Reply-To: <20151209230852.GB28304@deathstar>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:36799 "EHLO
+	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752334AbbLMUTu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:19:50 -0500
+Received: by oian133 with SMTP id n133so4215658oia.3
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 12:19:50 -0800 (PST)
+In-Reply-To: <87poyfjnim.fsf@belgarion.home>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>, "arm@kernel.org" <arm@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vl>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Daniel Mack <zonque@gmail.com>
 
-On Thu, Dec 10, 2015 at 12:08 AM, Michael Welling <mwelling@ieee.org> wrote:
-> On Wed, Dec 09, 2015 at 02:12:40PM +0100, Linus Walleij wrote:
-> ...
->> -     ret = gpiochip_add(&bgc->gc);
->> +     ret = gpiochip_add_data(gc, NULL);
->>       if (ret) {
+On Wed, Dec 9, 2015 at 10:54 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+> Linus Walleij <linus.walleij@linaro.org> writes:
 >
-> gpiochip_add is still mentioned in the dev_err below.
+>> This makes the driver use the data pointer added to the gpio_chip
+>> to store a pointer to the state container instead of relying on
+>> container_of().
+>>
+>> Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+>> Cc: Daniel Mack <zonque@gmail.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> This conflicts with the earlier serie in https://lkml.org/lkml/2015/11/28/136
+> which revamps the gpio_chip_base() anyway.
 
-I explicitly left text string updates aside, I am anyways going to have to go
-over all drivers for a second refactoring with gpiodev_alloc() etc.
+I have already fixed that, I think.
+
+> The patch is perfectly fine, and yet it's the opportunity to ask a review of the
+> other serie before other patches make me respin the serie, isn't it ?
+
+I merged it and rebased my patch.
 
 Yours,
 Linus Walleij
