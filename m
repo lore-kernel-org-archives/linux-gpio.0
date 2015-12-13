@@ -1,85 +1,42 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] i2c: create builtin_i2c_driver to avoid registration boilerplate
-Date: Sun, 13 Dec 2015 15:33:19 -0500
-Message-ID: <1450038799-27995-1-git-send-email-paul.gortmaker@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 156/182] input: adp5589-keys: use gpiochip data pointer
+Date: Sun, 13 Dec 2015 22:00:00 +0100
+Message-ID: <CACRpkdY10bVq_2dBdg+1=BkT-XjxHJ2uN=Wt2f=NJ-YgHWqoPg@mail.gmail.com>
+References: <1449668710-5785-1-git-send-email-linus.walleij@linaro.org>
+	<20151209234752.GB8146@deathstar>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:40107 "EHLO
-	mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752020AbbLMUfl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:35:41 -0500
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:36399 "EHLO
+	mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752409AbbLMVAC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 16:00:02 -0500
+Received: by oian133 with SMTP id n133so4487548oia.3
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 13:00:01 -0800 (PST)
+In-Reply-To: <20151209234752.GB8146@deathstar>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Wolfram Sang <wsa@the-dreams.de>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Michael Welling <mwelling@ieee.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-In commit f309d4443130bf814e991f836e919dca22df37ae ("platform_device:
-better support builtin boilerplate avoidance") we introduced the
-builtin_driver macro.
+On Thu, Dec 10, 2015 at 12:47 AM, Michael Welling <mwelling@ieee.org> wrote:
+> On Wed, Dec 09, 2015 at 02:45:10PM +0100, Linus Walleij wrote:
+>> @@ -525,7 +525,7 @@ static int adp5589_gpio_add(struct adp5589_kpad *kpad)
+>>
+>>       mutex_init(&kpad->gpio_lock);
+>>
+>> -     error = gpiochip_add(&kpad->gc);
+>> +     error = gpiochip_add_data(&kpad->gc, kpad);
+>>       if (error) {
+>>               dev_err(dev, "gpiochip_add failed, err: %d\n", error);
+>
+> Another dev_err referencing gpiochip_add instead of gpiochip_add_data.
 
-Here we use that support and extend it to I2C driver registration,
-so where a driver is clearly non-modular and builtin-only, we can
-register it in a similar fashion.  And existing code that is clearly
-non-modular can be updated with the simple mapping of
+I just went in and edited the commit. No other change so not resending,
+OK?
 
-     module_i2c_driver(...)  ---> builtin_i2c_driver(...)
+First I thought this textstring thing was minor but now I'm fixing it up,
+why not.
 
-We've essentially cloned the former to make the latter, and taken
-out the remove/module_exit parts since those never get used in a
-non-modular build of the code.
-
-A similar thing was done in commit b4eb6cdbbd13698704863f680c643c569909e1c2
-("PCI: Add builtin_pci_driver() to avoid registration boilerplate").
-
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
-
-[I've about 10 drivers/mfd and one drivers/gpio users of this in
- my personal testing queue, but obviously I can't submit those
- until builtin_i2c_driver makes it to mainline.  Since there are
- no drivers/i2c users yet this change is sent to i2c on its own.]
-
- include/linux/i2c.h | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 768063baafbf..d3ca750bfcdf 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -622,7 +622,7 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
- }
- 
- /**
-- * module_i2c_driver() - Helper macro for registering a I2C driver
-+ * module_i2c_driver() - Helper macro for registering a modular I2C driver
-  * @__i2c_driver: i2c_driver struct
-  *
-  * Helper macro for I2C drivers which do not do anything special in module
-@@ -633,6 +633,17 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
- 	module_driver(__i2c_driver, i2c_add_driver, \
- 			i2c_del_driver)
- 
-+/**
-+ * builtin_i2c_driver() - Helper macro for registering a builtin I2C driver
-+ * @__i2c_driver: i2c_driver struct
-+ *
-+ * Helper macro for I2C drivers which do not do anything special in their
-+ * init. This eliminates a lot of boilerplate. Each driver may only
-+ * use this macro once, and calling it replaces device_initcall().
-+ */
-+#define builtin_i2c_driver(__i2c_driver) \
-+	builtin_driver(__i2c_driver, i2c_add_driver)
-+
- #endif /* I2C */
- 
- #if IS_ENABLED(CONFIG_OF)
--- 
-2.5.0
-
+Yours,
+Linus Walleij
