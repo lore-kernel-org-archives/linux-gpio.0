@@ -1,59 +1,35 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Sun, 13 Dec 2015 08:44:46 -0800
-Message-ID: <CAKdAkRRxL1s=8FpehMaVx482M_ST7be46n0BLzBfeP0nH-FcUg@mail.gmail.com>
-References: <20151111194530.GA26559@dtor-ws>
-	<CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
-	<20151127173721.GC27040@dtor-ws>
-	<CACRpkda7fRZ=CB=Ec2iHmA=u9w6T7-WH2RNVvxBS5jL8he77Tg@mail.gmail.com>
-	<20151209172133.GC27131@dtor-ws>
-	<CACRpkda21=_XZyDYYTAUB4PrKVGhNxz4X-Cubn_eSNn3GY9StQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 004/182] gpio: generic: factor into gpio_chip struct
+Date: Sun, 13 Dec 2015 21:15:01 +0100
+Message-ID: <CACRpkdZxGYaRJ_LY0jjHkb67j70Aws53ec2DtwrOzdBfEOj5gQ@mail.gmail.com>
+References: <1449666760-29876-1-git-send-email-linus.walleij@linaro.org>
+	<20151209230852.GB28304@deathstar>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35123 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751961AbbLMQor (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 11:44:47 -0500
-In-Reply-To: <CACRpkda21=_XZyDYYTAUB4PrKVGhNxz4X-Cubn_eSNn3GY9StQ@mail.gmail.com>
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:36648 "EHLO
+	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751987AbbLMUPD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 15:15:03 -0500
+Received: by oian133 with SMTP id n133so4182934oia.3
+        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 12:15:01 -0800 (PST)
+In-Reply-To: <20151209230852.GB28304@deathstar>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Michael Welling <mwelling@ieee.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Anton Vorontsov <anton@enomsg.org>, "arm@kernel.org" <arm@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Vladimir Zapolskiy <vl>
 
-On Sun, Dec 13, 2015 at 8:37 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 9, 2015 at 6:21 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
+On Thu, Dec 10, 2015 at 12:08 AM, Michael Welling <mwelling@ieee.org> wrote:
+> On Wed, Dec 09, 2015 at 02:12:40PM +0100, Linus Walleij wrote:
+> ...
+>> -     ret = gpiochip_add(&bgc->gc);
+>> +     ret = gpiochip_add_data(gc, NULL);
+>>       if (ret) {
 >
->>> > Hmm, I'd like to get this patch into my tree as well to apply Irina's
->>> > goodix pieces on top to make sure they do not break. Would it be OK for
->>> > me to just apply the patch and hope git will sort it out when we merge
->>> > into next/mainline, you maybe you could prepare a 4.3-based branch with
->>> > the patch for me to pull?
->>>
->>> I had to fuzz the patch so then you need to get the version I applied out
->>> of my tree.
->>>
->>> But I'm not going to rebase the tree so you can pull commit
->>> 9c3c9bc9cc980d8981f75109f3921576daf75723
->>> from the GPIO tree if you like. Or I can make a tag there if
->>> you prefer, just tell me.
->>
->> Both would mean I will end up with parts of your work-in-progress queue,
->> which I would rather avoid. If you create a branch (lets call it A) off
->> v4.3 and apply that one patch there and merge branch A it into your main
->> branch (even though you already have a version of the same patch in your
->> main branch) and I will merge that branch A into my tree then we are
->> guaranteed not to have conflicts as git will resolve everything nicely.
->
-> I can't do that, as this patch is not applying cleanly on v4.3.
->
-> It applies cleanly to v4.4-rc1 though, would you like an immutable
-> branch like such based on v4.4-rc1 instead?
+> gpiochip_add is still mentioned in the dev_err below.
 
-Yep, that would work too.
+I explicitly left text string updates aside, I am anyways going to have to go
+over all drivers for a second refactoring with gpiodev_alloc() etc.
 
-Thank you!
-
--- 
-Dmitry
+Yours,
+Linus Walleij
