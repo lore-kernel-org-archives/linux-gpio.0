@@ -1,39 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 143/182] powerpc: mpc52xx_gpt: use gpiochip data pointer
-Date: Sun, 13 Dec 2015 22:02:20 +0100
-Message-ID: <CACRpkdYSRfD9jKdrysfY40hwHszKhsZmxZ4fncS+D5uciOj0rw@mail.gmail.com>
-References: <1449668466-4882-1-git-send-email-linus.walleij@linaro.org>
-	<20151209232746.GC28304@deathstar>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 052/182] gpio: pxa: use gpiochip data pointer
+Date: Sun, 13 Dec 2015 23:48:06 +0100
+Message-ID: <87mvtehsnt.fsf@belgarion.home>
+References: <1449667312-32244-1-git-send-email-linus.walleij@linaro.org>
+	<87poyfjnim.fsf@belgarion.home>
+	<CACRpkdbdAb4DRWnp_PkxuQpDxaf6O4tY8OMxHd1iWyC-z8J8hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:34126 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752512AbbLMVCV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 16:02:21 -0500
-Received: by oihr132 with SMTP id r132so29692820oih.1
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 13:02:20 -0800 (PST)
-In-Reply-To: <20151209232746.GC28304@deathstar>
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:17217 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751533AbbLMWsL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 17:48:11 -0500
+In-Reply-To: <CACRpkdbdAb4DRWnp_PkxuQpDxaf6O4tY8OMxHd1iWyC-z8J8hg@mail.gmail.com>
+	(Linus Walleij's message of "Sun, 13 Dec 2015 21:19:49 +0100")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Welling <mwelling@ieee.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Daniel Mack <zonque@gmail.com>
 
-On Thu, Dec 10, 2015 at 12:27 AM, Michael Welling <mwelling@ieee.org> wrote:
-> On Wed, Dec 09, 2015 at 02:41:06PM +0100, Linus Walleij wrote:
->> @@ -354,7 +349,7 @@ mpc52xx_gpt_gpio_setup(struct mpc52xx_gpt_priv *gpt, struct device_node *node)
->>       clrsetbits_be32(&gpt->regs->mode, MPC52xx_GPT_MODE_MS_MASK,
->>                       MPC52xx_GPT_MODE_MS_GPIO);
->>
->> -     rc = gpiochip_add(&gpt->gc);
->> +     rc = gpiochip_add_data(&gpt->gc, gpt);
->>       if (rc)
+Linus Walleij <linus.walleij@linaro.org> writes:
+
+>> The patch is perfectly fine, and yet it's the opportunity to ask a review of the
+>> other serie before other patches make me respin the serie, isn't it ?
 >
-> Another place that dev_err references gpiochip_add instead of gpiochip_add_data.
->
->>               dev_err(gpt->dev, "gpiochip_add() failed; rc=%i\n", rc);
+> I merged it and rebased my patch.
+Excellent, thanks.
 
-OK fixed it.
+Cheers.
 
-Yours,
-Linus Walleij
+-- 
+Robert
