@@ -1,123 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 000/182] Rid struct gpio_chip from container_of() usage
-Date: Mon, 14 Dec 2015 10:18:04 +0100
-Message-ID: <CACRpkdZDFPFOH=9FfYzLeKo5b-oXG4rPjoU4Rpq9Wv1-RvY6uQ@mail.gmail.com>
-References: <1449666515-23343-1-git-send-email-linus.walleij@linaro.org>
-	<20151209193034.GE27131@dtor-ws>
+Subject: Re: [PATCH 042/182] gpio: mpc8xxx: use gpiochip data pointer
+Date: Mon, 14 Dec 2015 10:25:50 +0100
+Message-ID: <CACRpkdbUuAZqnvzdfGpLTQc+mnvXeKbNrYT71JJw37FBD5uCMQ@mail.gmail.com>
+References: <1449667117-31740-1-git-send-email-linus.walleij@linaro.org>
+	<20151209191956.GW5072@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:35052 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466AbbLNJSF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 04:18:05 -0500
-Received: by obc18 with SMTP id 18so126235708obc.2
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 01:18:04 -0800 (PST)
-In-Reply-To: <20151209193034.GE27131@dtor-ws>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:36831 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932093AbbLNJZu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 04:25:50 -0500
+Received: by obcno2 with SMTP id no2so7978242obc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 01:25:50 -0800 (PST)
+In-Reply-To: <20151209191956.GW5072@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Sonic Zhang <sonic.zhang@analog.com>, Greg Ungerer <gerg@uclinux.org>, Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Anatolij Gustschin <agust@denx.de>, linux-wireless <linux-wireless@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Alexander Stein <alexander.stein@systec-electronic.com>
 
-On Wed, Dec 9, 2015 at 8:30 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Wed, Dec 09, 2015 at 02:08:35PM +0100, Linus Walleij wrote:
->> This removes the use of container_of() constructions from *all*
->> GPIO drivers in the kernel. It is done by instead adding an
->> optional void *data pointer to the struct gpio_chip and an
->> accessor function, gpiochip_get_data() to get it from a driver.
->>
->> WHY?
->>
->> Because we want to have a proper userspace ABI for GPIO chips,
->> which involves using a character device that the user opens
->> and closes. While the character device is open, the underlying
->> kernel objects must not go away.
->>
->> Currently the GPIO drivers keep their state in the struct
->> gpio_chip, and that is often allocated by the drivers, very
->> often as a part of a containing per-instance state container
->> struct for the driver:
->>
->> struct foo_state {
->>    struct gpio_chip chip;  <- OMG my state is there
->> };
->>
->> Drivers cannot allocate and manage this state: if a user has the
->> character device open, the objects allocated must stay around
->> even if the driver goes away. Instead drivers need to pass a
->> descriptor to the GPIO core, and then the core should allocate
->> and manage the lifecycle of things related to the device, such
->> as the chardev itself or the struct device related to the GPIO
->> device.
+On Wed, Dec 9, 2015 at 8:19 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Wed, Dec 09, 2015 at 02:18:37PM +0100, Linus Walleij wrote:
+>> This makes the driver use the data pointer added to the gpio_chip
+>> to store a pointer to the state container instead of relying on
+>> container_of().
 >
-> Yes, but it does not mean that the object that is being maintained by
-> the subsystem and that us attached to character device needs to be
-> gpio_chip itself. You can have something like
->
-> struct gpio_chip_chardev {
->         struct cdev chardev;
->         struct gpio_chip *chip;
->         bool dead;
-> };
+> I wonder why your patch is an improvement. I imagine that container_o=
+f
+> is cheaper in instructions and memory/cache accesses.
 
-There needs to be a struct device too, amongst other things.
+This is described in patch 000/182.
 
->
-> struct gpio_chip {
->         ...
->         struct gpio_chip_chardev *chardev;
->         ...
-> };
->
-> You alloctae the new structure when you register/export gpio chip in
-> gpio subsystem core and leave all the individual drivers alone.
-
-The current idea I have is something in the middle. Drivers have to
-change a bit. The important part is that gpiolib handles allocation of
-anything containing states. I'm thinking along the lines of Russell's
-proposal to use netdev_alloc()'s design pattern.
-
-The problem is that currently gpio_chip contains a lot of
-stateful variables (like the dynamically allocated array of GPIO descriptors
-etc) and those are used by the gpiolib core, so they have to be moved away
-from gpio_chip.
-
-So what happens if I don't change the design pattern:
-
-int ret = gpiochip_add(&my_chip);
-...
-gpiochip_remove(&my_chip);
-
-At this point we have to cross-reference the pointer to my chip to
-find the chip to remove. This goes for anything that takes the struct
-gpio_chip *
-as parameter, like gpiochip_add_pin_range(), gpiochip_request_own_desc()
-etc etc. So something inside gpiolib must take a gpio_chip * pointer and
-turn that into the actual state container, e.g, a struct gpio_device.
-Since struct gpio_chip needs to be static and stateless, it cannot contain
-a pointer back to its struct gpio_device.
-
-That means basically comparing pointers across a list of gpio_device's
-to find it. And that's ... very kludgy. But if people think it's better to avoid
-changing all drivers I will consider it.
-
-I think it is better if the GPIO drivers get a handle on the
-real gpio_device * to be used when calling these gpiochip_* related
-functions and also in the callbacks, which is a bigger refactoring
-indeed.
-
-Part of this is trying to be elegant and mimic other subsystems and not
-have GPIO be too hopelessly wayward about things.
-
-If I compare to how struct input_dev is done, you appear to also use the
-pattern Russell suggested with input_dev_allocate() akin to
-netdev_alloc(), and the allocated struct holds all the vtable and states etc,
-and I think it is a good pattern, and that GPIO should conform.
-
-This current patch series however, just give us the equivalent of
-input_get_drvdata()/input_set_drvdata() and that seems valuable on its
-own, as it reduces code size and make things more readable.
+I'm sorry I couldn't put everyone on direct CC for that, but the mailin=
+g lists
+complain if I have too many recipients, so damned if I do, damned if I =
+don't :(
+http://marc.info/?l=3Dlinux-gpio&m=3D144966662402660&w=3D2
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
