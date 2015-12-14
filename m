@@ -1,48 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 042/182] gpio: mpc8xxx: use gpiochip data pointer
-Date: Mon, 14 Dec 2015 10:25:50 +0100
-Message-ID: <CACRpkdbUuAZqnvzdfGpLTQc+mnvXeKbNrYT71JJw37FBD5uCMQ@mail.gmail.com>
-References: <1449667117-31740-1-git-send-email-linus.walleij@linaro.org>
-	<20151209191956.GW5072@pengutronix.de>
+Subject: Re: [PATCH RESEND] pinctrl: bcm2835: Fix initial value for direction_output
+Date: Mon, 14 Dec 2015 11:33:04 +0100
+Message-ID: <CACRpkdYPDo3-0M+1sHqPi9CAh9yeohcBepJCrQ2=OzRsuX4OJg@mail.gmail.com>
+References: <1449511825-6156-1-git-send-email-stefan.wahren@i2se.com>
+	<1330071479.188146.762be339-5c35-483f-b17c-6076dc1d3758.open-xchange@email.1und1.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:36831 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932093AbbLNJZu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 04:25:50 -0500
-Received: by obcno2 with SMTP id no2so7978242obc.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 01:25:50 -0800 (PST)
-In-Reply-To: <20151209191956.GW5072@pengutronix.de>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35431 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932157AbbLNKdF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 05:33:05 -0500
+Received: by oiai186 with SMTP id i186so21374008oia.2
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 02:33:04 -0800 (PST)
+In-Reply-To: <1330071479.188146.762be339-5c35-483f-b17c-6076dc1d3758.open-xchange@email.1und1.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Alexander Stein <alexander.stein@systec-electronic.com>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Dec 9, 2015 at 8:19 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Wed, Dec 09, 2015 at 02:18:37PM +0100, Linus Walleij wrote:
->> This makes the driver use the data pointer added to the gpio_chip
->> to store a pointer to the state container instead of relying on
->> container_of().
+On Thu, Dec 10, 2015 at 12:05 PM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> Hi Linus,
 >
-> I wonder why your patch is an improvement. I imagine that container_o=
-f
-> is cheaper in instructions and memory/cache accesses.
+>> Stefan Wahren <stefan.wahren@i2se.com> hat am 7. Dezember 2015 um 19:10
+>> geschrieben:
+>>
+>>
+>> Currently the provided initial value for bcm2835_gpio_direction_output
+>> has no effect. So fix this issue by changing the value before
+>> changing the GPIO direction. As a result we need to move the function below
+>> bcm2835_gpio_set.
+>>
+>> Suggested-by: Martin Sperl <kernel@martin.sperl.org>
+>> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+>> Fixes: e1b2dc70cd5b ("pinctrl: add bcm2835 driver")
+>> Acked-by: Stephen Warren <swarren@wwwdotorg.org>
+>> Acked-by: Eric Anholt <eric@anholt.net>
+>> ---
+>
+> on Nov 30 you wrote that you want Stephen's ACK and now it's there.
 
-This is described in patch 000/182.
+Yeal already applied it for fixes. Added the Fixes: tag now.
 
-I'm sorry I couldn't put everyone on direct CC for that, but the mailin=
-g lists
-complain if I have too many recipients, so damned if I do, damned if I =
-don't :(
-http://marc.info/?l=3Dlinux-gpio&m=3D144966662402660&w=3D2
+> But your current patch "[PATCH 092/182] pinctrl: bcm2835: use gpiochip data
+> pointer" seems to conflict with my?
+
+No problem. I will merge the next release candidate into the GPIO tree
+and fix the conflicts after this fix is merged.
+
+Fixing conflicts is all subsystem maintainers do some days :D
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
