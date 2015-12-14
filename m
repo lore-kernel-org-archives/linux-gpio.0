@@ -1,63 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/4] gpio: pxa: integrate with pincontrol
-Date: Mon, 14 Dec 2015 14:42:23 +0100
-Message-ID: <CACRpkdawaM5dMqoyeb=UqzaCeEdfSD-dQ+AMxwe5L9FQQsWKyw@mail.gmail.com>
-References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
-	<CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
-	<87lh92kbjg.fsf@belgarion.home>
-	<CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
-	<87d1uejjmr.fsf@belgarion.home>
+Subject: Re: [PATCH 112/182] pinctrl: samsung: use gpiochip data pointer
+Date: Mon, 14 Dec 2015 14:55:30 +0100
+Message-ID: <CACRpkdYCqKXjnaA2C0ynF8x3mFUyo6bV9ViZJD8haHNG1wpS4A@mail.gmail.com>
+References: <1449667992-3104-1-git-send-email-linus.walleij@linaro.org>
+	<CA+Ln22HrFVwtMDRg4wC10EwESf+PixDa4-3eKsqnD4ELEGqSXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:34439 "EHLO
-	mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932247AbbLNNmY (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 08:42:24 -0500
-Received: by oiao124 with SMTP id o124so929701oia.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 05:42:23 -0800 (PST)
-In-Reply-To: <87d1uejjmr.fsf@belgarion.home>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:36573 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752456AbbLNNzb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 08:55:31 -0500
+Received: by obcno2 with SMTP id no2so12393690obc.3
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 05:55:31 -0800 (PST)
+In-Reply-To: <CA+Ln22HrFVwtMDRg4wC10EwESf+PixDa4-3eKsqnD4ELEGqSXQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
-On Thu, Dec 10, 2015 at 6:31 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Linus Walleij <linus.walleij@linaro.org> writes:
+On Fri, Dec 11, 2015 at 7:14 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Linus,
 >
->>>    - the GPDR (gpio direction register) shared access bothers me a bit
->>
->> How is it shared and between what users?
+> 2015-12-09 22:33 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+>> This makes the driver use the data pointer added to the gpio_chip
+>> to store a pointer to the state container instead of relying on
+>> container_of().
 >
-> It's shared between the pin controller and the gpio controller.
+> I always thought container_of() was preferred because of higher type
+> safety than void *data pointers. Is there any reason for mandating the
+> (IMHO worse) new method of accessing data, even though the one
+> currently used seems to be still valid?
 
-OK then it may be one of these cases where we should jit the pin controller
-and the GPIO controller together in the same file (under drivers/pinctrl)
-to simplify the mess. We can do that in the NEXT merge window because
-right now I don't want any more crisscross between gpio and pin control
-as there are refactorings I'm piling up.
+This is explained in patch 000/182:
+http://marc.info/?l=linux-gpio&m=144966662402660&w=2
 
-Another option is e.g. accessing the registers through regmap-mmio but
-it feels a bit like overkill for this...
+In the generic GPIO case it gets really really messy with
+container_of(container_of(x)) in every driver, making the code
+so hard to read that it becomes a pain to maintain and do the
+right thing, trumping any type safety.
 
-> The odd thing with the pxa architecture is that the GPDR bit selects between 2
-> different alternate functions, even when the pin is not a GPIO. Strange design,
-> isn't it ?
-
-Probably just unfortunate naming.
-
-In my presentation "building GPIO and pin control from the ground up" I
-try to explain a bit how hardware engineers design these things...
-http://dflund.se/~triad/papers/pincontrol.pdf
-
-> As a consequence, both the gpio driver and pinctrl have to modify it, for
-> different purposes :
->  - pinctrl will modify it to select a specific alternate function
->  - gpio driver will modify it when the pin is a GPIO, to modify its direction.
-
-OK. Solutions per above, I guess it currently just optimistically hope
-we do not fiddle the same bit in parallell from the two drivers (which
-is maybe even possible to prove to be true).
+Unless someone has a real performance issue I think this is
+the way to go.
 
 Yours,
 Linus Walleij
