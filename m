@@ -1,49 +1,60 @@
-From: Michael Welling <mwelling@ieee.org>
-Subject: Re: [PATCH 143/182] powerpc: mpc52xx_gpt: use gpiochip data pointer
-Date: Sun, 13 Dec 2015 17:01:56 -0600
-Message-ID: <20151213230156.GA12944@qwerty.qwertyembedded>
-References: <1449668466-4882-1-git-send-email-linus.walleij@linaro.org>
- <20151209232746.GC28304@deathstar>
- <CACRpkdYSRfD9jKdrysfY40hwHszKhsZmxZ4fncS+D5uciOj0rw@mail.gmail.com>
+From: Greg Ungerer <gerg@uclinux.org>
+Subject: Re: [PATCH 134/182] m68k: gpio: switch to gpiochip_add_data()
+Date: Mon, 14 Dec 2015 10:49:50 +1000
+Message-ID: <566E122E.8070700@uclinux.org>
+References: <1449668315-4352-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:33476 "EHLO
-	mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998AbbLMXCU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 13 Dec 2015 18:02:20 -0500
-Received: by iow186 with SMTP id 186so8517210iow.0
-        for <linux-gpio@vger.kernel.org>; Sun, 13 Dec 2015 15:02:19 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYSRfD9jKdrysfY40hwHszKhsZmxZ4fncS+D5uciOj0rw@mail.gmail.com>
+Received: from icp-osb-irony-out5.external.iinet.net.au ([203.59.1.221]:5997
+	"EHLO icp-osb-irony-out5.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751342AbbLNA7G (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 13 Dec 2015 19:59:06 -0500
+In-Reply-To: <1449668315-4352-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Markus Pargmann <mpa@pengutronix.de>, Anatolij Gustschin <agust@denx.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On Sun, Dec 13, 2015 at 10:02:20PM +0100, Linus Walleij wrote:
-> On Thu, Dec 10, 2015 at 12:27 AM, Michael Welling <mwelling@ieee.org> wrote:
-> > On Wed, Dec 09, 2015 at 02:41:06PM +0100, Linus Walleij wrote:
-> >> @@ -354,7 +349,7 @@ mpc52xx_gpt_gpio_setup(struct mpc52xx_gpt_priv *gpt, struct device_node *node)
-> >>       clrsetbits_be32(&gpt->regs->mode, MPC52xx_GPT_MODE_MS_MASK,
-> >>                       MPC52xx_GPT_MODE_MS_GPIO);
-> >>
-> >> -     rc = gpiochip_add(&gpt->gc);
-> >> +     rc = gpiochip_add_data(&gpt->gc, gpt);
-> >>       if (rc)
-> >
-> > Another place that dev_err references gpiochip_add instead of gpiochip_add_data.
-> >
-> >>               dev_err(gpt->dev, "gpiochip_add() failed; rc=%i\n", rc);
+Hi Linus,
+
+On 09/12/15 23:38, Linus Walleij wrote:
+> We're planning to remove the gpiochip_add() function to swith
+> to gpiochip_add_data() with NULL for data argument.
 > 
-> OK fixed it.
+> Cc: Greg Ungerer <gerg@uclinux.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Coldfire maintainers: please ACK this so I can take it through
+> the GPIO tree.
 
-Sorry for nit picking.
+Acked-by: Greg Ungerer <gerg@uclinux.org>
 
-The series otherwises looks good.
+Thanks
+Greg
 
-Reviewed-by: Michael Welling <mwelling@ieee.org>
 
+
+> Also consider abstracting out GPIO and moving it to drivers/gpio
+> at some point. It would involve some work though.
+> ---
+>  arch/m68k/coldfire/gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Yours,
-> Linus Walleij
+> diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
+> index e7e428681ec5..19c335d5031d 100644
+> --- a/arch/m68k/coldfire/gpio.c
+> +++ b/arch/m68k/coldfire/gpio.c
+> @@ -178,7 +178,7 @@ static struct gpio_chip mcfgpio_chip = {
+>  
+>  static int __init mcfgpio_sysinit(void)
+>  {
+> -	gpiochip_add(&mcfgpio_chip);
+> +	gpiochip_add_data(&mcfgpio_chip, NULL);
+>  	return subsys_system_register(&mcfgpio_subsys, NULL);
+>  }
+>  
+> 
+
