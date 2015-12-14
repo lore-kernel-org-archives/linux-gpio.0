@@ -1,42 +1,87 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 172/182] staging: vme: use gpiochip data pointer
-Date: Mon, 14 Dec 2015 15:14:04 +0100
-Message-ID: <CACRpkdbXvabyuWAt3dVZB5UCC8Z_OuxeB8opapq4kvWp6Y6mtw@mail.gmail.com>
-References: <1449669005-6835-1-git-send-email-linus.walleij@linaro.org>
-	<566A7405.9080302@welchs.me.uk>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Mon, 14 Dec 2015 10:41:16 -0600
+Message-ID: <566EF12C.4060509@ti.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+ <1449863184-29668-2-git-send-email-afd@ti.com>
+ <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:35572 "EHLO
-	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750786AbbLNOOF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 09:14:05 -0500
-Received: by oiai186 with SMTP id i186so24286860oia.2
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 06:14:04 -0800 (PST)
-In-Reply-To: <566A7405.9080302@welchs.me.uk>
+Received: from devils.ext.ti.com ([198.47.26.153]:57235 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751608AbbLNQld (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 11:41:33 -0500
+In-Reply-To: <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martyn Welch <martyn@welchs.me.uk>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Manohar Vanga <manohar.vanga@gmail.com>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 11, 2015 at 7:58 AM, Martyn Welch <martyn@welchs.me.uk> wrote:
-> On 09/12/15 13:50, Linus Walleij wrote:
->>
->> This makes the driver use the data pointer added to the gpio_chip
->> to store a pointer to the state container instead of relying on
->> container_of().
->>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Martyn Welch <martyn@welchs.me.uk>
->> Cc: Manohar Vanga <manohar.vanga@gmail.com>
->> Cc: devel@driverdev.osuosl.org
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On 12/11/2015 03:48 PM, Linus Walleij wrote:
+> On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
 >
+>> Add binding for generic parallel-in/serial-out shift register devices
+>> used as GPIO.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
 >
-> Signed-of-by: Martyn Welch <martyn@welchs.me.uk>
+>> +Generic Parallel-in/Serial-out Shift Register GPIO Driver
+>> +
+>> +This binding describes generic parallel-in/serial-out shift register
+>> +devices that can be used for GPI (General Purpose Input). This includes
+>> +SN74165 serial-out shift registers and the SN65HVS88x series of
+>> +industrial serializers.
+>> +
+>> +Required properties:
+>> + - compatible          : Should be "pisosr-gpio".
+>
+> I think it should also define compatible strings on the "vendor,device"
+> format apart from the generic compatible. Sooner or later we may need
+> to differentiate them and then that comes in handy.
+>
 
-Signed-off is for the delivery path so I assume you meant
-Acked-by and I added that.
+Would it be better to wait until/if this issue arises? This driver
+targets the generic features, as these parts are very generic and
+have been produced by many companies since the 70s I'm not sure
+if privileging any of them makes much sense.
 
-Yours,
-Linus Walleij
+What I'm worried about looks to have happened with the gpio-74x164
+driver, this is kind of the companion device to mine (74164 / 74165)
+and should work with any 74164 compatible shift register (possibly 100s
+of versions of them), but the compatible string that was added is
+"fairchild,74hc595", a relatively new device by a single manufacturer.
+The problem this has is then that boards will use this compatible string
+even if the parts are not actually the Fairchild version, just to get
+the match, when they should be using a generic string.
+
+>> + - gpio-controller     : Marks the device node as a GPIO controller.
+>> + - #gpio-cells         : Should be two. For consumer use see gpio.txt.
+>> +
+>> +Optional properties:
+>> + - ngpios              : Number of GPIO lines, default is 8.
+>
+> If you didn't do "pisosr-gpio" but instead "foo,sn74165", maybe you
+> don't need to have this in the device tree but instead it can be
+> determined from the compatible string?
+>
+> In that case do that.
+>
+
+These devices can be daisy-chained together, so three 8bit registers
+look exactly like one 24bit register. The only way to know this is
+from the physical wiring of the board, not from the part number.
+
+Thanks,
+Andrew
+
+>> + - load-gpios          : GPIO pin specifier attached to load enable, this
+>> +                         pin is pulsed before reading from the device to
+>> +                         load input pin values into the the device.
+>
+> OK seems necessary.
+>
+> Yours,
+> Linus Walleij
+>
