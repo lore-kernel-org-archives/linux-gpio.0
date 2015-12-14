@@ -1,39 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl:Convert the composition of devm_request_mem_region
- and devm_ioremap to a single call
-Date: Mon, 14 Dec 2015 15:03:54 +0100
-Message-ID: <CACRpkda7a2KtyUJM4jkjn7aCZFYyzuz+xB328Djmc=ayHOdMhA@mail.gmail.com>
-References: <1446191478-22714-1-git-send-email-sanjeev_sharma@mentor.com>
-	<CACRpkdZFhseQDbXvJg1CP3+WRsw_dPivx0w8730-9FV3fwjUGQ@mail.gmail.com>
-	<20151203214415.GC23396@atomide.com>
-	<CACRpkdZFw=tbRmh1_qUeRvVKokMqYd35FEO+NPbp+=gwSE6yDA@mail.gmail.com>
-	<20151210223142.GH23396@atomide.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] gpio: pl061: add support for wakeup configuration
+Date: Mon, 14 Dec 2015 14:04:15 +0000
+Message-ID: <566ECC5F.1010807@arm.com>
+References: <1448644755-29183-1-git-send-email-sudeep.holla@arm.com>
+ <CACRpkdbmSXiOtubuUX0tGs_3-j9+jje+U5TkyJcMRgMSzykuSw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:36089 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752898AbbLNODy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 09:03:54 -0500
-Received: by obcno2 with SMTP id no2so12576521obc.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 06:03:54 -0800 (PST)
-In-Reply-To: <20151210223142.GH23396@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbmSXiOtubuUX0tGs_3-j9+jje+U5TkyJcMRgMSzykuSw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Sanjeev Sharma <sanjeev_sharma@mentor.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 
-On Thu, Dec 10, 2015 at 11:31 PM, Tony Lindgren <tony@atomide.com> wrote:
 
->> >
->> > I think we need to add ourselves to MAINTAINERS for this driver,
->> > otherwise we'll keep on missing emails.
->>
->> Good idea! Patches accepted.
+
+On 14/12/15 14:02, Linus Walleij wrote:
+> On Fri, Nov 27, 2015 at 6:19 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
 >
-> How about this one below?
+>> The PL061 supports interrupts and those can be wakeup interrupts. We
+>> need to provide support for configuring those interrupts as wakeup
+>> sources.
+>>
+>> This patch adds irq_set_wake callback for PL061 so that GPIO interrupts
+>> can be configured as wakeup.
+>>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> Patch applied, since I can't think of anything better.
+>
 
-Patch applied for fixes!
+Thanks and I agree but we can always fix/enhance if/whenever required :)
 
-Yours,
-Linus Walleij
+-- 
+Regards,
+Sudeep
