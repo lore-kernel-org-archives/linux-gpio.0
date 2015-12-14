@@ -1,65 +1,83 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH 092/182] pinctrl: bcm2835: use gpiochip data pointer
-Date: Mon, 14 Dec 2015 10:03:02 -0800
-Message-ID: <87y4cwvrft.fsf@eliezer.anholt.net>
-References: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org> <566A5D30.2040401@wwwdotorg.org> <CACRpkdZxzin43oHNo9dcwq8br=ibFyPdsAZYi8cULZ9vQ7Ng4A@mail.gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 0/4] gpio: pxa: integrate with pincontrol
+Date: Mon, 14 Dec 2015 22:10:55 +0100
+Message-ID: <87io40ivmo.fsf@belgarion.home>
+References: <1448746665-13422-1-git-send-email-robert.jarzmik@free.fr>
+	<CACRpkdZ0JZOsU7VuFyeM8akWTKHjksEC3-wB4zrx0NJBRD+agQ@mail.gmail.com>
+	<87lh92kbjg.fsf@belgarion.home>
+	<CACRpkdZP=3mDWxoX6PRskztoeow41T9RgDyh82NP1=xnY+S1nQ@mail.gmail.com>
+	<87d1uejjmr.fsf@belgarion.home>
+	<CACRpkdawaM5dMqoyeb=UqzaCeEdfSD-dQ+AMxwe5L9FQQsWKyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gabe.freedesktop.org ([131.252.210.177]:44984 "EHLO
-	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752928AbbLNSDF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 13:03:05 -0500
-In-Reply-To: <CACRpkdZxzin43oHNo9dcwq8br=ibFyPdsAZYi8cULZ9vQ7Ng4A@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-
---=-=-=
 Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdawaM5dMqoyeb=UqzaCeEdfSD-dQ+AMxwe5L9FQQsWKyw@mail.gmail.com>
+	(Linus Walleij's message of "Mon, 14 Dec 2015 14:42:23 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <zonque@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 Linus Walleij <linus.walleij@linaro.org> writes:
 
-> On Fri, Dec 11, 2015 at 6:20 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> On 12/09/2015 06:30 AM, Linus Walleij wrote:
->>> This makes the driver use the data pointer added to the gpio_chip
->>> to store a pointer to the state container instead of relying on
->>> container_of().
+> On Thu, Dec 10, 2015 at 6:31 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>> Linus Walleij <linus.walleij@linaro.org> writes:
 >>
->> This looks like it's fine, but I wonder what is the justification for
->> the change? It might be good to mention that in the commit description.
+>>>>    - the GPDR (gpio direction register) shared access bothers me a bit
+>>>
+>>> How is it shared and between what users?
+>>
+>> It's shared between the pin controller and the gpio controller.
 >
-> It is in patch 000/182:
-> http://marc.info/?l=linux-gpio&m=144966662402660&w=2
+> OK then it may be one of these cases where we should jit the pin controller
+> and the GPIO controller together in the same file (under drivers/pinctrl)
+> to simplify the mess. We can do that in the NEXT merge window because
+> right now I don't want any more crisscross between gpio and pin control
+> as there are refactorings I'm piling up.
 
-Thanks, that helps.
+Well, maybe, but I don't know how to do it, due to the number of possibilities,
+given that :
+ - gpio-pxa.c should work for pxa27x device-tree
+   (this would be possible with a pinctrl+gpio fusion)
+ - gpio-pxa.c should work for pxa3xx device-tree
+   (I don't know how to do this, pxa3xx uses pinctrl-single AFAIK)
+ - gpio-pxa.c should work for pxa168 + mmp* device-tree
+   (same as for pxa3xx)
+ - gpio-pxa.c might should with pxa27x platform_data
+   (this doesn't work yet fully, the wake-up pin give me headaches)
+ - gpio-pxa.c should work with pxa25x platform_data
+   (I don't see either how a merged pinctrl+gpio driver could address this)
 
-I don't think it makes much sense to remove a module for a device that's
-opened, but I don't really have any stake in the discussion.  So, for
-the bcm2835 part:
+All of this to say it looks a bit complicated to me to have a gpio+pinctrl in
+the same file, but I might be missing something obvious.
+ 
+> Another option is e.g. accessing the registers through regmap-mmio but
+> it feels a bit like overkill for this...
+Yes, overkill maybe, but maybe an idea. The nice thing about regmap is the debug
+capabilities, the less good is the permanent need of locks ...
 
-Acked-by: Eric Anholt <eric@anholt.net>
+>> The odd thing with the pxa architecture is that the GPDR bit selects between 2
+>> different alternate functions, even when the pin is not a GPIO. Strange design,
+>> isn't it ?
+>
+> Probably just unfortunate naming.
+>
+> In my presentation "building GPIO and pin control from the ground up" I
+> try to explain a bit how hardware engineers design these things...
+> http://dflund.se/~triad/papers/pincontrol.pdf
+Nice, I had already read it :)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+>> As a consequence, both the gpio driver and pinctrl have to modify it, for
+>> different purposes :
+>>  - pinctrl will modify it to select a specific alternate function
+>>  - gpio driver will modify it when the pin is a GPIO, to modify its direction.
+>
+> OK. Solutions per above, I guess it currently just optimistically hope
+> we do not fiddle the same bit in parallell from the two drivers (which
+> is maybe even possible to prove to be true).
+Ok. I will think about it again in the next days.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Cheers.
 
-iQIcBAEBCgAGBQJWbwRWAAoJELXWKTbR/J7oq7YP/R+Oql6K/uto5rJDrAzW4Ojp
-uFn5Fe2wXZQw/DLj+o8ERWEGHrlvzKlgCuWtg1LysOtT6DMd9K9f4+zTjwV+eC26
-DISqfzkd2D/E/WEW6rhUePv3dFvqAIBkBJLGZh1wQGMHGW13NErdROzyu/3M/TRi
-toabAzI+2SirC42vrArQvccBMewiU1Ytgg+F/AmwlKUJvJsKTVbFTylo/mRC7YW1
-G6+22EgcLW30OOG5qtLoiga0vym2A3dGcR+ETFHWGNdtzrmdDEJrFDlcm/qTVLvm
-kovx5vVWpC8DPLExmEYLml0oaMEpzFRX/dAeB8KH+DiGD90x24EkPXMJ/ebKl71C
-9EBnWoJdCt7t1v4w/KWKE5PPgChxXEGlmsgSmLgH6TTxfkPg27ybaK8/Y3hbfBxO
-tJvR3AvC9emg5RNP3hrbX581vVRXG1FSfDg8dlGigtFkg9ZG65wctBOQJDZfsTg8
-t8se2b92faGiithl6msRUoSD+cGSwvsGAXWAriVb1HRBaORBfz/hNZNsCgYbvs7N
-egK7IFXcrCYJYYGRjTJCNF+RJBiJ3pC70sOpaHlTlij8QdCnBZ9xfw2KLVHuChSy
-ZB2towke2hrbYy7n7rT97iOcmLSatUbXv3aVe2zvGR0M/Jb4pr+uonPei+iQYazi
-lBc/JbtNV5DF45kKSsSp
-=RnvT
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Robert
