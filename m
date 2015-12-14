@@ -1,170 +1,79 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2] pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
-Date: Tue, 15 Dec 2015 01:06:55 +0300
-Message-ID: <4277494.6KPmCjaGvB@wasted.cogentembedded.com>
-References: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Mon, 14 Dec 2015 16:36:41 -0600
+Message-ID: <CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com> <1449863184-29668-2-git-send-email-afd@ti.com>
+ <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com> <566EF12C.4060509@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:36261 "EHLO
-	mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932469AbbLNWHA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Dec 2015 17:07:00 -0500
-Received: by lfed137 with SMTP id d137so80855157lfe.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Dec 2015 14:06:58 -0800 (PST)
-In-Reply-To: <13219129.kD4pZSmcAP@wasted.cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <566EF12C.4060509@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, linux-sh@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-gpio@vger.kernel.org, geert@linux-m68k.org
 
-Add the EtherAVB pin groups to the R8A7791 PFC driver.
+On Mon, Dec 14, 2015 at 10:41 AM, Andrew F. Davis <afd@ti.com> wrote:
+> On 12/11/2015 03:48 PM, Linus Walleij wrote:
+>>
+>> On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
+>>
+>>> Add binding for generic parallel-in/serial-out shift register devices
+>>> used as GPIO.
+>>>
+>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>
+>>
+>>> +Generic Parallel-in/Serial-out Shift Register GPIO Driver
+>>> +
+>>> +This binding describes generic parallel-in/serial-out shift register
+>>> +devices that can be used for GPI (General Purpose Input). This includes
+>>> +SN74165 serial-out shift registers and the SN65HVS88x series of
+>>> +industrial serializers.
+>>> +
+>>> +Required properties:
+>>> + - compatible          : Should be "pisosr-gpio".
+>>
+>>
+>> I think it should also define compatible strings on the "vendor,device"
+>> format apart from the generic compatible. Sooner or later we may need
+>> to differentiate them and then that comes in handy.
+>>
+>
+> Would it be better to wait until/if this issue arises? This driver
+> targets the generic features, as these parts are very generic and
+> have been produced by many companies since the 70s I'm not sure
+> if privileging any of them makes much sense.
+>
+> What I'm worried about looks to have happened with the gpio-74x164
+> driver, this is kind of the companion device to mine (74164 / 74165)
+> and should work with any 74164 compatible shift register (possibly 100s
+> of versions of them), but the compatible string that was added is
+> "fairchild,74hc595", a relatively new device by a single manufacturer.
+> The problem this has is then that boards will use this compatible string
+> even if the parts are not actually the Fairchild version, just to get
+> the match, when they should be using a generic string.
 
-Also add the copyright for all the Cogent Embedded's past work on this file.
+I agree the generic version is fine (or find who made the first part
+;)). What "pisosr" is is not very obvious though. Having 74165 in the
+compatible would make it somewhat more obvious it is a standard logic
+part.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>> +Optional properties:
+>>> + - ngpios              : Number of GPIO lines, default is 8.
+>>
+>>
+>> If you didn't do "pisosr-gpio" but instead "foo,sn74165", maybe you
+>> don't need to have this in the device tree but instead it can be
+>> determined from the compatible string?
+>>
+>> In that case do that.
+>>
+>
+> These devices can be daisy-chained together, so three 8bit registers
+> look exactly like one 24bit register. The only way to know this is
+> from the physical wiring of the board, not from the part number.
 
----
-The patch is against the 'devel' branch of Linus W.'s 'linux-pinctrl.git' repo.
+Then you should say it must be multiple of 8 (or are there other lengths?).
 
-Changes in version 2:
-- added AVB_TX_ER pin to the AVB MII group;
-- added Cogent Embedded's copyright;
-- refreshed the patch.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |   93 +++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -2,6 +2,7 @@
-  * r8a7791 processor support - PFC hardware block.
-  *
-  * Copyright (C) 2013 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2015 Cogent Embedded, Inc.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2
-@@ -1725,6 +1726,82 @@ static const unsigned int audio_clkout_m
- 	AUDIO_CLKOUT_MARK,
- };
- 
-+/* - AVB -------------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	RCAR_GP_PIN(5, 14),
-+};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
-+};
-+static const unsigned int avb_magic_pins[] = {
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdio_pins[] = {
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int avb_mdio_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27),
-+	RCAR_GP_PIN(5, 28), RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_TX_EN_MARK, AVB_TX_ER_MARK,
-+	AVB_TX_CLK_MARK, AVB_COL_MARK,
-+};
-+static const unsigned int avb_gmii_pins[] = {
-+	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 20),
-+	RCAR_GP_PIN(5, 21), RCAR_GP_PIN(5, 22), RCAR_GP_PIN(5, 23),
-+	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 25),
-+
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 13), RCAR_GP_PIN(5, 10),
-+	RCAR_GP_PIN(5, 15), RCAR_GP_PIN(5, 30), RCAR_GP_PIN(5, 17),
-+	RCAR_GP_PIN(5, 26), RCAR_GP_PIN(5, 27), RCAR_GP_PIN(5, 28),
-+	RCAR_GP_PIN(5, 29),
-+};
-+static const unsigned int avb_gmii_mux[] = {
-+	AVB_TXD0_MARK, AVB_TXD1_MARK, AVB_TXD2_MARK,
-+	AVB_TXD3_MARK, AVB_TXD4_MARK, AVB_TXD5_MARK,
-+	AVB_TXD6_MARK, AVB_TXD7_MARK,
-+
-+	AVB_RXD0_MARK, AVB_RXD1_MARK, AVB_RXD2_MARK,
-+	AVB_RXD3_MARK, AVB_RXD4_MARK, AVB_RXD5_MARK,
-+	AVB_RXD6_MARK, AVB_RXD7_MARK,
-+
-+	AVB_RX_ER_MARK, AVB_RX_CLK_MARK, AVB_RX_DV_MARK,
-+	AVB_CRS_MARK, AVB_GTX_CLK_MARK, AVB_GTXREFCLK_MARK,
-+	AVB_TX_EN_MARK, AVB_TX_ER_MARK, AVB_TX_CLK_MARK,
-+	AVB_COL_MARK,
-+};
-+
- /* - CAN -------------------------------------------------------------------- */
- 
- static const unsigned int can0_data_pins[] = {
-@@ -4260,6 +4337,12 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(audio_clk_b_b),
- 	SH_PFC_PIN_GROUP(audio_clk_c),
- 	SH_PFC_PIN_GROUP(audio_clkout),
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdio),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_gmii),
- 	SH_PFC_PIN_GROUP(can0_data),
- 	SH_PFC_PIN_GROUP(can0_data_b),
- 	SH_PFC_PIN_GROUP(can0_data_c),
-@@ -4601,6 +4684,15 @@ static const char * const audio_clk_grou
- 	"audio_clkout",
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdio",
-+	"avb_mii",
-+	"avb_gmii",
-+};
-+
- static const char * const can0_groups[] = {
- 	"can0_data",
- 	"can0_data_b",
-@@ -5090,6 +5182,7 @@ static const char * const vin2_groups[]
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(can0),
- 	SH_PFC_FUNCTION(can1),
- 	SH_PFC_FUNCTION(du),
-
+Rob
