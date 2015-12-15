@@ -1,35 +1,50 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a7779: Add SCIF_CLK support
-Date: Tue, 15 Dec 2015 19:24:29 +0200
-Message-ID: <5734500.nIa6IDBXUp@avalon>
-References: <1449841738-17490-1-git-send-email-geert+renesas@glider.be> <1449841738-17490-2-git-send-email-geert+renesas@glider.be> <CACRpkdapAtyz18WZ9=9-=5yV5hLyQ-_Ka2OVyZosHEESUtTbgw@mail.gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2 1/2] gpio: pxa: change the interrupt management
+Date: Tue, 15 Dec 2015 18:52:06 +0100
+Message-ID: <87egenioqh.fsf@belgarion.home>
+References: <1449960921-19002-1-git-send-email-robert.jarzmik@free.fr>
+	<CACRpkdYKqWLZsEiSqoVxVikZ2RPToVHpmASoFPZmBnh0X_Qrcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdapAtyz18WZ9=9-=5yV5hLyQ-_Ka2OVyZosHEESUtTbgw@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:18161 "EHLO
+	smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933282AbbLORwK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 12:52:10 -0500
+In-Reply-To: <CACRpkdYKqWLZsEiSqoVxVikZ2RPToVHpmASoFPZmBnh0X_Qrcw@mail.gmail.com>
+	(Linus Walleij's message of "Tue, 15 Dec 2015 14:15:51 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tuesday 15 December 2015 09:36:06 Linus Walleij wrote:
-> On Fri, Dec 11, 2015 at 2:48 PM, Geert Uytterhoeven wrote:
-> > Add pins, groups, and a function for SCIF_CLK, which is the external
-> > clock source for the Baud Rate Generator for External Clock (BRG) on
-> > SCIF.
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> All looks OK to me, Acked-by.
-> 
-> BTW: Geert, what do you say as listing yourself as comaintainer for SH-PFC
-> below Laurent in MAINTAINERS? I think it's about time.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> On Sat, Dec 12, 2015 at 11:55 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>
+>> The interrupt management is changed by this patch to rely on chip data
+>> instead of chained interrupts.
+>>
+>> The main goal is to loosen the dependency on the global pxa chip
+>> structure in favor of the passed chip data. The secondary goal is to
+>> better show in /proc/interrupts the difference between interrupts for
+>> gpio0 and gpio1 (directly wired to interrupt controller), and the other
+>> gpios (wired onto a third line in the interrupt controller).
+>>
+>> The last advantage of this patch is that the interrupt is actually
+>> requested, so that another driver cannot steal this line, or overwrite
+>> the handler.
+>>
+>> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+>> ---
+>> Since v1: moved CONFIG_OF for pxa_irq_domain_ops
+>
+> I already merged v1 and I don't like to rebase my tree,
+> can you send an incremental patch fixing this, based off
+> my "devel" branch?
+Yeah, sure, I'll just do that.
+
+Cheers.
 
 -- 
-Regards,
-
-Laurent Pinchart
-
+Robert
