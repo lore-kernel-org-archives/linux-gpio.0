@@ -1,44 +1,138 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio: pch: fix non-DT build
-Date: Tue, 15 Dec 2015 14:43:22 +0100
-Message-ID: <1450187002-25804-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [RESEND RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
+Date: Tue, 15 Dec 2015 15:20:45 +0100
+Message-ID: <CACRpkdY9Nwg3B1bAJ53Y-tJJywC=ENvFR6S99+wUKzcUHTa5TQ@mail.gmail.com>
+References: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
+	<CACRpkdYN=n=Q+UpLbWjxJHP-FYi_e4cHFE_d1_fR2r7QYcqgYQ@mail.gmail.com>
+	<566C6122.6040406@kernel.org>
+	<85d1850f20c141b2952d93be72199fdf@EMAIL.axentia.se>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f51.google.com ([209.85.215.51]:35655 "EHLO
-	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932487AbbLONn1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:43:27 -0500
-Received: by mail-lf0-f51.google.com with SMTP id l133so6680161lfd.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:43:26 -0800 (PST)
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:33812 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753820AbbLOOUq (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 09:20:46 -0500
+Received: by mail-ob0-f173.google.com with SMTP id iw8so7387726obc.1
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 06:20:46 -0800 (PST)
+In-Reply-To: <85d1850f20c141b2952d93be72199fdf@EMAIL.axentia.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@lysator.liu.se>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lars-Peter Clausen <lars@metafoo.de>, "mporter@linaro.org" <mporter@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>
 
-commit 1cfadea8f395e3fb6a15ea548e3e86c8b6d64f98
-"gpio: pch: allow use from device tree"
-makes the driver not compile unless CONFIG_OF_GPIO is set.
-Fix it.
+Hi Peter,
 
-Cc: Paul Burton <paul.burton@imgtec.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-pch.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Dec 14, 2015 at 11:38 AM, Peter Rosin <peda@axentia.se> wrote:
 
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index a650a6cc1312..af0715f8524b 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -394,7 +394,9 @@ static int pch_gpio_probe(struct pci_dev *pdev,
- 	pci_set_drvdata(pdev, chip);
- 	spin_lock_init(&chip->spinlock);
- 	pch_gpio_setup(chip);
-+#ifdef CONFIG_OF_GPIO
- 	chip->gpio.of_node = pdev->dev.of_node;
-+#endif
- 	ret = gpiochip_add(&chip->gpio);
- 	if (ret) {
- 		dev_err(&pdev->dev, "PCH gpio: Failed to register GPIO\n");
--- 
-2.4.3
+I think I atleast half-understand what you're trying to do.
 
+> Userspace does the following when doing this w/o the isr patches:
+>
+> 1. select signal using the MUX
+> 2. set the DAC so high that INPUT is never reaching that level.
+>    C (and thus gpio) is now stable
+> 3. start waiting for interrupts on gpio
+> 4. adjust the DAC level to the level of interest
+> 5. abort on interrupt or timeout
+(...)
+> With the isr patches, the above transforms into:
+>
+> 1. select signal using the MUX
+> 2. set the DAC so high that INPUT is never reaching that level.
+>    C (and thus gpio) is now stable
+> 3. read the isr bit to clear it
+> 4. adjust the DAC level to the level of interest
+> 5. read the isr bit again after 50ms
+>
+> The result is available directly in the isr bit, no interrupts needed.
+
+The problem I see here as kernel developer is that there is a fuzzy
+and implicit separation of concerns between userspace and
+kernelspace.
+
+IMO reading hardware registers is the domain of the kernel, and
+then the result thereof is presented to userspace. The kernel
+handles hardware, simply.
+
+I think we need to reverse out of this solution and instead ask
+the question what the kernel should provide your userspace.
+Maybe parts of what you have in userspace needs to actually
+go into the kernel?
+
+The goal of IIO seems to be to present raw and calibrated
+(SI unit) data to userspace. So what data is it you want, and
+why can't you just get that directly from the kernel without
+tricksing around with reading registers bits in userspace?
+
+If a kernel module needs to read an interrupt bit directly from the
+GPIO controller is another thing. That is akin to how polling
+network drivers start polling registers for incoming packages
+instead of waiting for them to fire interrupts. Just that these are
+dedicated IRQ lines, not GPIOs.
+
+As struct irq_chip has irq_get_irqchip_state() I think this
+is actually possible to achieve this by implementing that
+and calling irq_get_irqchip_state().
+
+> I have realized that I could work with one-shot-interrupts. Then the
+> urgency to disable interrupts go away, as only one interrupt would
+> be served. That was not my immediate solution though, as I have been
+> using isr type registers in this way several times before.
+
+That sounds like the right solution. With ONESHOT a threaded IRQ
+will have its line masked until you return from the ISR thread. Would this
+work for your usecase?
+
+I suspect this require you to move the logic into the kernel? Into IIO?
+
+> If this is to be done in IIO, I imagine that the sanest thing would
+> be to integrate the whole DAC-loop and present a finished envelope
+> value to user space? This envelope detector would have to be pretty
+> configurable, or it will be next to useless to anybody but me.
+
+Makes sense to me, but must be ACKed by Jonathan. But it
+sounds pretty cool does it not?
+
+> I could imaging that this new IIO driver should be able to work
+> with any DAC type device, which in my case would be the mcp4531
+> dpot. Which is not a DAC, maybe that could be solved with a new
+> dac-dpot driver, applicable to cases where a dpot is wired as a
+> simple voltage divider? The new IIO driver also needs to know how
+> to get a reading from the comparator. I think the driver should
+> support having a latch between the comparator and the gpio, so it
+> need to know how to optionally "reset the comparator". That
+> would have solved the whole problem, you would never have seen
+> any of this if I had such a latch on my board. But the isr
+> register is a latch, so...
+>
+> Regardless, I think such a driver still needs support from gpio
+> and/or pinctrl. Either exposing the isr register or supporting
+> one-shot-interrupts that disarm themselves before restoring the
+> processor interrupt flag (maybe that exists?).
+
+All irqchips support one-shot interrupts as long as you request a
+threaded IRQ I think.
+
+Your GPIO driver must support IRQs though but AT91 surely does.
+Maybe you will need to implement irq_get_irqchip_state() on it
+if you insist on polling the interrupt.
+
+> Otherwise the
+> core problem remains unsolved. Also, this imaginary IIO driver
+> probably have to be totally oblivious of the MUX, or the number
+> of possibilities explode.
+
+Usually we try to follow the UNIX philisophy to do one thing
+and do it good.
+
+You haven't said much about how that MUX works, if it's another
+userspace ThingOfABob or what it is. There is no generic
+kernel framework for muxes so I see why people would want to
+drive that using userspace GPIO lines for example.
+
+If it is pinmuxing in a standard chip of some kind, pinctrl
+handles it.
+
+Yours,
+Linus Walleij
