@@ -1,31 +1,41 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 035/182] gpio: mb86s7x: use gpiochip data pointer
-Date: Tue, 15 Dec 2015 16:59:44 +0530
-Message-ID: <CAJe_ZhfoWu2_QKpc1jYJfD5NzR+W3MaJQWF616Df3SUtB1Ca3w@mail.gmail.com>
-References: <1449667058-31408-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 030/182] gpio: lpc18xx: use gpiochip data pointer
+Date: Tue, 15 Dec 2015 13:58:56 +0100
+Message-ID: <CACRpkdZ1Lg+BH6bBRhy=T-wxknP3L8q4p3DLz_hmhfux3VyUzQ@mail.gmail.com>
+References: <1449667013-31170-1-git-send-email-linus.walleij@linaro.org>
+	<CAGhQ9VweDMhwTPWrjz6zfhaJqh_McWDMrsyZawQB_LF9RvoumA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f53.google.com ([209.85.213.53]:36690 "EHLO
-	mail-vk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964929AbbLOL3p (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 06:29:45 -0500
-Received: by mail-vk0-f53.google.com with SMTP id y187so3275279vka.3
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 03:29:45 -0800 (PST)
-In-Reply-To: <1449667058-31408-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:34366 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932283AbbLOM65 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 07:58:57 -0500
+Received: by mail-ob0-f171.google.com with SMTP id iw8so5580490obc.1
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 04:58:57 -0800 (PST)
+In-Reply-To: <CAGhQ9VweDMhwTPWrjz6zfhaJqh_McWDMrsyZawQB_LF9RvoumA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Joachim Eastwood <manabian@gmail.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
-On 9 December 2015 at 18:47, Linus Walleij <linus.walleij@linaro.org> wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
+On Sun, Dec 13, 2015 at 1:49 PM, Joachim  Eastwood <manabian@gmail.com> wrote:
+> On 9 December 2015 at 14:16, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> Acked-by: Joachim Eastwood <manabian@gmail.com>
+
+Thx.
+
+>> Joachim: this driver looks very simplistic, it seems it can
+>> be totally replaced with drivers/gpio/gpio-generic.c provided
+>> that some (optional) clock handling is added to the generic GPIO
+>> driver, if you have some time, please look into that.
 >
-> Cc: Jassi Brar <jaswinder.singh@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> I don't think gpio-generic supports one big gpio namespace of 256
+> gpios which this driver uses.
 
-Acked-By: Jassi Brar <jaswinder.singh@linaro.org>
+No just 8, 16 or 32 simple registers, OK. (Maybe we could make
+it more generic but it seems like overkill.)
 
-Thanks.
+Yours,
+Linus Walleij
