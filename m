@@ -1,33 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 050/182] gpio: pch: use gpiochip data pointer
-Date: Tue, 15 Dec 2015 14:02:32 +0100
-Message-ID: <CACRpkdYoPOYTiryLxctJ8iZj2U01zCKV3PMAnLAN7NyJzXfaOw@mail.gmail.com>
-References: <1449667188-32127-1-git-send-email-linus.walleij@linaro.org>
-	<20151214130709.7d0e5e75@endymion.delvare>
+Subject: Re: [PATCH] fixup! pinctrl: pxa: pxa2xx: add pin control skeleton
+Date: Tue, 15 Dec 2015 14:08:13 +0100
+Message-ID: <CACRpkdZgHWwGXhSv4D9-oyS1wW_ZGDpyUfM47-EbU9ujNRD3Mg@mail.gmail.com>
+References: <1449956585-17118-1-git-send-email-robert.jarzmik@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36630 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932887AbbLONCd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:02:33 -0500
-Received: by mail-oi0-f51.google.com with SMTP id n133so4171034oia.3
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:02:32 -0800 (PST)
-In-Reply-To: <20151214130709.7d0e5e75@endymion.delvare>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:36859 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752496AbbLONIO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:08:14 -0500
+Received: by mail-oi0-f47.google.com with SMTP id n133so4264837oia.3
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:08:13 -0800 (PST)
+In-Reply-To: <1449956585-17118-1-git-send-email-robert.jarzmik@free.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Thierry Reding <treding@nvidia.com>, Daniel Krueger <daniel.krueger@systec-electronic.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Dec 14, 2015 at 1:07 PM, Jean Delvare <jdelvare@suse.de> wrote:
+On Sat, Dec 12, 2015 at 10:43 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-> Looks good, although I can't test it without patches 001 and 002, which
-> were not sent to me and are only archived by the download-unfriendly
-> gmane.
+> The wrong free functions were used to release temporary buffers.
+>
+> This didn't show up in the normal driver's life. Yet in suspend to RAM,
+> the managed resource list is walked, and as memory was released, the
+> list is corrupted and make the kernel Oops.
+>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+> Linus, if it's time, then this can fixup the commit. If not, I'll
+> provide a better commit message.
 
-Oopsie. I should have mentioned: you can pull the entire branch from
-here:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=set-get-data
+I just applied it on top of my branch, removing the "fixup!"
+comment. It's enough of a commit message I think.
 
 Yours,
 Linus Walleij
