@@ -1,136 +1,117 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 000/182] Rid struct gpio_chip from container_of() usage
-Date: Mon, 14 Dec 2015 23:25:44 -0800
-Message-ID: <CAKdAkRR6kEzEOtjxXqS4BPToEzKGBsLb=SzePFAiLSDhh+=qnw@mail.gmail.com>
-References: <1449666515-23343-1-git-send-email-linus.walleij@linaro.org>
-	<20151209193034.GE27131@dtor-ws>
-	<CACRpkdZDFPFOH=9FfYzLeKo5b-oXG4rPjoU4Rpq9Wv1-RvY6uQ@mail.gmail.com>
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] gpio: mcp23s08: support setting pullups from device tree data
+Date: Tue, 15 Dec 2015 09:09:04 +0100
+Message-ID: <1922527.uScxQGmYqz@ws-stein>
+References: <1449229573-25759-1-git-send-email-timo.teras@iki.fi> <5332318.fo424NgDVM@ws-stein> <20151207092259.665dbeea@vostro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:35013 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753067AbbLOHZp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 02:25:45 -0500
-In-Reply-To: <CACRpkdZDFPFOH=9FfYzLeKo5b-oXG4rPjoU4Rpq9Wv1-RvY6uQ@mail.gmail.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:51349 "EHLO
+	webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753194AbbLOIJI convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 15 Dec 2015 03:09:08 -0500
+In-Reply-To: <20151207092259.665dbeea@vostro>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Sonic Zhang <sonic.zhang@analog.com>, Greg Ungerer <gerg@uclinux.org>, Ralf Baechle <ralf@linux-mips.org>, Linux MIPS <linux-mips@linux-mips.org>, Anatolij Gustschin <agust@denx.de>, linux-wireless <linux-wireless@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Timo Teras <timo.teras@iki.fi>
+Cc: linux-gpio@vger.kernel.org
 
-On Mon, Dec 14, 2015 at 1:18 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Dec 9, 2015 at 8:30 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->> On Wed, Dec 09, 2015 at 02:08:35PM +0100, Linus Walleij wrote:
->>> This removes the use of container_of() constructions from *all*
->>> GPIO drivers in the kernel. It is done by instead adding an
->>> optional void *data pointer to the struct gpio_chip and an
->>> accessor function, gpiochip_get_data() to get it from a driver.
->>>
->>> WHY?
->>>
->>> Because we want to have a proper userspace ABI for GPIO chips,
->>> which involves using a character device that the user opens
->>> and closes. While the character device is open, the underlying
->>> kernel objects must not go away.
->>>
->>> Currently the GPIO drivers keep their state in the struct
->>> gpio_chip, and that is often allocated by the drivers, very
->>> often as a part of a containing per-instance state container
->>> struct for the driver:
->>>
->>> struct foo_state {
->>>    struct gpio_chip chip;  <- OMG my state is there
->>> };
->>>
->>> Drivers cannot allocate and manage this state: if a user has the
->>> character device open, the objects allocated must stay around
->>> even if the driver goes away. Instead drivers need to pass a
->>> descriptor to the GPIO core, and then the core should allocate
->>> and manage the lifecycle of things related to the device, such
->>> as the chardev itself or the struct device related to the GPIO
->>> device.
->>
->> Yes, but it does not mean that the object that is being maintained by
->> the subsystem and that us attached to character device needs to be
->> gpio_chip itself. You can have something like
->>
->> struct gpio_chip_chardev {
->>         struct cdev chardev;
->>         struct gpio_chip *chip;
->>         bool dead;
->> };
->
-> There needs to be a struct device too, amongst other things.
+On Monday 07 December 2015 09:22:59, Timo Teras wrote:
+> On Mon, 07 Dec 2015 07:53:08 +0100
+> Alexander Stein <alexander.stein@systec-electronic.com> wrote:
+>=20
+> > On Friday 04 December 2015 13:46:13, Timo Ter=E4s wrote:
+> > > Make pullup configurable from device tree data.
+> > >=20
+> > > Signed-off-by: Timo Ter=E4s <timo.teras@iki.fi>
+> > > ---
+> > > I'm not fully certain how the pullup data should be made
+> > > configurable via OF. gpio-twl4030.c uses similar approach as this=
+,
+> > > but gpio-samsung.c makes the pullup configuration seems to be par=
+t
+> > > of the custom data in gpio specifiers. =20
+> >=20
+> > I think this should be specified for each individual GPIO. e.g.
+> > > gpios =3D <&gpio-ctrl 0 GPIO_ACTIVE_HIGH GPIO_PULLUP>; =20
+> >=20
+> > You don't know (yet) which pins might need a internal pull-up when
+> > specifying the mcp23s08 node itself. You might override the
+> > controller node in your dts, but so you need to adjust 2 entries, o=
+ne
+> > for the user and one for the pullup, rather than have all options a=
+t
+> > one place.
+>=20
+> I think this is debatable. So consider this as opening a bit wider
+> discussion about the preferred way of exposing pullup/down configurat=
+ion
+> via OF. And hopefully documenting it. (As mentioned there's already
+> code in for either way.)
+>=20
+> Agreeably one might want to override it on PIN basis. Perhaps the GPI=
+O
+> function can be changed or similar.
 
-Could be; I was not trying to provide finished data structure but just
-illustrate possible solution.
+I think for this you need only to add an additional cell entry or just =
+add an additional mask bit like active low/high.
+This would add the pull up/down feature to each GPIO user.
 
->
->>
->> struct gpio_chip {
->>         ...
->>         struct gpio_chip_chardev *chardev;
->>         ...
->> };
->>
->> You alloctae the new structure when you register/export gpio chip in
->> gpio subsystem core and leave all the individual drivers alone.
->
-> The current idea I have is something in the middle. Drivers have to
-> change a bit. The important part is that gpiolib handles allocation of
-> anything containing states. I'm thinking along the lines of Russell's
-> proposal to use netdev_alloc()'s design pattern.
->
-> The problem is that currently gpio_chip contains a lot of
-> stateful variables (like the dynamically allocated array of GPIO descriptors
-> etc) and those are used by the gpiolib core, so they have to be moved away
-> from gpio_chip.
->
-> So what happens if I don't change the design pattern:
->
-> int ret = gpiochip_add(&my_chip);
-> ...
-> gpiochip_remove(&my_chip);
->
-> At this point we have to cross-reference the pointer to my chip to
-> find the chip to remove. This goes for anything that takes the struct
-> gpio_chip *
-> as parameter, like gpiochip_add_pin_range(), gpiochip_request_own_desc()
-> etc etc. So something inside gpiolib must take a gpio_chip * pointer and
-> turn that into the actual state container, e.g, a struct gpio_device.
-> Since struct gpio_chip needs to be static and stateless, it cannot contain
-> a pointer back to its struct gpio_device.
+> The other side is: Why would my gpio-keys input mapping specification
+> need know to what kind of GPIO input it is connected to? What if I
+> switch the GPIO expander - or the hardware schema?  I need to edit 10
+> different places rather than one - places that are about the high-lev=
+el
+> functionality, not the hardware. Normally the pullup settings are
+> hardware layout dependant, so GPIO configuration would be the logical
+> place.
 
-Why does gpio_chip have to be stateless? I am not saying that it
-should or should not, I just want to better understand what you are
-trying to achieve.
+gpio-keys need to know this when selecting active low or active high. Y=
+ou usually need the corresponding pull up/down for this to work.
 
->
-> That means basically comparing pointers across a list of gpio_device's
-> to find it. And that's ... very kludgy. But if people think it's better to avoid
-> changing all drivers I will consider it.
->
-> I think it is better if the GPIO drivers get a handle on the
-> real gpio_device * to be used when calling these gpiochip_* related
-> functions and also in the callbacks, which is a bigger refactoring
-> indeed.
->
-> Part of this is trying to be elegant and mimic other subsystems and not
-> have GPIO be too hopelessly wayward about things.
->
-> If I compare to how struct input_dev is done, you appear to also use the
-> pattern Russell suggested with input_dev_allocate() akin to
-> netdev_alloc(), and the allocated struct holds all the vtable and states etc,
-> and I think it is a good pattern, and that GPIO should conform.
+> One generally wants to configure pullups correctly for all GPIOs
+> regardless of if they are connected or not; or if the relevant
+> high-level gpio driver is loaded or not. And this should be done as
+> early as possible - even before the driver for that specific GPIO pin
+> functionality is loaded.
 
-The main difference between gpio_chip (at least as it stands
-currently) and input devices and corresponding private driver data is
-that input device and driver data has different lifetimes; input
-devices may stick around even though driver is unbound from
-corresponding device and driver's private data freed.
+This is also a valid point.
 
-Thanks.
+> Perphaps others have more arguments for the per-pin configuration?
 
--- 
-Dmitry
+I get the impression both ways would be needed... which is kinda error-=
+prone.
+
+Best regards,
+Alexander
+--=20
+-----
+Please note our closure period for Christmas vacation and turn of the y=
+ear
+We are closed from 21st December 2015 to 3rd January 2016
+-----
+Dipl.-Inf. Alexander Stein
+SYS TEC electronic GmbH
+alexander.stein@systec-electronic.com
+
+Legal and Commercial Address:
+Am Windrad 2
+08468 Heinsdorfergrund
+Germany
+
+Office: +49 (0) 3765 38600-0
+=46ax:    +49 (0) 3765 38600-4100
+=20
+Managing Directors:
+	Director Technology/CEO: Dipl.-Phys. Siegmar Schmidt;
+	Director Commercial Affairs/COO: Dipl. Ing. (FH) Armin von Collrepp
+Commercial Registry:
+	Amtsgericht Chemnitz, HRB 28082; USt.-Id Nr. DE150534010
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
