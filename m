@@ -1,68 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
-Date: Tue, 15 Dec 2015 14:24:05 +0100
-Message-ID: <CACRpkdZgQNtSopGgCSWmzfK6_T2PG_WxpNGML_DWGDA604mMxA@mail.gmail.com>
-References: <20151111194530.GA26559@dtor-ws>
-	<CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
-	<20151127173721.GC27040@dtor-ws>
-	<CACRpkda7fRZ=CB=Ec2iHmA=u9w6T7-WH2RNVvxBS5jL8he77Tg@mail.gmail.com>
-	<20151209172133.GC27131@dtor-ws>
-	<CACRpkda21=_XZyDYYTAUB4PrKVGhNxz4X-Cubn_eSNn3GY9StQ@mail.gmail.com>
-	<CAKdAkRRxL1s=8FpehMaVx482M_ST7be46n0BLzBfeP0nH-FcUg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] gpio: pch: fix non-DT build
+Date: Tue, 15 Dec 2015 14:43:22 +0100
+Message-ID: <1450187002-25804-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:35212 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933452AbbLONYG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:24:06 -0500
-Received: by mail-oi0-f51.google.com with SMTP id i186so4607271oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:24:05 -0800 (PST)
-In-Reply-To: <CAKdAkRRxL1s=8FpehMaVx482M_ST7be46n0BLzBfeP0nH-FcUg@mail.gmail.com>
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:35655 "EHLO
+	mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932487AbbLONn1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:43:27 -0500
+Received: by mail-lf0-f51.google.com with SMTP id l133so6680161lfd.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:43:26 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Burton <paul.burton@imgtec.com>
 
-On Sun, Dec 13, 2015 at 5:44 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Sun, Dec 13, 2015 at 8:37 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Wed, Dec 9, 2015 at 6:21 PM, Dmitry Torokhov
->> <dmitry.torokhov@gmail.com> wrote:
->>
->>>> > Hmm, I'd like to get this patch into my tree as well to apply Irina's
->>>> > goodix pieces on top to make sure they do not break. Would it be OK for
->>>> > me to just apply the patch and hope git will sort it out when we merge
->>>> > into next/mainline, you maybe you could prepare a 4.3-based branch with
->>>> > the patch for me to pull?
->>>>
->>>> I had to fuzz the patch so then you need to get the version I applied out
->>>> of my tree.
->>>>
->>>> But I'm not going to rebase the tree so you can pull commit
->>>> 9c3c9bc9cc980d8981f75109f3921576daf75723
->>>> from the GPIO tree if you like. Or I can make a tag there if
->>>> you prefer, just tell me.
->>>
->>> Both would mean I will end up with parts of your work-in-progress queue,
->>> which I would rather avoid. If you create a branch (lets call it A) off
->>> v4.3 and apply that one patch there and merge branch A it into your main
->>> branch (even though you already have a version of the same patch in your
->>> main branch) and I will merge that branch A into my tree then we are
->>> guaranteed not to have conflicts as git will resolve everything nicely.
->>
->> I can't do that, as this patch is not applying cleanly on v4.3.
->>
->> It applies cleanly to v4.4-rc1 though, would you like an immutable
->> branch like such based on v4.4-rc1 instead?
->
-> Yep, that would work too.
+commit 1cfadea8f395e3fb6a15ea548e3e86c8b6d64f98
+"gpio: pch: allow use from device tree"
+makes the driver not compile unless CONFIG_OF_GPIO is set.
+Fix it.
 
-OK here is a for-dmitry branch:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=for-dmitry
+Cc: Paul Burton <paul.burton@imgtec.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-pch.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Absolutely nothing happens when I merge it to my devel branch so I guess
-git will cope, but whatever, this one is safe :)
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index a650a6cc1312..af0715f8524b 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -394,7 +394,9 @@ static int pch_gpio_probe(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, chip);
+ 	spin_lock_init(&chip->spinlock);
+ 	pch_gpio_setup(chip);
++#ifdef CONFIG_OF_GPIO
+ 	chip->gpio.of_node = pdev->dev.of_node;
++#endif
+ 	ret = gpiochip_add(&chip->gpio);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "PCH gpio: Failed to register GPIO\n");
+-- 
+2.4.3
 
-Yours,
-Linus Walleij
