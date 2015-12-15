@@ -1,48 +1,68 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] gpio: pxa: add pin control gpio direction and request
-Date: Tue, 15 Dec 2015 14:17:40 +0100
-Message-ID: <CACRpkdbRxzFqgXC8tzSCR+r3_-8Ko3n7yq3c7xcCU4+ibqxqVA@mail.gmail.com>
-References: <1449960921-19002-1-git-send-email-robert.jarzmik@free.fr>
-	<1449960921-19002-2-git-send-email-robert.jarzmik@free.fr>
+Subject: Re: [PATCH v2] gpiolib: tighten up ACPI legacy gpio lookups
+Date: Tue, 15 Dec 2015 14:24:05 +0100
+Message-ID: <CACRpkdZgQNtSopGgCSWmzfK6_T2PG_WxpNGML_DWGDA604mMxA@mail.gmail.com>
+References: <20151111194530.GA26559@dtor-ws>
+	<CACRpkdbXaXzQ38sy9JJGEhx+ix3WzheAsKJqsXum2T9n00YEvA@mail.gmail.com>
+	<20151127173721.GC27040@dtor-ws>
+	<CACRpkda7fRZ=CB=Ec2iHmA=u9w6T7-WH2RNVvxBS5jL8he77Tg@mail.gmail.com>
+	<20151209172133.GC27131@dtor-ws>
+	<CACRpkda21=_XZyDYYTAUB4PrKVGhNxz4X-Cubn_eSNn3GY9StQ@mail.gmail.com>
+	<CAKdAkRRxL1s=8FpehMaVx482M_ST7be46n0BLzBfeP0nH-FcUg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36128 "EHLO
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:35212 "EHLO
 	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753405AbbLONRl (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:17:41 -0500
-Received: by mail-oi0-f51.google.com with SMTP id n133so4417153oia.3
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:17:41 -0800 (PST)
-In-Reply-To: <1449960921-19002-2-git-send-email-robert.jarzmik@free.fr>
+	with ESMTP id S933452AbbLONYG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:24:06 -0500
+Received: by mail-oi0-f51.google.com with SMTP id i186so4607271oia.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:24:05 -0800 (PST)
+In-Reply-To: <CAKdAkRRxL1s=8FpehMaVx482M_ST7be46n0BLzBfeP0nH-FcUg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Johan Hovold <johan@kernel.org>, "Tirdea, Irina" <irina.tirdea@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Dec 12, 2015 at 11:55 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-
-> If a pin control driver is available, use it to change the gpio
-> direction. If not fallback to directly manipulating the gpio direction
-> register.
+On Sun, Dec 13, 2015 at 5:44 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Sun, Dec 13, 2015 at 8:37 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Wed, Dec 9, 2015 at 6:21 PM, Dmitry Torokhov
+>> <dmitry.torokhov@gmail.com> wrote:
+>>
+>>>> > Hmm, I'd like to get this patch into my tree as well to apply Irina's
+>>>> > goodix pieces on top to make sure they do not break. Would it be OK for
+>>>> > me to just apply the patch and hope git will sort it out when we merge
+>>>> > into next/mainline, you maybe you could prepare a 4.3-based branch with
+>>>> > the patch for me to pull?
+>>>>
+>>>> I had to fuzz the patch so then you need to get the version I applied out
+>>>> of my tree.
+>>>>
+>>>> But I'm not going to rebase the tree so you can pull commit
+>>>> 9c3c9bc9cc980d8981f75109f3921576daf75723
+>>>> from the GPIO tree if you like. Or I can make a tag there if
+>>>> you prefer, just tell me.
+>>>
+>>> Both would mean I will end up with parts of your work-in-progress queue,
+>>> which I would rather avoid. If you create a branch (lets call it A) off
+>>> v4.3 and apply that one patch there and merge branch A it into your main
+>>> branch (even though you already have a version of the same patch in your
+>>> main branch) and I will merge that branch A into my tree then we are
+>>> guaranteed not to have conflicts as git will resolve everything nicely.
+>>
+>> I can't do that, as this patch is not applying cleanly on v4.3.
+>>
+>> It applies cleanly to v4.4-rc1 though, would you like an immutable
+>> branch like such based on v4.4-rc1 instead?
 >
-> The reason to use the pin control driver first is that pin control in
-> pxa2xx architecture implies changing the gpio direction, even for non
-> gpio functions. In order to do it atomically, only one driver should
-> control the gpio direction, and if a pin controller is available, it has
-> to be him.
->
-> There is a small catch : if CONFIG_PINCTRL is selected, then a pinctrl
-> driver has to be probed. If not, gpio_request() will return
-> -EPROBE_DEFER as pinctrl_request_gpio() returns it in that case.
->
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
-> Since v1: expand commit message to state the gpio possible breakage if
->           CONFIG_PINCTRL is selected and no pinctrl driver is built.
+> Yep, that would work too.
 
-Patch applied.
+OK here is a for-dmitry branch:
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=for-dmitry
 
-Now you only need to send the incremental diff for patch 1/2.
+Absolutely nothing happens when I merge it to my devel branch so I guess
+git will cope, but whatever, this one is safe :)
 
 Yours,
 Linus Walleij
