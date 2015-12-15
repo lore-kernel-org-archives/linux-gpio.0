@@ -1,42 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 031/182] gpio: lpc32xx: use gpiochip data pointer
-Date: Tue, 15 Dec 2015 14:00:32 +0100
-Message-ID: <CACRpkdbFW3VtOOsyyvRwpOhKz_hw1=EB-atrbaKeP-UOOobQ3A@mail.gmail.com>
-References: <1449667026-31219-1-git-send-email-linus.walleij@linaro.org>
-	<566C87E3.8030602@mleia.com>
+Subject: Re: [PATCH 050/182] gpio: pch: use gpiochip data pointer
+Date: Tue, 15 Dec 2015 14:02:32 +0100
+Message-ID: <CACRpkdYoPOYTiryLxctJ8iZj2U01zCKV3PMAnLAN7NyJzXfaOw@mail.gmail.com>
+References: <1449667188-32127-1-git-send-email-linus.walleij@linaro.org>
+	<20151214130709.7d0e5e75@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:35664 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932283AbbLONAd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:00:33 -0500
-Received: by mail-ob0-f175.google.com with SMTP id 18so5598236obc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:00:33 -0800 (PST)
-In-Reply-To: <566C87E3.8030602@mleia.com>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:36630 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932887AbbLONCd (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Dec 2015 08:02:33 -0500
+Received: by mail-oi0-f51.google.com with SMTP id n133so4171034oia.3
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Dec 2015 05:02:32 -0800 (PST)
+In-Reply-To: <20151214130709.7d0e5e75@endymion.delvare>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vz@mleia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Roland Stigge <stigge@antcom.de>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Thierry Reding <treding@nvidia.com>, Daniel Krueger <daniel.krueger@systec-electronic.com>
 
-On Sat, Dec 12, 2015 at 9:47 PM, Vladimir Zapolskiy <vz@mleia.com> wrote:
+On Mon, Dec 14, 2015 at 1:07 PM, Jean Delvare <jdelvare@suse.de> wrote:
 
-> Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+> Looks good, although I can't test it without patches 001 and 002, which
+> were not sent to me and are only archived by the download-unfriendly
+> gmane.
 
-Thx.
+Oopsie. I should have mentioned: you can pull the entire branch from
+here:
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=set-get-data
 
->> Roland: this looks like a driver that should move to drivers/pinctrl
->> since it is obviously controlling a lot of pins. Can you confirm?
->
-> The platform to which this driver belongs is unmaintained (and broken)
-> for more than one year.
->
-> If you remember I've recently sent a complete replacement of this
-> driver, but not this legacy driver nor mine new one control pin
-> functions, there should be another pinctrl driver.
-
-OK sorry that I don't manage to keep everything in my head at the
-moment, too much going on at the same time.
-
-Yours.
+Yours,
 Linus Walleij
