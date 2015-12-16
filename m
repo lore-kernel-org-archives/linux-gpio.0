@@ -1,106 +1,266 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Wed, 16 Dec 2015 10:29:37 -0600
-Message-ID: <CAL_JsqJbg-VsZjg6QuN5SUvDXGR1DnShmhLvp3b_bipVn1q74A@mail.gmail.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com> <1449863184-29668-2-git-send-email-afd@ti.com>
- <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
- <566EF12C.4060509@ti.com> <CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
- <566F4E9B.8090202@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <566F4E9B.8090202-l0cyMroinI0@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH resend] pinctrl: sunxi: Add A80 special pin controller
+Date: Thu, 17 Dec 2015 00:39:42 +0800
+Message-ID: <1450283982-25295-1-git-send-email-wens@csie.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36112 "EHLO
+	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932155AbbLPQkA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Dec 2015 11:40:00 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chen-Yu Tsai <wens@wens.tw>, Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
 
-On Mon, Dec 14, 2015 at 5:19 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
-> On 12/14/2015 04:36 PM, Rob Herring wrote:
->>
->> On Mon, Dec 14, 2015 at 10:41 AM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
->>>
->>> On 12/11/2015 03:48 PM, Linus Walleij wrote:
->>>>
->>>>
->>>> On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-[...]
+Like the previous designs, the A80 has a special pin controller for the
+critical pins, like the PMIC bus.
 
->>>>> + - compatible          : Should be "pisosr-gpio".
->>>>
->>>>
->>>>
->>>> I think it should also define compatible strings on the "vendor,device"
->>>> format apart from the generic compatible. Sooner or later we may need
->>>> to differentiate them and then that comes in handy.
->>>>
->>>
->>> Would it be better to wait until/if this issue arises? This driver
->>> targets the generic features, as these parts are very generic and
->>> have been produced by many companies since the 70s I'm not sure
->>> if privileging any of them makes much sense.
->>>
->>> What I'm worried about looks to have happened with the gpio-74x164
->>> driver, this is kind of the companion device to mine (74164 / 74165)
->>> and should work with any 74164 compatible shift register (possibly 100s
->>> of versions of them), but the compatible string that was added is
->>> "fairchild,74hc595", a relatively new device by a single manufacturer.
->>> The problem this has is then that boards will use this compatible string
->>> even if the parts are not actually the Fairchild version, just to get
->>> the match, when they should be using a generic string.
->>
->>
->> I agree the generic version is fine (or find who made the first part
->> ;)). What "pisosr" is is not very obvious though. Having 74165 in the
->> compatible would make it somewhat more obvious it is a standard logic
->> part.
->>
->
-> A quick search shows shift-registers being made from vacuum tubes for
-> the Colossus! Those might work with this driver if you could match the
-> voltage to an SPI bus... :)
->
-> I agree about the name not being very good, but I'm not sure about
-> 74165 ether as it is also just a single part number. The idea was to
-> have a non-part number compatible string for any shift-register you
-> can hook to the SPI line. That way when we have boards with a sn65x882
-> or something we wont have to call it a 74165. But I guess that's why
-> it's a "compatible:" string, and not "is-a:" string.
+Add a driver for this controller.
 
-If there are a couple then I think it is okay. If there are 10s then
-maybe not. Perhaps logic-pisosr or discrete-pisosr?
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+[wens: Add A80 compatible strings to bindings doc; fix pin function
+       names based on v1.3 datasheet; constify of_device_id table]
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
 
->>>>> +Optional properties:
->>>>> + - ngpios              : Number of GPIO lines, default is 8.
->>>>
->>>>
->>>>
->>>> If you didn't do "pisosr-gpio" but instead "foo,sn74165", maybe you
->>>> don't need to have this in the device tree but instead it can be
->>>> determined from the compatible string?
->>>>
->>>> In that case do that.
->>>>
->>>
->>> These devices can be daisy-chained together, so three 8bit registers
->>> look exactly like one 24bit register. The only way to know this is
->>> from the physical wiring of the board, not from the part number.
->>
->>
->> Then you should say it must be multiple of 8 (or are there other
->> lengths?).
->>
->
-> Some are 4bit, you can even just hook a single flip-flop to the SPI bus for
-> a single bit (or multiples) of input.
+Linus, can we have this one included for 4.5?
 
-One would hope you would just connect the CS signal directly to that
-input for 1-bit... I guess you could be out of GPIOs and only have a
-free output only CS signal.
+Thanks
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   2 +
+ drivers/pinctrl/sunxi/Kconfig                      |   5 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c        | 181 +++++++++++++++++++++
+ 4 files changed, 189 insertions(+)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index b321b26780dc..b3b6c2f210d7 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -18,6 +18,8 @@ Required properties:
+   "allwinner,sun8i-a23-r-pinctrl"
+   "allwinner,sun8i-a33-pinctrl"
+   "allwinner,sun8i-a83t-pinctrl"
++  "allwinner,sun9i-a80-pinctrl"
++  "allwinner,sun9i-a80-r-pinctrl"
+ 
+ - reg: Should contain the register physical address and length for the
+   pin controller.
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index e68fd951129a..0252b3fa41ce 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -55,4 +55,9 @@ config PINCTRL_SUN9I_A80
+ 	def_bool MACH_SUN9I
+ 	select PINCTRL_SUNXI_COMMON
+ 
++config PINCTRL_SUN9I_A80_R
++	def_bool MACH_SUN9I
++	depends on RESET_CONTROLLER
++	select PINCTRL_SUNXI_COMMON
++
+ endif
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index e08029034510..0b4b827f314b 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -14,3 +14,4 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
++obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
+new file mode 100644
+index 000000000000..42547ffa20a8
+--- /dev/null
++++ b/drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c
+@@ -0,0 +1,181 @@
++/*
++ * Allwinner A80 SoCs special pins pinctrl driver.
++ *
++ * Copyright (C) 2014 Maxime Ripard
++ * Maxime Ripard <maxime.ripard@free-electrons.com>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2.  This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/reset.h>
++
++#include "pinctrl-sunxi.h"
++
++static const struct sunxi_desc_pin sun9i_a80_r_pins[] = {
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_uart"),	/* TX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_uart"),	/* RX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TMS */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TCK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TDO */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* TDI */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_cir_rx"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "1wire"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_ps2"),		/* SCK1 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_ps2"),		/* SDA1 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
++
++	/* Hole */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 0)),	/* PM_EINT0 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 1)),	/* PM_EINT1 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 2),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 2)),	/* PM_EINT2 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 3),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 3)),	/* PM_EINT3 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 4),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2s1"),	/* LRCKR */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 4)),	/* PM_EINT4 */
++
++	/* Hole */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 8),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c1"),	/* SCK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 8)),	/* PM_EINT8 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 9),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c1"),	/* SDA */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 9)),	/* PM_EINT9 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 10),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* MCLK */
++		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* MCLK */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 11),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* BCLK */
++		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* BCLK */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 12),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* LRCK */
++		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* LRCK */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 13),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* DIN */
++		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* DIN */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 14),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2s0"),	/* DOUT */
++		  SUNXI_FUNCTION(0x3, "s_i2s1")),	/* DOUT */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 15),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 15)),	/* PM_EINT15 */
++
++	/* Hole */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(N, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2c0"),	/* SCK */
++		  SUNXI_FUNCTION(0x3, "s_rsb")),	/* SCK */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(N, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_i2c0"),	/* SDA */
++		  SUNXI_FUNCTION(0x3, "s_rsb")),	/* SDA */
++};
++
++static const struct sunxi_pinctrl_desc sun9i_a80_r_pinctrl_data = {
++	.pins = sun9i_a80_r_pins,
++	.npins = ARRAY_SIZE(sun9i_a80_r_pins),
++	.pin_base = PL_BASE,
++	.irq_banks = 2,
++};
++
++static int sun9i_a80_r_pinctrl_probe(struct platform_device *pdev)
++{
++	return sunxi_pinctrl_init(pdev,
++				  &sun9i_a80_r_pinctrl_data);
++}
++
++static const struct of_device_id sun9i_a80_r_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun9i-a80-r-pinctrl", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, sun9i_a80_r_pinctrl_match);
++
++static struct platform_driver sun9i_a80_r_pinctrl_driver = {
++	.probe	= sun9i_a80_r_pinctrl_probe,
++	.driver	= {
++		.name		= "sun9i-a80-r-pinctrl",
++		.owner		= THIS_MODULE,
++		.of_match_table	= sun9i_a80_r_pinctrl_match,
++	},
++};
++module_platform_driver(sun9i_a80_r_pinctrl_driver);
++
++MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com");
++MODULE_DESCRIPTION("Allwinner A80 R_PIO pinctrl driver");
++MODULE_LICENSE("GPL");
+-- 
+2.6.4
+
