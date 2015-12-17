@@ -1,107 +1,61 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 157/182] input: ad7879: use gpiochip data pointer
-Date: Wed, 16 Dec 2015 14:08:39 -0800
-Message-ID: <20151216220839.GD10962@dtor-ws>
-References: <1449668721-5832-1-git-send-email-linus.walleij@linaro.org>
- <5668300F.8070800@analog.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] MAINTAINERS: Add co-maintainer for Renesas Pin
+ Controllers
+Date: Thu, 17 Dec 2015 09:40:30 +0900
+Message-ID: <20151217004029.GB12221@verge.net.au>
+References: <1450261872-540-1-git-send-email-geert+renesas@glider.be>
+ <25446083.A6nEDZhEZH@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:36195 "EHLO
-	mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754929AbbLPWIm (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Dec 2015 17:08:42 -0500
-Received: by mail-pf0-f169.google.com with SMTP id o64so18831083pfb.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Dec 2015 14:08:42 -0800 (PST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <5668300F.8070800@analog.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <25446083.A6nEDZhEZH@avalon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Hennerich <michael.hennerich@analog.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
-On Wed, Dec 09, 2015 at 02:43:43PM +0100, Michael Hennerich wrote:
-> On 12/09/2015 02:45 PM, Linus Walleij wrote:
-> >This makes the driver use the data pointer added to the gpio_chip
-> >to store a pointer to the state container instead of relying on
-> >container_of().
-> >
-> >Cc: Michael Hennerich <michael.hennerich@analog.com>
-> >Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Dec 16, 2015 at 07:07:08PM +0200, Laurent Pinchart wrote:
+> Hi Geert,
 > 
-> Acked-by: Michael Hennerich <michael.hennerich@analog.com>
+> On Wednesday 16 December 2015 11:31:12 Geert Uytterhoeven wrote:
+> > Add myself as a co-maintainer for Renesas Pin Controllers.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> >---
-> >Dmitry: please ACK this so I can take it through the GPIO tree.
+> Thank you for helping me with sh-pfc.
+> 
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-> >---
-> >  drivers/input/touchscreen/ad7879.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >
-> >diff --git a/drivers/input/touchscreen/ad7879.c b/drivers/input/touchscreen/ad7879.c
-> >index 16b5cc2196f2..583a0590ceb2 100644
-> >--- a/drivers/input/touchscreen/ad7879.c
-> >+++ b/drivers/input/touchscreen/ad7879.c
-> >@@ -379,7 +379,7 @@ static const struct attribute_group ad7879_attr_group = {
-> >  static int ad7879_gpio_direction_input(struct gpio_chip *chip,
-> >  					unsigned gpio)
-> >  {
-> >-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
-> >+	struct ad7879 *ts = gpiochip_get_data(chip);
-> >  	int err;
-> >
-> >  	mutex_lock(&ts->mutex);
-> >@@ -393,7 +393,7 @@ static int ad7879_gpio_direction_input(struct gpio_chip *chip,
-> >  static int ad7879_gpio_direction_output(struct gpio_chip *chip,
-> >  					unsigned gpio, int level)
-> >  {
-> >-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
-> >+	struct ad7879 *ts = gpiochip_get_data(chip);
-> >  	int err;
-> >
-> >  	mutex_lock(&ts->mutex);
-> >@@ -412,7 +412,7 @@ static int ad7879_gpio_direction_output(struct gpio_chip *chip,
-> >
-> >  static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-> >  {
-> >-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
-> >+	struct ad7879 *ts = gpiochip_get_data(chip);
-> >  	u16 val;
-> >
-> >  	mutex_lock(&ts->mutex);
-> >@@ -425,7 +425,7 @@ static int ad7879_gpio_get_value(struct gpio_chip *chip, unsigned gpio)
-> >  static void ad7879_gpio_set_value(struct gpio_chip *chip,
-> >  				  unsigned gpio, int value)
-> >  {
-> >-	struct ad7879 *ts = container_of(chip, struct ad7879, gc);
-> >+	struct ad7879 *ts = gpiochip_get_data(chip);
-> >
-> >  	mutex_lock(&ts->mutex);
-> >  	if (value)
-> >@@ -456,7 +456,7 @@ static int ad7879_gpio_add(struct ad7879 *ts,
-> >  		ts->gc.owner = THIS_MODULE;
-> >  		ts->gc.parent = ts->dev;
-> >
-> >-		ret = gpiochip_add(&ts->gc);
-> >+		ret = gpiochip_add_data(&ts->gc, ts);
-> >  		if (ret)
-> >  			dev_err(ts->dev, "failed to register gpio %d\n",
-> >  				ts->gc.base);
-> >
 > 
+> > ---
+> > To be included in next sh-pfc-for-v4.5 pull request.
+> > 
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index e9caa4b288284b92..f625860effec8c16 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -8351,6 +8351,7 @@ F:	drivers/pinctrl/intel/
+> > 
+> >  PIN CONTROLLER - RENESAS
+> >  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +M:	Geert Uytterhoeven <geert+renesas@glider.be>
+> >  L:	linux-sh@vger.kernel.org
+> >  S:	Maintained
+> >  F:	drivers/pinctrl/sh-pfc/
 > 
 > -- 
-> Greetings,
-> Michael
+> Regards,
+> 
+> Laurent Pinchart
 > 
 > --
-> Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-> Sitz der Gesellschaft: Muenchen; Registergericht: Muenchen HRB 40368;
-> Geschaeftsfuehrer:Dr.Carsten Suckrow, Thomas Wessel, William A. Martin,
-> Margaret Seif
-
--- 
-Dmitry
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
