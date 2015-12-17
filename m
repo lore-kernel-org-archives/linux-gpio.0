@@ -1,52 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: generic: clamp values from bgpio_get_set()
-Date: Thu, 17 Dec 2015 15:49:12 +0100
-Message-ID: <CACRpkdYcvWvTRrWbDk+ewk7NUZJ64EmtnVzjeXg7q9hz9-nOOg@mail.gmail.com>
-References: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
-	<CAOMZO5DVNm9JK080RQ+OnhtBVyt+VYc5PmdYDUzRnJDBZ+3CEg@mail.gmail.com>
-	<5672BD6A.5020209@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:34072 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753438AbbLQOyd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2015 09:54:33 -0500
-Received: by mail-ob0-f174.google.com with SMTP id iw8so58386645obc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Dec 2015 06:54:32 -0800 (PST)
-In-Reply-To: <5672BD6A.5020209@mentor.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] gpio/sysfs: Add ID parameter for GPIO lines
+Date: Thu, 17 Dec 2015 17:48:12 +0100
+Message-ID: <1450370892-2517-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Fabio Estevam <festevam@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-On Thu, Dec 17, 2015 at 2:49 PM, Vladimir Zapolskiy
-<vladimir_zapolskiy@mentor.com> wrote:
-> On 11.12.2015 23:47, Fabio Estevam wrote:
->> Hi Linus,
->>
->> On Fri, Dec 11, 2015 at 7:36 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> The bgpio_get_set() call should return a value clamped to [0,1],
->>> the current code will return a negative value if reading
->>> bit 31, which turns the value negative as this is a signed value
->>> and thus gets interpreted as an error by the gpiolib core.
->>> Found on the gpio-mxc but applies to any MMIO driver.
->>>
->>> Fixes: b19e7f51a55f "gpio: gpio-generic: add flag to read out output value from reg_set"
->>
->> This commit appeared in 4.2, so it would be nice to add a stable tag:
->>
->> Cc: <stable@vger.kernel.org> # 4.2+
->
-> As it was discussed yesterday in another thread, the specified commit is
-> correct, and v4.2 works good.
->
-> The problem is in commit e20538b82f1f ("gpio: Propagate errors from
-> chip->get()"), which is present in v4.3.
->
-> So, Fixes: tag should be removed or corrected IMHO.
+On named GPIOs there is currently no find out their numerical id.
 
-OK fixed it, also tagged for stable # 4.3+
+Because of this, a GPIO pin named like:
+/sys/class/gpio/PROG_B
 
-Yours,
-Linus Walleij
+cannot be unexported by an application different than the one that
+exported it.
+
+This patch adds a new parameter to the GPIO line called id, that
+shows the numerical id of a given GPIO. E.g.:
+
+$ cat /sys/class/gpio/PROG_B/id
+496
+$ echo 496 > unexport
+
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-gpio |  1 +
+ Documentation/gpio/sysfs.txt         |  3 +++
+ drivers/gpio/gpiolib-sysfs.c         | 10 ++++++++++
+ 3 files changed, 14 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI/testing/sysfs-gpio
+index 55ffa2df1c10..53d78abef4f3 100644
+--- a/Documentation/ABI/testing/sysfs-gpio
++++ b/Documentation/ABI/testing/sysfs-gpio
+@@ -21,6 +21,7 @@ Description:
+ 	    /value ... always readable, writes fail for input GPIOs
+ 	    /direction ... r/w as: in, out (default low); write: high, low
+ 	    /edge ... r/w as: none, falling, rising, both
++	    /id ... r only, GPIO number
+ 	/gpiochipN ... for each gpiochip; #N is its first GPIO
+ 	    /base ... (r/o) same as N
+ 	    /label ... (r/o) descriptive, not necessarily unique
+diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
+index aeab01aa4d00..68e1b16e747b 100644
+--- a/Documentation/gpio/sysfs.txt
++++ b/Documentation/gpio/sysfs.txt
+@@ -96,6 +96,9 @@ and have the following read/write attributes:
+ 		for "rising" and "falling" edges will follow this
+ 		setting.
+ 
++	"id" ... ID used for export/unxexport the GPIO. This value may
++		be used by named GPIOs, to find out their numerical id.
++
+ GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
+ controller implementing GPIOs starting at #42) and have the following
+ read-only attributes:
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index b57ed8e55ab5..3fc5c7231aae 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -350,6 +350,15 @@ static ssize_t active_low_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(active_low);
+ 
++static ssize_t id_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct gpiod_data *data = dev_get_drvdata(dev);
++
++	return  sprintf(buf, "%d\n", desc_to_gpio(data->desc));
++}
++static DEVICE_ATTR_RO(id);
++
+ static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
+ 			       int n)
+ {
+@@ -377,6 +386,7 @@ static struct attribute *gpio_attrs[] = {
+ 	&dev_attr_edge.attr,
+ 	&dev_attr_value.attr,
+ 	&dev_attr_active_low.attr,
++	&dev_attr_id.attr,
+ 	NULL,
+ };
+ 
+-- 
+2.6.4
