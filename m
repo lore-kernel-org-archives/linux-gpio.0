@@ -1,107 +1,53 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH V2 2/8] irqdomain: Don't set type when mapping an IRQ
-Date: Thu, 17 Dec 2015 13:18:26 +0100
-Message-ID: <CACRpkdbqUWtKNhxrL24RYrMkfmRFZOuEqCiX7q_JLxpL9TxmaA@mail.gmail.com>
-References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
-	<1450349309-8107-3-git-send-email-jonathanh@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 092/182] pinctrl: bcm2835: use gpiochip data pointer
+Date: Thu, 17 Dec 2015 14:40:28 +0100
+Message-ID: <CACRpkdbo0B3Cb=O0j_Lh4GzFCg06bLjdcg3Mh69ALdFGMHtZng@mail.gmail.com>
+References: <1449667836-1932-1-git-send-email-linus.walleij@linaro.org>
+	<566A5D30.2040401@wwwdotorg.org>
+	<CACRpkdZxzin43oHNo9dcwq8br=ibFyPdsAZYi8cULZ9vQ7Ng4A@mail.gmail.com>
+	<87y4cwvrft.fsf@eliezer.anholt.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450349309-8107-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:35023 "EHLO
+	mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750936AbbLQNk3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2015 08:40:29 -0500
+Received: by mail-oi0-f47.google.com with SMTP id l9so13987011oia.2
+        for <linux-gpio@vger.kernel.org>; Thu, 17 Dec 2015 05:40:29 -0800 (PST)
+In-Reply-To: <87y4cwvrft.fsf@eliezer.anholt.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
 
-Adding linux-gpio, so quoting in full.
-
-On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-> Some IRQ chips, such as GPIO controllers or secondary level interrupt
-> controllers, may require require additional runtime power management
-> control to ensure they are accessible. For such IRQ chips, it makes sense
-> to enable the IRQ chip when interrupts are requested and disabled them
-> again once all interrupts have been freed.
+On Mon, Dec 14, 2015 at 7:03 PM, Eric Anholt <eric@anholt.net> wrote:
+> Linus Walleij <linus.walleij@linaro.org> writes:
 >
-> When mapping an IRQ, the IRQ type settings are read and then programmed.
-> The mapping of the IRQ happens before the IRQ is requested and so the
-> programming of the type settings occurs before the IRQ is requested. This
-> is a problem for IRQ chips that require additional power management
-> control because they may not be accessible yet. Therefore, when mapping
-> the IRQ, don't program the type settings, just save them and then program
-> these saved settings when the IRQ is requested (so long as if they are not
-> overridden via the call to request the IRQ).
+>> On Fri, Dec 11, 2015 at 6:20 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>> On 12/09/2015 06:30 AM, Linus Walleij wrote:
+>>>> This makes the driver use the data pointer added to the gpio_chip
+>>>> to store a pointer to the state container instead of relying on
+>>>> container_of().
+>>>
+>>> This looks like it's fine, but I wonder what is the justification for
+>>> the change? It might be good to mention that in the commit description.
+>>
+>> It is in patch 000/182:
+>> http://marc.info/?l=linux-gpio&m=144966662402660&w=2
 >
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  kernel/irq/irqdomain.c | 18 ++++++++++++++----
->  kernel/irq/manage.c    |  7 +++++++
->  2 files changed, 21 insertions(+), 4 deletions(-)
+> Thanks, that helps.
 >
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index eae31e978ab2..4322d6fd0b8f 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -570,6 +570,7 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
->  {
->         struct device_node *of_node;
->         struct irq_domain *domain;
-> +       struct irq_data *irq_data;
->         irq_hw_number_t hwirq;
->         unsigned int cur_type = IRQ_TYPE_NONE;
->         unsigned int type = IRQ_TYPE_NONE;
-> @@ -634,10 +635,19 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
->                 return 0;
->         }
->
-> -       /* Set type if specified and different than the current one */
-> -       if (type != IRQ_TYPE_NONE &&
-> -           type != irq_get_trigger_type(virq))
-> -               irq_set_irq_type(virq, type);
-> +       irq_data = irq_get_irq_data(virq);
-> +       if (!irq_data) {
-> +               if (irq_domain_is_hierarchy(domain))
-> +                       irq_domain_free_irqs(virq, 1);
-> +               else
-> +                       irq_dispose_mapping(virq);
-> +
-> +               return 0;
-> +       }
-> +
-> +       /* Store trigger type */
-> +       irqd_set_trigger_type(irq_data, type);
-> +
->         return virq;
->  }
->  EXPORT_SYMBOL_GPL(irq_create_fwspec_mapping);
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index 0eebaeef317b..2a429b061171 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -1119,6 +1119,13 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
->         new->irq = irq;
->
->         /*
-> +        * If the trigger type is not specified by the caller,
-> +        * then use the default for this interrupt.
-> +        */
-> +       if (!(new->flags & IRQF_TRIGGER_MASK))
-> +               new->flags |= irqd_get_trigger_type(&desc->irq_data);
-> +
-> +       /*
->          * Check whether the interrupt nests into another interrupt
->          * thread.
->          */
+> I don't think it makes much sense to remove a module for a device that's
+> opened,
 
-This patch looks correct to me. It will have semantic effects though
-so we need to be on the lookout for drivers that start to behave strange
-as an effect of this, i.e. if they were counting on their .set_type()
-to be called during domain setup.
+That is not what we're afraid of really. We are afraid of the actual
+device going away, like a GPIO on a USB cable that someone
+unplugs.
 
-If anyone is aware of such drivers amonst the GPIO chips, please
-point them out to me.
+> Acked-by: Eric Anholt <eric@anholt.net>
 
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Thanks.
 
 Yours,
 Linus Walleij
