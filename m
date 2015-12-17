@@ -1,88 +1,71 @@
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH] gpio/sysfs: Add ID parameter for GPIO lines
-Date: Thu, 17 Dec 2015 17:48:12 +0100
-Message-ID: <1450370892-2517-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: Re: [PATCH] gpio: revert get() to non-errorprogating behaviour
+Date: Thu, 17 Dec 2015 13:26:58 -0800
+Message-ID: <20151217212658.GZ4000@usrtlx11787.corpusers.net>
+References: <1450344071-7169-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:7653 "EHLO
+	SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932526AbbLQVhG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 17 Dec 2015 16:37:06 -0500
+Content-Disposition: inline
+In-Reply-To: <1450344071-7169-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Trimarchi <michael@amarulasolutions.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-On named GPIOs there is currently no find out their numerical id.
+On Thu 17 Dec 01:21 PST 2015, Linus Walleij wrote:
 
-Because of this, a GPIO pin named like:
-/sys/class/gpio/PROG_B
+> commit e20538b82f1ffcc06e68feb117f24f211cff7a4d
+> "gpio: Propagate errors from chip->get()"
+> started to propagate errors from the .get() functions since
+> we can get errors from the infrastructure of e.g. slowbus
+> GPIO expanders.
+> 
+> However it turns out a bunch of drivers relied on the core
+> to clamp the value, so we need to revert to the old behaviour
+> and go over all drivers and fix them to conform to the
+> expectations of the core before we go back to propagating
+> the error code.
+> 
 
-cannot be unexported by an application different than the one that
-exported it.
+Okay, lets fix the drivers and then revert this revert.
 
-This patch adds a new parameter to the GPIO line called id, that
-shows the numerical id of a given GPIO. E.g.:
+> Cc: stable@vger.kernel.org
+> Cc: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-$ cat /sys/class/gpio/PROG_B/id
-496
-$ echo 496 > unexport
+Acked-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- Documentation/ABI/testing/sysfs-gpio |  1 +
- Documentation/gpio/sysfs.txt         |  3 +++
- drivers/gpio/gpiolib-sysfs.c         | 10 ++++++++++
- 3 files changed, 14 insertions(+)
+> Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> Reported-by: Michael Trimarchi <michael@amarulasolutions.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpiolib.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 2a91f3287e3b..4e4c3083ae56 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1279,7 +1279,13 @@ static int _gpiod_get_raw_value(const struct gpio_desc *desc)
+>  	chip = desc->chip;
+>  	offset = gpio_chip_hwgpio(desc);
+>  	value = chip->get ? chip->get(chip, offset) : -EIO;
+> -	value = value < 0 ? value : !!value;
+> +	/*
+> +	 * FIXME: fix all drivers to clamp to [0,1] or return negative,
+> +	 * then change this to:
+> +	 * value = value < 0 ? value : !!value;
+> +	 * so we can properly propagate error codes.
+> +	 */
+> +	value = !!value;
+>  	trace_gpio_value(desc_to_gpio(desc), 1, value);
+>  	return value;
+>  }
 
-diff --git a/Documentation/ABI/testing/sysfs-gpio b/Documentation/ABI/testing/sysfs-gpio
-index 55ffa2df1c10..53d78abef4f3 100644
---- a/Documentation/ABI/testing/sysfs-gpio
-+++ b/Documentation/ABI/testing/sysfs-gpio
-@@ -21,6 +21,7 @@ Description:
- 	    /value ... always readable, writes fail for input GPIOs
- 	    /direction ... r/w as: in, out (default low); write: high, low
- 	    /edge ... r/w as: none, falling, rising, both
-+	    /id ... r only, GPIO number
- 	/gpiochipN ... for each gpiochip; #N is its first GPIO
- 	    /base ... (r/o) same as N
- 	    /label ... (r/o) descriptive, not necessarily unique
-diff --git a/Documentation/gpio/sysfs.txt b/Documentation/gpio/sysfs.txt
-index aeab01aa4d00..68e1b16e747b 100644
---- a/Documentation/gpio/sysfs.txt
-+++ b/Documentation/gpio/sysfs.txt
-@@ -96,6 +96,9 @@ and have the following read/write attributes:
- 		for "rising" and "falling" edges will follow this
- 		setting.
- 
-+	"id" ... ID used for export/unxexport the GPIO. This value may
-+		be used by named GPIOs, to find out their numerical id.
-+
- GPIO controllers have paths like /sys/class/gpio/gpiochip42/ (for the
- controller implementing GPIOs starting at #42) and have the following
- read-only attributes:
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index b57ed8e55ab5..3fc5c7231aae 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -350,6 +350,15 @@ static ssize_t active_low_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(active_low);
- 
-+static ssize_t id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct gpiod_data *data = dev_get_drvdata(dev);
-+
-+	return  sprintf(buf, "%d\n", desc_to_gpio(data->desc));
-+}
-+static DEVICE_ATTR_RO(id);
-+
- static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
- 			       int n)
- {
-@@ -377,6 +386,7 @@ static struct attribute *gpio_attrs[] = {
- 	&dev_attr_edge.attr,
- 	&dev_attr_value.attr,
- 	&dev_attr_active_low.attr,
-+	&dev_attr_id.attr,
- 	NULL,
- };
- 
--- 
-2.6.4
+Regards,
+Bjorn
