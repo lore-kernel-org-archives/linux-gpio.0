@@ -1,37 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: generic: clamp values from bgpio_get_set()
-Date: Thu, 17 Dec 2015 09:22:53 +0100
-Message-ID: <CACRpkdZ2=5DBFaO7iJivAFCjocUmOwMbFzohL6=n8yjKby-SKg@mail.gmail.com>
-References: <1449869778-6974-1-git-send-email-linus.walleij@linaro.org>
-	<CAOMZO5DVNm9JK080RQ+OnhtBVyt+VYc5PmdYDUzRnJDBZ+3CEg@mail.gmail.com>
-	<CACRpkdb2nv99RN1PGwQx7LxSd1_jn0A5MAB7YGTY5TWm_s7z5A@mail.gmail.com>
-	<CAOMZO5D22UWVOr3J-LgwB41w8XJcvyraeKgfvgUpCr1Uv8kL6A@mail.gmail.com>
-	<CACRpkdZoz8vM1Jiyn7y39d14ezO4F5PLGXT2S5F8CKbWjAZrAw@mail.gmail.com>
-	<20151215170013.GB18302@kroah.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Thu, 17 Dec 2015 09:28:09 +0100
+Message-ID: <CAMuHMdUVS6zRAMyES1171N94WK53mF5dd7ADYqrnaegsu2U4dQ@mail.gmail.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+	<1449863184-29668-2-git-send-email-afd@ti.com>
+	<CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
+	<566EF12C.4060509@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35140 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811AbbLQIWy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2015 03:22:54 -0500
-Received: by mail-oi0-f43.google.com with SMTP id l9so10095146oia.2
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Dec 2015 00:22:53 -0800 (PST)
-In-Reply-To: <20151215170013.GB18302@kroah.com>
+Received: from mail-ob0-f194.google.com ([209.85.214.194]:36052 "EHLO
+	mail-ob0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754718AbbLQI2K (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Dec 2015 03:28:10 -0500
+In-Reply-To: <566EF12C.4060509@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Fabio Estevam <festevam@gmail.com>, linux-stable@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Sascha Hauer <kernel@pengutronix.de>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 6:00 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+On Mon, Dec 14, 2015 at 5:41 PM, Andrew F. Davis <afd@ti.com> wrote:
+> What I'm worried about looks to have happened with the gpio-74x164
+> driver, this is kind of the companion device to mine (74164 / 74165)
+> and should work with any 74164 compatible shift register (possibly 100s
+> of versions of them), but the compatible string that was added is
+> "fairchild,74hc595", a relatively new device by a single manufacturer.
 
-> No, please don't.  I do pick up _some_ patches that have "Fixes:" tags
-> in them, if they look relevant, and I'm bored at the moment.  Otherwise,
-> if you want something in a stable release, put the needed
-> "stable@vger.kernel.org" tag in it, that way you know it will go there
-> as I know to look for that.
+In hindsight, that probably should have been "motorola,mc74hc595" instead.
+Recently I read that Motorola invented the 74hc59x for their "new" SPI bus
+as that time, as the 74164 is not 100% SPI-compatible.
 
-OK! I will be a better person from this day :D
+Given the limitations of the '164 for SPI, is the same true for '165, and
+should it be "[...]74[...]597" instead?
 
-Yours,
-Linus Walleij
+> The problem this has is then that boards will use this compatible string
+> even if the parts are not actually the Fairchild version, just to get
+> the match, when they should be using a generic string.
+
+They're all supposed to be "compatible".
+Personally, I wouldn't object to just "74595", cfr. "ns16550a".
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
