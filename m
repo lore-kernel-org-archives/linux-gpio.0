@@ -1,60 +1,94 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 000/182] Rid struct gpio_chip from container_of() usage
-Date: Fri, 18 Dec 2015 15:46:51 +0100
-Message-ID: <CACRpkdb+jJyt1DLqsMfbFJ+md1mUrFprzG1m+6W2S-9pZV+PxA@mail.gmail.com>
-References: <1449666515-23343-1-git-send-email-linus.walleij@linaro.org>
-	<20151209193034.GE27131@dtor-ws>
-	<CACRpkdZDFPFOH=9FfYzLeKo5b-oXG4rPjoU4Rpq9Wv1-RvY6uQ@mail.gmail.com>
-	<CAKdAkRR6kEzEOtjxXqS4BPToEzKGBsLb=SzePFAiLSDhh+=qnw@mail.gmail.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
+Date: Fri, 18 Dec 2015 23:06:36 +0800
+Message-ID: <1450451196.19539.9.camel@mtksdaap41>
+References: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKdAkRR6kEzEOtjxXqS4BPToEzKGBsLb=SzePFAiLSDhh+=qnw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Michael Welling <mwelling-EkmVulN54Sk@public.gmane.org>, Markus Pargmann <mpa-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Haavard Skinnemoen <hskinnemoen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sonic Zhang <sonic.zhang-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Greg Ungerer <gerg-JBU5SbJe1FlAfugRpC6u6w@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Anatolij Gustschin <agust-ynQEQJNshbs@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34349 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751968AbbLRPGl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2015 10:06:41 -0500
+In-Reply-To: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Fabio Estevam <fabio.estevam@freescale.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, open list <linux-kernel@vger.kernel.org>, Fabian Frederick <fabf@skynet.be>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Dec 15, 2015 at 8:25 AM, Dmitry Torokhov
-<dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Dec 14, 2015 at 1:18 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+On Fri, 2015-12-18 at 12:21 +0800, Daniel Kurtz wrote:
+> Move pinctrl initialization earlier in boot so that real devices can find
+> their pctldev without probe deferring.
+> 
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt6397.c | 2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mt8127.c | 2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mt8135.c | 2 +-
+>  drivers/pinctrl/mediatek/pinctrl-mt8173.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> index f9751ae..a3780d4 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
+> @@ -70,7 +70,7 @@ static int __init mtk_pinctrl_init(void)
+>  	return platform_driver_register(&mtk_pinctrl_driver);
+>  }
+>  
+> -module_init(mtk_pinctrl_init);
+> +arch_initcall(mtk_pinctrl_init);
 
->> At this point we have to cross-reference the pointer to my chip to
->> find the chip to remove. This goes for anything that takes the struct
->> gpio_chip *
->> as parameter, like gpiochip_add_pin_range(), gpiochip_request_own_desc()
->> etc etc. So something inside gpiolib must take a gpio_chip * pointer and
->> turn that into the actual state container, e.g, a struct gpio_device.
->> Since struct gpio_chip needs to be static and stateless, it cannot contain
->> a pointer back to its struct gpio_device.
->
-> Why does gpio_chip have to be stateless? I am not saying that it
-> should or should not, I just want to better understand what you are
-> trying to achieve.
 
-Because the allocation of gpio_chip is currently inside each driver
-(often as part of their own state struct) and will go away with the
-driver. I want to make that const parameter that the drivers supply
-to the core gpiolib, and the gpiolib handled all states using something
-like that struct gpio_device you suggested or a more elaborate
-solution.
+MT6397 is PMIC, which depends on pwrap on main AP to work. Since
+pmic-wrap itself is module_platform_driver, I think it make sense to
+keep this one as module_init. Maybe adding a comment to explain why it
+is different from others will help.
 
->> If I compare to how struct input_dev is done, you appear to also use the
->> pattern Russell suggested with input_dev_allocate() akin to
->> netdev_alloc(), and the allocated struct holds all the vtable and states etc,
->> and I think it is a good pattern, and that GPIO should conform.
->
-> The main difference between gpio_chip (at least as it stands
-> currently) and input devices and corresponding private driver data is
-> that input device and driver data has different lifetimes; input
-> devices may stick around even though driver is unbound from
-> corresponding device and driver's private data freed.
+Joe.C
 
-I would like to achieve something similar for GPIO devices.
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("MediaTek MT6397 Pinctrl Driver");
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8127.c b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+> index b317b0b..98e0beb 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
+> @@ -351,7 +351,7 @@ static int __init mtk_pinctrl_init(void)
+>  	return platform_driver_register(&mtk_pinctrl_driver);
+>  }
+>  
+> -module_init(mtk_pinctrl_init);
+> +arch_initcall(mtk_pinctrl_init);
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("MediaTek MT8127 Pinctrl Driver");
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8135.c b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
+> index 404f117..1c153b8 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8135.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
+> @@ -366,7 +366,7 @@ static int __init mtk_pinctrl_init(void)
+>  	return platform_driver_register(&mtk_pinctrl_driver);
+>  }
+>  
+> -module_init(mtk_pinctrl_init);
+> +arch_initcall(mtk_pinctrl_init);
+>  
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("MediaTek Pinctrl Driver");
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> index ad27184..a62514e 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
+> @@ -394,7 +394,7 @@ static int __init mtk_pinctrl_init(void)
+>  	return platform_driver_register(&mtk_pinctrl_driver);
+>  }
+>  
+> -module_init(mtk_pinctrl_init);
+> +arch_initcall(mtk_pinctrl_init);
+>  
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_DESCRIPTION("MediaTek Pinctrl Driver");
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
