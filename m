@@ -1,64 +1,24 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.5 (take two)
-Date: Fri, 18 Dec 2015 14:48:31 +0100
-Message-ID: <1450446511-7649-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-sh@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Michael@mail.microamerica.com.pe,
+	"J.Tynan <f.digeronimo"@federconsumatori.abruzzo.it
+Subject: Review & Reply
+Date: Fri, 18 Dec 2015 17:18:54 +0700
+Message-ID: <20151218101947.AE93A8E86296__36249.8620212593$1450448603$gmane$org@mail.microamerica.com.pe>
+Reply-To: michaeljtynan8@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.microamerica.com.pe ([200.37.170.69]:41180 "EHLO
+	mail.microamerica.com.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754006AbbLROVk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 18 Dec 2015 09:21:40 -0500
+Content-Description: Mail message body
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Recipients <f.digeronimo@federconsumatori.abruzzo.it>
 
-	Hi Linus,
-
-The following changes since commit f27200f9dce59ce5063bf722ef6ccedd34e4357b:
-
-  pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support (2015-12-08 14:18:45 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git sh-pfc-for-v4.5
-
-for you to fetch changes up to 1a4ca6dd3dc8551fc0288ec76d046700366d7683:
-
-  MAINTAINERS: Add co-maintainer for Renesas Pin Controllers (2015-12-17 10:41:23 +0100)
-
-Summary:
-  - r8a7779/r8a7790/r8a7794: Add support for SCIF_CLK,
-  - r8a7791: Add support for EtherAVB,
-  - r8a7795: Add support for SATA and SDHI,
-  - Add myself as co-maintainer for Renesas Pin Controllers.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      pinctrl: sh-pfc: r8a7779: Add SCIF_CLK support
-      pinctrl: sh-pfc: r8a7790: Add SCIF_CLK support
-      pinctrl: sh-pfc: r8a7794: Add SCIF_CLK support
-      MAINTAINERS: Add co-maintainer for Renesas Pin Controllers
-
-Sergei Shtylyov (1):
-      pinctrl: sh-pfc: r8a7791: add EtherAVB pin groups
-
-Takeshi Kihara (2):
-      pinctrl: sh-pfc: r8a7795: Add SDHI support
-      pinctrl: sh-pfc: r8a7795: Add SATA support
-
- MAINTAINERS                          |   1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c |  41 +++++
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c |  23 +++
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  93 +++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c |  23 +++
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 298 +++++++++++++++++++++++++++++++++++
- 6 files changed, 479 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Greetings,
+My name is Mr.Michael J. Tynan, I am a banker with Bank Of America. It is true that we have not meet each other in person, but I strongly believe in trust and friendship in every business. I have a Lebanese deceased customer's abandoned fund, which I am his personal financial adviser before his accidental death, that being the main reason why I alone working in the bank here, know much about the existence of this fund and the secrets surrounding this money. But before I disclose the full details to you, I will like to know your interest and willingness to assist me. You can call me as soon you receive my message, so that i will send to you full details about the transaction.
+My best regards,
+Mr.Michael J. Tynan
+MOBILE: +1 347 269 3740
