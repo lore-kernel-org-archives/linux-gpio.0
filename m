@@ -1,65 +1,66 @@
-From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v7 2/3] ACPI / gpio: Add irq_type when a gpio is used as
- an interrupt
-Date: Fri, 18 Dec 2015 11:13:11 +0200
-Message-ID: <20151218091311.GD1762@lahna.fi.intel.com>
-References: <1450163493-4938-1-git-send-email-christophe-h.ricard@st.com>
- <1450163493-4938-3-git-send-email-christophe-h.ricard@st.com>
+From: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 0/3] Add basic support for Allwinner A83T SOC
+Date: Fri, 18 Dec 2015 21:30:48 +0800
+Message-ID: <1450445451-311-1-git-send-email-vishnupatekar0510@gmail.com>
+Reply-To: vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1450163493-4938-3-git-send-email-christophe-h.ricard-qxv4g6HH51o@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christophe Ricard <christophe.ricard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe Ricard <christophe-h.ricard-qxv4g6HH51o@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBD64TFVR3YIBBI4V2CZQKGQEH55BJ7Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Dec 15, 2015 at 08:11:32AM +0100, Christophe Ricard wrote:
-> When a gpio is used as an interrupt in acpi, the irq_type was not
-> available for device driver.
-> 
-> Make available polarity and triggering information in acpi_find_gpio by
-> renaming acpi_gpio_info field active_low  to polarity and adding triggering
-> field (edge/level).
-> For sanity, in gpiolib.c replace info.active_low by
-> "info.polarity == GPIO_ACTIVE_LOW".
-> 
-> Set the irq_type if necessary in acpi_dev_gpio_irq_get.
-> 
-> Signed-off-by: Christophe Ricard <christophe-h.ricard-qxv4g6HH51o@public.gmane.org>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 30 ++++++++++++++++++++++++------
->  drivers/gpio/gpiolib.c      |  4 ++--
->  drivers/gpio/gpiolib.h      |  3 ++-
->  3 files changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 16a7b68..9f83fc6 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -418,9 +418,11 @@ static int acpi_find_gpio(struct acpi_resource *ares, void *data)
->  		 * GpioIo is used then the only way to set the flag is
->  		 * to use _DSD "gpios" property.
->  		 */
-> -		if (lookup->info.gpioint)
-> -			lookup->info.active_low =
-> -				agpio->polarity == ACPI_ACTIVE_LOW;
-> +		if (lookup->info.gpioint) {
-> +			lookup->info.polarity = agpio->polarity;
+This patch series adds very basic support for Allwinner A83T SOC.
+Clock, peripherals, smp support will be added later.
 
-Since you are passing ACPI_ACTIVE_LOW/HIGH/BOTH here and then later on
-compare that to GPIO_ACTIVE_LOW you should either put comment here
-explaining that we expect the two to be equal, or alternatively convert
-ACPI flags here to the corresponding Linux ones.
+Allwinner A83T is octa-core cortex-a7 based SoC.
+It's clock control unit and prcm, pinmux are different from previous sun8i
+series.
+Its processor cores are arragned in two clusters 4 cores each,
+similar to A80.
 
-> +			lookup->info.triggering = agpio->triggering;
-> +		}
-> +
->  	}
->  
->  	return 1;
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Note: A83T pincontroller patch is already applied by Linus, so not added in this
+patch.
+
+changes from v2->v3
+1. removed "Not Supported" for A83T in sunxi/README
+2. removed un-unsed nodes from dtsi.
+3. corrected GIC_SPI number for PH_EINT in dtsi.
+4. removed address at soc node which was un-necessary.
+5. corrected reg<> addresses for cpu nodes.
+6. changed cpu mask to 8 in gic and archtimer node.
+
+
+changes from v1->v2:
+1. used UART0 header with PB9, PB10 pins.
+2. removed unnecessary includes and comments from dtsi.
+3. arranged nodes in alphabatical order.
+4. arrnaged compatible in alphabatical order.
+5. changed cpu nodes to use cpu@100 -cpu@-103.
+6. changed dts filename.
+
+Vishnu Patekar (3):
+  ARM: sunxi: Introduce Allwinner for A83T support
+  ARM: dts: sun8i: Add Allwinner A83T dtsi
+  ARM: dts: sun8i: Add A83T HomletV2 Board by Allwinner
+
+ Documentation/arm/sunxi/README                     |   1 -
+ Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts  |  64 +++++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 206 +++++++++++++++++++++
+ arch/arm/mach-sunxi/sunxi.c                        |   1 +
+ drivers/clk/sunxi/clk-sunxi.c                      |   6 +
+ 7 files changed, 279 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-a83t.dtsi
+
+-- 
+1.9.1
