@@ -1,279 +1,68 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 2/3] ARM: dts: sun8i: Add Allwinner
- A83T dtsi
-Date: Sat, 19 Dec 2015 11:57:03 +0100
-Message-ID: <567537FF.9010601@redhat.com>
-References: <1450445451-311-1-git-send-email-vishnupatekar0510@gmail.com>
- <1450445451-311-3-git-send-email-vishnupatekar0510@gmail.com>
- <20151218214112.GU30359@lukather>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.4 take 2
+Date: Sat, 19 Dec 2015 12:37:26 +0100
+Message-ID: <CACRpkdY8nGf3rCzrQvEZ5OJL1sLCVOMdwbiaOSmXgvyREyEiAw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40663 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750931AbbLSK5Q (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 19 Dec 2015 05:57:16 -0500
-In-Reply-To: <20151218214112.GU30359@lukather>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:34719 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932175AbbLSLh1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 19 Dec 2015 06:37:27 -0500
+Received: by mail-ob0-f170.google.com with SMTP id iw8so95830187obc.1
+        for <linux-gpio@vger.kernel.org>; Sat, 19 Dec 2015 03:37:27 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, linus.walleij@linaro.org, jenskuske@gmail.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi,
+Hi Linus,
 
-On 18-12-15 22:41, Maxime Ripard wrote:
-> Hi,
->
-> On Fri, Dec 18, 2015 at 09:30:50PM +0800, Vishnu Patekar wrote:
->> Allwinner A83T is new octa-core cortex-a7 SOC.
->> This adds the basic dtsi, the clocks differs from
->> earlier sun8i SOCs.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> ---
->>   arch/arm/boot/dts/sun8i-a83t.dtsi | 206 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 206 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/sun8i-a83t.dtsi
->>
->> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
->> new file mode 100644
->> index 0000000..e577c64
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
->> @@ -0,0 +1,206 @@
->> +/*
->> + * Copyright 2015 Vishnu Patekar
->> + *
->> + * Vishnu Patekar <vishnupatekar0510@gmail.com>
->> + *
->> + * This file is dual-licensed: you can use it either under the terms
->> + * of the GPL or the X11 license, at your option. Note that this dual
->> + * licensing only applies to this file, and not this project as a
->> + * whole.
->> + *
->> + *  a) This file is free software; you can redistribute it and/or
->> + *     modify it under the terms of the GNU General Public License as
->> + *     published by the Free Software Foundation; either version 2 of the
->> + *     License, or (at your option) any later version.
->> + *
->> + *     This file is distributed in the hope that it will be useful,
->> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + *     GNU General Public License for more details.
->> + *
->> + * Or, alternatively,
->> + *
->> + *  b) Permission is hereby granted, free of charge, to any person
->> + *     obtaining a copy of this software and associated documentation
->> + *     files (the "Software"), to deal in the Software without
->> + *     restriction, including without limitation the rights to use,
->> + *     copy, modify, merge, publish, distribute, sublicense, and/or
->> + *     sell copies of the Software, and to permit persons to whom the
->> + *     Software is furnished to do so, subject to the following
->> + *     conditions:
->> + *
->> + *     The above copyright notice and this permission notice shall be
->> + *     included in all copies or substantial portions of the Software.
->> + *
->> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
->> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
->> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
->> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
->> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
->> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
->> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + *     OTHER DEALINGS IN THE SOFTWARE.
->> +
->> + */
->> +
->> +#include "skeleton.dtsi"
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +#include <dt-bindings/pinctrl/sun4i-a10.h>
->> +
->> +/ {
->> +	interrupt-parent = <&gic>;
->> +
->> +	chosen {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu@0 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <0>;
->> +		};
->> +
->> +		cpu@1 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <1>;
->> +		};
->> +
->> +		cpu@2 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <2>;
->> +		};
->> +
->> +		cpu@3 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <3>;
->> +		};
->
-> A \n here please
->
->> +		cpu@100 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <0x100>;
->> +		};
->> +
->> +		cpu@101 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <0x101>;
->> +		};
->
-> Ditto.
->
->> +		cpu@102 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <0x102>;
->> +		};
->> +
->> +		cpu@103 {
->> +			compatible = "arm,cortex-a7";
->> +			device_type = "cpu";
->> +			reg = <0x103>;
->> +		};
->> +	};
->> +
->> +	memory {
->> +		reg = <0x40000000 0x80000000>;
->> +	};
->
-> Is mainline u-boot usable ? If so, you can remove that node entirely.
+here is a bunch of small driver fixes and a MAINTAINERS
+entry for the pinctrl-single driver, not much to say about that,
+please pull it in!
 
-mainline u-boot works for me when cold-booting from a sdcard, so I consider
-it usable :)
+Yours,
+Linus Walleij
 
-Regards,
+The following changes since commit 527e9316f8ec44bd53d90fb9f611fa7ffff52bb9:
 
-Hans
+  Linux 4.4-rc4 (2015-12-06 15:43:12 -0800)
 
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.4-3
 
->
->> +
->> +	timer {
->> +		compatible = "arm,armv7-timer";
->> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
->> +	};
->> +
->> +	clocks {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		osc24M: osc24M_clk {
->> +			#clock-cells = <0>;
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <24000000>;
->> +			clock-output-names = "osc24M";
->> +		};
->> +
->> +		osc32k: osc32k_clk {
->> +			#clock-cells = <0>;
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <32768>;
->> +			clock-output-names = "osc32k";
->> +		};
->
-> Do you need to modify the clocks driver in your first commit then?
->
->> +	};
->> +
->> +	soc {
->> +		compatible = "simple-bus";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		gic: interrupt-controller@01c81000 {
->> +			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
->> +			reg = <0x01c81000 0x1000>,
->> +			      <0x01c82000 0x1000>,
->> +			      <0x01c84000 0x2000>,
->> +			      <0x01c86000 0x2000>;
->
-> Please order the nodes by ascending physical addresses.
->
->> +			interrupt-controller;
->> +			#interrupt-cells = <3>;
->> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
->> +		};
->> +
->> +		pio: pinctrl@01c20800 {
->> +			compatible = "allwinner,sun8i-a83t-pinctrl";
->> +			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
->> +			reg = <0x01c20800 0x400>;
->> +			clocks = <&osc24M>;
->> +			gpio-controller;
->> +			interrupt-controller;
->> +			#interrupt-cells = <3>;
->> +			#gpio-cells = <3>;
->> +
->> +			mmc0_pins_a: mmc0@0 {
->> +				allwinner,pins = "PF0", "PF1", "PF2",
->> +						 "PF3", "PF4", "PF5";
->> +				allwinner,function = "mmc0";
->> +				allwinner,drive = <SUN4I_PINCTRL_30_MA>;
->> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
->> +			};
->> +
->> +			uart0_pins_a: uart0@0 {
->> +				allwinner,pins = "PF2", "PF4";
->> +				allwinner,function = "uart0";
->> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
->> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
->> +			};
->> +
->> +			uart0_pins_b: uart0@1 {
->> +				allwinner,pins = "PB9", "PB10";
->> +				allwinner,function = "uart0";
->> +				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
->> +				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
->> +			};
->> +		};
->> +
->> +		uart0: serial@01c28000 {
->> +			compatible = "snps,dw-apb-uart";
->> +			reg = <0x01c28000 0x400>;
->> +			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
->> +			reg-shift = <2>;
->> +			reg-io-width = <4>;
->> +			clocks = <&osc24M>;
->> +			status = "disabled";
->> +		};
->> +	};
->> +};
->
-> Thanks!
-> Maxime
->
+for you to fetch changes up to 13cbd906e89a1af42c586dcc4f42b311d23b7fd1:
+
+  MAINTAINERS: pinctrl: Add maintainers for pinctrl-single (2015-12-14
+15:03:19 +0100)
+
+----------------------------------------------------------------
+Pin control fixes:
+- Driver fixes for Freescale i.MX7D, Intel, Broadcom 2835
+- One MAINTAINERS entry
+
+----------------------------------------------------------------
+Qipeng Zha (2):
+      pinctrl: intel: fix bug of register offset calculation
+      pinctrl: intel: fix offset calculation issue of register PAD_OWN
+
+Shawn Guo (1):
+      pinctrl: freescale: add ZERO_OFFSET_VALID flag for vf610 pinctrl
+
+Stefan Wahren (1):
+      pinctrl: bcm2835: Fix initial value for direction_output
+
+Tony Lindgren (1):
+      MAINTAINERS: pinctrl: Add maintainers for pinctrl-single
+
+ MAINTAINERS                                  |  8 ++++++
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c        | 13 +++++----
+ drivers/pinctrl/freescale/pinctrl-vf610.c    |  2 +-
+ drivers/pinctrl/intel/pinctrl-broxton.c      |  1 +
+ drivers/pinctrl/intel/pinctrl-intel.c        | 41 ++++++++++++++--------------
+ drivers/pinctrl/intel/pinctrl-intel.h        |  3 ++
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c |  1 +
+ 7 files changed, 41 insertions(+), 28 deletions(-)
