@@ -1,96 +1,28 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] ARM: sunxi: Introduce Allwinner for
- A83T support
-Date: Fri, 18 Dec 2015 22:05:10 -0600
-Message-ID: <20151219040252.GA4997@rob-hp-laptop>
-References: <1450445451-311-1-git-send-email-vishnupatekar0510@gmail.com>
- <1450445451-311-2-git-send-email-vishnupatekar0510@gmail.com>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] gpio: sx150x: Add support for sx1502
+Date: Fri, 18 Dec 2015 22:19:38 -0600
+Message-ID: <20151219041938.GT14936@rob-hp-laptop>
+References: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDJIP47K7MERB7FO2OZQKGQEXYR2OWY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1450445451-311-2-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Rosin <peda@lysator.liu.se>
+Cc: linux-gpio@vger.kernel.org, Peter Rosin <peda@axentia.se>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Dec 18, 2015 at 09:30:49PM +0800, Vishnu Patekar wrote:
-> Allwinner A83T is octa-core cortex-a7 based SoC.
-> It's clock control unit and prcm, pinmux are different from previous sun8i
-> series.
-> Its processor cores are arragned in two clusters 4 cores each,
-> similar to A80.
+On Tue, Dec 15, 2015 at 11:01:34PM +0100, Peter Rosin wrote:
+> From: Peter Rosin <peda@axentia.se>
 > 
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 > ---
->  Documentation/arm/sunxi/README                  | 1 -
->  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->  arch/arm/mach-sunxi/sunxi.c                     | 1 +
->  drivers/clk/sunxi/clk-sunxi.c                   | 6 ++++++
->  4 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
-> index 430d279..e5a115f 100644
-> --- a/Documentation/arm/sunxi/README
-> +++ b/Documentation/arm/sunxi/README
-> @@ -72,6 +72,5 @@ SunXi family
->  
->      * Octa ARM Cortex-A7 based SoCs
->        - Allwinner A83T
-> -        + Not Supported
->          + Datasheet
->            http://dl.linux-sunxi.org/A83T/A83T_datasheet_Revision_1.1.pdf
-> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
-> index bb9b0faa..7e79fcc 100644
-> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
-> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
-> @@ -11,5 +11,6 @@ using one of the following compatible strings:
->    allwinner,sun7i-a20
->    allwinner,sun8i-a23
->    allwinner,sun8i-a33
-> +  allwinner,sun8i-a83t
->    allwinner,sun8i-h3
->    allwinner,sun9i-a80
-> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> index c2be98f..3c15619 100644
-> --- a/arch/arm/mach-sunxi/sunxi.c
-> +++ b/arch/arm/mach-sunxi/sunxi.c
-> @@ -69,6 +69,7 @@ MACHINE_END
->  static const char * const sun8i_board_dt_compat[] = {
->  	"allwinner,sun8i-a23",
->  	"allwinner,sun8i-a33",
-> +	"allwinner,sun8i-a83t",
->  	"allwinner,sun8i-h3",
->  	NULL,
->  };
-> diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-> index 5ba2188..0d45253 100644
-> --- a/drivers/clk/sunxi/clk-sunxi.c
-> +++ b/drivers/clk/sunxi/clk-sunxi.c
-> @@ -1219,6 +1219,12 @@ CLK_OF_DECLARE(sun8i_a23_clk_init, "allwinner,sun8i-a23", sun6i_init_clocks);
->  CLK_OF_DECLARE(sun8i_a33_clk_init, "allwinner,sun8i-a33", sun6i_init_clocks);
->  CLK_OF_DECLARE(sun8i_h3_clk_init, "allwinner,sun8i-h3", sun6i_init_clocks);
->  
-> +static void __init sun8i_a83t_init_clocks(struct device_node *node)
-> +{
-> +	sunxi_init_clocks(NULL, 0);
-> +}
-> +CLK_OF_DECLARE(sun8i_a83t_clk_init, "allwinner,sun8i-a83t", sun8i_a83t_init_clocks);
-> +
->  static void __init sun9i_init_clocks(struct device_node *node)
->  {
->  	sunxi_init_clocks(NULL, 0);
-> -- 
-> 1.9.1
-> 
+>  .../devicetree/bindings/gpio/gpio-sx150x.txt       |  3 +-
+
+For the binding:
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/gpio/gpio-sx150x.c                         | 53 ++++++++++++++++++++--
+>  2 files changed, 51 insertions(+), 5 deletions(-)
