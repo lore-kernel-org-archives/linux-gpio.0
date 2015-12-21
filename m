@@ -1,13 +1,13 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
-Date: Mon, 21 Dec 2015 17:39:44 +0100
-Message-ID: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
+Subject: [PATCH 2/5] pinctrl: sirf: add missing of_node_put
+Date: Mon, 21 Dec 2015 17:39:45 +0100
+Message-ID: <1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
 References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <kernel-janitors-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: kernel-janitors-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 for_each_child_of_node performs an of_node_get on each iteration, so a
@@ -41,36 +41,29 @@ expression e,e1;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/pinctrl/pinctrl-tegra-xusb.c |    4 +++-
- drivers/pinctrl/pinctrl-tegra.c      |    1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sirf/pinctrl-sirf.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
-index 84a43e6..bd3aa5a 100644
---- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-@@ -253,8 +253,10 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
- 		err = tegra_xusb_padctl_parse_subnode(padctl, np, maps,
- 						      &reserved_maps,
- 						      num_maps);
--		if (err < 0)
-+		if (err < 0) {
-+			of_node_put(np);
- 			return err;
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-index 0fd7fd2..9da4da2 100644
---- a/drivers/pinctrl/pinctrl-tegra.c
-+++ b/drivers/pinctrl/pinctrl-tegra.c
-@@ -217,6 +217,7 @@ static int tegra_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 		if (ret < 0) {
- 			pinctrl_utils_dt_free_map(pctldev, *map,
- 				*num_maps);
+diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
+index ae97bdc..18fe46d 100644
+--- a/drivers/pinctrl/sirf/pinctrl-sirf.c
++++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
+@@ -85,12 +85,16 @@ static int sirfsoc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	/* calculate number of maps required */
+ 	for_each_child_of_node(np_config, np) {
+ 		ret = of_property_read_string(np, "sirf,function", &function);
+-		if (ret < 0)
++		if (ret < 0) {
 +			of_node_put(np);
  			return ret;
- 		}
++		}
+ 
+ 		ret = of_property_count_strings(np, "sirf,pins");
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(np);
+ 			return ret;
++		}
+ 
+ 		count += ret;
  	}
-
