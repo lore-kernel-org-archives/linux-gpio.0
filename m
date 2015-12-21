@@ -1,13 +1,13 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 4/5] pinctrl: rockchip: add missing of_node_put
-Date: Mon, 21 Dec 2015 17:39:47 +0100
-Message-ID: <1450715988-4770-5-git-send-email-Julia.Lawall@lip6.fr>
+Subject: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
+Date: Mon, 21 Dec 2015 17:39:44 +0100
+Message-ID: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
 References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <kernel-janitors-owner@vger.kernel.org>
 In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: kernel-janitors-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: kernel-janitors@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 for_each_child_of_node performs an of_node_get on each iteration, so a
@@ -41,30 +41,36 @@ expression e,e1;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/pinctrl/pinctrl-rockchip.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-tegra-xusb.c |    4 +++-
+ drivers/pinctrl/pinctrl-tegra.c      |    1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 2b88a40..d0305a2 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1258,8 +1258,10 @@ static int rockchip_pinctrl_parse_functions(struct device_node *np,
- 		func->groups[i] = child->name;
- 		grp = &info->groups[grp_index++];
- 		ret = rockchip_pinctrl_parse_groups(child, grp, info, i++);
--		if (ret)
-+		if (ret) {
-+			of_node_put(child);
- 			return ret;
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index 84a43e6..bd3aa5a 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -253,8 +253,10 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
+ 		err = tegra_xusb_padctl_parse_subnode(padctl, np, maps,
+ 						      &reserved_maps,
+ 						      num_maps);
+-		if (err < 0)
++		if (err < 0) {
++			of_node_put(np);
+ 			return err;
 +		}
  	}
  
  	return 0;
-@@ -1304,6 +1306,7 @@ static int rockchip_pinctrl_parse_dt(struct platform_device *pdev,
- 		ret = rockchip_pinctrl_parse_functions(child, info, i++);
- 		if (ret) {
- 			dev_err(&pdev->dev, "failed to parse function\n");
-+			of_node_put(child);
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 0fd7fd2..9da4da2 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -217,6 +217,7 @@ static int tegra_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		if (ret < 0) {
+ 			pinctrl_utils_dt_free_map(pctldev, *map,
+ 				*num_maps);
++			of_node_put(np);
  			return ret;
  		}
  	}
+
