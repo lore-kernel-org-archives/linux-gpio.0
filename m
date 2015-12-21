@@ -1,81 +1,54 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock
- signals
-Date: Tue, 22 Dec 2015 01:01:34 +0300
-Message-ID: <567876BE.60100@cogentembedded.com>
-References: <20151117031832.24924.60685.sendpatchset@little-apple>
- <20151117031902.24924.4588.sendpatchset@little-apple>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH] pinctrl: bcm2835: Fix memory leak in error path
+Date: Mon, 21 Dec 2015 14:41:41 -0800
+Message-ID: <87fuyvfmqi.fsf@eliezer.anholt.net>
+References: <1450658644-20858-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151117031902.24924.4588.sendpatchset@little-apple>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org
-Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gabe.freedesktop.org ([131.252.210.177]:44354 "EHLO
+	gabe.freedesktop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751401AbbLUWlp (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Dec 2015 17:41:45 -0500
+In-Reply-To: <1450658644-20858-1-git-send-email-stefan.wahren@i2se.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Stefan Wahren <stefan.wahren@i2se.com>
 
-Hello.
+--=-=-=
+Content-Type: text/plain
 
-On 11/17/2015 06:19 AM, Magnus Damm wrote:
+Stefan Wahren <stefan.wahren@i2se.com> writes:
 
-> From: Magnus Damm <damm+renesas@opensource.se>
+> In case of an invalid pin value bcm2835_pctl_dt_node_to_map()
+> would leak the pull configs of already assigned pins.
+> So avoid this by calling the free map function in error case.
 >
-> Add missing r8a7794 DU dot clock output signals and in
-> particular the DU1_DOTCLKOUT0 signal on GP4_25 which is
-> needed by DU1 on the r8a7794 ALT board.
->
-> The groups "du0_clk_out" and "du1_clk_out" are replaced by
-> "du0_dotclkout0", "du0_dotclkout1", "du1_dotclkout0" and
-> "du1_dotclkout1".
->
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> ---
->
->   drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   34 ++++++++++++++++++++++++++--------
->   1 file changed, 26 insertions(+), 8 deletions(-)
->
-> --- 0014/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-> +++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:08:28.230513000 +0900
-[...]
-> @@ -2942,8 +2956,10 @@ static const struct sh_pfc_pin_group pin
->   	SH_PFC_PIN_GROUP(du0_rgb888),
->   	SH_PFC_PIN_GROUP(du1_rgb666),
->   	SH_PFC_PIN_GROUP(du1_rgb888),
-> -	SH_PFC_PIN_GROUP(du0_clk_out),
-> -	SH_PFC_PIN_GROUP(du1_clk_out),
-> +	SH_PFC_PIN_GROUP(du0_clk0_out),
-> +	SH_PFC_PIN_GROUP(du0_clk1_out),
-> +	SH_PFC_PIN_GROUP(du1_clk0_out),
-> +	SH_PFC_PIN_GROUP(du1_clk1_out),
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Fixes: e1b2dc70cd5b ("pinctrl: add bcm2835 driver")
 
-    Hm, this kinda contradicts your chngnelog, no?
+Reviewed-by: Eric Anholt <eric@anholt.net>
 
->   	SH_PFC_PIN_GROUP(du0_sync),
->   	SH_PFC_PIN_GROUP(du1_sync),
->   	SH_PFC_PIN_GROUP(du0_cde),
-> @@ -3134,8 +3150,10 @@ static const char * const du_groups[] =
->   	"du0_rgb888",
->   	"du1_rgb666",
->   	"du1_rgb888",
-> -	"du0_clk_out",
-> -	"du1_clk_out",
-> +	"du0_dotclkout0",
-> +	"du0_dotclkout1",
-> +	"du1_dotclkout0",
-> +	"du1_dotclkout1",
->   	"du0_sync",
->   	"du1_sync",
->   	"du0_cde",
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    I'm getting the following on the SILK board with this patch:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-[drm] Initialized drm 1.1.0 20060810
-sh-pfc e6060000.pin-controller: does not have pin group du1_dotclkout0
-sh-pfc e6060000.pin-controller: invalid group du1_dotclkout0 in map table
-[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[drm] No driver support for vblank timestamp query.
-rcar-du feb00000.display: fb0:  frame buffer device
-[drm] Initialized rcar-du 1.0.0 20130110 on minor 0
-
-MBR, Sergei
+iQIcBAEBCgAGBQJWeIAmAAoJELXWKTbR/J7o5iwQAKRoq7jG2HLe2/HCJ2j6arHD
+H2xS68aIDn32C5gEtuqzT3C+6Ijm8kyXTpxoaxF+yQsMUkgw2tIKfLQe7cSVtewH
+GxoIbY7bE4t8jsoULyMEflIW1+Y7BFMGGxZyGpiTfcz/xEAzhPcqffaWTjMoL9/v
+Wc2luieBiPDqkzwj6CFZ5YNySwI/haXoGafBaAwDFoUA50x+yQf/KP3OPLyGAzC3
+FvIhoM9CafEPAxDdXfdNtTUFFO9XD8PG7YvIYgZZV7kvEZinfx1kPGnIo8KtATfX
+8CCdCFvqL0mdybY/UyhOUQOV0TaFhn2GpJgnbFo2r7/yd+NSCEGL7P1EBG9r8/dC
+I9WXUnC45qbPyMyRJErvXJkDM+7xQFuw40pOr+pfT77iBmgw3GBIxBjz8GevRie0
+ooJaaXM38B5GMcROeew7l+joXwjOywDDTKUcFu2h7f+xOF8SLAmlYqkmqwu9C7B0
+FdMlQwNqon0Qvg1CfZXIUfGESIY+ukk6GgNaae1L9PlNxpAEXjpZTangac4dFkd/
+tzmQCkbuRTvdriLK7wW6joJp1bZKDgxDu9nJP02RXG9il1RhJPXEfJGuCH2cQtIJ
+dw8seTborgFLZzhHK1cg+QvZictZGr/l3YkjvBa5+a7q3oXmOjv2UrryUvuKLwGp
+sAZKKw3oRWvXMyjuj+z3
+=Gy29
+-----END PGP SIGNATURE-----
+--=-=-=--
