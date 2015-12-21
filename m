@@ -1,67 +1,81 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH 4/5] pinctrl: rockchip: add missing of_node_put
-Date: Mon, 21 Dec 2015 22:20:02 +0100
-Message-ID: <2055001.xH02id89et@diego>
-References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
- <1450715988-4770-5-git-send-email-Julia.Lawall@lip6.fr>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 03/04] pinctrl: sh-pfc: r8a7794: Add missing dot clock
+ signals
+Date: Tue, 22 Dec 2015 01:01:34 +0300
+Message-ID: <567876BE.60100@cogentembedded.com>
+References: <20151117031832.24924.60685.sendpatchset@little-apple>
+ <20151117031902.24924.4588.sendpatchset@little-apple>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1450715988-4770-5-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151117031902.24924.4588.sendpatchset@little-apple>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org
+Cc: linus.walleij@linaro.org, linux-kernel@vger.kernel.org, koji.matsuoka.xm@renesas.com, linux-gpio@vger.kernel.org, horms@verge.net.au, geert@glider.be, laurent.pinchart@ideasonboard.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Julia,
+Hello.
 
-Am Montag, 21. Dezember 2015, 17:39:47 schrieb Julia Lawall:
-> for_each_child_of_node performs an of_node_get on each iteration, so a
-> return from the loop requires an of_node_put.
-> 
-> A simplified version of the semantic patch that fixes this problem is as
-> follows (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @@
-> local idexpression n;
-> expression e,e1;
-> @@
-> 
->  for_each_child_of_node(e1,n) {
->    ...
-> (
->    of_node_put(n);
-> 
->    e = n
-> 
->    return n;
-> 
-> +  of_node_put(n);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+On 11/17/2015 06:19 AM, Magnus Damm wrote:
 
-thanks for catching this :-)
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Add missing r8a7794 DU dot clock output signals and in
+> particular the DU1_DOTCLKOUT0 signal on GP4_25 which is
+> needed by DU1 on the r8a7794 ALT board.
+>
+> The groups "du0_clk_out" and "du1_clk_out" are replaced by
+> "du0_dotclkout0", "du0_dotclkout1", "du1_dotclkout0" and
+> "du1_dotclkout1".
+>
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> ---
+>
+>   drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   34 ++++++++++++++++++++++++++--------
+>   1 file changed, 26 insertions(+), 8 deletions(-)
+>
+> --- 0014/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+> +++ work/drivers/pinctrl/sh-pfc/pfc-r8a7794.c	2015-11-16 22:08:28.230513000 +0900
+[...]
+> @@ -2942,8 +2956,10 @@ static const struct sh_pfc_pin_group pin
+>   	SH_PFC_PIN_GROUP(du0_rgb888),
+>   	SH_PFC_PIN_GROUP(du1_rgb666),
+>   	SH_PFC_PIN_GROUP(du1_rgb888),
+> -	SH_PFC_PIN_GROUP(du0_clk_out),
+> -	SH_PFC_PIN_GROUP(du1_clk_out),
+> +	SH_PFC_PIN_GROUP(du0_clk0_out),
+> +	SH_PFC_PIN_GROUP(du0_clk1_out),
+> +	SH_PFC_PIN_GROUP(du1_clk0_out),
+> +	SH_PFC_PIN_GROUP(du1_clk1_out),
 
-I still remember how we talked about that same issue in the phy driver and the 
-things for_each_child_of_node does when running, so
+    Hm, this kinda contradicts your chngnelog, no?
 
-Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+>   	SH_PFC_PIN_GROUP(du0_sync),
+>   	SH_PFC_PIN_GROUP(du1_sync),
+>   	SH_PFC_PIN_GROUP(du0_cde),
+> @@ -3134,8 +3150,10 @@ static const char * const du_groups[] =
+>   	"du0_rgb888",
+>   	"du1_rgb666",
+>   	"du1_rgb888",
+> -	"du0_clk_out",
+> -	"du1_clk_out",
+> +	"du0_dotclkout0",
+> +	"du0_dotclkout1",
+> +	"du1_dotclkout0",
+> +	"du1_dotclkout1",
+>   	"du0_sync",
+>   	"du1_sync",
+>   	"du0_cde",
 
+    I'm getting the following on the SILK board with this patch:
 
-Thanks
-Heiko
+[drm] Initialized drm 1.1.0 20060810
+sh-pfc e6060000.pin-controller: does not have pin group du1_dotclkout0
+sh-pfc e6060000.pin-controller: invalid group du1_dotclkout0 in map table
+[drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[drm] No driver support for vblank timestamp query.
+rcar-du feb00000.display: fb0:  frame buffer device
+[drm] Initialized rcar-du 1.0.0 20130110 on minor 0
+
+MBR, Sergei
