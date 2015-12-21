@@ -1,63 +1,58 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
-Date: Mon, 21 Dec 2015 20:45:38 +0800
-Message-ID: <CAGS+omBX2hXXaLfnHQboMXEcQnzO8TV33DRqWq80DPaNHEW=Ag@mail.gmail.com>
-References: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
- <1450451196.19539.9.camel@mtksdaap41> <CAGS+omCDxj_wMDiAiywSv4hAtq6E9vm+CxgG8gs1TmrrS499mQ@mail.gmail.com>
- <1450701598.6795.11.camel@mtksdaap41>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 5/5] pinctrl: mediatek: add missing of_node_put
+Date: Mon, 21 Dec 2015 17:39:48 +0100
+Message-ID: <1450715988-4770-6-git-send-email-Julia.Lawall@lip6.fr>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1450701598.6795.11.camel@mtksdaap41>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Cc: Fabio Estevam <fabio.estevam@freescale.com>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Linus Walleij <linus.walleij@linaro.org>, Patrice Chotard <patrice.chotard@st.com>, open list <linux-kernel@vger.kernel.org>, Fabian Frederick <fabf@skynet.be>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Dec 21, 2015 at 8:39 PM, Yingjoe Chen <yingjoe.chen@mediatek.com> wrote:
->
-> On Mon, 2015-12-21 at 14:51 +0800, Daniel Kurtz wrote:
-> > On Fri, Dec 18, 2015 at 11:06 PM, Yingjoe Chen
-> > <yingjoe.chen@mediatek.com> wrote:
-> > > On Fri, 2015-12-18 at 12:21 +0800, Daniel Kurtz wrote:
-> > >> Move pinctrl initialization earlier in boot so that real devices can find
-> > >> their pctldev without probe deferring.
-> > >>
-> > >> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> > >> ---
-> > >>  drivers/pinctrl/mediatek/pinctrl-mt6397.c | 2 +-
-> > >>  drivers/pinctrl/mediatek/pinctrl-mt8127.c | 2 +-
-> > >>  drivers/pinctrl/mediatek/pinctrl-mt8135.c | 2 +-
-> > >>  drivers/pinctrl/mediatek/pinctrl-mt8173.c | 2 +-
-> > >>  4 files changed, 4 insertions(+), 4 deletions(-)
-> > >>
-> > >> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-> > >> index f9751ae..a3780d4 100644
-> > >> --- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-> > >> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-> > >> @@ -70,7 +70,7 @@ static int __init mtk_pinctrl_init(void)
-> > >>       return platform_driver_register(&mtk_pinctrl_driver);
-> > >>  }
-> > >>
-> > >> -module_init(mtk_pinctrl_init);
-> > >> +arch_initcall(mtk_pinctrl_init);
-> > >
-> > >
-> > > MT6397 is PMIC, which depends on pwrap on main AP to work. Since
-> > > pmic-wrap itself is module_platform_driver, I think it make sense to
-> > > keep this one as module_init. Maybe adding a comment to explain why it
-> > > is different from others will help.
-> >
-> > I interpret this the other way - I think that since the PMIC wrapper
-> > provides a bus required for the system PMIC it should also be a
-> > builtin and use arch_initcall.
->
-> We'll have to change mt8173 PMIC wrapper and mt6397 MFD core to
-> arch_initcall if we want to do it.
->
-> I think regulators on PMIC is more important than pinctrl. For all
-> mt8173 systems, few drivers depends on PMIC pinctrl to work but many
-> depends on the regulators. So if we adjust pinctrl to arch_initcall, we
-> should change mt6397 regulator as well.
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-ACK to changing all of mt6397 to arch_initcall, especially the regulators.
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
+
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+@@
+
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 45f3562..ee2287b 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -598,6 +598,7 @@ static int mtk_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 				&reserved_maps, num_maps);
+ 		if (ret < 0) {
+ 			pinctrl_utils_dt_free_map(pctldev, *map, *num_maps);
++			of_node_put(np);
+ 			return ret;
+ 		}
+ 	}
