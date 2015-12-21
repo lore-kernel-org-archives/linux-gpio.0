@@ -1,62 +1,34 @@
 From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/5] add missing of_node_put
-Date: Mon, 21 Dec 2015 17:39:43 +0100
-Message-ID: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH 3/5] pinctrl: sh-pfc: add missing of_node_put
+Date: Mon, 21 Dec 2015 17:39:46 +0100
+Message-ID: <1450715988-4770-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:51458 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751844AbbLUQwW (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 21 Dec 2015 11:52:22 -0500
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: kernel-janitors@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The various for_each device_node iterators performs an of_node_get on each
-iteration, so a break out of the loop requires an of_node_put.
+for_each_child_of_node performs an of_node_get on each iteration, so a
+goto out of the loop requires an of_node_put.
 
-The complete semantic patch that fixes this problem is
-(http://coccinelle.lip6.fr):
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
 // <smpl>
-@r@
+@@
 local idexpression n;
-expression e1,e2;
-iterator name for_each_node_by_name, for_each_node_by_type,
-for_each_compatible_node, for_each_matching_node,
-for_each_matching_node_and_match, for_each_child_of_node,
-for_each_available_child_of_node, for_each_node_with_property;
-iterator i;
-statement S;
-expression list [n1] es;
+expression e,e1;
+identifier l;
 @@
 
-(
-(
-for_each_node_by_name(n,e1) S
-|
-for_each_node_by_type(n,e1) S
-|
-for_each_compatible_node(n,e1,e2) S
-|
-for_each_matching_node(n,e1) S
-|
-for_each_matching_node_and_match(n,e1,e2) S
-|
-for_each_child_of_node(e1,n) S
-|
-for_each_available_child_of_node(e1,n) S
-|
-for_each_node_with_property(n,e1) S
-)
-&
-i(es,n,...) S
-)
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
+ for_each_child_of_node(e1,n) {
    ...
 (
    of_node_put(n);
@@ -66,61 +38,33 @@ expression list [r.n1] es;
    return n;
 |
 +  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
-?  break;
-)
-   ...
- }
-... when != n
-
-@@
-local idexpression r.n;
-iterator r.i;
-expression e;
-identifier l;
-expression list [r.n1] es;
-@@
-
- i(es,n,...) {
-   ...
-(
-   of_node_put(n);
-|
-   e = n
-|
-+  of_node_put(n);
 ?  goto l;
 )
    ...
  }
-...
-l: ... when != n// </smpl>
+l: ... when != n
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+ drivers/pinctrl/sh-pfc/pinctrl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c |    1 +
- drivers/pinctrl/pinctrl-rockchip.c            |    5 ++++-
- drivers/pinctrl/pinctrl-tegra-xusb.c          |    4 +++-
- drivers/pinctrl/pinctrl-tegra.c               |    1 +
- drivers/pinctrl/sh-pfc/pinctrl.c              |    4 +++-
- drivers/pinctrl/sirf/pinctrl-sirf.c           |    8 ++++++--
- 6 files changed, 18 insertions(+), 5 deletions(-)
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+index 863c3e3..87b0a59 100644
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -273,8 +273,10 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	for_each_child_of_node(np, child) {
+ 		ret = sh_pfc_dt_subnode_to_map(pctldev, child, map, num_maps,
+ 					       &index);
+-		if (ret < 0)
++		if (ret < 0) {
++			of_node_put(child);
+ 			goto done;
++		}
+ 	}
+ 
+ 	/* If no mapping has been found in child nodes try the config node. */
+
