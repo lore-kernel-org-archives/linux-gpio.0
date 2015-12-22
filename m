@@ -1,59 +1,30 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Tue, 22 Dec 2015 10:51:50 +0100
-Message-ID: <CACRpkdYapF8br=c3utUmMbmPxyHwxZuT5pC8N-pySPY7dtEwng@mail.gmail.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com>
-	<1449863184-29668-2-git-send-email-afd@ti.com>
-	<CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
-	<566EF12C.4060509@ti.com>
-	<CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
-	<566F4E9B.8090202@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: sx150x: Add support for sx1502
+Date: Tue, 22 Dec 2015 11:08:35 +0100
+Message-ID: <CACRpkdYvaDbPVeO4yDAyibGNRNZbv8B7rhO=CfFfu5JnQYUiRA@mail.gmail.com>
+References: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <566F4E9B.8090202-l0cyMroinI0@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:35705 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932606AbbLVKIf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 05:08:35 -0500
+Received: by mail-oi0-f43.google.com with SMTP id l9so77162920oia.2
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 02:08:35 -0800 (PST)
+In-Reply-To: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Rosin <peda@lysator.liu.se>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Rosin <peda@axentia.se>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 12:19 AM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
-> [Rob]
->> I agree the generic version is fine (or find who made the first part
->> ;)). What "pisosr" is is not very obvious though. Having 74165 in the
->> compatible would make it somewhat more obvious it is a standard logic
->> part.
->>
+On Tue, Dec 15, 2015 at 11:01 PM, Peter Rosin <peda@lysator.liu.se> wrote:
+
+> From: Peter Rosin <peda@axentia.se>
 >
-> A quick search shows shift-registers being made from vacuum tubes for
-> the Colossus! Those might work with this driver if you could match the
-> voltage to an SPI bus... :)
->
-> I agree about the name not being very good, but I'm not sure about
-> 74165 ether as it is also just a single part number.
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-We can add many compatible strings so it's not an issue.
-"ti,74165" works for me as TI invented the 74xx series.
-
-> The idea was to
-> have a non-part number compatible string for any shift-register you
-> can hook to the SPI line.
-
-Again, one does not exclude the other. I'm happy with a generic
-compatible *and* "ti,74165".
-
-> That way when we have boards with a sn65x882
-> or something we wont have to call it a 74165. But I guess that's why
-> it's a "compatible:" string, and not "is-a:" string.
-
-Compatible ranges from the specific to the more generic
-so compatible = "ti,74165", "pisosr"; is just fine. Something
-will match if there is a suitable driver. The OS may choose to
-provide something part-specific or something more generic.
+Patch applied with Rob's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
