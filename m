@@ -1,39 +1,90 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 100/182] pinctrl: as3722: use gpiochip data pointer
-Date: Tue, 22 Dec 2015 11:27:07 +0530
-Message-ID: <5678E633.4060103@nvidia.com>
-References: <1449667897-2450-1-git-send-email-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RESEND RFC PATCH 0/2] Expose the PIO_ISR register on SAMA5D3
+Date: Tue, 22 Dec 2015 09:44:29 +0100
+Message-ID: <CACRpkdbVnpdPUaMZRr-Lh27MZjM-CUwzgsy1QfzDR7tbHFPZWw@mail.gmail.com>
+References: <1449544808-3163-1-git-send-email-peda@lysator.liu.se>
+	<CACRpkdYN=n=Q+UpLbWjxJHP-FYi_e4cHFE_d1_fR2r7QYcqgYQ@mail.gmail.com>
+	<566C6122.6040406@kernel.org>
+	<85d1850f20c141b2952d93be72199fdf@EMAIL.axentia.se>
+	<CACRpkdY9Nwg3B1bAJ53Y-tJJywC=ENvFR6S99+wUKzcUHTa5TQ@mail.gmail.com>
+	<a5deeb3722254bd08d7a7e071fd42e7f@EMAIL.axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3873 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751356AbbLVGGz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 01:06:55 -0500
-In-Reply-To: <1449667897-2450-1-git-send-email-linus.walleij@linaro.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:34710 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751766AbbLVIoa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 03:44:30 -0500
+Received: by mail-oi0-f48.google.com with SMTP id o124so104680198oia.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 00:44:30 -0800 (PST)
+In-Reply-To: <a5deeb3722254bd08d7a7e071fd42e7f@EMAIL.axentia.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: Jonathan Cameron <jic23@kernel.org>, Peter Rosin <peda@lysator.liu.se>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lars-Peter Clausen <lars@metafoo.de>, Matt Porter <mporter@konsulko.com>, Marc Zyngier <marc.zyngier@arm.com>
 
+On Fri, Dec 18, 2015 at 12:19 AM, Peter Rosin <peda@axentia.se> wrote:
 
-On Wednesday 09 December 2015 07:01 PM, Linus Walleij wrote:
-> This makes the driver use the data pointer added to the gpio_chip
-> to store a pointer to the state container instead of relying on
-> container_of().
+> This all makes sense. The reason is that I'm not familiar with
+> the kernel APIs. I have to wrap my head around how to set up
+> work to be performed later, etc etc.
+
+FWIW a random work to be performed later is a delayed work.
+It can be queued on a global workqueue or you can create your
+own workqueue. This is the latter way, it's even simpler if you
+just use NULL as workqueue, it will then end up on the big
+system workqueue. The workqueue in turn uses deferrable timers,
+and these can also be used directly.
+
+#include <linux/workqueue.h>
+
+struct foo {
+   struct workqueue_struct *foo_wq;
+   struct delayed_work delayed_foo_work;
+   ....
+};
+
+static void foo_work_cb(struct work_struct *work)
+{
+        struct foo *foo = container_of(work, struct foo, delayed_foo_work.work);
+
+        ... do the work ...
+};
+
+main {
+   INIT_DEFERRABLE_WORK(&foo->delayed_foo_work, foo_work_cb);
+   queue_delayed_work(foo->foo_wq, &foo->delayed_foo_work, 6*HZ);
+}
+
+6*HZ means wait for 6 seconds as the delay is given in ticks (jiffies)
+and the system does HZ ticks per second.
+
+>> > I have realized that I could work with one-shot-interrupts. Then the
+>> > urgency to disable interrupts go away, as only one interrupt would
+>> > be served. That was not my immediate solution though, as I have been
+>> > using isr type registers in this way several times before.
+>>
+>> That sounds like the right solution. With ONESHOT a threaded IRQ
+>> will have its line masked until you return from the ISR thread. Would this
+>> work for your usecase?
 >
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: Mallikarjun Kasoju <mkasoju@nvidia.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+> The ISR thread would need to be able to disable further interrupts
+> before it returned, is that possible without deadlock? If so, it's
+> a good fit.
 
+Yes that is what the ONESHOT flag means. So like this:
 
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+ret = request_threaded_irq(irqnum, NULL, foo_irq_handler,
+                                   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+                                   "foo", foo);
+
+To register a threaded oneshot IRQ that will run on a falling edge,
+as a thread, until completed, masking its own interrupt line, but
+no others.
+
+The threaded handler can msleep(), mdelay()/udelay() etc since it
+is a thread. usleep_range(a, b) is the best as the system can idle
+while that happens, and can plan for a good wakeup point.
+
+Yours,
+Linus Walleij
