@@ -1,27 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
-Date: Tue, 22 Dec 2015 11:23:26 +0100
-Message-ID: <CACRpkdbuL5Kjeqb-zJg9DmoxKzy7vphYgBTG-Ffh2i=UVH97ug@mail.gmail.com>
-References: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
+Subject: Re: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
+Date: Tue, 22 Dec 2015 13:44:24 +0100
+Message-ID: <CACRpkda33Jb7m1TWSy3MRjDEWPU9SU0L+ARN3O2Bjs8yato15g@mail.gmail.com>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Patrice Chotard <patrice.chotard@st.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:36690 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753185AbbLVMoZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 07:44:25 -0500
+Received: by mail-ob0-f179.google.com with SMTP id ba1so51934820obb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 04:44:25 -0800 (PST)
+In-Reply-To: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 18, 2015 at 5:21 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-> Move pinctrl initialization earlier in boot so that real devices can find
-> their pctldev without probe deferring.
+> for_each_child_of_node performs an of_node_get on each iteration, so a
+> return from the loop requires an of_node_put.
 >
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> A simplified version of the semantic patch that fixes this problem is as
+> follows (http://coccinelle.lip6.fr):
 
-I interpret the discussion as I should wait for a new version of this?
-
-Or should it be applied?
+Patch applied.
 
 Yours,
 Linus Walleij
