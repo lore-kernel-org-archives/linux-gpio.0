@@ -1,30 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: sx150x: Add support for sx1502
-Date: Tue, 22 Dec 2015 11:08:35 +0100
-Message-ID: <CACRpkdYvaDbPVeO4yDAyibGNRNZbv8B7rhO=CfFfu5JnQYUiRA@mail.gmail.com>
-References: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
+Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
+Date: Tue, 22 Dec 2015 11:23:26 +0100
+Message-ID: <CACRpkdbuL5Kjeqb-zJg9DmoxKzy7vphYgBTG-Ffh2i=UVH97ug@mail.gmail.com>
+References: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:35705 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932606AbbLVKIf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 05:08:35 -0500
-Received: by mail-oi0-f43.google.com with SMTP id l9so77162920oia.2
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 02:08:35 -0800 (PST)
-In-Reply-To: <1450216894-19390-1-git-send-email-peda@lysator.liu.se>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1450412497-25872-1-git-send-email-djkurtz@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Fabio Estevam <fabio.estevam@freescale.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, Patrice Chotard <patrice.chotard@st.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@lysator.liu.se>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Rosin <peda@axentia.se>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Wei Chen <Wei.Chen@csr.com>, Barry Song <Baohua.Song@csr.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 15, 2015 at 11:01 PM, Peter Rosin <peda@lysator.liu.se> wrote:
+On Fri, Dec 18, 2015 at 5:21 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-> From: Peter Rosin <peda@axentia.se>
+> Move pinctrl initialization earlier in boot so that real devices can find
+> their pctldev without probe deferring.
 >
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 
-Patch applied with Rob's ACK.
+I interpret the discussion as I should wait for a new version of this?
+
+Or should it be applied?
 
 Yours,
 Linus Walleij
