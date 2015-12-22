@@ -1,39 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: revert get() to non-errorprogating behaviour
-Date: Tue, 22 Dec 2015 10:07:47 +0100
-Message-ID: <CACRpkdakEtRAa8irCv=n1q9MAKLKyBvMmf6OXgeX3MySiwH7iQ@mail.gmail.com>
-References: <1450344071-7169-1-git-send-email-linus.walleij@linaro.org>
-	<20151217212658.GZ4000@usrtlx11787.corpusers.net>
+Subject: Re: [PATCH] gpio: pxa: fixes non devicetree builds
+Date: Tue, 22 Dec 2015 10:10:31 +0100
+Message-ID: <CACRpkdYiiD2iFsWQq5qrmiD+wTD=wp+Bhagz1RGGwQJGB6KLDQ@mail.gmail.com>
+References: <1450471240-10264-1-git-send-email-robert.jarzmik@free.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20151217212658.GZ4000@usrtlx11787.corpusers.net>
-Sender: stable-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Trimarchi <michael@amarulasolutions.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:35776 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932254AbbLVJKc (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 04:10:32 -0500
+Received: by mail-ob0-f180.google.com with SMTP id 18so140859219obc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 01:10:32 -0800 (PST)
+In-Reply-To: <1450471240-10264-1-git-send-email-robert.jarzmik@free.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 17, 2015 at 10:26 PM, Bjorn Andersson
-<bjorn.andersson@sonymobile.com> wrote:
-> On Thu 17 Dec 01:21 PST 2015, Linus Walleij wrote:
->
->> commit e20538b82f1ffcc06e68feb117f24f211cff7a4d
->> "gpio: Propagate errors from chip->get()"
->> started to propagate errors from the .get() functions since
->> we can get errors from the infrastructure of e.g. slowbus
->> GPIO expanders.
->>
->> However it turns out a bunch of drivers relied on the core
->> to clamp the value, so we need to revert to the old behaviour
->> and go over all drivers and fix them to conform to the
->> expectations of the core before we go back to propagating
->> the error code.
->>
->
-> Okay, lets fix the drivers and then revert this revert.
+On Fri, Dec 18, 2015 at 9:40 PM, Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-Yups, I'll send out a serious patch series later today
-fixing all affected drivers and then reverting the revert.
+> The commit "gpio: pxa: change the interrupt management" should have
+> taken care of moving an ifdef to not englobe irqdomain related
+> structures anymore, as they are used now for all builds.
+>
+> This repairs the broken builds where CONFIG_OF=n.
+>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+
+Patch applied, thanks!
 
 Yours,
 Linus Walleij
