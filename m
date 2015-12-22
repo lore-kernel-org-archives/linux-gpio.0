@@ -1,33 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: bcm2835: Fix memory leak in error path
-Date: Tue, 22 Dec 2015 13:51:17 +0100
-Message-ID: <CACRpkdYNEgUuF6VAa6pTs6tijYstzVghzOLQVhfCmxL_=pVqVQ@mail.gmail.com>
-References: <1450658644-20858-1-git-send-email-stefan.wahren@i2se.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 3/5] pinctrl: sh-pfc: add missing of_node_put
+Date: Tue, 22 Dec 2015 14:23:00 +0100
+Message-ID: <CAMuHMdVRFgKNbJMGoE-aLTbQFgpn6m2HqqE7mOyPZ4L6A3QXGg@mail.gmail.com>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+	<1450715988-4770-4-git-send-email-Julia.Lawall@lip6.fr>
+	<CACRpkdbmG8h31EFJMHFC2nx3vp4_G2ZR-wvOmioF5eh5YmVn7w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:36860 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751732AbbLVMvS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 07:51:18 -0500
-Received: by mail-ob0-f178.google.com with SMTP id ba1so52037325obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 04:51:17 -0800 (PST)
-In-Reply-To: <1450658644-20858-1-git-send-email-stefan.wahren@i2se.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbmG8h31EFJMHFC2nx3vp4_G2ZR-wvOmioF5eh5YmVn7w@mail.gmail.com>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julia Lawall <Julia.Lawall@lip6.fr>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Dec 21, 2015 at 1:44 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+Hi Linus,
 
-> In case of an invalid pin value bcm2835_pctl_dt_node_to_map()
-> would leak the pull configs of already assigned pins.
-> So avoid this by calling the free map function in error case.
+On Tue, Dec 22, 2015 at 1:47 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>> for_each_child_of_node performs an of_node_get on each iteration, so a
+>> goto out of the loop requires an of_node_put.
+>>
+>> A simplified version of the semantic patch that fixes this problem is as
+>> follows (http://coccinelle.lip6.fr):
 >
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> Fixes: e1b2dc70cd5b ("pinctrl: add bcm2835 driver")
+> Patch applied with Laurent's ACK.
+>
+> Geert: since I don't think you're gonna send me more pull
+> requests before the merge window I went ahead and applied
+> this directly, OK?
 
-Patch applied with Eric's Review tag.
+You're reading my mind ;-)
 
-Yours,
-Linus Walleij
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
