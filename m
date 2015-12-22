@@ -1,23 +1,17 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
-Date: Tue, 22 Dec 2015 13:44:24 +0100
-Message-ID: <CACRpkda33Jb7m1TWSy3MRjDEWPU9SU0L+ARN3O2Bjs8yato15g@mail.gmail.com>
+Subject: Re: [PATCH 2/5] pinctrl: sirf: add missing of_node_put
+Date: Tue, 22 Dec 2015 13:45:19 +0100
+Message-ID: <CACRpkdag9qaAiAqdGmFm9UMxzJ+S9DBs0Br2MdeE=x8_EYx2PA@mail.gmail.com>
 References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
-	<1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
+	<1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:36690 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753185AbbLVMoZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 07:44:25 -0500
-Received: by mail-ob0-f179.google.com with SMTP id ba1so51934820obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 04:44:25 -0800 (PST)
-In-Reply-To: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <1450715988-4770-3-git-send-email-Julia.Lawall@lip6.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
 To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: kernel-janitors@vger.kernel.org, Barry Song <baohua@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
 On Mon, Dec 21, 2015 at 5:39 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
