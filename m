@@ -1,53 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: at91-pio4: use %pr format string for resource
-Date: Tue, 22 Dec 2015 09:50:58 +0100
-Message-ID: <CACRpkdZwBjFDpHPPRWxoQ=NgQ68ABAxEsB1RCi3nsY1p33UUJg@mail.gmail.com>
-References: <5199877.GVYeflqET9@wuerfel>
-	<CACRpkdZ4F8Loyoh6niCvkM=S8KcekTs8EvXRmB-0WxcRFw_8+g@mail.gmail.com>
-	<2376227.VpCVZMP4nr@wuerfel>
+Subject: Re: [PATCH] gpio: revert get() to non-errorprogating behaviour
+Date: Tue, 22 Dec 2015 10:07:47 +0100
+Message-ID: <CACRpkdakEtRAa8irCv=n1q9MAKLKyBvMmf6OXgeX3MySiwH7iQ@mail.gmail.com>
+References: <1450344071-7169-1-git-send-email-linus.walleij@linaro.org>
+	<20151217212658.GZ4000@usrtlx11787.corpusers.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:35859 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180AbbLVIu7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Dec 2015 03:50:59 -0500
-Received: by mail-ob0-f174.google.com with SMTP id ba1so48531222obb.3
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Dec 2015 00:50:59 -0800 (PST)
-In-Reply-To: <2376227.VpCVZMP4nr@wuerfel>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20151217212658.GZ4000@usrtlx11787.corpusers.net>
+Sender: stable-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Michael Trimarchi <michael@amarulasolutions.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 18, 2015 at 4:29 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Monday 30 November 2015 09:47:03 Linus Walleij wrote:
->> On Wed, Nov 18, 2015 at 4:21 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>
->> > resource_size_t may be defined as 32 or 64 bit depending on configuration,
->> > so it cannot be printed using the normal format strings, as gcc correctly
->> > warns:
->> >
->> > pinctrl-at91-pio4.c: In function 'atmel_pinctrl_probe':
->> > pinctrl-at91-pio4.c:1003:41: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
->> >    dev_dbg(dev, "bank %i: hwirq=%u\n", i, res->start);
->> >
->> > This changes the format string to use the special "%pr" format
->> > string that prints a resource, and changes the arguments so we
->> > the resource structure directly.
->> >
->> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> > ---
->> > v2: don't break ordering of arguments, that part was correct already, unlike
->> > what I said in v1.
->>
->> Patch applied with Ludovic's review tag.
+On Thu, Dec 17, 2015 at 10:26 PM, Bjorn Andersson
+<bjorn.andersson@sonymobile.com> wrote:
+> On Thu 17 Dec 01:21 PST 2015, Linus Walleij wrote:
 >
-> I don't see this in linux-next, did the commit get lost accidentally?
+>> commit e20538b82f1ffcc06e68feb117f24f211cff7a4d
+>> "gpio: Propagate errors from chip->get()"
+>> started to propagate errors from the .get() functions since
+>> we can get errors from the infrastructure of e.g. slowbus
+>> GPIO expanders.
+>>
+>> However it turns out a bunch of drivers relied on the core
+>> to clamp the value, so we need to revert to the old behaviour
+>> and go over all drivers and fix them to conform to the
+>> expectations of the core before we go back to propagating
+>> the error code.
+>>
+>
+> Okay, lets fix the drivers and then revert this revert.
 
-No, it's just that I screwed up the next branch so many times and
-Stephen has not been able to pull it into linux-next.
+Yups, I'll send out a serious patch series later today
+fixing all affected drivers and then reverting the revert.
 
-Hope it works now...
-
+Yours,
 Linus Walleij
