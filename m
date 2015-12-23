@@ -1,85 +1,64 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [PATCH] pinctrl: nsp-gpio: fix type of iterator
-Date: Wed, 23 Dec 2015 14:35:57 -0800
-Message-ID: <567B21CD.9090900@broadcom.com>
-References: <1450867041-729-1-git-send-email-a.hajda@samsung.com>
- <1450867041-729-2-git-send-email-a.hajda@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: Add driver for TI TPIC2810
+Date: Thu, 24 Dec 2015 00:29:58 +0100
+Message-ID: <CACRpkdak90H+eZXH=9tZYzQ5DCZsYRXqF7i+tdAqQ8_Y0fcjug@mail.gmail.com>
+References: <1450210252-12121-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:46025 "EHLO
-	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934383AbbLWWgA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Dec 2015 17:36:00 -0500
-In-Reply-To: <1450867041-729-2-git-send-email-a.hajda@samsung.com>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:32787 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752481AbbLWX37 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Dec 2015 18:29:59 -0500
+Received: by mail-ob0-f170.google.com with SMTP id bx1so57716491obb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Dec 2015 15:29:59 -0800 (PST)
+In-Reply-To: <1450210252-12121-1-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:BROADCOM IPROC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, open list <linux-kernel@vger.kernel.org>, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-+ Reddy
+On Tue, Dec 15, 2015 at 9:10 PM, Andrew F. Davis <afd@ti.com> wrote:
 
-On 12/23/2015 2:37 AM, Andrzej Hajda wrote:
-> Iterator i declared as unsigned is always non-negative so the
-> loop will never end.
+> Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
 >
-> The problem has been detected using proposed semantic patch
-> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+> The TPIC2810 has 8 open-drain outputs that can but used to drive
+> LEDs and other low-side switched resistive loads.
 >
-> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->   drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> index 34648f6..ad5b04c 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-> @@ -439,7 +439,8 @@ static int nsp_gpio_set_strength(struct nsp_gpio *chip, unsigned gpio,
->   static int nsp_gpio_get_strength(struct nsp_gpio *chip, unsigned gpio,
->   				 u16 *strength)
->   {
-> -	unsigned int i, offset, shift;
-> +	unsigned int offset, shift;
-> +	int i;
->   	u32 val;
->   	unsigned long flags;
->
->
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-The fix is a valid fix. And at the same time it exposes other potential 
-issues in the driver. I just found the loop used in _set_strength and 
-_get_strength is inconsistent:
+This patch will have to be rebased to apply and compile after the release
+of kernel v4.5-rc1, as we have too much lined up right now, I see no
+big problems
+with it but here are some more minor comments.
 
-In _set_strength:
+ +static inline struct tpic2810 *to_tpic2810(struct gpio_chip *chip)
+> +{
+> +       return container_of(chip, struct tpic2810, chip);
+> +}
 
-427         for (i = GPIO_DRV_STRENGTH_BITS; i > 0; i--) {
+We are getting rid of this design pattern, check the gpiochip_get_data()
+function that will be introduced in v4.5-rc1 and patches I merge to all
+other drivers.
 
-For i to start at GPIO_DRV_STRENGTH_BITS, it seems to be wrong.
+> +static const struct i2c_device_id tpic2810_id_table[] = {
+> +       { "tpic2810", },
+> +       { /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, tpic2810_id_table);
+> +
+> +static struct i2c_driver tpic2810_driver = {
+> +       .driver = {
+> +               .name = "tpic2810",
+> +       },
+> +       .probe = tpic2810_probe,
+> +       .remove = tpic2810_remove,
+> +       .id_table = tpic2810_id_table,
+> +};
+> +module_i2c_driver(tpic2810_driver);
 
-428                 val = readl(chip->io_ctrl + offset);
-429                 val &= ~BIT(shift);
-430                 val |= ((strength >> (i-1)) & 0x1) << shift;
-431                 writel(val, chip->io_ctrl + offset);
-432                 offset += 4;
-433         }
+No device tree probing? Which platform uses this?
+I was expecting an .of_match_table()  in .driver.
 
-In _get_strength:
-
-451         for (i = (GPIO_DRV_STRENGTH_BITS - 1); i >= 0; i--) {
-452                 val = readl(chip->io_ctrl + offset) & BIT(shift);
-453                 val >>= shift;
-454                 *strength += (val << i);
-455                 offset += 4;
-456         }
-
-Reddy, could you please review and comment?
-
-Thanks,
-
-Ray
-
-
+Yours,
+Linus Walleij
