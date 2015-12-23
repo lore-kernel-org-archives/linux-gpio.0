@@ -1,66 +1,58 @@
-From: Aaron Sierra <asierra@xes-inc.com>
-Subject: Re: [PATCH 04/54] gpio: ich: Be sure to clamp return value
-Date: Wed, 23 Dec 2015 10:59:44 -0600 (CST)
-Message-ID: <158154057.29505.1450889984570.JavaMail.zimbra@xes-inc.com>
-References: <1450793493-21995-1-git-send-email-linus.walleij@linaro.org>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: [PATCH] gpiolib: Fix uninitialized variable warning
+Date: Wed, 23 Dec 2015 14:46:17 -0700
+Message-ID: <1450907177-31529-1-git-send-email-ross.zwisler@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xes-mad.com ([216.165.139.218]:55521 "EHLO xes-mad.com"
+Received: from mga09.intel.com ([134.134.136.24]:60664 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752237AbbLWRAs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 23 Dec 2015 12:00:48 -0500
-In-Reply-To: <1450793493-21995-1-git-send-email-linus.walleij@linaro.org>
+	id S932483AbbLWVqc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 23 Dec 2015 16:46:32 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
------ Original Message -----
-> From: "Linus Walleij" <linus.walleij@linaro.org>
-> Sent: Tuesday, December 22, 2015 8:11:33 AM
-> 
-> As we want gpio_chip .get() calls to be able to return negative
-> error codes and propagate to drivers, we need to go over all
-> drivers and make sure their return values are clamped to [0,1].
-> We do this by using the ret = !!(val) design pattern.
-> 
-> Cc: Aaron Sierra <asierra@xes-inc.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-ich.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
-> index 8623d12e23c1..68e525a3cea3 100644
-> --- a/drivers/gpio/gpio-ich.c
-> +++ b/drivers/gpio/gpio-ich.c
-> @@ -236,9 +236,9 @@ static int ich6_gpio_get(struct gpio_chip *chip, unsigned
-> nr)
->  
->  		spin_unlock_irqrestore(&ichx_priv.lock, flags);
->  
-> -		return (data >> 16) & (1 << nr) ? 1 : 0;
-> +		return !!((data >> 16) & (1 << nr));
+Commit ef7c7553039b ("gpiolib: improve overlap check of range of gpio")
+introduced the following compiler warning:
 
-Linus,
-Is this particular change done to simplify verification via Coccinelle? Otherwise,
-this value is already clamped to 0/1.
+drivers/gpio/gpiolib.c: In function =E2=80=98gpiochip_add=E2=80=99:
+drivers/gpio/gpiolib.c:193:20: warning: =E2=80=98iterator=E2=80=99 may =
+be used uninitialized in this function [-Wmaybe-uninitialized]
+  struct gpio_chip *iterator;
+                    ^
 
->  	} else {
-> -		return ichx_gpio_get(chip, nr);
-> +		return !!ichx_gpio_get(chip, nr);
+=46ix this by initializing 'iterator' to NULL.
 
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
 
-The current definition of ichx_gpio_get() is just a wrapper for
-ichx_read_bit(), which clamps the return value to 0 and 1.
+This was found in next-20151223.
 
-Suppose there were an opportunity to catch an error with these GPIOs. In that
-case, ichx_gpio_get() would be the best candidate to return an error code. I
-think this particular change should be dropped.
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  	}
->  }
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d72ac1f..abdcd6c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -190,7 +190,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
+ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ {
+ 	struct list_head *pos;
+-	struct gpio_chip *iterator;
++	struct gpio_chip *iterator =3D NULL;
+ 	struct gpio_chip *previous =3D NULL;
+=20
+ 	if (list_empty(&gpio_chips)) {
+--=20
+2.6.3
 
--Aaron S.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
