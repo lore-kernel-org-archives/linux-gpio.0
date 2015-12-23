@@ -1,43 +1,30 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] pinctrl: nsp-gpio: fix type of iterator
-Date: Wed, 23 Dec 2015 11:37:19 +0100
-Message-ID: <1450867041-729-2-git-send-email-a.hajda@samsung.com>
-References: <1450867041-729-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1450867041-729-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:BROADCOM IPROC ARM
-	ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:BROADCOM IPROC ARM
-	ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, open list <linux-kernel@vger.kernel.org>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH 12/54] gpio: msic: Be sure to clamp return value
+Date: Wed, 23 Dec 2015 13:47:53 +0200
+Message-ID: <567A89E9.8080308@linux.intel.com>
+References: <1450793970-22801-1-git-send-email-linus.walleij@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:31990 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934321AbbLWLm0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 23 Dec 2015 06:42:26 -0500
+In-Reply-To: <1450793970-22801-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-Iterator i declared as unsigned is always non-negative so the
-loop will never end.
+On 22.12.2015 16:19, Linus Walleij wrote:
+> As we want gpio_chip .get() calls to be able to return negative
+> error codes and propagate to drivers, we need to go over all
+> drivers and make sure their return values are clamped to [0,1].
+> We do this by using the ret = !!(val) design pattern.
+>
+> Cc: Mathias Nyman <mathias.nyman@linux.intel.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
-The problem has been detected using proposed semantic patch
-scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-index 34648f6..ad5b04c 100644
---- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-+++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
-@@ -439,7 +439,8 @@ static int nsp_gpio_set_strength(struct nsp_gpio *chip, unsigned gpio,
- static int nsp_gpio_get_strength(struct nsp_gpio *chip, unsigned gpio,
- 				 u16 *strength)
- {
--	unsigned int i, offset, shift;
-+	unsigned int offset, shift;
-+	int i;
- 	u32 val;
- 	unsigned long flags;
- 
--- 
-1.9.1
