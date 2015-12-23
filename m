@@ -1,60 +1,66 @@
-From: Greg Ungerer <gerg@uclinux.org>
-Subject: Re: [PATCH 35/54] m68k: coldfire/gpio: Be sure to clamp return value
-Date: Wed, 23 Dec 2015 21:51:45 +1000
-Message-ID: <567A8AD1.3070705@uclinux.org>
-References: <1450795145-27292-1-git-send-email-linus.walleij@linaro.org>
+From: Aaron Sierra <asierra@xes-inc.com>
+Subject: Re: [PATCH 04/54] gpio: ich: Be sure to clamp return value
+Date: Wed, 23 Dec 2015 10:59:44 -0600 (CST)
+Message-ID: <158154057.29505.1450889984570.JavaMail.zimbra@xes-inc.com>
+References: <1450793493-21995-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:18514
-	"EHLO icp-osb-irony-out8.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752871AbbLWLwH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 23 Dec 2015 06:52:07 -0500
-In-Reply-To: <1450795145-27292-1-git-send-email-linus.walleij@linaro.org>
+Received: from xes-mad.com ([216.165.139.218]:55521 "EHLO xes-mad.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752237AbbLWRAs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 23 Dec 2015 12:00:48 -0500
+In-Reply-To: <1450793493-21995-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Linus,
-
-On 23/12/15 00:39, Linus Walleij wrote:
+----- Original Message -----
+> From: "Linus Walleij" <linus.walleij@linaro.org>
+> Sent: Tuesday, December 22, 2015 8:11:33 AM
+> 
 > As we want gpio_chip .get() calls to be able to return negative
 > error codes and propagate to drivers, we need to go over all
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret = !!(val) design pattern.
->
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Greg Ungerer <gerg@uclinux.org>
+> 
+> Cc: Aaron Sierra <asierra@xes-inc.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> M68K folks: as mentioned in 00/54: either apply this directly
-> or ACK it and I will take it into the GPIO tree.
+>  drivers/gpio/gpio-ich.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+> index 8623d12e23c1..68e525a3cea3 100644
+> --- a/drivers/gpio/gpio-ich.c
+> +++ b/drivers/gpio/gpio-ich.c
+> @@ -236,9 +236,9 @@ static int ich6_gpio_get(struct gpio_chip *chip, unsigned
+> nr)
+>  
+>  		spin_unlock_irqrestore(&ichx_priv.lock, flags);
+>  
+> -		return (data >> 16) & (1 << nr) ? 1 : 0;
+> +		return !!((data >> 16) & (1 << nr));
 
-I will take via the m68knommu git tree.
-I am pushing it up to the for-next branch now.
+Linus,
+Is this particular change done to simplify verification via Coccinelle? Otherwise,
+this value is already clamped to 0/1.
 
-Thanks
-Greg
+>  	} else {
+> -		return ichx_gpio_get(chip, nr);
+> +		return !!ichx_gpio_get(chip, nr);
 
 
+The current definition of ichx_gpio_get() is just a wrapper for
+ichx_read_bit(), which clamps the return value to 0 and 1.
 
-> ---
->   arch/m68k/coldfire/gpio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
-> index e7e428681ec5..37a83e27c7a6 100644
-> --- a/arch/m68k/coldfire/gpio.c
-> +++ b/arch/m68k/coldfire/gpio.c
-> @@ -121,7 +121,7 @@ static int mcfgpio_direction_input(struct gpio_chip *chip, unsigned offset)
->
->   static int mcfgpio_get_value(struct gpio_chip *chip, unsigned offset)
->   {
-> -	return __mcfgpio_get_value(offset);
-> +	return !!__mcfgpio_get_value(offset);
->   }
->
->   static int mcfgpio_direction_output(struct gpio_chip *chip, unsigned offset,
->
+Suppose there were an opportunity to catch an error with these GPIOs. In that
+case, ichx_gpio_get() would be the best candidate to return an error code. I
+think this particular change should be dropped.
+
+>  	}
+>  }
+
+-Aaron S.
