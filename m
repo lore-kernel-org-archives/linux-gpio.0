@@ -1,58 +1,126 @@
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: [PATCH] gpiolib: Fix uninitialized variable warning
-Date: Wed, 23 Dec 2015 14:46:17 -0700
-Message-ID: <1450907177-31529-1-git-send-email-ross.zwisler@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Christophe Ricard <christophe.ricard@gmail.com>
+Subject: [PATCH v8 1/3] acpi: Rename acpi_gsi_get_irq_type to acpi_dev_get_irq_type and export symbol
+Date: Wed, 23 Dec 2015 23:25:33 +0100
+Message-ID: <1450909535-32138-2-git-send-email-christophe-h.ricard@st.com>
+References: <1450909535-32138-1-git-send-email-christophe-h.ricard@st.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:60664 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932483AbbLWVqc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 23 Dec 2015 16:46:32 -0500
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:38501 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757141AbbLWWZn (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Dec 2015 17:25:43 -0500
+In-Reply-To: <1450909535-32138-1-git-send-email-christophe-h.ricard@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, broonie@kernel.org
+Cc: linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
 
-Commit ef7c7553039b ("gpiolib: improve overlap check of range of gpio")
-introduced the following compiler warning:
+acpi_gsi_get_irq_type could be use out of gsi purpose.
 
-drivers/gpio/gpiolib.c: In function =E2=80=98gpiochip_add=E2=80=99:
-drivers/gpio/gpiolib.c:193:20: warning: =E2=80=98iterator=E2=80=99 may =
-be used uninitialized in this function [-Wmaybe-uninitialized]
-  struct gpio_chip *iterator;
-                    ^
+Rename and make it available as a resource function.
 
-=46ix this by initializing 'iterator' to NULL.
-
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
 ---
+ drivers/acpi/gsi.c      | 21 +--------------------
+ drivers/acpi/resource.c | 26 ++++++++++++++++++++++++++
+ include/linux/acpi.h    |  1 +
+ 3 files changed, 28 insertions(+), 20 deletions(-)
 
-This was found in next-20151223.
-
----
- drivers/gpio/gpiolib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d72ac1f..abdcd6c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -190,7 +190,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
- static int gpiochip_add_to_list(struct gpio_chip *chip)
+diff --git a/drivers/acpi/gsi.c b/drivers/acpi/gsi.c
+index fa4585a..ee9e0f2 100644
+--- a/drivers/acpi/gsi.c
++++ b/drivers/acpi/gsi.c
+@@ -17,25 +17,6 @@ enum acpi_irq_model_id acpi_irq_model;
+ 
+ static struct fwnode_handle *acpi_gsi_domain_id;
+ 
+-static unsigned int acpi_gsi_get_irq_type(int trigger, int polarity)
+-{
+-	switch (polarity) {
+-	case ACPI_ACTIVE_LOW:
+-		return trigger == ACPI_EDGE_SENSITIVE ?
+-		       IRQ_TYPE_EDGE_FALLING :
+-		       IRQ_TYPE_LEVEL_LOW;
+-	case ACPI_ACTIVE_HIGH:
+-		return trigger == ACPI_EDGE_SENSITIVE ?
+-		       IRQ_TYPE_EDGE_RISING :
+-		       IRQ_TYPE_LEVEL_HIGH;
+-	case ACPI_ACTIVE_BOTH:
+-		if (trigger == ACPI_EDGE_SENSITIVE)
+-			return IRQ_TYPE_EDGE_BOTH;
+-	default:
+-		return IRQ_TYPE_NONE;
+-	}
+-}
+-
+ /**
+  * acpi_gsi_to_irq() - Retrieve the linux irq number for a given GSI
+  * @gsi: GSI IRQ number to map
+@@ -82,7 +63,7 @@ int acpi_register_gsi(struct device *dev, u32 gsi, int trigger,
+ 
+ 	fwspec.fwnode = acpi_gsi_domain_id;
+ 	fwspec.param[0] = gsi;
+-	fwspec.param[1] = acpi_gsi_get_irq_type(trigger, polarity);
++	fwspec.param[1] = acpi_dev_get_irq_type(trigger, polarity);
+ 	fwspec.param_count = 2;
+ 
+ 	return irq_create_fwspec_mapping(&fwspec);
+diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
+index cdc5c25..d02fd53 100644
+--- a/drivers/acpi/resource.c
++++ b/drivers/acpi/resource.c
+@@ -23,6 +23,7 @@
+ #include <linux/export.h>
+ #include <linux/ioport.h>
+ #include <linux/slab.h>
++#include <linux/irq.h>
+ 
+ #ifdef CONFIG_X86
+ #define valid_IRQ(i) (((i) != 0) && ((i) != 2))
+@@ -336,6 +337,31 @@ unsigned long acpi_dev_irq_flags(u8 triggering, u8 polarity, u8 shareable)
+ }
+ EXPORT_SYMBOL_GPL(acpi_dev_irq_flags);
+ 
++/**
++ * acpi_dev_get_irq_type - Determine irq type.
++ * @triggering: Triggering type as provided by ACPI.
++ * @polarity: Interrupt polarity as provided by ACPI.
++ */
++unsigned int acpi_dev_get_irq_type(int triggering, int polarity)
++{
++	switch (polarity) {
++	case ACPI_ACTIVE_LOW:
++		return triggering == ACPI_EDGE_SENSITIVE ?
++		       IRQ_TYPE_EDGE_FALLING :
++		       IRQ_TYPE_LEVEL_LOW;
++	case ACPI_ACTIVE_HIGH:
++		return triggering == ACPI_EDGE_SENSITIVE ?
++		       IRQ_TYPE_EDGE_RISING :
++		       IRQ_TYPE_LEVEL_HIGH;
++	case ACPI_ACTIVE_BOTH:
++		if (triggering == ACPI_EDGE_SENSITIVE)
++			return IRQ_TYPE_EDGE_BOTH;
++	default:
++		return IRQ_TYPE_NONE;
++	}
++}
++EXPORT_SYMBOL_GPL(acpi_dev_get_irq_type);
++
+ static void acpi_dev_irqresource_disabled(struct resource *res, u32 gsi)
  {
- 	struct list_head *pos;
--	struct gpio_chip *iterator;
-+	struct gpio_chip *iterator =3D NULL;
- 	struct gpio_chip *previous =3D NULL;
-=20
- 	if (list_empty(&gpio_chips)) {
---=20
-2.6.3
+ 	res->start = gsi;
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 1991aea..42adb80 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -318,6 +318,7 @@ bool acpi_dev_resource_address_space(struct acpi_resource *ares,
+ bool acpi_dev_resource_ext_address_space(struct acpi_resource *ares,
+ 					 struct resource_win *win);
+ unsigned long acpi_dev_irq_flags(u8 triggering, u8 polarity, u8 shareable);
++unsigned int acpi_dev_get_irq_type(int triggering, int polarity);
+ bool acpi_dev_resource_interrupt(struct acpi_resource *ares, int index,
+ 				 struct resource *res);
+ 
+-- 
+2.1.4
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
