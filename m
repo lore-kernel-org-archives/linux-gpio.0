@@ -1,139 +1,85 @@
-From: Christophe Ricard <christophe.ricard@gmail.com>
-Subject: [PATCH v8 2/3] ACPI / gpio: Add irq_type when a gpio is used as an interrupt
-Date: Wed, 23 Dec 2015 23:25:34 +0100
-Message-ID: <1450909535-32138-3-git-send-email-christophe-h.ricard@st.com>
-References: <1450909535-32138-1-git-send-email-christophe-h.ricard@st.com>
+From: Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH] pinctrl: nsp-gpio: fix type of iterator
+Date: Wed, 23 Dec 2015 14:35:57 -0800
+Message-ID: <567B21CD.9090900@broadcom.com>
+References: <1450867041-729-1-git-send-email-a.hajda@samsung.com>
+ <1450867041-729-2-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:36105 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932650AbbLWWZp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Dec 2015 17:25:45 -0500
-In-Reply-To: <1450909535-32138-1-git-send-email-christophe-h.ricard@st.com>
+Received: from mail-gw3-out.broadcom.com ([216.31.210.64]:46025 "EHLO
+	mail-gw3-out.broadcom.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934383AbbLWWgA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Dec 2015 17:36:00 -0500
+In-Reply-To: <1450867041-729-2-git-send-email-a.hajda@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: rjw@rjwysocki.net, lenb@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, andriy.shevchenko@linux.intel.com, mika.westerberg@linux.intel.com, broonie@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Christophe Ricard <christophe-h.ricard@st.com>
+To: Andrzej Hajda <a.hajda@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:BROADCOM IPROC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, open list <linux-kernel@vger.kernel.org>, Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>
 
-When a gpio is used as an interrupt in acpi, the irq_type was not
-available for device driver.
++ Reddy
 
-Make available polarity and triggering information in acpi_find_gpio by
-renaming acpi_gpio_info field active_low  to polarity and adding triggering
-field (edge/level).
-For sanity, in gpiolib.c replace info.active_low by
-"info.polarity == GPIO_ACTIVE_LOW".
+On 12/23/2015 2:37 AM, Andrzej Hajda wrote:
+> Iterator i declared as unsigned is always non-negative so the
+> loop will never end.
+>
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>   drivers/pinctrl/bcm/pinctrl-nsp-gpio.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+> index 34648f6..ad5b04c 100644
+> --- a/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+> +++ b/drivers/pinctrl/bcm/pinctrl-nsp-gpio.c
+> @@ -439,7 +439,8 @@ static int nsp_gpio_set_strength(struct nsp_gpio *chip, unsigned gpio,
+>   static int nsp_gpio_get_strength(struct nsp_gpio *chip, unsigned gpio,
+>   				 u16 *strength)
+>   {
+> -	unsigned int i, offset, shift;
+> +	unsigned int offset, shift;
+> +	int i;
+>   	u32 val;
+>   	unsigned long flags;
+>
+>
 
-Set the irq_type if necessary in acpi_dev_gpio_irq_get.
+The fix is a valid fix. And at the same time it exposes other potential 
+issues in the driver. I just found the loop used in _set_strength and 
+_get_strength is inconsistent:
 
-Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
----
- drivers/gpio/gpiolib-acpi.c | 33 +++++++++++++++++++++++++++------
- drivers/gpio/gpiolib.c      |  4 ++--
- drivers/gpio/gpiolib.h      |  3 ++-
- 3 files changed, 31 insertions(+), 9 deletions(-)
+In _set_strength:
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 16a7b68..cbbb67a 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -417,10 +417,15 @@ static int acpi_find_gpio(struct acpi_resource *ares, void *data)
- 		 * ActiveLow is only specified for GpioInt resource. If
- 		 * GpioIo is used then the only way to set the flag is
- 		 * to use _DSD "gpios" property.
-+		 * Note: we expect here:
-+		 * - ACPI_ACTIVE_LOW == GPIO_ACTIVE_LOW
-+		 * - ACPI_ACTIVE_HIGH == GPIO_ACTIVE_HIGH
- 		 */
--		if (lookup->info.gpioint)
--			lookup->info.active_low =
--				agpio->polarity == ACPI_ACTIVE_LOW;
-+		if (lookup->info.gpioint) {
-+			lookup->info.polarity = agpio->polarity;
-+			lookup->info.triggering = agpio->triggering;
-+		}
-+
- 	}
- 
- 	return 1;
-@@ -447,7 +452,7 @@ static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
- 	if (info) {
- 		*info = lookup->info;
- 		if (lookup->active_low)
--			info->active_low = lookup->active_low;
-+			info->polarity = lookup->active_low;
- 	}
- 	return 0;
- }
-@@ -595,6 +600,7 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
- int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- {
- 	int idx, i;
-+	unsigned int irq_flags;
- 
- 	for (i = 0, idx = 0; idx <= index; i++) {
- 		struct acpi_gpio_info info;
-@@ -603,8 +609,23 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- 		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
- 		if (IS_ERR(desc))
- 			break;
--		if (info.gpioint && idx++ == index)
--			return gpiod_to_irq(desc);
-+		if (info.gpioint && idx++ == index) {
-+			int irq = gpiod_to_irq(desc);
-+
-+			if (irq < 0)
-+				return irq;
-+
-+			irq_flags = acpi_dev_get_irq_type(info.triggering,
-+							  info.polarity);
-+
-+			/* Set type if specified and different than the current one */
-+			if (irq_flags != IRQ_TYPE_NONE &&
-+			    irq_flags != irq_get_trigger_type(irq))
-+				irq_set_irq_type(irq, irq_flags);
-+
-+			return irq;
-+		}
-+
- 	}
- 	return -ENOENT;
- }
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 2a91f32..5b67177 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1873,7 +1873,7 @@ static struct gpio_desc *acpi_find_gpio(struct device *dev, const char *con_id,
- 			return desc;
- 	}
- 
--	if (info.active_low)
-+	if (info.polarity == GPIO_ACTIVE_LOW)
- 		*flags |= GPIO_ACTIVE_LOW;
- 
- 	return desc;
-@@ -2211,7 +2211,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 
- 		desc = acpi_node_get_gpiod(fwnode, propname, 0, &info);
- 		if (!IS_ERR(desc))
--			active_low = info.active_low;
-+			active_low = info.polarity == GPIO_ACTIVE_LOW;
- 	}
- 
- 	if (IS_ERR(desc))
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 98ab08c..5ac3b88 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -26,7 +26,8 @@ struct acpi_device;
-  */
- struct acpi_gpio_info {
- 	bool gpioint;
--	bool active_low;
-+	int polarity;
-+	int triggering;
- };
- 
- /* gpio suffixes used for ACPI and device tree lookup */
--- 
-2.1.4
+427         for (i = GPIO_DRV_STRENGTH_BITS; i > 0; i--) {
+
+For i to start at GPIO_DRV_STRENGTH_BITS, it seems to be wrong.
+
+428                 val = readl(chip->io_ctrl + offset);
+429                 val &= ~BIT(shift);
+430                 val |= ((strength >> (i-1)) & 0x1) << shift;
+431                 writel(val, chip->io_ctrl + offset);
+432                 offset += 4;
+433         }
+
+In _get_strength:
+
+451         for (i = (GPIO_DRV_STRENGTH_BITS - 1); i >= 0; i--) {
+452                 val = readl(chip->io_ctrl + offset) & BIT(shift);
+453                 val >>= shift;
+454                 *strength += (val << i);
+455                 offset += 4;
+456         }
+
+Reddy, could you please review and comment?
+
+Thanks,
+
+Ray
+
 
