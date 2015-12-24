@@ -1,32 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [patch] pinctrl: nsp-gpio: forever loop in nsp_gpio_get_strength()
-Date: Thu, 24 Dec 2015 10:01:22 +0100
-Message-ID: <CACRpkdbr4us-nMUJEv24YASprvHrnzv-dRMpXbrq+MEPuT10Wg@mail.gmail.com>
-References: <20151224072532.GC29642@mwanda>
+Subject: Re: [PATCH] pinctrl: nsp-gpio: fix type of iterator
+Date: Thu, 24 Dec 2015 10:03:59 +0100
+Message-ID: <CACRpkdZB60Zj3JP=ZT6R_C2DacwLPFwb-m2MJkCf-fiJNkN05w@mail.gmail.com>
+References: <1450867041-729-1-git-send-email-a.hajda@samsung.com>
+	<1450867041-729-2-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:34902 "EHLO
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:34142 "EHLO
 	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752534AbbLXJBW (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Dec 2015 04:01:22 -0500
-Received: by mail-ob0-f169.google.com with SMTP id 18so182402069obc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Dec 2015 01:01:22 -0800 (PST)
-In-Reply-To: <20151224072532.GC29642@mwanda>
+	with ESMTP id S1752535AbbLXJEA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Dec 2015 04:04:00 -0500
+Received: by mail-ob0-f169.google.com with SMTP id iw8so181045787obc.1
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Dec 2015 01:04:00 -0800 (PST)
+In-Reply-To: <1450867041-729-2-git-send-email-a.hajda@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Yendapally Reddy Dhananjaya Reddy <yrdreddy@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, kernel-janitors@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "moderated list:BROADCOM IPROC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:BROADCOM IPROC ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, open list <linux-kernel@vger.kernel.org>
 
-On Thu, Dec 24, 2015 at 8:25 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, Dec 23, 2015 at 11:37 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 
-> There is a signedness bug here so the loop will never exit.
+> Iterator i declared as unsigned is always non-negative so the
+> loop will never end.
 >
-> Fixes: 8bfcbbbcabe0 ('pinctrl: nsp: add gpio-a driver support for Broadcom NSP SoC')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The problem has been detected using proposed semantic patch
+> scripts/coccinelle/tests/unsigned_lesser_than_zero.cocci [1].
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel/2038576
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Merry Christmas!
-Patch applied.
+I already applied Dan Carpenters fix, somehow it was earlier
+in my mail flow. Thanks anyways!
 
 Yours,
 Linus Walleij
