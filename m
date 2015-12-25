@@ -1,47 +1,57 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/54] GPIO: clamp return values from drivers
-Date: Thu, 24 Dec 2015 19:51:14 +0100
-Message-ID: <CACRpkdbPZfFVotrtS6zZ4udaEQSfcZy6KwDYTtJD7jamYH7B7w@mail.gmail.com>
-References: <1450793312-21725-1-git-send-email-linus.walleij@linaro.org>
-	<567966EB.8060900@mentor.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] pinctrl: qcom: make PMIC drivers bool
+Date: Fri, 25 Dec 2015 13:31:10 +0100
+Message-ID: <1451046670-11032-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:35824 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753000AbbLXSvP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Dec 2015 13:51:15 -0500
-Received: by mail-ob0-f170.google.com with SMTP id 18so189937715obc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Dec 2015 10:51:14 -0800 (PST)
-In-Reply-To: <567966EB.8060900@mentor.com>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:33525 "EHLO
+	mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752204AbbLYMbk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 25 Dec 2015 07:31:40 -0500
+Received: by mail-wm0-f42.google.com with SMTP id p187so199819784wmp.0
+        for <linux-gpio@vger.kernel.org>; Fri, 25 Dec 2015 04:31:39 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@sonymobile.com>, Johan Hovold <johan@kernel.org>, Michael Trimarchi <michael@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Mark Brown <broonie@kernel.org>
 
-On Tue, Dec 22, 2015 at 4:06 PM, Vladimir Zapolskiy
-<vladimir_zapolskiy@mentor.com> wrote:
+commit ab4256cfeab91569e1d96e7f0014538fe0845259
+"pinctrl: qcom: pmic-gpio/mpp: of_irq_count() == npins"
+made the Qualcomm PMIC pin control drivers make use of
+of_irq_count() which is not an exported function, making
+modular builds fail.
 
-> From a19047b2131f73cdf494abd44d76de6f57ca81ff Mon Sep 17 00:00:00 2001
-> From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> Date: Tue, 22 Dec 2015 16:37:28 +0200
-> Subject: [PATCH] gpio: update gpiochip .get() callback description
->
-> Since gpiochip .get() callback may return a negative error value, it
-> strictly limits the range of possible non-error returned values to
-> a subset of [30:0] bitmask, however on practice on success all
-> gpiochip drivers return either 0 for low signal or 1 for high signal,
-> this is assured by "gpio: *: Be sure to clamp return value" series of
-> changes. To avoid any confusion, misinterpretation and potential
-> errors while developing gpiochip drivers in future convert this
-> implicit assumption to a mandatory rule.
->
-> For output signals with unknown output signal state gpiochip drivers
-> should return a negative error instead of 0.
->
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Fix this by marking the drivers as compiled-in/bool.
 
-Patch applied!
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/qcom/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Merry Christmas,
-Linus Walleij
+diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+index eeac8cba8a21..c658d9bce285 100644
+--- a/drivers/pinctrl/qcom/Kconfig
++++ b/drivers/pinctrl/qcom/Kconfig
+@@ -80,7 +80,7 @@ config PINCTRL_QDF2XXX
+ 	  Qualcomm Technologies QDF2xxx SOCs.
+ 
+ config PINCTRL_QCOM_SPMI_PMIC
+-       tristate "Qualcomm SPMI PMIC pin controller driver"
++       bool "Qualcomm SPMI PMIC pin controller driver"
+        depends on GPIOLIB && OF && SPMI
+        select REGMAP_SPMI
+        select PINMUX
+@@ -93,7 +93,7 @@ config PINCTRL_QCOM_SPMI_PMIC
+          devices are pm8841, pm8941 and pma8084.
+ 
+ config PINCTRL_QCOM_SSBI_PMIC
+-       tristate "Qualcomm SSBI PMIC pin controller driver"
++       bool "Qualcomm SSBI PMIC pin controller driver"
+        depends on GPIOLIB && OF
+        select PINMUX
+        select PINCONF
+-- 
+2.4.3
+
