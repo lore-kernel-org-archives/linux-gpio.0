@@ -1,48 +1,67 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] gpio-ucb1400: Delete an unnecessary variable initialisation
- in ucb1400_gpio_probe()
-Date: Fri, 25 Dec 2015 19:49:11 +0100
-Message-ID: <567D8FA7.2070701@users.sourceforge.net>
-References: <566ABCD9.1060404@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] gpiolib: fix warning about iterator
+Date: Sat, 26 Dec 2015 13:28:39 +0530
+Message-ID: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:63468 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753410AbbLYStT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 25 Dec 2015 13:49:19 -0500
-In-Reply-To: <566ABCD9.1060404@users.sourceforge.net>
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:34116 "EHLO
+	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750871AbbLZH6p (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Dec 2015 02:58:45 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 25 Dec 2015 19:36:20 +0100
+We were getting build warning about "iterator" being used uninitialized.
+Use iterator properly to fix the build warning and in the process remove
+the variable "pos" which is not required now.
 
-The variable "err" will eventually be set to an appropriate value
-from a call of the gpiochip_add() function.
-Thus let us omit the explicit initialisation at the beginning.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
 ---
- drivers/gpio/gpio-ucb1400.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ucb1400.c b/drivers/gpio/gpio-ucb1400.c
-index d502825..c963517 100644
---- a/drivers/gpio/gpio-ucb1400.c
-+++ b/drivers/gpio/gpio-ucb1400.c
-@@ -46,7 +46,7 @@ static void ucb1400_gpio_set(struct gpio_chip *gc, unsigned off, int val)
- static int ucb1400_gpio_probe(struct platform_device *dev)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d72ac1f..3619ce4 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -189,23 +189,21 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
+  */
+ static int gpiochip_add_to_list(struct gpio_chip *chip)
  {
- 	struct ucb1400_gpio *ucb = dev_get_platdata(&dev->dev);
--	int err = 0;
-+	int err;
+-	struct list_head *pos;
+ 	struct gpio_chip *iterator;
+ 	struct gpio_chip *previous = NULL;
  
- 	if (!(ucb && ucb->gpio_offset)) {
- 		err = -EINVAL;
+ 	if (list_empty(&gpio_chips)) {
+-		pos = gpio_chips.next;
+-		goto found;
++		list_add_tail(&chip->list, &gpio_chips);
++		return 0;
+ 	}
+ 
+-	list_for_each(pos, &gpio_chips) {
+-		iterator = list_entry(pos, struct gpio_chip, list);
++	list_for_each_entry(iterator, &gpio_chips, list) {
+ 		if (iterator->base >= chip->base + chip->ngpio) {
+ 			/*
+ 			 * Iterator is the first GPIO chip so there is no
+ 			 * previous one
+ 			 */
+-			if (previous == NULL) {
++			if (!previous) {
+ 				goto found;
+ 			} else {
+ 				/*
+@@ -230,7 +228,7 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ 	return -EBUSY;
+ 
+ found:
+-	list_add_tail(&chip->list, pos);
++	list_add_tail(&chip->list, &iterator->list);
+ 	return 0;
+ }
+ 
 -- 
-2.6.3
+1.9.1
 
