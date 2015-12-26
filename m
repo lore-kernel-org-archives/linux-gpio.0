@@ -1,36 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix warning about iterator
-Date: Sat, 26 Dec 2015 22:31:15 +0100
-Message-ID: <CACRpkdZA7m=YzjVmQwzoKNzMu+QiOeA9s3Wu_axZYMw=5j-LnQ@mail.gmail.com>
-References: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 13/54] gpio: pcf857x: Be sure to clamp return value
+Date: Sun, 27 Dec 2015 00:35:48 +0200
+Message-ID: <11897257.suvtS8Wvz6@avalon>
+References: <1450794009-22885-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:35729 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751601AbbLZVbQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Dec 2015 16:31:16 -0500
-Received: by mail-oi0-f45.google.com with SMTP id l9so130879512oia.2
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Dec 2015 13:31:16 -0800 (PST)
-In-Reply-To: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:56033 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751502AbbLZWft (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Dec 2015 17:35:49 -0500
+In-Reply-To: <1450794009-22885-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, George Cherian <george.cherian@ti.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-On Sat, Dec 26, 2015 at 8:58 AM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
+Hi Linus,
 
-> We were getting build warning about "iterator" being used uninitialized.
-> Use iterator properly to fix the build warning and in the process remove
-> the variable "pos" which is not required now.
->
-> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+Thank you for the patch.
 
-Aha there is a real patch solving the problem. Sorry Ross,
-had to drop your patch and replace it with this.
+On Tuesday 22 December 2015 15:20:09 Linus Walleij wrote:
+> As we want gpio_chip .get() calls to be able to return negative
+> error codes and propagate to drivers, we need to go over all
+> drivers and make sure their return values are clamped to [0,1].
+> We do this by using the ret = !!(val) design pattern.
 
-Patch applied!
+The patch itself looks good to me, but wouldn't it be easier to patch the 
+caller to clamp positive values to [0,1] and propagate negative values 
+untouched ?
 
-Yours,
-Linus Walleij
+> Also start returning the error code if something fails, as the
+> end of the series augment the core to support this.
+> 
+> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+> Cc: George Cherian <george.cherian@ti.com>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/gpio/gpio-pcf857x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+> index bf511c0efa48..f64380a7d004 100644
+> --- a/drivers/gpio/gpio-pcf857x.c
+> +++ b/drivers/gpio/gpio-pcf857x.c
+> @@ -154,7 +154,7 @@ static int pcf857x_get(struct gpio_chip *chip, unsigned
+> offset) int		value;
+> 
+>  	value = gpio->read(gpio->client);
+> -	return (value < 0) ? 0 : (value & (1 << offset));
+> +	return (value < 0) ? value : !!(value & (1 << offset));
+>  }
+> 
+>  static int pcf857x_output(struct gpio_chip *chip, unsigned offset, int
+> value)
+
+-- 
+Regards,
+
+Laurent Pinchart
+
