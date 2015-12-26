@@ -1,67 +1,36 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] gpiolib: fix warning about iterator
-Date: Sat, 26 Dec 2015 13:28:39 +0530
-Message-ID: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: fix warning about iterator
+Date: Sat, 26 Dec 2015 22:31:15 +0100
+Message-ID: <CACRpkdZA7m=YzjVmQwzoKNzMu+QiOeA9s3Wu_axZYMw=5j-LnQ@mail.gmail.com>
+References: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:34116 "EHLO
-	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871AbbLZH6p (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Dec 2015 02:58:45 -0500
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35729 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601AbbLZVbQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 26 Dec 2015 16:31:16 -0500
+Received: by mail-oi0-f45.google.com with SMTP id l9so130879512oia.2
+        for <linux-gpio@vger.kernel.org>; Sat, 26 Dec 2015 13:31:16 -0800 (PST)
+In-Reply-To: <1451116719-19158-1-git-send-email-sudipm.mukherjee@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-We were getting build warning about "iterator" being used uninitialized.
-Use iterator properly to fix the build warning and in the process remove
-the variable "pos" which is not required now.
+On Sat, Dec 26, 2015 at 8:58 AM, Sudip Mukherjee
+<sudipm.mukherjee@gmail.com> wrote:
 
-Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
----
- drivers/gpio/gpiolib.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> We were getting build warning about "iterator" being used uninitialized.
+> Use iterator properly to fix the build warning and in the process remove
+> the variable "pos" which is not required now.
+>
+> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index d72ac1f..3619ce4 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -189,23 +189,21 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
-  */
- static int gpiochip_add_to_list(struct gpio_chip *chip)
- {
--	struct list_head *pos;
- 	struct gpio_chip *iterator;
- 	struct gpio_chip *previous = NULL;
- 
- 	if (list_empty(&gpio_chips)) {
--		pos = gpio_chips.next;
--		goto found;
-+		list_add_tail(&chip->list, &gpio_chips);
-+		return 0;
- 	}
- 
--	list_for_each(pos, &gpio_chips) {
--		iterator = list_entry(pos, struct gpio_chip, list);
-+	list_for_each_entry(iterator, &gpio_chips, list) {
- 		if (iterator->base >= chip->base + chip->ngpio) {
- 			/*
- 			 * Iterator is the first GPIO chip so there is no
- 			 * previous one
- 			 */
--			if (previous == NULL) {
-+			if (!previous) {
- 				goto found;
- 			} else {
- 				/*
-@@ -230,7 +228,7 @@ static int gpiochip_add_to_list(struct gpio_chip *chip)
- 	return -EBUSY;
- 
- found:
--	list_add_tail(&chip->list, pos);
-+	list_add_tail(&chip->list, &iterator->list);
- 	return 0;
- }
- 
--- 
-1.9.1
+Aha there is a real patch solving the problem. Sorry Ross,
+had to drop your patch and replace it with this.
 
+Patch applied!
+
+Yours,
+Linus Walleij
