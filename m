@@ -1,38 +1,79 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: fix warning about iterator
-Date: Mon, 28 Dec 2015 01:35:17 +0100
-Message-ID: <CACRpkdaV0HL1v0z6NTLsuBKEu+bSxKCu=nHoNX=d39oWmchL+A@mail.gmail.com>
-References: <CACRpkdZA7m=YzjVmQwzoKNzMu+QiOeA9s3Wu_axZYMw=5j-LnQ@mail.gmail.com>
-	<1451223410-8985-1-git-send-email-sudipm.mukherjee@gmail.com>
+From: Bjorn Andersson <bjorn@kryo.se>
+Subject: Re: [PATCH 27/54] pinctrl: spmi-gpio: Be sure to clamp return value
+Date: Sun, 27 Dec 2015 19:52:54 -0800
+Message-ID: <20151228035254.GC16437@tuxbot>
+References: <1450794638-23834-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:34033 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751280AbbL1AfS (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Dec 2015 19:35:18 -0500
-Received: by mail-ob0-f169.google.com with SMTP id iw8so223373921obc.1
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Dec 2015 16:35:18 -0800 (PST)
-In-Reply-To: <1451223410-8985-1-git-send-email-sudipm.mukherjee@gmail.com>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:34381 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750781AbbL1Dw6 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Dec 2015 22:52:58 -0500
+Received: by mail-pa0-f52.google.com with SMTP id uo6so81503716pac.1
+        for <linux-gpio@vger.kernel.org>; Sun, 27 Dec 2015 19:52:58 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1450794638-23834-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, Bj?rn Andersson <bjorn.andersson@sonymobile.com>
 
-On Sun, Dec 27, 2015 at 2:36 PM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
+On Tue 22 Dec 06:30 PST 2015, Linus Walleij wrote:
 
-> We were getting build warning about "iterator" being used uninitialized.
-> Use iterator properly to fix the build warning and in the process remove
-> the variable "pos" which is not required now.
->
-> Signed-off-by: Sudip Mukherjee <sudip@vectorindia.org>
+> As we want gpio_chip .get() calls to be able to return negative
+> error codes and propagate to drivers, we need to go over all
+> drivers and make sure their return values are clamped to [0,1].
+> We do this by using the ret =3D !!(val) design pattern.
+>=20
+> Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+> Cc: Bj=F6rn Andersson <bjorn.andersson@sonymobile.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+out_value is a bool, so the patch shouldn't be necessary. But I like
+that it's consistent throughout.
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+
+
+On a separate note, I'm not sure that it's correct to update the cached
+output value with the current input state here. Need to think a little
+bit more on that.
+
+Regards,
+Bjorn
+
 > ---
->
-> v1: at the end of the loop iterator will point to head and we are trying
-> to check its field.
-
-OK took the v1 out and applied this version instead.
-
-Yours,
-Linus Walleij
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinct=
+rl/qcom/pinctrl-spmi-gpio.c
+> index 3e5ccc76d59c..4460b2c9c8bd 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> @@ -533,7 +533,7 @@ static int pmic_gpio_get(struct gpio_chip *chip, =
+unsigned pin)
+>  		pad->out_value =3D ret & PMIC_MPP_REG_RT_STS_VAL_MASK;
+>  	}
+> =20
+> -	return pad->out_value;
+> +	return !!pad->out_value;
+>  }
+> =20
+>  static void pmic_gpio_set(struct gpio_chip *chip, unsigned pin, int =
+value)
+> --=20
+> 2.4.3
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
