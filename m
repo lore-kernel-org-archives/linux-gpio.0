@@ -1,20 +1,20 @@
 From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH 27/54] pinctrl: spmi-gpio: Be sure to clamp return value
-Date: Sun, 27 Dec 2015 19:52:54 -0800
-Message-ID: <20151228035254.GC16437@tuxbot>
-References: <1450794638-23834-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 28/54] pinctrl: spmi-mpp: Be sure to clamp return value
+Date: Sun, 27 Dec 2015 19:53:31 -0800
+Message-ID: <20151228035331.GD16437@tuxbot>
+References: <1450794652-23900-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:34381 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750781AbbL1Dw6 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Dec 2015 22:52:58 -0500
-Received: by mail-pa0-f52.google.com with SMTP id uo6so81503716pac.1
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Dec 2015 19:52:58 -0800 (PST)
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:34598 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751510AbbL1Dxf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Dec 2015 22:53:35 -0500
+Received: by mail-pa0-f47.google.com with SMTP id uo6so81510391pac.1
+        for <linux-gpio@vger.kernel.org>; Sun, 27 Dec 2015 19:53:35 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450794638-23834-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450794652-23900-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
@@ -27,34 +27,26 @@ On Tue 22 Dec 06:30 PST 2015, Linus Walleij wrote:
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret =3D !!(val) design pattern.
 >=20
-> Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
 > Cc: Bj=F6rn Andersson <bjorn.andersson@sonymobile.com>
+> Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-out_value is a bool, so the patch shouldn't be necessary. But I like
-that it's consistent throughout.
-
 Reviewed-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-
-
-On a separate note, I'm not sure that it's correct to update the cached
-output value with the current input state here. Need to think a little
-bit more on that.
 
 Regards,
 Bjorn
 
 > ---
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
+>  drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinct=
-rl/qcom/pinctrl-spmi-gpio.c
-> index 3e5ccc76d59c..4460b2c9c8bd 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -533,7 +533,7 @@ static int pmic_gpio_get(struct gpio_chip *chip, =
-unsigned pin)
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctr=
+l/qcom/pinctrl-spmi-mpp.c
+> index 69c14ba177d0..ea1d2b2f6fd1 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+> @@ -591,7 +591,7 @@ static int pmic_mpp_get(struct gpio_chip *chip, u=
+nsigned pin)
 >  		pad->out_value =3D ret & PMIC_MPP_REG_RT_STS_VAL_MASK;
 >  	}
 > =20
@@ -62,8 +54,8 @@ unsigned pin)
 > +	return !!pad->out_value;
 >  }
 > =20
->  static void pmic_gpio_set(struct gpio_chip *chip, unsigned pin, int =
-value)
+>  static void pmic_mpp_set(struct gpio_chip *chip, unsigned pin, int v=
+alue)
 > --=20
 > 2.4.3
 >=20
