@@ -1,75 +1,62 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Wed, 30 Dec 2015 11:05:20 -0600
-Message-ID: <56840ED0.6070205@ti.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com>
- <1449863184-29668-2-git-send-email-afd@ti.com>
- <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
- <566EF12C.4060509@ti.com>
- <CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
- <566F4E9B.8090202@ti.com>
- <CACRpkdYapF8br=c3utUmMbmPxyHwxZuT5pC8N-pySPY7dtEwng@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
+Date: Wed, 30 Dec 2015 17:22:12 +0000
+Message-ID: <20151230172212.GZ16023@sirena.org.uk>
+References: <1450792017-7120-1-git-send-email-djkurtz@chromium.org>
+ <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8M+BMcg+0CmQ2H7L"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:56217 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755058AbbL3RFi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 30 Dec 2015 12:05:38 -0500
-In-Reply-To: <CACRpkdYapF8br=c3utUmMbmPxyHwxZuT5pC8N-pySPY7dtEwng@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56151 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754889AbbL3RWa (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Dec 2015 12:22:30 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Daniel Kurtz <djkurtz@chromium.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabio Estevam <fabio.estevam@freescale.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-On 12/22/2015 03:51 AM, Linus Walleij wrote:
-> On Tue, Dec 15, 2015 at 12:19 AM, Andrew F. Davis <afd@ti.com> wrote:
->> [Rob]
->>> I agree the generic version is fine (or find who made the first part
->>> ;)). What "pisosr" is is not very obvious though. Having 74165 in the
->>> compatible would make it somewhat more obvious it is a standard logic
->>> part.
->>>
->>
->> A quick search shows shift-registers being made from vacuum tubes for
->> the Colossus! Those might work with this driver if you could match the
->> voltage to an SPI bus... :)
->>
->> I agree about the name not being very good, but I'm not sure about
->> 74165 ether as it is also just a single part number.
->
-> We can add many compatible strings so it's not an issue.
-> "ti,74165" works for me as TI invented the 74xx series.
->
 
-Free advertising for our parts :)
+--8M+BMcg+0CmQ2H7L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> The idea was to
->> have a non-part number compatible string for any shift-register you
->> can hook to the SPI line.
->
-> Again, one does not exclude the other. I'm happy with a generic
-> compatible *and* "ti,74165".
->
->> That way when we have boards with a sn65x882
->> or something we wont have to call it a 74165. But I guess that's why
->> it's a "compatible:" string, and not "is-a:" string.
->
-> Compatible ranges from the specific to the more generic
-> so compatible = "ti,74165", "pisosr"; is just fine. Something
-> will match if there is a suitable driver. The OS may choose to
-> provide something part-specific or something more generic.
->
+On Tue, Dec 22, 2015 at 04:11:47PM +0100, Linus Walleij wrote:
+> On Tue, Dec 22, 2015 at 2:46 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-And so we won't need to have "ti,74165" in the driver itself,
-if we just have "pisosr", then dts files can use what ever they
-like to correctly identify the part then fall back to pisosr.
+> > Move pinctrl initialization earlier in boot so that real devices can find
+> > their pctldev without probe deferring.
+> (...)
+> > -module_init(mtk_pinctrl_init);
+> > +arch_initcall(mtk_pinctrl_init);
 
-compatible = "company,random_numbers_of_exact_part_actually_on_board", "pisosr";
+> So I see why you're doing this (because of wanting to avoid nasty boot
+> probe deferrals, right?) and I'm going to apply it, because the work
+> with probe ordering is still in the works, but I'd like some general
+> ARM people to come in with opinions.
 
-Andrew
+I really don't think we should be applying this sort of stuff unless
+things are actively broken right now.  It's a bit of a rabbit hole we
+could spend a long time going down tweaking things for different
+systems in the same way that tweaking the link order can be and it masks
+the underlying issues.
 
-> Yours,
-> Linus Walleij
->
+--8M+BMcg+0CmQ2H7L
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWhBLDAAoJECTWi3JdVIfQLYIH/jZbT5iHyC9Ab6s5PIomZwyZ
+q7OrVof89o5dikybusX0NTwUsX8INaJ9t3tR37q9euWV8wCCQ7EVodddM+t1PzTy
+AEt4LC5hdJAg5eDUlduMRm9pY1HaDGL9joeI7ieEIC5QY7BHKEXFuhwX2umvivRs
+zo50qo/9S4T+6xnqnYWJE+GHMc8L4vAAgd95cGB09fUEruerZCE76gu4i8nVLXQg
+hgdFBhRfm7njoJmUYJbquuR6GebpyEi0Kem/Rpl2rbV59d2lBdhDUtPzYkP0u76a
+lCDHLuXHIu/bCW7tVmHrWAtFZ+7VmuukpIvsyuxCEHXNsYdkCNScN6cbedGQa9E=
+=/zRB
+-----END PGP SIGNATURE-----
+
+--8M+BMcg+0CmQ2H7L--
