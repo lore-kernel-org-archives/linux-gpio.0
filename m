@@ -1,43 +1,127 @@
-From: Geliang Tang <geliangtang@163.com>
-Subject: [PATCH 2/2] gpio: davinci: use irq_data_get_chip_type
-Date: Wed, 30 Dec 2015 22:16:38 +0800
-Message-ID: <ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
-References: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Wed, 30 Dec 2015 10:59:38 -0600
+Message-ID: <56840D7A.4060502@ti.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+ <1449863184-29668-2-git-send-email-afd@ti.com>
+ <CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
+ <566EF12C.4060509@ti.com>
+ <CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
+ <566F4E9B.8090202@ti.com>
+ <CAL_JsqJbg-VsZjg6QuN5SUvDXGR1DnShmhLvp3b_bipVn1q74A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from m50-133.163.com ([123.125.50.133]:41305 "EHLO m50-133.163.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:34539 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751779AbbL3ORe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 30 Dec 2015 09:17:34 -0500
-In-Reply-To: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
-In-Reply-To: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
-References: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
+	id S1754889AbbL3Q7x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 30 Dec 2015 11:59:53 -0500
+In-Reply-To: <CAL_JsqJbg-VsZjg6QuN5SUvDXGR1DnShmhLvp3b_bipVn1q74A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Geliang Tang <geliangtang@163.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Use irq_data_get_chip_type() instead of container_of().
+On 12/16/2015 10:29 AM, Rob Herring wrote:
+> On Mon, Dec 14, 2015 at 5:19 PM, Andrew F. Davis <afd@ti.com> wrote:
+>> On 12/14/2015 04:36 PM, Rob Herring wrote:
+>>>
+>>> On Mon, Dec 14, 2015 at 10:41 AM, Andrew F. Davis <afd@ti.com> wrote:
+>>>>
+>>>> On 12/11/2015 03:48 PM, Linus Walleij wrote:
+>>>>>
+>>>>>
+>>>>> On Fri, Dec 11, 2015 at 8:46 PM, Andrew F. Davis <afd@ti.com> wrote:
+>
+> [...]
+>
+>>>>>> + - compatible          : Should be "pisosr-gpio".
+>>>>>
+>>>>>
+>>>>>
+>>>>> I think it should also define compatible strings on the "vendor,device"
+>>>>> format apart from the generic compatible. Sooner or later we may need
+>>>>> to differentiate them and then that comes in handy.
+>>>>>
+>>>>
+>>>> Would it be better to wait until/if this issue arises? This driver
+>>>> targets the generic features, as these parts are very generic and
+>>>> have been produced by many companies since the 70s I'm not sure
+>>>> if privileging any of them makes much sense.
+>>>>
+>>>> What I'm worried about looks to have happened with the gpio-74x164
+>>>> driver, this is kind of the companion device to mine (74164 / 74165)
+>>>> and should work with any 74164 compatible shift register (possibly 100s
+>>>> of versions of them), but the compatible string that was added is
+>>>> "fairchild,74hc595", a relatively new device by a single manufacturer.
+>>>> The problem this has is then that boards will use this compatible string
+>>>> even if the parts are not actually the Fairchild version, just to get
+>>>> the match, when they should be using a generic string.
+>>>
+>>>
+>>> I agree the generic version is fine (or find who made the first part
+>>> ;)). What "pisosr" is is not very obvious though. Having 74165 in the
+>>> compatible would make it somewhat more obvious it is a standard logic
+>>> part.
+>>>
+>>
+>> A quick search shows shift-registers being made from vacuum tubes for
+>> the Colossus! Those might work with this driver if you could match the
+>> voltage to an SPI bus... :)
+>>
+>> I agree about the name not being very good, but I'm not sure about
+>> 74165 ether as it is also just a single part number. The idea was to
+>> have a non-part number compatible string for any shift-register you
+>> can hook to the SPI line. That way when we have boards with a sn65x882
+>> or something we wont have to call it a 74165. But I guess that's why
+>> it's a "compatible:" string, and not "is-a:" string.
+>
+> If there are a couple then I think it is okay. If there are 10s then
+> maybe not. Perhaps logic-pisosr or discrete-pisosr?
+>
 
-Signed-off-by: Geliang Tang <geliangtang@163.com>
----
- drivers/gpio/gpio-davinci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+My concern as well, there are a lot of them, and every device doesn't
+need its own string, so why privilege the name of any that don't have
+anything different.
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 65ebaef..aaa1a249 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -435,8 +435,7 @@ static struct irq_chip *davinci_gpio_get_irq_chip(unsigned int irq)
- {
- 	static struct irq_chip_type gpio_unbanked;
- 
--	gpio_unbanked = *container_of(irq_get_chip(irq),
--				      struct irq_chip_type, chip);
-+	gpio_unbanked = *irq_data_get_chip_type(irq_get_irq_data(irq));
- 
- 	return &gpio_unbanked.chip;
- };
--- 
-2.5.0
+I'd like to leave the named ones for odd cases that needs special
+handling.
 
+>>>>>> +Optional properties:
+>>>>>> + - ngpios              : Number of GPIO lines, default is 8.
+>>>>>
+>>>>>
+>>>>>
+>>>>> If you didn't do "pisosr-gpio" but instead "foo,sn74165", maybe you
+>>>>> don't need to have this in the device tree but instead it can be
+>>>>> determined from the compatible string?
+>>>>>
+>>>>> In that case do that.
+>>>>>
+>>>>
+>>>> These devices can be daisy-chained together, so three 8bit registers
+>>>> look exactly like one 24bit register. The only way to know this is
+>>>> from the physical wiring of the board, not from the part number.
+>>>
+>>>
+>>> Then you should say it must be multiple of 8 (or are there other
+>>> lengths?).
+>>>
+>>
+>> Some are 4bit, you can even just hook a single flip-flop to the SPI bus for
+>> a single bit (or multiples) of input.
+>
+> One would hope you would just connect the CS signal directly to that
+> input for 1-bit... I guess you could be out of GPIOs and only have a
+> free output only CS signal.
+>
 
+Interesting use-case idea :), I'm more worried about a device with any
+prime number of pins where multiples will fail, not that I have ever
+seen one.
+
+Andrew
+
+> Rob
+>
