@@ -1,62 +1,75 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
-Date: Wed, 30 Dec 2015 17:22:12 +0000
-Message-ID: <20151230172212.GZ16023@sirena.org.uk>
-References: <1450792017-7120-1-git-send-email-djkurtz@chromium.org>
- <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com>
+From: Christophe Ricard <christophe.ricard-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v8 0/3] ACPI: Add irq_type to gpio interrupt
+Date: Wed, 30 Dec 2015 18:40:21 +0100
+Message-ID: <56841705.5030508@gmail.com>
+References: <1450909535-32138-1-git-send-email-christophe-h.ricard@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8M+BMcg+0CmQ2H7L"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56151 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754889AbbL3RWa (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Dec 2015 12:22:30 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1450909535-32138-1-git-send-email-christophe-h.ricard-qxv4g6HH51o@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe Ricard <christophe-h.ricard-qxv4g6HH51o@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabio Estevam <fabio.estevam@freescale.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
+Hi,
 
---8M+BMcg+0CmQ2H7L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Do you expect any other update from me ?
+Is there Anything else needed to this patchset to hit 4.5 release ?
 
-On Tue, Dec 22, 2015 at 04:11:47PM +0100, Linus Walleij wrote:
-> On Tue, Dec 22, 2015 at 2:46 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
+Best Regards
+Christophe
 
-> > Move pinctrl initialization earlier in boot so that real devices can find
-> > their pctldev without probe deferring.
-> (...)
-> > -module_init(mtk_pinctrl_init);
-> > +arch_initcall(mtk_pinctrl_init);
+On 23/12/2015 23:25, Christophe Ricard wrote:
+> Hi,
+>
+> ACPI probing method does not retrieve irq_type from a gpio interrupt declared
+> with GpioInt as it is done with devicetree probing. In other terms, irq_get_trigger_type
+> will always send back 0.
+>
+> Those 3 patches propose a way to retrieve the correct interrupt polarity/type from a GpioInt
+> acpi declaration when using irq_get_trigger_type.
+>
+> Since v4 after Mika and Andy's feedbacks:
+> - acpi_gpio_info active_low field got renamed polarity. Note that polarity/active_low is having sense
+> also when a gpio is not mapped as an interrupt but as an output (For example: check gpiod_set_value
+> in drivers/gpio/gpiolib.c).
+> - acpi_gsi_get_irq_type is now renamed acpi_dev_get_irq_type and moved to drivers/acpi/resource.c
+> - The irq described in the acpi spi slave node is now set once we fall back to retrieve normal interrupt.
+>
+> Since v5 after Andy's feedbacks:
+> - Make sure we are not using u* type but pure C type for non hardware value.
+>
+> Since v6:
+> - Patches now applies on top of Raphael tree tag linux-next
+>
+> Since v7:
+> - Added "Acked-by: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>" to patch 1.
+> - Added "Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>" to patch 3.
+> - Patch 3 got reworked following Mika's feedback.
+> - Patch 2 added few comment in acpi_find_gpio following Mika's feedback.
+>
+> Best Regards
+> Christophe
+>
+> Christophe Ricard (3):
+>    acpi: Rename acpi_gsi_get_irq_type to acpi_dev_get_irq_type and export
+>      symbol
+>    ACPI / gpio: Add irq_type when a gpio is used as an interrupt
+>    ACPI / spi: attach gpio irq from acpi description to spi device
+>
+>   drivers/acpi/gsi.c          | 21 +--------------------
+>   drivers/acpi/resource.c     | 26 ++++++++++++++++++++++++++
+>   drivers/gpio/gpiolib-acpi.c | 33 +++++++++++++++++++++++++++------
+>   drivers/gpio/gpiolib.c      |  4 ++--
+>   drivers/gpio/gpiolib.h      |  3 ++-
+>   drivers/spi/spi.c           |  3 +++
+>   include/linux/acpi.h        |  1 +
+>   7 files changed, 62 insertions(+), 29 deletions(-)
+>
 
-> So I see why you're doing this (because of wanting to avoid nasty boot
-> probe deferrals, right?) and I'm going to apply it, because the work
-> with probe ordering is still in the works, but I'd like some general
-> ARM people to come in with opinions.
-
-I really don't think we should be applying this sort of stuff unless
-things are actively broken right now.  It's a bit of a rabbit hole we
-could spend a long time going down tweaking things for different
-systems in the same way that tweaking the link order can be and it masks
-the underlying issues.
-
---8M+BMcg+0CmQ2H7L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWhBLDAAoJECTWi3JdVIfQLYIH/jZbT5iHyC9Ab6s5PIomZwyZ
-q7OrVof89o5dikybusX0NTwUsX8INaJ9t3tR37q9euWV8wCCQ7EVodddM+t1PzTy
-AEt4LC5hdJAg5eDUlduMRm9pY1HaDGL9joeI7ieEIC5QY7BHKEXFuhwX2umvivRs
-zo50qo/9S4T+6xnqnYWJE+GHMc8L4vAAgd95cGB09fUEruerZCE76gu4i8nVLXQg
-hgdFBhRfm7njoJmUYJbquuR6GebpyEi0Kem/Rpl2rbV59d2lBdhDUtPzYkP0u76a
-lCDHLuXHIu/bCW7tVmHrWAtFZ+7VmuukpIvsyuxCEHXNsYdkCNScN6cbedGQa9E=
-=/zRB
------END PGP SIGNATURE-----
-
---8M+BMcg+0CmQ2H7L--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
