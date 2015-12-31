@@ -1,89 +1,53 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH] gpio: Add driver for TI TPIC2810
-Date: Wed, 30 Dec 2015 11:45:04 -0600
-Message-ID: <56841820.3040807@ti.com>
-References: <1450210252-12121-1-git-send-email-afd@ti.com>
- <CACRpkdak90H+eZXH=9tZYzQ5DCZsYRXqF7i+tdAqQ8_Y0fcjug@mail.gmail.com>
+From: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 2/5] dt-bindings: mediatek: Modify pinctrl bindings for
+ mt2701
+Date: Thu, 31 Dec 2015 12:14:54 +0100
+Message-ID: <56850E2E.4060101@gmail.com>
+References: <1451286546-5920-1-git-send-email-biao.huang@mediatek.com>
+ <1451286546-5920-3-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:47464 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752046AbbL3RpG (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Dec 2015 12:45:06 -0500
-In-Reply-To: <CACRpkdak90H+eZXH=9tZYzQ5DCZsYRXqF7i+tdAqQ8_Y0fcjug@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1451286546-5920-3-git-send-email-biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 12/23/2015 05:29 PM, Linus Walleij wrote:
-> On Tue, Dec 15, 2015 at 9:10 PM, Andrew F. Davis <afd@ti.com> wrote:
->
->> Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
->>
->> The TPIC2810 has 8 open-drain outputs that can but used to drive
->> LEDs and other low-side switched resistive loads.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->
-> This patch will have to be rebased to apply and compile after the release
-> of kernel v4.5-rc1, as we have too much lined up right now, I see no
-> big problems
-> with it but here are some more minor comments.
+
+
+On 28/12/15 08:09, Biao Huang wrote:
+> Signed-off-by: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+> ---
+>   .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
 >
 
-Works for me.
+Reviewed-by: Mathias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
->   +static inline struct tpic2810 *to_tpic2810(struct gpio_chip *chip)
->> +{
->> +       return container_of(chip, struct tpic2810, chip);
->> +}
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> index 0480bc3..9ffb0b2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> @@ -4,10 +4,11 @@ The Mediatek's Pin controller is used to control SoC pins.
 >
-> We are getting rid of this design pattern, check the gpiochip_get_data()
-> function that will be introduced in v4.5-rc1 and patches I merge to all
-> other drivers.
+>   Required properties:
+>   - compatible: value should be one of the following.
+> -    (a) "mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
+> -    (b) "mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
+> -    (c) "mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
+> -    (d) "mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+> +	"mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
+> +	"mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
+> +	"mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+> +	"mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
+> +	"mediatek,mt8173-pinctrl", compatible with mt8173 pinctrl.
+>   - pins-are-numbered: Specify the subnodes are using numbered pinmux to
+>     specify pins.
+>   - gpio-controller : Marks the device node as a gpio controller.
 >
-
-ACK
-
->> +static const struct i2c_device_id tpic2810_id_table[] = {
->> +       { "tpic2810", },
->> +       { /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(i2c, tpic2810_id_table);
->> +
->> +static struct i2c_driver tpic2810_driver = {
->> +       .driver = {
->> +               .name = "tpic2810",
->> +       },
->> +       .probe = tpic2810_probe,
->> +       .remove = tpic2810_remove,
->> +       .id_table = tpic2810_id_table,
->> +};
->> +module_i2c_driver(tpic2810_driver);
->
-> No device tree probing? Which platform uses this?
-> I was expecting an .of_match_table()  in .driver.
->
-
-As far as I know .of_match_table and MODULE_ALIAS for
-DT have no real effect on I2C devices as they match
-on "anything,i2c_name". And only throw an I2C
-MODALIAS to userspace for loading. So we can use
-this device in a DTS without any driver modifications.
-
-At least it worked like this on my test platform
-(am57xx-evm).
-
-I think it might be best to keep drivers DT agnostic
-when possible, in case DT is superseded by something,
-so we don't end up with mountains of dead code.
-
-Thanks,
-Andrew
-
-> Yours,
-> Linus Walleij
->
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
