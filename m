@@ -1,74 +1,55 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v3 5/5] arm: dts: Add pinctrl/GPIO/EINT node for mt2701
-Date: Thu, 31 Dec 2015 12:23:57 +0100
-Message-ID: <5685104D.7070008@gmail.com>
-References: <1451286546-5920-1-git-send-email-biao.huang@mediatek.com>
- <1451286546-5920-6-git-send-email-biao.huang@mediatek.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
+Date: Thu, 31 Dec 2015 21:45:51 +0800
+Message-ID: <CAGS+omA9AarzE2sp1Ry3RuOt8EOa-sL=DL1iDA2OeVVdjn=xgg@mail.gmail.com>
+References: <1450792017-7120-1-git-send-email-djkurtz@chromium.org>
+ <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com> <20151230172212.GZ16023@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:36145 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750876AbbLaLYB (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Dec 2015 06:24:01 -0500
-In-Reply-To: <1451286546-5920-6-git-send-email-biao.huang@mediatek.com>
+Received: from mail-vk0-f50.google.com ([209.85.213.50]:34499 "EHLO
+	mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565AbbLaNqM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Dec 2015 08:46:12 -0500
+Received: by mail-vk0-f50.google.com with SMTP id a123so57997264vkh.1
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Dec 2015 05:46:11 -0800 (PST)
+In-Reply-To: <20151230172212.GZ16023@sirena.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, srv_heupstream@mediatek.com, yingjoe.chen@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabio Estevam <fabio.estevam@freescale.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-
-
-On 28/12/15 08:09, Biao Huang wrote:
-> Add pinctrl and GPIO node to mt2701.dtsi
+On Thu, Dec 31, 2015 at 1:22 AM, Mark Brown <broonie@kernel.org> wrote:
 >
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->   arch/arm/boot/dts/mt2701.dtsi |   19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
+> On Tue, Dec 22, 2015 at 04:11:47PM +0100, Linus Walleij wrote:
+> > On Tue, Dec 22, 2015 at 2:46 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
 >
+> > > Move pinctrl initialization earlier in boot so that real devices can find
+> > > their pctldev without probe deferring.
+> > (...)
+> > > -module_init(mtk_pinctrl_init);
+> > > +arch_initcall(mtk_pinctrl_init);
+>
+> > So I see why you're doing this (because of wanting to avoid nasty boot
+> > probe deferrals, right?) and I'm going to apply it, because the work
+> > with probe ordering is still in the works, but I'd like some general
+> > ARM people to come in with opinions.
+>
+> I really don't think we should be applying this sort of stuff unless
+> things are actively broken right now.  It's a bit of a rabbit hole we
+> could spend a long time going down tweaking things for different
+> systems in the same way that tweaking the link order can be and it masks
+> the underlying issues.
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Things are actively broken right now, in the sense that there are many
+needless probe deferrals on boot.
+These are pinctrl drivers, which are required to load before every
+other driver that requests a gpio.
+AFAICT, the pinctrl is part of the platform "architecture", hence why
+I suggest we move this to arch_initcall().
+arch_initcall() is also consistent with 39 other pinctrl drivers in
+drivers/pinctrl.
+19 others use subsys_initcall(), core_initcall() or
+postcore_initcall(), any of which would also work.
 
-Linus, will you take this patch through your branch?
-
-> diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
-> index dc02f76..bd88ae9 100644
-> --- a/arch/arm/boot/dts/mt2701.dtsi
-> +++ b/arch/arm/boot/dts/mt2701.dtsi
-> @@ -17,6 +17,7 @@
->   #include <dt-bindings/clock/mt2701-clk.h>
->   #include <dt-bindings/reset-controller/mt2701-resets.h>
->   #include "skeleton64.dtsi"
-> +#include "mt2701-pinfunc.h"
->
->   / {
->   	compatible = "mediatek,mt2701";
-> @@ -99,6 +100,24 @@
->   		#reset-cells = <1>;
->   	};
->
-> +	pio: pinctrl@10005000 {
-> +		compatible = "mediatek,mt2701-pinctrl";
-> +		reg = <0 0x1000b000 0 0x1000>;
-> +		mediatek,pctl-regmap = <&syscfg_pctl_a>;
-> +		pins-are-numbered;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	syscfg_pctl_a: syscfg@10005000 {
-> +		compatible = "mediatek,mt2701-pctl-a-syscfg", "syscon";
-> +		reg = <0 0x10005000 0 0x1000>;
-> +	};
-> +
->   	watchdog: watchdog@10007000 {
->   		compatible = "mediatek,mt2701-wdt",
->   			     "mediatek,mt6589-wdt";
->
+-Dan
