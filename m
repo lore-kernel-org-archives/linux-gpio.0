@@ -1,124 +1,50 @@
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
-Date: Fri, 01 Jan 2016 16:27:26 +0200
-Message-ID: <DBFC9B9B-5E81-44FD-9E26-8B50545004C1@gmail.com>
-References: <1450792017-7120-1-git-send-email-djkurtz@chromium.org> <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com> <20151230172212.GZ16023@sirena.org.uk> <CAGS+omA9AarzE2sp1Ry3RuOt8EOa-sL=DL1iDA2OeVVdjn=xgg@mail.gmail.com> <20151231220712.GD16023@sirena.org.uk> <CAGS+omDesPTYHhVLv_EtQsYxa6MNuSi06MwcXz6RcY=uAcEtnQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 13/54] gpio: pcf857x: Be sure to clamp return value
+Date: Fri, 1 Jan 2016 18:06:34 +0100
+Message-ID: <CACRpkdY3OO1rHxPf7yZQkNAtHnZzKPAa8wWHwO4HtC95ds__Jg@mail.gmail.com>
+References: <1450794009-22885-1-git-send-email-linus.walleij@linaro.org>
+	<11897257.suvtS8Wvz6@avalon>
+	<567F3258.7020003@mentor.com>
+	<4184910.enE8aZKjEM@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34551 "EHLO
-	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751372AbcAAO1e (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jan 2016 09:27:34 -0500
-In-Reply-To: <CAGS+omDesPTYHhVLv_EtQsYxa6MNuSi06MwcXz6RcY=uAcEtnQ@mail.gmail.com>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:33500 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751922AbcAARGf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jan 2016 12:06:35 -0500
+Received: by mail-ob0-f174.google.com with SMTP id bx1so185619335obb.0
+        for <linux-gpio@vger.kernel.org>; Fri, 01 Jan 2016 09:06:35 -0800 (PST)
+In-Reply-To: <4184910.enE8aZKjEM@avalon>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>, Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabio Estevam <fabio.estevam@freescale.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, George Cherian <george.cherian@ti.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
+On Sun, Dec 27, 2015 at 8:47 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 
+> Would something like the following make sense ?
+>
+>         value = chip->get ? chip->get(chip, offset) : -EIO;
+>         value = IS_ERR_VALUE(value) ? value : !!value;
 
-On January 1, 2016 3:56:01 AM EET, Daniel Kurtz <djkurtz@chromium.org> wrote:
->Hi Mark,
->
->Thanks for responding.
->
->On Fri, Jan 1, 2016 at 6:07 AM, Mark Brown <broonie@kernel.org> wrote:
->> On Thu, Dec 31, 2015 at 09:45:51PM +0800, Daniel Kurtz wrote:
->>> On Thu, Dec 31, 2015 at 1:22 AM, Mark Brown <broonie@kernel.org>
->wrote:
->>
->>> > I really don't think we should be applying this sort of stuff
->unless
->>> > things are actively broken right now.  It's a bit of a rabbit hole
->we
->>> > could spend a long time going down tweaking things for different
->>> > systems in the same way that tweaking the link order can be and it
->masks
->>> > the underlying issues.
->>
->>> Things are actively broken right now, in the sense that there are
->many
->>> needless probe deferrals on boot.
->>
->> That's just noisy, everything does end up loading OK.
->
->It's not just noisy, it also adds to boot time.
->
->>  If the noise is a
->> problem working on fixing the underlying problem with not being able
->to
->> figure out dependencies seems like a better thing.  When we discussed
->> this on the kernel summit list it wasn't clear everyone was convinced
->> this was even a problem (I think it is since it obscures real
->> information).  Actual breakage to me is something that never sorts
->> itself out.
->>
->>> These are pinctrl drivers, which are required to load before every
->>> other driver that requests a gpio.
->>> AFAICT, the pinctrl is part of the platform "architecture", hence
->why
->>> I suggest we move this to arch_initcall().
->>
->> This is exactly the sort of hacking that leads to problems
->
->What problems?
->More patches as people adjust / tune / optimize boot time, or something
->else?
->
->> you can
->> also make the same argument for a bunch of other things like
->regulators
->> but then you find there's circular dependencies or extra devices with
->> different requirements on some systems that cause further issues and
->> need more special casing, or you find that some other device gets
->pushed
->> earlier so you have to go round tweaking everything it uses.
->
->For regulators, I think things are a bit more subtle.  Most regulators
->are external components that can be used on different boards for
->different purposes, so I can see an argument for treating them in a
->more generic way by using a later device_initcall.  The exception
->being architecture specific PMICs that only make sense when paired
->with a specific small set of CPUs - and if you look, there are many
->PMIC regulator drivers that are at earlier initcall levels, presumably
->because they are required by cpufreq drivers, and/or their initcall
->level is set as the same as the rest of the functions exposed by the
->same PMIC MFD.
->
->> It's not
->> that the device is magic, it's that we don't understand how to handle
->> dependencies well enough.  Raphael did say he was going to work on
->> something for this, I'm not sure where it got to though.
->
->Glad to hear it is a well recognized problem, and that people plan to
->look into a fix.
->
->>> arch_initcall() is also consistent with 39 other pinctrl drivers in
->>> drivers/pinctrl.
->>> 19 others use subsys_initcall(), core_initcall() or
->>> postcore_initcall(), any of which would also work.
->>
->> It's fairly clear that there's at least a case for simplifying the
->> existing practice here, for example by moving everything into a
->single
->> (perhaps aliased) initcall rather than by randomly picking a level
->per
->> system or by actually fiddling with the link ordering if the case is
->> sufficiently clear that pinctrl in general ought to load earlier than
->it
->> does.
->
->Nothing above sounds like a reason not to merge this patch, however.
->Why should we block useful patches that use existing tools to fix real
->architecture-specific issues until new infrastructure is merged that
->solves general problems?
->
+Yeah that makes sense, I didn't think about using IS_ERR_VALUE()
+to mitigate the situation.
 
-I think what Mark means is, that we define some pinctrl_initcall which is a macro to subsys_initcall (or arch_initcall or similar). We apply this to all pinctrl drivers including the one from Mediatek. This way at least we have a common method and changing the behaviour in the future is easier to handle.
+Patches welcome :)
 
-Regards,
-Matthias
+> Granted, GPIO drivers would still need to make sure that the value they return
+> from register reads don't get considered as an error code, but any val & (1 <<
+> offset) would be fine, which is the most common case.
+>
+> If you still think that patching all GPIO drivers is better I won't oppose to
+> that.
 
+I have already patches all the drivers with this problem, merged the
+larger part of it and will merge the remainders for v4.6. The above is
+still more elegant than the code we have so I'd take it to put some
+nice robustness icing on top...
+
+Yours,
+Linus Walleij
