@@ -1,52 +1,74 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] gpiolib: always initialize *flags from of_get_named_gpio_flags
-Date: Fri, 01 Jan 2016 23:40:46 +0100
-Message-ID: <6037371.CvRA1dDj1l@wuerfel>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2] i2c: imx: make bus recovery through pinctrl optional
+Date: Sun, 3 Jan 2016 19:30:12 +0100
+Message-ID: <20160103183012.GE1522@katana>
+References: <1448055950-21190-1-git-send-email-leoli@freescale.com>
+ <CACRpkdbb-GFJSVvxOLda6CVG_fB2zAPPC2MMzQ6P1mAfvsrkPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6e7ZaeXHKrTJCxdu"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.135]:56526 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752364AbcAAWlP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 1 Jan 2016 17:41:15 -0500
+Received: from sauhun.de ([89.238.76.85]:55982 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751522AbcACSaQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sun, 3 Jan 2016 13:30:16 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbb-GFJSVvxOLda6CVG_fB2zAPPC2MMzQ6P1mAfvsrkPw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Li Yang <leoli@freescale.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Gao Pan <b54642@freescale.com>
 
-The of_get_named_gpio_flags() function does nothing other than returning
-an error when CONFIG_OF_GPIO is disabled, but that causes spurious
-warnings about possible use of uninitialized variables in any code that
-does not check the of_get_named_gpio_flags() return value before trying
-to use the flags:
 
-drivers/input/misc/rotary_encoder.c: In function 'rotary_encoder_probe':
-drivers/input/misc/rotary_encoder.c:223:28: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/power/bq24735-charger.c: In function 'bq24735_charger_probe':
-drivers/power/bq24735-charger.c:227:12: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
-drivers/power/sbs-battery.c: In function 'sbs_probe':
-drivers/power/sbs-battery.c:782:17: warning: 'gpio_flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+--6e7ZaeXHKrTJCxdu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This changes the behavior of the inline helper to set the flags to zero
-when OF_GPIO is disabled, to avoid the warnings. In all cases I've
-encountered, we don't actually get to the place that uses the flags
-if CONFIG_OF is disabled because we won't enter the DT parser code.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 87d6d1632dd4..bb85a8eeba6a 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -67,6 +67,9 @@ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- static inline int of_get_named_gpio_flags(struct device_node *np,
- 		const char *list_name, int index, enum of_gpio_flags *flags)
+On Mon, Nov 30, 2015 at 01:55:19PM +0100, Linus Walleij wrote:
+> On Fri, Nov 20, 2015 at 10:45 PM, Li Yang <leoli@freescale.com> wrote:
+>=20
+> > -       if (IS_ERR(i2c_imx->pinctrl)) {
+> > +       /* bailout on -ENOMEM or -EPROBE_DEFER, continue for other erro=
+rs */
+> > +       if (PTR_ERR(i2c_imx->pinctrl) =3D=3D -ENOMEM ||
+> > +                       PTR_ERR(i2c_imx->pinctrl) =3D=3D -EPROBE_DEFER)=
  {
-+	if (flags)
-+		*flags = 0;
-+
- 	return -ENOSYS;
- }
- 
+>=20
+> This is one of the evils of deferred probe: you never know if
+> something will eventually turn up. It feels wrong to bail out
+> on deferred probe...
+>=20
+> I have no better idea though.
+> Acked-by
 
+Linus, proper ack next time please, so patchwork will pick it up
+automatically.
+
+Li Yang: There have been some other changes to the imx driver. Could you
+rebase against my for-next or for-4.5 and add Linus' ack? Thanks!
+
+
+--6e7ZaeXHKrTJCxdu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWiWizAAoJEBQN5MwUoCm2O1gP/3ugwGZqeMECR7j68401jLvW
+YH78WTFzXwGIppJ+RhaCWp5CdNZK5n6oKnSVoVonIGBcy1MKt5lc09PaJo7FTNC6
+xBxJ5S4hgpLcr0BJ376+sUPHbRHr6pnFjAg8XoutHjifmcaH89KwN+yWDGHq+NXB
+Dv2O96p2Gcsqf+tlLMa462OvCLpHGMqtyUThTYXKHkM4GzAc4PedRTuO9zbhEPCb
+syrLMGy/eRGGKZicJK+bn6eXxIwI0Xg/z5hesIvD/g3dQFnAjcywQZD0mv9EkkFh
+DO+Htr8Eu3wyKtftCuUqhRqLm0u4dSD5a1yP2yV2snIsbghl07LEFHsp3yAo3kfC
+kFr46ngwlXH0DGpU4P2rf4AI2IIhqPUr6Xa5yJ5z92BVoPgQtnStV9WSZLXSk1ro
+5Cx7WMOfZUlPqwTd5xQeRbePvGKhETqc1xPifZhUG1yDLpbQHGXtW+bgSo+bmJr8
+VRrR4uhJKgL0R3nbxSfumGZLVZp0AORE0yXyTrnh4yQQdN3O8AowKUN++rwkt+1/
+uijny0P4xkGBVAc+xv7dJWoi0Kb/2+ul/bT3NnLUO9ObVzr+KWGMrCHwuNfpeH4B
+Sz7trNf9M0AUXbjRqEJaVWUA3jHKqGXytDSblKGpERXxPDh1R0gsqBj/J+690Uvb
+xbXfSSV3jys/1UAQWZWd
+=oeyQ
+-----END PGP SIGNATURE-----
+
+--6e7ZaeXHKrTJCxdu--
