@@ -1,160 +1,120 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH] drivers/pinctrl: make mediatek/pinctrl-mt8* driver explicitly
- non-modular
-Date: Mon, 4 Jan 2016 12:44:10 -0500
-Message-ID: <1451929450-18150-1-git-send-email-paul.gortmaker@windriver.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] pinctrl: mediatek: convert to arch_initcall
+Date: Mon, 4 Jan 2016 18:23:15 +0000
+Message-ID: <20160104182315.GP16023@sirena.org.uk>
+References: <1450792017-7120-1-git-send-email-djkurtz@chromium.org>
+ <CACRpkdbRDzXunYK5d6Ld4Z2a=0mkp4KBvgL2P-St4P65Jajamw@mail.gmail.com>
+ <20151230172212.GZ16023@sirena.org.uk>
+ <CAGS+omA9AarzE2sp1Ry3RuOt8EOa-sL=DL1iDA2OeVVdjn=xgg@mail.gmail.com>
+ <20151231220712.GD16023@sirena.org.uk>
+ <CAGS+omDesPTYHhVLv_EtQsYxa6MNuSi06MwcXz6RcY=uAcEtnQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/F2XdnRjS8y2HUtp"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35733 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752148AbcADSXg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2016 13:23:36 -0500
+Content-Disposition: inline
+In-Reply-To: <CAGS+omDesPTYHhVLv_EtQsYxa6MNuSi06MwcXz6RcY=uAcEtnQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Fabio Estevam <fabio.estevam@freescale.com>, Fabian Frederick <fabf@skynet.be>, Maoguang Meng <maoguang.meng@mediatek.com>, Axel Lin <axel.lin@ingics.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-The Kconfig for these drivers are currently:
 
-config PINCTRL_MT8127
-        bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
+--/F2XdnRjS8y2HUtp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-config PINCTRL_MT8135
-        bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+On Fri, Jan 01, 2016 at 09:56:01AM +0800, Daniel Kurtz wrote:
+> On Fri, Jan 1, 2016 at 6:07 AM, Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Dec 31, 2015 at 09:45:51PM +0800, Daniel Kurtz wrote:
 
-config PINCTRL_MT8173
-        bool "Mediatek MT8173 pin control"
+> >> Things are actively broken right now, in the sense that there are many
+> >> needless probe deferrals on boot.
 
-...meaning that they are currently not being built as a module by anyone.
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+> > That's just noisy, everything does end up loading OK.
 
-A recent commit moved these from module_init to arch_initcall already, so
-the init ordering remains untouched with this commit.
+> It's not just noisy, it also adds to boot time.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+If you've got meaningful boot time numbers from practical systems it'd
+be good to share them, nobody was able to show any actual problem there.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> >> These are pinctrl drivers, which are required to load before every
+> >> other driver that requests a gpio.
+> >> AFAICT, the pinctrl is part of the platform "architecture", hence why
+> >> I suggest we move this to arch_initcall().
 
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
----
+> > This is exactly the sort of hacking that leads to problems
 
-[The "recent commit" is 6c741c74092c61465af206672ba567940a23d709
- "pinctrl: mediatek: convert to arch_initcall" but since I was not
- sure if the pinctrl branch ever got rebased, I avoided referencing
- the commit by what might be a transient SHA directly.]
+> What problems?
+> More patches as people adjust / tune / optimize boot time, or something else?
 
- drivers/pinctrl/mediatek/pinctrl-mt8127.c | 8 +-------
- drivers/pinctrl/mediatek/pinctrl-mt8135.c | 8 +-------
- drivers/pinctrl/mediatek/pinctrl-mt8173.c | 8 +-------
- 3 files changed, 3 insertions(+), 21 deletions(-)
+There's that and also general fragility when multiple drivers interact -
+it can get really problematic when different systems end up with
+different requirements for the sasme driver and disrupt each other or
+conflict with each other.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8127.c b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-index 98e0bebfdf92..d76491574841 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-@@ -13,7 +13,7 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -336,7 +336,6 @@ static const struct of_device_id mt8127_pctrl_match[] = {
- 	{ .compatible = "mediatek,mt8127-pinctrl", },
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, mt8127_pctrl_match);
- 
- static struct platform_driver mtk_pinctrl_driver = {
- 	.probe = mt8127_pinctrl_probe,
-@@ -350,9 +349,4 @@ static int __init mtk_pinctrl_init(void)
- {
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
--
- arch_initcall(mtk_pinctrl_init);
--
--MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("MediaTek MT8127 Pinctrl Driver");
--MODULE_AUTHOR("Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8135.c b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-index 1c153b860f36..d8c645f16f21 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-@@ -12,7 +12,7 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -351,7 +351,6 @@ static const struct of_device_id mt8135_pctrl_match[] = {
- 	},
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, mt8135_pctrl_match);
- 
- static struct platform_driver mtk_pinctrl_driver = {
- 	.probe = mt8135_pinctrl_probe,
-@@ -365,9 +364,4 @@ static int __init mtk_pinctrl_init(void)
- {
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
--
- arch_initcall(mtk_pinctrl_init);
--
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("MediaTek Pinctrl Driver");
--MODULE_AUTHOR("Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-index a62514eb2129..8bfd427b9135 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-@@ -12,7 +12,7 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -378,7 +378,6 @@ static const struct of_device_id mt8173_pctrl_match[] = {
- 	},
- 	{ }
- };
--MODULE_DEVICE_TABLE(of, mt8173_pctrl_match);
- 
- static struct platform_driver mtk_pinctrl_driver = {
- 	.probe = mt8173_pinctrl_probe,
-@@ -393,9 +392,4 @@ static int __init mtk_pinctrl_init(void)
- {
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
--
- arch_initcall(mtk_pinctrl_init);
--
--MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("MediaTek Pinctrl Driver");
--MODULE_AUTHOR("Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>");
--- 
-2.6.1
+> > you can
+> > also make the same argument for a bunch of other things like regulators
+> > but then you find there's circular dependencies or extra devices with
+> > different requirements on some systems that cause further issues and
+> > need more special casing, or you find that some other device gets pushed
+> > earlier so you have to go round tweaking everything it uses.
+
+> For regulators, I think things are a bit more subtle.  Most regulators
+> are external components that can be used on different boards for
+> different purposes, so I can see an argument for treating them in a
+> more generic way by using a later device_initcall.  The exception
+> being architecture specific PMICs that only make sense when paired
+> with a specific small set of CPUs - and if you look, there are many
+> PMIC regulator drivers that are at earlier initcall levels, presumably
+> because they are required by cpufreq drivers, and/or their initcall
+> level is set as the same as the rest of the functions exposed by the
+> same PMIC MFD.
+
+The reason the regulator drivers are earlier is that cpufreq and a
+couple of other things are broken and don't use the device model so we
+have to use link order hacks.  I'm pushing any driver that doesn't
+specifically have problems with those to just use normal initcall.
+
+> >> arch_initcall() is also consistent with 39 other pinctrl drivers in
+> >> drivers/pinctrl.
+> >> 19 others use subsys_initcall(), core_initcall() or
+> >> postcore_initcall(), any of which would also work.
+
+> > It's fairly clear that there's at least a case for simplifying the
+> > existing practice here, for example by moving everything into a single
+> > (perhaps aliased) initcall rather than by randomly picking a level per
+> > system or by actually fiddling with the link ordering if the case is
+> > sufficiently clear that pinctrl in general ought to load earlier than it
+> > does.
+
+> Nothing above sounds like a reason not to merge this patch, however.
+> Why should we block useful patches that use existing tools to fix real
+> architecture-specific issues until new infrastructure is merged that
+> solves general problems?
+
+Some of the infrastructure here is really trivial if we are saying that
+basically all drivers do this.  That way you don't end up so much with
+things like wondering why different drivers made different decisions so
+much.
+
+--/F2XdnRjS8y2HUtp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWiriTAAoJECTWi3JdVIfQfCMH/iIpqLXso7jfP2CLIYK8qX1k
+sPYptZ0q87gwjDSinlZvCjaRAds+DsjtljoVK+xdw7PPOpnNR2K37JPWBn/AA4VH
+xK6S8kz0Z60oTlRjEqgLPfyOLMXlUtbw/GeT0KGn73hRW/MtvNgHjL1g2Fw+dVsC
+xdl+HeSE3y/I9kGgvS+xnLrlVKyDPv01xsovwjbgU8QDqDztL16HicCKWoxajGBA
+LKgQEQpi85FOncLzPzf+WEw48D5eTZpKVKgu416YtL7AQeFSqmk7j+RlOGYWmsJG
+xJzAJn0k1qhjv+VkimKDuRfOaabWjZop5Y050tUCtrBenbZH0KutMSBq0PSCsHM=
+=QARv
+-----END PGP SIGNATURE-----
+
+--/F2XdnRjS8y2HUtp--
