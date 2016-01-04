@@ -1,62 +1,75 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH 14/54] gpio: pch: Be sure to clamp return value
-Date: Mon, 4 Jan 2016 10:41:41 +0100
-Message-ID: <20160104104141.14cf44d9@endymion.delvare>
-References: <1450794054-22948-1-git-send-email-linus.walleij@linaro.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 2/3] ARM: dts: sun8i: Add Allwinner
+ A83T dtsi
+Date: Mon, 4 Jan 2016 11:04:08 +0100
+Message-ID: <20160104100408.GB11722@lukather>
+References: <1450445451-311-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1450445451-311-3-git-send-email-vishnupatekar0510@gmail.com>
+ <20151218214112.GU30359@lukather>
+ <567537FF.9010601@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:46881 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751521AbcADJlo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 4 Jan 2016 04:41:44 -0500
-In-Reply-To: <1450794054-22948-1-git-send-email-linus.walleij@linaro.org>
+Received: from down.free-electrons.com ([37.187.137.238]:36094 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753137AbcADKEL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 4 Jan 2016 05:04:11 -0500
+Content-Disposition: inline
+In-Reply-To: <567537FF.9010601@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Daniel Krueger <daniel.krueger@systec-electronic.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Vishnu Patekar <vishnupatekar0510@gmail.com>, robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, linus.walleij@linaro.org, jenskuske@gmail.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-On Tue, 22 Dec 2015 15:20:54 +0100, Linus Walleij wrote:
-> As we want gpio_chip .get() calls to be able to return negative
-> error codes and propagate to drivers, we need to go over all
-> drivers and make sure their return values are clamped to [0,1].
-> We do this by using the ret = !!(val) design pattern.
-> 
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Daniel Krueger <daniel.krueger@systec-electronic.com>
-> Cc: Jean Delvare <jdelvare@suse.de>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-pch.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-> index af0715f8524b..8c45b74dcf21 100644
-> --- a/drivers/gpio/gpio-pch.c
-> +++ b/drivers/gpio/gpio-pch.c
-> @@ -127,7 +127,7 @@ static int pch_gpio_get(struct gpio_chip *gpio, unsigned nr)
->  {
->  	struct pch_gpio *chip =	container_of(gpio, struct pch_gpio, gpio);
->  
-> -	return ioread32(&chip->reg->pi) & (1 << nr);
-> +	return !!(ioread32(&chip->reg->pi) & (1 << nr));
->  }
->  
->  static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+--KFztAG8eRSV9hGtP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would prefer:
+Hi,
 
-	return (ioread32(&chip->reg->pi) >> nr) & 1;
+On Sat, Dec 19, 2015 at 11:57:03AM +0100, Hans de Goede wrote:
+> >>+	memory {
+> >>+		reg =3D <0x40000000 0x80000000>;
+> >>+	};
+> >
+> >Is mainline u-boot usable ? If so, you can remove that node entirely.
+>=20
+> mainline u-boot works for me when cold-booting from a sdcard, so I consid=
+er
+> it usable :)
 
-which is faster for the same result.
+I'm glad we have the same definition of usable ;)
 
-At x86 assembly level, your approach requires 5 CPU instructions (mov,
-shl, test, setne and movzbl), mine only 2 CPU instructions (shr and
-and.)
+Maxime
 
--- 
-Jean Delvare
-SUSE L3 Support
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--KFztAG8eRSV9hGtP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWikOYAAoJEBx+YmzsjxAgM0sQAI37JwR9RFmpabddZuW9Sy1v
+8ULDzQD4cmZ/+4sPuwZgw6AsCqvvDIhXm7HZjkCDxgp/2Bl3EhkjAJ1WNH0zS9wN
+4rjisdEzByJvoCemIeRwcyjdtz443aC7qtjuPYnz8FSDMOemptsl5TlXwQhRudMP
+LaU6sNJNbXcUxtSx/KUf5xQ1LOJyCQ/2DnryH+W7jFFPJsaW4OnCifkC2ivYuDvD
+b0iMOFEhwliHvMnJUui7SyPFv8m5Bm0HvKHGhWU5qgL8ThjZlsY0d/3lWHoSwN9r
+/sfju4MNUUffaPbUTwZ1yUjtz6V06YyXNLHrSACDrIua0USrtYWx20lMIzHq+FcX
+NRgwDdn/+QgUp7EKmzB0StHyVpiOS4yn7uanBVmR3qZ6/bFFLE1ZgyDBm/xvT8rm
+EJ4ho5iZvE7uwO9WVge1WBtQqNPk2+u+arcJZ+L1BTltSOzTFqJRbKVwfXj9Lm9P
+gfK9N+B97WipsDX7yZfonVz5iXt80E5B6uzs6H+TPbIbqpnoUGjs7gvz+eCnAe61
+aCvoEUkITsCCqg7FOUAr89eEGf+eeO2AxI2my3jlUvs4dxE09uV/7GefgnqjGuto
+i63R+qCk103RYcNzoETTqbTYLQgfLHcTkWIQ79ooiDTWQlT+8CH2BZMCzrOVQIjn
+bvBKIrPwjP9otkS1/oXf
+=3m9s
+-----END PGP SIGNATURE-----
+
+--KFztAG8eRSV9hGtP--
