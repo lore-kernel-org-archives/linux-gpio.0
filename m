@@ -1,42 +1,35 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH] gpio: pch: Optimize pch_gpio_get()
-Date: Tue, 5 Jan 2016 14:23:47 +0100
-Message-ID: <20160105142347.72fff8f1@endymion.delvare>
+From: Martin Schiller <mschiller@tdt.de>
+Subject: RE: [PATCH 3/3] pinctrl: lantiq: add a to_irq callback
+Date: Tue, 5 Jan 2016 12:59:25 +0000
+Message-ID: <e607457b3c544ac69ba6295313f2af66@TDT-MS.TDTNET.local>
+References: <1451942879-43265-1-git-send-email-blogic@openwrt.org>
+	<1451942879-43265-3-git-send-email-blogic@openwrt.org>
+ <CACRpkda9mNt8XHhESpgmOFiRrRqMN14uHPmcXcrrJqe1=qxtWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:32938 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751188AbcAENX4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Jan 2016 08:23:56 -0500
+Received: from mxout51.expurgate.net ([91.198.224.51]:42914 "EHLO
+	mxout51.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751434AbcAENid (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 08:38:33 -0500
+In-Reply-To: <CACRpkda9mNt8XHhESpgmOFiRrRqMN14uHPmcXcrrJqe1=qxtWg@mail.gmail.com>
+Content-Language: de-DE
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, John Crispin <blogic@openwrt.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The double negation is costly and can be avoided by shifting the
-register value before masking the requested bit.
-
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-pch.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-4.4-rc8.orig/drivers/gpio/gpio-pch.c	2016-01-05 14:18:55.444163876 +0100
-+++ linux-4.4-rc8/drivers/gpio/gpio-pch.c	2016-01-05 14:19:02.014313389 +0100
-@@ -127,7 +127,7 @@ static int pch_gpio_get(struct gpio_chip
- {
- 	struct pch_gpio *chip =	gpiochip_get_data(gpio);
- 
--	return !!(ioread32(&chip->reg->pi) & (1 << nr));
-+	return (ioread32(&chip->reg->pi) >> nr) & 1;
- }
- 
- static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
-
-
--- 
-Jean Delvare
-SUSE L3 Support
+T24gMDEvMDUvMjAxNiBhdCAxMToxMCBBTSwgTGludXMgV2FsbGVpaiB3cm90ZToNCj4gT24gTW9u
+LCBKYW4gNCwgMjAxNiBhdCAxMDoyNyBQTSwgSm9obiBDcmlzcGluIDxibG9naWNAb3BlbndydC5v
+cmc+DQo+IHdyb3RlOg0KPg0KPiA+IFRoZSBjYWxsYmFjayBpcyBtaXNzaW5nIHNvIGxldHMgYWRk
+IGl0Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogSm9obiBDcmlzcGluIDxibG9naWNAb3Blbndy
+dC5vcmc+DQo+DQo+IFRoYW5rcyENCj4NCj4gPiArICAgICAgIHJldHVybiAtMTsNCj4gPiArfQ0K
+Pg0KPiBJIGNoYW5nZWQgdGhpcyB0byByZXR1cm4gMCBiZWNhdXNlIG9mIHRoaXM6DQo+IGh0dHA6
+Ly9sd24ubmV0L0FydGljbGVzLzQ3MDgyMC8NCj4NCj4gUGF0Y2ggYXBwbGllZCB3aXRoIHRoZSBh
+Ym92ZSBjaGFuZ2UuDQo+DQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQoNCkBMaW51czoNCkFz
+IEkgc3VibWl0dGVkIHRoaXMgY2hhbmdlIGEgZmV3IHdlZWtzIGFnbywgeW91IGFscmVhZHkgYXBw
+bGllZCB0aGlzIGluIHRoZSBsaW51eC1ncGlvIHRyZWUgaGVyZToNCmh0dHBzOi8vZ2l0Lmtlcm5l
+bC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2xpbnVzdy9saW51eC1ncGlvLmdpdC9jb21taXQv
+ZHJpdmVycy9waW5jdHJsL3BpbmN0cmwteHdheS5jP2g9ZGV2ZWwmaWQ9M2U2NDA3NDNmZWU2ZTZh
+ODJlYWQxZjE2MzczNzc1NWIyYTk2NTcxMg0KDQo=
