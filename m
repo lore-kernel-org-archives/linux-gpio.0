@@ -1,37 +1,63 @@
-From: John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH 2/3] pinctrl: lantiq: set the OD bit when the pin it an
- output
-Date: Tue, 5 Jan 2016 11:11:36 +0100
-Message-ID: <568B96D8.6050308@openwrt.org>
-References: <1451942879-43265-1-git-send-email-blogic@openwrt.org>
- <1451942879-43265-2-git-send-email-blogic@openwrt.org>
- <CACRpkda37RToxs7EQVAH+BxWvE_wntQ1WFe+HF8cjn0O+oMXZA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: generic: fix signedness bug found by cppcheck
+Date: Tue,  5 Jan 2016 11:16:56 +0100
+Message-ID: <1451989016-4126-1-git-send-email-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from arrakis.dune.hu ([78.24.191.176]:58945 "EHLO arrakis.dune.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751472AbcAEKLw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Jan 2016 05:11:52 -0500
-In-Reply-To: <CACRpkda37RToxs7EQVAH+BxWvE_wntQ1WFe+HF8cjn0O+oMXZA@mail.gmail.com>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:34113 "EHLO
+	mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751543AbcAEKRD (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 05:17:03 -0500
+Received: by mail-lf0-f46.google.com with SMTP id y184so291101895lfc.1
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jan 2016 02:17:02 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Martin Schiller <mschiller@tdt.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, David Binderman <dcb314@hotmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
+cppcheck reports this:
 
+(style) int result is returned as long value. If the return
+value is long to avoid loss of information, then you have
+loss of information.
 
-On 05/01/2016 11:05, Linus Walleij wrote:
-> On Mon, Jan 4, 2016 at 10:27 PM, John Crispin <blogic@openwrt.org> wrote:
-> 
->> Signed-off-by: John Crispin <blogic@openwrt.org>
-> 
-> I got the same patch from Martin Schiller earlier so already applied.
-> 
-> Yours,
-> Linus Walleij
-> 
+This can be fixed with (1UL << pin) but that is the same
+as using <linux/bitops.h> that already use 1UL so take
+this approach.
 
-opps, have to get used to the fact that after 7 years i am no longer the
-only one working on the lantiq target ;)
+Reported-by: David Binderman <dcb314@hotmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-generic.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-generic.c b/drivers/gpio/gpio-generic.c
+index ea581dc23d44..053a7f0a83e6 100644
+--- a/drivers/gpio/gpio-generic.c
++++ b/drivers/gpio/gpio-generic.c
+@@ -58,6 +58,7 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+ #include <linux/slab.h>
++#include <linux/bitops.h>
+ #include <linux/platform_device.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/basic_mmio_gpio.h>
+@@ -126,13 +127,13 @@ static unsigned long bgpio_read32be(void __iomem *reg)
+ 
+ static unsigned long bgpio_pin2mask(struct bgpio_chip *bgc, unsigned int pin)
+ {
+-	return 1 << pin;
++	return BIT(pin);
+ }
+ 
+ static unsigned long bgpio_pin2mask_be(struct bgpio_chip *bgc,
+ 				       unsigned int pin)
+ {
+-	return 1 << (bgc->bits - 1 - pin);
++	return BIT(bgc->bits - 1 - pin);
+ }
+ 
+ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
+-- 
+2.4.3
+
