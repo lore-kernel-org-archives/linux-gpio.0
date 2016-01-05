@@ -1,73 +1,41 @@
 From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH 14/54] gpio: pch: Be sure to clamp return value
-Date: Tue, 5 Jan 2016 14:21:12 +0100
-Message-ID: <20160105142112.089f45bd@endymion.delvare>
-References: <1450794054-22948-1-git-send-email-linus.walleij@linaro.org>
-	<20160104104141.14cf44d9@endymion.delvare>
-	<CACRpkdZBpENiiJe7GQE8xZQVZUi8Ehgzn05D0Vy+guuwK+LPVg@mail.gmail.com>
+Subject: [PATCH] gpio: pch: Optimize pch_gpio_get()
+Date: Tue, 5 Jan 2016 14:23:47 +0100
+Message-ID: <20160105142347.72fff8f1@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:32838 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:32938 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751188AbcAENVU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 5 Jan 2016 08:21:20 -0500
-In-Reply-To: <CACRpkdZBpENiiJe7GQE8xZQVZUi8Ehgzn05D0Vy+guuwK+LPVg@mail.gmail.com>
+	id S1751188AbcAENX4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 5 Jan 2016 08:23:56 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Daniel Krueger <daniel.krueger@systec-electronic.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-Hi Linus,
+The double negation is costly and can be avoided by shifting the
+register value before masking the requested bit.
 
-On Tue, 5 Jan 2016 10:46:06 +0100, Linus Walleij wrote:
-> On Mon, Jan 4, 2016 at 10:41 AM, Jean Delvare <jdelvare@suse.de> wrote:
-> > On Tue, 22 Dec 2015 15:20:54 +0100, Linus Walleij wrote:
-> >> As we want gpio_chip .get() calls to be able to return negative
-> >> error codes and propagate to drivers, we need to go over all
-> >> drivers and make sure their return values are clamped to [0,1].
-> >> We do this by using the ret = !!(val) design pattern.
-> >>
-> >> Cc: Thierry Reding <treding@nvidia.com>
-> >> Cc: Daniel Krueger <daniel.krueger@systec-electronic.com>
-> >> Cc: Jean Delvare <jdelvare@suse.de>
-> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >> ---
-> >>  drivers/gpio/gpio-pch.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-> >> index af0715f8524b..8c45b74dcf21 100644
-> >> --- a/drivers/gpio/gpio-pch.c
-> >> +++ b/drivers/gpio/gpio-pch.c
-> >> @@ -127,7 +127,7 @@ static int pch_gpio_get(struct gpio_chip *gpio, unsigned nr)
-> >>  {
-> >>       struct pch_gpio *chip = container_of(gpio, struct pch_gpio, gpio);
-> >>
-> >> -     return ioread32(&chip->reg->pi) & (1 << nr);
-> >> +     return !!(ioread32(&chip->reg->pi) & (1 << nr));
-> >>  }
-> >>
-> >>  static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
-> >
-> > I would prefer:
-> >
-> >         return (ioread32(&chip->reg->pi) >> nr) & 1;
-> >
-> > which is faster for the same result.
-> >
-> > At x86 assembly level, your approach requires 5 CPU instructions (mov,
-> > shl, test, setne and movzbl), mine only 2 CPU instructions (shr and
-> > and.)
-> 
-> I was mainly going over and fixing all drivers with the simplest
-> pattern I can think of, already merged this as it was a regression
-> basically, but a patch based on my GPIO devel branch or Linux-next
-> to fix it the way you want it would be
-> appreciated.
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-pch.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fair enough, will do.
+--- linux-4.4-rc8.orig/drivers/gpio/gpio-pch.c	2016-01-05 14:18:55.444163876 +0100
++++ linux-4.4-rc8/drivers/gpio/gpio-pch.c	2016-01-05 14:19:02.014313389 +0100
+@@ -127,7 +127,7 @@ static int pch_gpio_get(struct gpio_chip
+ {
+ 	struct pch_gpio *chip =	gpiochip_get_data(gpio);
+ 
+-	return !!(ioread32(&chip->reg->pi) & (1 << nr));
++	return (ioread32(&chip->reg->pi) >> nr) & 1;
+ }
+ 
+ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+
 
 -- 
 Jean Delvare
