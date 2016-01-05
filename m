@@ -1,32 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: pch: Optimize pch_gpio_get()
-Date: Tue, 5 Jan 2016 15:47:01 +0100
-Message-ID: <CACRpkdYruZ2GFcfCgPyGGGOW9exuMz7obAVRic9MJcYbKRXqWA@mail.gmail.com>
-References: <20160105142347.72fff8f1@endymion.delvare>
+Subject: Re: [PATCH 2/2] pinctrl: AMD: depend on Seattle or x86
+Date: Tue, 5 Jan 2016 15:58:53 +0100
+Message-ID: <CACRpkdbpRyXHfOtfqdTwVKxcjobEVaJ+BmFocPZ7AKon0Ah1jw@mail.gmail.com>
+References: <1451218972-22156-1-git-send-email-pbrobinson@gmail.com>
+	<1451218972-22156-3-git-send-email-pbrobinson@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33902 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751104AbcAEOrC (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 09:47:02 -0500
-Received: by mail-oi0-f43.google.com with SMTP id o124so275011914oia.1
-        for <linux-gpio@vger.kernel.org>; Tue, 05 Jan 2016 06:47:01 -0800 (PST)
-In-Reply-To: <20160105142347.72fff8f1@endymion.delvare>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:36356 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750846AbcAEO6y (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 09:58:54 -0500
+Received: by mail-ob0-f178.google.com with SMTP id ba1so275387839obb.3
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jan 2016 06:58:53 -0800 (PST)
+In-Reply-To: <1451218972-22156-3-git-send-email-pbrobinson@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On Tue, Jan 5, 2016 at 2:23 PM, Jean Delvare <jdelvare@suse.de> wrote:
+On Sun, Dec 27, 2015 at 1:22 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
 
-> The double negation is costly and can be avoided by shifting the
-> register value before masking the requested bit.
+> Add a dependency on the ARM64 Seatle SoC or generic x86 so we're not
+> prompted if we enable pinctrl for another platform.
 >
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+(...)
+> -       depends on GPIOLIB
+> +       depends on GPIOLIB && (ARCH_SEATTLE || X86_GENERIC || COMPILE_TEST)
 
-Patch applied.
+I suspect this should depend on X86 rather than X86_GENERIC
+as Mika pointed out for patch #1 so waiting for a new version
+of both patches.
 
 Yours,
 Linus Walleij
