@@ -1,34 +1,30 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpio: pxa: checking IS_ERR() instead of NULL
-Date: Tue, 5 Jan 2016 12:56:37 +0300
-Message-ID: <20160105095637.GE23619@mwanda>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: lantiq: 2 pins have the wrong mux list
+Date: Tue, 5 Jan 2016 11:03:08 +0100
+Message-ID: <CACRpkdZbJBTW2WbzR0K+afTvvP_y2scjtnnJv3frLfU5ki_b2w@mail.gmail.com>
+References: <1451942879-43265-1-git-send-email-blogic@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:35301 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751456AbcAEKDJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 05:03:09 -0500
+Received: by mail-ob0-f170.google.com with SMTP id pp16so8077578obb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jan 2016 02:03:08 -0800 (PST)
+In-Reply-To: <1451942879-43265-1-git-send-email-blogic@openwrt.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: John Crispin <blogic@openwrt.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-irq_domain_add_legacy() returns NULL on error, it doesn't return error
-pointers.
+On Mon, Jan 4, 2016 at 10:27 PM, John Crispin <blogic@openwrt.org> wrote:
 
-Fixes: 384ca3c6a28d ('gpio: pxa: change the interrupt management')
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> The latest vendor SDK contained this patch.
+>
+> Signed-off-by: John Crispin <blogic@openwrt.org>
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index c2d1a47..415852d 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -646,8 +646,8 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 	pchip->irqdomain = irq_domain_add_legacy(pdev->dev.of_node,
- 						 pxa_last_gpio + 1, irq_base,
- 						 0, &pxa_irq_domain_ops, pchip);
--	if (IS_ERR(pchip->irqdomain))
--		return PTR_ERR(pchip->irqdomain);
-+	if (!pchip->irqdomain)
-+		return -ENOMEM;
- 
- 	irq0 = platform_get_irq_byname(pdev, "gpio0");
- 	irq1 = platform_get_irq_byname(pdev, "gpio1");
+Patch applied. Had to rebase it manually for some reason.
+
+Yours,
+Linus Walleij
