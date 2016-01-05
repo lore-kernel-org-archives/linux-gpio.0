@@ -1,116 +1,58 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: reason for Allwinner SoC specific pinctrl drivers?
-Date: Tue, 5 Jan 2016 14:10:06 +0100
-Message-ID: <20160105131006.GI11722@lukather>
-References: <568A514D.7070102@arm.com>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: lantiq: 2 pins have the wrong mux list
+Date: Tue, 5 Jan 2016 14:19:22 +0100
+Message-ID: <CACRpkdbu2WtMofKx2Ot8zGbomwoqEEWvJYoCLCVUvh7kn7jFVw@mail.gmail.com>
+References: <1451942879-43265-1-git-send-email-blogic@openwrt.org>
+	<CACRpkdZbJBTW2WbzR0K+afTvvP_y2scjtnnJv3frLfU5ki_b2w@mail.gmail.com>
+	<568B9698.6060101@openwrt.org>
+	<751f45beafad43adad6f0181d73ef154@TDT-MS.TDTNET.local>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gJNQRAHI5jiYqw2y"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBL4BV62AKGQEVDSFPFI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <568A514D.7070102-5wv7dgnIgG8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-List-Id: linux-gpio@vger.kernel.org
-
---gJNQRAHI5jiYqw2y
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:36187 "EHLO
+	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751472AbcAENTX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Jan 2016 08:19:23 -0500
+Received: by mail-oi0-f51.google.com with SMTP id o62so268343663oif.3
+        for <linux-gpio@vger.kernel.org>; Tue, 05 Jan 2016 05:19:23 -0800 (PST)
+In-Reply-To: <751f45beafad43adad6f0181d73ef154@TDT-MS.TDTNET.local>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Martin Schiller <mschiller@tdt.de>
+Cc: John Crispin <blogic@openwrt.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Andre,
+On Tue, Jan 5, 2016 at 1:59 PM, Martin Schiller <mschiller@tdt.de> wrote:
+> On 01/05/2016 at 11:10 AM, John Crispin wrote:
+>>
+>>
+>> On 05/01/2016 11:03, Linus Walleij wrote:
+>> > On Mon, Jan 4, 2016 at 10:27 PM, John Crispin <blogic@openwrt.org>
+>> wrote:
+>> >
+>> >> The latest vendor SDK contained this patch.
+>> >>
+>> >> Signed-off-by: John Crispin <blogic@openwrt.org>
+>> >
+>> > Patch applied. Had to rebase it manually for some reason.
+>> >
+>> > Yours,
+>> > Linus Walleij
+>> >
+>>
+>>
+>> weird, it was generated using git on top of v4.4-rc7
+>
+> I think that's because of the changes submitted by me, which are not in
+> the official v4.4-rc7 so far:
+>
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/drivers/pinctrl/pinctrl-xway.c?h=devel&id=be14811c03cf20c793fd176a347625335110b0e6
 
-On Mon, Jan 04, 2016 at 11:02:37AM +0000, Andre Przywara wrote:
-> Hi,
-> 
-> while looking at the Allwinner A64 SoC support, I was wondering why we
-> would actually need a pinctrl driver (file) for each and every Allwinner
-> SoC that we support.
+I found the mess, of course it's my own fault. I merged some patches
+into the pin control tree and some into the GPIO tree and that combined
+with my massive refactorings is a mess.
 
-This was actually requested during the initial driver submission
-http://lists.infradead.org/pipermail/linux-arm-kernel/2012-December/136809.html
+I did some reverting and moving patches between the trees and
+now it should merge up in linux-next all right.
 
-And I actually came to like it, even though the initial port is indeed
-quite painful, for several reasons:
-
-1) In those times, we didn't have a datasheet available for all these
-SoCs, so no easy way to find out the value to set in the register to
-mux a particular function in. These days are mostly over, but we're
-still in that situation for a few SoCs (mostly the R* and H* SoCs
-though).
-
-2) It's quite easy to read and debug, at least from the DT PoV. The
-pain mostly comes from writing that table in the first place, but the
-alternative other SoCs have picked to have something readable in the
-DT is a SoC specific header file with the defines of all the functions
-availables for all the pins, which is just as painful to write and
-review, and is essentialy the same thing.
-
-3) It's easy to maintain. If one of the entry in the table came to be
-wrong, we simply have to update the table, it's completely contained
-in the kernel itself and doesn't require fixing (and updating) the DT.
-
-4) It allows to catch misconfiguration in the cases where you set a
-function on a pin that doesn't support it as well, which is also quite
-convenient, and wouldn't be possible at all in the case of a header,
-or simply open-coding the value.
-
-> Looking at both the A20 and the A64 doc I don't see any differences
-> in the port controller implementation apart from the actual muxval
-> <-> subsystem assignment, which is just data, right?
-
-There's also the interrupts over GPIOs that change slightly, the A20
-having a single bank and the A64 having several of them.
-
-The interrupt mechanism is quite interesting, since it's also a muxing
-option of a given pin, and only a few pins implement that option. On
-the A20 and earlier, we had 32 interrupts scattered around the
-available pins, on A31 and later, we still have the same mechanism,
-this time with multiple banks of 32 interrupts.
-
-We have to have a table somewhere as well to give the mapping a pin
-and the interrupt that might be connected to it.
-
-> Comparing the code files in drivers/pinctrl/sunxi seems to support this,
-> as those drivers only consist of the table and some boilerplate code.
-> 
-> Now I was wondering whether we could get away with one generic Allwinner
-> pinctrl driver and put the SoC specific pin assignments in DT instead.
-> It looks like adding an "allwinner,muxval" property in addition to the
-> existing "allwinner,function" in the SoC's .dtsi would give us all the
-> information we need. This could look like:
-> 
-> 	uart0_pins_a: uart0@0 {
-> 		allwinner,pins =   "PB22", "PB23";
-> +		allwinner,muxval = <0x02    0x02>;
-> 		allwinner,function = "uart0";
-> 		allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> 		allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
-> 	};
-> 
-> Would it make sense that I sit down and prototype such a driver?
-> 
-> We should keep compatibility with older DTs by keeping the existing
-> drivers in (or maybe emulating the current behaviour by providing just
-> those tables as a fallback) , but newer SoCs (like the A64?) would not
-> need a SoC specific driver, but just go with that generic driver and
-> appropriate DT properties.
-
-I guess in the such a case you wouldn't need the function string at
-all then?
-
-Thanks,
-Maxime
-
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---gJNQRAHI5jiYqw2y--
+Yours,
+Linus Walleij
