@@ -1,70 +1,73 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v4 2/3] ARM: dts: sun8i: Add Allwinner A83T dtsi
-Date: Wed, 6 Jan 2016 15:05:31 +0100
-Message-ID: <20160106140531.GK11722@lukather>
-References: <1452085914-29340-1-git-send-email-vishnupatekar0510@gmail.com>
- <1452085914-29340-3-git-send-email-vishnupatekar0510@gmail.com>
- <20160106132505.GJ563@leverpostej>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Xb8pJpF45Qg/t7GZ"
-Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBLF6WS2AKGQETWYQ76Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160106132505.GJ563@leverpostej>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH 2/3] gpio: brcmstb: Set endian flags for big-endian MIPS
+Date: Wed,  6 Jan 2016 10:55:22 -0800
+Message-ID: <1452106523-11556-3-git-send-email-f.fainelli@gmail.com>
+References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:34980 "EHLO
+	mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751863AbcAFS4N (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jan 2016 13:56:13 -0500
+Received: by mail-pf0-f173.google.com with SMTP id 78so246505767pfw.2
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jan 2016 10:56:13 -0800 (PST)
+In-Reply-To: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-mips@linux-mips.org, gregory.0xf0@gmail.com, jaedon.shin@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>
 
---Xb8pJpF45Qg/t7GZ
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Broadcom MIPS-based STB chips endianness is configured by boot strap,
+which also reverses all bus endianness (i.e., big-endian CPU + big
+endian bus ==> native endian I/O).
 
-Hi Mark,
+Other architectures (e.g., ARM) either do not support big endian, or
+else leave I/O in little endian mode.
 
-On Wed, Jan 06, 2016 at 01:25:05PM +0000, Mark Rutland wrote:
-> > +	clocks {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <1>;
-> > +		ranges;
-> > +
-> > +		osc24M: osc24M_clk {
-> > +			#clock-cells = <0>;
-> > +			compatible = "fixed-clock";
-> > +			clock-frequency = <24000000>;
-> > +			clock-output-names = "osc24M";
-> > +		};
-> > +
-> > +		osc32k: osc32k_clk {
-> > +			#clock-cells = <0>;
-> > +			compatible = "fixed-clock";
-> > +			clock-frequency = <32768>;
-> > +			clock-output-names = "osc32k";
-> > +		};
-> > +	};
-> 
-> Just put the clocks under the root node. 'clocks' is not a special
-> node.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-No, it's not a special node, but it's a very convenient one. It avoids
-"crippling" the main SoC definition with all the clocks definition,
-and keep the noise relatively low.
-
-And a bunch of other maintainers seem to agree:
-$ git grep "clocks {"  -- arch/arm/boot/dts/ arch/arm64/boot/dts/ | wc -l
-271
-
-Maxime
-
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index 3618b9fd0cba..8e8ddc76a56f 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -409,6 +409,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 	int num_banks = 0;
+ 	int err;
+ 	static int gpio_base;
++	unsigned long flags = 0;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -438,6 +439,18 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 	if (brcmstb_gpio_sanity_check_banks(dev, np, res))
+ 		return -EINVAL;
+ 
++	/*
++	 * MIPS endianness is configured by boot strap, which also reverses all
++	 * bus endianness (i.e., big-endian CPU + big endian bus ==> native
++	 * endian I/O).
++	 *
++	 * Other architectures (e.g., ARM) either do not support big endian, or
++	 * else leave I/O in little endian mode.
++	 */
++#if defined(CONFIG_MIPS) && defined(__BIG_ENDIAN)
++	flags = BGPIOF_BIG_ENDIAN_BYTE_ORDER;
++#endif
++
+ 	of_property_for_each_u32(np, "brcm,gpio-bank-widths", prop, p,
+ 			bank_width) {
+ 		struct brcmstb_gpio_bank *bank;
+@@ -466,7 +479,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+ 		err = bgpio_init(gc, dev, 4,
+ 				reg_base + GIO_DATA(bank->id),
+ 				NULL, NULL, NULL,
+-				reg_base + GIO_IODIR(bank->id), 0);
++				reg_base + GIO_IODIR(bank->id), flags);
+ 		if (err) {
+ 			dev_err(dev, "bgpio_init() failed\n");
+ 			goto fail;
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---Xb8pJpF45Qg/t7GZ--
+2.1.0
+
