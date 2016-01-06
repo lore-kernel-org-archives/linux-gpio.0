@@ -1,41 +1,61 @@
 From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 0/3] gpio: brcmstb: Misc changes
-Date: Wed,  6 Jan 2016 10:55:20 -0800
-Message-ID: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
+Subject: [PATCH 1/3] gpio: brcmstb: have driver register during subsys_initcall()
+Date: Wed,  6 Jan 2016 10:55:21 -0800
+Message-ID: <1452106523-11556-2-git-send-email-f.fainelli@gmail.com>
+References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:34947 "EHLO
-	mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752196AbcAFS4J (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jan 2016 13:56:09 -0500
-Received: by mail-pf0-f178.google.com with SMTP id 78so246504846pfw.2
-        for <linux-gpio@vger.kernel.org>; Wed, 06 Jan 2016 10:56:09 -0800 (PST)
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:34750 "EHLO
+	mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752213AbcAFS4M (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Jan 2016 13:56:12 -0500
+Received: by mail-pf0-f171.google.com with SMTP id e65so190261640pfe.1
+        for <linux-gpio@vger.kernel.org>; Wed, 06 Jan 2016 10:56:12 -0800 (PST)
+In-Reply-To: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-mips@linux-mips.org, gregory.0xf0@gmail.com, jaedon.shin@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-mips@linux-mips.org, gregory.0xf0@gmail.com, jaedon.shin@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, bcm-kernel-feedback-list@broadcom.com, Jim Quinlan <jim2101024@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
 
-Hi Linus, Alexandre,
+From: Jim Quinlan <jim2101024@gmail.com>
 
-This patch series updates the brcmstb GPIO driver to support the following:
+Because regulators are started with subsys_initcall(), and gpio references may
+be contained in the regulators, it makes sense to start the brcmstb-gpio's with
+a subsys_initcall(). The order within the drivers/Makefile ensures that the
+gpio initialization happens prior to the regulator's initialization.
 
-- move the initialization to subsys_initcall to allow using this driver with
-  GPIO-driven regulators
-- properly configure the driver for big-endian MIPS operation
-- enable the driver for MIPS-based brcmstb chips
+We need to unroll module_platform_driver() now to allow this and have custom
+exit and init module functions to control the initialization level.
 
-Thank you!
+Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/gpio/gpio-brcmstb.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Florian Fainelli (2):
-  gpio: brcmstb: Set endian flags for big-endian MIPS
-  gpio: brcmstb: Allow building driver for BMIPS_GENERIC
-
-Jim Quinlan (1):
-  gpio: brcmstb: have driver register during subsys_initcall()
-
- drivers/gpio/Kconfig        |  4 ++--
- drivers/gpio/gpio-brcmstb.c | 28 ++++++++++++++++++++++++++--
- 2 files changed, 28 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+index dc3f0395693b..3618b9fd0cba 100644
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -535,7 +535,18 @@ static struct platform_driver brcmstb_gpio_driver = {
+ 	.probe = brcmstb_gpio_probe,
+ 	.remove = brcmstb_gpio_remove,
+ };
+-module_platform_driver(brcmstb_gpio_driver);
++
++static int __init brcmstb_gpio_init(void)
++{
++	return platform_driver_register(&brcmstb_gpio_driver);
++}
++subsys_initcall(brcmstb_gpio_init);
++
++static void __exit brcmstb_gpio_exit(void)
++{
++	platform_driver_unregister(&brcmstb_gpio_driver);
++}
++module_exit(brcmstb_gpio_exit);
+ 
+ MODULE_AUTHOR("Gregory Fong");
+ MODULE_DESCRIPTION("Driver for Broadcom BRCMSTB SoC UPG GPIO");
 -- 
 2.1.0
 
