@@ -1,57 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] gpio: moxart: fix build regression
-Date: Thu, 07 Jan 2016 15:03:06 +0100
-Message-ID: <3740193.jff4NfDRv6@wuerfel>
-References: <4110228.QqTjkKaKSX@wuerfel>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/6] Add support for MAXIM MAX77620/MAX20024 PMIC
+Date: Thu, 7 Jan 2016 20:08:38 +0530
+Message-ID: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:62663 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751941AbcAGODj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2016 09:03:39 -0500
-In-Reply-To: <4110228.QqTjkKaKSX@wuerfel>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4717 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752172AbcAGOtL (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2016 09:49:11 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jonas Jensen <jonas.jensen@gmail.com>
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 
-On Thursday 07 January 2016 14:55:34 Arnd Bergmann wrote:
-> A cleanup patch replaced bgpio_chip with gpio_chip but missed
-> two references to the bgpio_chip:
-> 
-> drivers/gpio/gpio-moxart.c:60:19: error: use of undeclared identifier 'bgc'; did you mean 'gc'?
->         gc->bgpio_data = bgc->read_reg(bgc->reg_set);
-> drivers/gpio/gpio-moxart.c:35:20: note: 'gc' declared here
-> drivers/gpio/gpio-moxart.c:60:33: error: use of undeclared identifier 'bgc'; did you mean 'gc'?
->         gc->bgpio_data = bgc->read_reg(bgc->reg_set);
-> 
-> This adds the missing change.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
-> ---
+Add SW support for MAXIM Semiconductor's Power Management
+IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
+RTC, watchdog, clocks etc.
 
-Adding Jonas to Cc, sorry for forgetting him first.
+This series add respective driver for each of sub-modules.
 
-> diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
-> index 71c13c4e12b5..ca604538ebf7 100644
-> --- a/drivers/gpio/gpio-moxart.c
-> +++ b/drivers/gpio/gpio-moxart.c
-> @@ -57,7 +57,7 @@ static int moxart_gpio_probe(struct platform_device *pdev)
->  	gc->label = "moxart-gpio";
->  	gc->request = gpiochip_generic_request;
->  	gc->free = gpiochip_generic_free;
-> -	gc->bgpio_data = bgc->read_reg(bgc->reg_set);
-> +	gc->bgpio_data = gc->read_reg(gc->reg_set);
->  	gc->base = 0;
->  	gc->ngpio = 32;
->  	gc->parent = dev;
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Laxman Dewangan (6):
+  DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
+  mfd: max77620: add core driver for MAX77620/MAX20024
+  pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
+  gpio: max77620: add gpio driver for MAX77620/MAX20024
+  rtc: max77620: add support for max77620/max20024 RTC driver
+  regulator: max77620: add regulator driver for max77620/max20024
+
+ Documentation/devicetree/bindings/mfd/max77620.txt |  383 +++++++
+ drivers/gpio/Kconfig                               |    9 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-max77620.c                       |  330 ++++++
+ drivers/mfd/Kconfig                                |   15 +
+ drivers/mfd/Makefile                               |    1 +
+ drivers/mfd/max77620.c                             |  926 +++++++++++++++++
+ drivers/pinctrl/Kconfig                            |   10 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/pinctrl-max77620.c                 |  700 +++++++++++++
+ drivers/regulator/Kconfig                          |    9 +
+ drivers/regulator/Makefile                         |    1 +
+ drivers/regulator/max77620-regulator.c             | 1062 ++++++++++++++++++++
+ drivers/rtc/Kconfig                                |    9 +
+ drivers/rtc/Makefile                               |    1 +
+ drivers/rtc/rtc-max77620.c                         |  574 +++++++++++
+ include/dt-bindings/mfd/max77620.h                 |   38 +
+ include/linux/mfd/max77620.h                       |  503 +++++++++
+ 18 files changed, 4573 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
+ create mode 100644 drivers/gpio/gpio-max77620.c
+ create mode 100644 drivers/mfd/max77620.c
+ create mode 100644 drivers/pinctrl/pinctrl-max77620.c
+ create mode 100644 drivers/regulator/max77620-regulator.c
+ create mode 100644 drivers/rtc/rtc-max77620.c
+ create mode 100644 include/dt-bindings/mfd/max77620.h
+ create mode 100644 include/linux/mfd/max77620.h
+
+-- 
+2.1.4
 
