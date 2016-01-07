@@ -1,33 +1,45 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 2/6] mfd: max77620: add core driver for MAX77620/MAX20024
-Date: Thu, 7 Jan 2016 23:56:19 +0800
-Message-ID: <201601072308.7XP0yi7D%fengguang.wu@intel.com>
-References: <1452177524-23192-3-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1452177524-23192-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: kbuild-all@01.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH -next] gpio: mm-lantiq: Do not use gpiochip_get_data() in ltq_mm_save_regs()
+Date: Thu,  7 Jan 2016 08:24:58 -0800
+Message-ID: <1452183898-19343-1-git-send-email-linux@roeck-us.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:53811 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752256AbcAGQZC (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2016 11:25:02 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>, John Crispin <blogic@openwrt.org>
 
-Hi Laxman,
+Commit 6aa7dbfa2877 ("gpio: mm-lantiq: use gpiochip data pointer") replaces
+the use of container_of() with gpiochip_get_data(). However, the data
+pointer is not yet set by the time the save_regs function is called.
 
-[auto build test WARNING on pinctrl/for-next]
-[also build test WARNING on v4.4-rc8 next-20160107]
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-
-url:    https://github.com/0day-ci/linux/commits/Laxman-Dewangan/Add-support-for-MAXIM-MAX77620-MAX20024-PMIC/20160107-225450
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
-
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/mfd/max77620.c:900:3-8: No need to set .owner here. The core will do it.
-
-Please review and possibly fold the followup patch.
-
+Fixes: 6aa7dbfa2877 ("gpio: mm-lantiq: use gpiochip data pointer")
+Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: John Crispin <blogic@openwrt.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+It might make sense to merge this patch into the patch causing the problem.
+
+ drivers/gpio/gpio-mm-lantiq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
+index a2071ed69f79..54e5d8257d34 100644
+--- a/drivers/gpio/gpio-mm-lantiq.c
++++ b/drivers/gpio/gpio-mm-lantiq.c
+@@ -91,7 +91,8 @@ static int ltq_mm_dir_out(struct gpio_chip *gc, unsigned offset, int value)
+  */
+ static void ltq_mm_save_regs(struct of_mm_gpio_chip *mm_gc)
+ {
+-	struct ltq_mm *chip = gpiochip_get_data(&mm_gc->gc);
++	struct ltq_mm *chip =
++		container_of(mm_gc, struct ltq_mm, mmchip);
+ 
+ 	/* tell the ebu controller which memory address we will be using */
+ 	ltq_ebu_w32(CPHYSADDR(chip->mmchip.regs) | 0x1, LTQ_EBU_ADDRSEL1);
+-- 
+2.1.4
+
