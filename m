@@ -1,40 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: moxart: fix build regression
-Date: Thu, 7 Jan 2016 16:17:16 +0100
-Message-ID: <CACRpkdabuSueuTyUH-1VBO883eR_eyh8Kbp0k6SMCrWQf8c+vA@mail.gmail.com>
-References: <4110228.QqTjkKaKSX@wuerfel>
+Subject: Re: [PATCH 2/3] gpio: brcmstb: Set endian flags for big-endian MIPS
+Date: Thu, 7 Jan 2016 16:26:10 +0100
+Message-ID: <CACRpkdavAtSqcdp3_C5WFgSnAwzkCx-5G_BkbC05T0-GxnJxBw@mail.gmail.com>
+References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
+	<1452106523-11556-3-git-send-email-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f171.google.com ([209.85.214.171]:33809 "EHLO
-	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752062AbcAGPRQ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2016 10:17:16 -0500
-Received: by mail-ob0-f171.google.com with SMTP id wp13so193676484obc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Jan 2016 07:17:16 -0800 (PST)
-In-Reply-To: <4110228.QqTjkKaKSX@wuerfel>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:32945 "EHLO
+	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750722AbcAGP0K (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Jan 2016 10:26:10 -0500
+Received: by mail-oi0-f46.google.com with SMTP id y66so315724658oig.0
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Jan 2016 07:26:10 -0800 (PST)
+In-Reply-To: <1452106523-11556-3-git-send-email-f.fainelli@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, Gregory Fong <gregory.0xf0@gmail.com>, jaedon.shin@gmail.com, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-On Thu, Jan 7, 2016 at 2:55 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Wed, Jan 6, 2016 at 7:55 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> A cleanup patch replaced bgpio_chip with gpio_chip but missed
-> two references to the bgpio_chip:
+> Broadcom MIPS-based STB chips endianness is configured by boot strap,
+> which also reverses all bus endianness (i.e., big-endian CPU + big
+> endian bus ==> native endian I/O).
 >
-> drivers/gpio/gpio-moxart.c:60:19: error: use of undeclared identifier 'bgc'; did you mean 'gc'?
->         gc->bgpio_data = bgc->read_reg(bgc->reg_set);
-> drivers/gpio/gpio-moxart.c:35:20: note: 'gc' declared here
-> drivers/gpio/gpio-moxart.c:60:33: error: use of undeclared identifier 'bgc'; did you mean 'gc'?
->         gc->bgpio_data = bgc->read_reg(bgc->reg_set);
+> Other architectures (e.g., ARM) either do not support big endian, or
+> else leave I/O in little endian mode.
 >
-> This adds the missing change.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Patch applied, sorry for the mess...
+Patch applied with Gregory's ACK.
 
 Yours,
 Linus Walleij
