@@ -1,46 +1,65 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH -next] gpio: mpc8xxx: Do not use gpiochip_get_data() in mpc8xxx_gpio_save_regs()
-Date: Thu,  7 Jan 2016 08:25:24 -0800
-Message-ID: <1452183924-19390-1-git-send-email-linux@roeck-us.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 1/3] gpio: brcmstb: have driver register during subsys_initcall()
+Date: Thu, 07 Jan 2016 10:12:41 -0800
+Message-ID: <568EAA99.1020603@gmail.com>
+References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com> <1452106523-11556-2-git-send-email-f.fainelli@gmail.com> <CADtm3G7_pGdgM8EJgRzRf8j1JAJKivxzd85ie5haWP8ivZvwSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Alexander Stein <alexander.stein@systec-electronic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <CADtm3G7_pGdgM8EJgRzRf8j1JAJKivxzd85ie5haWP8ivZvwSg@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Gregory Fong <gregory.0xf0@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-gpio@vger.kernel.org, MIPS <linux-mips@linux-mips.org>, jaedon.shin@gmail.com, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 709d71a17c33 ("gpio: mpc8xxx: use gpiochip data pointer") replac=
-es
-the use of container_of() with gpiochip_get_data(). However, the data
-pointer is not yet set by the time the save_regs function is called.
+On 06/01/16 22:05, Gregory Fong wrote:
+> Hello Florian and Jim,
+> 
+> On Wed, Jan 6, 2016 at 10:55 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> From: Jim Quinlan <jim2101024@gmail.com>
+>>
+>> Because regulators are started with subsys_initcall(), and gpio references may
+>> be contained in the regulators, it makes sense to start the brcmstb-gpio's with
+>> a subsys_initcall(). The order within the drivers/Makefile ensures that the
+>> gpio initialization happens prior to the regulator's initialization.
+>>
+>> We need to unroll module_platform_driver() now to allow this and have custom
+>> exit and init module functions to control the initialization level.
+> 
+> If gpio pins are needed for a regulator to come up, wouldn't it be
+> better to handle this using deferred probe instead of initcall-based
+> initialization?  Deferred probe has its problems, but I was under the
+> impression that it's the encouraged way to resolve these sort of
+> initialization order issues.
 
-=46ixes: 709d71a17c33 ("gpio: mpc8xxx: use gpiochip data pointer")
-Cc: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-It might make sense to merge this patch into the patch causing the prob=
-lem.
+To give you some more context associated with this change, we now have
+some boards which have GPIO-connected regulators to turn on/off PCIe
+endpoint devices. In the downstream kernel, and with lack of a better
+solution for now, we ended-up having the PCIE Root Complex driver to
+claim these regulator, and flip them on shortly before attempting a bus
+scan.
 
- drivers/gpio/gpio-mpc8xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If we used deferred probing, I am assuming the sequence of events could
+go like this:
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 21eff0e1df87..9d40787e66c0 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -51,7 +51,8 @@ static inline u32 mpc8xxx_gpio2mask(unsigned int gpio=
-)
-=20
- static void mpc8xxx_gpio_save_regs(struct of_mm_gpio_chip *mm)
- {
--	struct mpc8xxx_gpio_chip *mpc8xxx_gc =3D gpiochip_get_data(&mm->gc);
-+	struct mpc8xxx_gpio_chip *mpc8xxx_gc =3D
-+		container_of(mm, struct mpc8xxx_gpio_chip, mm_gc);
-=20
- 	mpc8xxx_gc->data =3D in_be32(mm->regs + GPIO_DAT);
- }
---=20
-2.1.4
+- PCIe driver gets initialized, looks for regulators, cannot get a
+handle on them, gets EPROBE_DEFER (arch_initcall right now)
+- regulator subsystem gets initialized, does not have a valid GPIO
+provider driver yet, returns EPROBE_DEFER (subsys_initcall)
+- GPIO provider (gpio-brcmstb) finally gets probed and registered,
+regulator get registered and available, PCIe RC driver can now use them
+and power on the PCIE end point (module_initcall)
+
+I suppose this might be working actually, let me go back to the white
+board and look at this with Jim.
+-- 
+Florian
