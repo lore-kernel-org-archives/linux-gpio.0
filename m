@@ -1,14 +1,16 @@
 From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Subject: [PATCH] gpiolib: rewrite gpiochip_add_to_list
-Date: Fri,  8 Jan 2016 14:37:14 +0800
-Message-ID: <1452235035-828-1-git-send-email-bamvor.zhangjian@linaro.org>
+Date: Fri,  8 Jan 2016 14:37:15 +0800
+Message-ID: <1452235035-828-2-git-send-email-bamvor.zhangjian@linaro.org>
+References: <1452235035-828-1-git-send-email-bamvor.zhangjian@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:33812 "EHLO
-	mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750721AbcAHGhx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 01:37:53 -0500
-Received: by mail-pf0-f182.google.com with SMTP id q63so5471603pfb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 07 Jan 2016 22:37:52 -0800 (PST)
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:36499 "EHLO
+	mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074AbcAHGh7 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 01:37:59 -0500
+Received: by mail-pf0-f177.google.com with SMTP id n128so5336451pfn.3
+        for <linux-gpio@vger.kernel.org>; Thu, 07 Jan 2016 22:37:59 -0800 (PST)
+In-Reply-To: <1452235035-828-1-git-send-email-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
