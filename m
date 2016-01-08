@@ -1,50 +1,75 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/6] DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
-Date: Fri, 8 Jan 2016 08:19:37 -0600
-Message-ID: <CAL_JsqJ=bhFF2X-LHFtboWFP3Ch=W8VBr2gv1EFRTb4EgtM=2w@mail.gmail.com>
-References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>
- <1452177524-23192-2-git-send-email-ldewangan@nvidia.com> <20160107231249.GA17514@rob-hp-laptop>
- <568F51FF.7000102@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] pinctrl: freescale: imx: implement gpio_disable_free for Vybrid
+Date: Fri,  8 Jan 2016 10:50:30 -0800
+Message-ID: <1452279030-5459-1-git-send-email-stefan@agner.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46803 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751025AbcAHOUB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 8 Jan 2016 09:20:01 -0500
-In-Reply-To: <568F51FF.7000102@nvidia.com>
+Received: from mail.kmu-office.ch ([178.209.48.109]:57858 "EHLO
+	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752033AbcAHStZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 13:49:25 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <rtc-linux@googlegroups.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
+To: linus.walleij@linaro.org
+Cc: shawnguo@kernel.org, u.kleine-koenig@pengutronix.de, aalonso@freescale.com, mpa@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 
-On Fri, Jan 8, 2016 at 12:06 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> Thanks Rob for review.
-> I have taken care of all comment except following which I have query.
->
-> On Friday 08 January 2016 04:42 AM, Rob Herring wrote:
->>
->> +       - maxim,low-battery-reset-enable: Enable low battery reset.
->> +       - maxim,low-battery-reset-disable: Disable low battery reset.
->> Why not boolean? Not present means keep default value? I'd prefer
->> boolean or tristate of not present, 0 to disable, or 1 to enable.
->>
->>
-> Here, the properties are boolean. I will add this on the description.
->
-> I like to enable or disable with the DT and properties are not there then
-> left to default.
-> So added two properties for enable and disable. If properties are there, do
-> the activity.
->
-> Here tristate is also possible:
-> maxim,low-battery-reset: tristate, low battery reset control. 0 for disable,
-> 1 for enable and
->                                  absence of this will leave configuration on
-> default.
->
-> Does it look fine?
+The Freescale Vybrid SoC has GPIO capabilities as part of the
+IOMUXC. To enable GPIO's, the gpio_request_enable callback has
+been implemented, however the corsponding gpio_disable_free
+callback is missing. So far, disabling (unexporting) a GPIO left
+the pin in its last state.
 
-Yes.
+Implement a proper gpio_disable_free function which clears the
+three enable bits which influence the state (IBE, OBE and PUE).
 
-Rob
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index a5bb939..4c435cf 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -341,6 +341,31 @@ mux_pin:
+ 	return 0;
+ }
+ 
++static void imx_pmx_gpio_disable_free(struct pinctrl_dev *pctldev,
++			struct pinctrl_gpio_range *range, unsigned offset)
++{
++	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
++	const struct imx_pinctrl_soc_info *info = ipctl->info;
++	const struct imx_pin_reg *pin_reg;
++	u32 reg;
++
++	/*
++	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
++	 * They are part of the shared mux/conf register.
++	 */
++	if (!(info->flags & SHARE_MUX_CONF_REG))
++		return;
++
++	pin_reg = &info->pin_regs[offset];
++	if (pin_reg->mux_reg == -1)
++		return;
++
++	/* Clear IBE/OBE/PUE to disable the pin (Hi-Z) */
++	reg = readl(ipctl->base + pin_reg->mux_reg);
++	reg &= ~0x7;
++	writel(reg, ipctl->base + pin_reg->mux_reg);
++}
++
+ static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
+ {
+@@ -377,6 +402,7 @@ static const struct pinmux_ops imx_pmx_ops = {
+ 	.get_function_groups = imx_pmx_get_groups,
+ 	.set_mux = imx_pmx_set,
+ 	.gpio_request_enable = imx_pmx_gpio_request_enable,
++	.gpio_disable_free = imx_pmx_gpio_disable_free,
+ 	.gpio_set_direction = imx_pmx_gpio_set_direction,
+ };
+ 
+-- 
+2.6.4
+
