@@ -1,75 +1,69 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [rtc-linux] [PATCH 5/6] rtc: max77620: add support for max77620/max20024
- RTC driver
-Date: Fri, 8 Jan 2016 15:50:46 +0530
-Message-ID: <568F8D7E.10500@nvidia.com>
-References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>	<1452177524-23192-6-git-send-email-ldewangan@nvidia.com> <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com>
+From: Martyn Welch <martyn.welch@collabora.co.uk>
+Subject: CP2105 GPIO Pins
+Date: Fri, 08 Jan 2016 11:14:31 +0000
+Message-ID: <568F9A17.809@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12404 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752795AbcAHKax (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 05:30:53 -0500
-In-Reply-To: <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59528 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932213AbcAHLOf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 06:14:35 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Krzysztof,
-Thanks for review.
+Hi Linus,
 
-Accepted most of review comment and will update in next patch.
+I'm working on adding support to the cp210x driver for the optional GPIO 
+pins available on Silicon Labs CP2105 USB to serial bridge.
 
-Answer to query:
+Some hardware implementation details have got me wondering how best to 
+provide support through the GPIO framework.
 
+The device has 5 pins that can be GPIO. The pins that provide these GPIO 
+are muxed with serial control signals of the 2 serial ports the device 
+provides, though the GPIO is enabled by default.
 
-On Friday 08 January 2016 07:33 AM, Krzysztof Kozlowski wrote:
-> 2016-01-07 23:38 GMT+09:00 Laxman Dewangan <ldewangan@nvidia.com>:
-> ---
->   drivers/rtc/Kconfig        |   9 +
->   drivers/rtc/Makefile       |   1 +
->   drivers/rtc/rtc-max77620.c | 574 +++++++++++++++++++++++++++++++++++++++++++++
-> The driver (as most of Maxim's) looks quite similar to existing RTC
-> driver, like max77802. It is difficult to spot the exact differences
-> (I don't have 77620's datasheet) but I would suggest not duplicating
-> the work. Maybe the biggest difference is the way you configure the
-> regmap... but still sometimes the regmap config can be shared.
-Yaah, that is the issue on IP based PMIC system and it happen with the 
-Maxim and TI.
-The MFD and its sub module drivers are too much couped  and hence 
-dificult to use the IP driver across PMIC. For almost all Maxim PMIC, we 
-end up of same type of RTC driver.
+The GPIO pins can be configured as either push-pull or open-drain, with 
+a internal weak pullup. The pins are open-drain by default. There is no 
+explicit "input" mode, though it is possible to sense the state of the 
+pin independent of the state being driven.
 
-Probably, we need to enhance the mfd sub system to allow sub module 
-driver to decoupe from its APIs.
+Configuration of the muxing and GPIO mode is stored in one-time 
+programmable PROM built into the chip and can't be changed at runtime.
 
+The muxing is done for all pins associated with a port in one go. I 
+think I can determine at runtime when pins are used as serial control 
+signals, so currently have the pins split into 2 banks (each bank 
+providing the GPIO from pins associated with a port).
 
-+
-+       rtc->irq = platform_get_irq(pdev, 0);
-+       ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
-+                       max77620_rtc_irq, IRQF_ONESHOT | IRQF_EARLY_RESUME,
+I believe I can also determine when pins are configured as push-pull or 
+open-drain. Pins configured as push-pull clearly can't be used as 
+inputs. Pins in open-drain mode, if not internally pulled to ground, 
+could be used as an input.
 
-> Why early resume?
+I can allow open-drain pins to be configured as input (and arrange for 
+the pin to not be pulled low when it is), but the GPIO documentation 
+suggests that the output state of GPIO should be able to be set prior to 
+switching between input and output mode. This could be achieved by 
+storing a bit masks of values and directions, however this would require 
+locking to avoid race conditions and the documentation also suggests 
+that locking should be avoided in the get, set and direction functions, 
+so that the drivers can be used by and -RT kernel (I appreciate this a 
+USB device, so less likely to be used in a real time context).
 
-When we go on suspend, the interrupts are masked by framework. For 
-regmap-irq, it is stored on local reg value but not written into the 
-PMIC register.
-In Nvidia Tegra system, ARM GIC controller registered before the other 
-interrupt controller like GPIO, PMIC etc.
-When wakeup happened through RTC alarm, we get the interrupt from PMIC 
-and on resume path, the PMIC isr handler get called after PMIC interrupt 
-to the GIC is unmasked. But at this time, PMIC RTC alarm is still in 
-masked state by regmap-irq which causes the interrupt to RTC ignore in 
-the PMIC ISR handler and so RTC Isr did not get called and not cleared 
-interrupt. This causes PMIC ISr handler to stuck on loop.
+If such a scheme really isn't suitable, alternatively the pins could be 
+output only, with the user still being able to sense the pin state as 
+long as the pin is not set to pull the pin low. The disadvantage of not 
+allowing the pins to be configured as input is that users will 
+(ironically) not be able to use one of the pins with the 
+"GPIOF_OPEN_DRAIN" flag set as this attempts to set the pin as input 
+instead of a high state. "GPIOF_OPEN_SOURCE" is broken on this hardware 
+either way.
 
-The need is to unmask the RTC alarm interrupt on PMIC interrupt driver 
-before PMIC interrupt served so that we can have proper interrupt status 
-in handler and rtc isr can get called.
+How do you think it would be best to proceed?
 
-For this, RTC alarm interrupt need to be EARLY_RESUME.
-
-
+Martyn
