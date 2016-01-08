@@ -1,47 +1,50 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [rtc-linux] [PATCH 5/6] rtc: max77620: add support for max77620/max20024
- RTC driver
-Date: Fri, 8 Jan 2016 19:06:45 +0530
-Message-ID: <568FBB6D.2020904@nvidia.com>
-References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com> <1452177524-23192-6-git-send-email-ldewangan@nvidia.com> <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com> <568F8D7E.10500@nvidia.com> <20160108125117.GM6588@sirena.org.uk> <568FB3DD.4090503@nvidia.com> <20160108133648.GQ6588@sirena.org.uk>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/6] DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
+Date: Fri, 8 Jan 2016 08:19:37 -0600
+Message-ID: <CAL_JsqJ=bhFF2X-LHFtboWFP3Ch=W8VBr2gv1EFRTb4EgtM=2w@mail.gmail.com>
+References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>
+ <1452177524-23192-2-git-send-email-ldewangan@nvidia.com> <20160107231249.GA17514@rob-hp-laptop>
+ <568F51FF.7000102@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16887 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751919AbcAHNqx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 08:46:53 -0500
-In-Reply-To: <20160108133648.GQ6588@sirena.org.uk>
+Received: from mail.kernel.org ([198.145.29.136]:46803 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751025AbcAHOUB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 8 Jan 2016 09:20:01 -0500
+In-Reply-To: <568F51FF.7000102@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <rtc-linux@googlegroups.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
 
-
-On Friday 08 January 2016 07:06 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Fri, Jan 8, 2016 at 12:06 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> Thanks Rob for review.
+> I have taken care of all comment except following which I have query.
 >
-> On Fri, Jan 08, 2016 at 06:34:29PM +0530, Laxman Dewangan wrote:
+> On Friday 08 January 2016 04:42 AM, Rob Herring wrote:
+>>
+>> +       - maxim,low-battery-reset-enable: Enable low battery reset.
+>> +       - maxim,low-battery-reset-disable: Disable low battery reset.
+>> Why not boolean? Not present means keep default value? I'd prefer
+>> boolean or tristate of not present, 0 to disable, or 1 to enable.
+>>
+>>
+> Here, the properties are boolean. I will add this on the description.
 >
->> If we get the parent device, regmap handle and interrupt number from mfd
->> core independent of the PMIC (MAX77620 or MAX77686), then same driver can be
->> used here.
->> Two way which I can think of here:
-> Parent device is just dev->parent, you can use dev_get_regmap() to get a
-> regmap given a struct device and you can use platform resources to pass
-> the interrupts to the children from the MFD (there's some examples,
-> wm831x is one).
+> I like to enable or disable with the DT and properties are not there then
+> left to default.
+> So added two properties for enable and disable. If properties are there, do
+> the activity.
 >
+> Here tristate is also possible:
+> maxim,low-battery-reset: tristate, low battery reset control. 0 for disable,
+> 1 for enable and
+>                                  absence of this will leave configuration on
+> default.
 >
+> Does it look fine?
 
-I think it should work with named regmap. mfd whould init regmap with 
-name and rtc driver should ask with same name.
+Yes.
 
-I saw three drivers which looks same:
-rtc-max77620.c (new from me) and already available rtc-max77686.c, 
-rtc-max77802.c
-
-Seems I can develop IP based rtc driver as rtc-max77xxx.c
-
-
+Rob
