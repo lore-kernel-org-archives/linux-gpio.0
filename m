@@ -1,69 +1,59 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: CP2105 GPIO Pins
-Date: Fri, 08 Jan 2016 11:14:31 +0000
-Message-ID: <568F9A17.809@collabora.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [rtc-linux] [PATCH 5/6] rtc: max77620: add support for
+ max77620/max20024 RTC driver
+Date: Fri, 8 Jan 2016 12:51:17 +0000
+Message-ID: <20160108125117.GM6588@sirena.org.uk>
+References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>
+ <1452177524-23192-6-git-send-email-ldewangan@nvidia.com>
+ <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com>
+ <568F8D7E.10500@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XZn3P0VKTizxZG2b"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59528 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932213AbcAHLOf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 06:14:35 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41894 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754638AbcAHMvr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 07:51:47 -0500
+Content-Disposition: inline
+In-Reply-To: <568F8D7E.10500@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>
 
-Hi Linus,
 
-I'm working on adding support to the cp210x driver for the optional GPIO 
-pins available on Silicon Labs CP2105 USB to serial bridge.
+--XZn3P0VKTizxZG2b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Some hardware implementation details have got me wondering how best to 
-provide support through the GPIO framework.
+On Fri, Jan 08, 2016 at 03:50:46PM +0530, Laxman Dewangan wrote:
 
-The device has 5 pins that can be GPIO. The pins that provide these GPIO 
-are muxed with serial control signals of the 2 serial ports the device 
-provides, though the GPIO is enabled by default.
+> Yaah, that is the issue on IP based PMIC system and it happen with the Maxim
+> and TI.
+> The MFD and its sub module drivers are too much couped  and hence dificult
+> to use the IP driver across PMIC. For almost all Maxim PMIC, we end up of
+> same type of RTC driver.
 
-The GPIO pins can be configured as either push-pull or open-drain, with 
-a internal weak pullup. The pins are open-drain by default. There is no 
-explicit "input" mode, though it is possible to sense the state of the 
-pin independent of the state being driven.
+> Probably, we need to enhance the mfd sub system to allow sub module driver
+> to decoupe from its APIs.
 
-Configuration of the muxing and GPIO mode is stored in one-time 
-programmable PROM built into the chip and can't be changed at runtime.
+Could you be more specific about the issues here please?  I can't think
+of any barriers and you've not mentioned any barriers...
 
-The muxing is done for all pins associated with a port in one go. I 
-think I can determine at runtime when pins are used as serial control 
-signals, so currently have the pins split into 2 banks (each bank 
-providing the GPIO from pins associated with a port).
+--XZn3P0VKTizxZG2b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I believe I can also determine when pins are configured as push-pull or 
-open-drain. Pins configured as push-pull clearly can't be used as 
-inputs. Pins in open-drain mode, if not internally pulled to ground, 
-could be used as an input.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I can allow open-drain pins to be configured as input (and arrange for 
-the pin to not be pulled low when it is), but the GPIO documentation 
-suggests that the output state of GPIO should be able to be set prior to 
-switching between input and output mode. This could be achieved by 
-storing a bit masks of values and directions, however this would require 
-locking to avoid race conditions and the documentation also suggests 
-that locking should be avoided in the get, set and direction functions, 
-so that the drivers can be used by and -RT kernel (I appreciate this a 
-USB device, so less likely to be used in a real time context).
+iQEcBAEBCAAGBQJWj7DEAAoJECTWi3JdVIfQgFIH/26MBEPgSRynUZFlJHbdiig5
+2NisJbsGLrhNLUG7PcVoNt8dIjsHlt8f6JsZqhoxm+kwd/fwc02lAceRtXlrcluW
+BWw0xQkHLi8haOnZQmECd/J7vLyyWIAWhtuqY/pWOMi1IsChAG5kIhpDurWu9nos
+DGWqXBuTQ23qQyisC+FlgViaEiwwl6Db27BAHHMkTQ51bxXVmuzHZmY5PkIvMkR8
+r2WuaXJQSmjMR+srmTwMjApQs0c/HYVYIiIaQn7Tihl3+AGbkk6JgR7JgMhBeSjw
++IWkMZ57Q17/7zBfpVIJFcbTaFnWSaQsk5t9KB7h8QscuRLSgwfWf3ctUmZG36c=
+=QLbi
+-----END PGP SIGNATURE-----
 
-If such a scheme really isn't suitable, alternatively the pins could be 
-output only, with the user still being able to sense the pin state as 
-long as the pin is not set to pull the pin low. The disadvantage of not 
-allowing the pins to be configured as input is that users will 
-(ironically) not be able to use one of the pins with the 
-"GPIOF_OPEN_DRAIN" flag set as this attempts to set the pin as input 
-instead of a high state. "GPIOF_OPEN_SOURCE" is broken on this hardware 
-either way.
-
-How do you think it would be best to proceed?
-
-Martyn
+--XZn3P0VKTizxZG2b--
