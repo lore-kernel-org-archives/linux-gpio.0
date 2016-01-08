@@ -1,75 +1,151 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] pinctrl: freescale: imx: implement gpio_disable_free for Vybrid
-Date: Fri,  8 Jan 2016 10:50:30 -0800
-Message-ID: <1452279030-5459-1-git-send-email-stefan@agner.ch>
+From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+Subject: Re: [PATCH] gpiolib: rewrite gpiochip_add_to_list
+Date: Fri, 8 Jan 2016 16:47:03 -0500 (EST)
+Message-ID: <1120427455.529829.1452289623243.JavaMail.zimbra@savoirfairelinux.com>
+References: <1452235035-828-1-git-send-email-bamvor.zhangjian@linaro.org> <1452235035-828-2-git-send-email-bamvor.zhangjian@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:57858 "EHLO
-	mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033AbcAHStZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 13:49:25 -0500
+Received: from mail.savoirfairelinux.com ([208.88.110.44]:50476 "EHLO
+	mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756630AbcAHVrH (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Jan 2016 16:47:07 -0500
+In-Reply-To: <1452235035-828-2-git-send-email-bamvor.zhangjian@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: shawnguo@kernel.org, u.kleine-koenig@pengutronix.de, aalonso@freescale.com, mpa@pengutronix.de, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linus walleij <linus.walleij@linaro.org>, broonie@kernel.org, arnd@arndb.de, kernel <kernel@savoirfairelinux.com>
 
-The Freescale Vybrid SoC has GPIO capabilities as part of the
-IOMUXC. To enable GPIO's, the gpio_request_enable callback has
-been implemented, however the corsponding gpio_disable_free
-callback is missing. So far, disabling (unexporting) a GPIO left
-the pin in its last state.
+Hello,
 
-Implement a proper gpio_disable_free function which clears the
-three enable bits which influence the state (IBE, OBE and PUE).
+I tested this patch. It is not working in the following situation:
+A first driver request manually base number from 0 to 31, 32 to 63 etc... for some chips (gpio-mxc.c in my case).
+After this, an other driver set base to -1. It works for the first chip, but fails for all others.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+It looks like there is still an issue in the gpio chips list order. I will put some debug and see if I can give you feedback.
+
+Julien
+
+----- Original Message -----
+From: "Bamvor Jian Zhang" <bamvor.zhangjian@linaro.org>
+To: linux-gpio@vger.kernel.org
+Cc: "linus walleij" <linus.walleij@linaro.org>, broonie@kernel.org, "julien grossholtz" <julien.grossholtz@savoirfairelinux.com>, arnd@arndb.de, "Bamvor Jian Zhang" <bamvor.zhangjian@linaro.org>
+Sent: Friday, January 8, 2016 1:37:15 AM
+Subject: [PATCH] gpiolib: rewrite gpiochip_add_to_list
+
+The original code of gpiochip_add_to_list is not very clear which
+lead to bugs or compiling warning, reference the following patches:
+Bugs:
+1.  Commit ef7c7553039b ("gpiolib: improve overlap check of range of
+    gpio").
+2.  "[PATCH] gpiolib: fix chip order in gpio list" [1]
+
+Warning:
+1.  Commit e28ecca6eac4 ("gpio: fix warning about iterator").
+of gpio").
+
+There is a off-list discussion about how to improve it consequently.
+This commit try to follow this by rewriting the whole functions.
+
+Tested pass with my gpio mockup driver and test scripts[2].
+
+[1] http://www.spinics.net/lists/kernel/msg2156917.html
+[2] http://www.spinics.net/lists/linux-gpio/msg09598.html
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/gpio/gpiolib.c | 65 ++++++++++++++++++++++----------------------------
+ 1 file changed, 28 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index a5bb939..4c435cf 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -341,6 +341,31 @@ mux_pin:
- 	return 0;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 3db34e7..b9cc01f 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -189,55 +189,46 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
+  */
+ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ {
+-	struct gpio_chip *iterator;
+-	struct gpio_chip *previous = NULL;
++	struct gpio_chip *prev, *next;
+ 
+ 	if (list_empty(&gpio_chips)) {
+-		list_add_tail(&chip->list, &gpio_chips);
++		/* initial entry in list */
++		list_add(&chip->list, &gpio_chips);
+ 		return 0;
+ 	}
+ 
+-	list_for_each_entry(iterator, &gpio_chips, list) {
+-		if (iterator->base >= chip->base + chip->ngpio) {
+-			/*
+-			 * Iterator is the first GPIO chip so there is no
+-			 * previous one
+-			 */
+-			if (!previous) {
+-				goto found;
+-			} else {
+-				/*
+-				 * We found a valid range(means
+-				 * [base, base + ngpio - 1]) between previous
+-				 * and iterator chip.
+-				 */
+-				if (previous->base + previous->ngpio
+-						<= chip->base)
+-					goto found;
+-			}
+-		}
+-		previous = iterator;
++	next = list_entry(gpio_chips.next, struct gpio_chip, list);
++	if (chip->base + chip->ngpio <= next->base) {
++		/* add before first entry */
++		list_add(&chip->list, &gpio_chips);
++		return 0;
+ 	}
+ 
+-	/*
+-	 * We are beyond the last chip in the list and iterator now
+-	 * points to the head.
+-	 * Let iterator point to the last chip in the list.
+-	 */
++	prev = list_entry(gpio_chips.prev, struct gpio_chip, list);
++	if (prev->base + prev->ngpio <= chip->base) {
++		/* add behind last entry */
++		list_add_tail(&chip->list, &gpio_chips);
++		return 0;
++	}
+ 
+-	iterator = list_last_entry(&gpio_chips, struct gpio_chip, list);
+-	if (iterator->base + iterator->ngpio <= chip->base)
+-		goto found;
++	list_for_each_entry_safe(prev, next, &gpio_chips, list)
++		if (chip->base > prev->base)
++			break;
+ 
+-	dev_err(chip->parent,
+-	       "GPIO integer space overlap, cannot add chip\n");
+-	return -EBUSY;
++	if (&prev->list != &gpio_chips &&
++	    &next->list != &gpio_chips &&
++	    prev->base + prev->ngpio <= chip->base &&
++	    chip->base + chip->ngpio <= next->base) {
++		/* add between prev and next */
++		list_add(&chip->list, &prev->list);
++		return 0;
++	}
+ 
+-found:
+-	list_add_tail(&chip->list, &iterator->list);
+-	return 0;
++	dev_err(chip->parent, "GPIO integer space overlap, cannot add chip\n");
++	return -EBUSY;
  }
  
-+static void imx_pmx_gpio_disable_free(struct pinctrl_dev *pctldev,
-+			struct pinctrl_gpio_range *range, unsigned offset)
-+{
-+	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
-+	const struct imx_pinctrl_soc_info *info = ipctl->info;
-+	const struct imx_pin_reg *pin_reg;
-+	u32 reg;
 +
-+	/*
-+	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
-+	 * They are part of the shared mux/conf register.
-+	 */
-+	if (!(info->flags & SHARE_MUX_CONF_REG))
-+		return;
-+
-+	pin_reg = &info->pin_regs[offset];
-+	if (pin_reg->mux_reg == -1)
-+		return;
-+
-+	/* Clear IBE/OBE/PUE to disable the pin (Hi-Z) */
-+	reg = readl(ipctl->base + pin_reg->mux_reg);
-+	reg &= ~0x7;
-+	writel(reg, ipctl->base + pin_reg->mux_reg);
-+}
-+
- static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
- {
-@@ -377,6 +402,7 @@ static const struct pinmux_ops imx_pmx_ops = {
- 	.get_function_groups = imx_pmx_get_groups,
- 	.set_mux = imx_pmx_set,
- 	.gpio_request_enable = imx_pmx_gpio_request_enable,
-+	.gpio_disable_free = imx_pmx_gpio_disable_free,
- 	.gpio_set_direction = imx_pmx_gpio_set_direction,
- };
- 
+ /**
+  * Convert a GPIO name to its descriptor
+  */
 -- 
-2.6.4
-
+2.1.4
