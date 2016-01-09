@@ -1,54 +1,32 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] gpio: generic: make bgpio_pdata always visible
-Date: Sat, 09 Jan 2016 22:16:42 +0100
-Message-ID: <21095568.bdP2eOAsBs@wuerfel>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] Documentation: gpio: Update description for
+ X-Gene standby GPIO controller DTS binding
+Date: Sat, 9 Jan 2016 16:28:10 -0600
+Message-ID: <20160109222810.GA11205@rob-hp-laptop>
+References: <1452162428-26839-1-git-send-email-qnguyen@apm.com>
+ <1452162428-26839-3-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:58710 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755886AbcAIVRK (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 9 Jan 2016 16:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.136]:51478 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756068AbcAIW2P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 9 Jan 2016 17:28:15 -0500
+Content-Disposition: inline
+In-Reply-To: <1452162428-26839-3-git-send-email-qnguyen@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexander Shiyan <shc_work@mail.ru>
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
 
-Board files that define their own bgpio_pdata are broken when
-CONFIG_GPIO_GENERIC is disabled and the bgpio_pdata structure
-definition is hidden by the #ifdef:
+On Thu, Jan 07, 2016 at 05:27:07PM +0700, Quan Nguyen wrote:
+> Update description for X-Gene standby GPIO controller DTS binding to
+> support GPIO line configuration as input, output or external IRQ pin.
+> 
+> Signed-off-by: Y Vo <yvo@apm.com>
+> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 49 +++++++++++++++++-----
+>  1 file changed, 38 insertions(+), 11 deletions(-)
 
-arch/arm/mach-clps711x/board-autcpu12.c:148:15: error: variable 'autcpu12_mmgpio_pdata' has initializer but incomplete type
- static struct bgpio_pdata autcpu12_mmgpio_pdata __initdata = {
-arch/arm/mach-clps711x/board-autcpu12.c:149:2: error: unknown field 'base' specified in initializer
-  .base = AUTCPU12_MMGPIO_BASE,
-
-Since the board files should generally not care what drivers are
-enabled, this makes the structure definition visible again.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
-
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index e2d05fd0e6e3..82fda487453f 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -220,14 +220,14 @@ static inline void *gpiochip_get_data(struct gpio_chip *chip)
- 
- struct gpio_chip *gpiod_to_chip(const struct gpio_desc *desc);
- 
--#if IS_ENABLED(CONFIG_GPIO_GENERIC)
--
- struct bgpio_pdata {
- 	const char *label;
- 	int base;
- 	int ngpio;
- };
- 
-+#if IS_ENABLED(CONFIG_GPIO_GENERIC)
-+
- int bgpio_init(struct gpio_chip *gc, struct device *dev,
- 	       unsigned long sz, void __iomem *dat, void __iomem *set,
- 	       void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
-
+Acked-by: Rob Herring <robh@kernel.org>
