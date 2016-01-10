@@ -1,711 +1,107 @@
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
-Date: Sun, 10 Jan 2016 19:50:22 +0000
-Message-ID: <cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
-References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:49366 "EHLO
-	gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757185AbcAJTue convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Jan 2016 14:50:34 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B6A32806F6
-	for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2016 08:50:31 +1300 (NZDT)
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Subject: [PATCH v3 0/6] Add Advantech iManager EC driver set
+Date: Sun, 10 Jan 2016 15:31:09 -0800
+Message-ID: <1452468675-5827-1-git-send-email-richard.dorsch@gmail.com>
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, jo.sunga-ELdSlb/RfAS1Z/+hSey0Gg@public.gmane.org, Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "hongzhou.yang@mediatek.com" <hongzhou.yang@mediatek.com>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "fabf@skynet.be" <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
 
-On 12/11/2015 01:45 PM, Chris Packham wrote:
-> The Marvell 98DX1135 is a switch chip with an integrated CPU,
-> similar to the MV98DX4122. From a pinctrl point of view the only
-> difference is that NF_REN, NF_WEN, NF_ALE and NF_CEN lines are
-> MPP pins instead of dedicated ones.
->
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->
-> I'm aware that as it stands this pushes the line length beyond 80 chars
-> for the mv88f6xxx_mpp_modes initialisation. What I'm not sure of is how
-> to address this.
->
-> I could
-> 1. Do nothing.
-> 2. Steal 3 characters from the whitespace before the 'V'. This would
->     mostly work but there would be a handful of lines left over the 80
->     char limit
-> 3. Remove whitespace between the arguments to V()
-> 4. Something else?
->
-> Thanks,
-> Chris
->
->   drivers/pinctrl/mvebu/pinctrl-kirkwood.c | 576 ++++++++++++++++---------------
->   1 file changed, 297 insertions(+), 279 deletions(-)
->
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-> index 0f07dc5..13de344 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-> @@ -33,341 +33,347 @@ static int kirkwood_mpp_ctrl_set(unsigned pid, unsigned long config)
->   	return default_mpp_ctrl_set(mpp_base, pid, config);
->   }
->
-> -#define V(f6180, f6190, f6192, f6281, f6282, dx4122)	\
-> +#define V(f6180, f6190, f6192, f6281, f6282, dx4122, dx1135)	\
->   	((f6180 << 0) | (f6190 << 1) | (f6192 << 2) |	\
-> -	 (f6281 << 3) | (f6282 << 4) | (dx4122 << 5))
-> +	 (f6281 << 3) | (f6282 << 4) | (dx4122 << 5) |	\
-> +	 (dx1135 << 6))
->
->   enum kirkwood_variant {
-> -	VARIANT_MV88F6180	= V(1, 0, 0, 0, 0, 0),
-> -	VARIANT_MV88F6190	= V(0, 1, 0, 0, 0, 0),
-> -	VARIANT_MV88F6192	= V(0, 0, 1, 0, 0, 0),
-> -	VARIANT_MV88F6281	= V(0, 0, 0, 1, 0, 0),
-> -	VARIANT_MV88F6282	= V(0, 0, 0, 0, 1, 0),
-> -	VARIANT_MV98DX4122	= V(0, 0, 0, 0, 0, 1),
-> +	VARIANT_MV88F6180	= V(1, 0, 0, 0, 0, 0, 0),
-> +	VARIANT_MV88F6190	= V(0, 1, 0, 0, 0, 0, 0),
-> +	VARIANT_MV88F6192	= V(0, 0, 1, 0, 0, 0, 0),
-> +	VARIANT_MV88F6281	= V(0, 0, 0, 1, 0, 0, 0),
-> +	VARIANT_MV88F6282	= V(0, 0, 0, 0, 1, 0, 0),
-> +	VARIANT_MV98DX4122	= V(0, 0, 0, 0, 0, 1, 0),
-> +	VARIANT_MV98DX1135	= V(0, 0, 0, 0, 0, 0, 1),
->   };
->
->   static struct mvebu_mpp_mode mv88f6xxx_mpp_modes[] = {
->   	MPP_MODE(0,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io2",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "cs",       V(1, 1, 1, 1, 1, 1))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io2",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "cs",       V(1, 1, 1, 1, 1, 1, 1))),
->   	MPP_MODE(1,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io3",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "mosi",     V(1, 1, 1, 1, 1, 1))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io3",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "mosi",     V(1, 1, 1, 1, 1, 1, 1))),
->   	MPP_MODE(2,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io4",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "sck",      V(1, 1, 1, 1, 1, 1))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io4",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "sck",      V(1, 1, 1, 1, 1, 1, 1))),
->   	MPP_MODE(3,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io5",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "miso",     V(1, 1, 1, 1, 1, 1))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io5",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "miso",     V(1, 1, 1, 1, 1, 1, 1))),
->   	MPP_MODE(4,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io6",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "rxd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "hsync",    V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "ptp", "clk",      V(1, 1, 1, 1, 0, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io6",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "rxd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "hsync",    V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "ptp", "clk",      V(1, 1, 1, 1, 0, 0, 0))),
->   	MPP_MODE(5,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io7",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "txd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x4, "ptp", "trig",     V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "vsync",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io7",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "txd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x4, "ptp", "trig",     V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "vsync",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(6,
-> -		MPP_VAR_FUNCTION(0x1, "sysrst", "out",   V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "mosi",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "ptp", "trig",     V(1, 1, 1, 1, 0, 0))),
-> +		MPP_VAR_FUNCTION(0x1, "sysrst", "out",   V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "mosi",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "ptp", "trig",     V(1, 1, 1, 1, 0, 0, 0))),
->   	MPP_MODE(7,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "pex", "rsto",     V(1, 1, 1, 1, 0, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "cs",       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "ptp", "trig",     V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "pwm",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "pex", "rsto",     V(1, 1, 1, 1, 0, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "cs",       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "ptp", "trig",     V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "pwm",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(8,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "twsi0", "sda",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "rts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "rts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x4, "mii-1", "rxerr",  V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "ptp", "clk",      V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "mii", "col",      V(1, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "twsi0", "sda",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "rts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "rts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x4, "mii-1", "rxerr",  V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "ptp", "clk",      V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "mii", "col",      V(1, 1, 1, 1, 1, 0, 0))),
->   	MPP_MODE(9,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "twsi0", "sck",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "cts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "cts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "ptp", "evreq",    V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "mii", "crs",      V(1, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "twsi0", "sck",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "cts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "cts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "ptp", "evreq",    V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "mii", "crs",      V(1, 1, 1, 1, 1, 0, 0))),
->   	MPP_MODE(10,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "sck",      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0X3, "uart0", "txd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "ptp", "trig",     V(1, 1, 1, 1, 0, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "sck",      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0X3, "uart0", "txd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "ptp", "trig",     V(1, 1, 1, 1, 0, 0, 0))),
->   	MPP_MODE(11,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "spi", "miso",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "uart0", "rxd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x4, "ptp-1", "evreq",  V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "ptp-2", "trig",   V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "ptp", "clk",      V(1, 1, 1, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "spi", "miso",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "uart0", "rxd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x4, "ptp-1", "evreq",  V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "ptp-2", "trig",   V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "ptp", "clk",      V(1, 1, 1, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0, 0))),
->   	MPP_MODE(12,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "clk",     V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xa, "audio", "spdifo", V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "spi", "mosi",     V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "twsi1", "sda",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "clk",     V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xa, "audio", "spdifo", V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "spi", "mosi",     V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "twsi1", "sda",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(13,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "cmd",     V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "txd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0xa, "audio", "rmclk",  V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "pwm",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "cmd",     V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "txd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0xa, "audio", "rmclk",  V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "pwm",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(14,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "d0",      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "rxd",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x4, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xa, "audio", "spdifi", V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "audio-1", "sdi",  V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "mii", "col",      V(1, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "d0",      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "rxd",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x4, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xa, "audio", "spdifi", V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "audio-1", "sdi",  V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "mii", "col",      V(1, 1, 1, 1, 1, 0, 0))),
->   	MPP_MODE(15,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "d1",      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "rts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "txd",    V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "sata0", "act",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "spi", "cs",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "d1",      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "rts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "txd",    V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "sata0", "act",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "spi", "cs",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(16,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "d2",      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "uart0", "cts",    V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x3, "uart1", "rxd",    V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "sata1", "act",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "extclk",   V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "mii", "crs",      V(1, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "d2",      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "uart0", "cts",    V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x3, "uart1", "rxd",    V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "sata1", "act",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "extclk",   V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "mii", "crs",      V(1, 1, 1, 1, 1, 0, 0))),
->   	MPP_MODE(17,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "sdio", "d3",      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xa, "sata1", "act",    V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xd, "twsi1", "sck",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "sdio", "d3",      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xa, "sata1", "act",    V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xd, "twsi1", "sck",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(18,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io0",     V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "pex", "clkreq",   V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io0",     V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "pex", "clkreq",   V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(19,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "nand", "io1",     V(1, 1, 1, 1, 1, 1))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(1, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "io1",     V(1, 1, 1, 1, 1, 1, 1))),
->   	MPP_MODE(20,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp0",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "tx0ql",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txd0",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d0",       V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "mii", "rxerr",    V(1, 0, 0, 0, 0, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp0",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "tx0ql",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txd0",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d0",       V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "mii", "rxerr",    V(1, 0, 0, 0, 0, 0, 0))),
->   	MPP_MODE(21,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp1",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rx0ql",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txd1",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d1",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp1",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rx0ql",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txd1",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d1",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(22,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp2",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "tx2ql",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txd2",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d2",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp2",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "tx2ql",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txd2",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "prsnt",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d2",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(23,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp3",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rx2ql",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txd3",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d3",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp3",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rx2ql",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txd3",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "prsnt",  V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d3",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(24,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp4",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs0",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxd0",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d4",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp4",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs0",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxd0",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d4",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(25,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp5",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-sck",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxd1",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d5",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp5",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-sck",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxd1",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d5",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(26,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp6",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-miso", V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxd2",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d6",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp6",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-miso", V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxd2",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d6",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(27,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp7",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-mosi", V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxd3",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d7",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp7",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-mosi", V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxd3",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d7",       V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(28,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp8",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "int",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "col",      V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d8",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp8",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "int",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "col",      V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d8",       V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "ren",     V(0, 0, 0, 0, 0, 0, 1))),
->   	MPP_MODE(29,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rst",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txclk",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(1, 0, 0, 0, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d9",       V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(1, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rst",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txclk",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(1, 0, 0, 0, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d9",       V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "wen",     V(0, 0, 0, 0, 0, 0, 1))),
->   	MPP_MODE(30,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp10",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "pclk",     V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxctl",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d10",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp10",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "pclk",     V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxctl",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d10",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(31,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp11",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "fs",       V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxclk",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d11",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp11",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "fs",       V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxclk",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d11",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(32,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp12",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "drx",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txclko",   V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d12",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp12",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "drx",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txclko",   V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d12",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(33,
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "dtx",      V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txctl",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d13",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "dtx",      V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txctl",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d13",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(34,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs1",  V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "txen",     V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d14",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs1",  V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "txen",     V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata1", "act",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d14",      V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "ale",     V(0, 0, 0, 0, 0, 0, 1))),
->   	MPP_MODE(35,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "tx0ql",    V(0, 0, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x3, "ge1", "rxerr",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d15",      V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xc, "mii", "rxerr",    V(0, 1, 1, 1, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 1, 1, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "tx0ql",    V(0, 0, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x3, "ge1", "rxerr",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "sata0", "act",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d15",      V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xc, "mii", "rxerr",    V(0, 1, 1, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "nand", "cen",     V(0, 0, 0, 0, 0, 0, 1))),
->   	MPP_MODE(36,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp0",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs1",  V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "twsi1", "sda",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp0",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs1",  V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifi", V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "twsi1", "sda",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(37,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp1",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "tx2ql",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "twsi1", "sck",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp1",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "tx2ql",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "spdifo", V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "twsi1", "sck",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(38,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp2",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rx2ql",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d18",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp2",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rx2ql",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "rmclk",  V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d18",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(39,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp3",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs0",  V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d19",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp3",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-cs0",  V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "bclk",   V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d19",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(40,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp4",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-sck",  V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d20",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp4",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-sck",  V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdo",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d20",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(41,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp5",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-miso", V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d21",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp5",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-miso", V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "lrclk",  V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d21",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(42,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp6",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "spi-mosi", V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d22",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp6",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "spi-mosi", V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "mclk",   V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d22",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(43,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp7",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "int",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d23",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp7",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "int",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "sdi",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d23",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(44,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp8",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rst",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "clk",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp8",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rst",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x4, "audio", "extclk", V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "clk",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(45,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "pclk",     V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "e",        V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "pclk",     V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "e",        V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(46,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp10",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "fs",       V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "hsync",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp10",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "fs",       V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "hsync",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(47,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp11",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "drx",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "vsync",    V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp11",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "drx",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "vsync",    V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(48,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp12",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "dtx",      V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d16",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp12",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "dtx",      V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d16",      V(0, 0, 0, 0, 1, 0, 0))),
->   	MPP_MODE(49,
-> -		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 0, 1)),
-> -		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 0, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0x2, "tdm", "rx0ql",    V(0, 0, 0, 1, 1, 0)),
-> -		MPP_VAR_FUNCTION(0x5, "ptp", "clk",      V(0, 0, 0, 1, 0, 0)),
-> -		MPP_VAR_FUNCTION(0xa, "pex", "clkreq",   V(0, 0, 0, 0, 1, 0)),
-> -		MPP_VAR_FUNCTION(0xb, "lcd", "d17",      V(0, 0, 0, 0, 1, 0))),
-> +		MPP_VAR_FUNCTION(0x0, "gpio", NULL,      V(0, 0, 0, 1, 0, 1, 1)),
-> +		MPP_VAR_FUNCTION(0x0, "gpo", NULL,       V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x1, "ts", "mp9",       V(0, 0, 0, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x2, "tdm", "rx0ql",    V(0, 0, 0, 1, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0x5, "ptp", "clk",      V(0, 0, 0, 1, 0, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xa, "pex", "clkreq",   V(0, 0, 0, 0, 1, 0, 0)),
-> +		MPP_VAR_FUNCTION(0xb, "lcd", "d17",      V(0, 0, 0, 0, 1, 0, 0))),
->   };
->
->   static struct mvebu_mpp_ctrl mv88f6180_mpp_controls[] = {
-> @@ -456,6 +462,17 @@ static struct mvebu_pinctrl_soc_info mv98dx4122_info = {
->   	.ngpioranges = ARRAY_SIZE(mv88f628x_gpio_ranges),
->   };
->
-> +static struct mvebu_pinctrl_soc_info mv98dx1135_info = {
-> +	.variant = VARIANT_MV98DX1135,
-> +	.controls = mv88f628x_mpp_controls,
-> +	.ncontrols = ARRAY_SIZE(mv88f628x_mpp_controls),
-> +	.modes = mv88f6xxx_mpp_modes,
-> +	.nmodes = ARRAY_SIZE(mv88f6xxx_mpp_modes),
-> +	.gpioranges = mv88f628x_gpio_ranges,
-> +	.ngpioranges = ARRAY_SIZE(mv88f628x_gpio_ranges),
-> +};
-> +
-> +
->   static const struct of_device_id kirkwood_pinctrl_of_match[] = {
->   	{ .compatible = "marvell,88f6180-pinctrl", .data = &mv88f6180_info },
->   	{ .compatible = "marvell,88f6190-pinctrl", .data = &mv88f6190_info },
-> @@ -463,6 +480,7 @@ static const struct of_device_id kirkwood_pinctrl_of_match[] = {
->   	{ .compatible = "marvell,88f6281-pinctrl", .data = &mv88f6281_info },
->   	{ .compatible = "marvell,88f6282-pinctrl", .data = &mv88f6282_info },
->   	{ .compatible = "marvell,98dx4122-pinctrl", .data = &mv98dx4122_info },
-> +	{ .compatible = "marvell,98dx1135-pinctrl", .data = &mv98dx1135_info },
->   	{ }
->   };
->
->
+From: Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Ping?
+The Advantech iManager is an embedded controller (depending on board type,
+ITE it8518/it8528) on which a custom firmware runs. All drivers (GPIO, I2C,
+HWmon, Watchdog, and backlight) are being managed by the imanager mfd driver.
+The imanager mfd driver acts as a 'gateway' and handles all communications
+between the EC and sub-drivers (GPIO, I2C, ...). The feature specific
+communication portions are split up into core files such as
+imanager-ec-[gpio, i2c, ...].
+
+Changes from v2:
+I forgot to remove .owner from other drivers too... silly me!
+- Remove .owner from platform_driver in:
+  drivers/gpio/imanager-bl
+  drivers/gpio/imanager-core.c
+  drivers/gpio/imanager-i2c.c
+  drivers/gpio/imanager-hwmon.c
+
+Changes from v1:
+- Remove .owner from platform_driver in drivers/gpio/imanager-gpio.c
+- Remove .owner from platform_driver in drivers/gpio/imanager-wdt.c
+- Replace 2015 by 2016 in all files
+
+Richard Vidal-Dorsch (6):
+  Add Advantech iManager MFD core driver
+  Add Advantech iManager GPIO driver
+  Add Advantech iManager HWmon driver
+  Add Advantech iManager I2C driver
+  Add Advantech iManager Backlight driver
+  Add Advantech iManager Watchdog driver
+
+ Documentation/devicetree/bindings/mfd/imanager.txt |   33 +
+ Documentation/hwmon/imanager                       |   59 +
+ Documentation/i2c/busses/i2c-imanager              |   48 +
+ MAINTAINERS                                        |   13 +
+ drivers/gpio/Kconfig                               |    8 +
+ drivers/gpio/Makefile                              |    2 +
+ drivers/gpio/imanager-ec-gpio.c                    |   98 ++
+ drivers/gpio/imanager-gpio.c                       |  181 +++
+ drivers/hwmon/Kconfig                              |   12 +
+ drivers/hwmon/Makefile                             |    2 +
+ drivers/hwmon/imanager-ec-hwmon.c                  |  606 +++++++++
+ drivers/hwmon/imanager-hwmon.c                     | 1057 +++++++++++++++
+ drivers/i2c/busses/Kconfig                         |   11 +
+ drivers/i2c/busses/Makefile                        |    2 +
+ drivers/i2c/busses/imanager-ec-i2c.c               |  466 +++++++
+ drivers/i2c/busses/imanager-i2c.c                  |  239 ++++
+ drivers/mfd/Kconfig                                |   20 +
+ drivers/mfd/Makefile                               |    2 +
+ drivers/mfd/imanager-core.c                        |  287 +++++
+ drivers/mfd/imanager-ec.c                          | 1345 ++++++++++++++++++++
+ drivers/video/backlight/Kconfig                    |   12 +
+ drivers/video/backlight/Makefile                   |    2 +
+ drivers/video/backlight/imanager-bl.c              |  198 +++
+ drivers/video/backlight/imanager-ec-bl.c           |  118 ++
+ drivers/watchdog/Kconfig                           |   12 +
+ drivers/watchdog/Makefile                          |    2 +
+ drivers/watchdog/imanager-ec-wdt.c                 |  170 +++
+ drivers/watchdog/imanager-wdt.c                    |  333 +++++
+ include/linux/mfd/imanager/backlight.h             |   37 +
+ include/linux/mfd/imanager/core.h                  |   31 +
+ include/linux/mfd/imanager/ec.h                    |  210 +++
+ include/linux/mfd/imanager/gpio.h                  |   27 +
+ include/linux/mfd/imanager/hwmon.h                 |  120 ++
+ include/linux/mfd/imanager/i2c.h                   |   55 +
+ include/linux/mfd/imanager/wdt.h                   |   37 +
+ 35 files changed, 5855 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/imanager.txt
+ create mode 100644 Documentation/hwmon/imanager
+ create mode 100644 Documentation/i2c/busses/i2c-imanager
+ create mode 100644 drivers/gpio/imanager-ec-gpio.c
+ create mode 100644 drivers/gpio/imanager-gpio.c
+ create mode 100644 drivers/hwmon/imanager-ec-hwmon.c
+ create mode 100644 drivers/hwmon/imanager-hwmon.c
+ create mode 100644 drivers/i2c/busses/imanager-ec-i2c.c
+ create mode 100644 drivers/i2c/busses/imanager-i2c.c
+ create mode 100644 drivers/mfd/imanager-core.c
+ create mode 100644 drivers/mfd/imanager-ec.c
+ create mode 100644 drivers/video/backlight/imanager-bl.c
+ create mode 100644 drivers/video/backlight/imanager-ec-bl.c
+ create mode 100644 drivers/watchdog/imanager-ec-wdt.c
+ create mode 100644 drivers/watchdog/imanager-wdt.c
+ create mode 100644 include/linux/mfd/imanager/backlight.h
+ create mode 100644 include/linux/mfd/imanager/core.h
+ create mode 100644 include/linux/mfd/imanager/ec.h
+ create mode 100644 include/linux/mfd/imanager/gpio.h
+ create mode 100644 include/linux/mfd/imanager/hwmon.h
+ create mode 100644 include/linux/mfd/imanager/i2c.h
+ create mode 100644 include/linux/mfd/imanager/wdt.h
+
+-- 
+2.7.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
