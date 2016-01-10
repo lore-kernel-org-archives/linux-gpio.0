@@ -1,32 +1,38 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 2/3] Documentation: gpio: Update description for
- X-Gene standby GPIO controller DTS binding
-Date: Sat, 9 Jan 2016 16:28:10 -0600
-Message-ID: <20160109222810.GA11205@rob-hp-laptop>
-References: <1452162428-26839-1-git-send-email-qnguyen@apm.com>
- <1452162428-26839-3-git-send-email-qnguyen@apm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: richard.dorsch@gmail.com
+Subject: [PATCH 7/8] Remove .owner from platform_driver struct
+Date: Sat,  9 Jan 2016 23:42:08 -0800
+Message-ID: <1452411728-5929-1-git-send-email-richard.dorsch@gmail.com>
+References: <201601090859.rNB9E9Y6%fengguang.wu@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:51478 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756068AbcAIW2P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Sat, 9 Jan 2016 17:28:15 -0500
-Content-Disposition: inline
-In-Reply-To: <1452162428-26839-3-git-send-email-qnguyen@apm.com>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:35156 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534AbcAJHmO (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Jan 2016 02:42:14 -0500
+In-Reply-To: <201601090859.rNB9E9Y6%fengguang.wu@intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quan Nguyen <qnguyen@apm.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
+To: linux-kernel@vger.kernel.org
+Cc: lm-sensors@lm-sensors.org, linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, lee.jones@linaro.org, jdelvare@suse.com, linux@roeck-us.net, wim@iguana.be, fengguang.wu@intel.com, jo.sunga@advantech.com, Richard Vidal-Dorsch <richard.dorsch@gmail.com>
 
-On Thu, Jan 07, 2016 at 05:27:07PM +0700, Quan Nguyen wrote:
-> Update description for X-Gene standby GPIO controller DTS binding to
-> support GPIO line configuration as input, output or external IRQ pin.
-> 
-> Signed-off-by: Y Vo <yvo@apm.com>
-> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 49 +++++++++++++++++-----
->  1 file changed, 38 insertions(+), 11 deletions(-)
+From: Richard Vidal-Dorsch <richard.dorsch@gmail.com>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Richard Vidal-Dorsch <richard.dorsch@gmail.com>
+---
+ drivers/gpio/imanager-gpio.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpio/imanager-gpio.c b/drivers/gpio/imanager-gpio.c
+index 3939c0f..b6fa689 100644
+--- a/drivers/gpio/imanager-gpio.c
++++ b/drivers/gpio/imanager-gpio.c
+@@ -167,7 +167,6 @@ static int imanager_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver imanager_gpio_driver = {
+ 	.driver = {
+-		.owner	= THIS_MODULE,
+ 		.name	= "imanager_gpio",
+ 	},
+ 	.probe	= imanager_gpio_probe,
+-- 
+2.6.4
+
