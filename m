@@ -1,82 +1,135 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [rtc-linux] [PATCH 5/6] rtc: max77620: add support for max77620/max20024
- RTC driver
-Date: Mon, 11 Jan 2016 18:47:34 +0530
-Message-ID: <5693AB6E.4090700@nvidia.com>
-References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com> <1452177524-23192-6-git-send-email-ldewangan@nvidia.com> <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com> <568F8D7E.10500@nvidia.com> <20160108125117.GM6588@sirena.org.uk> <568FB3DD.4090503@nvidia.com> <20160108133648.GQ6588@sirena.org.uk> <568FBB6D.2020904@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Subject: Re: [Kernel] [PATCH] gpiolib: rewrite gpiochip_add_to_list
+Date: Mon, 11 Jan 2016 22:35:13 +0800
+Message-ID: <1452522913-6298-1-git-send-email-bamvor.zhangjian@linaro.org>
+References: <CAFy1USRc8=wwpr9rGkcvYR5gdO-cz1c1onfngSAECb94XpmGgg@mail.gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2382 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932103AbcAKN1t (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 08:27:49 -0500
-In-Reply-To: <568FBB6D.2020904@nvidia.com>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:36183 "EHLO
+	mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759004AbcAKOgV (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 09:36:21 -0500
+Received: by mail-pf0-f171.google.com with SMTP id n128so45640696pfn.3
+        for <linux-gpio@vger.kernel.org>; Mon, 11 Jan 2016 06:36:21 -0800 (PST)
+In-Reply-To: <CAFy1USRc8=wwpr9rGkcvYR5gdO-cz1c1onfngSAECb94XpmGgg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>
+To: julien.grossholtz@savoirfairelinux.com
+Cc: linux-gpio@vger.kernel.org, linus.walleij@linaro.org, broonie@kernel.org, kernel@savoirfairelinux.com, arnd@arndb.de, bamvor.zhangjian@linaro.org
 
+Hi, Julien
 
-On Friday 08 January 2016 07:06 PM, Laxman Dewangan wrote:
+On 01/09/2016 11:16 PM, Bamvor Zhang Jian wrote:
+> Hi, Julien
 >
-> On Friday 08 January 2016 07:06 PM, Mark Brown wrote:
->> * PGP Signed by an unknown key
+> On 01/09/2016 06:56 AM, Julien Grossholtz wrote:
+>> Hi,
 >>
->> On Fri, Jan 08, 2016 at 06:34:29PM +0530, Laxman Dewangan wrote:
->>
->>> If we get the parent device, regmap handle and interrupt number from 
->>> mfd
->>> core independent of the PMIC (MAX77620 or MAX77686), then same 
->>> driver can be
->>> used here.
->>> Two way which I can think of here:
->> Parent device is just dev->parent, you can use dev_get_regmap() to get a
->> regmap given a struct device and you can use platform resources to pass
->> the interrupts to the children from the MFD (there's some examples,
->> wm831x is one).
->>
->>
->
-> I think it should work with named regmap. mfd whould init regmap with 
-> name and rtc driver should ask with same name.
->
-> I saw three drivers which looks same:
-> rtc-max77620.c (new from me) and already available rtc-max77686.c, 
-> rtc-max77802.c
->
-> Seems I can develop IP based rtc driver as rtc-max77xxx.c
+>> The issue is in the break condition of the list_for_each_entry_safe loop.
+>> If there is a chip at the beginning it breaks even if there is another
+>> one after. You should check the next chip:
+>> if (chip->base > prev->base && chip->base + chip->ngpio <= next->base)
+> Thanks you suggestion. It indeed fix the issue you mentioned.
+> I will send the new version after I make sure there is no other corner case.
+Could you do me favor to test the following patches?
+It works for the following ranges: [0,31], [32,64], [-1,32], [-1, 32] and the
+other test cases I wrote.
 
-I came with one of issue when doing this.
+Regards
 
-The RTC driver parent is not the same parent for which i2c slave address 
-get registered.
-There is two slave address from max77620, 0x3C (for general) and 0x68 
-for RTC.
+Bamvor
 
-In max77620 mfd driver, we make dummy i2c client for 0x68 and initialize 
-regmap with this address.
+---
+ drivers/gpio/gpiolib.c | 65 ++++++++++++++++++++++----------------------------
+ 1 file changed, 28 insertions(+), 37 deletions(-)
 
-Now on mfd_add_devices, we pass the device for 0x3c and hence the RTC 
-driver treat the parent as the 0x3c device but actually it should be 
-0x68 to get the proper regmap.
-
-
-Two approach:
-1. If we add the option to pass parent_dev when adding cells form 
-mfd_add_devices and select the parent device based on this option then 
-it can be easily handle.
-     Add parent_dev structure in struct mfd_cell and then change the 
-parent in mfd_add_device() if cells has parent device.
-
-2. Register the RTC driver with different mfd_add_devices with dummy i2c 
-client device.
-So two times mfd_add_devices.
-
-
-IMO, approach 1 looks good to me.
-
-Any opinion?
-
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 3db34e7..9460f94 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -189,55 +189,46 @@ EXPORT_SYMBOL_GPL(gpiod_get_direction);
+  */
+ static int gpiochip_add_to_list(struct gpio_chip *chip)
+ {
+-	struct gpio_chip *iterator;
+-	struct gpio_chip *previous = NULL;
++	struct gpio_chip *prev, *next;
+ 
+ 	if (list_empty(&gpio_chips)) {
+-		list_add_tail(&chip->list, &gpio_chips);
++		/* initial entry in list */
++		list_add(&chip->list, &gpio_chips);
+ 		return 0;
+ 	}
+ 
+-	list_for_each_entry(iterator, &gpio_chips, list) {
+-		if (iterator->base >= chip->base + chip->ngpio) {
+-			/*
+-			 * Iterator is the first GPIO chip so there is no
+-			 * previous one
+-			 */
+-			if (!previous) {
+-				goto found;
+-			} else {
+-				/*
+-				 * We found a valid range(means
+-				 * [base, base + ngpio - 1]) between previous
+-				 * and iterator chip.
+-				 */
+-				if (previous->base + previous->ngpio
+-						<= chip->base)
+-					goto found;
+-			}
+-		}
+-		previous = iterator;
++	next = list_entry(gpio_chips.next, struct gpio_chip, list);
++	if (chip->base + chip->ngpio <= next->base) {
++		/* add before first entry */
++		list_add(&chip->list, &gpio_chips);
++		return 0;
+ 	}
+ 
+-	/*
+-	 * We are beyond the last chip in the list and iterator now
+-	 * points to the head.
+-	 * Let iterator point to the last chip in the list.
+-	 */
++	prev = list_entry(gpio_chips.prev, struct gpio_chip, list);
++	if (prev->base + prev->ngpio <= chip->base) {
++		/* add behind last entry */
++		list_add_tail(&chip->list, &gpio_chips);
++		return 0;
++	}
+ 
+-	iterator = list_last_entry(&gpio_chips, struct gpio_chip, list);
+-	if (iterator->base + iterator->ngpio <= chip->base)
+-		goto found;
++	list_for_each_entry_safe(prev, next, &gpio_chips, list) {
++		/* at the end of the list */
++		if (&(next->list) == &gpio_chips)
++			break;
+ 
+-	dev_err(chip->parent,
+-	       "GPIO integer space overlap, cannot add chip\n");
+-	return -EBUSY;
++		/* add between prev and next */
++		if ( prev->base + prev->ngpio <= chip->base
++				&& chip->base + chip->ngpio <= next->base) {
++			list_add(&chip->list, &prev->list);
++			return 0;
++		}
++	}
+ 
+-found:
+-	list_add_tail(&chip->list, &iterator->list);
+-	return 0;
++	dev_err(chip->parent, "GPIO integer space overlap, cannot add chip\n");
++	return -EBUSY;
+ }
+ 
++
+ /**
+  * Convert a GPIO name to its descriptor
+  */
+-- 
+2.1.4
 
