@@ -1,51 +1,39 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 3/5] gpio: arizona: Support Cirrus Logic CS47L24 and
- WM1831
-Date: Mon, 11 Jan 2016 06:26:19 +0000
-Message-ID: <20160111062619.GP3331@x1>
-References: <1446563316-28878-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1446563316-28878-4-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 RESEND] gpio: arizona: Support Cirrus Logic CS47L24
+ and WM1831
+Date: Mon, 11 Jan 2016 06:26:39 +0000
+Message-ID: <20160111062639.GQ3331@x1>
+References: <1449480242-19380-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1449480242-19380-2-git-send-email-rf@opensource.wolfsonmicro.com>
+ <CACRpkdaosbBm4oOGHWUVBV+s9UdQ1oU7cFjd4+c_9uzyab97kg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1446563316-28878-4-git-send-email-rf@opensource.wolfsonmicro.com>
+In-Reply-To: <CACRpkdaosbBm4oOGHWUVBV+s9UdQ1oU7cFjd4+c_9uzyab97kg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: linus.walleij@linaro.org, broonie@kernel.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 03 Nov 2015, Richard Fitzgerald wrote:
+On Fri, 11 Dec 2015, Linus Walleij wrote:
 
-> The CS47L24 and WM1831 codecs only have two GPIO lines, but are
-> otherwise similar to the WM8280.
+> On Mon, Dec 7, 2015 at 10:24 AM, Richard Fitzgerald
+> <rf@opensource.wolfsonmicro.com> wrote:
 >=20
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-arizona.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> > The CS47L24 and WM1831 codecs only have two GPIO lines, but are
+> > otherwise similar to the WM8280.
+> >
+> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+> OK I guess it should just be optimistically merged to the MFD
+> tree where the dependency is (I guess?). Else I can take it once the =
+MFD
+> changes are upstream.
 
-Applied, thanks.
-
-> diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.=
-c
-> index ca00273..624ea54 100644
-> --- a/drivers/gpio/gpio-arizona.c
-> +++ b/drivers/gpio/gpio-arizona.c
-> @@ -122,6 +122,10 @@ static int arizona_gpio_probe(struct platform_de=
-vice *pdev)
->  	case WM1814:
->  		arizona_gpio->gpio_chip.ngpio =3D 5;
->  		break;
-> +	case WM1831:
-> +	case CS47L24:
-> +		arizona_gpio->gpio_chip.ngpio =3D 2;
-> +		break;
->  	default:
->  		dev_err(&pdev->dev, "Unknown chip variant %d\n",
->  			arizona->type);
+I just applied it.
 
 --=20
 Lee Jones
