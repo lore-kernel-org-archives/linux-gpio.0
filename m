@@ -1,67 +1,50 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 45/54] mfd: asic3: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:48:09 +0000
-Message-ID: <20160111074809.GK3331@x1>
-References: <1450795526-27949-1-git-send-email-linus.walleij@linaro.org>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] ARM: sunxi: Introduce Allwinner for
+ A83T support
+Date: Mon, 11 Jan 2016 08:48:47 +0100
+Message-ID: <20160111074847.GJ9631@lukather>
+References: <1452085914-29340-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1452085914-29340-2-git-send-email-vishnupatekar0510@gmail.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:36457 "EHLO
-	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752602AbcAKHsN (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:48:13 -0500
-Received: by mail-wm0-f44.google.com with SMTP id l65so199825953wmf.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:48:13 -0800 (PST)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5cSRzy0VGBWAML+b"
+Return-path: <linux-sunxi+bncBD2ZNBF5VYJRBYF4ZW2AKGQE2U5MK3I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1450795526-27949-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1452085914-29340-2-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Paul Parsons <lost.distance@yahoo.com>
 
-On Tue, 22 Dec 2015, Linus Walleij wrote:
+--5cSRzy0VGBWAML+b
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 
-> As we want gpio_chip .get() calls to be able to return negative
-> error codes and propagate to drivers, we need to go over all
-> drivers and make sure their return values are clamped to [0,1].
-> We do this by using the ret =3D !!(val) design pattern.
->=20
-> Cc: Paul Parsons <lost.distance@yahoo.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Lee: as mentioned in 00/54: either apply this directly
-> or ACK it and I will take it into the GPIO tree.
-> ---
->  drivers/mfd/asic3.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi,
 
-Applied, thanks.
+On Wed, Jan 06, 2016 at 09:11:52PM +0800, Vishnu Patekar wrote:
+> Allwinner A83T is octa-core cortex-a7 based SoC.
+> It's clock control unit and prcm, pinmux are different from previous sun8i
+> series.
+> Its processor cores are arragned in two clusters 4 cores each,
+> similar to A80.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 
-> diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
-> index a726f01e3b02..58c4d9cb8e8d 100644
-> --- a/drivers/mfd/asic3.c
-> +++ b/drivers/mfd/asic3.c
-> @@ -502,7 +502,8 @@ static int asic3_gpio_get(struct gpio_chip *chip,
->  		return -EINVAL;
->  	}
-> =20
-> -	return asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS) & m=
-ask;
-> +	return !!(asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS)
-> +		  & mask));
->  }
-> =20
->  static void asic3_gpio_set(struct gpio_chip *chip,
+Applied, thanks!
+Maxime
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--5cSRzy0VGBWAML+b--
