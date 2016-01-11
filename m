@@ -1,20 +1,20 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 50/54] mfd: ucb1x00-core: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:43:07 +0000
-Message-ID: <20160111074307.GB3331@x1>
-References: <1450795713-28414-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 49/54] mfd: tps65010: Be sure to clamp return value
+Date: Mon, 11 Jan 2016 07:43:36 +0000
+Message-ID: <20160111074336.GC3331@x1>
+References: <1450795693-28364-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:36854 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752956AbcAKHnL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:43:11 -0500
-Received: by mail-wm0-f50.google.com with SMTP id l65so199696397wmf.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:43:11 -0800 (PST)
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:38161 "EHLO
+	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758602AbcAKHnk (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:43:40 -0500
+Received: by mail-wm0-f49.google.com with SMTP id b14so253932675wmb.1
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:43:39 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450795713-28414-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450795693-28364-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
@@ -27,32 +27,40 @@ On Tue, 22 Dec 2015, Linus Walleij wrote:
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret =3D !!(val) design pattern.
 >=20
+> This also start to propagate the negative error code from the
+> smbus call if there is one, as the last commit of this series
+> will make the gpiolib core deal with that properly.
+>=20
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee: as mentioned in 00/54: either apply this directly
 > or ACK it and I will take it into the GPIO tree.
 > ---
->  drivers/mfd/ucb1x00-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mfd/tps65010.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/ucb1x00-core.c b/drivers/mfd/ucb1x00-core.c
-> index a6ec7cc0fac6..bcafe1ecd71c 100644
-> --- a/drivers/mfd/ucb1x00-core.c
-> +++ b/drivers/mfd/ucb1x00-core.c
-> @@ -133,7 +133,7 @@ static int ucb1x00_gpio_get(struct gpio_chip *chi=
-p, unsigned offset)
->  	val =3D ucb1x00_reg_read(ucb, UCB_IO_DATA);
->  	ucb1x00_disable(ucb);
+> diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
+> index b96847491277..83e615ed100a 100644
+> --- a/drivers/mfd/tps65010.c
+> +++ b/drivers/mfd/tps65010.c
+> @@ -499,11 +499,11 @@ static int tps65010_gpio_get(struct gpio_chip *=
+chip, unsigned offset)
+>  	if (offset < 4) {
+>  		value =3D i2c_smbus_read_byte_data(tps->client, TPS_DEFGPIO);
+>  		if (value < 0)
+> -			return 0;
+> +			return value;
+>  		if (value & (1 << (offset + 4)))	/* output */
+>  			return !(value & (1 << offset));
+>  		else					/* input */
+> -			return (value & (1 << offset));
+> +			return !!(value & (1 << offset));
+>  	}
 > =20
-> -	return val & (1 << offset);
-> +	return !!(val & (1 << offset));
->  }
-> =20
->  static int ucb1x00_gpio_direction_input(struct gpio_chip *chip, unsi=
-gned offset)
+>  	/* REVISIT we *could* report LED1/nPG and LED2 state ... */
 
 --=20
 Lee Jones
