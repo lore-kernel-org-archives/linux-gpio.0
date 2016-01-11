@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 48/54] mfd: tc6393xb: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:45:04 +0000
-Message-ID: <20160111074504.GE3331@x1>
-References: <1450795675-28314-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 47/54] mfd: htc-egpio: Be sure to clamp return value
+Date: Mon, 11 Jan 2016 07:45:23 +0000
+Message-ID: <20160111074523.GF3331@x1>
+References: <1450795659-28262-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:36195 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758611AbcAKHpI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:45:08 -0500
-Received: by mail-wm0-f43.google.com with SMTP id l65so199745761wmf.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:45:07 -0800 (PST)
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:35792 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069AbcAKHp1 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:45:27 -0500
+Received: by mail-wm0-f54.google.com with SMTP id f206so200132177wmf.0
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:45:26 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450795675-28314-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450795659-28262-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Dmitry Baryshkov <dbaryshkov@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Philipp Zabel <philipp.zabel@gmail.com>
 
 On Tue, 22 Dec 2015, Linus Walleij wrote:
 
@@ -27,35 +27,33 @@ On Tue, 22 Dec 2015, Linus Walleij wrote:
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret =3D !!(val) design pattern.
 >=20
-> Cc: Dmitry Baryshkov <dbaryshkov@gmail.com>
 > Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Philipp Zabel <philipp.zabel@gmail.com>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee: as mentioned in 00/54: either apply this directly
 > or ACK it and I will take it into the GPIO tree.
 > ---
->  drivers/mfd/tc6393xb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/mfd/htc-egpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
-> index 8c84a513016b..1ecbfa40d1b3 100644
-> --- a/drivers/mfd/tc6393xb.c
-> +++ b/drivers/mfd/tc6393xb.c
-> @@ -437,8 +437,8 @@ static int tc6393xb_gpio_get(struct gpio_chip *ch=
-ip,
->  	struct tc6393xb *tc6393xb =3D container_of(chip, struct tc6393xb, g=
-pio);
-> =20
->  	/* XXX: does dsr also represent inputs? */
-> -	return tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8))
-> -		& TC_GPIO_BIT(offset);
-> +	return !!(tmio_ioread8(tc6393xb->scr + SCR_GPO_DSR(offset / 8))
-> +		  & TC_GPIO_BIT(offset));
+> diff --git a/drivers/mfd/htc-egpio.c b/drivers/mfd/htc-egpio.c
+> index d334e7d8a77d..c636b5f83cfb 100644
+> --- a/drivers/mfd/htc-egpio.c
+> +++ b/drivers/mfd/htc-egpio.c
+> @@ -163,7 +163,7 @@ static int egpio_get(struct gpio_chip *chip, unsi=
+gned offset)
+>  	value =3D egpio_readw(ei, reg);
+>  	pr_debug("readw(%p + %x) =3D %x\n",
+>  			ei->base_addr, reg << ei->bus_shift, value);
+> -	return value & bit;
+> +	return !!(value & bit);
 >  }
 > =20
->  static void __tc6393xb_gpio_set(struct gpio_chip *chip,
+>  static int egpio_direction_input(struct gpio_chip *chip, unsigned of=
+fset)
 
 --=20
 Lee Jones
