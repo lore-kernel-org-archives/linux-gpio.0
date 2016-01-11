@@ -1,66 +1,59 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 49/54] mfd: tps65010: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:43:36 +0000
-Message-ID: <20160111074336.GC3331@x1>
-References: <1450795693-28364-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 45/54 v2] mfd: asic3: Be sure to clamp return value
+Date: Mon, 11 Jan 2016 07:44:06 +0000
+Message-ID: <20160111074406.GD3331@x1>
+References: <1450825536-8830-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:38161 "EHLO
-	mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758602AbcAKHnk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:43:40 -0500
-Received: by mail-wm0-f49.google.com with SMTP id b14so253932675wmb.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:43:39 -0800 (PST)
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:34491 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758611AbcAKHoK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:44:10 -0500
+Received: by mail-wm0-f46.google.com with SMTP id u188so202984075wmu.1
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:44:09 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450795693-28364-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450825536-8830-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Paul Parsons <lost.distance@yahoo.com>
 
-On Tue, 22 Dec 2015, Linus Walleij wrote:
+On Wed, 23 Dec 2015, Linus Walleij wrote:
 
 > As we want gpio_chip .get() calls to be able to return negative
 > error codes and propagate to drivers, we need to go over all
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret =3D !!(val) design pattern.
 >=20
-> This also start to propagate the negative error code from the
-> smbus call if there is one, as the last commit of this series
-> will make the gpiolib core deal with that properly.
->=20
+> Cc: Paul Parsons <lost.distance@yahoo.com>
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> Lee: as mentioned in 00/54: either apply this directly
-> or ACK it and I will take it into the GPIO tree.
+> ChangeLog v1->v2: fixed a compilation issue, I was hammering
+> to much on parentheses sorry.
 > ---
->  drivers/mfd/tps65010.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/mfd/asic3.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/tps65010.c b/drivers/mfd/tps65010.c
-> index b96847491277..83e615ed100a 100644
-> --- a/drivers/mfd/tps65010.c
-> +++ b/drivers/mfd/tps65010.c
-> @@ -499,11 +499,11 @@ static int tps65010_gpio_get(struct gpio_chip *=
-chip, unsigned offset)
->  	if (offset < 4) {
->  		value =3D i2c_smbus_read_byte_data(tps->client, TPS_DEFGPIO);
->  		if (value < 0)
-> -			return 0;
-> +			return value;
->  		if (value & (1 << (offset + 4)))	/* output */
->  			return !(value & (1 << offset));
->  		else					/* input */
-> -			return (value & (1 << offset));
-> +			return !!(value & (1 << offset));
+> diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+> index a726f01e3b02..927e2c2a9a39 100644
+> --- a/drivers/mfd/asic3.c
+> +++ b/drivers/mfd/asic3.c
+> @@ -502,7 +502,8 @@ static int asic3_gpio_get(struct gpio_chip *chip,
+>  		return -EINVAL;
 >  	}
 > =20
->  	/* REVISIT we *could* report LED1/nPG and LED2 state ... */
+> -	return asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS) & m=
+ask;
+> +	return !!(asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS)
+> +		  & mask);
+>  }
+> =20
+>  static void asic3_gpio_set(struct gpio_chip *chip,
 
 --=20
 Lee Jones
