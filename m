@@ -1,20 +1,20 @@
 From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH 46/54] mfd: dm355evm_mps: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:47:07 +0000
-Message-ID: <20160111074707.GG3331@x1>
-References: <1450795651-28215-1-git-send-email-linus.walleij@linaro.org>
+Date: Mon, 11 Jan 2016 07:47:22 +0000
+Message-ID: <20160111074722.GH3331@x1>
+References: <1450795633-28167-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:34692 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758612AbcAKHrM (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:47:12 -0500
-Received: by mail-wm0-f47.google.com with SMTP id u188so203063090wmu.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:47:11 -0800 (PST)
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37851 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758612AbcAKHrZ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:47:25 -0500
+Received: by mail-wm0-f51.google.com with SMTP id f206so254163858wmf.0
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:47:25 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450795651-28215-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450795633-28167-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
