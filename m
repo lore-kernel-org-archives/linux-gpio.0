@@ -1,44 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 5/6] Add Advantech iManager Backlight driver
-Date: Mon, 11 Jan 2016 10:23:02 +0000
-Message-ID: <20160111102302.GV14104@x1>
-References: <1452468675-5827-1-git-send-email-richard.dorsch@gmail.com>
- <1452468675-5827-6-git-send-email-richard.dorsch@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 6/6] regulator: max77620: add regulator driver for max77620/max20024
+Date: Mon, 11 Jan 2016 15:46:30 +0530
+Message-ID: <569380FE.6020609@nvidia.com>
+References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com> <1452177524-23192-7-git-send-email-ldewangan@nvidia.com> <20160110124014.GZ6588@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1452468675-5827-6-git-send-email-richard.dorsch@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: richard.dorsch@gmail.com
-Cc: linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net, wim@iguana.be, jo.sunga@advantech.com
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160110124014.GZ6588-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mallikarjun Kasoju <mkasoju-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, 10 Jan 2016, richard.dorsch@gmail.com wrote:
+Thanks Mark for review.
 
-> From: Richard Vidal-Dorsch <richard.dorsch@gmail.com>
->=20
-> Signed-off-by: Richard Vidal-Dorsch <richard.dorsch@gmail.com>
-> ---
->  drivers/video/backlight/Kconfig          |  12 ++
->  drivers/video/backlight/Makefile         |   2 +
->  drivers/video/backlight/imanager-bl.c    | 198 +++++++++++++++++++++=
-++++++++++
->  drivers/video/backlight/imanager-ec-bl.c | 118 ++++++++++++++++++
->  include/linux/mfd/imanager/backlight.h   |  37 ++++++
->  5 files changed, 367 insertions(+)
->  create mode 100644 drivers/video/backlight/imanager-bl.c
->  create mode 100644 drivers/video/backlight/imanager-ec-bl.c
->  create mode 100644 include/linux/mfd/imanager/backlight.h
+I have query in one of comment.
 
-How do you expect this to be reviewed if you don't send it to the
-reviewer?
+On Sunday 10 January 2016 06:10 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Thu, Jan 07, 2016 at 08:08:44PM +0530, Laxman Dewangan wrote:
+>
+>
+> +	np = of_get_child_by_name(pdev->dev.parent->of_node, "regulators");
+> +	if (!np) {
+> +		dev_err(&pdev->dev, "Device is not having regulators node\n");
+> +		return -ENODEV;
+> +	}
+> +	pdev->dev.of_node = np;
+> +
+> +	ret = of_regulator_match(&pdev->dev, np, max77620_regulator_matches,
+> +			ARRAY_SIZE(max77620_regulator_matches));
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Parsing of regulator node failed: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> Don't open code this, use the core support via regulators and of_match.
+>
 
-[...]
+I did not get this point? Here I am using the of_regulator_match from 
+core? Can you please help to explain this?
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
