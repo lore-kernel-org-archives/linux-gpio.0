@@ -1,24 +1,24 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 46/54] mfd: dm355evm_mps: Be sure to clamp return value
-Date: Mon, 11 Jan 2016 07:47:55 +0000
-Message-ID: <20160111074755.GJ3331@x1>
-References: <1450795547-28000-1-git-send-email-linus.walleij@linaro.org>
+Subject: Re: [PATCH 45/54] mfd: asic3: Be sure to clamp return value
+Date: Mon, 11 Jan 2016 07:48:09 +0000
+Message-ID: <20160111074809.GK3331@x1>
+References: <1450795526-27949-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:36280 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752602AbcAKHr7 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:47:59 -0500
-Received: by mail-wm0-f48.google.com with SMTP id l65so199819988wmf.1
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:47:59 -0800 (PST)
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:36457 "EHLO
+	mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752602AbcAKHsN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 02:48:13 -0500
+Received: by mail-wm0-f44.google.com with SMTP id l65so199825953wmf.1
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Jan 2016 23:48:13 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1450795547-28000-1-git-send-email-linus.walleij@linaro.org>
+In-Reply-To: <1450795526-27949-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>
+Cc: linux-gpio@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Paul Parsons <lost.distance@yahoo.com>
 
 On Tue, 22 Dec 2015, Linus Walleij wrote:
 
@@ -27,32 +27,33 @@ On Tue, 22 Dec 2015, Linus Walleij wrote:
 > drivers and make sure their return values are clamped to [0,1].
 > We do this by using the ret =3D !!(val) design pattern.
 >=20
+> Cc: Paul Parsons <lost.distance@yahoo.com>
 > Cc: Lee Jones <lee.jones@linaro.org>
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
 > Lee: as mentioned in 00/54: either apply this directly
 > or ACK it and I will take it into the GPIO tree.
 > ---
->  drivers/mfd/dm355evm_msp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mfd/asic3.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
 Applied, thanks.
 
-> diff --git a/drivers/mfd/dm355evm_msp.c b/drivers/mfd/dm355evm_msp.c
-> index bc90efe01b59..ec4438ed2faf 100644
-> --- a/drivers/mfd/dm355evm_msp.c
-> +++ b/drivers/mfd/dm355evm_msp.c
-> @@ -147,7 +147,7 @@ static int msp_gpio_get(struct gpio_chip *chip, u=
-nsigned offset)
->  		return status;
->  	if (reg =3D=3D DM355EVM_MSP_LED)
->  		msp_led_cache =3D status;
-> -	return status & MSP_GPIO_MASK(offset);
-> +	return !!(status & MSP_GPIO_MASK(offset));
+> diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
+> index a726f01e3b02..58c4d9cb8e8d 100644
+> --- a/drivers/mfd/asic3.c
+> +++ b/drivers/mfd/asic3.c
+> @@ -502,7 +502,8 @@ static int asic3_gpio_get(struct gpio_chip *chip,
+>  		return -EINVAL;
+>  	}
+> =20
+> -	return asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS) & m=
+ask;
+> +	return !!(asic3_read_register(asic, gpio_base + ASIC3_GPIO_STATUS)
+> +		  & mask));
 >  }
 > =20
->  static int msp_gpio_out(struct gpio_chip *chip, unsigned offset, int=
- value)
+>  static void asic3_gpio_set(struct gpio_chip *chip,
 
 --=20
 Lee Jones
