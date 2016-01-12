@@ -1,220 +1,483 @@
-From: Peter Hung <hpeter@gmail.com>
-Subject: [PATCH 2/2] gpio-f7188x: filter non-export gpio for F81866
-Date: Tue, 12 Jan 2016 15:41:39 +0800
-Message-ID: <1452584499-13939-3-git-send-email-hpeter+linux_kernel@gmail.com>
-References: <1452584499-13939-1-git-send-email-hpeter+linux_kernel@gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 1/6] DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
+Date: Tue, 12 Jan 2016 14:47:48 +0530
+Message-ID: <1452590273-16421-2-git-send-email-ldewangan@nvidia.com>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452584499-13939-1-git-send-email-hpeter+linux_kernel@gmail.com>
+In-Reply-To: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tom_tsai@fintek.com.tw, peter_hong@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Dont export gpios which not enabled by motherboard manufacturer.
+The MAXIM PMIC MAX77620 and MAX20024 are power management IC
+which supports RTC, GPIO, DCDC/LDO regulators, interrupt,
+watchdog etc.
 
-Signed-off-by: Peter Hung <hpeter+linux_kernel@gmail.com>
+Add DT binding document for the different functionality of
+this device.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-f7188x.c | 153 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+Changes from V1:
+- Added units in some of properties.
+- Change the boolean property to tristate type and detail some of
+  properties.
 
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index a6a9641..f7fe7aa 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -38,6 +38,12 @@
- #define SIO_F71889_ID		0x0909	/* F71889 chipset ID */
- #define SIO_F81866_ID		0x1010	/* F81866 chipset ID */
- 
-+#define F81866_PORT_SEL_REG	0x27
-+#define F81866_MULTI_FUN1_REG	0x28
-+#define F81866_MULTI_FUN3_REG	0x29
-+#define F81866_MULTI_FUN4_REG	0x2B
-+#define F81866_GPIO_EN_REG	0x2C
+ Documentation/devicetree/bindings/mfd/max77620.txt | 397 +++++++++++++++++++++
+ include/dt-bindings/mfd/max77620.h                 |  38 ++
+ 2 files changed, 435 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
+ create mode 100644 include/dt-bindings/mfd/max77620.h
+
+diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+new file mode 100644
+index 0000000..76cda7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+@@ -0,0 +1,397 @@
++* MAX77620 Power management IC from Maxim Semiconductor.
 +
- enum chips { f71869, f71869a, f71882fg, f71889f, f81866 };
- 
- static const char * const f7188x_names[] = {
-@@ -93,6 +99,15 @@ static inline void superio_outb(int base, int reg, int val)
- 	outb(val, base + 1);
- }
- 
-+static inline void superio_mask_outb(int base, int reg, int mask, int val)
-+{
-+	u8 tmp;
++Required properties:
++-------------------
++- compatible: Must be one of
++		"maxim,max77620" or
++		"maxim,max20024".
++- reg: I2C device address.
++- interrupt-controller: MAX77620 has internal interrupt controller which
++  takes the interrupt request from internal sub-blocks like RTC,
++  regulators, GPIOs as well as external input.
++- #interrupt-cells: Should be set to 2 for IRQ number and flags.
++  The first cell is the IRQ number. IRQ numbers for different interrupt
++  source of MAX77620 are defined at dt-bindings/mfd/max77620.h
++  The second cell is the flags, encoded as the trigger masks from binding
++  document interrupts.txt, using dt-bindings/irq.
 +
-+	tmp = superio_inb(base, reg);
-+	tmp = (tmp & ~mask) | (val & mask);
-+	superio_outb(base, reg, tmp);
-+}
++Optional properties:
++-------------------
++This device also supports the power OFF of system.
++Following properties are used for this purpose:
++- system-power-controller: Boolean, This device will be use as
++	system power controller and used for power OFF of system.
++	Host issue necessary command to PMIC.
 +
- static inline int superio_enter(int base)
- {
- 	/* Don't step on other drivers' I/O space by accident. */
-@@ -304,6 +319,125 @@ static void f7188x_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	superio_exit(sio->addr);
- }
- 
-+static int f81866_verify_gpioset(int base, int set)
-+{
-+	int err;
-+	u8 tmp;
 +
-+	err = superio_enter(base);
-+	if (err)
-+		return err;
++Optional submodule and their properties:
++=======================================
 +
-+	err = -ENODEV;
++Flexible power sequence configuration
++====================================
++This sub-node configures the Flexible Power Sequnece(FPS) for power ON slot,
++power OFF slot and slot period of the device. Device has 3 FPS as FPS0,
++FPS1 and FPS2. The details of FPS configuration is provided through
++subnode "fps". The details of FPS0, FPS1, FPS2 are provided through the
++child node under this subnodes. The FPS number is provided via reg property.
 +
-+	switch (set) {
-+	case 0:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2) |
-+				BIT(0), 0);
-+		tmp = superio_inb(base, F81866_GPIO_EN_REG);
-+		if ((tmp & 0x1f) != 0x1f)
-+			break; /* one in GPIO00~GPIO04 is not enable */
++The property for fps child nodes as:
++Required properties:
++	-reg: FPS number like 0, 1, 2 for FPS0, FPS1 and FPS2 respectively.
++Optinal properties:
++	-maxim,active-fps-time-period: Active state FPS time period in
++		microseconds.
++	-maxim,suspend-fps-time-period: Suspend state FPS time period in
++		microseconds.
++	-maxim,fps-enable-input: FPS enable source like EN0, EN1 or SW. The
++			macros are defined on dt-bindings/mfd/max77620.h for
++			different enable source.
++				FPS_EN_SRC_EN0 for EN0 enable source.
++				FPS_EN_SRC_EN1 for En1 enable source.
++				FPS_EN_SRC_SW for SW based control.
++	-maxim,fps-sw-enable: Boolean, applicable if enable input is SW.
++			If this property present then enable the FPS else
++			disable FPS.
++	-maxim,enable-sleep: Boolean, enable sleep when the external control
++			goes from HIGH to LOW.
++	-maxim,enable-global-lpm: Boolean, enable global LPM when the external
++			control goes from HIGH to LOW.
 +
-+		tmp = superio_inb(base, F81866_MULTI_FUN1_REG);
-+		if ((tmp & 0xc) != 0x0)
-+			break;
++Here supported time periods by device in microseconds are as follows:
++MAX77620 supports 40, 80, 160, 320, 640, 1280, 2560 and 5120 microseconds.
++MAX20024 supports 20, 40, 80, 160, 320, 640, 1280 and 2540 microseconds.
 +
-+		err = 0; /* GPIO0x set is all enabled */
-+		break;
-+	case 1:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2) |
-+				BIT(0), BIT(2));
-+		tmp = superio_inb(base, F81866_GPIO_EN_REG);
-+		if ((tmp & 0xef) != 0xef)
-+			break; /* one in GPIO10~GPIO17 is not enable */
++Pinmux and GPIO:
++===============
++Device has 8 GPIO pins which can be configured as GPIO as well as the
++special IO functions.
 +
-+		tmp = superio_inb(base, F81866_MULTI_FUN3_REG);
-+		if ((tmp & 0x03) != 0x00)
-+			break; /* one in GPIO12~GPIO13 is not enable */
++Please refer to pinctrl-bindings.txt for details of the common pinctrl
++bindings used by client devices, including the meaning of the phrase
++"pin configuration node".
 +
-+		err = 0; /* GPIO1x set is all enabled */
-+		break;
-+	case 2:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2) |
-+				BIT(0), BIT(3));
-+		tmp = superio_inb(base, F81866_GPIO_EN_REG);
-+		if ((tmp & 0xff) != 0xff)
-+			break; /* one in GPIO20~GPIO27 is not enable */
++Following are properties which is needed if GPIO and pinmux functionality
++is required:
++    Required properties:
++    -------------------
++	- gpio-controller: Marks the device node as a GPIO controller.
++	- #gpio-cells: Number of GPIO cells. Refer to binding document
++			gpio/gpio.txt
 +
-+		tmp = superio_inb(base, F81866_MULTI_FUN3_REG);
-+		if ((tmp & 0x08) != 0x00)
-+			break; /* GPIO20 is not enable */
++    Optional properties:
++    --------------------
++	Following properties are require if pin control setting is required
++	at boot.
++	- pinctrl-names: A pinctrl state named "default" be defined, using
++		the bindings in pinctrl/pinctrl-binding.txt.
++	- pinctrl[0...n]: Properties to contain the phandle that refer to
++		different nodes of pin control settings. These nodes
++		represents the pin control setting of state 0 to state n.
++		Each of these nodes contains different subnodes to
++		represents some desired configuration for a list of pins.
++		This configuration can include the mux function to select
++		on those pin(s), and various pin configuration parameters,
++		such as pull-up, open drain.
 +
-+		err = 0; /* GPIO2x set is all enabled */
-+		break;
-+	case 3:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(0), 0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN3_REG);
-+		if ((tmp & 0x30) != 0x00)
-+			break; /* GPIO3x is not enable */
++		Each subnode have following properties:
++		Required properties:
++		    - pins: List of pins. Valid values of pins properties
++				are: gpio0, gpio1, gpio2, gpio3, gpio4,
++				gpio5, gpio6, gpio7
 +
-+		err = 0; /* GPIO3x set is all enabled */
-+		break;
-+	case 4:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(0), 0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN3_REG);
-+		if ((tmp & 0xc0) != 0x00)
-+			break; /* GPIO4x is not enable */
++		Optional properties:
++			function, drive-push-pull, drive-open-drain,
++			bias-pull-up, bias-pull-down.
++				Definitions are in the pinmux dt binding
++			devicetree/bindings/pinctrl/pinctrl-bindings.txt
++			Absence of properties will leave the configuration
++			on default.
 +
-+		err = 0; /* GPIO4x set is all enabled */
-+		break;
-+	case 5:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2),
-+				0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN1_REG);
-+		if ((tmp & 0x43) != 0x40)
-+			break; /* GPIO5x is not enable */
++			Valid values for function properties are:
++				gpio, lpm-control-in, fps-out, 32k-out,
++				sd0-dvs-in, sd1-dvs-in, reference-out
++			Theres is also customised property for the GPIO1,
++				GPIO2 and GPIO3.
++			- maxim,active-fps-source: FPS source for the gpios in
++				active state of the GPIO. Valid values are
++				FPS_SRC_0, FPS_SRC_1, FPS_SRC_2 and
++				FPS_SRC_NONE. Absence of this property will
++				leave the pin on default.
++			- maxim,active-fps-power-up-slot: Power up slot on
++				given FPS for acive state.Valid values are 0
++				to 7.
++			- maxim,active-fps-power-down-slot: Power down slot
++				on given FPS for active state. Valid values
++				are 0 t  7.
++			- maxim,suspend-fps-source: Suspend state FPS source.
++			- maxim,suspend-fps-power-down-slot: Suspend state
++				power down slot.
++			- maxim,suspend-fps-power-up-slot: Suspend state power
++				up slot.
 +
-+		err = 0; /* GPIO5x set is all enabled */
-+		break;
-+	case 6:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2) |
-+				BIT(0), 0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN1_REG);
-+		if ((tmp & 0x4c) != 0x40)
-+			break; /* GPIO60~64 is not enable */
++Regulators:
++===========
++Device has multiple DCDC(sd[0-3] and LDOs(ldo[0-8]). The node "regulators"
++is require if regulator functionality is needed.
 +
-+		tmp = superio_inb(base, F81866_MULTI_FUN4_REG);
-+		if ((tmp & 0xe0) != 0xe0)
-+			break; /* GPIO65~67 is not enable */
++Following are properties of regulator subnode.
 +
-+		err = 0; /* GPIO6x set is all enabled */
-+		break;
-+	case 7:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2) |
-+				BIT(0), 0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN1_REG);
-+		if ((tmp & 0x20) != 0x20)
-+			break; /* GPIO7x is not enable */
++    Optional properties:
++    -------------------
++	The input supply of regulators are the optional properties on the
++	regulator node. The input supply of these regulators are provided
++	through following properties:
++		in-sd0-supply: Input supply for SD0, INA-SD0 or INB-SD0 pins.
++		in-sd1-supply: Input supply for SD1.
++		in-sd2-supply: Input supply for SD2.
++		in-sd3-supply: Input supply for SD3.
++		in-ldo0-1-supply: Input supply for LDO0 and LDO1.
++		in-ldo2-supply: Input supply for LDO2.
++		in-ldo3-5-supply: Input supply for LDO3 and LDO5
++		in-ldo4-6-supply: Input supply for LDO4 and LDO6.
++		in-ldo7-8-supply: Input supply for LDO7 and LDO8.
 +
-+		tmp = superio_inb(base, F81866_MULTI_FUN4_REG);
-+		if ((tmp & 0x01) != 0x00)
-+			break; /* GPIO70 is not enable */
 +
-+		err = 0; /* GPIO7x set is all enabled */
-+		break;
-+	case 8:
-+		superio_mask_outb(base, F81866_PORT_SEL_REG, BIT(3) | BIT(2),
-+				0);
-+		tmp = superio_inb(base, F81866_MULTI_FUN1_REG);
-+		if ((tmp & 0x20) != 0x20)
-+			break; /* GPIO8x is not enable */
++    Optional sub nodes for regulators:
++    ---------------------------------
++	The subnodes name is the name of regulator and it must be one of:
++	sd[0-3], ldo[0-8]
 +
-+		err = 0; /* GPIO8x set is all enabled */
-+		break;
-+	default:
-+		break;
-+	}
++	Each sub-node should contain the constraints and initialization
++	information for that regulator. See regulator.txt for a description
++	of standard properties for these sub-nodes.
++	Additional optional custom properties  are listed below.
++		maxim,active-fps-source: FPS source. The macros are defined at
++			dt-bindings/mfd/max77620.h
++		maxim,shutdown-fps-source: Same as maxim,fps-source, but it
++			will apply during shutdown of system.
++		maxim,active-fps-power-up-slot: Active state Power up slot for
++			rail on given FPS.
++		maxim,active-fps-power-down-slot: Active state Power down slot
++			for rail on given FPS.
++		maxim,suspend-fps-source: Suspend state FPS source of rail.
++		maxim,suspend-fps-power-up-slot: Suspend state FPS power
++			up slot.
++		maxim,suspend-fps-power-down-slot: Suspend state FPS power
++			down slot.
++		maxim,enable-group-low-power: Enable Group low power mode.
++		maxim,enable-sd0-en2-control: Enable EN2 pincontrol for SD0.
++			This property is only applicable for SD0.
++		maxim,disable-remote-sense-on-suspend: Boolean, disable
++			remote sense on suspend and re-enable on resume.
++			If this property is not there then no change on
++			configuration.
 +
-+	superio_exit(base);
-+	return err;
-+}
++Backup Battery:
++==============
++This sub-node configure charging backup battery of the device. Device
++has support of charging the backup battery. The subnode name is
++"backup-battery".
 +
- /*
-  * Platform device and driver.
-  */
-@@ -351,6 +485,15 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
- 	for (i = 0; i < data->nr_bank; i++) {
- 		struct f7188x_gpio_bank *bank = &data->bank[i];
- 
-+		/*
-+		 * Dont export GPIO sysfs if pin set is not enable by MB
-+		 * manufacturer.
-+		 */
-+		if (sio->type == f81866 && f81866_verify_gpioset(sio->addr, i))
-+			continue;
++The property for backup-battery child nodes as:
++Presense of this child node will enable the backup battery charging.
 +
-+		dev_dbg(&pdev->dev, "%s: register GPIO%xx set\n", __func__,
-+				bank->chip.base >> 4);
- 		bank->chip.dev = &pdev->dev;
- 		bank->data = data;
- 
-@@ -368,6 +511,11 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
- err_gpiochip:
- 	for (i = i - 1; i >= 0; i--) {
- 		struct f7188x_gpio_bank *bank = &data->bank[i];
++Optinal properties:
++	-maxim,bb-charging-current-microamp: Charging current
++			setting.
++			The device supports 50/100/200/400/600/800uA.
++			If this property is unavailable then it will
++			charge with 50uA.
++	-maxim,bb-charging-voltage-microvolt: Charging Voltage Limit Setting.
++			Device supports 2500000/3000000/3300000/350000uV.
++			Default will be set to 2500mV. The voltage will be roundoff
++			to nearest lower side if other than above is configured.
++	-maxim,bb-output-resister-ohm: Output resistor on Ohm.
++			Device supports 100/1000/3000/6000 Ohms.
 +
-+		/* Some GPIO is not export, not need to remove */
-+		if (!bank->data || !bank->chip.dev)
-+			continue;
++Low-Battery Monitor:
++==================
++This sub-node configure low battery monitor configuration registers.
++Device has support for low-battery monitor configuration through
++child DT node "low-battery-monitor".
 +
- 		gpiochip_remove(&bank->chip);
- 	}
- 
-@@ -381,6 +529,11 @@ static int f7188x_gpio_remove(struct platform_device *pdev)
- 
- 	for (i = 0; i < data->nr_bank; i++) {
- 		struct f7188x_gpio_bank *bank = &data->bank[i];
++Optinal properties:
++	- maxim,low-battery-dac: Tristate, enable/disable low battery DAC.
++			0 for disable,
++			1 for enable,
++			absence will left configuration to default.
++	- maxim,low-battery-shutdown: Tristate, enable/disable low battery
++		shutdown.
++			0 for disable,
++			1 for enable,
++			absence will left configuration to default.
++	- maxim,low-battery-reset: Tristate, enable/disable low battery reset.
++			0 for disable,
++			1 for enable,
++			absence will left configuration to default.
 +
-+		/* Some GPIO is not export, not need to remove */
-+		if (!bank->data || !bank->chip.dev)
-+			continue;
++Example:
++--------
++#include <dt-bindings/mfd/max77620.h>
++...
++max77620@3c {
++	compatible = "maxim,max77620";
++	reg = <0x3c>;
 +
- 		gpiochip_remove(&bank->chip);
- 	}
- 
++	interrupt-parent = <&intc>;
++	interrupts = <0 86 IRQ_TYPE_NONE>;
++
++
++Example:
++--------
++#include <dt-bindings/mfd/max77620.h>
++...
++max77620@3c {
++	compatible = "maxim,max77620";
++	reg = <0x3c>;
++
++	interrupt-parent = <&intc>;
++	interrupts = <0 86 IRQ_TYPE_NONE>;
++
++	interrupt-controller;
++	#interrupt-cells = <2>;
++
++	gpio-controller;
++	#gpio-cells = <2>;
++
++	backup-battery {
++		maxim,bb-charging-current-microamp = <100>;
++		maxim,bb-charging-voltage-microvolt = <3000000>;
++		maxim,bb-output-resister-ohm = <100>;
++	};
++
++	fps {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		fps@0 {
++			reg = <0>;
++			maxim,fps-time-period = <100>;
++			maxim,fps-enable-input = <FPS_EN_SRC_EN0>;
++		};
++
++		fps@1 {
++			reg = <1>;
++			maxim,fps-time-period = <100>;
++			maxim,fps-enable-input = <FPS_EN_SRC_EN1>;
++		};
++
++		fps@2 {
++			reg = <2>;
++			maxim,fps-time-period = <100>;
++			maxim,fps-enable-input = <FPS_EN_SRC_SW>;
++		};
++	};
++
++	regulators {
++		in-ldo0-1-supply = <&max77620_sd2>;
++		in-ldo7-8-supply = <&max77620_sd2>;
++
++		max77620_sd0: sd0 {
++			regulator-name = "vdd-core";
++			regulator-min-microvolt = <600000>;
++			regulator-max-microvolt = <1400000>;
++			regulator-boot-on;
++			regulator-always-on;
++			maxim,fps-source = <FPS_SRC_1>;
++			regulator-init-mode = <REGULATOR_MODE_NORMAL>;
++		};
++
++		max77620_sd1: sd1 {
++			regulator-name = "vddio-ddr";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-always-on;
++			regulator-boot-on;
++			regulator-init-mode = <REGULATOR_MODE_NORMAL>;
++			maxim,fps-source = <FPS_SRC_0>;
++		};
++
++		max77620_sd2: sd2 {
++			regulator-name = "vdd-pre-reg";
++			regulator-min-microvolt = <1350000>;
++			regulator-max-microvolt = <1350000>;
++			maxim,fps-source = <FPS_SRC_1>;
++		};
++
++		max77620_sd3: sd3 {
++			regulator-name = "vdd-1v8";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,fps-source = <FPS_SRC_0>;
++			regulator-init-mode = <REGULATOR_MODE_NORMAL>;
++		};
++
++		max77620_ldo0: ldo0 {
++			regulator-name = "avdd-sys";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo1: ldo1 {
++			regulator-name = "vdd-pex";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo2: ldo2 {
++			regulator-name = "vddio-sdmmc3";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <3300000>;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo3: ldo3 {
++			regulator-name = "vdd-cam-hv";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo4: ldo4 {
++			regulator-name = "vdd-rtc";
++			regulator-min-microvolt = <1250000>;
++			regulator-max-microvolt = <1250000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,fps-source = <FPS_SRC_0>;
++		};
++
++		max77620_ldo5: ldo5 {
++			regulator-name = "avdd-ts-hv";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo6: ldo6 {
++			regulator-name = "vdd-ts";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++
++		max77620_ldo7: ldo7 {
++			regulator-name = "vdd-gen-pll-edp";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,fps-source = <FPS_SRC_1>;
++		};
++
++		max77620_ldo8: ldo8 {
++			regulator-name = "vdd-hdmi-dp";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++			maxim,fps-source = <FPS_SRC_NONE>;
++		};
++	};
++};
+diff --git a/include/dt-bindings/mfd/max77620.h b/include/dt-bindings/mfd/max77620.h
+new file mode 100644
+index 0000000..8423d1d
+--- /dev/null
++++ b/include/dt-bindings/mfd/max77620.h
+@@ -0,0 +1,38 @@
++/*
++ * This header provides macros for MAXIM MAX77620 device bindings.
++ *
++ * Copyright (c) 2016, NVIDIA Corporation.
++ *
++ * Author: Laxman Dewangan <ldewangan@nvidia.com>
++ *
++ */
++
++#ifndef _DT_BINDINGS_MFD_MAX77620_H
++#define _DT_BINDINGS_MFD_MAX77620_H
++
++/* MAX77620 interrupts */
++#define MAX77620_IRQ_TOP_GLBL		0 /* Low-Battery */
++#define MAX77620_IRQ_TOP_SD		1 /* SD power fail */
++#define MAX77620_IRQ_TOP_LDO		2 /* LDO power fail */
++#define MAX77620_IRQ_TOP_GPIO		3 /* GPIO internal int to MAX77620 */
++#define MAX77620_IRQ_TOP_RTC		4 /* RTC */
++#define MAX77620_IRQ_TOP_32K		5 /* 32kHz oscillator */
++#define MAX77620_IRQ_TOP_ONOFF		6 /* ON/OFF oscillator */
++#define MAX77620_IRQ_LBT_MBATLOW	7 /* Thermal alarm status, > 120C */
++#define MAX77620_IRQ_LBT_TJALRM1	8 /* Thermal alarm status, > 120C */
++#define MAX77620_IRQ_LBT_TJALRM2	9 /* Thermal alarm status, > 140C */
++
++/* FPS enable -inputs */
++#define FPS_EN_SRC_EN0	0
++#define FPS_EN_SRC_EN1	1
++#define FPS_EN_SRC_SW	2
++#define FPS_EN_SRC_RSVD	3
++
++/* FPS source */
++#define FPS_SRC_0	0
++#define FPS_SRC_1	1
++#define FPS_SRC_2	2
++#define FPS_SRC_NONE	3
++#define FPS_SRC_DEF	4
++
++#endif
 -- 
-1.9.1
+2.1.4
