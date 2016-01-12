@@ -1,86 +1,44 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [rtc-linux] [PATCH 5/6] rtc: max77620: add support for
- max77620/max20024 RTC driver
-Date: Tue, 12 Jan 2016 12:51:51 +0900
-Message-ID: <56947857.30709@samsung.com>
-References: <1452177524-23192-1-git-send-email-ldewangan@nvidia.com>
- <1452177524-23192-6-git-send-email-ldewangan@nvidia.com>
- <CAJKOXPd938soaa5M0GFo5HpVCYzAS1w8j8Hko3Ja9mx47NYkEQ@mail.gmail.com>
- <568F8D7E.10500@nvidia.com> <20160108125117.GM6588@sirena.org.uk>
- <568FB3DD.4090503@nvidia.com> <20160108133648.GQ6588@sirena.org.uk>
- <568FBB6D.2020904@nvidia.com> <5693AB6E.4090700@nvidia.com>
- <20160111160419.GA3367@piout.net> <5693E14B.4050306@nvidia.com>
- <56944520.6090301@samsung.com> <569465DA.10609@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Peter Hung <hpeter@gmail.com>
+Subject: [PATCH 0/2] gpio-f7188x: Add F81886 gpio function
+Date: Tue, 12 Jan 2016 15:41:37 +0800
+Message-ID: <1452584499-13939-1-git-send-email-hpeter+linux_kernel@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:31667 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759190AbcALDwA (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Jan 2016 22:52:00 -0500
-In-reply-to: <569465DA.10609@nvidia.com>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36337 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761762AbcALHlm (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jan 2016 02:41:42 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Mark Brown <broonie@kernel.org>, rtc-linux@googlegroups.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, tom_tsai@fintek.com.tw, peter_hong@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-On 12.01.2016 11:32, Laxman Dewangan wrote:
-> 
-> On Tuesday 12 January 2016 05:43 AM, Krzysztof Kozlowski wrote:
->> On 12.01.2016 02:07, Laxman Dewangan wrote:
->>>>> The RTC driver parent is not the same parent for which i2c slave
->>>>> address get
->>>>> registered.
->>>>> There is two slave address from max77620, 0x3C (for general) and 0x68
->>>>> for
->>>>> RTC.
->>>>>
->>>>> In max77620 mfd driver, we make dummy i2c client for 0x68 and
->>>>> initialize
->>>>> regmap with this address.
->>>>>
->>>>> Now on mfd_add_devices, we pass the device for 0x3c and hence the RTC
->>>>> driver
->>>>> treat the parent as the 0x3c device but actually it should be 0x68 to
->>>>> get
->>>>> the proper regmap.
->>>>>
->>>>>
->>>>> Two approach:
->>>>> 1. If we add the option to pass parent_dev when adding cells form
->>>>> mfd_add_devices and select the parent device based on this option
->>>>> then it
->>>>> can be easily handle.
->>>>>       Add parent_dev structure in struct mfd_cell and then change the
->>>>> parent
->>>>> in mfd_add_device() if cells has parent device.
->>>>>
->>>>> 2. Register the RTC driver with different mfd_add_devices with
->>>>> dummy i2c
->>>>> client device.
->>>>> So two times mfd_add_devices.
->> Lexman,
->>
->> I don't quite get the problem. This looks exactly the same as for
->> max77686. What is the difference? I don't see any need to change the
->> mfd_cell for current drivers...
->>
->>
-> 
-> Here the change is only required to pass the regmap handle from mfd to
-> the rtc driver. There is no change for rest of rtc driver.
-> 
-> RTC i2c regmap registered with i2c dummy client device, not with actual
-> parent device and hence we need to register RTC with this dummy i2c
-> client device. This way we can get regmap handle by using the
-> dev_get_regmap(pdev->dev.parent).
+Fintek F81886 SuperIO spec:
+http://www.alldatasheet.com/datasheet-pdf/pdf/459085/FINTEK/F81866AD-I.html
+The detail gpio check & configuration could be found within spec P126.
 
-It seems that both max77620 and max77686 use separate I2C addresses for
-RTC block. The max77802 does not. This means that probably each child
-driver should be responsible for its own regmap. The max77620 and
-max77686 will create new I2C dummy devices and new regmaps. The max77802
-will re-use references passed by parent (MFD).
+It controls gpio is the same with F7188x and has max 9 set of gpios.
+The gpio address is below:
+	GPIO0x based: 0xf0
+	GPIO1x based: 0xe0
+	GPIO2x based: 0xd0
+	GPIO3x based: 0xc0
+	GPIO4x based: 0xb0
+	GPIO5x based: 0xa0
+	GPIO6x based: 0x90
+	GPIO7x based: 0x80
+	GPIO8x based: 0x88 <-- not 0x70.
 
-Best regards,
-Krzysztof
+The first patch only add basic structure for F81866 to use all unverified
+gpio, and second patch add filter function to make sure only enabled gpios
+are exported.
+
+Peter Hung (2):
+  gpio-f7188x: add Fintek F81866 SuperIO support
+  gpio-f7188x: filter non-export gpio for F81866
+
+ drivers/gpio/gpio-f7188x.c | 176 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 175 insertions(+), 1 deletion(-)
+
+-- 
+1.9.1
+
