@@ -1,33 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
-Date: Wed, 13 Jan 2016 16:03:48 +0100
-Message-ID: <CACRpkdaXWaXYW86E+Qr1VgPz0LGNGha7AXUZUqOjK=7c9K=--Q@mail.gmail.com>
-References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
-	<cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 5/6] rtc: max77xxx: add RTC driver for Maxim MAX77xxx
+ series RTC IP
+Date: Wed, 13 Jan 2016 20:29:38 +0530
+Message-ID: <5696665A.5030508@nvidia.com>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com> <1452590273-16421-6-git-send-email-ldewangan@nvidia.com> <569594F0.4020007@samsung.com> <5695CD73.5010709@nvidia.com> <5695D268.3060705@samsung.com> <5695D1AF.9000806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:34155 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754276AbcAMPDt (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 10:03:49 -0500
-Received: by mail-oi0-f49.google.com with SMTP id k206so95624637oia.1
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2016 07:03:49 -0800 (PST)
-In-Reply-To: <cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5695D1AF.9000806-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Cc: lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "hongzhou.yang@mediatek.com" <hongzhou.yang@mediatek.com>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "fabf@skynet.be" <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
 
-On Sun, Jan 10, 2016 at 8:50 PM, Chris Packham
-<Chris.Packham@alliedtelesis.co.nz> wrote:
+
+On Wednesday 13 January 2016 09:55 AM, Laxman Dewangan wrote:
 >
-> Ping?
+> On Wednesday 13 January 2016 09:58 AM, Krzysztof Kozlowski wrote:
+>> On 13.01.2016 13:07, Laxman Dewangan wrote:
+>>> On Wednesday 13 January 2016 05:36 AM, Krzysztof Kozlowski wrote:
+>>
+>>> That is also fine to me but still I am not comfortable with the config
+>>> name and driver file name as this does not suggest the common.
+>> The name does not matter. Really. We have a lot of drivers with a
+>> specific device-like name and supporting different devices. To point
+>> that your argument is invalid - your initial name of driver
+>> "rtc-max77620.c" supported totally different "names": the max77620 and
+>> max20024. It also wasn't suggesting something "common"...
+> In all config string, I have mentioned the MAX20024.
+>
+>
+>> With my approach we are not developing common think neither. We just
+>> want to extend/re-use existing max77686 (or max77802) driver for new
+>> devices. Just like everywhere else.
+>
+> OK, fine to me if this is acceptable.
+> I will drop this rtc patch form this series and work in max77686 
+> driver to modify first and once merged, use this config on my defconfig.
+>
 
-I didn't see this because I was on the CC not TO line in the mail.
+Here, MAX686 RTC driver needs two regmap handle, one for the rtc_regmap 
+and other for STATUS2 register access.
 
-Will look at it after the merge window. Do you have ACKs from the
-mvebu driver maintainers?
+         ret = regmap_read(info->max77686->regmap, MAX77686_REG_STATUS2, 
+&val);
+         if (ret < 0) {
+                 dev_err(info->dev, "%s:%d fail to read status2 reg(%d)\n",
+                                 __func__, __LINE__, ret);
+                 goto out;
+         }
 
-Yours,
-Linus Walleij
+
+We can not have two regmap handle on rtc driver as both regmap (pmic and 
+rtc) registered with different i2c device.
+
+Also this register should not be accessed by RTC driver if we want to 
+decouple as this is very much MAX77686 register set.
+Do we need this code?
+static int max77686_rtc_read_alarm(struct device *dev, struct rtc_wkalrm 
+*alrm)
+{
+         struct max77686_rtc_info *info = dev_get_drvdata(dev);
+         u8 data[RTC_NR_TIME];
+         unsigned int val;
+         int i, ret;
+
+::::::::
+        alrm->pending = 0;
+         ret = regmap_read(info->max77686->regmap, MAX77686_REG_STATUS2, 
+&val);
+         if (ret < 0) {
+                 dev_err(info->dev, "%s:%d fail to read status2 reg(%d)\n",
+                                 __func__, __LINE__, ret);
+                 goto out;
+         }
+
+         if (val & (1 << 4)) /* RTCA1 */
+                 alrm->pending = 1;
+
+}
+
+
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
