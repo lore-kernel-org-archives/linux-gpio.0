@@ -1,352 +1,71 @@
-From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Wed, 13 Jan 2016 12:30:37 +0000
-Message-ID: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 6/6] regulator: max77620: add regulator driver for
+ max77620/max20024
+Date: Wed, 13 Jan 2016 12:31:33 +0000
+Message-ID: <20160113123133.GK6588@sirena.org.uk>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+ <1452590273-16421-7-git-send-email-ldewangan@nvidia.com>
+ <5695A854.60108@samsung.com>
+ <5696378B.6070704@nvidia.com>
+ <20160113115736.GJ6588@sirena.org.uk>
+ <56963D8D.9060908@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AC4h36899OtEuhrO"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40111 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755623AbcAMMbF (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 07:31:05 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51418 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754483AbcAMMb5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 07:31:57 -0500
+Content-Disposition: inline
+In-Reply-To: <56963D8D.9060908@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, Martyn Welch <martyn.welch@collabora.co.uk>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
-provided by some of the other devices supported by the cp210x driver, the
-GPIO on the CP2015 is muxed on pins otherwise used for serial control
-lines. The GPIO have been configured in 2 separate banks as the choice to
-configure the pins for GPIO is made separately for pins shared with each
-of the 2 serial ports this device provides, though the choice is made for
-all pins associated with that port in one go. The choice of whether to use
-the pins for GPIO or serial is made by adding configuration to a one-time
-programable PROM in the chip and can not be changed at runtime. The device
-defaults to GPIO.
 
-This device supports either push-pull or open-drain modes, it doesn't
-provide an explicit input mode, though the state of the GPIO can be read
-when used in open-drain mode. Like with pin use, the mode is configured in
-the one-time programable PROM and can't be changed at runtime.
+--AC4h36899OtEuhrO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
----
+On Wed, Jan 13, 2016 at 05:35:33PM +0530, Laxman Dewangan wrote:
+> On Wednesday 13 January 2016 05:27 PM, Mark Brown wrote:
 
-This patch applies to usb-next, which has a number of changes to the cp210x
-driver in it, so I assumed that would be the correct tree to base this on.
+> >>Something below. This will do the pre configuration before
+> >>regulator_register happena dn machine constraint sets.
+> >>I can not use the init_data->regulator_init() as I need to have the init
+> >>data passed to the driver.
 
-V2: Doesn't break build when gpiolib isn't selected.
+> >Why do you have this requirement?
 
- drivers/usb/serial/cp210x.c | 223 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 218 insertions(+), 5 deletions(-)
+> This is require to
+> - configure FPS_SRC based on platform data for each rail,
+>     - If FPS_SRC enabled then enable it always.
+>     - If FPS_SRC is disabled (NONE) then based on init data constraint,
+>       set it to desired state.
 
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index 9b90ad7..73e2a12 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -23,6 +23,8 @@
- #include <linux/usb.h>
- #include <linux/uaccess.h>
- #include <linux/usb/serial.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/bitops.h>
- 
- #define DRIVER_DESC "Silicon Labs CP210x RS232 serial adaptor driver"
- 
-@@ -44,10 +46,13 @@ static int cp210x_tiocmset(struct tty_struct *, unsigned int, unsigned int);
- static int cp210x_tiocmset_port(struct usb_serial_port *port,
- 		unsigned int, unsigned int);
- static void cp210x_break_ctl(struct tty_struct *, int);
-+static int cp210x_probe(struct usb_serial *, const struct usb_device_id *);
- static int cp210x_port_probe(struct usb_serial_port *);
- static int cp210x_port_remove(struct usb_serial_port *);
- static void cp210x_dtr_rts(struct usb_serial_port *p, int on);
- 
-+#define CP210X_FEATURE_HAS_SHARED_GPIO		BIT(0)
-+
- static const struct usb_device_id id_table[] = {
- 	{ USB_DEVICE(0x045B, 0x0053) }, /* Renesas RX610 RX-Stick */
- 	{ USB_DEVICE(0x0471, 0x066A) }, /* AKTAKOM ACE-1001 cable */
-@@ -132,7 +137,8 @@ static const struct usb_device_id id_table[] = {
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
- 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
--	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
-+	{ USB_DEVICE(0x10C4, 0xEA70),	/* Silicon Labs factory default */
-+	  .driver_info = CP210X_FEATURE_HAS_SHARED_GPIO },
- 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
- 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
- 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
-@@ -201,6 +207,10 @@ MODULE_DEVICE_TABLE(usb, id_table);
- struct cp210x_port_private {
- 	__u8			bInterfaceNumber;
- 	bool			has_swapped_line_ctl;
-+#ifdef CONFIG_GPIOLIB
-+	struct usb_serial	*serial;
-+	struct gpio_chip	gc;
-+#endif
- };
- 
- static struct usb_serial_driver cp210x_device = {
-@@ -219,6 +229,7 @@ static struct usb_serial_driver cp210x_device = {
- 	.tx_empty		= cp210x_tx_empty,
- 	.tiocmget		= cp210x_tiocmget,
- 	.tiocmset		= cp210x_tiocmset,
-+	.probe			= cp210x_probe,
- 	.port_probe		= cp210x_port_probe,
- 	.port_remove		= cp210x_port_remove,
- 	.dtr_rts		= cp210x_dtr_rts
-@@ -261,6 +272,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
- #define CP210X_SET_CHARS	0x19
- #define CP210X_GET_BAUDRATE	0x1D
- #define CP210X_SET_BAUDRATE	0x1E
-+#define CP210X_VENDOR_SPECIFIC	0xFF
- 
- /* CP210X_IFC_ENABLE */
- #define UART_ENABLE		0x0001
-@@ -303,6 +315,11 @@ static struct usb_serial_driver * const serial_drivers[] = {
- #define CONTROL_WRITE_DTR	0x0100
- #define CONTROL_WRITE_RTS	0x0200
- 
-+/* CP210X_VENDOR_SPECIFIC values */
-+#define CP210X_GET_DEVICEMODE	0x3711
-+#define CP210X_WRITE_LATCH	0x37E1
-+#define CP210X_READ_LATCH	0x00C2
-+
- /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
- struct cp210x_comm_status {
- 	__le32   ulErrors;
-@@ -991,6 +1008,179 @@ static void cp210x_break_ctl(struct tty_struct *tty, int break_state)
- 	cp210x_set_config(port, CP210X_SET_BREAK, &state, 2);
- }
- 
-+#ifdef CONFIG_GPIOLIB
-+static int cp210x_gpio_direction_get(struct gpio_chip *gc, unsigned gpio)
-+{
-+	return 0;
-+}
-+
-+static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
-+{
-+	struct cp210x_port_private *port_priv =
-+			 container_of(gc, struct cp210x_port_private, gc);
-+	struct usb_serial *serial = port_priv->serial;
-+	__le32 *buf;
-+	int result, i, length;
-+	int size = 1;
-+	unsigned int data[size];
-+
-+	/* Number of integers required to contain the array */
-+	length = (((size - 1) | 3) + 1) / 4;
-+
-+	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	/* Issue the request, attempting to read 'size' bytes */
-+	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
-+				 CP210X_VENDOR_SPECIFIC,
-+				 REQTYPE_INTERFACE_TO_HOST, CP210X_READ_LATCH,
-+				 port_priv->bInterfaceNumber, buf, size,
-+				 USB_CTRL_GET_TIMEOUT);
-+	if (result != size) {
-+		result = 0;
-+		goto err;
-+	}
-+
-+	/* Convert data into an array of integers */
-+	for (i = 0; i < length; i++)
-+		data[i] = le32_to_cpu(buf[i]);
-+
-+	result = (data[0] >> gpio) & 0x1;
-+
-+	kfree(buf);
-+err:
-+	return result;
-+}
-+
-+static void cp210x_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
-+{
-+	struct cp210x_port_private *port_priv =
-+			 container_of(gc, struct cp210x_port_private, gc);
-+	struct usb_serial *serial = port_priv->serial;
-+
-+	int result, i, length;
-+	unsigned int data[1];
-+	__le32 *buf;
-+	int size = 2;
-+
-+	/* Number of integers required to contain the array */
-+	length = (((size - 1) | 3) + 1) / 4;
-+
-+	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
-+	if (!buf) {
-+		WARN_ON("Unable to alloc memory to perform set");
-+		return;
-+	}
-+
-+	/* Issue the request, attempting to read 'size' bytes */
-+	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
-+				 CP210X_VENDOR_SPECIFIC,
-+				 REQTYPE_INTERFACE_TO_HOST, CP210X_READ_LATCH,
-+				 port_priv->bInterfaceNumber, buf, 1,
-+				 USB_CTRL_GET_TIMEOUT);
-+	if (result != 1) {
-+		WARN_ON("Failed to read data over usb");
-+		goto err;
-+	}
-+
-+	/* Convert data into an array of integers */
-+	for (i = 0; i < length; i++)
-+		data[i] = le32_to_cpu(buf[i]);
-+
-+	if (value == 0)
-+		data[0] &= ~BIT(gpio);
-+	else
-+		data[0] |= BIT(gpio);
-+
-+	data[0] = data[0] << 8;
-+
-+	data[0] |= 0x00FF;
-+
-+	/* Array of integers into bytes */
-+	for (i = 0; i < length; i++)
-+		buf[i] = cpu_to_le32(data[i]);
-+
-+	result = usb_control_msg(serial->dev,
-+				 usb_sndctrlpipe(serial->dev, 0),
-+				 CP210X_VENDOR_SPECIFIC,
-+				 REQTYPE_HOST_TO_INTERFACE, CP210X_WRITE_LATCH,
-+				 port_priv->bInterfaceNumber, buf, size,
-+				 USB_CTRL_SET_TIMEOUT);
-+
-+	if (result != size) {
-+		WARN_ON("Failed to read data over usb");
-+		goto err;
-+	}
-+err:
-+	kfree(buf);
-+}
-+
-+static int cp210x_shared_gpio_init(struct usb_serial_port *port)
-+{
-+	struct usb_serial *serial = port->serial;
-+	struct cp210x_port_private *port_priv = usb_get_serial_port_data(port);
-+	__le32 *buf;
-+	unsigned long tmp;
-+	int result, mode;
-+
-+	tmp = (unsigned long)usb_get_serial_data(serial);
-+
-+	if ((tmp & CP210X_FEATURE_HAS_SHARED_GPIO) == 0)
-+		return 0;
-+
-+	buf = kzalloc(sizeof(buf), GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	/* Issue the request, attempting to read 'size' bytes */
-+	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
-+				 CP210X_VENDOR_SPECIFIC, REQTYPE_DEVICE_TO_HOST,
-+				 CP210X_GET_DEVICEMODE,
-+				 port_priv->bInterfaceNumber, buf,
-+				 2, USB_CTRL_GET_TIMEOUT);
-+
-+	if (result != 2) {
-+		dev_err(&port->dev, "failed to get device mode: %d\n", result);
-+		if (result > 0)
-+			result = -EPROTO;
-+
-+		goto err;
-+	}
-+
-+	mode = le32_to_cpu(*buf);
-+
-+	/*  2 banks of GPIO - One for the pins taken from each serial port */
-+	if (port_priv->bInterfaceNumber == 0 && (mode & 0xFF) != 0) {
-+		port_priv->gc.label = "cp210x_eci";
-+		port_priv->gc.ngpio = 2;
-+	} else if (port_priv->bInterfaceNumber == 1 &&
-+		   ((mode >> 8) & 0xFF) != 0) {
-+		port_priv->gc.label = "cp210x_sci";
-+		port_priv->gc.ngpio = 3;
-+	} else {
-+		result = 0;
-+		goto err;
-+	}
-+
-+	port_priv->gc.get_direction = cp210x_gpio_direction_get;
-+	port_priv->gc.get = cp210x_gpio_get;
-+	port_priv->gc.set = cp210x_gpio_set;
-+	port_priv->gc.owner = THIS_MODULE;
-+	port_priv->gc.dev = &serial->dev->dev;
-+	port_priv->gc.base = -1;
-+
-+	port_priv->serial = serial;
-+
-+	result = gpiochip_add(&port_priv->gc);
-+
-+err:
-+	kfree(buf);
-+
-+	return result;
-+}
-+#endif
-+
- static int cp210x_port_probe(struct usb_serial_port *port)
- {
- 	struct usb_serial *serial = port->serial;
-@@ -1008,12 +1198,21 @@ static int cp210x_port_probe(struct usb_serial_port *port)
- 	usb_set_serial_port_data(port, port_priv);
- 
- 	ret = cp210x_detect_swapped_line_ctl(port);
--	if (ret) {
--		kfree(port_priv);
--		return ret;
--	}
-+	if (ret)
-+		goto err_ctl;
-+
-+#ifdef CONFIG_GPIOLIB
-+	ret = cp210x_shared_gpio_init(port);
-+	if (ret < 0)
-+		goto err_ctl;
-+#endif
- 
- 	return 0;
-+
-+err_ctl:
-+	kfree(port_priv);
-+
-+	return ret;
- }
- 
- static int cp210x_port_remove(struct usb_serial_port *port)
-@@ -1021,11 +1220,25 @@ static int cp210x_port_remove(struct usb_serial_port *port)
- 	struct cp210x_port_private *port_priv;
- 
- 	port_priv = usb_get_serial_port_data(port);
-+
-+#ifdef CONFIG_GPIOLIB
-+	if (port_priv->gc.label)
-+		gpiochip_remove(&port_priv->gc);
-+#endif
-+
- 	kfree(port_priv);
- 
- 	return 0;
- }
- 
-+static int cp210x_probe(struct usb_serial *serial,
-+			const struct usb_device_id *id)
-+{
-+	usb_set_serial_data(serial, (void *)id->driver_info);
-+
-+	return 0;
-+}
-+
- module_usb_serial_driver(serial_drivers, id_table);
- 
- MODULE_DESCRIPTION(DRIVER_DESC);
--- 
-2.1.4
+What is FPS_SRC and why is it set from init_data?  A driver should never
+be looking at init_data.
 
+> - Power mode and slew rate init based on default configuration from the
+> register if platform does not want to set it.
+
+Same here, why is init_data needed here?
+
+--AC4h36899OtEuhrO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWlkOlAAoJECTWi3JdVIfQsmcH/A2kZO2AMtyRc04tc5ijA0kJ
+q0+Ky136KnvM4WjRCQu7dJZ2SvUK92m2E50KBdQ8fZOvn5lAc5dVelriuxjgzw8Z
+1X7CabcprWF7g3Y+TPg5X+V5Sej4qZqPWoVncaE1eBkkijAJbW4eK++VqY9HQihT
+9R4jdK3GmxyPuXRY2fU4+9HDMN3DmSWOXo86m2e/gPNQ7BXk0Z+D/5bjOry/yv6h
+5up9LTCoRiEd880F3UDziwwqA7HERmFmK7eDz3lLi8fzdepAi/c3JwxEegfxnDTt
+u5WIpL3CHy5HjbV+7XkKx3mnLi+wHAA/9aI/F9s4TGyaAfCml771C5zYDHIq1U0=
+=5pwb
+-----END PGP SIGNATURE-----
+
+--AC4h36899OtEuhrO--
