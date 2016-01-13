@@ -1,34 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix chip order in gpio list
-Date: Wed, 13 Jan 2016 11:11:02 +0100
-Message-ID: <CACRpkdZb1wWy-19y9BX9T0xeKUfmC2ym-sd4JEoLqhqVeb6GFw@mail.gmail.com>
-References: <1452203205-4660-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: [PATCH V2 2/6] mfd: max77620: add core driver for
+ MAX77620/MAX20024
+Date: Wed, 13 Jan 2016 11:11:35 +0100
+Message-ID: <20160113101135.GI3367@piout.net>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+ <1452590273-16421-3-git-send-email-ldewangan@nvidia.com>
+ <56959E9A.3060903@samsung.com>
+ <5696122A.6000509@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452203205-4660-1-git-send-email-julien.grossholtz@savoirfairelinux.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>, Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel <kernel@savoirfairelinux.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:57933 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754041AbcAMKLi (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 05:11:38 -0500
+Content-Disposition: inline
+In-Reply-To: <5696122A.6000509@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-On Thu, Jan 7, 2016 at 10:46 PM, Julien Grossholtz
-<julien.grossholtz@savoirfairelinux.com> wrote:
+On 13/01/2016 at 14:30:26 +0530, Laxman Dewangan wrote :
+> In my 3rd patch, I tried to align it little more where is possible. But I
+> feel that all these indenting is more over individual choice. Example, I
+> added one more indent in below example to look better.
+> 
+> 
+>         ret = max77620_reg_update(chip->dev, MAX77620_PWR_SLAVE,
+> -               MAX77620_REG_ONOFFCNFG2, MAX77620_ONOFFCNFG2_WK_EN0,
+> -               MAX77620_ONOFFCNFG2_WK_EN0);
+> +                       MAX77620_REG_ONOFFCNFG2, MAX77620_ONOFFCNFG2_WK_EN0,
+> +                       MAX77620_ONOFFCNFG2_WK_EN0);
+> 
+> 
 
-> In some situations the gpio_list order is not correct.
-> As a consequence gpiochip_find_base returns the same
-> base number twice. This happens when a first ship is added
-> with manual base number, then other ships are added using
-> automatic base number.
->
-> To prevent this behaviour, this patch add the new ship after
-> the last element of the gpio list.
->
-> Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
+You should probably use checkpatch.pl --strict, it requires that you
+align on the open parenthesis.
 
-Patch looks correct to me so applied.
 
-Bamvor: please comment if you see some problems.
-
-Yours,
-Linus Walleij
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
