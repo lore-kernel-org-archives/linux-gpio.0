@@ -1,94 +1,75 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] i2c: create builtin_i2c_driver to avoid registration
- boilerplate
-Date: Tue, 12 Jan 2016 10:45:41 -0500
-Message-ID: <56951FA5.1070206@windriver.com>
-References: <1450038799-27995-1-git-send-email-paul.gortmaker@windriver.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH V2 5/6] rtc: max77xxx: add RTC driver for Maxim MAX77xxx
+ series RTC IP
+Date: Wed, 13 Jan 2016 09:06:08 +0900
+Message-ID: <569594F0.4020007@samsung.com>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+ <1452590273-16421-6-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1450038799-27995-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:14754 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752483AbcAMAGP (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jan 2016 19:06:15 -0500
+In-reply-to: <1452590273-16421-6-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com
 
-On 2015-12-13 03:33 PM, Paul Gortmaker wrote:
-> In commit f309d4443130bf814e991f836e919dca22df37ae ("platform_device:
-> better support builtin boilerplate avoidance") we introduced the
-> builtin_driver macro.
+On 12.01.2016 18:17, Laxman Dewangan wrote:
+> Maxim Semiconductor's PMIC MAX77620, MAX77686, MAX20024 have
+> same RTC IP on these PMICs.
 > 
-> Here we use that support and extend it to I2C driver registration,
-> so where a driver is clearly non-modular and builtin-only, we can
-> register it in a similar fashion.  And existing code that is clearly
-> non-modular can be updated with the simple mapping of
+> Add generic MAX77xxxx series RTC driver which can be used as
+> RTC driver for these PMIC and avoids duplication of RTC driver
+> for each PMICs. Their MFD driver can be different here.
 > 
->      module_i2c_driver(...)  ---> builtin_i2c_driver(...)
-> 
-> We've essentially cloned the former to make the latter, and taken
-> out the remove/module_exit parts since those never get used in a
-> non-modular build of the code.
-> 
-> A similar thing was done in commit b4eb6cdbbd13698704863f680c643c569909e1c2
-> ("PCI: Add builtin_pci_driver() to avoid registration boilerplate").
-> 
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-i2c@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 > ---
+> Changes from V1: 
+> - Rename the file to rtc-max77xxx.c and make the generic implementation.
+> - Direct regmap apis are used for the register access.
+> - Decouped from max77620 driver.
+> - Taken care of cleanup comments form V1 version.
 > 
-> [I've about 10 drivers/mfd and one drivers/gpio users of this in
->  my personal testing queue, but obviously I can't submit those
->  until builtin_i2c_driver makes it to mainline.  Since there are
->  no drivers/i2c users yet this change is sent to i2c on its own.]
-
-Hi Wolfram,
-
-Was wondering if this is still in consideration for 4.5, so as per
-the above info, I can make use of it in MFD in 4.6 without worrying
-about cross maintainer dependencies.
-
-Thanks,
-Paul.
---
+>  drivers/rtc/Kconfig        |  10 +
+>  drivers/rtc/Makefile       |   1 +
+>  drivers/rtc/rtc-max77xxx.c | 500 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 511 insertions(+)
+>  create mode 100644 drivers/rtc/rtc-max77xxx.c
 > 
->  include/linux/i2c.h | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-> index 768063baafbf..d3ca750bfcdf 100644
-> --- a/include/linux/i2c.h
-> +++ b/include/linux/i2c.h
-> @@ -622,7 +622,7 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
->  }
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 376322f..4972dd5 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -315,6 +315,16 @@ config RTC_DRV_MAX8997
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rtc-max8997.
 >  
->  /**
-> - * module_i2c_driver() - Helper macro for registering a I2C driver
-> + * module_i2c_driver() - Helper macro for registering a modular I2C driver
->   * @__i2c_driver: i2c_driver struct
->   *
->   * Helper macro for I2C drivers which do not do anything special in module
-> @@ -633,6 +633,17 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
->  	module_driver(__i2c_driver, i2c_add_driver, \
->  			i2c_del_driver)
->  
-> +/**
-> + * builtin_i2c_driver() - Helper macro for registering a builtin I2C driver
-> + * @__i2c_driver: i2c_driver struct
-> + *
-> + * Helper macro for I2C drivers which do not do anything special in their
-> + * init. This eliminates a lot of boilerplate. Each driver may only
-> + * use this macro once, and calling it replaces device_initcall().
-> + */
-> +#define builtin_i2c_driver(__i2c_driver) \
-> +	builtin_driver(__i2c_driver, i2c_add_driver)
+> +config RTC_DRV_MAX77XXX
+> +	tristate "Maxim MAX77XXX series generic RTC driver"
+> +	help
+> +	  If you say yes here you will get support for the generic RTC driver
+> +	  for Maxim Semiconductor MAX77XXX series of PMIC like MAX77620.
+> +	  This also supports the RTC driver for Maxim PMIC MaX20024 which
+> +	  is almost same as MAX77620.
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called rtc-max77xxx.
 > +
->  #endif /* I2C */
->  
->  #if IS_ENABLED(CONFIG_OF)
-> 
+
+That was not the consensus... You still added a new driver - but now
+with different name.
+
+That is useless duplication
+
+Please work with existing code. Use existing maxim RTC drivers: either
+max77686 or max77802.
+
+There is no need for new one.
+
+Best regards,
+Krzysztof
+
