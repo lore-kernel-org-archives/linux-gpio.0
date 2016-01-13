@@ -1,38 +1,52 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Thu, 14 Jan 2016 01:57:16 +0800
-Message-ID: <201601140128.israexFi%fengguang.wu@intel.com>
-References: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
+Date: Wed, 13 Jan 2016 20:12:40 +0000
+Message-ID: <5d134b2f14dc4374baca0155455c6c49@svr-chch-ex1.atlnz.lc>
+References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+ <cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
+ <CACRpkdaXWaXYW86E+Qr1VgPz0LGNGha7AXUZUqOjK=7c9K=--Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:18458 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755005AbcAMR7P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 13 Jan 2016 12:59:15 -0500
-Content-Disposition: inline
-In-Reply-To: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:60173 "EHLO
+	gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758457AbcAMUMy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 15:12:54 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0CD9C806F4
+	for <linux-gpio@vger.kernel.org>; Thu, 14 Jan 2016 09:12:49 +1300 (NZDT)
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-Cc: kbuild-all@01.org, Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, Martyn Welch <martyn.welch@collabora.co.uk>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "hongzhou.yang@mediatek.com" <hongzhou.yang@mediatek.com>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "fabf@skynet.be" <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
 
-Hi Martyn,
+On 01/14/2016 04:03 AM, Linus Walleij wrote:
+> On Sun, Jan 10, 2016 at 8:50 PM, Chris Packham
+> <Chris.Packham@alliedtelesis.co.nz> wrote:
+>>
+>> Ping?
+>
+> I didn't see this because I was on the CC not TO line in the mail.
 
-[auto build test WARNING on usb/usb-testing]
-[also build test WARNING on next-20160113]
-[cannot apply to v4.4]
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+Noted. I'm used to projects with To: List Cc: Maintainer policies. I'll 
+make sure to flip my send-email defaults
 
-url:    https://github.com/0day-ci/linux/commits/Martyn-Welch/USB-serial-cp210x-Adding-GPIO-support-for-CP2105/20160113-203435
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> Will look at it after the merge window. Do you have ACKs from the
+> mvebu driver maintainers?
 
+No ACKs yet, probably for the same reason you missed it plus the holiday 
+season.
 
-coccinelle warnings: (new ones prefixed by >>)
+I was hoping someone would have some suggestions to tackling the long 
+V(...) lines. The armada-xp pinctrl driver has some additional macros 
+that group common variants together. pinctrl-kirkwood.c has about a 
+dozen V() variants so it should be possible to do something similar if 
+we could come up with some sensible names (as we all know naming things 
+is an NP-hard problem).
 
->> drivers/usb/serial/cp210x.c:1132:15-21: ERROR: application of sizeof to pointer
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks,
+Chris
