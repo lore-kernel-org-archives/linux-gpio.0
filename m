@@ -1,41 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: generic: make bgpio_pdata always visible
-Date: Wed, 13 Jan 2016 16:01:19 +0100
-Message-ID: <CACRpkdZd6sToPvGXtjrXEvoHyARfL9gz=t91Q_Qmawwu5_A8Jw@mail.gmail.com>
-References: <21095568.bdP2eOAsBs@wuerfel>
+Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
+Date: Wed, 13 Jan 2016 16:03:48 +0100
+Message-ID: <CACRpkdaXWaXYW86E+Qr1VgPz0LGNGha7AXUZUqOjK=7c9K=--Q@mail.gmail.com>
+References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+	<cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:33349 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755106AbcAMPBU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 10:01:20 -0500
-Received: by mail-ob0-f169.google.com with SMTP id is5so56903266obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2016 07:01:20 -0800 (PST)
-In-Reply-To: <21095568.bdP2eOAsBs@wuerfel>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34155 "EHLO
+	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754276AbcAMPDt (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 10:03:49 -0500
+Received: by mail-oi0-f49.google.com with SMTP id k206so95624637oia.1
+        for <linux-gpio@vger.kernel.org>; Wed, 13 Jan 2016 07:03:49 -0800 (PST)
+In-Reply-To: <cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alexander Shiyan <shc_work@mail.ru>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "hongzhou.yang@mediatek.com" <hongzhou.yang@mediatek.com>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "fabf@skynet.be" <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
 
-On Sat, Jan 9, 2016 at 10:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Sun, Jan 10, 2016 at 8:50 PM, Chris Packham
+<Chris.Packham@alliedtelesis.co.nz> wrote:
+>
+> Ping?
 
-> Board files that define their own bgpio_pdata are broken when
-> CONFIG_GPIO_GENERIC is disabled and the bgpio_pdata structure
-> definition is hidden by the #ifdef:
->
-> arch/arm/mach-clps711x/board-autcpu12.c:148:15: error: variable 'autcpu12_mmgpio_pdata' has initializer but incomplete type
->  static struct bgpio_pdata autcpu12_mmgpio_pdata __initdata = {
-> arch/arm/mach-clps711x/board-autcpu12.c:149:2: error: unknown field 'base' specified in initializer
->   .base = AUTCPU12_MMGPIO_BASE,
->
-> Since the board files should generally not care what drivers are
-> enabled, this makes the structure definition visible again.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 0f4630f3720e ("gpio: generic: factor into gpio_chip struct")
+I didn't see this because I was on the CC not TO line in the mail.
 
-Thanks a lot, patch applied!
+Will look at it after the merge window. Do you have ACKs from the
+mvebu driver maintainers?
 
 Yours,
 Linus Walleij
