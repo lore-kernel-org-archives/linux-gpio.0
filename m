@@ -1,90 +1,59 @@
-From: Peter Hung <hpeter@gmail.com>
-Subject: Re: [PATCH 2/2] gpio-f7188x: filter non-export gpio for F81866
-Date: Wed, 13 Jan 2016 10:03:55 +0800
-Message-ID: <5695B08B.1090200@gmail.com>
-References: <1452584499-13939-1-git-send-email-hpeter+linux_kernel@gmail.com>
- <1452584499-13939-3-git-send-email-hpeter+linux_kernel@gmail.com>
- <CAHp75VctumwyOtLpqyCB3ABUu8ktwhN94POGdtS4Ug7cnuayEg@mail.gmail.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/6] DT: mfd: add device-tree binding doc fro PMIC
+ max77620/max20024
+Date: Tue, 12 Jan 2016 20:07:59 -0600
+Message-ID: <20160113020759.GA16193@rob-hp-laptop>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+ <1452590273-16421-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:32938 "EHLO
-	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751849AbcAMCDy (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Jan 2016 21:03:54 -0500
-In-Reply-To: <CAHp75VctumwyOtLpqyCB3ABUu8ktwhN94POGdtS4Ug7cnuayEg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1452590273-16421-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, tom_tsai@fintek.com.tw, Peter H <peter_hong@fintek.com.tw>, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-Hi Andy,
+On Tue, Jan 12, 2016 at 02:47:48PM +0530, Laxman Dewangan wrote:
+> The MAXIM PMIC MAX77620 and MAX20024 are power management IC
+> which supports RTC, GPIO, DCDC/LDO regulators, interrupt,
+> watchdog etc.
+> 
+> Add DT binding document for the different functionality of
+> this device.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes from V1:
+> - Added units in some of properties.
+> - Change the boolean property to tristate type and detail some of
+>   properties.
 
-Andy Shevchenko =E6=96=BC 2016/1/12 =E4=B8=8B=E5=8D=88 05:33 =E5=AF=AB=E9=
-=81=93:
-> On Tue, Jan 12, 2016 at 9:41 AM, Peter Hung <hpeter@gmail.com> wrote:
->> Dont export gpios which not enabled by motherboard manufacturer.
->
-> 'Do not' or 'Don't'.
->
-> Perhaps 'GPIOs'.
->
-> 'which are not enabled'
+[...]
 
-OK.
+> +Flexible power sequence configuration
+> +====================================
+> +This sub-node configures the Flexible Power Sequnece(FPS) for power ON slot,
+> +power OFF slot and slot period of the device. Device has 3 FPS as FPS0,
+> +FPS1 and FPS2. The details of FPS configuration is provided through
+> +subnode "fps". The details of FPS0, FPS1, FPS2 are provided through the
+> +child node under this subnodes. The FPS number is provided via reg property.
+> +
+> +The property for fps child nodes as:
+> +Required properties:
+> +	-reg: FPS number like 0, 1, 2 for FPS0, FPS1 and FPS2 respectively.
+> +Optinal properties:
+> +	-maxim,active-fps-time-period: Active state FPS time period in
+> +		microseconds.
+> +	-maxim,suspend-fps-time-period: Suspend state FPS time period in
+> +		microseconds.
 
->> +#define F81866_PORT_SEL_REG    0x27
->> +#define F81866_MULTI_FUN1_REG  0x28
->> +#define F81866_MULTI_FUN3_REG  0x29
->> +#define F81866_MULTI_FUN4_REG  0x2B
->> +#define F81866_GPIO_EN_REG     0x2C
->> +
->
-> Move this before IDs block.
+These property names need units, too. IOW, append with '-us', so 
+something like "maxim,suspend-fps-time-us".
 
-OK.
-
-
->> +static inline void superio_mask_outb(int base, int reg, int mask, i=
-nt val)
->
-> Usually we named such as _update or _update_bits.
-> superio_update()
-
-OK
-
->> +static int f81866_verify_gpioset(int base, int set)
->
-> =E2=80=A6_gpio_verify() looks more suitable to the existing scheme.
-
-OK
-
->> +                * manufacturer.
->> +                */
->> +               if (sio->type =3D=3D f81866 && f81866_verify_gpioset=
-(sio->addr, i))
->> +                       continue;
->> +
->> +               dev_dbg(&pdev->dev, "%s: register GPIO%xx set\n", __=
-func__,
->
-> %x ?
-
-Sorry for misunderstand. This section will print debug message as GPIO3=
-x
-set if GPIO3 set enabled, so I used %xx.
-
-We are discussing about the patch with maintainer. It maybe drop if
-don't need filter.
-
-Thanks for your advices.
---=20
-With Best Regards,
-Peter Hung
+Otherwise, looks fine to me.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
