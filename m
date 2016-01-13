@@ -1,59 +1,69 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH V2 6/6] regulator: max77620: add regulator driver for
  max77620/max20024
-Date: Wed, 13 Jan 2016 18:07:51 +0530
-Message-ID: <5696451F.3000707@nvidia.com>
-References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com> <1452590273-16421-7-git-send-email-ldewangan@nvidia.com> <5695A854.60108@samsung.com> <5696378B.6070704@nvidia.com> <20160113115736.GJ6588@sirena.org.uk> <56963D8D.9060908@nvidia.com> <20160113123133.GK6588@sirena.org.uk>
+Date: Wed, 13 Jan 2016 13:09:09 +0000
+Message-ID: <20160113130909.GL6588@sirena.org.uk>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+ <1452590273-16421-7-git-send-email-ldewangan@nvidia.com>
+ <5695A854.60108@samsung.com>
+ <5696378B.6070704@nvidia.com>
+ <20160113115736.GJ6588@sirena.org.uk>
+ <56963D8D.9060908@nvidia.com>
+ <20160113123133.GK6588@sirena.org.uk>
+ <5696451F.3000707@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GWLvvOwKrQC9aCO6"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5549 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225AbcAMMsL (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 07:48:11 -0500
-In-Reply-To: <20160113123133.GK6588@sirena.org.uk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51510 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932880AbcAMNJg (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 08:09:36 -0500
+Content-Disposition: inline
+In-Reply-To: <5696451F.3000707@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
 Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
 
-On Wednesday 13 January 2016 06:01 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Jan 13, 2016 at 05:35:33PM +0530, Laxman Dewangan wrote:
->> On Wednesday 13 January 2016 05:27 PM, Mark Brown wrote:
->> This is require to
->> - configure FPS_SRC based on platform data for each rail,
->>      - If FPS_SRC enabled then enable it always.
->>      - If FPS_SRC is disabled (NONE) then based on init data constraint,
->>        set it to desired state.
-> What is FPS_SRC and why is it set from init_data?  A driver should never
-> be looking at init_data.
-FPS: Flexible Power Sequence.
-Max77620 has three FPS source configuration FPS0,1 2 and can be 
-configured with different digital input signals EN0, EN1 and EN2.
-Then rails and few GPIOs can configured with these FPS SRC with 
-different slots so that it can be controlled externally.
+--GWLvvOwKrQC9aCO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When FPS_SRC is set to NONE (this is needed from platform data) then 
-based on constraint like boot enable/always enable, it need to be on 
-desired state. Otherwise we may endup with disabling the rail when 
-setting to NONE and create issue.
+On Wed, Jan 13, 2016 at 06:07:51PM +0530, Laxman Dewangan wrote:
+> On Wednesday 13 January 2016 06:01 PM, Mark Brown wrote:
 
-I need to set the FPS src properly for each rails before callback happen 
-from regulator init so that enable/disable/is_enable can handle it properly.
+> >What is FPS_SRC and why is it set from init_data?  A driver should never
+> >be looking at init_data.
 
+> When FPS_SRC is set to NONE (this is needed from platform data) then based
+> on constraint like boot enable/always enable, it need to be on desired
+> state. Otherwise we may endup with disabling the rail when setting to NONE
+> and create issue.
 
->> - Power mode and slew rate init based on default configuration from the
->> register if platform does not want to set it.
-> Same here, why is init_data needed here?
->
-Here, init data is not needed. I was thinking to configure slew rate in 
-preinit but can be done later also through regulator->ops.
-But I will need the driver specific DT data (customized flag) to 
-configure the PMIC like slots.
+What is "it" and why can't we check what the current configuration is
+while setting FPS to NONE?
 
+> I need to set the FPS src properly for each rails before callback happen
+> from regulator init so that enable/disable/is_enable can handle it properly.
 
+Why not just reorder the callback so it happens before the constraints
+are applied?
 
+--GWLvvOwKrQC9aCO6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWlkx0AAoJECTWi3JdVIfQH50H/2fuJLY76kSR7ePDsn6wPrIE
+5srOQ0u5g8LLfdwt21pyjUHao8j/npEfiXpgYr6chcezHqYYtP5CEC7UDud8rmUa
+CHmGucFHTytYS7W0d8XNdbONIcxUOtXN2Bui+SYvpONb2OUFe8elh8TW/hmz/NIo
+iiWkRrnFLUc+Uf7dZw9RMsu0NXBU2VXqeCY1BN1fY7Sif/eWBf+YP4mpEdFj5l9+
+ebmdPCrILWRDrzsEUrCuo0o2+saJaIWzGHv7gwOBu02Dh07zPVr+57fuAHdiBQmn
+worPox87muri8Rq5sSENdP9mMa4dOsBf9FuZTNsVFRWVH6BkyFDNWsBvz4f1Cwo=
+=MLnx
+-----END PGP SIGNATURE-----
+
+--GWLvvOwKrQC9aCO6--
