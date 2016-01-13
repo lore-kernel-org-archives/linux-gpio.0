@@ -1,139 +1,368 @@
 From: Martyn Welch <martyn.welch@collabora.co.uk>
-Subject: Re: CP2105 GPIO Pins
-Date: Wed, 13 Jan 2016 16:10:23 +0000
-Message-ID: <569676EF.9070604@collabora.co.uk>
-References: <568F9A17.809@collabora.co.uk> <CACRpkda_qbxeeFW4XdoJqaN_-wyB2cgHcLjr8XUDtdZBv+MvRw@mail.gmail.com>
+Subject: Re: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
+Date: Wed, 13 Jan 2016 16:22:37 +0000
+Message-ID: <569679CD.2010908@collabora.co.uk>
+References: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40547 "EHLO
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40568 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752077AbcAMQK0 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 11:10:26 -0500
-In-Reply-To: <CACRpkda_qbxeeFW4XdoJqaN_-wyB2cgHcLjr8XUDtdZBv+MvRw@mail.gmail.com>
+	with ESMTP id S1753641AbcAMQWl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 11:22:41 -0500
+In-Reply-To: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 
 
 
-On 13/01/16 14:58, Linus Walleij wrote:
-> (Adding Johan Hovold, serial-usb-maintainer)
+On 13/01/16 12:30, Martyn Welch wrote:
+> This patch adds support for the GPIO found on the CP2105. Unlike the GPIO
+> provided by some of the other devices supported by the cp210x driver, the
+> GPIO on the CP2015 is muxed on pins otherwise used for serial control
+> lines. The GPIO have been configured in 2 separate banks as the choice to
+> configure the pins for GPIO is made separately for pins shared with each
+> of the 2 serial ports this device provides, though the choice is made for
+> all pins associated with that port in one go. The choice of whether to use
+> the pins for GPIO or serial is made by adding configuration to a one-time
+> programable PROM in the chip and can not be changed at runtime. The device
+> defaults to GPIO.
 >
-> On Fri, Jan 8, 2016 at 12:14 PM, Martyn Welch
-> <martyn.welch@collabora.co.uk> wrote:
+> This device supports either push-pull or open-drain modes, it doesn't
+> provide an explicit input mode, though the state of the GPIO can be read
+> when used in open-drain mode. Like with pin use, the mode is configured in
+> the one-time programable PROM and can't be changed at runtime.
 >
->> I'm working on adding support to the cp210x driver for the optional GPIO
->> pins available on Silicon Labs CP2105 USB to serial bridge.
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.co.uk>
+> ---
 >
-> Do you have a data sheet?
+> This patch applies to usb-next, which has a number of changes to the cp210x
+> driver in it, so I assumed that would be the correct tree to base this on.
 >
+> V2: Doesn't break build when gpiolib isn't selected.
+>
+>   drivers/usb/serial/cp210x.c | 223 +++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 218 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+> index 9b90ad7..73e2a12 100644
+> --- a/drivers/usb/serial/cp210x.c
+> +++ b/drivers/usb/serial/cp210x.c
+> @@ -23,6 +23,8 @@
+>   #include <linux/usb.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/usb/serial.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/bitops.h>
+>
+>   #define DRIVER_DESC "Silicon Labs CP210x RS232 serial adaptor driver"
+>
+> @@ -44,10 +46,13 @@ static int cp210x_tiocmset(struct tty_struct *, unsigned int, unsigned int);
+>   static int cp210x_tiocmset_port(struct usb_serial_port *port,
+>   		unsigned int, unsigned int);
+>   static void cp210x_break_ctl(struct tty_struct *, int);
+> +static int cp210x_probe(struct usb_serial *, const struct usb_device_id *);
+>   static int cp210x_port_probe(struct usb_serial_port *);
+>   static int cp210x_port_remove(struct usb_serial_port *);
+>   static void cp210x_dtr_rts(struct usb_serial_port *p, int on);
+>
+> +#define CP210X_FEATURE_HAS_SHARED_GPIO		BIT(0)
+> +
+>   static const struct usb_device_id id_table[] = {
+>   	{ USB_DEVICE(0x045B, 0x0053) }, /* Renesas RX610 RX-Stick */
+>   	{ USB_DEVICE(0x0471, 0x066A) }, /* AKTAKOM ACE-1001 cable */
+> @@ -132,7 +137,8 @@ static const struct usb_device_id id_table[] = {
+>   	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
+>   	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
+>   	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
+> -	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
+> +	{ USB_DEVICE(0x10C4, 0xEA70),	/* Silicon Labs factory default */
+> +	  .driver_info = CP210X_FEATURE_HAS_SHARED_GPIO },
+>   	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
+>   	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
+>   	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
+> @@ -201,6 +207,10 @@ MODULE_DEVICE_TABLE(usb, id_table);
+>   struct cp210x_port_private {
+>   	__u8			bInterfaceNumber;
+>   	bool			has_swapped_line_ctl;
+> +#ifdef CONFIG_GPIOLIB
+> +	struct usb_serial	*serial;
+> +	struct gpio_chip	gc;
+> +#endif
+>   };
+>
+>   static struct usb_serial_driver cp210x_device = {
+> @@ -219,6 +229,7 @@ static struct usb_serial_driver cp210x_device = {
+>   	.tx_empty		= cp210x_tx_empty,
+>   	.tiocmget		= cp210x_tiocmget,
+>   	.tiocmset		= cp210x_tiocmset,
+> +	.probe			= cp210x_probe,
+>   	.port_probe		= cp210x_port_probe,
+>   	.port_remove		= cp210x_port_remove,
+>   	.dtr_rts		= cp210x_dtr_rts
+> @@ -261,6 +272,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
+>   #define CP210X_SET_CHARS	0x19
+>   #define CP210X_GET_BAUDRATE	0x1D
+>   #define CP210X_SET_BAUDRATE	0x1E
+> +#define CP210X_VENDOR_SPECIFIC	0xFF
+>
+>   /* CP210X_IFC_ENABLE */
+>   #define UART_ENABLE		0x0001
+> @@ -303,6 +315,11 @@ static struct usb_serial_driver * const serial_drivers[] = {
+>   #define CONTROL_WRITE_DTR	0x0100
+>   #define CONTROL_WRITE_RTS	0x0200
+>
+> +/* CP210X_VENDOR_SPECIFIC values */
+> +#define CP210X_GET_DEVICEMODE	0x3711
+> +#define CP210X_WRITE_LATCH	0x37E1
+> +#define CP210X_READ_LATCH	0x00C2
+> +
+>   /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
+>   struct cp210x_comm_status {
+>   	__le32   ulErrors;
+> @@ -991,6 +1008,179 @@ static void cp210x_break_ctl(struct tty_struct *tty, int break_state)
+>   	cp210x_set_config(port, CP210X_SET_BREAK, &state, 2);
+>   }
+>
+> +#ifdef CONFIG_GPIOLIB
+> +static int cp210x_gpio_direction_get(struct gpio_chip *gc, unsigned gpio)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
+> +{
+> +	struct cp210x_port_private *port_priv =
+> +			 container_of(gc, struct cp210x_port_private, gc);
+> +	struct usb_serial *serial = port_priv->serial;
+> +	__le32 *buf;
+> +	int result, i, length;
+> +	int size = 1;
+> +	unsigned int data[size];
+> +
+> +	/* Number of integers required to contain the array */
+> +	length = (((size - 1) | 3) + 1) / 4;
+> +
+> +	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	/* Issue the request, attempting to read 'size' bytes */
+> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> +				 CP210X_VENDOR_SPECIFIC,
+> +				 REQTYPE_INTERFACE_TO_HOST, CP210X_READ_LATCH,
+> +				 port_priv->bInterfaceNumber, buf, size,
+> +				 USB_CTRL_GET_TIMEOUT);
+> +	if (result != size) {
+> +		result = 0;
+> +		goto err;
+> +	}
+> +
+> +	/* Convert data into an array of integers */
+> +	for (i = 0; i < length; i++)
+> +		data[i] = le32_to_cpu(buf[i]);
+> +
+> +	result = (data[0] >> gpio) & 0x1;
+> +
+> +	kfree(buf);
+> +err:
+> +	return result;
+> +}
+> +
+> +static void cp210x_gpio_set(struct gpio_chip *gc, unsigned gpio, int value)
+> +{
+> +	struct cp210x_port_private *port_priv =
+> +			 container_of(gc, struct cp210x_port_private, gc);
+> +	struct usb_serial *serial = port_priv->serial;
+> +
+> +	int result, i, length;
+> +	unsigned int data[1];
+> +	__le32 *buf;
+> +	int size = 2;
+> +
+> +	/* Number of integers required to contain the array */
+> +	length = (((size - 1) | 3) + 1) / 4;
+> +
+> +	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
+> +	if (!buf) {
+> +		WARN_ON("Unable to alloc memory to perform set");
+> +		return;
+> +	}
+> +
+> +	/* Issue the request, attempting to read 'size' bytes */
+> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> +				 CP210X_VENDOR_SPECIFIC,
+> +				 REQTYPE_INTERFACE_TO_HOST, CP210X_READ_LATCH,
+> +				 port_priv->bInterfaceNumber, buf, 1,
+> +				 USB_CTRL_GET_TIMEOUT);
+> +	if (result != 1) {
+> +		WARN_ON("Failed to read data over usb");
+> +		goto err;
+> +	}
+> +
+> +	/* Convert data into an array of integers */
+> +	for (i = 0; i < length; i++)
+> +		data[i] = le32_to_cpu(buf[i]);
+> +
 
-Yes.
+Um, v3 needed.
 
->> Some hardware implementation details have got me wondering how best to
->> provide support through the GPIO framework.
->>
->> The device has 5 pins that can be GPIO. The pins that provide these GPIO are
->> muxed with serial control signals of the 2 serial ports the device provides,
->> though the GPIO is enabled by default.
->
-> I don't get it? Do you mean that the two serial ports will be able on
-> some serial port pins and then *also* on these extra pins in this
-> case, or do you mean that this is the only way for the serial
-> lines to get out of the chip?
->
-
-You loose DTR, DSR, DCD and RI on each serial port when GPIO is enabled 
-on that port. Two of these pins on one port and 3 on the other become 
-GPIO. Both serial ports are still available, but only provide TX, RX, 
-RTS and CTS (which is more than enough for a lot of uses).
-
-> In any case, multiplexing is really a task for the pin control
-> framework, if you desire to switch this muxing at runtime.
->
-
-You can't do it at runtime. The choice is programmed into a PROM, 
-typically at manufacture time (OEM, not chip) and can't be reverted.
-
-> If you don't ever want to change the muxing from the default, just don't
-> implement muxing and us it as-is.
->
->> The GPIO pins can be configured as either push-pull or open-drain, with a
->> internal weak pullup. The pins are open-drain by default. There is no
->> explicit "input" mode, though it is possible to sense the state of the pin
->> independent of the state being driven.
->
-> OK so no high impedance input state?
->
-
-Correct.
-
-> These modes are better controlled by pin control, but if you
-> have only these modes, the GPIO subsystem will suffice.
->
->> Configuration of the muxing and GPIO mode is stored in one-time programmable
->> PROM built into the chip and can't be changed at runtime.
->
-> OK no runtime muxing then.
->
->> The muxing is done for all pins associated with a port in one go. I think I
->> can determine at runtime when pins are used as serial control signals, so
->> currently have the pins split into 2 banks (each bank providing the GPIO
->> from pins associated with a port).
->>
->> I believe I can also determine when pins are configured as push-pull or
->> open-drain. Pins configured as push-pull clearly can't be used as inputs.
->> Pins in open-drain mode, if not internally pulled to ground, could be used
->> as an input.
->
-> OK how do you determine this then?
->
-
-There are some vendor specific USB calls that can be used to determine this.
-
-> Isn't it possible to read/query the PROM about the settings?
->
->> I can allow open-drain pins to be configured as input (and arrange for the
->> pin to not be pulled low when it is), but the GPIO documentation suggests
->> that the output state of GPIO should be able to be set prior to switching
->> between input and output mode.
->
-> I don't think there is such a rule. We cannot dictate how hardware
-> works. Seems like good hardware design, but it is really not our
-> pick.
->
->> This could be achieved by storing a bit masks
->> of values and directions, however this would require locking to avoid race
->> conditions and the documentation also suggests that locking should be
->> avoided in the get, set and direction functions, so that the drivers can be
->> used by and -RT kernel (I appreciate this a USB device, so less likely to be
->> used in a real time context).
->
-> I don't quite get this. The talk about the RT kernel is about irqchips.
-> This adapter doesn't support interrupts does it?
->
-
-Ah, OK. Miss-understood the documentation.
-
-> For gpio_chips, see the flag .can_sleep.
->
->> If such a scheme really isn't suitable, alternatively the pins could be
->> output only, with the user still being able to sense the pin state as long
->> as the pin is not set to pull the pin low. The disadvantage of not allowing
->> the pins to be configured as input is that users will (ironically) not be
->> able to use one of the pins with the "GPIOF_OPEN_DRAIN" flag set as this
->> attempts to set the pin as input instead of a high state.
->> "GPIOF_OPEN_SOURCE" is broken on this hardware either way.
->
-> I think this problem goes away if you look closely.
->
-> Yours,
-> Linus Walleij
->
-
-Thanks for your reply,
+The above read is reading the state of the pins, not the value last 
+written. When pins are configured as open-drain, writing to one GPIO 
+whilst another is externally pulled down will result in that second GPIO 
+being internally pulled low as well. Not good.
 
 Martyn
+
+> +	if (value == 0)
+> +		data[0] &= ~BIT(gpio);
+> +	else
+> +		data[0] |= BIT(gpio);
+> +
+> +	data[0] = data[0] << 8;
+> +
+> +	data[0] |= 0x00FF;
+> +
+> +	/* Array of integers into bytes */
+> +	for (i = 0; i < length; i++)
+> +		buf[i] = cpu_to_le32(data[i]);
+> +
+> +	result = usb_control_msg(serial->dev,
+> +				 usb_sndctrlpipe(serial->dev, 0),
+> +				 CP210X_VENDOR_SPECIFIC,
+> +				 REQTYPE_HOST_TO_INTERFACE, CP210X_WRITE_LATCH,
+> +				 port_priv->bInterfaceNumber, buf, size,
+> +				 USB_CTRL_SET_TIMEOUT);
+> +
+> +	if (result != size) {
+> +		WARN_ON("Failed to read data over usb");
+> +		goto err;
+> +	}
+> +err:
+> +	kfree(buf);
+> +}
+> +
+> +static int cp210x_shared_gpio_init(struct usb_serial_port *port)
+> +{
+> +	struct usb_serial *serial = port->serial;
+> +	struct cp210x_port_private *port_priv = usb_get_serial_port_data(port);
+> +	__le32 *buf;
+> +	unsigned long tmp;
+> +	int result, mode;
+> +
+> +	tmp = (unsigned long)usb_get_serial_data(serial);
+> +
+> +	if ((tmp & CP210X_FEATURE_HAS_SHARED_GPIO) == 0)
+> +		return 0;
+> +
+> +	buf = kzalloc(sizeof(buf), GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	/* Issue the request, attempting to read 'size' bytes */
+> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
+> +				 CP210X_VENDOR_SPECIFIC, REQTYPE_DEVICE_TO_HOST,
+> +				 CP210X_GET_DEVICEMODE,
+> +				 port_priv->bInterfaceNumber, buf,
+> +				 2, USB_CTRL_GET_TIMEOUT);
+> +
+> +	if (result != 2) {
+> +		dev_err(&port->dev, "failed to get device mode: %d\n", result);
+> +		if (result > 0)
+> +			result = -EPROTO;
+> +
+> +		goto err;
+> +	}
+> +
+> +	mode = le32_to_cpu(*buf);
+> +
+> +	/*  2 banks of GPIO - One for the pins taken from each serial port */
+> +	if (port_priv->bInterfaceNumber == 0 && (mode & 0xFF) != 0) {
+> +		port_priv->gc.label = "cp210x_eci";
+> +		port_priv->gc.ngpio = 2;
+> +	} else if (port_priv->bInterfaceNumber == 1 &&
+> +		   ((mode >> 8) & 0xFF) != 0) {
+> +		port_priv->gc.label = "cp210x_sci";
+> +		port_priv->gc.ngpio = 3;
+> +	} else {
+> +		result = 0;
+> +		goto err;
+> +	}
+> +
+> +	port_priv->gc.get_direction = cp210x_gpio_direction_get;
+> +	port_priv->gc.get = cp210x_gpio_get;
+> +	port_priv->gc.set = cp210x_gpio_set;
+> +	port_priv->gc.owner = THIS_MODULE;
+> +	port_priv->gc.dev = &serial->dev->dev;
+> +	port_priv->gc.base = -1;
+> +
+> +	port_priv->serial = serial;
+> +
+> +	result = gpiochip_add(&port_priv->gc);
+> +
+> +err:
+> +	kfree(buf);
+> +
+> +	return result;
+> +}
+> +#endif
+> +
+>   static int cp210x_port_probe(struct usb_serial_port *port)
+>   {
+>   	struct usb_serial *serial = port->serial;
+> @@ -1008,12 +1198,21 @@ static int cp210x_port_probe(struct usb_serial_port *port)
+>   	usb_set_serial_port_data(port, port_priv);
+>
+>   	ret = cp210x_detect_swapped_line_ctl(port);
+> -	if (ret) {
+> -		kfree(port_priv);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto err_ctl;
+> +
+> +#ifdef CONFIG_GPIOLIB
+> +	ret = cp210x_shared_gpio_init(port);
+> +	if (ret < 0)
+> +		goto err_ctl;
+> +#endif
+>
+>   	return 0;
+> +
+> +err_ctl:
+> +	kfree(port_priv);
+> +
+> +	return ret;
+>   }
+>
+>   static int cp210x_port_remove(struct usb_serial_port *port)
+> @@ -1021,11 +1220,25 @@ static int cp210x_port_remove(struct usb_serial_port *port)
+>   	struct cp210x_port_private *port_priv;
+>
+>   	port_priv = usb_get_serial_port_data(port);
+> +
+> +#ifdef CONFIG_GPIOLIB
+> +	if (port_priv->gc.label)
+> +		gpiochip_remove(&port_priv->gc);
+> +#endif
+> +
+>   	kfree(port_priv);
+>
+>   	return 0;
+>   }
+>
+> +static int cp210x_probe(struct usb_serial *serial,
+> +			const struct usb_device_id *id)
+> +{
+> +	usb_set_serial_data(serial, (void *)id->driver_info);
+> +
+> +	return 0;
+> +}
+> +
+>   module_usb_serial_driver(serial_drivers, id_table);
+>
+>   MODULE_DESCRIPTION(DRIVER_DESC);
+>
