@@ -1,38 +1,79 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V2 5/6] rtc: max77xxx: add RTC driver for Maxim MAX77xxx
- series RTC IP
-Date: Wed, 13 Jan 2016 09:55:19 +0530
-Message-ID: <5695D1AF.9000806@nvidia.com>
-References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com> <1452590273-16421-6-git-send-email-ldewangan@nvidia.com> <569594F0.4020007@samsung.com> <5695CD73.5010709@nvidia.com> <5695D268.3060705@samsung.com>
+Subject: Re: [PATCH V2 2/6] mfd: max77620: add core driver for MAX77620/MAX20024
+Date: Wed, 13 Jan 2016 14:30:26 +0530
+Message-ID: <5696122A.6000509@nvidia.com>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com> <1452590273-16421-3-git-send-email-ldewangan@nvidia.com> <56959E9A.3060903@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5695D268.3060705@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6540 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753718AbcAMJKr (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 04:10:47 -0500
+In-Reply-To: <56959E9A.3060903@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
 
-On Wednesday 13 January 2016 09:58 AM, Krzysztof Kozlowski wrote:
-> On 13.01.2016 13:07, Laxman Dewangan wrote:
->> On Wednesday 13 January 2016 05:36 AM, Krzysztof Kozlowski wrote:
+On Wednesday 13 January 2016 06:17 AM, Krzysztof Kozlowski wrote:
+> On 12.01.2016 18:17, Laxman Dewangan wrote:
+
+>> +	}
+>> +	dev_dbg(chip->dev, "NVERC = 0x%02x\n", val);
+>> +	for (i = 0; i < 8; ++i) {
+>> +		if (val & BIT(i))
+>> +			dev_info(chip->dev, "NVERC: %s\n", max77620_nverc[i]);
+> You are still printing two dev_info (OTP, ES) and here NVERC (probably
+> one?). This will be printed on each boot, over and over, till the user
+> will learn it and will remember it forever :).
 >
->> That is also fine to me but still I am not comfortable with the config
->> name and driver file name as this does not suggest the common.
-> The name does not matter. Really. We have a lot of drivers with a
-> specific device-like name and supporting different devices. To point
-> that your argument is invalid - your initial name of driver
-> "rtc-max77620.c" supported totally different "names": the max77620 and
-> max20024. It also wasn't suggesting something "common"...
-In all config string, I have mentioned the MAX20024.
+>  From my point of view: one dev_info for one probed device.
+>
+> I don't know if others agree with that, though. What's your opinion Lee?
+
+OK, I make single line print for OTP and ES version.
+I remove the NVREC reading and printing as this is read on clear and 
+better to move on uboot for this prints.
 
 
-> With my approach we are not developing common think neither. We just
-> want to extend/re-use existing max77686 (or max77802) driver for new
-> devices. Just like everywhere else.
+>
+>
+> +
+> +	ret = regmap_add_irq_chip(chip->rmap[MAX77620_PWR_SLAVE],
+> +		chip->chip_irq, IRQF_ONESHOT | IRQF_SHARED, chip->irq_base,
+> Why do you need IRQF_SHARED?
 
-OK, fine to me if this is acceptable.
-I will drop this rtc patch form this series and work in max77686 driver 
-to modify first and once merged, use this config on my defconfig.
+In one of my design,  I have three PMICs, one MAX77620, two MAX77621. 
+MAX77621 alert an MAX77620 interrupt line is tied and going to single 
+interrupt of SoC.
+
+To register same interrupt from all driver, I made it SHARED.
+
+This is per discussion on the other patch
+regulator: max8973: add support for junction thermal warning
+
+
+>> +		&max77620_top_irq_chip, &chip->top_irq_data);
+> More tabs needed for indentation of arguments.
+>
+> Actually the alignment of arguments here is mixed. Sometimes arguments
+> are aligned with opening parenthesis, mostly not. Can you make it
+> consistent - always aligned?
+
+
+In my 3rd patch, I tried to align it little more where is possible. But 
+I feel that all these indenting is more over individual choice. Example, 
+I added one more indent in below example to look better.
+
+
+         ret = max77620_reg_update(chip->dev, MAX77620_PWR_SLAVE,
+-               MAX77620_REG_ONOFFCNFG2, MAX77620_ONOFFCNFG2_WK_EN0,
+-               MAX77620_ONOFFCNFG2_WK_EN0);
++                       MAX77620_REG_ONOFFCNFG2, MAX77620_ONOFFCNFG2_WK_EN0,
++                       MAX77620_ONOFFCNFG2_WK_EN0);
+
+
+
