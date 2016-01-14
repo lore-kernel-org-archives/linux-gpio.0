@@ -1,30 +1,113 @@
-From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH RESEND v3 0/9] Add STM32 pinctrl/GPIO driver
-Date: Thu, 14 Jan 2016 13:55:18 +0100
-Message-ID: <CALszF6CJi72CgX_pGu-YgAeGc1LSEFLdCCvvyH3uzGYPJ-z2qg@mail.gmail.com>
-References: <1449822306-9035-1-git-send-email-mcoquelin.stm32@gmail.com>
-	<567197A7.5000903@st.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v3 1/4] i2c: rk3x: switch to i2c generic dt parsing
+Date: Thu, 14 Jan 2016 15:05:15 +0200
+Message-ID: <CAHp75VdtDjNMLH2szW=u-+iogoTc3t5wnOpoGndoadMCetLtDw@mail.gmail.com>
+References: <1452774699-57455-1-git-send-email-david.wu@rock-chips.com>
+	<1452774699-57455-2-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qg0-f66.google.com ([209.85.192.66]:33286 "EHLO
-	mail-qg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752554AbcANMzU (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jan 2016 07:55:20 -0500
-In-Reply-To: <567197A7.5000903@st.com>
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:36750 "EHLO
+	mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225AbcANNFR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jan 2016 08:05:17 -0500
+In-Reply-To: <1452774699-57455-2-git-send-email-david.wu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Patrice Chotard <patrice.chotard@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
+To: David Wu <david.wu@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Wolfram Sang <wsa@the-dreams.de>, Douglas Anderson <dianders@chromium.org>, Tao Huang <huangtao@rock-chips.com>, Chris Zhong <zyw@rock-chips.com>, cf@rock-chips.com, Jianqun Xu <xjq@rock-chips.com>, Lin Huang <hl@rock-chips.com>, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, linux-rockchip@lists.infradead.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Patrice,
+On Thu, Jan 14, 2016 at 2:31 PM, David Wu <david.wu@rock-chips.com> wrote:
+> Switch to the new generic functions: i2c_parse_fw_timings().
 
-2015-12-16 17:56 GMT+01:00 Patrice Chotard <patrice.chotard@st.com>:
-> Hi Maxime
+Nice one!
+Reviwed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+Minor comments below.
+
+> --- a/drivers/i2c/busses/i2c-rk3x.c
+> +++ b/drivers/i2c/busses/i2c-rk3x.c
+
+> @@ -437,10 +434,7 @@ out:
+>   * Calculate divider values for desired SCL frequency
+>   *
+>   * @clk_rate: I2C input clock rate
+> - * @scl_rate: Desired SCL rate
+> - * @scl_rise_ns: How many ns it takes for SCL to rise.
+> - * @scl_fall_ns: How many ns it takes for SCL to fall.
+> - * @sda_fall_ns: How many ns it takes for SDA to fall.
+> + * @t_input: Known I2C timing information.
+
+Perhaps t_input -> t.
+
+>   * @div_low: Divider output for low
+>   * @div_high: Divider output for high
+>   *
+> @@ -448,11 +442,10 @@ out:
+>   * a best-effort divider value is returned in divs. If the target rate is
+>   * too high, we silently use the highest possible rate.
+>   */
+> -static int rk3x_i2c_calc_divs(unsigned long clk_rate, unsigned long scl_rate,
+> -                             unsigned long scl_rise_ns,
+> -                             unsigned long scl_fall_ns,
+> -                             unsigned long sda_fall_ns,
+> -                             unsigned long *div_low, unsigned long *div_high)
+> +static int rk3x_i2c_calc_divs(unsigned long clk_rate,
+> +                             struct i2c_timings *t_input,
+
+Ditto.
+
+> +                             unsigned long *div_low,
+> +                             unsigned long *div_high)
+>  {
+>         unsigned long spec_min_low_ns, spec_min_high_ns;
+>         unsigned long spec_setup_start, spec_max_data_hold_ns;
+
+> @@ -517,18 +510,19 @@ static int rk3x_i2c_calc_divs(unsigned long clk_rate, unsigned long scl_rate,
+>          * we meet tSU;STA and tHD;STA times.
+>          */
+>         min_high_ns = max(min_high_ns,
+> -               DIV_ROUND_UP((scl_rise_ns + spec_setup_start) * 1000, 875));
+> +               DIV_ROUND_UP((t_input->scl_rise_ns + spec_setup_start) * 1000,
+> +                            875));
+
+To one line (after above change).
+
+>         min_high_ns = max(min_high_ns,
+> -               DIV_ROUND_UP((scl_rise_ns + spec_setup_start +
+> -                             sda_fall_ns + spec_min_high_ns), 2));
+> +               DIV_ROUND_UP((t_input->scl_rise_ns + spec_setup_start +
+> +                             t_input->sda_fall_ns + spec_min_high_ns), 2));
+
+Ditto.
+
+> @@ -620,10 +614,8 @@ static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
+>         u64 t_low_ns, t_high_ns;
+>         int ret;
 >
-> You can add my Acked-by after fixing the patch 4/9
+> -       ret = rk3x_i2c_calc_divs(clk_rate, i2c->scl_frequency, i2c->scl_rise_ns,
+> -                                i2c->scl_fall_ns, i2c->sda_fall_ns,
+> -                                &div_low, &div_high);
+> -       WARN_ONCE(ret != 0, "Could not reach SCL freq %u", i2c->scl_frequency);
+> +       ret = rk3x_i2c_calc_divs(clk_rate, &i2c->t, &div_low, &div_high);
+> +       WARN_ONCE(ret != 0, "Could not reach SCL freq %u", i2c->t.bus_freq_hz);
 
-Thanks a lot for the review, I taken into account all your comments and sent v4.
+I would recommend to
 
-Best regards,
-Maxime
+struct i2c_timings *t = &i2c->t;
+
++       ret = rk3x_i2c_calc_divs(clk_rate, t, &div_low, &div_high);
++       WARN_ONCE(ret != 0, "Could not reach SCL freq %u", t->bus_freq_hz);
+
+> @@ -634,7 +626,7 @@ static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, unsigned long clk_rate)
+>         dev_dbg(i2c->dev,
+>                 "CLK %lukhz, Req %uns, Act low %lluns high %lluns\n",
+>                 clk_rate / 1000,
+> -               1000000000 / i2c->scl_frequency,
+> +               1000000000 / i2c->t.bus_freq_hz,
+
+Ditto.
+
+-- 
+With Best Regards,
+Andy Shevchenko
