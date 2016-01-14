@@ -1,179 +1,94 @@
-From: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Thu, 14 Jan 2016 10:23:11 +0000
-Message-ID: <5697770F.9040707@collabora.co.uk>
-References: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk> <BLUPR0701MB1572CDBC6E43EA82429B723491CC0@BLUPR0701MB1572.namprd07.prod.outlook.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 0/5] Add support for MAXIM MAX77620/MAX20024 PMIC
+Date: Thu, 14 Jan 2016 17:02:41 +0530
+Message-ID: <1452771166-13694-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BLUPR0701MB1572CDBC6E43EA82429B723491CC0-v5ruerSQ/ojJf3AXQIW3Ok5OhdzP3rhOnBOFsp37pqbUKgpGm//BTAC/G2K4zDHf@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Konstantin Shkolnyy <Konstantin.Shkolnyy-S6d6foEdJf7QT0dZR+AlfA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11090 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753039AbcANLn3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Jan 2016 06:43:29 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
 
+Add SW support for MAXIM Semiconductor's Power Management
+IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
+RTC, watchdog, clocks etc.
 
+This series add respective driver for each of sub-modules.
 
-On 14/01/16 00:27, Konstantin Shkolnyy wrote:
-> Comments inline, not comprehensive by any measure...
->
->> -----Original Message-----
->> From: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-usb-
->> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Martyn Welch
->> Sent: Wednesday, January 13, 2016 06:31
->> To: Johan Hovold; Linus Walleij; Alexandre Courbot
->> Cc: Greg Kroah-Hartman; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
->> gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Martyn Welch
->> Subject: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
->>
-> ...
->
->> +#include <linux/gpio/driver.h>
->> +#include <linux/bitops.h>
->
-> Enclose this in CONFIG_GPIOLIB?
-> ...
+--- 
+Changes from V1: 
+DT DOC:
+- Added units in some of properties.
+- Change the boolean property to tristate type and detail some of
+  properties.
 
-Is there any point? I took a look at a few other drivers which 
-optionally support GPIO and they don't ifdef the headers.
+RTC:
+- Rename the file to rtc-max77xxx.c and make the generic implementation.
+- Direct regmap apis are used for the register access.
+- Decouped from max77620 driver.
+- Taken care of cleanup comments form V1 version.
 
-I think the contents of the headers will effectively be ignored if not 
-used and this won't affect module size.
+MFD:
+- Code cleanups per review from V1. 
+- Move register acccess APIs from header to c file.
+- Remove some of non required variable, remove duplication in error message
+ and simplify some of function implementation.
 
->
->> @@ -201,6 +207,10 @@ MODULE_DEVICE_TABLE(usb, id_table);
->>   struct cp210x_port_private {
->>   	__u8			bInterfaceNumber;
->>   	bool			has_swapped_line_ctl;
->> +#ifdef CONFIG_GPIOLIB
->> +	struct usb_serial	*serial;
->
-> If you have port_private (and port), you can always get usb_serial from port->serial, so why store it here?
->
+GPIO:
+- Use the gpiochip_add_data and get the chip data from core APIs.
+- Cleanups based on comment received on mfd/rtc.
+- Avoid duplication on error message.
 
-We don't have usb_serial in the gpio functions. Have to do:
+Pinctrl:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
 
-struct cp210x_port_private *port_priv =
-		 container_of(gc, struct cp210x_port_private, gc);
-struct usb_serial *serial = port_priv->serial;
+Regulators:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+- Taken care of review comment from Mark.
 
->> +	struct gpio_chip	gc;
->> +#endif
->>   };
->
-> ...
->
->>
->>   static struct usb_serial_driver cp210x_device = {
->> @@ -219,6 +229,7 @@ static struct usb_serial_driver cp210x_device = {
->>   	.tx_empty		= cp210x_tx_empty,
->>   	.tiocmget		= cp210x_tiocmget,
->>   	.tiocmset		= cp210x_tiocmset,
->> +	.probe			= cp210x_probe,
->
-> Enclose this in CONFIG_GPIOLIB?
-> ...
->
+Changes from V2:
+- Run coccicheck and checkpatch in strict mode for the alignment.
+- Drop RTC driver and its i2c client registartion.
+- Refactor Regulator  driver to use core API for DT parsing.
 
-Can do, though splattering ifdefs all over the driver isn't particularly 
-nice.
+Laxman Dewangan (5):
+  DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
+  mfd: max77620: add core driver for MAX77620/MAX20024
+  pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
+  gpio: max77620: add gpio driver for MAX77620/MAX20024
+  regulator: max77620: add regulator driver for max77620/max20024
 
-I guess the question I have is: Would the preference be to ifdef out all 
-extraneous functionality when GPIOLIB isn't enabled or to minimise the 
-number of ifdef's at the expense of building in some functionality that 
-wasn't then used?
+ Documentation/devicetree/bindings/mfd/max77620.txt | 397 +++++++++
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77620.c                       | 302 +++++++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77620.c                             | 898 +++++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-max77620.c                 | 703 ++++++++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77620-regulator.c             | 892 ++++++++++++++++++++
+ include/dt-bindings/mfd/max77620.h                 |  38 +
+ include/linux/mfd/max77620.h                       | 402 +++++++++
+ 15 files changed, 3679 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
+ create mode 100644 drivers/gpio/gpio-max77620.c
+ create mode 100644 drivers/mfd/max77620.c
+ create mode 100644 drivers/pinctrl/pinctrl-max77620.c
+ create mode 100644 drivers/regulator/max77620-regulator.c
+ create mode 100644 include/dt-bindings/mfd/max77620.h
+ create mode 100644 include/linux/mfd/max77620.h
 
->> +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
->> +{
->> +	struct cp210x_port_private *port_priv =
->> +			 container_of(gc, struct cp210x_port_private, gc);
->> +	struct usb_serial *serial = port_priv->serial;
->> +	__le32 *buf;
->> +	int result, i, length;
->> +	int size = 1;
->> +	unsigned int data[size];
->> +
->> +	/* Number of integers required to contain the array */
->> +	length = (((size - 1) | 3) + 1) / 4;
->
-> usb_control_msg can deal with any size of the buffer, so use __le16 and remove these length calculations.
->
+-- 
+2.1.4
 
-OK. (This is the process used in the other calls. Was wondering why they 
-are in the first place, any ideas?)
-
->> +
->> +	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
->> +	if (!buf)
->> +		return -ENOMEM;
->> +
->> +	/* Issue the request, attempting to read 'size' bytes */
->> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev,
->> 0),
->> +				 CP210X_VENDOR_SPECIFIC,
->> +				 REQTYPE_INTERFACE_TO_HOST,
->> CP210X_READ_LATCH,
->> +				 port_priv->bInterfaceNumber, buf, size,
->> +				 USB_CTRL_GET_TIMEOUT);
->> +	if (result != size) {
->
-> print err message here and any other time this function fails.
->
-
-OK.
-
->> +		result = 0;
->> +		goto err;
->> +	}
-> ...
->
->> +static int cp210x_shared_gpio_init(struct usb_serial_port *port)
->> +{
->> +	struct usb_serial *serial = port->serial;
->> +	struct cp210x_port_private *port_priv =
->> usb_get_serial_port_data(port);
->> +	__le32 *buf;
->> +	unsigned long tmp;
->
-> Wouldn't "chip_features" be better?
->
->> +	int result, mode;
->
-> mode is unsigned.
-
-OK.
-
-> ...
->
->>   static int cp210x_port_probe(struct usb_serial_port *port)
->>   {
->>   	struct usb_serial *serial = port->serial;
->> @@ -1008,12 +1198,21 @@ static int cp210x_port_probe(struct
->> usb_serial_port *port)
->>   	usb_set_serial_port_data(port, port_priv);
->>
->>   	ret = cp210x_detect_swapped_line_ctl(port);
->> -	if (ret) {
->> -		kfree(port_priv);
->> -		return ret;
->> -	}
->> +	if (ret)
->> +		goto err_ctl;
->> +
->> +#ifdef CONFIG_GPIOLIB
->> +	ret = cp210x_shared_gpio_init(port);
->> +	if (ret < 0)
->> +		goto err_ctl;
->
-> put kfree and return here
-> ...
->
-
-Why not use a shared error path?
-
-Martyn
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
