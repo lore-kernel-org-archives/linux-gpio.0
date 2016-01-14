@@ -1,52 +1,141 @@
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
-Date: Wed, 13 Jan 2016 20:12:40 +0000
-Message-ID: <5d134b2f14dc4374baca0155455c6c49@svr-chch-ex1.atlnz.lc>
-References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
- <cca7142e25a5417e82495e25e54eb01f@svr-chch-ex1.atlnz.lc>
- <CACRpkdaXWaXYW86E+Qr1VgPz0LGNGha7AXUZUqOjK=7c9K=--Q@mail.gmail.com>
+From: Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>
+Subject: RE: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
+Date: Thu, 14 Jan 2016 00:27:25 +0000
+Message-ID: <BLUPR0701MB1572CDBC6E43EA82429B723491CC0@BLUPR0701MB1572.namprd07.prod.outlook.com>
+References: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:60173 "EHLO
-	gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758457AbcAMUMy convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 15:12:54 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0CD9C806F4
-	for <linux-gpio@vger.kernel.org>; Thu, 14 Jan 2016 09:12:49 +1300 (NZDT)
+Received: from mail-bn1on0080.outbound.protection.outlook.com ([157.56.110.80]:52736
+	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750871AbcANA12 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Jan 2016 19:27:28 -0500
+In-Reply-To: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "maxime.coquelin@st.com" <maxime.coquelin@st.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "hongzhou.yang@mediatek.com" <hongzhou.yang@mediatek.com>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "fabf@skynet.be" <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
+To: Martyn Welch <martyn.welch@collabora.co.uk>, Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 01/14/2016 04:03 AM, Linus Walleij wrote:
-> On Sun, Jan 10, 2016 at 8:50 PM, Chris Packham
-> <Chris.Packham@alliedtelesis.co.nz> wrote:
->>
->> Ping?
->
-> I didn't see this because I was on the CC not TO line in the mail.
+Comments inline, not comprehensive by any measure...
 
-Noted. I'm used to projects with To: List Cc: Maintainer policies. I'll 
-make sure to flip my send-email defaults
+> -----Original Message-----
+> From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-
+> owner@vger.kernel.org] On Behalf Of Martyn Welch
+> Sent: Wednesday, January 13, 2016 06:31
+> To: Johan Hovold; Linus Walleij; Alexandre Courbot
+> Cc: Greg Kroah-Hartman; linux-usb@vger.kernel.org; linux-
+> gpio@vger.kernel.org; Martyn Welch
+> Subject: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
+> 
+...
 
-> Will look at it after the merge window. Do you have ACKs from the
-> mvebu driver maintainers?
+> +#include <linux/gpio/driver.h>
+> +#include <linux/bitops.h>
 
-No ACKs yet, probably for the same reason you missed it plus the holiday 
-season.
+Enclose this in CONFIG_GPIOLIB?
+...
 
-I was hoping someone would have some suggestions to tackling the long 
-V(...) lines. The armada-xp pinctrl driver has some additional macros 
-that group common variants together. pinctrl-kirkwood.c has about a 
-dozen V() variants so it should be possible to do something similar if 
-we could come up with some sensible names (as we all know naming things 
-is an NP-hard problem).
+> @@ -201,6 +207,10 @@ MODULE_DEVICE_TABLE(usb, id_table);
+>  struct cp210x_port_private {
+>  	__u8			bInterfaceNumber;
+>  	bool			has_swapped_line_ctl;
+> +#ifdef CONFIG_GPIOLIB
+> +	struct usb_serial	*serial;
 
-Thanks,
-Chris
+If you have port_private (and port), you can always get usb_serial from port->serial, so why store it here?
+
+> +	struct gpio_chip	gc;
+> +#endif
+>  };
+
+...
+
+> 
+>  static struct usb_serial_driver cp210x_device = {
+> @@ -219,6 +229,7 @@ static struct usb_serial_driver cp210x_device = {
+>  	.tx_empty		= cp210x_tx_empty,
+>  	.tiocmget		= cp210x_tiocmget,
+>  	.tiocmset		= cp210x_tiocmset,
+> +	.probe			= cp210x_probe,
+
+Enclose this in CONFIG_GPIOLIB?
+...
+
+> +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
+> +{
+> +	struct cp210x_port_private *port_priv =
+> +			 container_of(gc, struct cp210x_port_private, gc);
+> +	struct usb_serial *serial = port_priv->serial;
+> +	__le32 *buf;
+> +	int result, i, length;
+> +	int size = 1;
+> +	unsigned int data[size];
+> +
+> +	/* Number of integers required to contain the array */
+> +	length = (((size - 1) | 3) + 1) / 4;
+
+usb_control_msg can deal with any size of the buffer, so use __le16 and remove these length calculations.
+
+> +
+> +	buf = kcalloc(length, sizeof(__le32), GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	/* Issue the request, attempting to read 'size' bytes */
+> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev,
+> 0),
+> +				 CP210X_VENDOR_SPECIFIC,
+> +				 REQTYPE_INTERFACE_TO_HOST,
+> CP210X_READ_LATCH,
+> +				 port_priv->bInterfaceNumber, buf, size,
+> +				 USB_CTRL_GET_TIMEOUT);
+> +	if (result != size) {
+
+print err message here and any other time this function fails.
+
+> +		result = 0;
+> +		goto err;
+> +	}
+...
+
+> +static int cp210x_shared_gpio_init(struct usb_serial_port *port)
+> +{
+> +	struct usb_serial *serial = port->serial;
+> +	struct cp210x_port_private *port_priv =
+> usb_get_serial_port_data(port);
+> +	__le32 *buf;
+> +	unsigned long tmp;
+
+Wouldn't "chip_features" be better?
+
+> +	int result, mode;
+
+mode is unsigned.
+...
+
+>  static int cp210x_port_probe(struct usb_serial_port *port)
+>  {
+>  	struct usb_serial *serial = port->serial;
+> @@ -1008,12 +1198,21 @@ static int cp210x_port_probe(struct
+> usb_serial_port *port)
+>  	usb_set_serial_port_data(port, port_priv);
+> 
+>  	ret = cp210x_detect_swapped_line_ctl(port);
+> -	if (ret) {
+> -		kfree(port_priv);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto err_ctl;
+> +
+> +#ifdef CONFIG_GPIOLIB
+> +	ret = cp210x_shared_gpio_init(port);
+> +	if (ret < 0)
+> +		goto err_ctl;
+
+put kfree and return here
+...
+
