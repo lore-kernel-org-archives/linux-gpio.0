@@ -1,38 +1,46 @@
-From: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 9/9] ARM: config: Enable GPIO Led driver in stm32_defconfig
-Date: Thu, 14 Jan 2016 13:16:35 +0100
-Message-ID: <1452773795-24216-10-git-send-email-mcoquelin.stm32@gmail.com>
-References: <1452773795-24216-1-git-send-email-mcoquelin.stm32@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1452773795-24216-1-git-send-email-mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: patrice.chotard-qxv4g6HH51o@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, bruherrera-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v5 02/14] irqchip: irq-pic32-evic: Add support for PIC32
+ interrupt controller
+Date: Thu, 14 Jan 2016 12:12:13 +0100
+Message-ID: <20160114111213.GC28942@linux-mips.org>
+References: <1452734299-460-1-git-send-email-joshua.henderson@microchip.com>
+ <1452734299-460-3-git-send-email-joshua.henderson@microchip.com>
+ <alpine.DEB.2.11.1601140901210.3575@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.11.1601140901210.3575@nanos>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joshua Henderson <joshua.henderson@microchip.com>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, Cristian Birsan <cristian.birsan@microchip.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Purna Chandra Mandal <purna.mandal@microchip.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Andrei Pistirica <andrei.pistirica@microchip.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org, linux-api@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, Jean Delvare <jdelvare@suse.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Cornel
 List-Id: linux-gpio@vger.kernel.org
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Acked-by: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
-Signed-off-by: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- arch/arm/configs/stm32_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Jan 14, 2016 at 09:10:09AM +0100, Thomas Gleixner wrote:
 
-diff --git a/arch/arm/configs/stm32_defconfig b/arch/arm/configs/stm32_defconfig
-index 4725fab..92ade2e 100644
---- a/arch/arm/configs/stm32_defconfig
-+++ b/arch/arm/configs/stm32_defconfig
-@@ -52,6 +52,7 @@ CONFIG_SERIAL_STM32_CONSOLE=y
- # CONFIG_USB_SUPPORT is not set
- CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
- CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- # CONFIG_FILE_LOCKING is not set
--- 
-1.9.1
+> I like that approach.
+> 
+> So except for the nit in pic32_set_type_edge() this looks good. It's pretty
+> clear now what the code does and how the hardware works.
+> 
+> Thanks for following up!
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So I take that for an ack.  I still haven't seen any acks or comments for
+the patches:
+
+     4/14      drivers/clk
+     8/14      drivers/pinctrl
+    10/14      drivers/serial
+    12/14      drivers/mmc
+
+Of this series.  Ping?
+
+  Ralf
