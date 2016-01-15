@@ -1,53 +1,73 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: [PATCH 1/1] gpio: gpio-altera: Remove gpiochip on probe failure.
-Date: Fri, 15 Jan 2016 11:32:22 +0800
-Message-ID: <1452828742-57299-2-git-send-email-preid@electromag.com.au>
-References: <1452828742-57299-1-git-send-email-preid@electromag.com.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 203-59-230-133.perm.iinet.net.au ([203.59.230.133]:40571 "EHLO
-	preid-centos7.electromag.com.au" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753222AbcAODjw (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 14 Jan 2016 22:39:52 -0500
-In-Reply-To: <1452828742-57299-1-git-send-email-preid@electromag.com.au>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Li Yang <leoyang.li@nxp.com>
+Subject: [PATCH v3] i2c: imx: make bus recovery through pinctrl optional
+Date: Fri, 15 Jan 2016 01:27:24 -0600
+Message-ID: <1452842844-16256-1-git-send-email-leoyang.li@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Gao Pan <pandy.gao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: thloh@altera.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org
-Cc: Phil Reid <preid@electromag.com.au>
 
-On failure to setup the irq altera_gpio_probe would return an error
-but not call altera_gpio_probe. This resulted in kernel fault
-"Unable to handle kernel paging request at virtual address xxxxxxxx"
-later on in of_gpiochip_find_and_xlate.
+Since commit 1c4b6c3bcf30 ("i2c: imx: implement bus recovery") the driver
+starts to use gpio/pinctrl to do i2c bus recovery.  But pinctrl is not
+always available for platforms using this driver such as ls1021a and
+ls1043a, and the device tree binding also mentioned this gpio based
+recovery mechanism as optional.  The patch make it really optional that
+the probe function won't bailout when pinctrl is not available and it
+won't try to register recovery functions if pinctrl is NULL when the
+PINCTRL is not enabled at all.
 
-Signed-off-by: Phil Reid <preid@electromag.com.au>
+Signed-off-by: Li Yang <leoyang.li@nxp.com>
+Cc: Gao Pan <pandy.gao@nxp.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/gpio-altera.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+v3:
+Rebased to Wolfram's for-next branch
+Added acked-by from Linus Walleij
+Update to use new nxp email addresses due to company merge
 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index 3e6661b..7ed30f2 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -317,8 +317,8 @@ static int altera_gpio_probe(struct platform_device *pdev)
- 		handle_simple_irq, IRQ_TYPE_NONE);
- 
- 	if (ret) {
--		dev_info(&pdev->dev, "could not add irqchip\n");
--		return ret;
-+		dev_err(&pdev->dev, "could not add irqchip\n");
-+		goto teardown;
+ drivers/i2c/busses/i2c-imx.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index a2b132c..1239bfa 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1081,8 +1081,11 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
- 	gpiochip_set_chained_irqchip(&altera_gc->mmchip.gc,
-@@ -331,6 +331,7 @@ static int altera_gpio_probe(struct platform_device *pdev)
- skip_irq:
- 	return 0;
- teardown:
-+	of_mm_gpiochip_remove(&altera_gc->mmchip);
- 	pr_err("%s: registration failed with status %d\n",
- 		node->full_name, ret);
++	/* optional bus recovery feature through pinctrl */
+ 	i2c_imx->pinctrl = devm_pinctrl_get(&pdev->dev);
+-	if (IS_ERR(i2c_imx->pinctrl)) {
++	/* bailout on -ENOMEM or -EPROBE_DEFER, continue for other errors */
++	if (PTR_ERR(i2c_imx->pinctrl) == -ENOMEM ||
++			PTR_ERR(i2c_imx->pinctrl) == -EPROBE_DEFER) {
+ 		ret = PTR_ERR(i2c_imx->pinctrl);
+ 		goto clk_disable;
+ 	}
+@@ -1125,7 +1128,10 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 			i2c_imx, IMX_I2C_I2CR);
+ 	imx_i2c_write_reg(i2c_imx->hwdata->i2sr_clr_opcode, i2c_imx, IMX_I2C_I2SR);
  
+-	i2c_imx_init_recovery_info(i2c_imx, pdev);
++	if (IS_ERR_OR_NULL(i2c_imx->pinctrl))
++		dev_info(&pdev->dev, "can't get pinctrl, bus recovery feature disabled\n");
++	else
++		i2c_imx_init_recovery_info(i2c_imx, pdev);
+ 
+ 	/* Add I2C adapter */
+ 	ret = i2c_add_numbered_adapter(&i2c_imx->adapter);
 -- 
-1.8.3.1
-
+1.7.9.5
