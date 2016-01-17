@@ -1,26 +1,27 @@
-From: Ms Donna Kwok <info@vet.bg.ac.rs>
-Subject: Greetings
-Date: Sat, 16 Jan 2016 23:28:44 +0100
-Message-ID: <7e7d78c0f75dda49b4dc830484f72bd8__34460.1327124566$1452984161$gmane$org@vet.bg.ac.rs>
-Reply-To: Ms.DonnaKwok1@qq.com
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] gpio: pca953x: Add DT binding documentation for
+ XRA1207
+Date: Sat, 16 Jan 2016 18:14:13 -0600
+Message-ID: <20160117001413.GA9271@rob-hp-laptop>
+References: <1452867100-22701-1-git-send-email-sean.nyekjaer@prevas.dk>
+ <1452867100-22701-2-git-send-email-sean.nyekjaer@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailserver.vet.bg.ac.rs ([147.91.250.8]:47288 "EHLO
-	mailserver.vet.bg.ac.rs" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752842AbcAPWlc (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sat, 16 Jan 2016 17:41:32 -0500
+Received: from mail.kernel.org ([198.145.29.136]:40332 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753041AbcAQAOQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 16 Jan 2016 19:14:16 -0500
+Content-Disposition: inline
+In-Reply-To: <1452867100-22701-2-git-send-email-sean.nyekjaer@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: linux-gpio@vger.kernel.org, Sean Nyekjaer <sean@nyekjaer.dk>, devicetree@vger.kernel.org
 
-I am Ms Donna Kwok, HSBC Hong Kong, head of corporate sustainability 
-Asia pacific region. A sum of USD$21,300,000.00 Million was deposited by 
-our Late customer who died without declaring any next of kin before his 
-death in 2006.My suggestion to you is to stand as the next of kin to 
-Fadel Ahmed.We shall share in the ratio of 50% for me, 50% for you.if 
-interested please email: Ms.DonnaKwok1@qq.com
+On Fri, Jan 15, 2016 at 03:11:40PM +0100, Sean Nyekjaer wrote:
+> From: Sean Nyekjaer <sean@nyekjaer.dk>
+> 
+> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
 
-Thanks,
-Donna Kwok.
+Acked-by: Rob Herring <robh@kernel.org>
