@@ -1,112 +1,109 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 5/6] rtc: max77xxx: add RTC driver for Maxim MAX77xxx
- series RTC IP
-Date: Mon, 18 Jan 2016 13:27:11 +0900
-Message-ID: <569C699F.10407@samsung.com>
-References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
- <1452590273-16421-6-git-send-email-ldewangan@nvidia.com>
- <569594F0.4020007@samsung.com> <5695CD73.5010709@nvidia.com>
- <5695D268.3060705@samsung.com> <5695D1AF.9000806@nvidia.com>
- <5696665A.5030508@nvidia.com> <5696F0C4.1060904@samsung.com>
- <5696F7F8.108@samsung.com> <56978BA1.9050409@nvidia.com>
- <CABxcv=kqQc1DNmMJ1PAQkB7d=w9V4-85kJXtOXRPpwpXn7to8A@mail.gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] Add Advantech iManager Watchdog driver
+Date: Mon, 18 Jan 2016 07:38:05 +0000
+Message-ID: <20160118073805.GG28745@x1>
+References: <1452468675-5827-1-git-send-email-richard.dorsch@gmail.com>
+ <1452468675-5827-7-git-send-email-richard.dorsch@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CABxcv=kqQc1DNmMJ1PAQkB7d=w9V4-85kJXtOXRPpwpXn7to8A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, rtc-linux@googlegroups.com, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1452468675-5827-7-git-send-email-richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jdelvare-IBi9RG/b67k@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org, jo.sunga-ELdSlb/RfAS1Z/+hSey0Gg@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 15.01.2016 10:50, Javier Martinez Canillas wrote:
-> Hello,
-> 
-> On Thu, Jan 14, 2016 at 8:50 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->> On Thursday 14 January 2016 06:50 AM, Krzysztof Kozlowski wrote:
->>> On 14.01.2016 09:50, Krzysztof Kozlowski wrote:
-> 
-> [snip]
-> 
->>>>
->>>> The max77802 does exactly the same (BTW, these should be merged as
->>>> well... I'll add this to the TODO list) so I think this is necessary.
->>>
->>> How about merging max77802 to max77686 first? The only differences I
->>> found are:
->>> 1. It uses main MFD/PMIC regmap.
->>>     This can be solved as part of decoupling code. The driver will get
->>> MFD's regmap and set up its own (only on max77686). The max77802 will
->>> only use parent's regmap.
->>>
->>> 2. It has different register address.
->>>     We need a register-layout/configuration structure. The logic is the
->>> same except few differences (e.g. presence of MAX77802_RTC_AE1).
->>>
->>> It may be easier to merge them now, before adding support for max77620?
-> 
-> Agreed.
-> 
-> When I originally posted the max77802 support, I had separate MFD,
-> RTC, regulator and clock drivers and the feedback (IIRC) was that the
-> MFD and clock blocks were too similar to the max77686 so I extended
-> those drivers instead of adding new ones. But that the RTC and
-> regulator blocks were different so a separate driver was justified...
-> but it's true that are not that different and rtc-max77686 could be
-> extended and rtc-max77802 removed.
+On Sun, 10 Jan 2016, richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org wrote:
 
-Great!
+> From: Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-> 
-> In fact, the ChromiumOS vendor tree has a single RTC driver for both
-> max77686 and max77802:
-> 
-> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/rtc/rtc-max77xxx.c
-> 
->>> I could handle this probably next week or in the following week
->>> (assuming someone would test max77802 because I don't have the hardware).
->>>
-> 
-> I could also work on this next week if you want. After all I feel
-> guilty for the code duplication :-)
+Some more information required about the device here.
 
-So feel free to take that job from me. :) I will happily do the testing
-and provide complains (I mean, comments).
+> Signed-off-by: Richard Vidal-Dorsch <richard.dorsch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/watchdog/Kconfig           |  12 ++
+>  drivers/watchdog/Makefile          |   2 +
+>  drivers/watchdog/imanager-ec-wdt.c | 170 +++++++++++++++++++
+>  drivers/watchdog/imanager-wdt.c    | 333 +++++++++++++++++++++++++++=
+++++++++++
+>  include/linux/mfd/imanager/wdt.h   |  37 +++++
 
-> 
->>> Anyway I think we should develop these RTC patches having this in mind:
->>> merge all of them.
->>>
->>
->> I think we can do the merging of max77802 and max77686 at second step.
->>
->> At first, lets decouple the rtc-max77686.c with its mfd driver. This will
->> give better picture how will it be done.
-> 
-> I don't quite understand what you mean by decoupling here, the
-> max77686 MFD driver today is not highly coupled to their cells devices
-> drivers since it supports both max77802 and max77686 already. Yes,
-> some changes will be needed but I think those should be small.
+Please relocate this to include/linux/watchdog.
 
-The decoupling needed is to move RTC-related stuff (i2c_new_dummy and
-regmap) entirely to RTC driver. This work is independent of which driver
-will be merged to rtc-max77xxx first.
+>  5 files changed, 554 insertions(+)
+>  create mode 100644 drivers/watchdog/imanager-ec-wdt.c
+>  create mode 100644 drivers/watchdog/imanager-wdt.c
+>  create mode 100644 include/linux/mfd/imanager/wdt.h
 
-> 
->> Once this is there then max77620 can use this and in parallel, can be work
->> for max77802 to use the same driver.
->>
->>
->> Let's first conclude and get accpepted for max77686 and max77620 as both of
->> us have related HW to verify the changes.
->>
-> 
-> I agree with Krzysztof that merging first before extending makes more
-> sense but I don't have a strong opinion on this and can be done as a
-> followup as well.
+[...]
 
-AFAIR, Javier have max77802 on Chromebook, right?
+> diff --git a/include/linux/mfd/imanager/wdt.h b/include/linux/mfd/ima=
+nager/wdt.h
+> new file mode 100644
+> index 0000000..eb709b7
+> --- /dev/null
+> +++ b/include/linux/mfd/imanager/wdt.h
+> @@ -0,0 +1,37 @@
+> +/*
+> + * Advantech iManager Watchdog core
+> + *
+> + * Copyright (C) 2016 Advantech Co., Ltd., Irvine, CA, USA
+> + * Author: Richard Vidal-Dorsch <richard.dorsch-ELdSlb/RfAS1Z/+hSey0Gg@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute  it and/or mo=
+dify it
+> + * under  the terms of  the GNU General  Public License as published=
+ by the
+> + * Free Software Foundation;  either version 2 of the  License, or (=
+at your
+> + * option) any later version.
+> + */
+> +
+> +#ifndef __WDT_H__
+> +#define __WDT_H__
 
-Best regards,
-Krzysztof
+These need to be less generic.
+
+> +#include <linux/types.h>
+> +
+> +enum wdt_event {
+> +	DELAY,
+> +	PWRBTN,
+> +	NMI,
+> +	RESET,
+> +	WDPIN,
+> +	SCI,
+> +};
+
+Unless shared between other source files, this should probably move
+into the driver.
+
+> +int wdt_core_init(void);
+> +
+> +int wdt_core_set_timeout(enum wdt_event type, u32 timeout);
+> +
+> +int wdt_core_disable_all(void);
+> +int wdt_core_start_timer(void);
+> +int wdt_core_stop_timer(void);
+> +int wdt_core_reset_timer(void);
+> +int wdt_core_stop_boot_timer(void);
+
+What's the point of these?
+
+> +#endif
+> --=20
+> 2.7.0
+>=20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdo=
+g" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
