@@ -1,76 +1,117 @@
-From: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v3] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Mon, 18 Jan 2016 12:19:21 +0000
-Message-ID: <569CD849.6020007@collabora.co.uk>
-References: <1452855064-5395-1-git-send-email-martyn.welch@collabora.co.uk> <BLUPR0701MB1572287BDEEB4368C76C12EE91CD0@BLUPR0701MB1572.namprd07.prod.outlook.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH V2 5/6] rtc: max77xxx: add RTC driver for Maxim MAX77xxx
+ series RTC IP
+Date: Mon, 18 Jan 2016 09:52:28 -0300
+Message-ID: <CABxcv=mOjtE6awpJ2He=5pcGh1z24cOhezO4JYxtc2TGC5upEw@mail.gmail.com>
+References: <1452590273-16421-1-git-send-email-ldewangan@nvidia.com>
+	<1452590273-16421-6-git-send-email-ldewangan@nvidia.com>
+	<569594F0.4020007@samsung.com>
+	<5695CD73.5010709@nvidia.com>
+	<5695D268.3060705@samsung.com>
+	<5695D1AF.9000806@nvidia.com>
+	<5696665A.5030508@nvidia.com>
+	<5696F0C4.1060904@samsung.com>
+	<5696F7F8.108@samsung.com>
+	<56978BA1.9050409@nvidia.com>
+	<CABxcv=kqQc1DNmMJ1PAQkB7d=w9V4-85kJXtOXRPpwpXn7to8A@mail.gmail.com>
+	<569C699F.10407@samsung.com>
+	<569CD427.3090106@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <BLUPR0701MB1572287BDEEB4368C76C12EE91CD0-v5ruerSQ/ojJf3AXQIW3Ok5OhdzP3rhOnBOFsp37pqbUKgpGm//BTAC/G2K4zDHf@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Konstantin Shkolnyy <Konstantin.Shkolnyy-S6d6foEdJf7QT0dZR+AlfA@public.gmane.org>, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:32885 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754809AbcARMw2 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2016 07:52:28 -0500
+Received: by mail-yk0-f172.google.com with SMTP id k129so589020675yke.0
+        for <linux-gpio@vger.kernel.org>; Mon, 18 Jan 2016 04:52:28 -0800 (PST)
+In-Reply-To: <569CD427.3090106@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Liam Girdwood <lgirdwood@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>, rtc-linux@googlegroups.com, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>
 
+Hello Laxman and Krzysztof,
 
-
-On 15/01/16 21:59, Konstantin Shkolnyy wrote:
->> From: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-usb-
->> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Martyn Welch
->> Sent: Friday, January 15, 2016 04:51
->> To: Johan Hovold; Linus Walleij; Alexandre Courbot
->> Cc: Greg Kroah-Hartman; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
->> gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Martyn Welch
->> Subject: [PATCH v3] USB: serial: cp210x: Adding GPIO support for CP2105
+On Mon, Jan 18, 2016 at 9:01 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+> On Monday 18 January 2016 09:57 AM, Krzysztof Kozlowski wrote:
 >>
-> ...
+>> On 15.01.2016 10:50, Javier Martinez Canillas wrote:
+>>>
+>>> Hello,
+>>>
+>>> On Thu, Jan 14, 2016 at 8:50 AM, Laxman Dewangan <ldewangan@nvidia.com>
+>>> wrote:
+>>>>
+>>>> On Thursday 14 January 2016 06:50 AM, Krzysztof Kozlowski wrote:
+>>>>>
+>>>>> On 14.01.2016 09:50, Krzysztof Kozlowski wrote:
+>>>
+>>> [snip]
+>>>
+>>>>>> The max77802 does exactly the same (BTW, these should be merged as
+>>>>>> well... I'll add this to the TODO list) so I think this is necessary.
+>>>>>
+>>>>> How about merging max77802 to max77686 first? The only differences I
+>>>>> found are:
+>>>>> 1. It uses main MFD/PMIC regmap.
+>>>>>      This can be solved as part of decoupling code. The driver will get
+>>>>> MFD's regmap and set up its own (only on max77686). The max77802 will
+>>>>> only use parent's regmap.
+>>>>>
+>>>>> 2. It has different register address.
+>>>>>      We need a register-layout/configuration structure. The logic is
+>>>>> the
+>>>>> same except few differences (e.g. presence of MAX77802_RTC_AE1).
+>>>>>
+>>>>> It may be easier to merge them now, before adding support for max77620?
+>>>
+>>> Agreed.
+>>>
+>>> When I originally posted the max77802 support, I had separate MFD,
+>>> RTC, regulator and clock drivers and the feedback (IIRC) was that the
+>>> MFD and clock blocks were too similar to the max77686 so I extended
+>>> those drivers instead of adding new ones. But that the RTC and
+>>> regulator blocks were different so a separate driver was justified...
+>>> but it's true that are not that different and rtc-max77686 could be
+>>> extended and rtc-max77802 removed.
+>>
+>> Great!
+>>
+>>> In fact, the ChromiumOS vendor tree has a single RTC driver for both
+>>> max77686 and max77802:
+>>>
+>>>
+>>> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/rtc/rtc-max77xxx.c
+>>>
+>>>>> I could handle this probably next week or in the following week
+>>>>> (assuming someone would test max77802 because I don't have the
+>>>>> hardware).
+>>>>>
+>>> I could also work on this next week if you want. After all I feel
+>>> guilty for the code duplication :-)
+>>
+>> So feel free to take that job from me. :) I will happily do the testing
+>> and provide complains (I mean, comments).
+>>
 >
->> +static int cp210x_gpio_get(struct gpio_chip *gc, unsigned gpio)
->> +{
->> +	struct cp210x_port_private *port_priv =
->> +			 container_of(gc, struct cp210x_port_private, gc);
->> +	struct usb_serial *serial = port_priv->serial;
->> +	u8 *buf;
->> +	int result;
->> +
->> +	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
->> +	if (!buf)
->> +		return -ENOMEM;
->> +
->> +	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev,
->> 0),
->> +				 CP210X_VENDOR_SPECIFIC,
->> +				 REQTYPE_INTERFACE_TO_HOST,
->> CP210X_READ_LATCH,
->> +				 port_priv->bInterfaceNumber, buf, 1,
->> +				 USB_CTRL_GET_TIMEOUT);
->> +	if (result != 1) {
->> +		dev_err(&serial->port[port_priv->bInterfaceNumber]->dev,
->> +			"failed to get gpio state: %d\n", result);
->> +		result = 0;
->> +		goto err;
->
-> leaking buf
+> Hi Javier,
+> If you can provide the patch for moving MAX77802 to MAX77686 then I can
+> create the other change to move the regmap and i2c dummy client for rtc of
+> max77686 to rtc driver from core on top of your change. This will
+> completely decouple the rtc driver from core and so will be easy to use for
+> other chip MAX77620.
 >
 
-Oops. Thanks.
+Ok, sounds like a plan. I'll just do the change to extend rtc-max77686
+to support the max77802 rtc then and let the other change to you.
 
->> +	}
->> +
->> +	result = (*buf >> gpio) & 0x1;
->> +
->> +	kfree(buf);
->> +err:
->> +	return result;
->> +}
-> ...
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'll work on this today once I finish other task that I'm currently working on.
+
+> Thanks,
+> Laxman
 >
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Best regards,
+Javier
