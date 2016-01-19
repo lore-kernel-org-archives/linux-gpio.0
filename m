@@ -1,67 +1,52 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5] serial: 8250: add gpio support to exar
-Date: Tue, 19 Jan 2016 13:39:07 +0200
-Message-ID: <CAHp75VcOQSqe1aw4GS3LhRgFhBmOg4rn0DnP7KsSKrwqVpESfg@mail.gmail.com>
-References: <1453183595-17996-1-git-send-email-sudipm.mukherjee@gmail.com>
-	<CAHp75VdopyRUcwSFY=qowoiq6Twkg686oQHed8WU5Ep8QQtL+A@mail.gmail.com>
-	<20160119111344.GA23168@sudip-pc>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv3 2/2] gpio: sn65hvs885: Add DT binding documentation
+Date: Tue, 19 Jan 2016 11:20:40 -0600
+Message-ID: <20160119172040.GA8857@rob-hp-laptop>
+References: <1453198940-31410-1-git-send-email-sean.nyekjaer@prevas.dk>
+ <1453198940-31410-2-git-send-email-sean.nyekjaer@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f194.google.com ([209.85.160.194]:34272 "EHLO
-	mail-yk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954AbcASLjH (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2016 06:39:07 -0500
-In-Reply-To: <20160119111344.GA23168@sudip-pc>
+Received: from mail.kernel.org ([198.145.29.136]:51805 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756688AbcASRUo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Jan 2016 12:20:44 -0500
+Content-Disposition: inline
+In-Reply-To: <1453198940-31410-2-git-send-email-sean.nyekjaer@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>
-Cc: Peter Hung <hpeter@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Rob Groner <rgroner@rtd.com>
+To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Tue, Jan 19, 2016 at 1:14 PM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
-> On Tue, Jan 19, 2016 at 12:09:08PM +0200, Andy Shevchenko wrote:
->> On Tue, Jan 19, 2016 at 8:06 AM, Sudip Mukherjee
->> <sudipm.mukherjee@gmail.com> wrote:
->> > Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
->> > can be controlled using gpio interface.
->> > Add support to use these pins.
->>
->> + Peter Hung.
->>
->> Seems Fintek HW is going similar way you, guys, have to decide how to
->> proceed in general. I like this way Sudip made here, though I still
->> few comments below.
->
-> Just had a look at the Fintek patch. Interestingly high baudrate was our
-> next plan. :)
->
->>
->> First of all, can we split it to two patches like cooking GPIO driver
->> first, then extend Exar piece of serial driver?
->>
->> I also would like to vote for splitting out first Exar parts from
->> 8250_pci like Peter did for Fintek.
->
-> Then maybe instead of splitting out if we have the provision of high
-> baudrate in 8250_pci? And the way I have done, it is just a matter of few
-> function calls from 8250_pci in case the hardware is present. So then,
-> what may be the advantage of splitting out?
+On Tue, Jan 19, 2016 at 11:22:20AM +0100, Sean Nyekjaer wrote:
+> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> new file mode 100644
+> index 0000000..56679ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> @@ -0,0 +1,9 @@
+> +* TI SN65HVS885 digital-input serializer
+> +
+> +Example:
+> +	sn65hvs885@3 {
+> +		compatible = "sn65hvs885";
+> +		spi-max-frequency = <10000000>;
+> +		reg = <0>;
 
-+ Heikki.
-When we considered what to do with extension to 8250_mid (at that time
-it was just a set of functions in the 8250_pci) we decided not to blow
-up 8250_pci anymore. At that time it was something like 6k+ LOCs.
-One of the example is how sdhci is split (2 level scheme: core <- glue
-bus driver <- particular hw). This might not work for 8250. But I'm
-thinking something like core <- specific hw core <- bus driver.
-Heikki, do you have your vision about this?
+What about all the standard gpio controller properties?
 
-> But now the question is should I split out? What advantage
-> will be there in splitting out?
-
-You already asked it above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> +	};
+> +
+> -- 
+> 2.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
