@@ -1,100 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V3 5/5] regulator: max77620: add regulator driver for
- max77620/max20024
-Date: Tue, 19 Jan 2016 16:26:08 +0900
-Message-ID: <569DE510.8090606@samsung.com>
-References: <1452771166-13694-1-git-send-email-ldewangan@nvidia.com>
- <1452771166-13694-6-git-send-email-ldewangan@nvidia.com>
- <569DC9AD.7000504@samsung.com> <569DDFEE.4080307@nvidia.com>
+From: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Subject: [PATCHv2 2/2] gpio: sn65hvs885: Add DT binding documentation
+Date: Tue, 19 Jan 2016 10:40:26 +0100
+Message-ID: <1453196426-21399-2-git-send-email-sean.nyekjaer@prevas.dk>
+References: <1453196426-21399-1-git-send-email-sean.nyekjaer@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:61482 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752310AbcASH0Q (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2016 02:26:16 -0500
-In-reply-to: <569DDFEE.4080307@nvidia.com>
+Received: from mail01.prevas.se ([62.95.78.3]:40092 "EHLO mail01.prevas.se"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757713AbcASJxw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 19 Jan 2016 04:53:52 -0500
+In-Reply-To: <1453196426-21399-1-git-send-email-sean.nyekjaer@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: linux-gpio@vger.kernel.org
+Cc: Sean Nyekjaer <sean.nyekjaer@prevas.dk>, devicetree@vger.kernel.org
 
-On 19.01.2016 16:04, Laxman Dewangan wrote:
-> Thanks for review.
-> Here is my view on the some of the review comment.
-> 
-> On Tuesday 19 January 2016 10:59 AM, Krzysztof Kozlowski wrote:
->> On 14.01.2016 20:32, Laxman Dewangan wrote:
-> 
->> +    return ret;
->> +}
->> +
->> +static int max77620_init_pmic(struct max77620_regulator *pmic, int id)
->> +{
->> This function seems to be used only from max77620_of_parse_cb(). I would
->> find easier to read if this was located before definition of
->> max77620_of_parse_cb(). Can you move it (or you had other idea of
->> placing algorithm)?
-> 
-> I wanted to keep all local function on top which is used on this file
-> and not the regulator ops.
-> Then implement regulator ops and then probe.
-> Let me see if I can do anything here.
+Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+---
+ Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
 
-Ah, OK then. That kind of order makes sense as well.
-
-> 
->>
->>> +             pmic->enable_power_mode[id]) {
->>> +            ret = max77620_regulator_set_power_mode(
->>> +                    pmic, pmic->enable_power_mode[id], id);
->> The 'pmic' argument should be after opening parenthesis, not at new line.
-> 
-> This is done for indenting alignment. I am using checkpatch --strict
-> option and for this the next line should be on same column of first
-> charcter after opening parenthesis.
-> To avoid this error, if we want to re-align the indenting for next line
-> then left the line empty after "(".
-
-But the next line is not aligned with the function call. So the 'strict'
-is not followed and the code is less readable. Instead this should be
-something like:
-
-+			ret = max77620_regulator_set_power_mode(pmic
-+					pmic->enable_power_mode[id],
-					id);
-
-You cannot align it with function call anyway (to many indentations and
-too long name of function).
-
-> 
-> +
-> +static int __init max77620_regulator_init(void)
-> +{
-> +    return platform_driver_register(&max77620_regulator_driver);
-> +}
-> +subsys_initcall(max77620_regulator_init);
-> +
-> 
->> Does it have to be subsys_initcall? Any special requirements for
->> ordering the drivers? Probe deferring is encouraged instead.
->>
->>
-> 
-> 
-> This is to make sure th regulators are ready before other driver get
-> probed. This is basic need of some of driver and hence subsys_initcall.
-> I will move to module_init() as some of other PMIC driver (as3722) is in
-> the module init and used in tegra platform so not seeing much issue on
-> this.
-
-The other driver should support deferred probe and then the problem is
-somehow solved. There are some rare cases when this does not work yet
-but then please describe exactly which driver cannot work with it.
-
-For example max77802 regulator works well.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+new file mode 100644
+index 0000000..56679ac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+@@ -0,0 +1,9 @@
++* TI SN65HVS885 digital-input serializer
++
++Example:
++	sn65hvs885@3 {
++		compatible = "sn65hvs885";
++		spi-max-frequency = <10000000>;
++		reg = <0>;
++	};
++
+-- 
+2.7.0
 
