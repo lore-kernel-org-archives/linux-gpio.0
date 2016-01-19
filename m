@@ -1,549 +1,633 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v3] gpio: Add GPIO support for the WinSystems WS16C48
-Date: Mon, 18 Jan 2016 15:10:43 -0500
-Message-ID: <20160118201043.GA12657@sophia>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH V3 2/5] mfd: max77620: add core driver for MAX77620/MAX20024
+Date: Tue, 19 Jan 2016 14:13:17 +0900
+Message-ID: <569DC5ED.6070303@samsung.com>
+References: <1452771166-13694-1-git-send-email-ldewangan@nvidia.com>
+ <1452771166-13694-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:35301 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756440AbcARUKv (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 18 Jan 2016 15:10:51 -0500
-Content-Disposition: inline
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:62104 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771AbcASFN3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Jan 2016 00:13:29 -0500
+In-reply-to: <1452771166-13694-3-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O. In
-addition, the first 24 lines may be used for interrupt-handled edge
-detection; rising edge detection and falling edge detection are
-supported.
+On 14.01.2016 20:32, Laxman Dewangan wrote:
+> MAX77620/MAX20024 are Power Management IC from the MAXIM.
+> It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
+> watchdog, clock etc.
+> 
+> Add MFD drier to provides common support for accessing the
+> device; additional drivers is developed on respected subsystem
+> in order to use the functionality of the device.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Signed-off-by: Chaitanya Bandi <bandik@nvidia.com>
+> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
+> ---
+> Changes from V1:
+> - Code cleanups per review from V1. 
+> - Move register acccess APIs from header to c file.
+> - Remove some of non required variable, remove duplication in error message
+>  and simplify some of function implementation.
+> - Register RTC driver such that it can get the regmap handle form parent device
+> Changes from V2:
+> - Run coccicheck and checkpatch in strict mode for the alignment.
+> - Drop RTC driver and its i2c client registration.
+> 
+>  drivers/mfd/Kconfig          |  15 +
+>  drivers/mfd/Makefile         |   1 +
+>  drivers/mfd/max77620.c       | 898 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/max77620.h | 402 +++++++++++++++++++
+>  4 files changed, 1316 insertions(+)
+>  create mode 100644 drivers/mfd/max77620.c
+>  create mode 100644 include/linux/mfd/max77620.h
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 9581ebb..edeb85c 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -492,6 +492,21 @@ config MFD_MAX14577
+>  	  additional drivers must be enabled in order to use the functionality
+>  	  of the device.
+>  
+> +config MFD_MAX77620
+> +	bool "Maxim Semiconductor MAX77620 and MAX20024 PMIC Support"
+> +	depends on I2C=y
+> +	depends on OF
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	select REGMAP_IRQ
+> +	select IRQ_DOMAIN
+> +	help
+> +	  Say yes here to add support for Maxim Semiconductor MAX77620 and
+> +	  MAX20024 which are Power Management IC with General purpose pins,
+> +	  RTC, regulators, clock generator, watchdog etc. This driver
+> +	  provides common support for accessing the device; additional drivers
+> +	  must be enabled in order to use the functionality of the device.
+> +
+>  config MFD_MAX77686
+>  	bool "Maxim Semiconductor MAX77686/802 PMIC Support"
+>  	depends on I2C=y
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 0f230a6..97910ed 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -123,6 +123,7 @@ obj-$(CONFIG_MFD_DA9063)	+= da9063.o
+>  obj-$(CONFIG_MFD_DA9150)	+= da9150-core.o
+>  
+>  obj-$(CONFIG_MFD_MAX14577)	+= max14577.o
+> +obj-$(CONFIG_MFD_MAX77620)	+= max77620.o
+>  obj-$(CONFIG_MFD_MAX77686)	+= max77686.o
+>  obj-$(CONFIG_MFD_MAX77693)	+= max77693.o
+>  obj-$(CONFIG_MFD_MAX77843)	+= max77843.o
+> diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+> new file mode 100644
+> index 0000000..e965261
+> --- /dev/null
+> +++ b/drivers/mfd/max77620.c
+> @@ -0,0 +1,898 @@
+> +/*
+> + * Maxim MAX77620 MFD Driver
+> + *
+> + * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * Author:
+> + *		Laxman Dewangan <ldewangan@nvidia.com>
+> + *		Chaitanya Bandi <bandik@nvidia.com>
+> + *		Mallikarjun Kasoju <mkasoju@nvidia.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/i2c.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/regmap.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/mfd/max77620.h>
+> +
+> +static struct resource gpio_resources[] = {
+> +	{
+> +		.start	= MAX77620_IRQ_TOP_GPIO,
+> +		.end	= MAX77620_IRQ_TOP_GPIO,
+> +		.flags  = IORESOURCE_IRQ,
+> +	}
+> +};
+> +
+> +static struct resource thermal_resources[] = {
+> +	{
+> +		.start	= MAX77620_IRQ_LBT_TJALRM1,
+> +		.end	= MAX77620_IRQ_LBT_TJALRM1,
+> +		.flags  = IORESOURCE_IRQ,
+> +	},
+> +	{
+> +		.start	= MAX77620_IRQ_LBT_TJALRM2,
+> +		.end	= MAX77620_IRQ_LBT_TJALRM2,
+> +		.flags  = IORESOURCE_IRQ,
+> +	}
+> +};
+> +
+> +static const struct regmap_irq max77620_top_irqs[] = {
+> +	[MAX77620_IRQ_TOP_GLBL] = {
+> +		.mask = MAX77620_IRQ_TOP_GLBL_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_SD] = {
+> +		.mask = MAX77620_IRQ_TOP_SD_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_LDO] = {
+> +		.mask = MAX77620_IRQ_TOP_LDO_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_GPIO] = {
+> +		.mask = MAX77620_IRQ_TOP_GPIO_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_RTC] = {
+> +		.mask = MAX77620_IRQ_TOP_RTC_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_32K] = {
+> +		.mask = MAX77620_IRQ_TOP_32K_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +	[MAX77620_IRQ_TOP_ONOFF] = {
+> +		.mask = MAX77620_IRQ_TOP_ONOFF_MASK,
+> +		.reg_offset = 0,
+> +	},
+> +
+> +	[MAX77620_IRQ_LBT_MBATLOW] = {
+> +		.mask = MAX77620_IRQ_LBM_MASK,
+> +		.reg_offset = 1,
+> +	},
+> +	[MAX77620_IRQ_LBT_TJALRM1] = {
+> +		.mask = MAX77620_IRQ_TJALRM1_MASK,
+> +		.reg_offset = 1,
+> +	},
+> +	[MAX77620_IRQ_LBT_TJALRM2] = {
+> +		.mask = MAX77620_IRQ_TJALRM2_MASK,
+> +		.reg_offset = 1,
+> +	},
+> +
+> +};
+> +
+> +static const char * const max77620_nverc[] = {
+> +	"Shutdown-pin",
+> +	"System WatchDog Timer",
+> +	"Hard Reset",
+> +	"Junction Temp Overload",
+> +	"Main-Battery Low",
+> +	"Main-Battery overvoltage Lockout",
+> +	"Main-Battery undervoltage Lockout",
+> +	"Reset input",
+> +};
 
-This driver provides GPIO and IRQ support for these 48 channels of
-digital I/O. The base port address for the device may be configured via
-the ws16c48_base module parameter. The interrupt line number for the
-device may be configured via the ws16c48_irq module parameter.
+This looks unused.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
-Changes in v3:
-  - Fix symbol name typos in gpiochip_get_data calls
----
- MAINTAINERS                 |   6 +
- drivers/gpio/Kconfig        |   9 +
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-ws16c48.c | 432 ++++++++++++++++++++++++++++++++++++=
-++++++++
- 4 files changed, 448 insertions(+)
- create mode 100644 drivers/gpio/gpio-ws16c48.c
+> +
+> +enum max77660_ids {
+> +	MAX77620_PMIC_ID,
+> +	MAX77620_GPIO_ID,
+> +	MAX77620_PINCTRL_ID,
+> +	MAX77620_CLK_ID,
+> +	MAX77620_POWER_OFF_ID,
+> +	MAX77620_WDT_ID,
+> +	MAX77620_THERMAL_ID,
+> +	MAX77620_RTC_ID,
+> +};
+> +
+> +#define MAX77620_SUB_MODULE_RES(_name, _id)			\
+> +	[MAX77620_##_id##_ID] = {				\
+> +		.name = "max77620-"#_name,			\
+> +		.num_resources	= ARRAY_SIZE(_name##_resources), \
+> +		.resources	= &_name##_resources[0],	\
+> +		.id = MAX77620_##_id##_ID,			\
+> +	}
+> +
+> +#define MAX20024_SUB_MODULE_RES(_name, _id)			\
+> +	[MAX77620_##_id##_ID] = {				\
+> +		.name = "max20024-"#_name,			\
+> +		.num_resources	= ARRAY_SIZE(_name##_resources), \
+> +		.resources	= &_name##_resources[0],	\
+> +		.id = MAX77620_##_id##_ID,			\
+> +	}
+> +
+> +#define MAX77620_SUB_MODULE_NO_RES(_name, _id)			\
+> +	[MAX77620_##_id##_ID] = {				\
+> +		.name = "max77620-"#_name,			\
+> +		.id = MAX77620_##_id##_ID,			\
+> +	}
+> +
+> +#define MAX20024_SUB_MODULE_NO_RES(_name, _id)			\
+> +	[MAX77620_##_id##_ID] = {				\
+> +		.name = "max20024-"#_name,			\
+> +		.id = MAX77620_##_id##_ID,			\
+> +	}
+> +
+> +static struct mfd_cell max77620_children[] = {
+> +	MAX77620_SUB_MODULE_RES(gpio, GPIO),
+> +	MAX77620_SUB_MODULE_NO_RES(pmic, PMIC),
+> +	MAX77620_SUB_MODULE_NO_RES(pinctrl, PINCTRL),
+> +	MAX77620_SUB_MODULE_NO_RES(clk, CLK),
+> +	MAX77620_SUB_MODULE_NO_RES(power-off, POWER_OFF),
+> +	MAX77620_SUB_MODULE_NO_RES(wdt, WDT),
+> +	MAX77620_SUB_MODULE_RES(thermal, THERMAL),
+> +};
+> +
+> +static struct mfd_cell max20024_children[] = {
+> +	MAX20024_SUB_MODULE_RES(gpio, GPIO),
+> +	MAX20024_SUB_MODULE_NO_RES(pmic, PMIC),
+> +	MAX20024_SUB_MODULE_NO_RES(pinctrl, PINCTRL),
+> +	MAX20024_SUB_MODULE_NO_RES(clk, CLK),
+> +	MAX20024_SUB_MODULE_NO_RES(power-off, POWER_OFF),
+> +	MAX20024_SUB_MODULE_NO_RES(wdt, WDT),
+> +	MAX20024_SUB_MODULE_RES(thermal, THERMAL),
+> +};
+> +
+> +struct max77620_sub_modules {
+> +	struct mfd_cell *cells;
+> +	int ncells;
+> +	u32 id;
+> +};
+> +
+> +static const struct max77620_sub_modules max77620_cells = {
+> +	.cells = max77620_children,
+> +	.ncells = ARRAY_SIZE(max77620_children),
+> +	.id = MAX77620,
+> +};
+> +
+> +static const struct max77620_sub_modules  max20024_cells = {
+> +	.cells = max20024_children,
+> +	.ncells = ARRAY_SIZE(max20024_children),
+> +	.id = MAX20024,
+> +};
+> +
+> +static struct regmap_irq_chip max77620_top_irq_chip = {
+> +	.name = "max77620-top",
+> +	.irqs = max77620_top_irqs,
+> +	.num_irqs = ARRAY_SIZE(max77620_top_irqs),
+> +	.num_regs = 2,
+> +	.status_base = MAX77620_REG_IRQTOP,
+> +	.mask_base = MAX77620_REG_IRQTOPM,
+> +};
+> +
+> +static const struct regmap_range max77620_readable_ranges[] = {
+> +	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
+> +};
+> +
+> +static const struct regmap_access_table max77620_readable_table = {
+> +	.yes_ranges = max77620_readable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(max77620_readable_ranges),
+> +};
+> +
+> +static const struct regmap_range max20024_readable_ranges[] = {
+> +	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
+> +	regmap_reg_range(MAX20024_REG_MAX_ADD, MAX20024_REG_MAX_ADD),
+> +};
+> +
+> +static const struct regmap_access_table max20024_readable_table = {
+> +	.yes_ranges = max20024_readable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(max20024_readable_ranges),
+> +};
+> +
+> +static const struct regmap_range max77620_writable_ranges[] = {
+> +	regmap_reg_range(MAX77620_REG_CNFGGLBL1, MAX77620_REG_DVSSD4),
+> +};
+> +
+> +static const struct regmap_access_table max77620_writable_table = {
+> +	.yes_ranges = max77620_writable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(max77620_writable_ranges),
+> +};
+> +
+> +static const struct regmap_range max77620_cacheable_ranges[] = {
+> +	regmap_reg_range(MAX77620_REG_SD0_CFG, MAX77620_REG_LDO_CFG3),
+> +	regmap_reg_range(MAX77620_REG_FPS_CFG0, MAX77620_REG_FPS_SD3),
+> +};
+> +
+> +static const struct regmap_access_table max77620_volatile_table = {
+> +	.no_ranges = max77620_cacheable_ranges,
+> +	.n_no_ranges = ARRAY_SIZE(max77620_cacheable_ranges),
+> +};
+> +
+> +static const struct regmap_config max77620_regmap_config = {
+> +	.name = "power-slave",
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = MAX77620_REG_DVSSD4 + 1,
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.rd_table = &max77620_readable_table,
+> +	.wr_table = &max77620_writable_table,
+> +	.volatile_table = &max77620_volatile_table,
+> +};
+> +
+> +static const struct regmap_config max20024_regmap_config = {
+> +	.name = "power-slave",
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = MAX20024_REG_MAX_ADD + 1,
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.rd_table = &max20024_readable_table,
+> +	.wr_table = &max77620_writable_table,
+> +	.volatile_table = &max77620_volatile_table,
+> +};
+> +
+> +int max77620_irq_get_virq(struct device *dev, int irq)
+> +{
+> +	struct max77620_chip *chip = dev_get_drvdata(dev);
+> +
+> +	return regmap_irq_get_virq(chip->top_irq_data, irq);
+> +}
+> +EXPORT_SYMBOL_GPL(max77620_irq_get_virq);
+> +
+> +int max77620_reg_write(struct device *dev, unsigned int reg, u8 val)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4d7d83c..0b24c42 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11659,6 +11659,12 @@ M:	David H=E4rdeman <david@hardeman.nu>
- S:	Maintained
- F:	drivers/media/rc/winbond-cir.c
-=20
-+WINSYSTEMS WS16C48 GPIO DRIVER
-+M:	William Breathitt Gray <vilhelm.gray@gmail.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/gpio/gpio-ws16c48.c
-+
- WIMAX STACK
- M:	Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
- M:	linux-wimax@intel.com
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index cb212eb..b391139 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -577,6 +577,15 @@ config GPIO_TS5500
- 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
- 	  LCD port.
-=20
-+config GPIO_WS16C48
-+	tristate "WinSystems WS16C48 GPIO support"
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Enables GPIO support for the WinSystems WS16C48. The base port addr=
-ess
-+	  for the device may be configured via the ws16c48_base module
-+	  parameter. The interrupt line number for the device may be configur=
-ed
-+	  via the ws16c48_irq module parameter.
-+
- endmenu
-=20
- menu "I2C GPIO expanders"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 548e9b5..bcb6cbe 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -112,6 +112,7 @@ obj-$(CONFIG_GPIO_VX855)	+=3D gpio-vx855.o
- obj-$(CONFIG_GPIO_WM831X)	+=3D gpio-wm831x.o
- obj-$(CONFIG_GPIO_WM8350)	+=3D gpio-wm8350.o
- obj-$(CONFIG_GPIO_WM8994)	+=3D gpio-wm8994.o
-+obj-$(CONFIG_GPIO_WS16C48)	+=3D gpio-ws16c48.o
- obj-$(CONFIG_GPIO_XGENE)	+=3D gpio-xgene.o
- obj-$(CONFIG_GPIO_XGENE_SB)	+=3D gpio-xgene-sb.o
- obj-$(CONFIG_GPIO_XILINX)	+=3D gpio-xilinx.o
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-new file mode 100644
-index 0000000..8904176
---- /dev/null
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -0,0 +1,432 @@
-+/*
-+ * GPIO driver for the WinSystems WS16C48
-+ * Copyright (C) 2016 William Breathitt Gray
-+ *
-+ * This program is free software; you can redistribute it and/or modif=
-y
-+ * it under the terms of the GNU General Public License, version 2, as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqdesc.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/platform_device.h>
-+#include <linux/spinlock.h>
-+
-+static unsigned ws16c48_base;
-+module_param(ws16c48_base, uint, 0);
-+MODULE_PARM_DESC(ws16c48_base, "WinSystems WS16C48 base address");
-+static unsigned ws16c48_irq;
-+module_param(ws16c48_irq, uint, 0);
-+MODULE_PARM_DESC(ws16c48_irq, "WinSystems WS16C48 interrupt line numbe=
-r");
-+
-+/**
-+ * struct ws16c48_gpio - GPIO device private data structure
-+ * @chip:	instance of the gpio_chip
-+ * @io_state:	bit I/O state (whether bit is set to input or output)
-+ * @out_state:	output bits state
-+ * @lock:	synchronization lock to prevent I/O race conditions
-+ * @irq_mask:	I/O bits affected by interrupts
-+ * @flow_mask:	IRQ flow type mask for the respective I/O bits
-+ * @base:	base port address of the GPIO device
-+ * @extent:	extent of port address region of the GPIO device
-+ * @irq:	Interrupt line number
-+ */
-+struct ws16c48_gpio {
-+	struct gpio_chip chip;
-+	unsigned char io_state[6];
-+	unsigned char out_state[6];
-+	spinlock_t lock;
-+	unsigned long irq_mask;
-+	unsigned long flow_mask;
-+	unsigned base;
-+	unsigned extent;
-+	unsigned irq;
-+};
-+
-+static int ws16c48_gpio_get_direction(struct gpio_chip *chip, unsigned=
- offset)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+
-+	return !!(ws16c48gpio->io_state[port] & mask);
-+}
-+
-+static int ws16c48_gpio_direction_input(struct gpio_chip *chip, unsign=
-ed offset)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	ws16c48gpio->io_state[port] |=3D mask;
-+	ws16c48gpio->out_state[port] &=3D ~mask;
-+	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
-+	unsigned offset, int value)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	ws16c48gpio->io_state[port] &=3D ~mask;
-+	if (value)
-+		ws16c48gpio->out_state[port] |=3D mask;
-+	else
-+		ws16c48gpio->out_state[port] &=3D ~mask;
-+	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+	unsigned long flags;
-+	unsigned port_state;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	/* ensure that GPIO is set for input */
-+	if (!(ws16c48gpio->io_state[port] & mask)) {
-+		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+		return -EINVAL;
-+	}
-+
-+	port_state =3D inb(ws16c48gpio->base + port);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+
-+	return !!(port_state & mask);
-+}
-+
-+static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, =
-int value)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	/* ensure that GPIO is set for output */
-+	if (ws16c48gpio->io_state[port] & mask) {
-+		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+		return;
-+	}
-+
-+	if (value)
-+		ws16c48gpio->out_state[port] |=3D mask;
-+	else
-+		ws16c48gpio->out_state[port] &=3D ~mask;
-+	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+}
-+
-+static void ws16c48_irq_ack(struct irq_data *data)
-+{
-+	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned long offset =3D irqd_to_hwirq(data);
-+	const unsigned port =3D offset / 8;
-+	const unsigned mask =3D BIT(offset % 8);
-+	unsigned long flags;
-+	unsigned port_state;
-+
-+	/* only the first 3 ports support interrupts */
-+	if (port > 2)
-+		return;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	port_state =3D ws16c48gpio->irq_mask >> (8*port);
-+
-+	outb(0x80, ws16c48gpio->base + 7);
-+	outb(port_state & ~mask, ws16c48gpio->base + 8 + port);
-+	outb(port_state | mask, ws16c48gpio->base + 8 + port);
-+	outb(0xC0, ws16c48gpio->base + 7);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+}
-+
-+static void ws16c48_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned long offset =3D irqd_to_hwirq(data);
-+	const unsigned long mask =3D BIT(offset);
-+	const unsigned port =3D offset / 8;
-+	unsigned long flags;
-+
-+	/* only the first 3 ports support interrupts */
-+	if (port > 2)
-+		return;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	ws16c48gpio->irq_mask &=3D ~mask;
-+
-+	outb(0x80, ws16c48gpio->base + 7);
-+	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port)=
-;
-+	outb(0xC0, ws16c48gpio->base + 7);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+}
-+
-+static void ws16c48_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned long offset =3D irqd_to_hwirq(data);
-+	const unsigned long mask =3D BIT(offset);
-+	const unsigned port =3D offset / 8;
-+	unsigned long flags;
-+
-+	/* only the first 3 ports support interrupts */
-+	if (port > 2)
-+		return;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	ws16c48gpio->irq_mask |=3D mask;
-+
-+	outb(0x80, ws16c48gpio->base + 7);
-+	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port)=
-;
-+	outb(0xC0, ws16c48gpio->base + 7);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+}
-+
-+static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_t=
-ype)
-+{
-+	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-+	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
-+	const unsigned long offset =3D irqd_to_hwirq(data);
-+	const unsigned long mask =3D BIT(offset);
-+	const unsigned port =3D offset / 8;
-+	unsigned long flags;
-+
-+	/* only the first 3 ports support interrupts */
-+	if (port > 2)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+	switch (flow_type) {
-+	case IRQ_TYPE_NONE:
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		ws16c48gpio->flow_mask |=3D mask;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		ws16c48gpio->flow_mask &=3D ~mask;
-+		break;
-+	default:
-+		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+		return -EINVAL;
-+	}
-+
-+	outb(0x40, ws16c48gpio->base + 7);
-+	outb(ws16c48gpio->flow_mask >> (8*port), ws16c48gpio->base + 8 + port=
-);
-+	outb(0xC0, ws16c48gpio->base + 7);
-+
-+	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+
-+	return 0;
-+}
-+
-+static struct irq_chip ws16c48_irqchip =3D {
-+	.name =3D "ws16c48",
-+	.irq_ack =3D ws16c48_irq_ack,
-+	.irq_mask =3D ws16c48_irq_mask,
-+	.irq_unmask =3D ws16c48_irq_unmask,
-+	.irq_set_type =3D ws16c48_irq_set_type
-+};
-+
-+static irqreturn_t ws16c48_irq_handler(int irq, void *dev_id)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D dev_id;
-+	struct gpio_chip *const chip =3D &ws16c48gpio->chip;
-+	unsigned long int_pending;
-+	unsigned long port;
-+	unsigned long int_id;
-+	unsigned long gpio;
-+
-+	int_pending =3D inb(ws16c48gpio->base + 6) & 0x7;
-+	/* loop until all pending interrupts are handled */
-+	while (int_pending) {
-+		for_each_set_bit(port, &int_pending, 3) {
-+			int_id =3D inb(ws16c48gpio->base + 8 + port);
-+			for_each_set_bit(gpio, &int_id, 8)
-+				generic_handle_irq(irq_find_mapping(
-+					chip->irqdomain, gpio + 8*port));
-+		}
-+
-+		int_pending =3D inb(ws16c48gpio->base + 6) & 0x7;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int __init ws16c48_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct ws16c48_gpio *ws16c48gpio;
-+	const unsigned base =3D ws16c48_base;
-+	const unsigned extent =3D 16;
-+	const char *const name =3D dev_name(dev);
-+	int err;
-+	const unsigned irq =3D ws16c48_irq;
-+
-+	ws16c48gpio =3D devm_kzalloc(dev, sizeof(*ws16c48gpio), GFP_KERNEL);
-+	if (!ws16c48gpio)
-+		return -ENOMEM;
-+
-+	if (!request_region(base, extent, name)) {
-+		dev_err(dev, "Unable to lock %s port addresses (0x%X-0x%X)\n",
-+			name, base, base + extent);
-+		err =3D -EBUSY;
-+		goto err_lock_io_port;
-+	}
-+
-+	ws16c48gpio->chip.label =3D name;
-+	ws16c48gpio->chip.parent =3D dev;
-+	ws16c48gpio->chip.owner =3D THIS_MODULE;
-+	ws16c48gpio->chip.base =3D -1;
-+	ws16c48gpio->chip.ngpio =3D 48;
-+	ws16c48gpio->chip.get_direction =3D ws16c48_gpio_get_direction;
-+	ws16c48gpio->chip.direction_input =3D ws16c48_gpio_direction_input;
-+	ws16c48gpio->chip.direction_output =3D ws16c48_gpio_direction_output;
-+	ws16c48gpio->chip.get =3D ws16c48_gpio_get;
-+	ws16c48gpio->chip.set =3D ws16c48_gpio_set;
-+	ws16c48gpio->base =3D base;
-+	ws16c48gpio->extent =3D extent;
-+	ws16c48gpio->irq =3D irq;
-+
-+	spin_lock_init(&ws16c48gpio->lock);
-+
-+	dev_set_drvdata(dev, ws16c48gpio);
-+
-+	err =3D gpiochip_add_data(&ws16c48gpio->chip, ws16c48gpio);
-+	if (err) {
-+		dev_err(dev, "GPIO registering failed (%d)\n", err);
-+		goto err_gpio_register;
-+	}
-+
-+	/* Disable IRQ by default */
-+	outb(0x80, base + 7);
-+	outb(0, base + 8);
-+	outb(0, base + 9);
-+	outb(0, base + 10);
-+	outb(0xC0, base + 7);
-+
-+	err =3D gpiochip_irqchip_add(&ws16c48gpio->chip, &ws16c48_irqchip, 0,
-+		handle_edge_irq, IRQ_TYPE_NONE);
-+	if (err) {
-+		dev_err(dev, "Could not add irqchip (%d)\n", err);
-+		goto err_gpiochip_irqchip_add;
-+	}
-+
-+	err =3D request_irq(irq, ws16c48_irq_handler, 0, name, ws16c48gpio);
-+	if (err) {
-+		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
-+		goto err_request_irq;
-+	}
-+
-+	return 0;
-+
-+err_request_irq:
-+err_gpiochip_irqchip_add:
-+	gpiochip_remove(&ws16c48gpio->chip);
-+err_gpio_register:
-+	release_region(base, extent);
-+err_lock_io_port:
-+	return err;
-+}
-+
-+static int ws16c48_remove(struct platform_device *pdev)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio =3D platform_get_drvdata(pdev)=
-;
-+
-+	free_irq(ws16c48gpio->irq, ws16c48gpio);
-+	gpiochip_remove(&ws16c48gpio->chip);
-+	release_region(ws16c48gpio->base, ws16c48gpio->extent);
-+
-+	return 0;
-+}
-+
-+static struct platform_device *ws16c48_device;
-+
-+static struct platform_driver ws16c48_driver =3D {
-+	.driver =3D {
-+		.name =3D "ws16c48"
-+	},
-+	.remove =3D ws16c48_remove
-+};
-+
-+static void __exit ws16c48_exit(void)
-+{
-+	platform_device_unregister(ws16c48_device);
-+	platform_driver_unregister(&ws16c48_driver);
-+}
-+
-+static int __init ws16c48_init(void)
-+{
-+	int err;
-+
-+	ws16c48_device =3D platform_device_alloc(ws16c48_driver.driver.name, =
--1);
-+	if (!ws16c48_device)
-+		return -ENOMEM;
-+
-+	err =3D platform_device_add(ws16c48_device);
-+	if (err)
-+		goto err_platform_device;
-+
-+	err =3D platform_driver_probe(&ws16c48_driver, ws16c48_probe);
-+	if (err)
-+		goto err_platform_driver;
-+
-+	return 0;
-+
-+err_platform_driver:
-+	platform_device_del(ws16c48_device);
-+err_platform_device:
-+	platform_device_put(ws16c48_device);
-+	return err;
-+}
-+
-+module_init(ws16c48_init);
-+module_exit(ws16c48_exit);
-+
-+MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
-+MODULE_DESCRIPTION("WinSystems WS16C48 GPIO driver");
-+MODULE_LICENSE("GPL");
---=20
-2.4.10
+Any special need why val is u8 (here and in max77620_reg_read())? The
+regmap API and max77620_reg_update() use unsigned int.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Operate on unsigned ints, if it is possible. It makes everything more
+consistent and easier to spot eventual wrong casts.
+
+[...]
+
+> diff --git a/include/linux/mfd/max77620.h b/include/linux/mfd/max77620.h
+> new file mode 100644
+> index 0000000..2bb4829
+> --- /dev/null
+> +++ b/include/linux/mfd/max77620.h
+> @@ -0,0 +1,402 @@
+> +/*
+> + * max77620.h: Defining registers address and its bit definitions
+> + *	of MAX77620 and	MAX20024
+> + *
+> + * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#ifndef _LINUX_MFD_MAX77620_H_
+> +#define _LINUX_MFD_MAX77620_H_
+> +
+> +/* GLOBAL, PMIC, GPIO, FPS, ONOFFC, CID Registers */
+> +#define MAX77620_REG_CNFGGLBL1			0x00
+> +#define MAX77620_REG_CNFGGLBL2			0x01
+> +#define MAX77620_REG_CNFGGLBL3			0x02
+> +#define MAX77620_REG_CNFG1_32K			0x03
+> +#define MAX77620_REG_CNFGBBC			0x04
+> +#define MAX77620_REG_IRQTOP			0x05
+> +#define MAX77620_REG_INTLBT			0x06
+> +#define MAX77620_REG_IRQSD			0x07
+> +#define MAX77620_REG_IRQ_LVL2_L0_7		0x08
+> +#define MAX77620_REG_IRQ_LVL2_L8		0x09
+> +#define MAX77620_REG_IRQ_LVL2_GPIO		0x0A
+> +#define MAX77620_REG_ONOFFIRQ			0x0B
+> +#define MAX77620_REG_NVERC			0x0C
+> +#define MAX77620_REG_IRQTOPM			0x0D
+> +#define MAX77620_REG_INTENLBT			0x0E
+> +#define MAX77620_REG_IRQMASKSD			0x0F
+> +#define MAX77620_REG_IRQ_MSK_L0_7		0x10
+> +#define MAX77620_REG_IRQ_MSK_L8			0x11
+> +#define MAX77620_REG_ONOFFIRQM			0x12
+> +#define MAX77620_REG_STATLBT			0x13
+> +#define MAX77620_REG_STATSD			0x14
+> +#define MAX77620_REG_ONOFFSTAT			0x15
+> +
+> +/* SD and LDO Registers */
+> +#define MAX77620_REG_SD0			0x16
+> +#define MAX77620_REG_SD1			0x17
+> +#define MAX77620_REG_SD2			0x18
+> +#define MAX77620_REG_SD3			0x19
+> +#define MAX77620_REG_SD4			0x1A
+> +#define MAX77620_REG_DVSSD0			0x1B
+> +#define MAX77620_REG_DVSSD1			0x1C
+> +#define MAX77620_REG_SD0_CFG			0x1D
+> +#define MAX77620_REG_SD1_CFG			0x1E
+> +#define MAX77620_REG_SD2_CFG			0x1F
+> +#define MAX77620_REG_SD3_CFG			0x20
+> +#define MAX77620_REG_SD4_CFG			0x21
+> +#define MAX77620_REG_SD_CFG2			0x22
+> +#define MAX77620_REG_LDO0_CFG			0x23
+> +#define MAX77620_REG_LDO0_CFG2			0x24
+> +#define MAX77620_REG_LDO1_CFG			0x25
+> +#define MAX77620_REG_LDO1_CFG2			0x26
+> +#define MAX77620_REG_LDO2_CFG			0x27
+> +#define MAX77620_REG_LDO2_CFG2			0x28
+> +#define MAX77620_REG_LDO3_CFG			0x29
+> +#define MAX77620_REG_LDO3_CFG2			0x2A
+> +#define MAX77620_REG_LDO4_CFG			0x2B
+> +#define MAX77620_REG_LDO4_CFG2			0x2C
+> +#define MAX77620_REG_LDO5_CFG			0x2D
+> +#define MAX77620_REG_LDO5_CFG2			0x2E
+> +#define MAX77620_REG_LDO6_CFG			0x2F
+> +#define MAX77620_REG_LDO6_CFG2			0x30
+> +#define MAX77620_REG_LDO7_CFG			0x31
+> +#define MAX77620_REG_LDO7_CFG2			0x32
+> +#define MAX77620_REG_LDO8_CFG			0x33
+> +#define MAX77620_REG_LDO8_CFG2			0x34
+> +#define MAX77620_REG_LDO_CFG3			0x35
+> +
+> +#define MAX77620_LDO_SLEW_RATE_MASK		0x1
+> +
+> +/* LDO Configuration 3 */
+> +#define MAX77620_TRACK4_MASK			BIT(5)
+> +#define MAX77620_TRACK4_SHIFT			5
+> +
+> +/* Voltage */
+> +#define  MAX77620_SDX_VOLT_MASK			0xFF
+> +#define  MAX77620_SD0_VOLT_MASK			0x3F
+> +#define  MAX77620_SD1_VOLT_MASK			0x7F
+
+Duplicated space after #define
+
+> +#define MAX77620_LDO_VOLT_MASK			0x3F
+> +
+> +#define MAX77620_REG_GPIO0			0x36
+> +#define MAX77620_REG_GPIO1			0x37
+> +#define MAX77620_REG_GPIO2			0x38
+> +#define MAX77620_REG_GPIO3			0x39
+> +#define MAX77620_REG_GPIO4			0x3A
+> +#define MAX77620_REG_GPIO5			0x3B
+> +#define MAX77620_REG_GPIO6			0x3C
+> +#define MAX77620_REG_GPIO7			0x3D
+> +#define MAX77620_REG_PUE_GPIO			0x3E
+> +#define MAX77620_REG_PDE_GPIO			0x3F
+> +#define MAX77620_REG_AME_GPIO			0x40
+> +#define MAX77620_REG_ONOFFCNFG1			0x41
+> +#define MAX77620_REG_ONOFFCNFG2			0x42
+> +
+> +/* FPS Registers */
+> +#define MAX77620_REG_FPS_CFG0			0x43
+> +#define MAX77620_REG_FPS_CFG1			0x44
+> +#define MAX77620_REG_FPS_CFG2			0x45
+> +#define MAX77620_REG_FPS_LDO0			0x46
+> +#define MAX77620_REG_FPS_LDO1			0x47
+> +#define MAX77620_REG_FPS_LDO2			0x48
+> +#define MAX77620_REG_FPS_LDO3			0x49
+> +#define MAX77620_REG_FPS_LDO4			0x4A
+> +#define MAX77620_REG_FPS_LDO5			0x4B
+> +#define MAX77620_REG_FPS_LDO6			0x4C
+> +#define MAX77620_REG_FPS_LDO7			0x4D
+> +#define MAX77620_REG_FPS_LDO8			0x4E
+> +#define MAX77620_REG_FPS_SD0			0x4F
+> +#define MAX77620_REG_FPS_SD1			0x50
+> +#define MAX77620_REG_FPS_SD2			0x51
+> +#define MAX77620_REG_FPS_SD3			0x52
+> +#define MAX77620_REG_FPS_SD4			0x53
+> +#define MAX77620_REG_FPS_NONE			0
+> +
+> +#define MAX77620_FPS_SRC_MASK			0xC0
+> +#define MAX77620_FPS_SRC_SHIFT			6
+> +#define MAX77620_FPS_PU_PERIOD_MASK		0x38
+> +#define MAX77620_FPS_PU_PERIOD_SHIFT		3
+> +#define MAX77620_FPS_PD_PERIOD_MASK		0x07
+> +#define MAX77620_FPS_PD_PERIOD_SHIFT		0
+> +#define MAX77620_FPS_TIME_PERIOD_MASK		0x38
+> +#define MAX77620_FPS_TIME_PERIOD_SHIFT		3
+> +#define MAX77620_FPS_EN_SRC_MASK		0x06
+> +#define MAX77620_FPS_EN_SRC_SHIFT		1
+> +#define MAX77620_FPS_ENFPS_MASK			0x01
+> +
+> +#define MAX77620_REG_FPS_GPIO1			0x54
+> +#define MAX77620_REG_FPS_GPIO2			0x55
+> +#define MAX77620_REG_FPS_GPIO3			0x56
+> +#define MAX77620_REG_FPS_RSO			0x57
+> +#define MAX77620_REG_CID0			0x58
+> +#define MAX77620_REG_CID1			0x59
+> +#define MAX77620_REG_CID2			0x5A
+> +#define MAX77620_REG_CID3			0x5B
+> +#define MAX77620_REG_CID4			0x5C
+> +#define MAX77620_REG_CID5			0x5D
+> +
+> +#define MAX77620_REG_DVSSD4			0x5E
+> +#define MAX20024_REG_MAX_ADD			0x70
+> +
+> +#define MAX77620_CID_DIDM_MASK			0xF0
+> +#define MAX77620_CID_DIDM_SHIFT			4
+> +
+> +/* CNCG2SD */
+> +#define MAX77620_SD_CNF2_ROVS_EN_SD1		BIT(1)
+> +#define MAX77620_SD_CNF2_ROVS_EN_SD0		BIT(2)
+> +
+> +/* Device Identification Metal */
+> +#define MAX77620_CID5_DIDM(n)			(((n) >> 4) & 0xF)
+> +/* Device Indentification OTP */
+> +#define MAX77620_CID5_DIDO(n)			((n) & 0xF)
+> +
+> +/* SD CNFG1 */
+> +#define MAX77620_SD_SR_MASK			0xC0
+> +#define MAX77620_SD_SR_SHIFT			6
+> +#define MAX77620_SD_POWER_MODE_MASK		0x30
+> +#define MAX77620_SD_POWER_MODE_SHIFT		4
+> +#define MAX77620_SD_CFG1_ADE_MASK		BIT(3)
+> +#define MAX77620_SD_CFG1_ADE_DISABLE		0
+> +#define MAX77620_SD_CFG1_ADE_ENABLE		BIT(3)
+> +#define MAX77620_SD_FPWM_MASK			0x04
+> +#define MAX77620_SD_FPWM_SHIFT			2
+> +#define MAX77620_SD_FSRADE_MASK			0x01
+> +#define MAX77620_SD_FSRADE_SHIFT		0
+> +#define MAX77620_SD_CFG1_FPWM_SD_MASK		BIT(2)
+> +#define MAX77620_SD_CFG1_FPWM_SD_SKIP		0
+> +#define MAX77620_SD_CFG1_FPWM_SD_FPWM		BIT(2)
+> +#define MAX77620_SD_CFG1_FSRADE_SD_MASK		BIT(0)
+> +#define MAX77620_SD_CFG1_FSRADE_SD_DISABLE	0
+> +#define MAX77620_SD_CFG1_FSRADE_SD_ENABLE	BIT(0)
+> +
+> +/* LDO_CNFG2 */
+> +#define MAX77620_LDO_POWER_MODE_MASK		0xC0
+> +#define MAX77620_LDO_POWER_MODE_SHIFT		6
+> +#define MAX77620_LDO_CFG2_ADE_MASK		BIT(1)
+> +#define MAX77620_LDO_CFG2_ADE_DISABLE		0
+> +#define MAX77620_LDO_CFG2_ADE_ENABLE		BIT(1)
+> +#define MAX77620_LDO_CFG2_SS_MASK		BIT(0)
+> +#define MAX77620_LDO_CFG2_SS_FAST		BIT(0)
+> +#define MAX77620_LDO_CFG2_SS_SLOW		0
+> +
+> +#define MAX77620_IRQ_TOP_GLBL_MASK		BIT(7)
+> +#define MAX77620_IRQ_TOP_SD_MASK		BIT(6)
+> +#define MAX77620_IRQ_TOP_LDO_MASK		BIT(5)
+> +#define MAX77620_IRQ_TOP_GPIO_MASK		BIT(4)
+> +#define MAX77620_IRQ_TOP_RTC_MASK		BIT(3)
+> +#define MAX77620_IRQ_TOP_32K_MASK		BIT(2)
+> +#define MAX77620_IRQ_TOP_ONOFF_MASK		BIT(1)
+> +
+> +#define MAX77620_IRQ_LBM_MASK			BIT(3)
+> +#define MAX77620_IRQ_TJALRM1_MASK		BIT(2)
+> +#define MAX77620_IRQ_TJALRM2_MASK		BIT(1)
+> +
+> +#define MAX77620_PWR_I2C_ADDR			0x3c
+> +#define MAX77620_RTC_I2C_ADDR			0x68
+> +
+> +#define MAX77620_CNFG_GPIO_DRV_MASK		BIT(0)
+> +#define MAX77620_CNFG_GPIO_DRV_PUSHPULL		BIT(0)
+> +#define MAX77620_CNFG_GPIO_DRV_OPENDRAIN	0
+> +#define MAX77620_CNFG_GPIO_DIR_MASK		BIT(1)
+> +#define MAX77620_CNFG_GPIO_DIR_INPUT		BIT(1)
+> +#define MAX77620_CNFG_GPIO_DIR_OUTPUT		0
+> +#define MAX77620_CNFG_GPIO_INPUT_VAL_MASK	BIT(2)
+> +#define MAX77620_CNFG_GPIO_OUTPUT_VAL_MASK	BIT(3)
+> +#define MAX77620_CNFG_GPIO_OUTPUT_VAL_HIGH	BIT(3)
+> +#define MAX77620_CNFG_GPIO_OUTPUT_VAL_LOW	0
+> +#define MAX77620_CNFG_GPIO_INT_MASK		(0x3 << 4)
+> +#define MAX77620_CNFG_GPIO_INT_FALLING		BIT(4)
+> +#define MAX77620_CNFG_GPIO_INT_RISING		BIT(5)
+> +#define MAX77620_CNFG_GPIO_DBNC_MASK		(0x3 << 6)
+> +#define MAX77620_CNFG_GPIO_DBNC_None		(0x0 << 6)
+> +#define MAX77620_CNFG_GPIO_DBNC_8ms		(0x1 << 6)
+> +#define MAX77620_CNFG_GPIO_DBNC_16ms		(0x2 << 6)
+> +#define MAX77620_CNFG_GPIO_DBNC_32ms		(0x3 << 6)
+> +
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE0		BIT(0)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE1		BIT(1)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE2		BIT(2)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE3		BIT(3)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE4		BIT(4)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE5		BIT(5)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE6		BIT(6)
+> +#define MAX77620_IRQ_LVL2_GPIO_EDGE7		BIT(7)
+> +
+> +#define MAX77620_CNFG1_32K_OUT0_EN		BIT(2)
+> +
+> +#define MAX77620_ONOFFCNFG1_SFT_RST		BIT(7)
+> +#define MAX77620_ONOFFCNFG1_MRT_MASK		0x38
+> +#define MAX77620_ONOFFCNFG1_MRT_SHIFT		0x3
+> +#define MAX77620_ONOFFCNFG1_SLPEN		BIT(2)
+> +#define MAX77620_ONOFFCNFG1_PWR_OFF		BIT(1)
+> +#define MAX20024_ONOFFCNFG1_CLRSE		0x18
+> +
+> +#define MAX77620_ONOFFCNFG2_SFT_RST_WK		BIT(7)
+> +#define MAX77620_ONOFFCNFG2_WD_RST_WK		BIT(6)
+> +#define MAX77620_ONOFFCNFG2_SLP_LPM_MSK		BIT(5)
+> +#define MAX77620_ONOFFCNFG2_WK_ALARM1		BIT(2)
+> +#define MAX77620_ONOFFCNFG2_WK_EN0		BIT(0)
+> +
+> +#define	MAX77620_GLBLM_MASK			BIT(0)
+
+Use one space after #define.
+
+Best regards,
+Krzysztof
+
