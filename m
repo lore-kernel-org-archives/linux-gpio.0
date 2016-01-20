@@ -1,58 +1,46 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V4 5/5] regulator: max77620: add regulator driver for
- max77620/max20024
-Date: Wed, 20 Jan 2016 14:25:59 +0900
-Message-ID: <569F1A67.8080902@samsung.com>
-References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com>
- <1453198783-28383-6-git-send-email-ldewangan@nvidia.com>
+From: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mediatek: Modify pinctrl bindings for
+ mt7623
+Date: Wed, 20 Jan 2016 17:34:54 +0800
+Message-ID: <1453282494.16515.10.camel@mtksdaap41>
+References: <1452441608-24176-1-git-send-email-blogic@openwrt.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51873 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777AbcATF0G (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 00:26:06 -0500
-In-reply-to: <1453198783-28383-6-git-send-email-ldewangan@nvidia.com>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31150 "EHLO
+	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751627AbcATJfA (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 04:35:00 -0500
+In-Reply-To: <1452441608-24176-1-git-send-email-blogic@openwrt.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, vreddytalla@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: John Crispin <blogic@openwrt.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-On 19.01.2016 19:19, Laxman Dewangan wrote:
-> MAXIM Semiconductor's PMIC, MAX77620 and MAX20024 have the
-> multiple DCDC and LDOs. This supplies the power to different
-> components of the system.
-> Also these rails has configuration for ramp time, flexible
-> power sequence, slew rate etc.
-> 
-> Add regulator driver to access these rails via regulator APIs.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
+On Sun, 2016-01-10 at 17:00 +0100, John Crispin wrote:
+> Signed-off-by: John Crispin <blogic@openwrt.org>
 > ---
-> Changes from V1:
-> - Cleanup code based on comment received on mfd/rtc.
-> - Avoid duplication on error message.
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Changes form V2:
-> - Run coccicheck and checkpatch in strict mode for the alignment.
-> - Refactor Regulator driver to use core API for DT parsing.
-> - Update based on API changes.
-> 
-> Changes from V3: 
-> - Change all sys initcall to module driver.
-> - change the max77620_read argument to unisgned int from u8.
-> 
->  drivers/regulator/Kconfig              |   9 +
->  drivers/regulator/Makefile             |   1 +
->  drivers/regulator/max77620-regulator.c | 883 +++++++++++++++++++++++++++++++++
->  3 files changed, 893 insertions(+)
->  create mode 100644 drivers/regulator/max77620-regulator.c
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> index 9ffb0b2..4fa4444 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+> @@ -5,6 +5,7 @@ The Mediatek's Pin controller is used to control SoC pins.
+>  Required properties:
+>  - compatible: value should be one of the following.
+>  	"mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
+> +	"mediatek,mt7623-pinctrl", compatible with mt7623 pinctrl.
+>  	"mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
+>  	"mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+>  	"mediatek,mt8135-pinctrl", compatible with mt8135 pinctrl.
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi John,
 
-Best regards,
-Krzysztof
+Please keep the list sorted.
+
+Joe.C
 
 
