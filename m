@@ -1,43 +1,106 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] gpio: 104-idi-48: Allow IRQ sharing
-Date: Wed, 20 Jan 2016 13:57:31 -0500
-Message-ID: <20160120185731.GA10340@sophia>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv3 2/2] gpio: sn65hvs885: Add DT binding documentation
+Date: Wed, 20 Jan 2016 16:25:54 -0600
+Message-ID: <CAL_JsqLC+DWGh90qemZzBM=3sxDqH9sZ_mLKQ9u3c0g7obK-Yw@mail.gmail.com>
+References: <1453198940-31410-1-git-send-email-sean.nyekjaer@prevas.dk>
+ <1453198940-31410-2-git-send-email-sean.nyekjaer@prevas.dk>
+ <20160119172040.GA8857@rob-hp-laptop> <569F816D.1000309@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f169.google.com ([209.85.160.169]:34948 "EHLO
-	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754772AbcATS5i (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 13:57:38 -0500
-Content-Disposition: inline
+Received: from mail.kernel.org ([198.145.29.136]:38061 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754373AbcATW0Q convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 17:26:16 -0500
+In-Reply-To: <569F816D.1000309@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Sean_Nyekj=C3=A6r?= <sean.nyekjaer@prevas.dk>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-The ACCES 104-IDI-48 can differentiate between its own and other
-devices' interrupt requests. Therefore, IRQ sharing is possible and
-should be permitted.
+On Wed, Jan 20, 2016 at 6:45 AM, Sean Nyekj=C3=A6r <sean.nyekjaer@preva=
+s.dk> wrote:
+> Hi
+>
+> Yes i need to add the gpio-controller and #gpio-cells. But i'm not ex=
+actly
+> sure what gpio-cells means and its difficult to find in documentation=
+=2E
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-idi-48.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+#*-cells are standard properties that a producer sets for clients to
+describe their connection and are necessary to know how to parse
+properties such as *-gpios in this case.
 
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index 52eed32..285a075 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -267,7 +267,8 @@ static int __init idi_48_probe(struct platform_device *pdev)
- 		goto err_gpiochip_irqchip_add;
- 	}
- 
--	err = request_irq(irq, idi_48_irq_handler, 0, name, idi48gpio);
-+	err = request_irq(irq, idi_48_irq_handler, IRQF_SHARED, name,
-+		idi48gpio);
- 	if (err) {
- 		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
- 		goto err_request_irq;
--- 
-2.4.10
+> I found this in the documentation:
+> #gpio-cells: The first cell is the GPIO number and the second cell is=
+ used
+> to specify the GPIO polarity.
+>
+> This device only supports inputs so the gpio-cells option needs to be=
+ <1>
+> or ??
+> #gpio-cells =3D <1>;
 
+Most controllers use 2 even if 2nd field is unused. You can use the
+2nd field for inputs too. For example, specify that a detect line is
+active high or low for detect.
+
+Rob
+
+>
+> /Sean
+>
+>
+> On 2016-01-19 18:20, Rob Herring wrote:
+>>
+>> On Tue, Jan 19, 2016 at 11:22:20AM +0100, Sean Nyekjaer wrote:
+>>>
+>>> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+>>> ---
+>>>   Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt | 9
+>>> +++++++++
+>>>   1 file changed, 9 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885=
+=2Etxt
+>>> b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+>>> new file mode 100644
+>>> index 0000000..56679ac
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+>>> @@ -0,0 +1,9 @@
+>>> +* TI SN65HVS885 digital-input serializer
+>>> +
+>>> +Example:
+>>> +       sn65hvs885@3 {
+>>> +               compatible =3D "sn65hvs885";
+>>> +               spi-max-frequency =3D <10000000>;
+>>> +               reg =3D <0>;
+>>
+>> What about all the standard gpio controller properties?
+>>
+>>> +       };
+>>> +
+>>> --
+>>> 2.7.0
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe devicetre=
+e" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
