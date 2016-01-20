@@ -1,80 +1,109 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 2/2] pinctrl: mediatek: Add pinctrl files for MT7623
-Date: Wed, 20 Jan 2016 17:41:23 +0800
-Message-ID: <1453282883.16515.14.camel@mtksdaap41>
-References: <1452441608-24176-1-git-send-email-blogic@openwrt.org>
-	 <1452441608-24176-2-git-send-email-blogic@openwrt.org>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 1/3] gpio: brcmstb: have driver register during subsys_initcall()
+Date: Wed, 20 Jan 2016 01:40:48 -0800
+Message-ID: <CADtm3G6kAVAiBoq63oK3pnFjvXOAwgh7cX8P2TEK2hGsXy8eJg@mail.gmail.com>
+References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
+ <1452106523-11556-2-git-send-email-f.fainelli@gmail.com> <CADtm3G7_pGdgM8EJgRzRf8j1JAJKivxzd85ie5haWP8ivZvwSg@mail.gmail.com>
+ <568EAA99.1020603@gmail.com> <CANCKTBv-jfhf=UDz5XQ1tSso3v9A80ykEqOx=KTirU_ku=GUiQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39319 "EHLO
-	mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751311AbcATJl1 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 04:41:27 -0500
-In-Reply-To: <1452441608-24176-2-git-send-email-blogic@openwrt.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36202 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751311AbcATJlS (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 04:41:18 -0500
+Received: by mail-io0-f193.google.com with SMTP id q21so1134941iod.3
+        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2016 01:41:18 -0800 (PST)
+In-Reply-To: <CANCKTBv-jfhf=UDz5XQ1tSso3v9A80ykEqOx=KTirU_ku=GUiQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: John Crispin <blogic@openwrt.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org
+To: Jim Quinlan <jim2101024@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-gpio@vger.kernel.org
 
-On Sun, 2016-01-10 at 17:00 +0100, John Crispin wrote:
-> Add the driver and header files required to make pinctrl work on MediaTek
-> MT7623.
-> 
-> Signed-off-by: John Crispin <blogic@openwrt.org>
-> ---
->  drivers/pinctrl/mediatek/Kconfig              |    5 +
->  drivers/pinctrl/mediatek/Makefile             |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mt7623.c     |  380 +++++
->  drivers/pinctrl/mediatek/pinctrl-mtk-mt7623.h | 1936 +++++++++++++++++++++++++
->  include/dt-bindings/pinctrl/mt7623-pinfunc.h  |  520 +++++++
->  5 files changed, 2842 insertions(+)
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7623.c
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt7623.h
->  create mode 100644 include/dt-bindings/pinctrl/mt7623-pinfunc.h
-> 
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 13e9939..8cc6b8a 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -13,6 +13,11 @@ config PINCTRL_MT2701
->  	bool "Mediatek MT2701 pin control" if COMPILE_TEST && !MACH_MT2701
->  	depends on OF
->  	default MACH_MT2701
-> +
-> +config PINCTRL_MT7623
-> +	bool "Mediatek MT7623 pin control" if COMPILE_TEST && !MACH_MT7623
-> +	depends on OF
-> +	default MACH_MT7623
->  	select PINCTRL_MTK_COMMON
+Hi Jim,
 
+On Tue, Jan 19, 2016 at 1:18 PM, Jim Quinlan <jim2101024@gmail.com> wrote:
+> Hi, sorry I am late to this thead.  Our brcmstb PCIe code is using
+> platform_driver_probe() which does not tolerate EPROBE_DEFER.
 
-Hi John,
+Can't that be changed?  For instance, see this changeset which was
+merged, particularly patches 3 and 4:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-August/191612.html
 
-You removed 'select PINCTRL_MTK_COMMON' form PINCTRL_MT2701. Please add
-it back.
+> Also, I
+> do not see any "cost" associated with having gpio-brcmstb.c using
+> subsys_initcall(); in fact, I see 33 gpio-*.c files that use
+> subsys_initcall().
 
-<...>
+I've been seeing some recent patches merged that remove uses of
+subsys_initcall() in favor of deferred probe.  But I acknowledge it
+may have some problems:
+- may slow boot time because it just hacks around the dependency
+problem, not really taking the required order into account
+- may waste memory for non-hotpluggable devices (like PCIe root
+complex) by requiring that the initialization functions be kept in
+memory for the case where probe must be deferred
 
+This isn't advising against using subsys_initcall() in the brcmstb
+downstream tree as a stopgap.  But I'd rather we don't contribute to
+the manual initcall mess without a very good reason, and since
+1. it sounds like there's a way to write the pcie root complex driver
+to use deferred probe,
+2. I'm not fully convinced that the cost of writing in a way to handle
+deferred probe is that high vs platform_driver_probe(), and
+3. the one driver that would benefit from this isn't being submitted
+upstream at this time,
+I don't think this patch should be applied right now.
 
-> diff --git a/include/dt-bindings/pinctrl/mt7623-pinfunc.h b/include/dt-bindings/pinctrl/mt7623-pinfunc.h
-> new file mode 100644
-> index 0000000..d8a0f2e
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/mt7623-pinfunc.h
-> @@ -0,0 +1,520 @@
-> +#ifndef __DTS_MT7623_PINFUNC_H
-> +#define __DTS_MT7623_PINFUNC_H
-> +
-> +#include <dt-bindings/pinctrl/mt65xx.h>
-> +
+Aside: It looks like there were some good ideas thrown around after
+the 2015 Kernel Summit last November for better handling of device
+dependencies: https://lwn.net/Articles/662820/ .  Not sure what's
+developed since then.
 
-<...>
+Best regards,
+Gregory
 
-This is part of dt-binding. I think it should be a separate patch or go
-with the dt-binding patch.
-
-Joe.C
-
-
+>
+> On Thu, Jan 7, 2016 at 1:12 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 06/01/16 22:05, Gregory Fong wrote:
+>>> Hello Florian and Jim,
+>>>
+>>> On Wed, Jan 6, 2016 at 10:55 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>>> From: Jim Quinlan <jim2101024@gmail.com>
+>>>>
+>>>> Because regulators are started with subsys_initcall(), and gpio references may
+>>>> be contained in the regulators, it makes sense to start the brcmstb-gpio's with
+>>>> a subsys_initcall(). The order within the drivers/Makefile ensures that the
+>>>> gpio initialization happens prior to the regulator's initialization.
+>>>>
+>>>> We need to unroll module_platform_driver() now to allow this and have custom
+>>>> exit and init module functions to control the initialization level.
+>>>
+>>> If gpio pins are needed for a regulator to come up, wouldn't it be
+>>> better to handle this using deferred probe instead of initcall-based
+>>> initialization?  Deferred probe has its problems, but I was under the
+>>> impression that it's the encouraged way to resolve these sort of
+>>> initialization order issues.
+>>
+>> To give you some more context associated with this change, we now have
+>> some boards which have GPIO-connected regulators to turn on/off PCIe
+>> endpoint devices. In the downstream kernel, and with lack of a better
+>> solution for now, we ended-up having the PCIE Root Complex driver to
+>> claim these regulator, and flip them on shortly before attempting a bus
+>> scan.
+>>
+>> If we used deferred probing, I am assuming the sequence of events could
+>> go like this:
+>>
+>> - PCIe driver gets initialized, looks for regulators, cannot get a
+>> handle on them, gets EPROBE_DEFER (arch_initcall right now)
+>> - regulator subsystem gets initialized, does not have a valid GPIO
+>> provider driver yet, returns EPROBE_DEFER (subsys_initcall)
+>> - GPIO provider (gpio-brcmstb) finally gets probed and registered,
+>> regulator get registered and available, PCIe RC driver can now use them
+>> and power on the PCIE end point (module_initcall)
+>>
+>> I suppose this might be working actually, let me go back to the white
+>> board and look at this with Jim.
+>> --
+>> Florian
