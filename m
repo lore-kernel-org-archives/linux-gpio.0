@@ -1,123 +1,552 @@
-From: Jim Quinlan <jim2101024@gmail.com>
-Subject: Re: [PATCH 1/3] gpio: brcmstb: have driver register during subsys_initcall()
-Date: Wed, 20 Jan 2016 10:30:24 -0500
-Message-ID: <CANCKTBs-TSj5n1QE=Auo5XyXskJqc-Prrmyw6xm+HNMf9RBMUA@mail.gmail.com>
-References: <1452106523-11556-1-git-send-email-f.fainelli@gmail.com>
-	<1452106523-11556-2-git-send-email-f.fainelli@gmail.com>
-	<CADtm3G7_pGdgM8EJgRzRf8j1JAJKivxzd85ie5haWP8ivZvwSg@mail.gmail.com>
-	<568EAA99.1020603@gmail.com>
-	<CANCKTBv-jfhf=UDz5XQ1tSso3v9A80ykEqOx=KTirU_ku=GUiQ@mail.gmail.com>
-	<CADtm3G6kAVAiBoq63oK3pnFjvXOAwgh7cX8P2TEK2hGsXy8eJg@mail.gmail.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4] gpio: Add GPIO support for the WinSystems WS16C48
+Date: Wed, 20 Jan 2016 13:08:56 -0500
+Message-ID: <20160120180856.GA28900@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ig0-f193.google.com ([209.85.213.193]:33085 "EHLO
-	mail-ig0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933889AbcATPaZ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 10:30:25 -0500
-Received: by mail-ig0-f193.google.com with SMTP id h5so1881684igh.0
-        for <linux-gpio@vger.kernel.org>; Wed, 20 Jan 2016 07:30:25 -0800 (PST)
-In-Reply-To: <CADtm3G6kAVAiBoq63oK3pnFjvXOAwgh7cX8P2TEK2hGsXy8eJg@mail.gmail.com>
+Received: from mail-yk0-f195.google.com ([209.85.160.195]:33247 "EHLO
+	mail-yk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934556AbcATSJG (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Jan 2016 13:09:06 -0500
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Gregory,
-I don't want to use deferred probes as I think I can move the PCIe RC
-driver to use module_platform_driver().  It originally used
-arch_initcall(), but that was for legacy reasons; in it's previous
-life it was a MIPs PCIe driver, and all of the MIPs PCIe drivers use
-arch/postcore_initcall() because of the way the Linux MIPs PCIe
-infrastructure works.  So, assuming I can do this, we do not need this
-patch.
-Thanks, Jim
+The WinSystems WS16C48 device provides 48 lines of digital I/O. In
+addition, the first 24 lines may be used for interrupt-handled edge
+detection; rising edge detection and falling edge detection are
+supported.
 
-On Wed, Jan 20, 2016 at 4:40 AM, Gregory Fong <gregory.0xf0@gmail.com> wrote:
-> Hi Jim,
->
-> On Tue, Jan 19, 2016 at 1:18 PM, Jim Quinlan <jim2101024@gmail.com> wrote:
->> Hi, sorry I am late to this thead.  Our brcmstb PCIe code is using
->> platform_driver_probe() which does not tolerate EPROBE_DEFER.
->
-> Can't that be changed?  For instance, see this changeset which was
-> merged, particularly patches 3 and 4:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-August/191612.html
->
->> Also, I
->> do not see any "cost" associated with having gpio-brcmstb.c using
->> subsys_initcall(); in fact, I see 33 gpio-*.c files that use
->> subsys_initcall().
->
-> I've been seeing some recent patches merged that remove uses of
-> subsys_initcall() in favor of deferred probe.  But I acknowledge it
-> may have some problems:
-> - may slow boot time because it just hacks around the dependency
-> problem, not really taking the required order into account
-> - may waste memory for non-hotpluggable devices (like PCIe root
-> complex) by requiring that the initialization functions be kept in
-> memory for the case where probe must be deferred
->
-> This isn't advising against using subsys_initcall() in the brcmstb
-> downstream tree as a stopgap.  But I'd rather we don't contribute to
-> the manual initcall mess without a very good reason, and since
-> 1. it sounds like there's a way to write the pcie root complex driver
-> to use deferred probe,
-> 2. I'm not fully convinced that the cost of writing in a way to handle
-> deferred probe is that high vs platform_driver_probe(), and
-> 3. the one driver that would benefit from this isn't being submitted
-> upstream at this time,
-> I don't think this patch should be applied right now.
->
-> Aside: It looks like there were some good ideas thrown around after
-> the 2015 Kernel Summit last November for better handling of device
-> dependencies: https://lwn.net/Articles/662820/ .  Not sure what's
-> developed since then.
->
-> Best regards,
-> Gregory
->
->>
->> On Thu, Jan 7, 2016 at 1:12 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>> On 06/01/16 22:05, Gregory Fong wrote:
->>>> Hello Florian and Jim,
->>>>
->>>> On Wed, Jan 6, 2016 at 10:55 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>>>> From: Jim Quinlan <jim2101024@gmail.com>
->>>>>
->>>>> Because regulators are started with subsys_initcall(), and gpio references may
->>>>> be contained in the regulators, it makes sense to start the brcmstb-gpio's with
->>>>> a subsys_initcall(). The order within the drivers/Makefile ensures that the
->>>>> gpio initialization happens prior to the regulator's initialization.
->>>>>
->>>>> We need to unroll module_platform_driver() now to allow this and have custom
->>>>> exit and init module functions to control the initialization level.
->>>>
->>>> If gpio pins are needed for a regulator to come up, wouldn't it be
->>>> better to handle this using deferred probe instead of initcall-based
->>>> initialization?  Deferred probe has its problems, but I was under the
->>>> impression that it's the encouraged way to resolve these sort of
->>>> initialization order issues.
->>>
->>> To give you some more context associated with this change, we now have
->>> some boards which have GPIO-connected regulators to turn on/off PCIe
->>> endpoint devices. In the downstream kernel, and with lack of a better
->>> solution for now, we ended-up having the PCIE Root Complex driver to
->>> claim these regulator, and flip them on shortly before attempting a bus
->>> scan.
->>>
->>> If we used deferred probing, I am assuming the sequence of events could
->>> go like this:
->>>
->>> - PCIe driver gets initialized, looks for regulators, cannot get a
->>> handle on them, gets EPROBE_DEFER (arch_initcall right now)
->>> - regulator subsystem gets initialized, does not have a valid GPIO
->>> provider driver yet, returns EPROBE_DEFER (subsys_initcall)
->>> - GPIO provider (gpio-brcmstb) finally gets probed and registered,
->>> regulator get registered and available, PCIe RC driver can now use them
->>> and power on the PCIE end point (module_initcall)
->>>
->>> I suppose this might be working actually, let me go back to the white
->>> board and look at this with Jim.
->>> --
->>> Florian
+This driver provides GPIO and IRQ support for these 48 channels of
+digital I/O. The base port address for the device may be configured via
+the ws16c48_base module parameter. The interrupt line number for the
+device may be configured via the ws16c48_irq module parameter.
+
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+Changes in v4:
+  - Return IRQ_NONE if device did not generate interrupt
+
+ MAINTAINERS                 |   6 +
+ drivers/gpio/Kconfig        |   9 +
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-ws16c48.c | 435 ++++++++++++++++++++++++++++++++++++=
+++++++++
+ 4 files changed, 451 insertions(+)
+ create mode 100644 drivers/gpio/gpio-ws16c48.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4d7d83c..1cdb661 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11659,6 +11659,12 @@ M:	David H=E4rdeman <david@hardeman.nu>
+ S:	Maintained
+ F:	drivers/media/rc/winbond-cir.c
+=20
++WINSYSTEMS WS16C48 GPIO DRIVER
++M:	William Breathitt Gray <vilhelm.gray@gmail.com>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	drivers/gpio/gpio-ws16c48.c
++
+ WIMAX STACK
+ M:	Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+ M:	linux-wimax@intel.com
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index cb212eb..b391139 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -577,6 +577,15 @@ config GPIO_TS5500
+ 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
+ 	  LCD port.
+=20
++config GPIO_WS16C48
++	tristate "WinSystems WS16C48 GPIO support"
++	select GPIOLIB_IRQCHIP
++	help
++	  Enables GPIO support for the WinSystems WS16C48. The base port addr=
+ess
++	  for the device may be configured via the ws16c48_base module
++	  parameter. The interrupt line number for the device may be configur=
+ed
++	  via the ws16c48_irq module parameter.
++
+ endmenu
+=20
+ menu "I2C GPIO expanders"
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 548e9b5..bcb6cbe 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -112,6 +112,7 @@ obj-$(CONFIG_GPIO_VX855)	+=3D gpio-vx855.o
+ obj-$(CONFIG_GPIO_WM831X)	+=3D gpio-wm831x.o
+ obj-$(CONFIG_GPIO_WM8350)	+=3D gpio-wm8350.o
+ obj-$(CONFIG_GPIO_WM8994)	+=3D gpio-wm8994.o
++obj-$(CONFIG_GPIO_WS16C48)	+=3D gpio-ws16c48.o
+ obj-$(CONFIG_GPIO_XGENE)	+=3D gpio-xgene.o
+ obj-$(CONFIG_GPIO_XGENE_SB)	+=3D gpio-xgene-sb.o
+ obj-$(CONFIG_GPIO_XILINX)	+=3D gpio-xilinx.o
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+new file mode 100644
+index 0000000..c4961fd
+--- /dev/null
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -0,0 +1,435 @@
++/*
++ * GPIO driver for the WinSystems WS16C48
++ * Copyright (C) 2016 William Breathitt Gray
++ *
++ * This program is free software; you can redistribute it and/or modif=
+y
++ * it under the terms of the GNU General Public License, version 2, as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ */
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/gpio/driver.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
++#include <linux/interrupt.h>
++#include <linux/irqdesc.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++
++static unsigned ws16c48_base;
++module_param(ws16c48_base, uint, 0);
++MODULE_PARM_DESC(ws16c48_base, "WinSystems WS16C48 base address");
++static unsigned ws16c48_irq;
++module_param(ws16c48_irq, uint, 0);
++MODULE_PARM_DESC(ws16c48_irq, "WinSystems WS16C48 interrupt line numbe=
+r");
++
++/**
++ * struct ws16c48_gpio - GPIO device private data structure
++ * @chip:	instance of the gpio_chip
++ * @io_state:	bit I/O state (whether bit is set to input or output)
++ * @out_state:	output bits state
++ * @lock:	synchronization lock to prevent I/O race conditions
++ * @irq_mask:	I/O bits affected by interrupts
++ * @flow_mask:	IRQ flow type mask for the respective I/O bits
++ * @base:	base port address of the GPIO device
++ * @extent:	extent of port address region of the GPIO device
++ * @irq:	Interrupt line number
++ */
++struct ws16c48_gpio {
++	struct gpio_chip chip;
++	unsigned char io_state[6];
++	unsigned char out_state[6];
++	spinlock_t lock;
++	unsigned long irq_mask;
++	unsigned long flow_mask;
++	unsigned base;
++	unsigned extent;
++	unsigned irq;
++};
++
++static int ws16c48_gpio_get_direction(struct gpio_chip *chip, unsigned=
+ offset)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++
++	return !!(ws16c48gpio->io_state[port] & mask);
++}
++
++static int ws16c48_gpio_direction_input(struct gpio_chip *chip, unsign=
+ed offset)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	ws16c48gpio->io_state[port] |=3D mask;
++	ws16c48gpio->out_state[port] &=3D ~mask;
++	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++
++	return 0;
++}
++
++static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
++	unsigned offset, int value)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	ws16c48gpio->io_state[port] &=3D ~mask;
++	if (value)
++		ws16c48gpio->out_state[port] |=3D mask;
++	else
++		ws16c48gpio->out_state[port] &=3D ~mask;
++	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++
++	return 0;
++}
++
++static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++	unsigned long flags;
++	unsigned port_state;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	/* ensure that GPIO is set for input */
++	if (!(ws16c48gpio->io_state[port] & mask)) {
++		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++		return -EINVAL;
++	}
++
++	port_state =3D inb(ws16c48gpio->base + port);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++
++	return !!(port_state & mask);
++}
++
++static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, =
+int value)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	/* ensure that GPIO is set for output */
++	if (ws16c48gpio->io_state[port] & mask) {
++		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++		return;
++	}
++
++	if (value)
++		ws16c48gpio->out_state[port] |=3D mask;
++	else
++		ws16c48gpio->out_state[port] &=3D ~mask;
++	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++}
++
++static void ws16c48_irq_ack(struct irq_data *data)
++{
++	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned long offset =3D irqd_to_hwirq(data);
++	const unsigned port =3D offset / 8;
++	const unsigned mask =3D BIT(offset % 8);
++	unsigned long flags;
++	unsigned port_state;
++
++	/* only the first 3 ports support interrupts */
++	if (port > 2)
++		return;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	port_state =3D ws16c48gpio->irq_mask >> (8*port);
++
++	outb(0x80, ws16c48gpio->base + 7);
++	outb(port_state & ~mask, ws16c48gpio->base + 8 + port);
++	outb(port_state | mask, ws16c48gpio->base + 8 + port);
++	outb(0xC0, ws16c48gpio->base + 7);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++}
++
++static void ws16c48_irq_mask(struct irq_data *data)
++{
++	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned long offset =3D irqd_to_hwirq(data);
++	const unsigned long mask =3D BIT(offset);
++	const unsigned port =3D offset / 8;
++	unsigned long flags;
++
++	/* only the first 3 ports support interrupts */
++	if (port > 2)
++		return;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	ws16c48gpio->irq_mask &=3D ~mask;
++
++	outb(0x80, ws16c48gpio->base + 7);
++	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port)=
+;
++	outb(0xC0, ws16c48gpio->base + 7);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++}
++
++static void ws16c48_irq_unmask(struct irq_data *data)
++{
++	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned long offset =3D irqd_to_hwirq(data);
++	const unsigned long mask =3D BIT(offset);
++	const unsigned port =3D offset / 8;
++	unsigned long flags;
++
++	/* only the first 3 ports support interrupts */
++	if (port > 2)
++		return;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	ws16c48gpio->irq_mask |=3D mask;
++
++	outb(0x80, ws16c48gpio->base + 7);
++	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port)=
+;
++	outb(0xC0, ws16c48gpio->base + 7);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++}
++
++static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_t=
+ype)
++{
++	struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
++	struct ws16c48_gpio *const ws16c48gpio =3D gpiochip_get_data(chip);
++	const unsigned long offset =3D irqd_to_hwirq(data);
++	const unsigned long mask =3D BIT(offset);
++	const unsigned port =3D offset / 8;
++	unsigned long flags;
++
++	/* only the first 3 ports support interrupts */
++	if (port > 2)
++		return -EINVAL;
++
++	spin_lock_irqsave(&ws16c48gpio->lock, flags);
++
++	switch (flow_type) {
++	case IRQ_TYPE_NONE:
++		break;
++	case IRQ_TYPE_EDGE_RISING:
++		ws16c48gpio->flow_mask |=3D mask;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		ws16c48gpio->flow_mask &=3D ~mask;
++		break;
++	default:
++		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++		return -EINVAL;
++	}
++
++	outb(0x40, ws16c48gpio->base + 7);
++	outb(ws16c48gpio->flow_mask >> (8*port), ws16c48gpio->base + 8 + port=
+);
++	outb(0xC0, ws16c48gpio->base + 7);
++
++	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
++
++	return 0;
++}
++
++static struct irq_chip ws16c48_irqchip =3D {
++	.name =3D "ws16c48",
++	.irq_ack =3D ws16c48_irq_ack,
++	.irq_mask =3D ws16c48_irq_mask,
++	.irq_unmask =3D ws16c48_irq_unmask,
++	.irq_set_type =3D ws16c48_irq_set_type
++};
++
++static irqreturn_t ws16c48_irq_handler(int irq, void *dev_id)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D dev_id;
++	struct gpio_chip *const chip =3D &ws16c48gpio->chip;
++	unsigned long int_pending;
++	unsigned long port;
++	unsigned long int_id;
++	unsigned long gpio;
++
++	int_pending =3D inb(ws16c48gpio->base + 6) & 0x7;
++	if (!int_pending)
++		return IRQ_NONE;
++
++	/* loop until all pending interrupts are handled */
++	do {
++		for_each_set_bit(port, &int_pending, 3) {
++			int_id =3D inb(ws16c48gpio->base + 8 + port);
++			for_each_set_bit(gpio, &int_id, 8)
++				generic_handle_irq(irq_find_mapping(
++					chip->irqdomain, gpio + 8*port));
++		}
++
++		int_pending =3D inb(ws16c48gpio->base + 6) & 0x7;
++	} while (int_pending);
++
++	return IRQ_HANDLED;
++}
++
++static int __init ws16c48_probe(struct platform_device *pdev)
++{
++	struct device *dev =3D &pdev->dev;
++	struct ws16c48_gpio *ws16c48gpio;
++	const unsigned base =3D ws16c48_base;
++	const unsigned extent =3D 16;
++	const char *const name =3D dev_name(dev);
++	int err;
++	const unsigned irq =3D ws16c48_irq;
++
++	ws16c48gpio =3D devm_kzalloc(dev, sizeof(*ws16c48gpio), GFP_KERNEL);
++	if (!ws16c48gpio)
++		return -ENOMEM;
++
++	if (!request_region(base, extent, name)) {
++		dev_err(dev, "Unable to lock %s port addresses (0x%X-0x%X)\n",
++			name, base, base + extent);
++		err =3D -EBUSY;
++		goto err_lock_io_port;
++	}
++
++	ws16c48gpio->chip.label =3D name;
++	ws16c48gpio->chip.parent =3D dev;
++	ws16c48gpio->chip.owner =3D THIS_MODULE;
++	ws16c48gpio->chip.base =3D -1;
++	ws16c48gpio->chip.ngpio =3D 48;
++	ws16c48gpio->chip.get_direction =3D ws16c48_gpio_get_direction;
++	ws16c48gpio->chip.direction_input =3D ws16c48_gpio_direction_input;
++	ws16c48gpio->chip.direction_output =3D ws16c48_gpio_direction_output;
++	ws16c48gpio->chip.get =3D ws16c48_gpio_get;
++	ws16c48gpio->chip.set =3D ws16c48_gpio_set;
++	ws16c48gpio->base =3D base;
++	ws16c48gpio->extent =3D extent;
++	ws16c48gpio->irq =3D irq;
++
++	spin_lock_init(&ws16c48gpio->lock);
++
++	dev_set_drvdata(dev, ws16c48gpio);
++
++	err =3D gpiochip_add_data(&ws16c48gpio->chip, ws16c48gpio);
++	if (err) {
++		dev_err(dev, "GPIO registering failed (%d)\n", err);
++		goto err_gpio_register;
++	}
++
++	/* Disable IRQ by default */
++	outb(0x80, base + 7);
++	outb(0, base + 8);
++	outb(0, base + 9);
++	outb(0, base + 10);
++	outb(0xC0, base + 7);
++
++	err =3D gpiochip_irqchip_add(&ws16c48gpio->chip, &ws16c48_irqchip, 0,
++		handle_edge_irq, IRQ_TYPE_NONE);
++	if (err) {
++		dev_err(dev, "Could not add irqchip (%d)\n", err);
++		goto err_gpiochip_irqchip_add;
++	}
++
++	err =3D request_irq(irq, ws16c48_irq_handler, 0, name, ws16c48gpio);
++	if (err) {
++		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
++		goto err_request_irq;
++	}
++
++	return 0;
++
++err_request_irq:
++err_gpiochip_irqchip_add:
++	gpiochip_remove(&ws16c48gpio->chip);
++err_gpio_register:
++	release_region(base, extent);
++err_lock_io_port:
++	return err;
++}
++
++static int ws16c48_remove(struct platform_device *pdev)
++{
++	struct ws16c48_gpio *const ws16c48gpio =3D platform_get_drvdata(pdev)=
+;
++
++	free_irq(ws16c48gpio->irq, ws16c48gpio);
++	gpiochip_remove(&ws16c48gpio->chip);
++	release_region(ws16c48gpio->base, ws16c48gpio->extent);
++
++	return 0;
++}
++
++static struct platform_device *ws16c48_device;
++
++static struct platform_driver ws16c48_driver =3D {
++	.driver =3D {
++		.name =3D "ws16c48"
++	},
++	.remove =3D ws16c48_remove
++};
++
++static void __exit ws16c48_exit(void)
++{
++	platform_device_unregister(ws16c48_device);
++	platform_driver_unregister(&ws16c48_driver);
++}
++
++static int __init ws16c48_init(void)
++{
++	int err;
++
++	ws16c48_device =3D platform_device_alloc(ws16c48_driver.driver.name, =
+-1);
++	if (!ws16c48_device)
++		return -ENOMEM;
++
++	err =3D platform_device_add(ws16c48_device);
++	if (err)
++		goto err_platform_device;
++
++	err =3D platform_driver_probe(&ws16c48_driver, ws16c48_probe);
++	if (err)
++		goto err_platform_driver;
++
++	return 0;
++
++err_platform_driver:
++	platform_device_del(ws16c48_device);
++err_platform_device:
++	platform_device_put(ws16c48_device);
++	return err;
++}
++
++module_init(ws16c48_init);
++module_exit(ws16c48_exit);
++
++MODULE_AUTHOR("William Breathitt Gray <vilhelm.gray@gmail.com>");
++MODULE_DESCRIPTION("WinSystems WS16C48 GPIO driver");
++MODULE_LICENSE("GPL");
+--=20
+2.4.10
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
