@@ -1,42 +1,73 @@
-From: Peter Hung <hpeter@gmail.com>
-Subject: Re: [PATCH V2 1/1] gpio-f7188x: Add F81866 GPIO supports
-Date: Fri, 22 Jan 2016 17:45:20 +0800
-Message-ID: <56A1FA30.6030506@gmail.com>
-References: <1453447413-25290-1-git-send-email-hpeter+linux_kernel@gmail.com>
- <1453447413-25290-2-git-send-email-hpeter+linux_kernel@gmail.com>
- <20160122085823.GA4976@kw.sim.vm.gnt>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V4 2/5] mfd: max77620: add core driver for MAX77620/MAX20024
+Date: Fri, 22 Jan 2016 17:09:23 +0530
+Message-ID: <56A214EB.30905@nvidia.com>
+References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com> <1453198783-28383-3-git-send-email-ldewangan@nvidia.com> <569F199D.9020207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36312 "EHLO
-	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752502AbcAVJpV (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2016 04:45:21 -0500
-In-Reply-To: <20160122085823.GA4976@kw.sim.vm.gnt>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2927 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752733AbcAVLuJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2016 06:50:09 -0500
+In-Reply-To: <569F199D.9020207@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Simon Guinot <simon.guinot@sequanux.org>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, vreddytalla@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-Hi Simon,
+Thanks Krzysztof for review.
 
-Simon Guinot =E6=96=BC 2016/1/22 =E4=B8=8B=E5=8D=88 04:58 =E5=AF=AB=E9=81=
-=93:
-> On Fri, Jan 22, 2016 at 03:23:33PM +0800, Peter Hung wrote:
-> Acked-by: Simon Guinot <simon.guinot@sequanux.org>
+Hi Lee,
+Are you taking the patches from your tree? Or will go in individual 
+subsystem?
+
+Thanks,
+Laxman
+
+
+On Wednesday 20 January 2016 10:52 AM, Krzysztof Kozlowski wrote:
+> On 19.01.2016 19:19, Laxman Dewangan wrote:
+>> MAX77620/MAX20024 are Power Management IC from the MAXIM.
+>> It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
+>> watchdog, clock etc.
+>>
+>> Add MFD drier to provides common support for accessing the
+>> device; additional drivers is developed on respected subsystem
+>> in order to use the functionality of the device.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> Signed-off-by: Chaitanya Bandi <bandik@nvidia.com>
+>> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
+>> ---
+>> Changes from V1:
+>> - Code cleanups per review from V1.
+>> - Move register acccess APIs from header to c file.
+>> - Remove some of non required variable, remove duplication in error message
+>>   and simplify some of function implementation.
+>> - Register RTC driver such that it can get the regmap handle form parent device
+>>
+>> Changes from V2:
+>> - Run coccicheck and checkpatch in strict mode for the alignment.
+>> - Drop RTC driver and its i2c client registration.
+>>
+>> Changes from V3:
+>> - Change all sys initcall to module driver.
+>> - change the max77620_read argument to unisgned int from u8.
+>>
+>>   drivers/mfd/Kconfig          |  15 +
+>>   drivers/mfd/Makefile         |   1 +
+>>   drivers/mfd/max77620.c       | 871 +++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/mfd/max77620.h | 404 ++++++++++++++++++++
+>>   4 files changed, 1291 insertions(+)
+>>   create mode 100644 drivers/mfd/max77620.c
+>>   create mode 100644 include/linux/mfd/max77620.h
+>>
 >
-> Thanks,
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>
+> Best regards,
+> Krzysztof
 >
 
-Should I resend patch V3 to add Acked-by?
-
---=20
-With Best Regards,
-Peter Hung
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
