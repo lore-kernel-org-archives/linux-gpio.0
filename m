@@ -1,73 +1,51 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V4 2/5] mfd: max77620: add core driver for MAX77620/MAX20024
-Date: Fri, 22 Jan 2016 17:09:23 +0530
-Message-ID: <56A214EB.30905@nvidia.com>
-References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com> <1453198783-28383-3-git-send-email-ldewangan@nvidia.com> <569F199D.9020207@samsung.com>
+From: Per Hallsmark <wr.phallsma@gmail.com>
+Subject: [PATCH] gpio: minor correction in docs
+Date: Fri, 22 Jan 2016 13:21:52 +0100
+Message-ID: <CAERD_i1J_y5vmqKnXh_tcArYyoNf1vBQdR_R9LM_hNO+NoDzGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=001a11442feaa130700529eb4343
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2927 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752733AbcAVLuJ (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2016 06:50:09 -0500
-In-Reply-To: <569F199D.9020207@samsung.com>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36680 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752812AbcAVMVx (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2016 07:21:53 -0500
+Received: by mail-wm0-f41.google.com with SMTP id l65so258807008wmf.1
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2016 04:21:52 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, vreddytalla@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: linux-gpio@vger.kernel.org
 
-Thanks Krzysztof for review.
+--001a11442feaa130700529eb4343
+Content-Type: text/plain; charset=UTF-8
 
-Hi Lee,
-Are you taking the patches from your tree? Or will go in individual 
-subsystem?
+Since the doc example talk about two ranges of 10 gpio pins, I guess
+the gpio-ranges count should be 10 in both definitions?
 
-Thanks,
-Laxman
+/Per
 
+--001a11442feaa130700529eb4343
+Content-Type: text/x-patch; charset=US-ASCII;
+	name="0001-gpio-minor-correction-in-docs.patch"
+Content-Disposition: attachment;
+	filename="0001-gpio-minor-correction-in-docs.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_ijpnnffg0
 
-On Wednesday 20 January 2016 10:52 AM, Krzysztof Kozlowski wrote:
-> On 19.01.2016 19:19, Laxman Dewangan wrote:
->> MAX77620/MAX20024 are Power Management IC from the MAXIM.
->> It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
->> watchdog, clock etc.
->>
->> Add MFD drier to provides common support for accessing the
->> device; additional drivers is developed on respected subsystem
->> in order to use the functionality of the device.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->> Signed-off-by: Chaitanya Bandi <bandik@nvidia.com>
->> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
->> ---
->> Changes from V1:
->> - Code cleanups per review from V1.
->> - Move register acccess APIs from header to c file.
->> - Remove some of non required variable, remove duplication in error message
->>   and simplify some of function implementation.
->> - Register RTC driver such that it can get the regmap handle form parent device
->>
->> Changes from V2:
->> - Run coccicheck and checkpatch in strict mode for the alignment.
->> - Drop RTC driver and its i2c client registration.
->>
->> Changes from V3:
->> - Change all sys initcall to module driver.
->> - change the max77620_read argument to unisgned int from u8.
->>
->>   drivers/mfd/Kconfig          |  15 +
->>   drivers/mfd/Makefile         |   1 +
->>   drivers/mfd/max77620.c       | 871 +++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/mfd/max77620.h | 404 ++++++++++++++++++++
->>   4 files changed, 1291 insertions(+)
->>   create mode 100644 drivers/mfd/max77620.c
->>   create mode 100644 include/linux/mfd/max77620.h
->>
->
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->
-> Best regards,
-> Krzysztof
->
-
+RnJvbSA0OTc1OWU4NWMzMGRhZTU4ODRlZmQ5NzlmMDNiZTQ3NWU3NmVkN2Q2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBQZXIgSGFsbHNtYXJrIDxwZXIuaGFsbHNtYXJrQHdpbmRyaXZl
+ci5jb20+CkRhdGU6IEZyaSwgMjIgSmFuIDIwMTYgMTA6NTE6MTQgKzAxMDAKU3ViamVjdDogW1BB
+VENIXSBncGlvOiBtaW5vciBjb3JyZWN0aW9uIGluIGRvY3MKClNpZ25lZC1vZmYtYnk6IFBlciBI
+YWxsc21hcmsgPHBlci5oYWxsc21hcmtAd2luZHJpdmVyLmNvbT4KLS0tCiBEb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9ncGlvLnR4dCB8IDIgKy0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8udHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQKaW5kZXggMDY5Y2RmNi4uYWQzZDY0YiAxMDA2
+NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQK
+KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQKQEAg
+LTI1Miw3ICsyNTIsNyBAQCBFeGFtcGxlIDE6CiAJCWNvbXBhdGlibGUgPSAiZnNsLHFlLXBhcmlv
+LWJhbmstZSIsICJmc2wscWUtcGFyaW8tYmFuayI7CiAJCXJlZyA9IDwweDE0NjAgMHgxOD47CiAJ
+CWdwaW8tY29udHJvbGxlcjsKLQkJZ3Bpby1yYW5nZXMgPSA8JnBpbmN0cmwxIDAgMjAgMTA+LCA8
+JnBpbmN0cmwyIDEwIDUwIDIwPjsKKwkJZ3Bpby1yYW5nZXMgPSA8JnBpbmN0cmwxIDAgMjAgMTA+
+LCA8JnBpbmN0cmwyIDEwIDUwIDEwPjsKIAl9OwogCiBIZXJlLCBhIHNpbmdsZSBHUElPIGNvbnRy
+b2xsZXIgaGFzIEdQSU9zIDAuLjkgcm91dGVkIHRvIHBpbiBjb250cm9sbGVyCi0tIAoyLjUuMAoK
+--001a11442feaa130700529eb4343--
