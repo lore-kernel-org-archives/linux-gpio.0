@@ -1,51 +1,62 @@
-From: Per Hallsmark <wr.phallsma@gmail.com>
-Subject: [PATCH] gpio: minor correction in docs
-Date: Fri, 22 Jan 2016 13:21:52 +0100
-Message-ID: <CAERD_i1J_y5vmqKnXh_tcArYyoNf1vBQdR_R9LM_hNO+NoDzGw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 2/2] gpio: sn65hvs885: Add DT binding documentation
+Date: Fri, 22 Jan 2016 10:01:35 -0600
+Message-ID: <20160122160135.GA12320@rob-hp-laptop>
+References: <1453358496-4902-1-git-send-email-sean.nyekjaer@prevas.dk>
+ <1453358496-4902-2-git-send-email-sean.nyekjaer@prevas.dk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a11442feaa130700529eb4343
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:36680 "EHLO
-	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752812AbcAVMVx (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Jan 2016 07:21:53 -0500
-Received: by mail-wm0-f41.google.com with SMTP id l65so258807008wmf.1
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Jan 2016 04:21:52 -0800 (PST)
+Received: from mail.kernel.org ([198.145.29.136]:37905 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753459AbcAVQBs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Fri, 22 Jan 2016 11:01:48 -0500
+Content-Disposition: inline
+In-Reply-To: <1453358496-4902-2-git-send-email-sean.nyekjaer@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
---001a11442feaa130700529eb4343
-Content-Type: text/plain; charset=UTF-8
+On Thu, Jan 21, 2016 at 07:41:36AM +0100, Sean Nyekjaer wrote:
+> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+> ---
+> Changes since v3:
+> - Added gpio-controller and gpio cells flags
+> 
+>  Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> new file mode 100644
+> index 0000000..6d99c9e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> @@ -0,0 +1,11 @@
+> +* TI SN65HVS885 digital-input serializer
+> +
+> +Example:
 
-Since the doc example talk about two ranges of 10 gpio pins, I guess
-the gpio-ranges count should be 10 in both definitions?
+The example does not serve as documentation. You need to list the 
+properties and allowed values, required vs. optional, and point to 
+common bindings you are using as appropriate (i.e. gpio).
 
-/Per
+> +	sn65hvs885@3 {
+> +		compatible = "sn65hvs885";
 
---001a11442feaa130700529eb4343
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0001-gpio-minor-correction-in-docs.patch"
-Content-Disposition: attachment;
-	filename="0001-gpio-minor-correction-in-docs.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_ijpnnffg0
+Also, this needs a vendor prefix, so "ti,sn65hvs885".
 
-RnJvbSA0OTc1OWU4NWMzMGRhZTU4ODRlZmQ5NzlmMDNiZTQ3NWU3NmVkN2Q2IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBQZXIgSGFsbHNtYXJrIDxwZXIuaGFsbHNtYXJrQHdpbmRyaXZl
-ci5jb20+CkRhdGU6IEZyaSwgMjIgSmFuIDIwMTYgMTA6NTE6MTQgKzAxMDAKU3ViamVjdDogW1BB
-VENIXSBncGlvOiBtaW5vciBjb3JyZWN0aW9uIGluIGRvY3MKClNpZ25lZC1vZmYtYnk6IFBlciBI
-YWxsc21hcmsgPHBlci5oYWxsc21hcmtAd2luZHJpdmVyLmNvbT4KLS0tCiBEb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9ncGlvLnR4dCB8IDIgKy0KIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8udHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQKaW5kZXggMDY5Y2RmNi4uYWQzZDY0YiAxMDA2
-NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQK
-KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZ3Bpby50eHQKQEAg
-LTI1Miw3ICsyNTIsNyBAQCBFeGFtcGxlIDE6CiAJCWNvbXBhdGlibGUgPSAiZnNsLHFlLXBhcmlv
-LWJhbmstZSIsICJmc2wscWUtcGFyaW8tYmFuayI7CiAJCXJlZyA9IDwweDE0NjAgMHgxOD47CiAJ
-CWdwaW8tY29udHJvbGxlcjsKLQkJZ3Bpby1yYW5nZXMgPSA8JnBpbmN0cmwxIDAgMjAgMTA+LCA8
-JnBpbmN0cmwyIDEwIDUwIDIwPjsKKwkJZ3Bpby1yYW5nZXMgPSA8JnBpbmN0cmwxIDAgMjAgMTA+
-LCA8JnBpbmN0cmwyIDEwIDUwIDEwPjsKIAl9OwogCiBIZXJlLCBhIHNpbmdsZSBHUElPIGNvbnRy
-b2xsZXIgaGFzIEdQSU9zIDAuLjkgcm91dGVkIHRvIHBpbiBjb250cm9sbGVyCi0tIAoyLjUuMAoK
---001a11442feaa130700529eb4343--
+> +		spi-max-frequency = <10000000>;
+> +		reg = <0>;
+> +		gpio-controller;
+> +		#gpio-cells = <1>;
+> +	};
+> +
+> -- 
+> 2.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
