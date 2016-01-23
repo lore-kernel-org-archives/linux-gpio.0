@@ -1,62 +1,60 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 2/2] gpio: sn65hvs885: Add DT binding documentation
-Date: Fri, 22 Jan 2016 10:01:35 -0600
-Message-ID: <20160122160135.GA12320@rob-hp-laptop>
-References: <1453358496-4902-1-git-send-email-sean.nyekjaer@prevas.dk>
- <1453358496-4902-2-git-send-email-sean.nyekjaer@prevas.dk>
+From: Simon Guinot <simon.guinot@sequanux.org>
+Subject: Re: [PATCH V2 1/1] gpio-f7188x: Add F81866 GPIO supports
+Date: Sat, 23 Jan 2016 13:16:43 +0100
+Message-ID: <20160123121643.GC4976@kw.sim.vm.gnt>
+References: <1453447413-25290-1-git-send-email-hpeter+linux_kernel@gmail.com>
+ <1453447413-25290-2-git-send-email-hpeter+linux_kernel@gmail.com>
+ <20160122085823.GA4976@kw.sim.vm.gnt>
+ <56A1FA30.6030506@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+xNpyl7Qekk2NvDX"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:37905 "EHLO mail.kernel.org"
+Received: from vm1.sequanux.org ([188.165.36.56]:60069 "EHLO vm1.sequanux.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753459AbcAVQBs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Fri, 22 Jan 2016 11:01:48 -0500
+	id S1751739AbcAWMQr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Sat, 23 Jan 2016 07:16:47 -0500
 Content-Disposition: inline
-In-Reply-To: <1453358496-4902-2-git-send-email-sean.nyekjaer@prevas.dk>
+In-Reply-To: <56A1FA30.6030506@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+To: Peter Hung <hpeter@gmail.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-On Thu, Jan 21, 2016 at 07:41:36AM +0100, Sean Nyekjaer wrote:
-> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-> ---
-> Changes since v3:
-> - Added gpio-controller and gpio cells flags
-> 
->  Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
-> new file mode 100644
-> index 0000000..6d99c9e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
-> @@ -0,0 +1,11 @@
-> +* TI SN65HVS885 digital-input serializer
-> +
-> +Example:
 
-The example does not serve as documentation. You need to list the 
-properties and allowed values, required vs. optional, and point to 
-common bindings you are using as appropriate (i.e. gpio).
+--+xNpyl7Qekk2NvDX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	sn65hvs885@3 {
-> +		compatible = "sn65hvs885";
+On Fri, Jan 22, 2016 at 05:45:20PM +0800, Peter Hung wrote:
+> Hi Simon,
+>=20
+> Simon Guinot =E6=96=BC 2016/1/22 =E4=B8=8B=E5=8D=88 04:58 =E5=AF=AB=E9=81=
+=93:
+> >On Fri, Jan 22, 2016 at 03:23:33PM +0800, Peter Hung wrote:
+> >Acked-by: Simon Guinot <simon.guinot@sequanux.org>
+> >
+> >Thanks,
+> >
+>=20
+> Should I resend patch V3 to add Acked-by?
 
-Also, this needs a vendor prefix, so "ti,sn65hvs885".
+Hi Peter,
 
-> +		spi-max-frequency = <10000000>;
-> +		reg = <0>;
-> +		gpio-controller;
-> +		#gpio-cells = <1>;
-> +	};
-> +
-> -- 
-> 2.7.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I am pretty sure that Linus will add it while applying the patch.
+
+Simon
+
+--+xNpyl7Qekk2NvDX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlajbysACgkQgtp0PDeOcDobqwCeLnWktqBx0ZMLW1bYRqeFImqh
+ITwAoIS6vXfCFuT4VsFHbsUzf6wqLiv8
+=x24M
+-----END PGP SIGNATURE-----
+
+--+xNpyl7Qekk2NvDX--
