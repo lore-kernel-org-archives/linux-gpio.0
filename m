@@ -1,96 +1,70 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
-Date: Sun, 24 Jan 2016 00:33:24 +0900
-Message-ID: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Antoine Tenart <antoine.tenart@free-electrons.com>
+Subject: [PATCH 1/3] gpio: gpio-ich: add support for Intel Baytrail
+Date: Sat, 23 Jan 2016 17:32:07 +0100
+Message-ID: <1453566729-30220-2-git-send-email-antoine.tenart@free-electrons.com>
+References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:34699 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753554AbcAWQcM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Jan 2016 11:32:12 -0500
+In-Reply-To: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: ptyser@xes-inc.com
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
-to guard the drivers/pinctrl/mediatek/ directory.
-(I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
+This patch adds support for the Braytrail series, with the hardware
+blink capability.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
 ---
+ drivers/gpio/gpio-ich.c     | 12 ++++++++++++
+ include/linux/mfd/lpc_ich.h |  1 +
+ 2 files changed, 13 insertions(+)
 
- drivers/pinctrl/Makefile          |  2 +-
- drivers/pinctrl/mediatek/Kconfig  | 10 +++++-----
- drivers/pinctrl/mediatek/Makefile | 10 +++++-----
- 3 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 63a6f0b..ab512c4 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -48,4 +48,4 @@ obj-$(CONFIG_PINCTRL_SPEAR)	+= spear/
- obj-$(CONFIG_PINCTRL_SUNXI)	+= sunxi/
- obj-$(CONFIG_PINCTRL_UNIPHIER)	+= uniphier/
- obj-$(CONFIG_ARCH_VT8500)	+= vt8500/
--obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/
-+obj-$(CONFIG_PINCTRL_MTK)	+= mediatek/
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 02f6f92..3cfa705 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -1,6 +1,6 @@
- if ARCH_MEDIATEK || COMPILE_TEST
+diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
+index 4ba7ed502131..6f5fcae32855 100644
+--- a/drivers/gpio/gpio-ich.c
++++ b/drivers/gpio/gpio-ich.c
+@@ -384,6 +384,15 @@ static struct ichx_desc avoton_desc = {
+ 	.use_outlvl_cache = true,
+ };
  
--config PINCTRL_MTK_COMMON
-+config PINCTRL_MTK
- 	bool
- 	depends on OF
- 	select PINMUX
-@@ -13,13 +13,13 @@ config PINCTRL_MT8135
- 	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
- 	depends on OF
- 	default MACH_MT8135
--	select PINCTRL_MTK_COMMON
-+	select PINCTRL_MTK
++/* Baytrail */
++static struct ichx_desc baytrail_desc = {
++	.ngpio = 96,
++	.regs = ichx_regs,
++	.reglen = ichx_reglen,
++	.have_blink = true,
++	.use_outlvl_cache = true,
++};
++
+ static int ichx_gpio_request_regions(struct resource *res_base,
+ 						const char *name, u8 use_gpio)
+ {
+@@ -461,6 +470,9 @@ static int ichx_gpio_probe(struct platform_device *pdev)
+ 	case AVOTON_GPIO:
+ 		ichx_priv.desc = &avoton_desc;
+ 		break;
++	case ICH_BAYTRAIL_GPIO:
++		ichx_priv.desc = &baytrail_desc;
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+diff --git a/include/linux/mfd/lpc_ich.h b/include/linux/mfd/lpc_ich.h
+index 2b300b44f994..659a1cd875d8 100644
+--- a/include/linux/mfd/lpc_ich.h
++++ b/include/linux/mfd/lpc_ich.h
+@@ -34,6 +34,7 @@ enum {
+ 	ICH_V10CORP_GPIO,
+ 	ICH_V10CONS_GPIO,
+ 	AVOTON_GPIO,
++	ICH_BAYTRAIL_GPIO,
+ };
  
- config PINCTRL_MT8127
- 	bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
- 	depends on OF
- 	default MACH_MT8127
--	select PINCTRL_MTK_COMMON
-+	select PINCTRL_MTK
- 
- # For ARMv8 SoCs
- config PINCTRL_MT8173
-@@ -27,13 +27,13 @@ config PINCTRL_MT8173
- 	depends on OF
- 	depends on ARM64 || COMPILE_TEST
- 	default ARM64 && ARCH_MEDIATEK
--	select PINCTRL_MTK_COMMON
-+	select PINCTRL_MTK
- 
- # For PMIC
- config PINCTRL_MT6397
- 	bool "Mediatek MT6397 pin control" if COMPILE_TEST && !MFD_MT6397
- 	depends on OF
- 	default MFD_MT6397
--	select PINCTRL_MTK_COMMON
-+	select PINCTRL_MTK
- 
- endif
-diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
-index eb923d6..2419ce5 100644
---- a/drivers/pinctrl/mediatek/Makefile
-+++ b/drivers/pinctrl/mediatek/Makefile
-@@ -1,8 +1,8 @@
- # Core
--obj-$(CONFIG_PINCTRL_MTK_COMMON)	+= pinctrl-mtk-common.o
-+obj-y				+= pinctrl-mtk-common.o
- 
- # SoC Drivers
--obj-$(CONFIG_PINCTRL_MT8135)		+= pinctrl-mt8135.o
--obj-$(CONFIG_PINCTRL_MT8127)		+= pinctrl-mt8127.o
--obj-$(CONFIG_PINCTRL_MT8173)		+= pinctrl-mt8173.o
--obj-$(CONFIG_PINCTRL_MT6397)		+= pinctrl-mt6397.o
-+obj-$(CONFIG_PINCTRL_MT8135)	+= pinctrl-mt8135.o
-+obj-$(CONFIG_PINCTRL_MT8127)	+= pinctrl-mt8127.o
-+obj-$(CONFIG_PINCTRL_MT8173)	+= pinctrl-mt8173.o
-+obj-$(CONFIG_PINCTRL_MT6397)	+= pinctrl-mt6397.o
+ struct lpc_ich_info {
 -- 
-1.9.1
+2.7.0
+
