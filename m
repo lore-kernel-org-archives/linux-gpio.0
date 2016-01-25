@@ -1,37 +1,34 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V4 2/5] mfd: max77620: add core driver for MAX77620/MAX20024
-Date: Mon, 25 Jan 2016 16:50:35 +0530
-Message-ID: <56A60503.1050004@nvidia.com>
-References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com> <1453198783-28383-3-git-send-email-ldewangan@nvidia.com> <569F199D.9020207@samsung.com> <56A214EB.30905@nvidia.com> <20160125112936.GB3368@x1>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 0/3] gpio: Intel Baytrail support
+Date: Mon, 25 Jan 2016 13:49:03 +0200
+Message-ID: <20160125114903.GE1790@lahna.fi.intel.com>
+References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12787 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756564AbcAYLb3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2016 06:31:29 -0500
-In-Reply-To: <20160125112936.GB3368@x1>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Antoine Tenart <antoine.tenart@free-electrons.com>
+Cc: ptyser@xes-inc.com, lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mathias Nyman <mathias.nyman@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, vreddytalla@nvidia.com, Chaitanya Bandi <bandik@nvidia.com>, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
+On Sat, Jan 23, 2016 at 05:32:06PM +0100, Antoine Tenart wrote:
+> This series introduces the GPIO Intel Baytrail support, using both the
+> lpc ich and the gpio ich drivers.
+> 
+> Antoine Tenart (3):
+>   gpio: gpio-ich: add support for Intel Baytrail
 
-On Monday 25 January 2016 04:59 PM, Lee Jones wrote:
-> On Fri, 22 Jan 2016, Laxman Dewangan wrote:
->
->> Thanks Krzysztof for review.
->>
->> Hi Lee,
->> Are you taking the patches from your tree? Or will go in individual
->> subsystem?
-> I can take the set if there are build dependencies.  If there aren't,
-> then they should be routed via their respective subsystem trees.
->
->
+Intel Baytrail support has been in mainline kernel for quite some time
+already. The driver is drivers/pintctrl/intel/pinctrl-baytrail.c.
 
-All drivers include the header of max77620 which is part of mfd patch. 
-Hence it has build dependency.
-However, config of sub module will only be enabled if MFD config enabled.
+Also the ICH GPIO block is not compatible to Baytrail which is why there
+is a separate driver in the first place. Have you tested this series on
+Baytrail?
 
+>   mfd: lpc_ich: use a correct mask for the GPIO base address
+>   mfd: lpc_ich: add GPIO support for Baytrail
+
+All Baytrails I've seen expose the GPIO device via ACPI namespace so
+there should be no need for the above two patches.
