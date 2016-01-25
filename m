@@ -1,63 +1,89 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: sunxi: guard sub-directory with
- CONFIG_PINCTRL_SUNXI
-Date: Mon, 25 Jan 2016 10:27:03 +0100
-Message-ID: <20160125092703.GK7908@lukather>
-References: <1453563129-30332-1-git-send-email-yamada.masahiro@socionext.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V4 2/5] mfd: max77620: add core driver for
+ MAX77620/MAX20024
+Date: Mon, 25 Jan 2016 11:29:36 +0000
+Message-ID: <20160125112936.GB3368@x1>
+References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com>
+ <1453198783-28383-3-git-send-email-ldewangan@nvidia.com>
+ <569F199D.9020207@samsung.com>
+ <56A214EB.30905@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/rDaUNvWv5XYRSKj"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1453563129-30332-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <56A214EB.30905-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vreddytalla-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mallikarjun Kasoju <mkasoju-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, 22 Jan 2016, Laxman Dewangan wrote:
 
---/rDaUNvWv5XYRSKj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jan 24, 2016 at 12:32:09AM +0900, Masahiro Yamada wrote:
-> CONFIG_PINCTRL_SUNXI is more suitable than CONFIG_ARCH_SUNXI
-> to guard the drivers/pinctrl/sunxi/ directory.
-> (I renamed CONFIG_PINCTRL_SUNXI_COMMON to CONFIG_PINCTRL_SUNXI.)
+> Thanks Krzysztof for review.
 >=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Hi Lee,
+> Are you taking the patches from your tree? Or will go in individual
+> subsystem?
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+I can take the set if there are build dependencies.  If there aren't,
+then they should be routed via their respective subsystem trees.
 
-Thanks!
-Maxime
+> On Wednesday 20 January 2016 10:52 AM, Krzysztof Kozlowski wrote:
+> >On 19.01.2016 19:19, Laxman Dewangan wrote:
+> >>MAX77620/MAX20024 are Power Management IC from the MAXIM.
+> >>It supports RTC, multiple GPIOs, multiple DCDC and LDOs,
+> >>watchdog, clock etc.
+> >>
+> >>Add MFD drier to provides common support for accessing the
+> >>device; additional drivers is developed on respected subsystem
+> >>in order to use the functionality of the device.
+> >>
+> >>Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>Signed-off-by: Mallikarjun Kasoju <mkasoju-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>---
+> >>Changes from V1:
+> >>- Code cleanups per review from V1.
+> >>- Move register acccess APIs from header to c file.
+> >>- Remove some of non required variable, remove duplication in error=
+ message
+> >>  and simplify some of function implementation.
+> >>- Register RTC driver such that it can get the regmap handle form p=
+arent device
+> >>
+> >>Changes from V2:
+> >>- Run coccicheck and checkpatch in strict mode for the alignment.
+> >>- Drop RTC driver and its i2c client registration.
+> >>
+> >>Changes from V3:
+> >>- Change all sys initcall to module driver.
+> >>- change the max77620_read argument to unisgned int from u8.
+> >>
+> >>  drivers/mfd/Kconfig          |  15 +
+> >>  drivers/mfd/Makefile         |   1 +
+> >>  drivers/mfd/max77620.c       | 871 ++++++++++++++++++++++++++++++=
++++++++++++++
+> >>  include/linux/mfd/max77620.h | 404 ++++++++++++++++++++
+> >>  4 files changed, 1291 insertions(+)
+> >>  create mode 100644 drivers/mfd/max77620.c
+> >>  create mode 100644 include/linux/mfd/max77620.h
+> >>
+> >
+> >Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >
+> >Best regards,
+> >Krzysztof
+> >
+>=20
 
 --=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---/rDaUNvWv5XYRSKj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWpepnAAoJEBx+YmzsjxAgrecP+wXGKKRbMgASpCly9vpF8g6M
-Gpwkzbanv+/UcTmSz7pkYM4zkFwh3mgDT7tM+XQ2vuTiAFL5rSJ4+C8tZNrCo0aB
-6owiS2DNx/UqmkqCMJxEhu6hfDdaNZNAImqxAX7k6xJvwoC2sNCDMDunpMEp/KLs
-TiIlnwEh6s2Dq7hwp/LhL0rVLtvFUGV9x2FkAJA6hrlCj3q4O5FdlzaeAPttPFqG
-MDaFML58z+W3dPdtBrs4yoPKdghPxOnLgj+mMPhi9Ohhs54Bwei+aV6bPjjbaibL
-N1/Nk0nNF3xp/AeKRdPy2KepARlechlpSvPZL/L9DBC6OB1XJsDMx9wWN7eTp6Yw
-s5VTdSCClveQB+p+wso0uK85vUAqoIpipvGCPxOQoGXehQuU2X2U2ER/jpk3Uwpo
-iTj3AWvqx+DVWcw7Qx4D2FvhZ3K52wsrCpw5Q7PosYCJT0Ey35poQDFXlJvI1Wk4
-omUOctNMTrp64/Ba5e84cnWXvjrpVVZtsvjm6jSpqu3Qazq1f9jgeZsHuYDQI1m1
-6iYdo9UpOSyvJJ/SisVPxTWSwsAvc7Dft0nYuDSyzhFJNlZN+L6qWo521+Rc8uzC
-9tpyFbI12pbl2gJv7M6ivO/nCMsH+Aq2fDrp9BJn2uhN7ldpQuNnXoQLaTY25M/O
-P2kKUiVOvTWrPFgt5Sme
-=fhpR
------END PGP SIGNATURE-----
-
---/rDaUNvWv5XYRSKj--
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
