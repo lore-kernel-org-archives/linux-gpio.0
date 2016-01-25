@@ -1,61 +1,75 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 3/3] mfd: lpc_ich: add GPIO support for Baytrail
-Date: Mon, 25 Jan 2016 12:45:41 +0000
-Message-ID: <20160125124541.GK3368@x1>
-References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
- <1453566729-30220-4-git-send-email-antoine.tenart@free-electrons.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [REGRESSION] gpio: pxa: change initcall level second attempt
+Date: Mon, 25 Jan 2016 15:28:33 +0100
+Message-ID: <87oac9ag32.fsf@belgarion.home>
+References: <1453598314.3178.12.camel@ziswiler.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35346 "EHLO
-	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756751AbcAYMpq (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Jan 2016 07:45:46 -0500
-Received: by mail-wm0-f43.google.com with SMTP id r129so62519600wmr.0
-        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2016 04:45:45 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1453566729-30220-4-git-send-email-antoine.tenart@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Antoine Tenart <antoine.tenart@free-electrons.com>
-Cc: ptyser@xes-inc.com, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 23 Jan 2016, Antoine Tenart wrote:
+Marcel Ziswiler <marcel@ziswiler.com> writes:
 
-> This patch adds the GPIO support for the Baytrail family.
->=20
-> Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
-> ---
->  drivers/mfd/lpc_ich.c | 1 +
->  1 file changed, 1 insertion(+)
+> Hi Robert
+>
+> I tried latest=C2=A0next-20160122 on Colibri PXA270 with a previously
+> working device tree and got the following DM9000 Ethernet driver issu=
+e:
+>
+> [=C2=A0=C2=A0=C2=A0=C2=A01.062495] dm9000 8000000.ethernet: insuffici=
+ent resources
+> [=C2=A0=C2=A0=C2=A0=C2=A01.068439] dm9000 8000000.ethernet: not found=
+ (-2).
+> [=C2=A0=C2=A0=C2=A0=C2=A01.073451] dm9000: probe of 8000000.ethernet =
+failed with error -2
+>
+> Digging deeper I debugged it to a missing interrupt ressource. A
+> subsequent git bisect blamed your patch changing the initcall level a=
+nd
+> indeed just reverting that made it all work again.
+>
+> I then also noticed the following message upon boot in the failing ca=
+se
+> which is probably related:
+>
+> [=C2=A0=C2=A0=C2=A0=C2=A00.175995] irq: no irq domain found for /pxab=
+us/gpio@40e00000 !
+>
+> Have you seen this as well or do you know how exactly that should be
+> worked around?
+Hi Marcel,
 
-I can't take this yet, as it has a dependency on the GPIO patch.
+I haven't seen that before on my devicetree boards, I will try this eve=
+ning on
+top of next-20160125.
 
-=46or my own reference:
-  Acked-by: Lee Jones <lee.jones@linaro.org>
+Could you activate the debug logs in drivers/of/irq.c please, and send =
+me
+privately your boot dmesg ? And I'd like to see your board .dts file an=
+d your
+=2Econfig also, to compare with mine for the mioa701.
 
-> diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
-> index f13a5ded3958..d86b496874df 100644
-> --- a/drivers/mfd/lpc_ich.c
-> +++ b/drivers/mfd/lpc_ich.c
-> @@ -508,6 +508,7 @@ static struct lpc_ich_info lpc_chipset_info[] =3D=
- {
->  	[LPC_BAYTRAIL] =3D {
->  		.name =3D "Bay Trail SoC",
->  		.iTCO_version =3D 3,
-> +		.gpio_version =3D ICH_BAYTRAIL_GPIO,
->  	},
->  	[LPC_COLETO] =3D {
->  		.name =3D "Coleto Creek",
+I think in your dm9000 case we have this callstack :
+ - of_irq_get()
+     of_irq_parse_one() =3D> fails, for an unknown reason to me
+                        =3D> I would have expected it return 0
+                        =3D> the following irq_find_host() would return
+                           -EPROBE_DEFER, that's what I'd expect
+     irq_create_of_mapping()
+       irq_create_fwspec_mapping()
+         =3D> error message
+
+What is probable is that gpio-pxa was not probed yet, and this triggers=
+ the
+error. What I don't understand is why you don't end up with -EPROBE_DEF=
+ER,
+that's why I'd like to have your logs.
+
+Cheers.
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Robert
