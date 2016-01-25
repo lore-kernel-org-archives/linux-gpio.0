@@ -1,77 +1,239 @@
-From: Peter Tyser <ptyser@xes-inc.com>
-Subject: Re: [PATCH 2/3] mfd: lpc_ich: use a correct mask for the GPIO base
- address
-Date: Mon, 25 Jan 2016 10:07:50 -0600
-Message-ID: <1453738070.1770.74.camel@xes-inc.com>
-References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
-	 <1453566729-30220-3-git-send-email-antoine.tenart@free-electrons.com>
-	 <20160125124444.GJ3368@x1>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v2] gpio: Add driver for TI TPIC2810
+Date: Mon, 25 Jan 2016 10:14:12 -0600
+Message-ID: <1453738452-23633-1-git-send-email-afd@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xes-mad.com ([216.165.139.218]:58527 "EHLO xes-mad.com"
+Received: from comal.ext.ti.com ([198.47.26.152]:32839 "EHLO comal.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932864AbcAYQKA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Mon, 25 Jan 2016 11:10:00 -0500
-In-Reply-To: <20160125124444.GJ3368@x1>
+	id S932253AbcAYQOP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 25 Jan 2016 11:14:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>
 
+Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
 
-On Mon, 2016-01-25 at 12:44 +0000, Lee Jones wrote:
-> On Sat, 23 Jan 2016, Antoine Tenart wrote:
-> 
-> > The GPIO base address is read from the GPIOBASE register. The first
-> > bit must be cleared as it can be hardwired to 1 to represent the i/o
-> > space. Other bits are either containing the base address of are
-> > reserved. They should not be cleared as all the chipsets do not have
-> > the same reserved bits.
-> > 
-> > Signed-off-by: Antoine Tenart tenart@free-electrons.com>
-> > ---
-> >  drivers/mfd/lpc_ich.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> Applied, thanks.
+The TPIC2810 has 8 open-drain outputs that can but used to drive
+LEDs and other low-side switched resistive loads.
 
-Is it possible to hold off on the application of the change Lee?
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+Changes from v1:
+ - Added OF match table at Javier Martinez Canillas request
 
-> > diff --git a/drivers/mfd/lpc_ich.c b/drivers/mfd/lpc_ich.c
-> > index b514f3cf140d..f13a5ded3958 100644
-> > --- a/drivers/mfd/lpc_ich.c
-> > +++ b/drivers/mfd/lpc_ich.c
-> > @@ -921,7 +921,10 @@ static int lpc_ich_init_gpio(struct pci_dev *dev)
-> >  gpe0_done:
-> >         /* Setup GPIO base register */
-> >         pci_read_config_dword(dev, priv->gbase, &base_addr_cfg);
-> > -       base_addr = base_addr_cfg & 0x0000ff80;
-> > +
-> > +       /* Clear the i/o flag */
-> > +       base_addr = base_addr_cfg & ~BIT(0);
-> > +
+ drivers/gpio/Kconfig         |   8 +++
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-tpic2810.c | 167 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/gpio/gpio-tpic2810.c
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index c88dd24..fa00f25 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -702,6 +702,14 @@ config GPIO_SX150X
+ 	  8 bits:  sx1508q
+ 	  16 bits: sx1509q
+ 
++config GPIO_TPIC2810
++	tristate "TPIC2810 8-Bit I2C GPO expander"
++	help
++	  Say yes here to enable the GPO driver for the TI TPIC2810 chip.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-tpic2810.
++
+ endmenu
+ 
+ menu "MFD GPIO expanders"
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index ece7d7c..b84e3c3 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -95,6 +95,7 @@ obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
+ obj-$(CONFIG_ARCH_TEGRA)	+= gpio-tegra.o
+ obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
+ obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
++obj-$(CONFIG_GPIO_TPIC2810)	+= gpio-tpic2810.o
+ obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
+ obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
+ obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
+diff --git a/drivers/gpio/gpio-tpic2810.c b/drivers/gpio/gpio-tpic2810.c
+new file mode 100644
+index 0000000..032d058
+--- /dev/null
++++ b/drivers/gpio/gpio-tpic2810.c
+@@ -0,0 +1,167 @@
++/*
++ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
++ *	Andrew F. Davis <afd@ti.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
++ * kind, whether expressed or implied; without even the implied warranty
++ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License version 2 for more details.
++ */
++
++#include <linux/gpio/driver.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++
++#define TPIC2810_WS_COMMAND 0x44
++
++/**
++ * struct tpic2810 - GPIO driver data
++ * @chip: GPIO controller chip
++ * @client: I2C device pointer
++ * @buffer: Buffer for device register
++ * @lock: Protects write sequences
++ */
++struct tpic2810 {
++	struct gpio_chip chip;
++	struct i2c_client *client;
++	u8 buffer;
++	struct mutex lock;
++};
++
++static int tpic2810_get_direction(struct gpio_chip *chip,
++				  unsigned offset)
++{
++	/* This device always output */
++	return 0;
++}
++
++static int tpic2810_direction_input(struct gpio_chip *chip,
++				    unsigned offset)
++{
++	/* This device is output only */
++	return -EINVAL;
++}
++
++static int tpic2810_direction_output(struct gpio_chip *chip,
++				     unsigned offset, int value)
++{
++	/* This device always output */
++	return 0;
++}
++
++static void tpic2810_set(struct gpio_chip *chip, unsigned offset, int value)
++{
++	struct tpic2810 *gpio = gpiochip_get_data(chip);
++
++	mutex_lock(&gpio->lock);
++
++	if (value)
++		gpio->buffer |= BIT(offset);
++	else
++		gpio->buffer &= ~BIT(offset);
++
++	i2c_smbus_write_byte_data(gpio->client, TPIC2810_WS_COMMAND,
++				  gpio->buffer);
++
++	mutex_unlock(&gpio->lock);
++}
++
++static void tpic2810_set_multiple(struct gpio_chip *chip, unsigned long *mask,
++				  unsigned long *bits)
++{
++	struct tpic2810 *gpio = gpiochip_get_data(chip);
++
++	mutex_lock(&gpio->lock);
++
++	/* clear bits under mask */
++	gpio->buffer &= ~(*mask);
++	/* set bits under mask */
++	gpio->buffer |= ((*mask) & (*bits));
++
++	i2c_smbus_write_byte_data(gpio->client, TPIC2810_WS_COMMAND,
++				  gpio->buffer);
++
++	mutex_unlock(&gpio->lock);
++}
++
++static struct gpio_chip template_chip = {
++	.label			= "tpic2810",
++	.owner			= THIS_MODULE,
++	.get_direction		= tpic2810_get_direction,
++	.direction_input	= tpic2810_direction_input,
++	.direction_output	= tpic2810_direction_output,
++	.set			= tpic2810_set,
++	.set_multiple		= tpic2810_set_multiple,
++	.base			= -1,
++	.ngpio			= 8,
++	.can_sleep		= true,
++};
++
++static const struct of_device_id tpic2810_of_match_table[] = {
++	{ .compatible = "ti,tpic2810" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, tpic2810_of_match_table);
++
++static int tpic2810_probe(struct i2c_client *client,
++			  const struct i2c_device_id *id)
++{
++	struct tpic2810 *gpio;
++	int ret;
++
++	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
++	if (!gpio)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, gpio);
++
++	gpio->chip = template_chip;
++	gpio->chip.parent = &client->dev;
++
++	gpio->client = client;
++
++	mutex_init(&gpio->lock);
++
++	ret = gpiochip_add_data(&gpio->chip, gpio);
++	if (ret < 0) {
++		dev_err(&client->dev, "Unable to register gpiochip\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int tpic2810_remove(struct i2c_client *client)
++{
++	struct tpic2810 *gpio = i2c_get_clientdata(client);
++
++	gpiochip_remove(&gpio->chip);
++
++	return 0;
++}
++
++static const struct i2c_device_id tpic2810_id_table[] = {
++	{ "tpic2810", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(i2c, tpic2810_id_table);
++
++static struct i2c_driver tpic2810_driver = {
++	.driver = {
++		.name = "tpic2810",
++		.of_match_table = tpic2810_of_match_table,
++	},
++	.probe = tpic2810_probe,
++	.remove = tpic2810_remove,
++	.id_table = tpic2810_id_table,
++};
++module_i2c_driver(tpic2810_driver);
++
++MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
++MODULE_DESCRIPTION("TPIC2810 8-Bit LED Driver GPIO Driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.0
 
-Does this patch work around an issue you are seeing?  Looking at the Bay 
-Trail EDS, the GPIO base address register looks like it should work fine 
-with the original code (it uses 0xff00 as a mask for the address, and 
-reserves 0x80 which reads as a 0).  Also, Bay Trail bit 1 is an enable 
-flag, which this patch wouldn't mask off.  Eg if the BIOS enables the GPIO 
-controller and sets the enable bit, I think things would break with this 
-patch.
-
-It's also scary to not mask off the reserved bits on other Intel chipsets -
-you're assuming they all read as 0 and I'm not sure if this is true or 
-not.  The patch also doesn't make the same change to the other base 
-register reads either, and ideally they'd be kept in sync.
-
-Seems like things should be left as-is, or use an accurate chip-specific 
-mask.
-
-I'd leave as-is personally.  Like Mika mentioned, Baytrail GPIO should 
-already be supported elsewhere, which should make this change unnecessary.
-
-Regards,
-Peter
