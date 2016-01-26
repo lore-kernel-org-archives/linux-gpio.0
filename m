@@ -1,77 +1,39 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Mon, 25 Jan 2016 13:37:29 -0600
-Message-ID: <20160125193729.GA7781@rob-hp-laptop>
-References: <1453739851-31839-1-git-send-email-afd@ti.com>
- <1453739851-31839-2-git-send-email-afd@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1453739851-31839-2-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Brown <broonie@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Quan Nguyen <qnguyen@apm.com>
+Subject: [PATCH v4 0/3] Enable X-Gene standby GPIO as interrupt controller
+Date: Tue, 26 Jan 2016 14:22:12 +0700
+Message-ID: <1453792935-19916-1-git-send-email-qnguyen@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:33430 "EHLO
+	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755895AbcAZHW3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Jan 2016 02:22:29 -0500
+Received: by mail-pf0-f176.google.com with SMTP id e65so95595660pfe.0
+        for <linux-gpio@vger.kernel.org>; Mon, 25 Jan 2016 23:22:28 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com, Quan Nguyen <qnguyen@apm.com>
 
-On Mon, Jan 25, 2016 at 10:37:30AM -0600, Andrew F. Davis wrote:
-> Add binding for generic parallel-in/serial-out shift register devices
-> used as GPIO.
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-pisosr.txt       | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
+V4 Changes:
+        - Convert to hierarchical irq domain.
+V3 Changes:
+        - Picking up from version 2 of "Y Vo <yvo@apm.com>"
+        - Get HW resource information from DT
+        - Avoid keeping parent IRQ controller
+V2 Changes:
+        - Support X-Gene standby GPIO as an interrupt controller.
 
-One nit, otherwise:
+Quan Nguyen (3):
+  gpio: xgene: Enable X-Gene standby GPIO as interrupt controller
+  Documentation: gpio: Update description for X-Gene standby GPIO
+    controller DTS binding
+  arm64: dts: Update X-Gene standby GPIO controller DTS entries
 
-Acked-by: Rob Herring <robh@kernel.org>
+ .../devicetree/bindings/gpio/gpio-xgene-sb.txt     |  39 ++-
+ arch/arm64/boot/dts/apm/apm-storm.dtsi             |   3 +
+ drivers/gpio/gpio-xgene-sb.c                       | 331 +++++++++++++++++----
+ 3 files changed, 312 insertions(+), 61 deletions(-)
 
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-> new file mode 100644
-> index 0000000..e69e8ec
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pisosr.txt
-> @@ -0,0 +1,34 @@
-> +Generic Parallel-in/Serial-out Shift Register GPIO Driver
-> +
-> +This binding describes generic parallel-in/serial-out shift register
-> +devices that can be used for GPI (General Purpose Input). This includes
-> +SN74165 serial-out shift registers and the SN65HVS88x series of
-> +industrial serializers.
-> +
-> +Required properties:
-> + - compatible		: Should be "pisosr-gpio".
-> + - gpio-controller	: Marks the device node as a GPIO controller.
-> + - #gpio-cells		: Should be two. For consumer use see gpio.txt.
-> +
-> +Optional properties:
-> + - ngpios		: Number of GPIO lines, default is 8.
-> + - load-gpios		: GPIO pin specifier attached to load enable, this
-> +			  pin is pulsed before reading from the device to
-> +			  load input pin values into the the device.
-> +
-> +For other required and optional properties of SPI slave
-> +nodes please refer to ../spi/spi-bus.txt.
-> +
-> +Example:
-> +
-> +	sn65hvs882@0 {
+-- 
+1.7.12.4
 
-should be gpio@0
-
-> +		compatible = "pisosr-gpio";
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		load-gpios = <&gpio2 23 GPIO_ACTIVE_LOW>;
-> +
-> +		reg = <0>;
-> +		spi-max-frequency = <1000000>;
-> +		spi-cpol;
-> +	};
-> -- 
-> 2.7.0
-> 
