@@ -1,37 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: rockchip: add support for the rk3399
-Date: Wed, 27 Jan 2016 15:02:18 +0100
-Message-ID: <CACRpkdb6Cooo-_eBKJn-SdFkGPg2hR9nud7Tq6aa+bmkDuOEmg@mail.gmail.com>
-References: <1451997055-47655-1-git-send-email-wdc@rock-chips.com>
-	<1452152498-21780-1-git-send-email-wdc@rock-chips.com>
+Subject: Re: [PATCH] pinctrl: freescale: imx: implement gpio_disable_free for Vybrid
+Date: Wed, 27 Jan 2016 15:04:56 +0100
+Message-ID: <CACRpkdZ0oneKhFmug9k+zGP2Y0dncwHTEoQ35-ccQ=3MqQzSqw@mail.gmail.com>
+References: <1452279030-5459-1-git-send-email-stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452152498-21780-1-git-send-email-wdc@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Wu <wdc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: huangtao@rock-chips.com, Chris Zhong <zyw@rock-chips.com>, Eddie Cai <cf@rock-chips.com>, xjq@rock-chips.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Wu <david.wu@rock-chips.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:33807 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754261AbcA0OE5 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 09:04:57 -0500
+Received: by mail-ob0-f175.google.com with SMTP id vt7so7694918obb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 06:04:56 -0800 (PST)
+In-Reply-To: <1452279030-5459-1-git-send-email-stefan@agner.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 7, 2016 at 8:41 AM, David Wu <wdc@rock-chips.com> wrote:
+On Fri, Jan 8, 2016 at 7:50 PM, Stefan Agner <stefan@agner.ch> wrote:
 
-> From: David Wu <david.wu@rock-chips.com>
+> The Freescale Vybrid SoC has GPIO capabilities as part of the
+> IOMUXC. To enable GPIO's, the gpio_request_enable callback has
+> been implemented, however the corsponding gpio_disable_free
+> callback is missing. So far, disabling (unexporting) a GPIO left
+> the pin in its last state.
 >
-> The pinctrl of rk3399 is much different from other's,
-> especially the 3bits of drive strength.
+> Implement a proper gpio_disable_free function which clears the
+> three enable bits which influence the state (IBE, OBE and PUE).
 >
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> ---
-> change from v1:
-> - need spin_unlock_irqrestore for set drive default case
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Heiko can you please look at this patch?
-
-> +       { .compatible = "rockchip,rk3399-pinctrl",
-> +               .data = (void *)&rk3399_pin_ctrl },
-
-I guess this requires a small patch to some binding file.
-It's OK to fold that into this patch.
+Patch applied.
 
 Yours,
 Linus Walleij
