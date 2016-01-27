@@ -1,37 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: freescale: imx: implement gpio_disable_free for Vybrid
-Date: Wed, 27 Jan 2016 15:04:56 +0100
-Message-ID: <CACRpkdZ0oneKhFmug9k+zGP2Y0dncwHTEoQ35-ccQ=3MqQzSqw@mail.gmail.com>
-References: <1452279030-5459-1-git-send-email-stefan@agner.ch>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Rename SSI_{WS,SCK}0129 to SSI_{WS,SCK}01239
+Date: Wed, 27 Jan 2016 15:09:16 +0100
+Message-ID: <CACRpkdbOVka1+se86B9Sg3oCZDt65BgmagqwbSc89GABAAmcLg@mail.gmail.com>
+References: <1452856024-10793-1-git-send-email-geert+renesas@glider.be>
+	<1452856024-10793-2-git-send-email-geert+renesas@glider.be>
+	<CACRpkda7w6A48Bk2szWmAo1mor-VQGxMjPv6bwaFfoBzhm-DVQ@mail.gmail.com>
+	<CAMuHMdX7HkkXDdvMDPANbHyB5P0k-cgKfj8k84AvXkFLGrdPgw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:33807 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754261AbcA0OE5 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 09:04:57 -0500
-Received: by mail-ob0-f175.google.com with SMTP id vt7so7694918obb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 06:04:56 -0800 (PST)
-In-Reply-To: <1452279030-5459-1-git-send-email-stefan@agner.ch>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:35878 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932698AbcA0OJR (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 09:09:17 -0500
+Received: by mail-ob0-f181.google.com with SMTP id ba1so7719685obb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 06:09:16 -0800 (PST)
+In-Reply-To: <CAMuHMdX7HkkXDdvMDPANbHyB5P0k-cgKfj8k84AvXkFLGrdPgw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Shawn Guo <shawnguo@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Adrian Alonso <aalonso@freescale.com>, Markus Pargmann <mpa@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jan 8, 2016 at 7:50 PM, Stefan Agner <stefan@agner.ch> wrote:
-
-> The Freescale Vybrid SoC has GPIO capabilities as part of the
-> IOMUXC. To enable GPIO's, the gpio_request_enable callback has
-> been implemented, however the corsponding gpio_disable_free
-> callback is missing. So far, disabling (unexporting) a GPIO left
-> the pin in its last state.
+On Wed, Jan 20, 2016 at 2:17 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Linus,
 >
-> Implement a proper gpio_disable_free function which clears the
-> three enable bits which influence the state (IBE, OBE and PUE).
+> On Wed, Jan 20, 2016 at 2:04 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Fri, Jan 15, 2016 at 12:07 PM, Geert Uytterhoeven
+>> <geert+renesas@glider.be> wrote:
+>>
+>>> Cfr. Manual Errata for Rev 0.50 of the R-Car Gen3 datasheet.
+>>>
+>>> This has no user-visible impact, as the string used for configuration
+>>> ("ssi01239_ctrl") was already correct.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> Are these regressions that need to go in as fixes?
 >
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> No, I plan to queue them on a branch for v4.6.
 
-Patch applied.
+Excellent, Acked-by.
 
 Yours,
 Linus Walleij
