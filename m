@@ -1,40 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
-Date: Wed, 27 Jan 2016 14:10:08 +0100
-Message-ID: <CACRpkdbNPOCNLA+XgQ=J-z2PyTuh+2=uLBjhYoJix2cXsA_a2Q@mail.gmail.com>
-References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v4 1/3] gpio: xgene: Enable X-Gene standby GPIO as
+ interrupt controller
+Date: Wed, 27 Jan 2016 13:10:51 +0000
+Message-ID: <56A8C1DB.5040606@arm.com>
+References: <1453792935-19916-1-git-send-email-qnguyen@apm.com>
+ <1453792935-19916-2-git-send-email-qnguyen@apm.com> <56A74BD3.40801@arm.com>
+ <CAFopSPTz=sdZs_WZrU8ryTRXNtb4GPOMA_sj8HMPMxWBxV2w4A@mail.gmail.com>
+ <56A7AF48.8020605@arm.com>
+ <CAFopSPR1ZKinH=N29gaAu3M8oc-vfKUnPsFpAu3EUNb3Doi68w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:32786 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754487AbcA0NKI (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 08:10:08 -0500
-Received: by mail-ob0-f180.google.com with SMTP id is5so6481266obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 05:10:08 -0800 (PST)
-In-Reply-To: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+Received: from foss.arm.com ([217.140.101.70]:52338 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932106AbcA0NKz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Wed, 27 Jan 2016 08:10:55 -0500
+In-Reply-To: <CAFopSPR1ZKinH=N29gaAu3M8oc-vfKUnPsFpAu3EUNb3Doi68w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <maxime.coquelin@st.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Patrice CHOTARD <patrice.chotard@st.com>, Fabian Frederick <fabf@skynet.be>, valentin.longchamp@keymile.com
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
 
-Sebastian, Thomas:
+Quan,
 
-On Fri, Dec 11, 2015 at 1:44 AM, Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
+On 27/01/16 12:48, Quan Nguyen wrote:
+> On Wed, Jan 27, 2016 at 12:39 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> On 26/01/16 16:27, Quan Nguyen wrote:
+>>> On Tue, Jan 26, 2016 at 5:34 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>>>
+>>>> On 26/01/16 07:22, Quan Nguyen wrote:
+>>>>> Enable X-Gene standby GPIO controller as interrupt controller to provide
+>>>>> its own resources. This avoids ambiguity where GIC interrupt resource is
+>>>>> use as X-Gene standby GPIO interrupt resource in user driver.
+>>>>>
+>>>>> Signed-off-by: Y Vo <yvo@apm.com>
+>>>>> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
+>>>>> ---
+>>>>>  drivers/gpio/gpio-xgene-sb.c | 331 ++++++++++++++++++++++++++++++++++++-------
+>>>>>  1 file changed, 276 insertions(+), 55 deletions(-)
+>>
+>> [...]
+>>>>> @@ -90,6 +301,32 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+>>>>>       if (IS_ERR(regs))
+>>>>>               return PTR_ERR(regs);
+>>>>>
+>>>>> +     priv->regs = regs;
+>>>>> +
+>>>>> +     of_id = of_match_device(xgene_gpio_sb_of_match, &pdev->dev);
+>>>>> +     if (of_id)
+>>>>> +             priv->flags = (uintptr_t)of_id->data;
+>>>>
+>>>> Wait. Everything is hardcoded? So why do we have to deal with looking
+>>>> into that structure if nothing is actually parametrized?
+>>>
+>>> There will be other instances with difference number of irq pins /gpio
+>>> /start_irq_base etc.
+>>
+>> Then it has to be described in DT right now.
+>>
+> 
+> What I was thinking is to have other id to match with difference
+> instances and these code can be use for ACPI also. Let say
+> "apm,xgene2-gpio-sb"
+> Please help correcting me if it is not right.
 
-> The Marvell 98DX1135 is a switch chip with an integrated CPU,
-> similar to the MV98DX4122. From a pinctrl point of view the only
-> difference is that NF_REN, NF_WEN, NF_ALE and NF_CEN lines are
-> MPP pins instead of dedicated ones.
->
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+I still think this is the wrong thing to do. You are hiding magic values
+in the driver, for no good reason. If ACPI has such a broken model that
+it cannot give you the various parameters you need, then this is an ACPI
+problem you can solve in the ACPI-specific code. Alternatively, you
+could also fix your ACPI tables to be less braindead.
 
-I guess this patch falls in your territory, please look at it if you can.
+But please do not turn the DT code into the same mess for the sake of
+using the lowest common denominator. Have a set of properties describing
+the HW, a compatibility string to nicely identify the revision, and use
+that. You can still hardcode things for ACPI if you desperately need it.
 
-If you don't have it, ask Chris to resend it.
+Thanks,
 
-I suspect the patch needs to be rebased anyway.
-
-Yours,
-Linus Walleij
+	M.
+-- 
+Jazz is not dead. It just smells funny...
