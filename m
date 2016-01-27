@@ -1,28 +1,106 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
-Date: Wed, 27 Jan 2016 15:11:24 +0100
-Message-ID: <CACRpkdbrJ5P8Ro4RQUquMOTuXhN+54ZHYGbLqrbwW6tbwCC7Mg@mail.gmail.com>
-References: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V5 0/5] Add support for MAXIM MAX77620/MAX20024 PMIC
+Date: Wed, 27 Jan 2016 19:40:03 +0530
+Message-ID: <1453903808-29788-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Jan 23, 2016 at 4:33 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+Add SW support for MAXIM Semiconductor's Power Management
+IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
+RTC, watchdog, clocks etc.
 
-> CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
-> to guard the drivers/pinctrl/mediatek/ directory.
-> (I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+This series add respective driver for each of sub-modules.
 
-This patch does not apply to linux v4.5-rc1, please rebase the
-patch and resend.
+Changes from V1: 
+DT DOC:
+- Added units in some of properties.
+- Change the boolean property to tristate type and detail some of
+  properties.
 
-Yours,
-Linus Walleij
+RTC:
+- Rename the file to rtc-max77xxx.c and make the generic implementation.
+- Direct regmap apis are used for the register access.
+- Decouped from max77620 driver.
+- Taken care of cleanup comments form V1 version.
+
+MFD:
+- Code cleanups per review from V1. 
+- Move register access APIs from header to c file.
+- Remove some of non required variable, remove duplication in error message
+ and simplify some of function implementation.
+
+GPIO:
+- Use the gpiochip_add_data and get the chip data from core APIs.
+- Cleanups based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+
+Pinctrl:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+
+Regulators:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+- Taken care of review comment from Mark.
+
+Changes from V2: 
+- Run coccicheck and checkpatch in strict mode for the alignment.
+- Drop RTC driver and its i2c client registartion.
+- Refactor Regulator  driver to use core API for DT parsing.
+
+Changes from V3:
+- Change all sys initcall to module driver.
+- change the max77620_read argument to unisgned int from u8.
+
+
+Changes from V4:
+- Provide more details in the dt binding doc.
+- Take care of fps nodes.
+- Split the submodule's DT binding doc on respective folder.
+- Drop the battery charger and low battery binding and related code as
+  it need to go on power driver.
+
+Laxman Dewangan (5):
+  DT: mfd: add device-tree binding doc fro PMIC max77620/max20024
+  mfd: max77620: add core driver for MAX77620/MAX20024
+  pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
+  gpio: max77620: add gpio driver for MAX77620/MAX20024
+  regulator: max77620: add regulator driver for max77620/max20024
+
+ .../devicetree/bindings/gpio/gpio-max77620.txt     |  25 +
+ Documentation/devicetree/bindings/mfd/max77620.txt | 118 +++
+ .../bindings/pinctrl/pinctrl-max77620.txt          |  87 +++
+ .../bindings/regulator/regulator-max77620.txt      | 163 ++++
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77620.c                       | 292 +++++++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77620.c                             | 727 ++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-max77620.c                 | 693 +++++++++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77620-regulator.c             | 844 +++++++++++++++++++++
+ include/dt-bindings/mfd/max77620.h                 |  35 +
+ include/linux/mfd/max77620.h                       | 406 ++++++++++
+ 18 files changed, 3437 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+ create mode 100644 drivers/gpio/gpio-max77620.c
+ create mode 100644 drivers/mfd/max77620.c
+ create mode 100644 drivers/pinctrl/pinctrl-max77620.c
+ create mode 100644 drivers/regulator/max77620-regulator.c
+ create mode 100644 include/dt-bindings/mfd/max77620.h
+ create mode 100644 include/linux/mfd/max77620.h
+
+-- 
+2.1.4
