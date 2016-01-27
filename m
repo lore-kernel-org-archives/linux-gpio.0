@@ -1,62 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drivers/pinctrl: make mediatek/pinctrl-mt8* driver
- explicitly non-modular
-Date: Wed, 27 Jan 2016 15:00:19 +0100
-Message-ID: <CACRpkdb6-GhWdZ=0gM5YnpL6GzBmoUX1dLWCUDhCw+VgLxpLzg@mail.gmail.com>
-References: <1451929450-18150-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH v2] pinctrl: rockchip: add support for the rk3399
+Date: Wed, 27 Jan 2016 15:02:18 +0100
+Message-ID: <CACRpkdb6Cooo-_eBKJn-SdFkGPg2hR9nud7Tq6aa+bmkDuOEmg@mail.gmail.com>
+References: <1451997055-47655-1-git-send-email-wdc@rock-chips.com>
+	<1452152498-21780-1-git-send-email-wdc@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:33628 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754240AbcA0OAT (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 09:00:19 -0500
-Received: by mail-ob0-f181.google.com with SMTP id is5so7577551obc.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 06:00:19 -0800 (PST)
-In-Reply-To: <1451929450-18150-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1452152498-21780-1-git-send-email-wdc@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Wu <wdc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: huangtao@rock-chips.com, Chris Zhong <zyw@rock-chips.com>, Eddie Cai <cf@rock-chips.com>, xjq@rock-chips.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Wu <david.wu@rock-chips.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-On Mon, Jan 4, 2016 at 6:44 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Thu, Jan 7, 2016 at 8:41 AM, David Wu <wdc@rock-chips.com> wrote:
 
-> The Kconfig for these drivers are currently:
+> From: David Wu <david.wu@rock-chips.com>
 >
-> config PINCTRL_MT8127
->         bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
+> The pinctrl of rk3399 is much different from other's,
+> especially the 3bits of drive strength.
 >
-> config PINCTRL_MT8135
->         bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
->
-> config PINCTRL_MT8173
->         bool "Mediatek MT8173 pin control"
->
-> ...meaning that they are currently not being built as a module by anyone.
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> A recent commit moved these from module_init to arch_initcall already, so
-> the init ordering remains untouched with this commit.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Daniel Kurtz <djkurtz@chromium.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-mediatek@lists.infradead.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
+> ---
+> change from v1:
+> - need spin_unlock_irqrestore for set drive default case
 
-Patch applied.
+Heiko can you please look at this patch?
 
-Sorry for delayed response...
+> +       { .compatible = "rockchip,rk3399-pinctrl",
+> +               .data = (void *)&rk3399_pin_ctrl },
+
+I guess this requires a small patch to some binding file.
+It's OK to fold that into this patch.
 
 Yours,
 Linus Walleij
