@@ -1,64 +1,54 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 3/3] gpio: tps65086: Add GPO driver for the TPS65086
- PMIC
-Date: Wed, 27 Jan 2016 07:29:55 +0000
-Message-ID: <20160127072955.GH3368@x1>
-References: <1453737012-3130-1-git-send-email-afd@ti.com>
- <1453737012-3130-4-git-send-email-afd@ti.com>
- <20160126140312.GB3368@x1>
- <56A784CC.4090902@ti.com>
+From: Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v4 0/5] pinctrl: mediatek: add pinctrl/GPIO/EINT driver for mt2701
+Date: Wed, 27 Jan 2016 09:24:38 +0800
+Message-ID: <1453857883-28436-1-git-send-email-biao.huang@mediatek.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56A784CC.4090902-l0cyMroinI0@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Erin Lo <erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 26 Jan 2016, Andrew F. Davis wrote:
+Change in v4:
+1. create a sperate patch for direction setting of input-enable/disalbe and input-schmitt-enable/disable.
 
-> On 01/26/2016 08:03 AM, Lee Jones wrote:
-> >On Mon, 25 Jan 2016, Andrew F. Davis wrote:
-> >
-> >>Add support for the TPS65086 PMIC GPOs.
-> >>
-> >>TPS65086 has four configurable GPOs that can be used for several
-> >>purposes. These are output only.
-> >>
-> >>Signed-off-by: Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org>
-> >>---
-> >>  drivers/gpio/Kconfig         |   6 ++
-> >>  drivers/gpio/Makefile        |   1 +
-> >>  drivers/gpio/gpio-tps65086.c | 144 ++++++++++++++++++++++++++++++=
-+++++++++++++
-> >>  3 files changed, 151 insertions(+)
-> >>  create mode 100644 drivers/gpio/gpio-tps65086.c
-> >
-> >Is this patch orthogonal to the other two in the set, or do they all
-> >need to go in together?
->=20
-> These can all go in separately, in fact Mark has already taken the re=
-gulator
-> component from a previous push of this series. It is only the TPS6591=
-2
-> driver I'm pushing that will need to go all at once due to conflicts =
-with
-> the driver it is replacing.
+Change in v3:
+1. convert to arch_initcall.
+2. set direction to input when do input-enable/disable and input-schmitt-enable/disable properties.
 
-Very well.  MFD patches taken.
+Change in v2:
+1. add special pinmux setting for some pins.
+2. fix mt2701 direction control issue
+3. resort dt-bindings
 
-Linus should take this through his tree.
+Biao Huang (4):
+  pinctrl: mediatek: fix direction control issue
+  pinctrl: dt bindings: Add pinfunc header file for mt2701
+  pinctrl: mediatek: Add Pinctrl/GPIO/EINT driver for mt2701
+  arm: dts: Add pinctrl/GPIO/EINT node for mt2701
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Erin Lo (1):
+  ARM: mediatek: Add MT2701 config options for mediatek SoCs.
+
+ arch/arm/boot/dts/mt2701-pinfunc.h            |  735 ++++++++
+ arch/arm/boot/dts/mt2701.dtsi                 |   19 +
+ arch/arm/mach-mediatek/Kconfig                |    4 +
+ drivers/pinctrl/mediatek/Kconfig              |    6 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt2701.c     |  586 +++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   16 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.h |   12 +-
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h | 2323 +++++++++++++++++++++++++
+ 9 files changed, 3701 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/mt2701-pinfunc.h
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt2701.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h
+
+-- 
+1.7.9.5
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
