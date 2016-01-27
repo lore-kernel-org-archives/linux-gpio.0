@@ -1,105 +1,119 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V4 1/5] DT: mfd: add device-tree binding doc fro PMIC
- max77620/max20024
-Date: Wed, 27 Jan 2016 07:24:30 +0000
-Message-ID: <20160127072430.GD3368@x1>
-References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com>
- <1453198783-28383-2-git-send-email-ldewangan@nvidia.com>
- <20160125115610.GC3368@x1>
- <56A63A85.6060609@nvidia.com>
- <20160126145854.GC3368@x1>
- <56A79DB4.6090000@nvidia.com>
+Subject: Re: [PATCH v6 1/3] Documentation: tps65086: Add DT bindings for the
+ TPS65086 PMIC
+Date: Wed, 27 Jan 2016 07:28:58 +0000
+Message-ID: <20160127072858.GF3368@x1>
+References: <1453737012-3130-1-git-send-email-afd@ti.com>
+ <1453737012-3130-2-git-send-email-afd@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:37618 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753004AbcA0HYf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 02:24:35 -0500
-Received: by mail-wm0-f48.google.com with SMTP id n5so12135102wmn.0
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2016 23:24:34 -0800 (PST)
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:34903 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751629AbcA0H3C (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 02:29:02 -0500
+Received: by mail-wm0-f41.google.com with SMTP id r129so133620000wmr.0
+        for <linux-gpio@vger.kernel.org>; Tue, 26 Jan 2016 23:29:01 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <56A79DB4.6090000@nvidia.com>
+In-Reply-To: <1453737012-3130-2-git-send-email-afd@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, vreddytalla@nvidia.com
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 26 Jan 2016, Laxman Dewangan wrote:
+On Mon, 25 Jan 2016, Andrew F. Davis wrote:
 
+> The TPS65086 PMIC contains several regulators and a GPO controller.
+> Add bindings for the TPS65086 PMIC.
 >=20
-> On Tuesday 26 January 2016 08:28 PM, Lee Jones wrote:
-> >On Mon, 25 Jan 2016, Laxman Dewangan wrote:
-> >
-> >>Hmm. I describe the boolean and tristate only. Do I need to define
-> >>type for integer,string also?
-> >I wouldn't describe any of them.  It's normally pretty obvious which
-> >properties are boolean by the lack of required cell description.
-> >
->=20
-> Rob suggested to use the type also for Boolean and tristate. I think
-> it is good to have for all places that what type of values are
-> valid.
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/tps65086.txt | 55 ++++++++++++=
+++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/tps65086.tx=
+t
 
-It's fine, and some people do describe them.  I've just never seen the
-point, especially if you have a nice example of their use in the
-document.  But if you insist, please ensure you are consistent, so
-*all* bools need to be described.  That is not currently the case.
+Applied, thanks.
 
-> >>>>+The property for fps child nodes as:
-> >>>>+Required properties:
-> >>>>+	-reg: FPS number like 0, 1, 2 for FPS0, FPS1 and FPS2 respectiv=
-ely.
-> >>>I'm surprised Rob Acked this.  We don't usually do device numbers =
-in DT.
-> >>What is best way to make the child node for FPS and differentiate F=
-PS0,1, 2?
-> >>What is your suggestion here?
-> >There are lots of ways you can solve this and so many examples of
-> >others doing so.  I suggest you have a look at some DTS files and
-> >figure it out.  One possible solution is to use different compatible
-> >strings.
-> Here, I think I can go similar to regulators where child node name
-> identifies the regulators.
->=20
->     fps-config {
->         fps0 {
->             maxim,fps-time-period-us =3D <1280>;
->             maxim,fps-enable-input =3D <FPS_EN_SRC_EN0>;
->         };
->=20
->         fps1 {
->             maxim,fps-time-period-us =3D <2560>;
->             maxim,fps-enable-input =3D <FPS_EN_SRC_EN1>;
->         };
->=20
->         fps2 {
->             maxim,fps-time-period-us =3D <640>;
->             maxim,fps-enable-input =3D <FPS_EN_SRC_SW>;
->         };
->     };
->=20
-> So node name gives the FPS name.
-
-That is also an acceptable means to solve the issue.
-
-As I said, there are many ways to skin a cat.
-
-> >>>+Pinmux and GPIO:
-> >>>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>I think this whole section needs moving to ../pinctrl and needs to=
- be
-> >>>reviewed by Linus W.
-> >>Is this mean I need to create DT binding doc for the each subsystem
-> >>differently?
-> >>Actually during AS3722, I had different understanding to have singl=
-e file.
-> >Yes, that way you have each of the the subsystem experts review your
-> >documentation.  You can then link to them from this document.
-> OK, I will add different dt binding doc in respective driver and
-> squash that with respected submodule drivers.
->=20
+> diff --git a/Documentation/devicetree/bindings/mfd/tps65086.txt b/Doc=
+umentation/devicetree/bindings/mfd/tps65086.txt
+> new file mode 100644
+> index 0000000..d370561
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tps65086.txt
+> @@ -0,0 +1,55 @@
+> +* TPS65086 Power Management Integrated Circuit (PMIC) bindings
+> +
+> +Required properties:
+> + - compatible		: Should be "ti,tps65086".
+> + - reg			: I2C slave address.
+> + - interrupt-parent	: Phandle to the parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: Marks the device node as an interrupt cont=
+roller.
+> + - #interrupt-cells	: The number of cells to describe an IRQ, should=
+ be 2.
+> +			    The first cell is the IRQ number.
+> +			    The second cell is the flags, encoded as trigger
+> +			    masks from ../interrupt-controller/interrupts.txt.
+> + - gpio-controller      : Marks the device node as a GPIO Controller=
+=2E
+> + - #gpio-cells          : Should be two.  The first cell is the pin =
+number and
+> +                            the second cell is used to specify flags=
+=2E
+> +                            See ../gpio/gpio.txt for more informatio=
+n.
+> + - regulators:          : List of child nodes that specify the regul=
+ator
+> +                            initialization data. Child nodes must be=
+ named
+> +                            after their hardware counterparts: buck[=
+1-6],
+> +                            ldoa[1-3], swa1, swb[1-2], and vtt. Each=
+ child
+> +                            node is defined using the standard bindi=
+ng for
+> +                            regulators and the optional regulator pr=
+operties
+> +                            defined below.
+> +
+> +Optional regulator properties:
+> + - ti,regulator-step-size-25mv	: This is applicable for buck[1,2,6],=
+ set this
+> +				    if the regulator is factory set with a 25mv
+> +				    step voltage mapping.
+> + - ti,regulator-decay		: This is applicable for buck[1-6], set this =
+if
+> +				    the output needs to decay, default is for
+> +				    the output to slew down.
+> +
+> +Example:
+> +
+> +	pmic: tps65086@5e {
+> +		compatible =3D "ti,tps65086";
+> +		reg =3D <0x5e>;
+> +		interrupt-parent =3D <&gpio1>;
+> +		interrupts =3D <28 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+> +		#interrupt-cells =3D <2>;
+> +		gpio-controller;
+> +		#gpio-cells =3D <2>;
+> +
+> +		regulators {
+> +			buck1 {
+> +				regulator-name =3D "vcc1";
+> +				regulator-min-microvolt =3D <1600000>;
+> +				regulator-max-microvolt =3D <1600000>;
+> +				regulator-boot-on;
+> +				ti,regulator-decay;
+> +				ti,regulator-step-size-25mv;
+> +			};
+> +		};
+> +	};
 
 --=20
 Lee Jones
