@@ -1,43 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: davinci: use irq_data_get_chip_type
-Date: Wed, 27 Jan 2016 14:56:11 +0100
-Message-ID: <CACRpkda+WB_5yCScjeO2Q9aN2i3CTLRir-jKXk6uaxqMHhNWyg@mail.gmail.com>
-References: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
-	<ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
+Date: Wed, 27 Jan 2016 14:57:32 +0100
+Message-ID: <CACRpkdaCp1xSXK+ibRZzQCsFLTnGySDCHVFjVuKNSOgWadZ4gg@mail.gmail.com>
+References: <1449863184-29668-1-git-send-email-afd@ti.com>
+	<1449863184-29668-2-git-send-email-afd@ti.com>
+	<CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
+	<566EF12C.4060509@ti.com>
+	<CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
+	<566F4E9B.8090202@ti.com>
+	<CACRpkdYapF8br=c3utUmMbmPxyHwxZuT5pC8N-pySPY7dtEwng@mail.gmail.com>
+	<56840ED0.6070205@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Geliang Tang <geliangtang@163.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56840ED0.6070205-l0cyMroinI0@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Dec 30, 2015 at 3:16 PM, Geliang Tang <geliangtang@163.com> wrote:
+On Wed, Dec 30, 2015 at 6:05 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
+> [Me]
+>> Compatible ranges from the specific to the more generic
+>> so compatible = "ti,74165", "pisosr"; is just fine. Something
+>> will match if there is a suitable driver. The OS may choose to
+>> provide something part-specific or something more generic.
+>>
+>
+> And so we won't need to have "ti,74165" in the driver itself,
+> if we just have "pisosr", then dts files can use what ever they
+> like to correctly identify the part then fall back to pisosr.
+>
+> compatible = "company,random_numbers_of_exact_part_actually_on_board",
+> "pisosr";
 
-> Use irq_data_get_chip_type() instead of container_of().
->
-> Signed-off-by: Geliang Tang <geliangtang@163.com>
-> ---
->  drivers/gpio/gpio-davinci.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 65ebaef..aaa1a249 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -435,8 +435,7 @@ static struct irq_chip *davinci_gpio_get_irq_chip(unsigned int irq)
->  {
->         static struct irq_chip_type gpio_unbanked;
->
-> -       gpio_unbanked = *container_of(irq_get_chip(irq),
-> -                                     struct irq_chip_type, chip);
-> +       gpio_unbanked = *irq_data_get_chip_type(irq_get_irq_data(irq));
->
->         return &gpio_unbanked.chip;
->  };
-
-Grygorii/Santosh, can you ACK/comment on this patch?
+Exactly. Sorry for slow replies.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
