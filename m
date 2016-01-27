@@ -1,44 +1,62 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: GPIO: Add generic serializer binding
-Date: Wed, 27 Jan 2016 14:57:32 +0100
-Message-ID: <CACRpkdaCp1xSXK+ibRZzQCsFLTnGySDCHVFjVuKNSOgWadZ4gg@mail.gmail.com>
-References: <1449863184-29668-1-git-send-email-afd@ti.com>
-	<1449863184-29668-2-git-send-email-afd@ti.com>
-	<CACRpkdaV_dxzWUQcJ8pwPUDQNJ8qLhCvLvE9tBYFcTTGMoumWQ@mail.gmail.com>
-	<566EF12C.4060509@ti.com>
-	<CAL_Jsq+kYSJQd003RhYTeVFv6xLaSCxzZK7wnF2LVs502sWu4g@mail.gmail.com>
-	<566F4E9B.8090202@ti.com>
-	<CACRpkdYapF8br=c3utUmMbmPxyHwxZuT5pC8N-pySPY7dtEwng@mail.gmail.com>
-	<56840ED0.6070205@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] drivers/pinctrl: make mediatek/pinctrl-mt8* driver
+ explicitly non-modular
+Date: Wed, 27 Jan 2016 15:00:19 +0100
+Message-ID: <CACRpkdb6-GhWdZ=0gM5YnpL6GzBmoUX1dLWCUDhCw+VgLxpLzg@mail.gmail.com>
+References: <1451929450-18150-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56840ED0.6070205-l0cyMroinI0@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:33628 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754240AbcA0OAT (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 09:00:19 -0500
+Received: by mail-ob0-f181.google.com with SMTP id is5so7577551obc.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 06:00:19 -0800 (PST)
+In-Reply-To: <1451929450-18150-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Kurtz <djkurtz@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Yingjoe Chen <yingjoe.chen@mediatek.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 
-On Wed, Dec 30, 2015 at 6:05 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
-> [Me]
->> Compatible ranges from the specific to the more generic
->> so compatible = "ti,74165", "pisosr"; is just fine. Something
->> will match if there is a suitable driver. The OS may choose to
->> provide something part-specific or something more generic.
->>
->
-> And so we won't need to have "ti,74165" in the driver itself,
-> if we just have "pisosr", then dts files can use what ever they
-> like to correctly identify the part then fall back to pisosr.
->
-> compatible = "company,random_numbers_of_exact_part_actually_on_board",
-> "pisosr";
+On Mon, Jan 4, 2016 at 6:44 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-Exactly. Sorry for slow replies.
+> The Kconfig for these drivers are currently:
+>
+> config PINCTRL_MT8127
+>         bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
+>
+> config PINCTRL_MT8135
+>         bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
+>
+> config PINCTRL_MT8173
+>         bool "Mediatek MT8173 pin control"
+>
+> ...meaning that they are currently not being built as a module by anyone.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> A recent commit moved these from module_init to arch_initcall already, so
+> the init ordering remains untouched with this commit.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Daniel Kurtz <djkurtz@chromium.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+> Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+Patch applied.
+
+Sorry for delayed response...
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
