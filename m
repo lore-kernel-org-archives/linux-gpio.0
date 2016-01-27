@@ -1,49 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v8 4/5] regulator: tps65912: Add regulator driver for the
- TPS65912 PMIC
-Date: Wed, 27 Jan 2016 20:25:22 +0000
-Message-ID: <20160127202522.GE25316@sirena.org.uk>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
- <1453736627-2634-5-git-send-email-afd@ti.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: Re: [PATCH v4 0/9] Add STM32 pinctrl/GPIO driver
+Date: Wed, 27 Jan 2016 21:59:28 +0100
+Message-ID: <56A92FB0.7080907@gmail.com>
+References: <1452773795-24216-1-git-send-email-mcoquelin.stm32@gmail.com>
+ <CACRpkdYGQ1xObWfka2CN9au6YMGhpu4qcTZpu72bzuJjO38tog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DqhR8hV3EnoxUkKN"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1453736627-2634-5-git-send-email-afd@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Andrew F. Davis" <afd@ti.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36188 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965371AbcA0U7c (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 15:59:32 -0500
+In-Reply-To: <CACRpkdYGQ1xObWfka2CN9au6YMGhpu4qcTZpu72bzuJjO38tog@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Patrice CHOTARD <patrice.chotard@st.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
 
+On 01/27/2016 02:20 PM, Linus Walleij wrote:
+> On Thu, Jan 14, 2016 at 1:16 PM, Maxime Coquelin
+> <mcoquelin.stm32@gmail.com>  wrote:
+>
+>> >This is the fourth round of STM32 pinctrl series, which takes into
+>> >account comments made by Patrice on patch 4.
+> I have applied patch 2 and 4 to the pinctrl tree.
 
---DqhR8hV3EnoxUkKN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just tried to compile your devel branch, and it breaks:
 
-On Mon, Jan 25, 2016 at 09:43:46AM -0600, Andrew F. Davis wrote:
-> This patch adds support for TPS65912 PMIC regulators.
->=20
-> The regulators set consists of 4 DCDCs and 10 LDOs. The output
-> voltages are configurable and are meant to supply power to the
-> main processor and other components.
+   CC      drivers/pinctrl/stm32/pinctrl-stm32f429.o
+drivers/pinctrl/stm32/pinctrl-stm32.c: In function 
+'stm32_gpiolib_register_bank':
+drivers/pinctrl/stm32/pinctrl-stm32.c:692:17: error: 'struct gpio_chip' 
+has no member named 'dev'
+   bank->gpio_chip.dev = dev;
+                  ^
+make[3]: *** [drivers/pinctrl/stm32/pinctrl-stm32.o] Error 1
 
-Acked-by: Mark Brown <broonie@kernel.org>
+This is due to the field renaming you did in gpio_chip struct:
+58383c7 gpio: change member .dev to .parent
 
---DqhR8hV3EnoxUkKN
-Content-Type: application/pgp-signature; name="signature.asc"
+How do you prefer to proceed?
+Should I send a fix on top of your devel branch, or you will fix it 
+directly?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWqSexAAoJECTWi3JdVIfQkUQH/Auc115yyTOEkAZ69D+3tKqM
-Hsxyg/MTER/QF/0OhFOfnpM+1xKcpeFwxnxZl159Efz/a94wFIbwBd2qHIv9PWl7
-VZOspkMGJtAUww4L1FWsMjgU6dki+16dJ8bk1kBIphZoSDlzijmeaE0lMwKOTs1o
-qheyG2Fkm+g+ksk7x/frNJgmV5l5u8IFCCEsB7qnP50eynm3poRU/mphoSKsmO1C
-fFv4KIvt/jDrMvOcShIglqI05sVF19wASJzSJAZkb7JwERlW8Fn4WXgSDPUh7kYI
-C1iY0w1a7BmC0m1yTreIoMvqGVwmPeGbn0G7LWDy5AR3JjzseR1lELkU8qXRfcY=
-=aSMt
------END PGP SIGNATURE-----
-
---DqhR8hV3EnoxUkKN--
+Thanks,
+Maxime
