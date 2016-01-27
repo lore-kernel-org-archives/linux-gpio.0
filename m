@@ -1,52 +1,71 @@
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH 2/2] gpio: davinci: use irq_data_get_chip_type
-Date: Wed, 27 Jan 2016 11:03:44 -0800
-Message-ID: <56A91490.6060300@oracle.com>
-References: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
- <ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
- <CACRpkda+WB_5yCScjeO2Q9aN2i3CTLRir-jKXk6uaxqMHhNWyg@mail.gmail.com>
- <56A8F1B6.20401@ti.com>
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
+Date: Wed, 27 Jan 2016 19:48:08 +0000
+Message-ID: <fe421151d8104b71a6fd603a95d6b904@svr-chch-ex1.atlnz.lc>
+References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+ <CACRpkdbNPOCNLA+XgQ=J-z2PyTuh+2=uLBjhYoJix2cXsA_a2Q@mail.gmail.com>
+ <56A8C901.9050508@gmail.com> <20160127144620.2ab67411@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56A8F1B6.20401@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Geliang Tang <geliangtang@163.com>, Santosh Shilimkar <ssantosh@kernel.org>, Sekhar Nori <nsekhar@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:42969 "EHLO
+	gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933603AbcA0TsX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 14:48:23 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8F89E806F4
+	for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 08:48:17 +1300 (NZDT)
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <maxime.coquelin@st.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Patrice CHOTARD <patrice.chotard@st.com>, Fabian Frederick <fabf@skynet.be>, "valentin.longchamp@keymile.com" <valentin.longchamp@keymile.com>
 
-On 1/27/2016 8:35 AM, Grygorii Strashko wrote:
-> On 01/27/2016 03:56 PM, Linus Walleij wrote:
->> On Wed, Dec 30, 2015 at 3:16 PM, Geliang Tang <geliangtang@163.com>
->> wrote:
->>
->>> Use irq_data_get_chip_type() instead of container_of().
->>>
->>> Signed-off-by: Geliang Tang <geliangtang@163.com>
->>> ---
->>>   drivers/gpio/gpio-davinci.c | 3 +--
->>>   1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->>> index 65ebaef..aaa1a249 100644
->>> --- a/drivers/gpio/gpio-davinci.c
->>> +++ b/drivers/gpio/gpio-davinci.c
->>> @@ -435,8 +435,7 @@ static struct irq_chip
->>> *davinci_gpio_get_irq_chip(unsigned int irq)
->>>   {
->>>          static struct irq_chip_type gpio_unbanked;
->>>
->>> -       gpio_unbanked = *container_of(irq_get_chip(irq),
->>> -                                     struct irq_chip_type, chip);
->>> +       gpio_unbanked = *irq_data_get_chip_type(irq_get_irq_data(irq));
->>>
->>>          return &gpio_unbanked.chip;
->>>   };
->>
->> Grygorii/Santosh, can you ACK/comment on this patch?
->>
+On 01/28/2016 02:46 AM, Thomas Petazzoni wrote:
+> Hello,
 >
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> On Wed, 27 Jan 2016 14:41:21 +0100, Sebastian Hesselbarth wrote:
+>> On 27.01.2016 14:10, Linus Walleij wrote:
+>>> On Fri, Dec 11, 2015 at 1:44 AM, Chris Packham
+>>> <chris.packham@alliedtelesis.co.nz> wrote:
+>>>> The Marvell 98DX1135 is a switch chip with an integrated CPU,
+>>>> similar to the MV98DX4122. From a pinctrl point of view the only
+>>>> difference is that NF_REN, NF_WEN, NF_ALE and NF_CEN lines are
+>>>> MPP pins instead of dedicated ones.
+>>>>
+>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>>
+>>> I guess this patch falls in your territory, please look at it if you can.
+>>>
+>>> If you don't have it, ask Chris to resend it.
+>>
+>> Yes, please resend and make sure you also include
+>> linux-arm-kernel@lists.infradead.org which is the ARM Linux
+>> mailing list.
+>>
+>>> I suspect the patch needs to be rebased anyway.
+>>
+>> We'll see. Usually 98dx-something are pretty much Kirkwoods
+>> anyway.
 >
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> The one Chris is working on is actually more Armada XP similar as far
+> as I remember (or maybe it's a different one Chris is working on now?).
+
+This one is for a different product, and it's a variation of the 
+98DX4122 which is indeed "pretty much Kirkwood".
+
+>
+> But yes, I've looked for Chris patch on LAKML and couldn't find it.
+
+I'll rebase/resend. I still have an outstanding question about style but 
+we can move that to the LAKML.
+
+>
+> Best regards,
+>
+> Thomas
+>
+
