@@ -1,38 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/9] Add STM32 pinctrl/GPIO driver
-Date: Wed, 27 Jan 2016 14:20:38 +0100
-Message-ID: <CACRpkdYGQ1xObWfka2CN9au6YMGhpu4qcTZpu72bzuJjO38tog@mail.gmail.com>
-References: <1452773795-24216-1-git-send-email-mcoquelin.stm32@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH] pinctrl: mvebu: add 98dx1135-pinctrl
+Date: Wed, 27 Jan 2016 14:41:21 +0100
+Message-ID: <56A8C901.9050508@gmail.com>
+References: <1449794673-9461-1-git-send-email-chris.packham@alliedtelesis.co.nz>
+ <CACRpkdbNPOCNLA+XgQ=J-z2PyTuh+2=uLBjhYoJix2cXsA_a2Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33939 "EHLO
-	mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754266AbcA0NUj (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 08:20:39 -0500
-Received: by mail-oi0-f46.google.com with SMTP id k206so5012933oia.1
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 05:20:38 -0800 (PST)
-In-Reply-To: <1452773795-24216-1-git-send-email-mcoquelin.stm32@gmail.com>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37920 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752792AbcA0Nl0 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 08:41:26 -0500
+Received: by mail-wm0-f53.google.com with SMTP id p63so26940103wmp.1
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 05:41:26 -0800 (PST)
+In-Reply-To: <CACRpkdbNPOCNLA+XgQ=J-z2PyTuh+2=uLBjhYoJix2cXsA_a2Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Patrice CHOTARD <patrice.chotard@st.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>, Bruno Herrera <bruherrera@gmail.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Maxime Coquelin <maxime.coquelin@st.com>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Patrice CHOTARD <patrice.chotard@st.com>, Fabian Frederick <fabf@skynet.be>, valentin.longchamp@keymile.com
 
-On Thu, Jan 14, 2016 at 1:16 PM, Maxime Coquelin
-<mcoquelin.stm32@gmail.com> wrote:
+On 27.01.2016 14:10, Linus Walleij wrote:
+> On Fri, Dec 11, 2015 at 1:44 AM, Chris Packham
+> <chris.packham@alliedtelesis.co.nz> wrote:
+>> The Marvell 98DX1135 is a switch chip with an integrated CPU,
+>> similar to the MV98DX4122. From a pinctrl point of view the only
+>> difference is that NF_REN, NF_WEN, NF_ALE and NF_CEN lines are
+>> MPP pins instead of dedicated ones.
+>>
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>
+> I guess this patch falls in your territory, please look at it if you can.
+>
+> If you don't have it, ask Chris to resend it.
 
-> This is the fourth round of STM32 pinctrl series, which takes into
-> account comments made by Patrice on patch 4.
+Yes, please resend and make sure you also include
+linux-arm-kernel@lists.infradead.org which is the ARM Linux
+mailing list.
 
-I have applied patch 2 and 4 to the pinctrl tree.
+> I suspect the patch needs to be rebased anyway.
 
-Please put the rest of the patches in through ARM SoC, you can
-add my
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-to them.
+We'll see. Usually 98dx-something are pretty much Kirkwoods
+anyway.
 
-AFAICT there is no compile-time dependency between these two
-patches and the rest, so it should merge just fine.
+Sebastian
 
-Yours,
-Linus Walleij
