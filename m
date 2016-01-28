@@ -1,43 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: guard sub-directory with CONFIG_PINCTRL_SUNXI
-Date: Thu, 28 Jan 2016 14:27:06 +0100
-Message-ID: <CACRpkdbXVLPZ_UtF9=nVxdbrp3xTEMududjXXpbF1KbRApz=1A@mail.gmail.com>
-References: <1453563129-30332-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdad53bcBEOzKK=dTLmDSzr-rZuiFmh6XWnBqzi+NebuHw@mail.gmail.com>
-	<CAK7LNAThe1J9zEAQZP3RkKxHqooOmY4U-Pn9aA0_AX-ORtZ2KQ@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Thu, 28 Jan 2016 13:30:49 +0000
+Message-ID: <20160128133049.GQ3368@x1>
+References: <1453736627-2634-1-git-send-email-afd@ti.com>
+ <20160128064149.GM3368@x1>
+ <20160128114026.GB6078@sirena.org.uk>
+ <20160128120423.GP3368@x1>
+ <20160128124525.GF6078@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNAThe1J9zEAQZP3RkKxHqooOmY4U-Pn9aA0_AX-ORtZ2KQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:37849 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754840AbcA1Nay (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 08:30:54 -0500
+Received: by mail-wm0-f45.google.com with SMTP id l66so11043130wml.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 05:30:53 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20160128124525.GF6078@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 28, 2016 at 11:45 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2016-01-28 19:31 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Sat, Jan 23, 2016 at 4:32 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>
->>> CONFIG_PINCTRL_SUNXI is more suitable than CONFIG_ARCH_SUNXI
->>> to guard the drivers/pinctrl/sunxi/ directory.
->>> (I renamed CONFIG_PINCTRL_SUNXI_COMMON to CONFIG_PINCTRL_SUNXI.)
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->> This patch does not apply on linux v4.5-rc1, please rebase, add
->> Maxime's ACK and resend.
->
->
-> I think this patch applies on v4.5-rc1.
->
-> I tried again and it succeeded.
+On Thu, 28 Jan 2016, Mark Brown wrote:
 
-Bah, my own fault of course.
+> On Thu, Jan 28, 2016 at 12:04:23PM +0000, Lee Jones wrote:
+> > On Thu, 28 Jan 2016, Mark Brown wrote:
+>=20
+> > > Please be more specific?  What is it that you are looking for bey=
+ond the
+> > > review I already did for the regulator driver?
+>=20
+> > Patch 2.
+>=20
+> I reviewed that *ages* ago.
 
-I had other patches to Makefile etc in my tree, it was easy to fix up
-so applied it now, sorry for the fuzz.
+Link or it didn't happen. ;)
 
-Yours,
-Linus Walleij
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
