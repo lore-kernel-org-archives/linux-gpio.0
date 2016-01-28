@@ -1,63 +1,38 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V6 5/8] DT: gpio: add DT binding doc for gpio of PMIC max77620/max20024
-Date: Thu, 28 Jan 2016 19:07:51 +0530
-Message-ID: <1453988274-28052-6-git-send-email-ldewangan@nvidia.com>
-References: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v5] gpio: Add GPIO support for the WinSystems WS16C48
+Date: Thu, 28 Jan 2016 08:50:58 -0500
+Message-ID: <20160128135058.GA16395@sophia>
+References: <20160120184533.GA16632@sophia>
+ <CACRpkdaMchsc9E-8JTMoKR6cFP9WEBTUrkPiQxqyrkGHXp-xWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaMchsc9E-8JTMoKR6cFP9WEBTUrkPiQxqyrkGHXp-xWg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
-which act as GPIO as well as special function mode.
+On Thu, Jan 28, 2016 at 09:47:43AM +0100, Linus Walleij wrote:
+>Out of curiosity: what is your usecase for all these exotic
+>GPIO cards?
 
-Add DT binding document to support these pins in GPIO
-mode via GPIO framework.
+My motivated mainly by philosophy. Despite their popularity in the
+embedded systems industry, there isn't much support in the baseline
+kernel for PC/104 and other cards. Typically, when a user purchases one
+of these devices, they receive some general drivers which serve more as
+proof that the device is working rather than as practical driver.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-Changes from V4:
-- Separate out from gpio driver 
+The user is lucky if they receive Linux drivers rather than just the
+usual Windows drivers. Even if Linux drivers are provided, the drivers
+are often written for ancient kernel versions (e.g. version 2.4), and
+implement some custom character device structure rather than utilize the
+Linux device model.
 
- .../devicetree/bindings/gpio/gpio-max77620.txt     | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+I'm writing these drivers to help bring support for these devices to the
+baseline Linux kernel, in the hopes that it will be useful to someone,
+and perhaps even motivate the companies to improve and share their own
+Linux drivers.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-max77620.txt b/Documentation/devicetree/bindings/gpio/gpio-max77620.txt
-new file mode 100644
-index 0000000..410e716
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-max77620.txt
-@@ -0,0 +1,25 @@
-+GPIO driver for MAX77620 Power management IC from Maxim Semiconductor.
-+
-+Device has 8 GPIO pins which can be configured as GPIO as well as the
-+special IO functions.
-+
-+Required properties:
-+-------------------
-+- gpio-controller : 	Marks the device node as a gpio controller.
-+- #gpio-cells : 	Should be two.  The first cell is the pin number and
-+			the second cell is used to specify the gpio polarity:
-+				0 = active high
-+				1 = active low
-+For more details, please refer generic GPIO DT binding document
-+<devicetree/bindings/gpio/gpio.txt>.
-+
-+Example:
-+--------
-+#include <dt-bindings/mfd/max77620.h>
-+...
-+max77620@3c {
-+	compatible = "maxim,max77620";
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+};
--- 
-2.1.4
+William Breathitt Gray
