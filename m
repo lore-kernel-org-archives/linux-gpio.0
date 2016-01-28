@@ -1,60 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] pinctrl: nomadik: stn8815 CLCD alternate functions
-Date: Wed, 27 Jan 2016 22:38:30 +0100
-Message-ID: <1453930710-19163-1-git-send-email-linus.walleij@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] Documentation: minor correction of gpio dts example
+Date: Thu, 28 Jan 2016 10:15:56 +0900
+Message-ID: <CAAVeFu+G-_1O09R77sQ8zCkk=BxMx6YpoTvaOyyoqn85NQxfEw@mail.gmail.com>
+References: <1453909091-16955-1-git-send-email-wr.phallsma@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ig0-f181.google.com ([209.85.213.181]:36174 "EHLO
+	mail-ig0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965598AbcA1BQQ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 20:16:16 -0500
+Received: by mail-ig0-f181.google.com with SMTP id z14so2487363igp.1
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Jan 2016 17:16:16 -0800 (PST)
+In-Reply-To: <1453909091-16955-1-git-send-email-wr.phallsma@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Per Hallsmark <wr.phallsma@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Per Hallsmark <per.hallsmark@windriver.com>
 
-The STn8815 has 22 dedicated pins for CLCD with up to 16 bits
-in parallel, but pins 32 thru 39 can be used for an additional
-CLCD signal lines 16 thru 23.
+On Thu, Jan 28, 2016 at 12:38 AM,  <wr.phallsma@gmail.com> wrote:
+> From: Per Hallsmark <per.hallsmark@windriver.com>
+>
+> As the example brings up two ranges of 10 pins each, the count
+> should be 10 in both range definitions.
+>
+> Signed-off-by: Per Hallsmark <per.hallsmark@windriver.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 069cdf6..ad3d64b 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -252,7 +252,7 @@ Example 1:
+>                 compatible = "fsl,qe-pario-bank-e", "fsl,qe-pario-bank";
+>                 reg = <0x1460 0x18>;
+>                 gpio-controller;
+> -               gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 20>;
+> +               gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 10>;
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Looks correct wrt. the description that follows, thanks!
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-index 587b222f12f3..e852048c4c04 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik-stn8815.c
-@@ -287,6 +287,10 @@ static const unsigned i2c0_a_1_pins[] = { STN8815_PIN_D3, STN8815_PIN_D2 };
- /* Altfunction B */
- static const unsigned u1_b_1_pins[] = { STN8815_PIN_B16, STN8815_PIN_A16 };
- static const unsigned i2cusb_b_1_pins[] = { STN8815_PIN_C21, STN8815_PIN_C20 };
-+static const unsigned clcd_16_23_b_1_pins[] = { STN8815_PIN_AB6,
-+	STN8815_PIN_AA6, STN8815_PIN_Y6, STN8815_PIN_Y5, STN8815_PIN_AA5,
-+	STN8815_PIN_AB5, STN8815_PIN_AB4, STN8815_PIN_Y4 };
-+
- 
- #define STN8815_PIN_GROUP(a, b) { .name = #a, .pins = a##_pins,		\
- 			.npins = ARRAY_SIZE(a##_pins), .altsetting = b }
-@@ -302,6 +306,7 @@ static const struct nmk_pingroup nmk_stn8815_groups[] = {
- 	STN8815_PIN_GROUP(i2c0_a_1, NMK_GPIO_ALT_A),
- 	STN8815_PIN_GROUP(u1_b_1, NMK_GPIO_ALT_B),
- 	STN8815_PIN_GROUP(i2cusb_b_1, NMK_GPIO_ALT_B),
-+	STN8815_PIN_GROUP(clcd_16_23_b_1, NMK_GPIO_ALT_B),
- };
- 
- /* We use this macro to define the groups applicable to a function */
-@@ -314,6 +319,7 @@ STN8815_FUNC_GROUPS(u1, "u1_a_1", "u1_b_1");
- STN8815_FUNC_GROUPS(i2c1, "i2c1_a_1");
- STN8815_FUNC_GROUPS(i2c0, "i2c0_a_1");
- STN8815_FUNC_GROUPS(i2cusb, "i2cusb_b_1");
-+STN8815_FUNC_GROUPS(clcd, "clcd_16_23_b_1");
- 
- #define FUNCTION(fname)					\
- 	{						\
-@@ -329,6 +335,7 @@ static const struct nmk_function nmk_stn8815_functions[] = {
- 	FUNCTION(i2c1),
- 	FUNCTION(i2c0),
- 	FUNCTION(i2cusb),
-+	FUNCTION(clcd),
- };
- 
- static const struct nmk_pinctrl_soc_data nmk_stn8815_soc = {
--- 
-2.4.3
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+
+One nit: please make sure to run scripts/get_maintainer.pl on your
+patch and email the maintainers of the subsystem you are submitting to
+directly. It usually makes your email more visible in their inboxes
+than if you send to the mailing-list only.
