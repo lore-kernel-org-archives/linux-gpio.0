@@ -1,89 +1,99 @@
-From: Quan Nguyen <qnguyen@apm.com>
-Subject: Re: [PATCH v4 1/3] gpio: xgene: Enable X-Gene standby GPIO as
- interrupt controller
-Date: Thu, 28 Jan 2016 16:30:47 +0700
-Message-ID: <CAFopSPRW0yOdbyU_MYuXus+hS-DYWAukPRfn8WsQSv4yqrTjpA@mail.gmail.com>
-References: <1453792935-19916-1-git-send-email-qnguyen@apm.com>
-	<1453792935-19916-2-git-send-email-qnguyen@apm.com>
-	<56A74BD3.40801@arm.com>
-	<CAFopSPTz=sdZs_WZrU8ryTRXNtb4GPOMA_sj8HMPMxWBxV2w4A@mail.gmail.com>
-	<56A7AF48.8020605@arm.com>
-	<CAFopSPR1ZKinH=N29gaAu3M8oc-vfKUnPsFpAu3EUNb3Doi68w@mail.gmail.com>
-	<56A8C1DB.5040606@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2 V3] drivers/gpio: Switch gpio-mpc8xxx to use gpio-generic
+Date: Thu, 28 Jan 2016 10:40:12 +0100
+Message-ID: <CACRpkdZMPho0=1-S9=E+2Q8moccegfupXJEbnpfxRe-+W=3uGQ@mail.gmail.com>
+References: <1452600610-17400-1-git-send-email-Gang.Liu@nxp.com>
+	<1452600610-17400-2-git-send-email-Gang.Liu@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yk0-f173.google.com ([209.85.160.173]:34467 "EHLO
-	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966905AbcA1Jas (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 04:30:48 -0500
-Received: by mail-yk0-f173.google.com with SMTP id a85so23986356ykb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 01:30:48 -0800 (PST)
-In-Reply-To: <56A8C1DB.5040606@arm.com>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:33148 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbcA1JkN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 04:40:13 -0500
+Received: by mail-ob0-f172.google.com with SMTP id is5so30909296obc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 01:40:13 -0800 (PST)
+In-Reply-To: <1452600610-17400-2-git-send-email-Gang.Liu@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches <patches@apm.com>
+To: Liu Gang <Gang.Liu@nxp.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, bhupesh.sharma@nxp.com, scottwood@nxp.com, LeoLi@nxp.com
 
-On Wed, Jan 27, 2016 at 8:10 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Quan,
->
-> On 27/01/16 12:48, Quan Nguyen wrote:
->> On Wed, Jan 27, 2016 at 12:39 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> On 26/01/16 16:27, Quan Nguyen wrote:
->>>> On Tue, Jan 26, 2016 at 5:34 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>>>>
->>>>> On 26/01/16 07:22, Quan Nguyen wrote:
->>>>>> Enable X-Gene standby GPIO controller as interrupt controller to provide
->>>>>> its own resources. This avoids ambiguity where GIC interrupt resource is
->>>>>> use as X-Gene standby GPIO interrupt resource in user driver.
->>>>>>
->>>>>> Signed-off-by: Y Vo <yvo@apm.com>
->>>>>> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
->>>>>> ---
->>>>>>  drivers/gpio/gpio-xgene-sb.c | 331 ++++++++++++++++++++++++++++++++++++-------
->>>>>>  1 file changed, 276 insertions(+), 55 deletions(-)
->>>
->>> [...]
->>>>>> @@ -90,6 +301,32 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
->>>>>>       if (IS_ERR(regs))
->>>>>>               return PTR_ERR(regs);
->>>>>>
->>>>>> +     priv->regs = regs;
->>>>>> +
->>>>>> +     of_id = of_match_device(xgene_gpio_sb_of_match, &pdev->dev);
->>>>>> +     if (of_id)
->>>>>> +             priv->flags = (uintptr_t)of_id->data;
->>>>>
->>>>> Wait. Everything is hardcoded? So why do we have to deal with looking
->>>>> into that structure if nothing is actually parametrized?
->>>>
->>>> There will be other instances with difference number of irq pins /gpio
->>>> /start_irq_base etc.
->>>
->>> Then it has to be described in DT right now.
->>>
->>
->> What I was thinking is to have other id to match with difference
->> instances and these code can be use for ACPI also. Let say
->> "apm,xgene2-gpio-sb"
->> Please help correcting me if it is not right.
->
-> I still think this is the wrong thing to do. You are hiding magic values
-> in the driver, for no good reason. If ACPI has such a broken model that
-> it cannot give you the various parameters you need, then this is an ACPI
-> problem you can solve in the ACPI-specific code. Alternatively, you
-> could also fix your ACPI tables to be less braindead.
->
-> But please do not turn the DT code into the same mess for the sake of
-> using the lowest common denominator. Have a set of properties describing
-> the HW, a compatibility string to nicely identify the revision, and use
-> that. You can still hardcode things for ACPI if you desperately need it.
->
->
+On Tue, Jan 12, 2016 at 1:10 PM, Liu Gang <Gang.Liu@nxp.com> wrote:
 
-Thanks, Marc.
-I'll try with set of properties describing HW and may utilize _DSD
-method for ACPI.
+> The new Layerscape platforms has the same ip block/controller
+> as GPIO on PowerPC platforms(MPC8XXX), but the GPIO registers
+> may be big or little endian. So the code needs to get the
+> endian property from DTB, then make additional functions to
+> fit all the PowerPC/Layerscape GPIO register read/write
+> operations.
+>
+> gpio-generic.c provides an universal infrastructure for both
+> big and little endian register operations. So switch the
+> gpio-mpc8xxx to use gpio-generic can simplify the driver and
+> reduce a lot of code.
+>
+> The IRQ and some workaround parts in gpio-mpc8xxx.c will be
+> updated with the new API interfaces but following the
+> original functionalities.
+>
+> Signed-off-by: Liu Gang <Gang.Liu@nxp.com>
+> ---
+> -V3: Switch gpio-mpc8xxx to use gpio-generic for both
+>      little, big endian kinds of GPIO register following
+>      Linus Walleij comments.
 
--- Quan Nguyen
+This is starting to look good :)
+
+Just a few minor tweaks left.
+
+First rebase onto linux v4.5-rc1 unless you've already done
+this. Unfortunately you're hitting the window when I've been
+refactoring generic GPIO...
+
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/gpio.h>
+>  #include <linux/slab.h>
+>  #include <linux/irq.h>
+> +#include <linux/basic_mmio_gpio.h>
+
+You should remove #include <linux/gpioh.h> and
+#include <linux/basic_mmio_gpio.h> as I have moved
+all of that into #include <linux/gpio/driver.h> so include
+that instead.
+
+>  struct mpc8xxx_gpio_chip {
+> -       struct of_mm_gpio_chip mm_gc;
+> +       struct bgpio_chip       bgc;
+
+Just use struct gpio_chip *gc
+
+as I merged strict bgpio_chip into struct gpio_chip,
+see commit 0f4630f3720e7e6e921bf525c8357fea7ef3dbab
+"gpio: generic: factor into gpio_chip struct"
+
+If you look at this commit, you will see what changes
+are needed for your driver.
+
+>  static inline struct mpc8xxx_gpio_chip *
+> -to_mpc8xxx_gpio_chip(struct of_mm_gpio_chip *mm)
+> +to_mpc8xxx_gpio_chip(struct bgpio_chip *bg_c)
+>  {
+> -       return container_of(mm, struct mpc8xxx_gpio_chip, mm_gc);
+> -}
+
+You should be able to use gpio_add_chip_data() and then
+get the pointer to your struct mpc8xxx_gpio_chip *
+from gpiochip_get_data() instead, like that:
+
+struct mpc8xxx_gpio_chip *mpc = gpiochip_get_data(gc);
+
+Just search and replace everywhere.
+
+Yours,
+Linus Walleij
