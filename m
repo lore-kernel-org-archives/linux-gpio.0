@@ -1,44 +1,201 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH 1/2] gpio: davinci: Add the missing of-node pointer in the irq_domain_add_legacy function call
-Date: Thu, 28 Jan 2016 19:08:50 +0530
-Message-ID: <1453988331-17111-2-git-send-email-j-keerthy@ti.com>
-References: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V6 7/8] DT: regulator: add DT binding doc for regulator of PMIC max77620/max20024
+Date: Thu, 28 Jan 2016 19:07:53 +0530
+Message-ID: <1453988274-28052-8-git-send-email-ldewangan@nvidia.com>
+References: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:38513 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755242AbcA1Njk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 08:39:40 -0500
-In-Reply-To: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, lokeshvutla@ti.com, j-keerthy@ti.com
 
-Currently the first parameter of irq_domain_add_legacy is NULL.
-irq_find_host function returns NULL when we do not populate the of_node
-and hence irq_of_parse_and_map call fails whenever we want to request a
-gpio irq. This fixes the request_irq failures for gpio interrupts.
+Maxim Semiconductor's PMIC MAX77620/MAX20024 has multiple
+DCDCs and LDOs.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Add DT binding document to support these regulators via
+regulator framework.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpio/gpio-davinci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from V4:
+- Separate out from regulator driver 
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index ec58f42..c889f31 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -511,7 +511,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 			return irq;
- 		}
- 
--		irq_domain = irq_domain_add_legacy(NULL, ngpio, irq, 0,
-+		irq_domain = irq_domain_add_legacy(dev->of_node, ngpio, irq, 0,
- 							&davinci_gpio_irq_ops,
- 							chips);
- 		if (!irq_domain) {
+ .../bindings/regulator/regulator-max77620.txt      | 163 +++++++++++++++++++++
+ 1 file changed, 163 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+
+diff --git a/Documentation/devicetree/bindings/regulator/regulator-max77620.txt b/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+new file mode 100644
+index 0000000..230f885
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+@@ -0,0 +1,163 @@
++Regulator DT binding for MAX77620 Power management IC from Maxim Semiconductor.
++
++Device has multiple DCDC(sd[0-3] and LDOs(ldo[0-8]). The details of regulator
++properties are defined under the sub node "regulators" of parent node.
++
++Please refer file <Documentation/devicetree/bindings/regulator/regulator.txt>
++for common regulator bindings used by client.
++
++Following are properties of regulator subnode.
++
++Optional properties:
++-------------------
++The input supply of regulators are the optional properties on the
++regulator node. The input supply of these regulators are provided
++through following properties:
++in-sd0-supply: Input supply for SD0, INA-SD0 or INB-SD0 pins.
++in-sd1-supply: Input supply for SD1.
++in-sd2-supply: Input supply for SD2.
++in-sd3-supply: Input supply for SD3.
++in-ldo0-1-supply: Input supply for LDO0 and LDO1.
++in-ldo2-supply: Input supply for LDO2.
++in-ldo3-5-supply: Input supply for LDO3 and LDO5
++in-ldo4-6-supply: Input supply for LDO4 and LDO6.
++in-ldo7-8-supply: Input supply for LDO7 and LDO8.
++
++
++Optional sub nodes for regulators:
++---------------------------------
++The subnodes name is the name of regulator and it must be one of:
++	sd[0-3], ldo[0-8]
++
++Each sub-node should contain the constraints and initialization
++information for that regulator. The definition for each of these
++nodes is defined using the standard binding for regulators found at
++<Documentation/devicetree/bindings/regulator/regulator.txt>.
++
++Theres is also additional properties for SD/LDOs.
++The properties are required to configure SDs/LDOs FPS parameters
++when system is in "active" state or in "suspend" state.
++Here "active" state means system is UP and working normally.
++"suspend" state means system enters into the suspend state.
++
++- maxim,active-fps-source:	     FPS source for the gpios in active state
++				     of the GPIO. Valid values are FPS_SRC_0,
++				     FPS_SRC_1, FPS_SRC_2 and FPS_SRC_NONE.
++				     Absence of this property will leave the pin
++				     on default.
++- maxim,active-fps-power-up-slot:    Power up slot on given FPS for active state.
++				     Valid values are 0 to 7.
++- maxim,active-fps-power-down-slot:  Power down slot on given FPS for active
++				     state. Valid values are 0 to 7.
++- maxim,suspend-fps-source:	     Suspend state FPS source. Valid values are
++				     same as maxim,active-fps-source.
++- maxim,suspend-fps-power-down-slot: Suspend state power down slot. Valid
++				     values are 0 to 7.
++- maxim,suspend-fps-power-up-slot:   Suspend state power up slot. Valid values
++				     are 0 to 7.
++- maxim,disable-active-discharge:    boolean, Disable active discharge.
++
++Example:
++--------
++#include <dt-bindings/mfd/max77620.h>
++...
++max77620@3c {
++	regulators {
++		in-ldo0-1-supply = <&max77620_sd2>;
++		in-ldo7-8-supply = <&max77620_sd2>;
++
++		sd0 {
++			regulator-name = "vdd-core";
++			regulator-min-microvolt = <600000>;
++			regulator-max-microvolt = <1400000>;
++			regulator-boot-on;
++			regulator-always-on;
++			maxim,active-fps-source = <FPS_SRC_1>;
++		};
++
++		sd1 {
++			regulator-name = "vddio-ddr";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-always-on;
++			regulator-boot-on;
++			maxim,active-fps-source = <FPS_SRC_0>;
++		};
++
++		sd2 {
++			regulator-name = "vdd-pre-reg";
++			regulator-min-microvolt = <1350000>;
++			regulator-max-microvolt = <1350000>;
++		};
++
++		sd3 {
++			regulator-name = "vdd-1v8";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		ldo0 {
++			regulator-name = "avdd-sys";
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1200000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		ldo1 {
++			regulator-name = "vdd-pex";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++		};
++
++		ldo2 {
++			regulator-name = "vddio-sdmmc3";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <3300000>;
++		};
++
++		ldo3 {
++			regulator-name = "vdd-cam-hv";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++		};
++
++		ldo4 {
++			regulator-name = "vdd-rtc";
++			regulator-min-microvolt = <1250000>;
++			regulator-max-microvolt = <1250000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		ldo5 {
++			regulator-name = "avdd-ts-hv";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++		};
++
++		ldo6 {
++			regulator-name = "vdd-ts";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		ldo7 {
++			regulator-name = "vdd-gen-pll-edp";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		ldo8 {
++			regulator-name = "vdd-hdmi-dp";
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1050000>;
++		};
++	};
++};
 -- 
-1.9.1
-
+2.1.4
