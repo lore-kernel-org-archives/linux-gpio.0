@@ -1,31 +1,53 @@
 From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH 0/2] gpio: davinci: driver fixes
-Date: Thu, 28 Jan 2016 19:08:49 +0530
-Message-ID: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
+Subject: [PATCH 2/2] gpio: davinci: Fix the number of controllers allocated
+Date: Thu, 28 Jan 2016 19:08:51 +0530
+Message-ID: <1453988331-17111-3-git-send-email-j-keerthy@ti.com>
+References: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:38510 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750934AbcA1Njh (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 08:39:37 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1453988331-17111-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, grygorii.strashko@ti.com, lokeshvutla@ti.com, j-keerthy@ti.com
+List-Id: linux-gpio@vger.kernel.org
 
-The series has couple of for the gpio driver.
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-Keerthy (1):
-  gpio: davinci: Add the missing of-node pointer in the
-    irq_domain_add_legacy function call
+Driver only needs to allocate for [ngpio / 32] controllers,
+as each controller handles 32 gpios. But the current driver
+allocates for ngpio of which the extra allocated are unused.
+Fix it be registering only the required number of controllers.
 
-Lokesh Vutla (1):
-  gpio: davinci: Fix the number of controllers allocated
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ drivers/gpio/gpio-davinci.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- drivers/gpio/gpio-davinci.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index c889f31..cd007a6 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -195,7 +195,7 @@ static int davinci_gpio_of_xlate(struct gpio_chip *gc,
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	int i, base;
+-	unsigned ngpio;
++	unsigned ngpio, nbank;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+ 	struct davinci_gpio_regs __iomem *regs;
+@@ -224,8 +224,9 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
+ 		ngpio = ARCH_NR_GPIOS;
+ 
++	nbank = DIV_ROUND_UP(ngpio, 32);
+ 	chips = devm_kzalloc(dev,
+-			     ngpio * sizeof(struct davinci_gpio_controller),
++			     nbank * sizeof(struct davinci_gpio_controller),
+ 			     GFP_KERNEL);
+ 	if (!chips)
+ 		return -ENOMEM;
 -- 
 1.9.1
-
