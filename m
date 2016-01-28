@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V6 7/8] DT: regulator: add DT binding doc for regulator of PMIC max77620/max20024
-Date: Thu, 28 Jan 2016 19:07:53 +0530
-Message-ID: <1453988274-28052-8-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V6 3/8] DT: pinctrl: add DT binding doc for pincontrol of PMIC max77620/max20024
+Date: Thu, 28 Jan 2016 19:07:49 +0530
+Message-ID: <1453988274-28052-4-git-send-email-ldewangan@nvidia.com>
 References: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,66 +12,67 @@ To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree
 Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Maxim Semiconductor's PMIC MAX77620/MAX20024 has multiple
-DCDCs and LDOs.
+Maxim Semiconductor's PMIC MAX77620/MAX20024 has 8 GPIO pins
+which act as GPIO as well as special function mode.
 
-Add DT binding document to support these regulators via
-regulator framework.
+Add DT binding document to configure pins in function mode as
+well as pin configuration parameters.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 Acked-by: Rob Herring <robh@kernel.org>
 ---
 Changes from V4:
-- Separate out from regulator driver 
+- Separate out from pincontrol driver 
 
- .../bindings/regulator/regulator-max77620.txt      | 163 +++++++++++++++++++++
- 1 file changed, 163 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+ .../bindings/pinctrl/pinctrl-max77620.txt          | 87 ++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
 
-diff --git a/Documentation/devicetree/bindings/regulator/regulator-max77620.txt b/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
 new file mode 100644
-index 0000000..230f885
+index 0000000..6536786
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/regulator-max77620.txt
-@@ -0,0 +1,163 @@
-+Regulator DT binding for MAX77620 Power management IC from Maxim Semiconductor.
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
+@@ -0,0 +1,87 @@
++Pincontrol driver for MAX77620 Power management IC from Maxim Semiconductor.
 +
-+Device has multiple DCDC(sd[0-3] and LDOs(ldo[0-8]). The details of regulator
-+properties are defined under the sub node "regulators" of parent node.
++Device has 8 GPIO pins which can be configured as GPIO as well as the
++special IO functions.
 +
-+Please refer file <Documentation/devicetree/bindings/regulator/regulator.txt>
-+for common regulator bindings used by client.
++Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
++for details of the common pinctrl bindings used by client devices,
++including the meaning of the phrase "pin configuration node".
 +
-+Following are properties of regulator subnode.
++Optional Pinmux properties:
++--------------------------
++Following properties are require if pin control setting is required at boot.
++- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
++- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
++		<pinctrl-binding.txt>.
++
++The pin configurations are defined as child of the pinctrl states node. Each
++sub-node have following properties:
++
++Required properties:
++- pins: List of pins. Valid values of pins properties are:
++		      gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7.
 +
 +Optional properties:
-+-------------------
-+The input supply of regulators are the optional properties on the
-+regulator node. The input supply of these regulators are provided
-+through following properties:
-+in-sd0-supply: Input supply for SD0, INA-SD0 or INB-SD0 pins.
-+in-sd1-supply: Input supply for SD1.
-+in-sd2-supply: Input supply for SD2.
-+in-sd3-supply: Input supply for SD3.
-+in-ldo0-1-supply: Input supply for LDO0 and LDO1.
-+in-ldo2-supply: Input supply for LDO2.
-+in-ldo3-5-supply: Input supply for LDO3 and LDO5
-+in-ldo4-6-supply: Input supply for LDO4 and LDO6.
-+in-ldo7-8-supply: Input supply for LDO7 and LDO8.
++Following are optional properties defined as pinmux DT binding document
++<pinctrl-bindings.txt>. Absence of properties will leave the configuration
++on default.
++	function,
++	drive-push-pull,
++	drive-open-drain,
++	bias-pull-up,
++	bias-pull-down.
 +
++Valid values for function properties are:
++	gpio, lpm-control-in, fps-out, 32k-out, sd0-dvs-in, sd1-dvs-in,
++	reference-out
 +
-+Optional sub nodes for regulators:
-+---------------------------------
-+The subnodes name is the name of regulator and it must be one of:
-+	sd[0-3], ldo[0-8]
-+
-+Each sub-node should contain the constraints and initialization
-+information for that regulator. The definition for each of these
-+nodes is defined using the standard binding for regulators found at
-+<Documentation/devicetree/bindings/regulator/regulator.txt>.
-+
-+Theres is also additional properties for SD/LDOs.
-+The properties are required to configure SDs/LDOs FPS parameters
++Theres is also customised properties for the GPIO1, GPIO2 and GPIO3.
++The properties are required to configure these resource FPS parameters
 +when system is in "active" state or in "suspend" state.
 +Here "active" state means system is UP and working normally.
 +"suspend" state means system enters into the suspend state.
@@ -89,111 +90,34 @@ index 0000000..230f885
 +				     same as maxim,active-fps-source.
 +- maxim,suspend-fps-power-down-slot: Suspend state power down slot. Valid
 +				     values are 0 to 7.
-+- maxim,suspend-fps-power-up-slot:   Suspend state power up slot. Valid values
++- maxim,suspend-fps-power-up-slot: Suspend state power up slot. Valid values
 +				     are 0 to 7.
-+- maxim,disable-active-discharge:    boolean, Disable active discharge.
 +
 +Example:
 +--------
 +#include <dt-bindings/mfd/max77620.h>
 +...
 +max77620@3c {
-+	regulators {
-+		in-ldo0-1-supply = <&max77620_sd2>;
-+		in-ldo7-8-supply = <&max77620_sd2>;
 +
-+		sd0 {
-+			regulator-name = "vdd-core";
-+			regulator-min-microvolt = <600000>;
-+			regulator-max-microvolt = <1400000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			maxim,active-fps-source = <FPS_SRC_1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&spmic_default>;
++
++	spmic_default: pinmux@0 {
++		pin_gpio0 {
++			pins = "gpio0";
++			function = "gpio";
 +		};
 +
-+		sd1 {
-+			regulator-name = "vddio-ddr";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+			maxim,active-fps-source = <FPS_SRC_0>;
++		pin_gpio1 {
++			pins = "gpio1";
++			function = "fps-out";
++			maxim,fps-source = <FPS_SRC_0>;
 +		};
 +
-+		sd2 {
-+			regulator-name = "vdd-pre-reg";
-+			regulator-min-microvolt = <1350000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		sd3 {
-+			regulator-name = "vdd-1v8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		ldo0 {
-+			regulator-name = "avdd-sys";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		ldo1 {
-+			regulator-name = "vdd-pex";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+		};
-+
-+		ldo2 {
-+			regulator-name = "vddio-sdmmc3";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		ldo3 {
-+			regulator-name = "vdd-cam-hv";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+		};
-+
-+		ldo4 {
-+			regulator-name = "vdd-rtc";
-+			regulator-min-microvolt = <1250000>;
-+			regulator-max-microvolt = <1250000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		ldo5 {
-+			regulator-name = "avdd-ts-hv";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		ldo6 {
-+			regulator-name = "vdd-ts";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		ldo7 {
-+			regulator-name = "vdd-gen-pll-edp";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		ldo8 {
-+			regulator-name = "vdd-hdmi-dp";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
++		pin_gpio2 {
++			pins = "gpio2";
++			function = "fps-out";
++			maxim,fps-source = <FPS_SRC_1>;
 +		};
 +	};
 +};
