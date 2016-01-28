@@ -1,65 +1,37 @@
-From: biao huang <biao.huang@mediatek.com>
-Subject: pinctrl: mediatek: questions about gpio/pinctrl/eint
-Date: Thu, 28 Jan 2016 10:35:41 +0800
-Message-ID: <1453948541.14802.38.camel@mhfsdcap03>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: nomadik: hide unused functions
+Date: Thu, 28 Jan 2016 11:36:31 +0100
+Message-ID: <CACRpkdYHpeb18SfUU=d_jXtLPFpUe2AkW5JJzMK5giFBw1aKAA@mail.gmail.com>
+References: <1453737557-1960171-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([218.249.47.111]:44823 "EHLO
-	mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-	with ESMTP id S964802AbcA1Kf4 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 05:35:56 -0500
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:35889 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964802AbcA1Kgb (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 05:36:31 -0500
+Received: by mail-ob0-f173.google.com with SMTP id ba1so31962744obb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 02:36:31 -0800 (PST)
+In-Reply-To: <1453737557-1960171-1-git-send-email-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alessandro Rubini <rubini@unipv.it>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Mon, Jan 25, 2016 at 4:59 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-	We have two questions associate with mediatek pinctrl/gpio in linux
-kernel to asking for your help.
+> The nomadik pinctrl driver has two functions that are only used
+> for debugfs output and are otherwise unused:
+>
+> drivers/pinctrl/nomadik/pinctrl-abx500.c:194:12: error: 'abx500_get_pull_updown' defined but not used
+> drivers/pinctrl/nomadik/pinctrl-abx500.c:471:12: error: 'abx500_get_mode' defined but not used
+>
+> This makes the function definitions conditional to avoid the
+> harmless warnings.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-	First, when user call GPIO API to control medaitek gpio, they should
-call pinctrl API to set pinmux to mode 0 ahead, so this pin is function
-as gpio. And this makes things a little complicated. Is there any simple
-API can solve this problem? How about add pinmux setting in
-gpio_request?
+Patch applied for fixes.
 
-	Second, here is our request_irq flow in mkd eint driver:
-request_irq --> mtk_pinctrl_irq_request_resources--> mtk_pmx_set_mode,
-Normally, it'll set pinmux to eint mode (usually is mode 0) in
-mtk_pmx_set_mode function. But for special case, such as iddig (connect
-to usb), when iddig request_irq, it should set pinmux to iddig mode
-(mode 2 in mt8163).
-	Is there a better way than changing
-        MTK_PIN(
-                PINCTRL_PIN(16, "IDDIG"),
-                NULL, "mt8173",
-                MTK_EINT_FUNCTION(0, 16),
-                MTK_FUNCTION(0, "GPIO16"),
-                MTK_FUNCTION(1, "IDDIG"),
-                MTK_FUNCTION(2, "CMFLASH"),
-                MTK_FUNCTION(4, "PWM5")
-        ),
-	to
-        MTK_PIN(
-                PINCTRL_PIN(16, "IDDIG"),
-                NULL, "mt8173",
-                MTK_EINT_FUNCTION(2, 16),
-                MTK_FUNCTION(0, "GPIO16"),
-                MTK_FUNCTION(1, "IDDIG"),
-                MTK_FUNCTION(2, "CMFLASH"),
-                MTK_FUNCTION(4, "PWM5")
-        ),
-	in drivers/pinctrl/mediatek/pinctrl-mtk-mt8163.h?
-
-	We are looking forward for your help, thanks very much!
-
-Best Regards!
 Yours,
-Biao Huang
-
-
-
-
+Linus Walleij
