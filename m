@@ -1,45 +1,69 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 1/1] gpio-f7188x: Add F81866 GPIO supports
-Date: Thu, 28 Jan 2016 10:07:25 +0100
-Message-ID: <CACRpkdYB3_X++4+ARRPh5yAE_7tdQ3XmuSzaGUQTaZshqR+NUg@mail.gmail.com>
-References: <1453447413-25290-1-git-send-email-hpeter+linux_kernel@gmail.com>
-	<1453447413-25290-2-git-send-email-hpeter+linux_kernel@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1453447413-25290-2-git-send-email-hpeter+linux_kernel@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Hung <hpeter@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Simon Guinot <simon.guinot@sequanux.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, peter_hong@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
+From: Peter Hung <hpeter@gmail.com>
+Subject: [PATCH V2 0/4] Transform Fintek PCIE driver from 8250 to MFD
+Date: Thu, 28 Jan 2016 17:20:34 +0800
+Message-ID: <1453972838-30268-1-git-send-email-hpeter+linux_kernel@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:34086 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964837AbcA1JUl (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 04:20:41 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw
+Cc: heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-On Fri, Jan 22, 2016 at 8:23 AM, Peter Hung <hpeter@gmail.com> wrote:
+The Fintek F81504/508/512 is a multi-function PCIE devices.
+IC function list:
+    F81504: Max 2x8 GPIOs and max 4 serial ports
+        port2/3 are multi-function
+    F81508: Max 6x8 GPIOs and max 8 serial ports
+        port2/3 are multi-function, port8/9/10/11 are gpio only
+    F81512: Max 6x8 GPIOs and max 12 serial ports
+        port2/3/8/9/10/11 are multi-function
 
-> Add F81866 GPIO supports
->
-> Fintek F81866 is a SuperIO. It contains HWMON/GPIO/Serial Ports.
-> and it has totally 72(9x8 sets) gpio pins.
->
-> Here is the PDF spec:
-> http://www.alldatasheet.com/datasheet-pdf/pdf/459085/FINTEK/F81866AD-I.html
->
-> The control method is the same with F7188x, but we should care the address
-> of GPIO8x.
->
-> GPIO address is below:
->     GPIO0x based: 0xf0
->     GPIO1x based: 0xe0
->     GPIO2x based: 0xd0
->     GPIO3x based: 0xc0
->     GPIO4x based: 0xb0
->     GPIO5x based: 0xa0
->     GPIO6x based: 0x90
->     GPIO7x based: 0x80
->     GPIO8x based: 0x88 <-- not 0x70.
->
-> Signed-off-by: Peter Hung <hpeter+linux_kernel@gmail.com>
+It had implemented in 8250_pci.c with basic serial port function.
+We want to complete it. Alan & Andy recommend us to rewrite and
+spilt our driver with MFD architecture.
+https://lkml.org/lkml/2016/1/19/288
 
-This v2 patch applied with Simon's ACK.
+Paul recommed us do less code deletion to avoid confusing problem when
+bisect.
+https://lkml.org/lkml/2016/1/18/646
 
-Yours,
-Linus Walleij
+So we'll do this with following patches.
+    1. Add MFD core driver.
+    2. Add GPIOLIB driver.
+    3. Add serial port driver.
+    4. Remove old driver in 8250_pci.c
+
+It can be workable when applied patches 1~3. After apply patch 4,
+the device will control by F81504 MFD core driver.
+Peter Hung (4):
+  mfd: f81504-core: Add Fintek F81504/508/512 PCIE-to-UART/GPIO core
+    support
+  gpio: gpio-f81504: Add Fintek F81504/508/512 PCIE-to-UART/GPIO GPIOLIB
+    support
+  8250: 8250_f81504: Add Fintek F81504/508/512 PCIE-to-UART/GPIO UART
+    support
+  serial: 8250_pci: Remove Fintek F81504/508/512 UART driver
+
+ drivers/gpio/Kconfig                  |  10 +
+ drivers/gpio/Makefile                 |   1 +
+ drivers/gpio/gpio-f81504.c            | 257 ++++++++++++++++++++++++++
+ drivers/mfd/Kconfig                   |  11 ++
+ drivers/mfd/Makefile                  |   2 +
+ drivers/mfd/f81504-core.c             | 331 ++++++++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_f81504.c | 254 ++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_pci.c    | 201 ---------------------
+ drivers/tty/serial/8250/Kconfig       |  11 ++
+ drivers/tty/serial/8250/Makefile      |   1 +
+ include/linux/mfd/f81504.h            |  52 ++++++
+ 11 files changed, 930 insertions(+), 201 deletions(-)
+ create mode 100644 drivers/gpio/gpio-f81504.c
+ create mode 100644 drivers/mfd/f81504-core.c
+ create mode 100644 drivers/tty/serial/8250/8250_f81504.c
+ create mode 100644 include/linux/mfd/f81504.h
+
+-- 
+1.9.1
+
