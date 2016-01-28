@@ -1,34 +1,221 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH] pinctrl: pxa: export pxa2xx_pinctrl_init()
-Date: Wed, 27 Jan 2016 21:20:27 +0100
-Message-ID: <87powm93lg.fsf@belgarion.home>
-References: <1453577113-14423-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdai_HysVqroBz-NcupxRF_2PPyHQnj8e8Ani6+04xre0A@mail.gmail.com>
+From: Joshua Henderson <joshua.henderson@microchip.com>
+Subject: Re: [PATCH v5 08/14] pinctrl: pinctrl-pic32: Add PIC32 pin control
+ driver
+Date: Wed, 27 Jan 2016 17:33:16 -0700
+Message-ID: <56A961CC.9030205@microchip.com>
+References: <1452734299-460-1-git-send-email-joshua.henderson@microchip.com>
+ <1452734299-460-9-git-send-email-joshua.henderson@microchip.com>
+ <CACRpkdaDC5LLcQx5_=vm=tjAV0z6RHvzgjzSFK6S+_1M7faMuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdai_HysVqroBz-NcupxRF_2PPyHQnj8e8Ani6+04xre0A@mail.gmail.com>
-	(Linus Walleij's message of "Wed, 27 Jan 2016 13:33:23 +0100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Mack <daniel@zonque.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from exsmtp01.microchip.com ([198.175.253.37]:6217 "EHLO
+	email.microchip.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S934437AbcA1AZJ (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Jan 2016 19:25:09 -0500
+In-Reply-To: <CACRpkdaDC5LLcQx5_=vm=tjAV0z6RHvzgjzSFK6S+_1M7faMuA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+Linus,
 
-> On Sat, Jan 23, 2016 at 8:25 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> Building pinctrl-pxa27x.c as a module causes a link error:
+On 01/27/2016 06:49 AM, Linus Walleij wrote:
+> On Thu, Jan 14, 2016 at 2:15 AM, Joshua Henderson
+> <joshua.henderson@microchip.com> wrote:
+> 
+>> Add a driver for the pin controller present on the Microchip PIC32
+>> including the specific variant PIC32MZDA. This driver provides pinmux
+>> and pinconfig operations as well as GPIO and IRQ chips for the GPIO
+>> banks.
 >>
->> ERROR: "pxa2xx_pinctrl_init" [drivers/pinctrl/pxa/pinctrl-pxa27x.ko] undefined!
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Signed-off-by: Joshua Henderson <joshua.henderson@microchip.com>
+>> Cc: Ralf Baechle <ralf@linux-mips.org>
+>> ---
+>> Changes since v4: None
+> 
+> Sorry for the delay. Fell between the cracks.
 >
-> Patch applied with Robert's ACK.
-Thanks Linus.
+> Overall this looks nice. Small things that need to be fixed below.
+> 
+> Is it possible to merge this patch separately into the pinctrl tree?
 
-Cheers.
+Yes. That was not the original goal as it is part of a larger patch set for dependency reasons, but a couple in the series got left behind, including this one.
 
--- 
-Robert
+> 
+> I was hoping there are no compile-time dependencies to the
+> MIPS tree so I can just merge this. Else I can provide some
+> kind of immutable branch to the MIPS maintainers.
+> (Having dangling symbols in Kconfig is OK with me if I know
+> they will come in from some other tree.)
+> 
+
+You have what you need in your pinctrl tree.  I see 4.5-rc1 pulled with MIPS PIC32 platform support.
+
+>> +#include <linux/clk.h>
+>> +#include <linux/gpio.h>
+> 
+> This include should not be needed, just the one below.
+> 
+
+Ack.
+
+>> +#include <linux/gpio/driver.h>
+> (...)
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/pinctrl/pinconf.h>
+>> +#include <linux/pinctrl/pinconf-generic.h>
+>> +#include <linux/pinctrl/pinctrl.h>
+>> +#include <linux/pinctrl/pinmux.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +#include <asm/mach-pic32/pic32.h>
+> 
+> Oh this is how you do things still? Is this necessary? :/
+
+This is needed only for the PIC32_CLR()/PIC32_SET()/PIC32_INV() macros that are just providing register offsets. These macros are used by many (all?) of the PIC32 drivers and platform.  Explicitly labeling these offsets where used is valuable because it changes the meaning of "value" to writel().  If you can suggest a better place to put these I am all for it.
+
+> Then I guess it has to be applied to the MIPS tree.
+> 
+
+Doesn't have to now.
+
+>> +static inline u32 pctl_readl(struct pic32_pinctrl *pctl, u32 reg)
+>> +{
+>> +       return readl(pctl->reg_base + reg);
+>> +}
+>> +
+>> +static inline void pctl_writel(struct pic32_pinctrl *pctl, u32 val, u32 reg)
+>> +{
+>> +       writel(val, pctl->reg_base + reg);
+>> +}
+> 
+> This is a bit excess abstraction, I would just readl() and writel()
+> directly in the code, adding the offset. Butr it's you pick.
+> 
+
+I'm in agreement.  It was nice for initial debug, but we are past that.  I'll yank the wrapper *_writel/*_readl functions.
+
+>> +static inline struct pic32_gpio_bank *gc_to_bank(struct gpio_chip *gc)
+>> +{
+>> +       return container_of(gc, struct pic32_gpio_bank, gpio_chip);
+>> +}
+> 
+> Don't do this anymore.
+> 
+> Se all the "use gpiochip data pointer" patches I merged last
+> merge window.
+> 
+
+Those made it in with this patch outstanding.  I will double check against your pinctrl tree.
+
+> Replace
+> 
+> = gc_to_bank(gc)
+> with
+> = gpiochip_get_data(gc);
+> 
+> everywhere and use
+> 
+> gpiochip_add_data(&gc, bank)
+> 
+> to make sure that gpipchip_get_data() returns what you want.
+> 
+>> +static inline struct pic32_gpio_bank *irqd_to_bank(struct irq_data *d)
+>> +{
+>> +       return gc_to_bank(irq_data_get_irq_chip_data(d));
+>> +}
+> 
+> For example this becomes:
+> return gpiochip_get_data(irq_data_get_irq_chip_data(d));
+> 
+
+Thanks for the explanation.  Consider it done.
+
+>> +static inline u32 gpio_readl(struct pic32_gpio_bank *bank, u32 reg)
+>> +{
+>> +       return readl(bank->reg_base + reg);
+>> +}
+>> +
+>> +static inline void gpio_writel(struct pic32_gpio_bank *bank, u32 val,
+>> +                              u32 reg)
+>> +{
+>> +       writel(val, bank->reg_base + reg);
+>> +}
+> 
+> Again excessive abstraction IMO.
+> 
+
+Ack.
+
+>> +#define GPIO_BANK(_bank, _npins)                                       \
+>> +       {                                                               \
+>> +               .gpio_chip = {                                          \
+>> +                       .label = "GPIO" #_bank,                         \
+>> +                       .request = gpiochip_generic_request,            \
+>> +                       .free = gpiochip_generic_free,                  \
+>> +                       .get_direction = pic32_gpio_get_direction,      \
+>> +                       .direction_input = pic32_gpio_direction_input,  \
+>> +                       .direction_output = pic32_gpio_direction_output, \
+>> +                       .get = pic32_gpio_get,                          \
+>> +                       .set = pic32_gpio_set,                          \
+>> +                       .ngpio = _npins,                                \
+>> +                       .base = GPIO_BANK_START(_bank),                 \
+>> +                       .owner = THIS_MODULE,                           \
+>> +                       .can_sleep = 0,                                 \
+>> +               },                                                      \
+>> +               .irq_chip = {                                           \
+>> +                       .name = "GPIO" #_bank,                          \
+>> +                       .irq_startup = pic32_gpio_irq_startup,  \
+>> +                       .irq_ack = pic32_gpio_irq_ack,          \
+>> +                       .irq_mask = pic32_gpio_irq_mask,                \
+>> +                       .irq_unmask = pic32_gpio_irq_unmask,            \
+>> +                       .irq_set_type = pic32_gpio_irq_set_type,        \
+>> +               },                                                      \
+>> +       }
+>> +
+>> +static struct pic32_gpio_bank pic32_gpio_banks[] = {
+>> +       GPIO_BANK(0, PINS_PER_BANK),
+>> +       GPIO_BANK(1, PINS_PER_BANK),
+>> +       GPIO_BANK(2, PINS_PER_BANK),
+>> +       GPIO_BANK(3, PINS_PER_BANK),
+>> +       GPIO_BANK(4, PINS_PER_BANK),
+>> +       GPIO_BANK(5, PINS_PER_BANK),
+>> +       GPIO_BANK(6, PINS_PER_BANK),
+>> +       GPIO_BANK(7, PINS_PER_BANK),
+>> +       GPIO_BANK(8, PINS_PER_BANK),
+>> +       GPIO_BANK(9, PINS_PER_BANK),
+>> +};
+> 
+> Ewwwww.... I guess it's OK though. I would have made it with
+> some dynamic allocation and a for() loop in code.
+> 
+
+Let me look into this more and see if I can clean it up.
+
+>> +       bank->gpio_chip.dev = &pdev->dev;
+> 
+> This is named .parent in the upstream kernel so you need to change it.
+
+Ack.
+
+> 
+>> +       bank->gpio_chip.of_node = np;
+>> +       ret = gpiochip_add(&bank->gpio_chip);
+> 
+> So use gpiochip_add_data()
+> 
+> Apart from this it looks pretty OK.
+> 
+
+I'll take what I can get.  Let me submit a patch in response to this feedback and you can take it at will.
+
+Josh
