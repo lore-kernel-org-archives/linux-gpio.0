@@ -1,39 +1,51 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH V2 3/4] 8250: 8250_f81504: Add Fintek F81504/508/512
- PCIE-to-UART/GPIO UART support
-Date: Thu, 28 Jan 2016 19:06:39 +0800
-Message-ID: <201601281904.MbBUDU3t%fengguang.wu@intel.com>
-References: <1453972838-30268-4-git-send-email-hpeter+linux_kernel@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/6] gpio: add a userspace chardev ABI for GPIOs
+Date: Thu, 28 Jan 2016 12:13:28 +0100
+Message-ID: <CACRpkdbizV=gA35AteaSSkgBogo=7mcgW4=r6D93arYq7RPSOw@mail.gmail.com>
+References: <1445502750-22672-1-git-send-email-linus.walleij@linaro.org>
+	<1445502750-22672-4-git-send-email-linus.walleij@linaro.org>
+	<20151024003010.GA376@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:19334 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S966981AbcA1LIN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Jan 2016 06:08:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1453972838-30268-4-git-send-email-hpeter+linux_kernel@gmail.com>
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:33565 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964950AbcA1LN3 (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 06:13:29 -0500
+Received: by mail-ob0-f175.google.com with SMTP id is5so32542875obc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 03:13:29 -0800 (PST)
+In-Reply-To: <20151024003010.GA376@kroah.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Hung <hpeter@gmail.com>
-Cc: kbuild-all@01.org, linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw, heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Johan Hovold <johan@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Michael Welling <mwelling@ieee.org>, Markus Pargmann <mpa@pengutronix.de>, Mark Brown <broonie@kernel.org>, Amit Kucheria <amit.kucheria@linaro.org>
 
-Hi Peter,
+On Sat, Oct 24, 2015 at 2:30 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Oct 22, 2015 at 10:32:27AM +0200, Linus Walleij wrote:
+>> +/**
+>> + * struct gpiochip_info - Information about a certain GPIO chip
+>> + * @name: the name of this GPIO chip
+>> + * @lines: number of GPIO lines on this chip
+>> + */
+>> +struct gpiochip_info {
+>> +     char name[32];
+>
+> To be pendantic, s/char/__u8/
 
-[auto build test WARNING on gpio/for-next]
-[also build test WARNING on v4.5-rc1 next-20160128]
-[if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
+Thanks, will fix.
 
-url:    https://github.com/0day-ci/linux/commits/Peter-Hung/Transform-Fintek-PCIE-driver-from-8250-to-MFD/20160128-172929
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git for-next
+> Otherwise, looks good, but I don't see the read/write protocol here, is
+> that in a later patch?
 
+I wanted to get the very basic infrastructure in place first
+so we can then add a careful selection of ioctl():s one by
+one.
 
-coccinelle warnings: (new ones prefixed by >>)
+get/set is delicate as I want to be able to handle
+reading/switching multiple lines at once from day one as
+that reduce context switching nicely, and we also have
+.set_multiple() in the driver backend for select chips.
 
->> drivers/tty/serial/8250/8250_f81504.c:233:3-8: No need to set .owner here. The core will do it.
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Yours,
+Linus Walleij
