@@ -1,46 +1,40 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v8 0/5] mfd: tps65912: Driver rewrite with DT support
-Date: Thu, 28 Jan 2016 12:04:23 +0000
-Message-ID: <20160128120423.GP3368@x1>
-References: <1453736627-2634-1-git-send-email-afd@ti.com>
- <20160128064149.GM3368@x1>
- <20160128114026.GB6078@sirena.org.uk>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH V2 4/4] serial: 8250_pci: Remove Fintek F81504/508/512
+ UART driver
+Date: Thu, 28 Jan 2016 14:04:17 +0200
+Message-ID: <1453982657.2521.287.camel@linux.intel.com>
+References: <1453972838-30268-1-git-send-email-hpeter+linux_kernel@gmail.com>
+	 <1453972838-30268-5-git-send-email-hpeter+linux_kernel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:33725 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933485AbcA1ME3 (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 07:04:29 -0500
-Received: by mail-wm0-f52.google.com with SMTP id l66so22285789wml.0
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 04:04:29 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20160128114026.GB6078@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1453972838-30268-5-git-send-email-hpeter+linux_kernel@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Hung <hpeter@gmail.com>, linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw
+Cc: heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 28 Jan 2016, Mark Brown wrote:
+On Thu, 2016-01-28 at 17:20 +0800, Peter Hung wrote:
+> Remove Fintek F81504/508/512 PCIE-to-UART device driver from
+> 8250_pci.c
+> 
+> Paul recommed us do less code deletion to avoid confusing problem
+> when
+> bisect.
+> https://lkml.org/lkml/2016/1/18/646
+> 
+> 
 
-> On Thu, Jan 28, 2016 at 06:41:49AM +0000, Lee Jones wrote:
->=20
-> > Just need your stamp for this to go in.
->=20
-> Please be more specific?  What is it that you are looking for beyond =
-the
-> review I already did for the regulator driver?
 
-Patch 2.
+> -	/* Fintek PCI serial cards */
+> -	{ PCI_DEVICE(0x1c29, 0x1104), .driver_data = pbn_fintek_4 },
+> -	{ PCI_DEVICE(0x1c29, 0x1108), .driver_data = pbn_fintek_8 },
+> -	{ PCI_DEVICE(0x1c29, 0x1112), .driver_data = pbn_fintek_12
+> },
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Shouldn't you blacklist them in 8250_pci?
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
