@@ -1,74 +1,33 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V5 5/5] regulator: max77620: add regulator driver for
- max77620/max20024
-Date: Thu, 28 Jan 2016 15:42:36 +0900
-Message-ID: <56A9B85C.2050206@samsung.com>
-References: <1453903808-29788-1-git-send-email-ldewangan@nvidia.com>
- <1453903808-29788-6-git-send-email-ldewangan@nvidia.com>
- <56A99130.1070904@samsung.com> <56A9B41C.4070607@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: 104-idi-48: Allow IRQ sharing
+Date: Thu, 28 Jan 2016 09:43:50 +0100
+Message-ID: <CACRpkdan5BbY5LNoJsyFAwQpvMYrEGW4WsG2Tk_KMngb-Rm29Q@mail.gmail.com>
+References: <20160120185731.GA10340@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11150 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934583AbcA1Gmn (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 01:42:43 -0500
-In-reply-to: <56A9B41C.4070607@nvidia.com>
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:33529 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934860AbcA1Inu (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 03:43:50 -0500
+Received: by mail-ob0-f178.google.com with SMTP id is5so29926967obc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 00:43:50 -0800 (PST)
+In-Reply-To: <20160120185731.GA10340@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
-Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 28.01.2016 15:24, Laxman Dewangan wrote:
-> 
-> On Thursday 28 January 2016 09:25 AM, Krzysztof Kozlowski wrote:
->> On 27.01.2016 23:10, Laxman Dewangan wrote:
->>> MAXIM Semiconductor's PMIC, MAX77620 and MAX20024 have the
->>> multiple DCDC and LDOs. This supplies the power to different
->>> components of the system.
->>> Also these rails has configuration for ramp time, flexible
->>> power sequence, slew rate etc.
->>>
->>> Add regulator driver to access these rails via regulator APIs.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
->>> ---
->>> Changes from V1:
->>> - Cleanup code based on comment received on mfd/rtc.
->>> - Avoid duplication on error message.
->>>
->>> Changes form V2:
->>> - Run coccicheck and checkpatch in strict mode for the alignment.
->>> - Refactor Regulator driver to use core API for DT parsing.
->>> - Update based on API changes.
->>>
->>> Changes from V3:
->>> - Change all sys initcall to module driver.
->>> - change the max77620_read argument to unisgned int from u8.
->>>
->>> Changes from V4:
->>> - Added DT binding document as
->>> devicetree/bindings/regulator/regulator-max77620.txt
->>> - Detail out properties.
->> What does it mean "Detail out properties"? What have changed>
-> 
-> Based on review comment from Linus W, I added more description on the
-> properties.
+On Wed, Jan 20, 2016 at 7:57 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-Ah, ok.
+> The ACCES 104-IDI-48 can differentiate between its own and other
+> devices' interrupt requests. Therefore, IRQ sharing is possible and
+> should be permitted.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
->> I already reviewed the patchset but because of adding bindings here, you
->> could not add my reviewed-by tag (which makes my effort not tracked...).
-> Yaah, This patch include the dt binding and so wanted your review again.
-> This si only reason to not add reviewed-by.
-> 
-> Now I am going to separate out DT binding and driver,  I will add
-> reviewed-by tag for you in driver file.
+Patch applied.
 
-Yeah, but the driver nor the bindings do not change so it really does
-not need my additional review.
-
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
