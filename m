@@ -1,107 +1,49 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: pinctrl: mediatek: questions about gpio/pinctrl/eint
-Date: Thu, 28 Jan 2016 12:22:14 +0100
-Message-ID: <CACRpkdbhY9Rt-DD3BgiG8u5JrW+6XcZn0JWWE2Q39wQp38GjXA@mail.gmail.com>
-References: <1453948541.14802.38.camel@mhfsdcap03>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 0/5] mfd: tps65912: Driver rewrite with DT support
+Date: Thu, 28 Jan 2016 11:40:26 +0000
+Message-ID: <20160128114026.GB6078@sirena.org.uk>
+References: <1453736627-2634-1-git-send-email-afd@ti.com>
+ <20160128064149.GM3368@x1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:35170 "EHLO
-	mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966106AbcA1LWP (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 06:22:15 -0500
-Received: by mail-oi0-f52.google.com with SMTP id p187so24513290oia.2
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 03:22:15 -0800 (PST)
-In-Reply-To: <1453948541.14802.38.camel@mhfsdcap03>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160128064149.GM3368@x1>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: biao huang <biao.huang@mediatek.com>
-Cc: "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>
 
-On Thu, Jan 28, 2016 at 3:35 AM, biao huang <biao.huang@mediatek.com> wrote:
 
->         First, when user call GPIO API to control medaitek gpio, they should
-> call pinctrl API to set pinmux to mode 0 ahead, so this pin is function
-> as gpio. And this makes things a little complicated. Is there any simple
-> API can solve this problem? How about add pinmux setting in
-> gpio_request?
+--i0/AhcQY5QxfSsSZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is what the
-pinctrl_request_gpio, pinctrl_free_gpio, pinctrl_gpio_direction_input
-andpinctrl_gpio_direction_output calls are for.
+On Thu, Jan 28, 2016 at 06:41:49AM +0000, Lee Jones wrote:
 
-Look for example in drivers/gpio/gpio-pl061.c:
+> Just need your stamp for this to go in.
 
-      if (of_property_read_bool(dev->of_node, "gpio-ranges")) {
-                chip->gc.request = gpiochip_generic_request;
-                chip->gc.free = gpiochip_generic_free;
-        }
+Please be more specific?  What is it that you are looking for beyond the
+review I already did for the regulator driver?
 
-What does that do:
+--i0/AhcQY5QxfSsSZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-/**
- * gpiochip_generic_request() - request the gpio function for a pin
- * @chip: the gpiochip owning the GPIO
- * @offset: the offset of the GPIO to request for GPIO function
- */
-int gpiochip_generic_request(struct gpio_chip *chip, unsigned offset)
-{
-        return pinctrl_request_gpio(chip->base + offset);
-}
-EXPORT_SYMBOL_GPL(gpiochip_generic_request);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-/**
- * gpiochip_generic_free() - free the gpio function from a pin
- * @chip: the gpiochip to request the gpio function for
- * @offset: the offset of the GPIO to free from GPIO function
- */
-void gpiochip_generic_free(struct gpio_chip *chip, unsigned offset)
-{
-        pinctrl_free_gpio(chip->base + offset);
-}
-EXPORT_SYMBOL_GPL(gpiochip_generic_free);
+iQEcBAEBCAAGBQJWqf4pAAoJECTWi3JdVIfQwDcH/AmSPSBza+y0sZ7m6Dz+2wUG
+6MNGV0uBGeWeZLVGrHJAEhQEdZqTxlPdrsSoS4eTJEuTqbn9Bgb+4hxunigsT7hS
++wPlMpY3X1YTU4u51ysmAZyfshdwRnZKjUHZgg2cKhRNaTeq4yBomKKN/56Q8I85
+A28HKCpaeSC3dNm1DJ5ClpjwjlPG8RZldC7vD/lkxiloFEcV3sauhydkqpHLlZTW
+2zOHZEU7JbcLB3FhiJ/faCEQAii6ef0a+SzYmnVPBy9rCMa78lXly2lA/KCIQ/Ct
+R0DFeF/mTvWyTW3CVz5vx74+owNs+nru4qsTFRlIaZcETei4kxtd7/XeJGq2CAQ=
+=Y7uz
+-----END PGP SIGNATURE-----
 
-Yes....
-
-Your pinctrl driver needs to implement the
-.gpio_request_enable()
-.gpio_disable_free()
-.gpio_set_direction()
-callbacks in struct pinmux_ops.
-
-Also read in Documentation/pinctrl.txt about pinctrl/GPIO interaction.
-
->         Second, here is our request_irq flow in mkd eint driver:
-> request_irq --> mtk_pinctrl_irq_request_resources--> mtk_pmx_set_mode,
-> Normally, it'll set pinmux to eint mode (usually is mode 0) in
-> mtk_pmx_set_mode function. But for special case, such as iddig (connect
-> to usb), when iddig request_irq, it should set pinmux to iddig mode
-> (mode 2 in mt8163).
->         Is there a better way than changing
->         MTK_PIN(
->                 PINCTRL_PIN(16, "IDDIG"),
->                 NULL, "mt8173",
->                 MTK_EINT_FUNCTION(0, 16),
->                 MTK_FUNCTION(0, "GPIO16"),
->                 MTK_FUNCTION(1, "IDDIG"),
->                 MTK_FUNCTION(2, "CMFLASH"),
->                 MTK_FUNCTION(4, "PWM5")
->         ),
->         to
->         MTK_PIN(
->                 PINCTRL_PIN(16, "IDDIG"),
->                 NULL, "mt8173",
->                 MTK_EINT_FUNCTION(2, 16),
->                 MTK_FUNCTION(0, "GPIO16"),
->                 MTK_FUNCTION(1, "IDDIG"),
->                 MTK_FUNCTION(2, "CMFLASH"),
->                 MTK_FUNCTION(4, "PWM5")
->         ),
->         in drivers/pinctrl/mediatek/pinctrl-mtk-mt8163.h?
-
-This is the mediatek driver internals, I don't understand that.
-Your guess is as good as mine, ask help from the other
-driver authors is my hint, I can only help with the framework...
-
-Yours,
-Linus Walleij
+--i0/AhcQY5QxfSsSZ--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
