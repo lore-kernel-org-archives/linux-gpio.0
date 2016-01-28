@@ -1,50 +1,70 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: mediatek: guard sub-directory with CONFIG_PINCTRL_MTK
-Date: Thu, 28 Jan 2016 13:22:35 +0900
-Message-ID: <CAK7LNAQ_8o0FiRpb7D6RBmA+7WxRMFhWJjo2f4E_NH5qAGYb4A@mail.gmail.com>
-References: <1453563204-30407-1-git-send-email-yamada.masahiro@socionext.com>
-	<CACRpkdbrJ5P8Ro4RQUquMOTuXhN+54ZHYGbLqrbwW6tbwCC7Mg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V5 5/5] regulator: max77620: add regulator driver for
+ max77620/max20024
+Date: Thu, 28 Jan 2016 11:54:28 +0530
+Message-ID: <56A9B41C.4070607@nvidia.com>
+References: <1453903808-29788-1-git-send-email-ldewangan@nvidia.com> <1453903808-29788-6-git-send-email-ldewangan@nvidia.com> <56A99130.1070904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg004.nifty.com ([202.248.44.42]:20607 "EHLO
-	conssluserg004-v.nifty.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S934609AbcA1EWz (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 27 Jan 2016 23:22:55 -0500
-In-Reply-To: <CACRpkdbrJ5P8Ro4RQUquMOTuXhN+54ZHYGbLqrbwW6tbwCC7Mg@mail.gmail.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16675 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933905AbcA1GgM (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 01:36:12 -0500
+In-Reply-To: <56A99130.1070904@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, Mallikarjun Kasoju <mkasoju@nvidia.com>
 
-Hi Linus
 
-2016-01-27 23:11 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Sat, Jan 23, 2016 at 4:33 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> CONFIG_PINCTRL_MTK is more suitable than CONFIG_ARCH_MEDIATEK
->> to guard the drivers/pinctrl/mediatek/ directory.
->> (I renamed CONFIG_PINCTRL_MTK_COMMON to CONFIG_PINCTRL_MTK.)
+On Thursday 28 January 2016 09:25 AM, Krzysztof Kozlowski wrote:
+> On 27.01.2016 23:10, Laxman Dewangan wrote:
+>> MAXIM Semiconductor's PMIC, MAX77620 and MAX20024 have the
+>> multiple DCDC and LDOs. This supplies the power to different
+>> components of the system.
+>> Also these rails has configuration for ramp time, flexible
+>> power sequence, slew rate etc.
 >>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Add regulator driver to access these rails via regulator APIs.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> Signed-off-by: Mallikarjun Kasoju <mkasoju@nvidia.com>
+>> ---
+>> Changes from V1:
+>> - Cleanup code based on comment received on mfd/rtc.
+>> - Avoid duplication on error message.
+>>
+>> Changes form V2:
+>> - Run coccicheck and checkpatch in strict mode for the alignment.
+>> - Refactor Regulator driver to use core API for DT parsing.
+>> - Update based on API changes.
+>>
+>> Changes from V3:
+>> - Change all sys initcall to module driver.
+>> - change the max77620_read argument to unisgned int from u8.
+>>
+>> Changes from V4:
+>> - Added DT binding document as devicetree/bindings/regulator/regulator-max77620.txt
+>> - Detail out properties.
+> What does it mean "Detail out properties"? What have changed>
+
+Based on review comment from Linus W, I added more description on the 
+properties.
+
 >
-> This patch does not apply to linux v4.5-rc1, please rebase the
-> patch and resend.
+>>   .../bindings/regulator/regulator-max77620.txt      | 163 ++++
+> Please put the bindings in separate patch. It might be easier for DT
+> guys to review them (they are acking the bindings, not the driver). Also
+OK, will push it.
 
 
-These two patches can be applied in this order:
-https://patchwork.kernel.org/patch/8097541/
-https://patchwork.kernel.org/patch/8097551/
+> I already reviewed the patchset but because of adding bindings here, you
+> could not add my reviewed-by tag (which makes my effort not tracked...).
+Yaah, This patch include the dt binding and so wanted your review again. 
+This si only reason to not add reviewed-by.
 
-(Sorry, I should have sent them as a series.)
+Now I am going to separate out DT binding and driver,  I will add 
+reviewed-by tag for you in driver file.
 
-
-If you want to apply only the latter onto v4.5-rc1,
-"git am -C2" can apply it.
-
-
--- 
-Best Regards
-Masahiro Yamada
