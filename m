@@ -1,67 +1,36 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
-Date: Thu, 28 Jan 2016 08:56:48 -0600
-Message-ID: <56AA2C30.2040708@ti.com>
-References: <1453738452-23633-1-git-send-email-afd@ti.com>
- <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 3/3] mfd: lpc_ich: add GPIO support for Baytrail
+Date: Thu, 28 Jan 2016 17:48:22 +0200
+Message-ID: <20160128154822.GC1778@lahna.fi.intel.com>
+References: <1453566729-30220-1-git-send-email-antoine.tenart@free-electrons.com>
+ <1453566729-30220-4-git-send-email-antoine.tenart@free-electrons.com>
+ <CACRpkdYJPeYmp7pdn7qjt=VD6rsa7GBRpdFnCJ1t06SFCJPxNA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:37682 "EHLO bear.ext.ti.com"
+Received: from mga14.intel.com ([192.55.52.115]:49566 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965438AbcA1O5C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Jan 2016 09:57:02 -0500
-In-Reply-To: <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
+	id S965872AbcA1Pvn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Jan 2016 10:51:43 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYJPeYmp7pdn7qjt=VD6rsa7GBRpdFnCJ1t06SFCJPxNA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>, "ptyser@xes-inc.com" <ptyser@xes-inc.com>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 01/28/2016 04:47 AM, Linus Walleij wrote:
-> On Mon, Jan 25, 2016 at 5:14 PM, Andrew F. Davis <afd@ti.com> wrote:
->
->> Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
->>
->> The TPIC2810 has 8 open-drain outputs that can but used to drive
->> LEDs and other low-side switched resistive loads.
->>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->> Changes from v1:
->>   - Added OF match table at Javier Martinez Canillas request
->
-> So the TI datasheet says:
-> "8 bit LED driver with I2C interface"
->
-> So it is *not* "general purpose input/output" (GPIO).
->
-> It is special purpose LED drive output-only circuit.
->
-> So why can it not have a driver directly in drivers/leds/*?
->
-> I understand that it can also be used as a GPIO (and that it
-> is then nice to put leds-gpio on top of it) but then
-> I want a reference to the hardware that actually went ahead
-> and used this as a GPIO chip rather than using a proper
-> GPIO expander.
->
-> Yours,
-> Linus Walleij
->
+On Thu, Jan 28, 2016 at 11:34:40AM +0100, Linus Walleij wrote:
+> On Sat, Jan 23, 2016 at 5:32 PM, Antoine Tenart
+> <antoine.tenart@free-electrons.com> wrote:
+> 
+> > This patch adds the GPIO support for the Baytrail family.
+> >
+> > Signed-off-by: Antoine Tenart <antoine.tenart@free-electrons.com>
+> 
+> I'm confused by this and Mika's comment on patch 0.
+> 
+> Is the BayTrail an ICH variant or not? Or does it have
+> two GPIO controllers? Or um ....
 
-These don't really have the traditional LED features (current control,
-HW blinking, etc), and all the use cases I've found treat them as GPO,
-including our Industrial Dev Kits (although they run them to test LEDs
-as well as the IO header):
-
-http://www.ti.com/tool/tmdsice3359
-http://www.ti.com/tool/tmdxidk437x
-
-And a couple more that I don't think have any public schematics yet.
-
-Like you said, they can still be used for LEDs with leds-gpio, as they
-don't have any LED specific features I figure this way we get both
-uses with one driver.
-
-Andrew
+It is not compatible with ICH and there is only one GPIO controller in
+the SoC.
