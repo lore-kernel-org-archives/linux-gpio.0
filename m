@@ -1,76 +1,37 @@
-From: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH V2 1/4] mfd: f81504-core: Add Fintek F81504/508/512
- PCIE-to-UART/GPIO core support
-Date: Thu, 28 Jan 2016 10:04:47 +0000
-Message-ID: <20160128100447.00cffae7@lxorguk.ukuu.org.uk>
-References: <1453972838-30268-1-git-send-email-hpeter+linux_kernel@gmail.com>
-	<1453972838-30268-2-git-send-email-hpeter+linux_kernel@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V4 4/5] gpio: max77620: add gpio driver for MAX77620/MAX20024
+Date: Thu, 28 Jan 2016 11:05:53 +0100
+Message-ID: <CACRpkdYSLW6_t8zauYJNd=3OMF=yo5htJHfAocBPQZtyA-Oj1Q@mail.gmail.com>
+References: <1453198783-28383-1-git-send-email-ldewangan@nvidia.com>
+	<1453198783-28383-5-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lxorguk.ukuu.org.uk ([81.2.110.251]:57424 "EHLO
-	lxorguk.ukuu.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966579AbcA1KFf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 05:05:35 -0500
-In-Reply-To: <1453972838-30268-2-git-send-email-hpeter+linux_kernel@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1453198783-28383-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?Q?Pawe=C5=82_Moll?= <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, vreddytalla-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Chaitanya
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Hung <hpeter@gmail.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw, heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 
-> +config MFD_FINTEK_F81504_CORE
-> +        tristate "Fintek F81504/508/512 PCIE-to-UART/GPIO MFD support"
-> +        depends on PCI
-> +        select MFD_CORE
-> +        default y
-> +        help
-> +          This driver generate F81504/508/512 UART & GPIO platform
-This driver provides the F81504/508/512 UART & GPIO platform
-> +          device. It should enable CONFIG_GPIO_F81504 to get GPIOLIB
-devices. You should enable CONFIG_GPIO_F81504 to get GPIOLIB
-> +          support and CONFIG_8250_F81504 to get serial ports support.
-port rather than ports
+On Tue, Jan 19, 2016 at 11:19 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-> +          Please bulit-in kernel if you need early console support.
-This driver needs to be built into the kernel to use early console
-support.
+> MAXIM Semiconductor's PMIC, MAX77620/MAX20024 has 8 GPIO
+> pins. It also supports interrupts from these pins.
+>
+> Add GPIO driver for these pins to control via GPIO APIs.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+That's a fine driver, no doubt about that.
+Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
+Same comment on merging through MFD etc as on the
+pinctrl patch.
 
-> +	switch (dev->device) {
-> +	case FINTEK_F81504: /* 4 ports */
-> +		/* F81504 max 2 sets of GPIO, others are max 6 sets*/
-> +		gpio_en &= 0x03;
-> +	case FINTEK_F81508: /* 8 ports */
-> +		max_port = dev->device & 0xff;
-
-If that is meant to fall through from F81504 into F81508 it's worth
-commenting, otherwise someone reviewing the code can't always be sure it
-was intentional.
-
-> +		break;
-> +	case FINTEK_F81512: /* 12 ports */
-> +		max_port = 12;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* rewrite GPIO Mode setting */
-> +	pci_write_config_byte(dev, F81504_GPIO_ENABLE_REG, gpio_en & 0x3f);
-> +	pci_write_config_byte(dev, F81504_GPIO_MODE_REG, ~gpio_en & 0x3f);
-> +
-> +	/* Get the UART IO address dispatch from the BIOS */
-> +	pci_read_config_dword(dev, 0x24, &bar_data[0]);
-> +	pci_read_config_dword(dev, 0x20, &bar_data[1]);
-> +	pci_read_config_dword(dev, 0x1c, &bar_data[2]);
-
-Take these from the pci device itself. On some non PC platforms the
-values in the pci bar may be remapped by bridges and not give you the
-true answer.
-
-	pci_resource_start(dev, barnumber)
-
-
-Alan
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
