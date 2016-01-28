@@ -1,41 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/5] pinctrl: mediatek: add pinctrl/GPIO/EINT driver
- for mt2701
-Date: Thu, 28 Jan 2016 11:20:34 +0100
-Message-ID: <CACRpkdbxpc19bdzGDUDoqseTA-TW3V8dAA4Oe+G860qTsHd-dQ@mail.gmail.com>
-References: <1453857883-28436-1-git-send-email-biao.huang@mediatek.com>
+Subject: Re: [PATCH] pinctrl: pxa: guard sub-directory with CONFIG_PINCTRL_PXA
+Date: Thu, 28 Jan 2016 11:24:13 +0100
+Message-ID: <CACRpkdaMz_kSamr6KoBC+JrhCDfwmkZggXQ4-F9rEZ=czXL8uw@mail.gmail.com>
+References: <1453563068-30238-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:36230 "EHLO
-	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933722AbcA1KUf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 05:20:35 -0500
-Received: by mail-oi0-f45.google.com with SMTP id o124so23615069oia.3
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 02:20:34 -0800 (PST)
-In-Reply-To: <1453857883-28436-1-git-send-email-biao.huang@mediatek.com>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:35477 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934235AbcA1KYN (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 05:24:13 -0500
+Received: by mail-ob0-f179.google.com with SMTP id ny8so10146026obc.2
+        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 02:24:13 -0800 (PST)
+In-Reply-To: <1453563068-30238-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Biao Huang <biao.huang@mediatek.com>, John Crispin <blogic@openwrt.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, srv_heupstream@mediatek.com, Yingjoe Chen <yingjoe.chen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, "arm@kernel.org" <arm@kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jan 27, 2016 at 2:24 AM, Biao Huang <biao.huang@mediatek.com> wrote:
+On Sat, Jan 23, 2016 at 4:31 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> Change in v4:
-> 1. create a sperate patch for direction setting of input-enable/disalbe and input-schmitt-enable/disable.
+> CONFIG_PINCTRL_PXA is more suitable than CONFIG_ARCH_PXA
+> to guard the drivers/pinctrl/pxa/ directory.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-So I've merged the patches affecting drivers/pinctrl on the special
-devel-mt2701 branch, so the ARM SoC people can pull this into
-their tree to resolve dependencies on the pinctrl include
-in include/dt-bindings.
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel-mt2701
-
-The rest of the patches should go into ARM SoC, so they can
-just pull this branch in and apply that stuff on top.
-
-Allow this a few days, I am also waiting for the add-on patches
-from John Crispin to come in, please include John in the
-feedback loop.
+Patch applied.
 
 Yours,
 Linus Walleij
