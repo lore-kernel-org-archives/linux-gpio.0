@@ -1,31 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: davinci: use irq_data_get_chip_type
-Date: Thu, 28 Jan 2016 15:29:53 +0100
-Message-ID: <CACRpkdZQEG2GU+OtMECpZ9JcckdJjoKfHu+UyHHGd9GFntRBoA@mail.gmail.com>
-References: <4cc3a3a7a74c7a1894892a85aa7eabbd1534fe96.1451484758.git.geliangtang@163.com>
-	<ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
+Date: Thu, 28 Jan 2016 08:56:48 -0600
+Message-ID: <56AA2C30.2040708@ti.com>
+References: <1453738452-23633-1-git-send-email-afd@ti.com>
+ <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:34973 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965436AbcA1O3y (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 09:29:54 -0500
-Received: by mail-ob0-f181.google.com with SMTP id ny8so14972689obc.2
-        for <linux-gpio@vger.kernel.org>; Thu, 28 Jan 2016 06:29:53 -0800 (PST)
-In-Reply-To: <ca4c79f0383786097cf59da27432eb619325002b.1451484758.git.geliangtang@163.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:37682 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S965438AbcA1O5C (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Jan 2016 09:57:02 -0500
+In-Reply-To: <CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geliang Tang <geliangtang@163.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 30, 2015 at 3:16 PM, Geliang Tang <geliangtang@163.com> wrote:
-
-> Use irq_data_get_chip_type() instead of container_of().
+On 01/28/2016 04:47 AM, Linus Walleij wrote:
+> On Mon, Jan 25, 2016 at 5:14 PM, Andrew F. Davis <afd@ti.com> wrote:
 >
-> Signed-off-by: Geliang Tang <geliangtang@163.com>
+>> Add driver for TI TPIC2810 8-Bit LED Driver with I2C Interface.
+>>
+>> The TPIC2810 has 8 open-drain outputs that can but used to drive
+>> LEDs and other low-side switched resistive loads.
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>> Changes from v1:
+>>   - Added OF match table at Javier Martinez Canillas request
+>
+> So the TI datasheet says:
+> "8 bit LED driver with I2C interface"
+>
+> So it is *not* "general purpose input/output" (GPIO).
+>
+> It is special purpose LED drive output-only circuit.
+>
+> So why can it not have a driver directly in drivers/leds/*?
+>
+> I understand that it can also be used as a GPIO (and that it
+> is then nice to put leds-gpio on top of it) but then
+> I want a reference to the hardware that actually went ahead
+> and used this as a GPIO chip rather than using a proper
+> GPIO expander.
+>
+> Yours,
+> Linus Walleij
+>
 
-Patch applied with Grygorii's and Santosh's tags.
+These don't really have the traditional LED features (current control,
+HW blinking, etc), and all the use cases I've found treat them as GPO,
+including our Industrial Dev Kits (although they run them to test LEDs
+as well as the IO header):
 
-Yours,
-Linus Walleij
+http://www.ti.com/tool/tmdsice3359
+http://www.ti.com/tool/tmdxidk437x
+
+And a couple more that I don't think have any public schematics yet.
+
+Like you said, they can still be used for LEDs with leds-gpio, as they
+don't have any LED specific features I figure this way we get both
+uses with one driver.
+
+Andrew
