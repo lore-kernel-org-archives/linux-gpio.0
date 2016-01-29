@@ -1,60 +1,76 @@
-From: Peter Hung <hpeter@gmail.com>
-Subject: Re: [PATCH V2 1/4] mfd: f81504-core: Add Fintek F81504/508/512
- PCIE-to-UART/GPIO core support
-Date: Fri, 29 Jan 2016 10:22:20 +0800
-Message-ID: <56AACCDC.8020306@gmail.com>
-References: <1453972838-30268-1-git-send-email-hpeter+linux_kernel@gmail.com>
- <1453972838-30268-2-git-send-email-hpeter+linux_kernel@gmail.com>
- <20160128100447.00cffae7@lxorguk.ukuu.org.uk>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 2/2] gpio: sn65hvs885: Add DT binding documentation
+Date: Thu, 28 Jan 2016 20:43:35 -0600
+Message-ID: <20160129024335.GA5772@rob-hp-laptop>
+References: <1453793566-31363-1-git-send-email-sean.nyekjaer@prevas.dk>
+ <1453793566-31363-2-git-send-email-sean.nyekjaer@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160128100447.00cffae7@lxorguk.ukuu.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw, heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58359 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751805AbcA2Cnk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Jan 2016 21:43:40 -0500
+Content-Disposition: inline
+In-Reply-To: <1453793566-31363-2-git-send-email-sean.nyekjaer@prevas.dk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Alan,
+On Tue, Jan 26, 2016 at 08:32:46AM +0100, Sean Nyekjaer wrote:
+> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+> ---
+> Changes since v4:
+> - Added description, required properties
+> - Tested and added support for gpio polarity
+> - Added vendor prefix to compatible flags
+> 
+> Changes since v3:
+> - Added gpio-controller and gpio cells flags
+> 
+>  .../devicetree/bindings/gpio/gpio-sn65hvs885.txt     | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
 
-One Thousand Gnomes =E6=96=BC 2016/1/28 =E4=B8=8B=E5=8D=88 06:04 =E5=AF=
-=AB=E9=81=93:
->> +          Please bulit-in kernel if you need early console support.
-> This driver needs to be built into the kernel to use early console
-> support.
->
+This looks fine, but I just realized this is the same thing as this[1]. 
+Please coordinate these bindings. 
 
-ok
+Rob
 
->> +	switch (dev->device) {
->> +	case FINTEK_F81504: /* 4 ports */
->> +		/* F81504 max 2 sets of GPIO, others are max 6 sets*/
->> +		gpio_en &=3D 0x03;
->> +	case FINTEK_F81508: /* 8 ports */
->> +		max_port =3D dev->device & 0xff;
->
-> If that is meant to fall through from F81504 into F81508 it's worth
-> commenting, otherwise someone reviewing the code can't always be sure=
- it
-> was intentional.
+[1] https://lkml.org/lkml/2016/1/25/781
 
-ok, I'll add comments to describe this.
-
->> +	/* Get the UART IO address dispatch from the BIOS */
->> +	pci_read_config_dword(dev, 0x24, &bar_data[0]);
->> +	pci_read_config_dword(dev, 0x20, &bar_data[1]);
->> +	pci_read_config_dword(dev, 0x1c, &bar_data[2]);
->
-> Take these from the pci device itself. On some non PC platforms the
-> values in the pci bar may be remapped by bridges and not give you the
-> true answer.
->
-> 	pci_resource_start(dev, barnumber)
->
-
-Thanks for point this out, I'll rewrite here with pci_resource_start().
---=20
-With Best Regards,
-Peter Hung
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> new file mode 100644
+> index 0000000..c9b3592
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+> @@ -0,0 +1,20 @@
+> +* TI SN65HVS885 digital-input serializer
+> +
+> +Required properties:
+> +- compatible : Should be "ti,sn65hvs885"
+> +- reg : chip select number
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +- #gpio-cells : Should be two.  The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +      0 = active high
+> +      1 = active low
+> +
+> +Example:
+> +sn65hvs885@3 {
+> +	compatible = "ti,sn65hvs885";
+> +	spi-max-frequency = <10000000>;
+> +	latch-gpio = <&gpio4 1 GPIO_ACTIVE_HIGH>;
+> +	reg = <0>;
+> +	gpio-controller;
+> +	#gpio-cells = <2>;
+> +};
+> -- 
+> 2.7.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
