@@ -1,65 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V6 7/8] DT: regulator: add DT binding doc for regulator
- of PMIC max77620/max20024
-Date: Fri, 29 Jan 2016 00:28:17 +0100
-Message-ID: <20160128232817.GH4130@sirena.org.uk>
-References: <1453988274-28052-1-git-send-email-ldewangan@nvidia.com>
- <1453988274-28052-8-git-send-email-ldewangan@nvidia.com>
+From: Peter Hung <hpeter@gmail.com>
+Subject: Re: [PATCH V2 1/4] mfd: f81504-core: Add Fintek F81504/508/512
+ PCIE-to-UART/GPIO core support
+Date: Fri, 29 Jan 2016 10:22:20 +0800
+Message-ID: <56AACCDC.8020306@gmail.com>
+References: <1453972838-30268-1-git-send-email-hpeter+linux_kernel@gmail.com>
+ <1453972838-30268-2-git-send-email-hpeter+linux_kernel@gmail.com>
+ <20160128100447.00cffae7@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51258 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870AbcA1X2n (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Jan 2016 18:28:43 -0500
-Content-Disposition: inline
-In-Reply-To: <1453988274-28052-8-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160128100447.00cffae7@lxorguk.ukuu.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com, paul.gortmaker@windriver.com, lee.jones@linaro.org, jslaby@suse.com, peter_hong@fintek.com.tw, heikki.krogerus@linux.intel.com, peter@hurleysoftware.com, soeren.grunewald@desy.de, udknight@gmail.com, adam.lee@canonical.com, arnd@arndb.de, manabian@gmail.com, scottwood@freescale.com, yamada.masahiro@socionext.com, paul.burton@imgtec.com, mans@mansr.com, matthias.bgg@gmail.com, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, tom_tsai@fintek.com.tw, Peter Hung <hpeter+linux_kernel@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com
 
+Hi Alan,
 
---2oox5VnwalALFvA7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+One Thousand Gnomes =E6=96=BC 2016/1/28 =E4=B8=8B=E5=8D=88 06:04 =E5=AF=
+=AB=E9=81=93:
+>> +          Please bulit-in kernel if you need early console support.
+> This driver needs to be built into the kernel to use early console
+> support.
+>
 
-On Thu, Jan 28, 2016 at 07:07:53PM +0530, Laxman Dewangan wrote:
-> Maxim Semiconductor's PMIC MAX77620/MAX20024 has multiple
-> DCDCs and LDOs.
+ok
 
-Please use subject lines matching the style for the subsystem.  I'm
-fairly sure I've mentioned this before and really if your subject lines
-don't visually resemble anything else in the directory that ought to be
-a warning sign.
+>> +	switch (dev->device) {
+>> +	case FINTEK_F81504: /* 4 ports */
+>> +		/* F81504 max 2 sets of GPIO, others are max 6 sets*/
+>> +		gpio_en &=3D 0x03;
+>> +	case FINTEK_F81508: /* 8 ports */
+>> +		max_port =3D dev->device & 0xff;
+>
+> If that is meant to fall through from F81504 into F81508 it's worth
+> commenting, otherwise someone reviewing the code can't always be sure=
+ it
+> was intentional.
 
-> +- maxim,disable-active-discharge:    boolean, Disable active discharge.
+ok, I'll add comments to describe this.
 
-That's something I've seen other regulators do, can we make it a
-standard property with an op?
+>> +	/* Get the UART IO address dispatch from the BIOS */
+>> +	pci_read_config_dword(dev, 0x24, &bar_data[0]);
+>> +	pci_read_config_dword(dev, 0x20, &bar_data[1]);
+>> +	pci_read_config_dword(dev, 0x1c, &bar_data[2]);
+>
+> Take these from the pci device itself. On some non PC platforms the
+> values in the pci bar may be remapped by bridges and not give you the
+> true answer.
+>
+> 	pci_resource_start(dev, barnumber)
+>
 
-> +max77620@3c {
-> +	regulators {
-> +		in-ldo0-1-supply = <&max77620_sd2>;
-> +		in-ldo7-8-supply = <&max77620_sd2>;
-
-I'd expect any supplies for the device to be at the device level,
-including supplies used by regulators.
-
---2oox5VnwalALFvA7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWqqQQAAoJECTWi3JdVIfQ7wQIAIYk6ZkTOPNOCsbPz8ruY17f
-hTnw2UWK1JXkW8rcR0d//LER/ATrYfF6bv+CjwUf8DYUVx2UD/o6WQKH67cItf/p
-rDJEpFOXedtBBO2sLVm+nzbjJwSuya1aM4lAJ0hmv8Nq0s0DwYDd95pp2vai807j
-XEUg9M4+uX4aTzN15bDPyPDKfu36zs5NF+MZ3bTwIuwwpDihpfYPt/F1P54J2m31
-OuxyRi3992+hMj9I2F3JMB7nG1fXO3vX02xcX4cUwYXffaJgJ8aAwk5OX25WDnBM
-u2KIo09vfKyRKWD6GyuIbWiAVbtNqQSy9xK3J9gM6YqWb4eDK+kmuziJtH+QToA=
-=S+ho
------END PGP SIGNATURE-----
-
---2oox5VnwalALFvA7--
+Thanks for point this out, I'll rewrite here with pci_resource_start().
+--=20
+With Best Regards,
+Peter Hung
