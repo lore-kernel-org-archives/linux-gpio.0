@@ -1,76 +1,35 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/2] gpio: sn65hvs885: Add DT binding documentation
-Date: Thu, 28 Jan 2016 20:43:35 -0600
-Message-ID: <20160129024335.GA5772@rob-hp-laptop>
-References: <1453793566-31363-1-git-send-email-sean.nyekjaer@prevas.dk>
- <1453793566-31363-2-git-send-email-sean.nyekjaer@prevas.dk>
+Subject: Re: [PATCH v4 2/3] Documentation: gpio: Update description for
+ X-Gene standby GPIO controller DTS binding
+Date: Thu, 28 Jan 2016 20:46:06 -0600
+Message-ID: <20160129024606.GA18663@rob-hp-laptop>
+References: <1453792935-19916-1-git-send-email-qnguyen@apm.com>
+ <1453792935-19916-3-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58359 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:58448 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751805AbcA2Cnk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Thu, 28 Jan 2016 21:43:40 -0500
+	id S1750925AbcA2CqL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Thu, 28 Jan 2016 21:46:11 -0500
 Content-Disposition: inline
-In-Reply-To: <1453793566-31363-2-git-send-email-sean.nyekjaer@prevas.dk>
+In-Reply-To: <1453792935-19916-3-git-send-email-qnguyen@apm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Quan Nguyen <qnguyen@apm.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Y Vo <yvo@apm.com>, Phong Vo <pvo@apm.com>, Loc Ho <lho@apm.com>, Feng Kan <fkan@apm.com>, Duc Dang <dhdang@apm.com>, patches@apm.com
 
-On Tue, Jan 26, 2016 at 08:32:46AM +0100, Sean Nyekjaer wrote:
-> Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+On Tue, Jan 26, 2016 at 02:22:14PM +0700, Quan Nguyen wrote:
+> Update description for X-Gene standby GPIO controller DTS binding to
+> support GPIO line configuration as input, output or external IRQ pin.
+> 
+> Signed-off-by: Y Vo <yvo@apm.com>
+> Signed-off-by: Quan Nguyen <qnguyen@apm.com>
 > ---
-> Changes since v4:
-> - Added description, required properties
-> - Tested and added support for gpio polarity
-> - Added vendor prefix to compatible flags
-> 
-> Changes since v3:
-> - Added gpio-controller and gpio cells flags
-> 
->  .../devicetree/bindings/gpio/gpio-sn65hvs885.txt     | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
+>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 39 ++++++++++++++++++----
+>  1 file changed, 33 insertions(+), 6 deletions(-)
 
-This looks fine, but I just realized this is the same thing as this[1]. 
-Please coordinate these bindings. 
+Did you change something here? I've already acked this. Please add acks 
+when posting new versions.
 
 Rob
-
-[1] https://lkml.org/lkml/2016/1/25/781
-
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
-> new file mode 100644
-> index 0000000..c9b3592
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-sn65hvs885.txt
-> @@ -0,0 +1,20 @@
-> +* TI SN65HVS885 digital-input serializer
-> +
-> +Required properties:
-> +- compatible : Should be "ti,sn65hvs885"
-> +- reg : chip select number
-> +- gpio-controller : Marks the device node as a gpio controller.
-> +- #gpio-cells : Should be two.  The first cell is the pin number and
-> +  the second cell is used to specify the gpio polarity:
-> +      0 = active high
-> +      1 = active low
-> +
-> +Example:
-> +sn65hvs885@3 {
-> +	compatible = "ti,sn65hvs885";
-> +	spi-max-frequency = <10000000>;
-> +	latch-gpio = <&gpio4 1 GPIO_ACTIVE_HIGH>;
-> +	reg = <0>;
-> +	gpio-controller;
-> +	#gpio-cells = <2>;
-> +};
-> -- 
-> 2.7.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
