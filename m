@@ -1,46 +1,33 @@
-From: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v4 2/2] dt-bindings: rockchip-pinctrl: Support the RK3399 SoCs
- compatible
-Date: Sat, 30 Jan 2016 20:20:13 +0800
-Message-ID: <1454156413-56148-3-git-send-email-david.wu@rock-chips.com>
-References: <1454156413-56148-1-git-send-email-david.wu@rock-chips.com>
+From: David Wu <david.wu@rock-chips.com>
+Subject: [PATCH v4 0/2] add pinctrl support for rk3399
+Date: Sat, 30 Jan 2016 20:20:11 +0800
+Message-ID: <1454156413-56148-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1454156413-56148-1-git-send-email-david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org
-Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cf-TNX95d0MmH7DzftRWevZcw@public.gmane.org, xjq-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: heiko@sntech.de
+Cc: huangtao@rock-chips.com, linux-rockchip@lists.infradead.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, cf@rock-chips.com, xjq@rock-chips.com, linux-gpio@vger.kernel.org, David Wu <david.wu@rock-chips.com>, zyw@rock-chips.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
-Change in v4:
-- need Signed-off
+Test on rk3399 fpga-board
 
- Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt | 1 +
- 1 file changed, 1 insertion(+)
+David Wu (2):
+  pinctrl: rockchip: add support for the rk3399
+  dt-bindings: rockchip-pinctrl: Support the RK3399 SoCs compatible
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index 391ef4b..3bb9456 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -22,6 +22,7 @@ Required properties for iomux controller:
-   - compatible: one of "rockchip,rk2928-pinctrl", "rockchip,rk3066a-pinctrl"
- 		       "rockchip,rk3066b-pinctrl", "rockchip,rk3188-pinctrl"
- 		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
-+		       "rockchip,rk3399-pinctrl"
-   - rockchip,grf: phandle referencing a syscon providing the
- 	 "general register files"
- 
+ .../bindings/pinctrl/rockchip,pinctrl.txt          |   1 +
+ drivers/pinctrl/pinctrl-rockchip.c                 | 372 ++++++++++++++++++++-
+ 2 files changed, 359 insertions(+), 14 deletions(-)
+
 -- 
 1.9.1
