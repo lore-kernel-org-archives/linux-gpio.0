@@ -1,48 +1,129 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v3 2/2] dt-bindings: rockchip-pinctrl: Support the RK3399 SoCs compatible
-Date: Sat, 30 Jan 2016 13:16:13 +0100
-Message-ID: <14543443.RsRWh5K5Uv@phil>
-References: <1451997055-47655-1-git-send-email-wdc@rock-chips.com> <1454153517-52969-1-git-send-email-david.wu@rock-chips.com> <1454153517-52969-3-git-send-email-david.wu@rock-chips.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V7 0/8] Add support for MAXIM MAX77620/MAX20024 PMIC
+Date: Sat, 30 Jan 2016 22:08:43 +0530
+Message-ID: <1454171931-27752-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454153517-52969-3-git-send-email-david.wu@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Wu <david.wu@rock-chips.com>
-Cc: linus.walleij@linaro.org, huangtao@rock-chips.com, zyw@rock-chips.com, cf@rock-chips.com, xjq@rock-chips.com, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2556 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932126AbcA3QuK (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Jan 2016 11:50:10 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linus.walleij@linaro.org, gnurou@gmail.com, lee.jones@linaro.org, broonie@kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com
+Cc: lgirdwood@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, rtc-linux@googlegroups.com, swarren@nvidia.com, treding@nvidia.com, k.kozlowski@samsung.com, vreddytalla@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 
-Hi David,
+Add SW support for MAXIM Semiconductor's Power Management
+IC (PMIC) MAX77620/MAX20024. This PMIC supports DC-DC/LDOS, GPIOs,
+RTC, watchdog, clocks etc.
 
-Am Samstag, 30. Januar 2016, 19:31:57 schrieb David Wu:
-> Change-Id: Ic1bdb3dc358837e97d7b48dd58be2f8d9d08d766
+This series add respective driver for each of sub-modules.
 
-please no Change-Id, it's missing the Signed-off, and as Linus Walleij said, 
-the compatible addition to the documentation can maybe stay in the pinctrl-
-patch itself.
+Changes from V1: 
+DT DOC:
+- Added units in some of properties.
+- Change the boolean property to tristate type and detail some of
+  properties.
 
-I think both Linus and me overlooked that the binding-doc-addition was 
-already correctly included in your v2 patch at the top :-)
+RTC:
+- Rename the file to rtc-max77xxx.c and make the generic implementation.
+- Direct regmap apis are used for the register access.
+- Decouped from max77620 driver.
+- Taken care of cleanup comments form V1 version.
+
+MFD:
+- Code cleanups per review from V1. 
+- Move register access APIs from header to c file.
+- Remove some of non required variable, remove duplication in error message
+ and simplify some of function implementation.
+
+GPIO:
+- Use the gpiochip_add_data and get the chip data from core APIs.
+- Cleanups based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+
+Pinctrl:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+
+Regulators:
+- Cleanup code based on comment received on mfd/rtc.
+- Avoid duplication on error message.
+- Taken care of review comment from Mark.
+
+Changes from V2: 
+- Run coccicheck and checkpatch in strict mode for the alignment.
+- Drop RTC driver and its i2c client registartion.
+- Refactor Regulator  driver to use core API for DT parsing.
+
+Changes from V3: 
+- Change all sys initcall to module driver.
+- change the max77620_read argument to unisgned int from u8.
 
 
-Heiko
+Changes from V4:
+- Provide more details in the dt binding doc.
+- Take care of fps nodes.
+- Split the submodule's DT binding doc on respective folder.
+- Drop the battery charger and low battery binding and related code as
+  it need to go on power driver.
 
-> ---
->  Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt index
-> 391ef4b..3bb9456 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-> @@ -22,6 +22,7 @@ Required properties for iomux controller:
->    - compatible: one of "rockchip,rk2928-pinctrl",
-> "rockchip,rk3066a-pinctrl" "rockchip,rk3066b-pinctrl",
-> "rockchip,rk3188-pinctrl"
->  		       "rockchip,rk3288-pinctrl", "rockchip,rk3368-pinctrl"
-> +		       "rockchip,rk3399-pinctrl"
->    - rockchip,grf: phandle referencing a syscon providing the
->  	 "general register files"
+Changes from V5:
+- None
+
+Changes from V6:
+- Taken care of Lee's comment like used defines for irqs, remove max77620
+  register accesss abstractions, remove DTof module and use ID table only,
+  reduce the copyright lines.
+- Drop configuration for hard power off time chnage as it will be in
+  power driver.
+- Taken care of Mark's comment about the active discharge. Currently
+  drop this configuration and follow up patches to move this to core
+  and add callback apis are planned.
+- Use direct regmap from all drivers instead of using abstractions.
+- move regulator supply to device node instead of regulators sub node.
+
+Laxman Dewangan (8):
+  mfd: add device-tree binding doc for PMIC max77620/max20024
+  mfd: max77620: add core driver for MAX77620/MAX20024
+  pinctrl: add DT binding doc for pincontrol of PMIC max77620/max20024
+  pinctrl: max77620: add pincontrol driver for MAX77620/MAX20024
+  gpio: add DT binding doc for gpio of PMIC max77620/max20024
+  gpio: max77620: add gpio driver for MAX77620/MAX20024
+  regulator: add DT binding doc for regulator of PMIC max77620/max20024
+  regulator: max77620: add regulator driver for max77620/max20024
+
+ .../devicetree/bindings/gpio/gpio-max77620.txt     |  25 +
+ Documentation/devicetree/bindings/mfd/max77620.txt | 118 +++
+ .../bindings/pinctrl/pinctrl-max77620.txt          |  87 +++
+ .../bindings/regulator/regulator-max77620.txt      | 163 ++++
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max77620.c                       | 263 +++++++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/max77620.c                             | 540 ++++++++++++++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-max77620.c                 | 687 +++++++++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77620-regulator.c             | 825 +++++++++++++++++++++
+ include/dt-bindings/mfd/max77620.h                 |  35 +
+ include/linux/mfd/max77620.h                       | 338 +++++++++
+ 18 files changed, 3128 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/regulator-max77620.txt
+ create mode 100644 drivers/gpio/gpio-max77620.c
+ create mode 100644 drivers/mfd/max77620.c
+ create mode 100644 drivers/pinctrl/pinctrl-max77620.c
+ create mode 100644 drivers/regulator/max77620-regulator.c
+ create mode 100644 include/dt-bindings/mfd/max77620.h
+ create mode 100644 include/linux/mfd/max77620.h
+
+-- 
+2.1.4
+
