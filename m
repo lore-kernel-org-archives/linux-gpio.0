@@ -1,49 +1,61 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2] USB: serial: cp210x: Adding GPIO support for CP2105
-Date: Sun, 31 Jan 2016 20:57:42 +0100
-Message-ID: <20160131195742.GB2957@localhost>
-References: <1452688237-30385-1-git-send-email-martyn.welch@collabora.co.uk>
- <BLUPR0701MB1572CDBC6E43EA82429B723491CC0@BLUPR0701MB1572.namprd07.prod.outlook.com>
- <5697770F.9040707@collabora.co.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2] gpio: Add driver for TI TPIC2810
+Date: Mon, 1 Feb 2016 00:52:43 +0200
+Message-ID: <CAHp75Vd_CxDmPbFWX7jaNd=ukOdE2hN13RhhMC5D+H_grM_Xiw@mail.gmail.com>
+References: <1453738452-23633-1-git-send-email-afd@ti.com>
+	<CACRpkdbkwd4K3rav+gfoSO_TqVQqfPXykGF2TWLQ7xWFOOtSaA@mail.gmail.com>
+	<56AA2C30.2040708@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:32853 "EHLO
-	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933307AbcAaT4k (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Sun, 31 Jan 2016 14:56:40 -0500
-Content-Disposition: inline
-In-Reply-To: <5697770F.9040707@collabora.co.uk>
+Received: from mail-yk0-f196.google.com ([209.85.160.196]:35353 "EHLO
+	mail-yk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932780AbcAaWwo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Sun, 31 Jan 2016 17:52:44 -0500
+In-Reply-To: <56AA2C30.2040708@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martyn Welch <martyn.welch@collabora.co.uk>
-Cc: Konstantin Shkolnyy <Konstantin.Shkolnyy@silabs.com>, Johan Hovold <johan@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 14, 2016 at 10:23:11AM +0000, Martyn Welch wrote:
-> On 14/01/16 00:27, Konstantin Shkolnyy wrote:
+On Thu, Jan 28, 2016 at 4:56 PM, Andrew F. Davis <afd@ti.com> wrote:
+> On 01/28/2016 04:47 AM, Linus Walleij wrote:
 
-> >>   static struct usb_serial_driver cp210x_device = {
-> >> @@ -219,6 +229,7 @@ static struct usb_serial_driver cp210x_device = {
-> >>   	.tx_empty		= cp210x_tx_empty,
-> >>   	.tiocmget		= cp210x_tiocmget,
-> >>   	.tiocmset		= cp210x_tiocmset,
-> >> +	.probe			= cp210x_probe,
-> >
-> > Enclose this in CONFIG_GPIOLIB?
-> > ...
-> >
-> 
-> Can do, though splattering ifdefs all over the driver isn't particularly 
-> nice.
-> 
-> I guess the question I have is: Would the preference be to ifdef out all 
-> extraneous functionality when GPIOLIB isn't enabled or to minimise the 
-> number of ifdef's at the expense of building in some functionality that 
-> wasn't then used?
+>> So the TI datasheet says:
+>> "8 bit LED driver with I2C interface"
+>>
+>> So it is *not* "general purpose input/output" (GPIO).
+>>
+>> It is special purpose LED drive output-only circuit.
+>>
+>> So why can it not have a driver directly in drivers/leds/*?
+>>
+>> I understand that it can also be used as a GPIO (and that it
+>> is then nice to put leds-gpio on top of it) but then
+>> I want a reference to the hardware that actually went ahead
+>> and used this as a GPIO chip rather than using a proper
+>> GPIO expander.
 
-Try to minimise the ifdefs and use dummy inline functions in case
-!CONFIG_GPIOLIB. That way you should not need to add more than two
-ifdefs (data + code).
+> These don't really have the traditional LED features (current control=
+,
+> HW blinking, etc), and all the use cases I've found treat them as GPO=
+,
+> including our Industrial Dev Kits=E2=80=A6
 
-Thanks,
-Johan
+It reminds me how 12 channel PWM chip is used on Intel Galileo Gen 2.
+Half pins are PWM, the other half is GPIO used for discrete based pin
+muxing and control. Nevertheless I think it's a userspace issue for
+now, otherwise we have to provide some 'semi-virtual' way of
+presenting pins as GPIO lines.
+
+just my 2 cents.
+
+--=20
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
