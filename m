@@ -1,31 +1,28 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Add H3 R_PIO controller support
-Date: Mon, 1 Feb 2016 08:09:31 -0600
-Message-ID: <20160201140931.GA7238@rob-hp-laptop>
-References: <20160201101225.GA19687@box2.japko.eu>
+Subject: Re: [PATCH 04/14] clk: sunxi: add ahb1 clock for A83T
+Date: Mon, 1 Feb 2016 08:49:23 -0600
+Message-ID: <20160201144923.GA29286@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160201101225.GA19687@box2.japko.eu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Adamski <k@japko.eu>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Vishnu Patekar <vishnupatekar0510@gmail.com>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, Jens Kuske <jenskuske@gmail.com>, linux-gpio@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1454203266-4450-5-git-send-email-vishnupatekar0510@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, maxime.ripard@free-electrons.com, linux@arm.linux.org.uk, emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com, linux-clk@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 01, 2016 at 11:12:26AM +0100, Krzysztof Adamski wrote:
-> H3 has additional PIO controller similar to what we can find on A23.
-> It's a 12 pin port, described in H3 Datasheet rev 1.1, pages 345-350.
+On Sun, Jan 31, 2016 at 09:20:56AM +0800, Vishnu Patekar wrote:
+> AHB1 on A83T is similar to ahb1 on A31, except parents are different.
+> clock index 0b1x is PLL6.
 > 
-> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
 > ---
-> .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
-> arch/arm/boot/dts/sun8i-h3.dtsi                    |  12 +++
+>  Documentation/devicetree/bindings/clock/sunxi.txt |  1 +
 
 Acked-by: Rob Herring <robh@kernel.org>
 
-> drivers/pinctrl/sunxi/Kconfig                      |   4 +
-> drivers/pinctrl/sunxi/Makefile                     |   1 +
-> drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c         | 105 +++++++++++++++++++++
-> 5 files changed, 123 insertions(+)
-> create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+>  drivers/clk/sunxi/clk-sunxi.c                     | 75 +++++++++++++++++++++++
+>  2 files changed, 76 insertions(+)
