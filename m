@@ -1,180 +1,35 @@
-From: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
-Subject: Re: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
-Date: Mon, 1 Feb 2016 09:55:03 -0500 (EST)
-Message-ID: <880790340.75681.1454338503610.JavaMail.zimbra@savoirfairelinux.com>
-References: <1452704263-16763-1-git-send-email-julien.grossholtz@savoirfairelinux.com> <1452704263-16763-2-git-send-email-julien.grossholtz@savoirfairelinux.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 01/14] pinctrl: sunxi: Add A83T R_PIO controller support
+Date: Mon, 1 Feb 2016 09:00:58 -0600
+Message-ID: <20160201150058.GA3209@rob-hp-laptop>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
+ <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:40915 "EHLO
-	mail.savoirfairelinux.com" rhost-flags-OK-FAIL-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932797AbcBAOzk (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Feb 2016 09:55:40 -0500
-In-Reply-To: <1452704263-16763-2-git-send-email-julien.grossholtz@savoirfairelinux.com>
+Received: from mail.kernel.org ([198.145.29.136]:34425 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932715AbcBAPBE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Mon, 1 Feb 2016 10:01:04 -0500
+Content-Disposition: inline
+In-Reply-To: <1454203266-4450-2-git-send-email-vishnupatekar0510@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus walleij <linus.walleij@linaro.org>, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com
+To: Vishnu Patekar <vishnupatekar0510@gmail.com>
+Cc: corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, maxime.ripard@free-electrons.com, linux@arm.linux.org.uk, emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com, linux-clk@vger.kernel.org
 
-Hello,
+On Sun, Jan 31, 2016 at 09:20:53AM +0800, Vishnu Patekar wrote:
+> The A83T has R_PIO pin controller, it's same as A23, execpt A83T
+> interrupt bit is 6th and A83T has one extra pin PL12.
+> 
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> ---
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
 
-Any chance to get feedback on this ?
+Acked-by: Rob Herring <robh@kernel.org>
 
-Thanks,
-
-Julien Grossholtz
-
------ Original Message -----
-From: "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
-To: "linus walleij" <linus.walleij@linaro.org>, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com, "Julien Grossholtz" <julien.grossholtz@savoirfairelinux.com>
-Sent: Wednesday, January 13, 2016 11:57:43 AM
-Subject: [PATCH 2/2] gpio: add TS-4800 fpga GPIO support
-
-The TS-4800 GPIO driver provide support for the GPIOs available
-on the Technologic Sytems board FPGA. It allows to set
-direction and read/write states.
-
-It uses the generic gpio driver.
-
-Signed-off-by: Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>
----
- drivers/gpio/Kconfig       |  7 ++++
- drivers/gpio/Makefile      |  1 +
- drivers/gpio/gpio-ts4800.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+)
- create mode 100644 drivers/gpio/gpio-ts4800.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b60f40a..1159abe 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -387,6 +387,13 @@ config GPIO_TB10X
- 	select GENERIC_IRQ_CHIP
- 	select OF_GPIO
- 
-+config GPIO_TS4800
-+	tristate "TS-4800 DIO blocks and compatibles"
-+	depends on OF_GPIO
-+	select GPIO_GENERIC
-+	help
-+	  This driver support TS-4800 FPGA GPIO controllers.
-+
- config GPIO_TZ1090
- 	bool "Toumaz Xenif TZ1090 GPIO support"
- 	depends on SOC_TZ1090
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 548e9b5..4d8daac 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -99,6 +99,7 @@ obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
- obj-$(CONFIG_GPIO_TPS6586X)	+= gpio-tps6586x.o
- obj-$(CONFIG_GPIO_TPS65910)	+= gpio-tps65910.o
- obj-$(CONFIG_GPIO_TPS65912)	+= gpio-tps65912.o
-+obj-$(CONFIG_GPIO_TS4800)	+= gpio-ts4800.o
- obj-$(CONFIG_GPIO_TS5500)	+= gpio-ts5500.o
- obj-$(CONFIG_GPIO_TWL4030)	+= gpio-twl4030.o
- obj-$(CONFIG_GPIO_TWL6040)	+= gpio-twl6040.o
-diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
-new file mode 100644
-index 0000000..c4908a4
---- /dev/null
-+++ b/drivers/gpio/gpio-ts4800.c
-@@ -0,0 +1,94 @@
-+/*
-+ * GPIO driver for the TS-4800 board
-+ *
-+ * Copyright (c) 2016 - Savoir-faire Linux
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2. This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#define DEFAULT_PIN_NUMBER      16
-+#define INPUT_REG_OFFSET        0x00
-+#define OUTPUT_REG_OFFSET       0x02
-+#define DIRECTION_REG_OFFSET    0x04
-+
-+static int ts4800_gpio_probe(struct platform_device *pdev)
-+{
-+	struct device_node *node;
-+	struct gpio_chip *chip;
-+	struct resource *res;
-+	void __iomem *base_addr;
-+	int retval;
-+	u32 ngpios;
-+
-+	chip = devm_kzalloc(&pdev->dev, sizeof(struct gpio_chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base_addr = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base_addr))
-+		return PTR_ERR(base_addr);
-+
-+	node = pdev->dev.of_node;
-+	if (!node)
-+		return -EINVAL;
-+
-+	retval = of_property_read_u32(node, "ngpios", &ngpios);
-+	if (retval == -EINVAL)
-+		ngpios = DEFAULT_PIN_NUMBER;
-+	else if (retval)
-+		return retval;
-+
-+	retval = bgpio_init(chip, &pdev->dev, 2, base_addr + INPUT_REG_OFFSET,
-+			    base_addr + OUTPUT_REG_OFFSET, NULL,
-+			    base_addr + DIRECTION_REG_OFFSET, NULL,
-+			    BGPIOF_BIG_ENDIAN & BGPIOF_BIG_ENDIAN_BYTE_ORDER);
-+	if (retval) {
-+		dev_err(&pdev->dev, "bgpio_init failed\n");
-+		return retval;
-+	}
-+
-+	chip->base = -1;
-+	chip->label = dev_name(&pdev->dev);
-+	chip->ngpio = ngpios;
-+
-+	platform_set_drvdata(pdev, chip);
-+
-+	return gpiochip_add_data(chip, NULL);
-+}
-+
-+static int ts4800_gpio_remove(struct platform_device *pdev)
-+{
-+	struct gpio_chip *chip = platform_get_drvdata(pdev);
-+
-+	gpiochip_remove(chip);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ts4800_gpio_of_match[] = {
-+	{ .compatible = "technologic,ts4800-gpio", },
-+	{},
-+};
-+
-+static struct platform_driver ts4800_gpio_driver = {
-+	.driver = {
-+		   .name = "ts4800-gpio",
-+		   .of_match_table = ts4800_gpio_of_match,
-+		   },
-+	.probe = ts4800_gpio_probe,
-+	.remove = ts4800_gpio_remove,
-+};
-+
-+module_platform_driver_probe(ts4800_gpio_driver, ts4800_gpio_probe);
-+
-+MODULE_AUTHOR("Julien Grossholtz <julien.grossholtz@savoirfairelinux.com>");
-+MODULE_DESCRIPTION("TS4800 FPGA GPIO driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.5.0
+>  drivers/pinctrl/sunxi/Kconfig                      |   5 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c       | 119 +++++++++++++++++++++
+>  4 files changed, 126 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
