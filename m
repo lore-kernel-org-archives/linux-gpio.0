@@ -1,44 +1,82 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 03/14] clk: sunxi: add bus gates for A83T
-Date: Mon, 1 Feb 2016 23:13:10 +0800
-Message-ID: <CAGb2v67BcLx8g+MDZnMyrgDpHWmQ-kcxFVqDNpMWzyJ_QoDrQA@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-4-git-send-email-vishnupatekar0510@gmail.com> <20160201150344.GA4947@rob-hp-laptop>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 2/3] Documentation: gpio: Update description for
+ X-Gene standby GPIO controller DTS binding
+Date: Mon, 1 Feb 2016 09:35:02 -0600
+Message-ID: <20160201153502.GA19725@rob-hp-laptop>
+References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
+ <1454041735-8434-3-git-send-email-qnguyen@apm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:48342 "EHLO
-	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933075AbcBAPNd (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Feb 2016 10:13:33 -0500
-In-Reply-To: <20160201150344.GA4947@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1454041735-8434-3-git-send-email-qnguyen-qTEPVZfXA3Y@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>, Feng Kan <fkan-qTEPVZfXA3Y@public.gmane.org>, Duc Dang <dhdang-qTEPVZfXA3Y@public.gmane.org>, patches-qTEPVZfXA3Y@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>
 
-On Mon, Feb 1, 2016 at 11:03 PM, Rob Herring <robh@kernel.org> wrote:
-> On Sun, Jan 31, 2016 at 09:20:55AM +0800, Vishnu Patekar wrote:
->> A83T has similar bus gates that of H3, including single gating register has
->> different clock parent.
->>
->> As per H3 and A83T datasheet, usbhost is under AHB2.
->>
->> However,below shows allwinner source code assignment:
->> bits: 26 (ehci0), 27 (ehci1), 29 (ohci0) => AHB1 for A83T.
->> bits: 26 (ehci0), 27 (ehci1) => AHB1 for H3
->> bits  29, 30, 31(ohci0,1,2) => AHB2 for H3.
->>
->> until, this confusion is cleared keep it H3 way.
->>
->> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/clock/sunxi.txt | 1 +
->>  drivers/clk/sunxi/clk-sun8i-bus-gates.c           | 2 ++
->>  2 files changed, 3 insertions(+)
->
-> Acked-by: Rob Herring <robh@kernel.org>
+On Fri, Jan 29, 2016 at 11:28:54AM +0700, Quan Nguyen wrote:
+> Update description for X-Gene standby GPIO controller DTS binding to
+> support GPIO line configuration as input, output or external IRQ pin.
+> 
+> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+> Signed-off-by: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
+> ---
+>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
+>  1 file changed, 40 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> index dae1300..7b8b4cb 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+> @@ -1,10 +1,20 @@
+>  APM X-Gene Standby GPIO controller bindings
+>  
+> -This is a gpio controller in the standby domain.
+> -
+> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
+> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
+> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
+> +This is a gpio controller in the standby domain. It also supports interrupt in
+> +some particular pins which are sourced to its parent interrupt controller
+> +as diagram below:
+> +                           +-----------------+
+> +                           | X-Gene standby  |
+> +                           | GPIO controller +--------- GPIO_0
+> ++------------+             |                 | ...
+> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
+> +| controller |  EXT_INT_0  |                 | ...
+> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
+> +|            |  ...        |                 |
+> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
+> +|            +-------------+                 | ...
+> +|            |             |                 +--------- GPIO_MAX
+> ++------------+             +-----------------+
+>  
+>  Required properties:
+>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
+> @@ -15,10 +25,18 @@ Required properties:
+>  		0 = active high
+>  		1 = active low
+>  - gpio-controller: Marks the device node as a GPIO controller.
+> -- interrupts: Shall contain exactly 6 interrupts.
+> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
+> +- interrupt-parent: Phandle of the parent interrupt controller.
+> +- interrupt-cells: Should be two.
+> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
+> +       - second cell is used to specify flags.
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- apm,nr-gpios: Optional, specify number of gpios pin.
+> +- apm,nr-irqs: Optional, specify number of interrupt pins.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+When is this not 6?
 
-We should really get the clk parents sorted out though.
+> +- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
+
+What determines this value? What value is assumed if not present?
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
