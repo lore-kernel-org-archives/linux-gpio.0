@@ -1,18 +1,13 @@
-From: Siarhei Siamashka <siarhei.siamashka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Re: [PATCH 05/11] drivers: pinctrl: add driver for
- Allwinner A64 SoC
-Date: Tue, 2 Feb 2016 03:58:52 +0200
-Message-ID: <20160202035852.6984db63@i7>
-References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
-	<1454348370-3816-6-git-send-email-andre.przywara@arm.com>
-	<20160201182754.GA14737@excalibur.cnev.de>
-	<56AFE0EC.8080207@arm.com>
-Reply-To: siarhei.siamashka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: Add H3 R_PIO controller support
+Date: Tue, 2 Feb 2016 14:25:18 +0800
+Message-ID: <CAGb2v65-X2_MoRm1=wAub9Y8Vpt-f-roYUT73jDk5Fnj17zKTw@mail.gmail.com>
+References: <20160201101225.GA19687@box2.japko.eu>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCH4DA7NUEBBBX42YC2QKGQEHUBU7ZQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-In-Reply-To: <56AFE0EC.8080207-5wv7dgnIgG8@public.gmane.org>
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBZMXYG2QKGQEC62J5EI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <20160201101225.GA19687-xLeyfSbClftGit24Ens98Q@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -20,116 +15,220 @@ Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
  <https://groups.google.com/group/linux-sunxi/subscribe>
-To: =?UTF-8?B?QW5kcsOp?= Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Cc: Karsten Merker <merker-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Adamski <k@japko.eu>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 1 Feb 2016 22:49:16 +0000
-Andr=C3=A9 Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
+On Mon, Feb 1, 2016 at 6:12 PM, Krzysztof Adamski <k@japko.eu> wrote:
+> H3 has additional PIO controller similar to what we can find on A23.
+> It's a 12 pin port, described in H3 Datasheet rev 1.1, pages 345-350.
+>
+> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+> ---
+> .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+> arch/arm/boot/dts/sun8i-h3.dtsi                    |  12 +++
+> drivers/pinctrl/sunxi/Kconfig                      |   4 +
+> drivers/pinctrl/sunxi/Makefile                     |   1 +
+> drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c         | 105
+> +++++++++++++++++++++
+> 5 files changed, 123 insertions(+)
+> create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+>
+> diff --git
+> a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> index 9213b27..730a917 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+> @@ -20,6 +20,7 @@ Required properties:
+>   "allwinner,sun9i-a80-pinctrl"
+>   "allwinner,sun9i-a80-r-pinctrl"
+>   "allwinner,sun8i-a83t-pinctrl"
+> +  "allwinner,sun8i-h3-r-pinctrl"
+>   "allwinner,sun8i-h3-pinctrl"
 
-> On 01/02/16 18:27, Karsten Merker wrote:
->=20
-> Hi Karsten,
->=20
-> thank you very much for your feedback!
->=20
-> > On Mon, Feb 01, 2016 at 05:39:24PM +0000, Andre Przywara wrote: =20
-> >> Based on the Allwinner A64 user manual and on the previous sunxi
-> >> pinctrl drivers this introduces the pin multiplex assignments for
-> >> the ARMv8 Allwinner A64 SoC.
-> >> Port A is apparently used for the fixed function DRAM controller, so
-> >> the ports start at B here (the manual mentions "n from 1 to 7", so
-> >> not starting at 0).
-> >>
-> >> Signed-off-by: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-> >> ---
-> >>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
-> >>  arch/arm64/Kconfig.platforms                       |   1 +
-> >>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
-> >>  drivers/pinctrl/sunxi/Makefile                     |   1 +
-> >>  drivers/pinctrl/sunxi/pinctrl-a64.c                | 606 ++++++++++++=
-+++++++++
-> >>  5 files changed, 613 insertions(+)
-> >>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-a64.c
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi=
--pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pi=
-nctrl.txt
-> >> index 9213b27..9050002 100644
-> >> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctr=
-l.txt
-> >> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctr=
-l.txt
-> >> @@ -21,6 +21,7 @@ Required properties:
-> >>    "allwinner,sun9i-a80-r-pinctrl"
-> >>    "allwinner,sun8i-a83t-pinctrl"
-> >>    "allwinner,sun8i-h3-pinctrl"
-> >> +  "allwinner,a64-pinctrl" =20
-> >=20
-> > Hello,
-> >=20
-> > on all other Allwinner SoCs we use the SoC family as part of the
-> > compatible, as well as in the names of the Kconfig options. To
-> > keep things consistent, I would like to propose doing the same on
-> > Arm64, i.e. using allwinner,sun50i-a64-pinctrl instead of
-> > allwinner,a64-pinctrl. =20
->=20
-> Yes, I have been told this already. However I don't like this idea so
-> much, for the following reasons:
-> a) It is mostly redundant. The actual SoC (marketing) name is unique,
-> there is no sun6i-a20 or sun7i-a23.
-> b) It is not even helpful. If I got Maxime correctly, then the newer
-> sunxi generation numbers depend on the ARM _cores_ used in the SoC,
-> which is frankly the least interesting part from a Linux support
-> perspective. I would see some sense if it would reflect the generation
-> of IP blocks used, but so it is even more confusing to see that
-> sun7i-a20 and sun8i-a23 are related, but sun8i-h3 is a completely
-> different beast. The Allwinner marketing name tells you that, but the
-> sunxi one does not.
-> c) It is very confusing for people not dealing with it everyday. Just
-> because I own a BananaPi I know that the A20 is sun7i, but I am totally
-> lost when it comes to all the other names. And even now it took me about
-> a minute to find the appropriate Wiki page which explains part of that
-> story.
-> d) Most importantly ;-): It kills TAB completion, unless you know the
-> sunxi number, which is mostly not true as pointed out in c)
->=20
-> So while I see that just a<somenumber> is not really very specific, I'd
-> rather do away with current naming scheme for the future. In this
-> particular case we have the vendor name as a name space identifier
-> already, so there is no possible confusion with ARM Cortex naming, for
-> instance.
->=20
-> Also as this is now moving into the arm64 world, I'd like to use the
-> opportunity to fix things that are not really optimal, the naming is one
-> of them.
+h3-r-pinctrl comes after h3-pinctrl
 
-One of the problems is that A64 name is not unique. We have reasons
-to believe that there are also H64 and R18 out there using exactly
-the same die, but possibly available in different packaging (a different
-ball grid pitch? or maybe a different set of peripherals routed to the
-outside?). Early prototypes of the Pine64 board were using Allwinner R18
-and the Jide Remix Mini HTPC box is using Allwinner H64.
 
-The bootloader sources from Allwinner are also referring to A64 as
-AW1689, which makes some sense because it is the chip id number that
-is accessible for runtime identification via reading the SRAM_VER_REG
-hardware register:
+>
+> - reg: Should contain the register physical address and length for the
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+> b/arch/arm/boot/dts/sun8i-h3.dtsi
+> index 1524130e..745f64c 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -493,5 +493,17 @@
+>                         interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+>                                      <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+> +
+> +               r_pio: pinctrl@01f02c00 {
+> +                       compatible = "allwinner,sun8i-h3-r-pinctrl";
+> +                       reg = <0x01f02c00 0x400>;
+> +                       interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&bus_gates 69>;
 
-    http://linux-sunxi.org/SRAM_Controller_Register_Guide#SRAM_VER_REG
+This is probably wrong. According to other SoCs all R_ block peripherals
+have clock gates and reset controls in the PRCM.
 
-So would it be a good idea to use "aw1689" as a compatible property
-in the DT instead of "a64"? Or maybe have "aw1689-a64" and
-"aw1689-h64", which would be similar to the existing "sun5i-a13"
-and "sun5i-a10s" naming convention?
+> +                       gpio-controller;
+> +                       #gpio-cells = <3>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <2>;
+> +               };
+> +
 
---=20
-Best regards,
-Siarhei Siamashka
+Extra new line here.
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Also please split this into a separate patch.
+
+>         };
+> };
+> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+> index f8dbc8b..75a26c9 100644
+> --- a/drivers/pinctrl/sunxi/Kconfig
+> +++ b/drivers/pinctrl/sunxi/Kconfig
+> @@ -55,6 +55,10 @@ config PINCTRL_SUN8I_H3
+>         def_bool MACH_SUN8I
+>         select PINCTRL_SUNXI_COMMON
+>
+> +config PINCTRL_SUN8I_H3_R
+> +       def_bool MACH_SUN8I
+> +       select PINCTRL_SUNXI_COMMON
+> +
+> config PINCTRL_SUN9I_A80
+>         def_bool MACH_SUN9I
+>         select PINCTRL_SUNXI_COMMON
+> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+> index ef82f22..a5d56f1 100644
+> --- a/drivers/pinctrl/sunxi/Makefile
+> +++ b/drivers/pinctrl/sunxi/Makefile
+> @@ -14,5 +14,6 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23_R)     +=
+> pinctrl-sun8i-a23-r.o
+> obj-$(CONFIG_PINCTRL_SUN8I_A33)         += pinctrl-sun8i-a33.o
+> obj-$(CONFIG_PINCTRL_SUN8I_A83T)        += pinctrl-sun8i-a83t.o
+> obj-$(CONFIG_PINCTRL_SUN8I_H3)          += pinctrl-sun8i-h3.o
+> +obj-$(CONFIG_PINCTRL_SUN8I_H3_R)       += pinctrl-sun8i-h3-r.o
+> obj-$(CONFIG_PINCTRL_SUN9I_A80)         += pinctrl-sun9i-a80.o
+> obj-$(CONFIG_PINCTRL_SUN9I_A80_R)       += pinctrl-sun9i-a80-r.o
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+> b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+> new file mode 100644
+> index 0000000..6271ceb
+> --- /dev/null
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
+> @@ -0,0 +1,105 @@
+> +/*
+> + * Allwinner H3 SoCs pinctrl driver.
+> + *
+> + * Copyright (C) 2016 Krzysztof Adamski <k@japko.eu>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2.  This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +
+> +#include "pinctrl-sunxi.h"
+> +
+> +static const struct sunxi_desc_pin sun8i_h3_r_pins[] = {
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_twi"),         /* SCK */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),  /* PL_EINT0 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_twi"),         /* SDA */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),  /* PL_EINT1 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_uart"),        /* TX */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),  /* PL_EINT2 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_uart"),        /* RX */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),  /* PL_EINT3 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_jtag"),        /* MS */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),  /* PL_EINT4 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_jtag"),        /* CK */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),  /* PL_EINT5 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_jtag"),        /* DO */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),  /* PL_EINT6 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_jtag"),        /* DI */
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),  /* PL_EINT7 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),  /* PL_EINT8 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),  /* PL_EINT9 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_pwn"),
+
+Typo: s_pwm
+
+Regards
+ChenYu
+
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)), /* PL_EINT10 */
+> +       SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
+> +                 SUNXI_FUNCTION(0x0, "gpio_in"),
+> +                 SUNXI_FUNCTION(0x1, "gpio_out"),
+> +                 SUNXI_FUNCTION(0x2, "s_cir_rx"),
+> +                 SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)), /* PL_EINT11 */
+> +};
+> +
+> +static const struct sunxi_pinctrl_desc sun8i_h3_r_pinctrl_data = {
+> +       .pins = sun8i_h3_r_pins,
+> +       .npins = ARRAY_SIZE(sun8i_h3_r_pins),
+> +       .irq_banks = 1,
+> +       .pin_base = PL_BASE,
+> +};
+> +
+> +static int sun8i_h3_r_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +       return sunxi_pinctrl_init(pdev,
+> +                                 &sun8i_h3_r_pinctrl_data);
+> +}
+> +
+> +static const struct of_device_id sun8i_h3_r_pinctrl_match[] = {
+> +       { .compatible = "allwinner,sun8i-h3-r-pinctrl", },
+> +       {}
+> +};
+> +
+> +static struct platform_driver sun8i_h3_r_pinctrl_driver = {
+> +       .probe  = sun8i_h3_r_pinctrl_probe,
+> +       .driver = {
+> +               .name           = "sun8i-h3-r-pinctrl",
+> +               .of_match_table = sun8i_h3_r_pinctrl_match,
+> +       },
+> +};
+> +builtin_platform_driver(sun8i_h3_r_pinctrl_driver);
+> --
+> 2.4.2
+>
