@@ -1,67 +1,175 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH] pinctrl: sunxi: H3 requires irq_read_needs_mux
-Date: Tue, 2 Feb 2016 14:24:21 +0100
-Message-ID: <20160202132421.GT4652@lukather>
-References: <20160202100217.GA7483@box2.japko.eu>
+From: Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 05/11] drivers: pinctrl: add driver for
+ Allwinner A64 SoC
+Date: Tue, 2 Feb 2016 14:24:20 +0000
+Message-ID: <56B0BC14.8060007@arm.com>
+References: <1454348370-3816-1-git-send-email-andre.przywara@arm.com>
+ <1454348370-3816-6-git-send-email-andre.przywara@arm.com>
+ <20160201182754.GA14737@excalibur.cnev.de> <56AFE0EC.8080207@arm.com>
+ <20160202035852.6984db63@i7>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="53TzBEXPl5+8hjUY"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from down.free-electrons.com ([37.187.137.238]:41787 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932579AbcBBNYX (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 08:24:23 -0500
-Content-Disposition: inline
-In-Reply-To: <20160202100217.GA7483@box2.japko.eu>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:37544 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754810AbcBBOYf (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 09:24:35 -0500
+In-Reply-To: <20160202035852.6984db63@i7>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Adamski <krzysztof.adamski@sonymobile.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Siarhei Siamashka <siarhei.siamashka@gmail.com>
+Cc: Karsten Merker <merker@debian.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
 
+Hi,
 
---53TzBEXPl5+8hjUY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 02, 2016 at 11:03:03AM +0100, Krzysztof Adamski wrote:
-> It seems that on H3, just like on A10, when GPIOs are configured as
-> external interrupt data registers does not contain their value.  When
-> value is read, GPIO function must be temporary switched to input for
-> reads.
+On 02/02/16 01:58, Siarhei Siamashka wrote:
+> On Mon, 1 Feb 2016 22:49:16 +0000
+> Andr=C3=A9 Przywara <andre.przywara@arm.com> wrote:
 >=20
-> Signed-off-by: Krzysztof Adamski <k@japko.eu>
+>> On 01/02/16 18:27, Karsten Merker wrote:
+>>
+>> Hi Karsten,
+>>
+>> thank you very much for your feedback!
+>>
+>>> On Mon, Feb 01, 2016 at 05:39:24PM +0000, Andre Przywara wrote: =20
+>>>> Based on the Allwinner A64 user manual and on the previous sunxi
+>>>> pinctrl drivers this introduces the pin multiplex assignments for
+>>>> the ARMv8 Allwinner A64 SoC.
+>>>> Port A is apparently used for the fixed function DRAM controller, =
+so
+>>>> the ports start at B here (the manual mentions "n from 1 to 7", so
+>>>> not starting at 0).
+>>>>
+>>>> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+>>>> ---
+>>>>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+>>>>  arch/arm64/Kconfig.platforms                       |   1 +
+>>>>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
+>>>>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>>>>  drivers/pinctrl/sunxi/pinctrl-a64.c                | 606 ++++++++=
++++++++++++++
+>>>>  5 files changed, 613 insertions(+)
+>>>>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-a64.c
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,s=
+unxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,=
+sunxi-pinctrl.txt
+>>>> index 9213b27..9050002 100644
+>>>> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pi=
+nctrl.txt
+>>>> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pi=
+nctrl.txt
+>>>> @@ -21,6 +21,7 @@ Required properties:
+>>>>    "allwinner,sun9i-a80-r-pinctrl"
+>>>>    "allwinner,sun8i-a83t-pinctrl"
+>>>>    "allwinner,sun8i-h3-pinctrl"
+>>>> +  "allwinner,a64-pinctrl" =20
+>>>
+>>> Hello,
+>>>
+>>> on all other Allwinner SoCs we use the SoC family as part of the
+>>> compatible, as well as in the names of the Kconfig options. To
+>>> keep things consistent, I would like to propose doing the same on
+>>> Arm64, i.e. using allwinner,sun50i-a64-pinctrl instead of
+>>> allwinner,a64-pinctrl. =20
+>>
+>> Yes, I have been told this already. However I don't like this idea s=
+o
+>> much, for the following reasons:
+>> a) It is mostly redundant. The actual SoC (marketing) name is unique=
+,
+>> there is no sun6i-a20 or sun7i-a23.
+>> b) It is not even helpful. If I got Maxime correctly, then the newer
+>> sunxi generation numbers depend on the ARM _cores_ used in the SoC,
+>> which is frankly the least interesting part from a Linux support
+>> perspective. I would see some sense if it would reflect the generati=
+on
+>> of IP blocks used, but so it is even more confusing to see that
+>> sun7i-a20 and sun8i-a23 are related, but sun8i-h3 is a completely
+>> different beast. The Allwinner marketing name tells you that, but th=
+e
+>> sunxi one does not.
+>> c) It is very confusing for people not dealing with it everyday. Jus=
+t
+>> because I own a BananaPi I know that the A20 is sun7i, but I am tota=
+lly
+>> lost when it comes to all the other names. And even now it took me a=
+bout
+>> a minute to find the appropriate Wiki page which explains part of th=
+at
+>> story.
+>> d) Most importantly ;-): It kills TAB completion, unless you know th=
+e
+>> sunxi number, which is mostly not true as pointed out in c)
+>>
+>> So while I see that just a<somenumber> is not really very specific, =
+I'd
+>> rather do away with current naming scheme for the future. In this
+>> particular case we have the vendor name as a name space identifier
+>> already, so there is no possible confusion with ARM Cortex naming, f=
+or
+>> instance.
+>>
+>> Also as this is now moving into the arm64 world, I'd like to use the
+>> opportunity to fix things that are not really optimal, the naming is=
+ one
+>> of them.
+>=20
+> One of the problems is that A64 name is not unique. We have reasons
+> to believe that there are also H64 and R18 out there using exactly
+> the same die, but possibly available in different packaging (a differ=
+ent
+> ball grid pitch? or maybe a different set of peripherals routed to th=
+e
+> outside?). Early prototypes of the Pine64 board were using Allwinner =
+R18
+> and the Jide Remix Mini HTPC box is using Allwinner H64.
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+So if the differences are actually hidden from software, why would we
+care? See below for an example on using DT to cover this.
 
-Thanks!
-Maxime
+> The bootloader sources from Allwinner are also referring to A64 as
+> AW1689, which makes some sense because it is the chip id number that
+> is accessible for runtime identification via reading the SRAM_VER_REG
+> hardware register:
+>=20
+>     http://linux-sunxi.org/SRAM_Controller_Register_Guide#SRAM_VER_RE=
+G
+>=20
+> So would it be a good idea to use "aw1689" as a compatible property
+> in the DT instead of "a64"? Or maybe have "aw1689-a64" and
+> "aw1689-h64", which would be similar to the existing "sun5i-a13"
+> and "sun5i-a10s" naming convention?
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+I would be fine with that if it really reflects something in the
+hardware. And I like it more than the rather arbitrary sun50i name. But
+on the other hand it seems to be completely unknown so far (Google just
+turns up this email and your sunxi-fel setup, basically). So I am not
+sure we should introduce yet another naming scheme.
 
---53TzBEXPl5+8hjUY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So looking at the compatible definition in the DT, this looks like a
+perfect example of a fall-back name to me:
+=46or the Pine64 we use "allwinner,a64", any other board could use say =
+a:
+"allwinner,h64", "allwinner,a64" compatible naming.
+So as long as we don't need any h64 specifics, going with the A64
+support code is fine. Should later the need arise to fix something for
+the H64 only, we can add this easily and be covered automatically.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+=46WIW, I just have received this Remix Mini PC thing, which I ordered =
+to
+see what's with the H64 and to make sure the SoC/board abstraction is
+right. So let me see what this version register looks like there and ho=
+w
+it behaves with the proposed kernel patches (should I be able to hack i=
+t).
 
-iQIcBAEBAgAGBQJWsK4FAAoJEBx+YmzsjxAghF4P/1lsU7fd6FGLasaZPUuFvmnw
-W/uYjZEvg+WVcH41JvKN6DJvtnY/ZDypio82ZhjRAKBsVzfFCNnUhaAC3alNIjF8
-tofDPEM1SYXdXKRkT9Bz4N7T0+mCsZS6eodBwgO310Lh1UQ2Yu+AqaFUwpDK8ZD0
-y/auKZb8UjlBbyRJTvsx2odxq031JTXQSMcgbKOzpjzz/PlAFQe1b9Wz0oa8xCtB
-BjFKzWgcIX6PCfEQPRtr0B+2vBktsETp79usye1c35uYslsqdI+NeExgVNjIQQYD
-52epFatqAXfJn6rIz2rLG9Ejhq1/ot/t8Ar2V3L/SlfSUIcK9kbZZ+XSIC0gYAgY
-kUyLCXkiRqGUcMIVOGtAeRQi0VOD+opdZCdNthUiuhQzU1kq0wzCRM879C1R2umk
-X7MChsKeO/C00z1Zkk7ptB4hwt20KR8GcvzY2//WnnBGLojhcYxfX1bNT/Z9aJeN
-F74o0VqNXOw/e3EBOvgahQSrfEf/l+RyQ1xpGHFNX78RVppqRWsi+BY5MT2q/a8n
-+n4i8DUihIeEhzU9L2lT/mKhS9UWK07dzqYvvXz9vlOahRAaOlYMQxzCI5yFux+x
-nU6V+xBStDmLTxFqpouE6W5egpekOmlsduS2IvI3CvP/6CAjiS2phK5XjJZmjQSy
-cn53lYkR4CsKqzflQMDz
-=+2zr
------END PGP SIGNATURE-----
-
---53TzBEXPl5+8hjUY--
+Cheers,
+Andre.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
