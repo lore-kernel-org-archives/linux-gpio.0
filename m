@@ -1,41 +1,40 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 06/14] ARM: dts: sun8i-a83t: Correct low speed oscillator
- clocks
-Date: Tue, 2 Feb 2016 14:19:47 +0100
-Message-ID: <20160202131947.GS4652@lukather>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com>
- <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: H3 requires irq_read_needs_mux
+Date: Tue, 2 Feb 2016 14:24:21 +0100
+Message-ID: <20160202132421.GT4652@lukather>
+References: <20160202100217.GA7483@box2.japko.eu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gXx2FYK2AghGE4Yq"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="53TzBEXPl5+8hjUY"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from down.free-electrons.com ([37.187.137.238]:41787 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S932579AbcBBNYX (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 08:24:23 -0500
 Content-Disposition: inline
-In-Reply-To: <1454203266-4450-7-git-send-email-vishnupatekar0510@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: robh+dt@kernel.org, corbet@lwn.net, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, emilio@elopez.com.ar, jenskuske@gmail.com, hdegoede@redhat.com, wens@csie.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@codeaurora.org, patchesrdh@mveas.com, linux-clk@vger.kernel.org
+In-Reply-To: <20160202100217.GA7483@box2.japko.eu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Adamski <krzysztof.adamski@sonymobile.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 
---gXx2FYK2AghGE4Yq
+--53TzBEXPl5+8hjUY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 31, 2016 at 09:20:58AM +0800, Vishnu Patekar wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+On Tue, Feb 02, 2016 at 11:03:03AM +0100, Krzysztof Adamski wrote:
+> It seems that on H3, just like on A10, when GPIOs are configured as
+> external interrupt data registers does not contain their value.  When
+> value is read, GPIO function must be temporary switched to input for
+> reads.
 >=20
-> The A83T does not have a 32.768 kHz low speed oscillator, either as
-> an external crystal or input. It has a 16 MHz RC-based (inaccurate)
-> internal oscillator, which is then divided by 512 for a clock close
-> to 32 kHz.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Krzysztof Adamski <k@japko.eu>
 
-You should have your SoB here.
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Is it ok to add it?
-
+Thanks!
 Maxime
 
 --=20
@@ -43,26 +42,26 @@ Maxime Ripard, Free Electrons
 Embedded Linux, Kernel and Android engineering
 http://free-electrons.com
 
---gXx2FYK2AghGE4Yq
+--53TzBEXPl5+8hjUY
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJWsKzzAAoJEBx+YmzsjxAgVbsQAIrgvDLhc9G7FHuWIjknKcbV
-Wa9uwHLTHr3TACcm0eUD8zjDxVKdRqYAZ2JDvwfPGN3Q62AZOtrIHJr8CnQcs+sa
-0ebCCBkBHsOo2sioydT9b6qpP1dUUOL19LXUIpJceNZfirPiJzkIZ40CNKLdwHsX
-K6m1W79sXyKM89zqvzVpsTUv/OeOgJwBE/t4AAVNPmt07gjN599PJ1NkChYaVYzi
-yVLBKBpi1Z3WPMZa3T7+zZHiCoROHzvnIgsxaCi9KKOlKrghg+ztKuWaKI+bPS5+
-n6INtuKFm/9wlL/Vek8yOHawMzO3a66rEEdfIvJFapzHIEIHqBy9yuM8OQOBwAjo
-mkgeKe66e/WzJ1cpuEeDgC+trgjXMPPFmhcZmnOMt6DrgMYZQ7cNxU/9iApC0fWA
-OxnkZ8yvBDc6FqJZDHi0bSllVo25O0ETQ3q8+rPcOGHJLQXghZs5ENfcYFSnS9o3
-QxJ1m9NiiYGPoJc2kGcwq6dliQ4AFP/htaZipHnz+qF/AmqFogycj3fEnjpmPy2i
-2TzhVKirt0dYDLGnHpph3HGe4NARMvMfn3NkdDExpZxfSmh6vizLKJApsmpSQCu6
-xFIotNzv3uFDo0qUn1j3qI5S10T4KaWaO+voZYn/g79z+LcQB5SnAtjAjZ3Q61A1
-8zM8qW4bqE6Y5ojRH7yQ
-=VPel
+iQIcBAEBAgAGBQJWsK4FAAoJEBx+YmzsjxAghF4P/1lsU7fd6FGLasaZPUuFvmnw
+W/uYjZEvg+WVcH41JvKN6DJvtnY/ZDypio82ZhjRAKBsVzfFCNnUhaAC3alNIjF8
+tofDPEM1SYXdXKRkT9Bz4N7T0+mCsZS6eodBwgO310Lh1UQ2Yu+AqaFUwpDK8ZD0
+y/auKZb8UjlBbyRJTvsx2odxq031JTXQSMcgbKOzpjzz/PlAFQe1b9Wz0oa8xCtB
+BjFKzWgcIX6PCfEQPRtr0B+2vBktsETp79usye1c35uYslsqdI+NeExgVNjIQQYD
+52epFatqAXfJn6rIz2rLG9Ejhq1/ot/t8Ar2V3L/SlfSUIcK9kbZZ+XSIC0gYAgY
+kUyLCXkiRqGUcMIVOGtAeRQi0VOD+opdZCdNthUiuhQzU1kq0wzCRM879C1R2umk
+X7MChsKeO/C00z1Zkk7ptB4hwt20KR8GcvzY2//WnnBGLojhcYxfX1bNT/Z9aJeN
+F74o0VqNXOw/e3EBOvgahQSrfEf/l+RyQ1xpGHFNX78RVppqRWsi+BY5MT2q/a8n
++n4i8DUihIeEhzU9L2lT/mKhS9UWK07dzqYvvXz9vlOahRAaOlYMQxzCI5yFux+x
+nU6V+xBStDmLTxFqpouE6W5egpekOmlsduS2IvI3CvP/6CAjiS2phK5XjJZmjQSy
+cn53lYkR4CsKqzflQMDz
+=+2zr
 -----END PGP SIGNATURE-----
 
---gXx2FYK2AghGE4Yq--
+--53TzBEXPl5+8hjUY--
