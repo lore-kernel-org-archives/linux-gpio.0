@@ -1,137 +1,35 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/2] gpio: Remove unused asm/gpio.h files
-Date: Tue, 02 Feb 2016 13:53:30 -0600
-Message-ID: <20160202195330.10827.68542.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH 0/3] USB: PHY: minor include cleanups
+Date: Tue, 02 Feb 2016 14:02:30 -0600
+Message-ID: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arch@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:58459 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754437AbcBBUCd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 2 Feb 2016 15:02:33 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>
 
-asm/gpio.h is included only by linux/gpio.h, and then only when the arch
-selects ARCH_HAVE_CUSTOM_GPIO_H.  Only the following arches select it: arm
-avr32 blackfin m68k (COLDFIRE only) sh unicore32.
+Remove some gpio and regulator #includes when they can be replaced by
+trivial forward struct declarations.  Also move a linux/gpio/consumer.h
+#include from a header to the single .c files that uses it.
 
-Remove the unused asm/gpio.h files for the arches that do not select
-ARCH_HAVE_CUSTOM_GPIO_H.
-
-This is a follow-on to 7563bbf89d06 ("gpiolib/arches: Centralise
-bolierplate asm/gpio.h").
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- arch/alpha/include/asm/gpio.h      |    4 ----
- arch/ia64/include/asm/gpio.h       |    4 ----
- arch/metag/include/asm/gpio.h      |    4 ----
- arch/microblaze/include/asm/gpio.h |    4 ----
- arch/openrisc/include/asm/gpio.h   |    4 ----
- arch/powerpc/include/asm/gpio.h    |    4 ----
- arch/sparc/include/asm/gpio.h      |    4 ----
- arch/x86/include/asm/gpio.h        |    4 ----
- arch/xtensa/include/asm/gpio.h     |    4 ----
- 9 files changed, 36 deletions(-)
- delete mode 100644 arch/alpha/include/asm/gpio.h
- delete mode 100644 arch/ia64/include/asm/gpio.h
- delete mode 100644 arch/metag/include/asm/gpio.h
- delete mode 100644 arch/microblaze/include/asm/gpio.h
- delete mode 100644 arch/openrisc/include/asm/gpio.h
- delete mode 100644 arch/powerpc/include/asm/gpio.h
- delete mode 100644 arch/sparc/include/asm/gpio.h
- delete mode 100644 arch/x86/include/asm/gpio.h
- delete mode 100644 arch/xtensa/include/asm/gpio.h
 
-diff --git a/arch/alpha/include/asm/gpio.h b/arch/alpha/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/alpha/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/ia64/include/asm/gpio.h b/arch/ia64/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/ia64/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/metag/include/asm/gpio.h b/arch/metag/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/metag/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/microblaze/include/asm/gpio.h b/arch/microblaze/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/microblaze/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/openrisc/include/asm/gpio.h b/arch/openrisc/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/openrisc/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/powerpc/include/asm/gpio.h b/arch/powerpc/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/powerpc/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/sparc/include/asm/gpio.h b/arch/sparc/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/sparc/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/x86/include/asm/gpio.h b/arch/x86/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/x86/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
-diff --git a/arch/xtensa/include/asm/gpio.h b/arch/xtensa/include/asm/gpio.h
-deleted file mode 100644
-index b3799d8..0000000
---- a/arch/xtensa/include/asm/gpio.h
-+++ /dev/null
-@@ -1,4 +0,0 @@
--#ifndef __LINUX_GPIO_H
--#warning Include linux/gpio.h instead of asm/gpio.h
--#include <linux/gpio.h>
--#endif
+Bjorn Helgaas (3):
+      usb: phy: generic: use forward declarations instead of #includes
+      usb: phy: generic: use forward declarations instead of #includes
+      usb: phy: phy-am335x: remove include of regulator/consumer.h
+
+
+ drivers/pci/pcie/pme.c              |    4 +++-
+ drivers/usb/phy/phy-am335x.c        |    1 -
+ drivers/usb/phy/phy-generic.c       |    1 +
+ drivers/usb/phy/phy-generic.h       |    5 +++--
+ include/linux/usb/usb_phy_generic.h |    3 ++-
+ 5 files changed, 9 insertions(+), 5 deletions(-)
