@@ -1,35 +1,59 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 0/3] USB: PHY: minor include cleanups
-Date: Tue, 02 Feb 2016 14:02:30 -0600
-Message-ID: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH 1/3] usb: phy: generic: use forward declarations instead of
+ #includes
+Date: Tue, 02 Feb 2016 14:02:37 -0600
+Message-ID: <20160202200237.11646.40985.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58459 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754437AbcBBUCd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Tue, 2 Feb 2016 15:02:33 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Felipe Balbi <balbi@ti.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-Remove some gpio and regulator #includes when they can be replaced by
-trivial forward struct declarations.  Also move a linux/gpio/consumer.h
-#include from a header to the single .c files that uses it.
+In include/linux/usb/usb_phy_generic.h, use a forward declaration for
+struct gpio_desc instead of including linux/gpio/consumer.h.
 
+Of the files that include usb_phy_generic.h, only
+drivers/usb/phy/phy-generic.c uses the gpiod_*() interfaces from
+linux/gpio/consumer.h, so include consumer.h explicitly there.
+
+This is a little more efficient and ensures that users of the gpiod
+interfaces include linux/gpio/consumer.h directly rather than getting it
+accidentally via linux/usb/usb_phy_generic.h.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
-
-Bjorn Helgaas (3):
-      usb: phy: generic: use forward declarations instead of #includes
-      usb: phy: generic: use forward declarations instead of #includes
-      usb: phy: phy-am335x: remove include of regulator/consumer.h
-
-
- drivers/pci/pcie/pme.c              |    4 +++-
- drivers/usb/phy/phy-am335x.c        |    1 -
  drivers/usb/phy/phy-generic.c       |    1 +
- drivers/usb/phy/phy-generic.h       |    5 +++--
  include/linux/usb/usb_phy_generic.h |    3 ++-
- 5 files changed, 9 insertions(+), 5 deletions(-)
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/phy/phy-generic.c b/drivers/usb/phy/phy-generic.c
+index 5320cb8..2c1349e 100644
+--- a/drivers/usb/phy/phy-generic.c
++++ b/drivers/usb/phy/phy-generic.c
+@@ -36,6 +36,7 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/delay.h>
+ 
+ #include "phy-generic.h"
+diff --git a/include/linux/usb/usb_phy_generic.h b/include/linux/usb/usb_phy_generic.h
+index c13632d5..45c20060 100644
+--- a/include/linux/usb/usb_phy_generic.h
++++ b/include/linux/usb/usb_phy_generic.h
+@@ -2,7 +2,8 @@
+ #define __LINUX_USB_NOP_XCEIV_H
+ 
+ #include <linux/usb/otg.h>
+-#include <linux/gpio/consumer.h>
++
++struct gpio_desc;
+ 
+ struct usb_phy_generic_platform_data {
+ 	enum usb_phy_type type;
