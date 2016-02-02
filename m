@@ -1,157 +1,82 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 14/14] ARM: dts: sun8i: Add A83T based Sinovoip Bpi-M3 Board
-Date: Tue, 2 Feb 2016 15:37:22 +0800
-Message-ID: <CAGb2v65BwAcT8920WXt7dBjNx4zjycw2Ea+sNZrm0aM_3JA8pA@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com> <1454203266-4450-15-git-send-email-vishnupatekar0510@gmail.com>
+From: Krzysztof Adamski <k@japko.eu>
+Subject: Re: [PATCH] pinctrl: sunxi: Add H3 R_PIO controller support
+Date: Tue, 2 Feb 2016 10:24:52 +0100
+Message-ID: <20160202092451.GA26944@box2.japko.eu>
+References: <20160201101225.GA19687@box2.japko.eu>
+ <CAGb2v65-X2_MoRm1=wAub9Y8Vpt-f-roYUT73jDk5Fnj17zKTw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:55838 "EHLO
-	smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354AbcBBHhp (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 02:37:45 -0500
-In-Reply-To: <1454203266-4450-15-git-send-email-vishnupatekar0510@gmail.com>
+Received: from box2.japko.eu ([91.121.152.53]:47539 "EHLO box2.japko.eu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753861AbcBBJ2n (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+	Tue, 2 Feb 2016 04:28:43 -0500
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65-X2_MoRm1=wAub9Y8Vpt-f-roYUT73jDk5Fnj17zKTw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-cl
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Vishnu Patekar <vishnupatekar0510@gmail.com>, Jens Kuske <jenskuske@gmail.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Sun, Jan 31, 2016 at 9:21 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> This patch adds support for Sinovoip BPI-M3 A83T based board.
+On Tue, Feb 02, 2016 at 02:25:18PM +0800, Chen-Yu Tsai wrote:
+>On Mon, Feb 1, 2016 at 6:12 PM, Krzysztof Adamski <k@japko.eu> wrote:
+>> - reg: Should contain the register physical address and length for 
+>> the
+>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> index 1524130e..745f64c 100644
+>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>> @@ -493,5 +493,17 @@
+>>                         interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+>>                                      <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+>>                 };
+>> +
+>> +               r_pio: pinctrl@01f02c00 {
+>> +                       compatible = "allwinner,sun8i-h3-r-pinctrl";
+>> +                       reg = <0x01f02c00 0x400>;
+>> +                       interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+>> +                       clocks = <&bus_gates 69>;
 >
-> It has 2G LPDDR3, UART, ethernet, USB, HDMI, USB Sata, MIPI DSI,
-> mic, AP6212 Wifi, etc on it.
-> It is paired with AXP813 PMIC which is almost same as AXP818.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
-> ---
->  arch/arm/boot/dts/Makefile                       |  1 +
->  arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts | 88 ++++++++++++++++++++++++
->  2 files changed, 89 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
->
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 58e461a..c0dd016 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -694,6 +694,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
->         sun8i-a33-sinlinx-sina33.dtb \
->         sun8i-a83t-allwinner-h8homlet-v2.dtb \
->         sun8i-a83t-cubietruck-plus.dtb \
-> +       sun8i-a83t-sinovoip-bpi-m3.dtb \
->         sun8i-h3-orangepi-plus.dtb
->  dtb-$(CONFIG_MACH_SUN9I) += \
->         sun9i-a80-optimus.dtb \
-> diff --git a/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-> new file mode 100644
-> index 0000000..fecc7dc
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun8i-a83t-sinovoip-bpi-m3.dts
-> @@ -0,0 +1,88 @@
-> +/*
-> + * Copyright 2015 Vishnu Patekar
+>This is probably wrong. According to other SoCs all R_ block peripherals
+>have clock gates and reset controls in the PRCM.
 
-2016?
+This is problematic. I can find information about reset and gates control for
+this peripheral on other SoCs user manuals but there is nothing about it in H3
+User Manual
+(https://www.dropbox.com/s/nkr9slo1o9x6i1z/Allwinner_H3_Datasheet_V1.1.pdf?dl=0).
 
-> + * Vishnu Patekar <vishnupatekar0510@gmail.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun8i-a83t.dtsi"
-> +#include "sunxi-common-regulators.dtsi"
-> +
-> +/ {
-> +       model = "Sinovoip BananaPi M3 v1.2";
-> +       compatible = "sinovoip,bpi-m3", "allwinner,sun8i-a83t";
-> +
-> +       aliases {
-> +               serial0 = &uart0;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +};
-> +
-> +&pio {
-> +       mmc0_cd_pin_bpi_m3: mmc0_cd_pin@0 {
-> +               allwinner,pins = "PF6";
-> +               allwinner,function = "gpio_in";
-> +               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-> +               allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
-> +       };
+Similarly, while I think I can find r_pio clock setup for A33:
+https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw5.c
 
-Maybe we should just put this in the .dtsi and call it
-"mmc0_cd_pin_reference_design"?
+I can't find it for H3, though:
+https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/drivers/clk/sunxi/clk-sun8iw7.c
 
-We have something similar for sun4i-a10.
+Well, apart from this strange snippet:
 
-> +};
-> +
-> +&mmc0 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_bpi_m3>;
-> +       vmmc-supply = <&reg_vcc3v0>;
-> +       cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-> +       bus-width = <4>;
-> +       cd-inverted;
-> +       status = "okay";
-> +};
-> +
-> +&uart0 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&uart0_pins_b>;
-> +       status = "okay";
-> +};
-> +
-> +&r_rsb {
-
-This goes before uart0.
-
-> +       status = "okay";
-> +};
-
-What about eMMC?
+// binder r-pio CPUS_APB0_GATE to pio-clk's gate-reset-register
+    clk = clk_get(NULL,"pio");
+    if(!clk || IS_ERR(clk))
+        printk("Error not get clk pio\n");
+    else
+    {
+        struct clk_hw *hw = __clk_get_hw(clk);
+        struct sunxi_clk_periph *periph = to_clk_periph(hw);
+        struct sunxi_clk_periph_gate *gate = &periph->gate;
+        gate->reset = sunxi_clk_cpus_base+CPUS_APB0_GATE ;
+        gate->rst_shift = 0;
+        clk_put(clk);
+    }
 
 
-Thanks!
-ChenYu
+Which I have to admit I don't fully understand. This seems to be setting reset
+line for first pio, not for r_pio - something we don't have right now. Or am I
+wrong here?
+
+I'm new to Allwinner SoCs, any help from veterans?
+
+Also, if that proves anything, I did test this code on OrangePi PC and PL ports
+works so their clock is enabled, for sure.
+
+Best regards,
+Krzysztof Adamski
