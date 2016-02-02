@@ -1,31 +1,95 @@
-From: "Khalid Mahmoud Ahmed" <ipm@africa-online.net>
-Subject: Request For Your Partnership
-Date: Tue, 02 Feb 2016 02:02:58 +0100
-Message-ID: <MXw4bnN3sYyCw0UXDca0007f392@mx.africa-online.net>
-Reply-To: khalidmahmed49@gmail.com
+From: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
+Subject: Re: [PATCH v5 2/3] Documentation: gpio: Update description for X-Gene
+ standby GPIO controller DTS binding
+Date: Tue, 2 Feb 2016 08:46:25 +0700
+Message-ID: <CAFopSPQBjXQZwG-Phfc+xJ5Kn6dXPakT6Hg5qT-ByXG06p8wgg@mail.gmail.com>
+References: <1454041735-8434-1-git-send-email-qnguyen@apm.com>
+	<1454041735-8434-3-git-send-email-qnguyen@apm.com>
+	<20160201153502.GA19725@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp2.africa-online.net ([41.190.93.230]:49072 "EHLO
-	smtp2.africa-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751228AbcBBBWE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Mon, 1 Feb 2016 20:22:04 -0500
-Content-Description: Mail message body
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160201153502.GA19725@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>, Phong Vo <pvo-qTEPVZfXA3Y@public.gmane.org>, Loc Ho <lho-qTEPVZfXA3Y@public.gmane.org>, Feng Kan <fkan-qTEPVZfXA3Y@public.gmane.org>, Duc Dang <dhdang-qTEPVZfXA3Y@public.gmane.org>, patches <patches-qTEPVZfXA3Y@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <ipm@africa-online.net>
 
-Hello My Friend,
+On Mon, Feb 1, 2016 at 10:35 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Fri, Jan 29, 2016 at 11:28:54AM +0700, Quan Nguyen wrote:
+>> Update description for X-Gene standby GPIO controller DTS binding to
+>> support GPIO line configuration as input, output or external IRQ pin.
+>>
+>> Signed-off-by: Y Vo <yvo-qTEPVZfXA3Y@public.gmane.org>
+>> Signed-off-by: Quan Nguyen <qnguyen-qTEPVZfXA3Y@public.gmane.org>
+>> ---
+>>  .../devicetree/bindings/gpio/gpio-xgene-sb.txt     | 47 ++++++++++++++++++----
+>>  1 file changed, 40 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>> index dae1300..7b8b4cb 100644
+>> --- a/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-xgene-sb.txt
+>> @@ -1,10 +1,20 @@
+>>  APM X-Gene Standby GPIO controller bindings
+>>
+>> -This is a gpio controller in the standby domain.
+>> -
+>> -There are 20 GPIO pins from 0..21. There is no GPIO_DS14 or GPIO_DS15,
+>> -only GPIO_DS8..GPIO_DS13 support interrupts. The IRQ mapping
+>> -is currently 1-to-1 on interrupts 0x28 thru 0x2d.
+>> +This is a gpio controller in the standby domain. It also supports interrupt in
+>> +some particular pins which are sourced to its parent interrupt controller
+>> +as diagram below:
+>> +                           +-----------------+
+>> +                           | X-Gene standby  |
+>> +                           | GPIO controller +--------- GPIO_0
+>> ++------------+             |                 | ...
+>> +| Parent IRQ |             |                 +--------- GPIO_8/EXT_INT_0
+>> +| controller |  EXT_INT_0  |                 | ...
+>> +| (GICv2)    +-------------+                 +--------- GPIO_[N+8]/EXT_INT_N
+>> +|            |  ...        |                 |
+>> +|            |  EXT_INT_N  |                 +--------- GPIO_[N+9]
+>> +|            +-------------+                 | ...
+>> +|            |             |                 +--------- GPIO_MAX
+>> ++------------+             +-----------------+
+>>
+>>  Required properties:
+>>  - compatible: "apm,xgene-gpio-sb" for the X-Gene Standby GPIO controller
+>> @@ -15,10 +25,18 @@ Required properties:
+>>               0 = active high
+>>               1 = active low
+>>  - gpio-controller: Marks the device node as a GPIO controller.
+>> -- interrupts: Shall contain exactly 6 interrupts.
+>> +- interrupts: The EXT_INT_0 parent interrupt resource must be listed first.
+>> +- interrupt-parent: Phandle of the parent interrupt controller.
+>> +- interrupt-cells: Should be two.
+>> +       - first cell is 0-N coresponding for EXT_INT_0 to EXT_INT_N.
+>> +       - second cell is used to specify flags.
+>> +- interrupt-controller: Marks the device node as an interrupt controller.
+>> +- apm,nr-gpios: Optional, specify number of gpios pin.
+>> +- apm,nr-irqs: Optional, specify number of interrupt pins.
+>
+> When is this not 6?
+>
+Hi Rob,  by default, this should be 6, but I think this property can
+help in cases:
++ Used only 5(or less) first pin as interrupt.
++ For similar device which has different interrupt pins (8 for example).
+My idea is to make it a bit more generic by using this optional property.
 
-I send you greetings. I have found your contact email address listed on an Internet Business Directory and it is my wish to do business with you, hence your receipt of this letter. We are brokering an Investment deal in your country on behalf of a client in Libya. This deal will involve the investment of a high profile client of ours in your country. In selected investment areas in your country, thus the reason for us contacting you.
+>> +- apm,irq-start: Optional, specify lowest gpio pin support interrupt.
+>
+> What determines this value? What value is assumed if not present?
+>
+This value will tell interrupt is support from which gpio pin, as in
+this case interrupt support from pin 8 (ie: only pin 8, 9,10 ...
+supports interrupt) as default.
+If not specify the default (ie: 8) will be used.
 
-We are by this letter offering you our partnership, so as to allow us have you as representative and manager of invested funds in your country within the time frame of the investment/partnership scheme. We have kept this proposal brief, if you are Interested in this offer of partnership, please respond and we would send you an elaborate proposal and details of this offer. Please respond to this email: khalidmahmed43@gmail.com
-
-Yours sincerely,
-Khalid Mahmoud Ahmed
-LIBYA CONSULATE,
-Department of International Negotiations.
-Deputy Director, International Affairs.
-
-
+Thanks,
+-- Quan Nguyen
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
