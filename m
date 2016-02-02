@@ -1,50 +1,51 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 2/3] usb: phy: generic: use forward declarations instead of
- #includes
-Date: Tue, 02 Feb 2016 14:02:44 -0600
-Message-ID: <20160202200244.11646.12411.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/3] USB: PHY: minor include cleanups
+Date: Tue, 2 Feb 2016 20:43:37 +0000
+Message-ID: <20160202204337.GD4455@sirena.org.uk>
 References: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+b2GFy/wpzNn/yIF"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59931 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932865AbcBBUoF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Tue, 2 Feb 2016 15:44:05 -0500
+Content-Disposition: inline
 In-Reply-To: <20160202200005.11646.98254.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Felipe Balbi <balbi@ti.com>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-In drivers/usb/phy/phy-generic.h, use forward declarations for struct
-regulator and struct gpio_desc instead of including
-linux/regulator/consumer.h and linux/gpio/consumer.h.
 
-phy-generic.c is included three places (phy-am335x.c, phy-generic.c,
-phy-keystone.c).  Of these, phy-am335x.c and phy-generic.c already include
-regulator/consumer.h and phy-keystone.c doesn't need it; only phy-generic.c
-uses gpiod_*() interfaces, and it already includes gpio/consumer.h.
+--+b2GFy/wpzNn/yIF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is a little more efficient and ensures that users of the regulator and
-gpio interfaces include the relevant header files directly rather than
-accidentally getting them via drivers/usb/phy/phy-generic.h.
+On Tue, Feb 02, 2016 at 02:02:30PM -0600, Bjorn Helgaas wrote:
+> Remove some gpio and regulator #includes when they can be replaced by
+> trivial forward struct declarations.  Also move a linux/gpio/consumer.h
+> #include from a header to the single .c files that uses it.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/usb/phy/phy-generic.h |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Please don't CC me on patches just for simple work on users of the
+regulator API - if there's some regulator specific input needed then of
+course that's fine but if it's just normal API user stuff there's no
+need.
 
-diff --git a/drivers/usb/phy/phy-generic.h b/drivers/usb/phy/phy-generic.h
-index 0d0eadd..cc4f1bd 100644
---- a/drivers/usb/phy/phy-generic.h
-+++ b/drivers/usb/phy/phy-generic.h
-@@ -2,8 +2,9 @@
- #define _PHY_GENERIC_H_
- 
- #include <linux/usb/usb_phy_generic.h>
--#include <linux/gpio/consumer.h>
--#include <linux/regulator/consumer.h>
-+
-+struct regulator;
-+struct gpio_desc;
- 
- struct usb_phy_generic {
- 	struct usb_phy phy;
+--+b2GFy/wpzNn/yIF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWsRT4AAoJECTWi3JdVIfQ2qIH/Rtl3MAeIqSOVxFCybHAU5YU
+6x3x5X6AeP8mriOGpjLlrXRRoy0/6sTEH7OxxAVnuyxVAfKIshflk2g2lMR1LJkj
+sBfNdWg1RbuB412J3mpLziSyN9jb0zvapjgitUcL3klA/BFcflY3aP/4r6Yn9RnI
+wNBJEWeqOrkrHuTEILc6RZ+KqsEbpmHl0muHFG3m2o1pIdnBLUB/9FfUhvmNZCZR
+nd9iYg6XSUXkpgQcaqfI97+vByZ9R1nhHAm23QlF1LBXaT5QPnBlcC2FTobnjYRk
+oN+oHDa8cmOL84UXXAE2LwOrG4/DisGtcxnmglmM9XkTH7JdDPvJFvi8tAqaS7g=
+=KI9c
+-----END PGP SIGNATURE-----
+
+--+b2GFy/wpzNn/yIF--
