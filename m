@@ -1,102 +1,89 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 10/14] ARM: dts: sun8i-a83t: Add PRCM related clocks and resets
-Date: Tue, 2 Feb 2016 14:44:26 +0800
-Message-ID: <CAGb2v67iO-816KaLttWRRPL2f7hpfgJ1--p69tD_oOrewmOjCA@mail.gmail.com>
-References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com> <1454203266-4450-11-git-send-email-vishnupatekar0510@gmail.com>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH 13/14] ARM: dts: sun8i: enable mmc for
+ H8Homlet Board.
+Date: Tue, 2 Feb 2016 15:31:35 +0800
+Message-ID: <CAGb2v66hgkxNVywB9n8UEcnhVB_=_rWUv4G8bw6k50hAUucZ4w@mail.gmail.com>
+References: <1454203266-4450-1-git-send-email-vishnupatekar0510@gmail.com> <1454203266-4450-14-git-send-email-vishnupatekar0510@gmail.com>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454203266-4450-11-git-send-email-vishnupatekar0510@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vishnu Patekar <vishnupatekar0510@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Emilio Lopez <emilio@elopez.com.ar>, Jens Kuske <jenskuske@gmail.com>, Hans De Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Reinder de Haan <patchesrdh@mveas.com>, linux-cl
+Return-path: <linux-sunxi+bncBCMILY6JWQBBB3VWYG2QKGQEGINWYVY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1454203266-4450-14-git-send-email-vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Emilio Lopez <emilio-0Z03zUJReD5OxF6Tv1QG9Q@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans De Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Reinder de Haan <patchesrdh-I1/eAgTnXDYAvxtiuMwx3w@public.gmane.org>, linux-cl
 List-Id: linux-gpio@vger.kernel.org
 
+Hi,
+
 On Sun, Jan 31, 2016 at 9:21 AM, Vishnu Patekar
-<vishnupatekar0510@gmail.com> wrote:
-> This adds A83T PRCM related clocks, clock resets.
+<vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> This enables mmc0.
 >
-> As a83t apb0 gates clock support is added earlier, this enables it.
-> Apart from apb0 gates, other added clocks are compatible with
-> earlier sun8i socs.
->
-> Signed-off-by: Vishnu Patekar <vishnupatekar0510@gmail.com>
+> Signed-off-by: Vishnu Patekar <vishnupatekar0510-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: LABBE Corentin <clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  arch/arm/boot/dts/sun8i-a83t.dtsi | 44 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+>  .../boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts    | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> index ac96aa1..5ea20ff 100644
-> --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-> @@ -268,6 +268,44 @@
->                                              "mmc2_output",
->                                              "mmc2_sample";
->                 };
-> +
-> +               cpus_clk: clk@01f01400 {
-> +                       compatible = "allwinner,sun9i-a80-cpus-clk";
-> +                       reg = <0x01f01400 0x4>;
-> +                       #clock-cells = <0>;
-> +                       clocks = <&osc16Md512>, <&osc24M>, <&pll6>, <&osc16M>;
-> +                       clock-output-names = "cpus";
-> +               };
-> +
-> +               ahb0: ahb0_clk {
-> +                       compatible = "fixed-factor-clock";
-> +                       #clock-cells = <0>;
-> +                       clock-div = <1>;
-> +                       clock-mult = <1>;
-> +                       clocks = <&cpus_clk>;
-> +                       clock-output-names = "ahb0";
-> +               };
-> +
-> +               apb0: clk@01f0140c {
-> +                       compatible = "allwinner,sun8i-a23-apb0-clk";
-
-This is actually wrong, as it is wrong in sun9i-a80.dtsi.
-I've sent a patch series for it.
-
-Also the drivers for "allwinner,sun9i-a80-cpus-clk" and
-"allwinner,sun9i-a80-apbs-clk"
-are only compiled for CONFIG_MACH_SUN9I. Please add a patch to address this.
-
-Regards
-ChenYu
-
-> +                       reg = <0x01f0140c 0x4>;
-> +                       #clock-cells = <0>;
-> +                       clocks = <&ahb0>;
-> +                       clock-output-names = "apb0";
-> +               };
-> +
-> +               apb0_gates: clk@01f01428 {
-> +                       compatible = "allwinner,sun8i-a83t-apb0-gates-clk";
-> +                       reg = <0x01f01428 0x4>;
-> +                       #clock-cells = <1>;
-> +                       clocks = <&apb0>;
-> +                       clock-indices = <0>, <1>,
-> +                                       <2>, <3>,
-> +                                       <4>, <6>, <7>;
-> +                       clock-output-names = "apb0_pio", "apb0_ir",
-> +                                       "apb0_timer", "apb0_rsb",
-> +                                       "apb0_uart", "apb0_i2c0", "apb0_twd";
-> +               };
->         };
+> diff --git a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+> index 342e1d3..6c1f598 100644
+> --- a/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+> +++ b/arch/arm/boot/dts/sun8i-a83t-allwinner-h8homlet-v2.dts
+> @@ -43,6 +43,7 @@
 >
->         soc {
-> @@ -434,5 +472,11 @@
->                         #interrupt-cells = <3>;
->                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
->                 };
-> +
-> +               apb0_reset: reset@01f014b0 {
-> +                       reg = <0x01f014b0 0x4>;
-> +                       compatible = "allwinner,sun6i-a31-clock-reset";
-> +                       #reset-cells = <1>;
-> +               };
+>  /dts-v1/;
+>  #include "sun8i-a83t.dtsi"
+> +#include "sunxi-common-regulators.dtsi"
+>
+>  / {
+>         model = "Allwinner A83T H8Homlet Proto Dev Board v2.0";
+> @@ -57,6 +58,25 @@
 >         };
 >  };
+>
+> +&pio {
+> +       mmc0_cd_pin_h8homlet: mmc0_cd_pin@0 {
+> +               allwinner,pins = "PF6";
+> +               allwinner,function = "gpio_in";
+> +               allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+> +               allwinner,pull = <SUN4I_PINCTRL_PULL_UP>;
+> +       };
+> +};
+> +
+
+Please keep them alphabetically sorted.
+
+> +&mmc0 {
+> +       pinctrl-names = "default";
+> +       pinctrl-0 = <&mmc0_pins_a>, <&mmc0_cd_pin_h8homlet>;
+> +       vmmc-supply = <&reg_vcc3v0>;
+
+The board design says 3.3V, but stock firmware uses 3.0V. I guess both work.
+
+> +       cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
+> +       bus-width = <4>;
+> +       cd-inverted;
+> +       status = "okay";
+> +};
+> +
+
+There's also eMMC onboard. Have you tried that?
+
+
+Thanks!
+ChenYu
+
+
+>  &uart0 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&uart0_pins_b>;
 > --
 > 1.9.1
 >
