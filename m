@@ -1,47 +1,33 @@
-From: Krzysztof Adamski <k@japko.eu>
-Subject: [PATCH v2] pinctrl: sunxi: H3 requires irq_read_needs_mux
-Date: Wed, 3 Feb 2016 08:57:14 +0100
-Message-ID: <20160203075713.GA23312@box2.japko.eu>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/2] GPIO: Clean up asm/gpio.h
+Date: Wed, 3 Feb 2016 09:19:55 +0100 (CET)
+Message-ID: <alpine.DEB.2.11.1602030919190.25254@nanos>
+References: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from box2.japko.eu ([91.121.152.53]:50121 "EHLO box2.japko.eu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756512AbcBCH5V (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-	Wed, 3 Feb 2016 02:57:21 -0500
-Content-Disposition: inline
+Received: from www.linutronix.de ([62.245.132.108]:54886 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933572AbcBCIVF (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 03:21:05 -0500
+In-Reply-To: <20160202194831.10827.63244.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Jens Kuske <jenskuske@gmail.com>, Fabian Frederick <fabf@skynet.be>, Vishnu Patekar <vishnupatekar0510@gmail.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arch@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 
-It seems that on H3, just like on A10, when GPIOs are configured as
-external interrupt data registers does not contain their value.  When
-value is read, GPIO function must be temporary switched to input for
-reads.
+On Tue, 2 Feb 2016, Bjorn Helgaas wrote:
 
-Signed-off-by: Krzysztof Adamski <k@japko.eu>
----
+> Many arches supply an asm/gpio.h that contains only this:
+> 
+>   #warning Include linux/gpio.h instead of asm/gpio.h
+>   #include <linux/gpio.h>
+> 
+> These two patches change all the places that include asm/gpio.h
+> so they include linux/gpio.h instead, and then remove the asm/gpio.h
+> files.
+> 
+> There are several arches that supply asm/gpio.h with useful
+> arch-specific content; I didn't touch those.
 
-Changes compared to v1:
-- None, but the patch was sent with wrong "From:", if you want to apply 
-  it, please apply this one. Sorry for confusion.
-
-
- drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-index 77d4cf0..11760bb 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c
-@@ -492,6 +492,7 @@ static const struct sunxi_pinctrl_desc sun8i_h3_pinctrl_data = {
- 	.pins = sun8i_h3_pins,
- 	.npins = ARRAY_SIZE(sun8i_h3_pins),
- 	.irq_banks = 2,
-+	.irq_read_needs_mux = true
- };
- 
- static int sun8i_h3_pinctrl_probe(struct platform_device *pdev)
--- 
-2.4.2
-
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
