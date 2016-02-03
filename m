@@ -1,235 +1,96 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 2/8] pinctrl: sh-pfc: r8a7790: Implement voltage switching for SDHI
-Date: Wed, 03 Feb 2016 11:59:34 +0200
-Message-ID: <3375560.xz1gJhmReB@avalon>
-References: <1435683177.23818.60.camel@codethink.co.uk> <6355006.FnTDFbP0bb@avalon> <1435879310.7541.2.camel@codethink.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1435879310.7541.2.camel@codethink.co.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Ian Molton <ian@mnementh.co.uk>, linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@lists.codethink.co.uk, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [PATCH v5 0/9] Add STM32 pinctrl/GPIO driver
+Date: Wed,  3 Feb 2016 12:04:36 +0100
+Message-ID: <1454497485-464-1-git-send-email-mcoquelin.stm32@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:32836 "EHLO
+	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753471AbcBCLEy (ORCPT
+	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 06:04:54 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, afaerber@suse.de, devicetree@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, bruherrera@gmail.com
 
-Hi Ben,
+Hi Linus,
 
-Just realized this mail thread fell through the cracks, sorry :-/
+This is the fifth round of STM32 pinctrl series, which is rebased on top of
+v4.5-rc1 and removes no more needed dependency between DT and driver.
 
-On Friday 03 July 2015 00:21:50 Ben Hutchings wrote:
-> On Wed, 2015-07-01 at 10:37 +0300, Laurent Pinchart wrote:
-> [...]
-> 
-> > > +#define PIN_IO_VOLTAGE(bank, _pin, _name, sfx)		\
-> > > +	[RCAR_GP_PIN(bank, _pin)].configs = SH_PFC_PIN_CFG_IO_VOLTAGE
-> > > +
-> > > 
-> > >  static const struct sh_pfc_pin pinmux_pins[] = {
-> > >  
-> > >  	PINMUX_GPIO_GP_ALL(),
-> > > 
-> > > -	/* Pins not associated with a GPIO port */
-> > > +	/*
-> > > +	 * All pins assigned to GPIO bank 3 can be used for SD interfaces
-> > > +	 * in which case they support both 3.3V and 1.8V signalling.
-> > > +	 */
-> > > +	PORT_GP_32(3, PIN_IO_VOLTAGE, unused),
-> > > +
-> > > +	/* Pins not associated with a GPIO port, placed after all the GPIOs 
-*/
-> > > +	[RCAR_GP_PIN(5, 31) + 1] =
-> > 
-> > I'm sorry but I still don't like this. gcc outputs a warning when
-> > overriding an initializer if you enable -Wextra, which leads me to
-> > believe this construct is dubious. It should at least be tested with
-> > LLVM.
-> > 
-> > I'd much prefer replacing PINMUX_GPIO_GP_ALL() with a version that will
-> > initialize the pins correctly right away.
-> 
-> [...]
-> 
-> Something like this?
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-> b/drivers/pinctrl/sh-pfc/pfc-emev2.c index 849c6943ed30..ad1a8281a91b
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-> @@ -228,7 +228,7 @@ enum {
-> 
->  /* Expand to a list of sh_pfc_pin entries (named PORT#).
->   * NOTE: No config are recorded since the driver do not handle pinconf. */
-> -#define __PIN_CFG(pn, pfx, sfx)  SH_PFC_PIN_CFG(pfx, 0)
-> +#define __PIN_CFG(pn, pfx, sfx)  SH_PFC_PORT_CFG(pfx, 0)
->  #define PINMUX_EMEV_GPIO_ALL()	  CPU_ALL_PORT(__PIN_CFG, , unused)
-> 
->  static const struct sh_pfc_pin pinmux_pins[] = {
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c index 280a56f97786..ca1538371563
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-> @@ -1272,8 +1272,8 @@ static const u16 pinmux_data[] = {
->  #define __IO	(SH_PFC_PIN_CFG_INPUT | SH_PFC_PIN_CFG_OUTPUT)
->  #define __PUD	(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
-> 
-> -#define R8A73A4_PIN_IO_PU_PD(pin)       SH_PFC_PIN_CFG(pin, __IO | __PUD)
-> -#define R8A73A4_PIN_O(pin)              SH_PFC_PIN_CFG(pin, __O)
-> +#define R8A73A4_PIN_IO_PU_PD(pin)       SH_PFC_PORT_CFG(pin, __IO | __PUD)
-> +#define R8A73A4_PIN_O(pin)              SH_PFC_PORT_CFG(pin, __O)
-> 
->  static const struct sh_pfc_pin pinmux_pins[] = {
->  	R8A73A4_PIN_IO_PU_PD(0), R8A73A4_PIN_IO_PU_PD(1),
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c index b486e9d20cc2..92939cbd7ad0
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-> @@ -1535,15 +1535,15 @@ static const u16 pinmux_data[] = {
->  #define __PU		(SH_PFC_PIN_CFG_PULL_UP)
->  #define __PUD		(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
-> 
-> -#define R8A7740_PIN_I_PD(pin)		SH_PFC_PIN_CFG(pin, __I | __PD)
-> -#define R8A7740_PIN_I_PU(pin)		SH_PFC_PIN_CFG(pin, __I | __PU)
-> -#define R8A7740_PIN_I_PU_PD(pin)	SH_PFC_PIN_CFG(pin, __I | __PUD)
-> -#define R8A7740_PIN_IO(pin)		SH_PFC_PIN_CFG(pin, __IO)
-> -#define R8A7740_PIN_IO_PD(pin)		SH_PFC_PIN_CFG(pin, __IO | __PD)
-> -#define R8A7740_PIN_IO_PU(pin)		SH_PFC_PIN_CFG(pin, __IO | __PU)
-> -#define R8A7740_PIN_IO_PU_PD(pin)	SH_PFC_PIN_CFG(pin, __IO | __PUD)
-> -#define R8A7740_PIN_O(pin)		SH_PFC_PIN_CFG(pin, __O)
-> -#define R8A7740_PIN_O_PU_PD(pin)	SH_PFC_PIN_CFG(pin, __O | __PUD)
-> +#define R8A7740_PIN_I_PD(pin)		SH_PFC_PORT_CFG(pin, __I | __PD)
-> +#define R8A7740_PIN_I_PU(pin)		SH_PFC_PORT_CFG(pin, __I | __PU)
-> +#define R8A7740_PIN_I_PU_PD(pin)	SH_PFC_PORT_CFG(pin, __I | __PUD)
-> +#define R8A7740_PIN_IO(pin)		SH_PFC_PORT_CFG(pin, __IO)
-> +#define R8A7740_PIN_IO_PD(pin)		SH_PFC_PORT_CFG(pin, __IO | __PD)
-> +#define R8A7740_PIN_IO_PU(pin)		SH_PFC_PORT_CFG(pin, __IO | __PU)
-> +#define R8A7740_PIN_IO_PU_PD(pin)	SH_PFC_PORT_CFG(pin, __IO | __PUD)
-> +#define R8A7740_PIN_O(pin)		SH_PFC_PORT_CFG(pin, __O)
-> +#define R8A7740_PIN_O_PU_PD(pin)	SH_PFC_PORT_CFG(pin, __O | __PUD)
-> 
->  static const struct sh_pfc_pin pinmux_pins[] = {
->  	/* Table 56-1 (I/O and Pull U/D) */
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c index 1137bbc810cd..1e59e1775374
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-> @@ -1740,20 +1740,23 @@ static const u16 pinmux_data[] = {
->  #define PIN_NUMBER(r, c) (((r) - 'A') * 31 + (c) + 200)
->  #define PIN_A_NUMBER(r, c) PIN_NUMBER(ROW_GROUP_A(r), c)
-> 
-> -#define PIN_IO_VOLTAGE(bank, _pin, _name, sfx)		\
-> -	[RCAR_GP_PIN(bank, _pin)].configs = SH_PFC_PIN_CFG_IO_VOLTAGE
-> +/*
-> + * All pins assigned to GPIO bank 3 can be used for SD interfaces in
-> + * which case they support both 3.3V and 1.8V signalling.
-> + */
-> +#define GP_GPIO_IO_VOLTAGE(bank, _pin, _name, sfx)			\
-> +	[RCAR_GP_PIN(bank, _pin)] =					\
-> +		SH_PFC_GPIO_CFG(bank, _pin, _name, SH_PFC_PIN_CFG_IO_VOLTAGE)
-> 
->  static const struct sh_pfc_pin pinmux_pins[] = {
-> -	PINMUX_GPIO_GP_ALL(),
-> -
-> -	/*
-> -	 * All pins assigned to GPIO bank 3 can be used for SD interfaces
-> -	 * in which case they support both 3.3V and 1.8V signalling.
-> -	 */
-> -	PORT_GP_32(3, PIN_IO_VOLTAGE, unused),
-> +	PORT_GP_32(0, _GP_GPIO, unused),
-> +	PORT_GP_32(1, _GP_GPIO, unused),
-> +	PORT_GP_32(2, _GP_GPIO, unused),
-> +	PORT_GP_32(3, GP_GPIO_IO_VOLTAGE, unused),
-> +	PORT_GP_32(4, _GP_GPIO, unused),
-> +	PORT_GP_32(5, _GP_GPIO, unused),
-> 
->  	/* Pins not associated with a GPIO port, placed after all the GPIOs */
-> -	[RCAR_GP_PIN(5, 31) + 1] =
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('F'), 15, AF15),
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('G'), 15, AG15),
->  	SH_PFC_PIN_NAMED(ROW_GROUP_A('H'), 15, AH15),
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-> b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c index d2efbfb776ac..2c798550cd8c
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
-> @@ -1166,14 +1166,14 @@ static const u16 pinmux_data[] = {
->  #define __PU		(SH_PFC_PIN_CFG_PULL_UP)
->  #define __PUD		(SH_PFC_PIN_CFG_PULL_DOWN | SH_PFC_PIN_CFG_PULL_UP)
-> 
-> -#define SH73A0_PIN_I_PD(pin)		SH_PFC_PIN_CFG(pin, __I | __PD)
-> -#define SH73A0_PIN_I_PU(pin)		SH_PFC_PIN_CFG(pin, __I | __PU)
-> -#define SH73A0_PIN_I_PU_PD(pin)		SH_PFC_PIN_CFG(pin, __I | __PUD)
-> -#define SH73A0_PIN_IO(pin)		SH_PFC_PIN_CFG(pin, __IO)
-> -#define SH73A0_PIN_IO_PD(pin)		SH_PFC_PIN_CFG(pin, __IO | __PD)
-> -#define SH73A0_PIN_IO_PU(pin)		SH_PFC_PIN_CFG(pin, __IO | __PU)
-> -#define SH73A0_PIN_IO_PU_PD(pin)	SH_PFC_PIN_CFG(pin, __IO | __PUD)
-> -#define SH73A0_PIN_O(pin)		SH_PFC_PIN_CFG(pin, __O)
-> +#define SH73A0_PIN_I_PD(pin)		SH_PFC_PORT_CFG(pin, __I | __PD)
-> +#define SH73A0_PIN_I_PU(pin)		SH_PFC_PORT_CFG(pin, __I | __PU)
-> +#define SH73A0_PIN_I_PU_PD(pin)		SH_PFC_PORT_CFG(pin, __I | __PUD)
-> +#define SH73A0_PIN_IO(pin)		SH_PFC_PORT_CFG(pin, __IO)
-> +#define SH73A0_PIN_IO_PD(pin)		SH_PFC_PORT_CFG(pin, __IO | __PD)
-> +#define SH73A0_PIN_IO_PU(pin)		SH_PFC_PORT_CFG(pin, __IO | __PU)
-> +#define SH73A0_PIN_IO_PU_PD(pin)	SH_PFC_PORT_CFG(pin, __IO | __PUD)
-> +#define SH73A0_PIN_O(pin)		SH_PFC_PORT_CFG(pin, __O)
-> 
->  /* Pin numbers for pins without a corresponding GPIO port number are
-> computed * from the row and column numbers with a 1000 offset to avoid
-> collisions with diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> b/drivers/pinctrl/sh-pfc/sh_pfc.h index 734f7a92229c..3eca740bba02 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -272,14 +272,18 @@ struct sh_pfc_soc_info {
->  		.enum_id = _pin##_DATA,					\
->  	}
-> 
-> -/* SH_PFC_PIN_CFG - Expand to a sh_pfc_pin entry (named PORT#) with config
-> */
-> -#define SH_PFC_PIN_CFG(_pin, cfgs)					\
-> +/* SH_PFC_{PORT,GPIO}_CFG - Expand to a sh_pfc_pin entry with config */
-> +#define _SH_PFC_PIN_CFG(_pin, _name, cfgs)				\
->  	{								\
->  		.pin = _pin,						\
-> -		.name = __stringify(PORT##_pin),			\
-> -		.enum_id = PORT##_pin##_DATA,				\
-> +		.name = __stringify(_name),				\
-> +		.enum_id = _name##_DATA,				\
->  		.configs = cfgs,					\
->  	}
-> +#define SH_PFC_PORT_CFG(_pin, cfgs)				\
-> +	_SH_PFC_PIN_CFG(PORT##_pin, PORT##_pin, cfgs)
-> +#define SH_PFC_GPIO_CFG(bank, _pin, _name, cfgs)		\
-> +	_SH_PFC_PIN_CFG((bank * 32) + _pin, _name, cfgs)
-> 
->  /* SH_PFC_PIN_NAMED - Expand to a sh_pfc_pin entry with the given name */
->  #define SH_PFC_PIN_NAMED(row, col, _name)				\
-> --- END ---
-> 
-> If you're happy with that, I'll re-send the series (hopefully for the
-> last time!) with the r8a7790 changes squashed into "pinctrl: sh-pfc:
-> r8a7790: Implement voltage switching for SDHI" and the SH_PFC_PIN_CFG
-> macro change as a new patch before it.
+Also, it fixes the Makefile so that it is really built when COMPILE_TEST is
+set and not ARCH_STM32.
 
-That looks good to me. I'd split it in two patches though, one that reworks 
-the existing macros (the drivers/pinctrl/sh-pfc/sh_pfc.h changes) and one that 
-implements voltage switching for SDHI on r8a7790.
+The STM32 family has 16 pins per GPIO bank, and the number of bank varies
+depending on the model.
 
-I would also avoid renaming SH_PFC_PIN_CFG to SH_PFC_PORT_CFG to avoid 
-modifying unrelated files, you can name the low-level macro __SH_PFC_PIN_CFG 
-and add
+Pins can be multiplexed either in GPIO mode, alternate function (up to 15
+functions per pin) or analog (for ADC/DAC).
 
-#define SH_PFC_PIN_CFG(_pin, cfgs)				\
-	__SH_PFC_PIN_CFG(PORT##_pin, PORT##_pin, cfgs)
+Changes since v4:
+-----------------
+ - Rebase on v4.5-rc1
+ - Fix compilation breakage due to gpio_chip struct .dev field renaming
+ - Move the macros from includes/dt-bindings to STM32 pinctrl driver directory
+to avoid uneeded dependency between DT and driver.
+ - Fix Makefile so that driver is built with COMPILE_TEST set
 
-Additionally, your new SH_PFC_GPIO_CFG macro seems identical to _GP_GPIO now. 
-It would make sense to merge the two.
+Changes since v3:
+-----------------
+ - Rebase on v4.4
+ - Fix error paths in stm32_pctrl_dt_subnode_to_map() (Patrice)
+ - Remove useless stm32_pctrl_find_function_by_pin function (Patrice)
+
+Changes since v2:
+-----------------
+ - Rebase on v4.4-rc1
+ - Declare leds also for Eval board
+ - Set green led as heartbeat
+ - Collect some acks
+
+Changes since v1:
+-----------------
+ - Add GPIO LEDs support in DT and defconfig
+ - Changes pinmux DT bindings from macros to raw values (Daniel)
+ - Improve DT bindings documentation (Daniel)
+ - Fix some commit fixup and rebase issues.
+
+Kind regards,
+Maxime
+
+Maxime Coquelin (9):
+  ARM: Kconfig: Introduce MACH_STM32F429 flag
+  Documentation: dt-bindings: Document STM32 pinctrl driver DT bindings
+  includes: dt-bindings: Add STM32F429 pinctrl DT bindings
+  pinctrl: Add STM32 MCUs support
+  ARM: mach-stm32: Select pinctrl
+  ARM: dts: Add pinctrl node to STM32F429
+  ARM: dts: Add USART1 pin config to STM32F429 boards
+  ARM: dts: Add leds support to STM32F429 boards
+  ARM: config: Enable GPIO Led driver in stm32_defconfig
+
+ .../bindings/pinctrl/st,stm32-pinctrl.txt          |  126 ++
+ arch/arm/Kconfig                                   |    6 +
+ arch/arm/boot/dts/stm32429i-eval.dts               |   19 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |   13 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |  110 ++
+ arch/arm/configs/stm32_defconfig                   |    1 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/stm32/Kconfig                      |   16 +
+ drivers/pinctrl/stm32/Makefile                     |    5 +
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  832 ++++++++++
+ drivers/pinctrl/stm32/pinctrl-stm32.h              |   51 +
+ drivers/pinctrl/stm32/pinctrl-stm32f429.c          | 1598 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/stm32f429-pinfunc.h    | 1239 +++++++++++++++
+ 14 files changed, 4018 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+ create mode 100644 drivers/pinctrl/stm32/Kconfig
+ create mode 100644 drivers/pinctrl/stm32/Makefile
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.c
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32.h
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f429.c
+ create mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
 
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
 
