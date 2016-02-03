@@ -1,144 +1,68 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v2 5/7] gpio: ich: Use devm_request_region
-Date: Wed,  3 Feb 2016 15:17:27 -0500
-Message-ID: <e36f676d444b9327fc50ea95fe6993f7645641cf.1454530144.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v2 6/7] gpio: sch311x: Use devm_request_region
+Date: Wed,  3 Feb 2016 15:17:40 -0500
+Message-ID: <126e48a53f3b241af14b1334518ea434c2c1cccc.1454530144.git.vilhelm.gray@gmail.com>
 References: <cover.1454530144.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:34455 "EHLO
-	mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932595AbcBCURf (ORCPT
-	<rfc822;linux-gpio@vger.kernel.org>); Wed, 3 Feb 2016 15:17:35 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1454530144.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Tyser <ptyser@xes-inc.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-By the time request_region is called in the Intel ICH series GPIO
-driver, a corresponding device structure has already been allocated. The
+By the time request_region is called in the SMSC SCH311x GPIO driver, a
+corresponding device structure has already been allocated. The
 devm_request_region function should be used to help simplify the cleanup
 code and reduce the possible points of failure.
 
-Cc: Peter Tyser <ptyser@xes-inc.com>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpio/gpio-ich.c | 51 +++++++++----------------------------------------
- 1 file changed, 9 insertions(+), 42 deletions(-)
+ drivers/gpio/gpio-sch311x.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ich.c b/drivers/gpio/gpio-ich.c
-index a489338..4f6d643 100644
---- a/drivers/gpio/gpio-ich.c
-+++ b/drivers/gpio/gpio-ich.c
-@@ -20,6 +20,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/gpio/gpio-sch311x.c b/drivers/gpio/gpio-sch311x.c
+index 1cbd77a..a03b38e 100644
+--- a/drivers/gpio/gpio-sch311x.c
++++ b/drivers/gpio/gpio-sch311x.c
+@@ -12,6 +12,7 @@
+  * (at your option) any later version.
+  */
  
 +#include <linux/ioport.h>
  #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/gpio.h>
-@@ -384,8 +385,8 @@ static struct ichx_desc avoton_desc = {
- 	.use_outlvl_cache = true,
- };
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+@@ -228,7 +229,8 @@ static int sch311x_gpio_probe(struct platform_device *pdev)
+ 	int err, i;
  
--static int ichx_gpio_request_regions(struct resource *res_base,
--						const char *name, u8 use_gpio)
-+static int ichx_gpio_request_regions(struct device *dev,
-+	struct resource *res_base, const char *name, u8 use_gpio)
+ 	/* we can register all GPIO data registers at once */
+-	if (!request_region(pdata->runtime_reg + GP1, 6, DRV_NAME)) {
++	if (!devm_request_region(&pdev->dev, pdata->runtime_reg + GP1, 6,
++		DRV_NAME)) {
+ 		dev_err(&pdev->dev, "Failed to request region 0x%04x-0x%04x.\n",
+ 			pdata->runtime_reg + GP1, pdata->runtime_reg + GP1 + 5);
+ 		return -EBUSY;
+@@ -273,7 +275,6 @@ static int sch311x_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ exit_err:
+-	release_region(pdata->runtime_reg + GP1, 6);
+ 	/* release already registered chips */
+ 	for (--i; i >= 0; i--)
+ 		gpiochip_remove(&priv->blocks[i].chip);
+@@ -282,12 +283,9 @@ exit_err:
+ 
+ static int sch311x_gpio_remove(struct platform_device *pdev)
  {
+-	struct sch311x_pdev_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct sch311x_gpio_priv *priv = platform_get_drvdata(pdev);
  	int i;
  
-@@ -395,34 +396,12 @@ static int ichx_gpio_request_regions(struct resource *res_base,
- 	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
- 		if (!(use_gpio & (1 << i)))
- 			continue;
--		if (!request_region(
-+		if (!devm_request_region(dev,
- 				res_base->start + ichx_priv.desc->regs[0][i],
- 				ichx_priv.desc->reglen[i], name))
--			goto request_err;
-+			return -EBUSY;
- 	}
- 	return 0;
+-	release_region(pdata->runtime_reg + GP1, 6);
 -
--request_err:
--	/* Clean up: release already requested regions, if any */
--	for (i--; i >= 0; i--) {
--		if (!(use_gpio & (1 << i)))
--			continue;
--		release_region(res_base->start + ichx_priv.desc->regs[0][i],
--			       ichx_priv.desc->reglen[i]);
--	}
--	return -EBUSY;
--}
--
--static void ichx_gpio_release_regions(struct resource *res_base, u8 use_gpio)
--{
--	int i;
--
--	for (i = 0; i < ARRAY_SIZE(ichx_priv.desc->regs[0]); i++) {
--		if (!(use_gpio & (1 << i)))
--			continue;
--		release_region(res_base->start + ichx_priv.desc->regs[0][i],
--			       ichx_priv.desc->reglen[i]);
--	}
- }
- 
- static int ichx_gpio_probe(struct platform_device *pdev)
-@@ -468,7 +447,7 @@ static int ichx_gpio_probe(struct platform_device *pdev)
- 	spin_lock_init(&ichx_priv.lock);
- 	res_base = platform_get_resource(pdev, IORESOURCE_IO, ICH_RES_GPIO);
- 	ichx_priv.use_gpio = ich_info->use_gpio;
--	err = ichx_gpio_request_regions(res_base, pdev->name,
-+	err = ichx_gpio_request_regions(&pdev->dev, res_base, pdev->name,
- 					ichx_priv.use_gpio);
- 	if (err)
- 		return err;
-@@ -489,8 +468,8 @@ static int ichx_gpio_probe(struct platform_device *pdev)
- 		goto init;
- 	}
- 
--	if (!request_region(res_pm->start, resource_size(res_pm),
--			pdev->name)) {
-+	if (!devm_request_region(&pdev->dev, res_pm->start,
-+			resource_size(res_pm), pdev->name)) {
- 		pr_warn("ACPI BAR is busy, GPI 0 - 15 unavailable\n");
- 		goto init;
- 	}
-@@ -502,31 +481,19 @@ init:
- 	err = gpiochip_add_data(&ichx_priv.chip, NULL);
- 	if (err) {
- 		pr_err("Failed to register GPIOs\n");
--		goto add_err;
-+		return err;
- 	}
- 
- 	pr_info("GPIO from %d to %d on %s\n", ichx_priv.chip.base,
- 	       ichx_priv.chip.base + ichx_priv.chip.ngpio - 1, DRV_NAME);
- 
- 	return 0;
--
--add_err:
--	ichx_gpio_release_regions(ichx_priv.gpio_base, ichx_priv.use_gpio);
--	if (ichx_priv.pm_base)
--		release_region(ichx_priv.pm_base->start,
--				resource_size(ichx_priv.pm_base));
--	return err;
- }
- 
- static int ichx_gpio_remove(struct platform_device *pdev)
- {
- 	gpiochip_remove(&ichx_priv.chip);
- 
--	ichx_gpio_release_regions(ichx_priv.gpio_base, ichx_priv.use_gpio);
--	if (ichx_priv.pm_base)
--		release_region(ichx_priv.pm_base->start,
--				resource_size(ichx_priv.pm_base));
--
- 	return 0;
- }
- 
+ 	for (i = 0; i < ARRAY_SIZE(priv->blocks); i++) {
+ 		gpiochip_remove(&priv->blocks[i].chip);
+ 		dev_info(&pdev->dev,
 -- 
 2.4.10
-
